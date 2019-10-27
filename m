@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 350D3E676A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 957E8E6604
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730717AbfJ0VUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41344 "EHLO mail.kernel.org"
+        id S1729233AbfJ0VHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731765AbfJ0VUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:43 -0400
+        id S1729211AbfJ0VHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B09A205C9;
-        Sun, 27 Oct 2019 21:20:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D92F4222C9;
+        Sun, 27 Oct 2019 21:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211242;
-        bh=5XqMLD8iGPlbW6virlcrv14XF0qzAbPIBv74bVt0L3c=;
+        s=default; t=1572210457;
+        bh=gv1Y2SUXRrBy9F58HbHm7Oba8NO36ODdouYrlrZSFJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Elr3B/8T8VCqIb9KZxI/LvHywqw2ASzUcBlnNFAfcpoDuh3BcHyjFOQ90mZPptJdS
-         3u7hfdn9w1ME8i/up1X+A5m9/v75FmmFpAast/4D8SWZaOpc4IUFiyAvVY9EAHQ7Mu
-         DlF7oiU54UVXxtoxIHd+2DXIuR+pPqtV3CTXpDtY=
+        b=Cl3vYum6OhFLc3FJeDN9AmSVKE6ILzb0rXfjnT9sxzfkEdXncoe6kSntRtH/fF6On
+         3ih7Q3hlZnM2wWS4O4p4WikROA+C4Pqipkg8Y2J9T8nAAY2UJtXxIDnk1kSCWh5e+1
+         7jPKX+xPTZ7cLBZyqbAs8ygOlpWm1CvyqZrW0rzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 080/197] sctp: change sctp_prot .no_autobind with true
-Date:   Sun, 27 Oct 2019 21:59:58 +0100
-Message-Id: <20191027203356.015238643@linuxfoundation.org>
+Subject: [PATCH 4.14 022/119] net: i82596: fix dma_alloc_attr for sni_82596
+Date:   Sun, 27 Oct 2019 21:59:59 +0100
+Message-Id: <20191027203306.580033772@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit 63dfb7938b13fa2c2fbcb45f34d065769eb09414 ]
+[ Upstream commit 61c1d33daf7b5146f44d4363b3322f8cda6a6c43 ]
 
-syzbot reported a memory leak:
+Commit 7f683b920479 ("i825xx: switch to switch to dma_alloc_attrs")
+switched dma allocation over to dma_alloc_attr, but didn't convert
+the SNI part to request consistent DMA memory. This broke sni_82596
+since driver doesn't do dma_cache_sync for performance reasons.
+Fix this by using different DMA_ATTRs for lasi_82596 and sni_82596.
 
-  BUG: memory leak, unreferenced object 0xffff888120b3d380 (size 64):
-  backtrace:
-
-    [...] slab_alloc mm/slab.c:3319 [inline]
-    [...] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
-    [...] sctp_bucket_create net/sctp/socket.c:8523 [inline]
-    [...] sctp_get_port_local+0x189/0x5a0 net/sctp/socket.c:8270
-    [...] sctp_do_bind+0xcc/0x200 net/sctp/socket.c:402
-    [...] sctp_bindx_add+0x4b/0xd0 net/sctp/socket.c:497
-    [...] sctp_setsockopt_bindx+0x156/0x1b0 net/sctp/socket.c:1022
-    [...] sctp_setsockopt net/sctp/socket.c:4641 [inline]
-    [...] sctp_setsockopt+0xaea/0x2dc0 net/sctp/socket.c:4611
-    [...] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3147
-    [...] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
-    [...] __do_sys_setsockopt net/socket.c:2100 [inline]
-
-It was caused by when sending msgs without binding a port, in the path:
-inet_sendmsg() -> inet_send_prepare() -> inet_autobind() ->
-.get_port/sctp_get_port(), sp->bind_hash will be set while bp->port is
-not. Later when binding another port by sctp_setsockopt_bindx(), a new
-bucket will be created as bp->port is not set.
-
-sctp's autobind is supposed to call sctp_autobind() where it does all
-things including setting bp->port. Since sctp_autobind() is called in
-sctp_sendmsg() if the sk is not yet bound, it should have skipped the
-auto bind.
-
-THis patch is to avoid calling inet_autobind() in inet_send_prepare()
-by changing sctp_prot .no_autobind with true, also remove the unused
-.get_port.
-
-Reported-by: syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Fixes: 7f683b920479 ("i825xx: switch to switch to dma_alloc_attrs")
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/socket.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/i825xx/lasi_82596.c |    4 +++-
+ drivers/net/ethernet/i825xx/lib82596.c   |    4 ++--
+ drivers/net/ethernet/i825xx/sni_82596.c  |    4 +++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -9353,7 +9353,7 @@ struct proto sctp_prot = {
- 	.backlog_rcv =	sctp_backlog_rcv,
- 	.hash        =	sctp_hash,
- 	.unhash      =	sctp_unhash,
--	.get_port    =	sctp_get_port,
-+	.no_autobind =	true,
- 	.obj_size    =  sizeof(struct sctp_sock),
- 	.useroffset  =  offsetof(struct sctp_sock, subscribe),
- 	.usersize    =  offsetof(struct sctp_sock, initmsg) -
-@@ -9395,7 +9395,7 @@ struct proto sctpv6_prot = {
- 	.backlog_rcv	= sctp_backlog_rcv,
- 	.hash		= sctp_hash,
- 	.unhash		= sctp_unhash,
--	.get_port	= sctp_get_port,
-+	.no_autobind	= true,
- 	.obj_size	= sizeof(struct sctp6_sock),
- 	.useroffset	= offsetof(struct sctp6_sock, sctp.subscribe),
- 	.usersize	= offsetof(struct sctp6_sock, sctp.initmsg) -
+--- a/drivers/net/ethernet/i825xx/lasi_82596.c
++++ b/drivers/net/ethernet/i825xx/lasi_82596.c
+@@ -96,6 +96,8 @@
+ 
+ #define OPT_SWAP_PORT	0x0001	/* Need to wordswp on the MPU port */
+ 
++#define LIB82596_DMA_ATTR	DMA_ATTR_NON_CONSISTENT
++
+ #define DMA_WBACK(ndev, addr, len) \
+ 	do { dma_cache_sync((ndev)->dev.parent, (void *)addr, len, DMA_TO_DEVICE); } while (0)
+ 
+@@ -199,7 +201,7 @@ static int __exit lan_remove_chip(struct
+ 
+ 	unregister_netdev (dev);
+ 	dma_free_attrs(&pdev->dev, sizeof(struct i596_private), lp->dma,
+-		       lp->dma_addr, DMA_ATTR_NON_CONSISTENT);
++		       lp->dma_addr, LIB82596_DMA_ATTR);
+ 	free_netdev (dev);
+ 	return 0;
+ }
+--- a/drivers/net/ethernet/i825xx/lib82596.c
++++ b/drivers/net/ethernet/i825xx/lib82596.c
+@@ -1065,7 +1065,7 @@ static int i82596_probe(struct net_devic
+ 
+ 	dma = dma_alloc_attrs(dev->dev.parent, sizeof(struct i596_dma),
+ 			      &lp->dma_addr, GFP_KERNEL,
+-			      DMA_ATTR_NON_CONSISTENT);
++			      LIB82596_DMA_ATTR);
+ 	if (!dma) {
+ 		printk(KERN_ERR "%s: Couldn't get shared memory\n", __FILE__);
+ 		return -ENOMEM;
+@@ -1087,7 +1087,7 @@ static int i82596_probe(struct net_devic
+ 	i = register_netdev(dev);
+ 	if (i) {
+ 		dma_free_attrs(dev->dev.parent, sizeof(struct i596_dma),
+-			       dma, lp->dma_addr, DMA_ATTR_NON_CONSISTENT);
++			       dma, lp->dma_addr, LIB82596_DMA_ATTR);
+ 		return i;
+ 	}
+ 
+--- a/drivers/net/ethernet/i825xx/sni_82596.c
++++ b/drivers/net/ethernet/i825xx/sni_82596.c
+@@ -23,6 +23,8 @@
+ 
+ static const char sni_82596_string[] = "snirm_82596";
+ 
++#define LIB82596_DMA_ATTR	0
++
+ #define DMA_WBACK(priv, addr, len)     do { } while (0)
+ #define DMA_INV(priv, addr, len)       do { } while (0)
+ #define DMA_WBACK_INV(priv, addr, len) do { } while (0)
+@@ -151,7 +153,7 @@ static int sni_82596_driver_remove(struc
+ 
+ 	unregister_netdev(dev);
+ 	dma_free_attrs(dev->dev.parent, sizeof(struct i596_private), lp->dma,
+-		       lp->dma_addr, DMA_ATTR_NON_CONSISTENT);
++		       lp->dma_addr, LIB82596_DMA_ATTR);
+ 	iounmap(lp->ca);
+ 	iounmap(lp->mpu_port);
+ 	free_netdev (dev);
 
 
