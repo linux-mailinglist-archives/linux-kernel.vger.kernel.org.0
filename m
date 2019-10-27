@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA7C7E66FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4D8E67E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730984AbfJ0VRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:17:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36850 "EHLO mail.kernel.org"
+        id S1732713AbfJ0VZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730966AbfJ0VRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:17:04 -0400
+        id S1732099AbfJ0VZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:17 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 363052070B;
-        Sun, 27 Oct 2019 21:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D9AE222BD;
+        Sun, 27 Oct 2019 21:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211023;
-        bh=9hY8NZOhxzV2KeZA0eTHKZPgwdCjCBrLUUEhiwi4SYg=;
+        s=default; t=1572211517;
+        bh=sBK3e/HJ72aJFPRCV7NuKK2fRBkXmMl86jjjjgNUYbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KbRfd8x1PeYAXjMAjuFnPu7ipPF2Qmmx5ithXTaLVUV1ZKjvtTtVRXVChmcWdKAO7
-         GkUz6RVg6Nd/fsYcLmk7hz79tI2WR9X8QluKOvgotHEER4pCJNu5NcHkKKb0ED9Xbt
-         ZWQAsYoAnh2E19B6zMfWQY77DBtcxPIseMdpZ768=
+        b=x1l7DicE5Xt5jH5lncunI3pi2KhV55GeXOA7WSWnggczXocKGl/eD+A1mkTvvruVK
+         iBIiE/5B2YMlxmFxsGjlfEif+23o+iJ5xRBYYC0hAYWe/y3sGq2BKD2+5cpwhvHgJq
+         fluc4j11RYLZCrr6xpOZvpB1tzsKgE5YuBTPts0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick Williams <alpawi@amazon.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 83/93] pinctrl: armada-37xx: swap polarity on LED group
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH 5.3 177/197] x86/hyperv: Make vapic support x2apic mode
 Date:   Sun, 27 Oct 2019 22:01:35 +0100
-Message-Id: <20191027203313.789507102@linuxfoundation.org>
+Message-Id: <20191027203405.081835714@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrick Williams <alpawi@amazon.com>
+From: Roman Kagan <rkagan@virtuozzo.com>
 
-commit b835d6953009dc350d61402a854b5a7178d8c615 upstream.
+commit e211288b72f15259da86eed6eca680758dbe9e74 upstream.
 
-The configuration registers for the LED group have inverted
-polarity, which puts the GPIO into open-drain state when used in
-GPIO mode.  Switch to '0' for GPIO and '1' for LED modes.
+Now that there's Hyper-V IOMMU driver, Linux can switch to x2apic mode
+when supported by the vcpus.
 
-Fixes: 87466ccd9401 ("pinctrl: armada-37xx: Add pin controller support for Armada 37xx")
-Signed-off-by: Patrick Williams <alpawi@amazon.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191001155154.99710-1-alpawi@amazon.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+However, the apic access functions for Hyper-V enlightened apic assume
+xapic mode only.
+
+As a result, Linux fails to bring up secondary cpus when run as a guest
+in QEMU/KVM with both hv_apic and x2apic enabled.
+
+According to Michael Kelley, when in x2apic mode, the Hyper-V synthetic
+apic MSRs behave exactly the same as the corresponding architectural
+x2apic MSRs, so there's no need to override the apic accessors.  The
+only exception is hv_apic_eoi_write, which benefits from lazy EOI when
+available; however, its implementation works for both xapic and x2apic
+modes.
+
+Fixes: 29217a474683 ("iommu/hyper-v: Add Hyper-V stub IOMMU driver")
+Fixes: 6b48cb5f8347 ("X86/Hyper-V: Enlighten APIC access")
+Suggested-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Roman Kagan <rkagan@virtuozzo.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191010123258.16919-1-rkagan@virtuozzo.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/hyperv/hv_apic.c |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -183,10 +183,10 @@ static struct armada_37xx_pin_group arma
- 	PIN_GRP_EXTRA("uart2", 9, 2, BIT(1) | BIT(13) | BIT(14) | BIT(19),
- 		      BIT(1) | BIT(13) | BIT(14), BIT(1) | BIT(19),
- 		      18, 2, "gpio", "uart"),
--	PIN_GRP_GPIO("led0_od", 11, 1, BIT(20), "led"),
--	PIN_GRP_GPIO("led1_od", 12, 1, BIT(21), "led"),
--	PIN_GRP_GPIO("led2_od", 13, 1, BIT(22), "led"),
--	PIN_GRP_GPIO("led3_od", 14, 1, BIT(23), "led"),
-+	PIN_GRP_GPIO_2("led0_od", 11, 1, BIT(20), BIT(20), 0, "led"),
-+	PIN_GRP_GPIO_2("led1_od", 12, 1, BIT(21), BIT(21), 0, "led"),
-+	PIN_GRP_GPIO_2("led2_od", 13, 1, BIT(22), BIT(22), 0, "led"),
-+	PIN_GRP_GPIO_2("led3_od", 14, 1, BIT(23), BIT(23), 0, "led"),
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -260,11 +260,21 @@ void __init hv_apic_init(void)
+ 	}
  
- };
- 
+ 	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
+-		pr_info("Hyper-V: Using MSR based APIC access\n");
++		pr_info("Hyper-V: Using enlightened APIC (%s mode)",
++			x2apic_enabled() ? "x2apic" : "xapic");
++		/*
++		 * With x2apic, architectural x2apic MSRs are equivalent to the
++		 * respective synthetic MSRs, so there's no need to override
++		 * the apic accessors.  The only exception is
++		 * hv_apic_eoi_write, because it benefits from lazy EOI when
++		 * available, but it works for both xapic and x2apic modes.
++		 */
+ 		apic_set_eoi_write(hv_apic_eoi_write);
+-		apic->read      = hv_apic_read;
+-		apic->write     = hv_apic_write;
+-		apic->icr_write = hv_apic_icr_write;
+-		apic->icr_read  = hv_apic_icr_read;
++		if (!x2apic_enabled()) {
++			apic->read      = hv_apic_read;
++			apic->write     = hv_apic_write;
++			apic->icr_write = hv_apic_icr_write;
++			apic->icr_read  = hv_apic_icr_read;
++		}
+ 	}
+ }
 
 
