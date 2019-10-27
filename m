@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C8ADE66D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA0F1E67D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfJ0VPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35098 "EHLO mail.kernel.org"
+        id S1732546AbfJ0VYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730673AbfJ0VPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:41 -0400
+        id S1732534AbfJ0VYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:32 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D901E20B7C;
-        Sun, 27 Oct 2019 21:15:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BCC21783;
+        Sun, 27 Oct 2019 21:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210940;
-        bh=DBvde18xu0b7T6PFX7Da40x3Js9/MlrRtGfYxpnYZJ8=;
+        s=default; t=1572211471;
+        bh=+9jZZGeI7w6970cSzL2GnY+5H/WDdvxEd0GZbvc3oaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z0vYvpff2W3tkGZG8JkemsCvzo45K5c7IOFG8mzQnh59JptbFBtJdFpm4sA9iI8qo
-         NX5NQhWDWoOHKh0nLoz55Hxkt4dvMNy+GuEJmAuzFJq9ug1AHcxmLDkySaE3IXdz0/
-         0145v/QoE6RQYrFVaIlOOTW4S24UIrrju2ZtJub4=
+        b=ChvKMzfBeWdcS63/aRH0G2THLmFDINW5sFUObdsrITpuxpvTpA6GizIBeVnUN3ltU
+         SUf9Y1JNrWKzctjxyVrDC8E5NxVwbd6xmp/tWvcoKZlfyTSXpX3eYws8qko41HiBU7
+         i6h0hQKyPsEy5WLe2H8cKraWAuKIN/1XJClLSS8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 68/93] hugetlbfs: dont access uninitialized memmaps in pfn_range_valid_gigantic()
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Borislav Petkov <bp@suse.de>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Richter <rrichter@marvell.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH 5.3 162/197] EDAC/ghes: Fix Use after free in ghes_edac remove path
 Date:   Sun, 27 Oct 2019 22:01:20 +0100
-Message-Id: <20191027203308.085426069@linuxfoundation.org>
+Message-Id: <20191027203402.547589321@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,59 +48,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: James Morse <james.morse@arm.com>
 
-commit f231fe4235e22e18d847e05cbe705deaca56580a upstream.
+commit 1e72e673b9d102ff2e8333e74b3308d012ddf75b upstream.
 
-Uninitialized memmaps contain garbage and in the worst case trigger
-kernel BUGs, especially with CONFIG_PAGE_POISONING.  They should not get
-touched.
+ghes_edac models a single logical memory controller, and uses a global
+ghes_init variable to ensure only the first ghes_edac_register() will
+do anything.
 
-Let's make sure that we only consider online memory (managed by the
-buddy) that has initialized memmaps.  ZONE_DEVICE is not applicable.
+ghes_edac is registered the first time a GHES entry in the HEST is
+probed. There may be multiple entries, so subsequent attempts to
+register ghes_edac are silently ignored as the work has already been
+done.
 
-page_zone() will call page_to_nid(), which will trigger
-VM_BUG_ON_PGFLAGS(PagePoisoned(page), page) with CONFIG_PAGE_POISONING
-and CONFIG_DEBUG_VM_PGFLAGS when called on uninitialized memmaps.  This
-can be the case when an offline memory block (e.g., never onlined) is
-spanned by a zone.
+When a GHES entry is unregistered, it calls ghes_edac_unregister(),
+which free()s the memory behind the global variables in ghes_edac.
 
-Note: As explained by Michal in [1], alloc_contig_range() will verify
-the range.  So it boils down to the wrong access in this function.
+But there may be multiple GHES entries, the next call to
+ghes_edac_unregister() will dereference the free()d memory, and attempt
+to free it a second time.
 
-[1] http://lkml.kernel.org/r/20180423000943.GO17484@dhcp22.suse.cz
+This may also be triggered on a platform with one GHES entry, if the
+driver is unbound/re-bound and unbound. The re-bind step will do
+nothing because of ghes_init, the second unbind will then do the same
+work as the first.
 
-Link: http://lkml.kernel.org/r/20191015120717.4858-1-david@redhat.com
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Michal Hocko <mhocko@kernel.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Doing the unregister work on the first call is unsafe, as another
+CPU may be processing a notification in ghes_edac_report_mem_error(),
+using the memory we are about to free.
+
+ghes_init is already half of the reference counting. We only need
+to do the register work for the first call, and the unregister work
+for the last. Add the unregister check.
+
+This means we no longer free ghes_edac's memory while there are
+GHES entries that may receive a notification.
+
+This was detected by KASAN and DEBUG_TEST_DRIVER_REMOVE.
+
+ [ bp: merge into a single patch. ]
+
+Fixes: 0fe5f281f749 ("EDAC, ghes: Model a single, logical memory controller")
+Reported-by: John Garry <john.garry@huawei.com>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Robert Richter <rrichter@marvell.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20191014171919.85044-2-james.morse@arm.com
+Link: https://lkml.kernel.org/r/304df85b-8b56-b77e-1a11-aa23769f2e7c@huawei.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/edac/ghes_edac.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1073,11 +1073,10 @@ static bool pfn_range_valid_gigantic(str
- 	struct page *page;
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -553,7 +553,11 @@ void ghes_edac_unregister(struct ghes *g
+ 	if (!ghes_pvt)
+ 		return;
  
- 	for (i = start_pfn; i < end_pfn; i++) {
--		if (!pfn_valid(i))
-+		page = pfn_to_online_page(i);
-+		if (!page)
- 			return false;
- 
--		page = pfn_to_page(i);
--
- 		if (page_zone(page) != z)
- 			return false;
- 
++	if (atomic_dec_return(&ghes_init))
++		return;
++
+ 	mci = ghes_pvt->mci;
++	ghes_pvt = NULL;
+ 	edac_mc_del_mc(mci->pdev);
+ 	edac_mc_free(mci);
+ }
 
 
