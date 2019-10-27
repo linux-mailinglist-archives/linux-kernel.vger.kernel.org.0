@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDA25E6582
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A43EE65BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:05:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbfJ0VCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:02:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47860 "EHLO mail.kernel.org"
+        id S1727008AbfJ0VEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728124AbfJ0VCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:02:44 -0400
+        id S1727326AbfJ0VEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:46 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1589B2064A;
-        Sun, 27 Oct 2019 21:02:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23F902064A;
+        Sun, 27 Oct 2019 21:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210163;
-        bh=OCtxOBfUNqUfdyo4QTi6W5P3JVdilBukGXrbpspuus8=;
+        s=default; t=1572210285;
+        bh=GHu3kxfw3EEQhhSdbxenzvZRkwjxrDM1IARAor+TjfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BPPryt4gifysVd8+O61SgKMy/jbXIkCrDKNq7ct2pk4BwMLlzZWswqmb9iljpUAdv
-         GGwlxihddiD0858EzUZEiNWYVH8PTtxCK5F1W+A88nn98dyxIlHhkdVdwIC7TrHimL
-         ZtIBuig49ozLS2siAFwPknLAsd+yVRPN5oxzo+2A=
+        b=H2yWnwZJcyylF4xEs8WyK+TzZbxUHyhUL5UATNoTVICzwC4JSw71Q4MsZ5nEYzmFy
+         mHcxXHicyTbItmofO5/mfmFJCGy9b7FrzyennuLEK94Ir+7SglsZUqRRoJr8/bpDrG
+         eY5aCuN7/3eqPbq+KusekBBBHMgEPZ1R75nm7Eh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Doug Berger <opendmb@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 13/41] net: bcmgenet: Fix RGMII_MODE_EN value for GENET v1/2/3
+        stable@vger.kernel.org, Yi Li <yilikernel@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 13/49] ocfs2: fix panic due to ocfs2_wq is null
 Date:   Sun, 27 Oct 2019 22:00:51 +0100
-Message-Id: <20191027203111.151176841@linuxfoundation.org>
+Message-Id: <20191027203126.938247877@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +50,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Yi Li <yilikernel@gmail.com>
 
-[ Upstream commit efb86fede98cdc70b674692ff617b1162f642c49 ]
+commit b918c43021baaa3648de09e19a4a3dd555a45f40 upstream.
 
-The RGMII_MODE_EN bit value was 0 for GENET versions 1 through 3, and
-became 6 for GENET v4 and above, account for that difference.
+mount.ocfs2 failed when reading ocfs2 filesystem superblock encounters
+an error.  ocfs2_initialize_super() returns before allocating ocfs2_wq.
+ocfs2_dismount_volume() triggers the following panic.
 
-Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Doug Berger <opendmb@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  Oct 15 16:09:27 cnwarekv-205120 kernel: On-disk corruption discovered.Please run fsck.ocfs2 once the filesystem is unmounted.
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_read_locked_inode:537 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_init_global_system_inodes:458 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_init_global_system_inodes:491 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_initialize_super:2313 ERROR: status = -30
+  Oct 15 16:09:27 cnwarekv-205120 kernel: (mount.ocfs2,22804,44): ocfs2_fill_super:1033 ERROR: status = -30
+  ------------[ cut here ]------------
+  Oops: 0002 [#1] SMP NOPTI
+  CPU: 1 PID: 11753 Comm: mount.ocfs2 Tainted: G  E
+        4.14.148-200.ckv.x86_64 #1
+  Hardware name: Sugon H320-G30/35N16-US, BIOS 0SSDX017 12/21/2018
+  task: ffff967af0520000 task.stack: ffffa5f05484000
+  RIP: 0010:mutex_lock+0x19/0x20
+  Call Trace:
+    flush_workqueue+0x81/0x460
+    ocfs2_shutdown_local_alloc+0x47/0x440 [ocfs2]
+    ocfs2_dismount_volume+0x84/0x400 [ocfs2]
+    ocfs2_fill_super+0xa4/0x1270 [ocfs2]
+    ? ocfs2_initialize_super.isa.211+0xf20/0xf20 [ocfs2]
+    mount_bdev+0x17f/0x1c0
+    mount_fs+0x3a/0x160
+
+Link: http://lkml.kernel.org/r/1571139611-24107-1-git-send-email-yili@winhong.com
+Signed-off-by: Yi Li <yilikernel@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.h |    1 +
- drivers/net/ethernet/broadcom/genet/bcmmii.c   |    6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -362,6 +362,7 @@ struct bcmgenet_mib_counters {
- #define  EXT_ENERGY_DET_MASK		(1 << 12)
+---
+ fs/ocfs2/journal.c    |    3 ++-
+ fs/ocfs2/localalloc.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -231,7 +231,8 @@ void ocfs2_recovery_exit(struct ocfs2_su
+ 	/* At this point, we know that no more recovery threads can be
+ 	 * launched, so wait for any recovery completion work to
+ 	 * complete. */
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
  
- #define EXT_RGMII_OOB_CTRL		0x0C
-+#define  RGMII_MODE_EN_V123		(1 << 0)
- #define  RGMII_LINK			(1 << 4)
- #define  OOB_DISABLE			(1 << 5)
- #define  RGMII_MODE_EN			(1 << 6)
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -328,7 +328,11 @@ int bcmgenet_mii_config(struct net_devic
- 	 */
- 	if (priv->ext_phy) {
- 		reg = bcmgenet_ext_readl(priv, EXT_RGMII_OOB_CTRL);
--		reg |= RGMII_MODE_EN | id_mode_dis;
-+		reg |= id_mode_dis;
-+		if (GENET_IS_V1(priv) || GENET_IS_V2(priv) || GENET_IS_V3(priv))
-+			reg |= RGMII_MODE_EN_V123;
-+		else
-+			reg |= RGMII_MODE_EN;
- 		bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
- 	}
+ 	/*
+ 	 * Now that recovery is shut down, and the osb is about to be
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -391,7 +391,8 @@ void ocfs2_shutdown_local_alloc(struct o
+ 	struct ocfs2_dinode *alloc = NULL;
  
+ 	cancel_delayed_work(&osb->la_enable_wq);
+-	flush_workqueue(osb->ocfs2_wq);
++	if (osb->ocfs2_wq)
++		flush_workqueue(osb->ocfs2_wq);
+ 
+ 	if (osb->local_alloc_state == OCFS2_LA_UNUSED)
+ 		goto out;
 
 
