@@ -2,170 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F2E2E6AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E2BE6B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbfJ1C0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:26:08 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3977 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726940AbfJ1C0H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:26:07 -0400
-X-UUID: 985bdf8ceb1f4401b9b4289eca2bc7f3-20191028
-X-UUID: 985bdf8ceb1f4401b9b4289eca2bc7f3-20191028
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <xia.jiang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1443399686; Mon, 28 Oct 2019 10:26:01 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 28 Oct 2019 10:25:58 +0800
-Received: from [10.17.3.153] (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 28 Oct 2019 10:25:58 +0800
-Message-ID: <1572229558.27439.6.camel@mhfsdcap03>
-Subject: Re: [PATCH v4 5/5] media: platform: Add jpeg dec/enc feature
-From:   Xia Jiang <xia.jiang@mediatek.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-CC:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Rick Chang <rick.chang@mediatek.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg 
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        srv_heupstream <srv_heupstream@mediatek.com>
-Date:   Mon, 28 Oct 2019 10:25:58 +0800
-In-Reply-To: <CAAFQd5DUF90daBAe96Vu46z9HD43AYG+9rK-_r_aWYey8GxpmQ@mail.gmail.com>
-References: <20191017084033.28299-1-xia.jiang@mediatek.com>
-         <20191017084033.28299-6-xia.jiang@mediatek.com>
-         <20191023103945.GA41089@chromium.org> <1571906317.6254.64.camel@mhfsdcap03>
-         <CAAFQd5DUF90daBAe96Vu46z9HD43AYG+9rK-_r_aWYey8GxpmQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1728776AbfJ1C6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:58:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:35133 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728229AbfJ1C6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 22:58:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 19:58:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,238,1569308400"; 
+   d="scan'208";a="229552422"
+Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Oct 2019 19:58:19 -0700
+From:   Like Xu <like.xu@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kan.liang@intel.com,
+        wei.w.wang@intel.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH v4 0/6]  KVM: x86/vPMU: Efficiency optimization by reusing last created perf_event
+Date:   Sun, 27 Oct 2019 18:52:37 +0800
+Message-Id: <20191027105243.34339-1-like.xu@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-24 at 18:23 +0900, Tomasz Figa wrote:
-> On Thu, Oct 24, 2019 at 5:38 PM Xia Jiang <xia.jiang@mediatek.com> wrote:
-> >
-> > On Wed, 2019-10-23 at 19:39 +0900, Tomasz Figa wrote:
-> > > Hi Xia,
-> > >
-> > > On Thu, Oct 17, 2019 at 04:40:38PM +0800, Xia Jiang wrote:
-> > > > Add mtk jpeg encode v4l2 driver based on jpeg decode, because that jpeg
-> > > > decode and encode have great similarities with function operation.
-> > > >
-> > > > Signed-off-by: Xia Jiang <xia.jiang@mediatek.com>
-> > > > ---
-> > > > v4: split mtk_jpeg_try_fmt_mplane() to two functions, one for encoder,
-> > > >     one for decoder.
-> > > >     split mtk_jpeg_set_default_params() to two functions, one for
-> > > >     encoder, one for decoder.
-> > > >     add cropping support for encoder in g/s_selection ioctls.
-> > > >     change exif mode support by using V4L2_JPEG_ACTIVE_MARKER_APP1.
-> > > >     change MTK_JPEG_MAX_WIDTH/MTK_JPEG_MAX_HEIGH from 8192 to 65535 by
-> > > >     specification.
-> > > >     move width shifting operation behind aligning operation in
-> > > >     mtk_jpeg_try_enc_fmt_mplane() for bug fix.
-> > > >     fix user abuseing data_offset issue for DMABUF in
-> > > >     mtk_jpeg_set_enc_src().
-> > > >     fix kbuild warings: change MTK_JPEG_MIN_HEIGHT/MTK_JPEG_MAX_HEIGHT
-> > > >                         and MTK_JPEG_MIN_WIDTH/MTK_JPEG_MAX_WIDTH from
-> > > >                         'int' type to 'unsigned int' type.
-> > > >                         fix msleadingly indented of 'else'.
-> > > >
-> > > > v3: delete Change-Id.
-> > > >     only test once handler->error after the last v4l2_ctrl_new_std().
-> > > >     seperate changes of v4l2-ctrls.c and v4l2-controls.h to new patch.
-> > > >
-> > > > v2: fix compliance test fail, check created buffer size in driver.
-> > > > ---
-> > > >  drivers/media/platform/mtk-jpeg/Makefile      |   5 +-
-> > > >  .../media/platform/mtk-jpeg/mtk_jpeg_core.c   | 731 +++++++++++++++---
-> > > >  .../media/platform/mtk-jpeg/mtk_jpeg_core.h   | 123 ++-
-> > > >  .../media/platform/mtk-jpeg/mtk_jpeg_dec_hw.h |   7 +-
-> > > >  .../media/platform/mtk-jpeg/mtk_jpeg_enc_hw.c | 175 +++++
-> > > >  .../media/platform/mtk-jpeg/mtk_jpeg_enc_hw.h |  60 ++
-> > > >  .../platform/mtk-jpeg/mtk_jpeg_enc_reg.h      |  49 ++
-> > > >  7 files changed, 1004 insertions(+), 146 deletions(-)
-> > > >  create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_hw.c
-> > > >  create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_hw.h
-> > > >  create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_reg.h
-> > > >
-> > >
-> > > First of all, thanks for the patch!
-> > >
-> > > Please check my comments below.
-> > >
-> > > My general feeling about this code is that the encoder hardware block is
-> > > completely orthogonal from the decoder block and there is very little code
-> > > reuse from the original decoder driver.
-> > >
-> > > Moreover, a lot of existing code now needs if (decoder) { ... } else {... }
-> > > segments, which complicates the code.
-> > >
-> > > Would it perhaps make sense to instead create a separate mtk-jpeg-enc
-> > > driver?
-> > >
-> > Dear Tomasz,
-> >
-> > Thanks for your comments.
-> >
-> > My reasons about the architecture of jpeg enc driver are as follows:
-> >
-> > The first internal design and realization of jpeg enc driver was a
-> > separate driver, but found that mtk_jpeg_core.c and mtk_jpeg_enc_core.c
-> > have lots of reuse.Because that  the core.c mainly contains realization
-> > of v4L2 ioctl functions and some logic which are high similarity between
-> > encoder and decoder.
-> >
-> > The jpeg encoder and decoder are two independent hardwares exactly, so
-> > the code about hardware specification(register setting) are
-> > separated(mtk_jpeg_enc_hw.c and mtk_jpeg_dec_hw.c).
-> >
-> > As for 17 existing code segments contain if(decoder){} else {}, they are
-> > not complicated IMHO.The complicated(multilayer nested) functions are
-> > separated in V4 version as Hans recommendation.
-> >
-> > By the way,the upstreamed module s5p-jpeg
-> > (https://elixir.bootlin.com/linux/latest/source/drivers/media/platform/s5p-jpeg/jpeg-core.c#L1998) also use encoder and decoder mode in the common core.c, but their encoder and decoder are the same hardware.Maybe our jpeg enc and dec are designed into one hardware in the future.In that case the current architecture is more compatible.
-> >
-> > So I prefer the current design.
-> >
-> 
-> Would you be able to give some numbers to show the code reuse to
-> justify using the same driver? From my observation, a new driver would
-> result in a significantly cleaner code. If there is a further hardware
-> architecture change, that would likely require another driver, because
-> it wouldn't be compatible with existing programming model anyway.
-> 
-> Regardless of that, if we end up with reusing the same driver, I'd
-> like you to fix the issues existing in the current base before adding
-> the encoder functionality.
-Dear Tomasz,
-I've counted about 1000 lines of code that can be reused.The reused code
-is 75 percent of the original code.
+Hi Community,
 
-If you agree to reuse the same driver,I will fix the issues existing in
-the current driver.
+For perf subsystem, please help review first two patches.
+For kvm subsystem, please help review last four patches.
 
-Best Regards,
-Xia Jiang
-> 
-> Best regards,
-> Tomasz
+This patch series is going to improve vPMU Efficiency for guest which is
+mainly measured by guest NMI handler latency in such as basic perf usages
+[1][2] with hardware PMU. It's not a passthrough solution but based on the
+legacy vPMU implementation.
 
+With this optimization, the average latency of the guest NMI handler is
+reduced from 104923 ns to 48393 ns (~2.16x speed up on CLX-AP with 5.4-rc4,
+w/ perf_v4_pmi=n). If host disables the watchdog, the minimum latency of
+guest NMI handler could be speed up at ~3413x and in the average at ~786x.
+The run time of workload with perf attached inside the guest could be
+reduced significantly with this optimization.
+
+The general idea (defined in patch 5/6) is to reuse last created event
+for the same vPMC when the new requested config is the exactly same as the
+current_config (used by last pmc_reprogram_counter()) AND the new event
+period is appropriate and accepted (via perf_event_period() in patch 1/6).
+Before reusing the perf_event, it will be disabled until it's suitable for
+reuse and a hardware counter will be reassigned again to serve vPMC.
+
+If the disabled perf_event is no longer reused, we do a lazy release
+mechanism (defined in patch 6/6) which in a short is to release the
+disabled perf_events in the call of kvm_pmu_handle_event since the vcpu
+gets next scheduled in if guest doesn't WRMSR its MSRs in the last sched
+time slice. In the kvm_arch_sched_in(), KVM_REQ_PMU is requested if the
+pmu->event_count has not been reduced to zero and then do kvm_pmu_cleanup
+only once for a sched time slice to ensure that overhead is very limited.
+
+Please check each commit for more details and share your comments with us.
+
+Thanks,
+Like Xu
+
+---
+[1] multiplexing sampling mode usage: perf record  -e \
+`perf list | grep Hardware | grep event |\
+awk '{print $1}' | head -n 10 |tr '\n' ',' | sed 's/,$//' ` ./ftest
+[2] single event count mode usage: perf stat -e branch-misses ./ftest
+
+---
+Changes in v4:
+- s/rdpmc_idx/rdpmc_ecx/g (Jim Mattson)
+- make *_msr_idx_to_pmc static (kbuild test robot)
+
+Changes in v3:
+- optimize perf_event_pause() for no child event 
+- rename programed_config to programed_config
+- rename lazy_release_ctrl to pmc_in_use
+- rename kvm_pmu_ops callbacks form msr_idx to rdpmc_idx
+- add a new kvm_pmu_ops callback msr_idx_to_pmc
+- use DECLARE_BITMAP to declare bitmap
+- set up a bitmap 'pmu->all_valid_pmc_idx'
+- move kvm_pmu_cleanup to kvm_pmu_handle_event
+- update performance data based on 5.4-rc4 on CLX-AP
+
+Changes in v2:
+- use perf_event_pause() to disable, read, reset by only one lock;
+- use __perf_event_read_value() after _perf_event_disable();
+- replace bitfields with 'u8 event_count; bool need_cleanup;';
+- refine comments and commit messages;
+- fix two issues reported by kbuild test robot for ARCH=[nds32|sh]
+
+v3:
+https://lore.kernel.org/kvm/20191021160651.49508-1-like.xu@linux.intel.com/
+
+v2:
+https://lore.kernel.org/kvm/20191013091533.12971-1-like.xu@linux.intel.com/
+
+v1:
+https://lore.kernel.org/kvm/20190930072257.43352-1-like.xu@linux.intel.com/
+
+Like Xu (6):
+  perf/core: Provide a kernel-internal interface to recalibrate event
+    period
+  perf/core: Provide a kernel-internal interface to pause perf_event
+  KVM: x86/vPMU: Rename pmu_ops callbacks from msr_idx to rdpmc_ecx
+  KVM: x86/vPMU: Introduce a new kvm_pmu_ops->msr_idx_to_pmc callback
+  KVM: x86/vPMU: Reuse perf_event to avoid unnecessary
+    pmc_reprogram_counter
+  KVM: x86/vPMU: Add lazy mechanism to release perf_event per vPMC
+
+ arch/x86/include/asm/kvm_host.h |  19 ++++++
+ arch/x86/kvm/pmu.c              | 112 ++++++++++++++++++++++++++++++--
+ arch/x86/kvm/pmu.h              |  23 +++++--
+ arch/x86/kvm/pmu_amd.c          |  24 +++++--
+ arch/x86/kvm/vmx/pmu_intel.c    |  29 +++++++--
+ arch/x86/kvm/x86.c              |   8 ++-
+ include/linux/perf_event.h      |  10 +++
+ kernel/events/core.c            |  46 +++++++++++--
+ 8 files changed, 240 insertions(+), 31 deletions(-)
+
+-- 
+2.21.0
 
