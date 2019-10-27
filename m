@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8443FE677E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76DEBE6780
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731934AbfJ0VV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42258 "EHLO mail.kernel.org"
+        id S1731947AbfJ0VVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731925AbfJ0VVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:25 -0400
+        id S1731929AbfJ0VV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:28 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EFE1205C9;
-        Sun, 27 Oct 2019 21:21:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FACE208C0;
+        Sun, 27 Oct 2019 21:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211284;
-        bh=szCVL3WGa8C+AIWwGVnSsMk9yNrdZonwa70Sb3Pb0e0=;
+        s=default; t=1572211287;
+        bh=zOf6QBfl7HHOIgvm0cyDG+mhCRuEGWYUeiUlNmlofOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBbJJms5MS5r/Ls7UT2LBxY6lfP59bP1D0U/1m1exbyUOpsg4PeOjs49IUxRXBGhy
-         fWlT9IeM9qw0e2LqPTWgiADdPPlVRd9CkPSz1ni2OJ7Lb5/pBcCQgQ4BubgBmWTSlg
-         zoMxSgoVo3hVTwvUY04ZBvOE3CxbxXwJzmnofZ9Y=
+        b=LyYDb0bqXMJFwrh4MZ/qpPsEqX/cX/RJvJ7MpAMbwB9rregMaFN3Zf3FGMQFMpsXc
+         qommLexIpBT1X7gw/3ffcNUbQ2NEAB3erLxv7201Hipri63hmy2ToS1jbpXnwNmFwT
+         vyF8/RFB7CS/lI5U64Hoxl3YDbIke2VVj9dhVkzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Szabolcs=20Sz=C5=91ke?= <szszoke.code@gmail.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.3 098/197] ALSA: hda/realtek - Enable headset mic on Asus MJ401TA
-Date:   Sun, 27 Oct 2019 22:00:16 +0100
-Message-Id: <20191027203357.054427454@linuxfoundation.org>
+Subject: [PATCH 5.3 099/197] ALSA: usb-audio: Disable quirks for BOSS Katana amplifiers
+Date:   Sun, 27 Oct 2019 22:00:17 +0100
+Message-Id: <20191027203357.104434455@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -43,62 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Szabolcs Szőke <szszoke.code@gmail.com>
 
-commit 8c8967a7dc01a25f57a0757fdca10987773cd1f2 upstream.
+commit 7571b6a17fcc5e4f6903f065a82d0e38011346ed upstream.
 
-On Asus MJ401TA (with Realtek ALC256), the headset mic is connected to
-pin 0x19, with default configuration value 0x411111f0 (indicating no
-physical connection).
+BOSS Katana amplifiers cannot be used for recording or playback if quirks
+are applied
 
-Enable this by quirking the pin. Mic jack detection was also tested and
-found to be working.
-
-This enables use of the headset mic on this product.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=195223
+Signed-off-by: Szabolcs Szőke <szszoke.code@gmail.com>
 Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191017081501.17135-1-drake@endlessm.com
+Link: https://lore.kernel.org/r/20191011171937.8013-1-szszoke.code@gmail.com
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ sound/usb/pcm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5868,6 +5868,7 @@ enum {
- 	ALC225_FIXUP_WYSE_AUTO_MUTE,
- 	ALC225_FIXUP_WYSE_DISABLE_MIC_VREF,
- 	ALC286_FIXUP_ACER_AIO_HEADSET_MIC,
-+	ALC256_FIXUP_ASUS_HEADSET_MIC,
- 	ALC256_FIXUP_ASUS_MIC_NO_PRESENCE,
- 	ALC299_FIXUP_PREDATOR_SPK,
- 	ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC,
-@@ -6902,6 +6903,15 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE
- 	},
-+	[ALC256_FIXUP_ASUS_HEADSET_MIC] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x03a11020 }, /* headset mic with jack detect */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC256_FIXUP_ASUS_HEADSET_MODE
-+	},
- 	[ALC256_FIXUP_ASUS_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
-@@ -7098,6 +7108,7 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
- 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
- 	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1043, 0x18b1, "Asus MJ401TA", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
- 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -348,6 +348,9 @@ static int set_sync_ep_implicit_fb_quirk
+ 		ep = 0x84;
+ 		ifnum = 0;
+ 		goto add_sync_ep_from_ifnum;
++	case USB_ID(0x0582, 0x01d8): /* BOSS Katana */
++		/* BOSS Katana amplifiers do not need quirks */
++		return 0;
+ 	}
+ 
+ 	if (attr == USB_ENDPOINT_SYNC_ASYNC &&
 
 
