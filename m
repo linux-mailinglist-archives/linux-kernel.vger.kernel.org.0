@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C7F1E6641
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EFCCE65C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:05:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfJ0VKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:10:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56600 "EHLO mail.kernel.org"
+        id S1727777AbfJ0VEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729643AbfJ0VKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:10:11 -0400
+        id S1728711AbfJ0VEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:50 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DB2F20873;
-        Sun, 27 Oct 2019 21:10:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D22720B7C;
+        Sun, 27 Oct 2019 21:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210610;
-        bh=kFr3bpDwZ5IbEy2fGNnG6yQKM9J6DQNIfylmPpZdyng=;
+        s=default; t=1572210288;
+        bh=oJ5CUPNbNtT3V+fDsQ5W+ZazwrslLjjgDVeCQQ110oI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t+94c8RNjMHGiMQnl+x+n0I6i3YpDJzm3GJ88bADGgxpoXyjCeD5t7olwdC9SRRvE
-         ABK40ex8vvi/poAYVIlpoHzEQt+/B6JpGRga+q8zjTCqO2AOnTINnQdGWFdbFphAro
-         H2FNZ2/9MZph9n3wL+8ke35zDagpFgT4eydSJYs4=
+        b=gXo/yQm1otlxVlYS/eUBucfK6oPWmykZhDbPIXiAU+2JNeN8F7VRle/Ni7JJBSbcN
+         hiu5iP6QKtDSO83vlu0Uafm8K9Da18spAWO8T2yWmGD4wC7uRi0p2bOfsA+2goiIWw
+         bf9cClkxKEELkBasEiOcqWbcmlvHOyAynUfB2UDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 075/119] arm64: Always enable ssb vulnerability detection
+        stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Yunqiang Su <ysu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 14/49] MIPS: Treat Loongson Extensions as ASEs
 Date:   Sun, 27 Oct 2019 22:00:52 +0100
-Message-Id: <20191027203341.465064712@linuxfoundation.org>
+Message-Id: <20191027203127.430697160@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,84 +46,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-[ Upstream commit d42281b6e49510f078ace15a8ea10f71e6262581 ]
+[ Upstream commit d2f965549006acb865c4638f1f030ebcefdc71f6 ]
 
-Ensure we are always able to detect whether or not the CPU is affected
-by SSB, so that we can later advertise this to userspace.
+Recently, binutils had split Loongson-3 Extensions into four ASEs:
+MMI, CAM, EXT, EXT2. This patch do the samething in kernel and expose
+them in cpuinfo so applications can probe supported ASEs at runtime.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-[will: Use IS_ENABLED instead of #ifdef]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Yunqiang Su <ysu@wavecomp.com>
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/cpufeature.h |    4 ----
- arch/arm64/kernel/cpu_errata.c      |    9 +++++----
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ arch/mips/include/asm/cpu-features.h | 16 ++++++++++++++++
+ arch/mips/include/asm/cpu.h          |  4 ++++
+ arch/mips/kernel/cpu-probe.c         |  4 ++++
+ arch/mips/kernel/proc.c              |  4 ++++
+ 4 files changed, 28 insertions(+)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -493,11 +493,7 @@ static inline int arm64_get_ssbd_state(v
+diff --git a/arch/mips/include/asm/cpu-features.h b/arch/mips/include/asm/cpu-features.h
+index e961c8a7ea662..8c8b92b9b1eeb 100644
+--- a/arch/mips/include/asm/cpu-features.h
++++ b/arch/mips/include/asm/cpu-features.h
+@@ -345,6 +345,22 @@
+ #define cpu_has_dsp3		(cpu_data[0].ases & MIPS_ASE_DSP3)
  #endif
- }
  
--#ifdef CONFIG_ARM64_SSBD
- void arm64_set_ssbd_mitigation(bool state);
--#else
--static inline void arm64_set_ssbd_mitigation(bool state) {}
--#endif
- 
- #endif /* __ASSEMBLY__ */
- 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -231,7 +231,6 @@ enable_smccc_arch_workaround_1(const str
- }
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
- 
--#ifdef CONFIG_ARM64_SSBD
- DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
- 
- int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
-@@ -304,6 +303,11 @@ void __init arm64_enable_wa2_handling(st
- 
- void arm64_set_ssbd_mitigation(bool state)
- {
-+	if (!IS_ENABLED(CONFIG_ARM64_SSBD)) {
-+		pr_info_once("SSBD disabled by kernel configuration\n");
-+		return;
-+	}
++#ifndef cpu_has_loongson_mmi
++#define cpu_has_loongson_mmi		__ase(MIPS_ASE_LOONGSON_MMI)
++#endif
 +
- 	if (this_cpu_has_cap(ARM64_SSBS)) {
- 		if (state)
- 			asm volatile(SET_PSTATE_SSBS(0));
-@@ -423,7 +427,6 @@ out_printmsg:
- 
- 	return required;
- }
--#endif	/* CONFIG_ARM64_SSBD */
- 
- #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
- 	.matches = is_affected_midr_range,			\
-@@ -627,14 +630,12 @@ const struct arm64_cpu_capabilities arm6
- 		.cpu_enable = enable_smccc_arch_workaround_1,
- 	},
++#ifndef cpu_has_loongson_cam
++#define cpu_has_loongson_cam		__ase(MIPS_ASE_LOONGSON_CAM)
++#endif
++
++#ifndef cpu_has_loongson_ext
++#define cpu_has_loongson_ext		__ase(MIPS_ASE_LOONGSON_EXT)
++#endif
++
++#ifndef cpu_has_loongson_ext2
++#define cpu_has_loongson_ext2		__ase(MIPS_ASE_LOONGSON_EXT2)
++#endif
++
+ #ifndef cpu_has_mipsmt
+ #define cpu_has_mipsmt		(cpu_data[0].ases & MIPS_ASE_MIPSMT)
  #endif
--#ifdef CONFIG_ARM64_SSBD
- 	{
- 		.desc = "Speculative Store Bypass Disable",
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
- 		.capability = ARM64_SSBD,
- 		.matches = has_ssbd_mitigation,
- 	},
--#endif
- 	{
- 	}
- };
+diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
+index 9a8372484edc0..2cd5ee7463605 100644
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -429,5 +429,9 @@ enum cpu_type_enum {
+ #define MIPS_ASE_VZ		0x00000080 /* Virtualization ASE */
+ #define MIPS_ASE_MSA		0x00000100 /* MIPS SIMD Architecture */
+ #define MIPS_ASE_DSP3		0x00000200 /* Signal Processing ASE Rev 3*/
++#define MIPS_ASE_LOONGSON_MMI	0x00000800 /* Loongson MultiMedia extensions Instructions */
++#define MIPS_ASE_LOONGSON_CAM	0x00001000 /* Loongson CAM */
++#define MIPS_ASE_LOONGSON_EXT	0x00002000 /* Loongson EXTensions */
++#define MIPS_ASE_LOONGSON_EXT2	0x00004000 /* Loongson EXTensions R2 */
+ 
+ #endif /* _ASM_CPU_H */
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index 921211bcd2bad..0a7b3e513650f 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1480,6 +1480,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3a");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
+ 			break;
+ 		case PRID_REV_LOONGSON3B_R1:
+ 		case PRID_REV_LOONGSON3B_R2:
+@@ -1487,6 +1488,7 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 			__cpu_name[cpu] = "ICT Loongson-3";
+ 			set_elf_platform(cpu, "loongson3b");
+ 			set_isa(c, MIPS_CPU_ISA_M64R1);
++			c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_EXT);
+ 			break;
+ 		}
+ 
+@@ -1826,6 +1828,8 @@ static inline void cpu_probe_loongson(struct cpuinfo_mips *c, unsigned int cpu)
+ 		decode_configs(c);
+ 		c->options |= MIPS_CPU_FTLB | MIPS_CPU_TLBINV | MIPS_CPU_LDPTE;
+ 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
++		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
++			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
+ 		break;
+ 	default:
+ 		panic("Unknown Loongson Processor ID!");
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index 4c01ee5b88c99..dd05ec89cc57e 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -122,6 +122,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
+ 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
+ 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
++	if (cpu_has_loongson_mmi)	seq_printf(m, "%s", " loongson-mmi");
++	if (cpu_has_loongson_cam)	seq_printf(m, "%s", " loongson-cam");
++	if (cpu_has_loongson_ext)	seq_printf(m, "%s", " loongson-ext");
++	if (cpu_has_loongson_ext2)	seq_printf(m, "%s", " loongson-ext2");
+ 	seq_printf(m, "\n");
+ 
+ 	if (cpu_has_mmips) {
+-- 
+2.20.1
+
 
 
