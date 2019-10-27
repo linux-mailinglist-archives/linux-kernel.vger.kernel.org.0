@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C355AE66C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:15:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C671EE6835
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfJ0VPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34200 "EHLO mail.kernel.org"
+        id S1732436AbfJ0VYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729353AbfJ0VPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:15:04 -0400
+        id S1730777AbfJ0VYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:00 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 723A4214AF;
-        Sun, 27 Oct 2019 21:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E51521726;
+        Sun, 27 Oct 2019 21:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210904;
-        bh=G8fdBiczYjP1dj+XAo4W0fgeejN6M3is5d/XqM9NW8A=;
+        s=default; t=1572211440;
+        bh=PBAuqa8bf6EkANw75Ec/0dC2L0rQjMnIEdBZie01Rg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lgFlJlfz4YN+ch7uqjnif8a362U5NHr47cTt8jvI35WLdQ5qfCQuCpnZGDf4tfL9q
-         OxcFi0fcYPw5HwBq1L8q3DFqLi3C3+KSenrxcng8f6GtM8lFiC6G9hKcAXQJZxKI1J
-         YVRgATe9YBe9MINd8+npcVv3zo/PAs0UhRaXj1z0=
+        b=1quUmj5MLL7g5U7yGuCHlnbPUnO55ko3H+5bV6P3csLHHATTgnfmN5P7CR/AmBu6U
+         iz6dL12ekIx+n7jE4Sp7EubJF8scCGTkG9bWeWjBxEzHVExcWXbTA+2QHSH2DRfxc8
+         nGnhn+ftn2Xl01oxK4W4qAPK+HTWuEDzLFoUyoCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Nicolas Waisman <nico@semmle.com>,
-        Will Deacon <will@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 57/93] cfg80211: wext: avoid copying malformed SSIDs
-Date:   Sun, 27 Oct 2019 22:01:09 +0100
-Message-Id: <20191027203303.102049509@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Adam Ford <aford173@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.3 152/197] mm: memblock: do not enforce current limit for memblock_phys* family
+Date:   Sun, 27 Oct 2019 22:01:10 +0100
+Message-Id: <20191027203359.893319012@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +49,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-commit 4ac2813cc867ae563a1ba5a9414bfb554e5796fa upstream.
+commit f3057ad767542be7bbac44e548cb44017178a163 upstream.
 
-Ensure the SSID element is bounds-checked prior to invoking memcpy()
-with its length field, when copying to userspace.
+Until commit 92d12f9544b7 ("memblock: refactor internal allocation
+functions") the maximal address for memblock allocations was forced to
+memblock.current_limit only for the allocation functions returning
+virtual address.  The changes introduced by that commit moved the limit
+enforcement into the allocation core and as a result the allocation
+functions returning physical address also started to limit allocations
+to memblock.current_limit.
 
+This caused breakage of etnaviv GPU driver:
+
+  etnaviv etnaviv: bound 130000.gpu (ops gpu_ops)
+  etnaviv etnaviv: bound 134000.gpu (ops gpu_ops)
+  etnaviv etnaviv: bound 2204000.gpu (ops gpu_ops)
+  etnaviv-gpu 130000.gpu: model: GC2000, revision: 5108
+  etnaviv-gpu 130000.gpu: command buffer outside valid memory window
+  etnaviv-gpu 134000.gpu: model: GC320, revision: 5007
+  etnaviv-gpu 134000.gpu: command buffer outside valid memory window
+  etnaviv-gpu 2204000.gpu: model: GC355, revision: 1215
+  etnaviv-gpu 2204000.gpu: Ignoring GPU with VG and FE2.0
+
+Restore the behaviour of memblock_phys* family so that these functions
+will not enforce memblock.current_limit.
+
+Link: http://lkml.kernel.org/r/1570915861-17633-1-git-send-email-rppt@kernel.org
+Fixes: 92d12f9544b7 ("memblock: refactor internal allocation functions")
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Reported-by: Adam Ford <aford173@gmail.com>
+Tested-by: Adam Ford <aford173@gmail.com>	[imx6q-logicpd]
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: <stable@vger.kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Reported-by: Nicolas Waisman <nico@semmle.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20191004095132.15777-2-will@kernel.org
-[adjust commit log a bit]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/wext-sme.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ mm/memblock.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/wireless/wext-sme.c
-+++ b/net/wireless/wext-sme.c
-@@ -202,6 +202,7 @@ int cfg80211_mgd_wext_giwessid(struct ne
- 			       struct iw_point *data, char *ssid)
- {
- 	struct wireless_dev *wdev = dev->ieee80211_ptr;
-+	int ret = 0;
- 
- 	/* call only for station! */
- 	if (WARN_ON(wdev->iftype != NL80211_IFTYPE_STATION))
-@@ -219,7 +220,10 @@ int cfg80211_mgd_wext_giwessid(struct ne
- 		if (ie) {
- 			data->flags = 1;
- 			data->length = ie[1];
--			memcpy(ssid, ie + 2, data->length);
-+			if (data->length > IW_ESSID_MAX_SIZE)
-+				ret = -EINVAL;
-+			else
-+				memcpy(ssid, ie + 2, data->length);
- 		}
- 		rcu_read_unlock();
- 	} else if (wdev->wext.connect.ssid && wdev->wext.connect.ssid_len) {
-@@ -229,7 +233,7 @@ int cfg80211_mgd_wext_giwessid(struct ne
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1356,9 +1356,6 @@ static phys_addr_t __init memblock_alloc
+ 		align = SMP_CACHE_BYTES;
  	}
- 	wdev_unlock(wdev);
  
--	return 0;
-+	return ret;
- }
+-	if (end > memblock.current_limit)
+-		end = memblock.current_limit;
+-
+ again:
+ 	found = memblock_find_in_range_node(size, align, start, end, nid,
+ 					    flags);
+@@ -1469,6 +1466,9 @@ static void * __init memblock_alloc_inte
+ 	if (WARN_ON_ONCE(slab_is_available()))
+ 		return kzalloc_node(size, GFP_NOWAIT, nid);
  
- int cfg80211_mgd_wext_siwap(struct net_device *dev,
++	if (max_addr > memblock.current_limit)
++		max_addr = memblock.current_limit;
++
+ 	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid);
+ 
+ 	/* retry allocation without lower limit */
 
 
