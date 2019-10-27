@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EA66E6617
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE96E67B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbfJ0VIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54510 "EHLO mail.kernel.org"
+        id S1729341AbfJ0VX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728484AbfJ0VIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:17 -0400
+        id S1732334AbfJ0VXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:20 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95133208C0;
-        Sun, 27 Oct 2019 21:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F0922064A;
+        Sun, 27 Oct 2019 21:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210497;
-        bh=Fh4dzU4UG4Qrpjq7yDidh3ux/mXdZHZdENBjLFk4hbM=;
+        s=default; t=1572211400;
+        bh=97MBzUNNqyU+uABWapxiR2K5S7vS+qfj9+fyGXsu65o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qNc744yI/H4Eb49TqfPvmHQNtWWKV0JKaEvYSDoNAk8Sot2+s0gCPcZAH/FmMYbgQ
-         ijGExKpOrt/c4LUUvpQWtDPWob0nHJjhrsxLydHx2mczakDmsGkXWJ2aquz2FdiD+H
-         OppCdxAS7+QMaKyrrRSfxh/zxbj1LGYolezQUBbw=
+        b=PuABERHg+VG27/suFJiaossoJbTwdj6Qp1GPWQFk2JmfFk9KOZGE8YAmOO61WBSAd
+         Vsg2obyGC/7cN6lXBsRNbQlRdHuDeBskSQ8080A6Qy7gpm4HjkIOAyodurFIN0tvMW
+         G0DMljHyXHeOXoaOc7t6nINC1XtbaTdAhf1cAVGc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 034/119] USB: ldusb: fix memleak on disconnect
-Date:   Sun, 27 Oct 2019 22:00:11 +0100
-Message-Id: <20191027203310.819119455@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.3 094/197] io_uring: fix bad inflight accounting for SETUP_IOPOLL|SETUP_SQTHREAD
+Date:   Sun, 27 Oct 2019 22:00:12 +0100
+Message-Id: <20191027203356.845912397@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,37 +43,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit b14a39048c1156cfee76228bf449852da2f14df8 upstream.
+commit 2b2ed9750fc9d040b9f6d076afcef6f00b6f1f7c upstream.
 
-If disconnect() races with release() after a process has been
-interrupted, release() could end up returning early and the driver would
-fail to free its driver data.
+We currently assume that submissions from the sqthread are successful,
+and if IO polling is enabled, we use that value for knowing how many
+completions to look for. But if we overflowed the CQ ring or some
+requests simply got errored and already completed, they won't be
+available for polling.
 
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191010125835.27031-2-johan@kernel.org
+For the case of IO polling and SQTHREAD usage, look at the pending
+poll list. If it ever hits empty then we know that we don't have
+anymore pollable requests inflight. For that case, simply reset
+the inflight count to zero.
+
+Reported-by: Pavel Begunkov <asml.silence@gmail.com>
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/ldusb.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/io_uring.c |   44 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -383,10 +383,7 @@ static int ld_usb_release(struct inode *
- 		goto exit;
- 	}
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -816,19 +816,11 @@ static void io_iopoll_reap_events(struct
+ 	mutex_unlock(&ctx->uring_lock);
+ }
  
--	if (mutex_lock_interruptible(&dev->mutex)) {
--		retval = -ERESTARTSYS;
--		goto exit;
--	}
-+	mutex_lock(&dev->mutex);
+-static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
+-			   long min)
++static int __io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
++			    long min)
+ {
+-	int iters, ret = 0;
++	int iters = 0, ret = 0;
  
- 	if (dev->open_count != 1) {
- 		retval = -ENODEV;
+-	/*
+-	 * We disallow the app entering submit/complete with polling, but we
+-	 * still need to lock the ring to prevent racing with polled issue
+-	 * that got punted to a workqueue.
+-	 */
+-	mutex_lock(&ctx->uring_lock);
+-
+-	iters = 0;
+ 	do {
+ 		int tmin = 0;
+ 
+@@ -864,6 +856,21 @@ static int io_iopoll_check(struct io_rin
+ 		ret = 0;
+ 	} while (min && !*nr_events && !need_resched());
+ 
++	return ret;
++}
++
++static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
++			   long min)
++{
++	int ret;
++
++	/*
++	 * We disallow the app entering submit/complete with polling, but we
++	 * still need to lock the ring to prevent racing with polled issue
++	 * that got punted to a workqueue.
++	 */
++	mutex_lock(&ctx->uring_lock);
++	ret = __io_iopoll_check(ctx, nr_events, min);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	return ret;
+ }
+@@ -2327,7 +2334,20 @@ static int io_sq_thread(void *data)
+ 			unsigned nr_events = 0;
+ 
+ 			if (ctx->flags & IORING_SETUP_IOPOLL) {
+-				io_iopoll_check(ctx, &nr_events, 0);
++				/*
++				 * inflight is the count of the maximum possible
++				 * entries we submitted, but it can be smaller
++				 * if we dropped some of them. If we don't have
++				 * poll entries available, then we know that we
++				 * have nothing left to poll for. Reset the
++				 * inflight count to zero in that case.
++				 */
++				mutex_lock(&ctx->uring_lock);
++				if (!list_empty(&ctx->poll_list))
++					__io_iopoll_check(ctx, &nr_events, 0);
++				else
++					inflight = 0;
++				mutex_unlock(&ctx->uring_lock);
+ 			} else {
+ 				/*
+ 				 * Normal IO, just pretend everything completed.
 
 
