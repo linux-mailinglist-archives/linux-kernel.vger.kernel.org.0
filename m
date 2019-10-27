@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 881EFE6580
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BB7E67ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfJ0VCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:02:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47694 "EHLO mail.kernel.org"
+        id S1732787AbfJ0VZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbfJ0VCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:02:41 -0400
+        id S1732779AbfJ0VZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB0D20873;
-        Sun, 27 Oct 2019 21:02:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B347421850;
+        Sun, 27 Oct 2019 21:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210160;
-        bh=WclGftjhtADkb4qHB3tRje/8CLOt7Ubn4RbsQk7VAXU=;
+        s=default; t=1572211537;
+        bh=eRXpJNeQCyyCD23nmN3XQx5ovGSGyho2lmGLOeVxShs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qdKRAulHz2Z1ajKBhsusIGlPih/tIiybGZhSmGZN1DIU87tXePZxdJFn95arhl6d3
-         Lu8xqJ3zOmRPYgWw204b+lKbH01wKbJz8D58hxpX9ClTapO5ntTP93hmh9V/m9ZYZy
-         grYCJq4n+LBMvIWVIrVkaw7+402TFdCETrvuVPJ4=
+        b=0T7+Cz2DlLAg90wg2cdVIprHqVdSRtTOjubwZlP5ObUqcjMmJftgEzCSlVeZJBCFI
+         6y5c1PIdLOkKu/QxGOnq+oo/Z3/TWJ+2TR4vy2//47C0ovnQzSkg3PGMg+3u9QW2Sc
+         ju9sUNpwFIarZZkU+t3o5X5QQgoEHM+dgqg8s3H0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Alessio Balsini <balsini@android.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 12/41] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        James Zhu <James.Zhu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.3 132/197] drm/amdgpu/vcn: fix allocation size in enc ring test
 Date:   Sun, 27 Oct 2019 22:00:50 +0100
-Message-Id: <20191027203110.371349330@linuxfoundation.org>
+Message-Id: <20191027203358.845695967@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alessio Balsini <balsini@android.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
+commit c81fffc2c9450750dd7a54a36a788a860ab0425d upstream.
 
-Enabling Direct I/O with loop devices helps reducing memory usage by
-avoiding double caching.  32 bit applications running on 64 bits systems
-are currently not able to request direct I/O because is missing from the
-lo_compat_ioctl.
+We need to allocate a large enough buffer for the
+session info, otherwise the IB test can overwrite
+other memory.
 
-This patch fixes the compatibility issue mentioned above by exporting
-LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
-The input argument for this ioctl is a single long converted to a 1-bit
-boolean, so compatibility is preserved.
+- Session info is 128K according to mesa
+- Use the same session info for create and destroy
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Alessio Balsini <balsini@android.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=204241
+Acked-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: James Zhu <James.Zhu@amd.com>
+Tested-by: James Zhu <James.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/block/loop.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c |   35 +++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1557,6 +1557,7 @@ static int lo_compat_ioctl(struct block_
- 		arg = (unsigned long) compat_ptr(arg);
- 	case LOOP_SET_FD:
- 	case LOOP_CHANGE_FD:
-+	case LOOP_SET_DIRECT_IO:
- 		err = lo_ioctl(bdev, mode, cmd, arg);
- 		break;
- 	default:
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -517,13 +517,14 @@ int amdgpu_vcn_enc_ring_test_ring(struct
+ }
+ 
+ static int amdgpu_vcn_enc_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
+-			      struct dma_fence **fence)
++					 struct amdgpu_bo *bo,
++					 struct dma_fence **fence)
+ {
+ 	const unsigned ib_size_dw = 16;
+ 	struct amdgpu_job *job;
+ 	struct amdgpu_ib *ib;
+ 	struct dma_fence *f = NULL;
+-	uint64_t dummy;
++	uint64_t addr;
+ 	int i, r;
+ 
+ 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
+@@ -531,14 +532,14 @@ static int amdgpu_vcn_enc_get_create_msg
+ 		return r;
+ 
+ 	ib = &job->ibs[0];
+-	dummy = ib->gpu_addr + 1024;
++	addr = amdgpu_bo_gpu_offset(bo);
+ 
+ 	ib->length_dw = 0;
+ 	ib->ptr[ib->length_dw++] = 0x00000018;
+ 	ib->ptr[ib->length_dw++] = 0x00000001; /* session info */
+ 	ib->ptr[ib->length_dw++] = handle;
+-	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
+-	ib->ptr[ib->length_dw++] = dummy;
++	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
++	ib->ptr[ib->length_dw++] = addr;
+ 	ib->ptr[ib->length_dw++] = 0x0000000b;
+ 
+ 	ib->ptr[ib->length_dw++] = 0x00000014;
+@@ -569,13 +570,14 @@ err:
+ }
+ 
+ static int amdgpu_vcn_enc_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
+-				struct dma_fence **fence)
++					  struct amdgpu_bo *bo,
++					  struct dma_fence **fence)
+ {
+ 	const unsigned ib_size_dw = 16;
+ 	struct amdgpu_job *job;
+ 	struct amdgpu_ib *ib;
+ 	struct dma_fence *f = NULL;
+-	uint64_t dummy;
++	uint64_t addr;
+ 	int i, r;
+ 
+ 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
+@@ -583,14 +585,14 @@ static int amdgpu_vcn_enc_get_destroy_ms
+ 		return r;
+ 
+ 	ib = &job->ibs[0];
+-	dummy = ib->gpu_addr + 1024;
++	addr = amdgpu_bo_gpu_offset(bo);
+ 
+ 	ib->length_dw = 0;
+ 	ib->ptr[ib->length_dw++] = 0x00000018;
+ 	ib->ptr[ib->length_dw++] = 0x00000001;
+ 	ib->ptr[ib->length_dw++] = handle;
+-	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
+-	ib->ptr[ib->length_dw++] = dummy;
++	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
++	ib->ptr[ib->length_dw++] = addr;
+ 	ib->ptr[ib->length_dw++] = 0x0000000b;
+ 
+ 	ib->ptr[ib->length_dw++] = 0x00000014;
+@@ -623,13 +625,20 @@ err:
+ int amdgpu_vcn_enc_ring_test_ib(struct amdgpu_ring *ring, long timeout)
+ {
+ 	struct dma_fence *fence = NULL;
++	struct amdgpu_bo *bo = NULL;
+ 	long r;
+ 
+-	r = amdgpu_vcn_enc_get_create_msg(ring, 1, NULL);
++	r = amdgpu_bo_create_reserved(ring->adev, 128 * 1024, PAGE_SIZE,
++				      AMDGPU_GEM_DOMAIN_VRAM,
++				      &bo, NULL, NULL);
++	if (r)
++		return r;
++
++	r = amdgpu_vcn_enc_get_create_msg(ring, 1, bo, NULL);
+ 	if (r)
+ 		goto error;
+ 
+-	r = amdgpu_vcn_enc_get_destroy_msg(ring, 1, &fence);
++	r = amdgpu_vcn_enc_get_destroy_msg(ring, 1, bo, &fence);
+ 	if (r)
+ 		goto error;
+ 
+@@ -641,6 +650,8 @@ int amdgpu_vcn_enc_ring_test_ib(struct a
+ 
+ error:
+ 	dma_fence_put(fence);
++	amdgpu_bo_unreserve(bo);
++	amdgpu_bo_unref(&bo);
+ 	return r;
+ }
+ 
 
 
