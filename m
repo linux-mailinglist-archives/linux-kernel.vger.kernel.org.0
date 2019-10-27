@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F567E69AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7661EE6919
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730837AbfJ0ViB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50038 "EHLO mail.kernel.org"
+        id S1732565AbfJ0VeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:34:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728581AbfJ0VEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:21 -0400
+        id S1729848AbfJ0VLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:11:11 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE95214E0;
-        Sun, 27 Oct 2019 21:04:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D3AF21848;
+        Sun, 27 Oct 2019 21:11:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210260;
-        bh=osvjggYOXfm6VYWKkXyKzvmRDORihsKLZU69VQwLwM4=;
+        s=default; t=1572210671;
+        bh=G8fdBiczYjP1dj+XAo4W0fgeejN6M3is5d/XqM9NW8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2k5SsqnA7BC1MDPWP/Ty/gARaC5fCj3i5y8oubWQzTi92KzC+0fR7A8oD+wEDVVv7
-         6MnzDVUxovO/KzmiTNnjRXkOQSiPd+kVJ52Xg/a41dWhTsP1vivf/pg2loxw+TfKcJ
-         Oz2FfhrV+HSIMF/9rdb1aQRg8ToLH4+ZrblDCIyI=
+        b=rkg8Ctn/yfpSanX5+0UrZ6qI6KmSFCqSW5FpmootWeb03+dq1KS8GCjHfgOLG3UhT
+         V0xYWs+F5URIUVmuYLKL7EITIF6r4aGv0oqjJyLUbx726wxtlwM4XbsvB3c0XofpH/
+         P40rx7qeyuaH4Nh9mYctPy7wsa1svt2bqaOHjY7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.4 32/41] xtensa: drop EXPORT_SYMBOL for outs*/ins*
-Date:   Sun, 27 Oct 2019 22:01:10 +0100
-Message-Id: <20191027203126.453980532@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Nicolas Waisman <nico@semmle.com>,
+        Will Deacon <will@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 094/119] cfg80211: wext: avoid copying malformed SSIDs
+Date:   Sun, 27 Oct 2019 22:01:11 +0100
+Message-Id: <20191027203348.587555174@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,46 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Will Deacon <will@kernel.org>
 
-commit 8b39da985194aac2998dd9e3a22d00b596cebf1e upstream.
+commit 4ac2813cc867ae563a1ba5a9414bfb554e5796fa upstream.
 
-Custom outs*/ins* implementations are long gone from the xtensa port,
-remove matching EXPORT_SYMBOLs.
-This fixes the following build warnings issued by modpost since commit
-15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions"):
+Ensure the SSID element is bounds-checked prior to invoking memcpy()
+with its length field, when copying to userspace.
 
-  WARNING: "insb" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "insw" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "insl" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsb" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsw" [vmlinux] is a static EXPORT_SYMBOL
-  WARNING: "outsl" [vmlinux] is a static EXPORT_SYMBOL
-
-Cc: stable@vger.kernel.org
-Fixes: d38efc1f150f ("xtensa: adopt generic io routines")
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Cc: <stable@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20191004095132.15777-2-will@kernel.org
+[adjust commit log a bit]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/kernel/xtensa_ksyms.c |    7 -------
- 1 file changed, 7 deletions(-)
+ net/wireless/wext-sme.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/xtensa/kernel/xtensa_ksyms.c
-+++ b/arch/xtensa/kernel/xtensa_ksyms.c
-@@ -116,13 +116,6 @@ EXPORT_SYMBOL(__invalidate_icache_range)
- // FIXME EXPORT_SYMBOL(screen_info);
- #endif
+--- a/net/wireless/wext-sme.c
++++ b/net/wireless/wext-sme.c
+@@ -202,6 +202,7 @@ int cfg80211_mgd_wext_giwessid(struct ne
+ 			       struct iw_point *data, char *ssid)
+ {
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
++	int ret = 0;
  
--EXPORT_SYMBOL(outsb);
--EXPORT_SYMBOL(outsw);
--EXPORT_SYMBOL(outsl);
--EXPORT_SYMBOL(insb);
--EXPORT_SYMBOL(insw);
--EXPORT_SYMBOL(insl);
--
- extern long common_exception_return;
- EXPORT_SYMBOL(common_exception_return);
+ 	/* call only for station! */
+ 	if (WARN_ON(wdev->iftype != NL80211_IFTYPE_STATION))
+@@ -219,7 +220,10 @@ int cfg80211_mgd_wext_giwessid(struct ne
+ 		if (ie) {
+ 			data->flags = 1;
+ 			data->length = ie[1];
+-			memcpy(ssid, ie + 2, data->length);
++			if (data->length > IW_ESSID_MAX_SIZE)
++				ret = -EINVAL;
++			else
++				memcpy(ssid, ie + 2, data->length);
+ 		}
+ 		rcu_read_unlock();
+ 	} else if (wdev->wext.connect.ssid && wdev->wext.connect.ssid_len) {
+@@ -229,7 +233,7 @@ int cfg80211_mgd_wext_giwessid(struct ne
+ 	}
+ 	wdev_unlock(wdev);
  
+-	return 0;
++	return ret;
+ }
+ 
+ int cfg80211_mgd_wext_siwap(struct net_device *dev,
 
 
