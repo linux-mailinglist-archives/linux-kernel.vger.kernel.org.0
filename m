@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73677E68B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B2F5E68BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731052AbfJ0VR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:17:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
+        id S1731924AbfJ0VbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731035AbfJ0VRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:17:22 -0400
+        id S1731049AbfJ0VR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:17:29 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59633205C9;
-        Sun, 27 Oct 2019 21:17:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74AC02070B;
+        Sun, 27 Oct 2019 21:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211041;
-        bh=N0zoL5YhrO/1NDUD4wR1V+S0xXE5d5+U9/T9JZWM2ZM=;
+        s=default; t=1572211047;
+        bh=XmgcN1gRkoXMecMZQ9tx4ufGWDQDD7XynS9mMfuQHn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGfDF0IBMDBAAhVjy0a0p+yoXsubo95qovkHGSZ8FREUkGvOgYI+6RJC1+2KncS0z
-         WZ2+tbUet89vhf/ySUo0jWkVxD36LKNfAYqhfCMIk+41iQR7eApUU+zZDlx3zrjpA4
-         WUfAuRprlW+AzA4oABS0eZGJfM0oWiShPt39v0j0=
+        b=I4OZX06An/pEWq6rH2OOWqwd9nBa78dMrwCTeEQ3+An4eO5tcNToQyKlldnjgaRNl
+         9N5m3vQ6eVREOsHELY5/3RuXUxk5nMTjmcRD/SBLKUeuS5Q38wbvWCiNBFS5sknTdm
+         9qghNgYbvwzudT1LcmAIWxIbIa2p7nvhEhL2nSQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 012/197] scsi: qla2xxx: Fix N2N link up fail
-Date:   Sun, 27 Oct 2019 21:58:50 +0100
-Message-Id: <20191027203352.341166174@linuxfoundation.org>
+Subject: [PATCH 5.3 014/197] ARM: OMAP2+: Fix missing reset done flag for am3 and am43
+Date:   Sun, 27 Oct 2019 21:58:52 +0100
+Message-Id: <20191027203352.444667918@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,62 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit f3f1938bb673b1b5ad182c4608f5f8a24921eea3 ]
+[ Upstream commit 8ad8041b98c665b6147e607b749586d6e20ba73a ]
 
-During link up/bounce, qla driver would do command flush as part of
-cleanup.  In this case, the flush can intefere with FW state.  This patch
-allows FW to be in control of link up.
+For ti,sysc-omap4 compatible devices with no sysstatus register, we do have
+reset done status available in the SOFTRESET bit that clears when the reset
+is done. This is documented for example in am437x TRM for DMTIMER_TIOCP_CFG
+register. The am335x TRM just says that SOFTRESET bit value 1 means reset is
+ongoing, but it behaves the same way clearing after reset is done.
 
-Link: https://lore.kernel.org/r/20190912180918.6436-7-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+With the ti-sysc driver handling this automatically based on no sysstatus
+register defined, we see warnings if SYSC_HAS_RESET_STATUS is missing in the
+legacy platform data:
+
+ti-sysc 48042000.target-module: sysc_flags 00000222 != 00000022
+ti-sysc 48044000.target-module: sysc_flags 00000222 != 00000022
+ti-sysc 48046000.target-module: sysc_flags 00000222 != 00000022
+...
+
+Let's fix these warnings by adding SYSC_HAS_RESET_STATUS. Let's also
+remove the useless parentheses while at it.
+
+If it turns out we do have ti,sysc-omap4 compatible devices without a
+working SOFTRESET bit we can set up additional quirk handling for it.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_mbx.c | 2 ++
- drivers/scsi/qla2xxx/qla_os.c  | 6 ++----
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index aadff0124f39f..abfb9c800ce28 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -3905,6 +3905,7 @@ qla24xx_report_id_acquisition(scsi_qla_host_t *vha,
- 				fcport->dm_login_expire = jiffies + 2*HZ;
- 				fcport->scan_state = QLA_FCPORT_FOUND;
- 				fcport->n2n_flag = 1;
-+				fcport->keep_nport_handle = 1;
- 				if (vha->flags.nvme_enabled)
- 					fcport->fc4f_nvme = 1;
- 
-@@ -4050,6 +4051,7 @@ qla24xx_report_id_acquisition(scsi_qla_host_t *vha,
- 			fcport->login_retry = vha->hw->login_retry_count;
- 			fcport->plogi_nack_done_deadline = jiffies + HZ;
- 			fcport->scan_state = QLA_FCPORT_FOUND;
-+			fcport->keep_nport_handle = 1;
- 			fcport->n2n_flag = 1;
- 			fcport->d_id.b.domain =
- 				rptid_entry->u.f2.remote_nport_id[2];
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 12d5f50646fba..2835afbd2edc7 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -5150,11 +5150,9 @@ void qla24xx_create_new_sess(struct scsi_qla_host *vha, struct qla_work_evt *e)
- 			if (dfcp)
- 				qlt_schedule_sess_for_deletion(tfcp);
- 
--
--			if (N2N_TOPO(vha->hw))
--				fcport->flags &= ~FCF_FABRIC_DEVICE;
--
- 			if (N2N_TOPO(vha->hw)) {
-+				fcport->flags &= ~FCF_FABRIC_DEVICE;
-+				fcport->keep_nport_handle = 1;
- 				if (vha->flags.nvme_enabled) {
- 					fcport->fc4f_nvme = 1;
- 					fcport->n2n_flag = 1;
+diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+index adb6271f819be..7773876d165f1 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
+@@ -811,7 +811,8 @@ static struct omap_hwmod_class_sysconfig am33xx_timer_sysc = {
+ 	.rev_offs	= 0x0000,
+ 	.sysc_offs	= 0x0010,
+ 	.syss_offs	= 0x0014,
+-	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
++	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
++			  SYSC_HAS_RESET_STATUS,
+ 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
+ 			  SIDLE_SMART_WKUP),
+ 	.sysc_fields	= &omap_hwmod_sysc_type2,
 -- 
 2.20.1
 
