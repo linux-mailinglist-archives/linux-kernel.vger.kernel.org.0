@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28723E69AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B688BE68CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbfJ0VEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50152 "EHLO mail.kernel.org"
+        id S1732278AbfJ0VcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:32:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbfJ0VE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:27 -0400
+        id S1730634AbfJ0VPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:15:21 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4D4D2064A;
-        Sun, 27 Oct 2019 21:04:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23253208C0;
+        Sun, 27 Oct 2019 21:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210266;
-        bh=EVUNZKsf8salVAcey8QhyzO1w7hAWnsfMPL7deYWGnk=;
+        s=default; t=1572210920;
+        bh=mxlFduGrtNmhyGxvPtdAxMCFBlbbzn5BNzBEegfL3yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RVwStQZt+tjYsp083zUxAoh/gC1hjXQH8OQ95OjlArwrC2xvDgnJiTZhZ1qj6pefV
-         5n0RQ8Q612DtcBbqiefskqZ6mCzxUZhFKHJ8V9WGuXb6J/vBU/88roo0Tk0Dbom8YH
-         MQX67HWfZQc997bXKq9t0B/PSSka+2irECGwPjSc=
+        b=SQQqlv8GUspFzhPMwgwaXG36XP72c+RHZ2nkYIilUhYXgUiIDGIz7M0shMePsSHTI
+         cDkHWnYXN24mMQis7dXNt9+UZ49XXBxRAN7CNZOHL0IOiAfUgbe+HrBr7WhGAwhHjN
+         +Vq1dpQXV0v2GBbDEa6n6RgPKmg7O1SXKXjmLNLc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 34/41] CIFS: avoid using MID 0xFFFF
-Date:   Sun, 27 Oct 2019 22:01:12 +0100
-Message-Id: <20191027203127.965834641@linuxfoundation.org>
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 62/93] drivers/base/memory.c: dont access uninitialized memmaps in soft_offline_page_store()
+Date:   Sun, 27 Oct 2019 22:01:14 +0100
+Message-Id: <20191027203305.837381571@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: David Hildenbrand <david@redhat.com>
 
-commit 03d9a9fe3f3aec508e485dd3dcfa1e99933b4bdb upstream.
+commit 641fe2e9387a36f9ee01d7c69382d1fe147a5e98 upstream.
 
-According to MS-CIFS specification MID 0xFFFF should not be used by the
-CIFS client, but we actually do. Besides, this has proven to cause races
-leading to oops between SendReceive2/cifs_demultiplex_thread. On SMB1,
-MID is a 2 byte value easy to reach in CurrentMid which may conflict with
-an oplock break notification request coming from server
+Uninitialized memmaps contain garbage and in the worst case trigger kernel
+BUGs, especially with CONFIG_PAGE_POISONING.  They should not get touched.
 
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Right now, when trying to soft-offline a PFN that resides on a memory
+block that was never onlined, one gets a misleading error with
+CONFIG_PAGE_POISONING:
+
+  :/# echo 5637144576 > /sys/devices/system/memory/soft_offline_page
+  [   23.097167] soft offline: 0x150000 page already poisoned
+
+But the actual result depends on the garbage in the memmap.
+
+soft_offline_page() can only work with online pages, it returns -EIO in
+case of ZONE_DEVICE.  Make sure to only forward pages that are online
+(iow, managed by the buddy) and, therefore, have an initialized memmap.
+
+Add a check against pfn_to_online_page() and similarly return -EIO.
+
+Link: http://lkml.kernel.org/r/20191010141200.8985-1-david@redhat.com
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: <stable@vger.kernel.org>	[4.13+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb1ops.c |    3 +++
+ drivers/base/memory.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/fs/cifs/smb1ops.c
-+++ b/fs/cifs/smb1ops.c
-@@ -180,6 +180,9 @@ cifs_get_next_mid(struct TCP_Server_Info
- 	/* we do not want to loop forever */
- 	last_mid = cur_mid;
- 	cur_mid++;
-+	/* avoid 0xFFFF MID */
-+	if (cur_mid == 0xffff)
-+		cur_mid++;
- 
- 	/*
- 	 * This nested loop looks more expensive than it is.
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -554,6 +554,9 @@ store_soft_offline_page(struct device *d
+ 	pfn >>= PAGE_SHIFT;
+ 	if (!pfn_valid(pfn))
+ 		return -ENXIO;
++	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
++	if (!pfn_to_online_page(pfn))
++		return -EIO;
+ 	ret = soft_offline_page(pfn_to_page(pfn), 0);
+ 	return ret == 0 ? count : ret;
+ }
 
 
