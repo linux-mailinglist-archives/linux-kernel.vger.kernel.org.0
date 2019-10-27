@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12347E65ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC44E67CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfJ0VGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52596 "EHLO mail.kernel.org"
+        id S1732500AbfJ0VYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727702AbfJ0VGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:39 -0400
+        id S1731856AbfJ0VYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:11 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E1042064A;
-        Sun, 27 Oct 2019 21:06:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B7002064A;
+        Sun, 27 Oct 2019 21:24:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210398;
-        bh=uw4FsbykKvY5mRQRdXpS59+P12ELhRHDs100pawlrWQ=;
+        s=default; t=1572211451;
+        bh=l+06AWxAeKb0gTOn8VVy4toEMu+SKlfr9RViXwvIcXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nmsddOP73VcrHXoc6fCyzitqY25qczk0kODTP7XGTAvWCSN6OrtQLMGsxKDgZcbeU
-         bRev7u0V8l0WPPGD9nJUU9ZAZ2Xktv5ZTjTV7xPtjzThhpGRIc/1kXoq8rKD8wYwz7
-         Aew2S0H4Rgdv6Qq3jjaWjaaH8u4FhakEfnWwRxBw=
+        b=RXupMkebjWBDnnQaw/Xkpj4VfXvVCubL1tvZGm+WD1m+yG8PdT1Z51lJB9oBAV/zt
+         esIZ/7aFN75HXUR/+2kaipBdd4MN+R6dXMvNoVxwo8bVitHVgCDhxDeD+sPL/HV9yG
+         HgPheExlimS1xxv2NxNUe8COHr43B6U0vdDrCHuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Nicolas Waisman <nico@semmle.com>,
-        Will Deacon <will@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 36/49] mac80211: Reject malformed SSID elements
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 5.3 156/197] xtensa: drop EXPORT_SYMBOL for outs*/ins*
 Date:   Sun, 27 Oct 2019 22:01:14 +0100
-Message-Id: <20191027203152.366352267@linuxfoundation.org>
+Message-Id: <20191027203400.106459028@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 4152561f5da3fca92af7179dd538ea89e248f9d0 upstream.
+commit 8b39da985194aac2998dd9e3a22d00b596cebf1e upstream.
 
-Although this shouldn't occur in practice, it's a good idea to bounds
-check the length field of the SSID element prior to using it for things
-like allocations or memcpy operations.
+Custom outs*/ins* implementations are long gone from the xtensa port,
+remove matching EXPORT_SYMBOLs.
+This fixes the following build warnings issued by modpost since commit
+15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions"):
 
-Cc: <stable@vger.kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Reported-by: Nicolas Waisman <nico@semmle.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/r/20191004095132.15777-1-will@kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+  WARNING: "insb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "insl" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsb" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsw" [vmlinux] is a static EXPORT_SYMBOL
+  WARNING: "outsl" [vmlinux] is a static EXPORT_SYMBOL
+
+Cc: stable@vger.kernel.org
+Fixes: d38efc1f150f ("xtensa: adopt generic io routines")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/mlme.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/xtensa/kernel/xtensa_ksyms.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2434,7 +2434,8 @@ struct sk_buff *ieee80211_ap_probereq_ge
+--- a/arch/xtensa/kernel/xtensa_ksyms.c
++++ b/arch/xtensa/kernel/xtensa_ksyms.c
+@@ -119,13 +119,6 @@ EXPORT_SYMBOL(__invalidate_icache_range)
+ // FIXME EXPORT_SYMBOL(screen_info);
+ #endif
  
- 	rcu_read_lock();
- 	ssid = ieee80211_bss_get_ie(cbss, WLAN_EID_SSID);
--	if (WARN_ON_ONCE(ssid == NULL))
-+	if (WARN_ONCE(!ssid || ssid[1] > IEEE80211_MAX_SSID_LEN,
-+		      "invalid SSID element (len=%d)", ssid ? ssid[1] : -1))
- 		ssid_len = 0;
- 	else
- 		ssid_len = ssid[1];
-@@ -4691,7 +4692,7 @@ int ieee80211_mgd_assoc(struct ieee80211
+-EXPORT_SYMBOL(outsb);
+-EXPORT_SYMBOL(outsw);
+-EXPORT_SYMBOL(outsl);
+-EXPORT_SYMBOL(insb);
+-EXPORT_SYMBOL(insw);
+-EXPORT_SYMBOL(insl);
+-
+ extern long common_exception_return;
+ EXPORT_SYMBOL(common_exception_return);
  
- 	rcu_read_lock();
- 	ssidie = ieee80211_bss_get_ie(req->bss, WLAN_EID_SSID);
--	if (!ssidie) {
-+	if (!ssidie || ssidie[1] > sizeof(assoc_data->ssid)) {
- 		rcu_read_unlock();
- 		kfree(assoc_data);
- 		return -EINVAL;
 
 
