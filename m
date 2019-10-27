@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F51AE67C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4BEE65B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732459AbfJ0VYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45662 "EHLO mail.kernel.org"
+        id S1728644AbfJ0VEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732428AbfJ0VYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:24:08 -0400
+        id S1727051AbfJ0VE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:29 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C337621783;
-        Sun, 27 Oct 2019 21:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADFE520873;
+        Sun, 27 Oct 2019 21:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211448;
-        bh=9bcCU39ZWTggCACE2Egvoc42+x08ORp7iVYCKacHHeo=;
+        s=default; t=1572210269;
+        bh=hCdWys4nfkW9HX9hA2t1QwKOg1sqsG2DB1dn1GyTNak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ft6tkr6pUyRRbf/UB/dli8IxNHc59S/CNheYJoeNBlvoH/K7ec+cmK6Bscw7pHDyp
-         5DpKbhbVfY+QfYhqArequ84rtcWNCHkfpL1rdhTnYbKVkbGGTZ8ewD9zxeO8pCQzss
-         LIoOgvp0DjXGLTuG6mMfSTZtR0+z7zsOMtyJOXAU=
+        b=f8bmJs4BESFWvjg58QXrSvZpe76kTwXzXSNpJgmJMlWbxotFd2S8UA6aJlseWEIdO
+         ewvjMfc4qyDfkzdY7vkrEaBEO52lJL5s2NGQ8YVpUHJNm7L0HoxlemUqbxsjGTCJ1c
+         oDATTNdBCboLlddgyR5AZJPfL6htnrBRem+YVOxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chenwandun <chenwandun@huawei.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 155/197] zram: fix race between backing_dev_show and backing_dev_store
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 35/41] btrfs: block-group: Fix a memory leak due to missing btrfs_put_block_group()
 Date:   Sun, 27 Oct 2019 22:01:13 +0100
-Message-Id: <20191027203400.055050644@linuxfoundation.org>
+Message-Id: <20191027203129.173850606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,66 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chenwandun <chenwandun@huawei.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit f7daefe4231e57381d92c2e2ad905a899c28e402 upstream.
+commit 4b654acdae850f48b8250b9a578a4eaa518c7a6f upstream.
 
-CPU0:				       CPU1:
-backing_dev_show		       backing_dev_store
-    ......				   ......
-    file = zram->backing_dev;
-    down_read(&zram->init_lock);	   down_read(&zram->init_init_lock)
-    file_path(file, ...);		   zram->backing_dev = backing_dev;
-    up_read(&zram->init_lock);		   up_read(&zram->init_lock);
+In btrfs_read_block_groups(), if we have an invalid block group which
+has mixed type (DATA|METADATA) while the fs doesn't have MIXED_GROUPS
+feature, we error out without freeing the block group cache.
 
-gets the value of zram->backing_dev too early in backing_dev_show, which
-resultin the value being NULL at the beginning, and not NULL later.
+This patch will add the missing btrfs_put_block_group() to prevent
+memory leak.
 
-backtrace:
-  d_path+0xcc/0x174
-  file_path+0x10/0x18
-  backing_dev_show+0x40/0xb4
-  dev_attr_show+0x20/0x54
-  sysfs_kf_seq_show+0x9c/0x10c
-  kernfs_seq_show+0x28/0x30
-  seq_read+0x184/0x488
-  kernfs_fop_read+0x5c/0x1a4
-  __vfs_read+0x44/0x128
-  vfs_read+0xa0/0x138
-  SyS_read+0x54/0xb4
+Note for stable backports: the file to patch in versions <= 5.3 is
+fs/btrfs/extent-tree.c
 
-Link: http://lkml.kernel.org/r/1571046839-16814-1-git-send-email-chenwandun@huawei.com
-Signed-off-by: Chenwandun <chenwandun@huawei.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: <stable@vger.kernel.org>	[4.14+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 49303381f19a ("Btrfs: bail out if block group has different mixed flag")
+CC: stable@vger.kernel.org # 4.9+
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/zram/zram_drv.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -413,13 +413,14 @@ static void reset_bdev(struct zram *zram
- static ssize_t backing_dev_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-+	struct file *file;
- 	struct zram *zram = dev_to_zram(dev);
--	struct file *file = zram->backing_dev;
- 	char *p;
- 	ssize_t ret;
- 
- 	down_read(&zram->init_lock);
--	if (!zram->backing_dev) {
-+	file = zram->backing_dev;
-+	if (!file) {
- 		memcpy(buf, "none\n", 5);
- 		up_read(&zram->init_lock);
- 		return 5;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9905,6 +9905,7 @@ int btrfs_read_block_groups(struct btrfs
+ 			btrfs_err(info,
+ "bg %llu is a mixed block group but filesystem hasn't enabled mixed block groups",
+ 				  cache->key.objectid);
++			btrfs_put_block_group(cache);
+ 			ret = -EINVAL;
+ 			goto error;
+ 		}
 
 
