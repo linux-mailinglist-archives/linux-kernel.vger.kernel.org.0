@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AB2BE6889
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4D70E6866
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfJ0VaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:30:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
+        id S1731562AbfJ0VTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:19:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729627AbfJ0VTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:19:31 -0400
+        id S1731452AbfJ0VTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:19:36 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 230862184C;
-        Sun, 27 Oct 2019 21:19:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A798920717;
+        Sun, 27 Oct 2019 21:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211169;
-        bh=9acb4oAkh0WGN71y8Jm334a0rqrCESm234EOcS+Qo1U=;
+        s=default; t=1572211175;
+        bh=RI9MPlO+lvnuqKMcP+8ukZ2/t6jJxYoBzXCL0CCGbsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W21DVycSipEeP8ca/mAdjXNlL62oJwRPYKcX/aR3S2WgA2emmnOj651eSr7j04xUf
-         2JipFssTTJoEIkPp2BF31YTO0CFqYKldPB9+piXehjhbnYP57tTL2xzqjnjxY3YjTx
-         qjP6PYEfsGWK5F0wfLFxijXjx+t2Rc/GdeObp+Do=
+        b=B9S3hPBSMGYdrun1nTVqFlmz0d2v6EN9WDzaDzQ3jQ7kOxg04dLexgNjRULGlei+k
+         Pzw9nEMXzFQ/NcDTEAyXr/tPru4LtCUHiV/ZUItLMp+IGbaUtCpVvaA2xKcLwMwslB
+         IaqvZa9JL9zPW/X9uULYe4fvVV8DXsnELq4h6Mn4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 057/197] Convert filldir[64]() from __put_user() to unsafe_put_user()
-Date:   Sun, 27 Oct 2019 21:59:35 +0100
-Message-Id: <20191027203354.749614096@linuxfoundation.org>
+Subject: [PATCH 5.3 058/197] elf: dont use MAP_FIXED_NOREPLACE for elf executable mappings
+Date:   Sun, 27 Oct 2019 21:59:36 +0100
+Message-Id: <20191027203354.803599528@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -46,203 +48,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 9f79b78ef74436c7507bac6bfb7b8b989263bccb ]
+[ Upstream commit b212921b13bda088a004328457c5c21458262fe2 ]
 
-We really should avoid the "__{get,put}_user()" functions entirely,
-because they can easily be mis-used and the original intent of being
-used for simple direct user accesses no longer holds in a post-SMAP/PAN
-world.
+In commit 4ed28639519c ("fs, elf: drop MAP_FIXED usage from elf_map") we
+changed elf to use MAP_FIXED_NOREPLACE instead of MAP_FIXED for the
+executable mappings.
 
-Manually optimizing away the user access range check makes no sense any
-more, when the range check is generally much cheaper than the "enable
-user accesses" code that the __{get,put}_user() functions still need.
+Then, people reported that it broke some binaries that had overlapping
+segments from the same file, and commit ad55eac74f20 ("elf: enforce
+MAP_FIXED on overlaying elf segments") re-instated MAP_FIXED for some
+overlaying elf segment cases.  But only some - despite the summary line
+of that commit, it only did it when it also does a temporary brk vma for
+one obvious overlapping case.
 
-So instead of __put_user(), use the unsafe_put_user() interface with
-user_access_{begin,end}() that really does generate better code these
-days, and which is generally a nicer interface.  Under some loads, the
-multiple user writes that filldir() does are actually quite noticeable.
+Now Russell King reports another overlapping case with old 32-bit x86
+binaries, which doesn't trigger that limited case.  End result: we had
+better just drop MAP_FIXED_NOREPLACE entirely, and go back to MAP_FIXED.
 
-This also makes the dirent name copy use unsafe_put_user() with a couple
-of macros.  We do not want to make function calls with SMAP/PAN
-disabled, and the code this generates is quite good when the
-architecture uses "asm goto" for unsafe_put_user() like x86 does.
+Yes, it's a sign of old binaries generated with old tool-chains, but we
+do pride ourselves on not breaking existing setups.
 
-Note that this doesn't bother with the legacy cases.  Nobody should use
-them anyway, so performance doesn't really matter there.
+This still leaves MAP_FIXED_NOREPLACE in place for the load_elf_interp()
+and the old load_elf_library() use-cases, because nobody has reported
+breakage for those. Yet.
 
+Note that in all the cases seen so far, the overlapping elf sections
+seem to be just re-mapping of the same executable with different section
+attributes.  We could possibly introduce a new MAP_FIXED_NOFILECHANGE
+flag or similar, which acts like NOREPLACE, but allows just remapping
+the same executable file using different protection flags.
+
+It's not clear that would make a huge difference to anything, but if
+people really hate that "elf remaps over previous maps" behavior, maybe
+at least a more limited form of remapping would alleviate some concerns.
+
+Alternatively, we should take a look at our elf_map() logic to see if we
+end up not mapping things properly the first time.
+
+In the meantime, this is the minimal "don't do that then" patch while
+people hopefully think about it more.
+
+Reported-by: Russell King <linux@armlinux.org.uk>
+Fixes: 4ed28639519c ("fs, elf: drop MAP_FIXED usage from elf_map")
+Fixes: ad55eac74f20 ("elf: enforce  MAP_FIXED on overlaying elf segments")
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/readdir.c | 128 +++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 93 insertions(+), 35 deletions(-)
+ fs/binfmt_elf.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index 2f6a4534e0dfe..579c8ea894ae3 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -20,9 +20,63 @@
- #include <linux/syscalls.h>
- #include <linux/unistd.h>
- #include <linux/compat.h>
--
- #include <linux/uaccess.h>
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index f131651502b8a..c62903290f3a5 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -899,7 +899,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	   the correct location in memory. */
+ 	for(i = 0, elf_ppnt = elf_phdata;
+ 	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
+-		int elf_prot, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
++		int elf_prot, elf_flags;
+ 		unsigned long k, vaddr;
+ 		unsigned long total_size = 0;
  
-+#include <asm/unaligned.h>
-+
-+/*
-+ * Note the "unsafe_put_user() semantics: we goto a
-+ * label for errors.
-+ *
-+ * Also note how we use a "while()" loop here, even though
-+ * only the biggest size needs to loop. The compiler (well,
-+ * at least gcc) is smart enough to turn the smaller sizes
-+ * into just if-statements, and this way we don't need to
-+ * care whether 'u64' or 'u32' is the biggest size.
-+ */
-+#define unsafe_copy_loop(dst, src, len, type, label) 		\
-+	while (len >= sizeof(type)) {				\
-+		unsafe_put_user(get_unaligned((type *)src),	\
-+			(type __user *)dst, label);		\
-+		dst += sizeof(type);				\
-+		src += sizeof(type);				\
-+		len -= sizeof(type);				\
-+	}
-+
-+/*
-+ * We avoid doing 64-bit copies on 32-bit architectures. They
-+ * might be better, but the component names are mostly small,
-+ * and the 64-bit cases can end up being much more complex and
-+ * put much more register pressure on the code, so it's likely
-+ * not worth the pain of unaligned accesses etc.
-+ *
-+ * So limit the copies to "unsigned long" size. I did verify
-+ * that at least the x86-32 case is ok without this limiting,
-+ * but I worry about random other legacy 32-bit cases that
-+ * might not do as well.
-+ */
-+#define unsafe_copy_type(dst, src, len, type, label) do {	\
-+	if (sizeof(type) <= sizeof(unsigned long))		\
-+		unsafe_copy_loop(dst, src, len, type, label);	\
-+} while (0)
-+
-+/*
-+ * Copy the dirent name to user space, and NUL-terminate
-+ * it. This should not be a function call, since we're doing
-+ * the copy inside a "user_access_begin/end()" section.
-+ */
-+#define unsafe_copy_dirent_name(_dst, _src, _len, label) do {	\
-+	char __user *dst = (_dst);				\
-+	const char *src = (_src);				\
-+	size_t len = (_len);					\
-+	unsafe_copy_type(dst, src, len, u64, label);	 	\
-+	unsafe_copy_type(dst, src, len, u32, label);		\
-+	unsafe_copy_type(dst, src, len, u16, label);		\
-+	unsafe_copy_type(dst, src, len, u8,  label);		\
-+	unsafe_put_user(0, dst, label);				\
-+} while (0)
-+
-+
- int iterate_dir(struct file *file, struct dir_context *ctx)
- {
- 	struct inode *inode = file_inode(file);
-@@ -182,28 +236,31 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
- 		return -EOVERFLOW;
- 	}
- 	dirent = buf->previous;
--	if (dirent) {
--		if (signal_pending(current))
--			return -EINTR;
--		if (__put_user(offset, &dirent->d_off))
--			goto efault;
--	}
--	dirent = buf->current_dir;
--	if (__put_user(d_ino, &dirent->d_ino))
--		goto efault;
--	if (__put_user(reclen, &dirent->d_reclen))
--		goto efault;
--	if (copy_to_user(dirent->d_name, name, namlen))
--		goto efault;
--	if (__put_user(0, dirent->d_name + namlen))
--		goto efault;
--	if (__put_user(d_type, (char __user *) dirent + reclen - 1))
-+	if (dirent && signal_pending(current))
-+		return -EINTR;
-+
-+	/*
-+	 * Note! This range-checks 'previous' (which may be NULL).
-+	 * The real range was checked in getdents
-+	 */
-+	if (!user_access_begin(dirent, sizeof(*dirent)))
- 		goto efault;
-+	if (dirent)
-+		unsafe_put_user(offset, &dirent->d_off, efault_end);
-+	dirent = buf->current_dir;
-+	unsafe_put_user(d_ino, &dirent->d_ino, efault_end);
-+	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
-+	unsafe_put_user(d_type, (char __user *) dirent + reclen - 1, efault_end);
-+	unsafe_copy_dirent_name(dirent->d_name, name, namlen, efault_end);
-+	user_access_end();
-+
- 	buf->previous = dirent;
- 	dirent = (void __user *)dirent + reclen;
- 	buf->current_dir = dirent;
- 	buf->count -= reclen;
- 	return 0;
-+efault_end:
-+	user_access_end();
- efault:
- 	buf->error = -EFAULT;
- 	return -EFAULT;
-@@ -263,30 +320,31 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	if (reclen > buf->count)
- 		return -EINVAL;
- 	dirent = buf->previous;
--	if (dirent) {
--		if (signal_pending(current))
--			return -EINTR;
--		if (__put_user(offset, &dirent->d_off))
--			goto efault;
--	}
--	dirent = buf->current_dir;
--	if (__put_user(ino, &dirent->d_ino))
--		goto efault;
--	if (__put_user(0, &dirent->d_off))
--		goto efault;
--	if (__put_user(reclen, &dirent->d_reclen))
--		goto efault;
--	if (__put_user(d_type, &dirent->d_type))
--		goto efault;
--	if (copy_to_user(dirent->d_name, name, namlen))
--		goto efault;
--	if (__put_user(0, dirent->d_name + namlen))
-+	if (dirent && signal_pending(current))
-+		return -EINTR;
-+
-+	/*
-+	 * Note! This range-checks 'previous' (which may be NULL).
-+	 * The real range was checked in getdents
-+	 */
-+	if (!user_access_begin(dirent, sizeof(*dirent)))
- 		goto efault;
-+	if (dirent)
-+		unsafe_put_user(offset, &dirent->d_off, efault_end);
-+	dirent = buf->current_dir;
-+	unsafe_put_user(ino, &dirent->d_ino, efault_end);
-+	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
-+	unsafe_put_user(d_type, &dirent->d_type, efault_end);
-+	unsafe_copy_dirent_name(dirent->d_name, name, namlen, efault_end);
-+	user_access_end();
-+
- 	buf->previous = dirent;
- 	dirent = (void __user *)dirent + reclen;
- 	buf->current_dir = dirent;
- 	buf->count -= reclen;
- 	return 0;
-+efault_end:
-+	user_access_end();
- efault:
- 	buf->error = -EFAULT;
- 	return -EFAULT;
+@@ -931,13 +931,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 					 */
+ 				}
+ 			}
+-
+-			/*
+-			 * Some binaries have overlapping elf segments and then
+-			 * we have to forcefully map over an existing mapping
+-			 * e.g. over this newly established brk mapping.
+-			 */
+-			elf_fixed = MAP_FIXED;
+ 		}
+ 
+ 		elf_prot = make_prot(elf_ppnt->p_flags);
+@@ -950,7 +943,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		 * the ET_DYN load_addr calculations, proceed normally.
+ 		 */
+ 		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
+-			elf_flags |= elf_fixed;
++			elf_flags |= MAP_FIXED;
+ 		} else if (loc->elf_ex.e_type == ET_DYN) {
+ 			/*
+ 			 * This logic is run once for the first LOAD Program
+@@ -986,7 +979,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				load_bias = ELF_ET_DYN_BASE;
+ 				if (current->flags & PF_RANDOMIZE)
+ 					load_bias += arch_mmap_rnd();
+-				elf_flags |= elf_fixed;
++				elf_flags |= MAP_FIXED;
+ 			} else
+ 				load_bias = 0;
+ 
 -- 
 2.20.1
 
