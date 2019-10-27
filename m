@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4381AE6672
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 373AEE66FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:17:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfJ0VMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:12:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58712 "EHLO mail.kernel.org"
+        id S1730945AbfJ0VQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:16:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730008AbfJ0VME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:12:04 -0400
+        id S1730934AbfJ0VQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:16:56 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47CBE205C9;
-        Sun, 27 Oct 2019 21:12:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E64FD21D80;
+        Sun, 27 Oct 2019 21:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210723;
-        bh=4Ce5rBZoOua/OoTPwPIKxJ3Gc5yMrdjZccCghVbMfAU=;
+        s=default; t=1572211015;
+        bh=+fUGPU/cUvr4r1VruQzw+nmYANorNrfj6Z+QY1jRk18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0tTpCNKFvIBHRna5jzn2Ty3UT245EqZYom3s51s/1g5DCEm5BvKBhgoW8BTE1ZUxA
-         k90c52bZGxyS2UcAfGJU8dq7khe+fa18T7lYnewLR3RUVESWDKsMzHjzApneuDJEFo
-         S2qYpD64z+w2+tPNc3A+GWL2GwwsYs2u9FFHU6iE=
+        b=ZvQfryEvcJcgrvNi4khxkrDj9GaDzwpEiA7ktRZHyNyYgccz8+dvnaQtQGJbnL9OO
+         5gouWlUInjNG5Fu2JvN4qi65Dz79vRjvEX/vwDxec/N2X6ziuLbqDePC/jfsDWPig6
+         qntd5iV/aHeubiexNxiWeWbTjAV5euZeqMioxf6g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Jitindar SIngh, Suraj" <surajjs@amazon.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>
-Subject: [PATCH 4.14 115/119] KVM: X86: introduce invalidate_gpa argument to tlb flush
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.19 80/93] x86/apic/x2apic: Fix a NULL pointer deref when handling a dying cpu
 Date:   Sun, 27 Oct 2019 22:01:32 +0100
-Message-Id: <20191027203349.831967407@linuxfoundation.org>
+Message-Id: <20191027203313.153509910@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,206 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit c2ba05ccfde2f069a66c0462e5b5ef8a517dcc9c upstream.
+commit 7a22e03b0c02988e91003c505b34d752a51de344 upstream.
 
-Introduce a new bool invalidate_gpa argument to kvm_x86_ops->tlb_flush,
-it will be used by later patches to just flush guest tlb.
+Check that the per-cpu cluster mask pointer has been set prior to
+clearing a dying cpu's bit.  The per-cpu pointer is not set until the
+target cpu reaches smp_callin() during CPUHP_BRINGUP_CPU, whereas the
+teardown function, x2apic_dead_cpu(), is associated with the earlier
+CPUHP_X2APIC_PREPARE.  If an error occurs before the cpu is awakened,
+e.g. if do_boot_cpu() itself fails, x2apic_dead_cpu() will dereference
+the NULL pointer and cause a panic.
 
-For VMX, this will use INVVPID instead of INVEPT, which will invalidate
-combined mappings while keeping guest-physical mappings.
+  smpboot: do_boot_cpu failed(-22) to wakeup CPU#1
+  BUG: kernel NULL pointer dereference, address: 0000000000000008
+  RIP: 0010:x2apic_dead_cpu+0x1a/0x30
+  Call Trace:
+   cpuhp_invoke_callback+0x9a/0x580
+   _cpu_up+0x10d/0x140
+   do_cpu_up+0x69/0xb0
+   smp_init+0x63/0xa9
+   kernel_init_freeable+0xd7/0x229
+   ? rest_init+0xa0/0xa0
+   kernel_init+0xa/0x100
+   ret_from_fork+0x35/0x40
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Jitindar SIngh, Suraj" <surajjs@amazon.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Fixes: 023a611748fd5 ("x86/apic/x2apic: Simplify cluster management")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191001205019.5789-1-sean.j.christopherson@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_host.h |    2 +-
- arch/x86/kvm/svm.c              |   14 +++++++-------
- arch/x86/kvm/vmx.c              |   21 +++++++++++----------
- arch/x86/kvm/x86.c              |    6 +++---
- 4 files changed, 22 insertions(+), 21 deletions(-)
+ arch/x86/kernel/apic/x2apic_cluster.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -973,7 +973,7 @@ struct kvm_x86_ops {
- 	unsigned long (*get_rflags)(struct kvm_vcpu *vcpu);
- 	void (*set_rflags)(struct kvm_vcpu *vcpu, unsigned long rflags);
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -158,7 +158,8 @@ static int x2apic_dead_cpu(unsigned int
+ {
+ 	struct cluster_mask *cmsk = per_cpu(cluster_masks, dead_cpu);
  
--	void (*tlb_flush)(struct kvm_vcpu *vcpu);
-+	void (*tlb_flush)(struct kvm_vcpu *vcpu, bool invalidate_gpa);
- 
- 	void (*run)(struct kvm_vcpu *vcpu);
- 	int (*handle_exit)(struct kvm_vcpu *vcpu);
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -299,7 +299,7 @@ static int vgif = true;
- module_param(vgif, int, 0444);
- 
- static void svm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0);
--static void svm_flush_tlb(struct kvm_vcpu *vcpu);
-+static void svm_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa);
- static void svm_complete_interrupts(struct vcpu_svm *svm);
- 
- static int nested_svm_exit_handled(struct vcpu_svm *svm);
-@@ -2097,7 +2097,7 @@ static int svm_set_cr4(struct kvm_vcpu *
- 		return 1;
- 
- 	if (npt_enabled && ((old_cr4 ^ cr4) & X86_CR4_PGE))
--		svm_flush_tlb(vcpu);
-+		svm_flush_tlb(vcpu, true);
- 
- 	vcpu->arch.cr4 = cr4;
- 	if (!npt_enabled)
-@@ -2438,7 +2438,7 @@ static void nested_svm_set_tdp_cr3(struc
- 
- 	svm->vmcb->control.nested_cr3 = __sme_set(root);
- 	mark_dirty(svm->vmcb, VMCB_NPT);
--	svm_flush_tlb(vcpu);
-+	svm_flush_tlb(vcpu, true);
- }
- 
- static void nested_svm_inject_npf_exit(struct kvm_vcpu *vcpu,
-@@ -3111,7 +3111,7 @@ static bool nested_svm_vmrun(struct vcpu
- 	svm->nested.intercept_exceptions = nested_vmcb->control.intercept_exceptions;
- 	svm->nested.intercept            = nested_vmcb->control.intercept;
- 
--	svm_flush_tlb(&svm->vcpu);
-+	svm_flush_tlb(&svm->vcpu, true);
- 	svm->vmcb->control.int_ctl = nested_vmcb->control.int_ctl | V_INTR_MASKING_MASK;
- 	if (nested_vmcb->control.int_ctl & V_INTR_MASKING_MASK)
- 		svm->vcpu.arch.hflags |= HF_VINTR_MASK;
-@@ -4947,7 +4947,7 @@ static int svm_set_tss_addr(struct kvm *
+-	cpumask_clear_cpu(dead_cpu, &cmsk->mask);
++	if (cmsk)
++		cpumask_clear_cpu(dead_cpu, &cmsk->mask);
+ 	free_cpumask_var(per_cpu(ipi_mask, dead_cpu));
  	return 0;
  }
- 
--static void svm_flush_tlb(struct kvm_vcpu *vcpu)
-+static void svm_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 
-@@ -5288,7 +5288,7 @@ static void svm_set_cr3(struct kvm_vcpu
- 
- 	svm->vmcb->save.cr3 = __sme_set(root);
- 	mark_dirty(svm->vmcb, VMCB_CR);
--	svm_flush_tlb(vcpu);
-+	svm_flush_tlb(vcpu, true);
- }
- 
- static void set_tdp_cr3(struct kvm_vcpu *vcpu, unsigned long root)
-@@ -5302,7 +5302,7 @@ static void set_tdp_cr3(struct kvm_vcpu
- 	svm->vmcb->save.cr3 = kvm_read_cr3(vcpu);
- 	mark_dirty(svm->vmcb, VMCB_CR);
- 
--	svm_flush_tlb(vcpu);
-+	svm_flush_tlb(vcpu, true);
- }
- 
- static int is_disabled(void)
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4427,9 +4427,10 @@ static void exit_lmode(struct kvm_vcpu *
- 
- #endif
- 
--static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid)
-+static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
-+				bool invalidate_gpa)
- {
--	if (enable_ept) {
-+	if (enable_ept && (invalidate_gpa || !enable_vpid)) {
- 		if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
- 			return;
- 		ept_sync_context(construct_eptp(vcpu, vcpu->arch.mmu.root_hpa));
-@@ -4438,15 +4439,15 @@ static inline void __vmx_flush_tlb(struc
- 	}
- }
- 
--static void vmx_flush_tlb(struct kvm_vcpu *vcpu)
-+static void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
- {
--	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid);
-+	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
- }
- 
- static void vmx_flush_tlb_ept_only(struct kvm_vcpu *vcpu)
- {
- 	if (enable_ept)
--		vmx_flush_tlb(vcpu);
-+		vmx_flush_tlb(vcpu, true);
- }
- 
- static void vmx_decache_cr0_guest_bits(struct kvm_vcpu *vcpu)
-@@ -4644,7 +4645,7 @@ static void vmx_set_cr3(struct kvm_vcpu
- 		ept_load_pdptrs(vcpu);
- 	}
- 
--	vmx_flush_tlb(vcpu);
-+	vmx_flush_tlb(vcpu, true);
- 	vmcs_writel(GUEST_CR3, guest_cr3);
- }
- 
-@@ -8314,7 +8315,7 @@ static int handle_invvpid(struct kvm_vcp
- 		return kvm_skip_emulated_instruction(vcpu);
- 	}
- 
--	__vmx_flush_tlb(vcpu, vmx->nested.vpid02);
-+	__vmx_flush_tlb(vcpu, vmx->nested.vpid02, true);
- 	nested_vmx_succeed(vcpu);
- 
- 	return kvm_skip_emulated_instruction(vcpu);
-@@ -11214,11 +11215,11 @@ static int prepare_vmcs02(struct kvm_vcp
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->nested.vpid02);
- 			if (vmcs12->virtual_processor_id != vmx->nested.last_vpid) {
- 				vmx->nested.last_vpid = vmcs12->virtual_processor_id;
--				__vmx_flush_tlb(vcpu, to_vmx(vcpu)->nested.vpid02);
-+				__vmx_flush_tlb(vcpu, to_vmx(vcpu)->nested.vpid02, true);
- 			}
- 		} else {
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->vpid);
--			vmx_flush_tlb(vcpu);
-+			vmx_flush_tlb(vcpu, true);
- 		}
- 
- 	}
-@@ -11921,7 +11922,7 @@ static void load_vmcs12_host_state(struc
- 		 * L1's vpid. TODO: move to a more elaborate solution, giving
- 		 * each L2 its own vpid and exposing the vpid feature to L1.
- 		 */
--		vmx_flush_tlb(vcpu);
-+		vmx_flush_tlb(vcpu, true);
- 	}
- 	/* Restore posted intr vector. */
- 	if (nested_cpu_has_posted_intr(vmcs12))
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6943,10 +6943,10 @@ static void vcpu_scan_ioapic(struct kvm_
- 	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
- }
- 
--static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu)
-+static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
- {
- 	++vcpu->stat.tlb_flush;
--	kvm_x86_ops->tlb_flush(vcpu);
-+	kvm_x86_ops->tlb_flush(vcpu, invalidate_gpa);
- }
- 
- void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-@@ -7017,7 +7017,7 @@ static int vcpu_enter_guest(struct kvm_v
- 		if (kvm_check_request(KVM_REQ_MMU_SYNC, vcpu))
- 			kvm_mmu_sync_roots(vcpu);
- 		if (kvm_check_request(KVM_REQ_TLB_FLUSH, vcpu))
--			kvm_vcpu_flush_tlb(vcpu);
-+			kvm_vcpu_flush_tlb(vcpu, true);
- 		if (kvm_check_request(KVM_REQ_REPORT_TPR_ACCESS, vcpu)) {
- 			vcpu->run->exit_reason = KVM_EXIT_TPR_ACCESS;
- 			r = 0;
 
 
