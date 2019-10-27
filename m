@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1854E67D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4067FE65E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbfJ0VYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46338 "EHLO mail.kernel.org"
+        id S1727786AbfJ0VGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:06:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732563AbfJ0VYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:24:40 -0400
+        id S1727099AbfJ0VGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:06:20 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00DEB21726;
-        Sun, 27 Oct 2019 21:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B94E9214AF;
+        Sun, 27 Oct 2019 21:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211479;
-        bh=qjjUIQQK/K3d1S3afzT05FRefX9ssSgQs8oma/kfAOw=;
+        s=default; t=1572210380;
+        bh=P5TbDHn4L8lp7SJMwGX8ysHqwlmcFsq8WwQEoWNuwV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t6n2K/Ve9gd0hErcT7LukVYRyemUDfRgJhI9cvAWLp9/h6yJYCX9X17WSQWXkb5Y5
-         pKh73LPt+sXL2482cgDf2T/LRfkL8XQNk/NjZtJel1cV+ZjuW8TOFAqtl0lL2bqLy0
-         h/jMuyjiBMnKo1yno+Qjw5jUt2hSAuW5kO+x2CiA=
+        b=RQEp1udP1XmstkZoazwqCEE8cFJJgNCUUyfEnOY7uw0QvATCe8fw44ro+nfz49qD6
+         6FHP/E+sJkO1w65t/4jDywNggZrdDAMIiSDUsH+Att9IdOalhGprPvGcV2/mIotMCS
+         dJUnyUWvrc1EpnXqY7nMT0PUT2cQQ8udjSejYqI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 5.3 165/197] arm64: Enable workaround for Cavium TX2 erratum 219 when running SMT
-Date:   Sun, 27 Oct 2019 22:01:23 +0100
-Message-Id: <20191027203403.176764398@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Paul Durrant <paul@xen.org>, Wei Liu <wei.liu@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 46/49] xen/netback: fix error path of xenvif_connect_data()
+Date:   Sun, 27 Oct 2019 22:01:24 +0100
+Message-Id: <20191027203203.808402034@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,78 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 93916beb70143c46bf1d2bacf814be3a124b253b upstream.
+commit 3d5c1a037d37392a6859afbde49be5ba6a70a6b3 upstream.
 
-It appears that the only case where we need to apply the TX2_219_TVM
-mitigation is when the core is in SMT mode. So let's condition the
-enabling on detecting a CPU whose MPIDR_EL1.Aff0 is non-zero.
+xenvif_connect_data() calls module_put() in case of error. This is
+wrong as there is no related module_get().
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Remove the superfluous module_put().
+
+Fixes: 279f438e36c0a7 ("xen-netback: Don't destroy the netdev until the vif is shut down")
+Cc: <stable@vger.kernel.org> # 3.12
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Paul Durrant <paul@xen.org>
+Reviewed-by: Wei Liu <wei.liu@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/cpu_errata.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/net/xen-netback/interface.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -12,6 +12,7 @@
- #include <asm/cpu.h>
- #include <asm/cputype.h>
- #include <asm/cpufeature.h>
-+#include <asm/smp_plat.h>
- 
- static bool __maybe_unused
- is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
-@@ -623,6 +624,30 @@ check_branch_predictor(const struct arm6
- 	return (need_wa > 0);
+--- a/drivers/net/xen-netback/interface.c
++++ b/drivers/net/xen-netback/interface.c
+@@ -706,7 +706,6 @@ err_unmap:
+ 	xenvif_unmap_frontend_data_rings(queue);
+ 	netif_napi_del(&queue->napi);
+ err:
+-	module_put(THIS_MODULE);
+ 	return err;
  }
  
-+static const __maybe_unused struct midr_range tx2_family_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
-+	MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
-+	{},
-+};
-+
-+static bool __maybe_unused
-+needs_tx2_tvm_workaround(const struct arm64_cpu_capabilities *entry,
-+			 int scope)
-+{
-+	int i;
-+
-+	if (!is_affected_midr_range_list(entry, scope) ||
-+	    !is_hyp_mode_available())
-+		return false;
-+
-+	for_each_possible_cpu(i) {
-+		if (MPIDR_AFFINITY_LEVEL(cpu_logical_map(i), 0) != 0)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- #ifdef CONFIG_HARDEN_EL2_VECTORS
- 
- static const struct midr_range arm64_harden_el2_vectors[] = {
-@@ -857,6 +882,14 @@ const struct arm64_cpu_capabilities arm6
- 		ERRATA_MIDR_RANGE_LIST(tx2_family_cpus),
- 	},
- #endif
-+#ifdef CONFIG_CAVIUM_TX2_ERRATUM_219
-+	{
-+		.desc = "Cavium ThunderX2 erratum 219 (KVM guest sysreg trapping)",
-+		.capability = ARM64_WORKAROUND_CAVIUM_TX2_219_TVM,
-+		ERRATA_MIDR_RANGE_LIST(tx2_family_cpus),
-+		.matches = needs_tx2_tvm_workaround,
-+	},
-+#endif
- 	{
- 	}
- };
 
 
