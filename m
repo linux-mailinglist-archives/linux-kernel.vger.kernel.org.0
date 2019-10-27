@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B802E67B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7F1E6641
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732360AbfJ0VXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:23:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44624 "EHLO mail.kernel.org"
+        id S1729662AbfJ0VKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731704AbfJ0VX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:23:27 -0400
+        id S1729643AbfJ0VKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:10:11 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE67208C0;
-        Sun, 27 Oct 2019 21:23:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB2F20873;
+        Sun, 27 Oct 2019 21:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211406;
-        bh=uNhMYFcm2xnYvgOnMOPZE1j3UgoZUNQObkqsayaq5xY=;
+        s=default; t=1572210610;
+        bh=kFr3bpDwZ5IbEy2fGNnG6yQKM9J6DQNIfylmPpZdyng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1o99OWxoDepjSEjf8udQGXzgNXX1OEpgOinGcAtLCe5xTLbGsTRYBg2Nlndu5srCr
-         Ir0L+OVmbaKRzIqUvxiiNV5SY3tpt+05BZH7K7eNwh3ViQTxdsS5yZ2sEVwFkJCGbu
-         /LPIzsAV8gmU3EEHpcB20f6Hx5zaWWwLhaq79Krk=
+        b=t+94c8RNjMHGiMQnl+x+n0I6i3YpDJzm3GJ88bADGgxpoXyjCeD5t7olwdC9SRRvE
+         ABK40ex8vvi/poAYVIlpoHzEQt+/B6JpGRga+q8zjTCqO2AOnTINnQdGWFdbFphAro
+         H2FNZ2/9MZph9n3wL+8ke35zDagpFgT4eydSJYs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        James Zhu <James.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.3 133/197] drm/amdgpu/uvd6: fix allocation size in enc ring test (v2)
-Date:   Sun, 27 Oct 2019 22:00:51 +0100
-Message-Id: <20191027203358.900154264@linuxfoundation.org>
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 075/119] arm64: Always enable ssb vulnerability detection
+Date:   Sun, 27 Oct 2019 22:00:52 +0100
+Message-Id: <20191027203341.465064712@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,132 +47,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
 
-commit ce584a8e2885c7b59dfacba42db39761243cacb2 upstream.
+[ Upstream commit d42281b6e49510f078ace15a8ea10f71e6262581 ]
 
-We need to allocate a large enough buffer for the
-session info, otherwise the IB test can overwrite
-other memory.
+Ensure we are always able to detect whether or not the CPU is affected
+by SSB, so that we can later advertise this to userspace.
 
-v2: - session info is 128K according to mesa
-    - use the same session info for create and destroy
-
-Bug: https://bugzilla.kernel.org/show_bug.cgi?id=204241
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: James Zhu <James.Zhu@amd.com>
-Tested-by: James Zhu <James.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+[will: Use IS_ENABLED instead of #ifdef]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c |   31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |    4 ----
+ arch/arm64/kernel/cpu_errata.c      |    9 +++++----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
-@@ -206,13 +206,14 @@ static int uvd_v6_0_enc_ring_test_ring(s
-  * Open up a stream for HW test
-  */
- static int uvd_v6_0_enc_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
-+				       struct amdgpu_bo *bo,
- 				       struct dma_fence **fence)
- {
- 	const unsigned ib_size_dw = 16;
- 	struct amdgpu_job *job;
- 	struct amdgpu_ib *ib;
- 	struct dma_fence *f = NULL;
--	uint64_t dummy;
-+	uint64_t addr;
- 	int i, r;
- 
- 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
-@@ -220,15 +221,15 @@ static int uvd_v6_0_enc_get_create_msg(s
- 		return r;
- 
- 	ib = &job->ibs[0];
--	dummy = ib->gpu_addr + 1024;
-+	addr = amdgpu_bo_gpu_offset(bo);
- 
- 	ib->length_dw = 0;
- 	ib->ptr[ib->length_dw++] = 0x00000018;
- 	ib->ptr[ib->length_dw++] = 0x00000001; /* session info */
- 	ib->ptr[ib->length_dw++] = handle;
- 	ib->ptr[ib->length_dw++] = 0x00010000;
--	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
--	ib->ptr[ib->length_dw++] = dummy;
-+	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
-+	ib->ptr[ib->length_dw++] = addr;
- 
- 	ib->ptr[ib->length_dw++] = 0x00000014;
- 	ib->ptr[ib->length_dw++] = 0x00000002; /* task info */
-@@ -268,13 +269,14 @@ err:
-  */
- static int uvd_v6_0_enc_get_destroy_msg(struct amdgpu_ring *ring,
- 					uint32_t handle,
-+					struct amdgpu_bo *bo,
- 					struct dma_fence **fence)
- {
- 	const unsigned ib_size_dw = 16;
- 	struct amdgpu_job *job;
- 	struct amdgpu_ib *ib;
- 	struct dma_fence *f = NULL;
--	uint64_t dummy;
-+	uint64_t addr;
- 	int i, r;
- 
- 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
-@@ -282,15 +284,15 @@ static int uvd_v6_0_enc_get_destroy_msg(
- 		return r;
- 
- 	ib = &job->ibs[0];
--	dummy = ib->gpu_addr + 1024;
-+	addr = amdgpu_bo_gpu_offset(bo);
- 
- 	ib->length_dw = 0;
- 	ib->ptr[ib->length_dw++] = 0x00000018;
- 	ib->ptr[ib->length_dw++] = 0x00000001; /* session info */
- 	ib->ptr[ib->length_dw++] = handle;
- 	ib->ptr[ib->length_dw++] = 0x00010000;
--	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
--	ib->ptr[ib->length_dw++] = dummy;
-+	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
-+	ib->ptr[ib->length_dw++] = addr;
- 
- 	ib->ptr[ib->length_dw++] = 0x00000014;
- 	ib->ptr[ib->length_dw++] = 0x00000002; /* task info */
-@@ -327,13 +329,20 @@ err:
- static int uvd_v6_0_enc_ring_test_ib(struct amdgpu_ring *ring, long timeout)
- {
- 	struct dma_fence *fence = NULL;
-+	struct amdgpu_bo *bo = NULL;
- 	long r;
- 
--	r = uvd_v6_0_enc_get_create_msg(ring, 1, NULL);
-+	r = amdgpu_bo_create_reserved(ring->adev, 128 * 1024, PAGE_SIZE,
-+				      AMDGPU_GEM_DOMAIN_VRAM,
-+				      &bo, NULL, NULL);
-+	if (r)
-+		return r;
-+
-+	r = uvd_v6_0_enc_get_create_msg(ring, 1, bo, NULL);
- 	if (r)
- 		goto error;
- 
--	r = uvd_v6_0_enc_get_destroy_msg(ring, 1, &fence);
-+	r = uvd_v6_0_enc_get_destroy_msg(ring, 1, bo, &fence);
- 	if (r)
- 		goto error;
- 
-@@ -345,6 +354,8 @@ static int uvd_v6_0_enc_ring_test_ib(str
- 
- error:
- 	dma_fence_put(fence);
-+	amdgpu_bo_unreserve(bo);
-+	amdgpu_bo_unref(&bo);
- 	return r;
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -493,11 +493,7 @@ static inline int arm64_get_ssbd_state(v
+ #endif
  }
  
+-#ifdef CONFIG_ARM64_SSBD
+ void arm64_set_ssbd_mitigation(bool state);
+-#else
+-static inline void arm64_set_ssbd_mitigation(bool state) {}
+-#endif
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -231,7 +231,6 @@ enable_smccc_arch_workaround_1(const str
+ }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+ 
+-#ifdef CONFIG_ARM64_SSBD
+ DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+ 
+ int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
+@@ -304,6 +303,11 @@ void __init arm64_enable_wa2_handling(st
+ 
+ void arm64_set_ssbd_mitigation(bool state)
+ {
++	if (!IS_ENABLED(CONFIG_ARM64_SSBD)) {
++		pr_info_once("SSBD disabled by kernel configuration\n");
++		return;
++	}
++
+ 	if (this_cpu_has_cap(ARM64_SSBS)) {
+ 		if (state)
+ 			asm volatile(SET_PSTATE_SSBS(0));
+@@ -423,7 +427,6 @@ out_printmsg:
+ 
+ 	return required;
+ }
+-#endif	/* CONFIG_ARM64_SSBD */
+ 
+ #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+ 	.matches = is_affected_midr_range,			\
+@@ -627,14 +630,12 @@ const struct arm64_cpu_capabilities arm6
+ 		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ #endif
+-#ifdef CONFIG_ARM64_SSBD
+ 	{
+ 		.desc = "Speculative Store Bypass Disable",
+ 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+ 		.capability = ARM64_SSBD,
+ 		.matches = has_ssbd_mitigation,
+ 	},
+-#endif
+ 	{
+ 	}
+ };
 
 
