@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25E3E6673
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD74E67C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfJ0VMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:12:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58802 "EHLO mail.kernel.org"
+        id S1732489AbfJ0VYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730013AbfJ0VMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:12:07 -0400
+        id S1730777AbfJ0VYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:24:17 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A3520873;
-        Sun, 27 Oct 2019 21:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1931521726;
+        Sun, 27 Oct 2019 21:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210726;
-        bh=CgIvwC7qTH85RQI6kmwZ38ooNUQA/hoQ21zTCtaVeX0=;
+        s=default; t=1572211456;
+        bh=t69A56lr0lOMmewix5iSiPHCFZCowdC0rRu0+B5hnBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MsDZHRFHUm73x1S691R497Ah0r97gqiZ/B/ZxR/1dTptbhuAtOpS8ok1Tsgz4pPP8
-         /guJmSJA3kF32ocr8JGo7LudpSeGAxmoyDxemFokeDj03083w1ifvknaFcr5iX8rnh
-         ezB3HKMWBj7gGndrsVqm5txwIR1SEkSDb417Ub7Y=
+        b=AJux7bHx8bwNBX+spHP+RVrVwwr2QdOFbhszpB1oe6EW2zZ5f30IGwRuNF7xfFa+8
+         63OlEWNSwIMqoHwCczXfVs/hwdJG7xXLNWzynJ2gOwevIVOclH1pt0aos3C4MBoIkr
+         6pju2HGzM+R/p7dqDDmW8vJ+lelaReqRn9A1hLvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 098/119] drivers/base/memory.c: dont access uninitialized memmaps in soft_offline_page_store()
-Date:   Sun, 27 Oct 2019 22:01:15 +0100
-Message-Id: <20191027203348.834120266@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Johan Hovold <johan@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.3 158/197] s390/zcrypt: fix memleak at release
+Date:   Sun, 27 Oct 2019 22:01:16 +0100
+Message-Id: <20191027203400.212151946@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 641fe2e9387a36f9ee01d7c69382d1fe147a5e98 upstream.
+commit 388bb19be8eab4674a660e0c97eaf60775362bc7 upstream.
 
-Uninitialized memmaps contain garbage and in the worst case trigger kernel
-BUGs, especially with CONFIG_PAGE_POISONING.  They should not get touched.
+If a process is interrupted while accessing the crypto device and the
+global ap_perms_mutex is contented, release() could return early and
+fail to free related resources.
 
-Right now, when trying to soft-offline a PFN that resides on a memory
-block that was never onlined, one gets a misleading error with
-CONFIG_PAGE_POISONING:
-
-  :/# echo 5637144576 > /sys/devices/system/memory/soft_offline_page
-  [   23.097167] soft offline: 0x150000 page already poisoned
-
-But the actual result depends on the garbage in the memmap.
-
-soft_offline_page() can only work with online pages, it returns -EIO in
-case of ZONE_DEVICE.  Make sure to only forward pages that are online
-(iow, managed by the buddy) and, therefore, have an initialized memmap.
-
-Add a check against pfn_to_online_page() and similarly return -EIO.
-
-Link: http://lkml.kernel.org/r/20191010141200.8985-1-david@redhat.com
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 00fab2350e6b ("s390/zcrypt: multiple zcrypt device nodes support")
+Cc: <stable@vger.kernel.org> # 4.19
+Cc: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/memory.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/s390/crypto/zcrypt_api.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -552,6 +552,9 @@ store_soft_offline_page(struct device *d
- 	pfn >>= PAGE_SHIFT;
- 	if (!pfn_valid(pfn))
- 		return -ENXIO;
-+	/* Only online pages can be soft-offlined (esp., not ZONE_DEVICE). */
-+	if (!pfn_to_online_page(pfn))
-+		return -EIO;
- 	ret = soft_offline_page(pfn_to_page(pfn), 0);
- 	return ret == 0 ? count : ret;
- }
+--- a/drivers/s390/crypto/zcrypt_api.c
++++ b/drivers/s390/crypto/zcrypt_api.c
+@@ -539,8 +539,7 @@ static int zcrypt_release(struct inode *
+ 	if (filp->f_inode->i_cdev == &zcrypt_cdev) {
+ 		struct zcdn_device *zcdndev;
+ 
+-		if (mutex_lock_interruptible(&ap_perms_mutex))
+-			return -ERESTARTSYS;
++		mutex_lock(&ap_perms_mutex);
+ 		zcdndev = find_zcdndev_by_devt(filp->f_inode->i_rdev);
+ 		mutex_unlock(&ap_perms_mutex);
+ 		if (zcdndev) {
 
 
