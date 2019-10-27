@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAF1E67C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E7A1E65B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:04:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbfJ0VYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
+        id S1728632AbfJ0VE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:04:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732428AbfJ0VYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:24:03 -0400
+        id S1728612AbfJ0VEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:04:24 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22FBC2184C;
-        Sun, 27 Oct 2019 21:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB42B20873;
+        Sun, 27 Oct 2019 21:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211442;
-        bh=Z13k9Rr+oBpf3ED7rjGzDOEk10lgri0uRu9QWWRnjeQ=;
+        s=default; t=1572210263;
+        bh=Nd/69uza/dlZHrUS8k+TlHCzIFVzAvLu8UefKxT4+6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bvXUK1uUHmvOc7qES7FO1eFiFi3RdaxEw/JZWiZzTtjPx71EUuS+edSpRqAW7udH+
-         QZjfBp7iAccmAu86WCG2VQ7JIxffJ5UR+6dX8ZPusoR8a23TxHXmKwvcvwlPQBDkXO
-         7Gh+59DsIIdbuT368RBCRAnxBw1bg2/dLPnjG8W4=
+        b=QVwBDdJgakdVRKQD2896UH00RKuQ++gKX/Zm1PCNcBc7sY69hELWaDWn5TLUqV9z1
+         6Qsd4057r3lm5L3LN8/r3zjEREziY15q732YycSUp7ALg3Qcm67AyfXMqn0gu2fgtb
+         3OboKrJrupmDyhANQ7EagQAwJSqaw/dr72KXYTig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 153/197] hugetlbfs: dont access uninitialized memmaps in pfn_range_valid_gigantic()
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        Sven Schnelle <svens@stackframe.org>
+Subject: [PATCH 4.4 33/41] parisc: Fix vmap memory leak in ioremap()/iounmap()
 Date:   Sun, 27 Oct 2019 22:01:11 +0100
-Message-Id: <20191027203359.945985294@linuxfoundation.org>
+Message-Id: <20191027203126.939170710@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,59 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Helge Deller <deller@gmx.de>
 
-commit f231fe4235e22e18d847e05cbe705deaca56580a upstream.
+commit 513f7f747e1cba81f28a436911fba0b485878ebd upstream.
 
-Uninitialized memmaps contain garbage and in the worst case trigger
-kernel BUGs, especially with CONFIG_PAGE_POISONING.  They should not get
-touched.
+Sven noticed that calling ioremap() and iounmap() multiple times leads
+to a vmap memory leak:
+	vmap allocation for size 4198400 failed:
+	use vmalloc=<size> to increase size
 
-Let's make sure that we only consider online memory (managed by the
-buddy) that has initialized memmaps.  ZONE_DEVICE is not applicable.
+It seems we missed calling vunmap() in iounmap().
 
-page_zone() will call page_to_nid(), which will trigger
-VM_BUG_ON_PGFLAGS(PagePoisoned(page), page) with CONFIG_PAGE_POISONING
-and CONFIG_DEBUG_VM_PGFLAGS when called on uninitialized memmaps.  This
-can be the case when an offline memory block (e.g., never onlined) is
-spanned by a zone.
-
-Note: As explained by Michal in [1], alloc_contig_range() will verify
-the range.  So it boils down to the wrong access in this function.
-
-[1] http://lkml.kernel.org/r/20180423000943.GO17484@dhcp22.suse.cz
-
-Link: http://lkml.kernel.org/r/20191015120717.4858-1-david@redhat.com
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")	[visible after d0dc12e86b319]
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Michal Hocko <mhocko@kernel.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: <stable@vger.kernel.org>	[4.13+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Noticed-by: Sven Schnelle <svens@stackframe.org>
+Cc: <stable@vger.kernel.org> # v3.16+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/parisc/mm/ioremap.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1084,11 +1084,10 @@ static bool pfn_range_valid_gigantic(str
- 	struct page *page;
+--- a/arch/parisc/mm/ioremap.c
++++ b/arch/parisc/mm/ioremap.c
+@@ -2,7 +2,7 @@
+  * arch/parisc/mm/ioremap.c
+  *
+  * (C) Copyright 1995 1996 Linus Torvalds
+- * (C) Copyright 2001-2006 Helge Deller <deller@gmx.de>
++ * (C) Copyright 2001-2019 Helge Deller <deller@gmx.de>
+  * (C) Copyright 2005 Kyle McMartin <kyle@parisc-linux.org>
+  */
  
- 	for (i = start_pfn; i < end_pfn; i++) {
--		if (!pfn_valid(i))
-+		page = pfn_to_online_page(i);
-+		if (!page)
- 			return false;
+@@ -83,7 +83,7 @@ void __iomem * __ioremap(unsigned long p
+ 	addr = (void __iomem *) area->addr;
+ 	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
+ 			       phys_addr, pgprot)) {
+-		vfree(addr);
++		vunmap(addr);
+ 		return NULL;
+ 	}
  
--		page = pfn_to_page(i);
--
- 		if (page_zone(page) != z)
- 			return false;
+@@ -91,9 +91,11 @@ void __iomem * __ioremap(unsigned long p
+ }
+ EXPORT_SYMBOL(__ioremap);
  
+-void iounmap(const volatile void __iomem *addr)
++void iounmap(const volatile void __iomem *io_addr)
+ {
+-	if (addr > high_memory)
+-		return vfree((void *) (PAGE_MASK & (unsigned long __force) addr));
++	unsigned long addr = (unsigned long)io_addr & PAGE_MASK;
++
++	if (is_vmalloc_addr((void *)addr))
++		vunmap((void *)addr);
+ }
+ EXPORT_SYMBOL(iounmap);
 
 
