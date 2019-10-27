@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4F1E699B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEBBE68A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbfJ0VDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:03:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48822 "EHLO mail.kernel.org"
+        id S1730754AbfJ0VQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfJ0VDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:03:31 -0400
+        id S1730746AbfJ0VQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:16:01 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D21952064A;
-        Sun, 27 Oct 2019 21:03:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C4C020717;
+        Sun, 27 Oct 2019 21:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210211;
-        bh=ODeQV7D452RsJPvO/GCdLNCAnLcW+rLVjTUnNcBeBLY=;
+        s=default; t=1572210961;
+        bh=CzjJGI9pfHkZbK+2YWhIK0w8TLcspavH7qQCc7Fm0CQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHrDGfLGNQ/Vs18j0aBgA4Ga1xIfReaGEMrCg3vTRQHl486XsKRa5asny5CVCXHVZ
-         Xvz3btusVWZ7Eu9r+U5qye7ZW/8IMXykcUUrhAo6qxsx4yWMt1rotQRN/Wkw6HaCoL
-         0CFrMcFL1d8sT7i47ZJAT30Xh7CqnmQi3YA2TRew=
+        b=AGKPdW4oNh91UTWwVkwX7GEiezRaWsZZ+LJA6gyGwd5kjvUPvTYJYTp/RLeS44R61
+         VQG/p+xPMZknFrKvvR5NATaIcQvMzOXVoeX/0H2aHvVHt9opzYCPJ2x69iMz6vGFU9
+         ZYT9NUCJBP9PsIP3rLXPTbOqzO0KikT8PApLr5WE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 05/41] ARM: dts: am4372: Set memory bandwidth limit for DISPC
-Date:   Sun, 27 Oct 2019 22:00:43 +0100
-Message-Id: <20191027203103.062004692@linuxfoundation.org>
+        stable@vger.kernel.org, Biao Huang <biao.huang@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 33/93] net: stmmac: disable/enable ptp_ref_clk in suspend/resume flow
+Date:   Sun, 27 Oct 2019 22:00:45 +0100
+Message-Id: <20191027203257.708941532@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Biao Huang <biao.huang@mediatek.com>
 
-[ Upstream commit f90ec6cdf674248dcad85bf9af6e064bf472b841 ]
+[ Upstream commit e497c20e203680aba9ccf7bb475959595908ca7e ]
 
-Set memory bandwidth limit to filter out resolutions above 720p@60Hz to
-avoid underflow errors due to the bandwidth needs of higher resolutions.
+disable ptp_ref_clk in suspend flow, and enable it in resume flow.
 
-am43xx can not provide enough bandwidth to DISPC to correctly handle
-'high' resolutions.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f573c0b9c4e0 ("stmmac: move stmmac_clk, pclk, clk_ptp_ref and stmmac_rst to platform structure")
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am4372.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index 3ef1d5a26389c..3bb5254a227a3 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -1002,6 +1002,8 @@
- 				ti,hwmods = "dss_dispc";
- 				clocks = <&disp_clk>;
- 				clock-names = "fck";
-+
-+				max-memory-bandwidth = <230000000>;
- 			};
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4522,8 +4522,10 @@ int stmmac_suspend(struct device *dev)
+ 		stmmac_mac_set(priv, priv->ioaddr, false);
+ 		pinctrl_pm_select_sleep_state(priv->device);
+ 		/* Disable clock in case of PWM is off */
+-		clk_disable(priv->plat->pclk);
+-		clk_disable(priv->plat->stmmac_clk);
++		if (priv->plat->clk_ptp_ref)
++			clk_disable_unprepare(priv->plat->clk_ptp_ref);
++		clk_disable_unprepare(priv->plat->pclk);
++		clk_disable_unprepare(priv->plat->stmmac_clk);
+ 	}
+ 	mutex_unlock(&priv->lock);
  
- 			rfbi: rfbi@4832a800 {
--- 
-2.20.1
-
+@@ -4588,8 +4590,10 @@ int stmmac_resume(struct device *dev)
+ 	} else {
+ 		pinctrl_pm_select_default_state(priv->device);
+ 		/* enable the clk previously disabled */
+-		clk_enable(priv->plat->stmmac_clk);
+-		clk_enable(priv->plat->pclk);
++		clk_prepare_enable(priv->plat->stmmac_clk);
++		clk_prepare_enable(priv->plat->pclk);
++		if (priv->plat->clk_ptp_ref)
++			clk_prepare_enable(priv->plat->clk_ptp_ref);
+ 		/* reset the phy so that it's ready */
+ 		if (priv->mii)
+ 			stmmac_mdio_reset(priv->mii);
 
 
