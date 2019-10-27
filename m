@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE80BE66B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:14:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A144E67E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbfJ0VOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:14:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33438 "EHLO mail.kernel.org"
+        id S1732148AbfJ0VZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729745AbfJ0VO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:14:27 -0400
+        id S1732745AbfJ0VZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:29 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40D3B21726;
-        Sun, 27 Oct 2019 21:14:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8018A21850;
+        Sun, 27 Oct 2019 21:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210866;
-        bh=EUuh1vPUFAlhoRbVgQeGEOyNuTvyYkG+7Olaa9exQJU=;
+        s=default; t=1572211529;
+        bh=ti2/6AttwyI/CUbzp9Nn0c4NFrp3fhY5UsaMZgfOQDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cLgJokeTwOcfLhtr8KSwTsS+TC0NHxgxr69Kg0eIdmC9Y8hMDOzhz/rE9BFalrQmG
-         Y/TsYeP3bQtPBsheVBjzeBIOgLddiRDuh48cwMJ3kGyU2gyw+uwbNRtks5znOPCnOT
-         ryD5rY9+CLeeaacgbTWQj2TeRviUah6W3zAxkZBo=
+        b=NGkeeb7Yekds7MLDLBtykcbVKQBgxN1ETDC52EwQaTFeZCHTsBSG6AlqJVbudeNvI
+         tVW9UgQT7M2CdLoVaF7AFDExjK4JkivUXK3U2UnfnQm8sLtdRMjJbD4/qSWXfKwjbe
+         r4kkvGP8THx41++6jjSlD+4jJtwiV6P2cP4mtWlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 45/93] USB: ldusb: fix read info leaks
+        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 139/197] io_uring: Fix race for sqes with userspace
 Date:   Sun, 27 Oct 2019 22:00:57 +0100
-Message-Id: <20191027203259.369262258@linuxfoundation.org>
+Message-Id: <20191027203359.214148601@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,80 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-commit 7a6f22d7479b7a0b68eadd308a997dd64dda7dae upstream.
+[ Upstream commit 935d1e45908afb8853c497f2c2bbbb685dec51dc ]
 
-Fix broken read implementation, which could be used to trigger slab info
-leaks.
+io_ring_submit() finalises with
+1. io_commit_sqring(), which releases sqes to the userspace
+2. Then calls to io_queue_link_head(), accessing released head's sqe
 
-The driver failed to check if the custom ring buffer was still empty
-when waking up after having waited for more data. This would happen on
-every interrupt-in completion, even if no data had been added to the
-ring buffer (e.g. on disconnect events).
+Reorder them.
 
-Due to missing sanity checks and uninitialised (kmalloced) ring-buffer
-entries, this meant that huge slab info leaks could easily be triggered.
-
-Note that the empty-buffer check after wakeup is enough to fix the info
-leak on disconnect, but let's clear the buffer on allocation and add a
-sanity check to read() to prevent further leaks.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Reported-by: syzbot+6fe95b826644f7f12b0b@syzkaller.appspotmail.com
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191018151955.25135-2-johan@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/ldusb.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -464,7 +464,7 @@ static ssize_t ld_usb_read(struct file *
- 
- 	/* wait for data */
- 	spin_lock_irq(&dev->rbsl);
--	if (dev->ring_head == dev->ring_tail) {
-+	while (dev->ring_head == dev->ring_tail) {
- 		dev->interrupt_in_done = 0;
- 		spin_unlock_irq(&dev->rbsl);
- 		if (file->f_flags & O_NONBLOCK) {
-@@ -474,12 +474,17 @@ static ssize_t ld_usb_read(struct file *
- 		retval = wait_event_interruptible(dev->read_wait, dev->interrupt_in_done);
- 		if (retval < 0)
- 			goto unlock_exit;
--	} else {
--		spin_unlock_irq(&dev->rbsl);
-+
-+		spin_lock_irq(&dev->rbsl);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 518042cc6628b..d447f43d64a24 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2488,13 +2488,14 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit)
+ 		submit++;
+ 		io_submit_sqe(ctx, &s, statep, &link);
  	}
-+	spin_unlock_irq(&dev->rbsl);
+-	io_commit_sqring(ctx);
  
- 	/* actual_buffer contains actual_length + interrupt_in_buffer */
- 	actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
-+	if (*actual_buffer > dev->interrupt_in_endpoint_size) {
-+		retval = -EIO;
-+		goto unlock_exit;
-+	}
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
- 		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
-@@ -690,10 +695,9 @@ static int ld_usb_probe(struct usb_inter
- 		dev_warn(&intf->dev, "Interrupt out endpoint not found (using control endpoint instead)\n");
+ 	if (link)
+ 		io_queue_sqe(ctx, link, &link->submit);
+ 	if (statep)
+ 		io_submit_state_end(statep);
  
- 	dev->interrupt_in_endpoint_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
--	dev->ring_buffer =
--		kmalloc_array(ring_buffer_size,
--			      sizeof(size_t) + dev->interrupt_in_endpoint_size,
--			      GFP_KERNEL);
-+	dev->ring_buffer = kcalloc(ring_buffer_size,
-+			sizeof(size_t) + dev->interrupt_in_endpoint_size,
-+			GFP_KERNEL);
- 	if (!dev->ring_buffer)
- 		goto error;
- 	dev->interrupt_in_buffer = kmalloc(dev->interrupt_in_endpoint_size, GFP_KERNEL);
++	io_commit_sqring(ctx);
++
+ 	return submit;
+ }
+ 
+-- 
+2.20.1
+
 
 
