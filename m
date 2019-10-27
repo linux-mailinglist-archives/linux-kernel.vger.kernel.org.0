@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DEBE6947
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE81DE695C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfJ0VIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54826 "EHLO mail.kernel.org"
+        id S1732188AbfJ0Vfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:35:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbfJ0VIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:35 -0400
+        id S1728766AbfJ0VIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:08:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA75D2064A;
-        Sun, 27 Oct 2019 21:08:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F75020B7C;
+        Sun, 27 Oct 2019 21:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210514;
-        bh=sZk67HLjrgXpirIOaPWbDB2dGtoSAtvE4M5NOkvG/pQ=;
+        s=default; t=1572210517;
+        bh=MbJJGwCPobPXC73iVz1NPLAWQ5aGkr8Eo6NSbR550Mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=izHqWapfoJ1t2uy94Ycl4PRWYQT6wJC4hmSMtchv8cdNGYEmd1CE01wFGzBk5t+av
-         EocKaFdzlTkES7w1KXKR56+wECWD7igjvkY/FPGu3kNuJ62F/fKSd66MC8OD0nEk/O
-         aUuYfWGiHScz+Y4CTkG2lcgqXr0wg0+QUkyADTA8=
+        b=swR2oESTSRZaWjW4oWfksFEOXt90FldNxoMnAeS1FxDV7wWrYdIwULPBzGNjfn5bB
+         dobBu674tS9zrsOxg3Vt+7DLcEpr2C1Vk0QyQVLVKGPDO4K8i0YjtUvQswUvm1jMmE
+         9P9l+T3VgTMG7TEiMx2RMmHKbxxxRxQmdJuCXAIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 040/119] arm64: v8.4: Support for new floating point multiplication instructions
-Date:   Sun, 27 Oct 2019 22:00:17 +0100
-Message-Id: <20191027203314.480084740@linuxfoundation.org>
+Subject: [PATCH 4.14 041/119] arm64: Documentation: cpu-feature-registers: Remove RES0 fields
+Date:   Sun, 27 Oct 2019 22:00:18 +0100
+Message-Id: <20191027203315.175774322@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
 References: <20191027203259.948006506@linuxfoundation.org>
@@ -46,95 +47,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongjiu Geng <gengdongjiu@huawei.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 3b3b681097fae73b7f5dcdd42db6cfdf32943d4c ]
+[ Upstream commit 847ecd3fa311cde0f10a1b66c572abb136742b1d ]
 
-ARM v8.4 extensions add new neon instructions for performing a
-multiplication of each FP16 element of one vector with the corresponding
-FP16 element of a second vector, and to add or subtract this without an
-intermediate rounding to the corresponding FP32 element in a third vector.
+Remove the invisible RES0 field entries from the table, listing
+fields in CPU ID feature registers, as :
+ 1) We are only interested in the user visible fields.
+ 2) The field description may not be up-to-date, as the
+    field could be assigned a new meaning.
+ 3) We already explain the rules of the fields which are not
+    visible.
 
-This patch detects this feature and let the userspace know about it via a
-HWCAP bit and MRS emulation.
-
-Cc: Dave Martin <Dave.Martin@arm.com>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 [ardb: fix up for missing SVE in context]
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/arm64/cpu-feature-registers.txt |    4 +++-
- arch/arm64/include/asm/sysreg.h               |    1 +
- arch/arm64/include/uapi/asm/hwcap.h           |    2 ++
- arch/arm64/kernel/cpufeature.c                |    2 ++
- arch/arm64/kernel/cpuinfo.c                   |    2 ++
- 5 files changed, 10 insertions(+), 1 deletion(-)
+ Documentation/arm64/cpu-feature-registers.txt |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 --- a/Documentation/arm64/cpu-feature-registers.txt
 +++ b/Documentation/arm64/cpu-feature-registers.txt
-@@ -110,7 +110,9 @@ infrastructure:
+@@ -110,7 +110,6 @@ infrastructure:
       x--------------------------------------------------x
       | Name                         |  bits   | visible |
       |--------------------------------------------------|
--     | RES0                         | [63-48] |    n    |
-+     | RES0                         | [63-52] |    n    |
+-     | RES0                         | [63-52] |    n    |
+      |--------------------------------------------------|
+      | FHM                          | [51-48] |    y    |
+      |--------------------------------------------------|
+@@ -124,8 +123,6 @@ infrastructure:
+      |--------------------------------------------------|
+      | RDM                          | [31-28] |    y    |
+      |--------------------------------------------------|
+-     | RES0                         | [27-24] |    n    |
+-     |--------------------------------------------------|
+      | ATOMICS                      | [23-20] |    y    |
+      |--------------------------------------------------|
+      | CRC32                        | [19-16] |    y    |
+@@ -135,8 +132,6 @@ infrastructure:
+      | SHA1                         | [11-8]  |    y    |
+      |--------------------------------------------------|
+      | AES                          | [7-4]   |    y    |
+-     |--------------------------------------------------|
+-     | RES0                         | [3-0]   |    n    |
+      x--------------------------------------------------x
+ 
+ 
+@@ -144,7 +139,8 @@ infrastructure:
+      x--------------------------------------------------x
+      | Name                         |  bits   | visible |
+      |--------------------------------------------------|
+-     | RES0                         | [63-28] |    n    |
 +     |--------------------------------------------------|
-+     | FHM                          | [51-48] |    y    |
++     | SVE                          | [35-32] |    y    |
       |--------------------------------------------------|
-      | DP                           | [47-44] |    y    |
+      | GIC                          | [27-24] |    n    |
       |--------------------------------------------------|
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -375,6 +375,7 @@
- #define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
- 
- /* id_aa64isar0 */
-+#define ID_AA64ISAR0_FHM_SHIFT		48
- #define ID_AA64ISAR0_DP_SHIFT		44
- #define ID_AA64ISAR0_SM4_SHIFT		40
- #define ID_AA64ISAR0_SM3_SHIFT		36
---- a/arch/arm64/include/uapi/asm/hwcap.h
-+++ b/arch/arm64/include/uapi/asm/hwcap.h
-@@ -42,5 +42,7 @@
- #define HWCAP_SM4		(1 << 19)
- #define HWCAP_ASIMDDP		(1 << 20)
- #define HWCAP_SHA512		(1 << 21)
-+#define HWCAP_SVE		(1 << 22)
-+#define HWCAP_ASIMDFHM		(1 << 23)
- 
- #endif /* _UAPI__ASM_HWCAP_H */
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -107,6 +107,7 @@ cpufeature_pan_not_uao(const struct arm6
-  * sync with the documentation of the CPU feature register ABI.
-  */
- static const struct arm64_ftr_bits ftr_id_aa64isar0[] = {
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_FHM_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_DP_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM4_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM3_SHIFT, 4, 0),
-@@ -1052,6 +1053,7 @@ static const struct arm64_cpu_capabiliti
- 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_SM3_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_SM3),
- 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_SM4_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_SM4),
- 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_DP_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDDP),
-+	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_FHM_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDFHM),
- 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_FP),
- 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_FPHP),
- 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_ASIMD_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_ASIMD),
---- a/arch/arm64/kernel/cpuinfo.c
-+++ b/arch/arm64/kernel/cpuinfo.c
-@@ -74,6 +74,8 @@ static const char *const hwcap_str[] = {
- 	"sm4",
- 	"asimddp",
- 	"sha512",
-+	"sve",
-+	"asimdfhm",
- 	NULL
- };
- 
 
 
