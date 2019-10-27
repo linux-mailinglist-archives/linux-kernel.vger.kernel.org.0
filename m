@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15AE1E66A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE1CE6781
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbfJ0VNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:13:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60922 "EHLO mail.kernel.org"
+        id S1731956AbfJ0VVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730330AbfJ0VNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:13:46 -0400
+        id S1731938AbfJ0VVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:30 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C3BA205C9;
-        Sun, 27 Oct 2019 21:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A64BD205C9;
+        Sun, 27 Oct 2019 21:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210826;
-        bh=hgWiUJDqFhtiAu2EufDq0H/kyP+i6BeWCEBmU9Aiu3U=;
+        s=default; t=1572211290;
+        bh=2DyfP3PmbQXEM8PChsIxEbxnKRdPq7KIWGN4SebMk6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qETjWUhsXUKy76iYK81RWchGD+qAukYj0sXn+b8e8qsN48w+VIOZh10DkrDfvED5y
-         vmsahIh4M7qG2JhoBhs+J2gIHDgFOHucXj4CSmKuSPIM10YmddxtIjP8a/pgYanlw0
-         Ikpa4S6G63mzUcOkpb4sG4xWtemEM9yXATFK3GUg=
+        b=AZfgTW3VB+WoOmY8F9A0kxDQRDR6hE2F77Bfxrjt01xEUhQUC2Lm2mxzV1YU8CnSf
+         TVQ6kIFFGqRqgwLsaK6jWYgROo2kQcdybf7/6KDYsc5/0FgsNip3V9EnKC/jR6wWLt
+         Joq1iOlOoXa/Ce9W4SyMKc24c3MldRE+NlM3u3+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 05/93] ARM: OMAP2+: Fix missing reset done flag for am3 and am43
-Date:   Sun, 27 Oct 2019 22:00:17 +0100
-Message-Id: <20191027203253.088898277@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Przemys=C5=82aw=20Kopa?= <prymoo@gmail.com>,
+        Rivera Valdez <riveravaldez@ysinembargo.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Daniel Drake <dan@reactivated.net>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 100/197] ALSA: hda - Force runtime PM on Nvidia HDMI codecs
+Date:   Sun, 27 Oct 2019 22:00:18 +0100
+Message-Id: <20191027203357.166902340@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
-References: <20191027203251.029297948@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 8ad8041b98c665b6147e607b749586d6e20ba73a ]
+commit 94989e318b2f11e217e86bee058088064fa9a2e9 upstream.
 
-For ti,sysc-omap4 compatible devices with no sysstatus register, we do have
-reset done status available in the SOFTRESET bit that clears when the reset
-is done. This is documented for example in am437x TRM for DMTIMER_TIOCP_CFG
-register. The am335x TRM just says that SOFTRESET bit value 1 means reset is
-ongoing, but it behaves the same way clearing after reset is done.
+Przemysław Kopa reports that since commit b516ea586d71 ("PCI: Enable
+NVIDIA HDA controllers"), the discrete GPU Nvidia GeForce GT 540M on his
+2011 Samsung laptop refuses to runtime suspend, resulting in a power
+regression and excessive heat.
 
-With the ti-sysc driver handling this automatically based on no sysstatus
-register defined, we see warnings if SYSC_HAS_RESET_STATUS is missing in the
-legacy platform data:
+Rivera Valdez witnesses the same issue with a GeForce GT 525M (GF108M)
+of the same era, as does another Arch Linux user named "R0AR" with a
+more recent GeForce GTX 1050 Ti (GP107M).
 
-ti-sysc 48042000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48044000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48046000.target-module: sysc_flags 00000222 != 00000022
-...
+The commit exposes the discrete GPU's HDA controller and all four codecs
+on the controller do not set the CLKSTOP and EPSS bits in the Supported
+Power States Response.  They also do not set the PS-ClkStopOk bit in the
+Get Power State Response.  hda_codec_runtime_suspend() therefore does
+not call snd_hdac_codec_link_down(), which prevents each codec and the
+PCI device from runtime suspending.
 
-Let's fix these warnings by adding SYSC_HAS_RESET_STATUS. Let's also
-remove the useless parentheses while at it.
+The same issue is present on some AMD discrete GPUs and we addressed it
+by forcing runtime PM despite the bits not being set, see commit
+57cb54e53bdd ("ALSA: hda - Force to link down at runtime suspend on
+ATI/AMD HDMI").
 
-If it turns out we do have ti,sysc-omap4 compatible devices without a
-working SOFTRESET bit we can set up additional quirk handling for it.
+Do the same for Nvidia HDMI codecs.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
+Link: https://bbs.archlinux.org/viewtopic.php?pid=1865512
+Link: https://bugs.freedesktop.org/show_bug.cgi?id=75985#c81
+Reported-by: Przemysław Kopa <prymoo@gmail.com>
+Reported-by: Rivera Valdez <riveravaldez@ysinembargo.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: Daniel Drake <dan@reactivated.net>
+Cc: stable@vger.kernel.org # v5.3+
+Link: https://lore.kernel.org/r/3086bc75135c1e3567c5bc4f3cc4ff5cbf7a56c2.1571324194.git.lukas@wunner.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_hdmi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-index 9ded7bf972e71..3b8fe014a3e94 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-@@ -946,7 +946,8 @@ static struct omap_hwmod_class_sysconfig am33xx_timer_sysc = {
- 	.rev_offs	= 0x0000,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0014,
--	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-+	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
-+			  SYSC_HAS_RESET_STATUS,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
- 			  SIDLE_SMART_WKUP),
- 	.sysc_fields	= &omap_hwmod_sysc_type2,
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -3307,6 +3307,8 @@ static int patch_nvhdmi(struct hda_codec
+ 		nvhdmi_chmap_cea_alloc_validate_get_type;
+ 	spec->chmap.ops.chmap_validate = nvhdmi_chmap_validate;
+ 
++	codec->link_down_at_suspend = 1;
++
+ 	return 0;
+ }
+ 
 
 
