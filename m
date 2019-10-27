@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4E0E6958
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 024C4E695A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:36:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfJ0VId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54660 "EHLO mail.kernel.org"
+        id S1729364AbfJ0VIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbfJ0VI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:27 -0400
+        id S1728744AbfJ0VId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:08:33 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9A6120B7C;
-        Sun, 27 Oct 2019 21:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2977A20B7C;
+        Sun, 27 Oct 2019 21:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210506;
-        bh=apWKvyUIUtNX+3YsSJL5D6ID3OsKFOhQny8MCSXLP/w=;
+        s=default; t=1572210511;
+        bh=El9ZsWCJ0ZN4AZBe+Cgor0HJAgaRb2PCeyU5H1wVL+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yn9Tqd3tbRwD21Fk6nYP+eyVIZ/eIcXoUm9khDJIl1RCkvo8fh19aK3tFtPMDn8L7
-         fzpr7rJkeqU5lUZb89JXcqRwfTMUHzzxGKX0FCYDpIiAKi3mxidT+9TUlqBV9tdDoJ
-         e7/3sOgCfbutex2wutBRAhjTwiQFs7qG2Br0gpqc=
+        b=hH+ojIv3KXoOb9g87yvyTE3wrTK+73l5sWKHIozupLvp4OH9KlAxkymQWYdYnKvmC
+         H/z8YGnBduNYWqpR7RnlXTvtwRf7b8JwEqrChA21Ni94Cs2+CYA5oWdtih9zMp/VcZ
+         4gOD7nQkTzVkStTr0qNuOE2h30/0ZIXFc/MJUw3Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morse <james.morse@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 037/119] arm64: sysreg: Move to use definitions for all the SCTLR bits
-Date:   Sun, 27 Oct 2019 22:00:14 +0100
-Message-Id: <20191027203312.470729066@linuxfoundation.org>
+Subject: [PATCH 4.14 039/119] arm64: Fix the feature type for ID register fields
+Date:   Sun, 27 Oct 2019 22:00:16 +0100
+Message-Id: <20191027203313.723141654@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
 References: <20191027203259.948006506@linuxfoundation.org>
@@ -44,217 +47,207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 7a00d68ebe5f07cb1db17e7fedfd031f0d87e8bb ]
+[ Upstream commit 5bdecb7971572a1aef828df507558e7a4dfe25ec ]
 
-__cpu_setup() configures SCTLR_EL1 using some hard coded hex masks,
-and el2_setup() duplicates some this when setting RES1 bits.
+Now that the ARM ARM clearly specifies the rules for inferring
+the values of the ID register fields, fix the types of the
+feature bits we have in the kernel.
 
-Lets make this the same as KVM's hyp_init, which uses named bits.
+As per ARM ARM DDI0487B.b, section D10.1.4 "Principles of the
+ID scheme for fields in ID registers" lists the registers to
+which the scheme applies along with the exceptions.
 
-First, we add definitions for all the SCTLR_EL{1,2} bits, the RES{1,0}
-bits, and those we want to set or clear.
+This patch changes the relevant feature bits from FTR_EXACT
+to FTR_LOWER_SAFE to select the safer value. This will enable
+an older kernel running on a new CPU detect the safer option
+rather than completely disabling the feature.
 
-Add a build_bug checks to ensures all bits are either set or clear.
-This means we don't need to preserve endian-ness configuration
-generated elsewhere.
-
-Finally, move the head.S and proc.S users of these hard-coded masks
-over to the macro versions.
-
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/sysreg.h |   65 ++++++++++++++++++++++++++++++++++++++--
- arch/arm64/kernel/head.S        |   13 +-------
- arch/arm64/mm/proc.S            |   24 --------------
- 3 files changed, 67 insertions(+), 35 deletions(-)
+ arch/arm64/kernel/cpufeature.c |  102 ++++++++++++++++++++---------------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -20,6 +20,7 @@
- #ifndef __ASM_SYSREG_H
- #define __ASM_SYSREG_H
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -107,11 +107,11 @@ cpufeature_pan_not_uao(const struct arm6
+  * sync with the documentation of the CPU feature register ABI.
+  */
+ static const struct arm64_ftr_bits ftr_id_aa64isar0[] = {
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR0_DP_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR0_SM4_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR0_SM3_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR0_SHA3_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR0_RDM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_DP_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM4_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM3_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SHA3_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_RDM_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_ATOMICS_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_CRC32_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SHA2_SHIFT, 4, 0),
+@@ -121,36 +121,36 @@ static const struct arm64_ftr_bits ftr_i
+ };
  
-+#include <asm/compiler.h>
- #include <linux/stringify.h>
+ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR1_LRCPC_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR1_FCMA_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR1_JSCVT_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, ID_AA64ISAR1_DPB_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_LRCPC_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FCMA_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_JSCVT_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_DPB_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
  
- /*
-@@ -297,25 +298,81 @@
+ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_GIC_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_GIC_SHIFT, 4, 0),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+ 	/* Linux doesn't care about the EL3 */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_EXACT, ID_AA64PFR0_EL3_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_EL2_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_EL1_SHIFT, 4, ID_AA64PFR0_EL1_64BIT_ONLY),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_EL0_SHIFT, 4, ID_AA64PFR0_EL0_64BIT_ONLY),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_EL3_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_EL2_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_EL1_SHIFT, 4, ID_AA64PFR0_EL1_64BIT_ONLY),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_EL0_SHIFT, 4, ID_AA64PFR0_EL0_64BIT_ONLY),
+ 	ARM64_FTR_END,
+ };
  
- /* Common SCTLR_ELx flags. */
- #define SCTLR_ELx_EE    (1 << 25)
-+#define SCTLR_ELx_WXN	(1 << 19)
- #define SCTLR_ELx_I	(1 << 12)
- #define SCTLR_ELx_SA	(1 << 3)
- #define SCTLR_ELx_C	(1 << 2)
- #define SCTLR_ELx_A	(1 << 1)
- #define SCTLR_ELx_M	1
- 
-+#define SCTLR_ELx_FLAGS	(SCTLR_ELx_M | SCTLR_ELx_A | SCTLR_ELx_C | \
-+			 SCTLR_ELx_SA | SCTLR_ELx_I)
-+
-+/* SCTLR_EL2 specific flags. */
- #define SCTLR_EL2_RES1	((1 << 4)  | (1 << 5)  | (1 << 11) | (1 << 16) | \
- 			 (1 << 18) | (1 << 22) | (1 << 23) | (1 << 28) | \
- 			 (1 << 29))
-+#define SCTLR_EL2_RES0	((1 << 6)  | (1 << 7)  | (1 << 8)  | (1 << 9)  | \
-+			 (1 << 10) | (1 << 13) | (1 << 14) | (1 << 15) | \
-+			 (1 << 17) | (1 << 20) | (1 << 21) | (1 << 24) | \
-+			 (1 << 26) | (1 << 27) | (1 << 30) | (1 << 31))
-+
-+#ifdef CONFIG_CPU_BIG_ENDIAN
-+#define ENDIAN_SET_EL2		SCTLR_ELx_EE
-+#define ENDIAN_CLEAR_EL2	0
-+#else
-+#define ENDIAN_SET_EL2		0
-+#define ENDIAN_CLEAR_EL2	SCTLR_ELx_EE
-+#endif
-+
-+/* SCTLR_EL2 value used for the hyp-stub */
-+#define SCTLR_EL2_SET	(ENDIAN_SET_EL2   | SCTLR_EL2_RES1)
-+#define SCTLR_EL2_CLEAR	(SCTLR_ELx_M      | SCTLR_ELx_A    | SCTLR_ELx_C   | \
-+			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
-+			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
-+
-+/* Check all the bits are accounted for */
-+#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
- 
--#define SCTLR_ELx_FLAGS	(SCTLR_ELx_M | SCTLR_ELx_A | SCTLR_ELx_C | \
--			 SCTLR_ELx_SA | SCTLR_ELx_I)
- 
- /* SCTLR_EL1 specific flags. */
- #define SCTLR_EL1_UCI		(1 << 26)
-+#define SCTLR_EL1_E0E		(1 << 24)
- #define SCTLR_EL1_SPAN		(1 << 23)
-+#define SCTLR_EL1_NTWE		(1 << 18)
-+#define SCTLR_EL1_NTWI		(1 << 16)
- #define SCTLR_EL1_UCT		(1 << 15)
-+#define SCTLR_EL1_DZE		(1 << 14)
-+#define SCTLR_EL1_UMA		(1 << 9)
- #define SCTLR_EL1_SED		(1 << 8)
-+#define SCTLR_EL1_ITD		(1 << 7)
- #define SCTLR_EL1_CP15BEN	(1 << 5)
-+#define SCTLR_EL1_SA0		(1 << 4)
-+
-+#define SCTLR_EL1_RES1	((1 << 11) | (1 << 20) | (1 << 22) | (1 << 28) | \
-+			 (1 << 29))
-+#define SCTLR_EL1_RES0  ((1 << 6)  | (1 << 10) | (1 << 13) | (1 << 17) | \
-+			 (1 << 21) | (1 << 27) | (1 << 30) | (1 << 31))
-+
-+#ifdef CONFIG_CPU_BIG_ENDIAN
-+#define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
-+#define ENDIAN_CLEAR_EL1	0
-+#else
-+#define ENDIAN_SET_EL1		0
-+#define ENDIAN_CLEAR_EL1	(SCTLR_EL1_E0E | SCTLR_ELx_EE)
-+#endif
-+
-+#define SCTLR_EL1_SET	(SCTLR_ELx_M    | SCTLR_ELx_C    | SCTLR_ELx_SA   |\
-+			 SCTLR_EL1_SA0  | SCTLR_EL1_SED  | SCTLR_ELx_I    |\
-+			 SCTLR_EL1_DZE  | SCTLR_EL1_UCT  | SCTLR_EL1_NTWI |\
-+			 SCTLR_EL1_NTWE | SCTLR_EL1_SPAN | ENDIAN_SET_EL1 |\
-+			 SCTLR_EL1_UCI  | SCTLR_EL1_RES1)
-+#define SCTLR_EL1_CLEAR	(SCTLR_ELx_A   | SCTLR_EL1_CP15BEN | SCTLR_EL1_ITD    |\
-+			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
-+			 SCTLR_EL1_RES0)
-+
-+/* Check all the bits are accounted for */
-+#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
- 
- /* id_aa64isar0 */
- #define ID_AA64ISAR0_RDM_SHIFT		28
-@@ -463,6 +520,7 @@
- 
- #else
- 
-+#include <linux/build_bug.h>
- #include <linux/types.h>
- 
- asm(
-@@ -519,6 +577,9 @@ static inline void config_sctlr_el1(u32
- {
- 	u32 val;
- 
-+	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
-+	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
-+
- 	val = read_sysreg(sctlr_el1);
- 	val &= ~clear;
- 	val |= set;
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -388,17 +388,13 @@ ENTRY(el2_setup)
- 	mrs	x0, CurrentEL
- 	cmp	x0, #CurrentEL_EL2
- 	b.eq	1f
--	mrs	x0, sctlr_el1
--CPU_BE(	orr	x0, x0, #(3 << 24)	)	// Set the EE and E0E bits for EL1
--CPU_LE(	bic	x0, x0, #(3 << 24)	)	// Clear the EE and E0E bits for EL1
-+	mov_q	x0, (SCTLR_EL1_RES1 | ENDIAN_SET_EL1)
- 	msr	sctlr_el1, x0
- 	mov	w0, #BOOT_CPU_MODE_EL1		// This cpu booted in EL1
- 	isb
- 	ret
- 
--1:	mrs	x0, sctlr_el2
--CPU_BE(	orr	x0, x0, #(1 << 25)	)	// Set the EE bit for EL2
--CPU_LE(	bic	x0, x0, #(1 << 25)	)	// Clear the EE bit for EL2
-+1:	mov_q	x0, (SCTLR_EL2_RES1 | ENDIAN_SET_EL2)
- 	msr	sctlr_el2, x0
- 
- #ifdef CONFIG_ARM64_VHE
-@@ -505,10 +501,7 @@ install_el2_stub:
- 	 * requires no configuration, and all non-hyp-specific EL2 setup
- 	 * will be done via the _EL1 system register aliases in __cpu_setup.
- 	 */
--	/* sctlr_el1 */
--	mov	x0, #0x0800			// Set/clear RES{1,0} bits
--CPU_BE(	movk	x0, #0x33d0, lsl #16	)	// Set EE and E0E on BE systems
--CPU_LE(	movk	x0, #0x30d0, lsl #16	)	// Clear EE and E0E on LE systems
-+	mov_q	x0, (SCTLR_EL1_RES1 | ENDIAN_SET_EL1)
- 	msr	sctlr_el1, x0
- 
- 	/* Coprocessor traps. */
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -430,11 +430,7 @@ ENTRY(__cpu_setup)
+ static const struct arm64_ftr_bits ftr_id_aa64mmfr0[] = {
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_BIGENDEL0_SHIFT, 4, 0),
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_BIGENDEL0_SHIFT, 4, 0),
+ 	/* Linux shouldn't care about secure memory */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_EXACT, ID_AA64MMFR0_SNSMEM_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_BIGENDEL_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR0_ASID_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_SNSMEM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_BIGENDEL_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_ASID_SHIFT, 4, 0),
  	/*
- 	 * Prepare SCTLR
- 	 */
--	adr	x5, crval
--	ldp	w5, w6, [x5]
--	mrs	x0, sctlr_el1
--	bic	x0, x0, x5			// clear bits
--	orr	x0, x0, x6			// set bits
-+	mov_q	x0, SCTLR_EL1_SET
- 	/*
- 	 * Set/prepare TCR and TTBR. We use 512GB (39-bit) address range for
- 	 * both user and kernel.
-@@ -470,21 +466,3 @@ ENTRY(__cpu_setup)
- 	msr	tcr_el1, x10
- 	ret					// return to head.S
- ENDPROC(__cpu_setup)
--
--	/*
--	 * We set the desired value explicitly, including those of the
--	 * reserved bits. The values of bits EE & E0E were set early in
--	 * el2_setup, which are left untouched below.
--	 *
--	 *                 n n            T
--	 *       U E      WT T UD     US IHBS
--	 *       CE0      XWHW CZ     ME TEEA S
--	 * .... .IEE .... NEAI TE.I ..AD DEN0 ACAM
--	 * 0011 0... 1101 ..0. ..0. 10.. .0.. .... < hardware reserved
--	 * .... .1.. .... 01.1 11.1 ..01 0.01 1101 < software settings
--	 */
--	.type	crval, #object
--crval:
--	.word	0xfcffffff			// clear
--	.word	0x34d5d91d			// set
--	.popsection
+ 	 * Differing PARange is fine as long as all peripherals and memory are mapped
+ 	 * within the minimum PARange of all CPUs
+@@ -161,20 +161,20 @@ static const struct arm64_ftr_bits ftr_i
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64mmfr1[] = {
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_PAN_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR1_LOR_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR1_HPD_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR1_VHE_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR1_VMIDBITS_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR1_HADBS_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_LOR_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_HPD_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_VHE_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_VMIDBITS_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR1_HADBS_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64mmfr2[] = {
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR2_LVA_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR2_LSM_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR2_UAO_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64MMFR2_CNP_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_LVA_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_LSM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_UAO_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_CNP_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+ 
+@@ -201,14 +201,14 @@ struct arm64_ftr_reg arm64_ftr_reg_ctrel
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 28, 4, 0xf),	/* InnerShr */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 24, 4, 0),	/* FCSE */
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 28, 4, 0xf),	/* InnerShr */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 24, 4, 0),	/* FCSE */
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* AuxReg */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 16, 4, 0),	/* TCM */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 12, 4, 0),	/* ShareLvl */
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 8, 4, 0xf),	/* OuterShr */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 4, 4, 0),	/* PMSA */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 0, 4, 0),	/* VMSA */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 0),	/* TCM */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),	/* ShareLvl */
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0xf),	/* OuterShr */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),	/* PMSA */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),	/* VMSA */
+ 	ARM64_FTR_END,
+ };
+ 
+@@ -229,8 +229,8 @@ static const struct arm64_ftr_bits ftr_i
+ };
+ 
+ static const struct arm64_ftr_bits ftr_mvfr2[] = {
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 4, 4, 0),		/* FPMisc */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 0, 4, 0),		/* SIMDMisc */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),		/* FPMisc */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),		/* SIMDMisc */
+ 	ARM64_FTR_END,
+ };
+ 
+@@ -242,25 +242,25 @@ static const struct arm64_ftr_bits ftr_d
+ 
+ 
+ static const struct arm64_ftr_bits ftr_id_isar5[] = {
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_RDM_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_CRC32_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_SHA2_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_SHA1_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_AES_SHIFT, 4, 0),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_ISAR5_SEVL_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_RDM_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_CRC32_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_SHA2_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_SHA1_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_AES_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR5_SEVL_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_mmfr4[] = {
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 4, 4, 0),		/* ac2 */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),	/* ac2 */
+ 	ARM64_FTR_END,
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_pfr0[] = {
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 12, 4, 0),	/* State3 */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 8, 4, 0),		/* State2 */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 4, 4, 0),		/* State1 */
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 0, 4, 0),		/* State0 */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),		/* State3 */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0),		/* State2 */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),		/* State1 */
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),		/* State0 */
+ 	ARM64_FTR_END,
+ };
+ 
 
 
