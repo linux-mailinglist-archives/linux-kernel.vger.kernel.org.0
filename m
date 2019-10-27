@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6691E67BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36EEAE6585
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:02:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732425AbfJ0VYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:24:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45384 "EHLO mail.kernel.org"
+        id S1728152AbfJ0VCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:02:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732411AbfJ0VX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:23:58 -0400
+        id S1728139AbfJ0VCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:02:48 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6DAC21726;
-        Sun, 27 Oct 2019 21:23:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1729D2064A;
+        Sun, 27 Oct 2019 21:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211437;
-        bh=7hY4aOUAT25qZzu5Zp8O4Xw+/lhFo9NIKHCkfDHF/X4=;
+        s=default; t=1572210166;
+        bh=IsBStTCkeWmqdWA0ZgIgVTI6Qu3UtzZL3iN49SUkrIM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UY8tI9vtur6aqXfarJt/QpbYSSKBDLUIgI8QUN84g1+QwQQFBjwBRTponuW2eSUiT
-         ZIUoZZ/m5jA38NP39uTTNQWzUxxErTF7oRGhic4FKUDYqhMR3nhPG5uqRiUeyeeryc
-         t9w4NQKe59rb2+eD4Xo8zUdI7Ek8qDjc9vK6hUBY=
+        b=CNU8yWwaYZbwr0ZLewIURVpTPm/4AXUkvt60lnS0y9wMKKZZi/xtCXcmsToCL+c5D
+         FFql6RXknx6t2Ca+i7S8BcbBNiz1oyELwFpMXcgfezzbTyx1AtaZxTuKHuPtNyiosr
+         qK2TJdCCu3FBsMWxi8LZ6aIqDdQ4rin+CUuJ34oM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        James Zhu <James.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.3 134/197] drm/amdgpu/uvd7: fix allocation size in enc ring test (v2)
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 14/41] net: bcmgenet: Set phydev->dev_flags only for internal PHYs
 Date:   Sun, 27 Oct 2019 22:00:52 +0100
-Message-Id: <20191027203358.951696366@linuxfoundation.org>
+Message-Id: <20191027203111.748185407@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,133 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 5d230bc91f6c15e5d281f2851502918d98b9e770 upstream.
+[ Upstream commit 92696286f3bb37ba50e4bd8d1beb24afb759a799 ]
 
-We need to allocate a large enough buffer for the
-session info, otherwise the IB test can overwrite
-other memory.
+phydev->dev_flags is entirely dependent on the PHY device driver which
+is going to be used, setting the internal GENET PHY revision in those
+bits only makes sense when drivers/net/phy/bcm7xxx.c is the PHY driver
+being used.
 
-v2: - session info is 128K according to mesa
-    - use the same session info for create and destroy
-
-Bug: https://bugzilla.kernel.org/show_bug.cgi?id=204241
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: James Zhu <James.Zhu@amd.com>
-Tested-by: James Zhu <James.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: 487320c54143 ("net: bcmgenet: communicate integrated PHY revision to PHY driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Doug Berger <opendmb@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c |   33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/broadcom/genet/bcmmii.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
-@@ -214,13 +214,14 @@ static int uvd_v7_0_enc_ring_test_ring(s
-  * Open up a stream for HW test
-  */
- static int uvd_v7_0_enc_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
-+				       struct amdgpu_bo *bo,
- 				       struct dma_fence **fence)
- {
- 	const unsigned ib_size_dw = 16;
- 	struct amdgpu_job *job;
- 	struct amdgpu_ib *ib;
- 	struct dma_fence *f = NULL;
--	uint64_t dummy;
-+	uint64_t addr;
- 	int i, r;
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -346,11 +346,12 @@ int bcmgenet_mii_probe(struct net_device
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	struct device_node *dn = priv->pdev->dev.of_node;
+ 	struct phy_device *phydev;
+-	u32 phy_flags;
++	u32 phy_flags = 0;
+ 	int ret;
  
- 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
-@@ -228,15 +229,15 @@ static int uvd_v7_0_enc_get_create_msg(s
- 		return r;
+ 	/* Communicate the integrated PHY revision */
+-	phy_flags = priv->gphy_rev;
++	if (priv->internal_phy)
++		phy_flags = priv->gphy_rev;
  
- 	ib = &job->ibs[0];
--	dummy = ib->gpu_addr + 1024;
-+	addr = amdgpu_bo_gpu_offset(bo);
- 
- 	ib->length_dw = 0;
- 	ib->ptr[ib->length_dw++] = 0x00000018;
- 	ib->ptr[ib->length_dw++] = 0x00000001; /* session info */
- 	ib->ptr[ib->length_dw++] = handle;
- 	ib->ptr[ib->length_dw++] = 0x00000000;
--	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
--	ib->ptr[ib->length_dw++] = dummy;
-+	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
-+	ib->ptr[ib->length_dw++] = addr;
- 
- 	ib->ptr[ib->length_dw++] = 0x00000014;
- 	ib->ptr[ib->length_dw++] = 0x00000002; /* task info */
-@@ -275,13 +276,14 @@ err:
-  * Close up a stream for HW test or if userspace failed to do so
-  */
- static int uvd_v7_0_enc_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
--				struct dma_fence **fence)
-+					struct amdgpu_bo *bo,
-+					struct dma_fence **fence)
- {
- 	const unsigned ib_size_dw = 16;
- 	struct amdgpu_job *job;
- 	struct amdgpu_ib *ib;
- 	struct dma_fence *f = NULL;
--	uint64_t dummy;
-+	uint64_t addr;
- 	int i, r;
- 
- 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
-@@ -289,15 +291,15 @@ static int uvd_v7_0_enc_get_destroy_msg(
- 		return r;
- 
- 	ib = &job->ibs[0];
--	dummy = ib->gpu_addr + 1024;
-+	addr = amdgpu_bo_gpu_offset(bo);
- 
- 	ib->length_dw = 0;
- 	ib->ptr[ib->length_dw++] = 0x00000018;
- 	ib->ptr[ib->length_dw++] = 0x00000001;
- 	ib->ptr[ib->length_dw++] = handle;
- 	ib->ptr[ib->length_dw++] = 0x00000000;
--	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
--	ib->ptr[ib->length_dw++] = dummy;
-+	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
-+	ib->ptr[ib->length_dw++] = addr;
- 
- 	ib->ptr[ib->length_dw++] = 0x00000014;
- 	ib->ptr[ib->length_dw++] = 0x00000002;
-@@ -334,13 +336,20 @@ err:
- static int uvd_v7_0_enc_ring_test_ib(struct amdgpu_ring *ring, long timeout)
- {
- 	struct dma_fence *fence = NULL;
-+	struct amdgpu_bo *bo = NULL;
- 	long r;
- 
--	r = uvd_v7_0_enc_get_create_msg(ring, 1, NULL);
-+	r = amdgpu_bo_create_reserved(ring->adev, 128 * 1024, PAGE_SIZE,
-+				      AMDGPU_GEM_DOMAIN_VRAM,
-+				      &bo, NULL, NULL);
-+	if (r)
-+		return r;
-+
-+	r = uvd_v7_0_enc_get_create_msg(ring, 1, bo, NULL);
- 	if (r)
- 		goto error;
- 
--	r = uvd_v7_0_enc_get_destroy_msg(ring, 1, &fence);
-+	r = uvd_v7_0_enc_get_destroy_msg(ring, 1, bo, &fence);
- 	if (r)
- 		goto error;
- 
-@@ -352,6 +361,8 @@ static int uvd_v7_0_enc_ring_test_ib(str
- 
- error:
- 	dma_fence_put(fence);
-+	amdgpu_bo_unreserve(bo);
-+	amdgpu_bo_unref(&bo);
- 	return r;
- }
- 
+ 	/* Initialize link state variables that bcmgenet_mii_setup() uses */
+ 	priv->old_link = -1;
 
 
