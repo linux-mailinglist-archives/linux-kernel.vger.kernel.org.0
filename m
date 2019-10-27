@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5681AE660C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99CD7E6859
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbfJ0VIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
+        id S1731005AbfJ0V25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729303AbfJ0VH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:58 -0400
+        id S1730729AbfJ0VVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:44 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC5F720873;
-        Sun, 27 Oct 2019 21:07:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76D64214E0;
+        Sun, 27 Oct 2019 21:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210477;
-        bh=H9qPFSXEmi517p5/bsJsJ4u13zprYepTA2/NdxCmPqI=;
+        s=default; t=1572211303;
+        bh=Cgywksyt4H2wmbf4RTwC80HR3uuAZ4hEsERpXkzJm8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfK4CibjNIkmKHRR4BzMYG7CCeqL+aTAYSnbPYwVo1/P5eNYTZ+3jwJUJalPo2kRm
-         Pz0ClHhyazCG8ue27Hg5HKA3Xk8UMWKMmZikwDOaCViqtql4QHHdgQyS9jAyB1PAZQ
-         HVlEnpCKpmPo/F16pJ6fD+1camRguC4OrYIYTRBs=
+        b=g6ybWOshaY1tuL92SH+TPyO49bfASwNjhrnd/1gVLXKBdJpFTOr6pHwxuHLBrJ0ho
+         yVK6VtSUEAHZGvw25skkuT4rvGOYa9NPS/JZDsyR1hVk3i0+9Ho44UVKLFotJTFf3U
+         uZ3Tg8kRX87a5lwS08vmq4EySpEX3jwSy+K9Kydk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Alessio Balsini <balsini@android.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 028/119] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
+        stable@vger.kernel.org, Simon Horman <simon.horman@netronome.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 087/197] net: avoid errors when trying to pop MLPS header on non-MPLS packets
 Date:   Sun, 27 Oct 2019 22:00:05 +0100
-Message-Id: <20191027203308.865585869@linuxfoundation.org>
+Message-Id: <20191027203356.427262492@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alessio Balsini <balsini@android.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
+[ Upstream commit dedc5a08da07874c6e0d411e7f39c5c2cf137014 ]
 
-Enabling Direct I/O with loop devices helps reducing memory usage by
-avoiding double caching.  32 bit applications running on 64 bits systems
-are currently not able to request direct I/O because is missing from the
-lo_compat_ioctl.
+the following script:
 
-This patch fixes the compatibility issue mentioned above by exporting
-LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
-The input argument for this ioctl is a single long converted to a 1-bit
-boolean, so compatibility is preserved.
+ # tc qdisc add dev eth0 clsact
+ # tc filter add dev eth0 egress matchall action mpls pop
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Alessio Balsini <balsini@android.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+implicitly makes the kernel drop all packets transmitted by eth0, if they
+don't have a MPLS header. This behavior is uncommon: other encapsulations
+(like VLAN) just let the packet pass unmodified. Since the result of MPLS
+'pop' operation would be the same regardless of the presence / absence of
+MPLS header(s) in the original packet, we can let skb_mpls_pop() return 0
+when dealing with non-MPLS packets.
+
+For the OVS use-case, this is acceptable because __ovs_nla_copy_actions()
+already ensures that MPLS 'pop' operation only occurs with packets having
+an MPLS Ethernet type (and there are no other callers in current code, so
+the semantic change should be ok).
+
+v2: better documentation of use-cases for skb_mpls_pop(), thanks to Simon
+    Horman
+
+Fixes: 2a2ea50870ba ("net: sched: add mpls manipulation actions to TC")
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Acked-by: John Hurley <john.hurley@netronome.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/loop.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/core/skbuff.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 87d7c42affbc4..ec61dd873c93d 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1605,6 +1605,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 		arg = (unsigned long) compat_ptr(arg);
- 	case LOOP_SET_FD:
- 	case LOOP_CHANGE_FD:
-+	case LOOP_SET_DIRECT_IO:
- 		err = lo_ioctl(bdev, mode, cmd, arg);
- 		break;
- 	default:
--- 
-2.20.1
-
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -5524,7 +5524,7 @@ int skb_mpls_pop(struct sk_buff *skb, __
+ 	int err;
+ 
+ 	if (unlikely(!eth_p_mpls(skb->protocol)))
+-		return -EINVAL;
++		return 0;
+ 
+ 	err = skb_ensure_writable(skb, skb->mac_len + MPLS_HLEN);
+ 	if (unlikely(err))
 
 
