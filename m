@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF65CE6837
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C63E6592
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbfJ0VXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:23:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44682 "EHLO mail.kernel.org"
+        id S1728292AbfJ0VDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:03:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732355AbfJ0VX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:23:29 -0400
+        id S1728261AbfJ0VDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:03:15 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F27A214E0;
-        Sun, 27 Oct 2019 21:23:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD4C02064A;
+        Sun, 27 Oct 2019 21:03:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211408;
-        bh=l0pchxFYAHhyUv0q79nwe2Ng0yEf+Cg2EzxFV4FdCZU=;
+        s=default; t=1572210193;
+        bh=vSzc9HsvO8864r7VU+6QocCqs8J+dgGiZwvufdgUIlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iNCOP68UvMKi6KcsvY24SaqIh1paPYv3fLDlnyjoyMBoFS+VFV8cOFsm8YieVchU2
-         gkLUScIQvLlXBv1B9MKazQpbov3PzPpxjvg11vvlBPSnAszFL0+1b2x/tRv9gs3D91
-         v3Zq0c5GZ9mVpn2qd43NTcsbjm1mCvVbPCxTr7z8=
+        b=SCBlHhrrjIDX4vwvvI6hLWj2aJE07T4B82u95tI96AU1woPt47qTXEuVdXnorTRsg
+         C9rbdkFXSF6KmjhYhMZ0KUtXZWF5X7AUrOYkASDXK7kQJoLm4AV0MHuabL43dU/iY/
+         ADQ5CtqRAm9aWOvAJ93OYpFTmOJyTrN31syUmUW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.3 142/197] mmc: cqhci: Commit descriptors before setting the doorbell
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 22/41] USB: ldusb: fix memleak on disconnect
 Date:   Sun, 27 Oct 2019 22:01:00 +0100
-Message-Id: <20191027203359.367516888@linuxfoundation.org>
+Message-Id: <20191027203118.572227650@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
+References: <20191027203056.220821342@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +42,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit c07d0073b9ec80a139d07ebf78e9c30d2a28279e upstream.
+commit b14a39048c1156cfee76228bf449852da2f14df8 upstream.
 
-Add a write memory barrier to make sure that descriptors are actually
-written to memory, before ringing the doorbell.
+If disconnect() races with release() after a process has been
+interrupted, release() could end up returning early and the driver would
+fail to free its driver data.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191010125835.27031-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/cqhci.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/misc/ldusb.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -611,7 +611,8 @@ static int cqhci_request(struct mmc_host
- 	cq_host->slot[tag].flags = 0;
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -384,10 +384,7 @@ static int ld_usb_release(struct inode *
+ 		goto exit;
+ 	}
  
- 	cq_host->qcnt += 1;
--
-+	/* Make sure descriptors are ready before ringing the doorbell */
-+	wmb();
- 	cqhci_writel(cq_host, 1 << tag, CQHCI_TDBR);
- 	if (!(cqhci_readl(cq_host, CQHCI_TDBR) & (1 << tag)))
- 		pr_debug("%s: cqhci: doorbell not set for tag %d\n",
+-	if (mutex_lock_interruptible(&dev->mutex)) {
+-		retval = -ERESTARTSYS;
+-		goto exit;
+-	}
++	mutex_lock(&dev->mutex);
+ 
+ 	if (dev->open_count != 1) {
+ 		retval = -ENODEV;
 
 
