@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62426E661D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90294E6752
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:20:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfJ0VIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:08:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54996 "EHLO mail.kernel.org"
+        id S1731604AbfJ0VUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:20:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfJ0VIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:08:43 -0400
+        id S1731590AbfJ0VT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:19:58 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F27A20B7C;
-        Sun, 27 Oct 2019 21:08:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CD8E205C9;
+        Sun, 27 Oct 2019 21:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210522;
-        bh=8aKOuuqY5V4XqPQXlPH6ZYhPGkDDwBA5ONjdJGBW6rw=;
+        s=default; t=1572211198;
+        bh=MpeTyxLdGwSINKCEALywvaWEq2jpjZQmO+9Hqo0R9Hg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bKtDbg1a6Qz0/4PZBzMPg36VoHjXw4PzKFLtAhz+dxD95Su7CDuk/9Ccr+dih0FG/
-         g/UmVCQD7RtY1BgLBK2ZWRjwoqReSujxIYNSrSbDJLRJoko6xB4+u4/HadpWgDFdu8
-         O+IMjlnrWJqa+9H8WW3tsqWuY2o7FwRoe3ST4BDw=
+        b=WM8svX4GU2RY2NXCOHjaP9bVjOcZPXrC186GnIF6mShSZnMnAuq6+nUYMZTqoaLmE
+         EbEMvVO+qGc85lCcQd1z80KYnqA4Xl2jgDY5I7Uj7+HGZpysuuhSaUReY849M3Gs1d
+         3VXXRHvfaiKWzxo0TN+wG+zW47SFOs0fRU0mbMJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 007/119] net: dsa: qca8k: Use up to 7 ports for all operations
+Subject: [PATCH 5.3 066/197] Revert "drm/radeon: Fix EEH during kexec"
 Date:   Sun, 27 Oct 2019 21:59:44 +0100
-Message-Id: <20191027203301.305547161@linuxfoundation.org>
+Message-Id: <20191027203355.221286144@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Vokáč <michal.vokac@ysoft.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 7ae6d93c8f052b7a77ba56ed0f654e22a2876739 ]
+[ Upstream commit 8d13c187c42e110625d60094668a8f778c092879 ]
 
-The QCA8K family supports up to 7 ports. So use the existing
-QCA8K_NUM_PORTS define to allocate the switch structure and limit all
-operations with the switch ports.
+This reverts commit 6f7fe9a93e6c09bf988c5059403f5f88e17e21e6.
 
-This was not an issue until commit 0394a63acfe2 ("net: dsa: enable and
-disable all ports") disabled all unused ports. Since the unused ports 7-11
-are outside of the correct register range on this switch some registers
-were rewritten with invalid content.
+This breaks some boards.  Maybe just enable this on PPC for
+now?
 
-Fixes: 6b93fb46480a ("net-next: dsa: add new driver for qca8xxx family")
-Fixes: a0c02161ecfc ("net: dsa: variable number of ports")
-Fixes: 0394a63acfe2 ("net: dsa: enable and disable all ports")
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=205147
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/qca8k.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index c3c9d7e33bd6c..8e49974ffa0ed 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -551,7 +551,7 @@ qca8k_setup(struct dsa_switch *ds)
- 		    BIT(0) << QCA8K_GLOBAL_FW_CTRL1_UC_DP_S);
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 5cc0fbb04ab14..7033f3a38c878 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -380,19 +380,11 @@ radeon_pci_remove(struct pci_dev *pdev)
+ static void
+ radeon_pci_shutdown(struct pci_dev *pdev)
+ {
+-	struct drm_device *ddev = pci_get_drvdata(pdev);
+-
+ 	/* if we are running in a VM, make sure the device
+ 	 * torn down properly on reboot/shutdown
+ 	 */
+ 	if (radeon_device_is_virtual())
+ 		radeon_pci_remove(pdev);
+-
+-	/* Some adapters need to be suspended before a
+-	* shutdown occurs in order to prevent an error
+-	* during kexec.
+-	*/
+-	radeon_suspend_kms(ddev, true, true, false);
+ }
  
- 	/* Setup connection between CPU port & user ports */
--	for (i = 0; i < DSA_MAX_PORTS; i++) {
-+	for (i = 0; i < QCA8K_NUM_PORTS; i++) {
- 		/* CPU port gets connected to all user ports of the switch */
- 		if (dsa_is_cpu_port(ds, i)) {
- 			qca8k_rmw(priv, QCA8K_PORT_LOOKUP_CTRL(QCA8K_CPU_PORT),
-@@ -900,7 +900,7 @@ qca8k_sw_probe(struct mdio_device *mdiodev)
- 	if (id != QCA8K_ID_QCA8337)
- 		return -ENODEV;
- 
--	priv->ds = dsa_switch_alloc(&mdiodev->dev, DSA_MAX_PORTS);
-+	priv->ds = dsa_switch_alloc(&mdiodev->dev, QCA8K_NUM_PORTS);
- 	if (!priv->ds)
- 		return -ENOMEM;
- 
+ static int radeon_pmops_suspend(struct device *dev)
 -- 
 2.20.1
 
