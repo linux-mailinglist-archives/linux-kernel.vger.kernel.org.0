@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B069E6590
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D241AE67EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfJ0VDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:03:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
+        id S1732780AbfJ0VZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:25:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728225AbfJ0VDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:03:12 -0400
+        id S1732770AbfJ0VZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:35 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F11982064A;
-        Sun, 27 Oct 2019 21:03:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0651B21783;
+        Sun, 27 Oct 2019 21:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210190;
-        bh=KT9OedwaWzFobZ9k8xos3LGtnKHo9pu1eqz1AxaOMAY=;
+        s=default; t=1572211534;
+        bh=Y2PGDeGpqDF5Aq1B/bYZdGBz4DvQrgjH7TQuNiejeWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ARzDjsmf993+hcIT6j200xc4bQpDFhRgvIor1sglFCYiQ/cuw7JGQ7XN+IcvXJibX
-         wcVbOdZ/TG2ttXli2ceYm6K+eMOJbT6whdv752/oVdiizyqc6dP9Ifu0RrPuowKe8c
-         B7rMvjB7DDEIUroI8M9Xnqg1h9a1do5HTuPOvhUA=
+        b=ZNfTg1j2vaPklHnlY1ZtqEdBUG8BDX0l2+2NuLm3sof2SSvI9FVCCcEBDgkUtvMA6
+         G00cL6Qt+/6WWIXz8IEU1Qoi+iI+xkc8BpU5BuwI7zyaw7OjhtRA3YxusDvOwrgpxp
+         pVUXe4sZY8+Bt0jVY9ZEU7Aug18zCeMV8cUW4a9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 21/41] USB: serial: ti_usb_3410_5052: fix port-close races
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Bruno Thomsen <bruno.thomsen@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.3 141/197] mmc: mxs: fix flags passed to dmaengine_prep_slave_sg
 Date:   Sun, 27 Oct 2019 22:00:59 +0100
-Message-Id: <20191027203118.507966691@linuxfoundation.org>
+Message-Id: <20191027203359.315800560@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,53 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-commit 6f1d1dc8d540a9aa6e39b9cb86d3a67bbc1c8d8d upstream.
+commit 2bb9f7566ba7ab3c2154964461e37b52cdc6b91b upstream.
 
-Fix races between closing a port and opening or closing another port on
-the same device which could lead to a failure to start or stop the
-shared interrupt URB. The latter could potentially cause a
-use-after-free or worse in the completion handler on driver unbind.
+Since ceeeb99cd821 we no longer abuse the DMA_CTRL_ACK flag for custom
+driver use and introduced the MXS_DMA_CTRL_WAIT4END instead. We have not
+changed all users to this flag though. This patch fixes it for the
+mxs-mmc driver.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: ceeeb99cd821 ("dmaengine: mxs: rename custom flag")
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Tested-by: Fabio Estevam <festevam@gmail.com>
+Reported-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+Tested-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ti_usb_3410_5052.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/mmc/host/mxs-mmc.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/ti_usb_3410_5052.c
-+++ b/drivers/usb/serial/ti_usb_3410_5052.c
-@@ -542,7 +542,6 @@ static void ti_close(struct usb_serial_p
- 	struct ti_port *tport;
- 	int port_number;
- 	int status;
--	int do_unlock;
- 	unsigned long flags;
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -17,6 +17,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
++#include <linux/dma/mxs-dma.h>
+ #include <linux/highmem.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
+@@ -266,7 +267,7 @@ static void mxs_mmc_bc(struct mxs_mmc_ho
+ 	ssp->ssp_pio_words[2] = cmd1;
+ 	ssp->dma_dir = DMA_NONE;
+ 	ssp->slave_dirn = DMA_TRANS_NONE;
+-	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
++	desc = mxs_mmc_prep_dma(host, MXS_DMA_CTRL_WAIT4END);
+ 	if (!desc)
+ 		goto out;
  
- 	tdev = usb_get_serial_data(port->serial);
-@@ -569,16 +568,13 @@ static void ti_close(struct usb_serial_p
- 			"%s - cannot send close port command, %d\n"
- 							, __func__, status);
+@@ -311,7 +312,7 @@ static void mxs_mmc_ac(struct mxs_mmc_ho
+ 	ssp->ssp_pio_words[2] = cmd1;
+ 	ssp->dma_dir = DMA_NONE;
+ 	ssp->slave_dirn = DMA_TRANS_NONE;
+-	desc = mxs_mmc_prep_dma(host, DMA_CTRL_ACK);
++	desc = mxs_mmc_prep_dma(host, MXS_DMA_CTRL_WAIT4END);
+ 	if (!desc)
+ 		goto out;
  
--	/* if mutex_lock is interrupted, continue anyway */
--	do_unlock = !mutex_lock_interruptible(&tdev->td_open_close_lock);
-+	mutex_lock(&tdev->td_open_close_lock);
- 	--tport->tp_tdev->td_open_port_count;
--	if (tport->tp_tdev->td_open_port_count <= 0) {
-+	if (tport->tp_tdev->td_open_port_count == 0) {
- 		/* last port is closed, shut down interrupt urb */
- 		usb_kill_urb(port->serial->port[0]->interrupt_in_urb);
--		tport->tp_tdev->td_open_port_count = 0;
- 	}
--	if (do_unlock)
--		mutex_unlock(&tdev->td_open_close_lock);
-+	mutex_unlock(&tdev->td_open_close_lock);
- }
- 
+@@ -441,7 +442,7 @@ static void mxs_mmc_adtc(struct mxs_mmc_
+ 	host->data = data;
+ 	ssp->dma_dir = dma_data_dir;
+ 	ssp->slave_dirn = slave_dirn;
+-	desc = mxs_mmc_prep_dma(host, DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
++	desc = mxs_mmc_prep_dma(host, DMA_PREP_INTERRUPT | MXS_DMA_CTRL_WAIT4END);
+ 	if (!desc)
+ 		goto out;
  
 
 
