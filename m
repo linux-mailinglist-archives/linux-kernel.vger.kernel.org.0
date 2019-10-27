@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976DAE65FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B97B5E6762
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbfJ0VH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:07:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53386 "EHLO mail.kernel.org"
+        id S1731730AbfJ0VUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbfJ0VHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:07:23 -0400
+        id S1730775AbfJ0VUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:20:32 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 783932064A;
-        Sun, 27 Oct 2019 21:07:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13EAF21848;
+        Sun, 27 Oct 2019 21:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210443;
-        bh=WbnXvxpwEoGnorjSiLoymXvZ3F79jV+5PNgIiuu3PTk=;
+        s=default; t=1572211231;
+        bh=7yoZoRGGFhcYeBasBZNTGWbaRNQSgC+J70ieIlJyhLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RXWyOkrdUWCarX94e8XY9osv6UXv4A21KFq7VOSlDs03aOPjxvyloid7TAF5oVjhe
-         FDP0mqbCLfGeU8UMVDlvD37r5GkDW46kVLieYZ7uwWGG3vBFHypNDQQ/88d83jhfg7
-         8S5POXdG+HYDd+qD8ajczoYAYOdSx5DwRFFvnT+0=
+        b=dr7lHKvKlrWMIj++XDinxDWPTOLFyhMM1uGlff0iddWW5++0zhZU3sAQb86ytYRDv
+         E/FqblT0S37RPCs8IFfnYH1jFNwNFjA5th0/D6Lbua5fZ6kXE8PU0ksS1YOf4tiWqr
+         CETl88b82aNgMsi1QS04viPiuQjegaBw6SOj0V/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 017/119] Revert "drm/radeon: Fix EEH during kexec"
-Date:   Sun, 27 Oct 2019 21:59:54 +0100
-Message-Id: <20191027203304.817080909@linuxfoundation.org>
+        stable@vger.kernel.org, Biao Huang <biao.huang@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 077/197] net: stmmac: disable/enable ptp_ref_clk in suspend/resume flow
+Date:   Sun, 27 Oct 2019 21:59:55 +0100
+Message-Id: <20191027203355.826603403@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Biao Huang <biao.huang@mediatek.com>
 
-[ Upstream commit 8d13c187c42e110625d60094668a8f778c092879 ]
+[ Upstream commit e497c20e203680aba9ccf7bb475959595908ca7e ]
 
-This reverts commit 6f7fe9a93e6c09bf988c5059403f5f88e17e21e6.
+disable ptp_ref_clk in suspend flow, and enable it in resume flow.
 
-This breaks some boards.  Maybe just enable this on PPC for
-now?
-
-Bug: https://bugzilla.kernel.org/show_bug.cgi?id=205147
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f573c0b9c4e0 ("stmmac: move stmmac_clk, pclk, clk_ptp_ref and stmmac_rst to platform structure")
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/radeon/radeon_drv.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 54d97dd5780a1..f4becad0a78c0 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -368,19 +368,11 @@ radeon_pci_remove(struct pci_dev *pdev)
- static void
- radeon_pci_shutdown(struct pci_dev *pdev)
- {
--	struct drm_device *ddev = pci_get_drvdata(pdev);
--
- 	/* if we are running in a VM, make sure the device
- 	 * torn down properly on reboot/shutdown
- 	 */
- 	if (radeon_device_is_virtual())
- 		radeon_pci_remove(pdev);
--
--	/* Some adapters need to be suspended before a
--	* shutdown occurs in order to prevent an error
--	* during kexec.
--	*/
--	radeon_suspend_kms(ddev, true, true, false);
- }
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4480,8 +4480,10 @@ int stmmac_suspend(struct device *dev)
+ 		stmmac_mac_set(priv, priv->ioaddr, false);
+ 		pinctrl_pm_select_sleep_state(priv->device);
+ 		/* Disable clock in case of PWM is off */
+-		clk_disable(priv->plat->pclk);
+-		clk_disable(priv->plat->stmmac_clk);
++		if (priv->plat->clk_ptp_ref)
++			clk_disable_unprepare(priv->plat->clk_ptp_ref);
++		clk_disable_unprepare(priv->plat->pclk);
++		clk_disable_unprepare(priv->plat->stmmac_clk);
+ 	}
+ 	mutex_unlock(&priv->lock);
  
- static int radeon_pmops_suspend(struct device *dev)
--- 
-2.20.1
-
+@@ -4544,8 +4546,10 @@ int stmmac_resume(struct device *dev)
+ 	} else {
+ 		pinctrl_pm_select_default_state(priv->device);
+ 		/* enable the clk previously disabled */
+-		clk_enable(priv->plat->stmmac_clk);
+-		clk_enable(priv->plat->pclk);
++		clk_prepare_enable(priv->plat->stmmac_clk);
++		clk_prepare_enable(priv->plat->pclk);
++		if (priv->plat->clk_ptp_ref)
++			clk_prepare_enable(priv->plat->clk_ptp_ref);
+ 		/* reset the phy so that it's ready */
+ 		if (priv->mii)
+ 			stmmac_mdio_reset(priv->mii);
 
 
