@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CB5E62D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 15:03:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D33E6309
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 15:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfJ0ODz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 10:03:55 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38162 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfJ0ODz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 10:03:55 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q78so8568984lje.5
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 07:03:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aUtxqBrTqUG2JQM67qlbeu/gWrmsCKLHs/nf3HjwR6o=;
-        b=UBVoDLidxhGRZnO3t3s9odW+975NWscpsgyn72pMoIFtMXrLI8gYCDX8RoEk4dUGpu
-         XShVkulYmvYa4f4vPiGJkAOAAjj/NBHXSLZISLlhGaOzl5SAbZ6BhT9CpKJEgEzb8LhN
-         G2c7dQQvyPPapIvGT5FeHB9zbcHI3CN4A0Ff0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aUtxqBrTqUG2JQM67qlbeu/gWrmsCKLHs/nf3HjwR6o=;
-        b=pjJtU5xk+M2Xxhbtap4iD52OqsfKYRqwDY+bUWIpmDTlUgNyHKdzVh5Fgsv6ZRbtRf
-         dLPnpPCtpzSUC9ECfhSNqgz5//JOBpOvTfneglPWByMxJzhKa1BFKa48ZajiKuLYlt4S
-         ro1tXLDrfHgp9Wh11n3ft0Iyj63fhwF3UgyASXI0G4/fBx1SxXwvl8od97iGyY6aq6tD
-         m+9xec1Ilft38zLBqXVUlzaYZdt3bsRzZvrIaShDJMOgw3qYP39EnWuqjxmyYeFOrmMr
-         5BCQkrd6eZO21KiYSWfRPCo9S9d19jpmlExEwhERyr/nuypxpMIKZUZe9xteEMJTZI2z
-         yGfg==
-X-Gm-Message-State: APjAAAUlBxj4xIuSSNhVGwhG8udQb3CdcmdJulnnTu3zyNbwti8Tvoux
-        lH24O/KXTBTsz/PlgTfT4lWaoIV2EUCW5w==
-X-Google-Smtp-Source: APXvYqzHz0lHMKtGgtV/S9KiPBJL3wUGA+rPXOcwm9SWf3XNCkwSJQmMmDU12a9eLWCNqsKAfPRiig==
-X-Received: by 2002:a2e:7405:: with SMTP id p5mr8715432ljc.191.1572185033137;
-        Sun, 27 Oct 2019 07:03:53 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id w20sm5301877lff.46.2019.10.27.07.03.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2019 07:03:52 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id l21so8566941lje.4
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 07:03:52 -0700 (PDT)
-X-Received: by 2002:a05:651c:331:: with SMTP id b17mr8760744ljp.133.1572185032112;
- Sun, 27 Oct 2019 07:03:52 -0700 (PDT)
+        id S1726956AbfJ0O1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 10:27:07 -0400
+Received: from mout.perfora.net ([74.208.4.194]:34647 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726541AbfJ0O1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 10:27:06 -0400
+Received: from marcel-nb-toradex-int.toradex.int ([31.10.206.124]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0LfRRn-1he65P42eX-00p7fq; Sun, 27 Oct 2019 15:26:23 +0100
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     devicetree@vger.kernel.org, info@logictechno.com,
+        j.bauer@endrich.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v2 1/3] dt-bindings: add vendor prefix for logic technologies limited
+Date:   Sun, 27 Oct 2019 15:26:07 +0100
+Message-Id: <20191027142609.12754-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 27 Oct 2019 10:03:35 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wh7cf3ANq-G9MmwSQiUK2d-=083C0HV_8hTGe2Mb4X7JA@mail.gmail.com>
-Message-ID: <CAHk-=wh7cf3ANq-G9MmwSQiUK2d-=083C0HV_8hTGe2Mb4X7JA@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:heAvjHkMaQ14q2AF3Kh8VU+foLLPfuqVtVUsSN0DU7wAn6jdBCi
+ kzN+cvsQP/1Rbh0r2hYunbuT+PtH2UVZEftITahIy90Eg+EKW3nTG6TomsUh8gzC4q6RpOu
+ vVtT73rG6lWNmoPllJCa7CfYSLSMNl/EbqwdBGq5qCAV2EqsyvoC9ruOl9kgWr7xWW21APM
+ sWpnZESnqXeNCDCqF7iHQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TJ6us2BmZo8=:QSjvIflxkNhYzy1fkhJabB
+ ysxxNlXhSHyEIT3m9fLCDPzoBXhLGx1MMSulX7MIJrfkEfRmT/sy6ULWRpbLBC6j8gurXqE+c
+ 7rgnbzpYIGVA/AlhQEOl8ajUyBAhpOD2cz4ADpgCIXB8JOnBSWLr4rkOCaeG0oZtHxpXIDygV
+ 0MLcGDz7cis9KkmZPRPjVutsS4cppRiCYcz3hntgfUg9dTTEI0LTC3M77HTLlY6Iraf3Q0Vfu
+ A63UT+in6O2RMFnKY8PrXj2PdJJjD5lPqRaHZcwmx2yO13rJ5D9aI1ad5BE4uIGrBwYTKVp54
+ aRuE5B6hyFX/tBShOdiQbkxmhID/c/Gw6CDqAzrtgJFNJb3q3QxCxDk0+yll+AE2xAySr4RL0
+ 1x1cAvjA7WUF0XhAonELOTtBUK9oyY2+b/4k9aP3ROPRHI5/y33ihs/GNde7eYemjwTw91GYq
+ 1Zo1yf/u+8iqax89uXu50ZbWuuCcAowOkTryFDx8YznGvp4I0h0Wjsipw7XI+xRy76gzJWFe6
+ eKERL/VrpOxkAJFSfQSH/0n28SL+dJNv2gswbAtf/60Bk4cpfSDTX4qr1zvnzm68Ob/HhQ3w3
+ lWGbM9H2axUA6HRfrT8idPnYokUncUF+pX+xJmS+NtzDKwoauQjviUwTJi/yGfPI3PQGsEyv9
+ FiWzlNzHvWStSix/mbP6YvcyPqbtRkUEQKnJUL3lyAdaiyQbZy8ZA1eub1kAZhrbovAwwhtuW
+ 92aVLUtZIEJI/1pNvc0ofvsXWGb+GpDULJefel2MQ0xexTJIJnroF27dReDNxZPxsxo2u3tYO
+ rmcNn/iq4PwJMMqZBLZKNFNFjrOLSHz3OkxWw3+W7Zoqvo6+HkvYxqHy9TcBU0q5aDEulNGIc
+ smJMrl22Lxz2TDJvknTx6kTnC4ozRkc6ZF+9PX24E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This still has signs of that earlier series:
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-On Wed, Oct 23, 2019 at 4:17 PM David Howells <dhowells@redhat.com> wrote:
->
->                 if (rem >= ibuf->len) {
->                         *obuf = *ibuf;
->                         ibuf->ops = NULL;
-> -                       pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
-> -                       pipe->nrbufs--;
-> +                       tail++;
-> +                       pipe_commit_read(pipe, tail);
->                 } else {
->                         if (!pipe_buf_get(pipe, ibuf))
->                                 goto out_free;
+Add vendor prefix for Logic Technologies Limited [1] which is a Chinese
+display manufacturer e.g. distributed by German Endrich Bauelemente
+Vertriebs GmbH [2].
 
-with those odd "pipe_commit_read/write()" helpers.
+[1] https://logictechno.com/contact-us/
+[2] https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
 
-They make no sense, and they don't make things more legible.
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Philippe Schenker <philippe.schenker@toradex.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
-It's shorter and more obvious to just write
+---
 
-   pipe->head = head;
+Changes in v2:
+- Added Philippe's reviewed-by.
+- Added Rob's acked-by.
 
-than it is to write
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-   pipe_commit_write(pipe, head);
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9a8495e39c5b..94aea715d4e2 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -543,6 +543,8 @@ patternProperties:
+     description: Linear Technology Corporation
+   "^logicpd,.*":
+     description: Logic PD, Inc.
++  "^logictechno,.*":
++    description: Logic Technologies Limited
+   "^longcheer,.*":
+     description: Longcheer Technology (Shanghai) Co., Ltd.
+   "^lsi,.*":
+-- 
+2.21.0
 
-Even when the addition of the notifications,  it's all under the
-pipe->wait.lock, so it's all just regular assignments.
-
-Now, if at some point it starts doing fancy lockless things, at _that_
-point the updates might become more complex, but that's a potential
-future thing that wouldn't be relevant for a while, and isn't a reason
-to make the code more obscure now.
-
-Hmm?
-
-             Linus
