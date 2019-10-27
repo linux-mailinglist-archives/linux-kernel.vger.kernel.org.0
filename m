@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18582E65CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:05:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC7AE67B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfJ0VFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51008 "EHLO mail.kernel.org"
+        id S1730501AbfJ0VXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbfJ0VFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:05:15 -0400
+        id S1731704AbfJ0VXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:31 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31C4B20873;
-        Sun, 27 Oct 2019 21:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1ED0205C9;
+        Sun, 27 Oct 2019 21:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210314;
-        bh=e8q2fJU5INpq5s5LPoJnI797ee9zQRET5r6ihIlgYLU=;
+        s=default; t=1572211411;
+        bh=txFVa3o1tO0XS4afHK4M0KfRj3uMT4moVpCZDTRCnuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KkOMyAxKHzuQpgX/UXAIWElqcB32kOV7jwyqbmEiPpN34Xheg5WOUehCYqBTXI+CJ
-         7gvLYoLxw26A3EK72sbhdUkJOjc9ahFSA1i9qP0ZLIGOYjQXlgC4qPoDrHWr/lv12t
-         pMIgrwmsBoGDXSQ+sWZDaCgJUS6JuOqO1kpCvxvA=
+        b=toZ10yMHw7FOdT58aXlKPLd4MpdK+BSI+A1ACI8JlWqFzlZI3XSFtY4QlOqBkiqjO
+         SAMFN911EWUz+5uODWqo5Bs0au8VHblTTnv/u6nx/gAS8ETnwZaGLOq5Tj4L+wFXeh
+         eLFp64ddHgq/Cc1qxb+XMmGBD66bYc+PdQ40MX8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 22/49] memfd: Fix locking when tagging pins
-Date:   Sun, 27 Oct 2019 22:01:00 +0100
-Message-Id: <20191027203136.648201012@linuxfoundation.org>
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.3 143/197] mmc: sdhci-omap: Fix Tuning procedure for temperatures < -20C
+Date:   Sun, 27 Oct 2019 22:01:01 +0100
+Message-Id: <20191027203359.418304808@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,99 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox (Oracle) <willy@infradead.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-The RCU lock is insufficient to protect the radix tree iteration as
-a deletion from the tree can occur before we take the spinlock to
-tag the entry.  In 4.19, this has manifested as a bug with the following
-trace:
+commit feb40824d78eac5e48f56498dca941754dff33d7 upstream.
 
-kernel BUG at lib/radix-tree.c:1429!
-invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 7 PID: 6935 Comm: syz-executor.2 Not tainted 4.19.36 #25
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-RIP: 0010:radix_tree_tag_set+0x200/0x2f0 lib/radix-tree.c:1429
-Code: 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 89 44 24 10 e8 a3 29 7e fe 48 8b 44 24 10 48 0f ab 03 e9 d2 fe ff ff e8 90 29 7e fe <0f> 0b 48 c7 c7 e0 5a 87 84 e8 f0 e7 08 ff 4c 89 ef e8 4a ff ac fe
-RSP: 0018:ffff88837b13fb60 EFLAGS: 00010016
-RAX: 0000000000040000 RBX: ffff8883c5515d58 RCX: ffffffff82cb2ef0
-RDX: 0000000000000b72 RSI: ffffc90004cf2000 RDI: ffff8883c5515d98
-RBP: ffff88837b13fb98 R08: ffffed106f627f7e R09: ffffed106f627f7e
-R10: 0000000000000001 R11: ffffed106f627f7d R12: 0000000000000004
-R13: ffffea000d7fea80 R14: 1ffff1106f627f6f R15: 0000000000000002
-FS:  00007fa1b8df2700(0000) GS:ffff8883e2fc0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa1b8df1db8 CR3: 000000037d4d2001 CR4: 0000000000160ee0
-Call Trace:
- memfd_tag_pins mm/memfd.c:51 [inline]
- memfd_wait_for_pins+0x2c5/0x12d0 mm/memfd.c:81
- memfd_add_seals mm/memfd.c:215 [inline]
- memfd_fcntl+0x33d/0x4a0 mm/memfd.c:247
- do_fcntl+0x589/0xeb0 fs/fcntl.c:421
- __do_sys_fcntl fs/fcntl.c:463 [inline]
- __se_sys_fcntl fs/fcntl.c:448 [inline]
- __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:448
- do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:293
+According to the App note[1] detailing the tuning algorithm, for
+temperatures < -20C, the initial tuning value should be min(largest value
+in LPW - 24, ceil(13/16 ratio of LPW)). The largest value in LPW is
+(max_window + 4 * (max_len - 1)) and not (max_window + 4 * max_len) itself.
+Fix this implementation.
 
-The problem does not occur in mainline due to the XArray rewrite which
-changed the locking to exclude modification of the tree during iteration.
-At the time, nobody realised this was a bugfix.  Backport the locking
-changes to stable.
+[1] http://www.ti.com/lit/an/spraca9b/spraca9b.pdf
 
+Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding SDR104/HS200 tuning failures (i929)")
 Cc: stable@vger.kernel.org
-Reported-by: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/shmem.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/mmc/host/sdhci-omap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 944242491059d..ac8a5fedc2454 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2457,11 +2457,12 @@ static void shmem_tag_pins(struct address_space *mapping)
- 	void **slot;
- 	pgoff_t start;
- 	struct page *page;
-+	unsigned int tagged = 0;
- 
- 	lru_add_drain();
- 	start = 0;
--	rcu_read_lock();
- 
-+	spin_lock_irq(&mapping->tree_lock);
- 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
- 		page = radix_tree_deref_slot(slot);
- 		if (!page || radix_tree_exception(page)) {
-@@ -2470,18 +2471,19 @@ static void shmem_tag_pins(struct address_space *mapping)
- 				continue;
- 			}
- 		} else if (page_count(page) - page_mapcount(page) > 1) {
--			spin_lock_irq(&mapping->tree_lock);
- 			radix_tree_tag_set(&mapping->page_tree, iter.index,
- 					   SHMEM_TAG_PINNED);
--			spin_unlock_irq(&mapping->tree_lock);
- 		}
- 
--		if (need_resched()) {
--			cond_resched_rcu();
--			slot = radix_tree_iter_next(&iter);
--		}
-+		if (++tagged % 1024)
-+			continue;
-+
-+		slot = radix_tree_iter_next(&iter);
-+		spin_unlock_irq(&mapping->tree_lock);
-+		cond_resched();
-+		spin_lock_irq(&mapping->tree_lock);
- 	}
--	rcu_read_unlock();
-+	spin_unlock_irq(&mapping->tree_lock);
- }
- 
- /*
--- 
-2.20.1
-
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -372,7 +372,7 @@ static int sdhci_omap_execute_tuning(str
+ 	 * on temperature
+ 	 */
+ 	if (temperature < -20000)
+-		phase_delay = min(max_window + 4 * max_len - 24,
++		phase_delay = min(max_window + 4 * (max_len - 1) - 24,
+ 				  max_window +
+ 				  DIV_ROUND_UP(13 * max_len, 16) * 4);
+ 	else if (temperature < 20000)
 
 
