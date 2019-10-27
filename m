@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1524E6767
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF40FE6600
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbfJ0VUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41220 "EHLO mail.kernel.org"
+        id S1728287AbfJ0VHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbfJ0VUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:37 -0400
+        id S1729186AbfJ0VHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:07:32 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71D94205C9;
-        Sun, 27 Oct 2019 21:20:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F5EF208C0;
+        Sun, 27 Oct 2019 21:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211237;
-        bh=FRcip+bf8Avo8hiV0AGljEttBNu7felxz/jLbrHDQbg=;
+        s=default; t=1572210451;
+        bh=bCP1+fHmBV8/BGs0SY8FTbr8SneORJVTftd2CEs2aCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1PBmd/nRqP5OdNj7//+HgdRiqkFJVvUlY+s3souE0hhWXxkp5CXoXzuhXtTvvQp4A
-         dzi8QtYkbKbR5K/RMqhiEnnzgkGkCrGun3q88RxaZ3bO9R+JO4alUCoV4BHZxt756w
-         /JsoY5XWVCw9xGS24sGc4gjgjTbF2UAmPKzeU2LU=
+        b=bQsauK1A8yxXvx8imC+4SJ6e06Cv3mvaJotqOeCqXhSAi6yNyaRDsTb00OvIZjBU8
+         5iF4mYEcIWxUtx7nSWrc35PVahhYdd3FT/sTI8Nh4zFxTDwvJFTaOC6IF6e6njUT3b
+         6w+gzNtUk/T0HU9uTZNRK0XWrfeN+5IPKYs4NFSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+611164843bd48cc2190c@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 078/197] rxrpc: Fix possible NULL pointer access in ICMP handling
-Date:   Sun, 27 Oct 2019 21:59:56 +0100
-Message-Id: <20191027203355.887466873@linuxfoundation.org>
+Subject: [PATCH 4.14 020/119] net: bcmgenet: Fix RGMII_MODE_EN value for GENET v1/2/3
+Date:   Sun, 27 Oct 2019 21:59:57 +0100
+Message-Id: <20191027203306.038747087@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
+References: <20191027203259.948006506@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit f0308fb0708078d6c1d8a4d533941a7a191af634 ]
+[ Upstream commit efb86fede98cdc70b674692ff617b1162f642c49 ]
 
-If an ICMP packet comes in on the UDP socket backing an AF_RXRPC socket as
-the UDP socket is being shut down, rxrpc_error_report() may get called to
-deal with it after sk_user_data on the UDP socket has been cleared, leading
-to a NULL pointer access when this local endpoint record gets accessed.
+The RGMII_MODE_EN bit value was 0 for GENET versions 1 through 3, and
+became 6 for GENET v4 and above, account for that difference.
 
-Fix this by just returning immediately if sk_user_data was NULL.
-
-The oops looks like the following:
-
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-...
-RIP: 0010:rxrpc_error_report+0x1bd/0x6a9
-...
-Call Trace:
- ? sock_queue_err_skb+0xbd/0xde
- ? __udp4_lib_err+0x313/0x34d
- __udp4_lib_err+0x313/0x34d
- icmp_unreach+0x1ee/0x207
- icmp_rcv+0x25b/0x28f
- ip_protocol_deliver_rcu+0x95/0x10e
- ip_local_deliver+0xe9/0x148
- __netif_receive_skb_one_core+0x52/0x6e
- process_backlog+0xdc/0x177
- net_rx_action+0xf9/0x270
- __do_softirq+0x1b6/0x39a
- ? smpboot_register_percpu_thread+0xce/0xce
- run_ksoftirqd+0x1d/0x42
- smpboot_thread_fn+0x19e/0x1b3
- kthread+0xf1/0xf6
- ? kthread_delayed_work_timer_fn+0x83/0x83
- ret_from_fork+0x24/0x30
-
-Fixes: 17926a79320a ("[AF_RXRPC]: Provide secure RxRPC sockets for use by userspace and kernel both")
-Reported-by: syzbot+611164843bd48cc2190c@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Doug Berger <opendmb@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/peer_event.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.h |    1 +
+ drivers/net/ethernet/broadcom/genet/bcmmii.c   |    6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -151,6 +151,9 @@ void rxrpc_error_report(struct sock *sk)
- 	struct rxrpc_peer *peer;
- 	struct sk_buff *skb;
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
+@@ -368,6 +368,7 @@ struct bcmgenet_mib_counters {
+ #define  EXT_PWR_DOWN_PHY_EN		(1 << 20)
  
-+	if (unlikely(!local))
-+		return;
-+
- 	_enter("%p{%d}", sk, local->debug_id);
+ #define EXT_RGMII_OOB_CTRL		0x0C
++#define  RGMII_MODE_EN_V123		(1 << 0)
+ #define  RGMII_LINK			(1 << 4)
+ #define  OOB_DISABLE			(1 << 5)
+ #define  RGMII_MODE_EN			(1 << 6)
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -277,7 +277,11 @@ int bcmgenet_mii_config(struct net_devic
+ 	 */
+ 	if (priv->ext_phy) {
+ 		reg = bcmgenet_ext_readl(priv, EXT_RGMII_OOB_CTRL);
+-		reg |= RGMII_MODE_EN | id_mode_dis;
++		reg |= id_mode_dis;
++		if (GENET_IS_V1(priv) || GENET_IS_V2(priv) || GENET_IS_V3(priv))
++			reg |= RGMII_MODE_EN_V123;
++		else
++			reg |= RGMII_MODE_EN;
+ 		bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
+ 	}
  
- 	/* Clear the outstanding error value on the socket so that it doesn't
 
 
