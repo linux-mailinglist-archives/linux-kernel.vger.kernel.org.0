@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06D3E657E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7CF9E67AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfJ0VCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:02:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47640 "EHLO mail.kernel.org"
+        id S1732295AbfJ0VXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbfJ0VCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:02:39 -0400
+        id S1731618AbfJ0VXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:23:07 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A0162064A;
-        Sun, 27 Oct 2019 21:02:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 995C1205C9;
+        Sun, 27 Oct 2019 21:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210157;
-        bh=JAjNnovaKiGZ0JEZqWC//3IDhdNyQTZW3xqY1GsT6Hs=;
+        s=default; t=1572211386;
+        bh=2K+kbrC0pT7NeYLIPxFN+7ukgau/pSNVnR6/Ps6OhsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zUeNj7ki8KBilcan/kdBsFghy+Cne3mI1GaLpvYOwAv7c2GTT7sEob0n0lv1JPG+f
-         kLaOcFS+VehQmjmHMmOkudEeytoQprF5a6nrZr4TmIdk/AWfNKWPjO2+7/pnaSyOP5
-         vyfrQo6hYVcxtKK9QWSEhpqywKbHXoIkDxDJ0Oxk=
+        b=eXGd61xJjXv9goeFIqUj9LMfPQA1fb+cSkkndbKlMyih5myB+plF26TjCXwHYQoM4
+         pLa1+v1CsUp7+iHdT3Jj8JG6w2Yvn47cLDS2XJYCr9tro3MCvtgcY6MexNEYOaS6qX
+         LF37qwNSpQgcYqRc0F5lHWg9G7QmFtwdjjm3ieFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meng Zhuo <mengzhuo1203@gmail.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 11/41] MIPS: elf_hwcap: Export userspace ASEs
+        stable@vger.kernel.org, James Zhu <James.Zhu@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.3 131/197] drm/amdgpu/vce: fix allocation size in enc ring test
 Date:   Sun, 27 Oct 2019 22:00:49 +0100
-Message-Id: <20191027203108.951999877@linuxfoundation.org>
+Message-Id: <20191027203358.794097652@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-References: <20191027203056.220821342@linuxfoundation.org>
+In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
+References: <20191027203351.684916567@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,87 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 38dffe1e4dde1d3174fdce09d67370412843ebb5 ]
+commit ee027828c40faa92a7ef4c2b0641bbb3f4be95d3 upstream.
 
-A Golang developer reported MIPS hwcap isn't reflecting instructions
-that the processor actually supported so programs can't apply optimized
-code at runtime.
+We need to allocate a large enough buffer for the
+feedback buffer, otherwise the IB test can overwrite
+other memory.
 
-Thus we export the ASEs that can be used in userspace programs.
+Reviewed-by: James Zhu <James.Zhu@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Meng Zhuo <mengzhuo1203@gmail.com>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: <stable@vger.kernel.org> # 4.14+
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/hwcap.h | 11 +++++++++++
- arch/mips/kernel/cpu-probe.c       | 25 +++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c |   20 +++++++++++++++-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vce.h |    1 +
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/arch/mips/include/uapi/asm/hwcap.h b/arch/mips/include/uapi/asm/hwcap.h
-index c7484a7ca686d..2b6f8d569d00f 100644
---- a/arch/mips/include/uapi/asm/hwcap.h
-+++ b/arch/mips/include/uapi/asm/hwcap.h
-@@ -4,5 +4,16 @@
- /* HWCAP flags */
- #define HWCAP_MIPS_R6		(1 << 0)
- #define HWCAP_MIPS_MSA		(1 << 1)
-+#define HWCAP_MIPS_MIPS16	(1 << 3)
-+#define HWCAP_MIPS_MDMX     (1 << 4)
-+#define HWCAP_MIPS_MIPS3D   (1 << 5)
-+#define HWCAP_MIPS_SMARTMIPS (1 << 6)
-+#define HWCAP_MIPS_DSP      (1 << 7)
-+#define HWCAP_MIPS_DSP2     (1 << 8)
-+#define HWCAP_MIPS_DSP3     (1 << 9)
-+#define HWCAP_MIPS_MIPS16E2 (1 << 10)
-+#define HWCAP_LOONGSON_MMI  (1 << 11)
-+#define HWCAP_LOONGSON_EXT  (1 << 12)
-+#define HWCAP_LOONGSON_EXT2 (1 << 13)
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+@@ -429,13 +429,14 @@ void amdgpu_vce_free_handles(struct amdg
+  * Open up a stream for HW test
+  */
+ int amdgpu_vce_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
++			      struct amdgpu_bo *bo,
+ 			      struct dma_fence **fence)
+ {
+ 	const unsigned ib_size_dw = 1024;
+ 	struct amdgpu_job *job;
+ 	struct amdgpu_ib *ib;
+ 	struct dma_fence *f = NULL;
+-	uint64_t dummy;
++	uint64_t addr;
+ 	int i, r;
  
- #endif /* _UAPI_ASM_HWCAP_H */
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index ee71bda53d4e6..3903737e08cc8 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1540,6 +1540,31 @@ void cpu_probe(void)
- 		elf_hwcap |= HWCAP_MIPS_MSA;
- 	}
+ 	r = amdgpu_job_alloc_with_ib(ring->adev, ib_size_dw * 4, &job);
+@@ -444,7 +445,7 @@ int amdgpu_vce_get_create_msg(struct amd
  
-+	if (cpu_has_mips16)
-+		elf_hwcap |= HWCAP_MIPS_MIPS16;
-+
-+	if (cpu_has_mdmx)
-+		elf_hwcap |= HWCAP_MIPS_MDMX;
-+
-+	if (cpu_has_mips3d)
-+		elf_hwcap |= HWCAP_MIPS_MIPS3D;
-+
-+	if (cpu_has_smartmips)
-+		elf_hwcap |= HWCAP_MIPS_SMARTMIPS;
-+
-+	if (cpu_has_dsp)
-+		elf_hwcap |= HWCAP_MIPS_DSP;
-+
-+	if (cpu_has_dsp2)
-+		elf_hwcap |= HWCAP_MIPS_DSP2;
-+
-+	if (cpu_has_loongson_mmi)
-+		elf_hwcap |= HWCAP_LOONGSON_MMI;
-+
-+	if (cpu_has_loongson_ext)
-+		elf_hwcap |= HWCAP_LOONGSON_EXT;
-+
-+
- 	cpu_probe_vmbits(c);
+ 	ib = &job->ibs[0];
  
- #ifdef CONFIG_64BIT
--- 
-2.20.1
-
+-	dummy = ib->gpu_addr + 1024;
++	addr = amdgpu_bo_gpu_offset(bo);
+ 
+ 	/* stitch together an VCE create msg */
+ 	ib->length_dw = 0;
+@@ -476,8 +477,8 @@ int amdgpu_vce_get_create_msg(struct amd
+ 
+ 	ib->ptr[ib->length_dw++] = 0x00000014; /* len */
+ 	ib->ptr[ib->length_dw++] = 0x05000005; /* feedback buffer */
+-	ib->ptr[ib->length_dw++] = upper_32_bits(dummy);
+-	ib->ptr[ib->length_dw++] = dummy;
++	ib->ptr[ib->length_dw++] = upper_32_bits(addr);
++	ib->ptr[ib->length_dw++] = addr;
+ 	ib->ptr[ib->length_dw++] = 0x00000001;
+ 
+ 	for (i = ib->length_dw; i < ib_size_dw; ++i)
+@@ -1110,13 +1111,20 @@ int amdgpu_vce_ring_test_ring(struct amd
+ int amdgpu_vce_ring_test_ib(struct amdgpu_ring *ring, long timeout)
+ {
+ 	struct dma_fence *fence = NULL;
++	struct amdgpu_bo *bo = NULL;
+ 	long r;
+ 
+ 	/* skip vce ring1/2 ib test for now, since it's not reliable */
+ 	if (ring != &ring->adev->vce.ring[0])
+ 		return 0;
+ 
+-	r = amdgpu_vce_get_create_msg(ring, 1, NULL);
++	r = amdgpu_bo_create_reserved(ring->adev, 512, PAGE_SIZE,
++				      AMDGPU_GEM_DOMAIN_VRAM,
++				      &bo, NULL, NULL);
++	if (r)
++		return r;
++
++	r = amdgpu_vce_get_create_msg(ring, 1, bo, NULL);
+ 	if (r)
+ 		goto error;
+ 
+@@ -1132,5 +1140,7 @@ int amdgpu_vce_ring_test_ib(struct amdgp
+ 
+ error:
+ 	dma_fence_put(fence);
++	amdgpu_bo_unreserve(bo);
++	amdgpu_bo_unref(&bo);
+ 	return r;
+ }
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.h
+@@ -59,6 +59,7 @@ int amdgpu_vce_entity_init(struct amdgpu
+ int amdgpu_vce_suspend(struct amdgpu_device *adev);
+ int amdgpu_vce_resume(struct amdgpu_device *adev);
+ int amdgpu_vce_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
++			      struct amdgpu_bo *bo,
+ 			      struct dma_fence **fence);
+ int amdgpu_vce_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
+ 			       bool direct, struct dma_fence **fence);
 
 
