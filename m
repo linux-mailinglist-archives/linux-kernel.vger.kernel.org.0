@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B2F5E68BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C10CE68B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfJ0VbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:31:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37266 "EHLO mail.kernel.org"
+        id S1731136AbfJ0VRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731049AbfJ0VR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:17:29 -0400
+        id S1731091AbfJ0VRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:17:38 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74AC02070B;
-        Sun, 27 Oct 2019 21:17:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57E4C2070B;
+        Sun, 27 Oct 2019 21:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211047;
-        bh=XmgcN1gRkoXMecMZQ9tx4ufGWDQDD7XynS9mMfuQHn8=;
+        s=default; t=1572211057;
+        bh=R3+/hJX/2rD8flEe2XZwxCvvYNQNQxgQCV+Xkg2vBdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I4OZX06An/pEWq6rH2OOWqwd9nBa78dMrwCTeEQ3+An4eO5tcNToQyKlldnjgaRNl
-         9N5m3vQ6eVREOsHELY5/3RuXUxk5nMTjmcRD/SBLKUeuS5Q38wbvWCiNBFS5sknTdm
-         9qghNgYbvwzudT1LcmAIWxIbIa2p7nvhEhL2nSQQ=
+        b=jG/b8fSjQNXNzbVgQggGu2pt3V0hZQ0zUCOy0ZJpzhxeX/Lzz0VIQpLmaFdyPcaHO
+         jFT+JajxhS8NJiNqCRUgTf9+oiVSG9BA8T3Rne2AlxXVQixTr7/TxbCCFw4vhfWHRL
+         rG3RmyddbZ3EwYONSh+L9lHbIgcWwoTHonq2CeS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 014/197] ARM: OMAP2+: Fix missing reset done flag for am3 and am43
-Date:   Sun, 27 Oct 2019 21:58:52 +0100
-Message-Id: <20191027203352.444667918@linuxfoundation.org>
+Subject: [PATCH 5.3 018/197] nvme-pci: Save PCI state before putting drive into deepest state
+Date:   Sun, 27 Oct 2019 21:58:56 +0100
+Message-Id: <20191027203352.659130294@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -43,51 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-[ Upstream commit 8ad8041b98c665b6147e607b749586d6e20ba73a ]
+[ Upstream commit 7cbb5c6f9aa7cfda7175d82a9cf77a92965b0c5e ]
 
-For ti,sysc-omap4 compatible devices with no sysstatus register, we do have
-reset done status available in the SOFTRESET bit that clears when the reset
-is done. This is documented for example in am437x TRM for DMTIMER_TIOCP_CFG
-register. The am335x TRM just says that SOFTRESET bit value 1 means reset is
-ongoing, but it behaves the same way clearing after reset is done.
+The action of saving the PCI state will cause numerous PCI configuration
+space reads which depending upon the vendor implementation may cause
+the drive to exit the deepest NVMe state.
 
-With the ti-sysc driver handling this automatically based on no sysstatus
-register defined, we see warnings if SYSC_HAS_RESET_STATUS is missing in the
-legacy platform data:
+In these cases ASPM will typically resolve the PCIe link state and APST
+may resolve the NVMe power state.  However it has also been observed
+that this register access after quiesced will cause PC10 failure
+on some device combinations.
 
-ti-sysc 48042000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48044000.target-module: sysc_flags 00000222 != 00000022
-ti-sysc 48046000.target-module: sysc_flags 00000222 != 00000022
-...
+To resolve this, move the PCI state saving to before SetFeatures has been
+called.  This has been proven to resolve the issue across a 5000 sample
+test on previously failing disk/system combinations.
 
-Let's fix these warnings by adding SYSC_HAS_RESET_STATUS. Let's also
-remove the useless parentheses while at it.
-
-If it turns out we do have ti,sysc-omap4 compatible devices without a
-working SOFTRESET bit we can set up additional quirk handling for it.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-index adb6271f819be..7773876d165f1 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-@@ -811,7 +811,8 @@ static struct omap_hwmod_class_sysconfig am33xx_timer_sysc = {
- 	.rev_offs	= 0x0000,
- 	.sysc_offs	= 0x0010,
- 	.syss_offs	= 0x0014,
--	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET),
-+	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
-+			  SYSC_HAS_RESET_STATUS,
- 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART |
- 			  SIDLE_SMART_WKUP),
- 	.sysc_fields	= &omap_hwmod_sysc_type2,
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 732d5b63ec054..19458e85dab34 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2894,11 +2894,21 @@ static int nvme_suspend(struct device *dev)
+ 	if (ret < 0)
+ 		goto unfreeze;
+ 
++	/*
++	 * A saved state prevents pci pm from generically controlling the
++	 * device's power. If we're using protocol specific settings, we don't
++	 * want pci interfering.
++	 */
++	pci_save_state(pdev);
++
+ 	ret = nvme_set_power_state(ctrl, ctrl->npss);
+ 	if (ret < 0)
+ 		goto unfreeze;
+ 
+ 	if (ret) {
++		/* discard the saved state */
++		pci_load_saved_state(pdev, NULL);
++
+ 		/*
+ 		 * Clearing npss forces a controller reset on resume. The
+ 		 * correct value will be resdicovered then.
+@@ -2906,14 +2916,7 @@ static int nvme_suspend(struct device *dev)
+ 		nvme_dev_disable(ndev, true);
+ 		ctrl->npss = 0;
+ 		ret = 0;
+-		goto unfreeze;
+ 	}
+-	/*
+-	 * A saved state prevents pci pm from generically controlling the
+-	 * device's power. If we're using protocol specific settings, we don't
+-	 * want pci interfering.
+-	 */
+-	pci_save_state(pdev);
+ unfreeze:
+ 	nvme_unfreeze(ctrl);
+ 	return ret;
 -- 
 2.20.1
 
