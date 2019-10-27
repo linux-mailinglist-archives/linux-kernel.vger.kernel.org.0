@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84AD5E6873
+	by mail.lfdr.de (Postfix) with ESMTP id F20E7E6874
 	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731786AbfJ0VUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41484 "EHLO mail.kernel.org"
+        id S1731821AbfJ0VVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731765AbfJ0VUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:49 -0400
+        id S1731806AbfJ0VUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:20:55 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A6C4205C9;
-        Sun, 27 Oct 2019 21:20:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B88C2070B;
+        Sun, 27 Oct 2019 21:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211248;
-        bh=IswQNomoTlHHAm0FBwOCISP18LNq/Etgz9qumUH61Jw=;
+        s=default; t=1572211254;
+        bh=PoIO/1DhDvLFSiduFsiNLvyY8C1ess2wQO00EFowzMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ffAuIE6rvFWvGwdojsXTIOul5MSDSA8hEKrZjgbriWm+Lut3Ii7Qmk9Ojo5ZHqXGR
-         peQaj3gFJlBQPSSgLxIEUT56Gg0zONDtFKe4xeSbyFOLUnMcZXoqjJfZpMYurKxI0i
-         QaU2j+8LoT4rewpJJCMzbowvmgB/7V7JoKe39IgA=
+        b=SpLR7r+3nw7ePkN+RPRJJ33ohna6e76QiCjLrCCMtQfOdrm75JfDXhoflFYB/GCF6
+         CKQvYPi8Ioj3PoXjFsbGk0RkQ2wZG9Yzl40EIL0Wdi0oC++GToVXTXdIvyY2gUVZ4M
+         nYdnovPhdAEcYzTBSkcOy2HiJ2uQsTDW9fPovFQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Russkikh <igor.russkikh@aquantia.com>,
+        stable@vger.kernel.org,
+        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 082/197] net: aquantia: when cleaning hw cache it should be toggled
-Date:   Sun, 27 Oct 2019 22:00:00 +0100
-Message-Id: <20191027203356.136876729@linuxfoundation.org>
+Subject: [PATCH 5.3 084/197] net: aquantia: correctly handle macvlan and multicast coexistence
+Date:   Sun, 27 Oct 2019 22:00:02 +0100
+Message-Id: <20191027203356.250906373@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -43,132 +45,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Russkikh <Igor.Russkikh@aquantia.com>
+From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
 
-[ Upstream commit ed4d81c4b3f28ccf624f11fd66f67aec5b58859c ]
+[ Upstream commit 9f051db566da1e8110659ab4ab188af1c2510bb4 ]
 
->From HW specification to correctly reset HW caches (this is a required
-workaround when stopping the device), register bit should actually
-be toggled.
+macvlan and multicast handling is now mixed up.
+The explicit issue is that macvlan interface gets broken (no traffic)
+after clearing MULTICAST flag on the real interface.
 
-It was previosly always just set. Due to the way driver stops HW this
-never actually caused any issues, but it still may, so cleaning this up.
+We now do separate logic and consider both ALLMULTI and MULTICAST
+flags on the device.
 
-Fixes: 7a1bb49461b1 ("net: aquantia: fix potential IOMMU fault after driver unbind")
+Fixes: 11ba961c9161 ("net: aquantia: Fix IFF_ALLMULTI flag functionality")
+Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
 Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c           |   16 +++++++-
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c          |   17 +++++++-
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h          |    7 ++-
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h |   19 ++++++++++
- 4 files changed, 53 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_main.c          |    4 -
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c           |   32 +++++++-------
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c |    7 +--
+ 3 files changed, 21 insertions(+), 22 deletions(-)
 
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
+@@ -194,9 +194,7 @@ static void aq_ndev_set_multicast_settin
+ {
+ 	struct aq_nic_s *aq_nic = netdev_priv(ndev);
+ 
+-	aq_nic_set_packet_filter(aq_nic, ndev->flags);
+-
+-	aq_nic_set_multicast_list(aq_nic, ndev);
++	(void)aq_nic_set_multicast_list(aq_nic, ndev);
+ }
+ 
+ static int aq_ndo_vlan_rx_add_vid(struct net_device *ndev, __be16 proto,
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -631,9 +631,12 @@ err_exit:
+ 
+ int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
+ {
+-	unsigned int packet_filter = self->packet_filter;
++	const struct aq_hw_ops *hw_ops = self->aq_hw_ops;
++	struct aq_nic_cfg_s *cfg = &self->aq_nic_cfg;
++	unsigned int packet_filter = ndev->flags;
+ 	struct netdev_hw_addr *ha = NULL;
+ 	unsigned int i = 0U;
++	int err = 0;
+ 
+ 	self->mc_list.count = 0;
+ 	if (netdev_uc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
+@@ -641,29 +644,26 @@ int aq_nic_set_multicast_list(struct aq_
+ 	} else {
+ 		netdev_for_each_uc_addr(ha, ndev) {
+ 			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
+-
+-			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
+-				break;
+ 		}
+ 	}
+ 
+-	if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
+-		packet_filter |= IFF_ALLMULTI;
+-	} else {
+-		netdev_for_each_mc_addr(ha, ndev) {
+-			ether_addr_copy(self->mc_list.ar[i++], ha->addr);
+-
+-			if (i >= AQ_HW_MULTICAST_ADDRESS_MAX)
+-				break;
++	cfg->is_mc_list_enabled = !!(packet_filter & IFF_MULTICAST);
++	if (cfg->is_mc_list_enabled) {
++		if (i + netdev_mc_count(ndev) > AQ_HW_MULTICAST_ADDRESS_MAX) {
++			packet_filter |= IFF_ALLMULTI;
++		} else {
++			netdev_for_each_mc_addr(ha, ndev) {
++				ether_addr_copy(self->mc_list.ar[i++],
++						ha->addr);
++			}
+ 		}
+ 	}
+ 
+ 	if (i > 0 && i <= AQ_HW_MULTICAST_ADDRESS_MAX) {
+-		packet_filter |= IFF_MULTICAST;
+ 		self->mc_list.count = i;
+-		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
+-						       self->mc_list.ar,
+-						       self->mc_list.count);
++		err = hw_ops->hw_multicast_list_set(self->aq_hw,
++						    self->mc_list.ar,
++						    self->mc_list.count);
+ 	}
+ 	return aq_nic_set_packet_filter(self, packet_filter);
+ }
 --- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
 +++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -968,14 +968,26 @@ static int hw_atl_b0_hw_interrupt_modera
+@@ -818,14 +818,15 @@ static int hw_atl_b0_hw_packet_filter_se
+ 				     cfg->is_vlan_force_promisc);
  
- static int hw_atl_b0_hw_stop(struct aq_hw_s *self)
- {
-+	int err;
-+	u32 val;
-+
- 	hw_atl_b0_hw_irq_disable(self, HW_ATL_B0_INT_MASK);
+ 	hw_atl_rpfl2multicast_flr_en_set(self,
+-					 IS_FILTER_ENABLED(IFF_ALLMULTI), 0);
++					 IS_FILTER_ENABLED(IFF_ALLMULTI) &&
++					 IS_FILTER_ENABLED(IFF_MULTICAST), 0);
  
- 	/* Invalidate Descriptor Cache to prevent writing to the cached
- 	 * descriptors and to the data pointer of those descriptors
- 	 */
--	hw_atl_rdm_rx_dma_desc_cache_init_set(self, 1);
-+	hw_atl_rdm_rx_dma_desc_cache_init_tgl(self);
-+
-+	err = aq_hw_err_from_flags(self);
-+
-+	if (err)
-+		goto err_exit;
-+
-+	readx_poll_timeout_atomic(hw_atl_rdm_rx_dma_desc_cache_init_done_get,
-+				  self, val, val == 1, 1000U, 10000U);
+ 	hw_atl_rpfl2_accept_all_mc_packets_set(self,
+-					       IS_FILTER_ENABLED(IFF_ALLMULTI));
++					      IS_FILTER_ENABLED(IFF_ALLMULTI) &&
++					      IS_FILTER_ENABLED(IFF_MULTICAST));
  
--	return aq_hw_err_from_flags(self);
-+err_exit:
-+	return err;
- }
+ 	hw_atl_rpfl2broadcast_en_set(self, IS_FILTER_ENABLED(IFF_BROADCAST));
  
- static int hw_atl_b0_hw_ring_tx_stop(struct aq_hw_s *self,
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-@@ -606,12 +606,25 @@ void hw_atl_rpb_rx_flow_ctl_mode_set(str
- 			    HW_ATL_RPB_RX_FC_MODE_SHIFT, rx_flow_ctl_mode);
- }
+-	cfg->is_mc_list_enabled = IS_FILTER_ENABLED(IFF_MULTICAST);
  
--void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init)
-+void hw_atl_rdm_rx_dma_desc_cache_init_tgl(struct aq_hw_s *aq_hw)
- {
-+	u32 val;
-+
-+	val = aq_hw_read_reg_bit(aq_hw, HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR,
-+				 HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK,
-+				 HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT);
-+
- 	aq_hw_write_reg_bit(aq_hw, HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR,
- 			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK,
- 			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT,
--			    init);
-+			    val ^ 1);
-+}
-+
-+u32 hw_atl_rdm_rx_dma_desc_cache_init_done_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg_bit(aq_hw, RDM_RX_DMA_DESC_CACHE_INIT_DONE_ADR,
-+				  RDM_RX_DMA_DESC_CACHE_INIT_DONE_MSK,
-+				  RDM_RX_DMA_DESC_CACHE_INIT_DONE_SHIFT);
- }
- 
- void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-@@ -313,8 +313,11 @@ void hw_atl_rpb_rx_pkt_buff_size_per_tc_
- 					    u32 rx_pkt_buff_size_per_tc,
- 					    u32 buffer);
- 
--/* set rdm rx dma descriptor cache init */
--void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init);
-+/* toggle rdm rx dma descriptor cache init */
-+void hw_atl_rdm_rx_dma_desc_cache_init_tgl(struct aq_hw_s *aq_hw);
-+
-+/* get rdm rx dma descriptor cache init done */
-+u32 hw_atl_rdm_rx_dma_desc_cache_init_done_get(struct aq_hw_s *aq_hw);
- 
- /* set rx xoff enable (per tc) */
- void hw_atl_rpb_rx_xoff_en_per_tc_set(struct aq_hw_s *aq_hw, u32 rx_xoff_en_per_tc,
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-@@ -318,6 +318,25 @@
- /* default value of bitfield rdm_desc_init_i */
- #define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_DEFAULT 0x0
- 
-+/* rdm_desc_init_done_i bitfield definitions
-+ * preprocessor definitions for the bitfield rdm_desc_init_done_i.
-+ * port="pif_rdm_desc_init_done_i"
-+ */
-+
-+/* register address for bitfield rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_ADR 0x00005a10
-+/* bitmask for bitfield rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_MSK 0x00000001U
-+/* inverted bitmask for bitfield rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_MSKN 0xfffffffe
-+/* lower bit position of bitfield  rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_SHIFT 0U
-+/* width of bitfield rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_WIDTH 1
-+/* default value of bitfield rdm_desc_init_done_i */
-+#define RDM_RX_DMA_DESC_CACHE_INIT_DONE_DEFAULT 0x0
-+
-+
- /* rx int_desc_wrb_en bitfield definitions
-  * preprocessor definitions for the bitfield "int_desc_wrb_en".
-  * port="pif_rdm_int_desc_wrb_en_i"
+ 	for (i = HW_ATL_B0_MAC_MIN; i < HW_ATL_B0_MAC_MAX; ++i)
+ 		hw_atl_rpfl2_uc_flr_en_set(self,
 
 
