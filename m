@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CCA8E6875
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B7C6E6879
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbfJ0VVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41642 "EHLO mail.kernel.org"
+        id S1731878AbfJ0VVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:21:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731813AbfJ0VU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:20:57 -0400
+        id S1731859AbfJ0VVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:21:08 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 925B3205C9;
-        Sun, 27 Oct 2019 21:20:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 533BF205C9;
+        Sun, 27 Oct 2019 21:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211257;
-        bh=aYvmwZ8K19xAuz/J4n8ZHtP9meBds7d74/RjbcmdqF0=;
+        s=default; t=1572211267;
+        bh=OxtsmDZcRyjTy/TwgnZe5iInYm/ARc+kAq5vsnT/P2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6Q4Q+Y8uPtUTaBRRQ+bVlrukV1wntEmlvvYLlidSzRCFqP0oZURAnQOMY9bjGQBx
-         mBtexYDxO3gKycbGRC7MR4jftH3R+dATFsGd7PPvGnGNy5Ci9Go13HEHMZtBolIRnl
-         GIO6HcH38A0+QVgcGu02WLhXjdAHBRfcY4B1fRrs=
+        b=oN9QMqxAIW8H1riXXTEhJs1JYFVZdOGgr3ske+jRrIi8NNtm1dRcOSRmKdYB8LQYR
+         ywkFHxAEZ4vM95q9GROIfihsi9g0pU+aHN8jqAffg5o8E6J12/F5l/AbhlmiUSMDkG
+         w7Fy7Ciur0caOzSIPPl/+lkhDFkfYBgES0kliqm8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 043/197] RISC-V: Clear load reservations while restoring hart contexts
-Date:   Sun, 27 Oct 2019 21:59:21 +0100
-Message-Id: <20191027203354.035458609@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Paul Burton <paul.burton@mips.com>, chenhc@lemote.com,
+        ralf@linux-mips.org, jhogan@kernel.org, linux-mips@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 047/197] mips: Loongson: Fix the link time qualifier of serial_exit()
+Date:   Sun, 27 Oct 2019 21:59:25 +0100
+Message-Id: <20191027203354.239642675@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
 References: <20191027203351.684916567@linuxfoundation.org>
@@ -45,67 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Palmer Dabbelt <palmer@sifive.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 18856604b3e7090ce42d533995173ee70c24b1c9 ]
+[ Upstream commit 25b69a889b638b0b7e51e2c4fe717a66bec0e566 ]
 
-This is almost entirely a comment.  The bug is unlikely to manifest on
-existing hardware because there is a timeout on load reservations, but
-manifests on QEMU because there is no timeout.
+'exit' functions should be marked as __exit, not __init.
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Fixes: 85cc028817ef ("mips: make loongsoon serial driver explicitly modular")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: chenhc@lemote.com
+Cc: ralf@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/include/asm/asm.h |  1 +
- arch/riscv/kernel/entry.S    | 21 ++++++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ arch/mips/loongson64/common/serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-index 5a02b7d509408..9c992a88d858f 100644
---- a/arch/riscv/include/asm/asm.h
-+++ b/arch/riscv/include/asm/asm.h
-@@ -22,6 +22,7 @@
+diff --git a/arch/mips/loongson64/common/serial.c b/arch/mips/loongson64/common/serial.c
+index ffefc1cb26121..98c3a7feb10f8 100644
+--- a/arch/mips/loongson64/common/serial.c
++++ b/arch/mips/loongson64/common/serial.c
+@@ -110,7 +110,7 @@ static int __init serial_init(void)
+ }
+ module_init(serial_init);
  
- #define REG_L		__REG_SEL(ld, lw)
- #define REG_S		__REG_SEL(sd, sw)
-+#define REG_SC		__REG_SEL(sc.d, sc.w)
- #define SZREG		__REG_SEL(8, 4)
- #define LGREG		__REG_SEL(3, 2)
- 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 9b60878a4469c..2a82e0a5af46e 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -98,7 +98,26 @@ _save_context:
-  */
- 	.macro RESTORE_ALL
- 	REG_L a0, PT_SSTATUS(sp)
--	REG_L a2, PT_SEPC(sp)
-+	/*
-+	 * The current load reservation is effectively part of the processor's
-+	 * state, in the sense that load reservations cannot be shared between
-+	 * different hart contexts.  We can't actually save and restore a load
-+	 * reservation, so instead here we clear any existing reservation --
-+	 * it's always legal for implementations to clear load reservations at
-+	 * any point (as long as the forward progress guarantee is kept, but
-+	 * we'll ignore that here).
-+	 *
-+	 * Dangling load reservations can be the result of taking a trap in the
-+	 * middle of an LR/SC sequence, but can also be the result of a taken
-+	 * forward branch around an SC -- which is how we implement CAS.  As a
-+	 * result we need to clear reservations between the last CAS and the
-+	 * jump back to the new context.  While it is unlikely the store
-+	 * completes, implementations are allowed to expand reservations to be
-+	 * arbitrarily large.
-+	 */
-+	REG_L  a2, PT_SEPC(sp)
-+	REG_SC x0, a2, PT_SEPC(sp)
-+
- 	csrw CSR_SSTATUS, a0
- 	csrw CSR_SEPC, a2
- 
+-static void __init serial_exit(void)
++static void __exit serial_exit(void)
+ {
+ 	platform_device_unregister(&uart8250_device);
+ }
 -- 
 2.20.1
 
