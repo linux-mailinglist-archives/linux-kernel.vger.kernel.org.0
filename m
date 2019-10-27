@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E267CE65F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D36E66D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbfJ0VGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52764 "EHLO mail.kernel.org"
+        id S1730671AbfJ0VPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:15:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729033AbfJ0VGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:06:48 -0400
+        id S1728657AbfJ0VPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:15:33 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E293B222C5;
-        Sun, 27 Oct 2019 21:06:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADE3C214E0;
+        Sun, 27 Oct 2019 21:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210407;
-        bh=v4ZscuMLmn4BN8xgw0DUESVX5OWt+I8CB3ojBjfzfoE=;
+        s=default; t=1572210932;
+        bh=qEjOugn369vgG2UFLrZ2SDiOUnh+NNJeA5wSkZ9PlZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BH3QF1A5Hoa6W6t44HTBUJnyZt4YBQjIPpA/A+UQ3Xf6Uow6nZ8ig0/vSPC3M65N4
-         yujzyhvCiSybMg4KMihIL4NEHWV57QEIRYmp7xZWSmcbxrccZyZ41XVpQ3QHRkILKS
-         93AsjL0+fI/CPXhh27dPyaJi8oFDTVBCYeD0AQWg=
+        b=i8I+huohYe+IEL4ZKbj6r6PR3q+JVFg0QST1TNVPC5W+juWBkloggrDEO3tSWRi9Y
+         u5QBo190CMdvlpdI9bKCOB9eQsrLLcNwFquVadkaHgkkFoaLIURilYI8+v9/CuFEsk
+         nDwTHeHPXsS8yCPoqOowSXuVsrRp1xn4g/2h7Aro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -37,12 +37,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Roman Gushchin <guro@fb.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 39/49] mm/slub: fix a deadlock in show_slab_objects()
-Date:   Sun, 27 Oct 2019 22:01:17 +0100
-Message-Id: <20191027203157.361855967@linuxfoundation.org>
+Subject: [PATCH 4.19 66/93] mm/slub: fix a deadlock in show_slab_objects()
+Date:   Sun, 27 Oct 2019 22:01:18 +0100
+Message-Id: <20191027203307.332446177@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
-References: <20191027203119.468466356@linuxfoundation.org>
+In-Reply-To: <20191027203251.029297948@linuxfoundation.org>
+References: <20191027203251.029297948@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -206,7 +206,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -4718,7 +4718,17 @@ static ssize_t show_slab_objects(struct
+@@ -4797,7 +4797,17 @@ static ssize_t show_slab_objects(struct
  		}
  	}
  
@@ -225,7 +225,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  #ifdef CONFIG_SLUB_DEBUG
  	if (flags & SO_ALL) {
  		struct kmem_cache_node *n;
-@@ -4759,7 +4769,6 @@ static ssize_t show_slab_objects(struct
+@@ -4838,7 +4848,6 @@ static ssize_t show_slab_objects(struct
  			x += sprintf(buf + x, " N%d=%lu",
  					node, nodes[node]);
  #endif
