@@ -2,127 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB75E6881
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EBEE688F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731871AbfJ0V3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:29:07 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38446 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731916AbfJ0VVX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:21:23 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r14so700803otn.5;
-        Sun, 27 Oct 2019 14:21:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b/1qX8QqURu4yTR6/F+UUQyKvsmnZpVehqktiXte3R0=;
-        b=JTXd6g61ZLRjxtdTGudS2WI0DarJtHw9EK6Oae8napIvQzyUk2iQ6w0z8EA7UDUOAv
-         OCQVLBVikRUx5H1iAXTH2IvD9ulpaGu+7SqSiiXTIHISa9vT0vP31OyvpetUFl1OKdrM
-         /VzRUvMc+7oMVpkd2fbDZs4UdH3m4Uhh7c3mTuxSDt44nS8qSvOq1h1aDr50pCu3t9I2
-         Tyu1N4ZxQMJRz/e435bytmULRjelbPXpQb123Sbu+ortNapi/3dgZyEHkY6GqKucZjgB
-         eOxtY8EGjaLbbKAvGLiFAzKCjq/9s5JjHk4sNAxlN6BtEdyvR7aSmgkrsjDEoel5rWyw
-         hOrw==
-X-Gm-Message-State: APjAAAVLgWEiu1gtO9VDpxjrmnzhDZ8YPQhs9b59gq9ntVPc8eK6zXid
-        W02m5GxuGgyWiZqD6Ruktw==
-X-Google-Smtp-Source: APXvYqxeon+14sBfRLWGf2262ii9N4LSrDCmUuiwS4ja+XW6LEnxA7FhNfNFumE68Q5l0ZieaUkX9Q==
-X-Received: by 2002:a9d:6357:: with SMTP id y23mr11151500otk.86.1572211282486;
-        Sun, 27 Oct 2019 14:21:22 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o23sm3054166ote.67.2019.10.27.14.21.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2019 14:21:21 -0700 (PDT)
-Date:   Sun, 27 Oct 2019 16:21:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" 
-        <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] dt-bindings: timer: imx: gpt: Add pin group bindings
- for input capture
-Message-ID: <20191027212121.GA3049@bogus>
-References: <20191016010544.14561-1-slongerbeam@gmail.com>
- <20191016010544.14561-3-slongerbeam@gmail.com>
+        id S1732655AbfJ0Vad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:30:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731152AbfJ0Va2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:30:28 -0400
+Received: from earth.universe (unknown [46.218.74.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32A912070B;
+        Sun, 27 Oct 2019 21:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572211827;
+        bh=8izSZAbx6fQBwUzEgqL17sTkPb8Aj2f809bsHzCJRec=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A3CHmcenkVz7kS733vuH0673jNWz9Zx/lWgZ/CbFxj8unHvz7OjccwI2DkDKF85rM
+         LMtg1WkSbZ/5lwFO6+laJwBckY9C34S0Tiaj75y783XYBu77cNxeyaJU+niPkYu1Hq
+         GEI1BTRX36Cku/6aZyi2uzXhFMvIyxyPSeUCidzo=
+Received: by earth.universe (Postfix, from userid 1000)
+        id B31FF3C09B2; Sun, 27 Oct 2019 22:30:24 +0100 (CET)
+Date:   Sun, 27 Oct 2019 22:30:24 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: ab8500_charger: Fix inconsistent IS_ERR
+ and PTR_ERR
+Message-ID: <20191027213024.x3lvdefs67wcb37j@earth.universe>
+References: <20191021174937.GA17424@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ci4bos7uztzfqtgo"
 Content-Disposition: inline
-In-Reply-To: <20191016010544.14561-3-slongerbeam@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191021174937.GA17424@embeddedor>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 06:05:44PM -0700, Steve Longerbeam wrote:
-> Add pin group bindings to support input capture function of the i.MX
-> GPT.
-> 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+
+--ci4bos7uztzfqtgo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, Oct 21, 2019 at 12:49:37PM -0500, Gustavo A. R. Silva wrote:
+> Fix inconsistent IS_ERR and PTR_ERR in ab8500_charger_probe().
+>=20
+> The proper pointer to be passed as argument is di->adc_main_charger_c
+>=20
+> This bug was detected with the help of Coccinelle.
+>=20
+> Fixes: 97ab78bac5d0 ("power: supply: ab8500_charger: Convert to IIO ADC")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  .../devicetree/bindings/timer/fsl,imxgpt.txt  | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt b/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
-> index 5d8fd5b52598..32797b7b0d02 100644
-> --- a/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
-> +++ b/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
-> @@ -33,6 +33,13 @@ Required properties:
->             an entry for each entry in clock-names.
->  - clock-names : must include "ipg" entry first, then "per" entry.
->  
-> +Optional properties:
-> +
-> +- pinctrl-0: For the i.MX GPT to support the Input Capture function,
-> +  	     the input capture channel pin groups must be listed here.
-> +- pinctrl-names: must be "default".
-> +
-> +
->  Example:
->  
->  gpt1: timer@10003000 {
-> @@ -43,3 +50,24 @@ gpt1: timer@10003000 {
->  		 <&clks IMX27_CLK_PER1_GATE>;
->  	clock-names = "ipg", "per";
->  };
-> +
-> +
-> +Example with input capture channel 0 support:
-> +
-> +pinctrl_gpt_input_capture0: gptinputcapture0grp {
-> +	fsl,pins = <
-> +		MX6QDL_PAD_SD1_DAT0__GPT_CAPTURE1 0x1b0b0
-> +	>;
-> +};
-> +
-> +gpt: gpt@2098000 {
 
-timer@...
+Thanks, queued.
 
-I don't really think this merits another example though. 
+-- Sebastian
 
-> +	compatible = "fsl,imx6q-gpt", "fsl,imx31-gpt";
-> +	reg = <0x02098000 0x4000>;
-> +	interrupts = <0 55 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&clks IMX6QDL_CLK_GPT_IPG>,
-> +		<&clks IMX6QDL_CLK_GPT_IPG_PER>,
-> +		<&clks IMX6QDL_CLK_GPT_3M>;
-> +	clock-names = "ipg", "per", "osc_per";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_gpt_input_capture0>;
-> +};
-> -- 
-> 2.17.1
-> 
+>  drivers/power/supply/ab8500_charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
+/ab8500_charger.c
+> index ff2bb4411a22..8a0f9d769690 100644
+> --- a/drivers/power/supply/ab8500_charger.c
+> +++ b/drivers/power/supply/ab8500_charger.c
+> @@ -3393,7 +3393,7 @@ static int ab8500_charger_probe(struct platform_dev=
+ice *pdev)
+>  		if (PTR_ERR(di->adc_main_charger_c) =3D=3D -ENODEV)
+>  			return -EPROBE_DEFER;
+>  		dev_err(&pdev->dev, "failed to get ADC main charger current\n");
+> -		return PTR_ERR(di->adc_main_charger_v);
+> +		return PTR_ERR(di->adc_main_charger_c);
+>  	}
+>  	di->adc_vbus_v =3D devm_iio_channel_get(&pdev->dev, "vbus_v");
+>  	if (IS_ERR(di->adc_vbus_v)) {
+> --=20
+> 2.23.0
+>=20
+
+--ci4bos7uztzfqtgo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl22DG0ACgkQ2O7X88g7
++pqcLQ/+JkR/ANfCqah3p0yYMbAWJ6Rs3SI2YzhwyIFJBWzOIEWwWgcsUzq+ahlf
+2t8Um/Db2BC68q/GT+304JNaumpr5XfH/mWt4DrKcZgCGFePPwh5EscqAbUCHfu+
+IqNQbtoHrnofZu4hThBZDqDvgZL+LGtikMRwBL2asytquPBveDJ/URKNdec+ue23
+k7GzGGrvXp/IakLcWcFEfb66ibqgue8k4RL7YzKvySE74RQX/6ePQNVwGP4vGCSP
+Zin9CH+uFAgg7/Dg6dBpxjE6L2DWFv+ftrg0pQO9rn6bLdWWjZvOXjo/RNk+GTpF
+YMSfI1unLWHUf8/S/aGZjox/bH6KsqkY/W/TJ10C3OF5w19xj11hgWTQ1Y5oNB5c
+VRJCEcWwrBfT42IjQKLvzjqP4GAduwqqYc5dyyXp5lKVU7qKNl0G51EPomkyPw4z
+zNuS7KscPQeZQaZ6XB+70jQ2yUGvYN5IR4/H6ATgcG4zPUAQ286YobarRldJAeO2
+y1RkZF52MtIvLozfMR+hd3ppNXO/nb5v4xsAvJu0QhuAiMfCzwz6v8/dU3KMF5dW
+6zUxuX95sX3rW7zj0G35+O1r+olXHDqTJQmR1l+LLIOIA5F043DXTogsX9T8DzR9
+qpLj0bikHEnmnZKjl2mV7E44zrAvE6jDaPfTaiP1au8BiiGLuqo=
+=1lwG
+-----END PGP SIGNATURE-----
+
+--ci4bos7uztzfqtgo--
