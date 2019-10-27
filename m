@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2278EE6A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 00:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD8AE6A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 00:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbfJ0XKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 19:10:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39358 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728532AbfJ0XKC (ORCPT
+        id S1728660AbfJ0XKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 19:10:13 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35651 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728541AbfJ0XKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 19:10:02 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p12so5381010pgn.6
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 16:10:01 -0700 (PDT)
+        Sun, 27 Oct 2019 19:10:04 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x6so469958pln.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 16:10:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=17VXfSKYZQzbP4YelUVgRIk9dpr5Oa0vQvqhXwR8nzA=;
-        b=mDUrWiuq19RTwVgaoXS7SNL1c9FVSOOD1nEH/oJgMwHgoBcJTXS6cRSBtNrr9JCp6+
-         Wl4a5gtZdBFLvp+k6nisJR90NF1JKzTnsSxR7AzFUCmuCVI+hQJdDS/z/v3iRQAEx+Yp
-         JDidsW2+PklPsrSr8zHgSQzgxCW5IzUDwEL0g=
+        bh=+dWhvYQIT5GLEuQFWRMmxKHMUz5gpa4Xd6+5meRvcac=;
+        b=StrGIVCnTjmk9Q6WOOMn1S9EUjlETaeBOxzCopMzgK766haJ4BpaDPTvfUf5zBLab8
+         8L6xbRDqhMSWficpC/Uq47WpFnKwJe7un/KNOaKaCySA3bWKjm0vbAeT9WcCoE/rx7fo
+         +PMKxTR/Re/C90YHa1eQPTtqnBz013OWwSVlo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=17VXfSKYZQzbP4YelUVgRIk9dpr5Oa0vQvqhXwR8nzA=;
-        b=Gm4mo8XhGfE00XoWLPktO7L7iTZqcMQmKTigPuDI2Eh8SadSzKLFw2bC57yiXYELtD
-         Mnd6lN2osqBuoVpg622eVJUIoBHvbmC6zwyWKYXZvOIkSuzQW6HwPThrENAgfNf3Cw3R
-         O6um97vGldQa1YzaVOZTWih4Bmxbwzo1RTPvaauHFucEyDE6WbcZa3Gnx9PIjhx4Sv30
-         clwDkK4f8zN8glGJAtckbgsJ1vsKf7hgmOxcHOqsxTz1pNxVwHB7rXr/7eE6SQGnGjXE
-         Zb/mCbVM3oSuptDfZ0d9zpsWVM2fMUPui26XyzlXe3zwTMNop+eWGJoonLOSb9vH/KjP
-         6VsQ==
-X-Gm-Message-State: APjAAAWGC5o322OkcnlxUtqFLlcUpWikU59DPKuHD31H4tcKhqKQ/b+1
-        eCETHfJwZwIG3x6erjDDes4CGQUwRPPLjA==
-X-Google-Smtp-Source: APXvYqztWGys83usJcAnWsSsXSLPFur850GnCXfa7eEOG8ZEEyMWStikMNyLNoc7FLWHp4ANCpAn9A==
-X-Received: by 2002:a17:90a:234c:: with SMTP id f70mr18336779pje.109.1572217801287;
-        Sun, 27 Oct 2019 16:10:01 -0700 (PDT)
+        bh=+dWhvYQIT5GLEuQFWRMmxKHMUz5gpa4Xd6+5meRvcac=;
+        b=Q51T/1O3ATJsvEEOUHqdXzTp5TqpBQsRLRGiDIjQhxSsfpqNI8JARkjb3vJIWgFHbj
+         3l/xNt4InDe9/Ub2NeU9fGDnlkj13u3i6qSmwH4b3hOQUr39uQIwN8fRVZSKyubhZy1A
+         4i1TNYJ+HOUAtnKm7qqdhnfLrv2vpY+YJYRLAenHDXG6drpOIFcbPnOcM1PjW/vDSewP
+         66ysPnTyvL6BClqOKQIDKj6gcfsrsTxsoQcliqnhthY1vIU3jdKB0You+6su1WNqsSYs
+         VRySb4rCc5i1KGMm3noRNXhuMBwoNCJYx+jSSDBtsFBLapBGdo1nneYp6dj2PfdT8hiP
+         kH6g==
+X-Gm-Message-State: APjAAAWWA9vyd/k2HjjnGmyCWl0BGpJlbVGIp1BHJHcUEHL2hrvwCHm5
+        a3YnXaqOzj2NsX5F7GGwaSlCrQ==
+X-Google-Smtp-Source: APXvYqzbaz5P2iXJqMfWoXSZpI2FSoGkESSI9UBlE5MGhO/8b3h4rLubDPLBEj0YqIQDnJqcJIN/YQ==
+X-Received: by 2002:a17:902:9308:: with SMTP id bc8mr15725121plb.178.1572217802504;
+        Sun, 27 Oct 2019 16:10:02 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id w25sm8260438pfi.60.2019.10.27.16.10.00
+        by smtp.gmail.com with ESMTPSA id k32sm8620186pje.10.2019.10.27.16.10.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2019 16:10:00 -0700 (PDT)
+        Sun, 27 Oct 2019 16:10:02 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     briannorris@chromium.org, jic23@kernel.org, knaack.h@gmx.de,
         lars@metafoo.de, pmeerw@pmeerw.net, lee.jones@linaro.org,
@@ -50,9 +50,9 @@ To:     briannorris@chromium.org, jic23@kernel.org, knaack.h@gmx.de,
         fabien.lahoudere@collabora.com
 Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v3 08/18] Revert "Input: cros_ec_keyb - add back missing mask for event_type"
-Date:   Sun, 27 Oct 2019 16:09:11 -0700
-Message-Id: <20191027230921.205251-9-gwendal@chromium.org>
+Subject: [PATCH v3 09/18] Revert "Input: cros_ec_keyb: mask out extra flags in event_type"
+Date:   Sun, 27 Oct 2019 16:09:12 -0700
+Message-Id: <20191027230921.205251-10-gwendal@chromium.org>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
 In-Reply-To: <20191027230921.205251-1-gwendal@chromium.org>
 References: <20191027230921.205251-1-gwendal@chromium.org>
@@ -63,7 +63,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 62c3801619e16b68a37ea899b76572145dfe41c9.
+This reverts commit d096aa3eb6045a6a475a0239f3471c59eedf3d61.
 
 This patch is not needed anymore since we clear EC_MKBP_HAS_MORE_EVENTS
 flag before calling the notifiers in patch
@@ -74,40 +74,22 @@ Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 No changes in v3.
 New to v2.
 
- drivers/input/keyboard/cros_ec_keyb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/input/keyboard/cros_ec_keyb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 8d4d9786cc745..a29e81fdf1861 100644
+index a29e81fdf1861..2b71c5a51f907 100644
 --- a/drivers/input/keyboard/cros_ec_keyb.c
 +++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -226,8 +226,6 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- {
- 	struct cros_ec_keyb *ckdev = container_of(nb, struct cros_ec_keyb,
- 						  notifier);
--	uint8_t mkbp_event_type = ckdev->ec->event_data.event_type &
--				  EC_MKBP_EVENT_TYPE_MASK;
- 	u32 val;
- 	unsigned int ev_type;
- 
-@@ -239,7 +237,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
+@@ -237,7 +237,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
  	if (queued_during_suspend && !device_may_wakeup(ckdev->dev))
  		return NOTIFY_OK;
  
--	switch (mkbp_event_type) {
-+	switch (ckdev->ec->event_data.event_type & EC_MKBP_EVENT_TYPE_MASK) {
+-	switch (ckdev->ec->event_data.event_type & EC_MKBP_EVENT_TYPE_MASK) {
++	switch (ckdev->ec->event_data.event_type) {
  	case EC_MKBP_EVENT_KEY_MATRIX:
  		pm_wakeup_event(ckdev->dev, 0);
  
-@@ -266,7 +264,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- 	case EC_MKBP_EVENT_SWITCH:
- 		pm_wakeup_event(ckdev->dev, 0);
- 
--		if (mkbp_event_type == EC_MKBP_EVENT_BUTTON) {
-+		if (ckdev->ec->event_data.event_type == EC_MKBP_EVENT_BUTTON) {
- 			val = get_unaligned_le32(
- 					&ckdev->ec->event_data.data.buttons);
- 			ev_type = EV_KEY;
 -- 
 2.23.0.866.gb869b98d4c-goog
 
