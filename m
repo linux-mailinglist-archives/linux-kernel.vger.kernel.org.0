@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F859E6844
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A9CE65D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2019 22:06:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731552AbfJ0VWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 17:22:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43818 "EHLO mail.kernel.org"
+        id S1728935AbfJ0VFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 17:05:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732215AbfJ0VWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:22:43 -0400
+        id S1728903AbfJ0VFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:05:50 -0400
 Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4478205C9;
-        Sun, 27 Oct 2019 21:22:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3666E2064A;
+        Sun, 27 Oct 2019 21:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211363;
-        bh=TehNVrPPI8BaQbjQWUcOjjHCCMU5xCjlUHpyEyyqFzM=;
+        s=default; t=1572210348;
+        bh=ssAzw6BWhGL2G6UWNKMpXMhinAanx/MjgAnixJgzSCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGLwKx4aYc3YyI6KCNfNMFiudodox6LOMEzcrK5520hO97dNkMg1sWt/rY/kI9WUF
-         2AmJVfOHZcCww2405Quz+6rNHbIoYlHIgm4zV+9Qv8zU5hUqgaUMB29aVcCLF70eSh
-         /HWrzQmQyifkAi32kXdSYW/mL34RQhRnmOV6pGJo=
+        b=aW8RnGzonDuxSUefqEYwRAxnpDw8lDPfJHye5banmbXcTm/MPmSOG7O2PSJZgVwWD
+         hMhrbnp9cUdZVV7jUudeb/Li3visYDCoHKNdiHtC5l4ABFYW5efZ1lu/9xcm3HcANm
+         Cx1lvieGnO6s4yblucQTg6VSdW+4wf8C/rRREGYU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 5.3 124/197] drm/edid: Add 6 bpc quirk for SDC panel in Lenovo G50
-Date:   Sun, 27 Oct 2019 22:00:42 +0100
-Message-Id: <20191027203358.428719899@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 05/49] ARM: dts: am4372: Set memory bandwidth limit for DISPC
+Date:   Sun, 27 Oct 2019 22:00:43 +0100
+Message-Id: <20191027203123.017822699@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
+In-Reply-To: <20191027203119.468466356@linuxfoundation.org>
+References: <20191027203119.468466356@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-commit 11bcf5f78905b90baae8fb01e16650664ed0cb00 upstream.
+[ Upstream commit f90ec6cdf674248dcad85bf9af6e064bf472b841 ]
 
-Another panel that needs 6BPC quirk.
+Set memory bandwidth limit to filter out resolutions above 720p@60Hz to
+avoid underflow errors due to the bandwidth needs of higher resolutions.
 
-BugLink: https://bugs.launchpad.net/bugs/1819968
-Cc: <stable@vger.kernel.org> # v4.8+
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190402033037.21877-1-kai.heng.feng@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+am43xx can not provide enough bandwidth to DISPC to correctly handle
+'high' resolutions.
 
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_edid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/am4372.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -159,6 +159,9 @@ static const struct edid_quirk {
- 	/* Medion MD 30217 PG */
- 	{ "MED", 0x7b8, EDID_QUIRK_PREFER_LARGE_75 },
- 
-+	/* Lenovo G50 */
-+	{ "SDC", 18514, EDID_QUIRK_FORCE_6BPC },
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index c9c9a47446e8e..56224aa5e83ee 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -1117,6 +1117,8 @@
+ 				ti,hwmods = "dss_dispc";
+ 				clocks = <&disp_clk>;
+ 				clock-names = "fck";
 +
- 	/* Panel in Samsung NP700G7A-S01PL notebook reports 6bpc */
- 	{ "SEC", 0xd033, EDID_QUIRK_FORCE_8BPC },
++				max-memory-bandwidth = <230000000>;
+ 			};
  
+ 			rfbi: rfbi@4832a800 {
+-- 
+2.20.1
+
 
 
