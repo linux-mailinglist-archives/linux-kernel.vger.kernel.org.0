@@ -2,101 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 977D5E6CCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2646E6CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732414AbfJ1HTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 03:19:21 -0400
-Received: from gateway20.websitewelcome.com ([192.185.53.25]:20950 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730751AbfJ1HTU (ORCPT
+        id S1732069AbfJ1HBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 03:01:51 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35126 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfJ1HBv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 03:19:20 -0400
-X-Greylist: delayed 1363 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Oct 2019 03:19:20 EDT
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 6B6F9400D0068
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 00:48:29 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id OyxAi0Et4BnGaOyxAieeqj; Mon, 28 Oct 2019 01:56:36 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oCTskRlbgqD+J7aWayjsVtQZcA0SIwA4npc4QiguN5o=; b=xWHIGGQZ1Iab0c2jpYjZZ0O1Oy
-        idQhgFCv+VHyiZt9qhZtSPdqDV6XWoIjQ9LD9elLoup1AYbW8Td72bRF5lr0kkTihUp9DFdPudO0w
-        KilHebfPbteyYM7s9JyCgKXe6/ElNoP+cG7dRzqIL1av6S0RlGiwAw9u/tNY93aU9rsixr8gzgC58
-        d9XboNFx4FZBVoAi7BKsnMhiX1fqZqBhQf0s5TLXo0rPGmRIKAWt/7DM9p3HQu3YiVKUoXYUiW4V9
-        ZNmCDkfOgd5NUgYkoeyuMfUpp9/IE/PiVxJiM1ix1ElIS4MotV1xg2ioyWlJqbnSE88n/uPSbEkS2
-        cPVkDtwA==;
-Received: from [187.192.2.30] (port=58438 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iOyx9-0040bs-6Y; Mon, 28 Oct 2019 01:56:35 -0500
-Date:   Mon, 28 Oct 2019 01:56:33 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Bezrukov <dmitry.bezrukov@aquantia.com>,
-        Nikita Danilov <nikita.danilov@aquantia.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: aquantia: fix error handling in aq_nic_init
-Message-ID: <20191028065633.GA2412@embeddedor>
+        Mon, 28 Oct 2019 03:01:51 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l3so2651962qtp.2;
+        Mon, 28 Oct 2019 00:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=B8JVLFtcc9aWg+tsverFb6TLrQIPxF39zUE7VKNDhoI=;
+        b=hx7QfTuEid1Hcj9TC3rALkWx+Gku6XnXWmunhXazNO71XEThreP9UWB8Bbni20gYiM
+         sEkQUdjWgoiI7PAdzADqeTbaJQyGZFXJVnSmWMm/RXJ6lqqiQKtAdjTPw7vkmG3j7LtP
+         0XvfwbTK0m2QKX3LHUgqxDvmEK30kijN7fm2IYP5qloO/XJJW9dwQxAcm837u18moSd5
+         Tosf26t4ivUB2P4ACk8BPI2ezXkAUGMwAr48Pc2+hqdGVVEk8XtGwUK+basUtTCTNqi4
+         EQza5taJZUTXnWSASmu5uDmURdnonkMDQXIhakgP97IqoVztrIelaMPK+gWTwQLlt28g
+         e7XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=B8JVLFtcc9aWg+tsverFb6TLrQIPxF39zUE7VKNDhoI=;
+        b=NB7yPxi5TlntLHLcjUVWlkcdZi9dZTP8j/ALIei2QUIJTLvNW/p4nVDd4FNRKIAccd
+         zDh917kto9AXhoawwXyYdQtbgyBD6p1yMY2Pj/OdKuI30vhq1M8rL3YTOFPES36LRVAz
+         IBdSalaJADLUU62SIhHk/dph87IjXc7j8afIUipom8r3oOr1aOu4u+sg0OUTr/LgdpBE
+         ZrJjj9jNIw2fO84ZyVefez7hGBj+xB7Etd5v955uIeTEb6XiI0Wpd1+wPn4QuJLpzTO1
+         UdxhaQKGWcw7g9DGTGfS+P+qrq0WvQo3JE3q2HDGBMeyvzsaS+O5afDFv9vgf2/P7Y4Z
+         UOfQ==
+X-Gm-Message-State: APjAAAXgqc5++ZX/87boFB71Z2hBPN/dbpyjrhxf84fmdEpXFarp8DGU
+        RulI3FDcdEWJZ7918moEp7labPAufIr2s4MtTDc=
+X-Google-Smtp-Source: APXvYqx2RYAkGHTJdZoVZBWsqyraT9MFsCxp3j+m5VBkKsDI1NziE3k2TjQbNslMx3rA0R2JsmQoQxMDbxfR3cIGwkA=
+X-Received: by 2002:ac8:542:: with SMTP id c2mr16290854qth.338.1572246110227;
+ Mon, 28 Oct 2019 00:01:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.2.30
-X-Source-L: No
-X-Exim-ID: 1iOyx9-0040bs-6Y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.2.30]:58438
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20191028024101.26655-1-nickhu@andestech.com>
+In-Reply-To: <20191028024101.26655-1-nickhu@andestech.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Mon, 28 Oct 2019 15:01:14 +0800
+Message-ID: <CAEbi=3cs1h4pOU9TcP3JCp921Jj4qYiGtqWCkJ2VKby0YFbbXg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] KASAN support for RISC-V
+To:     Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <greentime.hu@sifive.com>
+Cc:     aryabinin@virtuozzo.com, Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, corbet@lwn.net,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh@linuxfoundation.org, alankao@andestech.com,
+        Anup.Patel@wdc.com, atish.patra@wdc.com,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix currenty ignored returned error by properly error checking
-aq_phy_init().
+Nick Hu <nickhu@andestech.com> =E6=96=BC 2019=E5=B9=B410=E6=9C=8828=E6=97=
+=A5 =E9=80=B1=E4=B8=80 =E4=B8=8A=E5=8D=8810:41=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> KASAN is an important runtime memory debugging feature in linux kernel wh=
+ich can
+> detect use-after-free and out-of-bounds problems.
+>
+> Changes in v2:
+>   - Remove the porting of memmove and exclude the check instead.
+>   - Fix some code noted by Christoph Hellwig
+>
+> Changes in v3:
+>   - Update the KASAN documentation to mention that riscv is supported.
+>
+> Changes in v4:
+>   - Correct the commit log
+>   - Fix the bug reported by Greentime Hu
+>
+> Nick Hu (3):
+>   kasan: No KASAN's memmove check if archs don't have it.
+>   riscv: Add KASAN support
+>   kasan: Add riscv to KASAN documentation.
+>
+>  Documentation/dev-tools/kasan.rst   |   4 +-
+>  arch/riscv/Kconfig                  |   1 +
+>  arch/riscv/include/asm/kasan.h      |  27 ++++++++
+>  arch/riscv/include/asm/pgtable-64.h |   5 ++
+>  arch/riscv/include/asm/string.h     |   9 +++
+>  arch/riscv/kernel/head.S            |   3 +
+>  arch/riscv/kernel/riscv_ksyms.c     |   2 +
+>  arch/riscv/kernel/setup.c           |   5 ++
+>  arch/riscv/kernel/vmlinux.lds.S     |   1 +
+>  arch/riscv/lib/memcpy.S             |   5 +-
+>  arch/riscv/lib/memset.S             |   5 +-
+>  arch/riscv/mm/Makefile              |   6 ++
+>  arch/riscv/mm/kasan_init.c          | 104 ++++++++++++++++++++++++++++
+>  mm/kasan/common.c                   |   2 +
+>  14 files changed, 173 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/kasan.h
+>  create mode 100644 arch/riscv/mm/kasan_init.c
+>
+Hi Nick,
 
-Addresses-Coverity-ID: 1487376 ("Unused value")
-Fixes: dbcd6806af42 ("net: aquantia: add support for Phy access")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I have tested KASAN feature with test_kasan.ko based on commit
+cd9e72b80090a8cd7d84a47a30a06fa92ff277d1 (tag: riscv/for-v5.4-rc3) and
+it passed in Qemu and Unleashed board.
+Thank you for fixing the bug. :)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-index 433adc099e44..1914aa0a19d0 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -341,7 +341,8 @@ int aq_nic_init(struct aq_nic_s *self)
- 
- 	if (self->aq_nic_cfg.aq_hw_caps->media_type == AQ_HW_MEDIA_TYPE_TP) {
- 		self->aq_hw->phy_id = HW_ATL_PHY_ID_MAX;
--		err = aq_phy_init(self->aq_hw);
-+		if (!aq_phy_init(self->aq_hw))
-+			goto err_exit;
- 	}
- 
- 	for (i = 0U, aq_vec = self->aq_vec[0];
--- 
-2.23.0
-
+Tested-by: Greentime Hu <greentime.hu@sifive.com>
