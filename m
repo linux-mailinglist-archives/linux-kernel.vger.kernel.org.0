@@ -2,115 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBC6E7284
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B152E7291
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:26:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388799AbfJ1NR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:17:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48652 "EHLO mail.kernel.org"
+        id S1731110AbfJ1N0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:26:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfJ1NR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:17:57 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726691AbfJ1N0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:26:11 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 711D720650;
-        Mon, 28 Oct 2019 13:17:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18FBA20663;
+        Mon, 28 Oct 2019 13:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572268676;
-        bh=NbPrpNWukhwArDUUIISrsPsSj3KaIzOulncG5+Yab5Y=;
-        h=Date:From:To:cc:Subject:From;
-        b=T/dfpVBxamwNNfI4CiEuzohQg0Ls7AmReY0dj1VhXk3sB6CbXaBqsbGOUnqU7Nrja
-         5dTD5JfMPtb95SMUV7ICp2YAidW5TnkkS87v7UYrwl35PgdtC9KJOELfOvIMfL2tPo
-         qZ6exzIxGYPxCp2GCCMfs4SwESEGcY6/NDkQCoAs=
-Date:   Mon, 28 Oct 2019 14:17:53 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [GIT PULL] HID fixes for 5.4
-Message-ID: <nycvar.YFH.7.76.1910281411130.13160@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        s=default; t=1572269170;
+        bh=3pE89ZCUoD6XHadsRN7ScSgeFYmrH/IyK9AtjIgnGqg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2fTGg4H7kVVcs3Lsth4IpuAZ9rhGzYgtOfAE2DrCKQ4Hshr8jQrepxZQcDQm+StiX
+         VkO/PljdhiW8zbnGd2u3E+bs10LLutkI9SC9qG3ajwm8prXQFHYf0CB7LR94P8xxfS
+         FNgIZ/RsIqSwB3O+GZEhm7pkbJHD3jFUp/ATkErg=
+Date:   Mon, 28 Oct 2019 21:25:36 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Oliver Graute <oliver.graute@kococonnector.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        =?iso-8859-1?Q?S=E9bastien?= Szymanski 
+        <sebastien.szymanski@armadeus.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] dt-bindings: arm: fsl: Document Variscite i.MX6q
+ devicetree
+Message-ID: <20191028132534.GM16985@dragon>
+References: <20191024092019.4020-1-oliver.graute@kococonnector.com>
+ <20191028113826.GD16985@dragon>
+ <20191028120519.GA4147@optiplex>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028120519.GA4147@optiplex>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Mon, Oct 28, 2019 at 12:07:32PM +0000, Oliver Graute wrote:
+> On 28/10/19, Shawn Guo wrote:
+> > On Thu, Oct 24, 2019 at 09:22:37AM +0000, Oliver Graute wrote:
+> > > Document the Variscite i.MX6qdl board devicetree binding
+> > > already supported:
+> > > 
+> > > - variscite,dt6customboard
+> > > 
+> > > Signed-off-by: Oliver Graute <oliver.graute@kococonnector.com>
+> > > Cc: Shawn Guo <shawnguo@kernel.org>
+> > > Cc: Neil Armstrong <narmstrong@baylibre.com>
+> > 
+> > Please organise it into the patch series, where it's being used.
+> 
+> I think this was just forgotten on this commit:
 
-please pull from
+Ah, sorry, missed the fact.  Applied, thanks.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+Shawn
 
-to receive fixes for HID subsystem:
-
-=====
-- HID++ device support regression fixes (race condition during cleanup, 
-  device detection fix, opps fix) from Andrey Smirnov
-- disable PM on i2c-hid, as it's causing problems with a lot of devices;
-  other OSes apparently don't implement/enable it either; from Kai-Heng 
-  Feng
-- error handling fix in intel-ish driver, from Zhang Lixu
-- syzbot fuzzer fix for HID core code from Alan Stern
-- a few other tiny fixups (printk message cleanup, new device ID)
-=====
-
-Thanks.
-
-----------------------------------------------------------------
-Alan Stern (1):
-      HID: Fix assumption that devices have inputs
-
-Andrey Smirnov (3):
-      HID: logitech-hidpp: split g920_get_config()
-      HID: logitech-hidpp: rework device validation
-      HID: logitech-hidpp: do all FF cleanup in hidpp_ff_destroy()
-
-Colin Ian King (1):
-      HID: prodikeys: make array keys static const, makes object smaller
-
-Hans de Goede (1):
-      HID: i2c-hid: add Trekstor Primebook C11B to descriptor override
-
-Kai-Heng Feng (1):
-      HID: i2c-hid: Remove runtime power management
-
-Micha³ Miros³aw (1):
-      HID: fix error message in hid_open_report()
-
-Nicolas Boichat (1):
-      HID: google: add magnemite/masterball USB ids
-
-Zhang Lixu (1):
-      HID: intel-ish-hid: fix wrong error handling in ishtp_cl_alloc_tx_ring()
-
- drivers/hid/hid-axff.c                           |  11 +-
- drivers/hid/hid-core.c                           |   7 +-
- drivers/hid/hid-dr.c                             |  12 +-
- drivers/hid/hid-emsff.c                          |  12 +-
- drivers/hid/hid-gaff.c                           |  12 +-
- drivers/hid/hid-google-hammer.c                  |   4 +
- drivers/hid/hid-holtekff.c                       |  12 +-
- drivers/hid/hid-ids.h                            |   2 +
- drivers/hid/hid-lg2ff.c                          |  12 +-
- drivers/hid/hid-lg3ff.c                          |  11 +-
- drivers/hid/hid-lg4ff.c                          |  11 +-
- drivers/hid/hid-lgff.c                           |  11 +-
- drivers/hid/hid-logitech-hidpp.c                 | 248 +++++++++++++----------
- drivers/hid/hid-microsoft.c                      |  12 +-
- drivers/hid/hid-prodikeys.c                      |   4 +-
- drivers/hid/hid-sony.c                           |  12 +-
- drivers/hid/hid-tmff.c                           |  12 +-
- drivers/hid/hid-zpff.c                           |  12 +-
- drivers/hid/i2c-hid/i2c-hid-core.c               | 118 +----------
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c         |  19 ++
- drivers/hid/intel-ish-hid/ishtp/client-buffers.c |   2 +-
- 21 files changed, 297 insertions(+), 259 deletions(-)
-
--- 
-Jiri Kosina
-SUSE Labs
-
+> 
+> commit 26b7784b29e90da926ff3c290107f7e78c807314
+> Author: Neil Armstrong <narmstrong@baylibre.com>
+> Date:   Mon Dec 4 10:21:09 2017 +0100
+> 
+>     ARM: dts: imx6q: Add Variscite DART-MX6 Carrier-board support
+> 
+>     This patch adds support for the i.MX6 Quad variant of the Variscite DART-MX6
+>     SoM Carrier-Board.
