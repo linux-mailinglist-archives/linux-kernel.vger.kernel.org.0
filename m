@@ -2,95 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 880DEE7C83
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F85E7C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbfJ1WtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:49:19 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:38416 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJ1WtT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:49:19 -0400
-Received: by mail-wr1-f49.google.com with SMTP id v9so11592944wrq.5;
-        Mon, 28 Oct 2019 15:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A2jEsBOs5Fgq1k1SUjS53cvLXGYRrdoo13cMo5AIHyk=;
-        b=i/IpsRc5S8qtvd4Hd2Jajl2muQJLkQ9Z8YMjvk6JZSa68F2SqLABksVza3TMROQk1l
-         /4QBiNY1iKt19N2BdTTsYSNeafJcDTRO2E4QtC+5aruM0hW4mtc5ftJT2S5L8GFlPVO6
-         YKMW91bU1FKH8m7wjlo0qMRlZEa5yscXWnOT5TtkxhV6uvyZw6int+SGf31E8CCgtgK/
-         +PnCW1FPhrNJnrlSQzaig+42FGFhZKigWWA1U5aJGoTzmzNKFNpQRyc3dJn4Eh6uVJle
-         kVA2eUWPyplVvIfzyavyLQm4lpmFVVkZvdSAmIfbVaktYI6/5+jFr0jbVFruWSb1RxEh
-         +Lzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A2jEsBOs5Fgq1k1SUjS53cvLXGYRrdoo13cMo5AIHyk=;
-        b=DOrr8kb/MjohnRRbaqHcEszxolytGIe8Dgei8oQL1LUrA3Nff//Mxuf5qNwQxA0nBS
-         xWxojUwDCOKhrHjhWThGDZTEr/kfdW8XkZGc/5YTIk5nWlSq0gyMC6zurDNAwoabSCXC
-         U3l27oaFPvOs65VVKUg8CcEx7mvB9JTDFQ4NQTSFEhbfFJyXYrBHPyj/xaA21wELXaz+
-         QMIa1AsxYTtH20yqWcBcPQ+12sCEP8ZnKHJZKXEl+ISnczRuO9PPgwD1K1rpFQ/9UAJk
-         0+rqcdSAS847FnL6IxOra+VK9IsNCRrf1HaOWO7BWSLspaj4yPeekfr6KS0J8kUw/o/x
-         ZxTA==
-X-Gm-Message-State: APjAAAUld68BVZGsIO9kwDqZGaTytTsHKb6Y7shLIUpugWCzg05ViHpe
-        x3Ky8nPzqOFpaLpa5JTXKaIA5eXI
-X-Google-Smtp-Source: APXvYqxkisLhWG9uNXHLiB27lzGZOriN/QcZjrQazkEnS+bedp3Okzy6CzZwUI/6m/n3bBjwuOviOg==
-X-Received: by 2002:adf:f44e:: with SMTP id f14mr16228477wrp.56.1572302957156;
-        Mon, 28 Oct 2019 15:49:17 -0700 (PDT)
-Received: from desk.local ([2a02:a03f:40ac:ce00:6dcd:e18f:2cd1:7611])
-        by smtp.gmail.com with ESMTPSA id u7sm14094078wre.59.2019.10.28.15.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 15:49:16 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 23:49:15 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Dan Carpenter <dan.carpenter@oracle.co>,
-        linux-sparse@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: detecting misuse of of_get_property
-Message-ID: <20191028224914.enpqjkcvbxyeexnl@desk.local>
-References: <ec277c12-c608-6326-7723-be8cab4f524a@rasmusvillemoes.dk>
+        id S1730274AbfJ1Wv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:51:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:46132 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbfJ1Wv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 18:51:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C8621F1;
+        Mon, 28 Oct 2019 15:51:56 -0700 (PDT)
+Received: from [192.168.1.124] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 324343F6C4;
+        Mon, 28 Oct 2019 15:51:55 -0700 (PDT)
+Subject: Re: [PATCH v2] iommu/arm-smmu: fix "hang" when games exit
+To:     Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>
+Cc:     Rob Clark <robdclark@gmail.com>, iommu@lists.linux-foundation.org,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "moderated list:ARM SMMU DRIVERS" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <418d8426-f299-1269-2b2e-f86677cf22c2@arm.com>
+ <20191007204906.19571-1-robdclark@gmail.com>
+ <20191028222042.GB8532@willie-the-truck>
+ <CAJs_Fx7zRWsTPiAg0PFt+8nJPpHpzSkxW6XMMJwozVO6vyB78A@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e3fc88d9-4934-0227-d9c7-b1cb37a8811e@arm.com>
+Date:   Mon, 28 Oct 2019 22:51:53 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec277c12-c608-6326-7723-be8cab4f524a@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAJs_Fx7zRWsTPiAg0PFt+8nJPpHpzSkxW6XMMJwozVO6vyB78A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 08:32:42PM +0100, Rasmus Villemoes wrote:
-> Hi,
+On 2019-10-28 10:38 pm, Rob Clark wrote:
+> On Mon, Oct 28, 2019 at 3:20 PM Will Deacon <will@kernel.org> wrote:
+>>
+>> Hi Rob,
+>>
+>> On Mon, Oct 07, 2019 at 01:49:06PM -0700, Rob Clark wrote:
+>>> From: Rob Clark <robdclark@chromium.org>
+>>>
+>>> When games, browser, or anything using a lot of GPU buffers exits, there
+>>> can be many hundreds or thousands of buffers to unmap and free.  If the
+>>> GPU is otherwise suspended, this can cause arm-smmu to resume/suspend
+>>> for each buffer, resulting 5-10 seconds worth of reprogramming the
+>>> context bank (arm_smmu_write_context_bank()/arm_smmu_write_s2cr()/etc).
+>>> To the user it would appear that the system just locked up.
+>>>
+>>> A simple solution is to use pm_runtime_put_autosuspend() instead, so we
+>>> don't immediately suspend the SMMU device.
+>>
+>> Please can you reword the subject to be a bit more useful? The commit
+>> message is great, but the subject is a bit like "fix bug in code" to me.
 > 
-> I just spent some time trying to convert some so far PPC-only drivers to
-> be more generic. One of the things I had to do was convert stuff like
-> 
->   u32 *val = of_get_property(np, "bla", NULL);
->   do_stuff_with(*val);
-> 
-> with
-> 
->   of_property_read_u32(np, "bla", &val);
->   do_stuff_with(val);
-> 
-> (error checking omitted for simplicity). The problem is that
-> of_get_property() just returns void*. When the property is just a
-> string, there's no problem interpreting that as a char*. But when the
-> property is a number of array of numbers, I'd like some way to flag
-> casting it to u32* as an error - if you cast it to a (pointer to integer
-> type wider than char), it must be to a __be32*. Is there some way
-> sparse/smatch could help find such cases?
+> yeah, not the best $subject, but I wasn't quite sure how to fit
+> something better in a reasonable # of chars.. maybe something like:
+> "iommu/arm-smmu: optimize unmap but avoiding toggling runpm state"?
 
-If I understand you correctly, you would need a kind of 'soft'
-bitwise pointer?
-I guess it shouldn't be too hard to add a new flag which would
-allow cast of bitwise pointers to pointers to char/void (see
-at end of evaluate.c:evaluate_cast()).
+FWIW, I'd be inclined to frame it as something like "avoid pathological 
+RPM behaviour for unmaps".
 
-Note: casts from bitwise pointer to void* are already allowed.
-
--- Luc
+Robin.
