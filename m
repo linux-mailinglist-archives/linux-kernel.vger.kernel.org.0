@@ -2,72 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13DA5E79A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12326E79AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:10:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732710AbfJ1UIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:08:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:44636 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727463AbfJ1UIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:08:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8293531F;
-        Mon, 28 Oct 2019 13:08:34 -0700 (PDT)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B4C9F3F71F;
-        Mon, 28 Oct 2019 13:08:33 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     robh@kernel.org, tomeu.vizoso@collabora.com
-Cc:     steven.price@arm.com, dri-devel@lists.freedesktop.org,
+        id S1732767AbfJ1UJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:09:59 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40685 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbfJ1UJ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 16:09:57 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p5so1024265plr.7;
+        Mon, 28 Oct 2019 13:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wl+iKNA5Jfay9ywIg9f4O45/2oXRJ3Weq7J5t6Tjfas=;
+        b=FvvSzQZhtAbnnhD9fehuY1IndRKkyeQFH/Ja4KzmDtuFlsQ4yWC3wDD/uKvTzXdO77
+         mRJu3Rm77YcfdaMIXRi38XW4xrNXJmd6jtwnIsHlAISpgUIJEssbEyHw/cJkryhevPZN
+         Fgqyy4Br72CBLdf3A6KK7MEGAW5jd/5I3c4hqfd5FEdFkBqtv0DDJ5Dy/73NCCMJFirJ
+         NKZDseP2xVBrVl7fL1syApRx1CoyuebQsBP14yBd4bHW2RejGkytU2DR5JTFikrscNYx
+         lt1lu33+alUjvvyA5YuTJKMFad3WBiTaJAY0PfsUs5EYRX3iHeUBoYkNhgssY8TS9POy
+         VbCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wl+iKNA5Jfay9ywIg9f4O45/2oXRJ3Weq7J5t6Tjfas=;
+        b=LHJ6jwy0/o46v6TRBpVFdGFdiheG3mBAa5sN+zOmv6aLNqzbvUcWD/VO7bOKyN1MO6
+         9C79cWB7wSoWvdnmFqubW58nxdZV7d8Ap2lf+JtKhPGE7E8XkgSUsGYLC1IUWk/lSpd0
+         3M4AFC8HTLA/wTqIfnV4/W0CwOeiAOsyuQOWsIDFrH489EZfdMzXwmJDVRmh+jQMxPfz
+         T8N5V6JhOJbWviZJ9bMBrYxRZJ+i0Tcdq3JlYiQkn6Ll9iPxdEJp04oo/NcczM9fZW5T
+         1zkhlhOAFqSq1sTR/WPxFtOFuGf3RDvJ5yBkFfJZ4hOYm5p4WdC+PBpM8wzcb9B88KLt
+         LPmg==
+X-Gm-Message-State: APjAAAVHpprEdZVLR2j6toGSMvEZYZdZsHk/tx3zbzvPIqq7zAmXXu2q
+        BYpYA/22TW8zEvcx3OPJkbo=
+X-Google-Smtp-Source: APXvYqyajeo0OC7xTlcmXfY/Y+R89i/qbP/KRbraF3xD5S+oVDl7mzcP/13Ma6RUFsB5gyTb/AAAbA==
+X-Received: by 2002:a17:902:a503:: with SMTP id s3mr20180655plq.203.1572293396691;
+        Mon, 28 Oct 2019 13:09:56 -0700 (PDT)
+Received: from saurav ([27.62.167.137])
+        by smtp.gmail.com with ESMTPSA id 31sm12360941pgy.63.2019.10.28.13.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 13:09:56 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 01:39:50 +0530
+From:   Saurav Girepunje <saurav.girepunje@gmail.com>
+To:     sgoutham@cavium.com, rric@kernel.org, davem@davemloft.net,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panfrost: Don't dereference bogus MMU pointers
-Date:   Mon, 28 Oct 2019 20:08:25 +0000
-Message-Id: <9a0b09e6b5851f0d4428b72dd6b8b4c0d0ef4206.1572293305.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.21.0.dirty
+Cc:     saurav.girepunje@hotmail.com
+Subject: [PATCH] cavium: thunder: Fix use true/false for bool type
+Message-ID: <20191028200949.GA28902@saurav>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that killing an application while faults are occurring
-(particularly with a GPU in FPGA at a whopping 40MHz) can lead to
-handling a lingering page fault after all the address space contexts
-have already been freed. In this situation, the LRU list is empty so
-addr_to_drm_mm_node() ends up dereferencing the list head as if it were
-a struct panfrost_mmu entry; this leaves "mmu->as" actually pointing at
-the pfdev->alloc_mask bitmap, which is also empty, and given that the
-fault has a high likelihood of being in AS0, hilarity ensues.
+use true/false on bool type variables for assignment.
 
-Sadly, the cleanest solution seems to involve another goto. Oh well, at
-least it's robust...
-
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_mmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-index e61984e26e0a..508765f80cfe 100644
---- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-@@ -413,11 +413,11 @@ addr_to_drm_mm_node(struct panfrost_device *pfdev, int as, u64 addr)
- 	spin_lock(&pfdev->as_lock);
- 	list_for_each_entry(mmu, &pfdev->as_lru_list, list) {
- 		if (as == mmu->as)
--			break;
-+			goto found_mmu;
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index acb016834f04..1e09fdb63c4f 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -1007,14 +1007,14 @@ static void bgx_poll_for_link(struct work_struct *work)
+ 
+ 	if ((spu_link & SPU_STATUS1_RCV_LNK) &&
+ 	    !(smu_link & SMU_RX_CTL_STATUS)) {
+-		lmac->link_up = 1;
++		lmac->link_up = true;
+ 		if (lmac->lmac_type == BGX_MODE_XLAUI)
+ 			lmac->last_speed = SPEED_40000;
+ 		else
+ 			lmac->last_speed = SPEED_10000;
+ 		lmac->last_duplex = DUPLEX_FULL;
+ 	} else {
+-		lmac->link_up = 0;
++		lmac->link_up = false;
+ 		lmac->last_speed = SPEED_UNKNOWN;
+ 		lmac->last_duplex = DUPLEX_UNKNOWN;
  	}
--	if (as != mmu->as)
--		goto out;
-+	goto out;
+@@ -1023,7 +1023,7 @@ static void bgx_poll_for_link(struct work_struct *work)
+ 		if (lmac->link_up) {
+ 			if (bgx_xaui_check_link(lmac)) {
+ 				/* Errors, clear link_up state */
+-				lmac->link_up = 0;
++				lmac->link_up = false;
+ 				lmac->last_speed = SPEED_UNKNOWN;
+ 				lmac->last_duplex = DUPLEX_UNKNOWN;
+ 			}
+@@ -1055,11 +1055,11 @@ static int bgx_lmac_enable(struct bgx *bgx, u8 lmacid)
+ 	if ((lmac->lmac_type == BGX_MODE_SGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_QSGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_RGMII)) {
+-		lmac->is_sgmii = 1;
++		lmac->is_sgmii = true;
+ 		if (bgx_lmac_sgmii_init(bgx, lmac))
+ 			return -1;
+ 	} else {
+-		lmac->is_sgmii = 0;
++		lmac->is_sgmii = false;
+ 		if (bgx_lmac_xaui_init(bgx, lmac))
+ 			return -1;
+ 	}
+@@ -1304,7 +1304,7 @@ static void lmac_set_training(struct bgx *bgx, struct lmac *lmac, int lmacid)
+ {
+ 	if ((lmac->lmac_type != BGX_MODE_10G_KR) &&
+ 	    (lmac->lmac_type != BGX_MODE_40G_KR)) {
+-		lmac->use_training = 0;
++		lmac->use_training = false;
+ 		return;
+ 	}
  
-+found_mmu:
- 	priv = container_of(mmu, struct panfrost_file_priv, mmu);
- 
- 	spin_lock(&priv->mm_lock);
 -- 
-2.21.0.dirty
+2.20.1
 
