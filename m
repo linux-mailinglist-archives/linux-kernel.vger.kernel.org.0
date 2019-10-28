@@ -2,131 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8C2E7B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A700E7B1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404080AbfJ1VHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:07:37 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30938 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391197AbfJ1VHY (ORCPT
+        id S2389035AbfJ1VIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:08:34 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:49338 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727119AbfJ1VId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:07:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572296843;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vaN691EUnxF95m8CQyGbqME6xNGoyr91KYIIBfK7uXs=;
-        b=NsYY3RCcrSSRK7N43bEJtZ75r4ut492io9M3kXqnv1Vnd2QxLuOUk2tRBmrI0f7Xc6siyu
-        PLyC2rwit7/d19vH3a4fMivKPMHLVxqCFihwoi7g76UrbDkdmmdWqwNKP0/Ke/hF7eILQP
-        5sycfsZPQXb9TKA2RCgr4zZ9MT7NfHY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-124-pWsCm5gWORa93cR4oE7e_g-1; Mon, 28 Oct 2019 17:07:20 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 851AF1804971;
-        Mon, 28 Oct 2019 21:07:17 +0000 (UTC)
-Received: from krava (ovpn-204-45.brq.redhat.com [10.40.204.45])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4928926359;
-        Mon, 28 Oct 2019 21:07:13 +0000 (UTC)
-Date:   Mon, 28 Oct 2019 22:07:12 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v4 4/9] perf tools: splice events onto evlist even on
- error
-Message-ID: <20191028210712.GB6158@krava>
-References: <20191024190202.109403-1-irogers@google.com>
- <20191025180827.191916-1-irogers@google.com>
- <20191025180827.191916-5-irogers@google.com>
+        Mon, 28 Oct 2019 17:08:33 -0400
+Received: from belgarion ([90.55.204.252])
+        by mwinf5d17 with ME
+        id K98W2100G5TFNlm0398XDJ; Mon, 28 Oct 2019 22:08:31 +0100
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Mon, 28 Oct 2019 22:08:31 +0100
+X-ME-IP: 90.55.204.252
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 21/46] ARM: pxa: spitz: use gpio descriptors for audio
+References: <20191018154052.1276506-1-arnd@arndb.de>
+        <20191018154201.1276638-21-arnd@arndb.de>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Mon, 28 Oct 2019 22:08:30 +0100
+In-Reply-To: <20191018154201.1276638-21-arnd@arndb.de> (Arnd Bergmann's
+        message of "Fri, 18 Oct 2019 17:41:36 +0200")
+Message-ID: <87o8y0lgs1.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191025180827.191916-5-irogers@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: pWsCm5gWORa93cR4oE7e_g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 11:08:22AM -0700, Ian Rogers wrote:
-> If event parsing fails the event list is leaked, instead splice the list
-> onto the out result and let the caller cleanup.
->=20
-> An example input for parse_events found by libFuzzer that reproduces
-> this memory leak is 'm{'.
->=20
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
-
+> The audio driver should not use a hardwired gpio number
+> from the header. Change it to use a lookup table.
+>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  tools/perf/util/parse-events.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->=20
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-> index c516d0cce946..4c4c6f3e866a 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1952,15 +1952,20 @@ int parse_events(struct evlist *evlist, const cha=
-r *str,
-> =20
->  =09ret =3D parse_events__scanner(str, &parse_state, PE_START_EVENTS);
->  =09perf_pmu__parse_cleanup();
+>  arch/arm/mach-pxa/spitz.c                    | 33 ++++++++++-
+>  arch/arm/mach-pxa/{include/mach => }/spitz.h |  2 +-
+>  arch/arm/mach-pxa/spitz_pm.c                 |  2 +-
+>  sound/soc/pxa/spitz.c                        | 58 ++++++++------------
+>  4 files changed, 57 insertions(+), 38 deletions(-)
+>  rename arch/arm/mach-pxa/{include/mach => }/spitz.h (99%)
+>
+> diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+> index a4fdc399d152..6028fd83c44d 100644
+> --- a/arch/arm/mach-pxa/spitz.c
+> +++ b/arch/arm/mach-pxa/spitz.c
+> @@ -44,7 +44,7 @@
+>  #include <linux/platform_data/mmc-pxamci.h>
+>  #include <linux/platform_data/usb-ohci-pxa27x.h>
+>  #include <linux/platform_data/video-pxafb.h>
+> -#include <mach/spitz.h>
+> +#include "spitz.h"
+>  #include "sharpsl_pm.h"
+>  #include <mach/smemc.h>
+>  
+> @@ -948,11 +948,42 @@ static void __init spitz_i2c_init(void)
+>  static inline void spitz_i2c_init(void) {}
+>  #endif
+>  
+> +static struct gpiod_lookup_table spitz_audio_gpio_table = {
+> +	.dev_id = "spitz-audio",
+> +	.table = {
+> +		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_L - SPITZ_SCP_GPIO_BASE,
+> +			    "mute-l", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_R - SPITZ_SCP_GPIO_BASE,
+> +			    "mute-r", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("sharp-scoop.1", SPITZ_GPIO_MIC_BIAS - SPITZ_SCP2_GPIO_BASE,
+> +			    "mic", GPIO_ACTIVE_HIGH),
+> +		{ },
+> +	},
+> +};
 > +
-> +=09if (!ret && list_empty(&parse_state.list)) {
-> +=09=09WARN_ONCE(true, "WARNING: event parser found nothing\n");
-> +=09=09return -1;
-> +=09}
-> +
-> +=09/*
-> +=09 * Add list to the evlist even with errors to allow callers to clean =
-up.
-> +=09 */
-> +=09perf_evlist__splice_list_tail(evlist, &parse_state.list);
-> +
->  =09if (!ret) {
->  =09=09struct evsel *last;
-> =20
-> -=09=09if (list_empty(&parse_state.list)) {
-> -=09=09=09WARN_ONCE(true, "WARNING: event parser found nothing\n");
-> -=09=09=09return -1;
-> -=09=09}
-> -
-> -=09=09perf_evlist__splice_list_tail(evlist, &parse_state.list);
->  =09=09evlist->nr_groups +=3D parse_state.nr_groups;
->  =09=09last =3D evlist__last(evlist);
->  =09=09last->cmdline_group_boundary =3D true;
-> --=20
-> 2.24.0.rc0.303.g954a862665-goog
->=20
+> +static struct gpiod_lookup_table akita_audio_gpio_table = {
+> +	.dev_id = "spitz-audio",
+> +	.table = {
+> +		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_L - SPITZ_SCP_GPIO_BASE,
+> +			    "mute-l", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_R - SPITZ_SCP_GPIO_BASE,
+> +			    "mute-r", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("gpio-pxa", AKITA_GPIO_MIC_BIAS - AKITA_IOEXP_GPIO_BASE,
+> +			    "mic", GPIO_ACTIVE_HIGH),
+This last one looks a bit dubious, as it looks like a gpio on a gpio expander,
+could you cross-check that "gpio-pxa" shouldn't be an I2C expander gpio please ?
 
+Cheers.
+
+--
+Robert
