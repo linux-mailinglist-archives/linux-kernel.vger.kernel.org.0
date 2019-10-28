@@ -2,234 +2,501 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C685E6C28
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6491E6C1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:03:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbfJ1GHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 02:07:20 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53422 "EHLO inva021.nxp.com"
+        id S1731300AbfJ1GDl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 28 Oct 2019 02:03:41 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22643 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbfJ1GHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 02:07:20 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 08E5B200710;
-        Mon, 28 Oct 2019 07:07:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C51E2006FA;
-        Mon, 28 Oct 2019 07:07:04 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 43E2F40309;
-        Mon, 28 Oct 2019 14:06:50 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, ping.bai@nxp.com, daniel.baluta@nxp.com,
-        jun.li@nxp.com, bjorn.andersson@linaro.org, olof@lixom.net,
-        mripard@kernel.org, vkoul@kernel.org, jagan@amarulasolutions.com,
-        dinguyen@kernel.org, marcin.juszkiewicz@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND 2/4] thermal: imx8mm: Add support for i.MX8MM thermal monitoring unit
-Date:   Mon, 28 Oct 2019 14:03:36 +0800
-Message-Id: <1572242618-18806-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572242618-18806-1-git-send-email-Anson.Huang@nxp.com>
-References: <1572242618-18806-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730394AbfJ1GDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 02:03:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 23:03:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,239,1569308400"; 
+   d="scan'208";a="203179906"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga006.jf.intel.com with ESMTP; 27 Oct 2019 23:03:39 -0700
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sun, 27 Oct 2019 23:03:38 -0700
+Received: from shsmsx106.ccr.corp.intel.com (10.239.4.159) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sun, 27 Oct 2019 23:03:38 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
+ SHSMSX106.ccr.corp.intel.com ([169.254.10.248]) with mapi id 14.03.0439.000;
+ Mon, 28 Oct 2019 14:03:37 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+CC:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: RE: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
+Thread-Topic: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
+Thread-Index: AQHViqRYHs7rkU/ej0S5OBwc0DBZHqdq78JwgAApg4CABHtLgA==
+Date:   Mon, 28 Oct 2019 06:03:36 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7B8@SHSMSX104.ccr.corp.intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-10-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDDA6@SHSMSX104.ccr.corp.intel.com>
+ <20191025103337.1e51c0c9@jacob-builder>
+In-Reply-To: <20191025103337.1e51c0c9@jacob-builder>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjE4OTNlMGEtOGNmYS00N2ZhLWEwMDItNjJmMDA1ZTAyZDQzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieG9MMDlReStuaVNySVF5cmFtVE1MUHJvXC9iTWlyZ082Tk1sbUdcL3laM3BldDRaZkdoSkpOM1RPeGJ4UEM0RldDIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX8MM has a thermal monitoring unit(TMU) inside, it ONLY has one
-sensor for CPU, add support for reading immediate temperature of
-this sensor.
+> From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
+> Sent: Saturday, October 26, 2019 1:34 AM
+> 
+> Hi Kevin,
+> 
+> 
+> On Fri, 25 Oct 2019 07:19:26 +0000
+> "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> 
+> > > From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
+> > > Sent: Friday, October 25, 2019 3:55 AM
+> > >
+> > > When supporting guest SVA with emulated IOMMU, the guest PASID
+> > > table is shadowed in VMM. Updates to guest vIOMMU PASID table
+> > > will result in PASID cache flush which will be passed down to
+> > > the host as bind guest PASID calls.
+> >
+> > will be translated into binding/unbinding guest PASID calls to update
+> > the host shadow PASID table.
+> >
+> yours is more precise, will replace.
+> > >
+> > > For the SL page tables, it will be harvested from device's
+> > > default domain (request w/o PASID), or aux domain in case of
+> > > mediated device.
+> >
+> > harvested -> copied or linked to?
+> Kind of the same, but I agree copied is more technical and precise
+> term. Will change.
+> 
+> > >
+> > >     .-------------.  .---------------------------.
+> > >     |   vIOMMU    |  | Guest process CR3, FL only|
+> > >     |             |  '---------------------------'
+> > >     .----------------/
+> > >     | PASID Entry |--- PASID cache flush -
+> > >     '-------------'                       |
+> > >     |             |                       V
+> > >     |             |                CR3 in GPA
+> > >     '-------------'
+> > > Guest
+> > > ------| Shadow |--------------------------|--------
+> > >       v        v                          v
+> > > Host
+> > >     .-------------.  .----------------------.
+> > >     |   pIOMMU    |  | Bind FL for GVA-GPA  |
+> > >     |             |  '----------------------'
+> > >     .----------------/  |
+> > >     | PASID Entry |     V (Nested xlate)
+> > >     '----------------\.------------------------------.
+> > >     |             |   |SL for GPA-HPA, default domain|
+> > >     |             |   '------------------------------'
+> > >     '-------------'
+> > > Where:
+> > >  - FL = First level/stage one page tables
+> > >  - SL = Second level/stage two page tables
+> > >
+> > > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> > > ---
+> > >  drivers/iommu/intel-iommu.c |   4 +
+> > >  drivers/iommu/intel-svm.c   | 184
+> > > ++++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/intel-iommu.h |   8 +-
+> > >  include/linux/intel-svm.h   |  17 ++++
+> > >  4 files changed, 212 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/iommu/intel-iommu.c
+> > > b/drivers/iommu/intel-iommu.c index acd1ac787d8b..5fab32fbc4b4
+> > > 100644 --- a/drivers/iommu/intel-iommu.c
+> > > +++ b/drivers/iommu/intel-iommu.c
+> > > @@ -6026,6 +6026,10 @@ const struct iommu_ops intel_iommu_ops =
+> {
+> > >  	.dev_disable_feat	= intel_iommu_dev_disable_feat,
+> > >  	.is_attach_deferred	=
+> > > intel_iommu_is_attach_deferred, .pgsize_bitmap		=
+> > > INTEL_IOMMU_PGSIZES, +#ifdef CONFIG_INTEL_IOMMU_SVM
+> > > +	.sva_bind_gpasid	= intel_svm_bind_gpasid,
+> > > +	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
+> > > +#endif
+> >
+> > again, pure PASID management logic should be separated from SVM.
+> >
+> I am not following, these two functions are SVM functionality, not
+> pure PASID management which is already separated in ioasid.c
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/thermal/Kconfig          |  10 +++
- drivers/thermal/Makefile         |   1 +
- drivers/thermal/imx8mm_thermal.c | 134 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 145 insertions(+)
- create mode 100644 drivers/thermal/imx8mm_thermal.c
+I should say pure "scalable mode" logic. Above callbacks are not
+related to host SVM per se. They are serving gpasid requests from
+guest side, thus part of generic scalable mode capability.
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 129b9ed..e09ff16 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -233,6 +233,16 @@ config IMX_THERMAL
- 	  cpufreq is used as the cooling device to throttle CPUs when the
- 	  passive trip is crossed.
- 
-+config IMX8MM_THERMAL
-+	tristate "Temperature sensor driver for Freescale i.MX8MM SoC"
-+	depends on ARCH_MXC
-+	depends on OF
-+	help
-+	  Support for Thermal Monitoring Unit (TMU) found on Freescale i.MX8MM SoC.
-+	  It supports one critical trip point and one passive trip point. The
-+	  cpufreq is used as the cooling device to throttle CPUs when the passive
-+	  trip is crossed.
-+
- config MAX77620_THERMAL
- 	tristate "Temperature sensor driver for Maxim MAX77620 PMIC"
- 	depends on MFD_MAX77620
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index baeb70b..f2608f0 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_DB8500_THERMAL)	+= db8500_thermal.o
- obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
- obj-$(CONFIG_TANGO_THERMAL)	+= tango_thermal.o
- obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
-+obj-$(CONFIG_IMX8MM_THERMAL)	+= imx8mm_thermal.o
- obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
- obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
- obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
-new file mode 100644
-index 0000000..04f8a8f
---- /dev/null
-+++ b/drivers/thermal/imx8mm_thermal.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 NXP.
-+ *
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/thermal.h>
-+
-+#include "thermal_core.h"
-+
-+#define TER			0x0	/* TMU enable */
-+#define TRITSR			0x20	/* TMU immediate temp */
-+
-+#define TER_EN			BIT(31)
-+#define TRITSR_VAL_MASK		0xff
-+
-+#define TEMP_LOW_LIMIT		10
-+
-+struct imx8mm_tmu {
-+	struct thermal_zone_device *tzd;
-+	void __iomem *base;
-+	struct clk *clk;
-+};
-+
-+static int tmu_get_temp(void *data, int *temp)
-+{
-+	struct imx8mm_tmu *tmu = data;
-+	u32 val;
-+
-+	/* the temp sensor need about 1ms to finish the measurement */
-+	usleep_range(1000, 2000);
-+
-+	val = readl_relaxed(tmu->base + TRITSR) & TRITSR_VAL_MASK;
-+	if (val < TEMP_LOW_LIMIT)
-+		return -EAGAIN;
-+
-+	*temp = val * 1000;
-+
-+	return 0;
-+}
-+
-+static struct thermal_zone_of_device_ops tmu_tz_ops = {
-+	.get_temp = tmu_get_temp,
-+};
-+
-+static int imx8mm_tmu_probe(struct platform_device *pdev)
-+{
-+	struct imx8mm_tmu *tmu;
-+	u32 val;
-+	int ret;
-+
-+	tmu = devm_kzalloc(&pdev->dev, sizeof(struct imx8mm_tmu), GFP_KERNEL);
-+	if (!tmu)
-+		return -ENOMEM;
-+
-+	tmu->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(tmu->base))
-+		return PTR_ERR(tmu->base);
-+
-+	tmu->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(tmu->clk)) {
-+		ret = PTR_ERR(tmu->clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to get tmu clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(tmu->clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to enable tmu clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	tmu->tzd = devm_thermal_zone_of_sensor_register(&pdev->dev, 0,
-+							tmu, &tmu_tz_ops);
-+	if (IS_ERR(tmu->tzd)) {
-+		dev_err(&pdev->dev,
-+			"failed to register thermal zone sensor: %d\n", ret);
-+		return PTR_ERR(tmu->tzd);
-+	}
-+
-+	platform_set_drvdata(pdev, tmu);
-+
-+	/* enable the monitor */
-+	val = readl_relaxed(tmu->base + TER);
-+	val |= TER_EN;
-+	writel_relaxed(val, tmu->base + TER);
-+
-+	return 0;
-+}
-+
-+static int imx8mm_tmu_remove(struct platform_device *pdev)
-+{
-+	struct imx8mm_tmu *tmu = platform_get_drvdata(pdev);
-+	u32 val;
-+
-+	/* disable TMU */
-+	val = readl_relaxed(tmu->base + TER);
-+	val &= ~TER_EN;
-+	writel_relaxed(val, tmu->base + TER);
-+
-+	clk_disable_unprepare(tmu->clk);
-+	platform_set_drvdata(pdev, NULL);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id imx8mm_tmu_table[] = {
-+	{ .compatible = "fsl,imx8mm-tmu", },
-+	{ },
-+};
-+
-+static struct platform_driver imx8mm_tmu = {
-+	.driver = {
-+		.name	= "i.mx8mm_thermal",
-+		.of_match_table = imx8mm_tmu_table,
-+	},
-+	.probe = imx8mm_tmu_probe,
-+	.remove = imx8mm_tmu_remove,
-+};
-+module_platform_driver(imx8mm_tmu);
-+
-+MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-+MODULE_DESCRIPTION("i.MX8MM Thermal Monitor Unit driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+> 
+> > >  };
+> > >
+> > >  static void quirk_iommu_igfx(struct pci_dev *dev)
+> > > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> > > index a18b02a9709d..ae13a310cf96 100644
+> > > --- a/drivers/iommu/intel-svm.c
+> > > +++ b/drivers/iommu/intel-svm.c
+> > > @@ -216,6 +216,190 @@ static LIST_HEAD(global_svm_list);
+> > >  	list_for_each_entry(sdev, &svm->devs, list)	\
+> > >  	if (dev == sdev->dev)				\
+> > >
+> > > +int intel_svm_bind_gpasid(struct iommu_domain *domain,
+> > > +			struct device *dev,
+> > > +			struct iommu_gpasid_bind_data *data)
+> > > +{
+> > > +	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
+> > > +	struct dmar_domain *ddomain;
+> > > +	struct intel_svm_dev *sdev;
+> > > +	struct intel_svm *svm;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (WARN_ON(!iommu) || !data)
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (data->version != IOMMU_GPASID_BIND_VERSION_1 ||
+> > > +		data->format != IOMMU_PASID_FORMAT_INTEL_VTD)
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (dev_is_pci(dev)) {
+> > > +		/* VT-d supports devices with full 20 bit PASIDs
+> > > only */
+> > > +		if (pci_max_pasids(to_pci_dev(dev)) != PASID_MAX)
+> > > +			return -EINVAL;
+> > > +	}
+> >
+> > what about non-pci devices? It just moves forward w/o any check here?
+> >
+> Good catch, we only support PCI-device on Intel. Even mdev has to pass
+> the pdev to bind. Will add the else case.
+> 
+> > > +
+> > > +	/*
+> > > +	 * We only check host PASID range, we have no knowledge to
+> > > check
+> > > +	 * guest PASID range nor do we use the guest PASID.
+> > > +	 */
+> > > +	if (data->hpasid <= 0 || data->hpasid >= PASID_MAX)
+> > > +		return -EINVAL;
+> > > +
+> > > +	ddomain = to_dmar_domain(domain);
+> > > +	/* REVISIT:
+> > > +	 * Sanity check adddress width and paging mode support
+> > > +	 * width matching in two dimensions:
+> > > +	 * 1. paging mode CPU <= IOMMU
+> > > +	 * 2. address width Guest <= Host.
+> > > +	 */
+> >
+> > Is lacking of above logic harmful? If not, we should add
+> >
+> It is better to add the check now, not solely rely on QEMU.
+> 
+> > > +	mutex_lock(&pasid_mutex);
+> > > +	svm = ioasid_find(NULL, data->hpasid, NULL);
+> > > +	if (IS_ERR(svm)) {
+> > > +		ret = PTR_ERR(svm);
+> > > +		goto out;
+> > > +	}
+> > > +	if (svm) {
+> > > +		/*
+> > > +		 * If we found svm for the PASID, there must be at
+> > > +		 * least one device bond, otherwise svm should be
+> > > freed.
+> > > +		 */
+> > > +		BUG_ON(list_empty(&svm->devs));
+> > > +
+> > > +		for_each_svm_dev(svm, dev) {
+> > > +			/* In case of multiple sub-devices of the
+> > > same pdev assigned, we should
+> > > +			 * allow multiple bind calls with the same
+> > > PASID and pdev.
+> > > +			 */
+> > > +			sdev->users++;
+> > > +			goto out;
+> >
+> > sorry if I overlooked, but I didn't see any check on the PASID
+> > actually belonging to this process. At least should check the
+> > match between svm->mm and get_task_mm? also check
+> > whether a previous binding between this hpasid and gpasid
+> > already exists.
+> >
+> We had some discussions on whom should be responsible for checking
+> ownership. I tend to think VFIO is right place but I guess we can also
+> double check here.
+> Good point, we should check the same H-G PASID bind already exists.
+> > > +		}
+> > > +	} else {
+> > > +		/* We come here when PASID has never been bond to a
+> > > device. */
+> > > +		svm = kzalloc(sizeof(*svm), GFP_KERNEL);
+> > > +		if (!svm) {
+> > > +			ret = -ENOMEM;
+> > > +			goto out;
+> > > +		}
+> > > +		/* REVISIT: upper layer/VFIO can track host
+> > > process that bind the PASID.
+> > > +		 * ioasid_set = mm might be sufficient for vfio to
+> > > check pasid VMM
+> > > +		 * ownership.
+> > > +		 */
+> >
+> > Is it correct to leave the check to the caller?
+> >
+> Ditto, we will double check. But since this is related to the guest, I
+> feel iommu driver check mm might be too restrictive. I am not sure if
+> any VMM could have more than one process? One process does alloc, the
+> other does bind.
 
+one process, and there might be multiple threads each corresponding
+to a vCPU.
+
+> 
+> > > +		svm->mm = get_task_mm(current);
+> > > +		svm->pasid = data->hpasid;
+> > > +		if (data->flags & IOMMU_SVA_GPASID_VAL) {
+> > > +			svm->gpasid = data->gpasid;
+> > > +			svm->flags |= SVM_FLAG_GUEST_PASID;
+> > > +		}
+> > > +		ioasid_set_data(data->hpasid, svm);
+> > > +		INIT_LIST_HEAD_RCU(&svm->devs);
+> > > +		INIT_LIST_HEAD(&svm->list);
+> > > +
+> > > +		mmput(svm->mm);
+> > > +	}
+> > > +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+> > > +	if (!sdev) {
+> > > +		if (list_empty(&svm->devs))
+> > > +			kfree(svm);
+> > > +		ret = -ENOMEM;
+> > > +		goto out;
+> > > +	}
+> > > +	sdev->dev = dev;
+> > > +	sdev->users = 1;
+> > > +
+> > > +	/* Set up device context entry for PASID if not enabled
+> > > already */
+> > > +	ret = intel_iommu_enable_pasid(iommu, sdev->dev);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "Failed to enable PASID
+> > > capability\n");
+> > > +		kfree(sdev);
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * For guest bind, we need to set up PASID table entry as
+> > > follows:
+> > > +	 * - FLPM matches guest paging mode
+> > > +	 * - turn on nested mode
+> > > +	 * - SL guest address width matching
+> > > +	 */
+> > > +	ret = intel_pasid_setup_nested(iommu,
+> > > +				dev,
+> > > +				(pgd_t *)data->gpgd,
+> > > +				data->hpasid,
+> > > +				&data->vtd,
+> > > +				ddomain,
+> > > +				data->addr_width);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "Failed to set up PASID %llu in
+> > > nested mode, Err %d\n",
+> > > +			data->hpasid, ret);
+> > > +		kfree(sdev);
+> >
+> > disable pasid? revert ioasid_set_data?
+> >
+> Good catch, will do.
+> > > +		goto out;
+> > > +	}
+> > > +	svm->flags |= SVM_FLAG_GUEST_MODE;
+> > > +
+> > > +	init_rcu_head(&sdev->rcu);
+> > > +	list_add_rcu(&sdev->list, &svm->devs);
+> > > + out:
+> > > +	mutex_unlock(&pasid_mutex);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +int intel_svm_unbind_gpasid(struct device *dev, int pasid)
+> > > +{
+> > > +	struct intel_svm_dev *sdev;
+> > > +	struct intel_iommu *iommu;
+> > > +	struct intel_svm *svm;
+> > > +	int ret = -EINVAL;
+> > > +
+> > > +	mutex_lock(&pasid_mutex);
+> > > +	iommu = intel_svm_device_to_iommu(dev);
+> > > +	if (!iommu)
+> > > +		goto out;
+> > > +
+> > > +	svm = ioasid_find(NULL, pasid, NULL);
+> > > +	if (IS_ERR_OR_NULL(svm)) {
+> > > +		ret = PTR_ERR(svm);
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	for_each_svm_dev(svm, dev) {
+> > > +		ret = 0;
+> > > +		sdev->users--;
+> > > +		if (!sdev->users) {
+> > > +			list_del_rcu(&sdev->list);
+> > > +			intel_pasid_tear_down_entry(iommu, dev,
+> > > svm-
+> > > >pasid);
+> > > +			/* TODO: Drain in flight PRQ for the PASID
+> > > since it
+> > > +			 * may get reused soon, we don't want to
+> > > +			 * confuse with its previous life.
+> > > +			 * intel_svm_drain_prq(dev, pasid);
+> > > +			 */
+> > > +			kfree_rcu(sdev, rcu);
+> > > +
+> > > +			if (list_empty(&svm->devs)) {
+> > > +				list_del(&svm->list);
+> > > +				kfree(svm);
+> > > +				/*
+> > > +				 * We do not free PASID here until
+> > > explicit call
+> > > +				 * from VFIO to free. The PASID
+> > > life cycle
+> > > +				 * management is largely tied to
+> > > VFIO management
+> > > +				 * of assigned device life cycles.
+> > > In case of
+> > > +				 * guest exit without a explicit
+> > > free PASID call,
+> > > +				 * the responsibility lies in VFIO
+> > > layer to free
+> > > +				 * the PASIDs allocated for the
+> > > guest.
+> > > +				 * For security reasons, VFIO has
+> > > to track the
+> > > +				 * PASID ownership per guest
+> > > anyway to ensure
+> > > +				 * that PASID allocated by one
+> > > guest cannot be
+> > > +				 * used by another.
+> > > +				 */
+> > > +				ioasid_set_data(pasid, NULL);
+> > > +			}
+> > > +		}
+> > > +		break;
+> > > +	}
+> > > + out:
+> > > +	mutex_unlock(&pasid_mutex);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > >  int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
+> > > struct svm_dev_ops *ops)
+> > >  {
+> > >  	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
+> > > diff --git a/include/linux/intel-iommu.h
+> > > b/include/linux/intel-iommu.h index 3dba6ad3e9ad..6c74c71b1ebf
+> > > 100644 --- a/include/linux/intel-iommu.h
+> > > +++ b/include/linux/intel-iommu.h
+> > > @@ -673,7 +673,9 @@ int intel_iommu_enable_pasid(struct
+> intel_iommu
+> > > *iommu, struct device *dev);
+> > >  int intel_svm_init(struct intel_iommu *iommu);
+> > >  extern int intel_svm_enable_prq(struct intel_iommu *iommu);
+> > >  extern int intel_svm_finish_prq(struct intel_iommu *iommu);
+> > > -
+> > > +extern int intel_svm_bind_gpasid(struct iommu_domain *domain,
+> > > +		struct device *dev, struct iommu_gpasid_bind_data
+> > > *data); +extern int intel_svm_unbind_gpasid(struct device *dev, int
+> > > pasid); struct svm_dev_ops;
+> > >
+> > >  struct intel_svm_dev {
+> > > @@ -690,9 +692,13 @@ struct intel_svm_dev {
+> > >  struct intel_svm {
+> > >  	struct mmu_notifier notifier;
+> > >  	struct mm_struct *mm;
+> > > +
+> > >  	struct intel_iommu *iommu;
+> > >  	int flags;
+> > >  	int pasid;
+> > > +	int gpasid; /* Guest PASID in case of vSVA bind with
+> > > non-identity host
+> > > +		     * to guest PASID mapping.
+> > > +		     */
+> > >  	struct list_head devs;
+> > >  	struct list_head list;
+> > >  };
+> > > diff --git a/include/linux/intel-svm.h b/include/linux/intel-svm.h
+> > > index 94f047a8a845..a2c189ad0b01 100644
+> > > --- a/include/linux/intel-svm.h
+> > > +++ b/include/linux/intel-svm.h
+> > > @@ -44,6 +44,23 @@ struct svm_dev_ops {
+> > >   * do such IOTLB flushes automatically.
+> > >   */
+> > >  #define SVM_FLAG_SUPERVISOR_MODE	(1<<1)
+> > > +/*
+> > > + * The SVM_FLAG_GUEST_MODE flag is used when a guest process
+> bind
+> > > to a device.
+> > > + * In this case the mm_struct is in the guest kernel or userspace,
+> > > its life
+> > > + * cycle is managed by VMM and VFIO layer. For IOMMU driver, this
+> > > API provides
+> > > + * means to bind/unbind guest CR3 with PASIDs allocated for a
+> > > device.
+> > > + */
+> > > +#define SVM_FLAG_GUEST_MODE	(1<<2)
+> > > +/*
+> > > + * The SVM_FLAG_GUEST_PASID flag is used when a guest has its own
+> > > PASID space,
+> > > + * which requires guest and host PASID translation at both
+> > > directions. We keep
+> > > + * track of guest PASID in order to provide lookup service to
+> > > device drivers.
+> > > + * One such example is a physical function (PF) driver that
+> > > supports mediated
+> > > + * device (mdev) assignment. Guest programming of mdev
+> > > configuration space can
+> > > + * only be done with guest PASID, therefore PF driver needs to
+> > > find the matching
+> > > + * host PASID to program the real hardware.
+> > > + */
+> > > +#define SVM_FLAG_GUEST_PASID	(1<<3)
+> > >
+> > >  #ifdef CONFIG_INTEL_IOMMU_SVM
+> > >
+> > > --
+> > > 2.7.4
+> >
+> 
+> [Jacob Pan]
