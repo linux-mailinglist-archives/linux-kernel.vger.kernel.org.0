@@ -2,287 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F260E6A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:35:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740C1E6A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:38:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbfJ1Bex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 21:34:53 -0400
-Received: from mga18.intel.com ([134.134.136.126]:49091 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729552AbfJ1Beu (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 21:34:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 18:34:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,238,1569308400"; 
-   d="scan'208";a="224492477"
-Received: from kbl.sh.intel.com ([10.239.159.163])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Oct 2019 18:34:48 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v4 7/7] perf report: Sort by sampled cycles percent per block for tui
-Date:   Mon, 28 Oct 2019 09:33:30 +0800
-Message-Id: <20191028013330.18319-8-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191028013330.18319-1-yao.jin@linux.intel.com>
-References: <20191028013330.18319-1-yao.jin@linux.intel.com>
+        id S1727647AbfJ1BiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 21:38:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36802 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfJ1BiN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 21:38:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id bm15so6625842edb.3;
+        Sun, 27 Oct 2019 18:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zncCQd975Gz2HvK2SjXCCS9OAbsNjkyZCeZT6yaW7zQ=;
+        b=MJFVIuDrAyz9pDLgpUUl9PU1eZbzKuPQNiEAzcQW1qYjBZjuoWDjrqGy9uWwBC66Cd
+         dI3yEdlYrJi9nlHlHzafl7i8WvKj/XLHxPbDWEtsBpUBMumEUFvInIYQnVTLK+ti+7tO
+         BA7mgqjIeTWS1O1WIN27xKabnFwlPMrDCiIPvQUPLPAq7HMw8gsza012bODYpDuy2/vD
+         taxlG8IqDmUdHTSnMyFv5PMGM92EtSdVF5rDTJo3CJh1YqlOtU4Zj+9HaR42o5jK8e3s
+         jenl27VKb6t9BWfqRxFCO0FEO8G9hJFf5yNF0aRrMh28ErjfYLPp42bc4NbualuBRcp/
+         eA5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zncCQd975Gz2HvK2SjXCCS9OAbsNjkyZCeZT6yaW7zQ=;
+        b=DFGzwfx7yteJn42AglkjGVDhQhojYv2DjzleECKTqc+pztvOGPfEXA2d/5tk0/DXf3
+         HefSkC8lA/107Ewu5E22Y0uIfSTrESpKRjVSwlgoXCvMW+cgMZ0qdSLfOE+5kLm9Alhm
+         /4MM0aSIw9E3u2qXLBQQoKrrOPbeA3HNcsW5+atPv1nzMQ2/8pZgebnfjEnKzOY5fjOX
+         9UINNcm0IVC647VWr5Vzm+iavjy+EBhq7MsYZS6DS975daPXxiM+C4Fd/LkwpuosR5eR
+         UA9zAcynxlZDh1L75MPCDbVhvCXK7W7pKxHG4x74cC+PXN++eZDivoxyPJlbCIYylIto
+         fSIQ==
+X-Gm-Message-State: APjAAAW29Is33njqt1Ai7j8xIc+++cMRXFCaEr5PkdeZyamW+iAz96H+
+        op0WMfVM4sbGdlkNso32CAYkfylr1hBmYe8yGmaskbsfjpE=
+X-Google-Smtp-Source: APXvYqzgnaDiUcH3IYDfQVBOpeExgcPu32wDgAZkOKAPutypEopBXKs6avGlVlBxf+yhnsEi3FfGHSOF7QMkbQk2/Ug=
+X-Received: by 2002:a17:906:1d4d:: with SMTP id o13mr10006173ejh.196.1572226690648;
+ Sun, 27 Oct 2019 18:38:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191017025058.31528-1-hslester96@gmail.com> <CAHp75Vd2SMERjtvNumxAF1HSp8GSThmcyx96zkFzUXKwnD5d2Q@mail.gmail.com>
+ <CANhBUQ2yxGbjk_DgXbip=TPT=evzA5naoJSY9t1_Ep47e9oupw@mail.gmail.com>
+ <CAHp75VeLyTi=gqfNr-=Tg36yQs_fYG__iQAxAEKdks0mqsTbug@mail.gmail.com>
+ <CANhBUQ1CnCHiY8tkCMcXZ3DAPcfnQZgfA_Fj4qf3yYBKGg10Wg@mail.gmail.com> <CAHp75Vdb19w02zKHo1tqAtF8TmT=z6Ye2YFfxVw_TGtO3VxfLA@mail.gmail.com>
+In-Reply-To: <CAHp75Vdb19w02zKHo1tqAtF8TmT=z6Ye2YFfxVw_TGtO3VxfLA@mail.gmail.com>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Mon, 28 Oct 2019 09:38:00 +0800
+Message-ID: <CANhBUQ2WJaFrk5JBDbTjaTM5mv0ebwdcHBoR8ODm28X_mOukLA@mail.gmail.com>
+Subject: Re: [PATCH] spi: pxa2xx: Add missed security checks
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous patch has implemented a new option "--total-cycles".
-But only stdio mode is supported.
+On Fri, Oct 18, 2019 at 10:04 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Oct 18, 2019 at 2:37 PM Chuhong Yuan <hslester96@gmail.com> wrote:
+> > On Fri, Oct 18, 2019 at 7:14 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Fri, Oct 18, 2019 at 1:39 PM Chuhong Yuan <hslester96@gmail.com> wrote:
+> > > > On Fri, Oct 18, 2019 at 5:35 PM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Fri, Oct 18, 2019 at 8:59 AM Chuhong Yuan <hslester96@gmail.com> wrote:
+>
+> > > > > I'm not sure they are mandatory for all platforms.
+> > > > > To be on the safe side, you simple need to add _optional() to the both
+> > > > > call along with above change.
+> > > > >
+> > > >
+> > > > As I know, this is the only one in spi which does not have a check for
+> > > > devm_clk_get.
+> > >
+> > > For some it still may be optional. That's why better to check it and
+> > > mention in the commit message.
+> > >
+> > > > Even if add _optional(), they still may return errors and need security checks.
+> > >
+> > > Of course, see "along with" in my previous comment.
+> > >
+> >
+> > Got it. I will send version 2 in which both _optional() and security
+> > checks will be added.
+>
+> Let me be clear. I didn't check if _optional() needed or not. You need
+> to investigate this before sending new verison.
+> And in either case this should be explained in commit message.
+>
 
-This patch supports the tui mode and support '--percent-limit'.
+I have checked this file again and found ssp->clk is used by clk_get_rate in
+pxa2xx_spi_probe.
+Therefore, it should not be NULL and _optional cannot be used here.
+Besides, ssp->irq is also used in pxa2xx_spi_probe.
+Hence, I think this patch is fine.
 
-For example,
+Regards,
+Chuhong
 
- perf record -b ./div
- perf report --total-cycles --percent-limit 1
-
- # Samples: 2753248 of event 'cycles'
- Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                                              [Program Block Range]         Shared Object
-          26.04%            2.8M        0.40%          18                                             [div.c:42 -> div.c:39]                   div
-          15.17%            1.2M        0.16%           7                                 [random_r.c:357 -> random_r.c:380]          libc-2.27.so
-           5.11%          402.0K        0.04%           2                                             [div.c:27 -> div.c:28]                   div
-           4.87%          381.6K        0.04%           2                                     [random.c:288 -> random.c:291]          libc-2.27.so
-           4.53%          381.0K        0.04%           2                                             [div.c:40 -> div.c:40]                   div
-           3.85%          300.9K        0.02%           1                                             [div.c:22 -> div.c:25]                   div
-           3.08%          241.1K        0.02%           1                                           [rand.c:26 -> rand.c:27]          libc-2.27.so
-           3.06%          240.0K        0.02%           1                                     [random.c:291 -> random.c:291]          libc-2.27.so
-           2.78%          215.7K        0.02%           1                                     [random.c:298 -> random.c:298]          libc-2.27.so
-           2.52%          198.3K        0.02%           1                                     [random.c:293 -> random.c:293]          libc-2.27.so
-           2.36%          184.8K        0.02%           1                                           [rand.c:28 -> rand.c:28]          libc-2.27.so
-           2.33%          180.5K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
-           2.28%          176.7K        0.02%           1                                     [random.c:295 -> random.c:295]          libc-2.27.so
-           2.20%          168.8K        0.02%           1                                         [rand@plt+0 -> rand@plt+0]                   div
-           1.98%          158.2K        0.02%           1                                 [random_r.c:388 -> random_r.c:388]          libc-2.27.so
-           1.57%          123.3K        0.02%           1                                             [div.c:42 -> div.c:44]                   div
-           1.44%          116.0K        0.42%          19                                 [random_r.c:357 -> random_r.c:394]          libc-2.27.so
-
- v4:
- ---
- Since the block collection is moved out of printing in
- previous patch, this patch is updated accordingly for
- tui supporting.
-
- v3:
- ---
- Minor change since the function name is changed:
- block_total_cycles_percent -> block_info__total_cycles_percent
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/builtin-report.c    | 30 +++++++++++++---
- tools/perf/ui/browsers/hists.c | 62 +++++++++++++++++++++++++++++++++-
- tools/perf/ui/browsers/hists.h |  2 ++
- tools/perf/util/hist.h         | 12 +++++++
- 4 files changed, 100 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 597da4dc2157..a47c102b7997 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -500,6 +500,25 @@ static int hists__fprintf_all_blocks(struct block_hist *bh, float min_percent)
- 	return 0;
- }
- 
-+static int perf_evlist__tui_block_hists_browse(struct evlist *evlist,
-+					       struct report *rep)
-+{
-+	struct block_hist *bh;
-+	struct evsel *pos;
-+	int i = 0, ret;
-+
-+	evlist__for_each_entry(evlist, pos) {
-+		bh = &rep->block_reports[i++].block_hist;
-+		symbol_conf.report_individual_block = true;
-+		ret = block_hists_tui_browse(bh, pos, rep->min_percent);
-+		hists__delete_entries(&bh->block_hists);
-+		if (ret != 0)
-+			return ret;
-+	}
-+
-+	return ret;
-+}
-+
- static int perf_evlist__tty_browse_hists(struct evlist *evlist,
- 					 struct report *rep,
- 					 const char *help)
-@@ -611,6 +630,11 @@ static int report__browse_hists(struct report *rep)
- 
- 	switch (use_browser) {
- 	case 1:
-+		if (rep->total_cycles) {
-+			ret = perf_evlist__tui_block_hists_browse(evlist, rep);
-+			break;
-+		}
-+
- 		ret = perf_evlist__tui_browse_hists(evlist, help, NULL,
- 						    rep->min_percent,
- 						    &session->header.env,
-@@ -1479,12 +1503,8 @@ int cmd_report(int argc, const char **argv)
- 	if (report.total_cycles_mode) {
- 		if (sort__mode != SORT_MODE__BRANCH)
- 			report.total_cycles_mode = false;
--		else if (!report.use_stdio) {
--			pr_err("Error: --total-cycles can be only used together with --stdio\n");
--			goto error;
--		} else {
-+		else
- 			sort_order = "sym";
--		}
- 	}
- 
- 	if (strcmp(input_name, "-") != 0)
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 7a7187e069b4..04301303c246 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -26,6 +26,7 @@
- #include "../../util/sort.h"
- #include "../../util/top.h"
- #include "../../util/thread.h"
-+#include "../../util/block-info.h"
- #include "../../arch/common.h"
- #include "../../perf.h"
- 
-@@ -1783,7 +1784,11 @@ static unsigned int hist_browser__refresh(struct ui_browser *browser)
- 			continue;
- 		}
- 
--		percent = hist_entry__get_percent_limit(h);
-+		if (symbol_conf.report_individual_block)
-+			percent = block_info__total_cycles_percent(h);
-+		else
-+			percent = hist_entry__get_percent_limit(h);
-+
- 		if (percent < hb->min_pcnt)
- 			continue;
- 
-@@ -3443,3 +3448,58 @@ int perf_evlist__tui_browse_hists(struct evlist *evlist, const char *help,
- 					       warn_lost_event,
- 					       annotation_opts);
- }
-+
-+static int block_hists_browser__title(struct hist_browser *browser, char *bf,
-+				      size_t size)
-+{
-+	struct hists *hists = evsel__hists(browser->block_evsel);
-+	const char *evname = perf_evsel__name(browser->block_evsel);
-+	unsigned long nr_samples = hists->stats.nr_events[PERF_RECORD_SAMPLE];
-+	int ret;
-+
-+	ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
-+	if (evname)
-+		scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
-+
-+	return 0;
-+}
-+
-+int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
-+			   float min_percent)
-+{
-+	struct hists *hists = &bh->block_hists;
-+	struct hist_browser *browser;
-+	int key = -1;
-+	static const char help[] =
-+	" q             Quit \n";
-+
-+	browser = hist_browser__new(hists);
-+	if (!browser)
-+		return -1;
-+
-+	browser->block_evsel = evsel;
-+	browser->title = block_hists_browser__title;
-+	browser->min_pcnt = min_percent;
-+
-+	/* reset abort key so that it can get Ctrl-C as a key */
-+	SLang_reset_tty();
-+	SLang_init_tty(0, 0, 0);
-+
-+	while (1) {
-+		key = hist_browser__run(browser, "? - help", true);
-+
-+		switch (key) {
-+		case 'q':
-+			goto out;
-+		case '?':
-+			ui_browser__help_window(&browser->b, help);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
-+out:
-+	hist_browser__delete(browser);
-+	return 0;
-+}
-diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/hists.h
-index 91d3e18b50aa..078f2f2c7abd 100644
---- a/tools/perf/ui/browsers/hists.h
-+++ b/tools/perf/ui/browsers/hists.h
-@@ -5,6 +5,7 @@
- #include "ui/browser.h"
- 
- struct annotation_options;
-+struct evsel;
- 
- struct hist_browser {
- 	struct ui_browser   b;
-@@ -15,6 +16,7 @@ struct hist_browser {
- 	struct pstack	    *pstack;
- 	struct perf_env	    *env;
- 	struct annotation_options *annotation_opts;
-+	struct evsel	    *block_evsel;
- 	int		     print_seq;
- 	bool		     show_dso;
- 	bool		     show_headers;
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 4d87c7b4c1b2..f254fa349ad6 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -449,6 +449,8 @@ enum rstype {
- 	A_SOURCE
- };
- 
-+struct block_hist;
-+
- #ifdef HAVE_SLANG_SUPPORT
- #include "../ui/keysyms.h"
- void attr_to_script(char *buf, struct perf_event_attr *attr);
-@@ -474,6 +476,9 @@ void run_script(char *cmd);
- int res_sample_browse(struct res_sample *res_samples, int num_res,
- 		      struct evsel *evsel, enum rstype rstype);
- void res_sample_init(void);
-+
-+int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
-+			   float min_percent);
- #else
- static inline
- int perf_evlist__tui_browse_hists(struct evlist *evlist __maybe_unused,
-@@ -516,6 +521,13 @@ static inline int res_sample_browse(struct res_sample *res_samples __maybe_unuse
- 	return 0;
- }
- 
-+static inline int block_hists_tui_browse(struct block_hist *bh __maybe_unused,
-+					 struct evsel *evsel __maybe_unused,
-+					 float min_percent __maybe_unused)
-+{
-+	return 0;
-+}
-+
- static inline void res_sample_init(void) {}
- 
- #define K_LEFT  -1000
--- 
-2.17.1
-
+> --
+> With Best Regards,
+> Andy Shevchenko
