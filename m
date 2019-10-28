@@ -2,96 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4CE6E7379
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A9AE7399
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:27:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390017AbfJ1ORh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:17:37 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38388 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730033AbfJ1ORg (ORCPT
+        id S2390050AbfJ1O1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:27:17 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34625 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728330AbfJ1O1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:17:36 -0400
-Received: by mail-qk1-f194.google.com with SMTP id e2so41292qkn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:17:36 -0700 (PDT)
+        Mon, 28 Oct 2019 10:27:17 -0400
+Received: by mail-ot1-f68.google.com with SMTP id m19so6812563otp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KcIXjOVnUdM4ahq3ItI2UTdzBoJ7szBep3RUJgsKNMg=;
-        b=OPLLBr/YxqYbXp/yOBTapSj2Gj52cx4piu3vrs1Y/lc0X7F4kDzY+M4E2vhAKVGS6S
-         /WrEccktrTLtpBkA2Pd2cXzjV3ulDJGMapESqu2bf6khkLCKMUlxJvMGiR+LQIAYsPYN
-         kp+yo6uK0Xe1gswA3folr0aaWwLUJpwYuG9eoQS1VjxjiFr1tRIh3wFhF5oCwRNvoA4D
-         dWYpKDG5VDo7JYx0YoiHOYS6q+uCbacxgtrU9TrBkcDblok81ZW14aBlabgJ8HzisBq7
-         9NaGzXpwpOvMjz+vTEETSwSHuHyThBgeEu1jv6D7GayHPkIiWvEnUTaVnJ8sA55GBgsa
-         NOZg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qRPcGUyjyYP3X+dNbFskpOrzjRKBib41L5MZ+6/IumQ=;
+        b=dmV0D1FpdEoza5dLoPFkgv/FDQhs15CmGwpEPlAT0j2u3NQ2wpQzX8doVJJvQLp8JI
+         Sfyln9GCLLrHiTDMC9FFAPtoCYXUkkrn8fg3vnkP0F4aygf3f7NO3lu8Np3KBwwjX0yZ
+         pJc7k0q8BWbyZAOWshLqcmfonZjCgHkNKErJnqANJ2AVg7gmRmWRvkqxo90KRjbJ8Dai
+         qvQZARVLSIAcnLYvMtXDOSAMNGQv/X31yNvWqRGx52VSt53OGmAo6QV2VHFtVEuRZNp6
+         ulx6antxyR/+qm+LVSywVNCb06FB76QI/zVpjXVy5PTJwIo8185g2OOeqJm95/BKsGD6
+         2F5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KcIXjOVnUdM4ahq3ItI2UTdzBoJ7szBep3RUJgsKNMg=;
-        b=kXMmnF8rfPiHDo1VljIDpki0sLbnJPv1k6qj8a03PyHQGFTLUMVjahW2j+1P8LSD3M
-         c/pgRWYq27IA9/K7vdKYhV5WhTf5q49jUVdycFp0VjYGaET2cs26JW0snn+FI9O81WmT
-         ObMrcDbpOVr0h1uTfHJgEXct68MH6VjgM/Qic/rucw1YowhlcpU2OQztMJOH2olRhsWD
-         KmEeec2JuWQvqWfkaxQIVcV+VfZFyLP7Lgp/ICeFRwo5nDmW9WQbgw9xwGKKZCkqKsyL
-         fup9NDdD5sBGQhAybhH2jPcLKXPCqNxPIx4kVcGTD1ACvc1cLWuX7XJeHrb6Vqo4sg2f
-         jwxw==
-X-Gm-Message-State: APjAAAVU28Ic1Gofot/23p/ifqFh0LCj7i0twtibbweYRF1n73aan0BF
-        0OWWxypbfLJpoxUALP7UgWOlNQ==
-X-Google-Smtp-Source: APXvYqxPWlwKd2Yhb6oeWw72tYoVkd9/4Iarg072Uy8QgkHXf/D8iZoBb9zg6tf4GlXMLlA2KYnF4g==
-X-Received: by 2002:a37:9b50:: with SMTP id d77mr16266180qke.349.1572272255692;
-        Mon, 28 Oct 2019 07:17:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id f11sm5243892qkk.76.2019.10.28.07.17.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Oct 2019 07:17:35 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iP5pu-0002Me-Jm; Mon, 28 Oct 2019 11:17:34 -0300
-Date:   Mon, 28 Oct 2019 11:17:34 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Sultan Alsawaf <sultan@kerneltoast.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Gal Pressman <galpress@amazon.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scatterlist: Speed up for_each_sg() loop macro
-Message-ID: <20191028141734.GD29652@ziepe.ca>
-References: <20191025213359.7538-1-sultan@kerneltoast.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qRPcGUyjyYP3X+dNbFskpOrzjRKBib41L5MZ+6/IumQ=;
+        b=U/4EVeBSCt8SCWuWfYTwDWeOw+rjQzeg5ztB/rMmnHdZZU8V0Ln1yyKYgLm69EFUOq
+         A8iWqxRoyE6t1vDOdhLaINXW7ZrThLHvFqNvHIwHbo0Qi+7slxbk5RjGlLPvXiadTcGH
+         hroUjLBTEqT41edPRHwFzLX7BaTv+KhqY6fhgTUDXkxvlONyxTAUgK2g2s2cTg9TQVPA
+         e/li/8Z4t7YuQOw5HEm26JVY45fZ6b259TfGqaS7vi3SGoQoPQO8aTg2m+QeMQx8vPf7
+         zZlBw1PeZoeLPPG4RuUqouudTUGjU0HbEDIKhWaq1Hc2mZduezzcoHT+hAsg7U5+X+2B
+         ULGw==
+X-Gm-Message-State: APjAAAUGIDrs5Ylrh5PksWsZ+VDt2heQ3ZUJI+dF2bClgcXF6xx87Xbj
+        NrCl/j8t1BbmqzRompiJCYQGrhiQShp08+rTC+Y=
+X-Google-Smtp-Source: APXvYqxIXLVM6e9Cd0PvKo8U2jwBqn1fDpadkb/s3M2zNmRTxnE/C0zaL4Y6+XA3oqXRyIcYfyzQxHt1ooMsBJciHlQ=
+X-Received: by 2002:a05:6830:237d:: with SMTP id r29mr8845480oth.0.1572272835772;
+ Mon, 28 Oct 2019 07:27:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191025213359.7538-1-sultan@kerneltoast.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191026235214.GA11702@cristiane-Inspiron-5420>
+In-Reply-To: <20191026235214.GA11702@cristiane-Inspiron-5420>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 28 Oct 2019 10:27:04 -0400
+Message-ID: <CAGngYiV0hCjXigVhijoTmwMfS4mM+hC-aVFsu6VDT-WmKsNsJQ@mail.gmail.com>
+Subject: Re: [PATCH] staging: fieldbus: anybuss: use devm_platform_ioremap_resource
+ helper
+To:     Cristiane Naves <cristianenavescardoso09@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 02:33:58PM -0700, Sultan Alsawaf wrote:
-> 
-> Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
->  include/linux/scatterlist.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index 556ec1ea2574..73f7fd6702d7 100644
-> +++ b/include/linux/scatterlist.h
-> @@ -146,7 +146,10 @@ static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
->   * Loop over each sg element, following the pointer to a new list if necessary
->   */
->  #define for_each_sg(sglist, sg, nr, __i)	\
-> -	for (__i = 0, sg = (sglist); __i < (nr); __i++, sg = sg_next(sg))
-> +	for (__i = 0, sg = (sglist); __i < (nr);		\
-> +	     likely(++__i % (SG_MAX_SINGLE_ALLOC - 1) ||	\
-> +		    (__i + 1) >= (nr)) ? sg++ :			\
-> +		    (sg = sg_chain_ptr(sg + 1)))
+On Sat, Oct 26, 2019 at 7:52 PM Cristiane Naves
+<cristianenavescardoso09@gmail.com> wrote:
+>
+> Use devm_platform_ioremap_resource helper which wraps
+> platform_get_resource() and devm_ioremap_resource() together. Issue
+> found by coccicheck.
+>
+> Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
 
-This is a big change in the algorithm, why are you sure it is OK?
+This is a duplicate of:
+https://www.spinics.net/lists/linux-driver-devel/msg129526.html
+and
+https://lore.kernel.org/patchwork/patch/1140024/
 
-Did you compare with just inlining sg_net?
-
-Jason
+When you find an issue, please search the mailing list(s) first to check
+if it is being discussed already.
