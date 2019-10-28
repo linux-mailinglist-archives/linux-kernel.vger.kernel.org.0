@@ -2,46 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F6BE7430
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 744ADE7428
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390512AbfJ1O5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:57:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40268 "EHLO
+        id S2390449AbfJ1O4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:56:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39846 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390502AbfJ1O5C (ORCPT
+        with ESMTP id S2390426AbfJ1O4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:57:02 -0400
+        Mon, 28 Oct 2019 10:56:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=pRAnZ2eosKV/53G9bqUjly+zJvMmzCGpbgurzDJUuFc=; b=ji8GRUakC0x3
-        My3BXG8nqht1NWURYP4Hl6TLrXwU+YQJQtG1BZ97HpUaz0DgR5UWjv9SY44Yy/KwuFpDAejKo3hHh
-        2130boS1xvfTbbKSPf/G1NXAijvKgw2nBNq0W+VUokakasfTmtqnI6lDnbLH6PMpRjyuNcgU3nNcv
-        rz4rM=;
+        List-Archive; bh=aacqV5nj/gG01sskTrzwE2VcR2Ffj1PwXKPwaCUoKC4=; b=cK5vMjbVyFJ2
+        PQ0lTJrK00lRYGa9l2T71D0ELFEg367gD6DCLfhJpFoG9Nv378r2InvxQnftVxnaAEkkSJv4SICgx
+        e2AbvyvQV8W1Vl6tUsJc0fev2ElW1EGmijfYpSaCQl12wjXg9FjAeps6cwf/6iim8yRcNKk6RfUJO
+        erUeM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iP6Ri-0008Rf-UG; Mon, 28 Oct 2019 14:56:39 +0000
+        id 1iP6Rj-0008Rl-5g; Mon, 28 Oct 2019 14:56:39 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 5632E2740B7F; Mon, 28 Oct 2019 14:56:37 +0000 (GMT)
+        id BC4A127403E4; Mon, 28 Oct 2019 14:56:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        dannym@scratchpost.org, georgii.staroselskii@emlid.com,
-        kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com,
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     alsa-devel@alsa-project.org, dgreid@chromium.org,
+        dianders@chromium.org, enric.balletbo@collabora.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, mripard@kernel.org,
-        perex@perex.cz, tglx@linutronix.de, tiwai@suse.com, wens@csie.org,
-        yuehaibing@huawei.com
-Subject: Applied "ASoC: sunxi: sun4i-codec: remove unneeded semicolon" to the asoc tree
-In-Reply-To: <20191025120801.16236-1-yuehaibing@huawei.com>
+        linux-rockchip@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        tzungbi@chromium.org
+Subject: Applied "ASoC: rockchip: rockchip_max98090: Enable SHDN to fix headset detection" to the asoc tree
+In-Reply-To: <20191028095229.99438-1-cychiang@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20191028145637.5632E2740B7F@ypsilon.sirena.org.uk>
+Message-Id: <20191028145637.BC4A127403E4@ypsilon.sirena.org.uk>
 Date:   Mon, 28 Oct 2019 14:56:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,11 +52,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sunxi: sun4i-codec: remove unneeded semicolon
+   ASoC: rockchip: rockchip_max98090: Enable SHDN to fix headset detection
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -75,51 +77,50 @@ to this mail.
 Thanks,
 Mark
 
-From 24d05966b560b88d37d90e64f018af2fed888104 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 25 Oct 2019 20:08:01 +0800
-Subject: [PATCH] ASoC: sunxi: sun4i-codec: remove unneeded semicolon
+From 07c1b73e2a027ea9a52677beeb6a943a3e357139 Mon Sep 17 00:00:00 2001
+From: Cheng-Yi Chiang <cychiang@chromium.org>
+Date: Mon, 28 Oct 2019 17:52:29 +0800
+Subject: [PATCH] ASoC: rockchip: rockchip_max98090: Enable SHDN to fix headset
+ detection
 
-remove unneeded semicolon.
+max98090 spec states that chip needs to be in turned-on state to supply
+mic bias. Enable SHDN dapm widget along with MICBIAS widget to
+actually turn on mic bias for proper headset button detection.
+This is similar to cht_ti_jack_event in
+sound/soc/intel/boards/cht_bsw_max98090_ti.c.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20191025120801.16236-1-yuehaibing@huawei.com
+Note that due to ts3a227e reports the jack event right away before the
+notifier is registered, if headset is plugged on boot, headset button
+will not get detected until headset is unplugged and plugged. This is
+still an issue to be fixed.
+
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Link: https://lore.kernel.org/r/20191028095229.99438-1-cychiang@chromium.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-codec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/rockchip/rockchip_max98090.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index ee448d5e07a6..34f3e0be3058 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -1442,7 +1442,7 @@ static struct snd_soc_card *sun8i_a23_codec_create_card(struct device *dev)
- 	if (!aux_dev.dlc.of_node) {
- 		dev_err(dev, "Can't find analog controls for codec.\n");
- 		return ERR_PTR(-EINVAL);
--	};
+diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
+index 0097df1fae66..e80b09143b63 100644
+--- a/sound/soc/rockchip/rockchip_max98090.c
++++ b/sound/soc/rockchip/rockchip_max98090.c
+@@ -66,10 +66,13 @@ static int rk_jack_event(struct notifier_block *nb, unsigned long event,
+ 	struct snd_soc_jack *jack = (struct snd_soc_jack *)data;
+ 	struct snd_soc_dapm_context *dapm = &jack->card->dapm;
+ 
+-	if (event & SND_JACK_MICROPHONE)
++	if (event & SND_JACK_MICROPHONE) {
+ 		snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
+-	else
++		snd_soc_dapm_force_enable_pin(dapm, "SHDN");
++	} else {
+ 		snd_soc_dapm_disable_pin(dapm, "MICBIAS");
++		snd_soc_dapm_disable_pin(dapm, "SHDN");
 +	}
  
- 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
- 	if (!card->dai_link)
-@@ -1480,7 +1480,7 @@ static struct snd_soc_card *sun8i_h3_codec_create_card(struct device *dev)
- 	if (!aux_dev.dlc.of_node) {
- 		dev_err(dev, "Can't find analog controls for codec.\n");
- 		return ERR_PTR(-EINVAL);
--	};
-+	}
+ 	snd_soc_dapm_sync(dapm);
  
- 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
- 	if (!card->dai_link)
-@@ -1518,7 +1518,7 @@ static struct snd_soc_card *sun8i_v3s_codec_create_card(struct device *dev)
- 	if (!aux_dev.dlc.of_node) {
- 		dev_err(dev, "Can't find analog controls for codec.\n");
- 		return ERR_PTR(-EINVAL);
--	};
-+	}
- 
- 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
- 	if (!card->dai_link)
 -- 
 2.20.1
 
