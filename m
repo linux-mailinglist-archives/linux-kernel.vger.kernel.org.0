@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F360E7996
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:07:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B203EE79A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:07:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732345AbfJ1UHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:07:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41832 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732221AbfJ1UHP (ORCPT
+        id S1732629AbfJ1UHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:07:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38540 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730303AbfJ1UHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:07:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l3so7651843pgr.8;
-        Mon, 28 Oct 2019 13:07:14 -0700 (PDT)
+        Mon, 28 Oct 2019 16:07:16 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c13so7655478pfp.5;
+        Mon, 28 Oct 2019 13:07:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1oBXLCEA6bDkeKywgn+CtEH0L7iMtQpOWpVW8yEPhC8=;
-        b=pZozOzvz5TipYCS9/zypTBWWMRY54LS7opQOiX6Esqx/bj3O2l7qz6FbxN+2QuK/8X
-         aoUvy52Y4n3ktCunLan/FbPfF/BLN4UJse43ZKQVqtvZbhCwxwpqUun4AW/LQdjYnNHZ
-         YejYl0VufjXXNnOSbOXjfJ/kccc21sW3uViFATXMqe/1Nkyd+jfiPGgzkn2MrPVd75Vu
-         aofHNlHd7rmPQRyRKZ0kK3v9jyhSGNsrKc6ZRXP24MHeGm0tb2L27v9UmNyqXprqDpHg
-         RzFMPr22Rax16MeNP6lKwYEA7bjN05NVo9C3iguh0PfCdCARoC3Mb8sPoyRWybly1i6Q
-         JRCQ==
-X-Gm-Message-State: APjAAAVchpEhbnnUkC254jCJImMiDnxR5RbH4/PgfoQFeCVf11420uIS
-        YXxBBye4FXic5+W3Qj9VPKo=
-X-Google-Smtp-Source: APXvYqyGZXaHAoKPYMZmixkQ/UpGd7ZSzk81MMGfj89a70nSjdOribyZ590gaws8mhw8BrSVyQu44w==
-X-Received: by 2002:aa7:8046:: with SMTP id y6mr21932294pfm.222.1572293234040;
-        Mon, 28 Oct 2019 13:07:14 -0700 (PDT)
+        bh=qqmafbxvt6DIwPrQ8GK8JiWsq1zCk4bn8bjPAnXJ94o=;
+        b=XeMbqqxpF+XpG8E1XvUmqM5AgW5npoTrQsFzGmAx1L+/vuBH4IWdI+wOVLDjAZ8cRx
+         DbAyXCT3P56EyD81uXC/r9A2n4uyNz1JzV+yUsSZ9U9K/1/RKuTlhjAqe05oUMnzJrQi
+         TpObNa9lr2r7PoBQ3bLOZsLdSBIgTQFvG7m8wJzg/jstJI7Jq6oMqUom0PLK3rfj3sfo
+         cnKw6yMfwpYRQUKzUSnKNlF2a2CwDgE+p5BUSq6kP+FG4E0xeemLwvfNPuLpLxf1Jqfe
+         WTUwD0AyY8c5UA6mZXM6cpKZwFMgiW8lilxP5cO7hifafvQffZvRJYNk4jOxQQy4SV2A
+         unmw==
+X-Gm-Message-State: APjAAAVLSh0XcXe2h2buG5XSgPJrSbFh5gJ2Cs7lsQawCHJpC6Ts2u/P
+        csK9FRPfheI996783to0tII=
+X-Google-Smtp-Source: APXvYqy10CadmomzITN/67Bio0fCL4NQieKkQErSkx+ODEEALJOyZM0aGK3wXkK2z/rgynMOGPbxSA==
+X-Received: by 2002:a17:90a:86c1:: with SMTP id y1mr1387473pjv.71.1572293235698;
+        Mon, 28 Oct 2019 13:07:15 -0700 (PDT)
 Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id p3sm11084218pgp.41.2019.10.28.13.07.12
+        by smtp.gmail.com with ESMTPSA id p3sm11084218pgp.41.2019.10.28.13.07.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 13:07:13 -0700 (PDT)
+        Mon, 28 Oct 2019 13:07:14 -0700 (PDT)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -42,13 +42,11 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Subject: [PATCH 4/9] drivers/iio: Sign extend without triggering implementation-defined behavior
-Date:   Mon, 28 Oct 2019 13:06:55 -0700
-Message-Id: <20191028200700.213753-5-bvanassche@acm.org>
+        Kai Makisara <Kai.Makisara@kolumbus.fi>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>
+Subject: [PATCH 5/9] scsi/st: Use get_unaligned_signed_be24()
+Date:   Mon, 28 Oct 2019 13:06:56 -0700
+Message-Id: <20191028200700.213753-6-bvanassche@acm.org>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
 In-Reply-To: <20191028200700.213753-1-bvanassche@acm.org>
 References: <20191028200700.213753-1-bvanassche@acm.org>
@@ -59,48 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From the C standard: "The result of E1 >> E2 is E1 right-shifted E2 bit
-positions. If E1 has an unsigned type or if E1 has a signed type and a
-nonnegative value, the value of the result is the integral part of the
-quotient of E1 / 2E2 . If E1 has a signed type and a negative value, the
-resulting value is implementation-defined."
+Use this function instead of open-coding it.
 
-Hence use sign_extend_24_to_32() instead of "<< 8 >> 8".
-
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: Kai Makisara <Kai.Makisara@kolumbus.fi>
+Cc: James E.J. Bottomley <jejb@linux.ibm.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/iio/common/st_sensors/st_sensors_core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/scsi/st.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
-index 4a3064fb6cd9..94a9cec69cd7 100644
---- a/drivers/iio/common/st_sensors/st_sensors_core.c
-+++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-@@ -21,11 +21,6 @@
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index e3266a64a477..53dc7706c935 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -44,6 +44,7 @@ static const char *verstr = "20160209";
  
- #include "st_sensors_core.h"
+ #include <linux/uaccess.h>
+ #include <asm/dma.h>
++#include <asm/unaligned.h>
  
--static inline u32 st_sensors_get_unaligned_le24(const u8 *p)
--{
--	return (s32)((p[0] | p[1] << 8 | p[2] << 16) << 8) >> 8;
--}
--
- int st_sensors_write_data_with_mask(struct iio_dev *indio_dev,
- 				    u8 reg_addr, u8 mask, u8 data)
- {
-@@ -556,7 +551,7 @@ static int st_sensors_read_axis_data(struct iio_dev *indio_dev,
- 	else if (byte_for_channel == 2)
- 		*data = (s16)get_unaligned_le16(outdata);
- 	else if (byte_for_channel == 3)
--		*data = (s32)st_sensors_get_unaligned_le24(outdata);
-+		*data = get_unaligned_signed_le24(outdata);
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_dbg.h>
+@@ -2679,8 +2680,7 @@ static void deb_space_print(struct scsi_tape *STp, int direction, char *units, u
+ 	if (!debugging)
+ 		return;
  
- st_sensors_free_memory:
- 	kfree(outdata);
+-	sc = cmd[2] & 0x80 ? 0xff000000 : 0;
+-	sc |= (cmd[2] << 16) | (cmd[3] << 8) | cmd[4];
++	sc = get_unaligned_signed_be24(&cmd[2]);
+ 	if (direction)
+ 		sc = -sc;
+ 	st_printk(ST_DEB_MSG, STp, "Spacing tape %s over %d %s.\n",
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
