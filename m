@@ -2,82 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F40E7A03
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 641C2E7A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733107AbfJ1UXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:23:25 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:46696 "EHLO albireo.enyo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727802AbfJ1UXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:23:24 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1iPBXp-0006Lq-Li; Mon, 28 Oct 2019 20:23:17 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1iPBXp-0005JX-J5; Mon, 28 Oct 2019 21:23:17 +0100
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        id S1733206AbfJ1UY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:24:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54800 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbfJ1UYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 16:24:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yPE0SEZPz8Tc+OMS4kFqOGsFj5A2ktZo+Yyz/KZ1TQE=; b=ILqfyNeJxEWgr49oAyTomKf5U
+        ZB9SUmnCLyq3+XdiArCsYn43E/7kA1ds75Is/qGUZOtd0NYLSAOrTJ4Pjhq7nXGq4b5kjg4ZTAzFb
+        qafGcD0CH0klR5B0GktMCkCvpC/ywNHI+CfXlSCYYbw3l8Et5KvYNMcgS4JxWgBNV/d4c=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iPBYl-0000aR-7O; Mon, 28 Oct 2019 20:24:15 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id B2C9527403EE; Mon, 28 Oct 2019 20:24:14 +0000 (GMT)
+Date:   Mon, 28 Oct 2019 20:24:14 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user mappings
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
-        <87d0eieb0i.fsf@mid.deneb.enyo.de>
-        <385EB6D4-A1B0-4617-B256-181AA1C3BDE3@kernel.org>
-Date:   Mon, 28 Oct 2019 21:23:17 +0100
-In-Reply-To: <385EB6D4-A1B0-4617-B256-181AA1C3BDE3@kernel.org> (Mike
-        Rapoport's message of "Sun, 27 Oct 2019 13:00:13 +0200")
-Message-ID: <87h83s62mi.fsf@mid.deneb.enyo.de>
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH 9/9] ASoC/fsl_spdif: Use put_unaligned_be24() instead of
+ open-coding it
+Message-ID: <20191028202414.GK5015@sirena.co.uk>
+References: <20191028200700.213753-1-bvanassche@acm.org>
+ <20191028200700.213753-10-bvanassche@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8tUgZ4IE8L4vmMyh"
+Content-Disposition: inline
+In-Reply-To: <20191028200700.213753-10-bvanassche@acm.org>
+X-Cookie: The Moral Majority is neither.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mike Rapoport:
 
-> On October 27, 2019 12:30:21 PM GMT+02:00, Florian Weimer
-> <fw@deneb.enyo.de> wrote:
->>* Mike Rapoport:
->>
->>> The patch below aims to allow applications to create mappins that
->>have
->>> pages visible only to the owning process. Such mappings could be used
->>to
->>> store secrets so that these secrets are not visible neither to other
->>> processes nor to the kernel.
->>
->>How is this expected to interact with CRIU?
->
-> CRIU dumps the memory contents using a parasite code from inside the
-> dumpee address space, so it would work the same way as for the other
-> mappings. Of course, at the restore time the exclusive mapping should
-> be recreated with the appropriate flags.
+--8tUgZ4IE8L4vmMyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hmm, so it would use a bounce buffer to perform the extraction?
+On Mon, Oct 28, 2019 at 01:07:00PM -0700, Bart Van Assche wrote:
+> This patch makes the code easier to read.
 
->>> I've only tested the basic functionality, the changes should be
->>verified
->>> against THP/migration/compaction. Yet, I'd appreciate early feedback.
->>
->>What are the expected semantics for VM migration?  Should it fail?
->
-> I don't quite follow. If qemu would use such mappings it would be able
-> to transfer them during live migration.
+I only have this patch from the series but no cover letter, what's the
+story with dependencies?
 
-I was wondering if the special state is supposed to bubble up to the
-host eventually.
+--8tUgZ4IE8L4vmMyh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl23Tm0ACgkQJNaLcl1U
+h9C0bQf/dKHPtMdfD3BnbaQDGmpdXBeC3ulHsdo6am7obLNTi3STvqJQub0n+xvl
+0qwhNlf7hP6A2S5amw7CHIhgZMaxiedFnckBA6lRfEeIBfsM724qWgEk9DX8csXG
+XyPbE35qiNCulfilLLbu7kgZn+jQrzur9qDJjI0c8L7nqhws/aShY2g/nOWu770z
++7KeMdWAPXyeTjXIiERD52wrk0XzOQe0b3vzplWRLeKBY/g7TILWzAEDU5woe1J7
+jXew9M8Eob3+GiW2vCXslP0eSrnVcibOVZ+0HIIhb+EPiyqUYn3i3TmSAXV8H7Rd
+EA2uR23tqoeMhbbUjytGXEtrrdDTkw==
+=38LL
+-----END PGP SIGNATURE-----
+
+--8tUgZ4IE8L4vmMyh--
