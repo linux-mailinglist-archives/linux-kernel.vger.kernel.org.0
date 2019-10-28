@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DEDAE7C77
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C9E9E7C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:44:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbfJ1Wls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:41:48 -0400
-Received: from mga07.intel.com ([134.134.136.100]:23723 "EHLO mga07.intel.com"
+        id S1729753AbfJ1Woi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:44:38 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12461 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJ1Wlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:41:47 -0400
+        id S1725867AbfJ1Woi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 18:44:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 15:41:47 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 15:44:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
-   d="scan'208";a="374361343"
+   d="scan'208";a="210976010"
 Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 28 Oct 2019 15:41:47 -0700
-Date:   Mon, 28 Oct 2019 15:46:11 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 28 Oct 2019 15:44:36 -0700
+Date:   Mon, 28 Oct 2019 15:49:00 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
 To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Joerg Roedel <joro@8bytes.org>,
         "David Woodhouse" <dwmw2@infradead.org>,
@@ -32,17 +33,19 @@ Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         "Liu, Yi L" <yi.l.liu@intel.com>,
         "Raj, Ashok" <ashok.raj@intel.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
+        "Jonathan Cameron" <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 04/11] iommu/vt-d: Replace Intel specific PASID
- allocator with IOASID
-Message-ID: <20191028154611.5c9979fd@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC87@SHSMSX104.ccr.corp.intel.com>
+Subject: Re: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
+Message-ID: <20191028154900.0be0a48f@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5D0FF0@SHSMSX104.ccr.corp.intel.com>
 References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-5-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC87@SHSMSX104.ccr.corp.intel.com>
+        <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <ae437be4-e633-e670-0e1f-d07b4364f651@linux.intel.com>
+        <20191024214311.43d76a5c@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC60@SHSMSX104.ccr.corp.intel.com>
+        <e950cde8-8cd9-6089-c833-23d2ffb539d1@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5D0FF0@SHSMSX104.ccr.corp.intel.com>
 Organization: OTC
 X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -53,247 +56,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Oct 2019 06:41:16 +0000
+On Fri, 25 Oct 2019 15:52:39 +0000
 "Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-> > From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
-> > Sent: Friday, October 25, 2019 3:55 AM
+> > From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> > Sent: Friday, October 25, 2019 10:39 PM
 > > 
-> > Make use of generic IOASID code to manage PASID allocation,
-> > free, and lookup. Replace Intel specific code.
+> > Hi,
 > > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
+> > On 10/25/19 2:40 PM, Tian, Kevin wrote:  
+> > >>>> ioasid_register_allocator(&iommu->pasid_allocator);
+> > >>>> +			if (ret) {
+> > >>>> +				pr_warn("Custom PASID
+> > >>>> allocator registeration failed\n");
+> > >>>> +				/*
+> > >>>> +				 * Disable scalable mode on
+> > >>>> this IOMMU if there
+> > >>>> +				 * is no custom allocator.
+> > >>>> Mixing SM capable vIOMMU
+> > >>>> +				 * and non-SM vIOMMU are not
+> > >>>> supported.
+> > >>>> +				 */
+> > >>>> +				intel_iommu_sm = 0;  
+> > >>> It's insufficient to disable scalable mode by only clearing
+> > >>> intel_iommu_sm. The DMA_RTADDR_SMT bit in root entry has
+> > >>> already  
+> > >> been  
+> > >>> set. Probably, you need to
+> > >>>
+> > >>> for each iommu
+> > >>> 	clear DMA_RTADDR_SMT in root entry
+> > >>>
+> > >>> Alternatively, since vSVA is the only customer of this custom
+> > >>> PASID allocator, is it possible to only disable SVA here?
+> > >>>  
+> > >> Yeah, I think disable SVA is better. We can still do gIOVA in
+> > >> SM. I guess we need to introduce a flag for sva_enabled.  
+> > > I'm not sure whether tying above logic to SVA is the right
+> > > approach. If vcmd interface doesn't work, the whole SM mode
+> > > doesn't make sense which is based on PASID-granular protection
+> > > (SVA is only one usage atop). If the only remaining usage of SM
+> > > is to map gIOVA using reserved PASID#0, then why not disabling SM
+> > > and just fallback to legacy mode?
+> > >
+> > > Based on that I prefer to disabling the SM mode completely (better
+> > > through an interface), and move the logic out of CONFIG_INTEL_
+> > > IOMMU_SVM
+> > >  
+> > 
+> > Unfortunately, it is dangerous to disable SM after boot. SM uses
+> > different root/device contexts and pasid table formats. Disabling SM
+> > after boot requires changing above from SM format into legacy
+> > format.  
 > 
-> better push this patch separately. It's a generic cleanup.
+> You are correct.
 > 
-True but might be more efficient to have this cleanup patch paved way.
-Since the follow up new guest SVA code uses the new API. So I wanted to
-get rid of the old code completely.
-> > ---
-> >  drivers/iommu/intel-iommu.c | 12 ++++++------
-> >  drivers/iommu/intel-pasid.c | 36
-> > ------------------------------------ drivers/iommu/intel-svm.c   |
-> > 39 +++++++++++++++++++++++---------------- 3 files changed, 29
-> > insertions(+), 58 deletions(-)
 > > 
-> > diff --git a/drivers/iommu/intel-iommu.c
-> > b/drivers/iommu/intel-iommu.c index ced1d89ef977..2ea09b988a23
-> > 100644 --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -5311,7 +5311,7 @@ static void auxiliary_unlink_device(struct
-> > dmar_domain *domain,
-> >  	domain->auxd_refcnt--;
-> > 
-> >  	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> > -		intel_pasid_free_id(domain->default_pasid);
-> > +		ioasid_free(domain->default_pasid);
-> >  }
-> > 
-> >  static int aux_domain_add_dev(struct dmar_domain *domain,
-> > @@ -5329,10 +5329,10 @@ static int aux_domain_add_dev(struct
-> > dmar_domain *domain,
-> >  	if (domain->default_pasid <= 0) {
-> >  		int pasid;
-> > 
-> > -		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
-> > -
-> > pci_max_pasids(to_pci_dev(dev)),
-> > -					     GFP_KERNEL);
-> > -		if (pasid <= 0) {
-> > +		/* No private data needed for the default pasid */
-> > +		pasid = ioasid_alloc(NULL, PASID_MIN,
-> > pci_max_pasids(to_pci_dev(dev)) - 1,
-> > +				NULL);
-> > +		if (pasid == INVALID_IOASID) {
-> >  			pr_err("Can't allocate default pasid\n");
-> >  			return -ENODEV;
-> >  		}
-> > @@ -5368,7 +5368,7 @@ static int aux_domain_add_dev(struct
-> > dmar_domain *domain,
-> >  	spin_unlock(&iommu->lock);
-> >  	spin_unlock_irqrestore(&device_domain_lock, flags);
-> >  	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> > -		intel_pasid_free_id(domain->default_pasid);
-> > +		ioasid_free(domain->default_pasid);
-> > 
-> >  	return ret;
-> >  }
-> > diff --git a/drivers/iommu/intel-pasid.c
-> > b/drivers/iommu/intel-pasid.c index d81e857d2b25..e79d680fe300
-> > 100644 --- a/drivers/iommu/intel-pasid.c
-> > +++ b/drivers/iommu/intel-pasid.c
-> > @@ -26,42 +26,6 @@
-> >   */
-> >  static DEFINE_SPINLOCK(pasid_lock);
-> >  u32 intel_pasid_max_id = PASID_MAX;
-> > -static DEFINE_IDR(pasid_idr);
-> > -
-> > -int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
-> > -{
-> > -	int ret, min, max;
-> > -
-> > -	min = max_t(int, start, PASID_MIN);
-> > -	max = min_t(int, end, intel_pasid_max_id);
-> > -
-> > -	WARN_ON(in_interrupt());
-> > -	idr_preload(gfp);
-> > -	spin_lock(&pasid_lock);
-> > -	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
-> > -	spin_unlock(&pasid_lock);
-> > -	idr_preload_end();
-> > -
-> > -	return ret;
-> > -}
-> > -
-> > -void intel_pasid_free_id(int pasid)
-> > -{
-> > -	spin_lock(&pasid_lock);
-> > -	idr_remove(&pasid_idr, pasid);
-> > -	spin_unlock(&pasid_lock);
-> > -}
-> > -
-> > -void *intel_pasid_lookup_id(int pasid)
-> > -{
-> > -	void *p;
-> > -
-> > -	spin_lock(&pasid_lock);
-> > -	p = idr_find(&pasid_idr, pasid);
-> > -	spin_unlock(&pasid_lock);
-> > -
-> > -	return p;
-> > -}
-> > 
-> >  int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int
-> > *pasid) {
-> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> > index 9b159132405d..a9a7f85a09bc 100644
-> > --- a/drivers/iommu/intel-svm.c
-> > +++ b/drivers/iommu/intel-svm.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/dmar.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/mm_types.h>
-> > +#include <linux/ioasid.h>
-> >  #include <asm/page.h>
-> > 
-> >  #include "intel-pasid.h"
-> > @@ -318,16 +319,15 @@ int intel_svm_bind_mm(struct device *dev, int
-> > *pasid, int flags, struct svm_dev_
-> >  		if (pasid_max > intel_pasid_max_id)
-> >  			pasid_max = intel_pasid_max_id;
-> > 
-> > -		/* Do not use PASID 0 in caching mode (virtualised
-> > IOMMU) */
-> > -		ret = intel_pasid_alloc_id(svm,
-> > -					   !!cap_caching_mode(iommu->cap),
-> > -					   pasid_max - 1,
-> > GFP_KERNEL);
-> > -		if (ret < 0) {
-> > +		/* Do not use PASID 0, reserved for RID to PASID */
-> > +		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
-> > +					pasid_max - 1, svm);
-> > +		if (svm->pasid == INVALID_IOASID) {
-> >  			kfree(svm);
-> >  			kfree(sdev);
-> > +			ret = ENOSPC;
-> >  			goto out;
-> >  		}
-> > -		svm->pasid = ret;
-> >  		svm->notifier.ops = &intel_mmuops;
-> >  		svm->mm = mm;
-> >  		svm->flags = flags;
-> > @@ -337,7 +337,7 @@ int intel_svm_bind_mm(struct device *dev, int
-> > *pasid, int flags, struct svm_dev_
-> >  		if (mm) {
-> >  			ret =
-> > mmu_notifier_register(&svm->notifier, mm); if (ret) {
-> > -				intel_pasid_free_id(svm->pasid);
-> > +				ioasid_free(svm->pasid);
-> >  				kfree(svm);
-> >  				kfree(sdev);
-> >  				goto out;
-> > @@ -353,7 +353,7 @@ int intel_svm_bind_mm(struct device *dev, int
-> > *pasid, int flags, struct svm_dev_
-> >  		if (ret) {
-> >  			if (mm)
-> >  				mmu_notifier_unregister(&svm->notifier,
-> > mm);
-> > -			intel_pasid_free_id(svm->pasid);
-> > +			ioasid_free(svm->pasid);
-> >  			kfree(svm);
-> >  			kfree(sdev);
-> >  			goto out;
-> > @@ -401,7 +401,12 @@ int intel_svm_unbind_mm(struct device *dev, int
-> > pasid)
-> >  	if (!iommu)
-> >  		goto out;
-> > 
-> > -	svm = intel_pasid_lookup_id(pasid);
-> > +	svm = ioasid_find(NULL, pasid, NULL);
-> > +	if (IS_ERR(svm)) {
-> > +		ret = PTR_ERR(svm);
-> > +		goto out;
-> > +	}
-> > +
-> >  	if (!svm)
-> >  		goto out;
-> > 
-> > @@ -423,7 +428,9 @@ int intel_svm_unbind_mm(struct device *dev, int
-> > pasid)
-> >  				kfree_rcu(sdev, rcu);
-> > 
-> >  				if (list_empty(&svm->devs)) {
-> > -
-> > intel_pasid_free_id(svm->pasid);
-> > +					/* Clear private data so
-> > that free pass check */
-> > +
-> > ioasid_set_data(svm->pasid, NULL);
-> > +					ioasid_free(svm->pasid);
-> >  					if (svm->mm)
-> > 
-> > 	mmu_notifier_unregister(&svm->notifier, svm->mm);
-> > 
-> > @@ -458,10 +465,11 @@ int intel_svm_is_pasid_valid(struct device
-> > *dev, int pasid)
-> >  	if (!iommu)
-> >  		goto out;
-> > 
-> > -	svm = intel_pasid_lookup_id(pasid);
-> > -	if (!svm)
-> > +	svm = ioasid_find(NULL, pasid, NULL);
-> > +	if (IS_ERR(svm)) {
-> > +		ret = PTR_ERR(svm);
-> >  		goto out;
-> > -
-> > +	}
-> >  	/* init_mm is used in this case */
-> >  	if (!svm->mm)
-> >  		ret = 1;
-> > @@ -568,13 +576,12 @@ static irqreturn_t prq_event_thread(int irq,
-> > void *d)
-> > 
-> >  		if (!svm || svm->pasid != req->pasid) {
-> >  			rcu_read_lock();
-> > -			svm = intel_pasid_lookup_id(req->pasid);
-> > +			svm = ioasid_find(NULL, req->pasid, NULL);
-> >  			/* It *can't* go away, because the driver
-> > is not permitted
-> >  			 * to unbind the mm while any page faults
-> > are outstanding.
-> >  			 * So we only need RCU to protect the
-> > internal idr code. */
-> >  			rcu_read_unlock();
-> > -
-> > -			if (!svm) {
-> > +			if (IS_ERR(svm) || !svm) {
-> >  				pr_err("%s: Page request for
-> > invalid PASID %d: %08llx %08llx\n",
-> >  				       iommu->name, req->pasid,
-> > ((unsigned long long *)req)[0],
-> >  				       ((unsigned long long
-> > *)req)[1]); --
-> > 2.7.4  
+> > Since ioasid registration failure is a rare case. How about moving
+> > this part of code up to the early stage of intel_iommu_init() and
+> > returning error if hardware present vcmd capability but software
+> > fails to register a custom ioasid allocator?
+> >   
 > 
+> It makes sense to me.
+> 
+sounds good to me too, the earlier the less to clean up.
+> Thanks
+> Kevin
 
 [Jacob Pan]
