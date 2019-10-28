@@ -2,83 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2726E729D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2408CE723B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:00:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729528AbfJ1N3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:29:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60228 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726691AbfJ1N3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:29:53 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3E0FFF9A41F616FE4F0C;
-        Mon, 28 Oct 2019 21:29:49 +0800 (CST)
-Received: from HGHY4Z004218071.china.huawei.com (10.133.224.57) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 28 Oct 2019 21:29:41 +0800
-From:   Xiang Zheng <zhengxiang9@huawei.com>
-To:     <bhelgaas@google.com>
-CC:     <zhengxiang9@huawei.com>, <wangxiongfeng2@huawei.com>,
-        <wanghaibin.wang@huawei.com>, <guoheyi@huawei.com>,
-        <yebiaoxiang@huawei.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <willy@infradead.org>,
-        <rjw@rjwysocki.net>, <tglx@linutronix.de>, <guohanjun@huawei.com>,
-        <yangyingliang@huawei.com>
-Subject: [PATCH] pci: lock the pci_cfg_wait queue for the consistency of data
-Date:   Mon, 28 Oct 2019 17:18:09 +0800
-Message-ID: <20191028091809.35212-1-zhengxiang9@huawei.com>
-X-Mailer: git-send-email 2.15.1.windows.2
+        id S1729618AbfJ1NA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:00:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbfJ1NA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:00:27 -0400
+Received: from rapoport-lnx (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4CD220873;
+        Mon, 28 Oct 2019 13:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572267626;
+        bh=7B5KqT02XX9UUIrQVYUjxF/tdp4AX2fxoquk/g1eYlg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W+ACpEJtAVmweITcDAONS+d676IgPfKwQtn05LXqUIkznSdTZHf+QRrS2253omIX6
+         f4YsmExVRa7lT6Sble5zHX+YPVeEOxeSUnSA2MCF1zYGfMN7ZbZtMsP1sGncjGcRyA
+         H1P+eY3WBy01O4yAzuWeWSC4E50ZtAkaNQbdeAzo=
+Date:   Mon, 28 Oct 2019 14:00:19 +0100
+From:   Mike Rapoport <rppt@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
+ mappings
+Message-ID: <20191028130018.GA7192@rapoport-lnx>
+References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+ <1572171452-7958-2-git-send-email-rppt@kernel.org>
+ <20191028123124.ogkk5ogjlamvwc2s@box>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.224.57]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028123124.ogkk5ogjlamvwc2s@box>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit "7ea7e98fd8d0" suggests that the "pci_lock" is sufficient,
-and all the callers of pci_wait_cfg() are wrapped with the "pci_lock".
+On Mon, Oct 28, 2019 at 03:31:24PM +0300, Kirill A. Shutemov wrote:
+> On Sun, Oct 27, 2019 at 12:17:32PM +0200, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > The mappings created with MAP_EXCLUSIVE are visible only in the context of
+> > the owning process and can be used by applications to store secret
+> > information that will not be visible not only to other processes but to the
+> > kernel as well.
+> > 
+> > The pages in these mappings are removed from the kernel direct map and
+> > marked with PG_user_exclusive flag. When the exclusive area is unmapped,
+> > the pages are mapped back into the direct map.
+> 
+> I probably blind, but I don't see where you manipulate direct map...
 
-However, since the commit "cdcb33f98244" merged, the accesses to
-the pci_cfg_wait queue are not safe anymore. A "pci_lock" is
-insufficient and we need to hold an additional queue lock while
-read/write the wait queue.
-
-So let's use the add_wait_queue()/remove_wait_queue() instead of
-__add_wait_queue()/__remove_wait_queue().
-
-Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
-Cc: Heyi Guo <guoheyi@huawei.com>
-Cc: Biaoxiang Ye <yebiaoxiang@huawei.com>
-Cc: Xiongfeng Wang <wangxiongfeng2@huawei.com>
----
- drivers/pci/access.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/access.c b/drivers/pci/access.c
-index 2fccb5762c76..247bf36e0047 100644
---- a/drivers/pci/access.c
-+++ b/drivers/pci/access.c
-@@ -207,14 +207,14 @@ static noinline void pci_wait_cfg(struct pci_dev *dev)
- {
- 	DECLARE_WAITQUEUE(wait, current);
+__get_user_pages() calls __set_page_user_exclusive() which in turn calls
+set_direct_map_invalid_noflush() that makes the page not present.
  
--	__add_wait_queue(&pci_cfg_wait, &wait);
-+	add_wait_queue(&pci_cfg_wait, &wait);
- 	do {
- 		set_current_state(TASK_UNINTERRUPTIBLE);
- 		raw_spin_unlock_irq(&pci_lock);
- 		schedule();
- 		raw_spin_lock_irq(&pci_lock);
- 	} while (dev->block_cfg_access);
--	__remove_wait_queue(&pci_cfg_wait, &wait);
-+	remove_wait_queue(&pci_cfg_wait, &wait);
- }
- 
- /* Returns 0 on success, negative values indicate error. */
+> -- 
+>  Kirill A. Shutemov
+
 -- 
-2.19.1
-
-
+Sincerely yours,
+Mike.
