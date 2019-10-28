@@ -2,125 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C168CE7C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A29E7C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfJ1WiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:38:17 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:37388 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729432AbfJ1WiQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:38:16 -0400
-Received: by mail-il1-f195.google.com with SMTP id v2so9638978ilq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 15:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1pqft6NUgSGPSsYgTI6KAW/EqfWsmOX+X7GP8nWIKRQ=;
-        b=KOtAhmLxM5DZQvf2Ll3f33KbklGMeTG2PKDxS+jixVpbEYv/r2fkX8rWW/POBAh8EZ
-         bhaa9F6E4wiUOAv7xzTF/OPYtmaoF81sAIOIN1D7uz2hMlzRn/GbsAID1pmlxlh0ULbu
-         KCWrpiKfUYuFXj/u1i4vCnm4AsCswlKrH1PH0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1pqft6NUgSGPSsYgTI6KAW/EqfWsmOX+X7GP8nWIKRQ=;
-        b=qeqZBl0bZcuPGz+1sVsvjwYIWkInt9HpM7hHA6t/UwE7h8suTXryTQHH4xt+QBdZCi
-         lT4kgqmSk3ewnKY/ChxtIEY3HT5edyQdAMS3Ki1RWzrcUf58CsEfr/Xrl5GIY6SZ3Jd2
-         df+BODwdC2MsoHOckbWspsQb51uIqS3ZvY7yfJ0tn/OSCGfqVoWQDP/TgDwamt0gvpNp
-         oJrXcpIkjRAw4aSeG4kEu9TNikpqiGCgFXlFvLaIkwM+cJVc5iKOvVQQPkb5YzT1tKyL
-         V63zGHv6Js0tWGBXBXuqA6jk7h8TasmzG08uAa1QBFGsYjLj76HHM8bq/2trCBgkgGJ4
-         sbBw==
-X-Gm-Message-State: APjAAAUmOsGq211reT+VMduhmEFEdAU9sBDwzWxSZ+3G6tz3BYtofDKU
-        3no1jHmccOwcAV55gomx8Cos+wbjDyG0h/mI3xlDqg==
-X-Google-Smtp-Source: APXvYqzOjbPZql47NIkJK7AmtptD85c0h2swAJ0981IFdP5pW7aIvp/4iQe9Q33o2yPDwnBDa7OGwzugpAmPA0ld6FE=
-X-Received: by 2002:a92:6e0a:: with SMTP id j10mr5422292ilc.26.1572302295420;
- Mon, 28 Oct 2019 15:38:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <418d8426-f299-1269-2b2e-f86677cf22c2@arm.com> <20191007204906.19571-1-robdclark@gmail.com>
- <20191028222042.GB8532@willie-the-truck>
-In-Reply-To: <20191028222042.GB8532@willie-the-truck>
-From:   Rob Clark <robdclark@chromium.org>
-Date:   Mon, 28 Oct 2019 15:38:04 -0700
-Message-ID: <CAJs_Fx7zRWsTPiAg0PFt+8nJPpHpzSkxW6XMMJwozVO6vyB78A@mail.gmail.com>
-Subject: Re: [PATCH v2] iommu/arm-smmu: fix "hang" when games exit
-To:     Will Deacon <will@kernel.org>
-Cc:     Rob Clark <robdclark@gmail.com>, iommu@lists.linux-foundation.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        id S1729074AbfJ1WeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:34:09 -0400
+Received: from mga01.intel.com ([192.55.52.88]:48858 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfJ1WeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 18:34:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 15:34:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
+   d="scan'208";a="205300605"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Oct 2019 15:34:07 -0700
+Date:   Mon, 28 Oct 2019 15:38:31 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Joerg Roedel <joro@8bytes.org>,
-        "moderated list:ARM SMMU DRIVERS" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v7 08/11] iommu/vt-d: Misc macro clean up for SVM
+Message-ID: <20191028153831.0594d56e@jacob-builder>
+In-Reply-To: <c07409eb-83e1-58eb-92d9-7e3c8208d5b7@linux.intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-9-git-send-email-jacob.jun.pan@linux.intel.com>
+        <c07409eb-83e1-58eb-92d9-7e3c8208d5b7@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 3:20 PM Will Deacon <will@kernel.org> wrote:
->
-> Hi Rob,
->
-> On Mon, Oct 07, 2019 at 01:49:06PM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > When games, browser, or anything using a lot of GPU buffers exits, there
-> > can be many hundreds or thousands of buffers to unmap and free.  If the
-> > GPU is otherwise suspended, this can cause arm-smmu to resume/suspend
-> > for each buffer, resulting 5-10 seconds worth of reprogramming the
-> > context bank (arm_smmu_write_context_bank()/arm_smmu_write_s2cr()/etc).
-> > To the user it would appear that the system just locked up.
-> >
-> > A simple solution is to use pm_runtime_put_autosuspend() instead, so we
-> > don't immediately suspend the SMMU device.
->
-> Please can you reword the subject to be a bit more useful? The commit
-> message is great, but the subject is a bit like "fix bug in code" to me.
+On Sat, 26 Oct 2019 09:00:51 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-yeah, not the best $subject, but I wasn't quite sure how to fit
-something better in a reasonable # of chars.. maybe something like:
-"iommu/arm-smmu: optimize unmap but avoiding toggling runpm state"?
-
-BR,
--R
-
-
->
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> Hi,
+> 
+> On 10/25/19 3:55 AM, Jacob Pan wrote:
+> > Use combined macros for_each_svm_dev() to simplify SVM device
+> > iteration and error checking.
+> > 
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Reviewed-by: Eric Auger <eric.auger@redhat.com>
 > > ---
-> > v1: original
-> > v2: unconditionally use autosuspend, rather than deciding based on what
-> >     consumer does
-> >
-> >  drivers/iommu/arm-smmu.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> > index 3f1d55fb43c4..b7b41f5001bc 100644
-> > --- a/drivers/iommu/arm-smmu.c
-> > +++ b/drivers/iommu/arm-smmu.c
-> > @@ -289,7 +289,7 @@ static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
-> >  static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
-> >  {
-> >       if (pm_runtime_enabled(smmu->dev))
-> > -             pm_runtime_put(smmu->dev);
-> > +             pm_runtime_put_autosuspend(smmu->dev);
-> >  }
-> >
-> >  static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
-> > @@ -1445,6 +1445,9 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
-> >       /* Looks ok, so add the device to the domain */
-> >       ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
->
-> Please can you put a comment here explaining what this is doing? An abridged
-> version of the commit message is fine.
->
-> > +     pm_runtime_set_autosuspend_delay(smmu->dev, 20);
-> > +     pm_runtime_use_autosuspend(smmu->dev);
->
-> Cheers,
->
-> Will
+> >   drivers/iommu/intel-svm.c | 89
+> > ++++++++++++++++++++++------------------------- 1 file changed, 42
+> > insertions(+), 47 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> > index a9a7f85a09bc..a18b02a9709d 100644
+> > --- a/drivers/iommu/intel-svm.c
+> > +++ b/drivers/iommu/intel-svm.c
+> > @@ -212,6 +212,10 @@ static const struct mmu_notifier_ops
+> > intel_mmuops = { static DEFINE_MUTEX(pasid_mutex);
+> >   static LIST_HEAD(global_svm_list);
+> >   
+> > +#define for_each_svm_dev(svm, dev)			\
+> > +	list_for_each_entry(sdev, &svm->devs, list)	\
+> > +	if (dev == sdev->dev)				\
+> > +
+> >   int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
+> > struct svm_dev_ops *ops) {
+> >   	struct intel_iommu *iommu =
+> > intel_svm_device_to_iommu(dev); @@ -257,15 +261,13 @@ int
+> > intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct
+> > svm_dev_ goto out; }
+> >   
+> > -			list_for_each_entry(sdev, &svm->devs,
+> > list) {
+> > -				if (dev == sdev->dev) {
+> > -					if (sdev->ops != ops) {
+> > -						ret = -EBUSY;
+> > -						goto out;
+> > -					}
+> > -					sdev->users++;
+> > -					goto success;
+> > +			for_each_svm_dev(svm, dev) {
+> > +				if (sdev->ops != ops) {
+> > +					ret = -EBUSY;
+> > +					goto out;
+> >   				}
+> > +				sdev->users++;
+> > +				goto success;
+> >   			}
+> >   
+> >   			break;
+> > @@ -402,50 +404,43 @@ int intel_svm_unbind_mm(struct device *dev,
+> > int pasid) goto out;
+> >   
+> >   	svm = ioasid_find(NULL, pasid, NULL);
+> > -	if (IS_ERR(svm)) {
+> > +	if (IS_ERR_OR_NULL(svm)) {
+> >   		ret = PTR_ERR(svm);
+> >   		goto out;
+> >   	}
+> >   
+> > -	if (!svm)
+> > -		goto out;  
+> 
+> If svm == NULL here, this function will return success. This isn't
+> expected, right?
+> 
+you are right, should handle separately.
+
+Thanks!
+> Others looks good to me.
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> 
+> Best regards,
+> baolu
+> 
+> > -
+> > -	list_for_each_entry(sdev, &svm->devs, list) {
+> > -		if (dev == sdev->dev) {
+> > -			ret = 0;
+> > -			sdev->users--;
+> > -			if (!sdev->users) {
+> > -				list_del_rcu(&sdev->list);
+> > -				/* Flush the PASID cache and IOTLB
+> > for this device.
+> > -				 * Note that we do depend on the
+> > hardware *not* using
+> > -				 * the PASID any more. Just as we
+> > depend on other
+> > -				 * devices never using PASIDs that
+> > they have no right
+> > -				 * to use. We have a *shared*
+> > PASID table, because it's
+> > -				 * large and has to be physically
+> > contiguous. So it's
+> > -				 * hard to be as defensive as we
+> > might like. */
+> > -				intel_pasid_tear_down_entry(iommu,
+> > dev, svm->pasid);
+> > -				intel_flush_svm_range_dev(svm,
+> > sdev, 0, -1, 0);
+> > -				kfree_rcu(sdev, rcu);
+> > -
+> > -				if (list_empty(&svm->devs)) {
+> > -					/* Clear private data so
+> > that free pass check */
+> > -
+> > ioasid_set_data(svm->pasid, NULL);
+> > -					ioasid_free(svm->pasid);
+> > -					if (svm->mm)
+> > -
+> > mmu_notifier_unregister(&svm->notifier, svm->mm); -
+> > -					list_del(&svm->list);
+> > -
+> > -					/* We mandate that no page
+> > faults may be outstanding
+> > -					 * for the PASID when
+> > intel_svm_unbind_mm() is called.
+> > -					 * If that is not obeyed,
+> > subtle errors will happen.
+> > -					 * Let's make them less
+> > subtle... */
+> > -					memset(svm, 0x6b,
+> > sizeof(*svm));
+> > -					kfree(svm);
+> > -				}
+> > +	for_each_svm_dev(svm, dev) {
+> > +		ret = 0;
+> > +		sdev->users--;
+> > +		if (!sdev->users) {
+> > +			list_del_rcu(&sdev->list);
+> > +			/* Flush the PASID cache and IOTLB for
+> > this device.
+> > +			 * Note that we do depend on the hardware
+> > *not* using
+> > +			 * the PASID any more. Just as we depend
+> > on other
+> > +			 * devices never using PASIDs that they
+> > have no right
+> > +			 * to use. We have a *shared* PASID table,
+> > because it's
+> > +			 * large and has to be physically
+> > contiguous. So it's
+> > +			 * hard to be as defensive as we might
+> > like. */
+> > +			intel_pasid_tear_down_entry(iommu, dev,
+> > svm->pasid);
+> > +			intel_flush_svm_range_dev(svm, sdev, 0,
+> > -1, 0);
+> > +			kfree_rcu(sdev, rcu);
+> > +
+> > +			if (list_empty(&svm->devs)) {
+> > +				/* Clear private data so that free
+> > pass check */
+> > +				ioasid_set_data(svm->pasid, NULL);
+> > +				ioasid_free(svm->pasid);
+> > +				if (svm->mm)
+> > +
+> > mmu_notifier_unregister(&svm->notifier, svm->mm);
+> > +				list_del(&svm->list);
+> > +				/* We mandate that no page faults
+> > may be outstanding
+> > +				 * for the PASID when
+> > intel_svm_unbind_mm() is called.
+> > +				 * If that is not obeyed, subtle
+> > errors will happen.
+> > +				 * Let's make them less subtle...
+> > */
+> > +				memset(svm, 0x6b, sizeof(*svm));
+> > +				kfree(svm);
+> >   			}
+> > -			break;
+> >   		}
+> > +		break;
+> >   	}
+> >    out:
+> >   	mutex_unlock(&pasid_mutex);
+> > @@ -581,7 +576,7 @@ static irqreturn_t prq_event_thread(int irq,
+> > void *d)
+> >   			 * to unbind the mm while any page faults
+> > are outstanding.
+> >   			 * So we only need RCU to protect the
+> > internal idr code. */ rcu_read_unlock();
+> > -			if (IS_ERR(svm) || !svm) {
+> > +			if (IS_ERR_OR_NULL(svm)) {
+> >   				pr_err("%s: Page request for
+> > invalid PASID %d: %08llx %08llx\n", iommu->name, req->pasid,
+> > ((unsigned long long *)req)[0], ((unsigned long long *)req)[1]);
+> >   
+
+[Jacob Pan]
