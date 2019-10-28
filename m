@@ -2,66 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F45E72A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C86D4E729F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389227AbfJ1Ncp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:32:45 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34768 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726833AbfJ1Ncp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:32:45 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 14AFDC67E735CB42E6F8;
-        Mon, 28 Oct 2019 21:32:40 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Mon, 28 Oct 2019
- 21:32:32 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <james.smart@broadcom.com>, <dick.kennedy@broadcom.com>,
-        <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: lpfc: Make lpfc_debugfs_ras_log_data static
-Date:   Mon, 28 Oct 2019 21:25:56 +0800
-Message-ID: <20191028132556.16272-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2389064AbfJ1Nay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbfJ1Nay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:30:54 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C812620873;
+        Mon, 28 Oct 2019 13:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572269452;
+        bh=Q4aTENSogO5dIUk61tZ+mKng+1PdVCEMMsHb/lYON2w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zbT5L1eHkeWMiJ7d35cXaAKdgbCDLGGfIdru6dSJRHiWLiDqpQJCHV4Is0NGz914Y
+         W27fseMJaz3ZPyVyiHLeXzYiaHwXNMBTDdNompmkd6xpWv2Q00cywIlqCl6gB+GlmV
+         7ylMyirXSq0aERB7GU7/+ezvoTR7TLXaMSpV3LQA=
+Date:   Mon, 28 Oct 2019 14:30:50 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     syzbot <syzbot+8f2612936028bfd28f28@syzkaller.appspotmail.com>,
+        allison@lohutok.net, alsa-devel@alsa-project.org,
+        benquike@gmail.com, dan.carpenter@oracle.com, glider@google.com,
+        linux-kernel@vger.kernel.org, perex@perex.cz,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        tiwai@suse.com, wang6495@umn.edu, yuehaibing@huawei.com
+Subject: Re: KMSAN: uninit-value in get_term_name
+Message-ID: <20191028133050.GA13691@kroah.com>
+References: <000000000000f838060595f602a7@google.com>
+ <s5hr22xau8f.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hr22xau8f.wl-tiwai@suse.de>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+On Mon, Oct 28, 2019 at 02:13:20PM +0100, Takashi Iwai wrote:
+> On Mon, 28 Oct 2019 11:32:07 +0100,
+> syzbot wrote:
+> > 
+> > Uninit was stored to memory at:
+> >  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:151 [inline]
+> >  kmsan_internal_chain_origin+0xbd/0x180 mm/kmsan/kmsan.c:319
+> >  __msan_chain_origin+0x6b/0xd0 mm/kmsan/kmsan_instr.c:179
+> >  parse_term_proc_unit+0x73d/0x7e0 sound/usb/mixer.c:896
+> >  __check_input_term+0x13ef/0x2360 sound/usb/mixer.c:989
+> 
+> So this comes from the invalid descriptor for a processing unit, and
+> it's very likely the same issue as already spotted -- the validator up
+> to 5.3-rc4 had a bug that passed the invalid descriptor falsely.
+> This should have been covered by 5.3-rc5, commit ba8bf0967a15 ("ALSA:
+> usb-audio: Fix copy&paste error in the validator").
 
-drivers/scsi/lpfc/lpfc_debugfs.c:2083:1: warning:
- symbol 'lpfc_debugfs_ras_log_data' was not declared. Should it be static?
+SHould we be backporting the validator to any older kernels as well?
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/lpfc/lpfc_debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+thanks,
 
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index 6c8effc..2e6a68d 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -2079,8 +2079,8 @@ lpfc_debugfs_lockstat_write(struct file *file, const char __user *buf,
- }
- #endif
- 
--int
--lpfc_debugfs_ras_log_data(struct lpfc_hba *phba, char *buffer, int size)
-+static int lpfc_debugfs_ras_log_data(struct lpfc_hba *phba,
-+				     char *buffer, int size)
- {
- 	int copied = 0;
- 	struct lpfc_dmabuf *dmabuf, *next;
--- 
-2.7.4
-
-
+greg k-h
