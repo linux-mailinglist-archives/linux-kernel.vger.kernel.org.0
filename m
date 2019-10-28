@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53213E7230
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2726E729D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbfJ1M5h convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 28 Oct 2019 08:57:37 -0400
-Received: from mga05.intel.com ([192.55.52.43]:36455 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbfJ1M5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:57:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 05:57:36 -0700
-X-IronPort-AV: E=Sophos;i="5.68,240,1569308400"; 
-   d="scan'208";a="193247150"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.18.53])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 05:57:29 -0700
-Content-Type: text/plain; charset="utf-8"
+        id S1729528AbfJ1N3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:29:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60228 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726691AbfJ1N3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:29:53 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3E0FFF9A41F616FE4F0C;
+        Mon, 28 Oct 2019 21:29:49 +0800 (CST)
+Received: from HGHY4Z004218071.china.huawei.com (10.133.224.57) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 28 Oct 2019 21:29:41 +0800
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+To:     <bhelgaas@google.com>
+CC:     <zhengxiang9@huawei.com>, <wangxiongfeng2@huawei.com>,
+        <wanghaibin.wang@huawei.com>, <guoheyi@huawei.com>,
+        <yebiaoxiang@huawei.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <willy@infradead.org>,
+        <rjw@rjwysocki.net>, <tglx@linutronix.de>, <guohanjun@huawei.com>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH] pci: lock the pci_cfg_wait queue for the consistency of data
+Date:   Mon, 28 Oct 2019 17:18:09 +0800
+Message-ID: <20191028091809.35212-1-zhengxiang9@huawei.com>
+X-Mailer: git-send-email 2.15.1.windows.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     paulmck@kernel.org, rcu@vger.kernel.org
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20191022191215.25781-3-paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
- <20191022191215.25781-3-paulmck@kernel.org>
-Message-ID: <157226744651.5420.128752979550120657@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH tip/core/rcu 03/10] drivers/gpu: Replace rcu_swap_protected()
- with rcu_replace()
-Date:   Mon, 28 Oct 2019 14:57:26 +0200
+Content-Type: text/plain
+X-Originating-IP: [10.133.224.57]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting paulmck@kernel.org (2019-10-22 22:12:08)
-> From: "Paul E. McKenney" <paulmck@kernel.org>
-> 
-> This commit replaces the use of rcu_swap_protected() with the more
-> intuitively appealing rcu_replace() as a step towards removing
-> rcu_swap_protected().
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> [ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-> Cc: <intel-gfx@lists.freedesktop.org>
-> Cc: <dri-devel@lists.freedesktop.org>
+Commit "7ea7e98fd8d0" suggests that the "pci_lock" is sufficient,
+and all the callers of pci_wait_cfg() are wrapped with the "pci_lock".
 
-"drm/i915:" preferred as the subject prefix for increased specificity.
+However, since the commit "cdcb33f98244" merged, the accesses to
+the pci_cfg_wait queue are not safe anymore. A "pci_lock" is
+insufficient and we need to hold an additional queue lock while
+read/write the wait queue.
 
-Let me know which tree you end up merging with.
+So let's use the add_wait_queue()/remove_wait_queue() instead of
+__add_wait_queue()/__remove_wait_queue().
 
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+Cc: Heyi Guo <guoheyi@huawei.com>
+Cc: Biaoxiang Ye <yebiaoxiang@huawei.com>
+Cc: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/pci/access.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards, Joonas
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index 2fccb5762c76..247bf36e0047 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -207,14 +207,14 @@ static noinline void pci_wait_cfg(struct pci_dev *dev)
+ {
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
+-	__add_wait_queue(&pci_cfg_wait, &wait);
++	add_wait_queue(&pci_cfg_wait, &wait);
+ 	do {
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		raw_spin_unlock_irq(&pci_lock);
+ 		schedule();
+ 		raw_spin_lock_irq(&pci_lock);
+ 	} while (dev->block_cfg_access);
+-	__remove_wait_queue(&pci_cfg_wait, &wait);
++	remove_wait_queue(&pci_cfg_wait, &wait);
+ }
+ 
+ /* Returns 0 on success, negative values indicate error. */
+-- 
+2.19.1
+
+
