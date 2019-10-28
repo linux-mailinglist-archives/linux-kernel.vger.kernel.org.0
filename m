@@ -2,105 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B28E0E77CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:47:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A12E77E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:56:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404210AbfJ1Rq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 13:46:59 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51940 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731878AbfJ1Rq7 (ORCPT
+        id S2404226AbfJ1R4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 13:56:09 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.162]:11954 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730395AbfJ1R4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 13:46:59 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q70so10449885wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 10:46:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kTqsNbX8N4/+tKo0tfrcCNjH51MhQhLsOa9YrJD5zj0=;
-        b=F2w3kuZUze6C88Rtsmh3Mhaj1Q23RKXWFnErHtknY0GcHadB2ptfiw8+jfgktawpYY
-         GxA+S09pISwBlnp8aYIyyvp9LNG4XRt4LVH2rqiL74KDx54jtzlBXpaNqxVQQDbil41L
-         hlKRwwnE/px0j7f+pLNoo0eAchljc4s2x4NI1TKEJnABhrwWQtpTCIX68G7nwIKGO0jC
-         be2hxz2wnvVayDP2Ei3EfFZcW2DBwITeb+eUcGmirQ+l/zqDmOxx1TsIRVrl2TZGWSk0
-         n94yJQzDHUt8AwxFoNHFP3v7cJqIylYJ9VaSy763H0g9I1kOY0yWPG4+wpaPtw2R3mIG
-         hU1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kTqsNbX8N4/+tKo0tfrcCNjH51MhQhLsOa9YrJD5zj0=;
-        b=ZhOKQr6icPW0LpkDklPjqLUiSGSgV+O3fOI7G3Lh3o5sy9AIXYdQePXdRRGM+3qV5B
-         8m56bV93KcHn/ByT+aIWo9uDjjWwX98TDe8+6NTdh8ow5840YBOIh8qghs3tvI74k1SX
-         MTvtHqyk5Egr6xCHfdsexl0yKZeBmHgTtBgBRHR98F5vcgbvtwzSB5hPHTsx9HgYG+Or
-         dJUtAsgmVkyQnLrAyLy1tgzDUlNtT4b946N+z6HxHyiT23UhBnOMWu4ijI4xAsHPINRU
-         kjYHB56QYdkB53MPMxYmitz5BktyZm/8L3sfIn6T1AfbQBUTtzmNCedYtHFhoD9c4QTO
-         CgRw==
-X-Gm-Message-State: APjAAAXwZ8tBgBlotZYUF6cL95HWumsm5hC8A3ZxEOKfHPKpzCTc2Ijl
-        9Pja3GCk8HqenJAFsqREALKU7Q==
-X-Google-Smtp-Source: APXvYqx6EKY5iVC1Y+vzz0E0soWNQFjW0aBCt1fx8az/wKxtKcqb64MDEMnFHUNzQ13rDe7I/o79dA==
-X-Received: by 2002:a05:600c:228b:: with SMTP id 11mr466368wmf.112.1572284816342;
-        Mon, 28 Oct 2019 10:46:56 -0700 (PDT)
-Received: from google.com ([100.105.32.75])
-        by smtp.gmail.com with ESMTPSA id q12sm11567587wrj.87.2019.10.28.10.46.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 10:46:55 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 18:46:49 +0100
-From:   Marco Elver <elver@google.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, dvyukov@google.com,
-        ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH cgroup/for-5.5] cgroup: remove
- cgroup_enable_task_cg_lists() optimization
-Message-ID: <20191028174649.GA63741@google.com>
-References: <20191021142111.GB1339@redhat.com>
- <20191024190351.GD3622521@devbig004.ftw2.facebook.com>
- <20191025125606.GI3622521@devbig004.ftw2.facebook.com>
- <20191025133358.pxpzxkhqc3mboi5x@wittgenstein>
- <20191025141325.GB6020@redhat.com>
- <20191025143224.wtwkkimqq4644iqq@wittgenstein>
- <20191025155224.GC6020@redhat.com>
- <20191025170523.u43rkulrui22ynix@wittgenstein>
- <20191028164852.GA17900@redhat.com>
- <20191028173031.m32p5e3ek764hnre@wittgenstein>
+        Mon, 28 Oct 2019 13:56:09 -0400
+X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Oct 2019 13:56:08 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1572285367;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=O1Y3cHLchpCrbqj8e6xjlT/zTElzb7HM0YYVa7PBPnQ=;
+        b=PcVqPg+GPcG7+B6KA4OGjbngaVWjXIMoQG9EeQs2wasC8wDH+Lm7MPTMpbq+kR9dIE
+        AozAsUIDDFf/80hpJOCbh3Hl3VUb+OY3/Nr1QEWgYnSaLQYRpRIPO0gYr/IXJodiYVnu
+        OHncsi6lPLj8CBq0PjjomJL3Az/lQEiTLw1v9uCcr5c1aIBMQDlfNt1g8ULexjI0sT3x
+        vcdFxf0ExYeldcEiULADyr/xSvqI4zhd2iZ/aO/2rhgi4kuQmk8iuV8Y0mDd7Z/Rw9H8
+        mxKVo+JhSIhpc+NcuO5ZTHOli1Nr00J7/jK0yAAi8triGrIFhNgdbGG+hTs1OUGqd1nE
+        Aa+A==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4AUztn93FPS2dyuYM9i8w=="
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.28.1 SBL|AUTH)
+        with ESMTPSA id e01a77v9SHo6tns
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 28 Oct 2019 18:50:06 +0100 (CET)
+Date:   Mon, 28 Oct 2019 18:49:55 +0100
+From:   Olaf Hering <olaf@aepfle.de>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "open list:Hyper-V CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] tools/hv: async name resolution in kvp_daemon
+Message-ID: <20191028184955.24dbb7d4.olaf@aepfle.de>
+In-Reply-To: <20191028161754.GF1554@sasha-vm>
+References: <20191024144943.26199-1-olaf@aepfle.de>
+        <20191028161754.GF1554@sasha-vm>
+X-Mailer: Claws Mail 2019.05.18 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028173031.m32p5e3ek764hnre@wittgenstein>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IuoZQOlE/DrovulyPpUOb_M"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/IuoZQOlE/DrovulyPpUOb_M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2019, Christian Brauner wrote:
+Am Mon, 28 Oct 2019 12:17:54 -0400
+schrieb Sasha Levin <sashal@kernel.org>:
 
-> On Mon, Oct 28, 2019 at 05:48:52PM +0100, Oleg Nesterov wrote:
-> > On 10/25, Christian Brauner wrote:
-> > 
-> > It is not that this code lacked READ_ONCE(). I am sure me and others
-> > understood that this code can read ->exit_state more than once, just
-> > nobody noticed that in this case this is really wrong.
-> > 
-> > IOW, if we simply change the code before 3245d6acab98 to use READ_ONCE()
-> > the code will be equally wrong, and
-> > 
-> > > and as far as I understand this would also help kcsan to better detect
-> > > races.
-> > 
-> > this change will simply hide the problem from kcsan.
-> 
-> I can't speak to that since the claim that read_once() helps them even
-> if it's not really doing anything. But maybe I misunderstood the
-> k{c,t}san manpage.
+> undefined reference to `pthread_create'
 
-What Oleg said is right: marking things _ONCE will make these accesses
-no longer be data races, and  KCSAN would then no longer report these as
-data race, even if the code is still buggy due to there being a race
-condition. In this case, the race condition would stop also being a data
-race, and we'd no longer find it.
+Does "make V=3D1 -C tools/hv" work for you?
+This is what I use.
 
-Thanks,
--- Marco
+Olaf
+
+--Sig_/IuoZQOlE/DrovulyPpUOb_M
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAl23KkMACgkQ86SN7mm1
+DoCRWQ/+LG5xpg4eIZaIs/EnRBJawuXuQ1KF4Uz20eoKmJkSXAvwSG0SF7CmgrHV
+OPnIugF9R02hFD686YOLSZJDqsCs5s+GHRMLMorRQOfBgXZlnbA7WL4Kj4T9EyiW
+q+yRzGefuekOAn/shc+ARHVCmhOglL/Uq/Cu/H7V7rGSNBLuc1JAHY2jQsasg+ds
+1YdVMWl3vVcZOP9X/JgBjC4DPXryer8MkAg8A01vV6NPGe2GJbm98mJOZBvUg7aO
+0QtRG+rR+c3mJelE9XWLrl+AT7Rl38H0x6qqMGxOUIrFfQBBlcgB9hA/DuxZXTN4
+eEDHRQbvCdLlBJ/+WHM4qxTU6ZaSkVpdQWPf+EpsoTHaQpRNYStD6LKh4+AWtKrW
+mTvZQvmt7qaGvPVX0hwDHlC8HwP0CJhNpBPCM6svozAyukfYrSKwxajV2Mvrul3D
+CXz4zWOk9qjYrjZKJecI93M3PekMoHbtN6AO7aTZKLBgtruGD5qf64bzpvb6cWUn
+7rsytsn5JfUY8PjRcDDDlpgqki5VE4YCQKRsOHyACjdtoXRVAltqTPSfhsmqU5MT
+eLQeyBLbMvGKxII83A8dLoU6FxdWAmsq1Yd7NtCKvSbLhPESnmbHb8dfFyvJtAmR
+062L5egcECYBkLgcwMZ06d1qXxrp8I0t2MDv9qu2xFFQjkT9Jp8=
+=lVDa
+-----END PGP SIGNATURE-----
+
+--Sig_/IuoZQOlE/DrovulyPpUOb_M--
