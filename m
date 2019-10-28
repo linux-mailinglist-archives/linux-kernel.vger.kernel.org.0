@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEFCEE7B31
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:13:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0CA1E7B39
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:17:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbfJ1VN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:13:26 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:18764 "EHLO
+        id S1728601AbfJ1VRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:17:12 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:23426 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfJ1VNZ (ORCPT
+        with ESMTP id S1726890AbfJ1VRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:13:25 -0400
+        Mon, 28 Oct 2019 17:17:12 -0400
 Received: from belgarion ([90.55.204.252])
         by mwinf5d17 with ME
-        id K9DP210045TFNlm039DPaW; Mon, 28 Oct 2019 22:13:23 +0100
+        id K9H92100A5TFNlm039HAqi; Mon, 28 Oct 2019 22:17:10 +0100
 X-ME-Helo: belgarion
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 28 Oct 2019 22:13:23 +0100
+X-ME-Date: Mon, 28 Oct 2019 22:17:10 +0100
 X-ME-IP: 90.55.204.252
 From:   Robert Jarzmik <robert.jarzmik@free.fr>
 To:     Arnd Bergmann <arnd@arndb.de>
@@ -26,14 +26,14 @@ Cc:     Daniel Mack <daniel@zonque.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 22/46] ARM: pxa: eseries: use gpio lookup for audio
+Subject: Re: [PATCH 23/46] ARM: pxa: z2: use gpio lookup for audio device
 References: <20191018154052.1276506-1-arnd@arndb.de>
-        <20191018154201.1276638-22-arnd@arndb.de>
+        <20191018154201.1276638-23-arnd@arndb.de>
 X-URL:  http://belgarath.falguerolles.org/
-Date:   Mon, 28 Oct 2019 22:13:23 +0100
-In-Reply-To: <20191018154201.1276638-22-arnd@arndb.de> (Arnd Bergmann's
-        message of "Fri, 18 Oct 2019 17:41:37 +0200")
-Message-ID: <87k18olgjw.fsf@belgarion.home>
+Date:   Mon, 28 Oct 2019 22:17:07 +0100
+In-Reply-To: <20191018154201.1276638-23-arnd@arndb.de> (Arnd Bergmann's
+        message of "Fri, 18 Oct 2019 17:41:38 +0200")
+Message-ID: <87ftjclgdo.fsf@belgarion.home>
 User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -44,19 +44,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Arnd Bergmann <arnd@arndb.de> writes:
 
-> The three eseries machines have very similar drivers for audio, all
-> using the mach/eseries-gpio.h header for finding the gpio numbers.
+> The audio device is allocated by the audio driver, and it uses a gpio
+> number from the mach/z2.h header file.
 >
-> Change these to use gpio descriptors to avoid the header file
-> dependency.
->
-> I convert the _OFF gpio numbers into GPIO_ACTIVE_LOW ones for
-> consistency here.
+> Change it to use a gpio lookup table for the device allocated by the
+> driver to keep the header file local to the machine.
 >
 > Cc: Mark Brown <broonie@kernel.org>
 > Cc: alsa-devel@alsa-project.org
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Let's hope for the best :
 Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
 Cheers.
