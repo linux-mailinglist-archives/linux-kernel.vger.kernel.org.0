@@ -2,109 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279DDE6D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F7EE6CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:20:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732715AbfJ1HVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 03:21:47 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44484 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730346AbfJ1HVr (ORCPT
+        id S1732499AbfJ1HTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 03:19:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37434 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732466AbfJ1HTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 03:21:47 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7JGF8158431;
-        Mon, 28 Oct 2019 07:21:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=6UrEt8Yob0WvnmAEmegBqErzZ/vNf8vt6/tp3mnw1QE=;
- b=QZ3mFo4dfKxKWOxUf6tINRvNo006Y5lDeMmbZsbVUFo7aYrvSdpBSJY2p8gki1dfWCvF
- k7QB2fwdMVRYpGzKuGUDYuxfsuS1kav/Mln3nN6gymXwknafBlsx7b37p6AvDvHHBO7f
- T2t9cuDpnbUYBQLN8CmI2OLiTf5EW0rLDDBAhNCg0O4ImO0MzJopRn1qaSssxkt2zv0U
- 6A0gwzsPllysVcXgprVZdlfrJEpLvodyZQdcxx9YTrA+heH6bSwppYquJDdtLss1NXNj
- 6Kv1sS7i7T9HtsDg7xfZuoQWgWMTPc+a4HE4dB6R8/94IUSqxrQLMzB2czwEml7yRnBh qQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2vve3pyyjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Oct 2019 07:21:31 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7JSsE168600;
-        Mon, 28 Oct 2019 07:19:30 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2vwakxgjfd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Oct 2019 07:19:30 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9S7J2ZJ004438;
-        Mon, 28 Oct 2019 07:19:04 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Oct 2019 00:19:02 -0700
-Date:   Mon, 28 Oct 2019 10:18:56 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <error27@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] kernel: sys.c: Avoid copying possible padding bytes in
- copy_to_user
-Message-ID: <20191028071856.GA1944@kadam>
-References: <dfa331c00881d61c8ee51577a082d8bebd61805c.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dfa331c00881d61c8ee51577a082d8bebd61805c.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=884
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910280073
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=964 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910280073
+        Mon, 28 Oct 2019 03:19:52 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u9so1566154pfn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 00:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ruFTA66AHlVe9lksioBMwwIdADskrYqVYX9wRS0DjSA=;
+        b=vTL+jOMSUKziFxGvmULpDuosEPrE9KNb5fxyiR+KvMpwfnMbiRIvHpP2o5MjkeTB7D
+         p9IzmnmSdzH9Ebhsgv9/FEJ3GvtMf7K0tcnXKQUEuX02OlyaqugYFxSTQoFmQ8ZVki6R
+         oms977+Ts142oOpF5S2arRJX+8lgoKQAYGD23LlOqe4Fo/ZNpttBx6kqD2o1kJBUjj9G
+         gCQKnJxj+vAPwE0GDYuhcZj9GXOEQJS0u2ZDtQYOwt2kq74qAJ0UDhKxoMBgk2SutMI1
+         8XCULjpZnMYTYz+Cvs0NaAyWVsjaeDwquo63f33xc4yZrvZ76gbBILwyNUGSLaNNN+Dk
+         iPCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ruFTA66AHlVe9lksioBMwwIdADskrYqVYX9wRS0DjSA=;
+        b=Z53ZNtAKTQ5ycISET+dRVdZu2/vjyuqvBVrT5mQeT1gSnPOPo3GQpmRZAbvqbzoE/9
+         nBISnez9/8HCvVZiCpILM9wPNtT1jWg7uI2fPTzSPhzk/i82VEoUJwirv3JZUTOw8/hH
+         48UYmp1e4siBxtE0UrSHHKMs+oxEjxgs33wj6KGE7fTiGifl4urNjd+oG1BZgxwNnAJc
+         0Wn3xPgAml/Xg6CIf+rWLyqJQn7JYgXtXfnFWt8ZpuDOFk4TSK5oDjVj+YZbDRPr1Q5R
+         X1IUvGrIP/GJ4B84DsIdTigzO1EAO+6e7CIdarQn0SeEhS8k8UfC0RLbDAMm+/FRBKr6
+         hoLA==
+X-Gm-Message-State: APjAAAXhLYYz9aRfgXlEbylSnc/TohVThHD4fRmJ7BjBmM6oSl2jHldh
+        8A/QjaSUHJdwAJVbnaMTlubjnA==
+X-Google-Smtp-Source: APXvYqykCw0rNzi3pE0X43+v5Bhy9g1kQP5vUS1px1WVWvFUlOsJdC9QkPi2amj89VM5Vk26EpLSvw==
+X-Received: by 2002:a17:90a:9a9:: with SMTP id 38mr10789292pjo.45.1572247190245;
+        Mon, 28 Oct 2019 00:19:50 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id 13sm11504703pgq.72.2019.10.28.00.19.46
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Oct 2019 00:19:49 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, baolin.wang7@gmail.com,
+        zhang.lyra@gmail.com, orsonzhai@gmail.com
+Subject: [PATCH 0/5] Improve the SC27XX fuel gauge controller
+Date:   Mon, 28 Oct 2019 15:18:56 +0800
+Message-Id: <cover.1572245011.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 26, 2019 at 12:46:08PM -0700, Joe Perches wrote:
-> Initialization is not guaranteed to zero padding bytes so
-> use an explicit memset instead to avoid leaking any kernel
-> content in any possible padding bytes.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  kernel/sys.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index a611d1..3459a5 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -1279,11 +1279,13 @@ SYSCALL_DEFINE1(uname, struct old_utsname __user *, name)
->  
->  SYSCALL_DEFINE1(olduname, struct oldold_utsname __user *, name)
->  {
-> -	struct oldold_utsname tmp = {};
-> +	struct oldold_utsname tmp;
+Hi,
 
-oldold_utsname doesn't have an struct holes.  It looks like this:
+This patch set adds one battery resistance-temperature table to optimize
+the real battery internal resistance in different tempertures, and
+calibrates the resistance of coulomb counter to improve the accuracy
+of the coulomb counter.
 
-struct oldold_utsname {
-        char sysname[9];
-        char nodename[9];
-        char release[9];
-        char version[9];
-        char machine[9];
-};
+Any comments are welcome. Thanks.
 
-regards,
-dan carpenter
+Baolin Wang (4):
+  dt-bindings: power: Introduce one property to describe the battery
+    resistance with temperature changes
+  power: supply: core: Add battery internal resistance temperature
+    table support
+  dt-bindings: power: sc27xx: Add a new property to describe the real
+    resistance of coulomb counter chip
+  power: supply: sc27xx: Calibrate the resistance of coulomb counter
+
+Yuanjiang Yu (1):
+  power: supply: sc27xx: Optimize the battery resistance with measuring
+    temperature
+
+ .../devicetree/bindings/power/supply/battery.txt   |    5 ++
+ .../devicetree/bindings/power/supply/sc27xx-fg.txt |    2 +
+ drivers/power/supply/power_supply_core.c           |   67 +++++++++++++++++++-
+ drivers/power/supply/sc27xx_fuel_gauge.c           |   49 +++++++++++++-
+ include/linux/power_supply.h                       |   10 +++
+ 5 files changed, 129 insertions(+), 4 deletions(-)
+
+-- 
+1.7.9.5
 
