@@ -2,74 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CC0E76E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 17:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8D0E76F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 17:48:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403861AbfJ1Qnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 12:43:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40796 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733000AbfJ1Qnu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 12:43:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g5yZ/J7rj95A/9mEJqR2HV55CqslV5uoj7lv7XPA0rc=; b=dJwW5ArCzatGekooY+ha+CWwu
-        ThNNd7ykejxHNKbVeSj0xbgKJfcUO8ZrxVjr9jxoAjrHZbyaNWo3tFg6xpfhXReTENzgkalslfbLK
-        G6xld+FPgAKkTO2yg2lMv1wLIZaKF0adCUafWcFBU3yryjAdGKUXp2Im4PBn8JjpACBBfg9cu7VlB
-        bZqHKbWR/VdDj4Xb5yS9yekFFPh6uiwbffZbP+nJSKvUl+ufQWu6LLWYpGvGhDtKKoJapaIZnW413
-        G5Ht3EEUAkxGVT/jHWpLOmxMICqmGFAS2T+pFfHKIKlKfdEZjoC9hx96neWSyp05WWQ1wMBJnTqTU
-        P6tgWCi6Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iP874-0001H0-Ak; Mon, 28 Oct 2019 16:43:26 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S2403888AbfJ1QsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 12:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403879AbfJ1QsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 12:48:05 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D3E95306098;
-        Mon, 28 Oct 2019 17:42:23 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 31B0D2B400ACC; Mon, 28 Oct 2019 17:43:24 +0100 (CET)
-Date:   Mon, 28 Oct 2019 17:43:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Like Xu <like.xu@linux.intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, kan.liang@intel.com,
-        wei.w.wang@intel.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v4 0/6]  KVM: x86/vPMU: Efficiency optimization by
- reusing last created perf_event
-Message-ID: <20191028164324.GJ4097@hirez.programming.kicks-ass.net>
-References: <20191027105243.34339-1-like.xu@linux.intel.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5395921744;
+        Mon, 28 Oct 2019 16:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572281285;
+        bh=bbAcMWRdFqGrmy2OuA3CTz7sLtDh6gOvZ+wqs7mptqo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=x4dioR8DAvAWhOCE0qby3MBEkKc9wMrAmJgXt1Q/vAGLgRN0MNBDHsqYcZ9KG8MjW
+         UOsfENg19XlYbNruJmLyBGF3jRXMM019HEi/1H2vuhu/+fn939SldCEHukgCSb77qR
+         ZjTp3x4Rjjqe4f4awXIyOJ6t85e48ShF1suaKSX4=
+Date:   Mon, 28 Oct 2019 16:47:59 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, jeyu@kernel.org,
+        rabin@rab.in, Mark Rutland <mark.rutland@arm.com>,
+        james.morse@arm.com
+Subject: Re: [PATCH v4 13/16] arm/ftrace: Use __patch_text_real()
+Message-ID: <20191028164758.GH5576@willie-the-truck>
+References: <20191018073525.768931536@infradead.org>
+ <20191018074634.687479693@infradead.org>
+ <20191028162525.GF5576@willie-the-truck>
+ <20191028163421.GI4097@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191027105243.34339-1-like.xu@linux.intel.com>
+In-Reply-To: <20191028163421.GI4097@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 06:52:37PM +0800, Like Xu wrote:
-> For perf subsystem, please help review first two patches.
+On Mon, Oct 28, 2019 at 05:34:21PM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2019 at 04:25:26PM +0000, Will Deacon wrote:
+> > On Fri, Oct 18, 2019 at 09:35:38AM +0200, Peter Zijlstra wrote:
+> > > @@ -97,10 +100,7 @@ static int ftrace_modify_code(unsigned l
+> > >  			return -EINVAL;
+> > >  	}
+> > >  
+> > > -	if (probe_kernel_write((void *)pc, &new, MCOUNT_INSN_SIZE))
+> > > -		return -EPERM;
+> > > -
+> > > -	flush_icache_range(pc, pc + MCOUNT_INSN_SIZE);
+> > > +	__patch_text_real((void *)pc, new, patch_text_remap);
+> > 
+> > Why can't you just pass 'true' for patch_text_remap? AFAICT, the only
+> > time you want to pass false is during early boot when the text is
+> > assumedly still writable without the fixmap.
+> 
+> Ah, it will also become true for module loading once we rework where we
+> flip the module text RO,X. See this patch:
+> 
+>   https://lkml.kernel.org/r/20191018074634.858645375@infradead.org
+> 
+> But for that to land, there's still a few other issues to fix (KLP).
 
-> Like Xu (6):
->   perf/core: Provide a kernel-internal interface to recalibrate event
->     period
->   perf/core: Provide a kernel-internal interface to pause perf_event
+Passing 'true' would still work though, right? Just feels a bit error
+prone having to maintain the state of patch_test_remap() and remember
+that 'ftrace_lock' is holding the concurrency together.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Will
