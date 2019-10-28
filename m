@@ -2,102 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCBF3E6DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 09:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B046E6DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 09:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733159AbfJ1IAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 04:00:50 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39747 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731405AbfJ1IAt (ORCPT
+        id S1733122AbfJ1IDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 04:03:44 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59500 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730328AbfJ1IDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 04:00:49 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p12so6370646pgn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 01:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Teb+nHfVj7QdEHZ6F94pdipxxAtosBBL8l+HZTtIm4A=;
-        b=buaiJ3wCZ4lN8R+UyQC0KOVQoxUBt6E4y93SYARVuR1cEQmv/6DKg4GcFkpHRoxyuZ
-         owizS5k3E6U2+4tNLCi2VzzTujDhbLZADv9SNpK6h5Mz6od8pwnNy7juEGYAPj9frn3F
-         yMPdfWr/m297s++31zAjbgfMq5FEv0rtrzsAX4Y2BOTh+VgZTwFpHrM5maha5RYfJ28s
-         i8vTW8T+L+PZ6mcbUUiC2fx9aHpoqrolWGKjjfqnrPFR5V91EuX3/bL3FfVDEPg26AcG
-         iWZwa4z03A1Bx0nETUvG+uyojlpdadDnzPWailVA/qhmAwdUW2H8KxKlfpRvCsiEm6Iu
-         D7KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Teb+nHfVj7QdEHZ6F94pdipxxAtosBBL8l+HZTtIm4A=;
-        b=ppy1mIYudWDh4gBaSXXMjekodoZ2p9MwCshWfWY56igw8WMC9VgjPwrXMqn1XRosLO
-         SGz7ZIJZUF/gwzrIXschcL57Hou1yRr109yr0EoXtP59JWpWCmBP+fbQOYK3XbOfSriP
-         /vncuHb61XsOC7lhurnMkSlT5QntiuCq7ZcLRhTuDUbB4OR60/tF8R13zyuq+CWdncZO
-         aFb/pDDeL/Th2BKJyJe95mPml+vfc41+LuwXPkRdabSx+j0bWH2wkp76FB7IEc5bumXO
-         li+4CGEcdveJDTufcRVZb9sQKBuw4lvqWID5xknNUoi30OYnndHCr2LOfjm2BrdaMMRX
-         KGMQ==
-X-Gm-Message-State: APjAAAXlV9KtbkdCzn0MhFvB5r4KoBjLbR9OVKYPDCmE9hM8OlP9pqUZ
-        53CK+YmwNrCUpSg0W7dkkukTuA==
-X-Google-Smtp-Source: APXvYqw5o9OQqVfoQBgItzsJbWV2pBxZDfEZpu9OM5nA5X7iLkchHyEIoGZfQuSvRNFLCJ9raZ6acA==
-X-Received: by 2002:a62:77c2:: with SMTP id s185mr3990854pfc.129.1572249648961;
-        Mon, 28 Oct 2019 01:00:48 -0700 (PDT)
-Received: from localhost.localdomain (111-241-170-106.dynamic-ip.hinet.net. [111.241.170.106])
-        by smtp.gmail.com with ESMTPSA id y36sm9504752pgk.66.2019.10.28.01.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 01:00:48 -0700 (PDT)
-From:   Green Wan <green.wan@sifive.com>
-Cc:     Green Wan <green.wan@sifive.com>, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Mon, 28 Oct 2019 04:03:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7wZSL186412;
+        Mon, 28 Oct 2019 08:03:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=QNBVBBb+Lx5XvQn0JPrdAgEUun+ZptEUgDhb2ofkyYA=;
+ b=fhh373ct+z1eyJ7TBkjKBqZEEQJ+ejOFlWUMU+Xh6ISqG0u721KH7368GfYzJmh6z6ql
+ J44WipsVoIY2VBF+l+18PlqmGm5a61J6h0ZIvljidQbMLqAh/jAJFgg+an65uYG/s8kz
+ 5dsIdQOaNkKJ08kVO3gSJTrVEon9sK4QFnTKSQfJC2MCF63lObSHBpnRywRuLOJF9BVa
+ F//l71SYIGtgs1+M3IrMym2fxlddKFw1xsHCUTI1u/X2Zc+eNR1eEYzB+jVgFtsLw0Qz
+ 5Z4hFIqlOLS/NWe6pMMkRKBbFU6r1view37IsXUaXiu18m3clWGJ8KCWkcenxwAaE3SM TA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2vve3q04q8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Oct 2019 08:03:31 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7wsfF179089;
+        Mon, 28 Oct 2019 08:01:31 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2vvymy5gwg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Oct 2019 08:01:31 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9S81UmT026440;
+        Mon, 28 Oct 2019 08:01:30 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 28 Oct 2019 01:01:29 -0700
+Date:   Mon, 28 Oct 2019 11:01:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Cristiane Naves <cristianenavescardoso09@gmail.com>,
+        outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Bin Meng <bmeng.cn@gmail.com>,
-        Yash Shah <yash.shah@sifive.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] MAINTAINERS: Add Green as SiFive PDMA driver maintainer
-Date:   Mon, 28 Oct 2019 15:56:23 +0800
-Message-Id: <20191028075658.12143-5-green.wan@sifive.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191028075658.12143-1-green.wan@sifive.com>
-References: <20191028075658.12143-1-green.wan@sifive.com>
-To:     unlisted-recipients:; (no To-header on input)
+        linux-kernel@vger.kernel.org,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [RESEND PATCH 1/2] staging: rtl8712: Fix Alignment of open
+ parenthesis
+Message-ID: <20191028080113.GD1944@kadam>
+References: <cover.1572051351.git.cristianenavescardoso09@gmail.com>
+ <e3842148b6dd01c47678f517a07772c75046c50f.1572051351.git.cristianenavescardoso09@gmail.com>
+ <25960b2a5dfe3f5f2c6579ef718f90a139ba84d7.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25960b2a5dfe3f5f2c6579ef718f90a139ba84d7.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910280080
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910280080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update MAINTAINERS for SiFive PDMA driver.
+On Fri, Oct 25, 2019 at 06:50:25PM -0700, Joe Perches wrote:
+> On Fri, 2019-10-25 at 22:09 -0300, Cristiane Naves wrote:
+> > Fix alignment should match open parenthesis.Issue found by checkpatch.
+> 
+> Beyond doing style cleanups, please always try
+> to make the code more readable.
+> 
+> > diff --git a/drivers/staging/rtl8712/rtl8712_recv.c b/drivers/staging/rtl8712/rtl8712_recv.c
+> []
+> > @@ -61,13 +61,13 @@ void r8712_init_recv_priv(struct recv_priv *precvpriv,
+> >  		precvbuf->ref_cnt = 0;
+> >  		precvbuf->adapter = padapter;
+> >  		list_add_tail(&precvbuf->list,
+> > -				 &(precvpriv->free_recv_buf_queue.queue));
+> > +			      &(precvpriv->free_recv_buf_queue.queue));
+> 
+> Please remove the unnecessary parentheses too
+> 
 
-Signed-off-by: Green Wan <green.wan@sifive.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+Removing the parentheses increases your chance of the patch being
+rejected on the one thing per patch rule...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c6c34d04ce95..330fbd050059 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14782,6 +14782,12 @@ F:	drivers/media/usb/siano/
- F:	drivers/media/usb/siano/
- F:	drivers/media/mmc/siano/
- 
-+SIFIVE PDMA DRIVER
-+M:	Green Wan <green.wan@sifive.com>
-+S:	Maintained
-+F:	drivers/dma/sf-pdma/
-+F:	Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-+
- SIFIVE DRIVERS
- M:	Palmer Dabbelt <palmer@sifive.com>
- M:	Paul Walmsley <paul.walmsley@sifive.com>
--- 
-2.17.1
+regards,
+dan carpenter
 
