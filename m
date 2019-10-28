@@ -2,111 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93334E73C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 114CEE73BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390184AbfJ1Ofl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:35:41 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49818 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbfJ1Ofk (ORCPT
+        id S2390143AbfJ1Oec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:34:32 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54867 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390052AbfJ1Oeb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:35:40 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9SETAd1128019;
-        Mon, 28 Oct 2019 14:34:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=FAQdU1JCR9DULjDB0FZACrkp/IGyVtvK8bkE0lTp0p0=;
- b=UwlgYWoRvKbwsApjVD2nnCWAEa2CI26mXkDrCrGKKTrf7P74iv6W1i5pU6dfZ/1rc65D
- tek1qlKFkEMJ3pX7EYequeQgGCiVZPnj4TV7mK+r8+NWnk/rUP/cXHu/ThHhP07HEDWs
- Lc2wiqVYJ9hUNOT5l/mjpVh8sl3Z7I/hjpS8WvVGDpXIYxOrJibv5Tf+VSgy7LRcYXJB
- f20fRkEUb8tvZKS6EzlF4FfDGsIhzsCY2Xp6kOZc91DIgkQUQHKySe+04M1eedY5DIcd
- sgf1GOPHfJ8xQd54ee+aYgt4cwblJ56V8jyNWPUAa13FvT7iFPGDIxKhbJ2Mhf8x/9Qb Cg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2vve3q2cj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Oct 2019 14:34:25 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9SEWgNF138564;
-        Mon, 28 Oct 2019 14:34:25 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2vvymyrpbx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Oct 2019 14:34:25 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9SEYGrk030677;
-        Mon, 28 Oct 2019 14:34:21 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Oct 2019 07:34:16 -0700
-Date:   Mon, 28 Oct 2019 17:34:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     syzbot <syzbot+0620f79a1978b1133fd7@syzkaller.appspotmail.com>,
-        alsa-devel@alsa-project.org, andreyknvl@google.com,
-        benquike@gmail.com, g@b4.vu, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, perex@perex.cz, rfontana@redhat.com,
-        syzkaller-bugs@googlegroups.com, tiwai@suse.com,
-        yuehaibing@huawei.com
-Subject: Re: KASAN: slab-out-of-bounds Read in build_audio_procunit
-Message-ID: <20191028143406.GE1922@kadam>
-References: <000000000000df5189059580f8e9@google.com>
- <s5hsgnkdbsl.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hsgnkdbsl.wl-tiwai@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910280151
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910280150
+        Mon, 28 Oct 2019 10:34:31 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g7so9720508wmk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=BEYu7m/BP15PKxS3B/UgDB/KRkLT0CCRGNyhfdY7cDM=;
+        b=Wys/SgWUXZA1zYzmzVS6ULJQ+rZkhvNARj/2aQx3Um+V5En3UGIAUu5lPaAq6NlAoC
+         oXnZzYO1AIRzADf997O87rUnvIOU5cxuJ8WhHTPVAZUpKxpsafFeXDIFDeRYePVcuJMd
+         ncbSTz05rd692UnYqEoD9+YWYIW5LMsdew9vFFhtU18msfjeYJfonuLa5m259cgEKyje
+         SEWRJhnlKeZ56uomr6cJby2wzWmLizFDMdnB5/ox+FzMWfZqoBeU3hkRhrSA2e1MA/MB
+         YjVW2DiYtI5UlBW8CrK7NHf+LKIiOmyJwPdfD2UazoqsmUwiVCWkjqtdrvgzWXx79lL3
+         GaEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BEYu7m/BP15PKxS3B/UgDB/KRkLT0CCRGNyhfdY7cDM=;
+        b=d/ctPdPqlK2dD4Q8LUF8qp6gGdWgYKG+iYzW+BhyTn91gkIY39qZNbtInk+DsduRNv
+         1p0BLOZzVRnPmg3dlmz5CYUrgClioRE/NnMA/Accm0d/eobnxfQQ3K7MzFDnPoxsUMSD
+         7/KQAgDbF3Dprjb80C3nEmIlBtQvOeceDbZouC/Iq4gRWvSIm6Idz6j0bfWtKwuHzGYB
+         ocR1jQh6jZbd1OSW/BZPTsPsEuuzb+tUISxCFyPRL4CFnU+HSoQbUdIXlD2rL2S03eLu
+         sW98Lzrmqiofw+A253hO4f/h8wRlqKO9/fM7CaNlIWV/pauufFqVWFORvU4QLfCD3Arn
+         o80Q==
+X-Gm-Message-State: APjAAAU+pPIYJbnbRulzzv9tXSzj0AuVRRRmBTRMsEVyf7hrtCd7cvc+
+        qt7eWMJmSbWBbtZVb5bvSQiwaQ==
+X-Google-Smtp-Source: APXvYqw/Rz1E14kfnWirGGYn7JTX/0QpzRHnvSQKGEFhux5jdWCMpKgGmfoZRG/bs0HLPhi4vTirdA==
+X-Received: by 2002:a1c:48c4:: with SMTP id v187mr267338wma.27.1572273267709;
+        Mon, 28 Oct 2019 07:34:27 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e34:ed2f:f020:d48d:c917:1f3e:4a87])
+        by smtp.gmail.com with ESMTPSA id g5sm14166144wmg.12.2019.10.28.07.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 07:34:27 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rjw@rjwysocki.net
+Cc:     mathieu.poirier@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org
+Subject: [PATCH V5 1/3] cpuidle: play_idle: Make play_idle more flexible
+Date:   Mon, 28 Oct 2019 15:34:17 +0100
+Message-Id: <20191028143419.16236-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I wish that this could have been detected with static analysis...
+The play_idle function has two users, the intel powerclamp and the
+idle_injection.
 
-On Tue, Oct 22, 2019 at 05:45:14PM +0200, Takashi Iwai wrote:
-> diff --git a/sound/usb/validate.c b/sound/usb/validate.c
-> index 3c8f73a0eb12..a5e584b60dcd 100644
-> --- a/sound/usb/validate.c
-> +++ b/sound/usb/validate.c
-> @@ -75,7 +75,7 @@ static bool validate_processing_unit(const void *p,
->  
->  	if (d->bLength < sizeof(*d))
-            ^^^^^^^^^^^^^^^^^^^^^^^
-So we know that d->bLength is >= 10.
+The idle injection cooling device uses the function via the
+idle_injection powercap's APIs. Unfortunately, play_idle is currently
+limited by the idle state depth: by default the deepest idle state is
+selected. On the ARM[64] platforms, most of the time it is the cluster
+idle state, the exit latency and the residency can be very high. That
+reduces the scope of the idle injection usage because the impact on
+the performances can be very significant.
 
->  		return false;
-> -	len = d->bLength < sizeof(*d) + d->bNrInPins;
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Len is 1 or 0.
+If the idle injection cycles can be done with a shallow state like a
+retention state, the cooling effect would eventually give similar
+results than the cpufreq cooling device.
 
-> +	len = sizeof(*d) + d->bNrInPins;
->  	if (d->bLength < len)
-            ^^^^^^^^^^^^^^^^
+In order to prepare the function to receive an idle state parameter,
+let's replace the 'use_deepest_state' boolean field with 'use_state'
+and use this value to enter the specific idle state.
 
-So this condition can't be false.
+The current code keeps the default behavior which is go to the deepest
+idle state.
 
->  		return false;
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+---
+  V5:
+   - Fix s2idle default idle state value:
+     https://lkml.org/lkml/2019/10/15/522
+---
+ drivers/cpuidle/cpuidle.c | 21 +++++++++++----------
+ include/linux/cpuidle.h   | 13 ++++++-------
+ kernel/sched/idle.c       | 11 +++++++----
+ 3 files changed, 24 insertions(+), 21 deletions(-)
 
-But it just makes this return into dead code and we have a lot of dead
-code paths in the kernel so it doesn't make sense to generate a warning.
-...  I don't know if I have a solution.
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 0895b988fa92..f8b54f277589 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -99,31 +99,31 @@ static int find_deepest_state(struct cpuidle_driver *drv,
+ }
+ 
+ /**
+- * cpuidle_use_deepest_state - Set/clear governor override flag.
+- * @enable: New value of the flag.
++ * cpuidle_use_state - Force the cpuidle framework to enter an idle state.
++ * @state: An integer for an idle state
+  *
+- * Set/unset the current CPU to use the deepest idle state (override governors
+- * going forward if set).
++ * Specify an idle state the cpuidle framework must step in and bypass
++ * the idle state selection process.
+  */
+-void cpuidle_use_deepest_state(bool enable)
++void cpuidle_use_state(int state)
+ {
+ 	struct cpuidle_device *dev;
+ 
+ 	preempt_disable();
+ 	dev = cpuidle_get_device();
+ 	if (dev)
+-		dev->use_deepest_state = enable;
++		dev->use_state = state;
+ 	preempt_enable();
+ }
+ 
+ /**
+  * cpuidle_find_deepest_state - Find the deepest available idle state.
+- * @drv: cpuidle driver for the given CPU.
+- * @dev: cpuidle device for the given CPU.
+  */
+-int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+-			       struct cpuidle_device *dev)
++int cpuidle_find_deepest_state(void)
+ {
++	struct cpuidle_device *dev = cpuidle_get_device();
++	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
++
+ 	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
+ }
+ 
+@@ -554,6 +554,7 @@ static void __cpuidle_unregister_device(struct cpuidle_device *dev)
+ static void __cpuidle_device_init(struct cpuidle_device *dev)
+ {
+ 	memset(dev->states_usage, 0, sizeof(dev->states_usage));
++	dev->use_state = CPUIDLE_STATE_NOUSE;
+ 	dev->last_residency = 0;
+ 	dev->next_hrtimer = 0;
+ }
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 4b6b5bea8f79..b5602ab28601 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -15,6 +15,7 @@
+ #include <linux/list.h>
+ #include <linux/hrtimer.h>
+ 
++#define CPUIDLE_STATE_NOUSE	-1
+ #define CPUIDLE_STATE_MAX	10
+ #define CPUIDLE_NAME_LEN	16
+ #define CPUIDLE_DESC_LEN	32
+@@ -80,11 +81,11 @@ struct cpuidle_driver_kobj;
+ struct cpuidle_device {
+ 	unsigned int		registered:1;
+ 	unsigned int		enabled:1;
+-	unsigned int		use_deepest_state:1;
+ 	unsigned int		poll_time_limit:1;
+ 	unsigned int		cpu;
+ 	ktime_t			next_hrtimer;
+ 
++	int			use_state;
+ 	int			last_state_idx;
+ 	int			last_residency;
+ 	u64			poll_limit_ns;
+@@ -203,19 +204,17 @@ static inline struct cpuidle_device *cpuidle_get_device(void) {return NULL; }
+ #endif
+ 
+ #ifdef CONFIG_CPU_IDLE
+-extern int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+-				      struct cpuidle_device *dev);
++extern int cpuidle_find_deepest_state(void);
+ extern int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
+ 				struct cpuidle_device *dev);
+-extern void cpuidle_use_deepest_state(bool enable);
++extern void cpuidle_use_state(int state);
+ #else
+-static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+-					     struct cpuidle_device *dev)
++static inline int cpuidle_find_deepest_state(void)
+ {return -ENODEV; }
+ static inline int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
+ 				       struct cpuidle_device *dev)
+ {return -ENODEV; }
+-static inline void cpuidle_use_deepest_state(bool enable)
++static inline void cpuidle_use_state(int state)
+ {
+ }
+ #endif
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 8dad5aa600ea..fc7f5216b579 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -165,7 +165,8 @@ static void cpuidle_idle_call(void)
+ 	 * until a proper wakeup interrupt happens.
+ 	 */
+ 
+-	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
++	if (idle_should_enter_s2idle() ||
++	    dev->use_state != CPUIDLE_STATE_NOUSE) {
+ 		if (idle_should_enter_s2idle()) {
+ 			rcu_idle_enter();
+ 
+@@ -176,12 +177,14 @@ static void cpuidle_idle_call(void)
+ 			}
+ 
+ 			rcu_idle_exit();
++			next_state = cpuidle_find_deepest_state();
++		} else {
++			next_state = dev->use_state;
+ 		}
+ 
+ 		tick_nohz_idle_stop_tick();
+ 		rcu_idle_enter();
+ 
+-		next_state = cpuidle_find_deepest_state(drv, dev);
+ 		call_cpuidle(drv, dev, next_state);
+ 	} else {
+ 		bool stop_tick = true;
+@@ -328,7 +331,7 @@ void play_idle(unsigned long duration_us)
+ 	rcu_sleep_check();
+ 	preempt_disable();
+ 	current->flags |= PF_IDLE;
+-	cpuidle_use_deepest_state(true);
++	cpuidle_use_state(cpuidle_find_deepest_state());
+ 
+ 	it.done = 0;
+ 	hrtimer_init_on_stack(&it.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+@@ -339,7 +342,7 @@ void play_idle(unsigned long duration_us)
+ 	while (!READ_ONCE(it.done))
+ 		do_idle();
+ 
+-	cpuidle_use_deepest_state(false);
++	cpuidle_use_state(CPUIDLE_STATE_NOUSE);
+ 	current->flags &= ~PF_IDLE;
+ 
+ 	preempt_fold_need_resched();
+-- 
+2.17.1
 
-Maybe some day we will have a vim pluggin which will highlight all the
-dead paths and someone would notice that it that way.
-
-regards,
-dan carpenter
