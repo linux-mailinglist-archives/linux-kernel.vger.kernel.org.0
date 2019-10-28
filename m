@@ -2,78 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D81E6C1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4427AE6C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbfJ1GA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 02:00:56 -0400
-Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21437 "EHLO
-        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfJ1GAz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 02:00:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1572242409; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=dB0bWUOERgGvT48DiOHzsKDaiV/DBnXlOQMIOZ4J+Tq4cjwF5rNgUSmEPDPfRFjKk10y6nZPLNHd6mCk6QQadcCAyeV2dgm2Pre/yv/7qh1lYw5dCsAaYuHGe0qDIA65fluBvMh8K4Gv2rYx5pZvlh7olPZE7wmHphbE3noaPPY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1572242409; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=+K/LZwImnPy9DLEwMasEs/dRwXl/m7WGIau4MogUkRc=; 
-        b=aoeMYjS+ByuvjpItNDCO+/H/HZP8sPCz7oQn7heFP8/830SLdk2l5WZ6BAHkIfiR8Vxd9skKXKlLy0CDsQzzuvGRES8vtH5mAyPakmoAaDr7hsJYE0EhzeR63eFJgCE7mB6nF/ZtqelNMZoafX4N0NR84qsYx5y6paigi2J/uek=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=didiksetiawan.com;
-        spf=pass  smtp.mailfrom=ds@didiksetiawan.com;
-        dmarc=pass header.from=<ds@didiksetiawan.com> header.from=<ds@didiksetiawan.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1572242409;
-        s=zoho; d=didiksetiawan.com; i=ds@didiksetiawan.com;
-        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
-        l=862; bh=+K/LZwImnPy9DLEwMasEs/dRwXl/m7WGIau4MogUkRc=;
-        b=W23eHQzZ4YGWIT028KQojAVgH+H+XjCrUS1Vm7cY1Obkfd7/duzPTuJy/Z179GmA
-        CasL0sKJCb1gweppm0xhGC9CRbiUbQAfRgDF9tGhxfdCHEsjCLtasDNNRAhhRPPYBMw
-        E7TOeX9NYWpDGtygDitP6UgezNpJak/K8AsfI0to=
-Received: from notebook (117.102.74.82 [117.102.74.82]) by mx.zohomail.com
-        with SMTPS id 15722424079661003.1516840715439; Sun, 27 Oct 2019 23:00:07 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 12:59:57 +0700
-From:   Didik Setiawan <ds@didiksetiawan.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/119] 4.14.151-stable review
-Message-ID: <20191028055957.GA20979@notebook>
-References: <20191027203259.948006506@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ZohoMailClient: External
+        id S1731628AbfJ1GHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 02:07:18 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53374 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbfJ1GHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 02:07:17 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 59A6A20070D;
+        Mon, 28 Oct 2019 07:07:15 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3EBAA200161;
+        Mon, 28 Oct 2019 07:07:01 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C0A60402F0;
+        Mon, 28 Oct 2019 14:06:47 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, leonard.crestez@nxp.com,
+        abel.vesa@nxp.com, ping.bai@nxp.com, daniel.baluta@nxp.com,
+        jun.li@nxp.com, bjorn.andersson@linaro.org, olof@lixom.net,
+        mripard@kernel.org, vkoul@kernel.org, jagan@amarulasolutions.com,
+        dinguyen@kernel.org, marcin.juszkiewicz@linaro.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH RESEND 1/4] dt-bindings: thermal: imx8mm-thermal: Add binding doc for i.MX8MM
+Date:   Mon, 28 Oct 2019 14:03:35 +0800
+Message-Id: <1572242618-18806-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 09:59:37PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.151 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.151-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Add thermal binding doc for Freescale's i.MX8MM Thermal Monitoring Unit.
 
-Compiled, booted, and no regressions found on my x86_64 system.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/thermal/imx8mm-thermal.txt        | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
 
-Thanks,
-Didik Setiawan
+diff --git a/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
+new file mode 100644
+index 0000000..d09ae82
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
+@@ -0,0 +1,15 @@
++* Thermal Monitoring Unit (TMU) on Freescale i.MX8MM SoC
++
++Required properties:
++- compatible : Must be "fsl,imx8mm-tmu".
++- reg : Address range of TMU registers.
++- clocks : TMU's clock source.
++- #thermal-sensor-cells : Should be 0. See ./thermal.txt for a description.
++
++Example:
++tmu: tmu@30260000 {
++	compatible = "fsl,imx8mm-tmu";
++	reg = <0x30260000 0x10000>;
++	clocks = <&clk IMX8MM_CLK_TMU_ROOT>;
++	#thermal-sensor-cells = <0>;
++};
+-- 
+2.7.4
 
