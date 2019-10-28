@@ -2,61 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A0DE6EF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC63CE6EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387981AbfJ1JVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:21:07 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36634 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731818AbfJ1JVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387971AbfJ1JVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 28 Oct 2019 05:21:06 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9833292B863420F96A74;
-        Mon, 28 Oct 2019 17:21:04 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 28 Oct 2019
- 17:20:55 +0800
-Subject: Re: [PATCH v2 02/36] irqchip/gic-v3-its: Factor out wait_for_syncr
- primitive
-To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-kernel@vger.kernel.org>
-CC:     Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Andrew Murray" <Andrew.Murray@arm.com>,
-        Jayachandran C <jnair@marvell.com>,
-        "Robert Richter" <rrichter@marvell.com>
-References: <20191027144234.8395-1-maz@kernel.org>
- <20191027144234.8395-3-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <3c618f47-de32-3868-7aaa-ca146e1e028c@huawei.com>
-Date:   Mon, 28 Oct 2019 17:20:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+Received: from bombadil.infradead.org ([198.137.202.133]:60592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730145AbfJ1JVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:21:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=omUBJeAkZsfdBHKC0beslz+VEerlp44bbMQsy1qRu/w=; b=XjVGMq9/GLcBg/EQjOZiPkdfw
+        C754lCosv0nklPNdYpI+eiEBUfIxBzx7aBokqv1LnqMyVNjeee50gsnLkwj08jE9xviLgEK4B2cFm
+        //NkJeFrz7jxksMAuwppe9mbMwyN0bBCPaPyUs1xSMjtACb/rp45fh3eoNJxpJ81FsXwJhB3BGKld
+        goz2ft3lU3237io2wJh5al7D1+Qi4NK5LX9bgMNqk1ZjsEi8jj5DPFmCVmXFgfMNpAbo38oNqXF2W
+        HiBXLHN7/jKAwmkKm/AZ2PPnhu4Z+EmtonUwv253eIe4N3yyo7tFFUCJZfn56ri0pu4C4O3f3nGvs
+        MqXvvnVaA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iP1Cw-0006NO-4I; Mon, 28 Oct 2019 09:21:02 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2A0F6306098;
+        Mon, 28 Oct 2019 10:20:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5E1E320098AB8; Mon, 28 Oct 2019 10:21:00 +0100 (CET)
+Date:   Mon, 28 Oct 2019 10:21:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, walken@google.com, dbueso@suse.de,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2 2/2] lib/rbtree: get successor's color directly
+Message-ID: <20191028092100.GD4114@hirez.programming.kicks-ass.net>
+References: <20191028021442.5450-1-richardw.yang@linux.intel.com>
+ <20191028021442.5450-2-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191027144234.8395-3-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028021442.5450-2-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/27 22:42, Marc Zyngier wrote:
-> Waiting for a redistributor to have performed an operation is a
-> common thing to do, and the idiom is already spread around.
-> As we're going to make even more use of this, let's have a primitive
-> that does just that.
+On Mon, Oct 28, 2019 at 10:14:42AM +0800, Wei Yang wrote:
+> After move parent assignment out, we can check the color directly.
 > 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
