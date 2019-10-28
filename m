@@ -2,110 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563D5E75B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 17:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A60E75BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 17:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731810AbfJ1QAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 12:00:38 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37138 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731519AbfJ1QAi (ORCPT
+        id S2390774AbfJ1QCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 12:02:53 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42595 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728864AbfJ1QCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 12:00:38 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l21so11946630lje.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 09:00:35 -0700 (PDT)
+        Mon, 28 Oct 2019 12:02:53 -0400
+Received: by mail-il1-f196.google.com with SMTP id o16so8627058ilq.9;
+        Mon, 28 Oct 2019 09:02:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V2usXM1ZvmoH+fXGSNylFf1GNvu1kOuKsgUsmavjuCM=;
-        b=RLW8aO1JPi6rKlXfp+KFONs7nDD9p2tzSrGW/I0NAUU+pjsPb1+Nm/qLuY0GVVGqHp
-         lg91yonrFepb0PgLj0w3FabP4nDzQEXVJEE60Z5TNvb/CgoqOgyRSZQXgwB/S8RvtwT6
-         KeyBiZQNWfPjSaVwOriKv6ypmcWil/TVD2h2djRwkhJ3BQQgHU412mys4RjibLwKFq2v
-         blU5URFTiL4WmkqLs3v1dBKpjxc12LPM9MX3srB5u3Xeipw8LvE1hAua5NC1CG7JaMfg
-         AkcclfLt6cWUA/39ZB7eAVtlslvCeWsr83JVIUKL65nI9qPWW7FlhvE9kjvrGhZuK1oN
-         0QYA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u+kZn6IyZZfN/0mlluWthGclsf/q1ikalY90VR/nHBU=;
+        b=pWcB+L+0mUwnOrVH0ALZ95dR9onLwO5cUAyZQpQnV6hLnzSMZrkkkaJAEF4WFT/xTt
+         nHo4+XYqDEGUkCUZMAn04Hz1fR2eXxWCPYvQ/96CDRm5APZpoSDlyTcY5qSR8olSdxBG
+         lCVXCTjk6LYiPqyzTDXIc9x+EJwyuaZKEINk7FVKob9s+nDDEID12gZyyVTYwHJhslmX
+         JWnGQiaREqGFl05g254TF/dQPGdRgYzHmZ7SSnK8a7PBQ7XJ3MTpvMCtWCzdmoj1udpA
+         FxrLT3MqhuAZIlWn2sqrEbW6vqHiLWRBkovD6TJDQfPDYfIuDN6C/kG8KWfAvdbWoY2a
+         cAmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V2usXM1ZvmoH+fXGSNylFf1GNvu1kOuKsgUsmavjuCM=;
-        b=cPSrkC6eLxlzExATpGgZDRoMf8Uu53kg+q2wjPqyq9MuqKHfbgCz7r9RfiqzPvTPCw
-         Hacoav+PS4/WY9tl2t+tz2cnubPc3Vh/z2gDeKT2JYAH/b7FYRTjzPJLcUVXterJLS9z
-         DQH9fdv2F6DfpZd4jXyPGZ1sPokzTj4na4NmxP3vXXQp30/hg5b4OoxiamsIPN3tzm7N
-         5+8+fAqCLFbhrkFoiAXmJZeRXsw5/r3rIO3qu3ET9mFn/LWaIP9LmUz5I4psuMKfm1wl
-         T5YpMEehskfhShV8x8CjgYUp4ARzL7zGJNcF6wj6INttdlPB8oRNFRx5rH6KxNJ36McP
-         fLhA==
-X-Gm-Message-State: APjAAAWbvA8mKvVF22PDAKQj602LYr5grZRiiZYPQSRL/T3/9dURiX8y
-        8xzjTEgryz/l5qfrpk2+I+xVxw==
-X-Google-Smtp-Source: APXvYqx4+zk6/ZVaSwL0e0sH6d5sCRcAj5zHuHrFwT07d6fLPhJBWMR1Ovg3/jPbRWfsWcYrbujgVQ==
-X-Received: by 2002:a2e:8545:: with SMTP id u5mr12177705ljj.213.1572278434407;
-        Mon, 28 Oct 2019 09:00:34 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id d9sm8304120lfj.81.2019.10.28.09.00.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Oct 2019 09:00:32 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 08:54:57 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org, arm@kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH v3] mfd: db8500-prcmu: Support U8420-sysclk firmware
-Message-ID: <20191028155457.5uae2crf3ygvn3qn@localhost>
-References: <20191026214732.17725-1-linus.walleij@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u+kZn6IyZZfN/0mlluWthGclsf/q1ikalY90VR/nHBU=;
+        b=g0PbtfR7VkR0olc/ye5d2k0pbky2stWwJ+ZbMGx9b/CXCfmKXE65UTwYyW3zdmO9bH
+         /c2eB9emcCYDT2PGEDd4N+g3VcKHpDl7DLO/zb4+qiI3/IcrfMuI5mnTEUl8kY/2EO45
+         9JEUcmKsad4OrCkql2pyVJiOv+4fwR3ICA5L+W2kk4Nm0iowT9scg0WB+4r6/44RWSNE
+         Gnv9Q3Og9e6LaK+b4r7UBm1tVzmvzX+LtMRK3lJFGPySY6tPZMybnaXZZRdoFvYaINHX
+         JrO/aWiSUw+PTsZHkCOyU8SprP128zGuuIolJBOIacWklavYoxm/JUwABcJTM30Br/7q
+         /6OQ==
+X-Gm-Message-State: APjAAAWOzpb22QTD5QD49dCHgTOWYq2dDi2KDE9pCGE+8WO5Cbaz7FDy
+        nwGch5kZ2ZC8TGQE1YmzCJ5CDcsX
+X-Google-Smtp-Source: APXvYqwtxC7hbRBlLLQaOvoES+rjeZt1ijbjiPAWdyitxy/scxKFyp/QCggwlSnY+oBbOpOKpq+9uA==
+X-Received: by 2002:a92:6f08:: with SMTP id k8mr20274149ilc.57.1572278571279;
+        Mon, 28 Oct 2019 09:02:51 -0700 (PDT)
+Received: from dell.localdomain ([216.249.49.8])
+        by smtp.googlemail.com with ESMTPSA id 133sm1618424ila.25.2019.10.28.09.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 09:02:50 -0700 (PDT)
+From:   Ethan Sommer <e5ten.arch@gmail.com>
+Cc:     Ethan Sommer <e5ten.arch@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: support byacc as alternative YACC to bison
+Date:   Mon, 28 Oct 2019 11:56:37 -0400
+Message-Id: <20191028155639.30330-1-e5ten.arch@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191026214732.17725-1-linus.walleij@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 26, 2019 at 11:47:32PM +0200, Linus Walleij wrote:
-> There is a distinct version of the Ux500 U8420 variant
-> with "sysclk", as can be seen from the vendor code that
-> didn't make it upstream, this firmware lacks the
-> ULPPLL (ultra-low power phase locked loop) which in
-> effect means that the timer clock is instead wired to
-> the 32768 Hz always-on clock.
-> 
-> This has some repercussions when enabling the timer
-> clock as the code as it stands will disable the timer
-> clock on these platforms (lacking the so-called
-> "doze mode") and obtaining the wrong rate of the timer
-> clock.
-> 
-> The timer frequency is of course needed very early in
-> the boot, and as a consequence, we need to shuffle
-> around the early PRCMU init code: whereas in the past
-> we did not need to look up the PRCMU firmware version
-> in the early init, but now we need to know the version
-> before the core system timers are registered so we
-> restructure the platform callbacks to the PRCMU so as
-> not to take any arguments and instead look up the
-> resources it needs directly from the device tree
-> when initializing.
-> 
-> As we do not yet support any platforms using this
-> firmware it is not a regression, but as PostmarketOS
-> is starting to support products with this firmware we
-> need to fix this up.
-> 
-> The low rate of 32kHz also makes the MTU timer unsuitable
-> as delay timer but this needs to be fixed in a separate
-> patch.
-> 
-> Cc: arm@kernel.org
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Stephan Gerhold <stephan@gerhold.net>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Switches to a more portable set of flags for generating the same file
+names instead of the bison-specific --defines, uses the more portable -V
+instead of --version, and explicitly defines YYSTYPE in lex.l, which
+bison implicitly defines if not present but byacc does not.
 
+Signed-off-by: Ethan Sommer <e5ten.arch@gmail.com>
+---
+ scripts/Makefile.host     | 2 +-
+ scripts/genksyms/Makefile | 2 +-
+ scripts/genksyms/lex.l    | 2 ++
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-Fine with me to go through MTD, so:
+diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+index 4c51c95d40f4..64e98e1d4825 100644
+--- a/scripts/Makefile.host
++++ b/scripts/Makefile.host
+@@ -11,7 +11,7 @@ $(obj)/%.lex.c: $(src)/%.l FORCE
+ # YACC
+ # ---------------------------------------------------------------------------
+ quiet_cmd_bison = YACC    $(basename $@).[ch]
+-      cmd_bison = $(YACC) -o $(basename $@).c --defines=$(basename $@).h -t -l $<
++      cmd_bison = $(YACC) -b $(basename $(basename $@)) -d -t -l $<
+ 
+ $(obj)/%.tab.c $(obj)/%.tab.h: $(src)/%.y FORCE
+ 	$(call if_changed,bison)
+diff --git a/scripts/genksyms/Makefile b/scripts/genksyms/Makefile
+index 78629f515e78..397c2dc8182b 100644
+--- a/scripts/genksyms/Makefile
++++ b/scripts/genksyms/Makefile
+@@ -15,7 +15,7 @@ genksyms-objs	:= genksyms.o parse.tab.o lex.lex.o
+ ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+ 
+ quiet_cmd_bison_no_warn = $(quiet_cmd_bison)
+-      cmd_bison_no_warn = $(YACC) --version >/dev/null; \
++      cmd_bison_no_warn = $(YACC) -V >/dev/null; \
+ 			  $(cmd_bison) 2>/dev/null
+ 
+ $(obj)/pars%.tab.c $(obj)/pars%.tab.h: $(src)/pars%.y FORCE
+diff --git a/scripts/genksyms/lex.l b/scripts/genksyms/lex.l
+index e265c5d96861..0580c088527f 100644
+--- a/scripts/genksyms/lex.l
++++ b/scripts/genksyms/lex.l
+@@ -19,6 +19,8 @@
+ #include "genksyms.h"
+ #include "parse.tab.h"
+ 
++extern YYSTYPE yylval;
++
+ /* We've got a two-level lexer here.  We let flex do basic tokenization
+    and then we categorize those basic tokens in the second stage.  */
+ #define YY_DECL		static int yylex1(void)
+-- 
+2.23.0
 
-Acked-by: Olof Johansson <olof@lixom.net>
-
-
--Olof
