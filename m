@@ -2,158 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D29E7B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E2DE7ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391220AbfJ1VHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:07:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:42989 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404060AbfJ1VHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:07:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 14:07:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
-   d="scan'208";a="224760299"
-Received: from shrehore-mobl1.ti.intel.com (HELO localhost) ([10.251.82.5])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Oct 2019 14:07:31 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-doc@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v23 24/24] docs: x86/sgx: Document kernel internals
-Date:   Mon, 28 Oct 2019 23:03:24 +0200
-Message-Id: <20191028210324.12475-25-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+        id S2389083AbfJ1VEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:04:52 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44885 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728319AbfJ1VEw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 17:04:52 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s71so7135806oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:04:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bhRVPrT7ZKrL948DFpxoobkyqmyFQ/kGjtFCRDQLbng=;
+        b=EhDsCDXZKEhkKKxR9OwL6VS6Q+pL7sVwJSUNjsD5y0ZW11C3R4V1ffABhbrlIAsWtm
+         jgRxVtAgWSCgT08v2hv5B+86wcZHq3Mt0AMzbBEu7TyGxDVqTLDa5Y02rb7xexxRJc8b
+         DKNeprORZQi+ya7w1yGDXj/+rO3/1kaatBTawySAlFLOBoxtRRz5qX33TEyTOhCcbM94
+         /UxgnbRuPSfJT/uO2L5GdPCmU0+5NrhPzLIjfhREyhJVTfq3aN8urJXUAlJ9PCcGKK5U
+         fciIiXUSqj8oE+mNviCdvSl6CPX+2YwheW7+7JRVM0GXhlnj6ToEGO024JvfMvgx1r0L
+         ckRA==
+X-Gm-Message-State: APjAAAU6STh33wzkSMAmPMRbFreFKg4z/1afM3Wzhun3YSDDP77A8aRv
+        UdblkM6I5nbXfIk0CyPnELK/S6hA
+X-Google-Smtp-Source: APXvYqyoqNc1IWxnFDOoTJQR8H2nVe8mGjroSu+MJkSzXQbjdYC9qBb6bxbVhJpen4kgjNKWWfDkbQ==
+X-Received: by 2002:aca:5f0a:: with SMTP id t10mr1156164oib.20.1572296690950;
+        Mon, 28 Oct 2019 14:04:50 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id l12sm3293027oii.48.2019.10.28.14.04.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Oct 2019 14:04:50 -0700 (PDT)
+Subject: Re: [RFC PATCH 3/3] nvme: Introduce nvme_execute_passthru_rq_nowait()
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Keith Busch <kbusch@kernel.org>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20191025202535.12036-1-logang@deltatee.com>
+ <20191025202535.12036-4-logang@deltatee.com> <20191027150937.GC5843@lst.de>
+ <94c1e177-4848-c88b-ec26-3da118fd18dc@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <7030395b-9f18-6866-10c0-906788243aa1@grimberg.me>
+Date:   Mon, 28 Oct 2019 14:04:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <94c1e177-4848-c88b-ec26-3da118fd18dc@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Document some of the more tricky parts of the kernel implementation
-internals.
+>>> +void nvme_execute_passthru_rq_nowait(struct request *rq, rq_end_io_fn *done)
+>>> +{
+>>> +	struct nvme_command *cmd = nvme_req(rq)->cmd;
+>>> +	struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
+>>> +	struct nvme_ns *ns = rq->q->queuedata;
+>>> +	struct gendisk *disk = ns ? ns->disk : NULL;
+>>> +	u32 effects;
+>>> +
+>>> +	/*
+>>> +	 * This function may be called in interrupt context, so we cannot sleep
+>>> +	 * but nvme_passthru_[start|end]() may sleep so we need to execute
+>>> +	 * the command in a work queue.
+>>> +	 */
+>>> +	effects = nvme_command_effects(ctrl, ns, cmd->common.opcode);
+>>> +	if (effects) {
+>>> +		rq->end_io = done;
+>>> +		INIT_WORK(&nvme_req(rq)->work, nvme_execute_passthru_rq_work);
+>>> +		queue_work(nvme_wq, &nvme_req(rq)->work);
+>>
+>> But independent of the target code - I'd much rather leave this to the
+>> caller.  Just call nvme_command_effects in the target code, then if
+>> there are not side effects use blk_execute_rq_nowait directly, else
+>> schedule a workqueue in the target code and call
+>> nvme_execute_passthru_rq from it.
+> 
+> Ok, that seems sensible. Except it conflicts a bit with Sagi's feedback:
+> presumably we need to cancel the work items during nvme_stop_ctrl() and
+> that's going to be rather difficult to do from the caller. Are we saying
+> this is unnecessary? It's not clear to me if passthru_start/end is going
+> to be affected by nvme_stop_ctrl() which I believe is the main concern.
 
-Cc: linux-doc@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- Documentation/x86/sgx/2.Kernel-internals.rst | 78 ++++++++++++++++++++
- Documentation/x86/sgx/index.rst              |  1 +
- 2 files changed, 79 insertions(+)
- create mode 100644 Documentation/x86/sgx/2.Kernel-internals.rst
+Actually, I don't think we need it thinking on it again... These are
+just I/Os sent to the device. The reset sequence will simply iterate
+all the I/Os and fail the busy ones, and those that will execute after
+it will block on a frozen queue, just like any other I/O. So I don't
+think we need to cancel them. And if this logic sits on the caller its
+even clearer that this is the case.
 
-diff --git a/Documentation/x86/sgx/2.Kernel-internals.rst b/Documentation/x86/sgx/2.Kernel-internals.rst
-new file mode 100644
-index 000000000000..7bfd5cb19b8e
---- /dev/null
-+++ b/Documentation/x86/sgx/2.Kernel-internals.rst
-@@ -0,0 +1,78 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================
-+Kernel Internals
-+================
-+
-+CPU configuration
-+=================
-+
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
-+
-+EPC management
-+==============
-+
-+Because the kernel can't arbitrarily read EPC memory or share RO backing pages
-+between enclaves, traditional memory models such as CoW and fork() do not work
-+with enclaves.  In other words, the architectural rules of EPC force it to be
-+treated as MAP_SHARED at all times.
-+
-+The inability to employ traditional memory models also means that EPC memory
-+must be isolated from normal memory pools, e.g. attempting to use EPC memory
-+for normal mappings would result in faults and/or perceived data corruption.
-+Furthermore, EPC is not enumerated as normal memory, e.g. BIOS enumerates
-+EPC as reserved memory in the e820 tables, or not at all.  As a result, EPC
-+memory is directly managed by the SGX subsystem, e.g. SGX employs VM_PFNMAP to
-+manually insert/zap/swap page table entries, and exposes EPC to userspace via
-+a well known device, /dev/sgx/enclave.
-+
-+The net effect is that all enclave VMAs must be MAP_SHARED and are backed by
-+a single file, /dev/sgx/enclave.
-+
-+EPC oversubscription
-+====================
-+
-+SGX allows to have larger enclaves the than amount of available EPC by providing
-+a subset of leaf instructions for swapping EPC pages to the system memory. The
-+details of these instructions are discussed in the architecture document. Due to
-+the unique requirements for swapping EPC pages, and because EPC pages do not
-+have associated page structures, management of the EPC is not handled by the
-+standard memory subsystem.
-+
-+SGX directly handles swapping of EPC pages, including a thread to initiate the
-+reclaiming process and a rudimentary LRU mechanism. When the amount of free EPC
-+pages goes below a low watermark the swapping thread starts reclaiming pages.
-+The pages that have not been recently accessed (i.e. do not have the A bit set)
-+are selected as victim pages. Each enclave holds an shmem file as a backing
-+storage for reclaimed pages.
-+
-+Launch Control
-+==============
-+
-+The current kernel implementation supports only writable MSRs. The launch is
-+performed by setting the MSRs to the hash of the public key modulus of the
-+enclave signer and a token with the valid bit set to zero.
-+
-+If the MSRs were read-only, the platform would need to provide a launch enclave
-+(LE), which would be signed with the key matching the MSRs. The LE creates
-+cryptographic tokens for other enclaves that they can pass together with their
-+signature to the ENCLS(EINIT) opcode, which is used to initialize enclaves.
-+
-+Provisioning
-+============
-+
-+The use of provisioning must be controlled because it allows to get access to
-+the provisioning keys to attest to a remote party that the software is running
-+inside a legitimate enclave. This could be used by a malware network to ensure
-+that its nodes are running inside legitimate enclaves.
-+
-+The driver introduces a special device file /dev/sgx/provision and a special
-+ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE to accomplish this. A file descriptor
-+pointing to /dev/sgx/provision is passed to ioctl from which kernel authorizes
-+the PROVISION_KEY attribute to the enclave.
-diff --git a/Documentation/x86/sgx/index.rst b/Documentation/x86/sgx/index.rst
-index c5dfef62e612..5d660e83d984 100644
---- a/Documentation/x86/sgx/index.rst
-+++ b/Documentation/x86/sgx/index.rst
-@@ -14,3 +14,4 @@ potentially malicious.
-    :maxdepth: 1
- 
-    1.Architecture
-+   2.Kernel-internals
--- 
-2.20.1
-
+However, it'd be good to test live controller resets to make sure
+we are not missing anything...
