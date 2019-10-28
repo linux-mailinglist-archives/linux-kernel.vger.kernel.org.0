@@ -2,126 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C9E9E7C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D6FE7C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfJ1Woi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:44:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:12461 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJ1Woi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:44:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 15:44:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
-   d="scan'208";a="210976010"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Oct 2019 15:44:36 -0700
-Date:   Mon, 28 Oct 2019 15:49:00 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Jonathan Cameron" <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
-Message-ID: <20191028154900.0be0a48f@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5D0FF0@SHSMSX104.ccr.corp.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <ae437be4-e633-e670-0e1f-d07b4364f651@linux.intel.com>
-        <20191024214311.43d76a5c@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC60@SHSMSX104.ccr.corp.intel.com>
-        <e950cde8-8cd9-6089-c833-23d2ffb539d1@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5D0FF0@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730150AbfJ1Wt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:49:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33537 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJ1Wt3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 18:49:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id y8so6480453plk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 15:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/WZEAomVjJ+725DnvAAAnSxsbckEzTmInFHoxAcfrVY=;
+        b=K8t/xfrUvO54cAT/K46akV/qEnLzS1/uU1SOkpoor14ttRwVYVkbpqoCY5VMK2fNbm
+         fLMCv1GpohL5N99sSwz2m9BFR4OMmrhNGzqngucJyfv3KivEQnBBcbsKxtFirSMedw94
+         RO/Q8sQN9KQCI0+BEWRQ92EZ7c16k4AS4hxkOPsqg5Yj3IABTTP+HYi+zR8TYVHuSuvz
+         NVxJjGctiHx/EsFpxF338Y7LWtbWIcPmX7IwxPtVZBWApBsiJhDWpo2DNZ3PnDVPVEYP
+         Ao8h+M0AsX0dyvTE2U3btXDFFGPBg95M55CK2iU+BUAMClOUHAMLI6Gk+46HaRWqiiLF
+         ALzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/WZEAomVjJ+725DnvAAAnSxsbckEzTmInFHoxAcfrVY=;
+        b=GY1hZ26E//vavbzqid02scWpRB8QGFSonYGwjuT3MxbA/VlJwDnUXaDXX5d4JfWgOE
+         +9wOW3n5BUDp0tnbU/oSKdXg4v0zIVyCReC+W+XKdrpiaa1csVBPevy7VsHgSCkj4xyz
+         iwNj2YQnfpURcRvb0HTib46gQvmdJdH7eZr0kNdRnE6n2XUfPdIMBiRTtIMl8wRudOrF
+         PZ3dZckYMwY3662YTULJLAK53CixFhzf+ikxOLQShRC7yY6U+HXBfSSPkD9wfXYx2R3c
+         ooK7eLb50wdFVOK3ir80oPKOsjivSUOHDCFwFLrtuIX0QWfdDVynG5lZc9+h7O1G0Xjp
+         5aNA==
+X-Gm-Message-State: APjAAAVnB0OfS7KVMZ9DsqpRTtDwSPp08yVu+m+9qsn07oYoUZQvgt+R
+        ifYpTf7Z2e1+QPaXLgFkOsA=
+X-Google-Smtp-Source: APXvYqxvD/GJ2WH7xzUvuVqaFgUWlHwU3zy1adKIbAVvZLCucTrhXqRqBQTAZu58dPq3TSZFuaAi/Q==
+X-Received: by 2002:a17:902:8345:: with SMTP id z5mr492355pln.113.1572302966574;
+        Mon, 28 Oct 2019 15:49:26 -0700 (PDT)
+Received: from taoren-ubuntu-R90MNF91.thefacebook.com ([2620:10d:c090:200::2:78fe])
+        by smtp.gmail.com with ESMTPSA id y129sm13092345pgb.28.2019.10.28.15.49.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 15:49:25 -0700 (PDT)
+From:   rentao.bupt@gmail.com
+To:     Russell King <linux@armlinux.org.uk>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Doug Anderson <armlinux@m.disordat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com
+Cc:     Tao Ren <rentao.bupt@gmail.com>
+Subject: [PATCH] ARM: ASPEED: update default ARCH_NR_GPIO for ARCH_ASPEED
+Date:   Mon, 28 Oct 2019 15:49:09 -0700
+Message-Id: <20191028224909.1069-1-rentao.bupt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Oct 2019 15:52:39 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+From: Tao Ren <rentao.bupt@gmail.com>
 
-> > From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
-> > Sent: Friday, October 25, 2019 10:39 PM
-> > 
-> > Hi,
-> > 
-> > On 10/25/19 2:40 PM, Tian, Kevin wrote:  
-> > >>>> ioasid_register_allocator(&iommu->pasid_allocator);
-> > >>>> +			if (ret) {
-> > >>>> +				pr_warn("Custom PASID
-> > >>>> allocator registeration failed\n");
-> > >>>> +				/*
-> > >>>> +				 * Disable scalable mode on
-> > >>>> this IOMMU if there
-> > >>>> +				 * is no custom allocator.
-> > >>>> Mixing SM capable vIOMMU
-> > >>>> +				 * and non-SM vIOMMU are not
-> > >>>> supported.
-> > >>>> +				 */
-> > >>>> +				intel_iommu_sm = 0;  
-> > >>> It's insufficient to disable scalable mode by only clearing
-> > >>> intel_iommu_sm. The DMA_RTADDR_SMT bit in root entry has
-> > >>> already  
-> > >> been  
-> > >>> set. Probably, you need to
-> > >>>
-> > >>> for each iommu
-> > >>> 	clear DMA_RTADDR_SMT in root entry
-> > >>>
-> > >>> Alternatively, since vSVA is the only customer of this custom
-> > >>> PASID allocator, is it possible to only disable SVA here?
-> > >>>  
-> > >> Yeah, I think disable SVA is better. We can still do gIOVA in
-> > >> SM. I guess we need to introduce a flag for sva_enabled.  
-> > > I'm not sure whether tying above logic to SVA is the right
-> > > approach. If vcmd interface doesn't work, the whole SM mode
-> > > doesn't make sense which is based on PASID-granular protection
-> > > (SVA is only one usage atop). If the only remaining usage of SM
-> > > is to map gIOVA using reserved PASID#0, then why not disabling SM
-> > > and just fallback to legacy mode?
-> > >
-> > > Based on that I prefer to disabling the SM mode completely (better
-> > > through an interface), and move the logic out of CONFIG_INTEL_
-> > > IOMMU_SVM
-> > >  
-> > 
-> > Unfortunately, it is dangerous to disable SM after boot. SM uses
-> > different root/device contexts and pasid table formats. Disabling SM
-> > after boot requires changing above from SM format into legacy
-> > format.  
-> 
-> You are correct.
-> 
-> > 
-> > Since ioasid registration failure is a rare case. How about moving
-> > this part of code up to the early stage of intel_iommu_init() and
-> > returning error if hardware present vcmd capability but software
-> > fails to register a custom ioasid allocator?
-> >   
-> 
-> It makes sense to me.
-> 
-sounds good to me too, the earlier the less to clean up.
-> Thanks
-> Kevin
+Increase the max number of GPIOs from default 512 to 1024 for ASPEED
+platforms, because Facebook Yamp (AST2500) BMC platform has total 594
+GPIO pins (232 provided by ASPEED SoC, and 362 by I/O Expanders).
 
-[Jacob Pan]
+Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+---
+ arch/arm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index b7dbeb652cb1..57504f3365c7 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1359,7 +1359,7 @@ config ARCH_NR_GPIO
+ 	int
+ 	default 2048 if ARCH_SOCFPGA
+ 	default 1024 if ARCH_BRCMSTB || ARCH_RENESAS || ARCH_TEGRA || \
+-		ARCH_ZYNQ
++		ARCH_ZYNQ || ARCH_ASPEED
+ 	default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
+ 		SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+ 	default 416 if ARCH_SUNXI
+-- 
+2.17.1
+
