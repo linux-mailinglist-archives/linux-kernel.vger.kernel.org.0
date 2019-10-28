@@ -2,89 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3280CE6E97
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 09:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C23B9E6E6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 09:47:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbfJ1I6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 04:58:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38859 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730849AbfJ1I6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 04:58:19 -0400
-Received: from [IPv6:2601:646:8600:3281:9f1:c5fc:f434:6a14] ([IPv6:2601:646:8600:3281:9f1:c5fc:f434:6a14])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x9S8kpgE2149778
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 28 Oct 2019 01:46:57 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x9S8kpgE2149778
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019091901; t=1572252419;
-        bh=Skodpi7nxzjzM78bU7LUUKImk5EIuBVZg2w//InSrlA=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=GIY6FWFqmb/JHimgI8SsfdgfiZRpBb8TM+vQmDCQ0kUqXCIe4S/ENEhbqQVuGqto5
-         gDJonHp5mnnv6Ju3KmVvKLu+QRoSef5OlryrIP5fvx3DFH+E431DcFy7AONIRcNvZv
-         wuuFPG90IHiSRZTdUfVItRzn81mywuogRuHtFk2zf1cmwM9DLcKEzWfbI/IqkzhFiq
-         VqhApkc+x4e7aBFZnq28V+oJE5hI4rt3Ooyne4Z2Y1h/TsIDelXli3wQJM1AtTQb0t
-         M+xwLznPWjg0KdCruXHQQYKi6cVJajz7FcXAsVqgaj+bZuaxbHLlHlI4/WS/+WR03j
-         R1rS8Fx+2oBqA==
-Date:   Mon, 28 Oct 2019 01:46:43 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191025073858.15081-1-jgross@suse.com>
-References: <20191025073858.15081-1-jgross@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] xen: issue deprecation warning for 32-bit pv guest
-To:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-CC:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-From:   hpa@zytor.com
-Message-ID: <088E9605-9FFA-42B7-BAB2-89D9DF0756BB@zytor.com>
+        id S2387631AbfJ1IrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 04:47:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731611AbfJ1IrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 04:47:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 15622B249;
+        Mon, 28 Oct 2019 08:47:13 +0000 (UTC)
+From:   Daniel Wagner <dwagner@suse.de>
+To:     linux-scsi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Daniel Wagner <dwagner@suse.de>,
+        Himanshu Madhani <hmadhani@marvell.com>
+Subject: [PATCH] scsi: qla2xxx: Check return value of alloc_workqueue()
+Date:   Mon, 28 Oct 2019 09:47:09 +0100
+Message-Id: <20191028084709.81538-1-dwagner@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 25, 2019 12:38:58 AM PDT, Juergen Gross <jgross@suse=2Ecom> wrot=
-e:
->Support for the kernel as Xen 32-bit PV guest will soon be removed=2E
->Issue a warning when booted as such=2E
->
->Signed-off-by: Juergen Gross <jgross@suse=2Ecom>
->---
-> arch/x86/xen/enlighten_pv=2Ec | 8 ++++++++
-> 1 file changed, 8 insertions(+)
->
->diff --git a/arch/x86/xen/enlighten_pv=2Ec b/arch/x86/xen/enlighten_pv=2E=
-c
->index 58f79ab32358=2E=2E5bfea374a160 100644
->--- a/arch/x86/xen/enlighten_pv=2Ec
->+++ b/arch/x86/xen/enlighten_pv=2Ec
->@@ -117,6 +117,14 @@ static void __init xen_banner(void)
-> 	printk(KERN_INFO "Xen version: %d=2E%d%s%s\n",
-> 	       version >> 16, version & 0xffff, extra=2Eextraversion,
->	       xen_feature(XENFEAT_mmu_pt_update_preserve_ad) ? "
->(preserve-AD)" : "");
->+
->+#ifdef CONFIG_X86_32
->+	pr_warn("WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!
->WARNING!\n"
->+		"Support for running as 32-bit PV-guest under Xen will soon be
->removed\n"
->+		"from the Linux kernel!\n"
->+		"Please use either a 64-bit kernel or switch to HVM or PVH mode!\n"
->+		"WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!\n");
->+#endif
-> }
->=20
-> static void __init xen_pv_init_platform(void)
+Do not derefence the pointer without checking it
+first. alloc_workqueue() can return a NULL pointer.
 
-And there was much rejoicing=2E
+Reported-by: Semmle vulnerability research team <security-reports@semmle.com>
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Daniel Wagner <dwagner@suse.de>
+---
+ drivers/scsi/qla2xxx/qla_os.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Yaay=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 16f9b6ed574a..040f82ccacba 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3224,6 +3224,10 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	    req->req_q_in, req->req_q_out, rsp->rsp_q_in, rsp->rsp_q_out);
+ 
+ 	ha->wq = alloc_workqueue("qla2xxx_wq", 0, 0);
++	if (!ha->wq) {
++		ret = -ENOMEM;
++		goto probe_failed;
++	}
+ 
+ 	if (ha->isp_ops->initialize_adapter(base_vha)) {
+ 		ql_log(ql_log_fatal, base_vha, 0x00d6,
+-- 
+2.16.4
+
