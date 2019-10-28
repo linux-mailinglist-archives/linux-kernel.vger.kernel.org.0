@@ -2,135 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465A8E6EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0A8E6EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387856AbfJ1JO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:14:27 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55048 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387596AbfJ1JO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:14:27 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B713B1A070C;
-        Mon, 28 Oct 2019 10:14:24 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A4CC1A0707;
-        Mon, 28 Oct 2019 10:14:19 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E7369402E2;
-        Mon, 28 Oct 2019 17:14:12 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3] ASoC: fsl_esai: Add spin lock to protect reset, stop and start
-Date:   Mon, 28 Oct 2019 17:11:05 +0800
-Message-Id: <52e92c4221a83e39a84a6cd92fc3d5479b44894c.1572252321.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2387819AbfJ1JLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:11:23 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:48301
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727586AbfJ1JLV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:11:21 -0400
+X-IronPort-AV: E=Sophos;i="5.68,239,1569276000"; 
+   d="scan'208";a="324786536"
+Received: from unknown (HELO [193.50.110.240]) ([193.50.110.240])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA; 28 Oct 2019 10:11:18 +0100
+To:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Keith Busch <kbusch@kernel.org>,
+        Rafael Wysocki <rafael@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Brice Goglin <Brice.Goglin@inria.fr>
+Subject: acpi/hmat: don't mix pxm and nid when setting memory target
+ processor_pxm
+Openpgp: preference=signencrypt
+Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7fa832a3-743f-437a-81e4-ac82e67be649@inria.fr>
+Date:   Mon, 28 Oct 2019 10:11:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xrun may happen at the end of stream, the
-trigger->fsl_esai_trigger_stop maybe called in the middle of
-fsl_esai_hw_reset, this may cause esai in wrong state
-after stop, and there may be endless xrun interrupt.
+On systems where PXMs and nids are in different order, memory initiators
+exposed in sysfs could be wrong: On dual-socket CLX with SNC enabled
+(4 nodes, 1 and 2 swapped between PXMs and nids), node1 would only
+get node2 as initiator, and node2 would only get node1.
 
-This issue may also happen with trigger->fsl_esai_trigger_start.
+With this patch, we get node1 as the only initiator of itself,
+and node2 as the only initiator of itself, as expected.
 
-So Add spin lock to lock those functions.
+This should likely go to stable up to 5.2.
 
-Fixes: 7ccafa2b3879 ("ASoC: fsl_esai: recover the channel swap after xrun")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
-Change in v3
--refine comments
+Signed-off-by: Brice Goglin <Brice.Goglin@inria.fr>
 
-Change in v2
--add lock for fsl_esai_trigger_start.
-
- sound/soc/fsl/fsl_esai.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index 37b14c48b537..453392a9cd68 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -33,6 +33,7 @@
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-  * @task: tasklet to handle the reset operation
-+ * @lock: spin lock between hw_reset() and trigger()
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -56,6 +57,7 @@ struct fsl_esai {
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
- 	struct tasklet_struct task;
-+	spinlock_t lock; /* Protect hw_reset and trigger */
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -676,8 +678,10 @@ static void fsl_esai_hw_reset(unsigned long arg)
- {
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
- 	bool tx = true, rx = false, enabled[2];
-+	unsigned long lock_flags;
- 	u32 tfcr, rfcr;
+diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+index 8f9a28a870b0..3ca3c7c97ee0 100644
+--- a/drivers/acpi/hmat/hmat.c
++++ b/drivers/acpi/hmat/hmat.c
+@@ -417,7 +417,7 @@ static int __init hmat_parse_proximity_domain(union acpi_subtable_headers *heade
+ 			pr_debug("HMAT: Invalid Processor Domain\n");
+ 			return -EINVAL;
+ 		}
+-		target->processor_pxm = p_node;
++		target->processor_pxm = p->processor_PD;
+ 	}
  
-+	spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 	/* Save the registers */
- 	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
- 	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-@@ -715,6 +719,8 @@ static void fsl_esai_hw_reset(unsigned long arg)
- 		fsl_esai_trigger_start(esai_priv, tx);
- 	if (enabled[rx])
- 		fsl_esai_trigger_start(esai_priv, rx);
-+
-+	spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- }
- 
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
-@@ -722,6 +728,7 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	unsigned long lock_flags;
- 
- 	esai_priv->channels[tx] = substream->runtime->channels;
- 
-@@ -729,12 +736,16 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_start(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_stop(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1002,6 +1013,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, esai_priv);
- 
-+	spin_lock_init(&esai_priv->lock);
- 	ret = fsl_esai_hw_init(esai_priv);
- 	if (ret)
- 		return ret;
--- 
-2.21.0
+ 	return 0;
 
