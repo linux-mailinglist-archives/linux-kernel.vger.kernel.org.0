@@ -2,116 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEACE727E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF6AE7285
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbfJ1NQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:16:24 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34075 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388553AbfJ1NQX (ORCPT
+        id S2388909AbfJ1NSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:18:04 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51878 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfJ1NSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:16:23 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 139so11126856ljf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 06:16:22 -0700 (PDT)
+        Mon, 28 Oct 2019 09:18:03 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q70so9429480wme.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 06:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RcPtv5d4Xhg7Yg5t5dc7cf1sdnUkFOizbhSvjAdERFI=;
-        b=utV3o3aTqHm5KCIW69feKUGPuTsUaHcp/zpYcTzvlXi3Olyfe1n4hKAzlQ3gdcEU3p
-         +QuGe8rjB2g0Q7BIO4DNZGZICNhpkadVJx6bhQNCcPFHCbbNxkbF8orYFak5554TAru/
-         zMFayG+JhL2iTkDnZS3Ij6Xzb7NTBaWhtt+JCUB0Rwk/pt5gSDRIBDeaJ43vJywfeHAW
-         SVXD2yhcM/0PInIsF3BvsDNaIHhqr3EAHAyEtdAxKawuv7fbhwNuNFOfPrC/zMa/xlJp
-         RMwOt9XPvVBsYbuKzo3XnYLSDEEF3Q9ZhMMpv50JXGIKgrSy8rO2t6dogMuXPfXa0Yni
-         l7eA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Yw1UTNtycGA9FN9cisYCGkekiRR1izJVSuYv8MiVRlk=;
+        b=Xm5uuVr/oWMODLgeT1dFlpvpSzfeEpSK6+zNmxsP7iPyv/NherpEdQIi3misQ/QSRe
+         sTH+YftONMDkVMNsVQEYdKR1sA4Pw7nxRhyE7+bN8a5yZ8fPFbGA/aLswiy0vrwXoomf
+         7JLCmpEgc5x/ZE7qABWh5nyKMVoiNu7YRo0BqmlYYvxAFgAtAcDjrLqlSN43NwyTdk/l
+         wRoAXEeY2J9MKWLMe/imam9NpmEFaFyx4xwG7he/Qet3tdVbMDIxdi1ReCo+hLN7atPC
+         rovpIBU1j5fFZBcDokPOb0T5JiB7N9l840VTu2McYvr9d+mo8bRZB3jfv/rxvYPpL3OL
+         vmCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RcPtv5d4Xhg7Yg5t5dc7cf1sdnUkFOizbhSvjAdERFI=;
-        b=THABzz71MeP+9tnm5XeSEjxuNMh/qhvPC9UXyyZdjz473fP4y580O1L1RI1IiZY1KU
-         Il+5ydsM0+wzCIkc4NsWK05g6W+P605iTZnkpISbIeE/Vlx8lOhfuLnMP7KxTtwlPSnP
-         wsSDpCr+MryvKIUvrUDn5MSwvEa9+JBjccVn1XF2E9NLKsifuGKLwiv/BSJ030XJDGwy
-         Ik2li4xYyBXF9g6pnr4J7ZiP6advFx4dZCZCk67ERAgH6cAzoKmSfvc5ysCm/o2FCVYn
-         Mqd4EV+2UHGlP8bY/GXP32K4W+v7n0CaVIoXTzVZ8JEDrKjnCAc3eBBjmYPepMYgWeXa
-         bqRQ==
-X-Gm-Message-State: APjAAAVMBxdyjA9lBmKoXsxcBPtCN8XGNYRgNYppEND9wNMH32rJ+ZrO
-        oTPdquKvmfUPB+umFaZ/+3k1EQ==
-X-Google-Smtp-Source: APXvYqyVfI0y1z4XXrCEM0pRrVCY4qmeS3CAaTSlq5hy1wZcRGDvnKux7ec6kYLSUeqeBO51XxbZtg==
-X-Received: by 2002:a2e:924a:: with SMTP id v10mr11766000ljg.134.1572268582067;
-        Mon, 28 Oct 2019 06:16:22 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y20sm8981461ljd.99.2019.10.28.06.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 06:16:21 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 23644100242; Mon, 28 Oct 2019 16:16:23 +0300 (+03)
-Date:   Mon, 28 Oct 2019 16:16:23 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
- mappings
-Message-ID: <20191028131623.zwuwguhm4v4s5imh@box>
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <1572171452-7958-2-git-send-email-rppt@kernel.org>
- <20191028123124.ogkk5ogjlamvwc2s@box>
- <20191028130018.GA7192@rapoport-lnx>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Yw1UTNtycGA9FN9cisYCGkekiRR1izJVSuYv8MiVRlk=;
+        b=DxAN10NP0m7mJuKSLOUJAI3nkUHXSG/lxpBeqfFAcFgwwkCW6mQ/hd2IqgwcY3HHOT
+         8NZmXGCtQfSYWArGtyg0u6Vz/VzgO8IU3Gdoqd5PZBgW+ZrlbNrMUB1442ok3MKYmM1u
+         jVrQtHrB5GrBLN36X8CIwGX6iSF6v6na8i6gj51zHdCE2qzRIneSAF6EG/E3TYdYnjwO
+         4DyrGsM9b9yjBDb1iojucewPuHX16egClrVvCCEQTX+Bu/si2fUvvkXDjyaOuV4WN26J
+         U/DF80AMD3Wwo5K5P26FmzlHspwePr08WpjS5unY6z94EV7VLsjdLpbm+ROimOKavbKC
+         iQtg==
+X-Gm-Message-State: APjAAAXFSMvFgPa18x7ZG3J0GzPwY4WxXIty6+b4OlPuz+YJMTsqQgXK
+        RsC7g6HNaDiEQ4exfLA7WvDmoiDoyI63jvRqU8UuuQ==
+X-Google-Smtp-Source: APXvYqxy6b4KTX9IE+ET5/6aH6sCNx/NgcZ39CN3S5h6U1S2p657qFhC6jJhL6C0HI0dYZPzNs0ydcZ4eAXll6X7gfg=
+X-Received: by 2002:a05:600c:2212:: with SMTP id z18mr16924236wml.154.1572268680300;
+ Mon, 28 Oct 2019 06:18:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028130018.GA7192@rapoport-lnx>
-User-Agent: NeoMutt/20180716
+References: <000000000000f838060595f602a7@google.com> <s5hr22xau8f.wl-tiwai@suse.de>
+In-Reply-To: <s5hr22xau8f.wl-tiwai@suse.de>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Mon, 28 Oct 2019 14:17:48 +0100
+Message-ID: <CAG_fn=VLxj9xKd_Wxm0cA1Lo7E6YG4SBsZ9EFnFj94TbE-6aPg@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in get_term_name
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     syzbot <syzbot+8f2612936028bfd28f28@syzkaller.appspotmail.com>,
+        allison@lohutok.net, alsa-devel@alsa-project.org,
+        benquike@gmail.com, dan.carpenter@oracle.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, perex@perex.cz,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Takashi Iwai <tiwai@suse.com>, wang6495@umn.edu,
+        yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 02:00:19PM +0100, Mike Rapoport wrote:
-> On Mon, Oct 28, 2019 at 03:31:24PM +0300, Kirill A. Shutemov wrote:
-> > On Sun, Oct 27, 2019 at 12:17:32PM +0200, Mike Rapoport wrote:
-> > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > > 
-> > > The mappings created with MAP_EXCLUSIVE are visible only in the context of
-> > > the owning process and can be used by applications to store secret
-> > > information that will not be visible not only to other processes but to the
-> > > kernel as well.
-> > > 
-> > > The pages in these mappings are removed from the kernel direct map and
-> > > marked with PG_user_exclusive flag. When the exclusive area is unmapped,
-> > > the pages are mapped back into the direct map.
-> > 
-> > I probably blind, but I don't see where you manipulate direct map...
-> 
-> __get_user_pages() calls __set_page_user_exclusive() which in turn calls
-> set_direct_map_invalid_noflush() that makes the page not present.
+On Mon, Oct 28, 2019 at 2:13 PM Takashi Iwai <tiwai@suse.de> wrote:
+>
+> On Mon, 28 Oct 2019 11:32:07 +0100,
+> syzbot wrote:
+> >
+> > Uninit was stored to memory at:
+> >  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:151 [inline]
+> >  kmsan_internal_chain_origin+0xbd/0x180 mm/kmsan/kmsan.c:319
+> >  __msan_chain_origin+0x6b/0xd0 mm/kmsan/kmsan_instr.c:179
+> >  parse_term_proc_unit+0x73d/0x7e0 sound/usb/mixer.c:896
+> >  __check_input_term+0x13ef/0x2360 sound/usb/mixer.c:989
+>
+> So this comes from the invalid descriptor for a processing unit, and
+> it's very likely the same issue as already spotted -- the validator up
+> to 5.3-rc4 had a bug that passed the invalid descriptor falsely.
+> This should have been covered by 5.3-rc5, commit ba8bf0967a15 ("ALSA:
+> usb-audio: Fix copy&paste error in the validator").
+Ah, thanks. Looks like I need to rebase the KMSAN tree.
+>
+> thanks,
+>
+> Takashi
 
-Ah. okay.
 
-I think active use of this feature will lead to performance degradation of
-the system with time.
 
-Setting a single 4k page non-present in the direct mapping will require
-splitting 2M or 1G page we usually map direct mapping with. And it's one
-way road. We don't have any mechanism to map the memory with huge page
-again after the application has freed the page.
+--=20
+Alexander Potapenko
+Software Engineer
 
-It might be okay if all these pages cluster together, but I don't think we
-have a way to achieve it easily.
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
--- 
- Kirill A. Shutemov
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
