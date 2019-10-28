@@ -2,114 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53619E77D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14025E779E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:33:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390686AbfJ1RsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 13:48:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41553 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730715AbfJ1RsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 13:48:07 -0400
-Received: from [91.217.168.176] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iP8qe-0005p2-OR; Mon, 28 Oct 2019 17:30:32 +0000
-Date:   Mon, 28 Oct 2019 18:30:32 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     dvyukov@google.com, ebiederm@xmission.com, elver@google.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH cgroup/for-5.5] cgroup: remove
- cgroup_enable_task_cg_lists() optimization
-Message-ID: <20191028173031.m32p5e3ek764hnre@wittgenstein>
-References: <0000000000003b1e8005956939f1@google.com>
- <20191021142111.GB1339@redhat.com>
- <20191024190351.GD3622521@devbig004.ftw2.facebook.com>
- <20191025125606.GI3622521@devbig004.ftw2.facebook.com>
- <20191025133358.pxpzxkhqc3mboi5x@wittgenstein>
- <20191025141325.GB6020@redhat.com>
- <20191025143224.wtwkkimqq4644iqq@wittgenstein>
- <20191025155224.GC6020@redhat.com>
- <20191025170523.u43rkulrui22ynix@wittgenstein>
- <20191028164852.GA17900@redhat.com>
+        id S2404182AbfJ1Rdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 13:33:31 -0400
+Received: from mga02.intel.com ([134.134.136.20]:42803 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404155AbfJ1Rdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 13:33:31 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 10:32:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,240,1569308400"; 
+   d="scan'208";a="399514952"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Oct 2019 10:32:30 -0700
+Date:   Mon, 28 Oct 2019 10:32:30 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
+ mappings
+Message-ID: <20191028173229.GC5061@linux.intel.com>
+References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+ <1572171452-7958-2-git-send-email-rppt@kernel.org>
+ <d6ac08fe-23f3-c2d5-24c4-88e68f3fd4d0@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028164852.GA17900@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <d6ac08fe-23f3-c2d5-24c4-88e68f3fd4d0@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 05:48:52PM +0100, Oleg Nesterov wrote:
-> On 10/25, Christian Brauner wrote:
-> >
-> > On Fri, Oct 25, 2019 at 05:52:25PM +0200, Oleg Nesterov wrote:
-> > > On 10/25, Christian Brauner wrote:
-> > > >
-> > > > On Fri, Oct 25, 2019 at 04:13:25PM +0200, Oleg Nesterov wrote:
-> > > > > Almost every usage of task->flags (load or sore) can be reported as "data race".
-> > > > >
-> > > > > Say, you do
-> > > > >
-> > > > > 	if (task->flags & PF_KTHREAD)
-> > > > >
-> > > > > while this task does
-> > > > >
-> > > > > 	current->flags |= PF_FREEZER_SKIP;
-> > > > > 	schedule().
-> > > > >
-> > > > > this is data race.
-> > > >
-> > > > Right, but I thought we agreed on WONTFIX in those scenarios?
-> > > > The alternative is to READ_ONCE()/WRITE_ONCE() all of these.
-> > >
-> > > Well, in my opinion this is WONTFIX, but I won't argue if someone
-> > > adds _ONCE to all of these. Same for task->state, exit_state, and
-> > > more.
-> >
-> > Well, I honestly think that state and exit_state would make sense.
+On Mon, Oct 28, 2019 at 10:12:44AM -0700, Dave Hansen wrote:
+> On 10/27/19 3:17 AM, Mike Rapoport wrote:
+> > The pages in these mappings are removed from the kernel direct map and
+> > marked with PG_user_exclusive flag. When the exclusive area is unmapped,
+> > the pages are mapped back into the direct map.
 > 
-> Heh. Again, I am not arguing, but...
+> This looks fun.  It's certainly simple.
 > 
-> OK, lets suppose we blindly add READ_ONCE() to every access of
-> task->state/exit_state.
+> But, the description is not really calling out the pros and cons very
+> well.  I'm also not sure that folks will use an interface like this that
+> requires up-front, special code to do an allocation instead of something
+> like madvise().  That's why protection keys ended up the way it did: if
+> you do this as a mmap() replacement, you need to modify all *allocators*
+> to be enabled for this.  If you do it with mprotect()-style, you can
+> apply it to existing allocations.
 > 
-> Yes, this won't hurt and possibly can fix some bugs we are not aware of.
+> Some other random thoughts:
+> 
+>  * The page flag is probably not a good idea.  It would be probably
+>    better to set _PAGE_SPECIAL on the PTE and force get_user_pages()
+>    into the slow path.
+>  * This really stops being "normal" memory.  You can't do futexes on it,
+>    cant splice it.  Probably need a more fleshed-out list of
+>    incompatible features.
+>  * As Kirill noted, each 4k page ends up with a potential 1GB "blast
+>    radius" of demoted pages in the direct map.  Not cool.  This is
+>    probably a non-starter as it stands.
+>  * The global TLB flushes are going to eat you alive.  They probably
+>    border on a DoS on larger systems.
+>  * Do we really want this user interface to dictate the kernel
+>    implementation?  In other words, do we really want MAP_EXCLUSIVE,
+>    or do we want MAP_SECRET?  One tells the kernel what do *do*, the
+>    other tells the kernel what the memory *IS*.
 
-I wasn't planning or working on adding *_ONCE everywhere. ;)
-I just think it makes sense as a preemptive strike since they are shared
-(though mostly protected by locks anyway).
+If we go that route, maybe MAP_USER_SECRET so that there's wiggle room in
+the event that there are different secret keepers that require different
+implementations in the kernel?   E.g. MAP_GUEST_SECRET for a KVM guest to
+take the userspace VMM (Qemu) out of the TCB, i.e. the mapping would be
+accessible by the kernel (or just KVM?) and the KVM guest, but not
+userspace.
 
+>  * There's a lot of other stuff going on in this area: XPFO, SEV, MKTME,
+>    Persistent Memory, where the kernel direct map is a liability in some
+>    way.  We probably need some kind of overall, architected solution
+>    rather than five or ten things all poking at the direct map.
 > 
-> However,
-> 
-> > There already were issues that got fixed for example in 3245d6acab98
-> > ("exit: fix race between wait_consider_task() and wait_task_zombie()")
-> 
-> The change above can't fix the problem like this.
-
-No argument about the code we discussed right here, for sure!
-
-> 
-> It is not that this code lacked READ_ONCE(). I am sure me and others
-> understood that this code can read ->exit_state more than once, just
-> nobody noticed that in this case this is really wrong.
-> 
-> IOW, if we simply change the code before 3245d6acab98 to use READ_ONCE()
-> the code will be equally wrong, and
-> 
-> > and as far as I understand this would also help kcsan to better detect
-> > races.
-> 
-> this change will simply hide the problem from kcsan.
-
-I can't speak to that since the claim that read_once() helps them even
-if it's not really doing anything. But maybe I misunderstood the
-k{c,t}san manpage.
-
-Christian
