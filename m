@@ -2,103 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E2DE7ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33250E7AC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389083AbfJ1VEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:04:52 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44885 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728319AbfJ1VEw (ORCPT
+        id S2389233AbfJ1VFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:05:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50578 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389188AbfJ1VFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:04:52 -0400
-Received: by mail-oi1-f195.google.com with SMTP id s71so7135806oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:04:51 -0700 (PDT)
+        Mon, 28 Oct 2019 17:05:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572296715;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TxKlhPKEe4Eb/axUY+ph5O+S3W8S8DEGprY2128AzI4=;
+        b=KyY7wqnhtiQ1muYynpu2Ss5D16X0yfQKIj27lzgcBCRKGAffq04yM6RX33QacpUDYLmo1y
+        CLp3e5WE4H9r7olX626IBnGg9quQEzD39YWAbmwx1LgddBSLHygjssTQSImPwvn/Ye8x9w
+        mhCtNLLWhLoUhovEic1iq9F/n5kAtl8=
+Received: from mail-yw1-f71.google.com (mail-yw1-f71.google.com
+ [209.85.161.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-i_rBb6VSM0e9RW7K8-ksqQ-1; Mon, 28 Oct 2019 17:05:10 -0400
+Received: by mail-yw1-f71.google.com with SMTP id u131so8405092ywa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:05:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bhRVPrT7ZKrL948DFpxoobkyqmyFQ/kGjtFCRDQLbng=;
-        b=EhDsCDXZKEhkKKxR9OwL6VS6Q+pL7sVwJSUNjsD5y0ZW11C3R4V1ffABhbrlIAsWtm
-         jgRxVtAgWSCgT08v2hv5B+86wcZHq3Mt0AMzbBEu7TyGxDVqTLDa5Y02rb7xexxRJc8b
-         DKNeprORZQi+ya7w1yGDXj/+rO3/1kaatBTawySAlFLOBoxtRRz5qX33TEyTOhCcbM94
-         /UxgnbRuPSfJT/uO2L5GdPCmU0+5NrhPzLIjfhREyhJVTfq3aN8urJXUAlJ9PCcGKK5U
-         fciIiXUSqj8oE+mNviCdvSl6CPX+2YwheW7+7JRVM0GXhlnj6ToEGO024JvfMvgx1r0L
-         ckRA==
-X-Gm-Message-State: APjAAAU6STh33wzkSMAmPMRbFreFKg4z/1afM3Wzhun3YSDDP77A8aRv
-        UdblkM6I5nbXfIk0CyPnELK/S6hA
-X-Google-Smtp-Source: APXvYqyoqNc1IWxnFDOoTJQR8H2nVe8mGjroSu+MJkSzXQbjdYC9qBb6bxbVhJpen4kgjNKWWfDkbQ==
-X-Received: by 2002:aca:5f0a:: with SMTP id t10mr1156164oib.20.1572296690950;
-        Mon, 28 Oct 2019 14:04:50 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id l12sm3293027oii.48.2019.10.28.14.04.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Oct 2019 14:04:50 -0700 (PDT)
-Subject: Re: [RFC PATCH 3/3] nvme: Introduce nvme_execute_passthru_rq_nowait()
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Keith Busch <kbusch@kernel.org>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20191025202535.12036-1-logang@deltatee.com>
- <20191025202535.12036-4-logang@deltatee.com> <20191027150937.GC5843@lst.de>
- <94c1e177-4848-c88b-ec26-3da118fd18dc@deltatee.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <7030395b-9f18-6866-10c0-906788243aa1@grimberg.me>
-Date:   Mon, 28 Oct 2019 14:04:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=yf4+zj7RNOPk8CerubFQ1G5hNP+VaWNT7LPoqLWZ0Gk=;
+        b=nhNfiOpKOcpY7UsYsVx2Q0jUYxRs0fj+HhxYZb8HCO2rCLoqDhzGwW2uNbvbhFxwax
+         7QmEtPm4Gz1ZEtzzAk0GPLGA8o5QbW1dJCeIcrRuytPXun+9oMvH/Epeywkz5+6/roZJ
+         A1EHOaMLvKO+ydVchXOWOYTvXx8pxrB98LaRtbTn+euchRHsXyjOIRHxFaX3WpnLP17A
+         jH8airSQDfjvD5eKgXII+oYzqJFpgy5igWwA5P9jrdX6wXrlFYdvUbS8WTHyQedpeNw0
+         vjYqNFB0NM6HdrlNwepfOTXeyU5lGMQWd41M3GC6WHZkIPdGMlVKuhTzexSu3+nhLtmU
+         ik+A==
+X-Gm-Message-State: APjAAAUbUyr/bj0p3qZthKAXgUkJ7gqDWzwSZB1Q9WlxPwOQP2GWzDLh
+        qaJeg4OB2jgH3+NPRhL628s/h5dx2eCSTkmsoYwEC+YOMXZ8JOaGQxLNdnkJAEy2barAh2dgCGg
+        LC2hoXL0GKtvceKxG/yZXhm3s
+X-Received: by 2002:a25:49c7:: with SMTP id w190mr15832737yba.140.1572296709841;
+        Mon, 28 Oct 2019 14:05:09 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxmmKVW7cJQlJOkIJYnBiX2JsU0pLw6AUn+HaxO5Jx8ZNWGwI05O9D8puCAWbLE4amCdxhDYQ==
+X-Received: by 2002:a25:49c7:: with SMTP id w190mr15832711yba.140.1572296709459;
+        Mon, 28 Oct 2019 14:05:09 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id j3sm9425112ywb.10.2019.10.28.14.05.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 14:05:08 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 14:05:07 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] tpm: Add major_version sysfs file
+Message-ID: <20191028210507.7i6d6b5olw72shm3@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+References: <20191025193103.30226-1-jsnitsel@redhat.com>
+ <20191028205313.GH8279@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <94c1e177-4848-c88b-ec26-3da118fd18dc@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191028205313.GH8279@linux.intel.com>
+User-Agent: NeoMutt/20180716
+X-MC-Unique: i_rBb6VSM0e9RW7K8-ksqQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon Oct 28 19, Jarkko Sakkinen wrote:
+>On Fri, Oct 25, 2019 at 12:31:03PM -0700, Jerry Snitselaar wrote:
+>> +=09return sprintf(buf, "%s\n", chip->flags & TPM_CHIP_FLAG_TPM2
+>> +=09=09       ? "2.0" : "1.2");
+>
+>This is not right. Should be either "1" or "2".
+>
+>/Jarkko
 
->>> +void nvme_execute_passthru_rq_nowait(struct request *rq, rq_end_io_fn *done)
->>> +{
->>> +	struct nvme_command *cmd = nvme_req(rq)->cmd;
->>> +	struct nvme_ctrl *ctrl = nvme_req(rq)->ctrl;
->>> +	struct nvme_ns *ns = rq->q->queuedata;
->>> +	struct gendisk *disk = ns ? ns->disk : NULL;
->>> +	u32 effects;
->>> +
->>> +	/*
->>> +	 * This function may be called in interrupt context, so we cannot sleep
->>> +	 * but nvme_passthru_[start|end]() may sleep so we need to execute
->>> +	 * the command in a work queue.
->>> +	 */
->>> +	effects = nvme_command_effects(ctrl, ns, cmd->common.opcode);
->>> +	if (effects) {
->>> +		rq->end_io = done;
->>> +		INIT_WORK(&nvme_req(rq)->work, nvme_execute_passthru_rq_work);
->>> +		queue_work(nvme_wq, &nvme_req(rq)->work);
->>
->> But independent of the target code - I'd much rather leave this to the
->> caller.  Just call nvme_command_effects in the target code, then if
->> there are not side effects use blk_execute_rq_nowait directly, else
->> schedule a workqueue in the target code and call
->> nvme_execute_passthru_rq from it.
-> 
-> Ok, that seems sensible. Except it conflicts a bit with Sagi's feedback:
-> presumably we need to cancel the work items during nvme_stop_ctrl() and
-> that's going to be rather difficult to do from the caller. Are we saying
-> this is unnecessary? It's not clear to me if passthru_start/end is going
-> to be affected by nvme_stop_ctrl() which I believe is the main concern.
+Okay I will fix that up. Do we have a final decision on the file name,
+major_version versus version_major?
 
-Actually, I don't think we need it thinking on it again... These are
-just I/Os sent to the device. The reset sequence will simply iterate
-all the I/Os and fail the busy ones, and those that will execute after
-it will block on a frozen queue, just like any other I/O. So I don't
-think we need to cancel them. And if this logic sits on the caller its
-even clearer that this is the case.
-
-However, it'd be good to test live controller resets to make sure
-we are not missing anything...
