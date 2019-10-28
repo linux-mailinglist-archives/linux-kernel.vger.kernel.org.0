@@ -2,178 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5F7E7789
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53619E77D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 18:48:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404169AbfJ1RXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 13:23:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42550 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730212AbfJ1RXT (ORCPT
+        id S2390686AbfJ1RsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 13:48:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41553 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730715AbfJ1RsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 13:23:19 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f14so7317639pgi.9
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 10:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UflXfL3dwhO51RWNtr30ZieO/LUtszv77VC5R3Td5p4=;
-        b=djoanQkiGA3fqiuTCeMp3PS0KDhFi1gk6EjakgwdacK8Hqk8l3UxxOnnkSpDAvM+ZD
-         tljXKBoM/Gl5mK8Ort4gG8L54R4wqn5HKR5qrEPSHNovOdL1GqR6CBgB+WEjAyr1smkG
-         RXSyvwASJ+KQCGxGJmBSvJC4ZdCK0PsvSUOtqtl8COFWH3EG9a15NN1IeB2tqZBWko/0
-         cQ1SPDIoC3nO8FtJaVzKO5dDuENqFfiOk5axnAjDEMM1O6mD1sHR5yxBwMUg1RqPnrZP
-         fvkc7EbqnRJoVLNXND4vGBALh7PmRcbUeD9eQNcbz7HfnHCjag9qCo5s31LIMqZfHIAX
-         CUsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UflXfL3dwhO51RWNtr30ZieO/LUtszv77VC5R3Td5p4=;
-        b=WivT0yXrUKagvvM6PuPY61A0ApKcz9ppJBQ+3IDcf/Y819QhpB6JFKwOVaRbTajiZv
-         wr3xF8IfkbfkK489DmS49CBlgfyf/q/7ddXo7CuTEehAuDu2hELTYQubANkwWP/lvC+s
-         IosUswYb5vafLjbqA7FlxFrq+RhgmXaUCxmyeXR/rT79uZHqATOUkiizQSfmLKzTonVo
-         eGjGtnbhOHVZjj4ZESnh8iDxjvkY3ptokYk9VkZwnzMDnVR+8Qn4wusE1LIzr+7IJXcw
-         Nwu6mWEA+tRzIoIWvHhgSoM5nRvz3Zgrp8IE65MEmV/yW+IUQaGlYu7N4hMbeP29gvP4
-         z0lg==
-X-Gm-Message-State: APjAAAVe0wn+x1Zux183ItC/3DeUFP3SKbLOkvUgRmkdH/Oe16FDQIBb
-        gwdUjiqeenSPOjK5odi2KUr6gTpvZpc1aCYbPJ5vUQ==
-X-Google-Smtp-Source: APXvYqytcmgUBglTw+96rAxyA8UoLZEEWQtQv6S5qGrK/cGa88KPzT32foKerAZ8x0LkY9vPTs4Gdwj3wPvVn1QVv48=
-X-Received: by 2002:a17:90a:6509:: with SMTP id i9mr449000pjj.47.1572283397935;
- Mon, 28 Oct 2019 10:23:17 -0700 (PDT)
+        Mon, 28 Oct 2019 13:48:07 -0400
+Received: from [91.217.168.176] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iP8qe-0005p2-OR; Mon, 28 Oct 2019 17:30:32 +0000
+Date:   Mon, 28 Oct 2019 18:30:32 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     dvyukov@google.com, ebiederm@xmission.com, elver@google.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH cgroup/for-5.5] cgroup: remove
+ cgroup_enable_task_cg_lists() optimization
+Message-ID: <20191028173031.m32p5e3ek764hnre@wittgenstein>
+References: <0000000000003b1e8005956939f1@google.com>
+ <20191021142111.GB1339@redhat.com>
+ <20191024190351.GD3622521@devbig004.ftw2.facebook.com>
+ <20191025125606.GI3622521@devbig004.ftw2.facebook.com>
+ <20191025133358.pxpzxkhqc3mboi5x@wittgenstein>
+ <20191025141325.GB6020@redhat.com>
+ <20191025143224.wtwkkimqq4644iqq@wittgenstein>
+ <20191025155224.GC6020@redhat.com>
+ <20191025170523.u43rkulrui22ynix@wittgenstein>
+ <20191028164852.GA17900@redhat.com>
 MIME-Version: 1.0
-References: <cover.1571844200.git.andreyknvl@google.com> <beeae42e313ef57b4630cc9f36e2e78ad42fd5b7.1571844200.git.andreyknvl@google.com>
- <20191023152216.796aeafd832ba5351d86d3ca@linux-foundation.org>
-In-Reply-To: <20191023152216.796aeafd832ba5351d86d3ca@linux-foundation.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 28 Oct 2019 18:23:06 +0100
-Message-ID: <CAAeHK+w1SB7Z7ndB3nocO3vKwBhPrr6GFZa6EYeApyppx7gYYw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kcov: remote coverage support
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     USB list <linux-usb@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Windsor <dwindsor@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191028164852.GA17900@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 12:22 AM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Wed, 23 Oct 2019 17:24:29 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> > This patch adds background thread coverage collection ability to kcov.
+On Mon, Oct 28, 2019 at 05:48:52PM +0100, Oleg Nesterov wrote:
+> On 10/25, Christian Brauner wrote:
 > >
-> > With KCOV_ENABLE coverage is collected only for syscalls that are issued
-> > from the current process. With KCOV_REMOTE_ENABLE it's possible to collect
-> > coverage for arbitrary parts of the kernel code, provided that those parts
-> > are annotated with kcov_remote_start()/kcov_remote_stop().
+> > On Fri, Oct 25, 2019 at 05:52:25PM +0200, Oleg Nesterov wrote:
+> > > On 10/25, Christian Brauner wrote:
+> > > >
+> > > > On Fri, Oct 25, 2019 at 04:13:25PM +0200, Oleg Nesterov wrote:
+> > > > > Almost every usage of task->flags (load or sore) can be reported as "data race".
+> > > > >
+> > > > > Say, you do
+> > > > >
+> > > > > 	if (task->flags & PF_KTHREAD)
+> > > > >
+> > > > > while this task does
+> > > > >
+> > > > > 	current->flags |= PF_FREEZER_SKIP;
+> > > > > 	schedule().
+> > > > >
+> > > > > this is data race.
+> > > >
+> > > > Right, but I thought we agreed on WONTFIX in those scenarios?
+> > > > The alternative is to READ_ONCE()/WRITE_ONCE() all of these.
+> > >
+> > > Well, in my opinion this is WONTFIX, but I won't argue if someone
+> > > adds _ONCE to all of these. Same for task->state, exit_state, and
+> > > more.
 > >
-> > This allows to collect coverage from two types of kernel background
-> > threads: the global ones, that are spawned during kernel boot and are
-> > always running (e.g. USB hub_event()); and the local ones, that are
-> > spawned when a user interacts with some kernel interface (e.g. vhost
-> > workers).
-> >
-> > To enable collecting coverage from a global background thread, a unique
-> > global handle must be assigned and passed to the corresponding
-> > kcov_remote_start() call. Then a userspace process can pass a list of such
-> > handles to the KCOV_REMOTE_ENABLE ioctl in the handles array field of the
-> > kcov_remote_arg struct. This will attach the used kcov device to the code
-> > sections, that are referenced by those handles.
-> >
-> > Since there might be many local background threads spawned from different
-> > userspace processes, we can't use a single global handle per annotation.
-> > Instead, the userspace process passes a non-zero handle through the
-> > common_handle field of the kcov_remote_arg struct. This common handle gets
-> > saved to the kcov_handle field in the current task_struct and needs to be
-> > passed to the newly spawned threads via custom annotations. Those threads
-> > should in turn be annotated with kcov_remote_start()/kcov_remote_stop().
-> >
-> > Internally kcov stores handles as u64 integers. The top byte of a handle
-> > is used to denote the id of a subsystem that this handle belongs to, and
-> > the lower 4 bytes are used to denote a handle id within that subsystem.
-> > A reserved value 0 is used as a subsystem id for common handles as they
-> > don't belong to a particular subsystem. The bytes 4-7 are currently
-> > reserved and must be zero. In the future the number of bytes used for the
-> > subsystem or handle ids might be increased.
-> >
-> > When a particular userspace proccess collects coverage by via a common
-> > handle, kcov will collect coverage for each code section that is annotated
-> > to use the common handle obtained as kcov_handle from the current
-> > task_struct. However non common handles allow to collect coverage
-> > selectively from different subsystems.
-> >
-> > ...
-> >
-> > +static struct kcov_remote *kcov_remote_add(struct kcov *kcov, u64 handle)
-> > +{
-> > +     struct kcov_remote *remote;
-> > +
-> > +     if (kcov_remote_find(handle))
-> > +             return ERR_PTR(-EEXIST);
-> > +     remote = kmalloc(sizeof(*remote), GFP_ATOMIC);
-> > +     if (!remote)
-> > +             return ERR_PTR(-ENOMEM);
-> > +     remote->handle = handle;
-> > +     remote->kcov = kcov;
-> > +     hash_add(kcov_remote_map, &remote->hnode, handle);
-> > +     return remote;
-> > +}
-> > +
-> >
-> > ...
-> >
-> > +             spin_lock(&kcov_remote_lock);
-> > +             for (i = 0; i < remote_arg->num_handles; i++) {
-> > +                     kcov_debug("handle %llx\n", remote_arg->handles[i]);
-> > +                     if (!kcov_check_handle(remote_arg->handles[i],
-> > +                                             false, true, false)) {
-> > +                             spin_unlock(&kcov_remote_lock);
-> > +                             kcov_disable(t, kcov);
-> > +                             return -EINVAL;
-> > +                     }
-> > +                     remote = kcov_remote_add(kcov, remote_arg->handles[i]);
-> > +                     if (IS_ERR(remote)) {
-> > +                             spin_unlock(&kcov_remote_lock);
-> > +                             kcov_disable(t, kcov);
-> > +                             return PTR_ERR(remote);
-> > +                     }
-> > +             }
->
-> It's worrisome that this code can perform up to 65536 GFP_ATOMIC
-> allocations without coming up for air.  The possibility of ENOMEM or of
-> causing collateral problems is significant.  It doesn't look too hard
-> to change this to use GFP_KERNEL?
+> > Well, I honestly think that state and exit_state would make sense.
+> 
+> Heh. Again, I am not arguing, but...
+> 
+> OK, lets suppose we blindly add READ_ONCE() to every access of
+> task->state/exit_state.
+> 
+> Yes, this won't hurt and possibly can fix some bugs we are not aware of.
 
-Looking at this again: it seems easy to get rid of locking
-kcov_remote_lock when doing kmalloc, but a bit harder to get rid of
-kcov->lock. Andrew, would it be OK to just change the max number of
-GFP_ATOMIC allocations to 256?
+I wasn't planning or working on adding *_ONCE everywhere. ;)
+I just think it makes sense as a preemptive strike since they are shared
+(though mostly protected by locks anyway).
 
->
-> > +u64 kcov_common_handle(void)
-> > +{
-> > +     return current->kcov_handle;
-> > +}
->
-> I don't immediately understand what this "common handle" thing is all about.
-> Code is rather lacking in this sort of high-level commentary?
->
->
+> 
+> However,
+> 
+> > There already were issues that got fixed for example in 3245d6acab98
+> > ("exit: fix race between wait_consider_task() and wait_task_zombie()")
+> 
+> The change above can't fix the problem like this.
+
+No argument about the code we discussed right here, for sure!
+
+> 
+> It is not that this code lacked READ_ONCE(). I am sure me and others
+> understood that this code can read ->exit_state more than once, just
+> nobody noticed that in this case this is really wrong.
+> 
+> IOW, if we simply change the code before 3245d6acab98 to use READ_ONCE()
+> the code will be equally wrong, and
+> 
+> > and as far as I understand this would also help kcsan to better detect
+> > races.
+> 
+> this change will simply hide the problem from kcsan.
+
+I can't speak to that since the claim that read_once() helps them even
+if it's not really doing anything. But maybe I misunderstood the
+k{c,t}san manpage.
+
+Christian
