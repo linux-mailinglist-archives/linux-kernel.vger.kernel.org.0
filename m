@@ -2,113 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5895E789B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:39:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0461E789F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbfJ1SjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 14:39:07 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38676 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbfJ1SjH (ORCPT
+        id S1728433AbfJ1SjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 14:39:15 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34789 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbfJ1SjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 14:39:07 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SId4fq017495;
-        Mon, 28 Oct 2019 13:39:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572287944;
-        bh=CiO3hXAyFsuZm3cE8SXZzPxL1D+KaY4p9kZlHGgSu6M=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vG8+/kNdu5gLrWQRaesP8Zzm2ONBqG9DU2T+h0L1SzGFSAChCLXdF+Ol5od8fKNcp
-         +QmAtQ+ntN1Bkb2YHcLI6Kg7BCuwT1RThVpH4gqmZbE//cJUKHOpOLiqhQfxWZ1YIw
-         Shp8ffYkv8GxCUbgTkJ0GAPaCjmmthY2vlxowDHY=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SId4GE098551;
-        Mon, 28 Oct 2019 13:39:04 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 28
- Oct 2019 13:38:52 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 28 Oct 2019 13:38:52 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SId4n4058699;
-        Mon, 28 Oct 2019 13:39:04 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v15 19/19] leds: lp55xx-common: Remove extern from lp55xx-common header
-Date:   Mon, 28 Oct 2019 13:36:29 -0500
-Message-ID: <20191028183629.11779-20-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191028183629.11779-1-dmurphy@ti.com>
-References: <20191028183629.11779-1-dmurphy@ti.com>
+        Mon, 28 Oct 2019 14:39:14 -0400
+Received: by mail-ot1-f65.google.com with SMTP id m19so7554811otp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 11:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/gAhBlJb+sh0KhEN82c+Z4PpNrmxIydwqif6hZnM8oQ=;
+        b=W9XRu8s6F/9TsFLHTcSQDb0Nv6pnIBlAVPHEIvO+0sRufsrPexDNntaTTDpMZkYUFo
+         HPcrYBHpRf+ThMx5LF2vxZRrxrnvJBpc4Sqnihoe1cxFGg+lLl92BzCZvB5gPmy64oYx
+         C1JVb5DYpmh6hT5M6smONPWDfCNxR+oiqBdKNQHXRCbonDeA8mQAlBm+G5c0IvbXpuED
+         fhS+aVBYsHYn5SNgUF7cgHJNxZpIvtVB/Y6vQ+MwZhPqdFpje6OesPLagLI4Ug6Q/VKZ
+         St6ztLOs3ojRqUZcTMIsSv2G7wbLOqTEMiKQ8LS2IyugyXUoJaGkFPbT/4mu9lCwKV9t
+         3T4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/gAhBlJb+sh0KhEN82c+Z4PpNrmxIydwqif6hZnM8oQ=;
+        b=J6KxMha9uGq2zdNwNJgp11X2mcvIRgjugDny+oj7Hae9DepV19wCWt908ntDmfE2Cx
+         MLGu3so1crnbLWfRK5ptmUYG9nV16/hNq5Un715le1VSV0MkDxN7mUcmZ7jBg29/g95B
+         L5sMXnMzhioCKyHO05kidNZ4D0+8b2x0rXOjO97D9gVaSa1HgmnyjkCovA0MQ7mZRyvx
+         MyuogKZI/wYkiJj8xpvb504twUafLfDQWNE5WTywGfEe8Up2PLByEiQVcu/Oe3xKsc5R
+         mOg19TSr776BFqthIGuNCH2GP7I29MwhzMwA5/ykKYZEO3oi5uTAvTc6DchCaLfsDxqJ
+         6sZQ==
+X-Gm-Message-State: APjAAAXlo7t36nnEwtjNZEnwYYC21mNyLY0DPVT1rvvMvduLUC/Li7dG
+        AHrrCKOr+ewVpj6J669wlg9zYbpuiwhTIpXXGbgh0w==
+X-Google-Smtp-Source: APXvYqyKEfwJb0l2DG8kqTlFCipDkABRVU0HfqUzj9xcr2+jKGtaVuiLUsrnqfOOo9Jq/Rny/0uW2EQPeSc+7gts5vI=
+X-Received: by 2002:a9d:5a0b:: with SMTP id v11mr15027479oth.102.1572287953644;
+ Mon, 28 Oct 2019 11:39:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191025234834.28214-1-john.stultz@linaro.org>
+ <20191025234834.28214-2-john.stultz@linaro.org> <20191028074642.GB31867@infradead.org>
+In-Reply-To: <20191028074642.GB31867@infradead.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 28 Oct 2019 11:39:03 -0700
+Message-ID: <CALAqxLXqLUpew9XptiXZGodf5M3qyNmD-D1-2CHZ9PRfPTBRRQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] mm: cma: Export cma symbols for cma heap as a module
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Sandeep Patil <sspatil@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yue Hu <huyue2@yulong.com>, Mike Rapoport <rppt@linux.ibm.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-extern is implied and is not needed in the common header file.
-Remove the extern keyword and re-align the code.
+On Mon, Oct 28, 2019 at 12:46 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Oct 25, 2019 at 11:48:33PM +0000, John Stultz wrote:
+> >  struct cma *dma_contiguous_default_area;
+> > +EXPORT_SYMBOL(dma_contiguous_default_area);
+>
+> Please CC the dma maintainer.  And no, you have no business using this.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lp55xx-common.h | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Sure thing. And I'll look again to see why I was needing to pull that
+one in to get it to build.
 
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index 18476051d3d2..051f8b33c601 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -183,29 +183,27 @@ struct lp55xx_led {
- };
- 
- /* register access */
--extern int lp55xx_write(struct lp55xx_chip *chip, u8 reg, u8 val);
--extern int lp55xx_read(struct lp55xx_chip *chip, u8 reg, u8 *val);
--extern int lp55xx_update_bits(struct lp55xx_chip *chip, u8 reg,
--			u8 mask, u8 val);
-+int lp55xx_write(struct lp55xx_chip *chip, u8 reg, u8 val);
-+int lp55xx_read(struct lp55xx_chip *chip, u8 reg, u8 *val);
-+int lp55xx_update_bits(struct lp55xx_chip *chip, u8 reg, u8 mask, u8 val);
- 
- /* external clock detection */
--extern bool lp55xx_is_extclk_used(struct lp55xx_chip *chip);
-+bool lp55xx_is_extclk_used(struct lp55xx_chip *chip);
- 
- /* common device init/deinit functions */
--extern int lp55xx_init_device(struct lp55xx_chip *chip);
--extern void lp55xx_deinit_device(struct lp55xx_chip *chip);
-+int lp55xx_init_device(struct lp55xx_chip *chip);
-+void lp55xx_deinit_device(struct lp55xx_chip *chip);
- 
- /* common LED class device functions */
--extern int lp55xx_register_leds(struct lp55xx_led *led,
--				struct lp55xx_chip *chip);
-+int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip);
- 
- /* common device attributes functions */
--extern int lp55xx_register_sysfs(struct lp55xx_chip *chip);
--extern void lp55xx_unregister_sysfs(struct lp55xx_chip *chip);
-+int lp55xx_register_sysfs(struct lp55xx_chip *chip);
-+void lp55xx_unregister_sysfs(struct lp55xx_chip *chip);
- 
- /* common device tree population function */
--extern struct lp55xx_platform_data
--*lp55xx_of_populate_pdata(struct device *dev, struct device_node *np,
--			  struct lp55xx_chip *chip);
-+struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
-+						      struct device_node *np,
-+						      struct lp55xx_chip *chip);
- 
- #endif /* _LEDS_LP55XX_COMMON_H */
--- 
-2.22.0.214.g8dca754b1e
+> Even if you did, internals like this should always be EXPORT_SYMBOL_GPL.
 
+Certainly! My mistake here!
+
+Thanks for the feedback!
+-john
