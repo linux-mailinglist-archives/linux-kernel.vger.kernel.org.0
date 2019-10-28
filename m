@@ -2,56 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BBC2E7B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFF5E7BA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfJ1VlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:41:07 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:49664 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfJ1VlG (ORCPT
+        id S1731930AbfJ1VoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:44:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42230 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730592AbfJ1VoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:41:06 -0400
-Received: from belgarion ([90.55.204.252])
-        by mwinf5d17 with ME
-        id K9h32100F5TFNlm039h4zn; Mon, 28 Oct 2019 22:41:04 +0100
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 28 Oct 2019 22:41:04 +0100
-X-ME-IP: 90.55.204.252
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 28/46] input: touchscreen: mainstone: sync with zylonite driver
-References: <20191018154052.1276506-1-arnd@arndb.de>
-        <20191018154201.1276638-28-arnd@arndb.de>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Mon, 28 Oct 2019 22:40:58 +0100
-In-Reply-To: <20191018154201.1276638-28-arnd@arndb.de> (Arnd Bergmann's
-        message of "Fri, 18 Oct 2019 17:41:43 +0200")
-Message-ID: <87tv7sk0ph.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 28 Oct 2019 17:44:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 21so7836831pfj.9;
+        Mon, 28 Oct 2019 14:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=drfMRjPwU02ASI4D8UPPiRYEp0GQr7RmuUSXzOJ1M7c=;
+        b=Na/pRE3OIbMvOU5Volk0BYefi+jBZUfF4rzcDoqfVGzl4K2s0TVoZleBlNrJ5KuDID
+         8TQrHao/fBEgJOQyZHPyC16TNS/P4HeERIeymPCbIWVXPvfDfIJdh4f//ixuZSnE1My5
+         QAcgtngX9mQQReaS+9pAeOA0zkn9swASNPOPY5j1zMf11hp9c25f3VhowuSsYXvc1QOS
+         5DiEfLzgKfgpzDOV03RGhHff8lha/yzPDlkvrHxvZ0VAKGLp6++h5ih7KD32BBmjGDOF
+         47na+6tLBIey1QH9Qnbwub48NVQM7WhRVIv47FK/Wi6PpDHt/SGahMy+DGke+igaesJM
+         XZXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=drfMRjPwU02ASI4D8UPPiRYEp0GQr7RmuUSXzOJ1M7c=;
+        b=krwFqVzPQZJeBd09gGqA3Dms1BOKGiolEeu/J8fAqICrhYSfpFy5GJBV/4CusYXbWO
+         dEWZYty0c/JYDcVeP45TwnkLGyNdBzCiryP33rKyHIfAKCQU1tSJ2IEqONYTOkcCo240
+         RKlPtWD7TLvvub9JO+dir3YoMhPQ9v1C7dvxvOZqmZinZMbHzVr8JPBtShAbe7Uka+b+
+         EaUYF26CtYLyMazSXHL6uwgwE9AU6AUspTncDU/0Zc1lkGgiOx7aZm4naXeXaxmJlhZO
+         kBRa1BOtAexr+1sD5kqav1NCN1FyndDmsw0+GkkvqaygNI1wLgZiDurBZUxnLf9tevoc
+         qH1Q==
+X-Gm-Message-State: APjAAAXdVCY7DSUBGq0/eE3MbA9cGnqmuOVEuNgTwx8Uz81R6ev8rd90
+        RAvkbUJkj/J+A7RSyioAnRkbgQmhAZ4=
+X-Google-Smtp-Source: APXvYqwLPAL5HbcRKZvVZt2XxMfc6yX6k45Zo9pjgV++L6/nE9p6IGd9f9PIWWYsu5p/nVlN1KtQsA==
+X-Received: by 2002:a17:90a:dd43:: with SMTP id u3mr1866546pjv.130.1572299047213;
+        Mon, 28 Oct 2019 14:44:07 -0700 (PDT)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:539:24ac:ac7b:1049:baaf:a6f9])
+        by smtp.gmail.com with ESMTPSA id t1sm1693013pgp.9.2019.10.28.14.44.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 14:44:06 -0700 (PDT)
+From:   madhuparnabhowmik04@gmail.com
+To:     paulmck@kernel.org, joel@joelfernandes.org, corbet@lwn.net
+Cc:     linux-doc@vger.kernel.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH] Documentation: RCU: NMI-RCU: Converted NMI-RCU.txt to NMI-RCU.rst.
+Date:   Tue, 29 Oct 2019 03:12:52 +0530
+Message-Id: <20191028214252.17580-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-> +	} else if (machine_is_zylonite()) {
-> +		pen_int = 1;
->  	}
-I don't understand that part, why do you check for a zylonite board in this file
-?
+This patch converts NMI-RCU from txt to rst format.
+Also adds NMI-RCU in the index.rst file.
 
-Cheers.
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ .../RCU/{NMI-RCU.txt => NMI-RCU.rst}          | 53 ++++++++++---------
+ Documentation/RCU/index.rst                   |  1 +
+ 2 files changed, 29 insertions(+), 25 deletions(-)
+ rename Documentation/RCU/{NMI-RCU.txt => NMI-RCU.rst} (73%)
 
---
-Robert
+diff --git a/Documentation/RCU/NMI-RCU.txt b/Documentation/RCU/NMI-RCU.rst
+similarity index 73%
+rename from Documentation/RCU/NMI-RCU.txt
+rename to Documentation/RCU/NMI-RCU.rst
+index 881353fd5bff..da5861f6a433 100644
+--- a/Documentation/RCU/NMI-RCU.txt
++++ b/Documentation/RCU/NMI-RCU.rst
+@@ -1,4 +1,7 @@
++.. _NMI_rcu_doc:
++
+ Using RCU to Protect Dynamic NMI Handlers
++=========================================
+ 
+ 
+ Although RCU is usually used to protect read-mostly data structures,
+@@ -9,7 +12,7 @@ work in "arch/x86/oprofile/nmi_timer_int.c" and in
+ "arch/x86/kernel/traps.c".
+ 
+ The relevant pieces of code are listed below, each followed by a
+-brief explanation.
++brief explanation.::
+ 
+ 	static int dummy_nmi_callback(struct pt_regs *regs, int cpu)
+ 	{
+@@ -18,12 +21,12 @@ brief explanation.
+ 
+ The dummy_nmi_callback() function is a "dummy" NMI handler that does
+ nothing, but returns zero, thus saying that it did nothing, allowing
+-the NMI handler to take the default machine-specific action.
++the NMI handler to take the default machine-specific action.::
+ 
+ 	static nmi_callback_t nmi_callback = dummy_nmi_callback;
+ 
+ This nmi_callback variable is a global function pointer to the current
+-NMI handler.
++NMI handler.::
+ 
+ 	void do_nmi(struct pt_regs * regs, long error_code)
+ 	{
+@@ -53,11 +56,12 @@ anyway.  However, in practice it is a good documentation aid, particularly
+ for anyone attempting to do something similar on Alpha or on systems
+ with aggressive optimizing compilers.
+ 
+-Quick Quiz:  Why might the rcu_dereference_sched() be necessary on Alpha,
+-	     given that the code referenced by the pointer is read-only?
++Quick Quiz:
++		Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
+ 
++:ref:`Answer to Quick Quiz <answer_quick_quiz_NMI>`
+ 
+-Back to the discussion of NMI and RCU...
++Back to the discussion of NMI and RCU...::
+ 
+ 	void set_nmi_callback(nmi_callback_t callback)
+ 	{
+@@ -68,7 +72,7 @@ The set_nmi_callback() function registers an NMI handler.  Note that any
+ data that is to be used by the callback must be initialized up -before-
+ the call to set_nmi_callback().  On architectures that do not order
+ writes, the rcu_assign_pointer() ensures that the NMI handler sees the
+-initialized values.
++initialized values::
+ 
+ 	void unset_nmi_callback(void)
+ 	{
+@@ -82,7 +86,7 @@ up any data structures used by the old NMI handler until execution
+ of it completes on all other CPUs.
+ 
+ One way to accomplish this is via synchronize_rcu(), perhaps as
+-follows:
++follows::
+ 
+ 	unset_nmi_callback();
+ 	synchronize_rcu();
+@@ -98,24 +102,23 @@ to free up the handler's data as soon as synchronize_rcu() returns.
+ Important note: for this to work, the architecture in question must
+ invoke nmi_enter() and nmi_exit() on NMI entry and exit, respectively.
+ 
++.. _answer_quick_quiz_NMI:
+ 
+-Answer to Quick Quiz
+-
+-	Why might the rcu_dereference_sched() be necessary on Alpha, given
+-	that the code referenced by the pointer is read-only?
++Answer to Quick Quiz:
++	Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
+ 
+-	Answer: The caller to set_nmi_callback() might well have
+-		initialized some data that is to be used by the new NMI
+-		handler.  In this case, the rcu_dereference_sched() would
+-		be needed, because otherwise a CPU that received an NMI
+-		just after the new handler was set might see the pointer
+-		to the new NMI handler, but the old pre-initialized
+-		version of the handler's data.
++	The caller to set_nmi_callback() might well have
++	initialized some data that is to be used by the new NMI
++	handler.  In this case, the rcu_dereference_sched() would
++	be needed, because otherwise a CPU that received an NMI
++	just after the new handler was set might see the pointer
++	to the new NMI handler, but the old pre-initialized
++	version of the handler's data.
+ 
+-		This same sad story can happen on other CPUs when using
+-		a compiler with aggressive pointer-value speculation
+-		optimizations.
++	This same sad story can happen on other CPUs when using
++	a compiler with aggressive pointer-value speculation
++	optimizations.
+ 
+-		More important, the rcu_dereference_sched() makes it
+-		clear to someone reading the code that the pointer is
+-		being protected by RCU-sched.
++	More important, the rcu_dereference_sched() makes it
++	clear to someone reading the code that the pointer is
++	being protected by RCU-sched.
+diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+index 8d20d44f8fd4..627128c230dc 100644
+--- a/Documentation/RCU/index.rst
++++ b/Documentation/RCU/index.rst
+@@ -10,6 +10,7 @@ RCU concepts
+    arrayRCU
+    rcu
+    listRCU
++   NMI-RCU
+    UP
+ 
+    Design/Memory-Ordering/Tree-RCU-Memory-Ordering
+-- 
+2.17.1
+
