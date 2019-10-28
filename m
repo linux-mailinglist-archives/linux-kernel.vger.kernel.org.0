@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9695BE7436
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F6BE7430
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390537AbfJ1O5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:57:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39876 "EHLO
+        id S2390512AbfJ1O5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:57:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40268 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390427AbfJ1O4t (ORCPT
+        with ESMTP id S2390502AbfJ1O5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:56:49 -0400
+        Mon, 28 Oct 2019 10:57:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lLXTCpICWi659xs2yPkSm7HYK750Tj1NUn0NyJCUbx4=; b=tUqOqnfn92Yu
-        E2xQO9YXBZx1AKlOdAdfx9pMdxD0yByLumn5KM9rhoRntlwnPOv/ay8ZmPSf/TyEG72Kf5cAdb5V1
-        vU7EW+oNTsO+Nw2Axk2g60e8JzenuLIn6YzGYqrkvgyE8OkeReRxYhSFM3XKYgXne8EPun3A1+aur
-        zod0c=;
+        List-Archive; bh=pRAnZ2eosKV/53G9bqUjly+zJvMmzCGpbgurzDJUuFc=; b=ji8GRUakC0x3
+        My3BXG8nqht1NWURYP4Hl6TLrXwU+YQJQtG1BZ97HpUaz0DgR5UWjv9SY44Yy/KwuFpDAejKo3hHh
+        2130boS1xvfTbbKSPf/G1NXAijvKgw2nBNq0W+VUokakasfTmtqnI6lDnbLH6PMpRjyuNcgU3nNcv
+        rz4rM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iP6Ri-0008RZ-BZ; Mon, 28 Oct 2019 14:56:38 +0000
+        id 1iP6Ri-0008Rf-UG; Mon, 28 Oct 2019 14:56:39 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 9EEAF27403F6; Mon, 28 Oct 2019 14:56:36 +0000 (GMT)
+        id 5632E2740B7F; Mon, 28 Oct 2019 14:56:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        festevam@gmail.com, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mark Brown <broonie@kernel.org>, nicoleotsuka@gmail.com,
-        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
-        timur@kernel.org, tiwai@suse.com, Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_esai: Add spin lock to protect reset, stop and start" to the asoc tree
-In-Reply-To: <52e92c4221a83e39a84a6cd92fc3d5479b44894c.1572252321.git.shengjiu.wang@nxp.com>
+        dannym@scratchpost.org, georgii.staroselskii@emlid.com,
+        kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, mripard@kernel.org,
+        perex@perex.cz, tglx@linutronix.de, tiwai@suse.com, wens@csie.org,
+        yuehaibing@huawei.com
+Subject: Applied "ASoC: sunxi: sun4i-codec: remove unneeded semicolon" to the asoc tree
+In-Reply-To: <20191025120801.16236-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191028145636.9EEAF27403F6@ypsilon.sirena.org.uk>
-Date:   Mon, 28 Oct 2019 14:56:36 +0000 (GMT)
+Message-Id: <20191028145637.5632E2740B7F@ypsilon.sirena.org.uk>
+Date:   Mon, 28 Oct 2019 14:56:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_esai: Add spin lock to protect reset, stop and start
+   ASoC: sunxi: sun4i-codec: remove unneeded semicolon
 
 has been applied to the asoc tree at
 
@@ -74,103 +75,51 @@ to this mail.
 Thanks,
 Mark
 
-From 35dac627471938eda89fa39ee4ead1f7667e0f57 Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Mon, 28 Oct 2019 17:11:05 +0800
-Subject: [PATCH] ASoC: fsl_esai: Add spin lock to protect reset, stop and
- start
+From 24d05966b560b88d37d90e64f018af2fed888104 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 25 Oct 2019 20:08:01 +0800
+Subject: [PATCH] ASoC: sunxi: sun4i-codec: remove unneeded semicolon
 
-xrun may happen at the end of stream, the
-trigger->fsl_esai_trigger_stop maybe called in the middle of
-fsl_esai_hw_reset, this may cause esai in wrong state
-after stop, and there may be endless xrun interrupt.
+remove unneeded semicolon.
 
-This issue may also happen with trigger->fsl_esai_trigger_start.
-
-So Add spin lock to lock those functions.
-
-Fixes: 7ccafa2b3879 ("ASoC: fsl_esai: recover the channel swap after xrun")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/52e92c4221a83e39a84a6cd92fc3d5479b44894c.1572252321.git.shengjiu.wang@nxp.com
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20191025120801.16236-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_esai.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ sound/soc/sunxi/sun4i-codec.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index a78e4ab478df..c7a49d03463a 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -33,6 +33,7 @@
-  * @fsysclk: system clock source to derive HCK, SCK and FS
-  * @spbaclk: SPBA clock (optional, depending on SoC design)
-  * @task: tasklet to handle the reset operation
-+ * @lock: spin lock between hw_reset() and trigger()
-  * @fifo_depth: depth of tx/rx FIFO
-  * @slot_width: width of each DAI slot
-  * @slots: number of slots
-@@ -56,6 +57,7 @@ struct fsl_esai {
- 	struct clk *fsysclk;
- 	struct clk *spbaclk;
- 	struct tasklet_struct task;
-+	spinlock_t lock; /* Protect hw_reset and trigger */
- 	u32 fifo_depth;
- 	u32 slot_width;
- 	u32 slots;
-@@ -676,8 +678,10 @@ static void fsl_esai_hw_reset(unsigned long arg)
- {
- 	struct fsl_esai *esai_priv = (struct fsl_esai *)arg;
- 	bool tx = true, rx = false, enabled[2];
-+	unsigned long lock_flags;
- 	u32 tfcr, rfcr;
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index ee448d5e07a6..34f3e0be3058 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -1442,7 +1442,7 @@ static struct snd_soc_card *sun8i_a23_codec_create_card(struct device *dev)
+ 	if (!aux_dev.dlc.of_node) {
+ 		dev_err(dev, "Can't find analog controls for codec.\n");
+ 		return ERR_PTR(-EINVAL);
+-	};
++	}
  
-+	spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 	/* Save the registers */
- 	regmap_read(esai_priv->regmap, REG_ESAI_TFCR, &tfcr);
- 	regmap_read(esai_priv->regmap, REG_ESAI_RFCR, &rfcr);
-@@ -715,6 +719,8 @@ static void fsl_esai_hw_reset(unsigned long arg)
- 		fsl_esai_trigger_start(esai_priv, tx);
- 	if (enabled[rx])
- 		fsl_esai_trigger_start(esai_priv, rx);
-+
-+	spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- }
+ 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
+ 	if (!card->dai_link)
+@@ -1480,7 +1480,7 @@ static struct snd_soc_card *sun8i_h3_codec_create_card(struct device *dev)
+ 	if (!aux_dev.dlc.of_node) {
+ 		dev_err(dev, "Can't find analog controls for codec.\n");
+ 		return ERR_PTR(-EINVAL);
+-	};
++	}
  
- static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
-@@ -722,6 +728,7 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- {
- 	struct fsl_esai *esai_priv = snd_soc_dai_get_drvdata(dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	unsigned long lock_flags;
+ 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
+ 	if (!card->dai_link)
+@@ -1518,7 +1518,7 @@ static struct snd_soc_card *sun8i_v3s_codec_create_card(struct device *dev)
+ 	if (!aux_dev.dlc.of_node) {
+ 		dev_err(dev, "Can't find analog controls for codec.\n");
+ 		return ERR_PTR(-EINVAL);
+-	};
++	}
  
- 	esai_priv->channels[tx] = substream->runtime->channels;
- 
-@@ -729,12 +736,16 @@ static int fsl_esai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_start(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		spin_lock_irqsave(&esai_priv->lock, lock_flags);
- 		fsl_esai_trigger_stop(esai_priv, tx);
-+		spin_unlock_irqrestore(&esai_priv->lock, lock_flags);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1002,6 +1013,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, esai_priv);
- 
-+	spin_lock_init(&esai_priv->lock);
- 	ret = fsl_esai_hw_init(esai_priv);
- 	if (ret)
- 		return ret;
+ 	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
+ 	if (!card->dai_link)
 -- 
 2.20.1
 
