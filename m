@@ -2,76 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53772E6D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 117B4E6DA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:58:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733089AbfJ1H5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 03:57:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733079AbfJ1H5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 03:57:03 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A96620650;
-        Mon, 28 Oct 2019 07:56:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572249423;
-        bh=7WSAwIvIMmCnPFbnYVFD8qYwityLxzs0vjC/ubdcMoA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gx3AXM/ir5pciLBeAaR22OBYiMfLES8rhG0Iv3VHtB96zQoTXZS3w1aCpbsvSN8e5
-         ky/KDRl2xKeD+GUeARJYhc5rbRRRlQqhTDfskXucyXRD/4nBjXhB1w1ETnyBRYz8XK
-         w+YvPKXqQnWo2HIIsMdnRQ2zoAYX1HEbk5uxsoYc=
-Date:   Mon, 28 Oct 2019 15:56:40 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Rogerio Pimentel da Silva <rpimentel.silva@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Carlo Caione <ccaione@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mq-evk: Add remote control
-Message-ID: <20191028075638.GS16985@dragon>
-References: <20191022192038.30094-1-rpimentel.silva@gmail.com>
+        id S1733109AbfJ1H57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 03:57:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36440 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731140AbfJ1H57 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 03:57:59 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7s6n4177032;
+        Mon, 28 Oct 2019 07:57:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=jQ6PJCli6p5m7RwQspPzyqTvse7VkcpWcjvd3zOJ4+A=;
+ b=HAQhKnprpT+rni6UrLSaaxlllVPKP9qFG9g/DnYovW+Mey13732trRR/riMkNnRM66Fn
+ gl7+/0Gc0h4RVBzI/RlvZ5ewCa+Jh8JsFdLxEhMof//9KM4oWmqxuAg6Iu22b74X/Hg5
+ b325kHQWHNF2LPUsPxCy7bAdIUu6yqsZlHjduOVuIjVUEkR9w2u6qSeZGqM9IRXopZJT
+ tl25BUtCGQvLWQPAl8gIpD1LotwFU0P6kx+GMTjOEkDLAeWyzHqNozAKQHHEKnZHfarK
+ PJJOeZcQU6AkeYMFNqBs9JumOrSSdf5aqsQH78Kfl9E5zmX+aFSOgTBx1R/sE+tLebyS jA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2vvumf50na-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Oct 2019 07:57:50 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9S7s07f105156;
+        Mon, 28 Oct 2019 07:57:50 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vw09f7h59-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Oct 2019 07:57:50 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9S7vmEl029995;
+        Mon, 28 Oct 2019 07:57:49 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 28 Oct 2019 00:57:47 -0700
+Date:   Mon, 28 Oct 2019 10:57:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Cristiane Naves <cristianenavescardoso09@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>
+Subject: Re: [RESEND PATCH] staging: gasket: Fix lines ending with a '('
+Message-ID: <20191028075738.GC1944@kadam>
+References: <20191025232935.GA813@cristiane-Inspiron-5420>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022192038.30094-1-rpimentel.silva@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191025232935.GA813@cristiane-Inspiron-5420>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910280079
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9423 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910280079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 04:20:34PM -0300, Rogerio Pimentel da Silva wrote:
-> Add remote control to i.MX8M EVK device tree.
-> 
-> The rc protocol must be selected by writing to:
-> /sys/devices/platform/ir-receiver/rc/rc0/protocols
-> 
-> On my tests, I used "nec" rc protocol:
-> echo nec > protocols
-> 
-> Tested using evetest:
-> evtest /dev/input/event0
-> 
-> Output log for each key pressed:
-> Event: 
-> time 1568122608.267845, -------------- SYN_REPORT ------------
-> Event: 
-> time 1568122610.503835, type 4 (EV_MSC), code 4 (MSC_SCAN), value 440
-> 
-> Signed-off-by: Rogerio Pimentel da Silva <rpimentel.silva@gmail.com>
+When I see a RESEND in the subject, that means you are tell us we messed
+up and accidentally ignored your patch.  So then we have to figure out
+what went wrong with the process and so we don't mess up again.
 
-Applied, thanks.
+It would help us if you put a note under the --- cut off like "I sent
+this a month ago and never received a response.  Here is a link to the
+email archive so I know that it made it to the list."
+
+I recently had an issue like this where I complained that my patch
+wasn't applied and the maintainer said "Oh.  That's odd.  I have it
+written down in patchword that I emailed you to ask you do fix the bug
+in a different way."  So these sorts of mistakes happen.
+
+regards,
+dan carpenter
+
+
