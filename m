@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B99FE6B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD44BE6B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730863AbfJ1Csp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:48:45 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47938 "EHLO
+        id S1731032AbfJ1CtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:49:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:8347 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730623AbfJ1Csi (ORCPT
+        with ESMTP id S1730492AbfJ1Csd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:48:38 -0400
-X-UUID: cef434dc8f8a48aca114eb333c900920-20191028
-X-UUID: cef434dc8f8a48aca114eb333c900920-20191028
+        Sun, 27 Oct 2019 22:48:33 -0400
+X-UUID: f92e7fbd52af47e5a834b965fe6a22fb-20191028
+X-UUID: f92e7fbd52af47e5a834b965fe6a22fb-20191028
 Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 521179705; Mon, 28 Oct 2019 10:48:28 +0800
+        with ESMTP id 243513245; Mon, 28 Oct 2019 10:48:28 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Mon, 28 Oct 2019 10:48:27 +0800
@@ -35,9 +35,9 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
         Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v8 12/14] soc: mediatek: Add MT8183 scpsys support
-Date:   Mon, 28 Oct 2019 10:48:16 +0800
-Message-ID: <1572230898-7860-13-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v8 13/14] arm64: dts: Add power controller device node of MT8183
+Date:   Mon, 28 Oct 2019 10:48:17 +0800
+Message-ID: <1572230898-7860-14-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1572230898-7860-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1572230898-7860-1-git-send-email-weiyi.lu@mediatek.com>
@@ -49,271 +49,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add scpsys driver for MT8183
+Add power controller node and smi-common node for MT8183
+In scpsys node, it contains clocks and regmapping of
+infracfg and smi-common for bus protection.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 226 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 226 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 62 ++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 992e5b3..eb828d9 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -20,6 +20,7 @@
- #include <dt-bindings/power/mt7622-power.h>
- #include <dt-bindings/power/mt7623a-power.h>
- #include <dt-bindings/power/mt8173-power.h>
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 97f84aa..6cbbd77 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/clock/mt8183-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
 +#include <dt-bindings/power/mt8183-power.h>
+ #include "mt8183-pinfunc.h"
  
- #define MTK_POLL_DELAY_US   10
- #define MTK_POLL_TIMEOUT    USEC_PER_SEC
-@@ -1129,6 +1130,217 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	{MT8173_POWER_DOMAIN_MFG_2D, MT8173_POWER_DOMAIN_MFG},
- };
+ / {
+@@ -253,6 +254,62 @@
+ 			#interrupt-cells = <2>;
+ 		};
  
-+/*
-+ * MT8183 power domain support
-+ */
++		scpsys: syscon@10006000 {
++			compatible = "mediatek,mt8183-scpsys", "syscon";
++			#power-domain-cells = <1>;
++			reg = <0 0x10006000 0 0x1000>;
++			clocks = <&topckgen CLK_TOP_MUX_AUD_INTBUS>,
++				 <&infracfg CLK_INFRA_AUDIO>,
++				 <&infracfg CLK_INFRA_AUDIO_26M_BCLK>,
++				 <&topckgen CLK_TOP_MUX_MFG>,
++				 <&topckgen CLK_TOP_MUX_MM>,
++				 <&topckgen CLK_TOP_MUX_CAM>,
++				 <&topckgen CLK_TOP_MUX_IMG>,
++				 <&topckgen CLK_TOP_MUX_IPU_IF>,
++				 <&topckgen CLK_TOP_MUX_DSP>,
++				 <&topckgen CLK_TOP_MUX_DSP1>,
++				 <&topckgen CLK_TOP_MUX_DSP2>,
++				 <&mmsys CLK_MM_SMI_COMMON>,
++				 <&mmsys CLK_MM_SMI_LARB0>,
++				 <&mmsys CLK_MM_SMI_LARB1>,
++				 <&mmsys CLK_MM_GALS_COMM0>,
++				 <&mmsys CLK_MM_GALS_COMM1>,
++				 <&mmsys CLK_MM_GALS_CCU2MM>,
++				 <&mmsys CLK_MM_GALS_IPU12MM>,
++				 <&mmsys CLK_MM_GALS_IMG2MM>,
++				 <&mmsys CLK_MM_GALS_CAM2MM>,
++				 <&mmsys CLK_MM_GALS_IPU2MM>,
++				 <&imgsys CLK_IMG_LARB5>,
++				 <&imgsys CLK_IMG_LARB2>,
++				 <&camsys CLK_CAM_LARB6>,
++				 <&camsys CLK_CAM_LARB3>,
++				 <&camsys CLK_CAM_SENINF>,
++				 <&camsys CLK_CAM_CAMSV0>,
++				 <&camsys CLK_CAM_CAMSV1>,
++				 <&camsys CLK_CAM_CAMSV2>,
++				 <&camsys CLK_CAM_CCU>,
++				 <&ipu_conn CLK_IPU_CONN_IPU>,
++				 <&ipu_conn CLK_IPU_CONN_AHB>,
++				 <&ipu_conn CLK_IPU_CONN_AXI>,
++				 <&ipu_conn CLK_IPU_CONN_ISP>,
++				 <&ipu_conn CLK_IPU_CONN_CAM_ADL>,
++				 <&ipu_conn CLK_IPU_CONN_IMG_ADL>;
++			clock-names = "audio", "audio1", "audio2",
++				      "mfg", "mm", "cam",
++				      "isp", "vpu", "vpu1",
++				      "vpu2", "vpu3", "mm-0",
++				      "mm-1", "mm-2", "mm-3",
++				      "mm-4", "mm-5", "mm-6",
++				      "mm-7", "mm-8", "mm-9",
++				      "isp-0", "isp-1", "cam-0",
++				      "cam-1", "cam-2", "cam-3",
++				      "cam-4", "cam-5", "cam-6",
++				      "vpu-0", "vpu-1", "vpu-2",
++				      "vpu-3", "vpu-4", "vpu-5";
++			infracfg = <&infracfg>;
++			smi_comm = <&smi_common>;
++		};
 +
-+static const struct scp_domain_data scp_domain_data_mt8183[] = {
-+	[MT8183_POWER_DOMAIN_AUDIO] = {
-+		.name = "audio",
-+		.sta_mask = PWR_STATUS_AUDIO,
-+		.ctl_offs = 0x0314,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.basic_clk_id = {"audio", "audio1", "audio2"},
-+	},
-+	[MT8183_POWER_DOMAIN_CONN] = {
-+		.name = "conn",
-+		.sta_mask = PWR_STATUS_CONN,
-+		.ctl_offs = 0x032c,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-+				BIT(13) | BIT(14), BIT(13) | BIT(14)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_MFG_ASYNC] = {
-+		.name = "mfg_async",
-+		.sta_mask = PWR_STATUS_MFG_ASYNC,
-+		.ctl_offs = 0x0334,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+		.basic_clk_id = {"mfg"},
-+	},
-+	[MT8183_POWER_DOMAIN_MFG] = {
-+		.name = "mfg",
-+		.sta_mask = PWR_STATUS_MFG,
-+		.ctl_offs = 0x0338,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT8183_POWER_DOMAIN_MFG_CORE0] = {
-+		.name = "mfg_core0",
-+		.sta_mask = BIT(7),
-+		.ctl_offs = 0x034c,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT8183_POWER_DOMAIN_MFG_CORE1] = {
-+		.name = "mfg_core1",
-+		.sta_mask = BIT(20),
-+		.ctl_offs = 0x0310,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT8183_POWER_DOMAIN_MFG_2D] = {
-+		.name = "mfg_2d",
-+		.sta_mask = PWR_STATUS_MFG_2D,
-+		.ctl_offs = 0x0348,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
-+				BIT(19) | BIT(20) | BIT(21),
-+				BIT(19) | BIT(20) | BIT(21)),
-+			BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-+				BIT(21) | BIT(22), BIT(21) | BIT(22)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_DISP] = {
-+		.name = "disp",
-+		.sta_mask = PWR_STATUS_DISP,
-+		.ctl_offs = 0x030c,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.basic_clk_id = {"mm"},
-+		.subsys_clk_prefix = "mm",
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
-+				BIT(16) | BIT(17), BIT(16) | BIT(17)),
-+			BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-+				BIT(10) | BIT(11), BIT(10) | BIT(11)),
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				GENMASK(7, 0), GENMASK(7, 0)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_CAM] = {
-+		.name = "cam",
-+		.sta_mask = BIT(25),
-+		.ctl_offs = 0x0344,
-+		.sram_pdn_bits = GENMASK(9, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.basic_clk_id = {"cam"},
-+		.subsys_clk_prefix = "cam",
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				BIT(4) | BIT(5) | BIT(9) | BIT(13),
-+				BIT(4) | BIT(5) | BIT(9) | BIT(13)),
-+			BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-+				BIT(28), BIT(28)),
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				BIT(11), 0),
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				BIT(3) | BIT(4), BIT(3) | BIT(4)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = PWR_STATUS_ISP,
-+		.ctl_offs = 0x0308,
-+		.sram_pdn_bits = GENMASK(9, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.basic_clk_id = {"isp"},
-+		.subsys_clk_prefix = "isp",
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				BIT(3) | BIT(8), BIT(3) | BIT(8)),
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				BIT(10), 0),
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				BIT(2), BIT(2)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_VDEC] = {
-+		.name = "vdec",
-+		.sta_mask = BIT(31),
-+		.ctl_offs = 0x0300,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.bp_table = {
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				BIT(7), BIT(7)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_VENC] = {
-+		.name = "venc",
-+		.sta_mask = PWR_STATUS_VENC,
-+		.ctl_offs = 0x0304,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.bp_table = {
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				BIT(1), BIT(1)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_VPU_TOP] = {
-+		.name = "vpu_top",
-+		.sta_mask = BIT(26),
-+		.ctl_offs = 0x0324,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.basic_clk_id = {"vpu", "vpu1"},
-+		.subsys_clk_prefix = "vpu",
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				GENMASK(9, 6) | BIT(12),
-+				GENMASK(9, 6) | BIT(12)),
-+			BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-+				BIT(27), BIT(27)),
-+			BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-+				BIT(10) | BIT(11), BIT(10) | BIT(11)),
-+			BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-+				BIT(5) | BIT(6), BIT(5) | BIT(6)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_VPU_CORE0] = {
-+		.name = "vpu_core0",
-+		.sta_mask = BIT(27),
-+		.ctl_offs = 0x33c,
-+		.sram_iso_ctrl = true,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.basic_clk_id = {"vpu2"},
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-+				BIT(6), BIT(6)),
-+			BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-+				BIT(0) | BIT(2) | BIT(4),
-+				BIT(0) | BIT(2) | BIT(4)),
-+		},
-+	},
-+	[MT8183_POWER_DOMAIN_VPU_CORE1] = {
-+		.name = "vpu_core1",
-+		.sta_mask = BIT(28),
-+		.ctl_offs = 0x0340,
-+		.sram_iso_ctrl = true,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.basic_clk_id = {"vpu3"},
-+		.bp_table = {
-+			BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-+				BIT(7), BIT(7)),
-+			BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-+				BIT(1) | BIT(3) | BIT(5),
-+				BIT(1) | BIT(3) | BIT(5)),
-+		},
-+	},
-+};
-+
-+static const struct scp_subdomain scp_subdomain_mt8183[] = {
-+	{MT8183_POWER_DOMAIN_MFG_ASYNC, MT8183_POWER_DOMAIN_MFG},
-+	{MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_2D},
-+	{MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE0},
-+	{MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE1},
-+	{MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_CAM},
-+	{MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_ISP},
-+	{MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VDEC},
-+	{MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VENC},
-+	{MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VPU_TOP},
-+	{MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE0},
-+	{MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE1},
-+};
-+
- static const struct scp_soc_data mt2701_data = {
- 	.domains = scp_domain_data_mt2701,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2701),
-@@ -1195,6 +1407,17 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.bus_prot_reg_update = true,
- };
+ 		apmixedsys: syscon@1000c000 {
+ 			compatible = "mediatek,mt8183-apmixedsys", "syscon";
+ 			reg = <0 0x1000c000 0 0x1000>;
+@@ -585,6 +642,11 @@
+ 			#clock-cells = <1>;
+ 		};
  
-+static const struct scp_soc_data mt8183_data = {
-+	.domains = scp_domain_data_mt8183,
-+	.num_domains = ARRAY_SIZE(scp_domain_data_mt8183),
-+	.subdomains = scp_subdomain_mt8183,
-+	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt8183),
-+	.regs = {
-+		.pwr_sta_offs = 0x0180,
-+		.pwr_sta2nd_offs = 0x0184
-+	}
-+};
++		smi_common: smi@14019000 {
++			compatible = "mediatek,mt8183-smi-common", "syscon";
++			reg = <0 0x14019000 0 0x1000>;
++		};
 +
- /*
-  * scpsys driver init
-  */
-@@ -1219,6 +1442,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.compatible = "mediatek,mt8173-scpsys",
- 		.data = &mt8173_data,
- 	}, {
-+		.compatible = "mediatek,mt8183-scpsys",
-+		.data = &mt8183_data,
-+	}, {
- 		/* sentinel */
- 	}
- };
+ 		imgsys: syscon@15020000 {
+ 			compatible = "mediatek,mt8183-imgsys", "syscon";
+ 			reg = <0 0x15020000 0 0x1000>;
 -- 
 1.8.1.1.dirty
 
