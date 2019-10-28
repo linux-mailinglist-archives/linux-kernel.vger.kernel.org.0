@@ -2,147 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53AE7E7C51
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4F2EE7C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:26:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbfJ1W0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:26:51 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39227 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbfJ1W0u (ORCPT
+        id S1728236AbfJ1W0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:26:41 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45196 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfJ1W0k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:26:50 -0400
-Received: by mail-ua1-f68.google.com with SMTP id o25so3221235uap.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 15:26:49 -0700 (PDT)
+        Mon, 28 Oct 2019 18:26:40 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 41so8049826oti.12
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 15:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cC1XjViNTOeEsQeTmUGVciEbRA1xexeqXxkOO6VDgww=;
-        b=DM5oOo8+rEyJnwVGouMVDBiWRU0VJ1/FJfFl8NoT8fVM9CHjPw8BjRpJIp+OdZKjDh
-         WY8S0GO54x0cf5mbLl8vQIS4zoGjDGxKEsTPxeyHZ4klvEcePB9k5463oeMG32Sxjm/U
-         HYc0YhOp12rMz0PpP/yBsS5bFGtozF6X4W6EDm6IIxYGJam/iWpwVKXtmxOWEIyjc3t8
-         ROZdqmWXdxy7agE76hKXjpAEht6Dy2XurOc7c2jRPQlrOAu78buXLaldLrylDLZzhJ+U
-         cKT/o6k3CoXmXoy75ksjerBrbaGhFUSFlCME5GpvcVIraT7RQIJiSXq8F9CNI83HJFlW
-         Xs9w==
+        bh=rjaKLyekYNHPXZ7Zh1mNGLtxL0unaQdEBwCVJlgaZ8w=;
+        b=mFJrUbF9SJh4NwZ1grLzSIg8GB0cbVWo9erluO3H5ch6mTmkstZOZ//IrIeSyR9Yva
+         vU5niR2ibGiMQyhT+KkdFZvWX/mcM4xaO+XVsGVzQZCHWUbQfZE5HgjqO48jxtJ+VWwV
+         xeJClmrCQwM+LyV9CTe+zH7j7599bBsEgjW1a9z5eb/xgM/hObBqRsD2bpPqEw0TjQNe
+         GQA/U9GsYTCE1jZUpWCEwYZKYxVRF4mi8w14jGNPY9NDWDhWwewcuVBhnPS6miSsi152
+         CJIPUCT5+JFktOIsaA3gYoq/HtHT60fsnjwzxHTfmiEYUxQdL+zTybLZ4n2L9/C+tWrb
+         /Ouw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cC1XjViNTOeEsQeTmUGVciEbRA1xexeqXxkOO6VDgww=;
-        b=UY904pYFN6TtXBH9AQIc3/tOfApQjg5wArb34OJiX8p2aN2ksBRgWR52lJIA+OOHVT
-         +jFUtri8v2Jwvwu64C1UifajkzbmCyiF6kiACgdrLk1zpLcMhn2/FM5RQGXq6YSgZOfx
-         9l4SYkAS8/V0ELplZUUOJ+5AZXpSIGQBcfv+kgv3rWXgaQkG/3EvUIwcTF01lKDOPpeP
-         4PmZxBq8CYJsfmrKeYbFjbg6Grhr2bKrcxAZF33I7bBLQ8X15dwY0RQ1q4J++n/OiOkz
-         jOEdMapsVxQW4pzYLTD4WNHnXLuroSY8iyphrM6/PSGG7us58mnX3R6r4DB0fhLUziqz
-         C2HA==
-X-Gm-Message-State: APjAAAWjEwKPa+bIbYNgC1KkREWntvCYPDV+PPxHnQzVZmeC2OoFzkgs
-        Ewe+5TaEBUO0tAiEH0OKk5Clqnwo8tmaYtwHjCIrCw==
-X-Google-Smtp-Source: APXvYqzJn+qL6YJppYUuZ8U925SMp11P9pHmNsx1nzk/9DVgTW43awkHkRz7X1RA4Iu7rte3ZVmMmtwa2RLJ2ZOrBtg=
-X-Received: by 2002:ab0:2258:: with SMTP id z24mr8741922uan.100.1572301609097;
- Mon, 28 Oct 2019 15:26:49 -0700 (PDT)
+        bh=rjaKLyekYNHPXZ7Zh1mNGLtxL0unaQdEBwCVJlgaZ8w=;
+        b=ImlGn54nEjuDiIaxcx/pF8B6q5FhZedxhxmfeL5H/aHFGX9m3C9OXmvDnyBrNW7fb2
+         /TRauu1aDqvlqg2i77UpuJw/oSGMaFfBRjLnKZ3v+CNrS250ofFEwcMuJ425mTQmWbG2
+         OvYrDVAVt1kc3gZVuN7qHAZuEH2CmyCLCvfBz0EjJXFZ38E7US60LIfWHVam5624Tr3D
+         kfj4M9Qtd/H9ewVYTKXBFc/fHvXUJmgPU54i7vmJ5My5QhmWJ9ojtxbRXaqb5SMdmJ9D
+         9AS2SRDsPidSTgrci7MFEHLDXdDIMBWyHlXTwuCwR9CYcBTjUwxyPzN2IxmFMURhSGzB
+         QJ9g==
+X-Gm-Message-State: APjAAAVA2W7PhnfdO7lWmXDpr02uaQf9JY05ZAMly2vmzfW+c9FUiQHJ
+        6+ODUuhdkOmIWGHMY2XFKV+CsY1nQwdy3FY64zDAgA==
+X-Google-Smtp-Source: APXvYqwaeIGafbzLyvtKwrzN2AssHSZQ3DHbhJ57doQ/HodEQyYbtIaq12npBm2CtcZ4G7Pyz3slNCD8r9A/pLQfEJo=
+X-Received: by 2002:a05:6830:ca:: with SMTP id x10mr14637591oto.221.1572301599265;
+ Mon, 28 Oct 2019 15:26:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191028143419.16236-1-daniel.lezcano@linaro.org> <20191028143419.16236-3-daniel.lezcano@linaro.org>
-In-Reply-To: <20191028143419.16236-3-daniel.lezcano@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 28 Oct 2019 23:26:12 +0100
-Message-ID: <CAPDyKFodr8+7W8FP_P4Ha6h3dgq-K93Hwn-_uAeY-Amwq1Q=qw@mail.gmail.com>
-Subject: Re: [PATCH V5 3/3] powercap/drivers/idle_inject: Specify the idle
- state to inject
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191025234834.28214-1-john.stultz@linaro.org>
+ <20191025234834.28214-2-john.stultz@linaro.org> <20191028191231.GJ125958@google.com>
+ <CALAqxLVEwTjNe6y9xLLv9ib8qnp6hFXsT+XS2bJT0jRTzZVdsg@mail.gmail.com>
+In-Reply-To: <CALAqxLVEwTjNe6y9xLLv9ib8qnp6hFXsT+XS2bJT0jRTzZVdsg@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 28 Oct 2019 15:26:28 -0700
+Message-ID: <CALAqxLWp3F-_uKrtW06CApyqajL-DK0Rujku8YjHe8QEUcXU6w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 1/2] mm: cma: Export cma symbols for cma heap as a module
+To:     Sandeep Patil <sspatil@google.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chenbo Feng <fengc@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Andrew F . Davis" <afd@ti.com>, Yue Hu <huyue2@yulong.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Alistair Strachan <astrachan@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Oct 2019 at 15:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+On Mon, Oct 28, 2019 at 1:03 PM John Stultz <john.stultz@linaro.org> wrote:
 >
-> Currently the idle injection framework only allows to inject the
-> deepest idle state available on the system.
+> On Mon, Oct 28, 2019 at 12:12 PM <sspatil@google.com> wrote:
+> > On Fri, Oct 25, 2019 at 11:48:33PM +0000, John Stultz wrote:
+> > > --- a/kernel/dma/contiguous.c
+> > > +++ b/kernel/dma/contiguous.c
+> > > @@ -31,6 +31,7 @@
+> > >  #endif
+> > >
+> > >  struct cma *dma_contiguous_default_area;
+> > > +EXPORT_SYMBOL(dma_contiguous_default_area);
+> >
+> > I didn't need to do this for the (out-of-tree) ion cma heap [1].
+> > Any reason why you had to?
 >
-> Give the opportunity to specify which idle state we want to inject by
-> adding a new function helper to set the state and use it when calling
-> play_idle().
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Its likely due to the changes I made in the separate
+> non-default-CMA-region patch set. Earlier I had gotten away with just
+> your change, but in testing before I sent this series, I hit the build
+> error and quickly added the export before sending.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+And just to clarify this point, I was mistaken and it wasn't the
+non-default-CMA-region patch set, but the fact that I'm using
+dev_get_cma_area(NULL) to get the default CMA area to register, rather
+then trying to register every CMA area via cma_for_each_area() as is
+done in ION.  I actually could probably drop the cma_for_each_area
+export for the dmabuf heaps usage.
 
-Kind regards
-Uffe
-
-
-> ---
->  drivers/powercap/idle_inject.c | 14 +++++++++++++-
->  include/linux/idle_inject.h    |  3 +++
->  2 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-> index 233c878cbf46..5e1efc71ed1c 100644
-> --- a/drivers/powercap/idle_inject.c
-> +++ b/drivers/powercap/idle_inject.c
-> @@ -66,6 +66,7 @@ struct idle_inject_thread {
->   */
->  struct idle_inject_device {
->         struct hrtimer timer;
-> +       int state;
->         unsigned int idle_duration_us;
->         unsigned int run_duration_us;
->         unsigned long int cpumask[0];
-> @@ -140,7 +141,7 @@ static void idle_inject_fn(unsigned int cpu)
->         iit->should_run = 0;
->
->         play_idle(READ_ONCE(ii_dev->idle_duration_us),
-> -                 cpuidle_find_deepest_state());
-> +                 READ_ONCE(ii_dev->state));
->  }
->
->  /**
-> @@ -171,6 +172,16 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
->         *idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
->  }
->
-> +/**
-> + * idle_inject_set_state - set the idle state to inject
-> + * @state: an integer for the idle state to inject
-> + */
-> +void idle_inject_set_state(struct idle_inject_device *ii_dev, int state)
-> +{
-> +       if (state >= CPUIDLE_STATE_NOUSE && state < CPUIDLE_STATE_MAX)
-> +               WRITE_ONCE(ii_dev->state, state);
-> +}
-> +
->  /**
->   * idle_inject_start - start idle injections
->   * @ii_dev: idle injection control device structure
-> @@ -299,6 +310,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
->         cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
->         hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->         ii_dev->timer.function = idle_inject_timer_fn;
-> +       ii_dev->state = 0;
->
->         for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
->
-> diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
-> index a445cd1a36c5..e2b26b9ccd34 100644
-> --- a/include/linux/idle_inject.h
-> +++ b/include/linux/idle_inject.h
-> @@ -26,4 +26,7 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
->  void idle_inject_get_duration(struct idle_inject_device *ii_dev,
->                                  unsigned int *run_duration_us,
->                                  unsigned int *idle_duration_us);
-> +
-> +void idle_inject_set_state(struct idle_inject_device *ii_dev, int state);
-> +
->  #endif /* __IDLE_INJECT_H__ */
-> --
-> 2.17.1
->
+thanks
+-john
