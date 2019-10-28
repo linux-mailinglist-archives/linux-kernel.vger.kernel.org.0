@@ -2,93 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B203EE79A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:07:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80CE5E7993
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732629AbfJ1UHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:07:39 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38540 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730303AbfJ1UHQ (ORCPT
+        id S1732008AbfJ1UHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:07:12 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35935 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731729AbfJ1UHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:07:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c13so7655478pfp.5;
-        Mon, 28 Oct 2019 13:07:16 -0700 (PDT)
+        Mon, 28 Oct 2019 16:07:10 -0400
+Received: by mail-oi1-f193.google.com with SMTP id j7so7016643oib.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 13:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3mQDuj70BWGu3VV82uhzxy+YFUqHzoQtIwn3n2CdLRE=;
+        b=IKRTi0Ru0Z2CZbiYPkjt54bUYiDtVaLg+wn4YyYerarxbCvkOD2U/mcIHPOQz64Haa
+         XrfFy2TQFH5aVL0nzNtKDHymWwtz5Ccjl7VFl4vKgvaTJ3oRibpddsJMnqf0ULhxNPxD
+         v96ZxjlvApCzyCG0XcjM9amYcFNFK2JAHQQE2pycicmBnkZ9I0lHDly7sdJZR00n3OKx
+         7ZLenlwm+qBBy0nDvOU744qKrRA/MKmsGi+kHLCA3f/apkLPZHPwgQdYfYyFFshmxlv6
+         OaWn5K/e5yKAMtTqqvXjQ6DVPpPyFuq7sLePYWBM4vbM8IuPyytnSeAimXkVGKw1MFw6
+         XbSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qqmafbxvt6DIwPrQ8GK8JiWsq1zCk4bn8bjPAnXJ94o=;
-        b=XeMbqqxpF+XpG8E1XvUmqM5AgW5npoTrQsFzGmAx1L+/vuBH4IWdI+wOVLDjAZ8cRx
-         DbAyXCT3P56EyD81uXC/r9A2n4uyNz1JzV+yUsSZ9U9K/1/RKuTlhjAqe05oUMnzJrQi
-         TpObNa9lr2r7PoBQ3bLOZsLdSBIgTQFvG7m8wJzg/jstJI7Jq6oMqUom0PLK3rfj3sfo
-         cnKw6yMfwpYRQUKzUSnKNlF2a2CwDgE+p5BUSq6kP+FG4E0xeemLwvfNPuLpLxf1Jqfe
-         WTUwD0AyY8c5UA6mZXM6cpKZwFMgiW8lilxP5cO7hifafvQffZvRJYNk4jOxQQy4SV2A
-         unmw==
-X-Gm-Message-State: APjAAAVLSh0XcXe2h2buG5XSgPJrSbFh5gJ2Cs7lsQawCHJpC6Ts2u/P
-        csK9FRPfheI996783to0tII=
-X-Google-Smtp-Source: APXvYqy10CadmomzITN/67Bio0fCL4NQieKkQErSkx+ODEEALJOyZM0aGK3wXkK2z/rgynMOGPbxSA==
-X-Received: by 2002:a17:90a:86c1:: with SMTP id y1mr1387473pjv.71.1572293235698;
-        Mon, 28 Oct 2019 13:07:15 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id p3sm11084218pgp.41.2019.10.28.13.07.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 13:07:14 -0700 (PDT)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Kai Makisara <Kai.Makisara@kolumbus.fi>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>
-Subject: [PATCH 5/9] scsi/st: Use get_unaligned_signed_be24()
-Date:   Mon, 28 Oct 2019 13:06:56 -0700
-Message-Id: <20191028200700.213753-6-bvanassche@acm.org>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-In-Reply-To: <20191028200700.213753-1-bvanassche@acm.org>
-References: <20191028200700.213753-1-bvanassche@acm.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3mQDuj70BWGu3VV82uhzxy+YFUqHzoQtIwn3n2CdLRE=;
+        b=ZjEdI0O/GcKtnUDaxwpEaMtrwnOsYfkS/dU10ogqB3edmjJcOnJv9Vu8CIJE9Ijy7U
+         Xy88FLxrVi7wBnFLI9HfKvjyLqgZSUhHd0QpwHtqwEW4vsViBO/zmfSPWqLUkeh2NQVY
+         2C9gTih7VQ0QntyMUaaIvpAXA/BGilo7RicEa8fEkxflDlu4V+6xC8cSc4SoRVWjaqo+
+         vmGsiTAcvV7dFeyRPmxEgi9SHZVUd5/xtiUSPh3I9BbxrCvlK3NrcqsiAIif3Z3xVBr+
+         KrRnbI8jljOTjrkKFgh8T1UL8srwgE/SSWKFjaUNGZlRJf796DGyVilZEawhu2aEU8aH
+         E2yg==
+X-Gm-Message-State: APjAAAV/aawUi2ezRelnDEA6gbPeUmVtKfWoE9IRDogn4ef9q/IsrxwI
+        RvUXlec32fahFcqx4enV3WmdVZ8ERHGZuzV+IlA=
+X-Google-Smtp-Source: APXvYqylC8iltBvl+YFEe/HffsinC7WiavH9wE1Y1YjSAqDRpN7ImEA+uluAFRaAQ0t/m1bTvpP0U1tZuMWFKPyieSM=
+X-Received: by 2002:aca:2112:: with SMTP id 18mr860588oiz.86.1572293228699;
+ Mon, 28 Oct 2019 13:07:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191026235214.GA11702@cristiane-Inspiron-5420>
+ <CAGngYiV0hCjXigVhijoTmwMfS4mM+hC-aVFsu6VDT-WmKsNsJQ@mail.gmail.com> <20191028182847.GA2311@cristiane-Inspiron-5420>
+In-Reply-To: <20191028182847.GA2311@cristiane-Inspiron-5420>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 28 Oct 2019 16:06:57 -0400
+Message-ID: <CAGngYiU10LH6v6Z2DvfZ9_v=zuzfmDQEzixteFFeGMf4kSeXKA@mail.gmail.com>
+Subject: Re: [PATCH] staging: fieldbus: anybuss: use devm_platform_ioremap_resource
+ helper
+To:     Cristiane Naves <cristianenavescardoso09@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use this function instead of open-coding it.
+On Mon, Oct 28, 2019 at 2:28 PM Cristiane Naves
+<cristianenavescardoso09@gmail.com> wrote:
+>
+> Sorry, I was searching for the issue only on outreachy mailing list and
+> had found nothing about it.
+> I didn't know about these other mailing lists.
+> Thanks for the feedback!
 
-Cc: Kai Makisara <Kai.Makisara@kolumbus.fi>
-Cc: James E.J. Bottomley <jejb@linux.ibm.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- drivers/scsi/st.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+No need to apologize, most of us are always learning !
 
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index e3266a64a477..53dc7706c935 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -44,6 +44,7 @@ static const char *verstr = "20160209";
- 
- #include <linux/uaccess.h>
- #include <asm/dma.h>
-+#include <asm/unaligned.h>
- 
- #include <scsi/scsi.h>
- #include <scsi/scsi_dbg.h>
-@@ -2679,8 +2680,7 @@ static void deb_space_print(struct scsi_tape *STp, int direction, char *units, u
- 	if (!debugging)
- 		return;
- 
--	sc = cmd[2] & 0x80 ? 0xff000000 : 0;
--	sc |= (cmd[2] << 16) | (cmd[3] << 8) | cmd[4];
-+	sc = get_unaligned_signed_be24(&cmd[2]);
- 	if (direction)
- 		sc = -sc;
- 	st_printk(ST_DEB_MSG, STp, "Spacing tape %s over %d %s.\n",
--- 
-2.24.0.rc0.303.g954a862665-goog
+Next time, you can get the mailing lists to check by running the
+get_maintainer.pl script on the file(s) you are going to modify:
 
+$ ./scripts/get_maintainer.pl drivers/staging/fieldbus/anybuss/arcx-anybus.c
+<snip>
+devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+linux-kernel@vger.kernel.org (open list)
