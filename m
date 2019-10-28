@@ -2,172 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7429E6EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AF51E6ED9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387897AbfJ1JTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:19:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:43858 "EHLO inva021.nxp.com"
+        id S2387880AbfJ1JS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:18:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727664AbfJ1JTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:19:20 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 136412000A9;
-        Mon, 28 Oct 2019 10:19:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A40420009D;
-        Mon, 28 Oct 2019 10:19:13 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 069544029E;
-        Mon, 28 Oct 2019 17:19:07 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] ARM: imx: Add serial number support for i.MX6/7 SoCs
-Date:   Mon, 28 Oct 2019 17:16:01 +0800
-Message-Id: <1572254161-18914-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727664AbfJ1JS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:18:27 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1F3B20717;
+        Mon, 28 Oct 2019 09:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572254305;
+        bh=Y0pjFTnEi7fofZFVzScrzdhMzlM8KuUwtUfFJMd6jEM=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=RgzxngTnQ5mhx9Hl2fC158gkHbjFpCK1xE9h+M1GjeCZxXb6MUInbliEaxAObjuqL
+         wSQcKENaW7bda+XlQFMQ4kSrY/CYQhZIb7yuVvXU8ecOVokkeGpi3FpJqjni84Zghu
+         HHQWsB9WCGlUQTC7Hz+Y655Ladb2jywc3qV2avTY=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191018154201.1276638-5-arnd@arndb.de>
+References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-5-arnd@arndb.de>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        alsa-devel@alsa-project.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
+To:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+User-Agent: alot/0.8.1
+Date:   Mon, 28 Oct 2019 02:18:24 -0700
+Message-Id: <20191028091825.A1F3B20717@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX6/7 SoCs have a 64-bit SoC unique ID stored in OCOTP,
-it can be used as SoC serial number, add this support for
-i.MX6Q/6DL/6SL/6SX/6SLL/6UL/6ULL/6ULZ/7D, see below example
-on i.MX6Q:
+Quoting Arnd Bergmann (2019-10-18 08:41:20)
+> The mach/hardware.h is included in lots of places, and it provides
+> three different things on pxa:
+>=20
+> - the cpu_is_pxa* macros
+> - an indirect inclusion of mach/addr-map.h
+> - the __REG() and io_pv2() helper macros
+>=20
+> Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
+> headers, then change all the files that use mach/hardware.h to
+> include the exact set of those three headers that they actually
+> need, allowing for further more targeted cleanup.
+>=20
+> linux/soc/pxa/cpu.h can remain permanently exported and is now in
+> a global location along with similar headers. pxa-regs.h and
+> addr-map.h are only used in a very small number of drivers now
+> and can be moved to arch/arm/mach-pxa/ directly when those drivers
+> are to pass the necessary data as resources.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-root@imx6qpdlsolox:~# cat /sys/devices/soc0/serial_number
-240F31D4E1FDFCA7
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- squash the whole patch set into 1 patch for this special case.
----
- arch/arm/mach-imx/cpu.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
-index 0b137ee..d811803 100644
---- a/arch/arm/mach-imx/cpu.c
-+++ b/arch/arm/mach-imx/cpu.c
-@@ -1,15 +1,20 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/err.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- 
- #include "hardware.h"
- #include "common.h"
- 
-+#define OCOTP_UID_H	0x420
-+#define OCOTP_UID_L	0x410
-+
- unsigned int __mxc_cpu_type;
- static unsigned int imx_soc_revision;
- 
-@@ -76,9 +81,13 @@ void __init imx_aips_allow_unprivileged_access(
- struct device * __init imx_soc_device_init(void)
- {
- 	struct soc_device_attribute *soc_dev_attr;
-+	const char *ocotp_compat = NULL;
- 	struct soc_device *soc_dev;
- 	struct device_node *root;
-+	struct regmap *ocotp;
- 	const char *soc_id;
-+	u64 soc_uid = 0;
-+	u32 val;
- 	int ret;
- 
- 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-@@ -119,30 +128,39 @@ struct device * __init imx_soc_device_init(void)
- 		soc_id = "i.MX53";
- 		break;
- 	case MXC_CPU_IMX6SL:
-+		ocotp_compat = "fsl,imx6sl-ocotp";
- 		soc_id = "i.MX6SL";
- 		break;
- 	case MXC_CPU_IMX6DL:
-+		ocotp_compat = "fsl,imx6q-ocotp";
- 		soc_id = "i.MX6DL";
- 		break;
- 	case MXC_CPU_IMX6SX:
-+		ocotp_compat = "fsl,imx6sx-ocotp";
- 		soc_id = "i.MX6SX";
- 		break;
- 	case MXC_CPU_IMX6Q:
-+		ocotp_compat = "fsl,imx6q-ocotp";
- 		soc_id = "i.MX6Q";
- 		break;
- 	case MXC_CPU_IMX6UL:
-+		ocotp_compat = "fsl,imx6ul-ocotp";
- 		soc_id = "i.MX6UL";
- 		break;
- 	case MXC_CPU_IMX6ULL:
-+		ocotp_compat = "fsl,imx6ul-ocotp";
- 		soc_id = "i.MX6ULL";
- 		break;
- 	case MXC_CPU_IMX6ULZ:
-+		ocotp_compat = "fsl,imx6ul-ocotp";
- 		soc_id = "i.MX6ULZ";
- 		break;
- 	case MXC_CPU_IMX6SLL:
-+		ocotp_compat = "fsl,imx6sll-ocotp";
- 		soc_id = "i.MX6SLL";
- 		break;
- 	case MXC_CPU_IMX7D:
-+		ocotp_compat = "fsl,imx7d-ocotp";
- 		soc_id = "i.MX7D";
- 		break;
- 	case MXC_CPU_IMX7ULP:
-@@ -153,18 +171,36 @@ struct device * __init imx_soc_device_init(void)
- 	}
- 	soc_dev_attr->soc_id = soc_id;
- 
-+	if (ocotp_compat) {
-+		ocotp = syscon_regmap_lookup_by_compatible(ocotp_compat);
-+		if (IS_ERR(ocotp))
-+			pr_err("%s: failed to find %s regmap!\n", __func__, ocotp_compat);
-+
-+		regmap_read(ocotp, OCOTP_UID_H, &val);
-+		soc_uid = val;
-+		regmap_read(ocotp, OCOTP_UID_L, &val);
-+		soc_uid <<= 32;
-+		soc_uid |= val;
-+	}
-+
- 	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d.%d",
- 					   (imx_soc_revision >> 4) & 0xf,
- 					   imx_soc_revision & 0xf);
- 	if (!soc_dev_attr->revision)
- 		goto free_soc;
- 
-+	soc_dev_attr->serial_number = kasprintf(GFP_KERNEL, "%016llX", soc_uid);
-+	if (!soc_dev_attr->serial_number)
-+		goto free_rev;
-+
- 	soc_dev = soc_device_register(soc_dev_attr);
- 	if (IS_ERR(soc_dev))
--		goto free_rev;
-+		goto free_serial_number;
- 
- 	return soc_device_to_device(soc_dev);
- 
-+free_serial_number:
-+	kfree(soc_dev_attr->serial_number);
- free_rev:
- 	kfree(soc_dev_attr->revision);
- free_soc:
--- 
-2.7.4
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
