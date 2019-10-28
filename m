@@ -2,123 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9CCEE7540
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 16:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6ADE754B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 16:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbfJ1Pev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 11:34:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44280 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbfJ1Peu (ORCPT
+        id S1732082AbfJ1Pgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 11:36:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39815 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfJ1Pgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 11:34:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 97C9060D39; Mon, 28 Oct 2019 15:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572276889;
-        bh=bCbdiTSckyICpvwuvpK6d6BcawKxrhdEuu25eW7caFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=deh2nyp9QKwEe2IUBDz71a85Z8BLFSTPeuOPtic8Dwm/mGlWRrIePWVXV4pyWJukU
-         w9U01YmEHLIVHppiPIysSFkaB42VTLbuHeF4JtA3L2DWc7ne17OG3zIHBPp3KRixD6
-         l4UHWp5EfAkwsAU+gJ8QV0XFb9bfmSTTWFot0COA=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E38EF60850;
-        Mon, 28 Oct 2019 15:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572276888;
-        bh=bCbdiTSckyICpvwuvpK6d6BcawKxrhdEuu25eW7caFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hQQ03xOrt536qEv7tq/7vDv8eKBYgdppf6EnJZ0Gu2clNU7Y46/cT8vJo6vfb4aKv
-         rLmFgQEbpbccRx2ByIFJKdNSha+n0ewaTA+MPu5J1tZHWn6L9n0CU4NDdPmkCWOgdo
-         E7hMd5pe9cMzWqXYkAVbGV4/qTtp0JOMlkrwo41M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E38EF60850
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Mon, 28 Oct 2019 09:34:46 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        isaacm@codeaurora.org, linux-kernel@vger.kernel.org,
-        lmark@codeaurora.org, iommu@lists.linux-foundation.org,
-        pratikp@codeaurora.org, smasetty@codeaurora.org
-Subject: Re: [PATCH] iommu/dma: Add support for DMA_ATTR_SYS_CACHE
-Message-ID: <20191028153445.GD7966@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        isaacm@codeaurora.org, linux-kernel@vger.kernel.org,
-        lmark@codeaurora.org, iommu@lists.linux-foundation.org,
-        pratikp@codeaurora.org, smasetty@codeaurora.org
-References: <1572050616-6143-1-git-send-email-isaacm@codeaurora.org>
- <20191026053026.GA14545@lst.de>
- <e5fe861d7d506eb41c23f3fc047efdfa@codeaurora.org>
- <20191028074156.GB20443@lst.de>
- <20191028112457.GB4122@willie-the-truck>
- <c1b37c8d-7bdc-eb81-19c2-29f50568150a@arm.com>
+        Mon, 28 Oct 2019 11:36:53 -0400
+Received: by mail-qt1-f194.google.com with SMTP id t8so15174376qtc.6;
+        Mon, 28 Oct 2019 08:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X/AyUl2apR1iCfwj2kG9abOusf6OXMfXucKK4+wE+uQ=;
+        b=KsoHc9+W6GrxaU4WH0NzZ7G6kzBg0b0z8dTYFiJ4Wg3ccWBwvIqmsbRc48h8ZesB7j
+         GpiB1D67APHsIL5nBr4bq1cywQUmlPqkfGUh5p5ilesffsd+dYKo2qdrSyjRtLqiKZX2
+         tm8TISpGQdaGd7p7iKWBYNq+ksjvRS0kmrOFmQ40RMBTjyAsUJwr178a3JgtJ/KY+Don
+         piZK/q99/KgWT3WCe6O4zcoastXxdlTkeaxN5HPIRzCRv6a0jgtfYW23ibGIGozBNkU8
+         nH53xNYApd8jZeUifEm2vNdG4HJ/EgT6aI2IMte5HbK1Yj2pRxY6XziFLN9YxiZXDnQs
+         +15w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X/AyUl2apR1iCfwj2kG9abOusf6OXMfXucKK4+wE+uQ=;
+        b=sh0gCUpto9CUSDSh8ccehb7QvX3Z+ZPCezkrsHRoCY9KARz/ucV2Vr1uCHkUqKXZm6
+         GNhydT1hYIe2ua5QDIy1zTc/84UwwjVWgWKvjjDY1UIvzf3GtRTrRUBsDd/QR2UuP8lQ
+         Gh5dsnxjmHvWWibZ2Ts2INwIFpj9FjpAVqxtcCD8WLe+DCUvCL48qKtEPw56zUpFxxb3
+         IeJxFWGdGIHRAMVLT0ayQiI7c65+5ixyp8tpSnjG1yXkl8n9jtM6QNUjhfZfK04Fkz+9
+         CZC5KR7CI9C2ICG7qIV84ZltUCQZ7o4I+oyVKcjkUQOcxoF1Ntz+Dyb/seR/+R6O6JAX
+         f/zA==
+X-Gm-Message-State: APjAAAXfVHEsviHQMaTpaRBQmkN2vApyBoPZqr9aE6Pwi2J9fPltnHUV
+        fxiaAoAUgryZ7Mt2Hrqd+oQ=
+X-Google-Smtp-Source: APXvYqymZABOv21SsYV9D8JTRdSkOnK9lkbnddolPIkUK1UpDSlv+qwInskpJwT/9VwSwKc/EEJcUA==
+X-Received: by 2002:a0c:f851:: with SMTP id g17mr16291522qvo.157.1572277011591;
+        Mon, 28 Oct 2019 08:36:51 -0700 (PDT)
+Received: from localhost.localdomain ([2001:1284:f013:326e:3cb7:46e:7f5e:cff5])
+        by smtp.gmail.com with ESMTPSA id y186sm6327995qkd.71.2019.10.28.08.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 08:36:50 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 6FE69C0AD9; Mon, 28 Oct 2019 12:36:48 -0300 (-03)
+Date:   Mon, 28 Oct 2019 12:36:48 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     syzbot <syzbot+e5b57b8780297657b25b@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com, roid@mellanox.com,
+        saeedm@mellanox.com, syzkaller-bugs@googlegroups.com,
+        vladbu@mellanox.com, vyasevich@gmail.com
+Subject: Re: KASAN: use-after-free Read in sctp_sock_dump
+Message-ID: <20191028153648.GF4250@localhost.localdomain>
+References: <000000000000e68ee20595fa33be@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c1b37c8d-7bdc-eb81-19c2-29f50568150a@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <000000000000e68ee20595fa33be@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 11:59:04AM +0000, Robin Murphy wrote:
-> On 28/10/2019 11:24, Will Deacon wrote:
-> >Hi Christoph,
-> >
-> >On Mon, Oct 28, 2019 at 08:41:56AM +0100, Christoph Hellwig wrote:
-> >>On Sat, Oct 26, 2019 at 03:12:57AM -0700, isaacm@codeaurora.org wrote:
-> >>>On 2019-10-25 22:30, Christoph Hellwig wrote:
-> >>>>The definition makes very little sense.
-> >>>Can you please clarify what part doesn’t make sense, and why?
-> >>
-> >>It looks like complete garbage to me.  That might just be because it
-> >>uses tons of terms I've never heard of of and which aren't used anywhere
-> >>in the DMA API.  It also might be because it doesn't explain how the
-> >>flag might actually be practically useful.
-> >
-> >Agreed. The way I /think/ it works is that on many SoCs there is a
-> >system/last-level cache (LLC) which effectively sits in front of memory for
-> >all masters. Even if a device isn't coherent with the CPU caches, we still
-> >want to be able to allocate into the LLC. Why this doesn't happen
-> >automatically is beyond me, but it appears that on these Qualcomm designs
-> >you actually have to set the memory attributes up in the page-table to
-> >ensure that the resulting memory transactions are non-cacheable for the CPU
-> >but cacheable for the LLC. Without any changes, the transactions are
-> >non-cacheable in both of them which assumedly has a performance cost.
-> >
-> >But you can see that I'm piecing things together myself here. Isaac?
+On Mon, Oct 28, 2019 at 08:32:08AM -0700, syzbot wrote:
+> Hello,
 > 
-> FWIW, that's pretty much how Pratik and Jordan explained it to me - the LLC
-> sits directly in front of memory and is more or less transparent, although
-> it might treat CPU and device accesses slightly differently (I don't
-> remember exactly how the inner cacheablility attribute interacts). Certain
-> devices don't get much benefit from the LLC, hence the desire for
-> finer-grained control of their outer allocation policy to avoid more
-> thrashing than necessary. Furthermore, for stuff in the video/GPU/display
-> area certain jobs benefit more than others, hence the desire to go even
-> finer-grained than a per-device control in order to maximise LLC
-> effectiveness.
+> syzbot found the following crash on:
+> 
+> HEAD commit:    d6d5df1d Linux 5.4-rc5
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17ef5a70e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2bcb64e504d04eff
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e5b57b8780297657b25b
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> userspace arch: i386
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cd8800e00000
+> 
+> The bug was bisected to:
+> 
+> commit 61086f391044fd587af9d70a9b8f6f800dd474ba
+> Author: Vlad Buslov <vladbu@mellanox.com>
+> Date:   Fri Aug 2 19:21:56 2019 +0000
+> 
+>     net/mlx5e: Protect encap hash table with mutex
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=135960af600000
 
-Robin's description is correct. And we did have a patch for an in-kernel user
-but it got lost in the wash. I'm hoping Sharat can get a respin in time for 5.5.
+This is weird. This mlx5e commit has nothing to do with SCTP diag
+dump.
 
-https://lore.kernel.org/linux-arm-msm/1538744915-25490-8-git-send-email-smasetty@codeaurora.org/
-
-Jordan
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  Marcelo
