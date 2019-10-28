@@ -2,90 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A9C2E72C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7810E72DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:49:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389615AbfJ1NlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:41:21 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2498 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729328AbfJ1NlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:41:21 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 57AF6E9C1175435F54AB;
-        Mon, 28 Oct 2019 21:41:19 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 28 Oct 2019 21:41:18 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Mon, 28 Oct 2019 21:41:18 +0800
-Date:   Mon, 28 Oct 2019 21:44:05 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Chao Yu <chao@kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Gao Xiang <xiang@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] erofs: support superblock checksum
-Message-ID: <20191028134405.GA186556@architecture4>
-References: <20191022180620.19638-1-pratikshinde320@gmail.com>
- <20191023040557.230886-1-gaoxiang25@huawei.com>
- <f158affb-c5c5-9cbe-d87d-17210bc635fe@huawei.com>
- <20191023084536.GA16289@architecture4>
- <df7d7427-e7ca-5135-5db2-640eda30d253@huawei.com>
+        id S1727024AbfJ1NtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:49:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbfJ1NtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:49:08 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A10CF20862;
+        Mon, 28 Oct 2019 13:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572270548;
+        bh=TIem8yhgrFj1zfc0iyle9zHw38NS9oGCLDSzUjsDd/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VKIGu9s6hREp7uYQUWgJ0AckdQgKnPg+uGovC51qpYZmr5mgsIOF54RnZc8x/UWdz
+         36A32qcGcLTf59MFay8TlT0DH6RcD5c8MJEU2ubDy2DqdtjhafPn34zLvc6djnnU7T
+         ANN+XR7+p4tahCxi2bi1IkWdr6X8wFVW4tKAoNpQ=
+Date:   Mon, 28 Oct 2019 14:49:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/41] 4.4.198-stable review
+Message-ID: <20191028134905.GA53500@kroah.com>
+References: <20191027203056.220821342@linuxfoundation.org>
+ <3961082b-17bc-cef7-f0e5-7bf029b2de2a@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df7d7427-e7ca-5135-5db2-640eda30d253@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <3961082b-17bc-cef7-f0e5-7bf029b2de2a@roeck-us.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
-
-On Mon, Oct 28, 2019 at 08:36:00PM +0800, Chao Yu wrote:
-> On 2019/10/23 16:45, Gao Xiang wrote:
-
-<snip>
-
-> > That is quite a good point. :-)
+On Mon, Oct 28, 2019 at 06:32:14AM -0700, Guenter Roeck wrote:
+> On 10/27/19 2:00 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.198 release.
+> > There are 41 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > My first thought is to check the following payloads of sb (e.g, some per-fs
-> > metadata should be checked at mount time together. or for small images, check
-> > the whole image at the mount time) as well since if we introduce a new feature
-> > to some kernel version, forward compatibility needs to be considered. So it's
-> > better to make proper scalability, for this case, we have some choices:
-> >  1) limit `chksum_blocks' upbound at runtime (e.g. refuse >= 65536 blocks,
-> >     totally 256M.)
-> >  2) just get rid of the whole `chksum_blocks' mess and checksum the first 4k
-> >     at all, don't consider any latter scalability.
+> > Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
+> > Anything received after that time might be too late.
+> > 
 > 
-> Xiang, sorry for later reply...
 > 
-> I prefer method 2), let's enable chksum feature only on superblock first,
-> chksum_blocks feature can be added later.
-
-Okay, got it. I will resend patch soon.
-
-Thanks,
-Gao Xiang
-
+> Building mips:defconfig ... failed
+> --------------
+> Error log:
+> In file included from /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/include/asm/bitops.h:21,
+>                  from /opt/buildbot/slave/stable-queue-4.9/build/include/linux/bitops.h:17,
+>                  from /opt/buildbot/slave/stable-queue-4.9/build/include/linux/kernel.h:10,
+>                  from /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/kernel/cpu-probe.c:15:
+> /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/kernel/cpu-probe.c: In function 'cpu_probe':
+> /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/include/asm/cpu-features.h:349:31: error: implicit declaration of function '__ase' [-Werror=implicit-function-declaration]
+>   349 | #define cpu_has_loongson_mmi  __ase(MIPS_ASE_LOONGSON_MMI)
+>       |                               ^~~~~
+> /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/kernel/cpu-probe.c:2079:6: note: in expansion of macro 'cpu_has_loongson_mmi'
+>  2079 |  if (cpu_has_loongson_mmi)
+>       |      ^~~~~~~~~~~~~~~~~~~~
+> /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/kernel/cpu-probe.c:2083:16: error: 'HWCAP_LOONGSON_CAM' undeclared (first use in this function); did you mean 'HWCAP_LOONGSON_EXT'?
+>  2083 |   elf_hwcap |= HWCAP_LOONGSON_CAM;
+>       |                ^~~~~~~~~~~~~~~~~~
+>       |                HWCAP_LOONGSON_EXT
+> /opt/buildbot/slave/stable-queue-4.9/build/arch/mips/kernel/cpu-probe.c:2083:16: note: each undeclared identifier is reported only once for each function it appears in
 > 
-> Thanks,
 > 
-> > 
-> > Some perferred idea about this? I plan to release erofs-utils v1.0 tomorrow
-> > and hold up this feature for the next erofs-utils release, but I think we can
-> > get it ready for v5.5 since it is not quite complex feature...
-> > 
-> > Thanks,
-> > Gao Xiang
-> > 
-> > .
-> > 
+> Affects all mips builds in v{4.4, 4.9, 4.14}.
+
+Ugh, let me see what happened...
