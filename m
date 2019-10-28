@@ -2,51 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E76DAE7429
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C59E4E742B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390458AbfJ1O4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:56:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39886 "EHLO
+        id S2390477AbfJ1O44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:56:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40078 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390428AbfJ1O4u (ORCPT
+        with ESMTP id S2390428AbfJ1O4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:56:50 -0400
+        Mon, 28 Oct 2019 10:56:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tN8epsZEkS31NtdlX45cDOmGF5PCzR59bS9MnzLxSmg=; b=BlTZDNucaG1B
-        kxm0DU1bGKzsOQw96Q+YQqdQrdJSBmRSPt3YiBXWZYnVqeOZwTh5ybIKq65Ybktnp1pZSbLBHnPeb
-        YFvUMyj0QqiJJI+DP8LQsNT1jquBZ4kK3//kxlYFxXMe3j5ACViX2bRNToEsbRiDliprT/JOrLKaA
-        VsgpA=;
+        List-Archive; bh=AFCr3rynD8V4Xu0si+l9pX7hWrr9yeLzz/mOG9Iw2wc=; b=G0w0eKogHrhP
+        q8K6V3DrJgZC7vPrVoys+O16CN+nQi6vYsFPu8CvMZEwCu5kkSS4vSxjP3s7vUiAjyT4NK3LXZEyV
+        jL/XjtfWFgEw2xMIxEP60y7Y8B3QdjH5BHZfNy8tuaf8+JJbATHxKGqcJUUP1mlVNnb1QD2L2Btzj
+        J8NKk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iP6Rj-0008Rp-Hj; Mon, 28 Oct 2019 14:56:39 +0000
+        id 1iP6Rk-0008Rv-0Q; Mon, 28 Oct 2019 14:56:40 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3045F27414F2; Mon, 28 Oct 2019 14:56:38 +0000 (GMT)
+        id 6969827403EF; Mon, 28 Oct 2019 14:56:38 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Navid Emamdoost <navid.emamdoost@gmail.com>
 Cc:     alsa-devel@alsa-project.org, "Cc:"@sirena.co.uk,
         "Cc:"@sirena.co.uk, emamd001@umn.edu,
-        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>, kjlu@umn.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>, kjlu@umn.edu,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Slawomir Blauciak <slawomir.blauciak@linux.intel.com>,
-        smccaman@umn.edu, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: SOF: ipc: Fix memory leak in sof_set_get_large_ctrl_data" to the asoc tree
-In-Reply-To: <20191027215330.12729-1-navid.emamdoost@gmail.com>
+        smccaman@umn.edu, Takashi Iwai <tiwai@suse.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Subject: Applied "ASoC: SOF: Fix memory leak in sof_dfsentry_write" to the asoc tree
+In-Reply-To: <20191027194856.4056-1-navid.emamdoost@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191028145638.3045F27414F2@ypsilon.sirena.org.uk>
+Message-Id: <20191028145638.6969827403EF@ypsilon.sirena.org.uk>
 Date:   Mon, 28 Oct 2019 14:56:38 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,7 +53,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: ipc: Fix memory leak in sof_set_get_large_ctrl_data
+   ASoC: SOF: Fix memory leak in sof_dfsentry_write
 
 has been applied to the asoc tree at
 
@@ -80,40 +78,40 @@ to this mail.
 Thanks,
 Mark
 
-From 45c1380358b12bf2d1db20a5874e9544f56b34ab Mon Sep 17 00:00:00 2001
+From c0a333d842ef67ac04adc72ff79dc1ccc3dca4ed Mon Sep 17 00:00:00 2001
 From: Navid Emamdoost <navid.emamdoost@gmail.com>
-Date: Sun, 27 Oct 2019 16:53:24 -0500
-Subject: [PATCH] ASoC: SOF: ipc: Fix memory leak in
- sof_set_get_large_ctrl_data
+Date: Sun, 27 Oct 2019 14:48:47 -0500
+Subject: [PATCH] ASoC: SOF: Fix memory leak in sof_dfsentry_write
 
-In the implementation of sof_set_get_large_ctrl_data() there is a memory
-leak in case an error. Release partdata if sof_get_ctrl_copy_params()
-fails.
+In the implementation of sof_dfsentry_write() memory allocated for
+string is leaked in case of an error. Go to error handling path if the
+d_name.name is not valid.
 
-Fixes: 54d198d5019d ("ASoC: SOF: Propagate sof_get_ctrl_copy_params() error properly")
+Fixes: 091c12e1f50c ("ASoC: SOF: debug: add new debugfs entries for IPC flood test")
 Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Link: https://lore.kernel.org/r/20191027215330.12729-1-navid.emamdoost@gmail.com
+Link: https://lore.kernel.org/r/20191027194856.4056-1-navid.emamdoost@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/ipc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/sof/debug.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sof/ipc.c b/sound/soc/sof/ipc.c
-index b2f359d2f7e5..086eeeab8679 100644
---- a/sound/soc/sof/ipc.c
-+++ b/sound/soc/sof/ipc.c
-@@ -572,8 +572,10 @@ static int sof_set_get_large_ctrl_data(struct snd_sof_dev *sdev,
- 	else
- 		err = sof_get_ctrl_copy_params(cdata->type, partdata, cdata,
- 					       sparams);
--	if (err < 0)
-+	if (err < 0) {
-+		kfree(partdata);
- 		return err;
+diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
+index 54cd431faab7..5529e8eeca46 100644
+--- a/sound/soc/sof/debug.c
++++ b/sound/soc/sof/debug.c
+@@ -152,8 +152,10 @@ static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+ 	 */
+ 	dentry = file->f_path.dentry;
+ 	if (strcmp(dentry->d_name.name, "ipc_flood_count") &&
+-	    strcmp(dentry->d_name.name, "ipc_flood_duration_ms"))
+-		return -EINVAL;
++	    strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {
++		ret = -EINVAL;
++		goto out;
 +	}
  
- 	msg_bytes = sparams->msg_bytes;
- 	pl_size = sparams->pl_size;
+ 	if (!strcmp(dentry->d_name.name, "ipc_flood_duration_ms"))
+ 		flood_duration_test = true;
 -- 
 2.20.1
 
