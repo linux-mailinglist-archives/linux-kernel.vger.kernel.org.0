@@ -2,65 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC20E6F6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BD3E6F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388120AbfJ1Jy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:54:26 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39356 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbfJ1JyZ (ORCPT
+        id S2388129AbfJ1J7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:59:38 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:58310 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732833AbfJ1J7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:54:25 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v138so5454513oif.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 02:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=6tV0hgiUIox3aKqhSnUyc9VOfl9/IFqW6zdnbZiAM6M=;
-        b=l3xLA+/fl4Z9mtRHi5dEqb1poETt6yES9qQuluSQTcJHa41B+ga1ZiNZajzUVIQ18u
-         8GP4L1XOY9FHPoeiD81H6ZFZSJz21KXNDFGdKXKUqvTtM/+gnvOZMzq3Ucyf3Z84XeEf
-         eeAjWTlC7A4E5CSxu8EzICo9FilAWuorHI1ivJwft3GBWk1WRVASAmxIyFLebMadaY2A
-         xi6WZkV8KNfdFTIbEJIPTe4mIlR8CvFYQq/o+L3o7DX/szE84wJ8zRTTYGa2csSYwa3d
-         XEM1dPDXJl6cbvXBNHUqH4sQwpIKIDLb0DiFltnpZwZ80W/gcnhfN8IM9sc4HTKc6Qny
-         Iipw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=6tV0hgiUIox3aKqhSnUyc9VOfl9/IFqW6zdnbZiAM6M=;
-        b=nRFlazULUhhynh0IGhKtRzwvN1ixjs5wkNDJIF6MfEP51DWKdoPx5GFj2GTDQUjNd0
-         lBEcpOvA1Swh1DjYCAqI2MD5M3Ck7VInaapxk9jsEXL7GyeTzinw2qLOdDDK673nz6Fx
-         emENwF+Ij8QVCJRsNLNyO/B+YFGEx6KkUpPyjgeKpPvhmTIPjfaizBhdB8IjHWStfkFf
-         dDUQQT0wBNA0sKOgrTAJG+d6Am9YE29vypN4afl9eHQD2SY5vJ50Ov84sEMvIvNKUihr
-         e28+FbeNM1zmZbclCGxGjDe+G5pSa8dR4V4nyMWW9m7SKzmNM7FwDfqScJUc6jamzCUR
-         Ox1Q==
-X-Gm-Message-State: APjAAAVYHA/Bd16Ze4WYrO3v9IdUeNAGkuMhhbtFenKLLqGwzICDiw2d
-        1j1m0aHQDFkM//cGFgdwNDN8GcmyZja6iUT82qc=
-X-Google-Smtp-Source: APXvYqzYttq93pPwdLbFHxZbT6k4bXfBZCkwVpc67WeZtdLLWs7VDyjiblR2qplIlj0Wro41B/XusLwMpT3TFaI1nfw=
-X-Received: by 2002:a05:6808:350:: with SMTP id j16mr9838105oie.109.1572256465244;
- Mon, 28 Oct 2019 02:54:25 -0700 (PDT)
+        Mon, 28 Oct 2019 05:59:38 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 2EB892E14B4;
+        Mon, 28 Oct 2019 12:59:36 +0300 (MSK)
+Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 1MMz6MIGFv-xZl450v5;
+        Mon, 28 Oct 2019 12:59:36 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572256776; bh=qKbZKUhxXAikWcE9+erLx+dDD7QZSmSl+7ceSjN66mg=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=jUI0uMDZxH7owFu2UKMQ7KRNEqVM5Fbnu6SXj3wPdJctmvDEmSPHmXmo6rltQ5bhe
+         694+7ixWanoElRRUS6lOxjlbB4kBGFgbbUylTyyYmSJ2L0Qk/29Wqo1A4QYeNHpyPk
+         Zu7c2Lxu3D39+XN8kJyMx7YY88JeIlPMHJ3VhZak=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
+        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id brINrBKnHB-xZV0tdEe;
+        Mon, 28 Oct 2019 12:59:35 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] mm/filemap: do not allocate cache pages beyond end of file
+ at read
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Date:   Mon, 28 Oct 2019 12:59:34 +0300
+Message-ID: <157225677483.3442.4227193290486305330.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Received: by 2002:a9d:53c1:0:0:0:0:0 with HTTP; Mon, 28 Oct 2019 02:54:24
- -0700 (PDT)
-Reply-To: lisatofan110@gmail.com
-From:   Lisa Tofan <markaddison631@gmail.com>
-Date:   Mon, 28 Oct 2019 10:54:24 +0100
-Message-ID: <CAPfnoJADtoCiVomMXCHNDC2yZchu6k1FO23HzXYvFOy8-sbFRA@mail.gmail.com>
-Subject: Hello Dear
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
+Page cache could contain pages beyond end of file during write or
+if read races with truncate. But generic_file_buffered_read() always
+allocates unneeded pages beyond eof if somebody reads here and one
+extra page at the end if file size is page-aligned.
 
-This is Miss Lisa Tofan, How are you today hope all is well with you,
-please I will need your urgent attention
+Function generic_file_buffered_read() calls page_cache_sync_readahead()
+if page not found in cache and then do another lookup. Readahead checks
+file size in __do_page_cache_readahead() before allocating pages.
+After that generic_file_buffered_read() falls back to slow path and
+allocates page for ->readpage() without checking file size.
 
-regarding this important discussion kindly write me back here
-:lisatofan110@gmail.com: for more details,
-Thanks,
-Miss Lisa Tofan
+This patch checks file size before allocating page for ->readpage().
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/filemap.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 85b7d087eb45..92abf5f348a9 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2225,6 +2225,10 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		goto out;
+ 
+ no_cached_page:
++		/* Do not allocate cache pages beyond end of file. */
++		if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
++			goto out;
++
+ 		/*
+ 		 * Ok, it wasn't cached, so we need to create a new
+ 		 * page..
+
