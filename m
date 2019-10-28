@@ -2,83 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACCAE7140
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:21:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 330CDE7146
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389064AbfJ1MVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:21:24 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:40652 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389047AbfJ1MVX (ORCPT
+        id S2389041AbfJ1MWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 08:22:35 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42834 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfJ1MWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:21:23 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.92.2)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1iP41N-0003VP-51; Mon, 28 Oct 2019 13:21:17 +0100
-Message-ID: <e5b07b4ce51f806ce79b1ae06ff3cbabbaa4873d.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] 802.11n IBSS: wlan0 stops receiving packets due to
- aggregation after sender reboot
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Krzysztof =?UTF-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 28 Oct 2019 13:21:15 +0100
-In-Reply-To: <m37e4tjfbu.fsf@t19.piap.pl>
-References: <m34l02mh71.fsf@t19.piap.pl> <m37e4tjfbu.fsf@t19.piap.pl>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Mon, 28 Oct 2019 08:22:35 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a21so11081369ljh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 05:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=enG5Lre713MdkCrSDwNrqoAuYHhMZ4WTXeUn1eOeHYo=;
+        b=YOSB0iKFmpvkF4JkW7MsyVt0UzoUy5JyQueItwDpTnO+YgFV3/egElfs6LFpDxwgZ3
+         8Xx0LSPXH4IrXXv2ju0022mF8Ix/O+lxAhNakrsVhZ6XQ3olaxwU7KHQ/6N0gbYnMrvo
+         l7QfMdy2vlzu/Tchtryb4HVfqE+KK6i4OVXZI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=enG5Lre713MdkCrSDwNrqoAuYHhMZ4WTXeUn1eOeHYo=;
+        b=gvZN5csBl8feouFDkTJHsmPQFRlzUDpOPjxkVBUA3o9OFmzDTbto3iup0BVD9xuP9/
+         3DAquqnpPHqqlFmyNzalFw+wfYEBEIE2AMWYwK7X+8IKYf6UYka8sYeyAQdsY2bMqUGL
+         ztXkFbqkL79yNeos/z0k7/+6P6UAjFCoqoaPVpvp980lHY1O4d2XFoxYkSCTMWqct0cx
+         0Oqs+RL1GLbdfJvkGR6EGF3fbSJ4z7SLl8IbXjfuBn0Do7z4EtqKWbPDQYP415vVwEBA
+         YKz4bGh+tkA8zc64oVdBZ/bE+wfY2OW+FOij1fPUyp3gLwk0wcBYmOFvfo4yFIxWqtKY
+         M1IQ==
+X-Gm-Message-State: APjAAAVtY/4ey030Sk9mPpTRVF47W66jBAXrKiY9BXX5GIbmjZgm0NsR
+        sL2+BlIc4Pr9lRu+jIYCb82tkzegfUnrOg==
+X-Google-Smtp-Source: APXvYqym/9Vaq93L3R8V+gLtdERRrOFtaaw3j2Vx7ARih65BjW66biLOp8jNunU/WFnEC06OD11ufQ==
+X-Received: by 2002:a2e:5c09:: with SMTP id q9mr3255963ljb.22.1572265352325;
+        Mon, 28 Oct 2019 05:22:32 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id e26sm4991075ljj.76.2019.10.28.05.22.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2019 05:22:31 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id w8so6584464lji.13
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 05:22:31 -0700 (PDT)
+X-Received: by 2002:a2e:819a:: with SMTP id e26mr7030458ljg.26.1572265350927;
+ Mon, 28 Oct 2019 05:22:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157219118016.7078.16223055699799396042.stgit@buzz>
+ <CAHk-=wjoTncMYdQFmY4yspKOUsDSNn1dHp1FWvJ0eRO94ZM3dQ@mail.gmail.com> <5b970999-c714-6bfb-0b02-ed206bafced4@yandex-team.ru>
+In-Reply-To: <5b970999-c714-6bfb-0b02-ed206bafced4@yandex-team.ru>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 28 Oct 2019 13:22:14 +0100
+X-Gmail-Original-Message-ID: <CAHk-=wjtLz=S00b0T+_Zrx0bfQ1QDLpWAq7eo=w0FPi5N_UqOA@mail.gmail.com>
+Message-ID: <CAHk-=wjtLz=S00b0T+_Zrx0bfQ1QDLpWAq7eo=w0FPi5N_UqOA@mail.gmail.com>
+Subject: Re: [PATCH] pipe: wakeup writer only if pipe buffer is at least half empty
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     David Howells <dhowells@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-25 at 12:21 +0200, Krzysztof Hałasa wrote:
-> Fix a bug where the mac80211 RX aggregation code sets a new aggregation
-> "session" at the remote station's request, but the head_seq_num
-> (the sequence number the receiver expects to receive) isn't reset.
-> 
-> Spotted on a pair of AR9580 in IBSS mode.
-> 
-> Signed-off-by: Krzysztof Halasa <khalasa@piap.pl>
-> 
-> diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
-> index 4d1c335e06e5..67733bd61297 100644
-> --- a/net/mac80211/agg-rx.c
-> +++ b/net/mac80211/agg-rx.c
-> @@ -354,10 +354,13 @@ void ___ieee80211_start_rx_ba_session(struct sta_info *sta,
->  			 */
->  			rcu_read_lock();
->  			tid_rx = rcu_dereference(sta->ampdu_mlme.tid_rx[tid]);
-> -			if (tid_rx && tid_rx->timeout == timeout)
-> +			if (tid_rx && tid_rx->timeout == timeout) {
-> +				tid_rx->ssn = start_seq_num;
-> +				tid_rx->head_seq_num = start_seq_num;
->  				status = WLAN_STATUS_SUCCESS;
+On Mon, Oct 28, 2019 at 10:09 AM Konstantin Khlebnikov
+<khlebnikov@yandex-team.ru> wrote:
+>
+> Ok. This breakage scenario is doubtful but such weird software really might exist.
+>
+> What about making this thing tunable via fcntl like size of pipe buffer?
 
-This is wrong, this is the case of *updating an existing session*, we
-must not reset the head SN then.
+Let's see if we can do it without a tunable and maybe nobody notices?
 
-I think you just got very lucky (or unlucky) to have the same dialog
-token, because we start from 0 - maybe we should initialize it to a
-random value to flush out such issues.
+But I'd like you to do it on top of David's pipe patches, so that we
+don't have unnecessary churn and conflicts next merge window in this
+area. Ok?
 
-Really what I think probably happened is that one of your stations lost
-the connection to the other, and didn't tell it about it in any way - so
-the other kept all the status alive.
-
-I suspect to make all this work well we need to not only have the fixes
-I made recently to actually send and parse deauth frames, but also to
-even send an auth and reset the state when we receive that, so if we
-move out of range and even the deauth frame is lost, we can still reset
-properly.
-
-In any case, this is not the right approach - we need to handle the
-"lost connection" case better I suspect, but since you don't say what
-really happened I don't really know that that's what you're seeing.
-
-johannes
-
+              Linus
