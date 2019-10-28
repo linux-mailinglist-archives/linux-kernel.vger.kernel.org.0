@@ -2,80 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD77E7110
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:11:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F075EE7113
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388936AbfJ1ML1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:11:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53828 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388941AbfJ1MLW (ORCPT
+        id S1728482AbfJ1MNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 08:13:02 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:40510 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbfJ1MNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:11:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fSsBKmgdY1QjDFHoBUNLb7SjQL8aeF8LHQYOgo1Pa4I=; b=Bez+aHQoHK4jqH+tVVnzZGE4QX
-        vJc4HF2pzu4wY6RaEOXN6OJl1YJ0ROKtr5bRtvGmRML7E6PEWEWdCxuBhZ+CRHuZs/Fgq1uFteRUu
-        PS174gzf15BpU8NvYQV3YwN/8ocf8xS6dywg915XSt8DaabDp7uWpSPPruAofVtkCzo37tYWn2b9n
-        4sZeV6RK49b09QrScILTq0DvBmo52Ex2ZAFxmbHB9yjXlen9CJsPeqX7LvOAupDfICXVt4gsig7Oh
-        CXIsukV1oOiJGvrAQN+rlxWMiDAakVMdBJ1Dmywetzyj1/e/nNhN38yabhOvVFzEH6lmLAAn0YPGd
-        IZ+9QCqQ==;
-Received: from [2001:4bb8:18c:c7d:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iP3rk-0007PC-Mn; Mon, 28 Oct 2019 12:11:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH 12/12] riscv: disable the EFI PECOFF header for M-mode
-Date:   Mon, 28 Oct 2019 13:10:43 +0100
-Message-Id: <20191028121043.22934-13-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191028121043.22934-1-hch@lst.de>
-References: <20191028121043.22934-1-hch@lst.de>
+        Mon, 28 Oct 2019 08:13:02 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.2)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1iP3tC-0003GO-4w; Mon, 28 Oct 2019 13:12:50 +0100
+Message-ID: <d0fc94581e0dce37d993c55edaae8fc40eaa7601.camel@sipsolutions.net>
+Subject: Re: [PATCH] cfg80211: Fix memory leak in
+ cfg80211_inform_single_bss_frame_data
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 28 Oct 2019 13:12:47 +0100
+In-Reply-To: <20191027181600.11149-1-navid.emamdoost@gmail.com> (sfid-20191027_191610_218836_6E8601E7)
+References: <20191027181600.11149-1-navid.emamdoost@gmail.com>
+         (sfid-20191027_191610_218836_6E8601E7)
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No point in bloating the kernel image with a bootloader header if
-we run bare metal.
+On Sun, 2019-10-27 at 13:15 -0500, Navid Emamdoost wrote:
+> In the implementation of cfg80211_inform_single_bss_frame_data() the
+> allocated memory for ies is leaked in case of an error. Release ies if
+> cfg80211_bss_update() fails.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Anup Patel <anup@brainfault.org>
----
- arch/riscv/kernel/head.S | 2 ++
- 1 file changed, 2 insertions(+)
+I'm pretty sure it's more complicated than this patch (and the previous
+one) - we already do free this at least in the case that "new =
+kzalloc(...)" fails in cfg80211_bss_update().
 
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index 84a6f0a4b120..9bca97ffb67a 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -16,6 +16,7 @@
- 
- __INIT
- ENTRY(_start)
-+#ifndef CONFIG_RISCV_M_MODE
- 	/*
- 	 * Image header expected by Linux boot-loaders. The image header data
- 	 * structure is described in asm/image.h.
-@@ -47,6 +48,7 @@ ENTRY(_start)
- 
- .global _start_kernel
- _start_kernel:
-+#endif /* CONFIG_RISCV_M_MODE */
- 	/* Mask all interrupts */
- 	csrw CSR_IE, zero
- 	csrw CSR_IP, zero
--- 
-2.20.1
+Your Fixes: tag is also wrong, back then we didn't even have the dynamic
+allocation of the IEs.
+
+I'm dropping this patch and the other and will make a note to eventually
+look at the lifetime issue here you point out, but if you want to work
+on it instead let me know.
+
+johannes
 
