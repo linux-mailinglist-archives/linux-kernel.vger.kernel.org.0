@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D63E6FD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 11:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 516A8E6FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 11:45:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388278AbfJ1Knr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 06:43:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35926 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732891AbfJ1Knq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 06:43:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nar9Iq7Q7mTUudrNdJ/jj69T2ZUNiLNNiPhobZAvyPM=; b=FgDpTFpvRAHkibxg6VtMsFgC2
-        sDSt8Yp+REORhqdfaPb8sB455Z0xfr7MDZlIap8nAU8BjZg/gZXg/MUjeilLECHPtSPIfPvxnq5Af
-        yEMTOmUzzTWra7TXvpnhHnNJ+mZl3jSCl3gdsJ7XgrNUBrRKODUdR5eckaVSoonpOHQSL1SaC7d0D
-        /WFWsV4WVGS+M9+Vx9WM+nAGspV7Z9YdaocylsyTYr2qNF3/k+pLAqTW1GyhJXzHV3db3nNz4dMR8
-        CkK7UEflpptcaMx+tKo6F7SBb+I/W/bJFp6LZtzLHrv/gG4zSEM+2Uoydv/XmamDWiYU/kTUl+hQ1
-        /kVvEXfKA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iP2Uo-0003zV-N0; Mon, 28 Oct 2019 10:43:34 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D5332300E4D;
-        Mon, 28 Oct 2019 11:42:31 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 10EE120761E44; Mon, 28 Oct 2019 11:43:32 +0100 (CET)
-Date:   Mon, 28 Oct 2019 11:43:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Petr Mladek <pmladek@suse.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jeyu@kernel.org,
-        live-patching@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v4 15/16] module: Move where we mark modules RO,X
-Message-ID: <20191028104332.GL4131@hirez.programming.kicks-ass.net>
-References: <20191018074634.801435443@infradead.org>
- <20191021135312.jbbxsuipxldocdjk@treble>
- <20191021141402.GI1817@hirez.programming.kicks-ass.net>
- <20191023114835.GT1817@hirez.programming.kicks-ass.net>
- <20191023170025.f34g3vxaqr4f5gqh@treble>
- <20191024131634.GC4131@hirez.programming.kicks-ass.net>
- <20191025064456.6jjrngm4m3mspaxw@pathway.suse.cz>
- <20191025084300.GG4131@hirez.programming.kicks-ass.net>
- <20191025100612.GB5671@hirez.programming.kicks-ass.net>
- <20191026011741.xywerjv62vdmz6sp@treble>
+        id S2388297AbfJ1Ko7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 06:44:59 -0400
+Received: from mail.jv-coder.de ([5.9.79.73]:51714 "EHLO mail.jv-coder.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732891AbfJ1Ko7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 06:44:59 -0400
+Received: from [10.61.40.7] (unknown [37.156.92.209])
+        by mail.jv-coder.de (Postfix) with ESMTPSA id 6CA929F7D6;
+        Mon, 28 Oct 2019 10:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jv-coder.de; s=dkim;
+        t=1572259497; bh=5JNSbrJraKNtfEOW/Y/SSiZAnTUWwvSO739g19EqHLQ=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version;
+        b=Ec7dBlyCzGP12sig57kfDZVbZaQc+hH3Brr14ZLMNFik/U84R+hBUB6coWb4EfKok
+         BvAnSV75+LKGPNfmrw3Y3waHtBek/STlB0ncvPqDxdxlXj/BjABFjn7W8U+6IHXiBv
+         NFDCNzM8SU8SkXjb1Q7+H6gvigrup8JB7qYm/qX8=
+Subject: Re: [PATCH v2 1/1] xfrm : lock input tasklet skb queue
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Tom Rix <trix@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CACVy4SUkfn4642Vne=c1yuWhne=2cutPZQ5XeXz_QBz1g67CrA@mail.gmail.com>
+ <20191024103134.GD13225@gauss3.secunet.de>
+ <ad094bfc-ebb3-012b-275b-05fb5a8f86e5@jv-coder.de>
+ <20191025094758.pchz4wupvo3qs6hy@linutronix.de>
+ <202da67b-95c7-3355-1abc-f67a40a554e9@jv-coder.de>
+ <20191025102203.zmkqvvg5tofaqfw6@linutronix.de>
+From:   Joerg Vehlow <lkml@jv-coder.de>
+Message-ID: <5b45c8f6-1aa2-2e1e-9019-a140988bba80@jv-coder.de>
+Date:   Mon, 28 Oct 2019 11:44:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191026011741.xywerjv62vdmz6sp@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191025102203.zmkqvvg5tofaqfw6@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,HELO_MISC_IP,RCVD_IN_DNSWL_BLOCKED,
+        RDNS_NONE autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.jv-coder.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 08:17:41PM -0500, Josh Poimboeuf wrote:
 
-> I can take over the livepatch-specific patches if you want.  Or however
-> you want to do it.
 
-Sure, feel free to take and route the livepatch patches. Then I'll wait
-until those and the ARM64 patches land before I'll pick this up again.
+Am 25.10.2019 um 12:22 schrieb Sebastian Andrzej Siewior:
+> On 2019-10-25 12:14:59 [+0200], Joerg Vehlow wrote:
+>> Here is one of the oops logs I still have:
+>>
+>> [  139.717273] CPU: 2 PID: 11987 Comm: netstress Not tainted
+>> 4.19.59-rt24-preemt-rt #1
+> could you retry with the latest v5.2-RT, please? qemu should boot fine…
+>
+> Sebastian
+I was unable to reproduce it with 5.2.21-rt13. Do you know if something
+changed in network scheduling code or could it be just less likely?
