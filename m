@@ -2,86 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EA3E78B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8528BE78B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:47:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfJ1So0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 14:44:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36470 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfJ1So0 (ORCPT
+        id S1728648AbfJ1SrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 14:47:02 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32891 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfJ1SrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 14:44:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w18so11041250wrt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 11:44:24 -0700 (PDT)
+        Mon, 28 Oct 2019 14:47:02 -0400
+Received: by mail-pg1-f196.google.com with SMTP id u23so7505918pgo.0;
+        Mon, 28 Oct 2019 11:47:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=z4B1DM+aYjxU+okrUuJoTvRLDFQzAUQP1MHsJfZ8ctg=;
-        b=NO4O1b/ERlpQUWIuP/MgVc9Ok9BNPHPqKeqbbM/mGKCqqo6CWyGn3Reu2OkuUo2/g7
-         EZyQ+zpcht4G6efFF2oMKS8iv++RA/qrjXjmiBFNg4t7oQfhXZZL8nRfFyOzKSllANpt
-         AmmWy4zM+8nFHyp96N6ItivJY6zyFaRsLA21V1cgN4/z8XnmbiWvxgSS4LU8zhQuE6JX
-         G1iyw3oByQ3Jb/d1gbFgmzaDDhQxjVnhv4scENpcInkqqq2DWTEnNh0ddGlNMn5H1ckG
-         LN99AzQXpi5F8vGmNG16zwsBOOp4aOqLog5I8Pv6FqGqUXtBn/3Eo47JtIclsNzz5LTq
-         Xdrg==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=4FYNWJKX/XjWeMthjDP9NPXXb7ZZAxlczEJEW9ICuKU=;
+        b=CV13MzP4UL8JmJrN7U5nk+/QEyD0gNzZjlLYkJ+qDnJs3ORyFCtvspFYL4vzzUhDAv
+         oMxicNK3UGKtq1l7G4yKokbkgdVyRz38FLPtBW9iag6EYoxjNGVofnQQQFpeJgOZWool
+         GLEUXsjYkx48bTPS4KQdnBmxvYX6hbW8nG6ywiAwjtTjNbYxhDV1gBO5rsvWDLDg37H5
+         S4dajOQ/kOplGbLqpjooPQkz9sVynUToBe9WrNP96wfFSWQx7jndg3yOC+toZPhWa+2W
+         2UjATvddCQD9RPXrVvjPzVE5Q66heV5BMSD2b5qU7j82jQ05S+mYSy47WHsY46E5hnUS
+         gGeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=z4B1DM+aYjxU+okrUuJoTvRLDFQzAUQP1MHsJfZ8ctg=;
-        b=dGTUqacHnf5k7YkulXDNHAPVVLD+ZliG4F9uib06dN2VgUCjeCC8Fhekk4tv6nEAJw
-         Y4YWNKr9eDHEJcgBsFZeXRsmlfjKGS47cFCBEda983lXCOQHxS1GLL7JXAHxewMf3UVl
-         XRrk5Hosw600Ojrs1hliUO98AwXl0aIZN5lB8bp1ZV/+op8rX9p9NUrNKf0kQVcKCu98
-         wDlYr7ViHk+2kMTguOzrTVlzczH+m3zpXH/YZxDXo+NALPOEZAhlU0l+5/+UE5LAFSF5
-         4tk9oc6fB9WxdcIo3a74QO12+DCVEEhv4nwls0qOVjQ76Jspk/jOWaozcEvLfLcSc8Tj
-         vnSQ==
-X-Gm-Message-State: APjAAAW+PBMOh97XeGnhNZq02/eYAocspQyuoiVxufqhX3yQ8l9nvBBK
-        kfzB5CtrPjvHyl6lHJX69XtiG0VKB2CUV5j5KP4=
-X-Google-Smtp-Source: APXvYqzNGFP1dLOjt9AfEgyISUn4xbWkhUQnuuU8oO5eop5ZJ1tomCbqe5UitSk5/xYXP/N++DiT9AdvDt6UpX16Vf0=
-X-Received: by 2002:a05:6000:351:: with SMTP id e17mr15351455wre.96.1572288264213;
- Mon, 28 Oct 2019 11:44:24 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=4FYNWJKX/XjWeMthjDP9NPXXb7ZZAxlczEJEW9ICuKU=;
+        b=uFgXZ7vjXq1zATsizvaTpsneHg++rxn/qaaPNOwYPF4TA0PbfSIcxsByP0/16HV7Uu
+         Sgl9FHVt5euueUmveDmOFe3dnbxLRyl2bkuoHZzUhR1UF2X2YvjxWYA6c8XY/6RuAhUK
+         9CdnP3fHSCht9K74wnjEulQRmbyhbq4sY5nnaegN4SYdMKgNYuH7IQ2SxH4z9g1shP82
+         HGXEFHC//1HB19rCz5B4tCfGUuWpH29eFq28LwygN1cUpfyd8EbZHetxDWjX9xMjnSKC
+         Xe+J44Zyteam1JDv4czAXFjTbA1jTKPNhqdoGmiJUeXOotDujsS0P5xj/abf5V3P9r5F
+         1DPg==
+X-Gm-Message-State: APjAAAUcX/7wjscLHznC5Zm37QbPWXjrJ80U46txCZRKFfDHnyT4XiYG
+        trmiRIcDzlVLgMes8beS1Bk=
+X-Google-Smtp-Source: APXvYqwbkABVl9FeCIXxt4Gwq6nhf1e5mB7GmhmE5wX02AhR7dC+OP+DXrSoleU/keVHrv99oGU6Dw==
+X-Received: by 2002:a17:90b:94f:: with SMTP id dw15mr931709pjb.21.1572288421568;
+        Mon, 28 Oct 2019 11:47:01 -0700 (PDT)
+Received: from saurav ([27.62.167.137])
+        by smtp.gmail.com with ESMTPSA id 129sm12417083pfg.38.2019.10.28.11.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 11:47:00 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 00:16:54 +0530
+From:   Saurav Girepunje <saurav.girepunje@gmail.com>
+To:     pkshih@realtek.com, kvalo@codeaurora.org, davem@davemloft.net,
+        Larry.Finger@lwfinger.net, saurav.girepunje@gmail.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     saurav.girepunje@hotmail.com
+Subject: [PATCH] net: wireless: rtlwifi: rtl8192c:Drop condition with no
+ effect
+Message-ID: <20191028184654.GA26755@saurav>
 MIME-Version: 1.0
-Reply-To: muahammedrabia@gmail.com
-Received: by 2002:adf:fdd2:0:0:0:0:0 with HTTP; Mon, 28 Oct 2019 11:44:23
- -0700 (PDT)
-From:   "Mrs.Rabia Muahammed" <rabiamuahammed@gmail.com>
-Date:   Mon, 28 Oct 2019 11:44:23 -0700
-X-Google-Sender-Auth: 9swnEmxCFHXFiQRRRKjUKJVNma0
-Message-ID: <CAHV+Bdi1nKY2OWhM3GVfSNp-VL83pqaarVp-iuy-x5v4s8OqpQ@mail.gmail.com>
-Subject: From Mrs. Rabia Muahammed
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As the "else if" and "else" branch body are identical the condition
+has no effect. So drop the "else if" condition.
+
+Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8192c/dm_common.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/dm_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/dm_common.c
+index f2908ee5f860..4bef237f488d 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/dm_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/dm_common.c
+@@ -1649,8 +1649,6 @@ static void rtl92c_bt_ant_isolation(struct ieee80211_hw *hw, u8 tmp1byte)
+ 			    (rtlpriv->btcoexist.bt_rssi_state &
+ 			    BT_RSSI_STATE_SPECIAL_LOW)) {
+ 			rtl_write_byte(rtlpriv, REG_GPIO_MUXCFG, 0xa0);
+-		} else if (rtlpriv->btcoexist.bt_service == BT_PAN) {
+-			rtl_write_byte(rtlpriv, REG_GPIO_MUXCFG, tmp1byte);
+ 		} else {
+ 			rtl_write_byte(rtlpriv, REG_GPIO_MUXCFG, tmp1byte);
+ 		}
 -- 
-From Mrs. Rabia Muahammed
+2.20.1
 
-Dear Good Friend
-
-My Name Is Mrs. Rabia Muahammed , I am a banker in (GARANTI BANK
-ISTANBUL TURKEY (G B I T)
-I want to transfer an abandoned sum of 25.5 millions USD to your
-account. 50% will be for you. No risk involved. Contact me for more
-details. Kindly reply me back.
-
-
-Fill this information
-
-
-Full name:
-Direct cell number:
-Country:
-City:
-Age :
-Gender:
-Occupation:
-
-
-Please respond urgently
-
-
-Regards,
-Mrs.Rabia Muahammed
