@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF05E70A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CAAE70A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388652AbfJ1LnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 07:43:02 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:40476 "EHLO metanate.com"
+        id S2388641AbfJ1LnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 07:43:01 -0400
+Received: from dougal.metanate.com ([90.155.101.14]:46592 "EHLO metanate.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727385AbfJ1LnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388603AbfJ1LnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Oct 2019 07:43:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
          s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -17,25 +17,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=lwODNx/KjIj+Y/Cod9TZnDM+jFNNhhm9mbvUKZSiSdY=; b=abKHpX5LsJ0gM4zh/a3HRf7+Dz
-        4Y8eWJJaa/6e+/94YeREhIkRrZFkeKv/YejskVC7f5/x7SiHQGYtztOKOSGpz5cBv5bvQk7HSEzQ9
-        45M2hqjGCXMQTeLuss0aOt+3fF+m3OPXbY+RATZKN1lF/tCA/2LKUNhWV+5LhfjQsVxqS350kNk4x
-        XLiH0UFgUq/t/LGQDtUbKoqldOdohrQF8aZfVrp5cYYpo/mmSB4udFKeZcb4fxNkXRmDmYy/ytMbO
-        2odavFBBkmzCerU1A5woP2lhBkkvGFL/dSPJMeak8jayBO+oVaDuD6cJya4DxhxoIBl+T0xL3S12o
-        Pe62aF2A==;
+        bh=3yHp3hDaqlC9sVsaUEOh4hHDVX97afo481OX9Wv/28o=; b=JFJJkAY0J7hR+kY0KnpsFW0Rk9
+        Sq3llvjAUA+tuAY0LLX35UJmclE0S1q9ht/dntPdOxOQqip+NTg3/n/UTvXoK2JENJjLhBCg2JXTd
+        W0eaBplcq/gcEJyu2dGF74zmCMdVPOSHlNUtWVywKgMUfE744jr6k06cjoX9GgAk7z1pEH/7k0AK+
+        QRSXgX5f8+RXsa0zBXcZnz235T17UcIu5GTnzLuRCSa3heJGxokM1SLQWUver77S+mpClWnyZzfE/
+        6ACk3pV9GEnO/fZAN69RJxCJyjYUCTSee3AjvCq8dsR/Es9AzcxBhOCDmvc8vw33ghF9YewbdwF8y
+        IvJVjrIQ==;
 Received: from dougal.metanate.com ([192.168.88.1] helo=localhost.localdomain)
         by email.metanate.com with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
         (Exim 4.92.3)
         (envelope-from <john@metanate.com>)
-        id 1iP3QH-00010o-AE; Mon, 28 Oct 2019 11:42:57 +0000
+        id 1iP3QH-00010o-CL; Mon, 28 Oct 2019 11:42:57 +0000
 From:   John Keeping <john@metanate.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
-Subject: [PATCH v2 2/6] USB: gadget: f_hid: switch to IDR for tracking minors
-Date:   Mon, 28 Oct 2019 11:42:24 +0000
-Message-Id: <20191028114228.3679219-3-john@metanate.com>
+Subject: [PATCH v2 3/6] USB: gadget: f_hid: find f_hidg by IDR lookup on open
+Date:   Mon, 28 Oct 2019 11:42:25 +0000
+Message-Id: <20191028114228.3679219-4-john@metanate.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191028114228.3679219-1-john@metanate.com>
 References: <20191024164538.3161474-1-john@metanate.com>
@@ -48,86 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the following commits, we are going to move the cdev allocation up to
-the module initialisation, and will look up the associated f_hidg
-structure from the open operation.
-
-Start preparing for this by switching from IDA to IDR.
+As a step towards decoupling the cdev lifetime from f_hidg, lookup the
+f_hidg structure by minor number from IDR when opening the device.
 
 Signed-off-by: John Keeping <john@metanate.com>
 ---
 v2:
 - No changes
 
- drivers/usb/gadget/function/f_hid.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/usb/gadget/function/f_hid.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index e5e18d02b77a..1eb8b545e5b4 100644
+index 1eb8b545e5b4..6cf3b5b14ded 100644
 --- a/drivers/usb/gadget/function/f_hid.c
 +++ b/drivers/usb/gadget/function/f_hid.c
-@@ -24,8 +24,8 @@
+@@ -441,8 +441,14 @@ static int f_hidg_release(struct inode *inode, struct file *fd)
  
- static int major, minors;
- static struct class *hidg_class;
--static DEFINE_IDA(hidg_ida);
--static DEFINE_MUTEX(hidg_ida_lock); /* protects access to hidg_ida */
-+static DEFINE_IDR(hidg_idr);
-+static DEFINE_MUTEX(hidg_idr_lock); /* protects access to hidg_idr */
- 
- /*-------------------------------------------------------------------------*/
- /*                            HID gadget struct                            */
-@@ -851,9 +851,9 @@ static inline int hidg_get_minor(void)
+ static int f_hidg_open(struct inode *inode, struct file *fd)
  {
- 	int ret;
- 
--	ret = ida_simple_get(&hidg_ida, 0, 0, GFP_KERNEL);
-+	ret = idr_alloc(&hidg_idr, NULL, 0, 0, GFP_KERNEL);
- 	if (ret >= HIDG_MINORS) {
--		ida_simple_remove(&hidg_ida, ret);
-+		idr_remove(&hidg_idr, ret);
- 		ret = -ENODEV;
- 	}
- 
-@@ -996,7 +996,7 @@ static const struct config_item_type hid_func_type = {
- 
- static inline void hidg_put_minor(int minor)
- {
--	ida_simple_remove(&hidg_ida, minor);
-+	idr_remove(&hidg_idr, minor);
- }
- 
- static void hidg_free_inst(struct usb_function_instance *f)
-@@ -1005,9 +1005,9 @@ static void hidg_free_inst(struct usb_function_instance *f)
- 
- 	opts = container_of(f, struct f_hid_opts, func_inst);
- 
--	mutex_lock(&hidg_ida_lock);
+-	struct f_hidg *hidg =
+-		container_of(inode->i_cdev, struct f_hidg, cdev);
++	struct f_hidg *hidg;
++
 +	mutex_lock(&hidg_idr_lock);
- 	hidg_put_minor(opts->minor);
--	mutex_unlock(&hidg_ida_lock);
++	hidg = idr_find(&hidg_idr, iminor(inode));
 +	mutex_unlock(&hidg_idr_lock);
++
++	if (!hidg)
++		return -ENODEV;
  
- 	if (opts->report_desc_alloc)
- 		kfree(opts->report_desc);
-@@ -1027,7 +1027,7 @@ static struct usb_function_instance *hidg_alloc_inst(void)
- 	opts->func_inst.free_func_inst = hidg_free_inst;
- 	ret = &opts->func_inst;
+ 	fd->private_data = hidg;
  
--	mutex_lock(&hidg_ida_lock);
+@@ -827,6 +833,10 @@ static int hidg_bind(struct usb_configuration *c, struct usb_function *f)
+ 	if (status)
+ 		goto fail_free_descs;
+ 
 +	mutex_lock(&hidg_idr_lock);
- 
- 	opts->minor = hidg_get_minor();
- 	if (opts->minor < 0) {
-@@ -1038,7 +1038,7 @@ static struct usb_function_instance *hidg_alloc_inst(void)
- 	config_group_init_type_name(&opts->func_inst.group, "", &hid_func_type);
- 
- unlock:
--	mutex_unlock(&hidg_ida_lock);
++	idr_replace(&hidg_idr, hidg, hidg->minor);
 +	mutex_unlock(&hidg_idr_lock);
- 	return ret;
- }
- 
++
+ 	device = device_create(hidg_class, NULL, dev, NULL,
+ 			       "%s%d", "hidg", hidg->minor);
+ 	if (IS_ERR(device)) {
 -- 
 2.23.0
 
