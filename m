@@ -2,118 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45BC7E6B2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 853B8E6B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbfJ1Czp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:55:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44332 "EHLO mail.kernel.org"
+        id S1729861AbfJ1C7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:59:49 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57343 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726789AbfJ1Czo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:55:44 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1727395AbfJ1C7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 22:59:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE302208C0;
-        Mon, 28 Oct 2019 02:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572231344;
-        bh=pb7IZTBRfkZVHAvZFuM2aHVe4OKL4bsoUZk1vFFsMic=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QeCp2KyO5HGNqs9LV5rCeAyHiDVHPizLKOXUYKZe9JMJNk5mejLTdbN1VT7KA+enL
-         nhFzRcexYUTqhoWNkmTETEes2aYa30k0oqjUzSXaNlImzHcJ79rLq8+3kmv1+p2Jsk
-         W9kfk5YiU0pAilyIEU7Qh9qOBeP9BnukZvoZ/wWg=
-Date:   Mon, 28 Oct 2019 10:55:26 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH v13 10/18] ARM: dts: imx6dl-yapp4: Add reg property to
- the lp5562 channel node
-Message-ID: <20191028025524.GF16985@dragon>
-References: <20191016155954.29044-1-dmurphy@ti.com>
- <20191016155954.29044-11-dmurphy@ti.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 471fZp0xqSz9sPc;
+        Mon, 28 Oct 2019 13:59:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1572231586;
+        bh=A99ViC7xdtIhVkC13zYqRE2VkM66MXhtZs7WENWuq6M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=RyJvM3Ql7sOS1kVJskXSEHLpAxu2pooYLlRv7GkREEWWHvslnt0mjtzZxhWnOXkLc
+         MBLBopoPB1aQTvRJI5YunFbFu0Ix7fKvm9/Q3JpuoM3YU0vRQP87s/yNZg1rwO00Gv
+         Qhu6Z5uQULiozWdviKOatijAXtHHazuebUA9D5laLDk8QZK/EOVFjS9V3g2Yj93SwH
+         8gR1L6co3BoVlxMaqO2HlXmrSJ/KSVeMIfEfKGmFan1TfyAcI214cx3qS/5aljxIxO
+         Y10B69MR8dHgQ//ttwe6SEyKJQM9D0Ns6wYo7OsAACkW07aAMx3Ok1bvmS2GF36Yef
+         PEJo4+JXU9I9A==
+Date:   Mon, 28 Oct 2019 13:59:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the block tree
+Message-ID: <20191028135945.5b2ed0fa@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191016155954.29044-11-dmurphy@ti.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; boundary="Sig_/S7w7HW1IKwIM54Qtue1azez";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 10:59:46AM -0500, Dan Murphy wrote:
-> Add the reg property to each channel node.  This update is
-> to accomodate the multicolor framework.  In addition to the
-> accomodation this allows the LEDs to be placed on any channel
-> and allow designs to skip channels as opposed to requiring
-> sequential order.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> CC: Shawn Guo <shawnguo@kernel.org>
-> CC: Sascha Hauer <s.hauer@pengutronix.de>
-> CC: Pengutronix Kernel Team <kernel@pengutronix.de>
-> CC: Fabio Estevam <festevam@gmail.com>
-> CC: NXP Linux Team <linux-imx@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-> index e8d800fec637..efc466ed1fea 100644
-> --- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-> +++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-> @@ -257,29 +257,35 @@
->  		reg = <0x30>;
->  		clock-mode = /bits/ 8 <1>;
->  		status = "disabled";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
->  
-> -		chan0 {
-> +		chan@0 {
+--Sig_/S7w7HW1IKwIM54Qtue1azez
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Patch #18 updates bindings example to use led as node name.  Maybe we
-should do the same here?
+Hi all,
 
-Shawn
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
->  			chan-name = "R";
->  			led-cur = /bits/ 8 <0x20>;
->  			max-cur = /bits/ 8 <0x60>;
-> +			reg = <0>;
->  		};
->  
-> -		chan1 {
-> +		chan@1 {
->  			chan-name = "G";
->  			led-cur = /bits/ 8 <0x20>;
->  			max-cur = /bits/ 8 <0x60>;
-> +			reg = <1>;
->  		};
->  
-> -		chan2 {
-> +		chan@2 {
->  			chan-name = "B";
->  			led-cur = /bits/ 8 <0x20>;
->  			max-cur = /bits/ 8 <0x60>;
-> +			reg = <2>;
->  		};
->  
-> -		chan3 {
-> +		chan@3 {
->  			chan-name = "W";
->  			led-cur = /bits/ 8 <0x0>;
->  			max-cur = /bits/ 8 <0x0>;
-> +			reg = <3>;
->  		};
->  	};
->  
-> -- 
-> 2.22.0.214.g8dca754b1e
-> 
+fs/io_uring.c: In function '__io_sqe_files_unregister':
+fs/io_uring.c:3010:12: error: invalid storage class for function 'io_sqe_fi=
+les_unregister'
+ 3010 | static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+fs/io_uring.c:3010:1: warning: ISO C90 forbids mixed declarations and code =
+[-Wdeclaration-after-statement]
+ 3010 | static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+      | ^~~~~~
+
+Caused by commit
+
+  ed9e02e4bad1 ("io_uring: support for larger fixed file sets")
+
+I have used the block tree from next-20191025 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/S7w7HW1IKwIM54Qtue1azez
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl22WaEACgkQAVBC80lX
+0GzRkggAgblmq0ejT4v2cuEjt39vjRaXd0cqVEglJGBiFqcGAt4jsH26hDVmtT0b
+zI1czC3rOZH0DIHIcVjoLrUVVFKJ+39f4YJH/QKfTHbXsaMH806T0jrGDmZ0Xys2
+STBT7yTDUktcUb78/hxlzU9LmZqtMi4BPmByIlVoqYy24aYI8+NnM4lPobpRJziW
+vOemwb2x2x0h6kN2blNyoYv2BYOMuGHcQc6JXiCVIj1tF0oS7vg4LNSPccRrvDH9
+YBdfd/bTo2vDXz/G55RKC/NtmXwToU3a+k15BGlz7jv062+68PgG/f3Zd1RbJv3H
+i+jc4h0V3/8gLykvVhi+b/Wo1vQuyQ==
+=8Ee+
+-----END PGP SIGNATURE-----
+
+--Sig_/S7w7HW1IKwIM54Qtue1azez--
