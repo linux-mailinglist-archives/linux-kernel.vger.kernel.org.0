@@ -2,137 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73039E71CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8B0E7206
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389495AbfJ1Mng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:43:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44674 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389395AbfJ1Mnc (ORCPT
+        id S1728183AbfJ1Mpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 08:45:45 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37405 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbfJ1Mpo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:43:32 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iP4Mi-0002Nj-M4; Mon, 28 Oct 2019 13:43:20 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 593761C0482;
-        Mon, 28 Oct 2019 13:43:20 +0100 (CET)
-Date:   Mon, 28 Oct 2019 12:43:20 -0000
-From:   "tip-bot2 for Alexey Budankov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core, perf/x86: Introduce swap_task_ctx()
- method at 'struct pmu'
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <9a0aa84a-f062-9b64-3133-373658550c4b@linux.intel.com>
-References: <9a0aa84a-f062-9b64-3133-373658550c4b@linux.intel.com>
+        Mon, 28 Oct 2019 08:45:44 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e11so9739564wrv.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 05:45:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EjO3nRtZRcHpq4gF9qTCncUdsLaN7JBougyYjcKY6iQ=;
+        b=ZoLU5m9GxdnwffSu0EW6y0pGEJD2St4BW1Or90pLKllhPiB4f1Di9B3e3e2mqGJjsq
+         jsFx8WAxwcc9s/0IgrizLkXgBV5lcpT33SA8sFf2vGjv3kjC/qpC305pVj/XYl/YtpcI
+         D6nlH9i0hwED/+2q7/04OYEVNE5pBpqM8rAZrlokoBQb1PeN69+gkewQ756V439YAp8r
+         u37qbi4DkpziBHivr9HsgQ1VD9bcuK/oBIqFaia7N/bgibq5DGJDdqU/Tai48T7XcTVr
+         OG7fyw4BHSSwOa1jfqymyccf2xA1Vq8/e+ECfuMMcK5s9tDdJjwk3JnJqopKM5cFSC4E
+         VltQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EjO3nRtZRcHpq4gF9qTCncUdsLaN7JBougyYjcKY6iQ=;
+        b=psGsTO5wj5DUqGA4O/124SfUHbJVYeyjgZwdo3TXrxJX1Eov6n5RKvKUEh4sjw5XUf
+         nM7/+9QIX4MoCVe+2ErnTS8nTSthjrMxBJ9BFP3E4d/nJLbbt/jpdcmeEra1ys7beSaB
+         QHWE8hz8yMty5n3IVdFNivaBBAYybKhjFTlXnUYsQ2Ikm8IY5gwEMckIp3dZ2UxYnuzj
+         eHJrPMON11BL1oi5QJJz/72XQG2p1uJxN6xCP28vrTevos8XPF+00QptllBBJQ/jHNuO
+         rdrDqPStqS1VsGERztm5PHpu/ke/+5eXNdF0YIp6DMDI6vWCgGvU3iiIwYZwmB0vP/Ox
+         EA0A==
+X-Gm-Message-State: APjAAAXviB2AXzowmRrudwLflYPDb6Yi6VIu5D6qn0GFQ1rCwLTRQzTg
+        cP4l6lpUxonKhJtUTZuRleqUNg==
+X-Google-Smtp-Source: APXvYqx5GBghFKmvy0FXn9fEAyKJ8U0QQT5f2YmoThu0wU+QHGSds58+7CTsU7u+9MwQhikla46hCQ==
+X-Received: by 2002:adf:8011:: with SMTP id 17mr15418613wrk.367.1572266743355;
+        Mon, 28 Oct 2019 05:45:43 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id d2sm16183996wmd.2.2019.10.28.05.45.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Oct 2019 05:45:42 -0700 (PDT)
+Subject: Re: [PATCH v2 01/11] ASoC: dt-bindings: add dt bindings for
+ WCD9340/WCD9341 audio codec
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     broonie@kernel.org, linus.walleij@linaro.org, lee.jones@linaro.org,
+        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org
+References: <20191018001849.27205-1-srinivas.kandagatla@linaro.org>
+ <20191018001849.27205-2-srinivas.kandagatla@linaro.org>
+ <20191025204338.GA25892@bogus>
+ <90b2d83b-f2b2-3a5d-4deb-589f4b48b208@linaro.org>
+Message-ID: <371955d9-ad2d-5ddc-31b4-710729feae42@linaro.org>
+Date:   Mon, 28 Oct 2019 12:45:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Message-ID: <157226660008.29376.17028800323168322771.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <90b2d83b-f2b2-3a5d-4deb-589f4b48b208@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     fc1adfe306b71e094df636012f8c0fed971cad45
-Gitweb:        https://git.kernel.org/tip/fc1adfe306b71e094df636012f8c0fed971cad45
-Author:        Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate:    Wed, 23 Oct 2019 10:11:04 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 28 Oct 2019 12:50:59 +01:00
 
-perf/core, perf/x86: Introduce swap_task_ctx() method at 'struct pmu'
+On 28/10/2019 12:40, Srinivas Kandagatla wrote:
+> Its Phandle.
+> 
+> something like this is okay?
+> 
+> slim-ifc-dev:
+>    $ref: '/schemas/types.yaml#/definitions/phandle-array'
 
-Declare swap_task_ctx() methods at the generic and x86 specific
-pmu types to bridge calls to platform specific PMU code on optimized
-context switch path between equivalent task perf event contexts.
+Sorry this should not be an array, so something like this:
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: https://lkml.kernel.org/r/9a0aa84a-f062-9b64-3133-373658550c4b@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/perf_event.h |  8 ++++++++
- include/linux/perf_event.h   |  9 +++++++++
- 2 files changed, 17 insertions(+)
+   slim-ifc-dev:
+     description: SLIMBus Interface device phandle
+     $ref: '/schemas/types.yaml#/definitions/phandle'
 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index ecacfbf..5384317 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -683,6 +683,14 @@ struct x86_pmu {
- 	atomic_t	lbr_exclusive[x86_lbr_exclusive_max];
- 
- 	/*
-+	 * perf task context (i.e. struct perf_event_context::task_ctx_data)
-+	 * switch helper to bridge calls from perf/core to perf/x86.
-+	 * See struct pmu::swap_task_ctx() usage for examples;
-+	 */
-+	void		(*swap_task_ctx)(struct perf_event_context *prev,
-+					 struct perf_event_context *next);
-+
-+	/*
- 	 * AMD bits
- 	 */
- 	unsigned int	amd_nb_constraints : 1;
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 4f77b22..011dcbd 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -410,6 +410,15 @@ struct pmu {
- 	 */
- 	size_t				task_ctx_size;
- 
-+	/*
-+	 * PMU specific parts of task perf event context (i.e. ctx->task_ctx_data)
-+	 * can be synchronized using this function. See Intel LBR callstack support
-+	 * implementation and Perf core context switch handling callbacks for usage
-+	 * examples.
-+	 */
-+	void (*swap_task_ctx)		(struct perf_event_context *prev,
-+					 struct perf_event_context *next);
-+					/* optional */
- 
- 	/*
- 	 * Set up pmu-private data structures for an AUX area
+
+>    description: SLIMBus Interface device phandle
