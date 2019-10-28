@@ -2,98 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7412DE7A69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D23FAE7A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:46:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbfJ1UpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:45:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45370 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbfJ1UpX (ORCPT
+        id S2388200AbfJ1UqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:46:05 -0400
+Received: from mail-pl1-f177.google.com ([209.85.214.177]:44851 "EHLO
+        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJ1UqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:45:23 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9SKdqrX136406
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 16:45:22 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vx4sunhq2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 16:45:22 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 28 Oct 2019 20:45:19 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Oct 2019 20:45:16 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9SKjF4125428188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Oct 2019 20:45:15 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 525B34C040;
-        Mon, 28 Oct 2019 20:45:15 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53C814C046;
-        Mon, 28 Oct 2019 20:45:14 +0000 (GMT)
-Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Oct 2019 20:45:14 +0000 (GMT)
-Subject: Re: [PATCH v1] selftest/trustedkeys: TPM 1.2 trusted keys test
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     David Howells <dhowells@redhat.com>, Petr Vorel <pvorel@suse.cz>,
-        shuah <shuah@kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 28 Oct 2019 16:45:13 -0400
-In-Reply-To: <20191028203014.GA8279@linux.intel.com>
-References: <1571944467-13097-1-git-send-email-zohar@linux.ibm.com>
-         <20191028203014.GA8279@linux.intel.com>
+        Mon, 28 Oct 2019 16:46:04 -0400
+Received: by mail-pl1-f177.google.com with SMTP id q16so6013889pll.11;
+        Mon, 28 Oct 2019 13:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:references:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=lV3TnrefZSIp2fBnZfeV64I5DeWk0aVLIz9eM31Y7DE=;
+        b=nhjSWFba7+p4xp4vcCxRo7Ivtn17fiGuTkgM4306IMhMQkfnKDp2wHMkIfWT8e7az4
+         7YOQ0o/XSuK8rpTb5aWxd9EaVPFrDk1cTdEseDbI2K8odAw3FY8ZxQ+e3JPkECRIjlZa
+         3t5TRjhUZ1z1V8V/A8TkHa/gSKKfss5P7FJfR3Z902htuwYH6uxIMNbJzTJ3FUPVcGKL
+         UCb20Eb/7IvOrcXjcQyeccE9x9Tlc3U9Wfy9HVppNdJ7GY5CR7iDiDKhDfmo931Pb0gs
+         QKqruvPMhnHfzRFJKuptnwKChS+/31YQoYltlyGhnxDj4tTPd7T1Vk52uY24KmtCC4zP
+         P6eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=lV3TnrefZSIp2fBnZfeV64I5DeWk0aVLIz9eM31Y7DE=;
+        b=sMMj09YiiljYkIaMTeSKqf1ZhJhrgIah27GRgHCRaShp2qwh68TF7TXVxezwhHeRoz
+         imZy4tksFUaiGjodefdk8GI/nWwmEVzsVm8pT5eE2qwy2krGbwL6XKLmLgSnFQB805hT
+         Zi1m81NFi2+59tdru+++04rzEuQofH2qD1jEHrL4saI7T4qIUFK6+645UEwnVTruKMso
+         5/CpmGJVA1ErEQlTgPzQaJoAN8p+pAOg0oc5fjEh+4wC0rs88R8D/ILGhxydNbwUO/OD
+         TjOX0gwadX56uo3/NG3Hkb5zWp2QctN2lUyQnRegGpVqdt6T1ATa6bf/bv2q0o3Wkql3
+         SAcQ==
+X-Gm-Message-State: APjAAAW6aS9oxjtFdQmNoNSmNqmVJxHdVMvQ6woqZWyUTdiyneH0NWTq
+        ntOWsQP0yfx+wRm5pTpFw19uc/NyT510dA==
+X-Google-Smtp-Source: APXvYqyqiBPqzBlqrSy0IddkiaS8mVe5wE1mBhL3+Wr7Mc7NuyY5wAZi98T20HhHXDPdRGQKPx7oUQ==
+X-Received: by 2002:a17:902:59d9:: with SMTP id d25mr21878plj.250.1572295563266;
+        Mon, 28 Oct 2019 13:46:03 -0700 (PDT)
+Received: from iclxps (155-97-232-235.usahousing.utah.edu. [155.97.232.235])
+        by smtp.gmail.com with ESMTPSA id z10sm6560789pfr.139.2019.10.28.13.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 13:46:02 -0700 (PDT)
+Message-ID: <5c5b9dec7ea401fffa13446af2a528cbaf6e1046.camel@gmail.com>
+Subject: Fwd: [PATCH v5 1/4] sparc64: implement ioremap_uc
+From:   Tuowen Zhao <ztuowen@gmail.com>
+To:     sparclinux@vger.kernel.org,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+        acelan.kao@canonical.com, mcgrof@kernel.org
+Date:   Mon, 28 Oct 2019 14:46:00 -0600
+References: <20191016210629.1005086-2-ztuowen@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102820-0028-0000-0000-000003B07F8B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102820-0029-0000-0000-00002472BDE2
-Message-Id: <1572295513.4532.270.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-28_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910280195
+User-Agent: Evolution 3.34.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-10-28 at 22:30 +0200, Jarkko Sakkinen wrote:
-> On Thu, Oct 24, 2019 at 03:14:27PM -0400, Mimi Zohar wrote:
-> > Create, save and load trusted keys test
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > 
-> > Change log v1:
-> > - Replace the directions for using Trousers to take ownership of the TPM
-> > with directions for using the IBM TSS.
-> > - Differentiate between different types of errors.  Recent bug is causing
-> > "add_key: Timer expired".
-> > ---
-> 
-> Is not really usable as a selftest because of 3rd party dependencies.
+Adding sparc list. Sorry, first time missed the list.
 
-As part of diagnosing trusted keys failure, there is some
-hints/directions as to how to take TPM 1.2 ownership, but it does not
-take ownership.  The previous version included directions for using
-Trousers.  This version provides directions for using the IBM TSS.
- Feel free to include additional hints/directions.
+Looking for some reviews.
 
-Mimi
-   
+Patch set: Fix MTRR bug for intel-lpss-pci
+https://lkml.org/lkml/2019/10/16/1230
+
+Tuowen
+
+-------- Forwarded Message --------
+From: Tuowen Zhao <ztuowen@gmail.com>
+To: lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc: andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+acelan.kao@canonical.com, mcgrof@kernel.org, davem@davemloft.net, 
+Tuowen Zhao <ztuowen@gmail.com>, kbuild test robot <lkp@intel.com>
+Subject: [PATCH v5 1/4] sparc64: implement ioremap_uc
+Date: Wed, 16 Oct 2019 15:06:27 -0600
+
+On sparc64, the whole physical IO address space is accessible using
+physically addressed loads and stores. *_uc does nothing like the
+others.
+
+Cc: <stable@vger.kernel.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
+---
+ arch/sparc/include/asm/io_64.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/sparc/include/asm/io_64.h
+b/arch/sparc/include/asm/io_64.h
+index 688911051b44..f4afa301954a 100644
+--- a/arch/sparc/include/asm/io_64.h
++++ b/arch/sparc/include/asm/io_64.h
+@@ -407,6 +407,7 @@ static inline void __iomem *ioremap(unsigned long
+offset, unsigned long size)
+ }
+ 
+ #define ioremap_nocache(X,Y)		ioremap((X),(Y))
++#define ioremap_uc(X,Y)			ioremap((X),(Y))
+ #define ioremap_wc(X,Y)			ioremap((X),(Y))
+ #define ioremap_wt(X,Y)			ioremap((X),(Y))
+ 
+-- 
+2.23.0
+
 
