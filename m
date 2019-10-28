@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0045E7BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C9CE7BF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390125AbfJ1V72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:59:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46131 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389915AbfJ1V70 (ORCPT
+        id S2390367AbfJ1V7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:59:31 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33314 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390311AbfJ1V7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:59:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f19so7877769pgn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:59:26 -0700 (PDT)
+        Mon, 28 Oct 2019 17:59:30 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c184so7908156pfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:59:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+L6QotxBXClg8Fe4NEIvH2M7vhWfz5AENh5gfCd6GV4=;
-        b=uaUmY97oSQxJQiygHKDaQ20ZTGg8dHh2CBe6oCjliV/RN29TrGpIx4ib9OqXas8o3L
-         VGfHqIuml3QwWjby0s2prmA2YMmiKWQVFFb1lAwmvGl498yOYU5Uls0CSQZ34KDFix43
-         G6JAmKHK8ywTaqFjTUQP00S7zXpDubMfH1Tir+VrVpTGeF7pp/x/zIimRziEyXRoQMht
-         x7W2cxF8KEa5n6o6m8KFmj7LejeivOjoMf2XtSHXLftGcJYpn6KXhdcqvG0pZZJ4idlx
-         kQxDcknr/f6WferMNpA/Vd7V+YIZo/bspA5ekOGZIugueMatX0phDtpfNMw5J5ckn8sF
-         6leg==
+        bh=0d8c9xxXfq9azaoIMnpd7T7O6Htbc+6dqNsLBH6goLs=;
+        b=OooiMpJlnthfCoHkNbKk5+ZkhnJ4zgwcMFUsDAdDdjsrni+Ym/oIzxMeoxGTl3a3Ma
+         pj0Kyj2In07BwtHsqyedhyDIRyzCFk8VWca0Obw0bNYJee8KpxoiSfVZn9h/lVDEimRR
+         5Q7G8PZYX9o9NcyIuCmaj57UB8KFcVl0IMa/vqB9XHsr6tObAeq8UoChUCRlr0A+tg+y
+         FDiVVTyCiU7MPfSums1k96+5GW/yFF3TomG9NIwun5QiuwETMTfBqMgs5F+ynDLBgAis
+         N6Yvgsv0rfanq46H8AWZ5R45RtHTXclUhZzTB9Vxgy8K7aSh8KBxgHcQ7X1TH0E3GqOh
+         ZeMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+L6QotxBXClg8Fe4NEIvH2M7vhWfz5AENh5gfCd6GV4=;
-        b=D0tz/R3Zn62HOyrbuQL6Q2101bJ9uLA9vYq7Tk7tNl0wJ8udaLYc/GsraYdtvDnnJ0
-         tg3w7ftVG8+kHP3dDc5BK2TvBzp0pmoRUTspyZze1mFTXUvV2NjSzW2vW2w4xp5A2T2s
-         gI2XiHwadgHFJyibvmpl9tDK12iVBhcFvTCviYScGusP8YdrjKLPByMMHOgCodyPVTUl
-         t48QC5YUkMnzm2AC/iSQuhHqx4x6VhvkGOe+rFYOpXPN7GMUpHMG700r3p9pqzfiUcVr
-         z5lm01FOqvt6laallTDMj9ATqOgnd/SwE+5Atbu7rFKAYCw4jimQLw6sXSE7tVaUb7Y5
-         Lfnw==
-X-Gm-Message-State: APjAAAWi0YHOVuLpRfArxSfJflyCLZscbZiaYPhtJYlkMR6PV7nSWrOr
-        fr3Vh4lIGbBM2zx8o71Xuf2ml8FSzfI=
-X-Google-Smtp-Source: APXvYqwoT7ayq2aO4CF8CK+7fEOHyKKj3eXU3Enm6OGIp8+0wievgg8RmOqjN0WXhlj2nCmqsIIU7g==
-X-Received: by 2002:a63:f923:: with SMTP id h35mr23802494pgi.323.1572299965657;
-        Mon, 28 Oct 2019 14:59:25 -0700 (PDT)
+        bh=0d8c9xxXfq9azaoIMnpd7T7O6Htbc+6dqNsLBH6goLs=;
+        b=Zg5wTDE2G1vJ8CnxNwU1sKnVHbmQ4iwIi5feMb0dLDSEBpYI/GQGaqzfrp/Yf15j0F
+         tcSRAFXVTekwPtTZSqRZKaEeZVE1l5ymG/sdap4zQ2ZIlY9YVyvwoDt8XU/JzoTSwegs
+         xUvXJvHgBOm/yYvgu6WtCUaZJxQ5IPAq875Uh8neM8UVhL50cm4AM8Igbar2T8GTnSCT
+         BiuOeVNPmISgxd23ZsIxsAyQYHuSUh/vdv622E9lThpfkQnzELYrWKWKG611xBIFmgIh
+         VmdNGJa0oWPFs8WE/6V/ni2YxhPm3hQtKZOLnp/K7WhO500Zr/OlPm64bkBcm5BqdX06
+         m48w==
+X-Gm-Message-State: APjAAAXo4yADWbp3CnE2YY+rz25Rcy8QFfRkPfqaUdgfL1HyFQOibWap
+        1IBuD1hRdhkqaegwxwkKqz5zdE+f4bs=
+X-Google-Smtp-Source: APXvYqxETt1r4GGA30YA4LQzxZEzUJ5jkilalooGWqJqTN8Hrs56L/j9noamumHZ8snA1JUFcFgYqA==
+X-Received: by 2002:a17:90a:8d82:: with SMTP id d2mr1932147pjo.31.1572299968324;
+        Mon, 28 Oct 2019 14:59:28 -0700 (PDT)
 Received: from localhost.localdomain (c-67-170-172-113.hsd1.or.comcast.net. [67.170.172.113])
-        by smtp.gmail.com with ESMTPSA id f12sm10880612pfn.152.2019.10.28.14.59.24
+        by smtp.gmail.com with ESMTPSA id f12sm10880612pfn.152.2019.10.28.14.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 14:59:25 -0700 (PDT)
+        Mon, 28 Oct 2019 14:59:27 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Yu Chen <chenyu56@huawei.com>,
+Cc:     John Stultz <john.stultz@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -54,16 +54,16 @@ Cc:     Yu Chen <chenyu56@huawei.com>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
+        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
         Hans de Goede <hdegoede@redhat.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Jun Li <lijun.kernel@gmail.com>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v4 2/9] usb: dwc3: Execute GCTL Core Soft Reset while switch modes
-Date:   Mon, 28 Oct 2019 21:59:12 +0000
-Message-Id: <20191028215919.83697-3-john.stultz@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 4/9] dt-bindings: usb: dwc3: Allow clock list & resets to be more flexible
+Date:   Mon, 28 Oct 2019 21:59:14 +0000
+Message-Id: <20191028215919.83697-5-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191028215919.83697-1-john.stultz@linaro.org>
 References: <20191028215919.83697-1-john.stultz@linaro.org>
@@ -72,17 +72,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Chen <chenyu56@huawei.com>
-
-On the HiKey960, we need to do a GCTL soft reset when
-switching modes.
-
-Jack Pham also noted that in the Synopsys databook it
-mentions performing a GCTL CoreSoftReset when changing the
-PrtCapDir between device & host modes.
-
-So this patch always does a GCTL Core Soft Reset when
-changing the mode.
+Rather then adding another device specific binding to support
+hikey960, Rob Herring suggested we expand the current dwc3
+binding to allow for variable numbers of clocks and resets.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Rob Herring <robh+dt@kernel.org>
@@ -100,51 +92,36 @@ Cc: Valentin Schneider <valentin.schneider@arm.com>
 Cc: Jack Pham <jackp@codeaurora.org>
 Cc: linux-usb@vger.kernel.org
 Cc: devicetree@vger.kernel.org
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
+Suggested-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
-v3: Remove quirk conditional, as Jack Pham noted the
-    Synopsis databook states this should be done generally.
-    Also, at Jacks' suggestion, make the reset call before
-    changing the prtcap direction.
----
- drivers/usb/dwc3/core.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/usb/dwc3.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 999ce5e84d3c..a039e35ec7ad 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -112,6 +112,19 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode)
- 	dwc->current_dr_role = mode;
- }
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 66780a47ad85..29768b0ca923 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -7,7 +7,8 @@ Required properties:
+  - compatible: must be "snps,dwc3"
+  - reg : Address and length of the register set for the device
+  - interrupts: Interrupts used by the dwc3 controller.
+- - clock-names: should contain "ref", "bus_early", "suspend"
++ - clock-names: list of clock names. Ideally should be "ref",
++                "bus_early", "suspend" but may be less or more.
+  - clocks: list of phandle and clock specifier pairs corresponding to
+            entries in the clock-names property.
  
-+static void dwc3_gctl_core_soft_reset(struct dwc3 *dwc)
-+{
-+	u32 reg;
-+
-+	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
-+	reg |= DWC3_GCTL_CORESOFTRESET;
-+	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
-+
-+	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
-+	reg &= ~DWC3_GCTL_CORESOFTRESET;
-+	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
-+}
-+
- static void __dwc3_set_mode(struct work_struct *work)
- {
- 	struct dwc3 *dwc = work_to_dwc(work);
-@@ -154,6 +167,9 @@ static void __dwc3_set_mode(struct work_struct *work)
- 
- 	spin_lock_irqsave(&dwc->lock, flags);
- 
-+	/* Execute a GCTL Core Soft Reset when switch mode */
-+	dwc3_gctl_core_soft_reset(dwc);
-+
- 	dwc3_set_prtcap(dwc, dwc->desired_dr_role);
- 
- 	spin_unlock_irqrestore(&dwc->lock, flags);
+@@ -36,7 +37,7 @@ Optional properties:
+  - phys: from the *Generic PHY* bindings
+  - phy-names: from the *Generic PHY* bindings; supported names are "usb2-phy"
+ 	or "usb3-phy".
+- - resets: a single pair of phandle and reset specifier
++ - resets: set of phandle and reset specifier pairs
+  - snps,usb2-lpm-disable: indicate if we don't want to enable USB2 HW LPM
+  - snps,usb3_lpm_capable: determines if platform is USB3 LPM capable
+  - snps,dis-start-transfer-quirk: when set, disable isoc START TRANSFER command
 -- 
 2.17.1
 
