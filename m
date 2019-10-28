@@ -2,125 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21DEE71A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC2AE71B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbfJ1MmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:42:23 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36766 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389175AbfJ1MmX (ORCPT
+        id S2389255AbfJ1MnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 08:43:00 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54456 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389229AbfJ1Mm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:42:23 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v24so11196752ljj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 05:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YXz21DLbYChNtLC16qKg/F5siZzPuHpmcF6L0vjR70Q=;
-        b=UDy5cy9jp7qw9ea3NmGoBYL5rkK3rD7lP+Y1vSO/MvqCsnHZxGiFpUyWebGJzCFW9E
-         O4EN/t7pstqQFEkuseKzS6HdAafHy69l0s5ygYkRkW8TfdZhrlCNwaXt87RY98wEt4RP
-         Is7yuQa+XX5HsO0mbecgrOsACK82b0mMHfbbMNG+RwruNptd7tjW6NPWahNTvZ/ZFKST
-         2P+zFWeOa9FKappwZ+pztKsRRDT1l00rkjKdMCAIe4JbmppMd9zzBec12Pq0lMHa2GJ7
-         Nl6Qdmal2rG3oTZIll/X/BRfpYMawwGMn5q0oMGKiT8/fQssH8XyiL1bv1kzEd1UPD1C
-         iwTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YXz21DLbYChNtLC16qKg/F5siZzPuHpmcF6L0vjR70Q=;
-        b=dC1R1PE+1hpz7ulwlYiAOoJfuV1T+NKmyBNeygDdDOxHmdFuTpJSxy3LTS90VeCD7w
-         2Aim1k39UL6lH4Xr/7Lc1s6gxvbAeA7ymk+FA+v7/vNJIU9iCSo7leiaNacmYpZnABpC
-         S6wSxE+oUPmtaAJ6D0KGjTla8paCmDen+10Jn0NEuVJ4wwPI1IYE3fNPP9QIY5++fCMJ
-         Z0ovsTMoeCn86kZJNUYcZt5TNvSgRzT1y8End42be/g7uk79+cm5MrIvC3JHzo01pUdi
-         lDyYW+7ZNJv9Kr+CBGJBd6JgapVFiMhQjBOcx1eHAXaObvjl/W0dr8Jl3FjzPBMgVPNS
-         9F+w==
-X-Gm-Message-State: APjAAAWcUZJH6mF/Zv/rBds08bxevxtkS3/oFoJ5/fEr+41roQVcJmXE
-        UVIRvKQFDdar02YGq9bb0aCqBA==
-X-Google-Smtp-Source: APXvYqzeBill5sGQdQXwwRpWKiSVdlLvWFYx2xLqvPT8yXAFAWaeU7gv4dx3rhmelIIJkIMHn+8r0A==
-X-Received: by 2002:a2e:547:: with SMTP id 68mr11779036ljf.150.1572266541309;
-        Mon, 28 Oct 2019 05:42:21 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 4sm6328938lfa.95.2019.10.28.05.42.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 05:42:20 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 86B96100242; Mon, 28 Oct 2019 15:42:22 +0300 (+03)
-Date:   Mon, 28 Oct 2019 15:42:22 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
- file at read
-Message-ID: <20191028124222.ld6u3dhhujfqcn7w@box>
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
+        Mon, 28 Oct 2019 08:42:58 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SCgvPc067052;
+        Mon, 28 Oct 2019 07:42:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572266577;
+        bh=Yz1BgUME6cvxTTqAS0w5bXD+zTBDG2uq+6hnZdt0R4M=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=GtxJLjhiK7D+ofcX6HEQPIEpw7ocMXBawr+nOqYTSlOj0eznVkTpT7LA6C4n+nem6
+         I+SyG2koZkG8z9f00pt8l4xrE7ebsv5mRvUtczNYPYMNG8RUYB3WNUDhGBOapklzZ1
+         mk0zeylUs82ISrfuWsZ/wStpvxo7uw+NujPjLBIY=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9SCgvue074467
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Oct 2019 07:42:57 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 28
+ Oct 2019 07:42:45 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 28 Oct 2019 07:42:45 -0500
+Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SCgogs063574;
+        Mon, 28 Oct 2019 07:42:55 -0500
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 02/17] remoteproc/omap: Switch to SPDX license identifiers
+Date:   Mon, 28 Oct 2019 14:42:23 +0200
+Message-ID: <20191028124238.19224-3-t-kristo@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157225677483.3442.4227193290486305330.stgit@buzz>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 12:59:34PM +0300, Konstantin Khlebnikov wrote:
-> Page cache could contain pages beyond end of file during write or
-> if read races with truncate. But generic_file_buffered_read() always
-> allocates unneeded pages beyond eof if somebody reads here and one
-> extra page at the end if file size is page-aligned.
-> 
-> Function generic_file_buffered_read() calls page_cache_sync_readahead()
-> if page not found in cache and then do another lookup. Readahead checks
-> file size in __do_page_cache_readahead() before allocating pages.
-> After that generic_file_buffered_read() falls back to slow path and
-> allocates page for ->readpage() without checking file size.
-> 
-> This patch checks file size before allocating page for ->readpage().
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> ---
->  mm/filemap.c |    4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 85b7d087eb45..92abf5f348a9 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2225,6 +2225,10 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
->  		goto out;
->  
->  no_cached_page:
-> +		/* Do not allocate cache pages beyond end of file. */
-> +		if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
-> +			goto out;
-> +
->  		/*
->  		 * Ok, it wasn't cached, so we need to create a new
->  		 * page..
-> 
-> 
+From: Suman Anna <s-anna@ti.com>
 
-CC Steven.
+Use the appropriate SPDX license identifiers in various OMAP remoteproc
+source files and drop the previous boilerplate license text.
 
-I've tried something of this sort back in 2013:
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
+ 1 file changed, 1 insertion(+), 26 deletions(-)
 
-http://lore.kernel.org/r/1377099441-2224-1-git-send-email-kirill.shutemov@linux.intel.com
-
-and I've got push back.
-
-Apparently, some filesystems may not have valid i_size before >readpage().
-Not sure if it's still the case...
-
-Anyway I don't think it's valid reason for this inefficiency. These
-filesystems have to have own implementation of >read_iter() to deal with
-this.
-
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index f6d2036d383d..1e6fef753c4f 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -1,35 +1,10 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+ /*
+  * Remote processor messaging
+  *
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  * All rights reserved.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- * * Redistributions of source code must retain the above copyright
+- *   notice, this list of conditions and the following disclaimer.
+- * * Redistributions in binary form must reproduce the above copyright
+- *   notice, this list of conditions and the following disclaimer in
+- *   the documentation and/or other materials provided with the
+- *   distribution.
+- * * Neither the name Texas Instruments nor the names of its
+- *   contributors may be used to endorse or promote products derived
+- *   from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+ #ifndef _OMAP_RPMSG_H
 -- 
- Kirill A. Shutemov
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
