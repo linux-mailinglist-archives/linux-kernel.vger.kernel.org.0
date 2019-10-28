@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33250E7AC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C23E7AC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:05:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389233AbfJ1VFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:05:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50578 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389188AbfJ1VFQ (ORCPT
+        id S2389170AbfJ1VFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:05:14 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:59079 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfJ1VFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:05:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572296715;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TxKlhPKEe4Eb/axUY+ph5O+S3W8S8DEGprY2128AzI4=;
-        b=KyY7wqnhtiQ1muYynpu2Ss5D16X0yfQKIj27lzgcBCRKGAffq04yM6RX33QacpUDYLmo1y
-        CLp3e5WE4H9r7olX626IBnGg9quQEzD39YWAbmwx1LgddBSLHygjssTQSImPwvn/Ye8x9w
-        mhCtNLLWhLoUhovEic1iq9F/n5kAtl8=
-Received: from mail-yw1-f71.google.com (mail-yw1-f71.google.com
- [209.85.161.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-342-i_rBb6VSM0e9RW7K8-ksqQ-1; Mon, 28 Oct 2019 17:05:10 -0400
-Received: by mail-yw1-f71.google.com with SMTP id u131so8405092ywa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 14:05:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=yf4+zj7RNOPk8CerubFQ1G5hNP+VaWNT7LPoqLWZ0Gk=;
-        b=nhNfiOpKOcpY7UsYsVx2Q0jUYxRs0fj+HhxYZb8HCO2rCLoqDhzGwW2uNbvbhFxwax
-         7QmEtPm4Gz1ZEtzzAk0GPLGA8o5QbW1dJCeIcrRuytPXun+9oMvH/Epeywkz5+6/roZJ
-         A1EHOaMLvKO+ydVchXOWOYTvXx8pxrB98LaRtbTn+euchRHsXyjOIRHxFaX3WpnLP17A
-         jH8airSQDfjvD5eKgXII+oYzqJFpgy5igWwA5P9jrdX6wXrlFYdvUbS8WTHyQedpeNw0
-         vjYqNFB0NM6HdrlNwepfOTXeyU5lGMQWd41M3GC6WHZkIPdGMlVKuhTzexSu3+nhLtmU
-         ik+A==
-X-Gm-Message-State: APjAAAUbUyr/bj0p3qZthKAXgUkJ7gqDWzwSZB1Q9WlxPwOQP2GWzDLh
-        qaJeg4OB2jgH3+NPRhL628s/h5dx2eCSTkmsoYwEC+YOMXZ8JOaGQxLNdnkJAEy2barAh2dgCGg
-        LC2hoXL0GKtvceKxG/yZXhm3s
-X-Received: by 2002:a25:49c7:: with SMTP id w190mr15832737yba.140.1572296709841;
-        Mon, 28 Oct 2019 14:05:09 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxmmKVW7cJQlJOkIJYnBiX2JsU0pLw6AUn+HaxO5Jx8ZNWGwI05O9D8puCAWbLE4amCdxhDYQ==
-X-Received: by 2002:a25:49c7:: with SMTP id w190mr15832711yba.140.1572296709459;
-        Mon, 28 Oct 2019 14:05:09 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id j3sm9425112ywb.10.2019.10.28.14.05.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 14:05:08 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 14:05:07 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Add major_version sysfs file
-Message-ID: <20191028210507.7i6d6b5olw72shm3@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-References: <20191025193103.30226-1-jsnitsel@redhat.com>
- <20191028205313.GH8279@linux.intel.com>
+        Mon, 28 Oct 2019 17:05:13 -0400
+Received: from belgarion ([90.55.204.252])
+        by mwinf5d17 with ME
+        id K95B210065TFNlm0395B0w; Mon, 28 Oct 2019 22:05:12 +0100
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Mon, 28 Oct 2019 22:05:12 +0100
+X-ME-IP: 90.55.204.252
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 20/46] ARM: pxa: lubbock: pass udc irqs as resource
+References: <20191018154052.1276506-1-arnd@arndb.de>
+        <20191018154201.1276638-20-arnd@arndb.de>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Mon, 28 Oct 2019 22:05:11 +0100
+In-Reply-To: <20191018154201.1276638-20-arnd@arndb.de> (Arnd Bergmann's
+        message of "Fri, 18 Oct 2019 17:41:35 +0200")
+Message-ID: <87sgnclgxk.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191028205313.GH8279@linux.intel.com>
-User-Agent: NeoMutt/20180716
-X-MC-Unique: i_rBb6VSM0e9RW7K8-ksqQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon Oct 28 19, Jarkko Sakkinen wrote:
->On Fri, Oct 25, 2019 at 12:31:03PM -0700, Jerry Snitselaar wrote:
->> +=09return sprintf(buf, "%s\n", chip->flags & TPM_CHIP_FLAG_TPM2
->> +=09=09       ? "2.0" : "1.2");
->
->This is not right. Should be either "1" or "2".
->
->/Jarkko
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Okay I will fix that up. Do we have a final decision on the file name,
-major_version versus version_major?
+> Lubbock is the only machine that has three IRQs for the UDC.
+> These are currently hardcoded in the driver based on a
+> machine header file.
+>
+> Change this to use platform device resources as we use for
+> the generic IRQ anyway.
+>
+> Cc: Felipe Balbi <balbi@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
+Cheers.
+
+--
+Robert
