@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8BA2E6C9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 977D5E6CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbfJ1G7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 02:59:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbfJ1G7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 02:59:20 -0400
-Received: from localhost (unknown [40.117.208.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB8C3208C0;
-        Mon, 28 Oct 2019 06:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572245959;
-        bh=X+DGLPW1NH1GddDto9slEA+llFD+SZqQ4t5yZRwcxgA=;
-        h=Date:From:To:To:To:Cc:Cc:Cc:Cc:Subject:In-Reply-To:References:
-         From;
-        b=A6Bb1sPIgUOAd7tjkshfGanusI8+dFjMRia9h9+NKna1DFWFB+1/U9rE0XTvb7Guw
-         Kv4CLQFpxvNVLvCN/pxOt8P/JYlBm2GhlqWKEK0dS7v9HE0gP/9QAIUBZ/KpThwmPN
-         y6jFdnAUEovOmk+wq3jz1lkgZixH35pdoXYZ3+H0=
-Date:   Mon, 28 Oct 2019 06:59:18 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
-Cc:     stable@vger.kernel.org
-Cc:     Joerg Roedel <jroedel@suse.de>
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH] KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active
-In-Reply-To: <20191027152323.24326-1-pbonzini@redhat.com>
-References: <20191027152323.24326-1-pbonzini@redhat.com>
-Message-Id: <20191028065919.AB8C3208C0@mail.kernel.org>
+        id S1732414AbfJ1HTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 03:19:21 -0400
+Received: from gateway20.websitewelcome.com ([192.185.53.25]:20950 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730751AbfJ1HTU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 03:19:20 -0400
+X-Greylist: delayed 1363 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Oct 2019 03:19:20 EDT
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 6B6F9400D0068
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 00:48:29 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id OyxAi0Et4BnGaOyxAieeqj; Mon, 28 Oct 2019 01:56:36 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oCTskRlbgqD+J7aWayjsVtQZcA0SIwA4npc4QiguN5o=; b=xWHIGGQZ1Iab0c2jpYjZZ0O1Oy
+        idQhgFCv+VHyiZt9qhZtSPdqDV6XWoIjQ9LD9elLoup1AYbW8Td72bRF5lr0kkTihUp9DFdPudO0w
+        KilHebfPbteyYM7s9JyCgKXe6/ElNoP+cG7dRzqIL1av6S0RlGiwAw9u/tNY93aU9rsixr8gzgC58
+        d9XboNFx4FZBVoAi7BKsnMhiX1fqZqBhQf0s5TLXo0rPGmRIKAWt/7DM9p3HQu3YiVKUoXYUiW4V9
+        ZNmCDkfOgd5NUgYkoeyuMfUpp9/IE/PiVxJiM1ix1ElIS4MotV1xg2ioyWlJqbnSE88n/uPSbEkS2
+        cPVkDtwA==;
+Received: from [187.192.2.30] (port=58438 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iOyx9-0040bs-6Y; Mon, 28 Oct 2019 01:56:35 -0500
+Date:   Mon, 28 Oct 2019 01:56:33 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Igor Russkikh <igor.russkikh@aquantia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Bezrukov <dmitry.bezrukov@aquantia.com>,
+        Nikita Danilov <nikita.danilov@aquantia.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: aquantia: fix error handling in aq_nic_init
+Message-ID: <20191028065633.GA2412@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.2.30
+X-Source-L: No
+X-Exim-ID: 1iOyx9-0040bs-6Y
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.2.30]:58438
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fix currenty ignored returned error by properly error checking
+aq_phy_init().
 
-[This is an automated email]
+Addresses-Coverity-ID: 1487376 ("Unused value")
+Fixes: dbcd6806af42 ("net: aquantia: add support for Phy access")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
-
-The bot has tested the following trees: v5.3.7, v4.19.80, v4.14.150, v4.9.197, v4.4.197.
-
-v5.3.7: Build OK!
-v4.19.80: Failed to apply! Possible dependencies:
-    Unable to calculate
-
-v4.14.150: Failed to apply! Possible dependencies:
-    Unable to calculate
-
-v4.9.197: Failed to apply! Possible dependencies:
-    Unable to calculate
-
-v4.4.197: Failed to apply! Possible dependencies:
-    Unable to calculate
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+index 433adc099e44..1914aa0a19d0 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -341,7 +341,8 @@ int aq_nic_init(struct aq_nic_s *self)
+ 
+ 	if (self->aq_nic_cfg.aq_hw_caps->media_type == AQ_HW_MEDIA_TYPE_TP) {
+ 		self->aq_hw->phy_id = HW_ATL_PHY_ID_MAX;
+-		err = aq_phy_init(self->aq_hw);
++		if (!aq_phy_init(self->aq_hw))
++			goto err_exit;
+ 	}
+ 
+ 	for (i = 0U, aq_vec = self->aq_vec[0];
 -- 
-Thanks,
-Sasha
+2.23.0
+
