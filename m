@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC386E7D3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 00:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36313E7D3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 00:49:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfJ1Xt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728673AbfJ1Xt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 28 Oct 2019 19:49:26 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43868 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfJ1XtY (ORCPT
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34231 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbfJ1XtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 19:49:24 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l24so8112934pgh.10;
-        Mon, 28 Oct 2019 16:49:23 -0700 (PDT)
+        Mon, 28 Oct 2019 19:49:25 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e4so3836543pgs.1;
+        Mon, 28 Oct 2019 16:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KUGQ/r655QOzhF8y8PZXKFFUJNm6vbuBEcIikKPosIk=;
-        b=gvCOXy/AmjPJG9Au95pDstcxJyiVgdnOiM7g6r9Mvoc7HQKAXyPdIcDaDZVNhbNMTu
-         aeDUOQgXB/9BSiKMiDyFBQ8gei9wo1w34Il1GIcW0XX8VpojdcznlZzOC/Ucv+EfhMo2
-         9NbmGKfhduldh/Gf3Xw4+Sm/uHGa/pFyesLWBbWwipUsE1cw9ohIi3JxJYc1gGnRiGT5
-         67bYqTImcYLNOu9pasOq5qLNGOBYKt3VEKq0RHADaRlWNFPtJ5/KjOVg6iHRNknFqTGr
-         MFsGlXwPr8Y/81bIATvsNgwkpoJvaaE+TjUA7a41c9e5MgN2pjNAVfyiIdaLdd0SG1wh
-         4oTg==
+        bh=sDVKctYQFPQQhndxFna9vtm7wSyOf2hUQLavep1crp4=;
+        b=sQNTSRDsXZpa47r1mRwPnfJ/BlGNsD34hfuusH+Yr0xkBhZh0VRjQhIWl8hJwtheyG
+         Gx1X7Uv+3Q4vgAC32/wwAmh52D564MMfAICCAk1FvUZpfTZqiAAnv0ylDhw1gj8ulPft
+         psaa6COHOGy5HZyH2124EqIjdehs+b29LIKRVpEQ5bJOSjp1pjRGD/5g5T+1mYpWMX7T
+         6vMJsw3qV7TaIXVCOuAbGSwo6bq+WvxFchucWVNTrkfMIP2H7o39DHEkrE7OaHHc2FpQ
+         PkBCUBuyu2JyItPrmV2qUfwm0lWb36Llj+N2RPomWix5gpE2qdlfuvIk5RfgJd4JCRbs
+         7vnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KUGQ/r655QOzhF8y8PZXKFFUJNm6vbuBEcIikKPosIk=;
-        b=tj2gWLY+DEsTjHRdhlOyY3U42hV/4mDKr4kTs/6Xruk0znf7jCn7C8Gx/ePISD6ECz
-         I5oIzZIxDsmr2rzX2I115K47LMFA+6vuws1qp0Pui8X4IsIwstd0CDf3aDec/K+T895N
-         xx46cY5jlLFCB3Q+nhwehVBc96mHrHo2OIEgcj4S+mdYYR9Cugh01qjCAgiEWpnGbLa8
-         6jrLuw7PGQI/b0v1Vzo2nz5bl/GsxRfPABPthRC4rGTc6UhJT7RnmnRzwnJuWyiCXQ2w
-         JLkthwpRC2PFoTGToi8K+bnjpp4orOEpYB6gSvDtrzHFlro1Nwl1YhZbYsFw/u1wU1nB
-         D+yg==
-X-Gm-Message-State: APjAAAU5Wqs0+1XsiVBrShCasYJdpsloY8iAPMWsLKrmu8xJDOFwRDbV
-        /6ajRw7FZcNKt9zou02KYRo=
-X-Google-Smtp-Source: APXvYqyB/VIWUUD6euIc1wIAj7+Kw8nEW24WdP9LBMqAwLPwyQpm/OUafznT7RjIrvuNsjxE/Wnw0A==
-X-Received: by 2002:a17:90a:7bcc:: with SMTP id d12mr2429491pjl.63.1572306563244;
-        Mon, 28 Oct 2019 16:49:23 -0700 (PDT)
+        bh=sDVKctYQFPQQhndxFna9vtm7wSyOf2hUQLavep1crp4=;
+        b=E8031P5DTBqt6lJN705mJ3WEUp1XqgFa19tgWAihIO8FhNfPwhxq9whdETuBUHxE+f
+         jnJetqGkcw7EyX6mCaTinK6VCHvFJSCCmo/wKQneKcKDIXZWeumA2IeMi89r1nw0jfpt
+         ybQ5bcKN4De/n49XwFUCmNRU+PQ4eF1L02y178IuKb+V71CdfIbnpBBwgXD6tbWK9kwy
+         Vc+X+LG0SCg84f0byqyGd5BCu7qtJaNl6LufQNQhvxVBKA6lTUO9EH90diHzMK0o1fBg
+         JJPkhNhJ2Vd35meileW5e0vRRWv3zQOYZJH0UmVodM4Z17euPRONb21N7EOHyfvkl0Bc
+         GDBw==
+X-Gm-Message-State: APjAAAWAcfZ/Qu1YVjJSSH9+dTO5e/8xu73zUJ/BeIHfXuAzK8FIFYBC
+        iBMLwYAAtjfvWwQQzayRK6m6GiXv4qk=
+X-Google-Smtp-Source: APXvYqwy/8Fn5H0ZgY1iNeuIidNJTniA7Oj3ADDkqWaznlUkhLyG/mH7kmTYIfVVrbAwiBkj7bPLwg==
+X-Received: by 2002:a17:90a:d149:: with SMTP id t9mr2403813pjw.108.1572306564400;
+        Mon, 28 Oct 2019 16:49:24 -0700 (PDT)
 Received: from taoren-ubuntu-R90MNF91.thefacebook.com ([2620:10d:c090:200::2:c0c7])
-        by smtp.gmail.com with ESMTPSA id d4sm597119pjs.9.2019.10.28.16.49.22
+        by smtp.gmail.com with ESMTPSA id d4sm597119pjs.9.2019.10.28.16.49.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 16:49:22 -0700 (PDT)
+        Mon, 28 Oct 2019 16:49:23 -0700 (PDT)
 From:   rentao.bupt@gmail.com
 To:     Guenter Roeck <linux@roeck-us.net>,
         Jean Delvare <jdelvare@suse.com>,
@@ -51,9 +51,9 @@ To:     Guenter Roeck <linux@roeck-us.net>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         openbmc@lists.ozlabs.org, taoren@fb.com
 Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH 1/3] hwmon: (pmbus) add BEL PFE1100 power supply driver
-Date:   Mon, 28 Oct 2019 16:49:02 -0700
-Message-Id: <20191028234904.12441-2-rentao.bupt@gmail.com>
+Subject: [PATCH 2/3] hwmon: (pmbus) add BEL PFE3000 power supply driver
+Date:   Mon, 28 Oct 2019 16:49:03 -0700
+Message-Id: <20191028234904.12441-3-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191028234904.12441-1-rentao.bupt@gmail.com>
 References: <20191028234904.12441-1-rentao.bupt@gmail.com>
@@ -64,74 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tao Ren <rentao.bupt@gmail.com>
 
-Add the driver to support BEL PFE1100 which is 1100 Wat AC to DC power
-supply. The chip has only 1 page.
+Add the driver to support BEL PFE3000 which is 3000 Wat AC to DC power
+supply. The chip has 8 pages.
 
 Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
 ---
- drivers/hwmon/pmbus/Kconfig   |  9 +++++
- drivers/hwmon/pmbus/Makefile  |  1 +
- drivers/hwmon/pmbus/bel-pfe.c | 68 +++++++++++++++++++++++++++++++++++
- 3 files changed, 78 insertions(+)
- create mode 100644 drivers/hwmon/pmbus/bel-pfe.c
+ drivers/hwmon/pmbus/bel-pfe.c | 65 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index d62d69bb7e49..59859979571d 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -36,6 +36,15 @@ config SENSORS_ADM1275
- 	  This driver can also be built as a module. If so, the module will
- 	  be called adm1275.
- 
-+config SENSORS_BEL_PFE
-+	tristate "Bel PFE Compatible Power Supplies"
-+	help
-+	  If you say yes here you get hardware monitoring support for BEL
-+	  PFE1100 and PFE3000 Power Supplies.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called bel-pfe.
-+
- config SENSORS_IBM_CFFPS
- 	tristate "IBM Common Form Factor Power Supply"
- 	depends on LEDS_CLASS
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-index 03bacfcfd660..3f8c1014938b 100644
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -6,6 +6,7 @@
- obj-$(CONFIG_PMBUS)		+= pmbus_core.o
- obj-$(CONFIG_SENSORS_PMBUS)	+= pmbus.o
- obj-$(CONFIG_SENSORS_ADM1275)	+= adm1275.o
-+obj-$(CONFIG_SENSORS_BEL_PFE)	+= bel-pfe.o
- obj-$(CONFIG_SENSORS_IBM_CFFPS)	+= ibm-cffps.o
- obj-$(CONFIG_SENSORS_INSPUR_IPSPS) += inspur-ipsps.o
- obj-$(CONFIG_SENSORS_IR35221)	+= ir35221.o
 diff --git a/drivers/hwmon/pmbus/bel-pfe.c b/drivers/hwmon/pmbus/bel-pfe.c
-new file mode 100644
-index 000000000000..117f9af21bf3
---- /dev/null
+index 117f9af21bf3..7b6c90b056c9 100644
+--- a/drivers/hwmon/pmbus/bel-pfe.c
 +++ b/drivers/hwmon/pmbus/bel-pfe.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0+
+@@ -10,9 +10,21 @@
+ #include <linux/init.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
++#include <linux/pmbus.h>
++
+ #include "pmbus.h"
+ 
+-enum chips {pfe1100};
++enum chips {pfe1100, pfe3000};
++
 +/*
-+ * Hardware monitoring driver for BEL PFE family power supplies.
-+ *
-+ * Copyright (c) 2019 Facebook Inc.
++ * Disable status check for pfe3000 devices, because some devices report
++ * communication error (invalid command) for VOUT_MODE command (0x20)
++ * although correct VOUT_MODE (0x16) is returned: it leads to incorrect
++ * exponent in linear mode.
 + */
++static struct pmbus_platform_data pfe3000_plat_data = {
++	.flags = PMBUS_SKIP_STATUS_CHECK,
++};
+ 
+ static struct pmbus_driver_info pfe_driver_info[] = {
+ 	[pfe1100] = {
+@@ -34,6 +46,45 @@ static struct pmbus_driver_info pfe_driver_info[] = {
+ 			   PMBUS_HAVE_STATUS_TEMP |
+ 			   PMBUS_HAVE_FAN12,
+ 	},
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include "pmbus.h"
-+
-+enum chips {pfe1100};
-+
-+static struct pmbus_driver_info pfe_driver_info[] = {
-+	[pfe1100] = {
-+		.pages = 1,
++	[pfe3000] = {
++		.pages = 8,
 +		.format[PSC_VOLTAGE_IN] = linear,
 +		.format[PSC_VOLTAGE_OUT] = linear,
 +		.format[PSC_CURRENT_IN] = linear,
@@ -140,47 +114,61 @@ index 000000000000..117f9af21bf3
 +		.format[PSC_TEMPERATURE] = linear,
 +		.format[PSC_FAN] = linear,
 +
++		/* Page 0: V1. */
 +		.func[0] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
 +			   PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
-+			   PMBUS_HAVE_POUT |
++			   PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12 |
 +			   PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
 +			   PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT |
 +			   PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
-+			   PMBUS_HAVE_STATUS_TEMP |
-+			   PMBUS_HAVE_FAN12,
++			   PMBUS_HAVE_TEMP3 | PMBUS_HAVE_STATUS_TEMP |
++			   PMBUS_HAVE_VCAP,
++
++		/* Page 1: Vsb. */
++		.func[1] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
++			   PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
++			   PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT |
++			   PMBUS_HAVE_POUT,
++
++		/*
++		 * Page 2: V1 Ishare.
++		 * Page 4: V1 Cathode.
++		 * Page 5: Vsb Cathode.
++		 * Page 6: V1 Sense.
++		 * Page 3 and 7 are reserved.
++		 */
++		.func[2] = PMBUS_HAVE_VOUT,
++		.func[4] = PMBUS_HAVE_VOUT,
++		.func[5] = PMBUS_HAVE_VOUT,
++		.func[6] = PMBUS_HAVE_VOUT,
 +	},
-+};
+ };
+ 
+ static int pfe_pmbus_probe(struct i2c_client *client,
+@@ -42,11 +93,23 @@ static int pfe_pmbus_probe(struct i2c_client *client,
+ 	int model;
+ 
+ 	model = (int)id->driver_data;
 +
-+static int pfe_pmbus_probe(struct i2c_client *client,
-+			   const struct i2c_device_id *id)
-+{
-+	int model;
++	/*
++	 * PFE3000-12-069RA devices may not stay in page 0 during device
++	 * probe which leads to probe failure (read status word failed).
++	 * So let's set the device to page 0 at the beginning.
++	 */
++	if (model == pfe3000) {
++		client->dev.platform_data = &pfe3000_plat_data;
++		i2c_smbus_write_byte_data(client, PMBUS_PAGE, 0);
++	}
 +
-+	model = (int)id->driver_data;
-+	return pmbus_do_probe(client, id, &pfe_driver_info[model]);
-+}
-+
-+static const struct i2c_device_id pfe_device_id[] = {
-+	{"pfe1100", pfe1100},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, pfe_device_id);
-+
-+static struct i2c_driver pfe_pmbus_driver = {
-+	.driver = {
-+		   .name = "bel-pfe",
-+	},
-+	.probe = pfe_pmbus_probe,
-+	.remove = pmbus_do_remove,
-+	.id_table = pfe_device_id,
-+};
-+
-+module_i2c_driver(pfe_pmbus_driver);
-+
-+MODULE_AUTHOR("Tao Ren <rentao.bupt@gmail.com>");
-+MODULE_DESCRIPTION("PMBus driver for BEL PFE Family Power Supplies");
-+MODULE_LICENSE("GPL");
+ 	return pmbus_do_probe(client, id, &pfe_driver_info[model]);
+ }
+ 
+ static const struct i2c_device_id pfe_device_id[] = {
+ 	{"pfe1100", pfe1100},
++	{"pfe3000", pfe3000},
+ 	{}
+ };
+ 
 -- 
 2.17.1
 
