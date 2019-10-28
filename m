@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB163E72BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 606F2E72C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 14:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389605AbfJ1NkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 09:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729742AbfJ1NkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 09:40:04 -0400
-Received: from paulmck-ThinkPad-P72 (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B1F4214B2;
-        Mon, 28 Oct 2019 13:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572270003;
-        bh=UZ8dGa7oJwy+aRMXt45rmpZRu20mhvclaF5fSnAE4dg=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=hOdD2adQ1NIAyqHNn+N1EINazgzUM2evLaa4K9JbledZF+4UJtlYQaRv4P011M0mQ
-         p3fZykUE+sawKaWceaxyB/s3h5CDCdx79SjuQYT6zURxIfzBF7neo5dre3aNdivcut
-         hV0sDP/d4IYuOo2kw4Ij1S40dxvwE09NyS95e+NA=
-Date:   Mon, 28 Oct 2019 06:40:01 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH tip/core/rcu 03/10] drivers/gpu: Replace
- rcu_swap_protected() with rcu_replace()
-Message-ID: <20191028134001.GM4465@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
- <20191022191215.25781-3-paulmck@kernel.org>
- <157226744651.5420.128752979550120657@jlahtine-desk.ger.corp.intel.com>
+        id S2389627AbfJ1Nlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 09:41:35 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39117 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729328AbfJ1Nlf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 09:41:35 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iP5H3-0006uL-5A; Mon, 28 Oct 2019 14:41:33 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iP5H1-0005La-MM; Mon, 28 Oct 2019 14:41:31 +0100
+Date:   Mon, 28 Oct 2019 14:41:31 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        Leo Li <leoyang.li@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Clark Wang <xiaoning.wang@nxp.com>,
+        Xiaobo Xie <xiaobo.xie@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        Jiafei Pan <jiafei.pan@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: Re: [EXT] Re: [RESEND v2] i2c: imx: support slave mode for imx I2C
+ driver
+Message-ID: <20191028134131.5pq2vaqojx4gpfth@pengutronix.de>
+References: <20191009101802.19309-1-biwen.li@nxp.com>
+ <113865e9-e846-1079-6f58-7fddb245398c@pengutronix.de>
+ <DB7PR04MB449066A02FB9FD0A795CFAFB8F650@DB7PR04MB4490.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <157226744651.5420.128752979550120657@jlahtine-desk.ger.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DB7PR04MB449066A02FB9FD0A795CFAFB8F650@DB7PR04MB4490.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 02:57:26PM +0200, Joonas Lahtinen wrote:
-> Quoting paulmck@kernel.org (2019-10-22 22:12:08)
-> > From: "Paul E. McKenney" <paulmck@kernel.org>
+Hello,
+
+On Fri, Oct 25, 2019 at 04:02:11AM +0000, Biwen Li wrote:
+> > I'm trying to test you patch on i.MX6S RIoTBoard. So far I fail to get it
+> > working with following setup:
+> > 1. register i2c-gpio
+> > 2. connect i2c-gpio SCL to i2c-imx SCL pin and i2c-gpio SDA to i2c-imx SDA
+> > pin 3. run this command to register i2c slave eeprom on i2c-imx:
+> > echo slave-24c02 0x1064 > /sys/bus/i2c/devices/i2c-3/new_device
+> > 4. run "i2cdetect 4" on i2c-gpio to detect eeprom on i2c-imx slave.
 > > 
-> > This commit replaces the use of rcu_swap_protected() with the more
-> > intuitively appealing rcu_replace() as a step towards removing
-> > rcu_swap_protected().
+> > So far, nothing was detected and even irq counter of i2c-imx didn't
+> > increased.
 > > 
-> > Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > [ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> > Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-> > Cc: <intel-gfx@lists.freedesktop.org>
-> > Cc: <dri-devel@lists.freedesktop.org>
-> 
-> "drm/i915:" preferred as the subject prefix for increased specificity.
+> > Do I'm missing some thing? Please, help me to test you patch.
+> You not miss anything, but the i2c-gpio driver from upstream is not
+> workable on imx(I have tested the i2c-gpio driver with oscilloscope
+> on imx8mm-evk, I cannot get any signal from the i2c-gpio bus).
 
-"drm/i915" it is!
+In general the GPIOs are known to work, so I wonder what the problem is.
+If it relies on being able to read the state of an output it might help
+to set the SION bit on the related pins.
 
-> Let me know which tree you end up merging with.
+Best regards
+Uwe
 
-I expect to be sending a pull request for inclusion into the -tip
-tree in a day or three.
-
-> Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-
-Applied, thank you!
-
-							Thanx, Paul
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
