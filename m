@@ -2,229 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98499E741C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F02DBE7427
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390414AbfJ1Ozh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:55:37 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45433 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729708AbfJ1Ozg (ORCPT
+        id S2390438AbfJ1O4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:56:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfJ1O4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:55:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572274535;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6SI6pU5ltjnpPB7iWVIT6QOJJZOAm4cxx0m6EK7PRco=;
-        b=I0u3RieR61PkgDl/AtvRXVSF6h/BP3FLCAvubMYn5wXGf/Zx4ZJi03zDM2nLqCA2Ya1xdL
-        wH1HFqLrucMNro7nPatYTZ6XB+PI7QxnAleOeOaD+tNfAVE5N8hYC/9BeUt35cqMrTL7e+
-        vDwdmE0Vq6t1IT14zRm5X4OdnXIEIig=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-86-9OF9M3p9Pzq4axXXmVk_FQ-1; Mon, 28 Oct 2019 10:55:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06FA51804972;
-        Mon, 28 Oct 2019 14:55:30 +0000 (UTC)
-Received: from [10.36.117.63] (ovpn-117-63.ams2.redhat.com [10.36.117.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 68C2B612B1;
-        Mon, 28 Oct 2019 14:55:26 +0000 (UTC)
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
- mappings
-To:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <1572171452-7958-2-git-send-email-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <9c844300-e151-97a0-7223-a6d341d0d75e@redhat.com>
-Date:   Mon, 28 Oct 2019 15:55:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <1572171452-7958-2-git-send-email-rppt@kernel.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: 9OF9M3p9Pzq4axXXmVk_FQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        Mon, 28 Oct 2019 10:56:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=x2dhPKkjICNRAo5195SCmNYSzw31Hm7SfRI2gVEfL0k=; b=CWm/IXmIypJq
+        fBbcSGmPD5XKf6Kh6WUekoRpA/xXAEeBOPaioTlB8ao117Na+W9RTiVzYaWxBtdvMVkwMWtQ4wZ0P
+        n+we0zXK2kbl7mV0dXOXy3q/TfSlll7JhQ2JxUfD/YkRYsSb4H5nTtyKmZJaWF3FCDEmJjho6Ks8/
+        SYSss=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iP6Ri-0008Ra-Hy; Mon, 28 Oct 2019 14:56:38 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D3FAA27403FD; Mon, 28 Oct 2019 14:56:36 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        festevam@gmail.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mark Brown <broonie@kernel.org>, nicoleotsuka@gmail.com,
+        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
+        timur@kernel.org, tiwai@suse.com, Xiubo.Lee@gmail.com
+Subject: Applied "ASoC: fsl_asrc: refine the setting of internal clock divider" to the asoc tree
+In-Reply-To: <23c634e4bf58afce5b3ae67f5f42e8d1cae2639a.1572252307.git.shengjiu.wang@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191028145636.D3FAA27403FD@ypsilon.sirena.org.uk>
+Date:   Mon, 28 Oct 2019 14:56:36 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.10.19 11:17, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
->=20
-> The mappings created with MAP_EXCLUSIVE are visible only in the context o=
-f
-> the owning process and can be used by applications to store secret
-> information that will not be visible not only to other processes but to t=
-he
-> kernel as well.
->=20
-> The pages in these mappings are removed from the kernel direct map and
-> marked with PG_user_exclusive flag. When the exclusive area is unmapped,
-> the pages are mapped back into the direct map.
->=20
-> The MAP_EXCLUSIVE flag implies MAP_POPULATE and MAP_LOCKED.
->=20
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->   arch/x86/mm/fault.c                    | 14 ++++++++++
->   fs/proc/task_mmu.c                     |  1 +
->   include/linux/mm.h                     |  9 +++++++
->   include/linux/page-flags.h             |  7 +++++
->   include/linux/page_excl.h              | 49 +++++++++++++++++++++++++++=
-+++++++
->   include/trace/events/mmflags.h         |  9 ++++++-
->   include/uapi/asm-generic/mman-common.h |  1 +
->   kernel/fork.c                          |  3 ++-
->   mm/Kconfig                             |  3 +++
->   mm/gup.c                               |  8 ++++++
->   mm/memory.c                            |  3 +++
->   mm/mmap.c                              | 16 +++++++++++
->   mm/page_alloc.c                        |  5 ++++
->   13 files changed, 126 insertions(+), 2 deletions(-)
->   create mode 100644 include/linux/page_excl.h
->=20
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 9ceacd1..8f73a75 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -17,6 +17,7 @@
->   #include <linux/context_tracking.h>=09/* exception_enter(), ...=09*/
->   #include <linux/uaccess.h>=09=09/* faulthandler_disabled()=09*/
->   #include <linux/efi.h>=09=09=09/* efi_recover_from_page_fault()*/
-> +#include <linux/page_excl.h>=09=09/* page_is_user_exclusive()=09*/
->   #include <linux/mm_types.h>
->  =20
->   #include <asm/cpufeature.h>=09=09/* boot_cpu_has, ...=09=09*/
-> @@ -1218,6 +1219,13 @@ static int fault_in_kernel_space(unsigned long add=
-ress)
->   =09return address >=3D TASK_SIZE_MAX;
->   }
->  =20
-> +static bool fault_in_user_exclusive_page(unsigned long address)
-> +{
-> +=09struct page *page =3D virt_to_page(address);
-> +
-> +=09return page_is_user_exclusive(page);
-> +}
-> +
->   /*
->    * Called for all faults where 'address' is part of the kernel address
->    * space.  Might get called for faults that originate from *code* that
-> @@ -1261,6 +1269,12 @@ do_kern_addr_fault(struct pt_regs *regs, unsigned =
-long hw_error_code,
->   =09if (spurious_kernel_fault(hw_error_code, address))
->   =09=09return;
->  =20
-> +=09/* FIXME: warn and handle gracefully */
-> +=09if (unlikely(fault_in_user_exclusive_page(address))) {
-> +=09=09pr_err("page fault in user exclusive page at %lx", address);
-> +=09=09force_sig_fault(SIGSEGV, SEGV_MAPERR, (void __user *)address);
-> +=09}
-> +
->   =09/* kprobes don't want to hook the spurious faults: */
->   =09if (kprobe_page_fault(regs, X86_TRAP_PF))
->   =09=09return;
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 9442631..99e14d1 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -655,6 +655,7 @@ static void show_smap_vma_flags(struct seq_file *m, s=
-truct vm_area_struct *vma)
->   #ifdef CONFIG_X86_INTEL_MPX
->   =09=09[ilog2(VM_MPX)]=09=09=3D "mp",
->   #endif
-> +=09=09[ilog2(VM_EXCLUSIVE)]=09=3D "xl",
->   =09=09[ilog2(VM_LOCKED)]=09=3D "lo",
->   =09=09[ilog2(VM_IO)]=09=09=3D "io",
->   =09=09[ilog2(VM_SEQ_READ)]=09=3D "sr",
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index cc29227..9c43375 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -298,11 +298,13 @@ extern unsigned int kobjsize(const void *objp);
->   #define VM_HIGH_ARCH_BIT_2=0934=09/* bit only usable on 64-bit architec=
-tures */
->   #define VM_HIGH_ARCH_BIT_3=0935=09/* bit only usable on 64-bit architec=
-tures */
->   #define VM_HIGH_ARCH_BIT_4=0936=09/* bit only usable on 64-bit architec=
-tures */
-> +#define VM_HIGH_ARCH_BIT_5=0937=09/* bit only usable on 64-bit architect=
-ures */
->   #define VM_HIGH_ARCH_0=09BIT(VM_HIGH_ARCH_BIT_0)
->   #define VM_HIGH_ARCH_1=09BIT(VM_HIGH_ARCH_BIT_1)
->   #define VM_HIGH_ARCH_2=09BIT(VM_HIGH_ARCH_BIT_2)
->   #define VM_HIGH_ARCH_3=09BIT(VM_HIGH_ARCH_BIT_3)
->   #define VM_HIGH_ARCH_4=09BIT(VM_HIGH_ARCH_BIT_4)
-> +#define VM_HIGH_ARCH_5=09BIT(VM_HIGH_ARCH_BIT_5)
->   #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
->  =20
->   #ifdef CONFIG_ARCH_HAS_PKEYS
-> @@ -340,6 +342,12 @@ extern unsigned int kobjsize(const void *objp);
->   # define VM_MPX=09=09VM_NONE
->   #endif
->  =20
-> +#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
-> +# define VM_EXCLUSIVE=09VM_HIGH_ARCH_5
-> +#else
-> +# define VM_EXCLUSIVE=09VM_NONE
-> +#endif
-> +
->   #ifndef VM_GROWSUP
->   # define VM_GROWSUP=09VM_NONE
->   #endif
-> @@ -2594,6 +2602,7 @@ struct page *follow_page(struct vm_area_struct *vma=
-, unsigned long address,
->   #define FOLL_ANON=090x8000=09/* don't do file mappings */
->   #define FOLL_LONGTERM=090x10000=09/* mapping lifetime is indefinite: se=
-e below */
->   #define FOLL_SPLIT_PMD=090x20000=09/* split huge pmd before returning *=
-/
-> +#define FOLL_EXCLUSIVE=090x40000=09/* mapping is exclusive to owning mm =
-*/
->  =20
->   /*
->    * NOTE on FOLL_LONGTERM:
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index f91cb88..32d0aee 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -131,6 +131,9 @@ enum pageflags {
->   =09PG_young,
->   =09PG_idle,
->   #endif
-> +#if defined(CONFIG_EXCLUSIVE_USER_PAGES)
-> +=09PG_user_exclusive,
-> +#endif
+The patch
 
-Last time I tried to introduce a new page flag I learned that this is=20
-very much frowned upon. Best you can usually do is reuse another flag -=20
-if valid in that context.
+   ASoC: fsl_asrc: refine the setting of internal clock divider
 
---=20
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-David / dhildenb
+From b39eb1e250c32c695a780f1814086f2bfa0fb593 Mon Sep 17 00:00:00 2001
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+Date: Mon, 28 Oct 2019 17:10:29 +0800
+Subject: [PATCH] ASoC: fsl_asrc: refine the setting of internal clock divider
+
+The output divider should align with the output sample
+rate, if use ideal sample rate, there will be a lot of overload,
+which would cause underrun.
+
+The maximum divider of asrc clock is 1024, but there is no
+judgement for this limitation in driver, which may cause the divider
+setting not correct.
+
+For non-ideal ratio mode, the clock rate should divide the sample
+rate with no remainder, and the quotient should be less than 1024.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/23c634e4bf58afce5b3ae67f5f42e8d1cae2639a.1572252307.git.shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/fsl/fsl_asrc.c | 45 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+index 0bf91a6f54b9..a3cfceea7d2f 100644
+--- a/sound/soc/fsl/fsl_asrc.c
++++ b/sound/soc/fsl/fsl_asrc.c
+@@ -259,8 +259,15 @@ static int fsl_asrc_set_ideal_ratio(struct fsl_asrc_pair *pair,
+  * It configures those ASRC registers according to a configuration instance
+  * of struct asrc_config which includes in/output sample rate, width, channel
+  * and clock settings.
++ *
++ * Note:
++ * The ideal ratio configuration can work with a flexible clock rate setting.
++ * Using IDEAL_RATIO_RATE gives a faster converting speed but overloads ASRC.
++ * For a regular audio playback, the clock rate should not be slower than an
++ * clock rate aligning with the output sample rate; For a use case requiring
++ * faster conversion, set use_ideal_rate to have the faster speed.
+  */
+-static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
++static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
+ {
+ 	struct asrc_config *config = pair->config;
+ 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
+@@ -268,7 +275,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
+ 	enum asrc_word_width input_word_width;
+ 	enum asrc_word_width output_word_width;
+ 	u32 inrate, outrate, indiv, outdiv;
+-	u32 clk_index[2], div[2];
++	u32 clk_index[2], div[2], rem[2];
++	u64 clk_rate;
+ 	int in, out, channels;
+ 	int pre_proc, post_proc;
+ 	struct clk *clk;
+@@ -351,27 +359,42 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
+ 	/* We only have output clock for ideal ratio mode */
+ 	clk = asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
+ 
+-	div[IN] = clk_get_rate(clk) / inrate;
+-	if (div[IN] == 0) {
++	clk_rate = clk_get_rate(clk);
++	rem[IN] = do_div(clk_rate, inrate);
++	div[IN] = (u32)clk_rate;
++
++	/*
++	 * The divider range is [1, 1024], defined by the hardware. For non-
++	 * ideal ratio configuration, clock rate has to be strictly aligned
++	 * with the sample rate. For ideal ratio configuration, clock rates
++	 * only result in different converting speeds. So remainder does not
++	 * matter, as long as we keep the divider within its valid range.
++	 */
++	if (div[IN] == 0 || (!ideal && (div[IN] > 1024 || rem[IN] != 0))) {
+ 		pair_err("failed to support input sample rate %dHz by asrck_%x\n",
+ 				inrate, clk_index[ideal ? OUT : IN]);
+ 		return -EINVAL;
+ 	}
+ 
+-	clk = asrc_priv->asrck_clk[clk_index[OUT]];
++	div[IN] = min_t(u32, 1024, div[IN]);
+ 
+-	/* Use fixed output rate for Ideal Ratio mode (INCLK_NONE) */
+-	if (ideal)
+-		div[OUT] = clk_get_rate(clk) / IDEAL_RATIO_RATE;
++	clk = asrc_priv->asrck_clk[clk_index[OUT]];
++	clk_rate = clk_get_rate(clk);
++	if (ideal && use_ideal_rate)
++		rem[OUT] = do_div(clk_rate, IDEAL_RATIO_RATE);
+ 	else
+-		div[OUT] = clk_get_rate(clk) / outrate;
++		rem[OUT] = do_div(clk_rate, outrate);
++	div[OUT] = clk_rate;
+ 
+-	if (div[OUT] == 0) {
++	/* Output divider has the same limitation as the input one */
++	if (div[OUT] == 0 || (!ideal && (div[OUT] > 1024 || rem[OUT] != 0))) {
+ 		pair_err("failed to support output sample rate %dHz by asrck_%x\n",
+ 				outrate, clk_index[OUT]);
+ 		return -EINVAL;
+ 	}
+ 
++	div[OUT] = min_t(u32, 1024, div[OUT]);
++
+ 	/* Set the channel number */
+ 	channels = config->channel_num;
+ 
+@@ -560,7 +583,7 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
+ 		config.output_sample_rate = rate;
+ 	}
+ 
+-	ret = fsl_asrc_config_pair(pair);
++	ret = fsl_asrc_config_pair(pair, false);
+ 	if (ret) {
+ 		dev_err(dai->dev, "fail to config asrc pair\n");
+ 		return ret;
+-- 
+2.20.1
 
