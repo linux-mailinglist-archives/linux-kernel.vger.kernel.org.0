@@ -2,163 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D86DE6C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFE2DE6C2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 07:07:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbfJ1GGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 02:06:38 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51015 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbfJ1GGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 02:06:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 23:06:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,239,1569308400"; 
-   d="scan'208";a="399353332"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Oct 2019 23:06:37 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sun, 27 Oct 2019 23:06:36 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sun, 27 Oct 2019 23:06:36 -0700
-Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Sun, 27 Oct 2019 23:06:35 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
- SHSMSX154.ccr.corp.intel.com ([169.254.7.200]) with mapi id 14.03.0439.000;
- Mon, 28 Oct 2019 14:06:34 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-CC:     "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>
-Subject: RE: [PATCH v7 11/11] iommu/vt-d: Add svm/sva invalidate function
-Thread-Topic: [PATCH v7 11/11] iommu/vt-d: Add svm/sva invalidate function
-Thread-Index: AQHViqRXy9Yx+C3oUEClzLBbVKfxc6dq9GqwgAC9yACAAEk4gIADmobw
-Date:   Mon, 28 Oct 2019 06:06:33 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7D9@SHSMSX104.ccr.corp.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1571946904-86776-12-git-send-email-jacob.jun.pan@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDE06@SHSMSX104.ccr.corp.intel.com>
- <5e9d2372-a8b5-9a26-1438-c1a608bfad6d@linux.intel.com>
- <d0375121-7893-bb06-45f3-209a0cff12de@linux.intel.com>
-In-Reply-To: <d0375121-7893-bb06-45f3-209a0cff12de@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTA0ZDcyYTUtM2JjYy00NTU1LTg4ZGQtMGU4ZGE4NWJiNWE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNmE3NGdsQzAxeGFcL1BNODhBNnhLQUFEeXp5bXgzM2xhZGxjdWhQdVhJTVM3UUJMdnFZWkRCTDZ0MEJQVXJQalAifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1731777AbfJ1GHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 02:07:30 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44499 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731716AbfJ1GHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 02:07:25 -0400
+Received: by mail-pl1-f193.google.com with SMTP id q16so4813908pll.11;
+        Sun, 27 Oct 2019 23:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=N3AnrnW8m8clFq9XuX9N6KUkxKYhGl3KT2G9TPIKHEM=;
+        b=bT52vDaGBuwdvyDqaSD1/IYjhM9gTx5GKu0rpFGpTnEp+vUUEry3qL26DvF4gTll+C
+         Tsg6NIxfTMU8UPtxYojqJlAet/oJktqwY9hMv/NDujzqn4f9kiDSME3+3Y5hsnAZS8LH
+         b96WrKIg58YXA5n6e3vcYIbyRDeSKZ0L2Ueus/iaZ2zqkrsVtUx4BWc40Kh+ilZ4/LNZ
+         EHGZjbFwgKMJDf4C1WMnZJvA9ZFBV9yCqGpVsiTi/9XlEinuePMUleGRp0TX/bTtKGZR
+         at4sGrNQYyv/v9eiv0dUdUzNvwDMCVD0p2bAAbiJ5bcTyZQFuRRYux5r5cjpnTLJKQcZ
+         z2fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=N3AnrnW8m8clFq9XuX9N6KUkxKYhGl3KT2G9TPIKHEM=;
+        b=pRc47WoXAgvhq2dvxWUadAteefh1aYHeiuNIMlnx7HRZL9XB2WbWrIIAYFk+6AKdGT
+         Vp0z2L6FIbpxRUwwnZiMstadnbGDW4lEVfTI7E8Uy2xDpgjqNd4VYLPmVsW9lqs+TrDc
+         lwmXzIEhxR6BXAJh9FZjWxP1JPJQZ4A5g0o7s/I90OwVlSBZQAhEryooGTI0psd9+ot4
+         rZJtm/RC8pjVNSo7CiA5A2Vhf7p/sbliBihKu1qBee4KQxeCK7BMXpFTsdzcgrl6qiTr
+         Tk4ZTclS39i8LW0n/O8i4SAmF6povxovY71HOuz/F1Ib9utha55TuAQqnnZ7MVzKasHR
+         aU+w==
+X-Gm-Message-State: APjAAAUewOKAVeyYLaK88d82EMhSLtvlDR351DQWr+3me+pJzzF2bUCx
+        jQycC6ldHumFJu4q6QXStq8=
+X-Google-Smtp-Source: APXvYqzUSnrIvw+xmNvs6HOdzZLoYxHxyluQ5VYTuyR6cYdBdKLk+sZRLjYcH4wWEmk0/9YY5QsZZw==
+X-Received: by 2002:a17:902:347:: with SMTP id 65mr16901116pld.161.1572242844300;
+        Sun, 27 Oct 2019 23:07:24 -0700 (PDT)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:539:cf3b:393e:2dcf:24de:b4fb])
+        by smtp.gmail.com with ESMTPSA id 70sm746781pfw.160.2019.10.27.23.07.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2019 23:07:23 -0700 (PDT)
+From:   madhuparnabhowmik04@gmail.com
+To:     corbet@lwn.net, mchehab+samsung@kernel.org,
+        gregkh@linuxfoundation.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH] Documentation: driver-api: index: Removed non-existing document driver-api/sgi-ioc4 from the toctree.
+Date:   Mon, 28 Oct 2019 11:37:10 +0530
+Message-Id: <20191028060710.15154-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBMdSBCYW9sdSBbbWFpbHRvOmJhb2x1Lmx1QGxpbnV4LmludGVsLmNvbV0NCj4gU2Vu
-dDogU2F0dXJkYXksIE9jdG9iZXIgMjYsIDIwMTkgMzowMyBQTQ0KPiANCj4gSGkgYWdhaW4sDQo+
-IA0KPiBPbiAxMC8yNi8xOSAxMDo0MCBBTSwgTHUgQmFvbHUgd3JvdGU6DQo+ID4gSGksDQo+ID4N
-Cj4gPiBPbiAxMC8yNS8xOSAzOjI3IFBNLCBUaWFuLCBLZXZpbiB3cm90ZToNCj4gPj4+IEZyb206
-IEphY29iIFBhbiBbbWFpbHRvOmphY29iLmp1bi5wYW5AbGludXguaW50ZWwuY29tXQ0KPiA+Pj4g
-U2VudDogRnJpZGF5LCBPY3RvYmVyIDI1LCAyMDE5IDM6NTUgQU0NCj4gPj4+DQo+ID4+PiBXaGVu
-IFNoYXJlZCBWaXJ0dWFsIEFkZHJlc3MgKFNWQSkgaXMgZW5hYmxlZCBmb3IgYSBndWVzdCBPUyB2
-aWENCj4gPj4+IHZJT01NVSwgd2UgbmVlZCB0byBwcm92aWRlIGludmFsaWRhdGlvbiBzdXBwb3J0
-IGF0IElPTU1VIEFQSSBhbmQNCj4gPj4+IGRyaXZlcg0KPiA+Pj4gbGV2ZWwuIFRoaXMgcGF0Y2gg
-YWRkcyBJbnRlbCBWVC1kIHNwZWNpZmljIGZ1bmN0aW9uIHRvIGltcGxlbWVudA0KPiA+Pj4gaW9t
-bXUgcGFzc2Rvd24gaW52YWxpZGF0ZSBBUEkgZm9yIHNoYXJlZCB2aXJ0dWFsIGFkZHJlc3MuDQo+
-ID4+Pg0KPiA+Pj4gVGhlIHVzZSBjYXNlIGlzIGZvciBzdXBwb3J0aW5nIGNhY2hpbmcgc3RydWN0
-dXJlIGludmFsaWRhdGlvbg0KPiA+Pj4gb2YgYXNzaWduZWQgU1ZNIGNhcGFibGUgZGV2aWNlcy4g
-RW11bGF0ZWQgSU9NTVUgZXhwb3NlcyBxdWV1ZQ0KPiA+Pj4gaW52YWxpZGF0aW9uIGNhcGFiaWxp
-dHkgYW5kIHBhc3NlcyBkb3duIGFsbCBkZXNjcmlwdG9ycyBmcm9tIHRoZSBndWVzdA0KPiA+Pj4g
-dG8gdGhlIHBoeXNpY2FsIElPTU1VLg0KPiA+Pg0KPiA+PiBzcGVjaWZpY2FsbHkgeW91IG1heSBj
-bGFyaWZ5IHRoYXQgb25seSBpbnZhbGlkYXRpb25zIHJlbGF0ZWQgdG8NCj4gPj4gZmlyc3QtbGV2
-ZWwgcGFnZSB0YWJsZSBpcyBwYXNzZWQgZG93biwgYmVjYXVzZSBpdCdzIGd1ZXN0DQo+ID4+IHN0
-cnVjdHVyZSBiZWluZyBib3VuZCB0byB0aGUgZmlyc3QtbGV2ZWwuIG90aGVyIGRlc2NyaXB0b3Jz
-DQo+ID4+IGFyZSBlbXVsYXRlZCBvciB0cmFuc2xhdGVkIGludG8gb3RoZXIgbmVjZXNzYXJ5IG9w
-ZXJhdGlvbnMuDQo+ID4+DQo+ID4+Pg0KPiA+Pj4gVGhlIGFzc3VtcHRpb24gaXMgdGhhdCBndWVz
-dCB0byBob3N0IGRldmljZSBJRCBtYXBwaW5nIHNob3VsZCBiZQ0KPiA+Pj4gcmVzb2x2ZWQgcHJp
-b3IgdG8gY2FsbGluZyBJT01NVSBkcml2ZXIuIEJhc2VkIG9uIHRoZSBkZXZpY2UgaGFuZGxlLA0K
-PiA+Pj4gaG9zdCBJT01NVSBkcml2ZXIgY2FuIHJlcGxhY2UgY2VydGFpbiBmaWVsZHMgYmVmb3Jl
-IHN1Ym1pdCB0byB0aGUNCj4gPj4+IGludmFsaWRhdGlvbiBxdWV1ZS4NCj4gPj4NCj4gPj4gd2hh
-dCBpcyBkZXZpY2UgSUQ/IGl0J3MgYSBiaXQgY29uZnVzaW5nIHRlcm0gaGVyZS4NCj4gPj4NCj4g
-Pj4+DQo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBKYWNvYiBQYW4gPGphY29iLmp1bi5wYW5AbGludXgu
-aW50ZWwuY29tPg0KPiA+Pj4gU2lnbmVkLW9mZi1ieTogQXNob2sgUmFqIDxhc2hvay5yYWpAaW50
-ZWwuY29tPg0KPiA+Pj4gU2lnbmVkLW9mZi1ieTogTGl1LCBZaSBMIDx5aS5sLmxpdUBsaW51eC5p
-bnRlbC5jb20+DQo+ID4+PiAtLS0NCj4gPj4+IMKgIGRyaXZlcnMvaW9tbXUvaW50ZWwtaW9tbXUu
-YyB8IDE3MA0KPiA+Pj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysNCj4gPj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAxNzAgaW5zZXJ0aW9ucygrKQ0KPiA+Pj4NCj4g
-Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L2ludGVsLWlvbW11LmMgYi9kcml2ZXJzL2lv
-bW11L2ludGVsLQ0KPiBpb21tdS5jDQo+ID4+PiBpbmRleCA1ZmFiMzJmYmM0YjQuLmE3M2U3NmQ2
-NDU3YSAxMDA2NDQNCj4gPj4+IC0tLSBhL2RyaXZlcnMvaW9tbXUvaW50ZWwtaW9tbXUuYw0KPiA+
-Pj4gKysrIGIvZHJpdmVycy9pb21tdS9pbnRlbC1pb21tdS5jDQo+ID4+PiBAQCAtNTQ5MSw2ICs1
-NDkxLDE3NSBAQCBzdGF0aWMgdm9pZA0KPiA+Pj4gaW50ZWxfaW9tbXVfYXV4X2RldGFjaF9kZXZp
-Y2Uoc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluLA0KPiA+Pj4gwqDCoMKgwqDCoCBhdXhfZG9t
-YWluX3JlbW92ZV9kZXYodG9fZG1hcl9kb21haW4oZG9tYWluKSwgZGV2KTsNCj4gPj4+IMKgIH0N
-Cj4gPj4+DQo+ID4+PiArLyoNCj4gPj4+ICsgKiAyRCBhcnJheSBmb3IgY29udmVydGluZyBhbmQg
-c2FuaXRpemluZyBJT01NVSBnZW5lcmljIFRMQg0KPiA+Pj4gZ3JhbnVsYXJpdHkgdG8NCj4gPj4+
-ICsgKiBWVC1kIGdyYW51bGFyaXR5LiBJbnZhbGlkYXRpb24gaXMgdHlwaWNhbGx5IGluY2x1ZGVk
-IGluIHRoZSB1bm1hcA0KPiA+Pj4gb3BlcmF0aW9uDQo+ID4+PiArICogYXMgYSByZXN1bHQgb2Yg
-RE1BIG9yIFZGSU8gdW5tYXAuIEhvd2V2ZXIsIGZvciBhc3NpZ25lZCBkZXZpY2UNCj4gd2hlcmUN
-Cj4gPj4+IGd1ZXN0DQo+ID4+PiArICogY291bGQgb3duIHRoZSBmaXJzdCBsZXZlbCBwYWdlIHRh
-YmxlcyB3aXRob3V0IGJlaW5nIHNoYWRvd2VkIGJ5DQo+ID4+PiBRRU1VLg0KPiA+Pj4gSW4NCj4g
-Pj4+ICsgKiB0aGlzIGNhc2UgdGhlcmUgaXMgbm8gcGFzcyBkb3duIHVubWFwIHRvIHRoZSBob3N0
-IElPTU1VIGFzIGENCj4gPj4+IHJlc3VsdCBvZg0KPiA+Pj4gdW5tYXANCj4gPj4+ICsgKiBpbiB0
-aGUgZ3Vlc3QuIE9ubHkgaW52YWxpZGF0aW9ucyBhcmUgdHJhcHBlZCBhbmQgcGFzc2VkIGRvd24u
-DQo+ID4+PiArICogSW4gYWxsIGNhc2VzLCBvbmx5IGZpcnN0IGxldmVsIFRMQiBpbnZhbGlkYXRp
-b24gKHJlcXVlc3Qgd2l0aA0KPiA+Pj4gUEFTSUQpIGNhbiBiZQ0KPiA+Pj4gKyAqIHBhc3NlZCBk
-b3duLCB0aGVyZWZvcmUgd2UgZG8gbm90IGluY2x1ZGUgSU9UTEIgZ3JhbnVsYXJpdHkgZm9yDQo+
-ID4+PiByZXF1ZXN0DQo+ID4+PiArICogd2l0aG91dCBQQVNJRCAoc2Vjb25kIGxldmVsKS4NCj4g
-Pj4+ICsgKg0KPiA+Pj4gKyAqIEZvciBhbiBleGFtcGxlLCB0byBmaW5kIHRoZSBWVC1kIGdyYW51
-bGFyaXR5IGVuY29kaW5nIGZvciBJT1RMQg0KPiA+Pj4gKyAqIHR5cGUgYW5kIHBhZ2Ugc2VsZWN0
-aXZlIGdyYW51bGFyaXR5IHdpdGhpbiBQQVNJRDoNCj4gPj4+ICsgKiBYOiBpbmRleGVkIGJ5IGlv
-bW11IGNhY2hlIHR5cGUNCj4gPj4+ICsgKiBZOiBpbmRleGVkIGJ5IGVudW0gaW9tbXVfaW52X2dy
-YW51bGFyaXR5DQo+ID4+PiArICogW0lPTU1VX0NBQ0hFX0lOVl9UWVBFX0lPVExCXVtJT01NVV9J
-TlZfR1JBTlVfQUREUl0NCj4gPj4+ICsgKg0KPiA+Pj4gKyAqIEdyYW51X21hcCBhcnJheSBpbmRp
-Y2F0ZXMgdmFsaWRpdHkgb2YgdGhlIHRhYmxlLiAxOiB2YWxpZCwgMDoNCj4gPj4+IGludmFsaWQN
-Cj4gPj4+ICsgKg0KPiA+Pj4gKyAqLw0KPiA+Pj4gK2NvbnN0IHN0YXRpYyBpbnQNCj4gPj4+DQo+
-IGludl90eXBlX2dyYW51X21hcFtJT01NVV9DQUNIRV9JTlZfVFlQRV9OUl1bSU9NTVVfSU5WX0dS
-QU4NCj4gPj4+IFVfTlJdID0gew0KPiA+Pj4gK8KgwqDCoCAvKiBQQVNJRCBiYXNlZCBJT1RMQiwg
-c3VwcG9ydCBQQVNJRCBzZWxlY3RpdmUgYW5kIHBhZ2Ugc2VsZWN0aXZlICovDQo+ID4+PiArwqDC
-oMKgIHswLCAxLCAxfSwNCj4gPj4+ICvCoMKgwqAgLyogUEFTSUQgYmFzZWQgZGV2IFRMQnMsIG9u
-bHkgc3VwcG9ydCBhbGwgUEFTSURzIG9yIHNpbmdsZSBQQVNJRCAqLw0KPiA+Pj4gK8KgwqDCoCB7
-MSwgMSwgMH0sDQo+ID4+DQo+ID4+IEkgZm9yZ290IHByZXZpb3VzIGRpc2N1c3Npb24uIGlzIGl0
-IG5lY2Vzc2FyeSB0byBwYXNzIGRvd24gZGV2IFRMQg0KPiA+PiBpbnZhbGlkYXRpb24NCj4gPj4g
-cmVxdWVzdHM/IENhbiBpdCBiZSBoYW5kbGVkIGJ5IGhvc3QgaU9NTVUgZHJpdmVyIGF1dG9tYXRp
-Y2FsbHk/DQo+ID4NCj4gPiBPbiBob3N0IFNWQSwgd2hlbiBhIG1lbW9yeSBpcyB1bm1hcHBlZCwg
-ZHJpdmVyIGNhbGxiYWNrIHdpbGwgaW52YWxpZGF0ZQ0KPiA+IGRldiBJT1RMQiBleHBsaWNpdGx5
-LiBTbyBJIGd1ZXNzIHdlIG5lZWQgdG8gcGFzcyBkb3duIGl0IGZvciBndWVzdCBjYXNlLg0KPiA+
-IFRoaXMgaXMgYWxzbyByZXF1aXJlZCBmb3IgZ3Vlc3QgaW92YSBvdmVyIDFzdCBsZXZlbCB1c2Fn
-ZSBhcyBmYXIgYXMgY2FuDQo+ID4gc2VlLg0KPiA+DQo+IA0KPiBTb3JyeSwgSSBjb25mdXNlZCBn
-dWVzdCB2SU9WQSBhbmQgZ3Vlc3QgdlNWQS4gRm9yIGd1ZXN0IHZJT1ZBLCBubyBkZXZpY2UNCj4g
-VExCIGludmFsaWRhdGlvbiBwYXNzIGRvd24uIEJ1dCBjdXJyZW50bHkgZm9yIGd1ZXN0IHZTVkEs
-IGRldmljZSBUTEINCj4gaW52YWxpZGF0aW9uIGlzIHBhc3NlZCBkb3duLiBQZXJoYXBzIHdlIGNh
-biBhdm9pZCBwYXNzaW5nIGRvd24gZGV2IFRMQg0KPiBmbHVzaCBqdXN0IGxpa2Ugd2hhdCB3ZSBh
-cmUgZG9pbmcgZm9yIGd1ZXN0IElPVkEuDQo+IA0KDQpJIHRoaW5rIGRldiBUTEIgaXMgZnVsbHkg
-aGFuZGxlZCB3aXRoaW4gSU9NTVUgZHJpdmVyIHRvZGF5LiBJdCBkb2Vzbid0DQpyZXF1aXJlIGRl
-dmljZSBkcml2ZXIgdG8gZXhwbGljaXQgdG9nZ2xlLiBXaXRoIHRoaXMgdGhlbiB3ZSBjYW4gZnVs
-bHkNCnZpcnR1YWxpemUgZ3Vlc3QgZGV2IFRMQiBpbnZhbGlkYXRpb24gcmVxdWVzdCB0byBzYXZl
-IG9uZSBzeXNjYWxsLCBzaW5jZQ0KdGhlIGhvc3QgaXMgc3VwcG9zZWQgdG8gZmx1c2ggZGV2IFRM
-QiB3aGVuIHNlcnZpbmcgdGhlIGVhcmxpZXIgSU9UTEINCmludmFsaWRhdGlvbiBwYXNzLWRvd24u
-DQoNClRoYW5rcw0KS2V2aW4NCg==
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+
+This patches fixes the WARNING: toctree contains reference
+to nonexisting document u'driver-api/sgi-ioc4'by removing
+it from the toctree in the index.rst file.
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ Documentation/driver-api/index.rst | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 38e638abe3eb..6d46ceeb62c4 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -93,7 +93,6 @@ available subsections can be seen below.
+    pwm
+    rfkill
+    serial/index
+-   sgi-ioc4
+    sm501
+    smsc_ece1099
+    switchtec
+-- 
+2.17.1
+
