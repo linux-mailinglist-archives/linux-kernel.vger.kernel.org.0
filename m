@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 344B1E7BDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D17E7BE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 22:58:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389105AbfJ1V5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 17:57:46 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:48215 "EHLO
+        id S2389279AbfJ1V6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 17:58:45 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:38212 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729738AbfJ1V5p (ORCPT
+        with ESMTP id S1731405AbfJ1V6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 17:57:45 -0400
+        Mon, 28 Oct 2019 17:58:43 -0400
 Received: from belgarion ([90.55.204.252])
         by mwinf5d17 with ME
-        id K9xj210025TFNlm039xje7; Mon, 28 Oct 2019 22:57:43 +0100
+        id K9yh210085TFNlm039yhhL; Mon, 28 Oct 2019 22:58:42 +0100
 X-ME-Helo: belgarion
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 28 Oct 2019 22:57:43 +0100
+X-ME-Date: Mon, 28 Oct 2019 22:58:42 +0100
 X-ME-IP: 90.55.204.252
 From:   Robert Jarzmik <robert.jarzmik@free.fr>
 To:     Arnd Bergmann <arnd@arndb.de>
@@ -25,15 +25,17 @@ Cc:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH 33/46] ARM: pxa: pcmcia: move smemc configuration back to arch
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 34/46] ARM: pxa: remove get_clk_frequency_khz()
 References: <20191018154052.1276506-1-arnd@arndb.de>
-        <20191018154201.1276638-33-arnd@arndb.de>
+        <20191018154201.1276638-34-arnd@arndb.de>
 X-URL:  http://belgarath.falguerolles.org/
-Date:   Mon, 28 Oct 2019 22:57:43 +0100
-In-Reply-To: <20191018154201.1276638-33-arnd@arndb.de> (Arnd Bergmann's
-        message of "Fri, 18 Oct 2019 17:41:48 +0200")
-Message-ID: <87d0egjzxk.fsf@belgarion.home>
+Date:   Mon, 28 Oct 2019 22:58:41 +0100
+In-Reply-To: <20191018154201.1276638-34-arnd@arndb.de> (Arnd Bergmann's
+        message of "Fri, 18 Oct 2019 17:41:49 +0200")
+Message-ID: <878sp4jzvy.fsf@belgarion.home>
 User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -44,38 +46,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Arnd Bergmann <arnd@arndb.de> writes:
 
-> Rather than poking at the smemc registers directly from the
-> pcmcia/pxa2xx_base driver, move those bits into machine file
-> to have a cleaner interface.
+> get_clk_frequency_khz() is not a proper name for a global function,
+> and there is only one caller.
 >
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Convert viper to use the properly namespaced
+> pxa25x_get_clk_frequency_khz() and remove the other references.
+>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> -static int pxa2xx_pcmcia_set_mcxx(struct soc_pcmcia_socket *skt, unsigned int clk)
-> +static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
->  {
-> +	unsigned long clk = clk_get_rate(skt->clk) / 1000;
->  	struct soc_pcmcia_timing timing;
->  	int sock = skt->nr;
->  
->  	soc_common_pcmcia_get_timing(skt, &timing);
->  
-> -	pxa2xx_pcmcia_set_mcmem(sock, timing.mem, clk);
-> -	pxa2xx_pcmcia_set_mcatt(sock, timing.attr, clk);
-> -	pxa2xx_pcmcia_set_mcio(sock, timing.io, clk);
-> +	pxa_smemc_set_pcmcia_timing(sock,
-> +		pxa2xx_pcmcia_mcmem(sock, timing.mem, clk),
-> +		pxa2xx_pcmcia_mcatt(sock, timing.attr, clk),
-> +		pxa2xx_pcmcia_mcio(sock, timing.io, clk));
->  
->  	return 0;
->  }
->  
-> -static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
-> -{
-> -	unsigned long clk = clk_get_rate(skt->clk);
-> -	return pxa2xx_pcmcia_set_mcxx(skt, clk / 10000);
-That curious, because you divide here by 10^4, while in the old
-pxa2xx_pcmcia_set_mcxx() that was 10^3 ... is that a fix I don't see ?
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
 Cheers.
 
