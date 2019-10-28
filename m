@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CAAE70A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B558EE70A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388641AbfJ1LnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 07:43:01 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:46592 "EHLO metanate.com"
+        id S2388628AbfJ1LnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 07:43:00 -0400
+Received: from dougal.metanate.com ([90.155.101.14]:58166 "EHLO metanate.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388603AbfJ1LnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727225AbfJ1LnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Oct 2019 07:43:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
          s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -17,25 +17,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=3yHp3hDaqlC9sVsaUEOh4hHDVX97afo481OX9Wv/28o=; b=JFJJkAY0J7hR+kY0KnpsFW0Rk9
-        Sq3llvjAUA+tuAY0LLX35UJmclE0S1q9ht/dntPdOxOQqip+NTg3/n/UTvXoK2JENJjLhBCg2JXTd
-        W0eaBplcq/gcEJyu2dGF74zmCMdVPOSHlNUtWVywKgMUfE744jr6k06cjoX9GgAk7z1pEH/7k0AK+
-        QRSXgX5f8+RXsa0zBXcZnz235T17UcIu5GTnzLuRCSa3heJGxokM1SLQWUver77S+mpClWnyZzfE/
-        6ACk3pV9GEnO/fZAN69RJxCJyjYUCTSee3AjvCq8dsR/Es9AzcxBhOCDmvc8vw33ghF9YewbdwF8y
-        IvJVjrIQ==;
+        bh=gvMfLh+YRX5h+NeO0cijiJcG+SWNrmorQ1gq6rn2++0=; b=mjFa0gJwbwJ2hNyjVmg6/IdfVu
+        59RoUPhgGAffgLln4Aopn65srewCihVIXydpvnMzE4pEckky26bdmw32mFGR0hC3BJVdF65qnILdd
+        2nkl3nEGhwjGJkEr9yykQWs0zXucTGBrpOkZIiYthe50XGvooWgGeWGkK4evp7BvUcNaqWhvSPTyo
+        VeSvj75d//V9doHG1EPhYXllAv/E/rbFcGmGtDOb4+1Rr7GxaNcfGCbbNRzdWx6yycrkCmJ0zcGhA
+        SbLNkiEKXAeXSjdwYk72xoHqE6fOZMJl1L6x2F/QTtDmxOprCmK0f5JVuv8weof1UdIXbzt6DFDkR
+        pT+zrPvg==;
 Received: from dougal.metanate.com ([192.168.88.1] helo=localhost.localdomain)
         by email.metanate.com with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
         (Exim 4.92.3)
         (envelope-from <john@metanate.com>)
-        id 1iP3QH-00010o-CL; Mon, 28 Oct 2019 11:42:57 +0000
+        id 1iP3QH-00010o-EZ; Mon, 28 Oct 2019 11:42:57 +0000
 From:   John Keeping <john@metanate.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
-Subject: [PATCH v2 3/6] USB: gadget: f_hid: find f_hidg by IDR lookup on open
-Date:   Mon, 28 Oct 2019 11:42:25 +0000
-Message-Id: <20191028114228.3679219-4-john@metanate.com>
+Subject: [PATCH v2 4/6] USB: gadget: f_hid: decouple cdev from f_hidg lifetime
+Date:   Mon, 28 Oct 2019 11:42:26 +0000
+Message-Id: <20191028114228.3679219-5-john@metanate.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191028114228.3679219-1-john@metanate.com>
 References: <20191024164538.3161474-1-john@metanate.com>
@@ -48,49 +48,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a step towards decoupling the cdev lifetime from f_hidg, lookup the
-f_hidg structure by minor number from IDR when opening the device.
+The character device needs to live until the last file descriptor has
+been closed (and until after ->release() is called in that case).
+Change the lifetime of our character devices to match the module, so as
+to avoid a use-after-free when closing a file descriptor after the
+gadget function has been deleted.
 
 Signed-off-by: John Keeping <john@metanate.com>
 ---
 v2:
-- No changes
+- Updated for changes in patch 1
 
- drivers/usb/gadget/function/f_hid.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_hid.c | 42 +++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 1eb8b545e5b4..6cf3b5b14ded 100644
+index 6cf3b5b14ded..eda4f24d2790 100644
 --- a/drivers/usb/gadget/function/f_hid.c
 +++ b/drivers/usb/gadget/function/f_hid.c
-@@ -441,8 +441,14 @@ static int f_hidg_release(struct inode *inode, struct file *fd)
+@@ -24,6 +24,7 @@
  
- static int f_hidg_open(struct inode *inode, struct file *fd)
- {
--	struct f_hidg *hidg =
--		container_of(inode->i_cdev, struct f_hidg, cdev);
-+	struct f_hidg *hidg;
-+
-+	mutex_lock(&hidg_idr_lock);
-+	hidg = idr_find(&hidg_idr, iminor(inode));
-+	mutex_unlock(&hidg_idr_lock);
-+
-+	if (!hidg)
-+		return -ENODEV;
+ static int major, minors;
+ static struct class *hidg_class;
++static struct cdev *hidg_cdev;
+ static DEFINE_IDR(hidg_idr);
+ static DEFINE_MUTEX(hidg_idr_lock); /* protects access to hidg_idr */
  
- 	fd->private_data = hidg;
+@@ -58,7 +59,6 @@ struct f_hidg {
+ 	struct usb_request		*req;
  
-@@ -827,6 +833,10 @@ static int hidg_bind(struct usb_configuration *c, struct usb_function *f)
- 	if (status)
- 		goto fail_free_descs;
+ 	int				minor;
+-	struct cdev			cdev;
+ 	struct usb_function		func;
  
-+	mutex_lock(&hidg_idr_lock);
-+	idr_replace(&hidg_idr, hidg, hidg->minor);
-+	mutex_unlock(&hidg_idr_lock);
-+
- 	device = device_create(hidg_class, NULL, dev, NULL,
+ 	struct usb_ep			*in_ep;
+@@ -827,11 +827,7 @@ static int hidg_bind(struct usb_configuration *c, struct usb_function *f)
+ 	INIT_LIST_HEAD(&hidg->completed_out_req);
+ 
+ 	/* create char device */
+-	cdev_init(&hidg->cdev, &f_hidg_fops);
+ 	dev = MKDEV(major, hidg->minor);
+-	status = cdev_add(&hidg->cdev, dev, 1);
+-	if (status)
+-		goto fail_free_descs;
+ 
+ 	mutex_lock(&hidg_idr_lock);
+ 	idr_replace(&hidg_idr, hidg, hidg->minor);
+@@ -841,13 +837,14 @@ static int hidg_bind(struct usb_configuration *c, struct usb_function *f)
  			       "%s%d", "hidg", hidg->minor);
  	if (IS_ERR(device)) {
+ 		status = PTR_ERR(device);
+-		goto del;
++		goto fail_idr_remove;
+ 	}
+ 
+ 	return 0;
+-del:
+-	cdev_del(&hidg->cdev);
+-fail_free_descs:
++fail_idr_remove:
++	mutex_lock(&hidg_idr_lock);
++	idr_replace(&hidg_idr, NULL, hidg->minor);
++	mutex_unlock(&hidg_idr_lock);
+ 	usb_free_all_descriptors(f);
+ fail:
+ 	ERROR(f->config->cdev, "hidg_bind FAILED\n");
+@@ -1071,7 +1068,10 @@ static void hidg_unbind(struct usb_configuration *c, struct usb_function *f)
+ 	struct f_hidg *hidg = func_to_hidg(f);
+ 
+ 	device_destroy(hidg_class, MKDEV(major, hidg->minor));
+-	cdev_del(&hidg->cdev);
++
++	mutex_lock(&hidg_idr_lock);
++	idr_replace(&hidg_idr, NULL, hidg->minor);
++	mutex_unlock(&hidg_idr_lock);
+ 
+ 	usb_free_all_descriptors(f);
+ }
+@@ -1129,6 +1129,7 @@ MODULE_AUTHOR("Fabien Chouteau");
+ 
+ static int ghid_setup(void)
+ {
++	struct cdev *cdev = NULL;
+ 	int status;
+ 	dev_t dev;
+ 
+@@ -1149,12 +1150,30 @@ static int ghid_setup(void)
+ 	major = MAJOR(dev);
+ 	minors = HIDG_MINORS;
+ 
++	status = -ENOMEM;
++	cdev = cdev_alloc();
++	if (!cdev)
++		goto fail_unregister;
++
++	cdev->owner = THIS_MODULE;
++	cdev->ops = &f_hidg_fops;
++	kobject_set_name(&cdev->kobj, "hidg");
++
++	status = cdev_add(cdev, dev, HIDG_MINORS);
++	if (status)
++		goto fail_put;
++
+ 	status = usb_function_register(&hidusb_func);
+ 	if (status)
+-		goto fail_unregister;
++		goto fail_cdev_del;
+ 
++	hidg_cdev = cdev;
+ 	return 0;
+ 
++fail_cdev_del:
++	cdev_del(cdev);
++fail_put:
++	kobject_put(&cdev->kobj);
+ fail_unregister:
+ 	unregister_chrdev_region(dev, HIDG_MINORS);
+ 	class_destroy(hidg_class);
+@@ -1165,6 +1184,7 @@ static int ghid_setup(void)
+ static void ghid_cleanup(void)
+ {
+ 	usb_function_unregister(&hidusb_func);
++	cdev_del(hidg_cdev);
+ 
+ 	if (major) {
+ 		unregister_chrdev_region(MKDEV(major, 0), minors);
 -- 
 2.23.0
 
