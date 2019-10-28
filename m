@@ -2,53 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9282CE7347
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DC15E7352
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:06:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbfJ1OFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729004AbfJ1OFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:05:06 -0400
-Subject: Re: [GIT PULL] HID fixes for 5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572271505;
-        bh=tQvXaDIwCIcYHfDA7yN+FUhesHg5CVQrJJveO1spFxI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=oXyAM1INC+6Iw96BQWkJGilMJ/A1qXAH/T5Ql/xUvtJbqmwo047l/pD2k0/peBL+m
-         WaTqqDTwTRDYU7QUX809hAY2e3b0kX5EMGTJ7BVaBUiCst/oqLRzkp+V52nSU0Lmzn
-         Z4hMcfj3RhYZkxLcVRI+cnUXb2fnOSwVvu2XIjAE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <nycvar.YFH.7.76.1910281411130.13160@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1910281411130.13160@cbobk.fhfr.pm>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.1910281411130.13160@cbobk.fhfr.pm>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-X-PR-Tracked-Commit-Id: 09f3dbe474735df13dd8a66d3d1231048d9b373f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0365fb6baeb1ebefbbdad9e3f48bab9b3ccb8df3
-Message-Id: <157227150551.11779.13715501880943537881.pr-tracker-bot@kernel.org>
-Date:   Mon, 28 Oct 2019 14:05:05 +0000
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+        id S1730310AbfJ1OGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:06:19 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38149 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390028AbfJ1OGT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 10:06:19 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v9so10035927wrq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rdC6V+W/0pKqgJwzkGX8wwGtenk6Ad4eyp94SQwYZN8=;
+        b=R5HdV1xFRhfl7jlVF2ygGLA04qDiJw37QSOQZkF7MsnXM5HNM18K4iIPwjs+t3zEUg
+         4c/cqHnL2KkIfbY826muE9b5MAoamhv4k7YEbjhAau9OnEU3xDZTMxabEHkjIePduZZj
+         sHBbDma0c0O/cHzx7Pkwc7xNE/Zr1TEGxfqpKIGIczkz2oNIJFdkIPqtpyPp6jWbMRvc
+         7VM7JHIzh42deYRq+7Pv2L01pohfPkZrcjftyBzrKZt7gOyBW1GQLkAWhHr/GC7Lwutg
+         3unltK9XvVTaNIIAMyq0E9vR+o6Sz4RkgQcXuPwJQ98p9o/R0AB4H3e/T53SzUKd6b40
+         8w2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rdC6V+W/0pKqgJwzkGX8wwGtenk6Ad4eyp94SQwYZN8=;
+        b=Rf6OdCYC8s+gdcyEI/in26aVoLDEaTXSBX43V/eS55KCa0quDimbDOjsk0clg+D/TW
+         cQnbStpnpMFZ1Se1Rv+CW/UhyrCPuLPlW/s/pE4WZ0OVk8k8K1agLvAfniFCIis149TY
+         v6PWrcv5UfdpWxWw6HVPnajb2HtjA9fNnW94aA2XoIBBi5Mi0gzW2p9t+bIYRMjPQxRY
+         OyZMzLHZ3aSc0SOuSdKc7GhdURNkHfa8VmCePWx/+LJWiIwfl2szXMcs+J+H5Epy8HcP
+         FLoRU+dg6Smby025pKHk6jNqyYxOJYqzrMN6Wd58izhhzOBxVSrlPvZqo5pjz8HDcD46
+         WHdg==
+X-Gm-Message-State: APjAAAUMjiFYE9DYm0Hx/8zemUBemmejte+mdjfD+GOUqHFlUgIDip44
+        XM9upP9tXpoRdUU5tkQUkjtWeTcvYtw4ZBJTtPc=
+X-Google-Smtp-Source: APXvYqx93VfHYQta5r6YehJQFm4Zit5CjBpG85IfDnlOhBb4sBmoUGmL/PYIDYPF4ekeP2EWvHda9cyimGmob83AeLk=
+X-Received: by 2002:adf:828c:: with SMTP id 12mr15047712wrc.40.1572271577123;
+ Mon, 28 Oct 2019 07:06:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191028133621.21400-1-yuehaibing@huawei.com>
+In-Reply-To: <20191028133621.21400-1-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 28 Oct 2019 10:06:05 -0400
+Message-ID: <CADnq5_Ow+W_Syo6G3ZUXJeiLbc4YU=DL1FtznaTKm=RGj4tq1g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/amd/powerplay: Make two functions static
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 28 Oct 2019 14:17:53 +0100 (CET):
+On Mon, Oct 28, 2019 at 9:37 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fix sparse warnings:
+>
+> drivers/gpu/drm/amd/amdgpu/../powerplay/arcturus_ppt.c:2050:5:
+>  warning: symbol 'arcturus_i2c_eeprom_control_init' was not declared. Should it be static?
+> drivers/gpu/drm/amd/amdgpu/../powerplay/arcturus_ppt.c:2068:6:
+>  warning: symbol 'arcturus_i2c_eeprom_control_fini' was not declared. Should it be static?
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+Applied.  Thanks.  Is there more to this series?  I don't see patches 1 or 2.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0365fb6baeb1ebefbbdad9e3f48bab9b3ccb8df3
+Alex
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> ---
+>  drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> index d48a49d..3099ac2 100644
+> --- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> +++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> @@ -2047,7 +2047,7 @@ static const struct i2c_algorithm arcturus_i2c_eeprom_i2c_algo = {
+>         .functionality = arcturus_i2c_eeprom_i2c_func,
+>  };
+>
+> -int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
+> +static int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
+>  {
+>         struct amdgpu_device *adev = to_amdgpu_device(control);
+>         int res;
+> @@ -2065,7 +2065,7 @@ int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
+>         return res;
+>  }
+>
+> -void arcturus_i2c_eeprom_control_fini(struct i2c_adapter *control)
+> +static void arcturus_i2c_eeprom_control_fini(struct i2c_adapter *control)
+>  {
+>         i2c_del_adapter(control);
+>  }
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
