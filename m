@@ -2,65 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D8BE6A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:11:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF685E6A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfJ1BL0 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 27 Oct 2019 21:11:26 -0400
-Received: from posta.amasya.edu.tr ([193.255.105.20]:21447 "EHLO
-        posta.amasya.edu.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727581AbfJ1BL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 21:11:26 -0400
-X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Oct 2019 21:11:23 EDT
-Received: by posta.amasya.edu.tr (Postfix, from userid 110)
-        id C70373C0849; Mon, 28 Oct 2019 04:04:29 +0300 (+03)
-X-Virus-Scanned: by SpamTitan at amasya.edu.tr
-Authentication-Results: posta.amasya.edu.tr; none
-Date:   Mon, 28 Oct 2019 04:04:17 +0300 (EET)
-From:   Bellucci Capital Partners <pinar.sen@amasya.edu.tr>
-Reply-To: Bellucci Capital Partners <info@belluccicp.net>
-Message-ID: <562889327.193976.1572224657561.JavaMail.zimbra@amasya.edu.tr>
-Subject: 
+        id S1729173AbfJ1BLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 21:11:38 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:39171 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728574AbfJ1BLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 21:11:37 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 471c9z030gz9sPK;
+        Mon, 28 Oct 2019 12:11:35 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1572225095;
+        bh=5Ds8Q7CwdrMTbH9IXggt+mmI5j9uKDnt49CBC/Yz0ac=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MM7/PoR8cF8t5iPgN5QkQc36BoC2GCYAu0R4TZ735lteuWaNTU8rqYfZKQ9Sm101V
+         DtDWX/XRAqaEY/rZzARWDLLCwQQqjRHjsM8vJX4FlAXA6qlmoenutcFR+P/C6GLbsI
+         xlgf9YwQaz9aSyOMFX1cej85Sxv17sQScpi8aVDYIqk3dmPobXymJ3i0Xu0D7dhgXa
+         C7bweNgoO1iH7H4yo2Sy2feqwTFo4MwNeqKMiiw42UXEO5/QkoIziCTSVQMMgIeEDD
+         UZQo2r/XX3o1Lmx7sjluxjRBiW4QNnLXWObAWpD4Tou3LGd3XUXGNetfnPSH3IlNTN
+         PDuwpCurDq9aQ==
+Date:   Mon, 28 Oct 2019 12:11:34 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kevin Wang <kevin1.wang@amd.com>, Evan Quan <evan.quan@amd.com>
+Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
+Message-ID: <20191028121134.63b6c3c0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [198.46.170.187]
-X-Mailer: Zimbra 8.8.15_GA_3869 (ZimbraWebClient - FF70 (Win)/8.8.15_GA_3869)
-Thread-Index: PnLc5EXjHjSmm3JIfAjZcRGfZDdKBA==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; boundary="Sig_/GWYAgCEI=ktipbJFMteknT0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/GWYAgCEI=ktipbJFMteknT0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Hej,
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-Vi har en enorm kreditportfölj, vi är intresserade av att finansiera projekt med stor volym. Förfarandena är följande:
+  drivers/gpu/drm/amd/powerplay/inc/amdgpu_smu.h
 
-1-Klienten måste skicka en kort sammanfattning av projektet. Detta måste innehålla det totala beloppet som krävs för projektet, beräknad avkastning på investeringen, lånets återbetalningsperiod, detta får inte vara mer än 15 år.
+between commit:
 
-2- Klienten kommer att behöva försäkra det nämnda projektet hos ett försäkringsbolag om det totala lånebeloppet för att garantera lånet som säkerhet.
+  155f85c0d568 ("drm/amd/powerplay: remove duplicate macro smu_get_uclk_dpm=
+_states in amdgpu_smu.h")
 
-3- Räntan är 1% per år.
+from Linus' tree and commit:
 
-4-återbetalningstid är 15 år
+  18c1d3cee4c5 ("drm/amd/powerplay: split out those internal used swSMU API=
+s V2")
 
-5 Finansiering tar ungefär 10 bankdagar från den dag du presenterar försäkringscertifikatet.
+from the amdgpu tree.
 
+I fixed it up (I just used the amdgpu tree version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
-Om du är nöjd med ovanstående procedurer skicka mig en avsiktsförklaring på ditt företags brevhuvud.
+--=20
+Cheers,
+Stephen Rothwell
 
-För ytterligare information om hur du kan få ett lån från: Svara omedelbart på den här e-postmeddelanden:
-info@belluccicp.net
+--Sig_/GWYAgCEI=ktipbJFMteknT0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Hälsningar, när vi väntar på ditt svar.
+-----BEGIN PGP SIGNATURE-----
 
-Vänliga hälsningar
-Manuel Baressi
-Annonspersonal
-WEB: https://www.belluccicp.net
-Bu e-posta mesaji kisiye ozel olup, gizli bilgiler iceriyor olabilir. Eger bu e-posta mesaji size yanlislikla ulasmissa, icerigini hicbir sekilde kullanmayiniz ve e-postayi siliniz. Amasya Universitesi bu e-posta mesajinin icerigi ile ilgili olarak hicbir hukuksal sorumlulugu kabul etmez. The information contained in this communication may contain confidential or legally privileged information. Amasya University doesn't accept any legal responsibility for the contents and attachments of this message. The sender does not accept any liability for any errors or omissions or any viruses in the context of this message which arise as a result of internet transmission.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl22QEYACgkQAVBC80lX
+0GzvBgf/T2qJJzaB2aCW3QcDa1KxjhFm6Uj3hqXBjy0akfnJ0YG2udqAqd8vLYrs
+epTg9PEJaxGgIDZFZ2lS8zxhgHr9Lzbg+DPVaXaQx9COIyNQSMsw+EPuA90B0Q36
+avdwsL/5g7Bqvib0sHTV6ke4zKUGRQGhdIz/+uoCuwj6X6nstXC2Mu+xVccjtBVh
+Zi27tac6QZpN8HJrZOLq5pualLpU92uCkV4V0twEHltN6xGV9sx53hT4ujsYOZ9/
+Wu1CMCmCLX+wEt3WFIlvEM1MMf6UysmbHLoUKqzUJohbT2kEMJMj+ilT5nvagF/R
+3Ci6aQiis1mzn41Sm7MvjsKhZ+AczA==
+=PkON
+-----END PGP SIGNATURE-----
+
+--Sig_/GWYAgCEI=ktipbJFMteknT0--
