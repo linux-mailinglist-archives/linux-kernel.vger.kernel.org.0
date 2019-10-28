@@ -2,101 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E8FE722B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53213E7230
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbfJ1M5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:57:03 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38909 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbfJ1M5D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:57:03 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q78so11235811lje.5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 05:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0z8rcnJQ2Ztw3XS+4jmpXqQHR2gbd+xnEDMVQdJ2PKg=;
-        b=srML+4c4W5XX21msxWpc4UTlLGRvocfhX+m8lvWZmTqWJ5JCiI2mfWZTnHxVqaYfjb
-         RZj0UT8eW/naYqmghTosmknDZj7Xpio4LxUzGrGSO3//giGKDQmYVrnZ/paCFuFAQcsB
-         V7znTFFwZzkN0gTbaEAl9TrDNfH1cG7W0wF73Ynd7rAmULk2w/g74sEdzHqe4AhDJ+3H
-         vPLMBrEepytPqjx0ZwiWK8rMJ4d7YqC1t7Ci1xJs9k1l4TphNVHkdFQ5/Xx3FdjDjY1D
-         qJp1PdMkWXv1nkI0LJwRV0l4SfjCylX+qDHekhf7ufySNb4+QR/AwOoYHWdrxpSqs3Sq
-         uUiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0z8rcnJQ2Ztw3XS+4jmpXqQHR2gbd+xnEDMVQdJ2PKg=;
-        b=LxYKsdO2+wfDG0pUGoos3gQcY4Km7jA85CtBCCq8GTB1daGUoRK/pCmKIUU/352v3Q
-         UvXpWDifaLib+Gq4LzdYLeFdM2v5ENb5YZZQnEmNujYJIj4hQxLaFIZIEnlGJaEIn3/t
-         +wfsWXN/K030WEEio/Rm4bhXvF7kT0hcIMsNRk3eIXh7pImKElmkzi+Sed0Qh4VjpA3O
-         qA5iBYl6voGdcbLEv8lTds73qYtiHiyOfugHhuX0bdxhNH4IVTgKK+d9+ZP7H+Wb7S5j
-         rU5gb0iBi7g9MUJa4+MltQQqVG/1Hgy1EyBGjtR1MG220TZ70mH8NOGTRA+biYTJmTZ2
-         JWFQ==
-X-Gm-Message-State: APjAAAWsNpFSGf75AD/DsVRlgIYYxKUN8xSS6rndmmF/zSWs89agxDOD
-        hrBocMFOaBxl3Ferz2moZTvKVEYEMn0=
-X-Google-Smtp-Source: APXvYqxnZmY+iQCpMLmbeFZh5dem+tdNcGHC4iY1KE4BMNoGuCBgfBV/T08SYVaI0ko2KXi+altLhA==
-X-Received: by 2002:a2e:9759:: with SMTP id f25mr175210ljj.173.1572267421409;
-        Mon, 28 Oct 2019 05:57:01 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id a11sm5241245ljp.97.2019.10.28.05.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 05:57:00 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C0662100242; Mon, 28 Oct 2019 15:57:02 +0300 (+03)
-Date:   Mon, 28 Oct 2019 15:57:02 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
- file at read
-Message-ID: <20191028125702.xdfbs7rqhm3wer5t@box>
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
- <20191028124222.ld6u3dhhujfqcn7w@box>
- <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+        id S1729431AbfJ1M5h convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 28 Oct 2019 08:57:37 -0400
+Received: from mga05.intel.com ([192.55.52.43]:36455 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729285AbfJ1M5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 08:57:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 05:57:36 -0700
+X-IronPort-AV: E=Sophos;i="5.68,240,1569308400"; 
+   d="scan'208";a="193247150"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.18.53])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 05:57:29 -0700
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8BIT
+To:     paulmck@kernel.org, rcu@vger.kernel.org
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20191022191215.25781-3-paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20191022191136.GA25627@paulmck-ThinkPad-P72>
+ <20191022191215.25781-3-paulmck@kernel.org>
+Message-ID: <157226744651.5420.128752979550120657@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH tip/core/rcu 03/10] drivers/gpu: Replace rcu_swap_protected()
+ with rcu_replace()
+Date:   Mon, 28 Oct 2019 14:57:26 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 01:47:16PM +0100, Linus Torvalds wrote:
-> On Mon, Oct 28, 2019 at 1:42 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > I've tried something of this sort back in 2013:
-> >
-> > http://lore.kernel.org/r/1377099441-2224-1-git-send-email-kirill.shutemov@linux.intel.com
-> >
-> > and I've got push back.
-> >
-> > Apparently, some filesystems may not have valid i_size before >readpage().
-> > Not sure if it's still the case...
+Quoting paulmck@kernel.org (2019-10-22 22:12:08)
+> From: "Paul E. McKenney" <paulmck@kernel.org>
 > 
-> Well, I agree that there might be some network filesystem that might
-> have inode sizes that are stale, but if that's the case then I don't
-> think your previous patch works either.
+> This commit replaces the use of rcu_swap_protected() with the more
+> intuitively appealing rcu_replace() as a step towards removing
+> rcu_swap_protected().
 > 
-> It too will avoid the readpage() if the read position is beyond i_size.
-> 
-> No?
+> Link: https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> [ paulmck: From rcu_replace() to rcu_replace_pointer() per Ingo Molnar. ]
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+> Cc: <intel-gfx@lists.freedesktop.org>
+> Cc: <dri-devel@lists.freedesktop.org>
 
-Yes. That's the reason the patch was rejected back then.
+"drm/i915:" preferred as the subject prefix for increased specificity.
 
-My point is that we need to make sure that this patch not break anything.
+Let me know which tree you end up merging with.
 
--- 
- Kirill A. Shutemov
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+
+Regards, Joonas
