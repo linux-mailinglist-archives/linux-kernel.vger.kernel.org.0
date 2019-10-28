@@ -2,125 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7A7E70A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8270E70B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388663AbfJ1LnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 07:43:03 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:47937 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729941AbfJ1LnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 07:43:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=zSqO7Gbt5gFHhPgKnnb70g2Sd1MZYdjH1WNB38pjbSY=; b=OD/lK/7ESCD34gj9SUJGd6S+A4
-        ZYTY7/ZbACOVtsMl9wTwor4rVAA1Zya0eDOfbk8xlvpWMwTiJHDG/5YnGYEBdR/2M5XzbUT3KStaC
-        wLKmPQVXWdWrM7tZNTM38OmcIJjMxZ1FxtDNqNghIoADwFmAbfDpC9+Ubh4Bq4TH6ET4kv2s5rnkp
-        LtJ+UZbX8F2mYHBBjNjzBkXL6S8on3wsHM7r6s76zWDjqjlTK+6MWGJdJPOGLBEAokyE7sQQd2QIY
-        J9MRlwmYxRzGZDXQ9xTAJJP5M1HliW1fWbQsUG4IQSU+dh8OtOc5yXRWNFOeHTrJ0I+rSEINiYE9z
-        r56Ajgxg==;
-Received: from dougal.metanate.com ([192.168.88.1] helo=localhost.localdomain)
-        by email.metanate.com with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <john@metanate.com>)
-        id 1iP3QH-00010o-JZ; Mon, 28 Oct 2019 11:42:57 +0000
-From:   John Keeping <john@metanate.com>
-To:     linux-usb@vger.kernel.org
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
-Subject: [PATCH v2 6/6] USB: gadget: f_hid: return ENODEV from read/write after deletion
-Date:   Mon, 28 Oct 2019 11:42:28 +0000
-Message-Id: <20191028114228.3679219-7-john@metanate.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191028114228.3679219-1-john@metanate.com>
-References: <20191024164538.3161474-1-john@metanate.com>
- <20191028114228.3679219-1-john@metanate.com>
+        id S1727432AbfJ1Lqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 07:46:46 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:36510 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbfJ1Lqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 07:46:46 -0400
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1iP3Tr-0003qb-E9; Mon, 28 Oct 2019 11:46:39 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1iP3Tr-0003Ho-Br; Mon, 28 Oct 2019 12:46:39 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
+References: <157225848971.557.16257813537984792761.stgit@buzz>
+Date:   Mon, 28 Oct 2019 12:46:39 +0100
+In-Reply-To: <157225848971.557.16257813537984792761.stgit@buzz> (Konstantin
+        Khlebnikov's message of "Mon, 28 Oct 2019 13:28:09 +0300")
+Message-ID: <87k18p6qjk.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a file descriptor to /dev/hidgN is kept open after the gadget
-function has been deleted, reading or writing will block indefinitely
-since no requests will ever be processed.
+* Konstantin Khlebnikov:
 
-Add a flag to note that the function has been deleted and check this in
-read & write if there is no other action to take.  When setting this
-flag, also wake up any readers/writers so that they get ENODEV
-immediately.
+> This implements fcntl() for getting amount of resident memory in cache.
+> Kernel already maintains counter for each inode, this patch just exposes
+> it into userspace. Returned size is in kilobytes like values in procfs.
 
-Signed-off-by: John Keeping <john@metanate.com>
----
-v2:
-- No changes
-
- drivers/usb/gadget/function/f_hid.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 3d848f7a4cca..a65bdf08ca54 100644
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -59,6 +59,7 @@ struct f_hidg {
- 	struct usb_request		*req;
- 
- 	struct kref			kref;
-+	bool				deleted;
- 	int				minor;
- 	struct usb_function		func;
- 
-@@ -271,10 +272,14 @@ static ssize_t f_hidg_read(struct file *file, char __user *buffer,
- 	/* wait for at least one buffer to complete */
- 	while (!READ_COND) {
- 		spin_unlock_irqrestore(&hidg->read_spinlock, flags);
-+		if (READ_ONCE(hidg->deleted))
-+			return -ENODEV;
-+
- 		if (file->f_flags & O_NONBLOCK)
- 			return -EAGAIN;
- 
--		if (wait_event_interruptible(hidg->read_queue, READ_COND))
-+		if (wait_event_interruptible(hidg->read_queue,
-+				READ_COND || READ_ONCE(hidg->deleted)))
- 			return -ERESTARTSYS;
- 
- 		spin_lock_irqsave(&hidg->read_spinlock, flags);
-@@ -358,11 +363,14 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
- 	/* write queue */
- 	while (!WRITE_COND) {
- 		spin_unlock_irqrestore(&hidg->write_spinlock, flags);
-+		if (READ_ONCE(hidg->deleted))
-+			return -ENODEV;
-+
- 		if (file->f_flags & O_NONBLOCK)
- 			return -EAGAIN;
- 
--		if (wait_event_interruptible_exclusive(
--				hidg->write_queue, WRITE_COND))
-+		if (wait_event_interruptible_exclusive(hidg->write_queue,
-+				WRITE_COND || READ_ONCE(hidg->deleted)))
- 			return -ERESTARTSYS;
- 
- 		spin_lock_irqsave(&hidg->write_spinlock, flags);
-@@ -1070,6 +1078,10 @@ static void hidg_free(struct usb_function *f)
- 
- 	hidg = func_to_hidg(f);
- 	opts = container_of(f->fi, struct f_hid_opts, func_inst);
-+	WRITE_ONCE(hidg->deleted, true);
-+	wake_up(&hidg->read_queue);
-+	wake_up(&hidg->write_queue);
-+
- 	kref_put(&hidg->kref, hidg_release);
- 	mutex_lock(&opts->lock);
- 	--opts->refcnt;
--- 
-2.23.0
-
+I think this needs a 32-bit compat implementation which clamps the
+returned value to INT_MAX.
