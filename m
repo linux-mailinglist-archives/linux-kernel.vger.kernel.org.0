@@ -2,87 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF375E79B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D642E79C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732720AbfJ1UJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:09:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58916 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfJ1UJ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:09:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B46DB60274; Mon, 28 Oct 2019 20:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572293395;
-        bh=yDqvNVHhioOXiqjnb4f2q03NmQOz4C5aqZuljuDMOF0=;
-        h=Reply-To:From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=YcdA17Z8/z0a65m6GazQEoBEp0Y0FHxyklETaAStgGFT8noyV20xlEJvEBdKpZSQA
-         Tn5+YITS2CbbohG1+J2WlWa3PJvR9yENTuoeKFXhZmKbUK/HDUQZfeVtCsn66lpeAQ
-         uKtSp2Tjuc/8w1mJPR0Q6cyzsMXX0u0EROCjeyj4=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from BCAIN (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bcain@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A46AB60274;
-        Mon, 28 Oct 2019 20:09:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572293394;
-        bh=yDqvNVHhioOXiqjnb4f2q03NmQOz4C5aqZuljuDMOF0=;
-        h=Reply-To:From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=mCdCEyDrGyipu0nnGPB7/pULaO1iagaTJbBnIwPaqNbrEjzy4xSUGxTtGbzTYxxoV
-         zDzZioBviFtj/O3Vo3pJVC2UTNaeUQ9KaE+0Hu4aB0AoCksBpy6x8gkbGfGCTDdP4L
-         1tNTNv5Fr+bmXe+VaH2WFXYI2/wrQUjM+6t4FSjs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A46AB60274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bcain@codeaurora.org
-Reply-To: <bcain@codeaurora.org>
-From:   "Brian Cain" <bcain@codeaurora.org>
-To:     "'Nick Desaulniers'" <ndesaulniers@google.com>
-Cc:     "'Sid Manning'" <sidneym@quicinc.com>,
-        "'Allison Randal'" <allison@lohutok.net>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Richard Fontana'" <rfontana@redhat.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        <linux-hexagon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <clang-built-linux@googlegroups.com>
-References: <20191028155722.23419-1-ndesaulniers@google.com>
-In-Reply-To: <20191028155722.23419-1-ndesaulniers@google.com>
-Subject: RE: [PATCH] hexagon: work around compiler crash
-Date:   Mon, 28 Oct 2019 15:09:52 -0500
-Message-ID: <002301d58dcb$a9ffaa80$fdfeff80$@codeaurora.org>
+        id S1732359AbfJ1UN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:13:29 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:8260 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726483AbfJ1UN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 16:13:28 -0400
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x9SKDD4I027324;
+        Mon, 28 Oct 2019 21:13:13 +0100
+Date:   Mon, 28 Oct 2019 21:13:13 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, dev@dpdk.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [dpdk-dev] Please stop using iopl() in DPDK
+Message-ID: <20191028201313.GA27316@1wt.eu>
+References: <CALCETrVepdYd4uN8jrG8i6iaixWp+N3MdGv5WhjOdCr9sLRK1w@mail.gmail.com>
+ <20191025064225.GA22917@1wt.eu>
+ <20191028094253.054fbf9c@hermes.lan>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKUlOT6xDYs3glgy2B+THlWPmKFrqXybLvA
-Content-Language: en-us
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028094253.054fbf9c@hermes.lan>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: linux-hexagon-owner@vger.kernel.org <linux-hexagon-
-> owner@vger.kernel.org> On Behalf Of Nick Desaulniers
-...
-> Subject: [PATCH] hexagon: work around compiler crash
+Hi Stephen,
+
+On Mon, Oct 28, 2019 at 09:42:53AM -0700, Stephen Hemminger wrote:
+(...)
+> > I'd see an API more or less like this :
+> > 
+> >   int ioport(int op, u16 port, long val, long *ret);
+> > 
+> > <op> would take values such as INB,INW,INL to fill *<ret>, OUTB,OUTW,OUL
+> > to read from <val>, possibly ORB,ORW,ORL to read, or with <val>, write
+> > back and return previous value to <ret>, ANDB/W/L, XORB/W/L to do the
+> > same with and/xor, and maybe a TEST operation to just validate support
+> > at start time and replace ioperm/iopl so that subsequent calls do not
+> > need to check for errors. Applications could then replace :
+> > 
+> >     ioperm() with ioport(TEST,port,0,0)
+> >     iopl() with ioport(TEST,0,0,0)
+> >     outb() with ioport(OUTB,port,val,0)
+> >     inb() with ({ char val;ioport(INB,port,0,&val);val;})
+> > 
+> > ... and so on.
+> > 
+> > And then ioperm/iopl can easily be dropped.
+> > 
+> > Maybe I'm overlooking something ?
+> > Willy
 > 
-> Clang cannot translate the string "r30" into a valid register yet.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/755
-> Suggested-by: Sid Manning <sidneym@quicinc.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> DPDK does not want to system calls. It kills performance.
+> With pure user mode access it can reach > 10 Million Packets/sec
+> with a system call per packet that drops to 1 Million Packets/sec.
 
-LGTM.  Thanks, Nick.
+I know that it would cause this on the data path, but are you *really*
+sure that in/out calls are performed there, because these are terribly
+slow already ? I'd suspect that instead it's relying on read/write of
+memory-mapped registers and descriptors. I really suspect that I/Os
+are only used for configuration purposes, which is why I proposed the
+stuff above (otherwise I obviously agree that syscalls in the data
+path are performance killers).
 
-Reviewed-by: Brian Cain <bcain@codeaurora.org>
+> Also, adding new system calls might help in the long term,
+> but users are often kernels that are at least 5 years behind
+> upstream.
 
+Sure but that has never been really an issue, what matters is that
+backwards compatibility is long enough to let old features smoothly
+fade away. Some people make fun of me because I still care a bit
+about kernel 2.4 and openssl 0.9.7 compatibility for haproxy, so
+yes, I am careful about backwards compatibility and smooth upgrades ;-)
+
+Willy
