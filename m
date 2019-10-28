@@ -2,93 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD459E7A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81EA0E7A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 21:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388076AbfJ1Un1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 16:43:27 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38901 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfJ1Un1 (ORCPT
+        id S2388176AbfJ1Up0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 16:45:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37307 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJ1UpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:43:27 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3so7742642pgt.5;
-        Mon, 28 Oct 2019 13:43:27 -0700 (PDT)
+        Mon, 28 Oct 2019 16:45:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p1so7753731pgi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 13:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=4zLDgL2Tv+U6+2fqrJoYSvbV/fzHrzrxd+zfcyEk0Mg=;
-        b=fC0Arx2fP2pQajMaoYQZ8TldvHGcKz83ifiEWa3vIhZIIL4m0B2Nergp1GFdE4kms0
-         heC85V7W9rGI1CCl+vSLDtKIyiPi/xWuiS5R4FVZRLLarsv1vMVWybHGsisAgwvUF8Mb
-         UBNDNIlIuFmtymhcFTDeDMpJVmc2Aq09jD0+5lg12gnYMvg3UhrWVs7rnHsZfXYq+wIm
-         NbYFld4OYbQl98JQkjElKmtwgsXmjXfXnP8GuQD86u/adwTy8edic8m4ByC33mIMV12t
-         qfPpwbE3lZyDyyDgNq2kpw+NrlM4xhM3jZKaBFhe4s6nwmz7wO1ydIcs+A5mlbhXn1ew
-         mxGA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=KOjhDV2bOtkoryUtZNdedbIyz5aUvjz8VRxxdiXfCZg=;
+        b=fcUjf9zk+4oJ62eLTSygNM/iUtrrnBl2+URBZKh9513ri3eVyRIWYt6bIgH6oBx4X0
+         LB5TPZm0P2iY/11cju/J8f/fRgRBSAwMe0CVXk0tW/1XHV0t8T2PQd/ceyOdSMnCnni5
+         9LeWRxiN2X+mhcgqmGe1cusQKUg8mFqlilKv2a9SwKST9Q/GowMmIwMwzcO2c2AGkhL4
+         xKH5DOsYPndupfQyJrxwYB7Z09GUJSFWJ7UqrM1qLKEiwtJqH80kHN5F87HbqAbzaiMR
+         uc5E7aoW6XA++r+uZ3QAikuJFPVAapX76VSsqSRNVeE3589Cdh9fCi9NV4M6qqamGUpI
+         w21Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=4zLDgL2Tv+U6+2fqrJoYSvbV/fzHrzrxd+zfcyEk0Mg=;
-        b=Ucd3vfgeZRVTgC8RM5l4vAbBMCT7BmkgWxaTAO0IcOc/SQ4J10lskOqk3wRc4ZEy5I
-         uWU6wQIGgKgu0OWLg6+jIVz/e0nuX2nM/vtt8sw1y8dqvsTlMyrqIcwO0lJQC2KVB5KI
-         JzrmRDIMU+gmUmoduaWdUr9Nx+dz9iWfJxBYRW8t4WH7HXLuDpuCVJc6F+huMSbuBHDu
-         IMIqPZ9vxL5n/mENlFMbAjrCkida49nad0dMDYPQuIj3ZMuI+NJQ6NmXuFvGZ9Z9+Wo1
-         vib2F92skImWSXakRY1pbX8XuQssR0108oUwyIRtxAQbTLa8z3Xuht6zGN3RseDTnB6Z
-         Kjyg==
-X-Gm-Message-State: APjAAAWBKTtTJ/qfGl2K3fnXyaMhOsZJ3H04cxIhCqN3wcFFGgj8nbm5
-        1c0onNdFl/oLUWGDYoqrbPQ=
-X-Google-Smtp-Source: APXvYqycfDtHncZtnj9Mi+Cs0rySqwXwx1Y/ecr4wfkWllPbSLcM/VJPhFzr5rGuTklLWd1CPzBRWw==
-X-Received: by 2002:a63:d10c:: with SMTP id k12mr14234478pgg.344.1572295406616;
-        Mon, 28 Oct 2019 13:43:26 -0700 (PDT)
-Received: from saurav ([27.62.167.137])
-        by smtp.gmail.com with ESMTPSA id 13sm13705579pgq.72.2019.10.28.13.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 13:43:26 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 02:13:17 +0530
-From:   Saurav Girepunje <saurav.girepunje@gmail.com>
-To:     ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org,
-        davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     saurav.girepunje@hotmail.com
-Subject: [PATCH] ath: ath9k: Remove unneeded variable
-Message-ID: <20191028204317.GA29468@saurav>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=KOjhDV2bOtkoryUtZNdedbIyz5aUvjz8VRxxdiXfCZg=;
+        b=XOCB4SxzxiNTnU8IlmA4X2YLL4LlbXjmP4/+FjHb4oFzmECHxByTJcV9vO7Zbq7c9A
+         cVgwXtv/CFDJhYPj7YfO4v47OUxuDF57POL9K+tve5TPkseXcGKQxiVtLwJPKQP0MySo
+         2pefiqV9e4Rp9Er/Zh57Kc2i8ltnd2OVzs4JiPhr55CBff0G0POKVmSQKvacyw3/v90W
+         hSrpz2SeKSdfcpVEV4IbSVodqHOcEEGbQfVdFNVD3rrECUYiVRBHgn8/KotzDNC9JiST
+         AlDFDm5GghgnoC9cKy2wUDzA8H/PFisuyeMNCnfPPXbw9D2TQcqM1l0w3uUf4fbHOI3+
+         vroA==
+X-Gm-Message-State: APjAAAW6tcA1iDVgInE4bnmOSG0rvSKYCTxKsFKa8Up7WO8SfsNkktHP
+        jBdrrTNTGNlrbSDvMOTKmXsoRw==
+X-Google-Smtp-Source: APXvYqz+3RSrMew/VEEbk6rofjrWlXLaxsQq8rNZqiU1GY8aOt/v3M5nMsymLZnECmWFFPRlRADoVg==
+X-Received: by 2002:a63:a03:: with SMTP id 3mr24167392pgk.112.1572295524109;
+        Mon, 28 Oct 2019 13:45:24 -0700 (PDT)
+Received: from [100.96.218.121] (241.sub-174-237-138.myvzw.com. [174.237.138.241])
+        by smtp.gmail.com with ESMTPSA id l72sm372781pjb.18.2019.10.28.13.45.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2019 13:45:22 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user mappings
+Date:   Mon, 28 Oct 2019 14:44:23 -0600
+Message-Id: <CA5C22D9-BC3E-4B69-8DD9-4D3B75E40BD5@amacapital.net>
+References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+In-Reply-To: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+To:     Mike Rapoport <rppt@kernel.org>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove "len" variable which is not used in ath9k_dump_legacy_btcoex.
 
-Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
----
- drivers/net/wireless/ath/ath9k/gpio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> On Oct 27, 2019, at 4:17 AM, Mike Rapoport <rppt@kernel.org> wrote:
+>=20
+> =EF=BB=BFFrom: Mike Rapoport <rppt@linux.ibm.com>
+>=20
+> Hi,
+>=20
+> The patch below aims to allow applications to create mappins that have
+> pages visible only to the owning process. Such mappings could be used to
+> store secrets so that these secrets are not visible neither to other
+> processes nor to the kernel.
+>=20
+> I've only tested the basic functionality, the changes should be verified
+> against THP/migration/compaction. Yet, I'd appreciate early feedback.
 
-diff --git a/drivers/net/wireless/ath/ath9k/gpio.c b/drivers/net/wireless/ath/ath9k/gpio.c
-index b457e52dd365..f3d1bc02e633 100644
---- a/drivers/net/wireless/ath/ath9k/gpio.c
-+++ b/drivers/net/wireless/ath/ath9k/gpio.c
-@@ -498,14 +498,13 @@ static int ath9k_dump_legacy_btcoex(struct ath_softc *sc, u8 *buf, u32 size)
- {
- 
- 	struct ath_btcoex *btcoex = &sc->btcoex;
--	u32 len = 0;
- 
- 	ATH_DUMP_BTCOEX("Stomp Type", btcoex->bt_stomp_type);
- 	ATH_DUMP_BTCOEX("BTCoex Period (msec)", btcoex->btcoex_period);
- 	ATH_DUMP_BTCOEX("Duty Cycle", btcoex->duty_cycle);
- 	ATH_DUMP_BTCOEX("BT Wait time", btcoex->bt_wait_time);
- 
--	return len;
-+	return 0;
- }
- 
- int ath9k_dump_btcoex(struct ath_softc *sc, u8 *buf, u32 size)
--- 
-2.20.1
-
+I=E2=80=99ve contemplated the concept a fair amount, and I think you should c=
+onsider a change to the API. In particular, rather than having it be a MAP_ f=
+lag, make it a chardev.  You can, at least at first, allow only MAP_SHARED, a=
+nd admins can decide who gets to use it.  It might also play better with the=
+ VM overall, and you won=E2=80=99t need a VM_ flag for it =E2=80=94 you can j=
+ust wire up .fault to do the right thing.
