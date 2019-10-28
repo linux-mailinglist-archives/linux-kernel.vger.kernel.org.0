@@ -2,99 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD48AE73D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB25FE73DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390232AbfJ1Ok2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:40:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729524AbfJ1Ok1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:40:27 -0400
-Received: from localhost (unknown [91.217.168.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67EFC21721;
-        Mon, 28 Oct 2019 14:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572273627;
-        bh=dmNS+or+xqTf7DWc23tqF8ino6TFJyoztCnlmTog0ZQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S9R1oKirOJsZSdHSDJ75V+onIuAjbZ8FC4w9OUTpOjJSdOG4HkaXhCSG0fyBc7tsL
-         8SoAd6V/tmB0sb3JpogsUSsxakuGaFtjrrkbpIZ7iQaIrL5ZaYr2vCWd7qYfe7UkMa
-         6227OncaKO6YJYgplKfSHvj3J4uuRTDpVP1BCOv8=
-Date:   Mon, 28 Oct 2019 15:40:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     syzbot <syzbot+8f2612936028bfd28f28@syzkaller.appspotmail.com>,
-        allison@lohutok.net, alsa-devel@alsa-project.org,
-        benquike@gmail.com, dan.carpenter@oracle.com, glider@google.com,
-        linux-kernel@vger.kernel.org, perex@perex.cz,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        tiwai@suse.com, wang6495@umn.edu, yuehaibing@huawei.com
-Subject: Re: KMSAN: uninit-value in get_term_name
-Message-ID: <20191028144024.GA120200@kroah.com>
-References: <000000000000f838060595f602a7@google.com>
- <s5hr22xau8f.wl-tiwai@suse.de>
- <20191028133050.GA13691@kroah.com>
- <s5himo9as9j.wl-tiwai@suse.de>
+        id S2390252AbfJ1OmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:42:02 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15113 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbfJ1OmC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 10:42:02 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5db6fe400000>; Mon, 28 Oct 2019 07:42:08 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 28 Oct 2019 07:42:00 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 28 Oct 2019 07:42:00 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
+ 2019 14:42:00 +0000
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Mon, 28 Oct 2019 14:41:59 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 7902243032; Mon, 28 Oct 2019 16:41:57 +0200 (EET)
+Date:   Mon, 28 Oct 2019 16:41:57 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tegra: divider: Support enable-bit for Super
+ clocks
+Message-ID: <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
+References: <20190723025245.27754-1-digetx@gmail.com>
+ <20190723025245.27754-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <s5himo9as9j.wl-tiwai@suse.de>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190723025245.27754-2-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572273728; bh=06nnWkX/y2hBb/UJENOgGV/3SZIw81i3749bZO7gUGg=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=bvQwmEjcBJGTgHHPkQCfdBxKvgc4KtOOSQ6K6A6J2mBqC5wA7qZOIvgQW4reP1rlp
+         5G9pBGCEBL1hWz6kV0Z/j1b1gpFEQ5MSXXgQvJ7nCk8u/siM6GE/4Mb0t8s5Z9ET2e
+         9mB2MP991+31ePo9SdJ5XS2T86thlnvT0QE8JK/S1jVFB+FpGbYdh1VAaxXMe2lMuv
+         1fZ+cL/Zyg6/u9sxgGa81R/ooiXhk7XrVOuw8MfCaB4zK9Rr5WroXSeF3zo9aqGeOs
+         KiHwf+QGSN8n6AhYyZea4T7Qexqof4E5C37NMdMqtTl7/ffEUFYQycnUr+bnFDdfnh
+         AflViycU0wQLg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 02:55:52PM +0100, Takashi Iwai wrote:
-> On Mon, 28 Oct 2019 14:30:50 +0100,
-> Greg KH wrote:
-> > 
-> > On Mon, Oct 28, 2019 at 02:13:20PM +0100, Takashi Iwai wrote:
-> > > On Mon, 28 Oct 2019 11:32:07 +0100,
-> > > syzbot wrote:
-> > > > 
-> > > > Uninit was stored to memory at:
-> > > >  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:151 [inline]
-> > > >  kmsan_internal_chain_origin+0xbd/0x180 mm/kmsan/kmsan.c:319
-> > > >  __msan_chain_origin+0x6b/0xd0 mm/kmsan/kmsan_instr.c:179
-> > > >  parse_term_proc_unit+0x73d/0x7e0 sound/usb/mixer.c:896
-> > > >  __check_input_term+0x13ef/0x2360 sound/usb/mixer.c:989
-> > > 
-> > > So this comes from the invalid descriptor for a processing unit, and
-> > > it's very likely the same issue as already spotted -- the validator up
-> > > to 5.3-rc4 had a bug that passed the invalid descriptor falsely.
-> > > This should have been covered by 5.3-rc5, commit ba8bf0967a15 ("ALSA:
-> > > usb-audio: Fix copy&paste error in the validator").
-> > 
-> > SHould we be backporting the validator to any older kernels as well?
-> 
-> Yes, that would be nice.  I didn't mark them for stable just because
-> they are a bit largish and wanted to let them tested for 5.4 for a
-> while.
-> 
-> The following commits are relevant (from top/old to bottom/new).
-> 
-> 57f8770620e9b51c61089751f0b5ad3dbe376ff2
->     ALSA: usb-audio: More validations of descriptor units
-> 68e9fde245591d18200f8a9054cac22339437adb
->     ALSA: usb-audio: Simplify parse_audio_unit()
-> 52c3e317a857091fd746e15179a637f32be4d337
->     ALSA: usb-audio: Unify the release of usb_mixer_elem_info objects
-> b8e4f1fdfa422398c2d6c47bfb7d1feb3046d70a
->     ALSA: usb-audio: Remove superfluous bLength checks
-> e0ccdef92653f8867e2d1667facfd3c23699f540
->     ALSA: usb-audio: Clean up check_input_term()
-> 60849562a5db4a1eee2160167e4dce4590d3eafe
->     ALSA: usb-audio: Fix possible NULL dereference at create_yamaha_midi_quirk()
-> b39e077fcb283dd96dd251a3abeba585402c61fe
->     ALSA: usb-audio: remove some dead code
-> ba8bf0967a154796be15c4983603aad0b05c3138
->     ALSA: usb-audio: Fix copy&paste error in the validator
+On Tue, Jul 23, 2019 at 05:52:45AM +0300, Dmitry Osipenko wrote:
+> All Super clocks have a divider that has the enable bit.
 > 
 
-Thanks, I'll look at these for the next round of kernels.
+This is broken to begin with. The only clock of this type in upstream is SCLK
+I think. However, this clock is not a normal divider, it's a skipper, so
+the normal divider logic doesn't work for it. In practice this clock is
+only used when scaling SCLK, which is not (yet) done in the upstream
+kernel due to the complex DVFS relationship between sclk, hclk and pclk.
+A driver for it can be found here:
+https://nv-tegra.nvidia.com/gitweb/?p=linux-4.9.git;a=blob;f=drivers/clk/tegra/clk-skipper.c;h=f5da4f6ca44fe194c87f66be70c708e9791db74d;hb=eb8dd21affa2be45fc29be8c082194ac4032393a
+As you can see in that tree, we eventually splitted sclk into three
+clocks:
 
-greg k-h
+sclk_mux (controls SCLK_BURST_POLICY register)
+sclk (controls SOURCE_SYS register which is like a normal peripheral
+clock but without the mux)
+sclk_skipper (controls SCLK_DIVIDER)
+
+Peter.
+
+
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2: Improved commit's message.
+> 
+>  drivers/clk/tegra/clk-divider.c | 12 ++++++++++++
+>  drivers/clk/tegra/clk-super.c   |  1 +
+>  drivers/clk/tegra/clk.h         |  4 ++++
+>  3 files changed, 17 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index f33c19045386..a980b9bddecd 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -17,6 +17,7 @@
+>  #define get_max_div(d) div_mask(d)
+>  
+>  #define PERIPH_CLK_UART_DIV_ENB BIT(24)
+> +#define SUPER_CLK_DIV_ENB BIT(31)
+>  
+>  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+>  		   unsigned long parent_rate)
+> @@ -46,6 +47,10 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+>  	    !(reg & PERIPH_CLK_UART_DIV_ENB))
+>  		return rate;
+>  
+> +	if ((divider->flags & TEGRA_DIVIDER_SUPER) &&
+> +	    !(reg & SUPER_CLK_DIV_ENB))
+> +		return rate;
+> +
+>  	div = (reg >> divider->shift) & div_mask(divider);
+>  
+>  	mul = get_mul(divider);
+> @@ -96,6 +101,13 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	val &= ~(div_mask(divider) << divider->shift);
+>  	val |= div << divider->shift;
+>  
+> +	if (divider->flags & TEGRA_DIVIDER_SUPER) {
+> +		if (div)
+> +			val |= SUPER_CLK_DIV_ENB;
+> +		else
+> +			val &= ~SUPER_CLK_DIV_ENB;
+> +	}
+> +
+>  	if (divider->flags & TEGRA_DIVIDER_UART) {
+>  		if (div)
+>  			val |= PERIPH_CLK_UART_DIV_ENB;
+> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+> index 39ef31b46df5..4d8e36b04f03 100644
+> --- a/drivers/clk/tegra/clk-super.c
+> +++ b/drivers/clk/tegra/clk-super.c
+> @@ -220,6 +220,7 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+>  	super->frac_div.width = 8;
+>  	super->frac_div.frac_width = 1;
+>  	super->frac_div.lock = lock;
+> +	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
+>  	super->div_ops = &tegra_clk_frac_div_ops;
+>  
+>  	/* Data in .init is copied by clk_register(), so stack variable OK */
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 905bf1096558..a4fbf55930aa 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -53,6 +53,9 @@ struct clk *tegra_clk_register_sync_source(const char *name,
+>   * TEGRA_DIVIDER_UART - UART module divider has additional enable bit which is
+>   *      set when divider value is not 0. This flags indicates that the divider
+>   *      is for UART module.
+> + * TEGRA_DIVIDER_SUPER - Super clock divider has additional enable bit which
+> + *      is set when divider value is not 0. This flags indicates that the
+> + *      divider is for super clock.
+>   */
+>  struct tegra_clk_frac_div {
+>  	struct clk_hw	hw;
+> @@ -70,6 +73,7 @@ struct tegra_clk_frac_div {
+>  #define TEGRA_DIVIDER_FIXED BIT(1)
+>  #define TEGRA_DIVIDER_INT BIT(2)
+>  #define TEGRA_DIVIDER_UART BIT(3)
+> +#define TEGRA_DIVIDER_SUPER BIT(4)
+>  
+>  extern const struct clk_ops tegra_clk_frac_div_ops;
+>  struct clk *tegra_clk_register_divider(const char *name,
+> -- 
+> 2.22.0
+> 
