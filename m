@@ -2,78 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86EACE6EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 376C4E6EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:09:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387768AbfJ1JI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:08:29 -0400
-Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21466 "EHLO
-        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbfJ1JI3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:08:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1572253676; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Moykj5B1WkkWHupL9r6DyGaoy35uM0AjUy18FK/f40nuy391tfpGT6KMsFIEDKYWkMAQtxFqdYcJ446SE7zfL66lTx0yc83qoeNxrbl06LQ02Zhc81v1RCVXNP9sHHQocTCiDqNfI6RYoyNz5Snhc6x72gArUnpwIn3d2sEiMdc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1572253676; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=ByZHeiiRbDCAualSxq60IBfLlVYMklrFoMjUG2DW5xM=; 
-        b=QW5eyPyFDShxKjIqRDjb4WTFKgnIDgt7M6x0TK347GB4wrpGEnzzfDLXfZrfoF3shucXuZ9YTeq4u1umDgzcxhbW9iu3Y8YOW7zO+713IccW4bDPA0fB6pThUWErQp+4SOhiWIKdNTcdJ7Dmp0riZT2y07e/0oQUIylAzicH1Yk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=didiksetiawan.com;
-        spf=pass  smtp.mailfrom=ds@didiksetiawan.com;
-        dmarc=pass header.from=<ds@didiksetiawan.com> header.from=<ds@didiksetiawan.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1572253676;
-        s=zoho; d=didiksetiawan.com; i=ds@didiksetiawan.com;
-        h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
-        l=858; bh=ByZHeiiRbDCAualSxq60IBfLlVYMklrFoMjUG2DW5xM=;
-        b=Bg+h1meVd4CC4+BWonNHt5yFaROEdS6hi5kCQAswwkqECDuWl/17hsSZFC0Y1IZA
-        aAph9lv07wR0VUqHLjT1P9oEBiqjUD27YCsguXGa/2v469t2U9WVVs8vj6AkDZkFLLO
-        yYE5IRLnwFOIycQZXZgUAnwDx7Z+pIlHHfwKoEu4=
-Received: from notebook (117.102.74.82 [117.102.74.82]) by mx.zohomail.com
-        with SMTPS id 1572253675682152.35703934118305; Mon, 28 Oct 2019 02:07:55 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 16:07:50 +0700
-From:   Didik Setiawan <ds@didiksetiawan.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/41] 4.4.198-stable review
-Message-ID: <20191028090750.GC3678@notebook>
-References: <20191027203056.220821342@linuxfoundation.org>
+        id S2387801AbfJ1JJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:09:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58978 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727586AbfJ1JJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:09:16 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6B82BAABADCF620220BB;
+        Mon, 28 Oct 2019 17:09:14 +0800 (CST)
+Received: from HGHY4Z004218071.china.huawei.com (10.133.224.57) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 28 Oct 2019 17:09:05 +0800
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+To:     <catalin.marinas@arm.com>, <will@kernel.org>
+CC:     <james.morse@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
+Subject: [PATCH] arm64: print additional fault message when executing non-exec memory
+Date:   Mon, 28 Oct 2019 17:08:37 +0800
+Message-ID: <20191028090837.39652-1-zhengxiang9@huawei.com>
+X-Mailer: git-send-email 2.15.1.windows.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191027203056.220821342@linuxfoundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-ZohoMailClient: External
+Content-Type: text/plain
+X-Originating-IP: [10.133.224.57]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 10:00:38PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.198 release.
-> There are 41 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.198-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+When attempting to executing non-executable memory, the fault message
+shows:
 
-Compiled, booted, and no regressions found on my x86_64 system.
+  Unable to handle kernel read from unreadable memory at virtual address
+  ffff802dac469000
 
-Thanks,
-Didik Setiawan
+This may confuse someone, so add a new fault message for instruction
+abort.
+
+Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+---
+ arch/arm64/mm/fault.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 9fc6db0bcbad..68bf4ec376d0 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -318,6 +318,8 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
+ 	if (is_el1_permission_fault(addr, esr, regs)) {
+ 		if (esr & ESR_ELx_WNR)
+ 			msg = "write to read-only memory";
++		else if (is_el1_instruction_abort(esr))
++			msg = "execute non-executable memory";
+ 		else
+ 			msg = "read from unreadable memory";
+ 	} else if (addr < PAGE_SIZE) {
+-- 
+2.19.1
+
 
