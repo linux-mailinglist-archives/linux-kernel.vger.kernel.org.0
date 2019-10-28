@@ -2,99 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6DAE6CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:04:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 705DEE6CAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 08:07:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732130AbfJ1HEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 03:04:51 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.142]:12027 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732101AbfJ1HEu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 03:04:50 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 79D364013
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 02:04:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Oz57iQARaVUVYOz57i1wGR; Mon, 28 Oct 2019 02:04:49 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cc1Lq/1I6uaUptz7nqvA6hsrq7d4wgFlwqeS4oYmYzU=; b=WoVLRJRJ59aEd0sJv0mgkAnfA6
-        ZwEXpix02KGKjEbIw+HFzZ4aiMfvGWbufEN5SopsynMu7MJPd5GpQW6fNuuYtWAmfY+PCptigBnoi
-        HJmG4SsWFG4lsAg2cJE0v3UWQOJ2xyUtGnJMIqQOXmBNDO8n+662Yxg8MGnuQxq8DPLn29U1ttsN8
-        C/ErRTaDE1Uv4APq0v0LvoX8voeiR/YCsggjKYKrFbRwoQoio6edcrjnRgmH58lr02y+2PzFcWScl
-        Kenk96P6DgVuCtjE7REdkTLemeGS8AWPVkIZvaNBp2/6p5yDjyBJD61/zID6Dha8Vl5NSEeg98R0a
-        r6TuMI0g==;
-Received: from [187.192.2.30] (port=58482 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iOz56-0046Kp-7m; Mon, 28 Oct 2019 02:04:48 -0500
-Date:   Mon, 28 Oct 2019 02:04:47 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Egor Pomozov <epomozov@marvell.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sergey Samoilenko <sergey.samoilenko@aquantia.com>,
-        Dmitry Bezrukov <dmitry.bezrukov@aquantia.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: aquantia: fix error handling in aq_ptp_poll
-Message-ID: <20191028070447.GA3659@embeddedor>
+        id S1732184AbfJ1HHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 03:07:17 -0400
+Received: from mga18.intel.com ([134.134.136.126]:19783 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730619AbfJ1HHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 03:07:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 00:07:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,239,1569308400"; 
+   d="scan'208";a="205111206"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Oct 2019 00:07:14 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 0/7] intel_th: Fixes for v5.4
+Date:   Mon, 28 Oct 2019 09:06:44 +0200
+Message-Id: <20191028070651.9770-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.2.30
-X-Source-L: No
-X-Exim-ID: 1iOz56-0046Kp-7m
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.2.30]:58482
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix currenty ignored returned error by properly checking *err* after
-calling aq_nic->aq_hw_ops->hw_ring_hwts_rx_fill().
+Hi Greg,
 
-Addresses-Coverity-ID: 1487357 ("Unused value")
-Fixes: 04a1839950d9 ("net: aquantia: implement data PTP datapath")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/aquantia/atlantic/aq_ptp.c | 2 ++
- 1 file changed, 2 insertions(+)
+These are the fixes I have for the v5.4 cycle. They are 4 fixes for the
+buffer management code that went in in the v5.4-rc1 and 2 new PCI IDs.
+The IDs are CC'd to stable. All checked with static checkers and Andy
+Shevchenko, who was kind enough to look them over. Signed tag at the URL
+below. Individual patches follow. Please consider pulling or applying.
+Thanks!
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-index 3ec08415e53e..92b666f7d242 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ptp.c
-@@ -678,6 +678,8 @@ static int aq_ptp_poll(struct napi_struct *napi, int budget)
- 
- 		err = aq_nic->aq_hw_ops->hw_ring_hwts_rx_fill(aq_nic->aq_hw,
- 							      &aq_ptp->hwts_rx);
-+		if (err < 0)
-+			goto err_exit;
- 
- 		was_cleaned = true;
- 	}
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git intel_th-fixes-for-greg-20191028
+
+for you to fetch changes up to 379815d9f34ef62f7f268a25c96b321396a7cbe5:
+
+  intel_th: pci: Add Jasper Lake PCH support (2019-10-28 08:54:27 +0200)
+
+----------------------------------------------------------------
+intel_th: Fixes for v5.4
+
+These are:
+ * several fixes for buffer management added in v5.4
+ * two new PCI IDs
+
+----------------------------------------------------------------
+Alexander Shishkin (4):
+      intel_th: gth: Fix the window switching sequence
+      intel_th: msu: Fix an uninitialized mutex
+      intel_th: pci: Add Comet Lake PCH support
+      intel_th: pci: Add Jasper Lake PCH support
+
+Colin Ian King (2):
+      intel_th: msu: Fix missing allocation failure check on a kstrndup
+      intel_th: msu: Fix overflow in shift of an unsigned int
+
+Wei Yongjun (1):
+      intel_th: msu: Fix possible memory leak in mode_store()
+
+ drivers/hwtracing/intel_th/gth.c |  3 +++
+ drivers/hwtracing/intel_th/msu.c | 11 ++++++++---
+ drivers/hwtracing/intel_th/pci.c | 10 ++++++++++
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/intel_th-fixes-for-greg-20191028
+
+for you to fetch changes up to 379815d9f34ef62f7f268a25c96b321396a7cbe5:
+
+  intel_th: pci: Add Jasper Lake PCH support (2019-10-28 08:54:27 +0200)
+
+----------------------------------------------------------------
+intel_th: Fixes for v5.4
+
+These are:
+ * several fixes for buffer management added in v5.4
+ * two new PCI IDs
+
+----------------------------------------------------------------
+Alexander Shishkin (4):
+      intel_th: gth: Fix the window switching sequence
+      intel_th: msu: Fix an uninitialized mutex
+      intel_th: pci: Add Comet Lake PCH support
+      intel_th: pci: Add Jasper Lake PCH support
+
+Colin Ian King (2):
+      intel_th: msu: Fix missing allocation failure check on a kstrndup
+      intel_th: msu: Fix overflow in shift of an unsigned int
+
+Wei Yongjun (1):
+      intel_th: msu: Fix possible memory leak in mode_store()
+
+ drivers/hwtracing/intel_th/gth.c |  3 +++
+ drivers/hwtracing/intel_th/msu.c | 11 ++++++++---
+ drivers/hwtracing/intel_th/pci.c | 10 ++++++++++
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
 -- 
 2.23.0
 
