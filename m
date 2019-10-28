@@ -2,71 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEBEE7226
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D0BE722E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 13:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbfJ1Mz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 08:55:26 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:44650 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728269AbfJ1MzZ (ORCPT
+        id S1729260AbfJ1M5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 08:57:09 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36688 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbfJ1M5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:55:25 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 71BB12E09CF;
-        Mon, 28 Oct 2019 15:55:21 +0300 (MSK)
-Received: from iva4-c987840161f8.qloud-c.yandex.net (iva4-c987840161f8.qloud-c.yandex.net [2a02:6b8:c0c:3da5:0:640:c987:8401])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 6aykFKr5ke-tJBSrcoG;
-        Mon, 28 Oct 2019 15:55:21 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572267321; bh=8ZYFRTzWqu504O6KQ7FUcpox3cZWhyoBz5ojDPWSmYE=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=vBo73IPUe3lrjMad2DFnaYStzbQtHX6+YDN8Zspbs17A3PUhAE2CpNckQRNrj+NQH
-         Fc/ykjTuHoaEP25SzA0GilwBqxkYuDk/Vog1pEEZ+1V9GKWmEN/wj1TMj63mquBT+n
-         9bq3FElt7uiVv3dj0zaldvpCQ2e4tNqLPw32lFcQ=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
-        by iva4-c987840161f8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id HgRUn4uEtY-tJWiB8BI;
-        Mon, 28 Oct 2019 15:55:19 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-References: <157225848971.557.16257813537984792761.stgit@buzz>
- <87k18p6qjk.fsf@mid.deneb.enyo.de>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <d7e76bee-80c3-d787-b854-91e631ab29cd@yandex-team.ru>
-Date:   Mon, 28 Oct 2019 15:55:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 28 Oct 2019 08:57:07 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id A08BD28E737
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, kernel@collabora.com, krisman@collabora.com,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH]        blk-mq: Document functions for sending request
+Date:   Mon, 28 Oct 2019 09:55:37 -0300
+Message-Id: <20191028125537.9047-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <87k18p6qjk.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/10/2019 14.46, Florian Weimer wrote:
-> * Konstantin Khlebnikov:
-> 
->> This implements fcntl() for getting amount of resident memory in cache.
->> Kernel already maintains counter for each inode, this patch just exposes
->> it into userspace. Returned size is in kilobytes like values in procfs.
-> 
-> I think this needs a 32-bit compat implementation which clamps the
-> returned value to INT_MAX.
-> 
+Add or improve documentation for function regarding creating and sending
+IO requests to the hardware.
 
-32-bit machine couldn't hold more than 2TB cache in one file.
-Even radix tree wouldn't fit into low memory area.
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+---
+Hello,
+
+I did my best to describe all variations of *_run_hw_queue, although
+their names and functionally are really similar. I would be happy to get
+feedback about those functions descriptions.
+
+Those comments were tested with:
+
+./scripts/kernel-doc -none block/blk-mq.c
+
+Which did not returned any warning or error.
+
+Thanks,
+	André
+---
+ block/blk-mq.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 77 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 1e067b78ab97..89f3c166180d 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1333,6 +1333,12 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
+ 	return (queued + errors) != 0;
+ }
+ 
++/**
++ * __blk_mq_run_hw_queue - Run a hardware queue.
++ * @hctx: Pointer to the hardware queue to run.
++ *
++ * Send pending requests to the hardware.
++ */
+ static void __blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx)
+ {
+ 	int srcu_idx;
+@@ -1430,6 +1436,15 @@ static int blk_mq_hctx_next_cpu(struct blk_mq_hw_ctx *hctx)
+ 	return next_cpu;
+ }
+ 
++/**
++ * __blk_mq_delay_run_hw_queue - Run (or schedule to run) a hardware queue.
++ * @hctx: Pointer to the hardware queue to run.
++ * @async: If we want to run the queue asynchronously.
++ * @msecs: Microseconds of delay to wait before running the queue.
++ *
++ * If !@async, try to run the queue now. Else, run the queue asynchronously and
++ * with a delay of @msecs.
++ */
+ static void __blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async,
+ 					unsigned long msecs)
+ {
+@@ -1451,12 +1466,30 @@ static void __blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async,
+ 				    msecs_to_jiffies(msecs));
+ }
+ 
++/**
++ * blk_mq_delay_run_hw_queue - Run a hardware queue asynchronously.
++ * @hctx: Pointer to the hardware queue to run.
++ * @msecs: Microseconds of delay to wait before running the queue.
++ *
++ * Run a hardware queue asynchronously with a delay of @msecs.
++ */
+ void blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, unsigned long msecs)
+ {
+ 	__blk_mq_delay_run_hw_queue(hctx, true, msecs);
+ }
+ EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
+ 
++/**
++ * blk_mq_run_hw_queue - Start to run a hardware queue.
++ * @hctx: Pointer to the hardware queue to run.
++ * @async: If we want to run the queue asynchronously.
++ *
++ * Check if the request queue is not in a quiesced state and if there are
++ * pending requests to be sent. If this is true, run the queue to send requests
++ * to hardware.
++ *
++ * Returns: True if we could run the queue, else otherwise.
++ */
+ bool blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+ {
+ 	int srcu_idx;
+@@ -1484,6 +1517,11 @@ bool blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+ }
+ EXPORT_SYMBOL(blk_mq_run_hw_queue);
+ 
++/**
++ * blk_mq_run_hw_queue - Run all hardware queues in a request queue.
++ * @q: Pointer to the request queue to run.
++ * @async: If we want to run the queue asynchronously.
++ */
+ void blk_mq_run_hw_queues(struct request_queue *q, bool async)
+ {
+ 	struct blk_mq_hw_ctx *hctx;
+@@ -1635,7 +1673,11 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 	blk_mq_hctx_mark_pending(hctx, ctx);
+ }
+ 
+-/*
++/**
++ * blk_mq_request_bypass_insert - Insert a request at dispatch list.
++ * @rq: Pointer to request to be inserted.
++ * @run_queue: If we should run the hardware queue after inserting the request.
++ *
+  * Should only be used carefully, when the caller knows we want to
+  * bypass a potential IO scheduler on the target device.
+  */
+@@ -1838,6 +1880,17 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 	return BLK_STS_OK;
+ }
+ 
++/**
++ * blk_mq_try_issue_directly - Try to send a request directly to device driver.
++ * @hctx: Pointer of the associated hardware queue.
++ * @rq: Pointer to request to be sent.
++ * @cookie: Request queue cookie.
++ *
++ * If the device has enough resources to accept a new request now, send the
++ * request directly to device driver. Else, insert at hctx->dispatch queue, so
++ * we can try send it another time in the future. Requests inserted at this
++ * queue have higher priority.
++ */
+ static void blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 		struct request *rq, blk_qc_t *cookie)
+ {
+@@ -1915,6 +1968,22 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
+ 	}
+ }
+ 
++/**
++ * blk_mq_make_request - Create and send a request to block device.
++ * @q: Request queue pointer.
++ * @bio: Bio pointer.
++ *
++ * Builds up a request structure from @q and @bio and send to the device. The
++ * request may not be queued directly to hardware if:
++ * * This request can be merged with another one
++ * * We want to place request at plug queue for possible future merging
++ * * There is an IO scheduler active at this queue
++ *
++ * It will not queue the request if there is an error with the bio, or at the
++ * request creation.
++ *
++ * Returns: Request queue cookie.
++ */
+ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+ {
+ 	const int is_sync = op_is_sync(bio->bi_opf);
+@@ -1960,7 +2029,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+ 
+ 	plug = blk_mq_plug(q, bio);
+ 	if (unlikely(is_flush_fua)) {
+-		/* bypass scheduler for flush rq */
++		/* Bypass scheduler for flush requests */
+ 		blk_insert_flush(rq);
+ 		blk_mq_run_hw_queue(data.hctx, true);
+ 	} else if (plug && (q->nr_hw_queues == 1 || q->mq_ops->commit_rqs ||
+@@ -1988,6 +2057,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+ 
+ 		blk_add_rq_to_plug(plug, rq);
+ 	} else if (q->elevator) {
++		/* Insert the request at the IO scheduler queue */
+ 		blk_mq_sched_insert_request(rq, false, true, true);
+ 	} else if (plug && !blk_queue_nomerges(q)) {
+ 		/*
+@@ -2014,8 +2084,13 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+ 		}
+ 	} else if ((q->nr_hw_queues > 1 && is_sync) ||
+ 			!data.hctx->dispatch_busy) {
++		/*
++		 * There is no scheduler and we can try to send directly
++		 * to the hardware.
++		 */
+ 		blk_mq_try_issue_directly(data.hctx, rq, &cookie);
+ 	} else {
++		/* Default case. */
+ 		blk_mq_sched_insert_request(rq, false, true, true);
+ 	}
+ 
+-- 
+2.23.0
+
