@@ -2,189 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7805EE73A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BF1E73AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390077AbfJ1O3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:29:42 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727148AbfJ1O3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:29:42 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0A902BBF12FD62FF3EB0;
-        Mon, 28 Oct 2019 22:29:36 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 28 Oct
- 2019 22:29:29 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Pratik Shinde <pratikshinde320@gmail.com>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
-CC:     Gao Xiang <xiang@kernel.org>, <linux-kernel@vger.kernel.org>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v5] erofs: support superblock checksum
-Date:   Mon, 28 Oct 2019 22:32:02 +0800
-Message-ID: <20191028143202.133428-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191028134405.GA186556@architecture4>
-References: <20191028134405.GA186556@architecture4>
+        id S2390099AbfJ1Oaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:30:46 -0400
+Received: from ms.lwn.net ([45.79.88.28]:38410 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727148AbfJ1Oap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 10:30:45 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id E73A1739;
+        Mon, 28 Oct 2019 14:30:43 +0000 (UTC)
+Date:   Mon, 28 Oct 2019 08:30:39 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     madhuparnabhowmik04@gmail.com
+Cc:     mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] Documentation: driver-api: index: Removed non-existing
+ document driver-api/sgi-ioc4 from the toctree.
+Message-ID: <20191028083039.1151a646@lwn.net>
+In-Reply-To: <20191028060710.15154-1-madhuparnabhowmik04@gmail.com>
+References: <20191028060710.15154-1-madhuparnabhowmik04@gmail.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pratik Shinde <pratikshinde320@gmail.com>
+On Mon, 28 Oct 2019 11:37:10 +0530
+madhuparnabhowmik04@gmail.com wrote:
 
-Introduce superblock checksum feature in order to verify
-a number of given blocks at mounting time.
+> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> 
+> This patches fixes the WARNING: toctree contains reference
+> to nonexisting document u'driver-api/sgi-ioc4'by removing
+> it from the toctree in the index.rst file.
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> ---
 
-Signed-off-by: Pratik Shinde <pratikshinde320@gmail.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-changes since v4:
- - Get rid of `chksum_blocks' pointed out by Chao;
-   https://lore.kernel.org/r/f158affb-c5c5-9cbe-d87d-17210bc635fe@huawei.com
- - Co-tested with mkfs patch:
-   https://lore.kernel.org/r/20191028142353.123204-1-gaoxiang25@huawei.com
+Thanks, but this was fixed in docs-next last week.
 
- fs/erofs/Kconfig    |  1 +
- fs/erofs/erofs_fs.h |  3 ++-
- fs/erofs/internal.h |  2 ++
- fs/erofs/super.c    | 36 ++++++++++++++++++++++++++++++++++--
- 4 files changed, 39 insertions(+), 3 deletions(-)
-
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 9d634d3a1845..74b0aaa7114c 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -3,6 +3,7 @@
- config EROFS_FS
- 	tristate "EROFS filesystem support"
- 	depends on BLOCK
-+	select LIBCRC32C
- 	help
- 	  EROFS (Enhanced Read-Only File System) is a lightweight
- 	  read-only file system with modern designs (eg. page-sized
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index b1ee5654750d..385fa49c7749 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -11,6 +11,8 @@
- 
- #define EROFS_SUPER_OFFSET      1024
- 
-+#define EROFS_FEATURE_COMPAT_SB_CHKSUM          0x00000001
-+
- /*
-  * Any bits that aren't in EROFS_ALL_FEATURE_INCOMPAT should
-  * be incompatible with this kernel version.
-@@ -37,7 +39,6 @@ struct erofs_super_block {
- 	__u8 uuid[16];          /* 128-bit uuid for volume */
- 	__u8 volume_name[16];   /* volume name */
- 	__le32 feature_incompat;
--
- 	__u8 reserved2[44];
- };
- 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 544a453f3076..a3778f597bf6 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -85,6 +85,7 @@ struct erofs_sb_info {
- 
- 	u8 uuid[16];                    /* 128-bit uuid for volume */
- 	u8 volume_name[16];             /* volume name */
-+	u32 feature_compat;
- 	u32 feature_incompat;
- 
- 	unsigned int mount_opt;
-@@ -426,6 +427,7 @@ static inline void z_erofs_exit_zip_subsystem(void) {}
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
-+#define EFSBADCRC       EBADMSG         /* Bad CRC detected */
- 
- #endif	/* __EROFS_INTERNAL_H */
- 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 0e369494f2f2..2fcf44b656dd 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/statfs.h>
- #include <linux/parser.h>
- #include <linux/seq_file.h>
-+#include <linux/crc32c.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -46,6 +47,30 @@ void _erofs_info(struct super_block *sb, const char *function,
- 	va_end(args);
- }
- 
-+static int erofs_superblock_csum_verify(struct super_block *sb, void *sbdata)
-+{
-+	struct erofs_super_block *dsb;
-+	u32 expected_crc, crc;
-+
-+	dsb = kmemdup(sbdata + EROFS_SUPER_OFFSET,
-+		      EROFS_BLKSIZ - EROFS_SUPER_OFFSET, GFP_KERNEL);
-+	if (!dsb)
-+		return -ENOMEM;
-+
-+	expected_crc = le32_to_cpu(dsb->checksum);
-+	dsb->checksum = 0;
-+	/* to allow for x86 boot sectors and other oddities. */
-+	crc = crc32c(~0, dsb, EROFS_BLKSIZ - EROFS_SUPER_OFFSET);
-+	kfree(dsb);
-+
-+	if (crc != expected_crc) {
-+		erofs_err(sb, "invalid checksum 0x%08x, 0x%08x expected",
-+			  crc, expected_crc);
-+		return -EFSBADCRC;
-+	}
-+	return 0;
-+}
-+
- static void erofs_inode_init_once(void *ptr)
- {
- 	struct erofs_inode *vi = ptr;
-@@ -112,7 +137,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 
- 	sbi = EROFS_SB(sb);
- 
--	data = kmap_atomic(page);
-+	data = kmap(page);
- 	dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
- 
- 	ret = -EINVAL;
-@@ -121,6 +146,13 @@ static int erofs_read_superblock(struct super_block *sb)
- 		goto out;
- 	}
- 
-+	sbi->feature_compat = le32_to_cpu(dsb->feature_compat);
-+	if (sbi->feature_compat & EROFS_FEATURE_COMPAT_SB_CHKSUM) {
-+		ret = erofs_superblock_csum_verify(sb, data);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	blkszbits = dsb->blkszbits;
- 	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
- 	if (blkszbits != LOG_BLOCK_SIZE) {
-@@ -155,7 +187,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 	}
- 	ret = 0;
- out:
--	kunmap_atomic(data);
-+	kunmap(data);
- 	put_page(page);
- 	return ret;
- }
--- 
-2.17.1
-
+jon
