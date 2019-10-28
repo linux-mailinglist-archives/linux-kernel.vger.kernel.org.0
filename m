@@ -2,423 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED025E6AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:47:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17134E6AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbfJ1Cqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:46:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47182 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726934AbfJ1Cqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:46:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E30CAABD3;
-        Mon, 28 Oct 2019 02:46:45 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org
-Cc:     dave@stgolabs.net, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/staging/exfat: Replace binary semaphores for mutexes
-Date:   Sun, 27 Oct 2019 19:45:19 -0700
-Message-Id: <20191028024519.32344-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        id S1729435AbfJ1CqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:46:15 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:55436 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726934AbfJ1CqP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 22:46:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572230773;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JamJ4gnvFxwjftOwafZltk5nfJrJj67jqUAhqzujMfY=;
+        b=LOMqt7HLBtq7PKMv83oy2ieueUeLkp7YCnKXjojbpzLJ5pCHoZVxBnbBUI0i2YGLWO0KXV
+        HlRFT5nomRPd1JqOHt0sPW3YCxgYTgbVrs08q1HXxzu8KfjEwVbxoymqt+0KLOQegK6DVq
+        sdaMrXRWiEH+5A7fU07Y0u2onlsXVok=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-377-2dx9YDZ-P22704eCoESnTg-1; Sun, 27 Oct 2019 22:46:10 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EBAAC80183E;
+        Mon, 28 Oct 2019 02:46:08 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-41.pek2.redhat.com [10.72.12.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 58C4260A9F;
+        Mon, 28 Oct 2019 02:45:56 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
+        horms@verge.net.au, kexec@lists.infradead.org
+Subject: [PATCH 0/2 v6] x86/kdump: Fix 'kmem -s' reported an invalid freepointer when SME was active
+Date:   Mon, 28 Oct 2019 10:45:49 +0800
+Message-Id: <20191028024551.4278-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: 2dx9YDZ-P22704eCoESnTg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At a slight footprint cost (24 vs 32 bytes), mutexes are more optimal
-than semaphores; it's also a nicer interface for mutual exclusion,
-which is why they are encouraged over binary semaphores, when possible.
-There is also lockdep support.
+In purgatory(), the main things are as below:
 
-For both v_sem and z_sem, their semantics imply traditional lock
-ownership; that is, the lock owner is the same for both lock/unlock
-operations and nothing is done in irq context. Therefore it is safe
-to convert.
+[1] verify sha256 hashes for various segments.
+    Lets keep these codes, and do not touch the logic.
 
-Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
----
-This is part of further reducing semaphore users in the kernel.
+[2] copy the first 640k content to a backup region.
+    Lets safely remove it and clean all code related to backup region.
 
- drivers/staging/exfat/exfat.h       |  2 +-
- drivers/staging/exfat/exfat_super.c | 84 ++++++++++++++++++-------------------
- 2 files changed, 43 insertions(+), 43 deletions(-)
+This patch series will remove the backup region, because the current
+handling of copying the first 640k runs into problems when SME is
+active(https://bugzilla.kernel.org/show_bug.cgi?id=3D204793).
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 6c12f2d79f4d..95c02f55de60 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -618,7 +618,7 @@ struct fs_info_t {
- 	u32 dev_ejected;	/* block device operation error flag */
- 
- 	struct fs_func *fs_func;
--	struct semaphore v_sem;
-+	struct mutex v_mutex;
- 
- 	/* FAT cache */
- 	struct buf_cache_t FAT_cache_array[FAT_CACHE_SIZE];
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5f6caee819a6..c0b09b2dbe96 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -283,7 +283,7 @@ static const struct dentry_operations exfat_dentry_ops = {
- 	.d_compare      = exfat_cmp,
- };
- 
--static DEFINE_SEMAPHORE(z_sem);
-+static DEFINE_MUTEX(z_mutex);
- 
- static inline void fs_sync(struct super_block *sb, bool do_sync)
- {
-@@ -352,11 +352,11 @@ static int ffsMountVol(struct super_block *sb)
- 
- 	pr_info("[EXFAT] trying to mount...\n");
- 
--	down(&z_sem);
-+        mutex_lock(&z_mutex);
- 
- 	buf_init(sb);
- 
--	sema_init(&p_fs->v_sem, 1);
-+	mutex_init(&p_fs->v_mutex);
- 	p_fs->dev_ejected = 0;
- 
- 	/* open the block device */
-@@ -441,7 +441,7 @@ static int ffsMountVol(struct super_block *sb)
- 	pr_info("[EXFAT] mounted successfully\n");
- 
- out:
--	up(&z_sem);
-+	mutex_unlock(&z_mutex);
- 
- 	return ret;
- }
-@@ -453,10 +453,10 @@ static int ffsUmountVol(struct super_block *sb)
- 
- 	pr_info("[EXFAT] trying to unmount...\n");
- 
--	down(&z_sem);
-+	mutex_lock(&z_mutex);
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	fs_sync(sb, false);
- 	fs_set_vol_flags(sb, VOL_CLEAN);
-@@ -480,8 +480,8 @@ static int ffsUmountVol(struct super_block *sb)
- 	buf_shutdown(sb);
- 
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
--	up(&z_sem);
-+	mutex_unlock(&p_fs->v_mutex);
-+	mutex_unlock(&z_mutex);
- 
- 	pr_info("[EXFAT] unmounted successfully\n");
- 
-@@ -498,7 +498,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	if (p_fs->used_clusters == UINT_MAX)
- 		p_fs->used_clusters = p_fs->fs_func->count_used_clusters(sb);
-@@ -513,7 +513,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 		err = FFS_MEDIAERR;
- 
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return err;
- }
-@@ -524,7 +524,7 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* synchronize the file system */
- 	fs_sync(sb, do_sync);
-@@ -534,7 +534,7 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
- 		err = FFS_MEDIAERR;
- 
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return err;
- }
-@@ -561,7 +561,7 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check the validity of directory name in the given pathname */
- 	ret = resolve_path(inode, path, &dir, &uni_name);
-@@ -635,7 +635,7 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
- 		ret = FFS_MEDIAERR;
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -654,7 +654,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check the validity of directory name in the given pathname */
- 	ret = resolve_path(inode, path, &dir, &uni_name);
-@@ -676,7 +676,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -703,7 +703,7 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check if the given file ID is opened */
- 	if (fid->type != TYPE_FILE) {
-@@ -800,7 +800,7 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -833,7 +833,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check if the given file ID is opened */
- 	if (fid->type != TYPE_FILE) {
-@@ -1057,7 +1057,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1080,7 +1080,7 @@ static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
- 		 new_size);
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check if the given file ID is opened */
- 	if (fid->type != TYPE_FILE) {
-@@ -1190,7 +1190,7 @@ static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
- out:
- 	pr_debug("%s exited (%d)\n", __func__, ret);
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1238,7 +1238,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	update_parent_info(fid, old_parent_inode);
- 
-@@ -1336,7 +1336,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 		ret = FFS_MEDIAERR;
- out2:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1355,7 +1355,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
- 		return FFS_INVALIDFID;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	dir.dir = fid->dir.dir;
- 	dir.size = fid->dir.size;
-@@ -1398,7 +1398,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
- 		ret = FFS_MEDIAERR;
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1433,7 +1433,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
- 	}
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* get the directory entry of given file */
- 	if (p_fs->vol_type == EXFAT) {
-@@ -1487,7 +1487,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
- 		ret = FFS_MEDIAERR;
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1511,7 +1511,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	pr_debug("%s entered\n", __func__);
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	if (is_dir) {
- 		if ((fid->dir.dir == p_fs->root_dir) &&
-@@ -1640,7 +1640,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	pr_debug("%s exited successfully\n", __func__);
- 	return ret;
-@@ -1661,7 +1661,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- 	pr_debug("%s entered (inode %p info %p\n", __func__, inode, info);
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	if (is_dir) {
- 		if ((fid->dir.dir == p_fs->root_dir) &&
-@@ -1727,7 +1727,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	pr_debug("%s exited (%d)\n", __func__, ret);
- 
-@@ -1753,7 +1753,7 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	fid->rwoffset = (s64)(clu_offset) << p_fs->cluster_size_bits;
- 
-@@ -1881,7 +1881,7 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1905,7 +1905,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
- 		return FFS_ERROR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	/* check the validity of directory name in the given old pathname */
- 	ret = resolve_path(inode, path, &dir, &uni_name);
-@@ -1925,7 +1925,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
- 		ret = FFS_MEDIAERR;
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -1955,7 +1955,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 		return FFS_PERMISSIONERR;
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	if (fid->entry == -1) {
- 		dir.dir = p_fs->root_dir;
-@@ -2124,7 +2124,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -2154,7 +2154,7 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
- 	}
- 
- 	/* acquire the lock for file system critical section */
--	down(&p_fs->v_sem);
-+	mutex_lock(&p_fs->v_mutex);
- 
- 	clu_to_free.dir = fid->start_clu;
- 	clu_to_free.size = (s32)((fid->size - 1) >> p_fs->cluster_size_bits) + 1;
-@@ -2187,7 +2187,7 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
- 
- out:
- 	/* release the lock for file system critical section */
--	up(&p_fs->v_sem);
-+	mutex_unlock(&p_fs->v_mutex);
- 
- 	return ret;
- }
-@@ -3983,10 +3983,10 @@ static void exfat_debug_kill_sb(struct super_block *sb)
- 			 * invalidate_bdev drops all device cache include
- 			 * dirty. We use this to simulate device removal.
- 			 */
--			down(&p_fs->v_sem);
-+			mutex_lock(&p_fs->v_mutex);
- 			FAT_release_all(sb);
- 			buf_release_all(sb);
--			up(&p_fs->v_sem);
-+			mutex_unlock(&p_fs->v_mutex);
- 
- 			invalidate_bdev(bdev);
- 		}
--- 
-2.16.4
+The low 1MiB region will always be reserved when the crashkernel kernel
+command line option is specified. And this way makes it unnecessary to
+do anything with the low 1MiB region, because the memory allocated later
+won't fall into the low 1MiB area.
+
+This series includes two patches:
+[1] x86/kdump: always reserve the low 1MiB when the crashkernel option
+    is specified
+    The low 1MiB region will always be reserved when the crashkernel
+    kernel command line option is specified, which ensures that the
+    memory allocated later won't fall into the low 1MiB area.
+
+[2] x86/kdump: clean up all the code related to the backup region
+    Remove the backup region and clean up.
+
+Changes since v1:
+[1] Add extra checking condition: when the crashkernel option is
+    specified, reserve the low 640k area.
+
+Changes since v2:
+[1] Reserve the low 1MiB region when the crashkernel option is only
+    specified.(Suggested by Eric)
+
+[2] Remove the unused crash_copy_backup_region()
+
+[3] Remove the backup region and clean up
+
+[4] Split them into three patches
+
+Changes since v3:
+[1] Improve the first patch's log
+
+[2] Improve the third patch based on Eric's suggestions
+
+Changes since v4:
+[1] Correct some typos, and also improve the first patch's log
+
+[2] Add a new function kexec_reserve_low_1MiB() in kernel/kexec_core.c
+    and which is called by reserve_real_mode(). (Suggested by Boris)
+
+Changes since v5:
+[1] Call the cmdline_find_option() instead of strstr() to check the
+    crashkernel option. (Suggested by Hatayama)
+
+[2] Add a weak function kexec_reserve_low_1MiB() in kernel/kexec_core.c,
+    and implement the kexec_reserve_low_1MiB() in arch/x86/kernel/
+    machine_kexec_64.c so that it does not cause the compile error
+    on non-x86 kernel, and also ensures that it can work well on x86
+    kernel.
+
+Lianbo Jiang (2):
+  x86/kdump: always reserve the low 1MiB when the crashkernel option is
+    specified
+  x86/kdump: clean up all the code related to the backup region
+
+ arch/x86/include/asm/kexec.h       | 10 ----
+ arch/x86/include/asm/purgatory.h   | 10 ----
+ arch/x86/kernel/crash.c            | 87 ++++--------------------------
+ arch/x86/kernel/machine_kexec_64.c | 62 ++++++---------------
+ arch/x86/purgatory/purgatory.c     | 19 -------
+ arch/x86/realmode/init.c           |  2 +
+ include/linux/kexec.h              |  2 +
+ kernel/kexec_core.c                |  3 ++
+ 8 files changed, 33 insertions(+), 162 deletions(-)
+
+--=20
+2.17.1
 
