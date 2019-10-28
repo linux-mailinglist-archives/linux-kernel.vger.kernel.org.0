@@ -2,105 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02F7FE7013
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 11:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CCAE7033
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 12:14:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388436AbfJ1K7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 06:59:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728554AbfJ1K7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 06:59:50 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE75C20873;
-        Mon, 28 Oct 2019 10:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572260389;
-        bh=vnID9+Oo8Ba/7JkP4NlkjT8aLuIOGGl8S6SiOMEIGLM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZOynHkfmFX06vNr8sfpvCZQtP+oE9c+n01F6NmlPDm8xnwdvq8mtNOSlkhGKdWkJV
-         5SNqE4Kw+KgkfR4LHBMn9kxVbXVJ0JAgzHWvt6ug5g6HreFNmQX5REz2u8FRKNnYtL
-         l8HASqabKNYlo51wBS0ALEHgahupJhoOVPcDmWvw=
-Date:   Mon, 28 Oct 2019 10:59:44 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Candle Sun <candlesea@gmail.com>
-Cc:     mark.rutland@arm.com, linux@armlinux.org.uk, orson.zhai@unisoc.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>
-Subject: Re: [PATCH v2] ARM/hw_breakpoint: add more ARMv8 debug architecture
- versions support
-Message-ID: <20191028105943.GA4122@willie-the-truck>
-References: <20191024080539.9187-1-candlesea@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191024080539.9187-1-candlesea@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726836AbfJ1LON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 07:14:13 -0400
+Received: from knopi.disroot.org ([178.21.23.139]:34198 "EHLO
+        knopi.disroot.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJ1LON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 07:14:13 -0400
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Oct 2019 07:14:12 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by disroot.org (Postfix) with ESMTP id A667130B3D;
+        Mon, 28 Oct 2019 12:08:23 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at disroot.org
+Received: from knopi.disroot.org ([127.0.0.1])
+        by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+        with UTF8SMTP id 2l6BXwpU0LXA; Mon, 28 Oct 2019 12:08:22 +0100 (CET)
+From:   Dhanuka Warusadura <csx@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+        t=1572260902; bh=s1qf9ZKS5xrrd7dcGul2Q+7zTiwuK5JOO7Osfl0QXxE=;
+        h=From:To:Cc:Subject:Date;
+        b=kpBWMmsbz1Af+NAs4+nHDlo8hHRxMWl+pW32NcVPeoJZz4c1SG40r9aWYrLrHGlqr
+         pI8LdT8MkjKyAb9u1XGVx4f74dMnwSa19WrSMO9unW5/ZDhN91iSxF62Zp1z6MBHRT
+         PEs0ArcA3s5EVuItJIXENxJezFAuWA92d/SqR7JQqXU1Q6RXVNZfp3uEMnDZ/xzumv
+         staxkvT2w8zUSBYHBYkAhDKNPVcq39nz6DzoRWceWOjq1ZNblP7YxxE+5RT2q6etMm
+         qoO2DwH13b+pIy4wnExTt1/xWtrI39eJ+xmhW8KbY2WuGUhaa6zhfIfjuj6PD116GN
+         qaRkVamggMtgw==
+To:     zbr@ioremap.net, skhan@linuxfoundation.org, mchehab@kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     Dhanuka Warusadura <csx@disroot.org>
+Subject: [PATCH] Fixes documentation warning.
+Date:   Mon, 28 Oct 2019 16:37:44 +0530
+Message-Id: <20191028110744.6523-1-csx@disroot.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 04:05:39PM +0800, Candle Sun wrote:
-> From: Candle Sun <candle.sun@unisoc.com>
-> 
-> When ARMv8 cores are used in AArch32 mode, arch_hw_breakpoint_init()
-> in arch/arm/kernel/hw_breakpoint.c will be used.
-> 
-> From ARMv8 specification, v8 debug architecture versions defined:
-> * 0110 ARMv8, v8 Debug architecture.
-> * 0111 ARMv8.1, v8 Debug architecture, with Virtualization Host
->   Extensions.
-> * 1000 ARMv8.2, v8.2 Debug architecture.
-> * 1001 ARMv8.4, v8.4 Debug architecture.
-> 
-> So missing ARMv8.1/ARMv8.2/ARMv8.4 cases will cause
-> enable_monitor_mode() returns -ENODEV,and eventually
-> arch_hw_breakpoint_init() will fail.
-> 
-> Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-> Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
-> ---
-> Changes in v2:
-> - Add ARMv8.4 debug architecture case
-> - Update patch description
-> ---
->  arch/arm/include/asm/hw_breakpoint.h | 3 +++
->  arch/arm/kernel/hw_breakpoint.c      | 3 +++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/include/asm/hw_breakpoint.h b/arch/arm/include/asm/hw_breakpoint.h
-> index ac54c06764e6..62358d3ca0a8 100644
-> --- a/arch/arm/include/asm/hw_breakpoint.h
-> +++ b/arch/arm/include/asm/hw_breakpoint.h
-> @@ -53,6 +53,9 @@ static inline void decode_ctrl_reg(u32 reg,
->  #define ARM_DEBUG_ARCH_V7_MM	4
->  #define ARM_DEBUG_ARCH_V7_1	5
->  #define ARM_DEBUG_ARCH_V8	6
-> +#define ARM_DEBUG_ARCH_V8_1	7
-> +#define ARM_DEBUG_ARCH_V8_2	8
-> +#define ARM_DEBUG_ARCH_V8_4	9
->  
->  /* Breakpoint */
->  #define ARM_BREAKPOINT_EXECUTE	0
-> diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
-> index b0c195e3a06d..02ca7adf5375 100644
-> --- a/arch/arm/kernel/hw_breakpoint.c
-> +++ b/arch/arm/kernel/hw_breakpoint.c
-> @@ -246,6 +246,9 @@ static int enable_monitor_mode(void)
->  	case ARM_DEBUG_ARCH_V7_ECP14:
->  	case ARM_DEBUG_ARCH_V7_1:
->  	case ARM_DEBUG_ARCH_V8:
-> +	case ARM_DEBUG_ARCH_V8_1:
-> +	case ARM_DEBUG_ARCH_V8_2:
-> +	case ARM_DEBUG_ARCH_V8_4:
->  		ARM_DBG_WRITE(c0, c2, 2, (dscr | ARM_DSCR_MDBGEN));
->  		isb();
->  		break;
+This patch fixes - warning: Function parameter or member 'of_match_table'
+not described in 'w1_family'
 
-Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Dhanuka Warusadura <csx@disroot.org>
+---
+ include/linux/w1.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Will
+diff --git a/include/linux/w1.h b/include/linux/w1.h
+index 7da0c7588e04..cebf3464bc03 100644
+--- a/include/linux/w1.h
++++ b/include/linux/w1.h
+@@ -262,6 +262,7 @@ struct w1_family_ops {
+  * @family_entry:	family linked list
+  * @fid:		8 bit family identifier
+  * @fops:		operations for this family
++ * @of_match_table: open firmware match table
+  * @refcnt:		reference counter
+  */
+ struct w1_family {
+-- 
+2.24.0.rc1
+
