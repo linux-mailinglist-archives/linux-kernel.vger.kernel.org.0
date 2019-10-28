@@ -2,134 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 414D1E6EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7429E6EE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387866AbfJ1JPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:15:43 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34642 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbfJ1JPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:15:43 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c25so1573884qkk.1;
-        Mon, 28 Oct 2019 02:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OT9vPn7ycGD7jBjGQjG9ZHBs+GjEiewGN8zg5+tO7oY=;
-        b=lmWK048tWPiLv2pOVdnF9PqCQUVr4N5gJNqTaqBojtv+qbIOpKBtZZTTJFEeYMcAmd
-         dwl7iI66sosJV6h5tmEmdVyIKvIEQ01QFD4om9+g/x8aL3V5+OjhqBoza6KfaYYYHoqo
-         /Hd+CnQs2s09wwBkm+QK8mfpVbw89LE2MtT0YZoyftLIuJC6K4yLgpq6/M66aBg9/9Lo
-         qt1QjIhvUng/xxUPzsT+b3FnIfxKIUAN3JyfoMeDddX79n0WZBNAwiolZ509Okk7UyLz
-         WeXpXgStdF198MTF2pI21AUtcIKQCZMrIdpVQQWc8JYBg7fq1IZq8nExtF1VlDpBtX8y
-         ngzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OT9vPn7ycGD7jBjGQjG9ZHBs+GjEiewGN8zg5+tO7oY=;
-        b=I9e2Xniq6Jh1CZg+giWPa4TiFiEexi8yoWBzsBTK9P1DGVZDUhAW/HtvsiZiUsesPr
-         Ig76sIuVLcwNbjmhAhtcn9QQ8RSb+hp36Xju9Roniqh3KsZyZFbiBWjUgNGktgQd32C0
-         utencHxEiXyFz0i6b0OxHmFo+aUykxEmTh2OTh1f+wpxT/lrISMqsamLXLLw7BAmBqt6
-         PXAP4T9/qvmy+ZjalAJqzdAgNghOg4A4pr/83KNkTPm+KIU5F4YjgoVy4kVK4P/YL4TX
-         trZCNMvf5nj8iJtl9AUDdvLcyyRGlAKUVe64pPOdrKeTSR+INjU/VJ6k7/m0Fha4daKf
-         hDEw==
-X-Gm-Message-State: APjAAAVX5lmTkgb860wubmWAWRzoGgfWRR+BtHPRz7JOV3whu5k/gFqa
-        x5pomIGsailffKS9hg8So3tPPnTXPdX7ICZRpSk=
-X-Google-Smtp-Source: APXvYqyKCAJKhdOJh+PbCAnM3MbXA1qxBjY4PetCB75UbrWI078RRPEm92FmplgeX5uxV0Dy0CGCuPMH7iIARo5ZXWI=
-X-Received: by 2002:a37:ab04:: with SMTP id u4mr15165699qke.114.1572254142067;
- Mon, 28 Oct 2019 02:15:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1571722391.git.baolin.wang@linaro.org> <487c2e45810c6dc6485638474136e375cb567807.1571722391.git.baolin.wang@linaro.org>
- <50696230-75f4-3de4-7424-c33d531ee159@intel.com> <CAMz4kuJAwV7f=pjUqs1nO3+L5NbcwCQrCi-HGUPPXgp7rWUs=g@mail.gmail.com>
- <CAMz4kuKfqMoM3WdaG8o0JHpXeUZHYpLt4P15BsOriU2h2OV--A@mail.gmail.com> <60aabcc6-9def-1472-0e1f-3fec391ef1cd@intel.com>
-In-Reply-To: <60aabcc6-9def-1472-0e1f-3fec391ef1cd@intel.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Mon, 28 Oct 2019 17:15:30 +0800
-Message-ID: <CADBw62qf4qM7c-3YWEpo-8o9qw6RD2_G7qqqBDZZC4Ht37SNnA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mmc: host: sdhci: Add request_done ops for struct sdhci_ops
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2387897AbfJ1JTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:19:21 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43858 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727664AbfJ1JTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:19:20 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 136412000A9;
+        Mon, 28 Oct 2019 10:19:18 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A40420009D;
+        Mon, 28 Oct 2019 10:19:13 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 069544029E;
+        Mon, 28 Oct 2019 17:19:07 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] ARM: imx: Add serial number support for i.MX6/7 SoCs
+Date:   Mon, 28 Oct 2019 17:16:01 +0800
+Message-Id: <1572254161-18914-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 5:11 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 28/10/19 10:38 AM, Baolin Wang wrote:
-> > On Mon, 28 Oct 2019 at 16:27, Baolin Wang <baolin.wang@linaro.org> wrote:
-> >>
-> >> Hi Adrian,
-> >>
-> >> On Mon, 28 Oct 2019 at 16:20, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> >>>
-> >>> On 22/10/19 8:58 AM, Baolin Wang wrote:
-> >>>> Add request_done ops for struct sdhci_ops as a preparation in case some
-> >>>> host controllers have different method to complete one request, such as
-> >>>> supporting request completion of MMC software queue.
-> >>>>
-> >>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> >>>> ---
-> >>>>  drivers/mmc/host/sdhci.c |   12 ++++++++++--
-> >>>>  drivers/mmc/host/sdhci.h |    2 ++
-> >>>>  2 files changed, 12 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> >>>> index b056400..850241f 100644
-> >>>> --- a/drivers/mmc/host/sdhci.c
-> >>>> +++ b/drivers/mmc/host/sdhci.c
-> >>>> @@ -2729,7 +2729,10 @@ static bool sdhci_request_done(struct sdhci_host *host)
-> >>>>
-> >>>>       spin_unlock_irqrestore(&host->lock, flags);
-> >>>>
-> >>>> -     mmc_request_done(host->mmc, mrq);
-> >>>> +     if (host->ops->request_done)
-> >>>> +             host->ops->request_done(host, mrq);
-> >>>
-> >>> For hsq, couldn't this result in sdhci_request() being called interrupt
-> >>> context here.
-> >>
-> >> Right, now it did not support.
-> >>
-> >>>
-> >>> To prevent that you would need to add a condition to sdhci_defer_done() so
-> >>> it always defers when using hsq.
-> >>
-> >> Yes, but now the condition can be matched in sdhci_defer_done()  when
-> >> using hsq. So no need to worry that the sdhci_request() will be called
-> >> in interrupt
-> >> context in this patch set. Thanks.
-> >>
-> >
-> > Wait, sorry, I realized some drivers may not select the
-> > SDHCI_REQ_USE_DMA flag in sdhci_defer_done()  when using hsq. OK, So
-> > how about below changes?
-> >
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 850241f..6c7a396 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -3035,7 +3035,7 @@ static inline bool sdhci_defer_done(struct
-> > sdhci_host *host,
-> >  {
-> >         struct mmc_data *data = mrq->data;
-> >
-> > -       return host->pending_reset ||
-> > +       return IS_ENABLED(CONFIG_MMC_HSQ) || host->pending_reset ||
->
-> Just because it is configured does not mean it is used.  How about adding a
-> variable host->always_defer_done and set it in sdhci_sprd_probe().
+i.MX6/7 SoCs have a 64-bit SoC unique ID stored in OCOTP,
+it can be used as SoC serial number, add this support for
+i.MX6Q/6DL/6SL/6SX/6SLL/6UL/6ULL/6ULZ/7D, see below example
+on i.MX6Q:
 
-Sure, sounds reasonable to me. Thanks.
+root@imx6qpdlsolox:~# cat /sys/devices/soc0/serial_number
+240F31D4E1FDFCA7
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- squash the whole patch set into 1 patch for this special case.
+---
+ arch/arm/mach-imx/cpu.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
+index 0b137ee..d811803 100644
+--- a/arch/arm/mach-imx/cpu.c
++++ b/arch/arm/mach-imx/cpu.c
+@@ -1,15 +1,20 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/err.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
+ 
+ #include "hardware.h"
+ #include "common.h"
+ 
++#define OCOTP_UID_H	0x420
++#define OCOTP_UID_L	0x410
++
+ unsigned int __mxc_cpu_type;
+ static unsigned int imx_soc_revision;
+ 
+@@ -76,9 +81,13 @@ void __init imx_aips_allow_unprivileged_access(
+ struct device * __init imx_soc_device_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
++	const char *ocotp_compat = NULL;
+ 	struct soc_device *soc_dev;
+ 	struct device_node *root;
++	struct regmap *ocotp;
+ 	const char *soc_id;
++	u64 soc_uid = 0;
++	u32 val;
+ 	int ret;
+ 
+ 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+@@ -119,30 +128,39 @@ struct device * __init imx_soc_device_init(void)
+ 		soc_id = "i.MX53";
+ 		break;
+ 	case MXC_CPU_IMX6SL:
++		ocotp_compat = "fsl,imx6sl-ocotp";
+ 		soc_id = "i.MX6SL";
+ 		break;
+ 	case MXC_CPU_IMX6DL:
++		ocotp_compat = "fsl,imx6q-ocotp";
+ 		soc_id = "i.MX6DL";
+ 		break;
+ 	case MXC_CPU_IMX6SX:
++		ocotp_compat = "fsl,imx6sx-ocotp";
+ 		soc_id = "i.MX6SX";
+ 		break;
+ 	case MXC_CPU_IMX6Q:
++		ocotp_compat = "fsl,imx6q-ocotp";
+ 		soc_id = "i.MX6Q";
+ 		break;
+ 	case MXC_CPU_IMX6UL:
++		ocotp_compat = "fsl,imx6ul-ocotp";
+ 		soc_id = "i.MX6UL";
+ 		break;
+ 	case MXC_CPU_IMX6ULL:
++		ocotp_compat = "fsl,imx6ul-ocotp";
+ 		soc_id = "i.MX6ULL";
+ 		break;
+ 	case MXC_CPU_IMX6ULZ:
++		ocotp_compat = "fsl,imx6ul-ocotp";
+ 		soc_id = "i.MX6ULZ";
+ 		break;
+ 	case MXC_CPU_IMX6SLL:
++		ocotp_compat = "fsl,imx6sll-ocotp";
+ 		soc_id = "i.MX6SLL";
+ 		break;
+ 	case MXC_CPU_IMX7D:
++		ocotp_compat = "fsl,imx7d-ocotp";
+ 		soc_id = "i.MX7D";
+ 		break;
+ 	case MXC_CPU_IMX7ULP:
+@@ -153,18 +171,36 @@ struct device * __init imx_soc_device_init(void)
+ 	}
+ 	soc_dev_attr->soc_id = soc_id;
+ 
++	if (ocotp_compat) {
++		ocotp = syscon_regmap_lookup_by_compatible(ocotp_compat);
++		if (IS_ERR(ocotp))
++			pr_err("%s: failed to find %s regmap!\n", __func__, ocotp_compat);
++
++		regmap_read(ocotp, OCOTP_UID_H, &val);
++		soc_uid = val;
++		regmap_read(ocotp, OCOTP_UID_L, &val);
++		soc_uid <<= 32;
++		soc_uid |= val;
++	}
++
+ 	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d.%d",
+ 					   (imx_soc_revision >> 4) & 0xf,
+ 					   imx_soc_revision & 0xf);
+ 	if (!soc_dev_attr->revision)
+ 		goto free_soc;
+ 
++	soc_dev_attr->serial_number = kasprintf(GFP_KERNEL, "%016llX", soc_uid);
++	if (!soc_dev_attr->serial_number)
++		goto free_rev;
++
+ 	soc_dev = soc_device_register(soc_dev_attr);
+ 	if (IS_ERR(soc_dev))
+-		goto free_rev;
++		goto free_serial_number;
+ 
+ 	return soc_device_to_device(soc_dev);
+ 
++free_serial_number:
++	kfree(soc_dev_attr->serial_number);
+ free_rev:
+ 	kfree(soc_dev_attr->revision);
+ free_soc:
+-- 
+2.7.4
+
