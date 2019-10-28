@@ -2,112 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAC63E6ADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BF6E6AE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbfJ1Cfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:35:41 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36296 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbfJ1Cfl (ORCPT
+        id S1730220AbfJ1Cm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:42:26 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:45349 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729378AbfJ1CmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:35:41 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w18so8231299wrt.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 19:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=sCnueQboB7yjbqdY0v/k1fqToGKy0OAW4/Awe/F57nA=;
-        b=L9kaD5OWOg/WgPujdLk8wzDYIhmlcsI4gg7jGMDnCi+bKcG8047kW3vHJIfot3EgBx
-         HWB4KVt3kGtrZU1NfmzcUp9MpkXQodpZXvQwZfcHZKpk5K2RU8ihCd/kKIdT6/S1JSpb
-         8wP1w1a0wKcP+UH0TGFcXuvonBvZNcJ0D7ntuFu6BmTjbmSMrJWfDW8EvV4JRGQwM+7z
-         38iZ0nChGg6kyqKqwCTAcKJ6FQUcHpf2YKVTi+EnfZ1YqCJUD13iNUzdzl1piJnI9A9t
-         bkp/Qowh4YbTP1JynmG0T2IKj0ysrARLH0X4tmO97k3uLdSitG4zSYubZ4accn579RTm
-         WViw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=sCnueQboB7yjbqdY0v/k1fqToGKy0OAW4/Awe/F57nA=;
-        b=j1TDREg17FXeKpF0e31yqm84aoKggX9JKKz8U6Je+eY0SRBaBT8oZt5EHvgh+kUoWz
-         7v7LpRLrxsG1YGD+1Gz2mojrH0+HdTaOSxAib6sBOLf6FW1jpR5P2bxE4zAljLhAxVAO
-         X5bNadKW9h8kRcqYPDZBrJ2gS4AGzt94KerGAtbaxv2n8wwOTw64CZa1acx595MMh2qY
-         UNYWY+z7uZJIX1qP57B+83tbIItJ/oOL5kBvDEvIuP5cMMvedLZtzEigNKwfJvz/Zl5h
-         ZGMUL4XvQGhlnRep/DRDTyhOA/ZZhM8YfX5FOpiKSFf23A+QtcolchAuyxnAdYGdpHUt
-         wCTQ==
-X-Gm-Message-State: APjAAAXf5Y2zy8QjGktoP/9bWtQrHdtoicjQ+P9/+lThGP8Dav+CHSx2
-        BOBI/33uGR5+9zAYVAM0GUzAiA==
-X-Google-Smtp-Source: APXvYqygXmEm3sH5pm3LVCvjvkJ/LAQnPV6M9+KKIrTYiwuwKz7cwqkLi9EPCCLWypWeLQHm4nGSLA==
-X-Received: by 2002:adf:9381:: with SMTP id 1mr12891363wrp.10.1572230139518;
-        Sun, 27 Oct 2019 19:35:39 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id b196sm12711847wmd.24.2019.10.27.19.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2019 19:35:38 -0700 (PDT)
-Message-ID: <5db653fa.1c69fb81.5a707.f77d@mx.google.com>
-Date:   Sun, 27 Oct 2019 19:35:38 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 27 Oct 2019 22:42:25 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x9S2Ns1u087163;
+        Mon, 28 Oct 2019 10:23:54 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 28 Oct 2019
+ 10:41:22 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <aryabinin@virtuozzo.com>, <glider@google.com>,
+        <dvyukov@google.com>, <corbet@lwn.net>, <paul.walmsley@sifive.com>,
+        <palmer@sifive.com>, <aou@eecs.berkeley.edu>, <tglx@linutronix.de>,
+        <gregkh@linuxfoundation.org>, <alankao@andestech.com>,
+        <Anup.Patel@wdc.com>, <atish.patra@wdc.com>,
+        <kasan-dev@googlegroups.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-mm@kvack.org>, <green.hu@gmail.com>
+CC:     Nick Hu <nickhu@andestech.com>
+Subject: [PATCH v4 0/3] KASAN support for RISC-V
+Date:   Mon, 28 Oct 2019 10:40:58 +0800
+Message-ID: <20191028024101.26655-1-nickhu@andestech.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Kernel: v4.14.150-120-gea1df089eebe
-X-Kernelci-Report-Type: boot
-In-Reply-To: <20191027203259.948006506@linuxfoundation.org>
-References: <20191027203259.948006506@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/119] 4.14.151-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x9S2Ns1u087163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.14.y boot: 117 boots: 0 failed, 110 passed with 7 offline=
- (v4.14.150-120-gea1df089eebe)
+KASAN is an important runtime memory debugging feature in linux kernel which can
+detect use-after-free and out-of-bounds problems.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.150-120-gea1df089eebe/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.150-120-gea1df089eebe/
+Changes in v2:
+  - Remove the porting of memmove and exclude the check instead.
+  - Fix some code noted by Christoph Hellwig
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.150-120-gea1df089eebe
-Git Commit: ea1df089eebe2babf969ff53de3fefe3898c2362
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 63 unique boards, 21 SoC families, 13 builds out of 201
+Changes in v3:
+  - Update the KASAN documentation to mention that riscv is supported.
 
-Offline Platforms:
+Changes in v4:
+  - Correct the commit log
+  - Fix the bug reported by Greentime Hu
 
-arm:
+Nick Hu (3):
+  kasan: No KASAN's memmove check if archs don't have it.
+  riscv: Add KASAN support
+  kasan: Add riscv to KASAN documentation.
 
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
+ Documentation/dev-tools/kasan.rst   |   4 +-
+ arch/riscv/Kconfig                  |   1 +
+ arch/riscv/include/asm/kasan.h      |  27 ++++++++
+ arch/riscv/include/asm/pgtable-64.h |   5 ++
+ arch/riscv/include/asm/string.h     |   9 +++
+ arch/riscv/kernel/head.S            |   3 +
+ arch/riscv/kernel/riscv_ksyms.c     |   2 +
+ arch/riscv/kernel/setup.c           |   5 ++
+ arch/riscv/kernel/vmlinux.lds.S     |   1 +
+ arch/riscv/lib/memcpy.S             |   5 +-
+ arch/riscv/lib/memset.S             |   5 +-
+ arch/riscv/mm/Makefile              |   6 ++
+ arch/riscv/mm/kasan_init.c          | 104 ++++++++++++++++++++++++++++
+ mm/kasan/common.c                   |   2 +
+ 14 files changed, 173 insertions(+), 6 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kasan.h
+ create mode 100644 arch/riscv/mm/kasan_init.c
 
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
+-- 
+2.17.0
 
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
