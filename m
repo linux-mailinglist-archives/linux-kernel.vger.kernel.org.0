@@ -2,116 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC15E7352
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CF9E736B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:10:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbfJ1OGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:06:19 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38149 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390028AbfJ1OGT (ORCPT
+        id S1729972AbfJ1OKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:10:03 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33892 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728383AbfJ1OKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:06:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v9so10035927wrq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:06:17 -0700 (PDT)
+        Mon, 28 Oct 2019 10:10:03 -0400
+Received: by mail-il1-f195.google.com with SMTP id a13so8315210ilp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 07:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rdC6V+W/0pKqgJwzkGX8wwGtenk6Ad4eyp94SQwYZN8=;
-        b=R5HdV1xFRhfl7jlVF2ygGLA04qDiJw37QSOQZkF7MsnXM5HNM18K4iIPwjs+t3zEUg
-         4c/cqHnL2KkIfbY826muE9b5MAoamhv4k7YEbjhAau9OnEU3xDZTMxabEHkjIePduZZj
-         sHBbDma0c0O/cHzx7Pkwc7xNE/Zr1TEGxfqpKIGIczkz2oNIJFdkIPqtpyPp6jWbMRvc
-         7VM7JHIzh42deYRq+7Pv2L01pohfPkZrcjftyBzrKZt7gOyBW1GQLkAWhHr/GC7Lwutg
-         3unltK9XvVTaNIIAMyq0E9vR+o6Sz4RkgQcXuPwJQ98p9o/R0AB4H3e/T53SzUKd6b40
-         8w2A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=kr5iIONmkKZJVxLZgVwCjkI7onir+j8sN/xM4cByuJ0=;
+        b=mLTX2WFgA3I8a4rG062yWLJFpkzXdtX2gl/+Cb+bSgNW+lePV51gEXQtkrnw83Kfky
+         Jci05OF2/yaVajJIiQXDf2mTYMJSOv4cENARR2PvUwQgacfZwSUpf7bBWx/SOPe0851f
+         OQZStjptb461wFrqPT+uLfuMmCrdHA4cZH0TnuMY1rOHXx4Oi6PW/22u0Mxfpk2Tsl0w
+         Ks1UmMSEDqFSm9pUXJzGgh4TYzR6CHLaUI2oFeXYq3XwyYEXHpcSwrX0uD2Ygvnxwk/j
+         GHw/xsarhG+WIsBH3wrs455v06+BV6JZo3h14P4dgnW1HrYp+0qAy6F+8QRkdDq+e/KZ
+         VDmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rdC6V+W/0pKqgJwzkGX8wwGtenk6Ad4eyp94SQwYZN8=;
-        b=Rf6OdCYC8s+gdcyEI/in26aVoLDEaTXSBX43V/eS55KCa0quDimbDOjsk0clg+D/TW
-         cQnbStpnpMFZ1Se1Rv+CW/UhyrCPuLPlW/s/pE4WZ0OVk8k8K1agLvAfniFCIis149TY
-         v6PWrcv5UfdpWxWw6HVPnajb2HtjA9fNnW94aA2XoIBBi5Mi0gzW2p9t+bIYRMjPQxRY
-         OyZMzLHZ3aSc0SOuSdKc7GhdURNkHfa8VmCePWx/+LJWiIwfl2szXMcs+J+H5Epy8HcP
-         FLoRU+dg6Smby025pKHk6jNqyYxOJYqzrMN6Wd58izhhzOBxVSrlPvZqo5pjz8HDcD46
-         WHdg==
-X-Gm-Message-State: APjAAAUMjiFYE9DYm0Hx/8zemUBemmejte+mdjfD+GOUqHFlUgIDip44
-        XM9upP9tXpoRdUU5tkQUkjtWeTcvYtw4ZBJTtPc=
-X-Google-Smtp-Source: APXvYqx93VfHYQta5r6YehJQFm4Zit5CjBpG85IfDnlOhBb4sBmoUGmL/PYIDYPF4ekeP2EWvHda9cyimGmob83AeLk=
-X-Received: by 2002:adf:828c:: with SMTP id 12mr15047712wrc.40.1572271577123;
- Mon, 28 Oct 2019 07:06:17 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kr5iIONmkKZJVxLZgVwCjkI7onir+j8sN/xM4cByuJ0=;
+        b=jwgugZpT78/WgHfsw8EmFjBsjpsIcglPCKTyGGCTY9YM3pxUtjn9rzyO4OjMVrUmfl
+         NaI8GHEzLgOoIBNgpjNqMOVbtbFFxoaziLUTBHq/rtKhZ+VFxKGPJaxwWFmU6s8Jx1tj
+         CKzWcoKgvU7O0cTEwVpJ0bYThDcl151Y1yQACMym7apFhKISRdhNt+zTnS5XRGzvx9W9
+         v8F1HoIg7pl112l5J8rQMxgHV8PNvrCH2eI4rOkIsN9K28fLm525yzMO6sWNQENUB4ZI
+         FllQBThkmEeaYdQXGOYf4JUuXNXfg4r6MqcnCu2icauDi+bXYk37mL+mLbt95r4iAPpe
+         sGVg==
+X-Gm-Message-State: APjAAAVwtuD+frr7UNDs3taZSeFJ9OY/Y4pquzndDCCvs0LLYeFTfIex
+        6P2LfhxEY9NYJB41yU4RAywS3w==
+X-Google-Smtp-Source: APXvYqyu2qmdiR4OZs+ChJ3ToBacy+uLfEdYJlGXR8GYIvKhPgHoVVNo6nCm3lSS7AjYt83yv3RrLA==
+X-Received: by 2002:a92:d643:: with SMTP id x3mr20836934ilp.203.1572271800046;
+        Mon, 28 Oct 2019 07:10:00 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id n3sm1660456ilm.8.2019.10.28.07.09.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Oct 2019 07:09:58 -0700 (PDT)
+Subject: Re: KASAN: use-after-free Read in io_uring_setup
+To:     syzbot <syzbot+6f03d895a6cd0d06187f@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000007c4f500595f35bf4@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <883b3cf9-1d92-a22f-e946-0936d09d36c0@kernel.dk>
+Date:   Mon, 28 Oct 2019 08:09:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191028133621.21400-1-yuehaibing@huawei.com>
-In-Reply-To: <20191028133621.21400-1-yuehaibing@huawei.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 28 Oct 2019 10:06:05 -0400
-Message-ID: <CADnq5_Ow+W_Syo6G3ZUXJeiLbc4YU=DL1FtznaTKm=RGj4tq1g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/amd/powerplay: Make two functions static
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0000000000007c4f500595f35bf4@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 9:37 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix sparse warnings:
->
-> drivers/gpu/drm/amd/amdgpu/../powerplay/arcturus_ppt.c:2050:5:
->  warning: symbol 'arcturus_i2c_eeprom_control_init' was not declared. Should it be static?
-> drivers/gpu/drm/amd/amdgpu/../powerplay/arcturus_ppt.c:2068:6:
->  warning: symbol 'arcturus_i2c_eeprom_control_fini' was not declared. Should it be static?
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On 10/28/19 1:22 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    5a1e843c Merge tag 'mips_fixes_5.4_3' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10e2001f600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=420126a10fdda0f1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6f03d895a6cd0d06187f
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d4fa97600000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+6f03d895a6cd0d06187f@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in io_uring_create fs/io_uring.c:3842 [inline]
+> BUG: KASAN: use-after-free in io_uring_setup+0x1877/0x18c0
+> fs/io_uring.c:3881
+> Read of size 8 at addr ffff888082284048 by task syz-executor.5/11342
+> 
+> CPU: 1 PID: 11342 Comm: syz-executor.5 Not tainted 5.4.0-rc4+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>    __dump_stack lib/dump_stack.c:77 [inline]
+>    dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+>    print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+>    __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+>    kasan_report+0x12/0x20 mm/kasan/common.c:634
+>    __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+>    io_uring_create fs/io_uring.c:3842 [inline]
+>    io_uring_setup+0x1877/0x18c0 fs/io_uring.c:3881
+>    __do_sys_io_uring_setup fs/io_uring.c:3894 [inline]
+>    __se_sys_io_uring_setup fs/io_uring.c:3891 [inline]
+>    __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:3891
+>    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x459f39
+> Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f313e126c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+> RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000000000459f39
+> RDX: 0000000000000000 RSI: 00000000200005c0 RDI: 000000040000000e
+> RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f313e1276d4
+> R13: 00000000004c1512 R14: 00000000004d4da8 R15: 00000000ffffffff
+> 
+> Allocated by task 11342:
+>    save_stack+0x23/0x90 mm/kasan/common.c:69
+>    set_track mm/kasan/common.c:77 [inline]
+>    __kasan_kmalloc mm/kasan/common.c:510 [inline]
+>    __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+>    kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+>    kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3550
+>    kmalloc include/linux/slab.h:556 [inline]
+>    kzalloc include/linux/slab.h:690 [inline]
+>    io_ring_ctx_alloc fs/io_uring.c:393 [inline]
+>    io_uring_create fs/io_uring.c:3811 [inline]
+>    io_uring_setup+0xec6/0x18c0 fs/io_uring.c:3881
+>    __do_sys_io_uring_setup fs/io_uring.c:3894 [inline]
+>    __se_sys_io_uring_setup fs/io_uring.c:3891 [inline]
+>    __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:3891
+>    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Freed by task 11335:
+>    save_stack+0x23/0x90 mm/kasan/common.c:69
+>    set_track mm/kasan/common.c:77 [inline]
+>    kasan_set_free_info mm/kasan/common.c:332 [inline]
+>    __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+>    kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+>    __cache_free mm/slab.c:3425 [inline]
+>    kfree+0x10a/0x2c0 mm/slab.c:3756
+>    io_ring_ctx_free fs/io_uring.c:3552 [inline]
+>    io_ring_ctx_wait_and_kill+0x4d7/0x6c0 fs/io_uring.c:3592
+>    io_uring_release+0x42/0x50 fs/io_uring.c:3600
+>    __fput+0x2ff/0x890 fs/file_table.c:280
+>    ____fput+0x16/0x20 fs/file_table.c:313
+>    task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>    tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>    exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>    prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>    syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>    do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> The buggy address belongs to the object at ffff888082284000
+>    which belongs to the cache kmalloc-2k of size 2048
+> The buggy address is located 72 bytes inside of
+>    2048-byte region [ffff888082284000, ffff888082284800)
+> The buggy address belongs to the page:
+> page:ffffea000208a100 refcount:1 mapcount:0 mapping:ffff8880aa400e00
+> index:0x0
+> flags: 0x1fffc0000000200(slab)
+> raw: 01fffc0000000200 ffffea0002a1bc88 ffffea00023fa248 ffff8880aa400e00
+> raw: 0000000000000000 ffff888082284000 0000000100000001 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>    ffff888082283f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>    ffff888082283f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>> ffff888082284000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                 ^
+>    ffff888082284080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>    ffff888082284100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
 
-Applied.  Thanks.  Is there more to this series?  I don't see patches 1 or 2.
+Interesting, looks like a malicious case that attempts to close the
+fd as soon as it's installed. As a result of that, the rest of the
+setup will be done on a ring that's already torn down. The below should
+fix that.
 
-Alex
+Totally untested, haven't tried the reproducer yet.
 
-> ---
->  drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-> index d48a49d..3099ac2 100644
-> --- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-> +++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-> @@ -2047,7 +2047,7 @@ static const struct i2c_algorithm arcturus_i2c_eeprom_i2c_algo = {
->         .functionality = arcturus_i2c_eeprom_i2c_func,
->  };
->
-> -int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
-> +static int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
->  {
->         struct amdgpu_device *adev = to_amdgpu_device(control);
->         int res;
-> @@ -2065,7 +2065,7 @@ int arcturus_i2c_eeprom_control_init(struct i2c_adapter *control)
->         return res;
->  }
->
-> -void arcturus_i2c_eeprom_control_fini(struct i2c_adapter *control)
-> +static void arcturus_i2c_eeprom_control_fini(struct i2c_adapter *control)
->  {
->         i2c_del_adapter(control);
->  }
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ba1431046c98..749637ca9cf7 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3821,6 +3821,12 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 	ctx->account_mem = account_mem;
+ 	ctx->user = user;
+ 
++	/*
++	 * Grab an initial reference to the ctx, so we ensure we have one
++	 * by the time the fd is installed.
++	 */
++	percpu_ref_get(&ctx->refs);
++
+ 	ret = io_allocate_scq_urings(ctx, p);
+ 	if (ret)
+ 		goto err;
+@@ -3851,8 +3857,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p)
+ 	p->cq_off.cqes = offsetof(struct io_rings, cqes);
+ 
+ 	p->features = IORING_FEAT_SINGLE_MMAP;
++	percpu_ref_put(&ctx->refs);
+ 	return ret;
+ err:
++	percpu_ref_put(&ctx->refs);
+ 	io_ring_ctx_wait_and_kill(ctx);
+ 	return ret;
+ }
+
+-- 
+Jens Axboe
+
