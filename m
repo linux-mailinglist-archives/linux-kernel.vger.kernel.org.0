@@ -2,103 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62922E786F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54019E7876
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 19:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391132AbfJ1Sb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 14:31:28 -0400
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:41976 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387407AbfJ1Sb1 (ORCPT
+        id S1726822AbfJ1ShZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 14:37:25 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38300 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfJ1ShZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 14:31:27 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 1B74CA31
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 18:31:26 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zJHCD8JGeDp3 for <linux-kernel@vger.kernel.org>;
-        Mon, 28 Oct 2019 13:31:25 -0500 (CDT)
-Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com [209.85.161.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id DBF60AA5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 13:31:25 -0500 (CDT)
-Received: by mail-yw1-f70.google.com with SMTP id m36so8064020ywh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 11:31:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=tt/VlbO+igImLkepQJBqwL30PnoA8x9FYvcXGMTcDYw=;
-        b=oNO8+LLHuVipTV+Rmo33B3yON7KyUc9Xj/Pfe8UT1QPRw01PV6eWl4WHxhg+9SvBZ0
-         bqscgIZdzeoQ8IDLZ+0i7jpFyHxw8oin0pPI85H9xjH+ZiugAxI7LYEq4oCB3R/t/8O9
-         P9NmBYOztPK9w7xgbg982mHdMuuUtwOufxCq00e94XU8xEBtjVN9q2yvz/aAl4Gsw4n/
-         Y21aeTWKjmxUx5zC4y2uCsTo/vzdgf+uRr09xIxVvn0ITT0WEByyWq6IQCwnMA1BAIiQ
-         NKebG+Q/ALGkz/AiQWBhLGddIleFsBRSnclNxPt7HJdNi2GyMz4saYe5STIzNQDWdgCE
-         PRGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tt/VlbO+igImLkepQJBqwL30PnoA8x9FYvcXGMTcDYw=;
-        b=s77mquVsl2IkfFz7dgVT4GetBF1iBsbYWDEZKWcjEc1YXClCRZi/tQcekYaC7hxcI8
-         Hs7FCAKjMmO0E27QAkM/PwZ1Ft8ZW2IiVNzAGMUtV20rYJOHHWISCRzz3lnVH2XkkS0A
-         E3NyWi3ITIpmKZR8O3NwzIHBS8NBKJhMSX020rVqfA34qNataiuHZoi2C1R4Y8SPuSoy
-         cpBWKUEOk60bSzx2E2Y5NhFeQeTvHtfKxez529ya4cwoJHAAtbncaPqFY/dEKlKeO+km
-         nY1gSdJL4mDff5qFjapBpMPy/RCu5txR4UQTZRyHGm3hmgAnGu6LDn4wdD+WmWaoIK0+
-         XwUQ==
-X-Gm-Message-State: APjAAAV9XJHDfjc90b+oK5i+qzPXNfzC4VMZE23GGFYdMO5L3KnDspWg
-        giNv43LTmjdObh0buE39SrxNK6KJYtFijoG8ToYEPxXyWeDDzDxVEWNis80P6++epUAZ5yZanMa
-        qX97jjgir5CsIqg+RyePycZG1d1zv
-X-Received: by 2002:a81:848b:: with SMTP id u133mr14474837ywf.249.1572287485189;
-        Mon, 28 Oct 2019 11:31:25 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzdS2/es6j9HHrsCkQGYL6DtKHSGg0H+WNsXY+UpzKPg1CIgtE3W/3jPS5Q92CHzMEUvQZuBA==
-X-Received: by 2002:a81:848b:: with SMTP id u133mr14474807ywf.249.1572287484704;
-        Mon, 28 Oct 2019 11:31:24 -0700 (PDT)
-Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id v198sm7033511ywv.44.2019.10.28.11.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 11:31:24 -0700 (PDT)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] acpi: fix potential race conditions bypassing checks
-Date:   Mon, 28 Oct 2019 13:31:14 -0500
-Message-Id: <20191028183114.15709-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Mon, 28 Oct 2019 14:37:25 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJK5049577;
+        Mon, 28 Oct 2019 13:37:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572287839;
+        bh=PfamenJM3deYwpZXFakRAh5uzTF6DAO1HF1Fe5NgHbQ=;
+        h=From:To:CC:Subject:Date;
+        b=J6F8dzl0jhnnXmKrR6CqGDHFPGbxki3LllNAus09rhslvqsQ4EU+MtHa+XeV+41v2
+         EJs1DxdJA759aotjtP/1dD39KpqfgQGo0AwpB9JkzM4Qsi9QXa80rsPuvS8+FD7cyd
+         IXt4gyuhvRevFXotvdn4vzn8zbW+bmw7o1P6GAAY=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJbo095350;
+        Mon, 28 Oct 2019 13:37:19 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 28
+ Oct 2019 13:37:07 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 28 Oct 2019 13:37:07 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJGa054891;
+        Mon, 28 Oct 2019 13:37:19 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v15 00/19] Multicolor Framework
+Date:   Mon, 28 Oct 2019 13:36:10 -0500
+Message-ID: <20191028183629.11779-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"obj" is a local variable. Elements are deep-copied from external
-package to obj and security-checked. The original code is
-seemingly fine; however, compilers optimize the deep copies into
-shallow copies, introducing potential race conditions. For
-example, the checks for type and length may be bypassed. The fix
-tells compilers to not optimize the deep copy by inserting
-"volatile".
+Hello
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/acpi/processor_throttling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am hoping that this is a final version to get pulled.  From there we can
+patch fixes on top of this code.
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 532a1ae3595a..6f4d86f8a9ce 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -413,7 +413,7 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- 	acpi_status status = 0;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
- 	union acpi_object *ptc = NULL;
--	union acpi_object obj = { 0 };
-+	volatile union acpi_object obj = { 0 };
- 	struct acpi_processor_throttling *throttling;
- 
- 	status = acpi_evaluate_object(pr->handle, "_PTC", NULL, &buffer);
+Changes from v14
+
+MC Framework:
+Fixed mc_calc_components from color_component->color_components
+Added back in inline devm functions for when MULTI_COLOR_FRAMEWORK flag is not
+set.
+
+LP55xx
+Update multi color and single LED DT parsing (From Jacek)
+
+Children devices (LP5521/23/62 & LP8501)
+
+Update the probe routines for each child device to pass in the chip->cfg so that
+the LP55xx common code can access the max_channel config data.
+
+Dan
+
+Dan Murphy (19):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Convert LED class registration to devm_*
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add multicolor brightness
+    function
+  leds: lp5521: Add multicolor framework multicolor brightness support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+  dt: bindings: Update lp55xx binding to recommended LED naming
+  leds: lp55xx-common: Remove extern from lp55xx-common header
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  36 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  | 100 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 271 ++++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  43 +-
+ drivers/leds/leds-lp5523.c                    |  62 +-
+ drivers/leds/leds-lp5562.c                    |  22 +-
+ drivers/leds/leds-lp55xx-common.c             | 235 ++++--
+ drivers/leds/leds-lp55xx-common.h             |  36 +-
+ drivers/leds/leds-lp8501.c                    |  23 +-
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          | 139 +++
+ include/linux/platform_data/leds-lp55xx.h     |   8 +
+ 23 files changed, 2105 insertions(+), 172 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
 -- 
-2.17.1
+2.22.0.214.g8dca754b1e
 
