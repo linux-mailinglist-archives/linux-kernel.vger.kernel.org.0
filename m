@@ -2,169 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3ABE7C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9F4E7C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 23:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbfJ1WhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 18:37:17 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30465 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728648AbfJ1WhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 18:37:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 15:37:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,241,1569308400"; 
-   d="scan'208";a="203399122"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 28 Oct 2019 15:37:16 -0700
-Date:   Mon, 28 Oct 2019 15:41:40 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 06/11] iommu/vt-d: Avoid duplicated code for PASID
- setup
-Message-ID: <20191028154140.313a1fe9@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDCA0@SHSMSX104.ccr.corp.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-7-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDCA0@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729644AbfJ1WoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 18:44:10 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:39324 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJ1WoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 18:44:09 -0400
+Received: by mail-il1-f195.google.com with SMTP id i12so9648254ils.6
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 15:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7oyJtVgOCGvHRM1kKW81IfnFRuKk0Wt8gUJq9lHt3b4=;
+        b=tN6sRznXRLbhX3REMNJELP+zf+OcM7vU768K/48hHxEPfdb9gott1G1wkMRx1cRVDs
+         9ArmBrOxmh4kQnPF6szwEWfxAU9YK1t26gYX6fZzUMXXKC0gDcWmMC+rWHiGAQedQNYl
+         8AoysUgiFKOgexGfYA6/Zzf2NU38kAnPf/deP+KRw4zC4AlAlBCfuMEwWDiTdRZxRyXs
+         1NDBRVe4Wsku6izPZ+f0bSoMwHhmXj+6D5NxVb/I5YIbQF7qK2vCwKbAVC6ypk3vq4Kx
+         eAHUBQ6B9bcYEkt+P24Bi2uLgBT5dI3pRX6xGsWBiKjG9qWRDgIArrzKqbKaGzHCAXLB
+         XxLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7oyJtVgOCGvHRM1kKW81IfnFRuKk0Wt8gUJq9lHt3b4=;
+        b=NkBK8+pP1zV0UjLvRrZLwBXBIx03CqXQxHtR5KWYnmXCP59IOpCdSq3QXtXr4yuXgL
+         u9SS0rLrOIEKJE9d320MoGiuZA7Wc3TEN4l6yLPrJBhzW19A26T3jSTKTpP4rC2vuGaV
+         KekRyCutkSXoLMom7ARsIfqacwC6vNUnOPOsXkA4Hl5TrMlQWBOjr9FSJJfSaNCz4e9y
+         ueoz5prw+EfCxxrjz1RwaWeYZv+xEUEz40XfpGJtSiTcwVMngiQM8zL9am8alSt3SBk7
+         2DZkdP+UjalL69Swa5B61SFDTmX0F6SJEIRsP2/IlQar6OIksM73MmHrWz2lhOUsLZNQ
+         /jYg==
+X-Gm-Message-State: APjAAAXhVceufZIlxaGFXfWpm9ASP7fJDcFDXWfbut7/Zh9xa+idxFay
+        tBFiL/SEE5Q0HNuAOuEmah3DuQEyVyGr8TEBrdAbSg==
+X-Google-Smtp-Source: APXvYqxxqFSLW+YQvW3W23/F3AzTIeFNS+xtL17gJ51JW7PYCH8Mt+fklr3ia4Aa36RBcrAlCDvv3YOJ9LZ4GPNFxGs=
+X-Received: by 2002:a92:350a:: with SMTP id c10mr5629595ila.140.1572302648463;
+ Mon, 28 Oct 2019 15:44:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191005091614.11635-1-leo.yan@linaro.org> <20191005091614.11635-4-leo.yan@linaro.org>
+ <20191011175353.GA13688@xps15> <20191022050304.GB32731@leoy-ThinkPad-X240s>
+In-Reply-To: <20191022050304.GB32731@leoy-ThinkPad-X240s>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 28 Oct 2019 16:43:57 -0600
+Message-ID: <CANLsYkwx1Z2eFz4JqKe9UB8tFqpSdx-kakMHnL1rkUttLZeX1w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] perf cs-etm: Support thread stack
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Coresight ML <coresight@lists.linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Oct 2019 06:42:54 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+On Mon, 21 Oct 2019 at 23:03, Leo Yan <leo.yan@linaro.org> wrote:
+>
+> Hi Mathieu,
+>
+> On Fri, Oct 11, 2019 at 11:53:53AM -0600, Mathieu Poirier wrote:
+> > On Sat, Oct 05, 2019 at 05:16:11PM +0800, Leo Yan wrote:
+> > > Since Arm CoreSight doesn't support thread stack, the decoding cannot
+> > > display symbols with indented spaces to reflect the stack depth.
+> > >
+> > > This patch adds support thread stack for Arm CoreSight, this allows
+> > > 'perf script' to display properly for option '-F,+callindent'.
+> > >
+> > > Before:
+> > >
+> > >   # perf script -F,+callindent
+> > >             main  2808          1          branches: coresight_test1                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> > >             main  2808          1          branches: printf@plt                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> > >             main  2808          1          branches: printf@plt                           aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> > >             main  2808          1          branches: _init                                aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> > >             main  2808          1          branches: _dl_fixup                            ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > >             main  2808          1          branches: _dl_lookup_symbol_x                  ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > >   [...]
+> > >
+> > > After:
+> > >
+> > >   # perf script -F,+callindent
+> > >             main  2808          1          branches:                 coresight_test1                                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> > >             main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> > >             main  2808          1          branches:                     printf@plt                                       aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> > >             main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> > >             main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
+> > >             main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > >   [...]
+> > >
+> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > ---
+> > >  tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 44 insertions(+)
+> > >
+> > > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > > index 58ceba7b91d5..780abbfd1833 100644
+> > > --- a/tools/perf/util/cs-etm.c
+> > > +++ b/tools/perf/util/cs-etm.c
+> > > @@ -1117,6 +1117,45 @@ static void cs_etm__copy_insn(struct cs_etm_queue *etmq,
+> > >                        sample->insn_len, (void *)sample->insn);
+> > >  }
+> > >
+> > > +static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
+> > > +                               struct cs_etm_traceid_queue *tidq)
+> > > +{
+> > > +   struct cs_etm_auxtrace *etm = etmq->etm;
+> > > +   u8 trace_chan_id = tidq->trace_chan_id;
+> > > +   int insn_len;
+> > > +   u64 from_ip, to_ip;
+> > > +
+> > > +   if (etm->synth_opts.thread_stack) {
+> > > +           from_ip = cs_etm__last_executed_instr(tidq->prev_packet);
+> > > +           to_ip = cs_etm__first_executed_instr(tidq->packet);
+> > > +
+> > > +           insn_len = cs_etm__instr_size(etmq, trace_chan_id,
+> > > +                                         tidq->prev_packet->isa, from_ip);
+> > > +
+> > > +           /*
+> > > +            * Create thread stacks by keeping track of calls and returns;
+> > > +            * any call pushes thread stack, return pops the stack, and
+> > > +            * flush stack when the trace is discontinuous.
+> > > +            */
+> > > +           thread_stack__event(tidq->thread, tidq->prev_packet->cpu,
+> > > +                               tidq->prev_packet->flags,
+> > > +                               from_ip, to_ip, insn_len,
+> > > +                               etmq->buffer->buffer_nr);
+> >
+> > Details are a little fuzzy in my head but I'm pretty sure
+> > we want trace_chan_id here.
+>
+> I spent some time to look into this question, and I think we don't
+> need to add extra info for trace_chan_id.
+>
+> The main reason is for CPU wide tracing, if one task is migrated from
+> CPU_a to CPU_b, if we append 'trace_chan_id' for the buffer number, then
+> it will tell the thread_stack that the buffer has been changed (or it
+> will be considered the trace is discontinuous), then thread stack will
+> be flushed.  Actually, this is not what we want; if a task is migrated
+> from one CPU to another, we still need to keep its thread stack if the
+> trace data comes from the same buffer_nr.
 
-> > From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
-> > Sent: Friday, October 25, 2019 3:55 AM
-> > 
-> > After each setup for PASID entry, related translation caches must be
-> > flushed.
-> > We can combine duplicated code into one function which is less error
-> > prone.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
-> 
-> similarly, it doesn't need to be in this series.
-Technically true, it is in this series so that we can use the combined
-function. 
-> 
-> > ---
-> >  drivers/iommu/intel-pasid.c | 48
-> > +++++++++++++++++--------------------------- -
-> >  1 file changed, 18 insertions(+), 30 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel-pasid.c
-> > b/drivers/iommu/intel-pasid.c index e79d680fe300..ffbd416ed3b8
-> > 100644 --- a/drivers/iommu/intel-pasid.c
-> > +++ b/drivers/iommu/intel-pasid.c
-> > @@ -485,6 +485,21 @@ void intel_pasid_tear_down_entry(struct
-> > intel_iommu *iommu,
-> >  		devtlb_invalidation_with_pasid(iommu, dev, pasid);
-> >  }
-> > 
-> > +static void pasid_flush_caches(struct intel_iommu *iommu,
-> > +				struct pasid_entry *pte,
-> > +				int pasid, u16 did)
-> > +{
-> > +	if (!ecap_coherent(iommu->ecap))
-> > +		clflush_cache_range(pte, sizeof(*pte));
-> > +
-> > +	if (cap_caching_mode(iommu->cap)) {
-> > +		pasid_cache_invalidation_with_pasid(iommu, did,
-> > pasid);
-> > +		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> > +	} else {
-> > +		iommu_flush_write_buffer(iommu);
-> > +	}
-> > +}
-> > +
-> >  /*
-> >   * Set up the scalable mode pasid table entry for first only
-> >   * translation type.
-> > @@ -530,16 +545,7 @@ int intel_pasid_setup_first_level(struct
-> > intel_iommu *iommu,
-> >  	/* Setup Present and PASID Granular Transfer Type: */
-> >  	pasid_set_translation_type(pte, 1);
-> >  	pasid_set_present(pte);
-> > -
-> > -	if (!ecap_coherent(iommu->ecap))
-> > -		clflush_cache_range(pte, sizeof(*pte));
-> > -
-> > -	if (cap_caching_mode(iommu->cap)) {
-> > -		pasid_cache_invalidation_with_pasid(iommu, did,
-> > pasid);
-> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> > -	} else {
-> > -		iommu_flush_write_buffer(iommu);
-> > -	}
-> > +	pasid_flush_caches(iommu, pte, pasid, did);
-> > 
-> >  	return 0;
-> >  }
-> > @@ -603,16 +609,7 @@ int intel_pasid_setup_second_level(struct
-> > intel_iommu *iommu,
-> >  	 */
-> >  	pasid_set_sre(pte);
-> >  	pasid_set_present(pte);
-> > -
-> > -	if (!ecap_coherent(iommu->ecap))
-> > -		clflush_cache_range(pte, sizeof(*pte));
-> > -
-> > -	if (cap_caching_mode(iommu->cap)) {
-> > -		pasid_cache_invalidation_with_pasid(iommu, did,
-> > pasid);
-> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> > -	} else {
-> > -		iommu_flush_write_buffer(iommu);
-> > -	}
-> > +	pasid_flush_caches(iommu, pte, pasid, did);
-> > 
-> >  	return 0;
-> >  }
-> > @@ -646,16 +643,7 @@ int intel_pasid_setup_pass_through(struct
-> > intel_iommu *iommu,
-> >  	 */
-> >  	pasid_set_sre(pte);
-> >  	pasid_set_present(pte);
-> > -
-> > -	if (!ecap_coherent(iommu->ecap))
-> > -		clflush_cache_range(pte, sizeof(*pte));
-> > -
-> > -	if (cap_caching_mode(iommu->cap)) {
-> > -		pasid_cache_invalidation_with_pasid(iommu, did,
-> > pasid);
-> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> > -	} else {
-> > -		iommu_flush_write_buffer(iommu);
-> > -	}
-> > +	pasid_flush_caches(iommu, pte, pasid, did);
-> > 
-> >  	return 0;
-> >  }
-> > --
-> > 2.7.4  
-> 
+After reviewing the code I conclude that using etmq->buffer->buffer_nr
+is the correct way to proceed.
 
-[Jacob Pan]
+That being said you have sent this new set [1], which is a rework of
+some of the code you have in the current set.  As such the only way
+forward is for you to wait until [1] I has been applied and rebase the
+remaining work in this set on top of it.
+
+Let me know if you have questions.
+
+Thanks,
+Mathieu
+
+[1]. https://patchwork.kernel.org/cover/11130213/
+
+>
+> To be honest, I struggled to understand what's the purpose for
+> 'buffer->buffer_nr', from the code, I think 'buffer->buffer_nr' is
+> mainly used to trace the splitted buffers (e.g. the buffers are splitted
+> into different queues so the trace data coming from different trace
+> chunk?).  Now I observe 'buffer->buffer_nr' is always zero since the
+> buffer is not used with splitted mode.  If later we support 1:1 map
+> between tracers and sinks, then we need to set 'buffer->buffer_nr' so
+> can reflect the correct buffer mapping, but we don't need to use
+> trace_chan_id as extra info at here.
+>
+> Please let me know what you think about this?  If you agree with this,
+> I will send out patch v4 soon with addressing other comments.
+>
+> Thanks,
+> Leo Yan
+>
+> > > +   } else {
+> > > +           /*
+> > > +            * The thread stack can be output via thread_stack__process();
+> > > +            * thus the detailed information about paired calls and returns
+> > > +            * will be facilitated by Python script for the db-export.
+> > > +            *
+> > > +            * Need to set trace buffer number and flush thread stack if the
+> > > +            * trace buffer number has been alternate.
+> > > +            */
+> > > +           thread_stack__set_trace_nr(tidq->thread,
+> > > +                                      tidq->prev_packet->cpu,
+> > > +                                      etmq->buffer->buffer_nr);
+> >
+> > Same here.
+> >
+> > > +   }
+> > > +}
+> > > +
+> > >  static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
+> > >                                         struct cs_etm_traceid_queue *tidq,
+> > >                                         u64 addr, u64 period)
+> > > @@ -1393,6 +1432,9 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
+> > >             tidq->period_instructions = instrs_over;
+> > >     }
+> > >
+> > > +   if (tidq->prev_packet->last_instr_taken_branch)
+> > > +           cs_etm__add_stack_event(etmq, tidq);
+> > > +
+> > >     if (etm->sample_branches) {
+> > >             bool generate_sample = false;
+> > >
+> > > @@ -2593,6 +2635,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+> > >             itrace_synth_opts__set_default(&etm->synth_opts,
+> > >                             session->itrace_synth_opts->default_no_sample);
+> > >             etm->synth_opts.callchain = false;
+> > > +           etm->synth_opts.thread_stack =
+> > > +                           session->itrace_synth_opts->thread_stack;
+> > >     }
+> > >
+> > >     err = cs_etm__synth_events(etm, session);
+> > > --
+> > > 2.17.1
+> > >
