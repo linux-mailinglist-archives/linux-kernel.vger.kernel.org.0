@@ -2,127 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D78E6EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD86E6EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 10:19:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387893AbfJ1JSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 05:18:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57538 "EHLO mx1.suse.de"
+        id S2387909AbfJ1JTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 05:19:25 -0400
+Received: from mail-eopbgr80077.outbound.protection.outlook.com ([40.107.8.77]:20670
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727664AbfJ1JSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:18:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5496BB009;
-        Mon, 28 Oct 2019 09:18:37 +0000 (UTC)
-Date:   Mon, 28 Oct 2019 09:18:36 +0000
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <ukernel@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ceph: Fix use-after-free in __ceph_remove_cap
-Message-ID: <20191028091836.GA8558@hermes.olymp>
-References: <9c1fe73500ca7dece15c73d7534b9e0ec417c83a.camel@kernel.org>
- <20191025130524.31755-1-lhenriques@suse.com>
- <1a9ac7d3097efe53ad6f2fda4dd584204dd7eba2.camel@kernel.org>
+        id S1727664AbfJ1JTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:19:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pk3FAYAg5kGr5Gs8ZT4qSg3DD25ZO4mcaiFyiKOKOrEsr0yOSTJ1nXIo3Eznzvwel7Cqg5rMQ0j9NB0Z3opUGcrA0hQi9Dn17Pzg1XAtXUiLR3fChmBLjej6q543GbVW0s4J3M2Rsr5M09SGD9fKOoXDDweSVBaCDYsDHjT5m4+mqx9170EyBMAlMZarBq+TL3RiE/iFyZKE1G06w8SbEVmPm563oT+pMi6M+OytCgpVzdIBannq+P1YXj+GAgUic+wepiercQvdOwPWaSMngPRk0EeC99sw19VBwqOSothPcI3Kdk7h//767wgnucEJNJwVTPO2sCJn4mjnWcQv0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=poljYZWImd/UoV9znr9CL8qrk3e49zRSwLQN4rNYNDU=;
+ b=oOd1ZPnfJef7MyO3NbzHDfU2zmIn/Sqlg3iyvJn0Sddukczu9o5jfvmg44xwUyqYyjC/tuxG77cLJgjJX3tISGgOieXql91KjyrlKkS5vRCvvD1IpNoE6MvFckLLFhPBlArN+VvUs46Ytf+Sot9PakGzXpljlPzZGAGROpO4c5p2k0gg7g4LrJgcjUoKFQxnGE3AZmBb9MrmCu/APQf9TOI9HWHC6a73C7J73olrKx4oay1e7tY27K07MQBlXKN/FMgSOMz76LM8iNrntHJqVP1ynARHddBHVGyZA51Vdz6R/70PzssezcR3Ube9Q/guS13NK+xq+z+O3v6mAvIkwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=poljYZWImd/UoV9znr9CL8qrk3e49zRSwLQN4rNYNDU=;
+ b=rpikaJfoOVEFXoULzUnoF+g4dgk0FnSExpFwQ5qwewC65Ti9+gB0mWRvmanAra5hnTV2/retq+/3ZmQtsKgLnkx7q+FAHwZ6wkP2J2bB+g0OJZA5C/qE6qRNMC2wpOiHtuZhsg+tBzdkWIZ6XgoYnGuS+ooccpHysXMc3Mw/V6s=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3915.eurprd04.prod.outlook.com (52.134.71.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.24; Mon, 28 Oct 2019 09:19:20 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d469:ad51:2bec:19f0%6]) with mapi id 15.20.2387.025; Mon, 28 Oct 2019
+ 09:19:20 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 0/9] Add SoC serial number support for i.MX6/7 SoCs
+Thread-Topic: [PATCH 0/9] Add SoC serial number support for i.MX6/7 SoCs
+Thread-Index: AQHVjT4KbRIaf/2970uItyw0KUGGP6dvxB8AgAAC0bA=
+Date:   Mon, 28 Oct 2019 09:19:19 +0000
+Message-ID: <DB3PR0402MB3916A92B8A20D4322423D995F5660@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1572232370-31580-1-git-send-email-Anson.Huang@nxp.com>
+ <20191028090846.GA16985@dragon>
+In-Reply-To: <20191028090846.GA16985@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9025ac87-b24d-44a6-c11c-08d75b87ea17
+x-ms-traffictypediagnostic: DB3PR0402MB3915:|DB3PR0402MB3915:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB391523D74D7C7D48D827EF31F5660@DB3PR0402MB3915.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 0204F0BDE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(4636009)(136003)(366004)(346002)(39860400002)(396003)(376002)(199004)(189003)(40224003)(64756008)(25786009)(76116006)(54906003)(66476007)(5660300002)(66556008)(66446008)(6246003)(316002)(7736002)(305945005)(66066001)(14454004)(11346002)(55016002)(256004)(446003)(4326008)(44832011)(9686003)(476003)(478600001)(52536014)(66946007)(2906002)(33656002)(3846002)(6916009)(71190400001)(71200400001)(6116002)(8676002)(86362001)(76176011)(486006)(229853002)(186003)(7696005)(102836004)(74316002)(99286004)(26005)(81166006)(81156014)(8936002)(6436002)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3915;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4FdwISIpPAbrneGlM159q4trkQVn7RJIQ8qHD10HGH3FTfoKXtk5MAMori0hxazj6sSFi8iyPR0o2fTbvlZJCWiI4PYLxidfLOxfevZ7NZp7CWBPAoCRXHtXyQm/eKMO2RydXnBLyhDQZxLD6O+q8ezvtd1RYa87P+iA7rreReiJKlg0EfKW/zsj4TkCOGWgyVJYDu8DQm+HhuPaWwNeow7by6WXbJ0+cgB3FeuAUgQLc4AXkuXHd1I2HJScDQ7REGXlA0r1z4kLAYd/hzS+BSQzyBrjDDqYRg2mXnwyt+pV8eyO9m2ufEnSBQsN1R5nhJB7oE/tmvvzEBNtTtnZkRkEkwOSRDxc6fDlYcpXkMeFoshgRk6dv6pkZiefyFR9CFjcfB4wTtbg0J9vv4s3cDQCldPbbpLRKbZqc46iouGIxwosjOWFxDeTpJRmSL+X
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1a9ac7d3097efe53ad6f2fda4dd584204dd7eba2.camel@kernel.org>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9025ac87-b24d-44a6-c11c-08d75b87ea17
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2019 09:19:20.0423
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ynMNG+sEp8eCQEoxfq9wpKarPGMLZMKNnKXvGMxl349JeyvRqkDXpeEryqHq6i8kViITVRLDVn1yqxIUMqy9zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3915
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 08:31:49AM -0400, Jeff Layton wrote:
-> On Fri, 2019-10-25 at 14:05 +0100, Luis Henriques wrote:
-> > KASAN reports a use-after-free when running xfstest generic/531, with the
-> > following trace:
-> > 
-> > [  293.903362]  kasan_report+0xe/0x20
-> > [  293.903365]  rb_erase+0x1f/0x790
-> > [  293.903370]  __ceph_remove_cap+0x201/0x370
-> > [  293.903375]  __ceph_remove_caps+0x4b/0x70
-> > [  293.903380]  ceph_evict_inode+0x4e/0x360
-> > [  293.903386]  evict+0x169/0x290
-> > [  293.903390]  __dentry_kill+0x16f/0x250
-> > [  293.903394]  dput+0x1c6/0x440
-> > [  293.903398]  __fput+0x184/0x330
-> > [  293.903404]  task_work_run+0xb9/0xe0
-> > [  293.903410]  exit_to_usermode_loop+0xd3/0xe0
-> > [  293.903413]  do_syscall_64+0x1a0/0x1c0
-> > [  293.903417]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > 
-> > This happens because __ceph_remove_cap() may queue a cap release
-> > (__ceph_queue_cap_release) which can be scheduled before that cap is
-> > removed from the inode list with
-> > 
-> > 	rb_erase(&cap->ci_node, &ci->i_caps);
-> > 
-> > And, when this finally happens, the use-after-free will occur.
-> > 
-> > This can be fixed by removing the cap from the inode list before being
-> > removed from the session list, and thus eliminating the risk of an UAF.
-> > 
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> > Hi!
-> > 
-> > So, after spending some time trying to find possible races throught code
-> > review and testing, I modified the fix according to Jeff's suggestion.
-> > 
-> > Cheers,
-> > Luis
-> > 
-> > fs/ceph/caps.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index d3b9c9d5c1bd..a9ce858c37d0 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -1058,6 +1058,11 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
-> >  
-> >  	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
-> >  
-> > +	/* remove from inode list */
-> > +	rb_erase(&cap->ci_node, &ci->i_caps);
-> > +	if (ci->i_auth_cap == cap)
-> > +		ci->i_auth_cap = NULL;
-> > +
-> >  	/* remove from session list */
-> >  	spin_lock(&session->s_cap_lock);
-> >  	if (session->s_cap_iterator == cap) {
-> > @@ -1091,11 +1096,6 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
-> >  
-> >  	spin_unlock(&session->s_cap_lock);
-> >  
-> > -	/* remove from inode list */
-> > -	rb_erase(&cap->ci_node, &ci->i_caps);
-> > -	if (ci->i_auth_cap == cap)
-> > -		ci->i_auth_cap = NULL;
-> > -
-> >  	if (removed)
-> >  		ceph_put_cap(mdsc, cap);
-> >  
-> 
-> Looks good. Merged with a slight modification to the comment:
-> 
-> +       /* remove from inode's cap rbtree, and clear auth cap */
-> 
-
-Awesome, thanks.  Regarding CC: stable@, feel free to add that too.  I
-guess it makes sense, even if this issue has been there for a while
-apparently without any reports.  (Although UAFs may have non-obvious
-side effects, I guess...)
-
-Cheers,
---
-Luís
-
-> Thanks!
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
+SGksIFNoYXduDQoNCj4gT24gTW9uLCBPY3QgMjgsIDIwMTkgYXQgMTE6MTI6NDFBTSArMDgwMCwg
+QW5zb24gSHVhbmcgd3JvdGU6DQo+ID4gaS5NWDYvNyBTb0NzIGhhdmUgNjQtYml0IHVuaXF1ZSBJ
+RCBzdG9yZWQgaW4gT0NPVFAgYmFuayAwLCB3b3JkIDEvMiwNCj4gPiByZWFkIHRoZW0gb3V0IGFz
+IFNvQyBzZXJpYWwgbnVtYmVyIHdoaWNoIGNhbiBiZSB1c2VkIGZyb20gdXNlcnNwYWNlOg0KPiA+
+DQo+ID4gcm9vdEBpbXg3ZHNhYnJlc2Q6fiMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NlcmlhbF9u
+dW1iZXINCj4gPiAwMDAwMDI4RkY2MThCOTUzDQo+ID4NCj4gPiBBZGQgc3VwcG9ydCBmb3IgaS5N
+WDZRLzZETC82U0wvNlNYLzZTTEwvNlVMLzZVTEwvNlVMWi83RCwgYXMgdGhleQ0KPiBoYXZlDQo+
+ID4gc2FtZSB1bmlxdWUgSUQgbGF5b3V0IGluIE9DT1RQLg0KPiA+DQo+ID4gQW5zb24gSHVhbmcg
+KDkpOg0KPiA+ICAgQVJNOiBpbXg6IEFkZCBzZXJpYWwgbnVtYmVyIHN1cHBvcnQgZm9yIGkuTVg2
+UQ0KPiA+ICAgQVJNOiBpbXg6IEFkZCBzZXJpYWwgbnVtYmVyIHN1cHBvcnQgZm9yIGkuTVg2REwN
+Cj4gPiAgIEFSTTogaW14OiBBZGQgc2VyaWFsIG51bWJlciBzdXBwb3J0IGZvciBpLk1YNlNMTA0K
+PiA+ICAgQVJNOiBpbXg6IEFkZCBzZXJpYWwgbnVtYmVyIHN1cHBvcnQgZm9yIGkuTVg2VUxMDQo+
+ID4gICBBUk06IGlteDogQWRkIHNlcmlhbCBudW1iZXIgc3VwcG9ydCBmb3IgaS5NWDZVTA0KPiA+
+ICAgQVJNOiBpbXg6IEFkZCBzZXJpYWwgbnVtYmVyIHN1cHBvcnQgZm9yIGkuTVg2VUxaDQo+ID4g
+ICBBUk06IGlteDogQWRkIHNlcmlhbCBudW1iZXIgc3VwcG9ydCBmb3IgaS5NWDZTTA0KPiA+ICAg
+QVJNOiBpbXg6IEFkZCBzZXJpYWwgbnVtYmVyIHN1cHBvcnQgZm9yIGkuTVg2U1gNCj4gPiAgIEFS
+TTogaW14OiBBZGQgc2VyaWFsIG51bWJlciBzdXBwb3J0IGZvciBpLk1YN0QNCj4gDQo+IEZvciB0
+aGlzIHBhcnRpY3VsYXIgY2FzZSwgSSB0aGluayBvbmUgc2luZ2xlIHBhdGNoIGlzIGV2ZW4gYmV0
+dGVyIHRoYW4gYSBzZXJpZXMuDQo+IFNvIHBsZWFzZSBzcXVhc2ggdGhlbS4NCg0KRG9uZSBpbiBW
+Mi4NCg0KVGhhbmtzLA0KQW5zb24NCg0KDQo=
