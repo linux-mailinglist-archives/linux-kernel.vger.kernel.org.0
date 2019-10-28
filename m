@@ -2,281 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1E9E6B3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C866E6ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 03:32:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731132AbfJ1C6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 22:58:46 -0400
-Received: from mga12.intel.com ([192.55.52.136]:35133 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731082AbfJ1C6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 22:58:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2019 19:58:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,238,1569308400"; 
-   d="scan'208";a="229552534"
-Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Oct 2019 19:58:38 -0700
-From:   Like Xu <like.xu@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, kan.liang@intel.com,
-        wei.w.wang@intel.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [PATCH v4 6/6] KVM: x86/vPMU: Add lazy mechanism to release perf_event per vPMC
-Date:   Sun, 27 Oct 2019 18:52:43 +0800
-Message-Id: <20191027105243.34339-7-like.xu@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191027105243.34339-1-like.xu@linux.intel.com>
-References: <20191027105243.34339-1-like.xu@linux.intel.com>
+        id S1729752AbfJ1Ccz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 27 Oct 2019 22:32:55 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41911 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728627AbfJ1Ccz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 22:32:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p4so8204020wrm.8
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2019 19:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w7WLAChacz4cdQUuGvSzDH2SDjigryRCbt+WDbtW90s=;
+        b=IysszB7/4YwlqN2hIxbjmBzRqB+jb5hB3Tg+ljjzuq3A+FEhC3OFZFMovTbRT0LJfK
+         H4qNyEspy1rpsUjibdaW/gAWpBeFZqCkQNS/a6m2giKGzWFHNCZXv+UikEp3b05qqUYQ
+         XL2aGPYxYupmlhSDoZ4ce3ZDLKnBEnisKO4aE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w7WLAChacz4cdQUuGvSzDH2SDjigryRCbt+WDbtW90s=;
+        b=CUKbjv34ANCLDSYIDRw9ENif7yKFb1Wz7VEBSd5frU4ahQRmeXXiH9USGcHZpwo63G
+         KJlw9LBxunqUPE6srOEC1gAYyR4oJEqev4WC9rtqJvnEOZiinL9/1pR80oqQBMcIuUcI
+         cLteyE177WlqzYpJDnCcXc+40/Jgpo08I+yd4P/sBchZYGANYnLfWWlHfrqtiv5qxbrV
+         MSq/go93iAaqgcWcJppgzf5LexLUWlTzYJdFdS2eiJAeYIGcU+Uu7x6dDvLYbpRS+pjy
+         cSUBTHoDr/WKFG7Uwa0ZRHGivroEkDImiCga0jb3Nxh5npz/vneRWbEbYG4WGCDCJMuY
+         uQVg==
+X-Gm-Message-State: APjAAAV9/6n75Pe2PVs2enwTA9aQ650ZCs/ewxNznmdbHzaQUcDfAR/s
+        dUzMAh1NdLURqFNJ4kF8qKOlgTaLfgqsjvaL0u1DGQ==
+X-Google-Smtp-Source: APXvYqzK0YBdyQgsMLm2ci9Dx4kOzJFycGTSzYpVPVfKV8gCZkiX6U1k76C9C14EYAVMDUxQGFHxdvyM+PTOBO8Lys4=
+X-Received: by 2002:adf:b1d1:: with SMTP id r17mr12904765wra.201.1572229970951;
+ Sun, 27 Oct 2019 19:32:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191025133007.11190-1-cychiang@chromium.org> <20191025133007.11190-3-cychiang@chromium.org>
+ <20191025162232.GA23022@bogus>
+In-Reply-To: <20191025162232.GA23022@bogus>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Mon, 28 Oct 2019 10:32:24 +0800
+Message-ID: <CAFv8NwKhe=CEuMCgeP1G0-Az4GEdMGPMMhvM3oY2=KmZNGrcRw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] ASoC: rockchip-max98090: Support usage with and
+ without HDMI
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Tzung-Bi Shih <tzungbi@chromium.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, a host perf_event is created for a vPMC functionality emulation.
-It’s unpredictable to determine if a disabled perf_event will be reused.
-If they are disabled and are not reused for a considerable period of time,
-those obsolete perf_events would increase host context switch overhead that
-could have been avoided.
+On Sat, Oct 26, 2019 at 12:22 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Oct 25, 2019 at 09:30:03PM +0800, Cheng-Yi Chiang wrote:
+> > There will be multiple boards sharing this machine driver.
+> > Use compatible string to specify the use case.
+> >
+> > "rockchip,rockchip-audio-max98090" for max98090-only.
+> > "rockchip,rockchip-audio-hdmi" for HDMI-only
+> > "rockchip,rockchip-audio-max98090-hdmi" for max98090 plus
+> >
+> > Move these properties to optional because they are not needed for
+> > HDMI-only use case.
+> > "rockchip,audio-codec": The phandle of the MAX98090 audio codec
+> > "rockchip,headset-codec": The phandle of Ext chip for jack detection
+> >
+> > The machine driver change will add support for HDMI codec in
+> > rockchip-max98090.
+> > Add one optional property "rockchip,hdmi-codec" to let user specify HDMI
+> > device node in DTS so machine driver can find hdmi-codec device node for
+> > codec DAI.
+>
+> Why not just use the presence of rockchip,hdmi-codec to enable HDMI or
+> not. Maybe you still add rockchip,rockchip-audio-hdmi for HDMI only.
+>
+> Really, the same should have been done for which codec is used too, but
+> I guess someone wanted 2 machine drivers.
 
-If the guest doesn't WRMSR any of the vPMC's MSRs during an entire vcpu
-sched time slice, and its independent enable bit of the vPMC isn't set,
-we can predict that the guest has finished the use of this vPMC, and then
-do request KVM_REQ_PMU in kvm_arch_sched_in and release those perf_events
-in the first call of kvm_pmu_handle_event() after the vcpu is scheduled in.
+Hi Rob,
+Thanks for the quick reply.
+I can make change in machine driver so that
+- The presence of rockchip,audio-codec enable max98090
+- The presence of rockchip,hdmi-codec enable HDMI.
 
-This lazy mechanism delays the event release time to the beginning of the
-next scheduled time slice if vPMC's MSRs aren't changed during this time
-slice. If guest comes back to use this vPMC in next time slice, a new perf
-event would be re-created via perf_event_create_kernel_counter() as usual.
+With that, we don't need the three properties added in this patch:
+"rockchip,rockchip-audio-max98090" for max98090-only.
+"rockchip,rockchip-audio-hdmi" for HDMI-only
+"rockchip,rockchip-audio-max98090-hdmi" for max98090 plus HDMI.
 
-Suggested-by: Wei Wang <wei.w.wang@intel.com>
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Like Xu <like.xu@linux.intel.com>
----
- arch/x86/include/asm/kvm_host.h | 14 ++++++++
- arch/x86/kvm/pmu.c              | 58 +++++++++++++++++++++++++++++++++
- arch/x86/kvm/pmu.h              |  2 ++
- arch/x86/kvm/pmu_amd.c          |  1 +
- arch/x86/kvm/vmx/pmu_intel.c    |  6 ++++
- arch/x86/kvm/x86.c              |  6 ++++
- 6 files changed, 87 insertions(+)
+I will post an update soon. Thanks!
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index c4e0da8e899c..1f489ffa3e9b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -475,6 +475,20 @@ struct kvm_pmu {
- 	struct kvm_pmc fixed_counters[INTEL_PMC_MAX_FIXED];
- 	struct irq_work irq_work;
- 	u64 reprogram_pmi;
-+	DECLARE_BITMAP(all_valid_pmc_idx, X86_PMC_IDX_MAX);
-+	DECLARE_BITMAP(pmc_in_use, X86_PMC_IDX_MAX);
-+
-+	/*
-+	 * The gate to release perf_events not marked in
-+	 * pmc_in_use only once in a vcpu time slice.
-+	 */
-+	bool need_cleanup;
-+
-+	/*
-+	 * The total number of programmed perf_events and it helps to avoid
-+	 * redundant check before cleanup if guest don't use vPMU at all.
-+	 */
-+	u8 event_count;
- };
- 
- struct kvm_pmu_ops;
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 47a01a75a8fa..0655fcde190f 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -137,6 +137,7 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
- 	}
- 
- 	pmc->perf_event = event;
-+	pmc_to_pmu(pmc)->event_count++;
- 	clear_bit(pmc->idx, (unsigned long*)&pmc_to_pmu(pmc)->reprogram_pmi);
- }
- 
-@@ -309,6 +310,15 @@ void kvm_pmu_handle_event(struct kvm_vcpu *vcpu)
- 
- 		reprogram_counter(pmu, bit);
- 	}
-+
-+	/*
-+	 * vPMU uses a lazy method to release the perf_events created for
-+	 * features emulation when the related MSRs weren't accessed during
-+	 * last vcpu time slice. Technically, this cleanup check happens on
-+	 * the first call of vcpu_enter_guest after the vcpu gets scheduled in.
-+	 */
-+	if (unlikely(pmu->need_cleanup))
-+		kvm_pmu_cleanup(vcpu);
- }
- 
- /* check if idx is a valid index to access PMU */
-@@ -384,6 +394,15 @@ bool kvm_pmu_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 		kvm_x86_ops->pmu_ops->is_valid_msr(vcpu, msr);
- }
- 
-+static void kvm_pmu_mark_pmc_in_use(struct kvm_vcpu *vcpu, u32 msr)
-+{
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+	struct kvm_pmc *pmc = kvm_x86_ops->pmu_ops->msr_idx_to_pmc(vcpu, msr);
-+
-+	if (pmc)
-+		__set_bit(pmc->idx, pmu->pmc_in_use);
-+}
-+
- int kvm_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- {
- 	return kvm_x86_ops->pmu_ops->get_msr(vcpu, msr, data);
-@@ -391,6 +410,7 @@ int kvm_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- 
- int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- {
-+	kvm_pmu_mark_pmc_in_use(vcpu, msr_info->index);
- 	return kvm_x86_ops->pmu_ops->set_msr(vcpu, msr_info);
- }
- 
-@@ -418,9 +438,47 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
- 	memset(pmu, 0, sizeof(*pmu));
- 	kvm_x86_ops->pmu_ops->init(vcpu);
- 	init_irq_work(&pmu->irq_work, kvm_pmi_trigger_fn);
-+	pmu->event_count = 0;
-+	pmu->need_cleanup = false;
- 	kvm_pmu_refresh(vcpu);
- }
- 
-+static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-+{
-+	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-+
-+	if (pmc_is_fixed(pmc))
-+		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-+			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-+
-+	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-+}
-+
-+void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+	struct kvm_pmc *pmc = NULL;
-+	DECLARE_BITMAP(bitmask, X86_PMC_IDX_MAX);
-+	int i;
-+
-+	/* do cleanup before the first time of running vcpu after sched_in */
-+	pmu->need_cleanup = false;
-+
-+	bitmap_andnot(bitmask, pmu->all_valid_pmc_idx,
-+		      pmu->pmc_in_use, X86_PMC_IDX_MAX);
-+
-+	/* release events for unmarked vPMCs in the last sched time slice */
-+	for_each_set_bit(i, bitmask, X86_PMC_IDX_MAX) {
-+		pmc = kvm_x86_ops->pmu_ops->pmc_idx_to_pmc(pmu, i);
-+
-+		if (pmc && pmc->perf_event && !pmc_speculative_in_use(pmc))
-+			pmc_stop_counter(pmc);
-+	}
-+
-+	/* reset vPMC lazy-release bitmap for this sched time slice */
-+	bitmap_zero(pmu->pmc_in_use, X86_PMC_IDX_MAX);
-+}
-+
- void kvm_pmu_destroy(struct kvm_vcpu *vcpu)
- {
- 	kvm_pmu_reset(vcpu);
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index 7eba298587dc..b7a625874203 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -62,6 +62,7 @@ static inline void pmc_release_perf_event(struct kvm_pmc *pmc)
- 		perf_event_release_kernel(pmc->perf_event);
- 		pmc->perf_event = NULL;
- 		pmc->current_config = 0;
-+		pmc_to_pmu(pmc)->event_count--;
- 	}
- }
- 
-@@ -126,6 +127,7 @@ int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info);
- void kvm_pmu_refresh(struct kvm_vcpu *vcpu);
- void kvm_pmu_reset(struct kvm_vcpu *vcpu);
- void kvm_pmu_init(struct kvm_vcpu *vcpu);
-+void kvm_pmu_cleanup(struct kvm_vcpu *vcpu);
- void kvm_pmu_destroy(struct kvm_vcpu *vcpu);
- int kvm_vm_ioctl_set_pmu_event_filter(struct kvm *kvm, void __user *argp);
- 
-diff --git a/arch/x86/kvm/pmu_amd.c b/arch/x86/kvm/pmu_amd.c
-index aaa065989ea1..e5223ff83a56 100644
---- a/arch/x86/kvm/pmu_amd.c
-+++ b/arch/x86/kvm/pmu_amd.c
-@@ -279,6 +279,7 @@ static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
- 	pmu->counter_bitmask[KVM_PMC_FIXED] = 0;
- 	pmu->nr_arch_fixed_counters = 0;
- 	pmu->global_status = 0;
-+	bitmap_set(pmu->all_valid_pmc_idx, 0, pmu->nr_arch_gp_counters);
- }
- 
- static void amd_pmu_init(struct kvm_vcpu *vcpu)
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 9b1ddc42f604..b5a16379f534 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -46,6 +46,7 @@ static void reprogram_fixed_counters(struct kvm_pmu *pmu, u64 data)
- 		if (old_ctrl == new_ctrl)
- 			continue;
- 
-+		__set_bit(INTEL_PMC_IDX_FIXED + i, pmu->pmc_in_use);
- 		reprogram_fixed_counter(pmc, new_ctrl, i);
- 	}
- 
-@@ -329,6 +330,11 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
- 	    (boot_cpu_has(X86_FEATURE_HLE) || boot_cpu_has(X86_FEATURE_RTM)) &&
- 	    (entry->ebx & (X86_FEATURE_HLE|X86_FEATURE_RTM)))
- 		pmu->reserved_bits ^= HSW_IN_TX|HSW_IN_TX_CHECKPOINTED;
-+
-+	bitmap_set(pmu->all_valid_pmc_idx,
-+		0, pmu->nr_arch_gp_counters);
-+	bitmap_set(pmu->all_valid_pmc_idx,
-+		INTEL_PMC_MAX_GENERIC, pmu->nr_arch_fixed_counters);
- }
- 
- static void intel_pmu_init(struct kvm_vcpu *vcpu)
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 726a74e1c6a1..66da24253452 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9416,7 +9416,13 @@ void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
- 
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- {
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+
- 	vcpu->arch.l1tf_flush_l1d = true;
-+	if (pmu->version && unlikely(pmu->event_count)) {
-+		pmu->need_cleanup = true;
-+		kvm_make_request(KVM_REQ_PMU, vcpu);
-+	}
- 	kvm_x86_ops->sched_in(vcpu, cpu);
- }
- 
--- 
-2.21.0
-
+>
+>
+> >
+> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> > ---
+> >  .../bindings/sound/rockchip-max98090.txt      | 38 +++++++++++++++++--
+> >  1 file changed, 35 insertions(+), 3 deletions(-)
