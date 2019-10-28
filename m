@@ -2,142 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F62E6A60
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:03:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D8BE6A66
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 02:11:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfJ1BD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 27 Oct 2019 21:03:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:37421 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727581AbfJ1BD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Oct 2019 21:03:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 471c0Y4QD0z9sNw;
-        Mon, 28 Oct 2019 12:03:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1572224606;
-        bh=i7ArOkOPCVtOfQnDVjrmr2pJ+xA+Nt8dJM4lSqoCdBc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oIP1UQeKKyB58N/+dUWkL8KMbgr9cAskfhUEBaQ+sR1p59qm17hYtlzbnwNRRaoBf
-         VCU8QD09virOjY6CbeCORuFCw5Yds4hh4SdX5qg+cvhvDhMxRNl5mhBfFaQHB7Y2Hp
-         r4DrFF/BkrUN+gh0js7k/dk71r7F8q9m10PqBXxLKmE21MpcA6pPwMrkOb1MgilB2u
-         CM5myUMZzl9jWgNO/KGhe1jtCHMJKlZ1hzhi+rIQJnCCM+Spm/50IAoy/S57ZIkfo5
-         jVIWlQYqH8kRm0PW67z8dP5Z7Ik5rQJPssVBv41ZE6wePVVxJuuww+WHxDZX5Uz2wK
-         vWsOldRZm4ncA==
-Date:   Mon, 28 Oct 2019 12:03:25 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
-Message-ID: <20191028120325.1f0dfb5d@canb.auug.org.au>
+        id S1728350AbfJ1BL0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 27 Oct 2019 21:11:26 -0400
+Received: from posta.amasya.edu.tr ([193.255.105.20]:21447 "EHLO
+        posta.amasya.edu.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727581AbfJ1BL0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Oct 2019 21:11:26 -0400
+X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Oct 2019 21:11:23 EDT
+Received: by posta.amasya.edu.tr (Postfix, from userid 110)
+        id C70373C0849; Mon, 28 Oct 2019 04:04:29 +0300 (+03)
+X-Virus-Scanned: by SpamTitan at amasya.edu.tr
+Authentication-Results: posta.amasya.edu.tr; none
+Date:   Mon, 28 Oct 2019 04:04:17 +0300 (EET)
+From:   Bellucci Capital Partners <pinar.sen@amasya.edu.tr>
+Reply-To: Bellucci Capital Partners <info@belluccicp.net>
+Message-ID: <562889327.193976.1572224657561.JavaMail.zimbra@amasya.edu.tr>
+Subject: 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SptWgYLNrqX+FhGlFPABrTA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [198.46.170.187]
+X-Mailer: Zimbra 8.8.15_GA_3869 (ZimbraWebClient - FF70 (Win)/8.8.15_GA_3869)
+Thread-Index: PnLc5EXjHjSmm3JIfAjZcRGfZDdKBA==
+Thread-Topic: 
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SptWgYLNrqX+FhGlFPABrTA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Hej,
 
-  drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+Vi har en enorm kreditportfölj, vi är intresserade av att finansiera projekt med stor volym. Förfarandena är följande:
 
-between commits:
+1-Klienten måste skicka en kort sammanfattning av projektet. Detta måste innehålla det totala beloppet som krävs för projektet, beräknad avkastning på investeringen, lånets återbetalningsperiod, detta får inte vara mer än 15 år.
 
-  d7b0827f28ab ("Merge tag 'kbuild-v5.4' of git://git.kernel.org/pub/scm/li=
-nux/kernel/git/masahiroy/linux-kbuild")
-  c0e70e10b11b ("drm/amd/display: fix dcn21 Makefile for clang")
+2- Klienten kommer att behöva försäkra det nämnda projektet hos ett försäkringsbolag om det totala lånebeloppet för att garantera lånet som säkerhet.
 
-from Linus' tree and commits:
+3- Räntan är 1% per år.
 
-  618f55831b84 ("drm/amd/display: fix dcn21 Makefile for clang")
-  4f952528add3 ("drm/amdgpu: fix stack alignment ABI mismatch for Clang")
-  971463bea55c ("drm/amdgpu: fix stack alignment ABI mismatch for GCC 7.1+")
-  101d09f07966 ("drm/amdgpu: enable -msse2 for GCC 7.1+ users")
+4-återbetalningstid är 15 år
 
-from the amdgpu tree.
+5 Finansiering tar ungefär 10 bankdagar från den dag du presenterar försäkringscertifikatet.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
---=20
-Cheers,
-Stephen Rothwell
+Om du är nöjd med ovanstående procedurer skicka mig en avsiktsförklaring på ditt företags brevhuvud.
 
-diff --cc drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-index ef673bffc241,feb7e705e792..000000000000
---- a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-+++ b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-@@@ -1,18 -1,23 +1,23 @@@
-  #
-  # Makefile for DCN21.
- =20
-- DCN21 =3D dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o
-+ DCN21 =3D dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o dcn21_hwseq.o dcn2=
-1_link_encoder.o
- =20
-- ifneq ($(call cc-option, -mpreferred-stack-boundary=3D4),)
-- 	cc_stack_align :=3D -mpreferred-stack-boundary=3D4
-- else ifneq ($(call cc-option, -mstack-alignment=3D16),)
-- 	cc_stack_align :=3D -mstack-alignment=3D16
-- endif
- -CFLAGS_dcn21_resource.o :=3D -mhard-float -msse
-++CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o :=3D -mhard-float -msse
- =20
-- CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o :=3D -mhard-float -msse $(=
-cc_stack_align)
-+ ifdef CONFIG_CC_IS_GCC
-+ ifeq ($(call cc-ifversion, -lt, 0701, y), y)
-+ IS_OLD_GCC =3D 1
-+ endif
-+ endif
- =20
-- ifdef CONFIG_CC_IS_CLANG
-+ ifdef IS_OLD_GCC
-+ # Stack alignment mismatch, proceed with caution.
-+ # GCC < 7.1 cannot compile code using `double` and -mpreferred-stack-boun=
-dary=3D3
-+ # (8B stack alignment).
- -CFLAGS_dcn21_resource.o +=3D -mpreferred-stack-boundary=3D4
-++CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o +=3D -mpreferred-stack-bou=
-ndary=3D4
-+ else
- -CFLAGS_dcn21_resource.o +=3D -msse2
- +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o +=3D -msse2
-  endif
- =20
-  AMD_DAL_DCN21 =3D $(addprefix $(AMDDALPATH)/dc/dcn21/,$(DCN21))
+För ytterligare information om hur du kan få ett lån från: Svara omedelbart på den här e-postmeddelanden:
+info@belluccicp.net
 
---Sig_/SptWgYLNrqX+FhGlFPABrTA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Hälsningar, när vi väntar på ditt svar.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl22Pl0ACgkQAVBC80lX
-0GzbfwgAl/Zx1fqOsi9h4M3m9WVpybj1Ww4AjucqlYUioGQXXG+oTkq2fBjScmTQ
-TaQRqKTn5P42HsLpMkOAIqLV9d48g0P1UCF7qT1vyj/1sZ0p1v5a9hW4pDIE9Wet
-ee5yRk+uFUsnIFV15+fPCMknSRcQpiWBjALH0uymqHIELsdvoxxvMOLTGaRNkPlM
-oEUY5dO8ltQUB8z3AfHTlYPvh6pBb5iiS8cCq0pSwjO6QnSI0pwhDPzdEb02c361
-+vPpGRCeAf/drwsucPTuV1+nfrWAL+8bNcivR23RrpTdNhB10ugzAATERapk+Bjf
-3+t/c0bJC1VzHxt+ayxjAgeOh2FS2g==
-=QlKz
------END PGP SIGNATURE-----
-
---Sig_/SptWgYLNrqX+FhGlFPABrTA--
+Vänliga hälsningar
+Manuel Baressi
+Annonspersonal
+WEB: https://www.belluccicp.net
+Bu e-posta mesaji kisiye ozel olup, gizli bilgiler iceriyor olabilir. Eger bu e-posta mesaji size yanlislikla ulasmissa, icerigini hicbir sekilde kullanmayiniz ve e-postayi siliniz. Amasya Universitesi bu e-posta mesajinin icerigi ile ilgili olarak hicbir hukuksal sorumlulugu kabul etmez. The information contained in this communication may contain confidential or legally privileged information. Amasya University doesn't accept any legal responsibility for the contents and attachments of this message. The sender does not accept any liability for any errors or omissions or any viruses in the context of this message which arise as a result of internet transmission.
