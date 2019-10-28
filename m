@@ -2,143 +2,342 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14295E7004
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 11:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D7CEE700A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 11:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbfJ1KyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 06:54:14 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:54322 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728554AbfJ1KyN (ORCPT
+        id S2388419AbfJ1KzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 06:55:13 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29649 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728554AbfJ1KzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 06:54:13 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9SAoUsF019263;
-        Mon, 28 Oct 2019 03:53:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=pfpt0818;
- bh=aYFHtx5i3Op3YaH4QYtN9aEhj5QrwtvhKVpuX17+1Os=;
- b=mlhLzOPZF7O14FynxsQixq1Ac49+p/5QDb/CYwwIovKuD5aoWaa6LPvSFJV2xA4Jj5fM
- ytvl+nejRjc7ZDQN5RIPA2HYoULKzDvDh48swskdZWOc/SPNpreAPIgMyLwmaLbm7gxq
- 1nb4+j9oVlRoJ7ncnwnfoN6nCiJeM5jDnMLvEnaCbywQNbxpBVzuTFDsgXxbjICKcps3
- vuZJb2y9cGQE7Rq18WfACORBzD4U8CcVaJZlb+wWJc8DhcOaTRdS11c96tB5nbOod3Z5
- lgInRtVjTqFBg1MWS+MT/b0KLWci7gJjRYHNph21R6biKtATK39jQ3OIOMuGn+z+B94U oA== 
-Received: from sc-exch04.marvell.com ([199.233.58.184])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2vvkgq5kcx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 28 Oct 2019 03:53:57 -0700
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
- (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 28 Oct
- 2019 03:53:56 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (104.47.38.59) by
- SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Mon, 28 Oct 2019 03:53:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GhyaXjeOuZp+QJdD2QC12uLTZxnEwqdCzZWd5zbiO0CmNHxajXztJ8Gu8+p4EYZ4rcmf2ocuEPDrmv+melpFkiz3SVqDvDh88hVWeoymhuEIZkIGkmI+76ALgmGYEk2OdIDdoTdqXKC4SOpbu63+NdYLc+IiDgwRayFIowb1yrmcK+kYMG4P9Y9O/PVtw+dFFXnZYldZmkCY9fdVFIrPFmknpXnqosUt/G5IjU+QKzkhmXzNsoCLEuBuyxSSuxPGLYj/ci7tyIizOTsFMqy/7P3eBtNdnzMwsMdPUvvw+F4Lca3pC5QNZ0XVjjnHg47N/59FZQ9HGVU3RJY0Ib23sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aYFHtx5i3Op3YaH4QYtN9aEhj5QrwtvhKVpuX17+1Os=;
- b=WNefG1D3iKZF6zsNbpij3t+Xb/Y6Ik8fErA5Jfu9AlBQDZfcNqeBhwrnTelTFJYNgoiAl3FvntY5LoHTCWA3PguAL0owzuPOlXP/hu/9JBdOnuWrP38TcdXF3Z36ZC9ZrmvTfHyN4dTDG+v0waQAraERg80C5zJAJpAhwlZNEqvFKZmvYlUWoLCLyru+r3nitbF4mYVgzhvLOzzIDEcAgGEIFfL8GMOUQBB/46butIG7sf6g3Uhij75JUR8IhZ7UREWCt0V/SJK5tp6+l4dGJXBaORbf4nnsVweO+mv7pPUHq+LtFmCg22fISF7lbhjsy6pzN+lMgFnZF80R8ErQKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aYFHtx5i3Op3YaH4QYtN9aEhj5QrwtvhKVpuX17+1Os=;
- b=Q7I+TKk+NiSRjJLC9OOSORA6iLeITVQ1Xg1QLWYX4Hddb8W4wbXH00Af3W3MBxvgHI97Tq8zs/5dOwR2T/dGQ6GvnCRHGZW6udKaYQLnICFyYh7NjaMcSIg/Hjl+FgWb6L0zw+GMmj4NRw/Kl/knVx5ZioadfsvCe/9Z1mFDX5I=
-Received: from BL0PR18MB2275.namprd18.prod.outlook.com (52.132.30.141) by
- BL0PR18MB2114.namprd18.prod.outlook.com (52.132.9.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.20; Mon, 28 Oct 2019 10:53:54 +0000
-Received: from BL0PR18MB2275.namprd18.prod.outlook.com
- ([fe80::4152:b5a9:45c2:a981]) by BL0PR18MB2275.namprd18.prod.outlook.com
- ([fe80::4152:b5a9:45c2:a981%3]) with mapi id 15.20.2387.025; Mon, 28 Oct 2019
- 10:53:54 +0000
-From:   Igor Russkikh <irusskikh@marvell.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Igor Russkikh <Igor.Russkikh@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Dmitry Bezrukov" <Dmitry.Bezrukov@aquantia.com>,
-        Nikita Danilov <Nikita.Danilov@aquantia.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] [PATCH net-next] net: aquantia: fix error handling in
- aq_nic_init
-Thread-Topic: [EXT] [PATCH net-next] net: aquantia: fix error handling in
- aq_nic_init
-Thread-Index: AQHVjX39Va16a2hsUESGAfJF8Iu5cg==
-Date:   Mon, 28 Oct 2019 10:53:54 +0000
-Message-ID: <ad34c73f-19ee-eb83-221b-cd9fac1d44d5@marvell.com>
-References: <20191028065633.GA2412@embeddedor>
-In-Reply-To: <20191028065633.GA2412@embeddedor>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MR2P264CA0138.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:500:30::30) To BL0PR18MB2275.namprd18.prod.outlook.com
- (2603:10b6:207:44::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [95.79.108.179]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 37d26c16-cfce-4f72-3b74-08d75b951fe3
-x-ms-traffictypediagnostic: BL0PR18MB2114:
-x-microsoft-antispam-prvs: <BL0PR18MB2114CB93EF3422EDBBE67B8AB7660@BL0PR18MB2114.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 0204F0BDE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(376002)(346002)(396003)(39850400004)(199004)(189003)(2616005)(6506007)(478600001)(8676002)(26005)(476003)(6246003)(71200400001)(316002)(71190400001)(54906003)(110136005)(6512007)(66946007)(102836004)(66476007)(66556008)(64756008)(66446008)(11346002)(3846002)(486006)(31686004)(2906002)(81156014)(86362001)(81166006)(99286004)(4326008)(8936002)(14444005)(256004)(186003)(446003)(6116002)(31696002)(6486002)(52116002)(7736002)(76176011)(5660300002)(14454004)(305945005)(25786009)(229853002)(66066001)(36756003)(6436002)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR18MB2114;H:BL0PR18MB2275.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Wa9f69f+Ex6pS3uaYDOr6edLYytjtDghIPrQEgnXhOGCJ8L0M4H5tLLyvIVpmWWZlYTo9Z5dVt2BPc8VM4s6RgQO5O4shM6yLLT9kajydeDrSLv0WKD+iqIJKINAy2bW92Y8jcMrAUNLmX9mVpp+q3Tu2K7UwCJaPwUBe3DPJyS+Ox/I8C0nnitDkqM0TvRkXSsWFjl75fndsAXKepQ4i8xUBleKRFUvmdxe7E3lqqxL3W0OWMruAxLZzTJKizMDnMZpKPiYxcz4q0kB6v+ZoR/mugDVO3Exq2/omZqwpENmlLN7vsW+2UkbwN6VCVG0HJFynXtcQgtayFVB6UMjbB56SX2t4i/bSHloeXHkISdwdOSdQVJYNKYv53IwnIee9HYztJXLn7ilM3VlgCkmUy396KlyAJ1lelCXoqsRF2ukRB6Zw8l6AHVnsR4jiOcQ
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <58C8773C3D8CEF44974EC0E093B58982@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 28 Oct 2019 06:55:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572260110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=M1mk61TIJ6A/qc9khwKKG/YfhVdtA4hyOvJ+7ko56Hk=;
+        b=Dql+tWN41wo3iQCPACZBOLgc+fBJiy/K+VSI3410gT6qFaYBV8oMk20QFnTvmBp24X+Rjs
+        pCzcYJB2pMBvIalg8UFyEUQRpD5lgdx2qac0sx0Vv0y2N2om91jkmgtHh7q4HbX2pF4MUt
+        l2EaXaqXbqlqQgJ5uClq7a/9NK3aB94=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-XfHig5YePwKyS1Cf1OPUNw-1; Mon, 28 Oct 2019 06:55:07 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2ECEF1005529;
+        Mon, 28 Oct 2019 10:55:05 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-233.ams2.redhat.com [10.36.116.233])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC08D5DA32;
+        Mon, 28 Oct 2019 10:54:58 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Tang Chen <tangchen@cn.fujitsu.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>
+Subject: [PATCH v1] mm/memory_hotplug: Fix try_offline_node()
+Date:   Mon, 28 Oct 2019 11:54:58 +0100
+Message-Id: <20191028105458.28320-1-david@redhat.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37d26c16-cfce-4f72-3b74-08d75b951fe3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2019 10:53:54.1833
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G9tVhSzBy2gHoCY6+0XxBWG4ochRjnR5dPG1uVP0azKJPRVo/wPUpbgiOAQiJdKQkV+yhRYMLlaK7WzUQkn65Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR18MB2114
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-28_05:2019-10-25,2019-10-28 signatures=0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: XfHig5YePwKyS1Cf1OPUNw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IEZpeCBjdXJyZW50eSBpZ25vcmVkIHJldHVybmVkIGVycm9yIGJ5IHByb3Blcmx5IGVycm9y
-IGNoZWNraW5nDQo+IGFxX3BoeV9pbml0KCkuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHktSUQ6
-IDE0ODczNzYgKCJVbnVzZWQgdmFsdWUiKQ0KPiBGaXhlczogZGJjZDY4MDZhZjQyICgibmV0OiBh
-cXVhbnRpYTogYWRkIHN1cHBvcnQgZm9yIFBoeSBhY2Nlc3MiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBH
-dXN0YXZvIEEuIFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPg0KPiAtLS0NCj4gIGRy
-aXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX25pYy5jIHwgMyArKy0NCj4g
-IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9hcV9uaWMu
-YyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2FxdWFudGlhL2F0bGFudGljL2FxX25pYy5jDQo+IGlu
-ZGV4IDQzM2FkYzA5OWU0NC4uMTkxNGFhMGExOWQwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25l
-dC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9hcV9uaWMuYw0KPiArKysgYi9kcml2ZXJzL25l
-dC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9hcV9uaWMuYw0KPiBAQCAtMzQxLDcgKzM0MSw4
-IEBAIGludCBhcV9uaWNfaW5pdChzdHJ1Y3QgYXFfbmljX3MgKnNlbGYpDQo+ICANCj4gIAlpZiAo
-c2VsZi0+YXFfbmljX2NmZy5hcV9od19jYXBzLT5tZWRpYV90eXBlID09IEFRX0hXX01FRElBX1RZ
-UEVfVFApIHsNCj4gIAkJc2VsZi0+YXFfaHctPnBoeV9pZCA9IEhXX0FUTF9QSFlfSURfTUFYOw0K
-PiAtCQllcnIgPSBhcV9waHlfaW5pdChzZWxmLT5hcV9odyk7DQo+ICsJCWlmICghYXFfcGh5X2lu
-aXQoc2VsZi0+YXFfaHcpKQ0KPiArCQkJZ290byBlcnJfZXhpdDsNCj4gIAl9DQo+ICANCj4gIAlm
-b3IgKGkgPSAwVSwgYXFfdmVjID0gc2VsZi0+YXFfdmVjWzBdOw0KPiANCg0KSGkgR3VzdGF2bywN
-Cg0KSSdkIHNheSB0aGUgaW50ZW50aW9uIGhlcmUgd2FzIHRvIGlnbm9yZSB0aGUgZXJyb3IsIGFz
-IGRyaXZlciBtYXkgc3RpbGwgbGl2ZSBpZg0Kc29tZXRoaW5nIHVuZXhwZWN0ZWQgaGFwcGVuZWQg
-b24gUGh5IGFjY2VzcyBwYXRoLg0KDQpOb3RpY2UgaW4gdGhlIGFib3ZlIGZpeCB5b3UgbGVhdmUg
-YGVycmAgYXMgemVybyBidXQgZG8gZXJyb3IgcGF0aCByZXR1cm4gLQ0KdGhhdCdsbCBicmVhayB0
-aGUgZGF0YXBhdGguDQoNCkknZCBwcmVmZXIgdG8gZml4IHRoaXMgd2l0aCBzaW1wbGUNCg0KICAg
-ICAodm9pZClhcV9waHlfaW5pdChzZWxmLT5hcV9odyk7DQoNCi0tIA0KUmVnYXJkcywNCiAgSWdv
-cg0K
+try_offline_node() is pretty much broken right now:
+- The node span is updated when onlining memory, not when adding it. We
+  ignore memory that was mever onlined. Bad.
+- We touch possible garbage memmaps. The pfn_to_nid(pfn) can easily
+  trigger a kernel panic. Bad for memory that is offline but also bad
+  for subsection hotadd with ZONE_DEVICE, whereby the memmap of the first
+  PFN of a section might contain garbage.
+- Sections belonging to mixed nodes are not properly considered.
+
+As memory blocks might belong to multiple nodes, we would have to walk all
+pageblocks (or at least subsections) within present sections. However,
+we don't have a way to identify whether a memmap that is not online was
+initialized (relevant for ZONE_DEVICE). This makes things more complicated.
+
+Luckily, we can piggy pack on the node span and the sysfs links between
+memory blocks and the node. Currently, the node span is grown when calling
+move_pfn_range_to_zone() - e.g., when onlining memory, and shrunk when
+removing memory, before calling try_offline_node(). Sysfs links are
+created via link_mem_sections(), e.g., during boot or when adding memory.
+
+If the node still spans memory or if any memory block is linked to the
+node in sysfs, we don't set the node offline. Without CONFIG_NUMA, or
+without CONFIG_SYSFS, we will simply always detect the node as being
+linked to the memory block and not set the node offline.
+
+Add a way to test if a sysfs link exists.
+
+Note: We will soon stop shrinking the ZONE_DEVICE zone and the node span
+when removing ZONE_DEVICE memory to fix similar issues (acess of garbage
+memmaps) - until we have a reliable way to identify whether these memmaps
+were properly initialized. This implies later, that once a node had
+ZONE_DEVICE memory, we won't be able to set a node offline -
+which should be acceptable.
+
+Since commit f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded
+memory to zones until online") memory that is added is not assoziated
+with a zone/node (memmap not initialized). The introducing commit
+60a5a19e7419 ("memory-hotplug: remove sysfs file of node") already
+missed that we could have multiple nodes for a section and that the
+zone/node span is updated when onlining pages, not when adding them.
+
+I tested this by hotplugging two DIMMs to a memory-less and cpu-less NUMA
+node. The node is properly onlined when adding the DIMMs. When removing
+the DIMMs, the node is properly offlined.
+
+Fixes: 60a5a19e7419 ("memory-hotplug: remove sysfs file of node")
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory =
+to zones until online") # visiable after d0dc12e86b319
+Cc: Tang Chen <tangchen@cn.fujitsu.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Nayna Jain <nayna@linux.ibm.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+
+I just realized that we are are missing a try_online_node() call in the
+memremap path. Bad when adding device memory to a memory-less and cpu-less
+node - the pgdat is not initialized. Will also have to be fixed.
+
+We stop shrinking the ZONE_DEVICE zone after the following patch:
+=09[PATCH v6 04/10] mm/memory_hotplug: Don't access uninitialized memmaps
+=09in shrink_zone_span()
+This implies, the above note regarding ZONE_DEVICE on a node blocking a
+node from getting offlined until we sorted out how to properly shrink
+the ZONE_DEVICE zone.
+
+This patch is especially important for:
+=09[PATCH v6 05/10] mm/memory_hotplug: Shrink zones when offlining
+=09memory
+As the BUG fixed with this patch becomes now easier to observe when memory
+is offlined (in contrast to when memory would never have been onlined
+before).
+
+As both patches are stable fixes and in next/master for a long time, we
+should probably pull this patch in front of both and also backport this
+patch at least to
+=09Cc: stable@vger.kernel.org # v4.13+
+I have not checked yet if there are real blockers to do that. I guess not.
+
+---
+ drivers/base/node.c   |  9 +++++++++
+ fs/sysfs/symlink.c    | 21 +++++++++++++++++++++
+ include/linux/node.h  |  7 +++++++
+ include/linux/sysfs.h |  6 ++++++
+ mm/memory_hotplug.c   | 42 ++++++++++++++++++++++++++----------------
+ 5 files changed, 69 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 98a31bafc8a2..32aeb85f1d4a 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -833,6 +833,15 @@ int link_mem_sections(int nid, unsigned long start_pfn=
+, unsigned long end_pfn)
+ =09=09=09=09  register_mem_sect_under_node);
+ }
+=20
++bool memory_block_registered_under_node(struct memory_block *mem, int nid)
++{
++=09if (mem->nid =3D=3D nid)
++=09=09return true;
++=09/* memory blocks can span multiple nodes. Check against the link. */
++=09return sysfs_link_exists(&mem->dev.kobj,
++=09=09=09=09 kobject_name(&node_devices[nid]->dev.kobj));
++}
++
+ #ifdef CONFIG_HUGETLBFS
+ /*
+  * Handle per node hstate attribute [un]registration on transistions
+diff --git a/fs/sysfs/symlink.c b/fs/sysfs/symlink.c
+index c4deecc80f67..b99697a9dae6 100644
+--- a/fs/sysfs/symlink.c
++++ b/fs/sysfs/symlink.c
+@@ -153,6 +153,27 @@ void sysfs_remove_link(struct kobject *kobj, const cha=
+r *name)
+ }
+ EXPORT_SYMBOL_GPL(sysfs_remove_link);
+=20
++/**
++ *=09sysfs_link_exists - test if a symlink exists in object's directory.
++ *=09@kobj:=09object we're acting for.
++ *=09@name:=09name of the symlink to test.
++ */
++bool sysfs_link_exists(struct kobject *kobj, const char *name)
++{
++=09struct kernfs_node *parent =3D NULL, *kn;
++
++=09if (!kobj)
++=09=09parent =3D sysfs_root_kn;
++=09else
++=09=09parent =3D kobj->sd;
++
++=09kn =3D kernfs_find_and_get(parent, name);
++=09kernfs_put(kn);
++
++=09return kn !=3D NULL;
++}
++EXPORT_SYMBOL_GPL(sysfs_link_exists);
++
+ /**
+  *=09sysfs_rename_link_ns - rename symlink in object's directory.
+  *=09@kobj:=09object we're acting for.
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 4866f32a02d8..353853018689 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -138,6 +138,8 @@ extern void unregister_one_node(int nid);
+ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern void unregister_memory_block_under_nodes(struct memory_block *mem_b=
+lk);
++extern bool memory_block_registered_under_node(struct memory_block *mem,
++=09=09=09=09=09       int nid);
+=20
+ extern int register_memory_node_under_compute_node(unsigned int mem_nid,
+ =09=09=09=09=09=09   unsigned int cpu_nid,
+@@ -171,6 +173,11 @@ static inline int unregister_cpu_under_node(unsigned i=
+nt cpu, unsigned int nid)
+ static inline void unregister_memory_block_under_nodes(struct memory_block=
+ *mem_blk)
+ {
+ }
++static inline bool memory_block_registered_under_node(struct memory_block =
+*mem,
++=09=09=09=09=09=09      int nid)
++{
++=09return true;
++}
+=20
+ static inline void register_hugetlbfs_with_node(node_registration_func_t r=
+eg,
+ =09=09=09=09=09=09node_registration_func_t unreg)
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index fa7ee503fb76..3ae9a69a0786 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -265,6 +265,7 @@ int __must_check sysfs_create_link_nowarn(struct kobjec=
+t *kobj,
+ =09=09=09=09=09  struct kobject *target,
+ =09=09=09=09=09  const char *name);
+ void sysfs_remove_link(struct kobject *kobj, const char *name);
++bool sysfs_link_exists(struct kobject *kobj, const char *name);
+=20
+ int sysfs_rename_link_ns(struct kobject *kobj, struct kobject *target,
+ =09=09=09 const char *old_name, const char *new_name,
+@@ -420,6 +421,11 @@ static inline void sysfs_remove_link(struct kobject *k=
+obj, const char *name)
+ {
+ }
+=20
++static inline bool sysfs_link_exists(struct kobject *kobj, const char *nam=
+e)
++{
++=09return true;
++}
++
+ static inline int sysfs_rename_link_ns(struct kobject *k, struct kobject *=
+t,
+ =09=09=09=09       const char *old_name,
+ =09=09=09=09       const char *new_name, const void *ns)
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 0140c20837b6..c75e99b292cd 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1634,6 +1634,15 @@ static int check_cpu_on_node(pg_data_t *pgdat)
+ =09return 0;
+ }
+=20
++static int check_no_memblock_registered_under_node_cb(struct memory_block =
+*mem,
++=09=09=09=09=09=09      void *arg)
++{
++
++=09const int nid =3D *(int *)arg;
++
++=09return memory_block_registered_under_node(mem, nid) ? -EEXIST : 0;
++}
++
+ /**
+  * try_offline_node
+  * @nid: the node ID
+@@ -1645,26 +1654,27 @@ static int check_cpu_on_node(pg_data_t *pgdat)
+  */
+ void try_offline_node(int nid)
+ {
++=09unsigned long end_pfn =3D section_nr_to_pfn(__highest_present_section_n=
+r);
+ =09pg_data_t *pgdat =3D NODE_DATA(nid);
+-=09unsigned long start_pfn =3D pgdat->node_start_pfn;
+-=09unsigned long end_pfn =3D start_pfn + pgdat->node_spanned_pages;
+-=09unsigned long pfn;
+-
+-=09for (pfn =3D start_pfn; pfn < end_pfn; pfn +=3D PAGES_PER_SECTION) {
+-=09=09unsigned long section_nr =3D pfn_to_section_nr(pfn);
+-
+-=09=09if (!present_section_nr(section_nr))
+-=09=09=09continue;
++=09int rc;
+=20
+-=09=09if (pfn_to_nid(pfn) !=3D nid)
+-=09=09=09continue;
++=09/*
++=09 * If the node still spans pages (especially ZONE_DEVICE), don't
++=09 * offline it. A node spans memory after move_pfn_range_to_zone(),
++=09 * e.g., after the memory block was onlined.
++=09 */
++=09if (pgdat->node_spanned_pages)
++=09=09return;
+=20
+-=09=09/*
+-=09=09 * some memory sections of this node are not removed, and we
+-=09=09 * can't offline node now.
+-=09=09 */
++=09/*
++=09 * Especially offline memory blocks might not be spanned by the
++=09 * node. They will get spanned by the node once they get onlined.
++=09 * However, they link to the node in sysfs and can get onlined later.
++=09 */
++=09rc =3D walk_memory_blocks(0, PFN_PHYS(end_pfn), &nid,
++=09=09=09=09check_no_memblock_registered_under_node_cb);
++=09if (rc)
+ =09=09return;
+-=09}
+=20
+ =09if (check_cpu_on_node(pgdat))
+ =09=09return;
+--=20
+2.21.0
+
