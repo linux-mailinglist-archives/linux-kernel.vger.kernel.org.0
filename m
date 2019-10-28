@@ -2,140 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E0ECE7435
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A60B0E743C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2019 15:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390526AbfJ1O5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 10:57:11 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:16617 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390461AbfJ1O5K (ORCPT
+        id S2390427AbfJ1O6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 10:58:38 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:42786 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfJ1O6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:57:10 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5db701cd0001>; Mon, 28 Oct 2019 07:57:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 28 Oct 2019 07:57:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 28 Oct 2019 07:57:09 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
- 2019 14:57:08 +0000
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Mon, 28 Oct 2019 14:57:08 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id C8DA543032; Mon, 28 Oct 2019 16:57:06 +0200 (EET)
-Date:   Mon, 28 Oct 2019 16:57:06 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        "Nicolas Chauvet" <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/17] clk: tegra: Add custom CCLK implementation
-Message-ID: <20191028145706.GF27141@pdeschrijver-desktop.Nvidia.com>
-References: <20191015211618.20758-1-digetx@gmail.com>
- <20191015211618.20758-2-digetx@gmail.com>
+        Mon, 28 Oct 2019 10:58:37 -0400
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id AD8EF2010AC5;
+        Mon, 28 Oct 2019 07:58:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD8EF2010AC5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1572274716;
+        bh=+4i7snc8+CJH6rwfZpPIV08+c2Slr7iBUhUCuWfrlls=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=j0UFvLFAwzPt56V4SalGwYBFPyo5AY8x+FDt/QbWoI7weuCwz94pbxHS2dxcBywsO
+         /Au8gNVv1GfwxnunbQq+3l5z+IcOX8CI0/1qn/lWU1D3WD4s1o3bl2iSeln9CRJSRq
+         DIjRAtjUzDkwRDz3GalJJ9ckMbiYvrkixtFgKYFE=
+Subject: Re: [PATCH v2 1/4] KEYS: Defined an ima hook for measuring keys on
+ key create or update
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        casey@schaufler-ca.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+References: <20191023233950.22072-1-nramas@linux.microsoft.com>
+ <20191023233950.22072-2-nramas@linux.microsoft.com>
+ <1572032428.4532.72.camel@linux.ibm.com>
+ <c1de8055-89a7-25dd-d99a-427e2c2c4c59@linux.microsoft.com>
+ <1572187644.4532.211.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <1d7730ff-9847-c6be-4f4f-8cf1e90a71f2@linux.microsoft.com>
+Date:   Mon, 28 Oct 2019 07:58:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191015211618.20758-2-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572274637; bh=a3iQGGwz0Ivg7sfs0KItL4POFuee26IhkUhjou3eb4M=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=ltTYQgdfMjWQKG2jN1sK+ylYqIivDrD90MVQgPlGFVpj2Sp27DCwSzppeJbib+j0j
-         CLEn+3hwOL3Fvb3JPx5nmrIeLBJuGCOGjdGnF196NJippTqXGkyD45hQ3XydK2WOZ5
-         w3afkvcQ2jUpA188B3DIQoik5OX2/feYlEqZdf68hVJ0iu4IbVBq4t+pArmqjBeCxH
-         UctsgV6EGdwyyuaaQJSo4clSL9PAzOHwIW16j96+H21FqJGnv4J8JcSDkmNQO4zH+n
-         toCpLsBLEgVUD3to458/C7zcPfhcz9Xu/xwUfqsIYqWMlPkP1Vsn27NJTdzaVxmVAV
-         Rbi+wn2KM9YWg==
+In-Reply-To: <1572187644.4532.211.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 12:16:02AM +0300, Dmitry Osipenko wrote:
-> CCLK stands for "CPU Clock", CPU core is running off CCLK. CCLK supports
-> multiple parents and it has internal clock divider which uses clock
-> skipping technique, meaning that CPU's voltage should correspond to the
-> parent clock rate and not CCLK. PLLX is the main CCLK parent that provides
-> clock rates above 1GHz and it has special property such that the CCLK's
-> internal divider is set into bypass mode when PLLX is set as a parent for
-> CCLK.
+On 10/27/19 7:47 AM, Mimi Zohar wrote:
+
+>>> There's no reason to define a new variable to determine if IMA is
+>>> initialized.  Use ima_policy_flag.
+>>
+>> Please correct me if I am wrong -
+>>
+>> ima_policy_flag will be set to 0 if IMA is not yet initialized
+>> OR
+>> IMA is initialized, but ima_policy_flag could be still set to 0 (say,
+>> due to the configured policy).
+>>
+>> In the latter case the measurement request should be a NOP immediately.
 > 
-> This patch forks generic Super Clock into CCLK implementation which takes
-> into account all CCLK specifics. The proper CCLK implementation is needed
-> by the upcoming Tegra20 CPUFreq driver update that will allow to utilize
-> the generic cpufreq-dt driver by moving intermediate clock handling into
-> the clock driver. Note that technically this all could be squashed into
-> clk-super, but result will be messier.
+> I'm not sure.  The builtin keys most likely will be loaded prior to a
+> custom IMA policy containing "keyring" rules are defined.
 > 
-> Note that currently all CCLKLP bits are left in the clk-super.c and only
-> CCLKG is supported by clk-tegra-super-cclk. It shouldn't be difficult
-> to move the CCLKLP bits, but CCLKLP is not used by anything in kernel
-> and thus better not to touch it for now.
+> Mimi
 
-..
+I am not sure if I described it clearly - let me clarify:
 
-> +	super->reg = reg;
-> +	super->lock = lock;
-> +	super->width = 4;
-> +	super->flags = clk_super_flags;
-> +	super->frac_div.reg = reg + 4;
-> +	super->frac_div.shift = 16;
-> +	super->frac_div.width = 8;
-> +	super->frac_div.frac_width = 1;
-> +	super->frac_div.lock = lock;
-> +	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
-> +	super->div_ops = &tegra_clk_frac_div_ops;
-> +
+Say, we use ima_policy_flag to determine whether to
+measure the key immediately or
+queue the key for measurement and, measure when IMA is initialized.
 
-This is not right. The super clock divider is not a divider, it's a
-pulse skipper.
+We can incorrectly keep queuing keys in the case when IMA is 
+initialized, but due to the way IMA policy is configured ima_policy_flag 
+is still 0.
 
-> +	/* Data in .init is copied by clk_register(), so stack variable OK */
-> +	super->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &super->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(super);
-> +
-> +	return clk;
-> +}
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f81c10654aa9..095595a5b8a8 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -699,6 +699,10 @@ struct clk *tegra_clk_register_super_clk(const char *name,
->  		const char * const *parent_names, u8 num_parents,
->  		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
->  		spinlock_t *lock);
-> +struct clk *tegra_clk_register_super_cclk(const char *name,
-> +		const char * const *parent_names, u8 num_parents,
-> +		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-> +		spinlock_t *lock);
->  
->  /**
->   * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
-> -- 
-> 2.23.0
-> 
+That's why I feel a separate boolean flag would be needed to know 
+whether IMA is initialized or not.
+
+If IMA is initialized, ima_policy_flag will dictate whether to measure 
+the key or not.
+
+thanks,
+  -lakshmi
+
