@@ -2,84 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF87BE898E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A032E8997
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388615AbfJ2Nbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:31:33 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5219 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388602AbfJ2Nbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:31:32 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B145089EF28F21D4DC20;
-        Tue, 29 Oct 2019 21:31:27 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
- 21:31:19 +0800
-Subject: Re: [PATCH 3/3] KVM: arm/arm64: vgic: Don't rely on the wrong pending
- table
-To:     Auger Eric <eric.auger@redhat.com>, Marc Zyngier <maz@kernel.org>
-CC:     <suzuki.poulose@arm.com>, <linux-kernel@vger.kernel.org>,
-        <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <wanghaibin.wang@huawei.com>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20191029071919.177-1-yuzenghui@huawei.com>
- <20191029071919.177-4-yuzenghui@huawei.com> <86mudjykfa.wl-maz@kernel.org>
- <f8a30e65-7077-301a-1558-7fc504b5e891@huawei.com>
- <e2141f6a-c530-46d5-d5d9-26806b02d55b@redhat.com>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <01638947-ce47-2e09-68f0-a95eb6e9b2d0@huawei.com>
-Date:   Tue, 29 Oct 2019 21:31:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S2388641AbfJ2NdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:33:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33113 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfJ2NdK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 09:33:10 -0400
+Received: by mail-wr1-f66.google.com with SMTP id s1so13702365wro.0;
+        Tue, 29 Oct 2019 06:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wUOdrvVXqhiPmXu5DftcsGiFCDGB+RbHtFoNpKa4ysw=;
+        b=V/mdrYqGmqnhydWlB5LpxMfm3gI794N2F8fExAObjJL3LRBrcSsv1oLLk5iVjJiOIm
+         mJUCpU/kFnZbaLgzfQnVSdMiAtW2/4+X/K80WECzd6+FNzpb2EnYGd08N1iqMPV5inv3
+         tny6/IZpHkkFwIA0ovfKHwGiU24vgZoqR/2kqAN3SEXSz0kmhohQBsG6Xj4pcozzPn4m
+         75i8WfQ1hQEqgCS7Q6t2QH1cE86paFaTUb69fkdH+o4H0dryB8QmGMrUHzsllTKkeUHP
+         A6rP++/8A+Vj7qtX4b+G6P4zB9PtvqjRnEg2g07ouQFpZi2Kdn+vzdD9djZJnwXIBZwd
+         D8/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wUOdrvVXqhiPmXu5DftcsGiFCDGB+RbHtFoNpKa4ysw=;
+        b=ZChuQj4YzrTm0PWDnpbB5vdQ2tdjIIsM6G1TjqkYxYTfK8NluVICWiQLHzzNdM9ZDr
+         6PvT97edE62F813OyoxCo8kH+S2+Fx4d3lNKfrdW8BNEHSYBokhAjuN3lL8v8gXxG8OH
+         nbu/MpGzy9fTSMfuDSFOKdwcUgAcSHFkPn2yIaICJTOBWzOHZDRJv9/3PUi8Ykp0tanA
+         n0n6TgwqemNto9OYB+9+ZvZISrAcif+ZzVWjLrRq2NrTOqNaJHEiqeEnLJAWosofMLbU
+         CiqfuNqOV+yvh8pjq+HgM+joEzN3F0JG9HQNhkyi5JRIZb9gYxtkmFow2yoO6z0NJWLH
+         16pA==
+X-Gm-Message-State: APjAAAVTIlSHlINT5Vh895FFAidG2uXQBVSVhaoj2Cg7Z4wrSS+25gNV
+        2SKSxFU8UNNcZnccUPLnSZI=
+X-Google-Smtp-Source: APXvYqwAGbPumI+jLSMDTumFzX1A6jETiibkW+lFp33Oi92Qk4MXCH9qLl3oOtOEhkYAvmVYqeOdyw==
+X-Received: by 2002:a5d:404d:: with SMTP id w13mr20902373wrp.185.1572355987745;
+        Tue, 29 Oct 2019 06:33:07 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id d199sm2945496wmd.35.2019.10.29.06.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 06:33:06 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:33:05 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Tegra30+ CPU suspend-resume bug-fixes
+Message-ID: <20191029133305.GG508460@ulmo>
+References: <20190730172340.14037-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e2141f6a-c530-46d5-d5d9-26806b02d55b@redhat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VACxsDaSTfeluoxK"
+Content-Disposition: inline
+In-Reply-To: <20190730172340.14037-1-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
 
-On 2019/10/29 20:49, Auger Eric wrote:
-> On 10/29/19 1:27 PM, Zenghui Yu wrote:
->> okay, the remaining question is that in vgic_v3_save_pending_tables():
->>
->>      stored = val & (1U << bit_nr);
->>      if (stored == irq->pending_latch)
->>          continue;
->>
->>      if (irq->pending_latch)
->>          val |= 1 << bit_nr;
->>      else
->>          val &= ~(1 << bit_nr);
->>
->> Do we really have a scenario where irq->pending_latch==false and
->> stored==true (corresponds to the above "else") and then we clear
->> pending status of this LPI in guest memory?
->> I can not think out one now.
-> 
-> if you save, restore and save again. On the 1st save the LPI may be
-> pending, it gets stored. On the second save the LPI may be not pending
-> anymore?
+--VACxsDaSTfeluoxK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I assume you mean the "restore" by vgic_its_restore_ite().
+On Tue, Jul 30, 2019 at 08:23:38PM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This small series addresses two suspend-resume bugs: one affects Tegra30+
+> due to a typo in the code, other fixes CPU hang on Tegra30 specifically.
+>=20
+> Changelog:
+>=20
+> v2: Reworded comment to the code to make it sound better in the patch
+>     "Use WFE for power-gating on Tegra30".
+>=20
+> Dmitry Osipenko (2):
+>   ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+>   ARM: tegra: Use WFE for power-gating on Tegra30
 
-While restoring a LPI, we will sync the pending status from guest
-pending table (into the software pending_latch), and clear the
-corresponding bit in guest memory.
-See vgic_v3_lpi_sync_pending_status().
+Applied to for-5.5/arm/core, thanks.
 
-So on the second save, the LPI can be not pending, the guest pending
-table will also indicate not pending.
+Thierry
 
+--VACxsDaSTfeluoxK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Zenghui
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24P5EACgkQ3SOs138+
+s6G5Sw//S0grOxV9TM8J+h8JsMlBe3IItRZfnQw0WAcovTCfk3BVoEEMvR08zuGd
+lu3KKJSPyvf0tISCn/gFgrhNlBtwytO9Mv0gJRNB846UU3vedB6qzm026oQKkvRR
+rFcYkuWXOt1rFofXbQGuXsT5cN/WlrgCmNbGCJBTkLAYnNVG9ASPrwD0Y2teidRU
+dT/fzKNQlpvFNqBoRhXJtUY8T5cYULd0QVqWhqEY9X33LL0rR9fR4X0Bm3awgMsm
+F2L9/7/mLl+BysnvIvVkQ+SbNwwks2diaxIEWlOogb8JM7uo5rzqacfTtVBd88Qp
+xUAfpZ2iZBJw2FqbZ4R+v27K3f8OG+DgT2grxqiWaWkHtjma8Lfn8KwOwwIrpE4d
+drdB5MjUJJNLBJ/Ki4fvONLwgcTYHCw1sZbaZydmDvYAh2RBG5esrFjU0IDCVQqE
+D6FidCp0Xk+tQtKECZ8gGPEYIpMJw9eImm6iVRdV+YoS8w8WHjh8zLULciHyWx6b
+a/jGGo835Xkv5EVv5LdH+tVIhR3IwOADjHTuWSNTYtXCijLOTgvhszvr3IChjw9Z
+ejRuN7ZVDllPLBxmZ/dpx+M+bVLy1Ymm1LdnYjXBZg8UzE/N8cyagkaVpQ4vzN3e
+X7SfNXDS0c9kE/SvJVkTlsMBucxua7Nc3lab70p3M+qKdhWwRn4=
+=vR6p
+-----END PGP SIGNATURE-----
+
+--VACxsDaSTfeluoxK--
