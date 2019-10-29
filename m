@@ -2,117 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9759FE84E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BCFE84EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732542AbfJ2Jxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:53:49 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38253 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733162AbfJ2Jxq (ORCPT
+        id S1726708AbfJ2J4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:56:00 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45793 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfJ2J4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:53:46 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y8so10229907edu.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:53:45 -0700 (PDT)
+        Tue, 29 Oct 2019 05:56:00 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y24so7306806plr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:subject:to:cc:references:openpgp:message-id:date:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=HGDKIfiK4WqAtiXxg2PaSaV3tKJwX+/+66kephvgEMc=;
-        b=snicYa4xa75qBwamypvTLqSPyFkZPl5dVyOqrJzmSnFo9ZWuJnc5ulCdFp8WlWQHOl
-         0AuO/24CzCPv7qVgEFhoukv2GFOuJ1bWq1gG2vGzILd3Sn50nx7Fi9m6nayEaiWTNeWY
-         ZCadVMAYdVU8FMtX8KFyDOyJIcHoqkuUGtzHURxZSnjPpu6p02UHO+TMXf7o5/0gNxYn
-         X+HUMTxEw5ceA3gawdZXe2RtYoL4PpaXATQWnklS4ADEMVGaVtRb2ZGtSlttNdf8qviH
-         SrQ8FWJCTqwBRF+wvNq/NxQJiignNV7jT9hOeVxyd31CXmFMEC2a4MK+EqJ4CMbagW3M
-         Jqgg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ptpy/vJ9nWhyDgwLIzHkRl9+v1e+gk6S6daIsLg9qkw=;
+        b=IRE77B74b3UTcN2DESlNJtYZL5cgVxTp9FkSlyL40OAUe2y2yDfKAs5ZjJrQ/Dn1D3
+         cF96AKMX4+nWUzV4n+FWAuoatauN+4JBM6Iih9Jav+Zmln/SinAdiOjF2CPSmbPcOQY5
+         2O/pAQ7oPNv4ICd1xiDYsA9NHpxrhiodqBSRdSYaFHjIWKmLA71bBCKscxLq7V4qzQ57
+         gVQeiba4wLM7OXCohjVV9sBGpj9JhaC3UenidgDtCMZduXCbGrG4ROmC1KQFipoixoLL
+         SqFrkhVCnlmFRdLPgJnzHkl3MoTTNlJazZA1/a5PQdeLnyWVfDlRfiNf4Hb1STCoH5I9
+         eOFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:message-id
-         :date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HGDKIfiK4WqAtiXxg2PaSaV3tKJwX+/+66kephvgEMc=;
-        b=Y47JY08dyccPKkhqnzCu5TbyOE8Hv41btOhRTSSFcKQSk2LNWFZqXkdF+DKNbD2JQq
-         Ji0KaKpQJ+90ZBnzhNGePVm7dqbOU1zIqz3MbxJg0WqJJvlhYjc8pIMAavEme/76XjeB
-         LsN7YBtuaMHab2nfUshfEvDV9SwvMjvGPBazjif6k81LQdAGD0at8ZOHZ/USNNsO1nD0
-         Fmp2VtMfFKP7jnfWK9qKDCh+a8TDGSbsza3Q9A3srx2Df6zb74PHvpwNwQZreCenBN9u
-         AHZhuk2sOdyNLlAYCrDchZujP9v9CuNjCDoiccdXuqi29iEzy5QiTkGSoXhtq5zhFg8A
-         JXuQ==
-X-Gm-Message-State: APjAAAUuF+hpHl6iXv2ZCwTOABWcxCI9uqjNxhT+6OSjCwvvjypWOBg3
-        pufuwUdwULimmKUva+VY67ku3Q==
-X-Google-Smtp-Source: APXvYqyFyb/NYxsK1RWq4WxvayVYls/goH6XAAk9FVVYjH3wL1Zb5+8jNZclhKtCmGdk5NT+7BUT2g==
-X-Received: by 2002:a50:eb92:: with SMTP id y18mr23242997edr.244.1572342824719;
-        Tue, 29 Oct 2019 02:53:44 -0700 (PDT)
-Received: from [192.168.27.135] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id x6sm664005edc.50.2019.10.29.02.53.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 02:53:44 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [RFC PATCH 4/4] interconnect: qcom: sdm845: Split qnodes into
- their respective NoCs
-To:     David Dai <daidavid1@codeaurora.org>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     evgreen@google.com, sboyd@kernel.org, ilina@codeaurora.org,
-        seansw@qti.qualcomm.com, elder@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1571278852-8023-1-git-send-email-daidavid1@codeaurora.org>
- <1571278852-8023-5-git-send-email-daidavid1@codeaurora.org>
-Openpgp: preference=signencrypt
-Message-ID: <9f879f99-527d-50bc-d5ef-5a72d4a65c4d@linaro.org>
-Date:   Tue, 29 Oct 2019 11:53:42 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ptpy/vJ9nWhyDgwLIzHkRl9+v1e+gk6S6daIsLg9qkw=;
+        b=gAlHZ6v9Lju2Zr36l6tjFhdPzr40Lzg89QU4oBbjxxdeGic0l7yNNaRiSGsHbhFnAs
+         oSihzLCYAD9JdbPS2Pdh8m7PB3D43Z/i751coFRE1hdBGXGd8j9mAvio6U3ELULheF05
+         4vnUE4LuzTnrMkPa6kzs99Tg+vKHSdOVSy1DwtgHjo2hGZSCJklY2j/1RDJrSzMiQ/hS
+         FLxPLfBFLV2vMXLLAQxvY0HF9RTmv0cArd/W4OH2yiuOEp37aJvDKGuUoamDxj42XjHl
+         TPGbuC1aSauzMwnlz8xh74peEETOC+dtHp+uQTpWu0DuzCsUCeRgTaHNluJDcCQv6nCa
+         Pk5Q==
+X-Gm-Message-State: APjAAAV0c5BrbfdOyZ1sJcWmXpPmIaVPneu6mOJ6DYqe+998qihzhIoB
+        8y66oAbZabuh4RYongQZYgg=
+X-Google-Smtp-Source: APXvYqylIdIbgfFpoNGl8hpyFFcZbk2+XifwhdGCN4d5cZYpXP0hke+9DfdWKAnPmV8s3uwFiswL/g==
+X-Received: by 2002:a17:902:a588:: with SMTP id az8mr3127639plb.70.1572342958474;
+        Tue, 29 Oct 2019 02:55:58 -0700 (PDT)
+Received: from saurav ([27.62.167.137])
+        by smtp.gmail.com with ESMTPSA id x190sm14750613pfc.89.2019.10.29.02.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 02:55:57 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 15:25:52 +0530
+From:   Saurav Girepunje <saurav.girepunje@gmail.com>
+To:     gregkh@linuxfoundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     saurav.girepunje@hotmail.com
+Subject: [PATCH] fs: kernfs: file.c: Drop the condition with no effect.
+Message-ID: <20191029095552.GA11561@saurav>
 MIME-Version: 1.0
-In-Reply-To: <1571278852-8023-5-git-send-email-daidavid1@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+As the "if" and "else" branch body are identical the condition
+has no effect. So drop the if,else condition.
 
-On 17.10.19 г. 5:20 ч., David Dai wrote:
-> In order to better represent the hardware and its different Network-On-Chip
-> devices, split the sdm845 provider driver into NoC specific providers.
-> Remove duplicate functionality already provided by the icc rpmh and
-> bcm voter drivers to calculate and commit bandwidth requests to hardware.
-> 
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> ---
->  drivers/interconnect/qcom/sdm845.c | 727 +++++++++++--------------------------
->  1 file changed, 206 insertions(+), 521 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
-> index 502a6c2..a731f4d 100644
-> --- a/drivers/interconnect/qcom/sdm845.c
-> +++ b/drivers/interconnect/qcom/sdm845.c
-[..]
->  static int qnoc_probe(struct platform_device *pdev)
->  {
-> @@ -808,6 +480,12 @@ static int qnoc_probe(struct platform_device *pdev)
->  	qp->bcms = desc->bcms;
->  	qp->num_bcms = desc->num_bcms;
->  
-> +	qp->voter = of_bcm_voter_get(qp->dev, NULL);
+Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+---
+ fs/kernfs/file.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-I assume that we could have a second optional bcm-voter? The
-"qcom,bcm-voter-names" DT property is not used anywhere, is it needed? Maybe
-give an example in patch 1.
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index e8c792b49616..d8123d8cfdcc 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -663,10 +663,7 @@ static int kernfs_fop_open(struct inode *inode, struct file *file)
+ 	 * Both paths of the branch look the same.  They're supposed to
+ 	 * look that way and give @of->mutex different static lockdep keys.
+ 	 */
+-	if (has_mmap)
+-		mutex_init(&of->mutex);
+-	else
+-		mutex_init(&of->mutex);
++	mutex_init(&of->mutex);
+ 
+ 	of->kn = kn;
+ 	of->file = file;
+-- 
+2.20.1
 
-> +	if (IS_ERR(qp->voter)) {
-> +		dev_err(&pdev->dev, "bcm_voter err:%d\n", PTR_ERR(qp->voter));
-
-Should be %ld
-
-> +		return PTR_ERR(qp->voter);
-> +	}
-> +
->  	ret = icc_provider_add(provider);
->  	if (ret) {
->  		dev_err(&pdev->dev, "error adding interconnect provider\n");
-
-Nit: I would also put patch 2/4 at the end of the series.
-
-Thanks,
-Georgi
