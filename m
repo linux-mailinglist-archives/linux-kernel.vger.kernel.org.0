@@ -2,114 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316C5E7FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB985E7FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732060AbfJ2FoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 01:44:04 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38458 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732037AbfJ2FoD (ORCPT
+        id S1732202AbfJ2Fq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 01:46:26 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35194 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfJ2Fq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 01:44:03 -0400
-Received: by mail-io1-f68.google.com with SMTP id u8so13432277iom.5;
-        Mon, 28 Oct 2019 22:44:03 -0700 (PDT)
+        Tue, 29 Oct 2019 01:46:26 -0400
+Received: by mail-pl1-f194.google.com with SMTP id x6so2963511pln.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 22:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TwIi5AOjL+xogOCvS6bHBwjeQf/wLwbiipgSMMh0034=;
-        b=KNzW/V7sWJosoX1Wgya+9xFpsAsFfo6DDBqfmWMNyaScGVynI6XSo7d+lwmrMWZxZL
-         DvRnMNBLvZ0EHRASZudom7+529D69Ioa/0D7baXzLTNV1FPTwLomqDyT/QmJcxb5Du1U
-         NSTkEadBjUQMLQPVj82sdWfYNZOwCSsWTG+L0Qx8obhz7U70EuP25ilO3ICo4oNGcrO3
-         sP0elWbXJEHp6oYJxQSMdD7e5pm22CHlDhcBkpOgjJK1GmkKT8A2loNgtllFUY87GsSZ
-         jNGDO3LVk14ot8lzEpFm3D45nS/xqU+HmDNj9xCjAxZlph83JhmRRF+2rMkfYu3bGp43
-         DIbQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BGNnUOeOALjeswlQdNmg6H9C3q6EXqw3JZNkQRr1llQ=;
+        b=jg9q/Es/BqriYOEAkxSEE33zkdwq115DyrEh0wvD3uy32lPbaiuOj2csLoIzevlL/r
+         E/12mffycTgJCADXDoCpEOcJQ5N4b5hxQAx7qOgpmzLu61JycIz+8mfdaZo9G+8MQ7Am
+         Vuhr0kE/FLTYqA321y7ShfNIzdWWPWTevpyG0WeuvYo0cQqJPSYH7yullEx722ZqFi1R
+         8ZtondxROzQdSdqrSN8Bb3UVCnno4n8q9ksYgMMj1Cvij/9GsE35ZlHHxIbbEniuU91a
+         wzyjFI3QyxKjyhFgtmoBy0FKTg9NUD7OKS+46Z6OyhcFWXPN9rQyG+ZNpVNJolCoo/jj
+         /3Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TwIi5AOjL+xogOCvS6bHBwjeQf/wLwbiipgSMMh0034=;
-        b=Hr3UfIUxeJkkUpxdoby5qlofCYoaIbUG2I+JbBiQ5BlzoQUCSo77oisL0Pd74CcT+i
-         mO9aJIpzkdZ+ZugckyBTsLP4MV3YTw5eS6IUvytclS5Q1jLZ1mBK2RHIa1QtapvTyeMI
-         pqzAFx1UaCyUh6jN+iPieDwWpYqyn9XztA8SZ4SufGoVvakXQvlE1qWhNn+GxayyXJyW
-         xNbdD669PYV8h6Dy6124t01FrLCUwDqY0UrpsWE8d3ftyNvoemHCtOsMheaHXuP1elxx
-         RGZ5+KOVAyT9Rve/ofL60VOlq8YOr1AVl78jP16KZJEcDrq7Bbvl3blmL2IoQTu4lr8o
-         DSVw==
-X-Gm-Message-State: APjAAAVwArOFtn5/ntqbW7vD7SWZhdGg6IllHeFj5qkXr1olUluN9gzs
-        73rX7B1eQBy0S1b5wQiEJ1YcFR8vOmx0mZHu7Zg=
-X-Google-Smtp-Source: APXvYqwfnx5VqN5e72dkTUgm4SNDz5ZOunVAy0hTGiBY9L2ixHUF+ZWjMafnA/vc/o+iuu7rYO8ulvkWS150jm+d+Kc=
-X-Received: by 2002:a5d:9b83:: with SMTP id r3mr1724580iom.5.1572327842597;
- Mon, 28 Oct 2019 22:44:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BGNnUOeOALjeswlQdNmg6H9C3q6EXqw3JZNkQRr1llQ=;
+        b=SbZZhOy/S687ILcpyM61KC36pvt+ruSu/qa441uaAdJXPjpcfAiJfenYx86B/3EC3o
+         +CGGfzkPk4TLJE2RJkj6G2naawKubc522lNLfLSjnFvFAHmVQo9ZxtKhyXIOtgz2Fnp1
+         HqPzd2hlG9h122Chshp8NM46qqwDW8C7QLgqiqwFGlLhm4fRfZQimtaU0sKjJtmSeEto
+         Vrj+bpfBU/pHB7dfTrbLx/DvptND5yCG+CuaE923c6LY4ZEWgkZXc9uyhDxmyUgUeZ7N
+         I6/ee0dJg2mYHWe9IBd6tcogZ343nbdNbcMvJ0r8oh+4lw3dfTm+qmU/PahUVz+M72Oy
+         F84g==
+X-Gm-Message-State: APjAAAURmyW+nsBsYUy2BKzJ9yYe9MidW1mS4VfeVFflSrnRhuh71TBA
+        HIAdaalr0fg/Adn3JzTnuExfKQ==
+X-Google-Smtp-Source: APXvYqyE5mvnRddgHXGsZTDyiF3MennLWBuBLEfVle86PMhMeHbJJHz1zf8sDXGq6hU0pJqMCcXeZA==
+X-Received: by 2002:a17:902:bd91:: with SMTP id q17mr1988190pls.43.1572327984016;
+        Mon, 28 Oct 2019 22:46:24 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i16sm12546753pfa.184.2019.10.28.22.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 22:46:23 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 22:46:20 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     cang@codeaurora.org
+Cc:     Avri Altman <Avri.Altman@wdc.com>,
+        "Winkler, Tomas" <tomas.winkler@intel.com>,
+        asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Evan Green <evgreen@chromium.org>,
+        Janek Kotas <jank@cadence.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] scsi: ufs: Add command logging infrastructure
+Message-ID: <20191029054620.GG1929@tuxbook-pro>
+References: <1571808560-3965-1-git-send-email-cang@codeaurora.org>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DCF0AFE@hasmsx108.ger.corp.intel.com>
+ <MN2PR04MB6991C2AF4DDEDD84C7887258FC6B0@MN2PR04MB6991.namprd04.prod.outlook.com>
+ <01eb3c55e35738f2853fbc7175a12eaa@codeaurora.org>
 MIME-Version: 1.0
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <1572171452-7958-2-git-send-email-rppt@kernel.org> <20191028123124.ogkk5ogjlamvwc2s@box>
- <20191028130018.GA7192@rapoport-lnx> <20191028131623.zwuwguhm4v4s5imh@box>
-In-Reply-To: <20191028131623.zwuwguhm4v4s5imh@box>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 28 Oct 2019 22:43:51 -0700
-Message-ID: <CAA9_cmd7f2y2AAT6646S=tco3yfyLgCAC4Qp=1iTQaJqrQcOwQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user mappings
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Mike Rapoport <rppt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01eb3c55e35738f2853fbc7175a12eaa@codeaurora.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 6:16 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Mon, Oct 28, 2019 at 02:00:19PM +0100, Mike Rapoport wrote:
-> > On Mon, Oct 28, 2019 at 03:31:24PM +0300, Kirill A. Shutemov wrote:
-> > > On Sun, Oct 27, 2019 at 12:17:32PM +0200, Mike Rapoport wrote:
-> > > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > > >
-> > > > The mappings created with MAP_EXCLUSIVE are visible only in the context of
-> > > > the owning process and can be used by applications to store secret
-> > > > information that will not be visible not only to other processes but to the
-> > > > kernel as well.
-> > > >
-> > > > The pages in these mappings are removed from the kernel direct map and
-> > > > marked with PG_user_exclusive flag. When the exclusive area is unmapped,
-> > > > the pages are mapped back into the direct map.
-> > >
-> > > I probably blind, but I don't see where you manipulate direct map...
-> >
-> > __get_user_pages() calls __set_page_user_exclusive() which in turn calls
-> > set_direct_map_invalid_noflush() that makes the page not present.
->
-> Ah. okay.
->
-> I think active use of this feature will lead to performance degradation of
-> the system with time.
->
-> Setting a single 4k page non-present in the direct mapping will require
-> splitting 2M or 1G page we usually map direct mapping with. And it's one
-> way road. We don't have any mechanism to map the memory with huge page
-> again after the application has freed the page.
->
-> It might be okay if all these pages cluster together, but I don't think we
-> have a way to achieve it easily.
+On Mon 28 Oct 19:37 PDT 2019, cang@codeaurora.org wrote:
 
-Still, it would be worth exploring what that would look like if not
-for MAP_EXCLUSIVE then set_mce_nospec() that wants to punch out poison
-pages from the direct map. In the case of pmem, where those pages are
-able to be repaired, it would be nice to also repair the mapping
-granularity of the direct map.
+> On 2019-10-23 18:33, Avri Altman wrote:
+> > > 
+> > > > Add the necessary infrastructure to keep timestamp history of
+> > > > commands, events and other useful info for debugging complex issues.
+> > > > This helps in diagnosing events leading upto failure.
+> > > 
+> > > Why not use tracepoints, for that?
+> > Ack on Tomas's comment.
+> > Are there any pieces of information that you need not provided by the
+> > upiu tracer?
+> > 
+> > Thanks,
+> > Avri
+> 
+> In extreme cases, when the UFS runs into bad state, system may crash. There
+> may not be a chance to collect trace. If trace is not collected and failure
+> is hard to be reproduced, some command logs prints would be very helpful to
+> help understand what was going on before we run into failure.
+> 
+
+This is a common problem shared among many/all subsystems, so it's
+better to rely on a generic solution for this; such as using tracepoints
+dumped into pstore/ramoops.
+
+Regards,
+Bjorn
