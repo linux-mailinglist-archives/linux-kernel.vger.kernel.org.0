@@ -2,89 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DC4E8E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D27E8E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:40:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbfJ2Rj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729470AbfJ2RjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:39:21 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95A02208E3;
-        Tue, 29 Oct 2019 17:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572370761;
-        bh=tsXvNgMCLtR2kuqm1evXZDlLqqX0YULzlHhwJ/E5i/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2dU3cm7PgO/ow0TadOq/6Bwc7XtLUensNccc5tmNmofFREhKLD/vngdmbLG3JE3KO
-         69XR/Lsd/xToVK/LJnacwXJKdbHTZyMcxMDH19YML2B7YS9NgPCVYJ05Z6hNzW0LGz
-         2+m+vTxOI3/O2ikGt2SZgt03eq+C2Xjtm9vEjQps=
-Date:   Tue, 29 Oct 2019 17:39:15 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2] arm64: cpufeature: Enable Qualcomm Falkor/Kryo errata
- 1003
-Message-ID: <20191029173915.GC13281@willie-the-truck>
-References: <20191029171539.1374553-1-bjorn.andersson@linaro.org>
+        id S1728157AbfJ2RkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:40:20 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38621 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfJ2RkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 13:40:20 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r14so5738054otn.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 10:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MioPHoHmZiJDkwtAxq/VI9F9tLNtqLzlol+i1u7r8fA=;
+        b=oBddjUwbYuu4Lj3WVOqQL7mkyQMLeydeOVhksSLQRwe9Gir8Z4rWNR8jmLZshyqsmr
+         /1yiueyFie5VvPJe/Q4QgS42MgJEgn9ZA8J4Ji2+x7vDNVyhxNfnT8zf6RJWL3YYYvlJ
+         fXTuOlFGMXUyRIrC8dRLduwQ8vAstTWyOwJgD2Rnshy+cbZJsv17mEk9jozie5x7OCd/
+         fak4Ujm7FgA2hP54yAMo6n4SJeh6V/iHkkAIBhcP1cZYOprBLFv3CxQuaiuNv7pBEtqG
+         Gr9j9dasGtqQ3pR3heFnkqmYmkoKPRP8qa+NsIwHanpqw9tM2mih8uIb+JX0J6EoVq1o
+         8l6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MioPHoHmZiJDkwtAxq/VI9F9tLNtqLzlol+i1u7r8fA=;
+        b=YomGSQtGc9n7sK3qqrVAAyjs039Zn0bfeGKQlNaavlINYVly7dRlqQPR5eRp5lq36L
+         hXto0ERKEwhAdAvWn2QjvOeSGYOYqGIv3v5TmB2IYRJG3dPZ7O43m3w4acLkslHGloQf
+         oloiEyg2Dla7YFngYWJc//LQMoLeQFAPqCUV2f1qQrGu3pGm9BySu70koPiMJesS9Y0D
+         kz8vMtvY9rglqp4DFNMyGN5p0mGbqj6FzaWtcKqlnY91B5OtxdJHU91OrMFen4z5A/01
+         Sg9gBumKAqBGYpLzOSB8e4Wx/HmyMdZ0ipPktSb+Me5EWXsjaaCHRnxlHU3ovnURahBF
+         jDvg==
+X-Gm-Message-State: APjAAAVj9H7NK+Vey1lOkxqO3qhq91jBzcRZrDYfVmRHHFm7nke6G6NS
+        8j1axgaXSk6YY5f4213pnvWzxXVyKQDIOlWGX08=
+X-Google-Smtp-Source: APXvYqyqXgmonX3RdyxFqzASwZjNWMmFfA4UaGDLY5jPXzt3BII9S4iZpIJfcBI2c62BdFfIFo4EbQJ3tsnlssvGTuE=
+X-Received: by 2002:a9d:630c:: with SMTP id q12mr7925015otk.332.1572370819510;
+ Tue, 29 Oct 2019 10:40:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029171539.1374553-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191026235214.GA11702@cristiane-Inspiron-5420>
+In-Reply-To: <20191026235214.GA11702@cristiane-Inspiron-5420>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 29 Oct 2019 13:40:08 -0400
+Message-ID: <CAGngYiXG1JbFcYLfnKDKYac=Ku+KAkOetPa_MkUCt7xXgJA-XA@mail.gmail.com>
+Subject: Re: [PATCH] staging: fieldbus: anybuss: use devm_platform_ioremap_resource
+ helper
+To:     Cristiane Naves <cristianenavescardoso09@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 10:15:39AM -0700, Bjorn Andersson wrote:
-> With the introduction of 'cce360b54ce6 ("arm64: capabilities: Filter the
-> entries based on a given mask")' the Qualcomm Falkor/Kryo errata 1003 is
-> no long applied.
-> 
-> The result of not applying errata 1003 is that MSM8996 runs into various
-> RCU stalls and fails to boot most of the times.
-> 
-> Give 1003 a "type" to ensure they are not filtered out in
-> update_cpu_capabilities().
-> 
-> Fixes: cce360b54ce6 ("arm64: capabilities: Filter the entries based on a given mask")
-> Cc: stable@vger.kernel.org
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Suggested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Sat, Oct 26, 2019 at 7:52 PM Cristiane Naves
+<cristianenavescardoso09@gmail.com> wrote:
+>
+> Use devm_platform_ioremap_resource helper which wraps
+> platform_get_resource() and devm_ioremap_resource() together. Issue
+> found by coccicheck.
+>
+> Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
 > ---
-> 
-> Changes since v1:
-> - s/ARM64_CPUCAP_SCOPE_LOCAL_CPU/ARM64_CPUCAP_LOCAL_CPU_ERRATUM/
-> - Dropped 1009 "fix" as it already had a type from ERRATA_MIDR_RANGE_LIST()
-> 
->  arch/arm64/kernel/cpu_errata.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index df9465120e2f..3facd5ca52ed 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -780,6 +780,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->  	{
->  		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
->  		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-> +		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
->  		.matches = cpucap_multi_entry_cap_matches,
->  		.match_list = qcom_erratum_1003_list,
->  	},
-> -- 
-> 2.23.0
+>  drivers/staging/fieldbus/anybuss/arcx-anybus.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
 
-Thanks, I'll pick this up as a fix.
+Reviewed-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Tested-by: Sven Van Asbroeck <TheSven73@gmail.com>
 
-Will
+Greg has already queued this patch, but the link embedded in
+his commit message should point people here.
