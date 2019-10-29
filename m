@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F60DE875A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5E1E8758
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733286AbfJ2Lnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:43:45 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43138 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732187AbfJ2Lnh (ORCPT
+        id S1732544AbfJ2Lnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:43:37 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51098 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732186AbfJ2Lnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Oct 2019 07:43:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1so5814671wra.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:34 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id 11so2230504wmk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H2CJ5u7SoLyb47H63oMSiNuFZvWZvb1TPdq7zIJAX2Q=;
-        b=QEWMcBQuQdPrxlY8iVWmlO5NK7qirG7I/rEGKCjgzqZr+2kStOAgMQOOLpcCXEdCrH
-         gLFpZGd1ABHlwBEB8BxPRzO3UHFR2gGn6DcaipPACK1S8OQYampSi+qAhdnlQdJqn32R
-         zpFruHwfyjQCCuRnjK4wEOFaXytfLlrK1r7TykgwIFj/YWfDcfXLj1IxJpP3PHUlyKkV
-         9rXRbm5rSIBRhj5TMe5a+74bJjFa8wiaqA2+3PToAwLTQGRK/Yu23dj1kHtT5D0ibiZF
-         xYHMxoAvL8qPdYVmQ6az6INdUbuPBrZvZQLD/kch8XQPWsqMAPJ2OzKPoy/OOasMvg+r
-         QOSw==
+        bh=BV9LuV+mEUNPyp8KDYlq7uwIWu6H/ILCOoWhmeflRas=;
+        b=e6u70EtU3vtcsFAGBCYUyhSMUHxapYcdd6VLpCgmt7Z9eJD9ov8o8bqwk7uWi72J8h
+         Hjw7IlYEMhkOv0sfh5aQzF7Uji1TJUIauV7gcBPaVlI0fUJhIiJwvE7RDSTQ8THRCDFt
+         dcHHxKMmuZZHaQ73sZRTrgNelpM7lpfd0+JB0fHFznfULYEXcnlBYNApVJERAa/f7BGl
+         nPFskfi71zTvj4UxTrzq0Bakz1EYKOUM1qKBZ6Fzsh1cp7er0kO8Hy5vawVMWqOzhtfG
+         AKCxPaiGXe3X2CUlYoaBVHldA9oi/bdChMZobfUCSqkoobMHMwsNIYIlQTByb2kahql0
+         vi7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H2CJ5u7SoLyb47H63oMSiNuFZvWZvb1TPdq7zIJAX2Q=;
-        b=s0fBhh2ULiMX7FNy3S4wXKxQOk3G/po1P39snK77m72+8IVFY6tZfhNa4w+thRf8w7
-         FhFZr1F0sa19PquIdvuqDJdt/k3XsIT9BbmHJxOutZDh7iPdVjnCtAaO0Nw+WMkDncbU
-         vno1B5OuUfqYYNexVwxS/tb5iwbax91aAwM4TxTncfLFTs/uVNN6DhS4JFJGKGyLHjKp
-         8q7EWlmkL/RAtGyL//6E73k6rSfo+sMsScbdmiA7/M5htdtqK2PUGtoC4bYLL1SkjrXQ
-         NJe2i/+RV9VT+DN9aYgkFmwfF/BLidDK1XV8fKFSWjQIXMBBkKj+W8cyI+h9Wecp0Xkc
-         1ntw==
-X-Gm-Message-State: APjAAAUAVBmlj7fPZ4AZptGkZHZK95Rb73BitqfYHPQ+dtFC988KsJiV
-        cKInREJcYh9z6LgEt2cJ4ZO7UA==
-X-Google-Smtp-Source: APXvYqxXfxvgGbwhHQ7KAWaxfMcQB/qbTX5lVDL9LdHipKZwJ+PU0EN2cUVZBjtPgqLWjIb7dzn2vw==
-X-Received: by 2002:a5d:498a:: with SMTP id r10mr20169245wrq.129.1572349413896;
-        Tue, 29 Oct 2019 04:43:33 -0700 (PDT)
+        bh=BV9LuV+mEUNPyp8KDYlq7uwIWu6H/ILCOoWhmeflRas=;
+        b=Gu8ybPgUAn83MFyQINV8fzKBwKu7iARqxlZjeYRa6BUTamU+zvf9HLiDJpxQbznJOW
+         HP35kQwo0jyZFRjH16A5C8inxY39PV341GS2E2SsRPI8mf3nO/9JWSeVB4Mn0rrUdDxv
+         u7ehS1cZhFzo1fI5b7tiJyTBP/C3jEa8391kSTYErzrE1XOJ2ZWisN5TvY2highuPCsl
+         hnB25d3mfXeUV60UzGbBoT0gVVWJur1kXIMpyXKgFvz493YOp1cuDHm+1f1XNeOfzB9f
+         Ai7KFmQU+YVfVNvv4kTkDXmKFJGzLwfXGhLs07RP14mmioHVRFZmOJipe8sB9djQnCIv
+         D1KA==
+X-Gm-Message-State: APjAAAVbUCUPcuzBh2ATwZOiALfKthuj/HCSxwYmCOfGV5sKVTUJHyvu
+        1Awgl4kNhQJ3xzUsbo3jOpiG1Q==
+X-Google-Smtp-Source: APXvYqxrrjqgDQBZbqcerfe/OHtw4xZ6XvSF/FHbqhiF+kCypy8sR9iC8mWk/NjYtXhvktZLG/wblw==
+X-Received: by 2002:a1c:c90f:: with SMTP id f15mr3776169wmb.125.1572349415217;
+        Tue, 29 Oct 2019 04:43:35 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.32
+        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 04:43:33 -0700 (PDT)
+        Tue, 29 Oct 2019 04:43:34 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
+Cc:     linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 02/10] nvmem: sc27xx: Change to use devm_hwspin_lock_request_specific() to request one hwlock
-Date:   Tue, 29 Oct 2019 11:42:32 +0000
-Message-Id: <20191029114240.14905-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 03/10] nvmem: imx: scu: support hole region check
+Date:   Tue, 29 Oct 2019 11:42:33 +0000
+Message-Id: <20191029114240.14905-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
 References: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
@@ -62,69 +62,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Peng Fan <peng.fan@nxp.com>
 
-Change to use devm_hwspin_lock_request_specific() to help to simplify the
-cleanup code for drivers requesting one hwlock. Thus we can remove the
-redundant sc27xx_efuse_remove() and platform_set_drvdata().
+Introduce HOLE/ECC_REGION flag and in_hole helper to ease the check
+of hole region. The ECC_REGION is also introduced here which is
+preparing for programming support. ECC_REGION could only be programmed
+once, so need take care.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/sc27xx-efuse.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/nvmem/imx-ocotp-scu.c | 47 +++++++++++++++++++++++++++++++----
+ 1 file changed, 42 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvmem/sc27xx-efuse.c b/drivers/nvmem/sc27xx-efuse.c
-index c6ee21018d80..ab5e7e0bc3d8 100644
---- a/drivers/nvmem/sc27xx-efuse.c
-+++ b/drivers/nvmem/sc27xx-efuse.c
-@@ -211,7 +211,7 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/nvmem/imx-ocotp-scu.c b/drivers/nvmem/imx-ocotp-scu.c
+index 61a17f943f47..030e27ba4dfb 100644
+--- a/drivers/nvmem/imx-ocotp-scu.c
++++ b/drivers/nvmem/imx-ocotp-scu.c
+@@ -19,9 +19,20 @@ enum ocotp_devtype {
+ 	IMX8QM,
+ };
  
--	efuse->hwlock = hwspin_lock_request_specific(ret);
-+	efuse->hwlock = devm_hwspin_lock_request_specific(&pdev->dev, ret);
- 	if (!efuse->hwlock) {
- 		dev_err(&pdev->dev, "failed to request hwspinlock\n");
- 		return -ENXIO;
-@@ -219,7 +219,6 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
++#define ECC_REGION	BIT(0)
++#define HOLE_REGION	BIT(1)
++
++struct ocotp_region {
++	u32 start;
++	u32 end;
++	u32 flag;
++};
++
+ struct ocotp_devtype_data {
+ 	int devtype;
+ 	int nregs;
++	u32 num_region;
++	struct ocotp_region region[];
+ };
  
- 	mutex_init(&efuse->mutex);
- 	efuse->dev = &pdev->dev;
--	platform_set_drvdata(pdev, efuse);
+ struct ocotp_priv {
+@@ -38,13 +49,41 @@ struct imx_sc_msg_misc_fuse_read {
+ static struct ocotp_devtype_data imx8qxp_data = {
+ 	.devtype = IMX8QXP,
+ 	.nregs = 800,
++	.num_region = 3,
++	.region = {
++		{0x10, 0x10f, ECC_REGION},
++		{0x110, 0x21F, HOLE_REGION},
++		{0x220, 0x31F, ECC_REGION},
++	},
+ };
  
- 	econfig.stride = 1;
- 	econfig.word_size = 1;
-@@ -232,21 +231,12 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
- 	nvmem = devm_nvmem_register(&pdev->dev, &econfig);
- 	if (IS_ERR(nvmem)) {
- 		dev_err(&pdev->dev, "failed to register nvmem config\n");
--		hwspin_lock_free(efuse->hwlock);
- 		return PTR_ERR(nvmem);
- 	}
+ static struct ocotp_devtype_data imx8qm_data = {
+ 	.devtype = IMX8QM,
+ 	.nregs = 800,
++	.num_region = 2,
++	.region = {
++		{0x10, 0x10f, ECC_REGION},
++		{0x1a0, 0x1ff, ECC_REGION},
++	},
+ };
  
- 	return 0;
- }
++static bool in_hole(void *context, u32 index)
++{
++	struct ocotp_priv *priv = context;
++	const struct ocotp_devtype_data *data = priv->data;
++	int i;
++
++	for (i = 0; i < data->num_region; i++) {
++		if (data->region[i].flag & HOLE_REGION) {
++			if ((index >= data->region[i].start) &&
++			    (index <= data->region[i].end))
++				return true;
++		}
++	}
++
++	return false;
++}
++
+ static int imx_sc_misc_otp_fuse_read(struct imx_sc_ipc *ipc, u32 word,
+ 				     u32 *val)
+ {
+@@ -91,11 +130,9 @@ static int imx_scu_ocotp_read(void *context, unsigned int offset,
+ 	buf = p;
  
--static int sc27xx_efuse_remove(struct platform_device *pdev)
--{
--	struct sc27xx_efuse *efuse = platform_get_drvdata(pdev);
--
--	hwspin_lock_free(efuse->hwlock);
--	return 0;
--}
--
- static const struct of_device_id sc27xx_efuse_of_match[] = {
- 	{ .compatible = "sprd,sc2731-efuse" },
- 	{ }
-@@ -254,7 +244,6 @@ static const struct of_device_id sc27xx_efuse_of_match[] = {
+ 	for (i = index; i < (index + count); i++) {
+-		if (priv->data->devtype == IMX8QXP) {
+-			if ((i > 271) && (i < 544)) {
+-				*buf++ = 0;
+-				continue;
+-			}
++		if (in_hole(context, i)) {
++			*buf++ = 0;
++			continue;
+ 		}
  
- static struct platform_driver sc27xx_efuse_driver = {
- 	.probe = sc27xx_efuse_probe,
--	.remove = sc27xx_efuse_remove,
- 	.driver = {
- 		.name = "sc27xx-efuse",
- 		.of_match_table = sc27xx_efuse_of_match,
+ 		ret = imx_sc_misc_otp_fuse_read(priv->nvmem_ipc, i, buf);
 -- 
 2.21.0
 
