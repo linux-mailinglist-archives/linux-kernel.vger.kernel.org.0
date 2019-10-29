@@ -2,70 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8300DE826F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E327E8219
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbfJ2HXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 03:23:11 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:27330 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfJ2HXI (ORCPT
+        id S1730112AbfJ2HVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 03:21:01 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:39672 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728547AbfJ2HUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:23:08 -0400
-IronPort-SDR: yAq6ABk4qt15wBPQwWCS9ROvcuttM+3PXDRZ+HXmMeT9KxUBy2FHIycxxm8c3SIbELn4nHJ8lo
- jY2xRIS39YYYSG81lRqcQ/hD96KWAWOY/RnaoU/PnXAYlJEKBK04N1QZcZwBfNycZqdn683bBw
- 6NOKQ/9lu7Ay4LAe0S/OCjdXa0u7j067wxXd1WS9CWDTFSBNH4H4vfh5antjjmrz3Nrcwm+EPI
- 2ES7fLnCFJEgH+JjvCofEV1SXYFHUwr6Fal/7CXVNedneU6oH3JzmonJDwQ++iRCIz7AQqeMfx
- hvQ=
-X-IronPort-AV: E=Sophos;i="5.68,243,1569312000"; 
-   d="scan'208";a="42697363"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 28 Oct 2019 23:23:07 -0800
-IronPort-SDR: sXPGs2Ndl2P+enHZB2dnITg/gGG/xDmsOREZ81pPSBYKNbcDdF7JjXw1ZxrnSJ2XKs6DRxqFL4
- y+z2ZL0BXYQ9YeY1vEAovNed2t2rO5FeGrnIq1FkaRjaGls5x+VUyi68Wf7CGa9apzz7pC0CKg
- SevqZRpNAGIcK4+/Hsd1UwGnkRmgnEw7vaNsQkrrRABHed/iIfuRMR/wKyX1007A5tVyKvdVf1
- ZW2f8C6p0GAqqJ9RcCr4omhYEObzFFD1vGQoQJPiDN57y7P1qrZQPoxPRFFfzQ16Lt+tG4vRg/
- 0vc=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <rydberg@bitmath.org>, <dmitry.torokhov@gmail.com>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>, <erosca@de.adit-jv.com>,
-        <Andrew_Gabbasov@mentor.com>
-Subject: [PATCH v4 48/48] Input: atmel_mxt_ts - Fix compilation warning
-Date:   Tue, 29 Oct 2019 16:20:10 +0900
-Message-ID: <20191029072010.8492-49-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191029072010.8492-1-jiada_wang@mentor.com>
-References: <20191029072010.8492-1-jiada_wang@mentor.com>
+        Tue, 29 Oct 2019 03:20:38 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 558EF2E1492;
+        Tue, 29 Oct 2019 10:20:35 +0300 (MSK)
+Received: from iva8-b53eb3f76dc7.qloud-c.yandex.net (iva8-b53eb3f76dc7.qloud-c.yandex.net [2a02:6b8:c0c:2ca1:0:640:b53e:b3f7])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id z9I2k0eD4G-KYl0QrA6;
+        Tue, 29 Oct 2019 10:20:35 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572333635; bh=ybO1Y2oq7Ib/EvpNL4QHXvV2p9s8Wjfoqf8YgObcVK8=;
+        h=In-Reply-To:Message-ID:Date:References:To:From:Subject:Cc;
+        b=1gVT2E7Kb5Wqsk8xqwFHfzj7ey/Sl4tf7LsGReR8lVZTJGvNiRGkSpFZ1P5QfOlfu
+         RvJTvz7WRKdqCJVKcQwyLkrIDZPWJSPaOtDl0Ot7x+vSMd4u+m8FLisUobJl6N8inN
+         gCis+y8CafSp6pnnkNV/iTjpVANuGMIcwXZx4REs=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
+        by iva8-b53eb3f76dc7.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id NZ48FxkpSN-KYWaqv0C;
+        Tue, 29 Oct 2019 10:20:34 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
+ ext4_evict_inode()
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org
+Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Eric Whitney <enwlinux@gmail.com>
+References: <157233344808.4027.17162642259754563372.stgit@buzz>
+Message-ID: <427b6718-0893-0f0f-f5db-5ad45b949a09@yandex-team.ru>
+Date:   Tue, 29 Oct 2019 10:20:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <157233344808.4027.17162642259754563372.stgit@buzz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix "make W=1" compilation warnings from Atmel driver
-as per the compilation logs.
+On 29/10/2019 10.17, Konstantin Khlebnikov wrote:
+> If inode->i_blocks is zero then ext4_evict_inode() skips ext4_truncate().
+> Delayed allocation extents are freed later in ext4_clear_inode() but this
+> happens when quota reference is already dropped. This leads to leak of
+> reserved space in quota block, which disappears after umount-mount.
+> 
+> This seems broken for a long time but worked somehow until recent changes
+> in delayed allocation.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FYI, perf cannot correctly parse related perf events without this:
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index f89382343c08..5cf303371103 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2049,7 +2049,7 @@ static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
- 
- 			byte_offset = reg + i - cfg->start_ofs;
- 
--			if (byte_offset >= 0 && byte_offset < cfg->mem_size) {
-+			if (byte_offset < cfg->mem_size) {
- 				*(cfg->mem + byte_offset) = val;
- 			} else {
- 				dev_err(dev, "Bad object: reg:%d, T%d, ofs=%d\n",
--- 
-2.17.1
-
+https://lore.kernel.org/lkml/157228145325.7530.4974461761228678289.stgit@buzz/
