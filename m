@@ -2,72 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 044BEE82FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75423E8316
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfJ2IKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 04:10:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52804 "EHLO mail.kernel.org"
+        id S1729002AbfJ2ITt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:19:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727331AbfJ2IKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 04:10:11 -0400
+        id S1728869AbfJ2ITs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 04:19:48 -0400
 Received: from localhost (unknown [91.217.168.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5817720663;
-        Tue, 29 Oct 2019 08:10:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7BA2086A;
+        Tue, 29 Oct 2019 08:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572336611;
-        bh=C85TGFeZCrGhOL2LSvwdwkyUtb0eIGs8u6rXwHu3r98=;
+        s=default; t=1572337188;
+        bh=ZRF796Wus2o0Ya1YW5Koj4SnZvUVISTZ2oEhfyYzeN0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S7XWlfdDSAlv3/uYXRZvk4A1wIhOPLofg4bVvODYpmmX6GbFCtoIWF9uPFB1ALy29
-         rybgZME5qU6TosYnR9W1rsrvwxEP0QgO3ZTcwIhMv1brnykO+JrIj+sGKBHmH7tGCO
-         EASLpW79fQ3SwYIzI+DMOPusJhZxE3EWssqJ3dOQ=
-Date:   Tue, 29 Oct 2019 09:10:07 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Samuil Ivanov <samuil.ivanovbg@gmail.com>
-Cc:     rspringer@google.com, toddpoynor@google.com, benchan@chromium.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Staging: gasket: implement apex_get_status() to
- check driver status
-Message-ID: <20191029081007.GA520581@kroah.com>
-References: <20191028225926.8951-1-samuil.ivanovbg@gmail.com>
- <20191028225926.8951-2-samuil.ivanovbg@gmail.com>
+        b=wEVhW4da2JeAw+Ddhxd52NlhX9cZj8HNq84M+PJTQsTrWHCN/WYR4BU8SgnxIMBzG
+         vMFgmkP33ElOyQ0oYD8GjVNUL6l/Bllq8lvXxpyZU3eg39Kl63Ih+U6nRFukiaJNSO
+         cvty9ZXBYVkMla+Noi6iKTf9r9AOWHntdAMPhHog=
+Date:   Tue, 29 Oct 2019 09:10:32 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Ondrej Jirman <megous@megous.com>
+Cc:     linux-sunxi@googlegroups.com, stable@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: sunxi: Fix CPU powerdown on A83T
+Message-ID: <20191029081032.5xhysz3mv65e7azv@hendrix>
+References: <20191028214914.3465156-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c2ir2aunacvuu6l7"
 Content-Disposition: inline
-In-Reply-To: <20191028225926.8951-2-samuil.ivanovbg@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191028214914.3465156-1-megous@megous.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 12:59:25AM +0200, Samuil Ivanov wrote:
-> >From the TODO:
-> - apex_get_status() should actually check status
-> 
-> The function now checkes the status of the driver
-> 
-> Signed-off-by: Samuil Ivanov <samuil.ivanovbg@gmail.com>
-> ---
->  drivers/staging/gasket/apex_driver.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-> index 46199c8ca441..a5dd6f3c367d 100644
-> --- a/drivers/staging/gasket/apex_driver.c
-> +++ b/drivers/staging/gasket/apex_driver.c
-> @@ -247,6 +247,9 @@ module_param(bypass_top_level, int, 0644);
->  static int apex_get_status(struct gasket_dev *gasket_dev)
->  {
->  	/* TODO: Check device status. */
-> +	if (gasket_dev->status == GASKET_STATUS_DEAD)
-> +		return GASKET_STATUS_DEAD;
-> +
 
-Have you tested this to verify that this is what is needed here?
+--c2ir2aunacvuu6l7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thanks,
+On Mon, Oct 28, 2019 at 10:49:14PM +0100, Ondrej Jirman wrote:
+> PRCM_PWROFF_GATING_REG has CPU0 at bit 4 on A83T. So without this
+> patch, instead of gating the CPU0, the whole cluster was power gated,
+> when shutting down first CPU in the cluster.
+>
+> Fixes: 6961275e72a8c1 ("ARM: sun8i: smp: Add support for A83T")
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> Cc: stable@vger.kernel.org
 
-greg k-h
+Applied, thanks
+
+Maxime
+
+--c2ir2aunacvuu6l7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbfz+AAKCRDj7w1vZxhR
+xabNAQDq9EMAe4I8hY+8J4KL3Khhrxd27KAbY3b3TIuqdn3a/AD/U7cgXhoTiEyI
+oc9v/zgOOL7PxQCykeoNxNc8SHYdiQc=
+=XYsh
+-----END PGP SIGNATURE-----
+
+--c2ir2aunacvuu6l7--
