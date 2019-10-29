@@ -2,74 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC48CE8B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000EEE8B4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:57:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389765AbfJ2O43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 10:56:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41156 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfJ2O42 (ORCPT
+        id S2389725AbfJ2O4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 10:56:53 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38170 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389095AbfJ2O4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:56:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=itujIrcjgeHcRCRmt2i/Dn9p5NDbz46nO37Gz+uhz+w=; b=2NV5ZpXwawqB+4I1yuLgiH+lq
-        a+OLyTYIdqCnGK5rjFSfgccN0T8UoE9rorE6fX8ga6YFFcYa34I83UY3LJGLAXyKxK9QtYrTkI55Y
-        FfZ6PEBqaHRCpX96Mp7s+H7SpP/yQp+v9DoG+3mtguky7SdErIgf39p0BJyLM6KSWGtr+EfUc09Hg
-        GdDwc05VJ3+roqDlMkhNApINBBRUxpzzd35VH6WCS2k3OsHpPzFH39EE613sYpyB4J6vvU1dBir5o
-        +4xDOAgetYl3oxj8KdVVDOgrXhUFTKC3YWf8zKBWXn7TUGmOA1kGLau1lyLFFzlsnTfvWj/KEqQEC
-        fECWx8ZZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iPSuZ-0004kf-Mo; Tue, 29 Oct 2019 14:55:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        Tue, 29 Oct 2019 10:56:53 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6F5938EE180;
+        Tue, 29 Oct 2019 07:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1572361012;
+        bh=hSAPbbchUW71aepMVeoCwqh6IN8XqeFoWWXaychDyd0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=CUnYZRQSwJp/G4unXoq4DjugON9DDRqeog63IrzuT3uOa59rp+uygu4R71hXVqiOy
+         GOpmVJvnFNgnGAC4B+aVIiDsuRKAvDBCvyjVlltkXpc7UPYaduGoMg8j/qrOI1FT+E
+         TK8D22TdOtNTuXZp5z6ftP47GpU9lgd0vYTofzAc=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3ejYJQojYjHj; Tue, 29 Oct 2019 07:56:52 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.76.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CCF73306B4A;
-        Tue, 29 Oct 2019 15:54:52 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9487C2B43836E; Tue, 29 Oct 2019 15:55:53 +0100 (CET)
-Date:   Tue, 29 Oct 2019 15:55:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Luwei Kang <luwei.kang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, ak@linux.intel.com, thomas.lendacky@amd.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Subject: Re: [PATCH v1 4/8] KVM: x86: Aviod clear the PEBS counter when PEBS
- enabled in guest
-Message-ID: <20191029145553.GL4097@hirez.programming.kicks-ass.net>
-References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
- <1572217877-26484-5-git-send-email-luwei.kang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572217877-26484-5-git-send-email-luwei.kang@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DB9718EE15F;
+        Tue, 29 Oct 2019 07:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1572361012;
+        bh=hSAPbbchUW71aepMVeoCwqh6IN8XqeFoWWXaychDyd0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=CUnYZRQSwJp/G4unXoq4DjugON9DDRqeog63IrzuT3uOa59rp+uygu4R71hXVqiOy
+         GOpmVJvnFNgnGAC4B+aVIiDsuRKAvDBCvyjVlltkXpc7UPYaduGoMg8j/qrOI1FT+E
+         TK8D22TdOtNTuXZp5z6ftP47GpU9lgd0vYTofzAc=
+Message-ID: <1572361008.4812.2.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] tpm: Add major_version sysfs file
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        linux-integrity@vger.kernel.org
+Date:   Tue, 29 Oct 2019 07:56:48 -0700
+In-Reply-To: <20191029142225.GC7415@linux.intel.com>
+References: <20191025193103.30226-1-jsnitsel@redhat.com>
+         <20191028205313.GH8279@linux.intel.com>
+         <20191028210507.7i6d6b5olw72shm3@cantor>
+         <20191029091731.GC9896@linux.intel.com> <20191029124342.GB6128@ziepe.ca>
+         <20191029142225.GC7415@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 07:11:13PM -0400, Luwei Kang wrote:
-> This patch introduce a parameter that avoid clear the PEBS event
-> counter while running in the guest. The performance counter which
-> use for PEBS event can be enabled through VM-entry when PEBS is
-> enabled in guest by PEBS output to Intel PT.
+On Tue, 2019-10-29 at 16:22 +0200, Jarkko Sakkinen wrote:
+> On Tue, Oct 29, 2019 at 09:43:42AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Oct 29, 2019 at 11:17:31AM +0200, Jarkko Sakkinen wrote:
+> > > On Mon, Oct 28, 2019 at 02:05:07PM -0700, Jerry Snitselaar wrote:
+> > > > On Mon Oct 28 19, Jarkko Sakkinen wrote:
+> > > > > On Fri, Oct 25, 2019 at 12:31:03PM -0700, Jerry Snitselaar
+> > > > > wrote:
+> > > > > > +	return sprintf(buf, "%s\n", chip->flags &
+> > > > > > TPM_CHIP_FLAG_TPM2
+> > > > > > +		       ? "2.0" : "1.2");
+> > > > > 
+> > > > > This is not right. Should be either "1" or "2".
+> > > > > 
+> > > > > /Jarkko
+> > > > 
+> > > > Okay I will fix that up. Do we have a final decision on the
+> > > > file name,
+> > > > major_version versus version_major?
+> > > 
+> > > Well, I don't see how major_version would make any sense. It is
+> > > not as future proof as version_major. Still waiting for Jason's
+> > > feedback for this.
+> > 
+> > $ find /sys/ -name  "*version*"
+> > /sys/devices/pci0000:00/0000:00:17.0/ata1/host0/scsi_host/host0/ahc
+> > i_host_version
+> > /sys/devices/virtual/net/docker0/bridge/multicast_mld_version
+> > /sys/devices/virtual/net/docker0/bridge/multicast_igmp_version
+> > /sys/firmware/efi/esrt/entries/entry0/lowest_supported_fw_version
+> > /sys/firmware/efi/esrt/entries/entry0/last_attempt_version
+> > /sys/firmware/efi/esrt/entries/entry0/fw_version
+> > /sys/module/acpi/parameters/acpica_version
+> > 
+> > etc..
+> > 
+> > Not a single example of the backward version.
+> > 
+> > Most likely it should be called 'tpm_version'
+> 
+> The postfix gives tells the part of the version number that the file
+> reports. If you really want to add the prefix, then the appropriate
+> name would be tpm_version_major.
+> 
+> I'd still go with just version_major as tpm_ prefix is somewhat
+> redundant.
 
-Please write coherent Changelogs. I have no clue what you're trying to
-say.
+You have to be careful with overly generic names in sysfs ... this is
+what happened to us in SCSI:
 
-Also, maybe this attrocious coding style is accepted in KVM, but I'm not
-having it. Pretty much all your linebreaks and subsequent indenting is
-against style.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=42caa0edabd6a0a392ec36a5f0943924e4954311
+
+That's not to say version_major is wrong ... plenty of sysfs files have
+generic names like this, it's just that tpm_version_major might be more
+future proof.
+
+James
+
+
