@@ -2,116 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2916E7E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0ED0E7E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbfJ2BzB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 28 Oct 2019 21:55:01 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:34612 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728432AbfJ2BzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 21:55:01 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id 856F7CB7E9BC2DB3B145;
-        Tue, 29 Oct 2019 09:54:58 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x9T1sbGV017474;
-        Tue, 29 Oct 2019 09:54:37 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019102909544831-171950 ;
-          Tue, 29 Oct 2019 09:54:48 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     steven.price@arm.com, robh@kernel.org
-Cc:     tomeu.vizoso@collabora.com, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
-        wang.liang82@zte.com.cn
-Subject: [PATCH v4] drm/panfrost: fix -Wmissing-prototypes warnings
-Date:   Tue, 29 Oct 2019 09:57:30 +0800
-Message-Id: <1572314250-6463-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1730201AbfJ2B6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 21:58:53 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41192 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfJ2B6w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 21:58:52 -0400
+Received: by mail-oi1-f196.google.com with SMTP id g81so7655841oib.8;
+        Mon, 28 Oct 2019 18:58:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q4RdVz7jkIsOGpxhWFOxJ9E8IFbZJNIjk7B6fraIgII=;
+        b=gwtNF5cz4VViEWGj6xngMOSau+jnX3ji2RNsUWv67wdztWwRrfiw/PCXxAv11dSjdg
+         11IUIbIKW9lPgIVRQkok4Pw4w/0P5LO/Oc9OCT1kiPcflrkZvXGz1WfbdWrRMIqmeKXo
+         +kKRntFlZ2hnn1w1Au5j1Lok0wG0xYvwctY2hFAHrv80+jLr8lIJnW470xdOw6v0+/ph
+         GAoVgp+ygUHEmwAPyNNfX6JVX0cS/f9MlUFeBS7rGTDWduVT94Rcn1vW3I4pF1CX8MK7
+         L9UqhZgGGTVm0/EMAi8aLitzjUA8nV764wMHi04A35VbBvVffDQ36TAfa+OyN+ltl2Ny
+         MTSQ==
+X-Gm-Message-State: APjAAAWzAccqu/kC1PHTtFC436o+lHarJhly5pXG3w515Se2G3sER6pZ
+        8nenmfwsGciAyRAReXnphg==
+X-Google-Smtp-Source: APXvYqyeLHJ2d2ap0NSLJ0gqOBva5Ecg8fSu8azZXOEJQSXbLXQAU79jzstSSsvVnvAazebX4foX/w==
+X-Received: by 2002:aca:4b0d:: with SMTP id y13mr1731732oia.151.1572314331039;
+        Mon, 28 Oct 2019 18:58:51 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k10sm3481304oig.25.2019.10.28.18.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 18:58:50 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 20:58:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     kishon@ti.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: phy: renesas: usb3-phy: convert bindings to
+ json-schema
+Message-ID: <20191029015849.GA8521@bogus>
+References: <1571387954-23446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-10-29 09:54:48,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-10-29 09:54:39
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse-fl2.zte.com.cn x9T1sbGV017474
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571387954-23446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get these warnings when build kernel W=1:
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:35:6: warning: no previous prototype for ‘panfrost_perfcnt_clean_cache_done’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:40:6: warning: no previous prototype for ‘panfrost_perfcnt_sample_done’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:190:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_enable’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:218:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_dump’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:250:6: warning: no previous prototype for ‘panfrost_perfcnt_close’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:264:5: warning: no previous prototype for ‘panfrost_perfcnt_init’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_perfcnt.c:320:6: warning: no previous prototype for ‘panfrost_perfcnt_fini’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_mmu.c:227:6: warning: no previous prototype for ‘panfrost_mmu_flush_range’ [-Wmissing-prototypes]
-drivers/gpu/drm/panfrost/panfrost_mmu.c:435:5: warning: no previous prototype for ‘panfrost_mmu_map_fault_addr’ [-Wmissing-prototypes]
+On Fri, Oct 18, 2019 at 05:39:14PM +0900, Yoshihiro Shimoda wrote:
+> Convert Renesas R-Car generation 3 USB 3.0 PHY bindings documentation
+> to json-schema.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 52 --------------
+>  .../devicetree/bindings/phy/renesas,usb3-phy.yaml  | 80 ++++++++++++++++++++++
+>  2 files changed, 80 insertions(+), 52 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+>  create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> deleted file mode 100644
+> index 0fe433b..00000000
+> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> +++ /dev/null
+> @@ -1,52 +0,0 @@
+> -* Renesas R-Car generation 3 USB 3.0 PHY
+> -
+> -This file provides information on what the device node for the R-Car generation
+> -3 and RZ/G2 USB 3.0 PHY contain.
+> -If you want to enable spread spectrum clock (ssc), you should use USB_EXTAL
+> -instead of USB3_CLK. However, if you don't want to these features, you don't
+> -need this driver.
+> -
+> -Required properties:
+> -- compatible: "renesas,r8a774a1-usb3-phy" if the device is a part of an R8A774A1
+> -	      SoC.
+> -	      "renesas,r8a774b1-usb3-phy" if the device is a part of an R8A774B1
+> -	      SoC.
+> -	      "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
+> -	      SoC.
+> -	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+> -	      SoC.
+> -	      "renesas,r8a77965-usb3-phy" if the device is a part of an
+> -	      R8A77965 SoC.
+> -	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 or RZ/G2
+> -	      compatible device.
+> -
+> -	      When compatible with the generic version, nodes must list the
+> -	      SoC-specific version corresponding to the platform first
+> -	      followed by the generic version.
+> -
+> -- reg: offset and length of the USB 3.0 PHY register block.
+> -- clocks: A list of phandles and clock-specifier pairs.
+> -- clock-names: Name of the clocks.
+> -  - The funcional clock must be "usb3-if".
+> -  - The usb3's external clock must be "usb3s_clk".
+> -  - The usb2's external clock must be "usb_extal". If you want to use the ssc,
+> -    the clock-frequency must not be 0.
+> -- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
+> -
+> -Optional properties:
+> -- renesas,ssc-range: Enable/disable spread spectrum clock (ssc) by using
+> -		     the following values as u32:
+> -			- 0 (or the property doesn't exist): disable the ssc
+> -			- 4980: enable the ssc as -4980 ppm
+> -			- 4492: enable the ssc as -4492 ppm
+> -			- 4003: enable the ssc as -4003 ppm
+> -
+> -Example (R-Car H3):
+> -
+> -	usb-phy@e65ee000 {
+> -		compatible = "renesas,r8a7795-usb3-phy",
+> -			     "renesas,rcar-gen3-usb3-phy";
+> -		reg = <0 0xe65ee000 0 0x90>;
+> -		clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>, <&usb_extal>;
+> -		clock-names = "usb3-if", "usb3s_clk", "usb_extal";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
+> new file mode 100644
+> index 00000000..42239e3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/renesas,usb3-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas R-Car generation 3 USB 3.0 PHY
+> +
+> +maintainers:
+> +  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
 
-For file panfrost_mmu.c, make functions static to fix this.
-For file panfrost_perfcnt.c, include header file can fix this.
+Don't need the oneOf here.
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Reviewed-by: Steven Price <steven.price@arm.com>
----
+> +      - items:
+> +          - enum:
+> +              - renesas,r8a774a1-usb3-phy # RZ/G2M
+> +              - renesas,r8a774b1-usb3-phy # RZ/G2N
+> +              - renesas,r8a7795-usb3-phy  # R-Car H3
+> +              - renesas,r8a7796-usb3-phy  # R-Car M3-W
+> +              - renesas,r8a77965-usb3-phy # R-Car M3-N
+> +          - const: renesas,rcar-gen3-usb3-phy
+> +
+> +  reg:
+> +    # base address and length of the registers block for the PHY.
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    # A list of phandles and clock-specifier pairs.
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    # If you want to use the ssc, the clock-frequency of usb_extal
+> +    # must not be 0.
+> +    maxItems: 3
+> +    items:
+> +      - const: usb3-if # The funcional clock
+> +      - const: usb3s_clk # The usb3's external clock
+> +      - const: usb_extal # The usb2's external clock
+> +
+> +  '#phy-cells':
+> +    # see phy-bindings.txt in the same directory
+> +    const: 0
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  renesas,ssc-range:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Enable/disable spread spectrum clock (ssc) by using the following values
+> +       - 0 (or the property doesn't exist): disable the ssc
+> +       - 4980: enable the ssc as -4980 ppm
+> +       - 4492: enable the ssc as -4492 ppm
+> +       - 4003: enable the ssc as -4003 ppm
 
-v4: make the parameters aligned.
+Make these values a schema. You'll need the $ref under an 'allOf' when 
+you do.
 
-v3: using tab size of 8 other than 4.
-
-v2: align parameter line and modify comment. Thanks to Steve.
----
- drivers/gpu/drm/panfrost/panfrost_mmu.c     | 9 +++++----
- drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 1 +
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-index bdd9905..87e7963 100644
---- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-@@ -224,9 +224,9 @@ static size_t get_pgsize(u64 addr, size_t size)
- 	return SZ_2M;
- }
- 
--void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
--			      struct panfrost_mmu *mmu,
--			      u64 iova, size_t size)
-+static void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
-+				     struct panfrost_mmu *mmu,
-+				     u64 iova, size_t size)
- {
- 	if (mmu->as < 0)
- 		return;
-@@ -432,7 +432,8 @@ void panfrost_mmu_pgtable_free(struct panfrost_file_priv *priv)
- 
- #define NUM_FAULT_PAGES (SZ_2M / PAGE_SIZE)
- 
--int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
-+static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
-+				       u64 addr)
- {
- 	int ret, i;
- 	struct panfrost_gem_object *bo;
-diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-index 83c57d3..2dba192 100644
---- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-@@ -16,6 +16,7 @@
- #include "panfrost_issues.h"
- #include "panfrost_job.h"
- #include "panfrost_mmu.h"
-+#include "panfrost_perfcnt.h"
- #include "panfrost_regs.h"
- 
- #define COUNTERS_PER_BLOCK		64
--- 
-1.8.3.1
-
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#phy-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+> +    #include <dt-bindings/power/r8a7795-sysc.h>
+> +
+> +    usb-phy@e65ee000 {
+> +        compatible = "renesas,r8a7795-usb3-phy", "renesas,rcar-gen3-usb3-phy";
+> +        reg = <0 0xe65ee000 0 0x90>;
+> +        clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>, <&usb_extal>;
+> +        clock-names = "usb3-if", "usb3s_clk", "usb_extal";
+> +        #phy-cells = <0>;
+> +    };
+> -- 
+> 2.7.4
+> 
