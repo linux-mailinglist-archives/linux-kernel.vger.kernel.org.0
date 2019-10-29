@@ -2,115 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A97E8F96
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A234FE8FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbfJ2SyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 14:54:05 -0400
-Received: from avasout03.plus.net ([84.93.230.244]:55912 "EHLO
-        avasout03.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732093AbfJ2SyE (ORCPT
+        id S1731495AbfJ2S7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 14:59:21 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44532 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfJ2S7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 14:54:04 -0400
-Received: from [10.0.2.15] ([146.198.133.39])
-        by smtp with ESMTPA
-        id PWcyigzCktvkXPWcziiYf9; Tue, 29 Oct 2019 18:54:03 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plus.com; s=042019;
-        t=1572375243; bh=I4ZZ/wVJJQ0guXrWMZRkvryKrerb1ReP5+TDi/d996w=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=qGlZh9wka1XHevwqmEXD49cMDJJfe+FkSQGHxa1snuKSk6S2cgjCPgidJzixQZACE
-         wUW2kiQI1FiTjd1ob1ZeayuihK5zg+aPVmAhvEfSBCL/Lm5zkYc5W3e3zyD5G6dnw7
-         BZQUO7icHobzrrZFqfhzrm6FI4cFgw+k/g9UpyhRC2saG+qzples5/pDdSc/FB+o3T
-         +EvtPc5/zBBu2vkEksa2KC4UqfCINtk+/N5ApeevynBL+EXTOrH7XT3lZnY0UFpRkt
-         GtNCTULhBK7GtciDczTbi4mP2kN1/FtVKCsZIh1/L/LAo06NwwMSu9Eddj0cRYOat8
-         0JzfIf7xWiPkw==
-X-Clacks-Overhead: "GNU Terry Pratchett"
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.3 cv=ePBtc0h1 c=1 sm=1 tr=0
- a=1Jh3712dEPwUcX5EWi7t+w==:117 a=1Jh3712dEPwUcX5EWi7t+w==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=491Ab-Zl-TA3clIL934A:9
- a=QEXdDO2ut3YA:10
-X-AUTH: ramsayjones@:2500
-Subject: Re: [PATCH] compiler*.h: Add '__' prefix and suffix to all
- __attribute__ #defines
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Joe Perches <joe@perches.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-References: <7a15bc8ad7437dc3a044a4f9cd283500bd0b5f36.camel@perches.com>
- <CANiq72=B6XKwfkC9L4=+OxWtjxCp-94TWRG1a=pC=y636gzckA@mail.gmail.com>
- <19fd23e98bab65a1ee624445193bd2ed86108881.camel@perches.com>
- <20191028221523.vlzdk6dkcglxei6v@desk.local>
- <00c5ef125a4e62f538de7ddddc9d8fe7085794a3.camel@perches.com>
- <20191028230349.xlhm42ripxktx43y@desk.local>
- <61eb73ad-5c30-0005-5031-6584df72ad5f@ramsayjones.plus.com>
- <20191029080701.qpvscbz3xptadhbd@ltop.local>
-From:   Ramsay Jones <ramsay@ramsayjones.plus.com>
-Message-ID: <ede574e5-d18d-f30c-b9f0-a39b73d57ff3@ramsayjones.plus.com>
-Date:   Tue, 29 Oct 2019 18:54:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 29 Oct 2019 14:59:20 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s71so9865824oih.11;
+        Tue, 29 Oct 2019 11:59:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sbW0B9s33za8M6w/VE4RAdJj372wopfiVHvYx/5lzV8=;
+        b=OHm+5fM9o46PGGHqSTnofx5NYwp8HSQ8PwFc/4coq3G07AR+8I/O1Da+Q/QwM3B1pl
+         T9n4LlUx7NKrV6zDJVRJeEPtzIw5HoEF297rhGkA1hsMzqgX3lGwAage2g0/pFMevCG1
+         Jnu1CzX23zT7s9gvckgn3C1wU7cV0oAh6qsUMI/hK3t/I0WvG9Cl9swdu9pke68P2HAk
+         Mtm8wJs6SbZfzAS54a/Uz7yh7E/EWG9Z5ksY5hHoWCRlhPUqaNsTasN5HJq8WfFGPa6K
+         JPioXWp3mEGMM97Yl1dxINWhbfZgjBoGWXN9n+iljrJyti2NVDW6ZHWSejf34cCRFycM
+         /jvA==
+X-Gm-Message-State: APjAAAXfN+QEMOM/wTvAP0Y80SYOwb+EvHgvKyjDgyXdD3xwcegwMqHs
+        wePRv7/E9BrdMNaqi5xWhg==
+X-Google-Smtp-Source: APXvYqzCYq3KtcJTg/u8ba3wAtt300fBoCT87IEubd8faZr8MJMw32nqZ9gqVS7HHtglOZo8yKOmfQ==
+X-Received: by 2002:aca:1309:: with SMTP id e9mr5606883oii.72.1572375559336;
+        Tue, 29 Oct 2019 11:59:19 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a88sm5149017otb.0.2019.10.29.11.59.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 11:59:18 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 13:59:17 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
+        Anil Varughese <aniljoy@cadence.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 01/14] dt-bindings: phy: Sierra: Add bindings for
+ Sierra in TI's J721E
+Message-ID: <20191029185916.GA19313@bogus>
+References: <20191023125735.4713-1-kishon@ti.com>
+ <20191023125735.4713-2-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20191029080701.qpvscbz3xptadhbd@ltop.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDVoYw7ULPJG2gXopqFyDkmgZvbcO8oQUTiYMfxlmz6Gnd4uUsch0XW/zcYouohl3jtIkJ7OQVZAnwhkyFoc8eds9yVeMsZTsXYDLiJipbGXmrCsDCtr
- za5CAl/4tJyknl2EXIlMxmt+ZrMs1BCXQEdZJNpJgkUGb3yruOFNglrpSlbHwCzZuVqbv/oKFJb+Bw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023125735.4713-2-kishon@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29/10/2019 08:07, Luc Van Oostenryck wrote:
-> On Tue, Oct 29, 2019 at 02:38:54AM +0000, Ramsay Jones wrote:
->> On 28/10/2019 23:03, Luc Van Oostenryck wrote:
->>> diff --git a/parse.c b/parse.c
->>> index 4464e2667..4b0a1566c 100644
->>> --- a/parse.c
->>> +++ b/parse.c
->>> @@ -345,6 +345,7 @@ static struct symbol_op goto_op = {
->>>  
->>>  static struct symbol_op __context___op = {
->>>  	.statement = parse_context_statement,
->>> +	.attribute = attribute_context,
->>
->> Hmm, so why is do we have a context_op and a __context___op?
->>
->>>  };
->>>  
->>>  static struct symbol_op range_op = {
->>> @@ -537,6 +538,7 @@ static struct init_keyword {
->>>  	{ "while",	NS_KEYWORD, .op = &while_op },
->>>  	{ "do",		NS_KEYWORD, .op = &do_op },
->>>  	{ "goto",	NS_KEYWORD, .op = &goto_op },
->>> +	{ "context",	NS_KEYWORD, .op = &context_op },
->>>  	{ "__context__",NS_KEYWORD, .op = &__context___op },
->>
->> So, can '__context__' be used in a statement, as well as an
->> attribute, while 'context' can only be used in an attribute?
+On Wed, Oct 23, 2019 at 06:27:22PM +0530, Kishon Vijay Abraham I wrote:
+> Add DT binding documentation for Sierra PHY IP used in TI's J721E
+> SoC.
 > 
-> Yes, indeed.
-
-OK, so I wasn't quite as confused as I thought! ;-)
-
-> '__context__' was only parsed as a statement and 'context'
-> only as an attribute. But now we also want to be able to use
-> '__context__' as an attribute (because 'context' is not a
-> reserved keyword and can thus be a used defined macro).
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../devicetree/bindings/phy/phy-cadence-sierra.txt  | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 > 
-> There is no reason, though, we should now also want to use
-> 'context' as a statement since it's a sparse extension. Hence
-> adding attribute_context to '__context___op' and keeping
-> 'context_op' as such (but moving them together).
+> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> index 6e1b47bfce43..bf90ef7e005e 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+> @@ -2,21 +2,24 @@ Cadence Sierra PHY
+>  -----------------------
+>  
+>  Required properties:
+> -- compatible:	cdns,sierra-phy-t0
+> -- clocks:	Must contain an entry in clock-names.
+> -		See ../clocks/clock-bindings.txt for details.
+> -- clock-names:	Must be "phy_clk"
+> +- compatible:	Must be "cdns,sierra-phy-t0" for Sierra in Cadence platform
+> +		Must be "ti,sierra-phy-t0" for Sierra in TI's J721E SoC.
+>  - resets:	Must contain an entry for each in reset-names.
+>  		See ../reset/reset.txt for details.
+>  - reset-names:	Must include "sierra_reset" and "sierra_apb".
+>  		"sierra_reset" must control the reset line to the PHY.
+>  		"sierra_apb" must control the reset line to the APB PHY
+> -		interface.
+> +		interface ("sierra_apb" is optional).
+>  - reg:		register range for the PHY.
+>  - #address-cells: Must be 1
+>  - #size-cells:	Must be 0
+>  
+>  Optional properties:
+> +- clocks:		Must contain an entry in clock-names.
+> +			See ../clocks/clock-bindings.txt for details.
+> +- clock-names:		Must be "phy_clk". Must contain "cmn_refclk" and
+> +			"cmn_refclk1" for configuring the frequency of the
+> +			clock to the lanes.
 
-Thanks for the explanation.
+I don't understand how the same block can have completely different 
+clocks. Did the original binding forget some? 
 
-ATB,
-Ramsay Jones
+TI needs 0, 1 or 3 clocks? Reads like it could be any.
 
+Rob
