@@ -2,104 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AE94E9131
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F83BE913D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfJ2VDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 17:03:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35891 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfJ2VDL (ORCPT
+        id S1729190AbfJ2VJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 17:09:23 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41620 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfJ2VJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 17:03:11 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g9so7683006plp.3;
-        Tue, 29 Oct 2019 14:03:11 -0700 (PDT)
+        Tue, 29 Oct 2019 17:09:23 -0400
+Received: by mail-qk1-f195.google.com with SMTP id m125so364178qkd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 14:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g2p2UomPud0WmT2AcKDqSrdNqtj5uGlkNFExAHANMTs=;
-        b=gTxeBvety6PyostFgbk1f0nfM81NR6rTPqgcB1L68JhnzzQG8EFAjX8So0PTjaaT4K
-         0GGCfxBR0obDBZxnbkjkF7RPNijqEOLe8lwG6fBZmW3mwCKLN67CGFH2WWT/jufefyNo
-         qNWVkSjV4+lfQhl3/iTJ6EaC+KU9Y28L3tE/56SC5JX9GonnvHTKPiv0vbD3HEcKaxxt
-         1Jj2j1NxqN6hXE9yqQa4mnEokBluydmfTUYwtolyPnMhH7S3fEYfB2WbeDKMb6pjG2M7
-         +sB80Qj6wlgydkkLY4di7HhqI1RWxG7b23QDwJmGP/g9ZMUIIq3KmUKgXdW+Im8iCaMb
-         FGxA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=J8cn+LNGBQlD5QlWJmme2gIbrHVQ0+7rWGrSL4Madoo=;
+        b=eU3Ih22bpawbGnzb3bGBkrltarVhNzNANX8Gi9sC1W/1OsqTeSKiQ5X7SFx9v4g5C3
+         4QSgxgJ+zrtYy/QE6PnxHOsqRjVV4E2iq0QPATe+6X6DdS8M35i4nIRmes+O0AjhMWfg
+         WecszofhOAuQQK57u2rFdRhDj9RXtnBqI37pzfvIlAZKKu2XREGjGfvM1KulrQ5hJoa5
+         Pv8plj4m9enFLqbxuAcNtMXb79xKWUVFwvUKE6Y5lSR0LlQjr2DT92MJyVFLW1pjBmN2
+         G+K9JKQ91sSg42L5ZJYyoFoevWxIJohi8NFtmguCC49zYia8Xnaov6nO3PdvEHjXcvvv
+         kmVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g2p2UomPud0WmT2AcKDqSrdNqtj5uGlkNFExAHANMTs=;
-        b=esvwrDU+QhIwWp9+mRVzIliFWQESLsb27R5c/92AW6Tb8/i7UzHlsmAqyFiBHPBIDt
-         438mcp/lHC5EdZ5GsBDb5xUHBBG2Vt864Gn0wjZJPQQ+tcsYgu1cm2iXOyoWndHbzZ+k
-         WtFGbNC+XDGX8HJFFi+8PkjxuTQZv4KpcbNETlwXM1J9QOQDrLcTzUwmy4w2mmZzfTee
-         y4Dg338lmWu2ZoiXGXXz1SBDr+D7d4Gnd5iu9Nci+iYKulHPqGDkP+dERU9Fy8BIz24n
-         kDV05yjj/SVY/yPj4y6qU2hnvEDB/+d6YTzUQ2O7tuHOJGopeFjchtE4Zrf8AkOM4fQy
-         PmMA==
-X-Gm-Message-State: APjAAAV0iu7kKsuirOCzCVjWyO1iJ+cH8vuatuRKxJSJkDe+hSznhZx7
-        FLGZI20IpXwh2i4lYetJaV8m4hG1
-X-Google-Smtp-Source: APXvYqwd+wri2SwMiryUSsJ//80fA74ecxBRjJaZ8TXlEk0AudxZ0x6W1gqXZ6cl9M03/i463Q3MSw==
-X-Received: by 2002:a17:902:8606:: with SMTP id f6mr707876plo.226.1572382990163;
-        Tue, 29 Oct 2019 14:03:10 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id f7sm17331pfa.150.2019.10.29.14.03.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 14:03:09 -0700 (PDT)
-Subject: Re: [PATCH net-next v2 4/4] bonding: balance ICMP echoes in layer3+4
- mode
-To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org
-Cc:     Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Paul Blakey <paulb@mellanox.com>, linux-kernel@vger.kernel.org
-References: <20191029135053.10055-1-mcroce@redhat.com>
- <20191029135053.10055-5-mcroce@redhat.com>
- <5be14e4e-807f-486d-d11a-3113901e72fe@cumulusnetworks.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <576a4a96-861b-6a86-b059-6621a22d191c@gmail.com>
-Date:   Tue, 29 Oct 2019 14:03:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=J8cn+LNGBQlD5QlWJmme2gIbrHVQ0+7rWGrSL4Madoo=;
+        b=Xl2HQVhbo8dIwHZ67NbsVQNLJm3sLf8BJg+Usww/LVmmwXuYLaZRZeCt+ptN4GvGtx
+         j/bWgnRZorArt9cKRdHL+GE62lM68WsLtRZIwLypGO5a5LkT0QLNmMLr6leZ039T9EEZ
+         HO5LIR0b1CFhT/Y1/AwjlI6HvqkOuOofvXKXBJBFitWCb2zGWF93xgA70EW4kf9whhgo
+         7rRHIRDcyi2ixQ31vjZn625wyjsAQWphSXwxFiKozIhG16YfZqUOixIAKMChAMmUa1LM
+         smcUj4U4XldG2xAoD6zPZzgxzKFk+G7N68PPPCG1c+D5OUn2ksZDfUjgynjqoVp1dw1R
+         9Dfw==
+X-Gm-Message-State: APjAAAXia1Mi4Pt8MYTzMzWFJCs/ncVdEwwWUuD4ayJ9cUWsqLTq35QR
+        z0QjxJP7oCQW3Hb9R2NtFKs=
+X-Google-Smtp-Source: APXvYqy4Q80NlhxmpzE820ofaWQtg8/V1FvT3ajwFjjmIjCMUgaNaoADZ61QvHMsoYKopuXyfUTilA==
+X-Received: by 2002:a05:620a:14bc:: with SMTP id x28mr23246894qkj.433.1572383361937;
+        Tue, 29 Oct 2019 14:09:21 -0700 (PDT)
+Received: from cristiane-Inspiron-5420 ([131.100.148.220])
+        by smtp.gmail.com with ESMTPSA id 4sm8078335qtf.87.2019.10.29.14.09.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 14:09:21 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 18:09:17 -0300
+From:   Cristiane Naves <cristianenavescardoso09@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vt6655: Fix lines ending with parentheses
+Message-ID: <20191029210917.GA14956@cristiane-Inspiron-5420>
 MIME-Version: 1.0
-In-Reply-To: <5be14e4e-807f-486d-d11a-3113901e72fe@cumulusnetworks.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix lines ending with parentheses. Issue found by checkpatch.
 
+Signed-off-by: Cristiane Naves <cristianenavescardoso09@gmail.com>
+---
+ drivers/staging/vt6655/card.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-On 10/29/19 11:35 AM, Nikolay Aleksandrov wrote:
-
-> Hi Matteo,
-> Wouldn't it be more useful and simpler to use some field to choose the slave (override the hash
-> completely) in a deterministic way from user-space ?
-> For example the mark can be interpreted as a slave id in the bonding (should be
-> optional, to avoid breaking existing setups). ping already supports -m and
-> anything else can set it, this way it can be used to do monitoring for a specific
-> slave with any protocol and would be a much simpler change.
-> User-space can then implement any logic for the monitoring case and as a minor bonus
-> can monitor the slaves in parallel. And the opposite as well - if people don't want
-> these balanced for some reason, they wouldn't enable it.
-> 
-
-I kind of agree giving user more control. But I do not believe we need to use the mark
-(this might be already used by other layers)
-
-TCP uses sk->sk_hash to feed skb->hash.
-
-Anything using skb_set_owner_w() is also using sk->sk_hash if set.
-
-So presumably we could add a generic SO_TXHASH socket option to let user space
-read/set this field.
+diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
+index eba4ee0..e65c982 100644
+--- a/drivers/staging/vt6655/card.c
++++ b/drivers/staging/vt6655/card.c
+@@ -79,14 +79,10 @@ static void s_vCalculateOFDMRParameter(unsigned char byRate, u8 bb_type,
+  *
+  * Return Value: none
+  */
+-static
+-void
+-s_vCalculateOFDMRParameter(
+-	unsigned char byRate,
+-	u8 bb_type,
+-	unsigned char *pbyTxRate,
+-	unsigned char *pbyRsvTime
+-)
++static void s_vCalculateOFDMRParameter(unsigned char byRate,
++				       u8 bb_type,
++				       unsigned char *pbyTxRate,
++				       unsigned char *pbyRsvTime)
+ {
+ 	switch (byRate) {
+ 	case RATE_6M:
+@@ -736,8 +732,7 @@ void CARDvSetRSPINF(struct vnt_private *priv, u8 bb_type)
+ 	VNSvOutPortW(priv->PortOffset + MAC_REG_RSPINF_A_24,
+ 		     MAKEWORD(byTxRate, byRsvTime));
+ 	/* RSPINF_a_36 */
+-	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate(
+-							   (void *)priv,
++	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate((void *)priv,
+ 							   RATE_36M),
+ 				   bb_type,
+ 				   &byTxRate,
+@@ -745,8 +740,7 @@ void CARDvSetRSPINF(struct vnt_private *priv, u8 bb_type)
+ 	VNSvOutPortW(priv->PortOffset + MAC_REG_RSPINF_A_36,
+ 		     MAKEWORD(byTxRate, byRsvTime));
+ 	/* RSPINF_a_48 */
+-	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate(
+-							   (void *)priv,
++	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate((void *)priv,
+ 							   RATE_48M),
+ 				   bb_type,
+ 				   &byTxRate,
+@@ -754,8 +748,7 @@ void CARDvSetRSPINF(struct vnt_private *priv, u8 bb_type)
+ 	VNSvOutPortW(priv->PortOffset + MAC_REG_RSPINF_A_48,
+ 		     MAKEWORD(byTxRate, byRsvTime));
+ 	/* RSPINF_a_54 */
+-	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate(
+-							   (void *)priv,
++	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate((void *)priv,
+ 							   RATE_54M),
+ 				   bb_type,
+ 				   &byTxRate,
+@@ -763,8 +756,7 @@ void CARDvSetRSPINF(struct vnt_private *priv, u8 bb_type)
+ 	VNSvOutPortW(priv->PortOffset + MAC_REG_RSPINF_A_54,
+ 		     MAKEWORD(byTxRate, byRsvTime));
+ 	/* RSPINF_a_72 */
+-	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate(
+-							   (void *)priv,
++	s_vCalculateOFDMRParameter(CARDwGetOFDMControlRate((void *)priv,
+ 							   RATE_54M),
+ 				   bb_type,
+ 				   &byTxRate,
+-- 
+2.7.4
 
