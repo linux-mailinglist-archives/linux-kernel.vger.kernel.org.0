@@ -2,178 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F86E912A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A9BE912E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:02:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbfJ2U7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:59:13 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46654 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfJ2U7N (ORCPT
+        id S1728640AbfJ2VCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 17:02:17 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43583 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbfJ2VCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:59:13 -0400
-Received: by mail-ed1-f68.google.com with SMTP id z22so7593957edr.13;
-        Tue, 29 Oct 2019 13:59:09 -0700 (PDT)
+        Tue, 29 Oct 2019 17:02:16 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l24so10467238pgh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 14:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CjYSqe0NVHv7PBpKzZgujNqWXOTQ3EeJ6Ic+T4FxfJc=;
-        b=saVdvDEiiNLvD7aTOsNw9iGbWLFMyQr2XnMdQEk/CKnERA3bYRYYJMDhfo9s7f84rR
-         IYfl94E0OLzR1MnA81gWde9+vp5sviFozxoV3G0Id2LHsUymKcg1nupt3GOttgxkjynf
-         IOinaAKgXTM1ITqNCP66LGTvFN7TegzBwLGTi1iSUlQU6xZUoiSQYt2mT9uXFbn5qkpq
-         uaYET9A1mYQ9BBprxvF9e8Ph1lFe3BDrHj1GuHKrjXHM7+O+gRtyh/59+vBdjNWAkNHD
-         5YOOHTMMGWmxZ/0FrGonK+v416+okaZBE876ZvCPhII/Nj8+Lxrce1d+923CTIKyZF4V
-         k5iA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/xRrKgwXdsmpjinuBDfuaLVGRyFAxJUz5gD94L89fPI=;
+        b=vNLtnlmdsA7PaAhCvchomclNhYC1/dWNQk40LZe45aHTxOTQ4KsQcnzQbCnVQ3ztXK
+         HnFyQrXTk2ZJT3k/NIwPhd3BHe43Z6mufbfaxl4t2+14jRfgRK25QLo7npW1YtE5haEM
+         eV3erMc6ny4p8uBuJL+400GBAVdGUWZx6j5AWCT+dc2J3lIH4BuQVGI57ABmsRpgNA/h
+         hzjPCS+QcosGZGat8Sz7WkBE1puZfs7OEE+EiUy87klxkj26Y7YdSmisvE7mwLphyVjy
+         QJhBG3KyfZs836A+VaUmmNgxHdNQACzT4kVI+OyghD40HkS19ecfgVra+pGfzv3zmKq2
+         Qnrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=CjYSqe0NVHv7PBpKzZgujNqWXOTQ3EeJ6Ic+T4FxfJc=;
-        b=K6ihzJoezm5sw4VpJZrhO/0v12QeX+76GEjJzQNNUYU4AUmInZpmRdJaCcuPonGf9y
-         ycG686O+QYDMR1a01jHneS+uTMPK+oErms++Wio4SVNdrqZjJ+M3nAMDOCQ9u/01CMrH
-         CGbBTLH8I4u4lXNgoAxxH0gBNgmx2b1JfxoshoTzEMXXTocaeB+lCRjriQDLQYjspEdK
-         d9deAAwo+OyhcUTbeNz1Q1EW4lbYqWLfsS5MhGQScJcFZZJi2vrSXc0d7dB/uZ8+9HOh
-         LI10n6shoz26CsJ+EgsIHNxwvudDY4SiIM7Hl+Eym0w/qMsz/Shy01uF49tKdTPQGhtt
-         hhoA==
-X-Gm-Message-State: APjAAAUM9mCFdCdJoK3xPrIPQbgzDhosIAw72Qd6FM70DWBvMh4qT9QA
-        f/EBTOdT+UXHUPLQ4dKYpp0=
-X-Google-Smtp-Source: APXvYqwEVdyt82IAftK6qhuzMhSmKVkdVaK7Wiqe8LHdMahMC6kx1TfFwhmOwDTxu6Fxbae7h/ZUyg==
-X-Received: by 2002:a17:906:4ec9:: with SMTP id i9mr5435592ejv.8.1572382748939;
-        Tue, 29 Oct 2019 13:59:08 -0700 (PDT)
-Received: from [10.67.50.53] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d12sm689932edt.57.2019.10.29.13.59.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 13:59:08 -0700 (PDT)
-Subject: Re: [PATCH 0/3] net: phy: initialize PHYs via device tree properties
-To:     Michael Walle <michael@walle.cc>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20191029174819.3502-1-michael@walle.cc>
- <519d52d2-cd83-b544-591b-ca9d9bb16dfa@gmail.com>
- <4B4A80A7-05C8-441A-B224-7CC01E3D8C30@walle.cc>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <c9447284-1c20-6dc7-8629-e62c61a7b4a8@gmail.com>
-Date:   Tue, 29 Oct 2019 13:59:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/xRrKgwXdsmpjinuBDfuaLVGRyFAxJUz5gD94L89fPI=;
+        b=SBJUVmoPanTzWyl0FGY5UQ75ldPLTU7uCCfWxmaEHPXgZFxUvEMIb4RVOu2kOz0fML
+         pFVqobOQPDQyAQ/Hxia3QW1ov8cYnvTJUb9AZ91pxWfxX56KTMF+4D4nx3iz0lOKFksl
+         To/GF9xyRho4QMil5EBb8nl9MG2Y9ryjYajABE1+0sVFfxpg7jnGYSqmS14fy784T8nw
+         ZAYwxVPfM0vplahBG+AvM5GcGpyn0gTLgxeOKvJBcb5adk6sMqshYnQu+42JVU/r/ibD
+         q9QQeYQe60g5BQfZdDB9EaBcPMARiM1SCQSNzJi9ymURVQDwwMHBOLgwfTyS6dcADHiJ
+         98Tw==
+X-Gm-Message-State: APjAAAXnvaH/hH+/KzHAFAWzwSAyxrcaCpX8hmdx/0+bAuThdd7G+Ukw
+        xEnlaM0K6lZ6ELJsN+LX9gPC2wPpTgT6mdXPKItLuQ==
+X-Google-Smtp-Source: APXvYqx5ypoKVeh+p1v42clF+cG0vqBqmVXwUTA7EkbmfXj/0qUXK7K8JIXAaN7XkxUlda3YEu9lME5MWnRfhrnTLlo=
+X-Received: by 2002:a6b:fb0c:: with SMTP id h12mr5986548iog.239.1572382934731;
+ Tue, 29 Oct 2019 14:02:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4B4A80A7-05C8-441A-B224-7CC01E3D8C30@walle.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1564980742-19124-1-git-send-email-hongxing.zhu@nxp.com>
+ <1564980742-19124-5-git-send-email-hongxing.zhu@nxp.com> <CAEnQRZDk4TjU0nWgGXEV06ZygvSyuPHc61_uT7KRu0j2Aaxj7w@mail.gmail.com>
+In-Reply-To: <CAEnQRZDk4TjU0nWgGXEV06ZygvSyuPHc61_uT7KRu0j2Aaxj7w@mail.gmail.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Tue, 29 Oct 2019 16:02:03 -0500
+Message-ID: <CABb+yY1-PrmT_Qp6M1+WTnVAKizVqJLYJcip4KfqcAjcuN3GCg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v5 4/4] mailbox: imx: add support for imx v1 mu
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29/19 1:54 PM, Michael Walle wrote:
-> Am 29. Oktober 2019 18:59:07 MEZ schrieb Florian Fainelli <f.fainelli@gmail.com>:
->> On 10/29/19 10:48 AM, Michael Walle wrote:
->>> I was trying to configure the Atheros PHY for my board. There are
->> fixups
->>> all over the place, for example to enable the 125MHz clock output in
->> almost
->>> any i.MX architecture. Instead of adding another fixup in
->> architecture
->>> specific code, try to provide a generic way to init the PHY
->> registers.
->>>
->>> This patch series tries to pick up the "broadcom,reg-init" and
->>> "marvell,reg-init" device tree properties idea and make it a more
->> generic
->>> "reg-init" which is handled by phy_device instead of a particular phy
->>> driver.
->>
->> These two examples are actually quite bad and were symptomatic of a few
->> things at the time:
->>
->> - rush to get a specific feature/device supported without thinking
->> about
->> the big picture
->> - lack of appropriate review on the Device Tree bindings
->>
->> Fortunately, the last item is now not happening anymore.
->>
->> The problem with letting that approach go through is that the Device
->> Tree can now hold a configuration policy which is passed through as-is
->>from DT to the PHY device, this is bad on so many different levels,
->> starting with abstraction.
-> 
-> I see.
-> 
->> If all you need is to enable a particular clock, introduce device
->> specific properties that describe the hardware, and make the necessary
->> change to the local driver that needs to act on those. You can always
->> define a more generic scope property if you see a recurring pattern.
-> 
-> Could you have a quick look at the following patch I made for u-boot, which adds a binding for the Atheros PHY. If that is the right direction. Yeah, I should have made it first to Linux to get some feedback on the binding :p
-> 
-> https://patchwork.ozlabs.org/patch/1184516/
-> 
-> I'd then prepare another patch for Linux based on your suggestions. 
+On Tue, Oct 29, 2019 at 4:07 AM Daniel Baluta <daniel.baluta@gmail.com> wrote:
+>
+> Since we got no answer from Jassi in 4 months I think it is safe
+> to assume that we can get this through Shawn's tree.
+>
+Please don't top post.
+This patchset doesn't lack my love. It contains support for a new
+platform and was sent after last merge window. I send new
+features/support only for next release. If you want some urgent
+bugfixes picked , please send them separately.
 
-This looks like the right direction IMHO.
--- 
-Florian
+Cheers!
