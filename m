@@ -2,195 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A746E88F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73015E8903
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388152AbfJ2NAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:00:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387868AbfJ2NAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:00:53 -0400
-Received: from [172.20.52.151] (unknown [91.217.168.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BB3F20874;
-        Tue, 29 Oct 2019 13:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572354051;
-        bh=BL0YD5+tRHbynt6BJTKvBePK+6HtQvxjqI2aXHq3Gec=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=v30jJeTCJsuncSbEuYtAnradgkCzhzlSQFOOFej8hmIKBkTUkZaQ268wWgIy8kuvR
-         nBM02GbqRiQyZoL6rf9ta930E4gi5UffaACWuPUdpeXyrW0QuDLnloBJTeGrSX7h2Y
-         ASAI/ss1h/cI4qhbpUfz05LA5h2+QY0A/O+5A5Vc=
-From:   shuah <shuah@kernel.org>
-Subject: Re: [PATCH linux-kselftest/test v6] lib/list-test: add a test for the
- 'list' doubly linked list
-To:     David Gow <davidgow@google.com>, brendanhiggins@google.com,
-        akpm@linux-foundation.org, keescook@chromium.org
-Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
-        shuah <shuah@kernel.org>
-References: <20191024224631.118656-1-davidgow@google.com>
-Message-ID: <0cb1d948-0da3-eb0f-c58f-ae3a785dd0dd@kernel.org>
-Date:   Tue, 29 Oct 2019 07:00:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388222AbfJ2NCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:02:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40124 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387901AbfJ2NCm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 09:02:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TXp6GtZA1fnB+a0OnStAdqw3GTFynTzXAdUuYTPfr54=; b=xgSb9VSYh5Q85Nh4M/recBLR7
+        4U/fKWmRlBQOG6yrhqwqxQPlG12WuXdub/XrZZvPjEuwh0gWIA6HWGWv/oDftAWPl98mRNYRxJESM
+        zQd5XSGZIrLC7DvrFzTGHfo3xMqaoqJai6oOHLbWKqzkDfJ+OIfHC6tkCaYeLXUre1ziCukLiEHcB
+        KBB8o91Cf6iReoBUYGYVLe3yuNNFMu+INako3SUceAZw2Qrp+fu8wCmPw4vMCcDmNB1caurduO/Mg
+        NXTocc55dVJjeyX3hYd11gCjmnH2hXs0xzTzCx+rFo3+qFl4h2nTElRRPskKmOlyHxvulzBxHdf0v
+        6zB5OA0dw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPR8g-00008h-HL; Tue, 29 Oct 2019 13:02:22 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 960DE30025A;
+        Tue, 29 Oct 2019 14:01:18 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 345C920D7FEFA; Tue, 29 Oct 2019 14:02:19 +0100 (CET)
+Date:   Tue, 29 Oct 2019 14:02:19 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
+Message-ID: <20191029130219.GN4114@hirez.programming.kicks-ass.net>
+References: <20191009104611.15363-1-qais.yousef@arm.com>
+ <CAKfTPtA6Fvc374oTfbHYkviAJbZebHkBg=w2O3f0oZ0m3ujVjA@mail.gmail.com>
+ <20191029110224.awoi37pdquachqtd@e107158-lin.cambridge.arm.com>
+ <CAKfTPtA=CzkTVwdCJL6ULYB628tWdGAvpD-sHfgSfL59PyYvxA@mail.gmail.com>
+ <20191029114824.2kb4fygxxx72r3in@e107158-lin.cambridge.arm.com>
+ <CAKfTPtD7e-dXhZ3mG36igArt=0f-mNc52vaJ1bb-jv5zB9bkgg@mail.gmail.com>
+ <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
+ <CAKfTPtDnt6oh7X6dGnPUn70sLJXAQoxdkn0GCwdPvA8G4Wg0fA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191024224631.118656-1-davidgow@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDnt6oh7X6dGnPUn70sLJXAQoxdkn0GCwdPvA8G4Wg0fA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-On 10/24/19 4:46 PM, David Gow wrote:
-> Add a KUnit test for the kernel doubly linked list implementation in
-> include/linux/list.h
+On Tue, Oct 29, 2019 at 01:54:24PM +0100, Vincent Guittot wrote:
+> On Tue, 29 Oct 2019 at 13:46, Qais Yousef <qais.yousef@arm.com> wrote:
+> >
+> > On 10/29/19 13:20, Vincent Guittot wrote:
+> > > > > Making big cores the default CPUs for all RT tasks is not a minor
+> > > > > change and IMO locality should stay the default behavior when there is
+> > > > > no uclamp constraint
+> > > >
+> > > > How this is affecting locality? The task will always go to the big core, so it
+> > > > should be local.
+> > >
+> > > local with the waker
+> > > You will force rt task to run on big cluster although waker, data and
+> > > interrupts can be on little one.
+> > > So making big core as default is far from always being the best choice
+> >
+> > This is loaded with assumptions IMO. AFAICT we don't know what's the best
+> > choice.
+> >
+> > First, the value of uclamp.min is outside of the scope of this patch. Unless
+> > what you're saying is that when uclamp.min is 1024 then we should NOT choose a
+> > big cpu then there's no disagreement about what this patch do. If that's what
+> > you're objecting to please be more specific about how do you see this working
+> > instead.
 > 
-> Each test case (list_test_x) is focused on testing the behaviour of the
-> list function/macro 'x'. None of the tests pass invalid lists to these
-> macros, and so should behave identically with DEBUG_LIST enabled and
-> disabled.
-> 
-> Note that, at present, it only tests the list_ types (not the
-> singly-linked hlist_), and does not yet test all of the
-> list_for_each_entry* macros (and some related things like
-> list_prepare_entry).
-> 
-> Signed-off-by: David Gow <davidgow@google.com>
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> Tested-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
-> 
-> This revision addresses Brendan's comments in
-> https://lore.kernel.org/linux-kselftest/20191023220248.GA55483@google.com/
-> 
-> Specifically:
-> - Brendan's Reviewed-by/Tested-by being included in the description.
-> - A couple of trailing tabs in Kconfig.debug & list-test.c
-> - Reformatting of previously >80 character lines.
-> 
-> 
-> Earlier versions of this patchset can be found:
-> 
-> v5:
-> https://lore.kernel.org/linux-kselftest/20191022221322.122788-1-davidgow@google.com/
-> v4:
-> https://lore.kernel.org/linux-kselftest/20191018215549.65000-1-davidgow@google.com/
-> v3:
-> https://lore.kernel.org/linux-kselftest/20191016215707.95317-1-davidgow@google.com/
-> v2:
-> https://lore.kernel.org/linux-kselftest/20191010185631.26541-1-davidgow@google.com/
-> v1:
-> https://lore.kernel.org/linux-kselftest/20191007213633.92565-1-davidgow@google.com/
-> 
+> My point is that this patch makes the big cores the default CPUs for
+> RT tasks which is far from being a minor change and far from being an
+> obvious default good choice
 
-CHECK: Unnecessary parentheses around test_struct.list
-#699: FILE: lib/list-test.c:510:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct, list_entry(&(test_struct.list),
+FIFO/RR tasks don't have a bandwidth specification (barring uclamp),
+therefore we must assume the worst. This is the same principle that has
+them select max_freq all the time.
 
-CHECK: Alignment should match open parenthesis
-#700: FILE: lib/list-test.c:511:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct, list_entry(&(test_struct.list),
-+				struct list_test_struct, list));
+I think it is a very natural extention of that very principle to place
+(otherwise unconstrained RT tasks) on big cores.
 
-CHECK: Please don't use multiple blank lines
-#711: FILE: lib/list-test.c:522:
-+
-+
-
-CHECK: Alignment should match open parenthesis
-#713: FILE: lib/list-test.c:524:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct1, list_first_entry(&list,
-+				struct list_test_struct, list));
-
-CHECK: Please don't use multiple blank lines
-#724: FILE: lib/list-test.c:535:
-+
-+
-
-CHECK: Alignment should match open parenthesis
-#726: FILE: lib/list-test.c:537:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct2, list_last_entry(&list,
-+				struct list_test_struct, list));
-
-CHECK: Alignment should match open parenthesis
-#735: FILE: lib/list-test.c:546:
-+	KUNIT_EXPECT_FALSE(test, list_first_entry_or_null(&list,
-+				struct list_test_struct, list));
-
-CHECK: Alignment should match open parenthesis
-#741: FILE: lib/list-test.c:552:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct1,
-+			list_first_entry_or_null(&list,
-
-CHECK: Alignment should match open parenthesis
-#742: FILE: lib/list-test.c:553:
-+			list_first_entry_or_null(&list,
-+				struct list_test_struct, list));
-
-CHECK: Please don't use multiple blank lines
-#753: FILE: lib/list-test.c:564:
-+
-+
-
-CHECK: Alignment should match open parenthesis
-#755: FILE: lib/list-test.c:566:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct2, list_next_entry(&test_struct1,
-+				list));
-
-CHECK: Please don't use multiple blank lines
-#766: FILE: lib/list-test.c:577:
-+
-+
-
-CHECK: Alignment should match open parenthesis
-#768: FILE: lib/list-test.c:579:
-+	KUNIT_EXPECT_PTR_EQ(test, &test_struct1, list_prev_entry(&test_struct2,
-+				list));
-
-ERROR: that open brace { should be on the previous line
-#789: FILE: lib/list-test.c:600:
-+static void list_test_list_for_each_prev(struct kunit *test)
-+{
-
-ERROR: that open brace { should be on the previous line
-#807: FILE: lib/list-test.c:618:
-+static void list_test_list_for_each_safe(struct kunit *test)
-+{
-
-CHECK: Please don't use multiple blank lines
-#813: FILE: lib/list-test.c:624:
-+
-+
-
-ERROR: that open brace { should be on the previous line
-#828: FILE: lib/list-test.c:639:
-+static void list_test_list_for_each_prev_safe(struct kunit *test)
-+{
-
-ERROR: that open brace { should be on the previous line
-#848: FILE: lib/list-test.c:659:
-+static void list_test_list_for_each_entry(struct kunit *test)
-+{
-
-ERROR: that open brace { should be on the previous line
-#869: FILE: lib/list-test.c:680:
-+static void list_test_list_for_each_entry_reverse(struct kunit *test)
-+{
-
-
-I am seeing these error and warns. As per our hallway conversation, the
-"for_each*" in the test naming is tripping up checkpatch.pl
-
-For now you can change the name a bit to not trip checkpatch and maybe
-explore fixing checkpatch to differentiate between function names
-with "for_each" in them vs. the actual for_each usages in the code.
-
-thanks,
--- Shuah
