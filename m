@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71130E8895
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1A1E889B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387875AbfJ2Mqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:46:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:51684 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbfJ2Mqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:46:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D05221FB;
-        Tue, 29 Oct 2019 05:46:33 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 940C43F6C4;
-        Tue, 29 Oct 2019 05:46:32 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 12:46:30 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
-Message-ID: <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
-References: <20191009104611.15363-1-qais.yousef@arm.com>
- <CAKfTPtA6Fvc374oTfbHYkviAJbZebHkBg=w2O3f0oZ0m3ujVjA@mail.gmail.com>
- <20191029110224.awoi37pdquachqtd@e107158-lin.cambridge.arm.com>
- <CAKfTPtA=CzkTVwdCJL6ULYB628tWdGAvpD-sHfgSfL59PyYvxA@mail.gmail.com>
- <20191029114824.2kb4fygxxx72r3in@e107158-lin.cambridge.arm.com>
- <CAKfTPtD7e-dXhZ3mG36igArt=0f-mNc52vaJ1bb-jv5zB9bkgg@mail.gmail.com>
+        id S2387919AbfJ2MrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:47:13 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42920 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726048AbfJ2MrM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:47:12 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9TCg9Eu004076;
+        Tue, 29 Oct 2019 13:46:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=PCCjXX8CusN1LvKZ5WG/65Gg+OP0fFkvR4ovWeCP35E=;
+ b=UvDQ0UxL7RFjoFqGtof5EcYaJ8mKZySVehljZXxjvRLUaeUd1gfDYvuRpUzWJg2pH2yV
+ V1OrBGltg2bWpfWI+PyNYLj2HgHxioZnDASNXkeEQBa3/18oBVYDCm7qqvlUTuvy+stj
+ inlGzmHsWZ5iefxsHbcErp2bYqzd03uHxmzEpFx8JxZI5tgEAuLCp8gYFxLXs+8cwJ9K
+ AI/WeY3hOaVqAbxqEt8WXbsE5piPuL8c33tT6zSPCxSbT3LSHUgGsVEmuv6nLXhm883K
+ ipXM7m/7mtXPnAl/WRRlwWAFx31ZqIis8I7yLTe1McgPCVfvW4DtESJbej54reLfnECV Fg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vvd1gqd8x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Oct 2019 13:46:59 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 50C8010002A;
+        Tue, 29 Oct 2019 13:46:59 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 236FD2BE234;
+        Tue, 29 Oct 2019 13:46:59 +0100 (CET)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 29 Oct
+ 2019 13:46:59 +0100
+Received: from localhost (10.201.22.141) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 29 Oct 2019 13:46:57
+ +0100
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 0/2] STMFX pinctrl definition updates
+Date:   Tue, 29 Oct 2019 13:46:49 +0100
+Message-ID: <20191029124651.12625-1-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtD7e-dXhZ3mG36igArt=0f-mNc52vaJ1bb-jv5zB9bkgg@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Originating-IP: [10.201.22.141]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-29_04:2019-10-28,2019-10-29 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29/19 13:20, Vincent Guittot wrote:
-> > > Making big cores the default CPUs for all RT tasks is not a minor
-> > > change and IMO locality should stay the default behavior when there is
-> > > no uclamp constraint
-> >
-> > How this is affecting locality? The task will always go to the big core, so it
-> > should be local.
-> 
-> local with the waker
-> You will force rt task to run on big cluster although waker, data and
-> interrupts can be on little one.
-> So making big core as default is far from always being the best choice
+Since a502b343eb ("pinctrl: stmfx: update pinconf settings"), pin
+confuguration has been fixed in STMFX pinctrl driver. Moreover, gpiolib now
+fully handles "push-pull" configuration.
+This series cleans up stm32mp157c-ev1 stmfx pins use.
 
-This is loaded with assumptions IMO. AFAICT we don't know what's the best
-choice.
+Amelie Delaunay (2):
+  ARM: dts: stm32: remove OV5640 pinctrl definition on stm32mp157c-ev1
+  ARM: dts: stm32: change joystick pinctrl definition on stm32mp157c-ev1
 
-First, the value of uclamp.min is outside of the scope of this patch. Unless
-what you're saying is that when uclamp.min is 1024 then we should NOT choose a
-big cpu then there's no disagreement about what this patch do. If that's what
-you're objecting to please be more specific about how do you see this working
-instead.
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-If your objection is purely based on the choice of uclamp.min then while
-I agree that on modern systems the little cores are good enough for the
-majority of RT tasks in average Android systems. But I don't feel confident to
-reach this conclusion on low end systems where the little core doesn't have
-enough grunt in many cases. So I see the current default is adequate and the
-responsibility of further tweaking lies within the hands of the system admin.
+-- 
+2.17.1
 
---
-Qais Yousef
