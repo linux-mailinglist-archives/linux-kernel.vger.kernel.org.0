@@ -2,159 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE2DE8490
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE828E849B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:41:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbfJ2JkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:40:11 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55811 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbfJ2JkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:40:11 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g24so1743941wmh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ncentric-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=2Aa5j2eV/0WKF03bDFsIwtghRGSKb/OqNGsEyVUDvWw=;
-        b=b7Wvn9TYfGj9kmhJZFlMf0XSxya4fT2WHQUdC9GD4TP99uxK3aR55urIElBfE0YGRc
-         SrdjJ0UtTiQhsA0a5PXzKo1xDTLywFg8w4FbuhuEdWJvVkYXmR3mPL47gc8cGG1HL/So
-         zZhhMnoQai5MOJnRY3CV0itPx0qrD53DBC0gujZ6bJYV2l4xbhLjimkVKFYU0Fem2Bv8
-         I4XmrSFAFDF+K2VlY2I0OglJQKSjNP/Dag6k9dWCMctxRdXdaXRp+OvaGWlfILAkocwT
-         3uCbPr5qTQcw4MYPyH5Yhgd3VreRJptew48RprMLz1kRyL6CvMA5+hm7GL1q+8UEVrVj
-         F+sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=2Aa5j2eV/0WKF03bDFsIwtghRGSKb/OqNGsEyVUDvWw=;
-        b=r9/fz+Tc6Muff2rIH4zkJ9R6BEqEJUaIqxxzh1ASdon7De2bFthtE9vc9sGIV6H5rN
-         tcfNTmHgSvnOaAMj8mS4Ak1HO4nW2xVY0+loreUgHtUPkiY24RoPCVg0NPPt2phi0Fsd
-         CfrhMXwAfKB0AY7KOFlrunwMG0/X8EaKVdP/8sg/EnDW6ILs2DOWb/zaATvHXa6wWfBQ
-         S/9vlhZSyFnqDG81y0hx4zab5qatrPpU6pVfdQCknVHNg8yiepDjN4Ph89T25wgeaiGM
-         372wsYKROshhaiIba0xGu5GIJYFuxU59X/yEhStygqoOsemtE4XecN1LZ2BpuqYvtLW7
-         itfg==
-X-Gm-Message-State: APjAAAVxSe1P7MbViyRxPsDb89MDkd62v64goK0Z2UH0RDfqOEjerl64
-        4krzQT75LFeUm+GR7w47p4UO0jhxaR0=
-X-Google-Smtp-Source: APXvYqybfJwsbSSLUwelX1MCkNxRbHTiindnv/Z3xFpqXx2ui62l5VksJqY5AC/XaTjKFMQQK0R9OA==
-X-Received: by 2002:a1c:ed0e:: with SMTP id l14mr3125989wmh.102.1572342008103;
-        Tue, 29 Oct 2019 02:40:08 -0700 (PDT)
-Received: from [192.168.3.176] (d515300d8.static.telenet.be. [81.83.0.216])
-        by smtp.gmail.com with ESMTPSA id v8sm16115329wra.79.2019.10.29.02.40.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 02:40:07 -0700 (PDT)
-Subject: Re: [PATCH v2] 802.11n IBSS: wlan0 stops receiving packets due to
- aggregation after sender reboot
-To:     Sebastian Gottschall <s.gottschall@newmedia-net.de>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        =?UTF-8?Q?Krzysztof_Ha=c5=82asa?= <khalasa@piap.pl>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <m34l02mh71.fsf@t19.piap.pl> <m37e4tjfbu.fsf@t19.piap.pl>
- <e5b07b4ce51f806ce79b1ae06ff3cbabbaa4873d.camel@sipsolutions.net>
- <30465e05-3465-f496-d57f-5e115551f5cb@ncentric.com>
- <b51030e8-7c56-0e24-4454-ff70f83d5ae8@newmedia-net.de>
-From:   Koen Vandeputte <koen.vandeputte@ncentric.com>
-Message-ID: <8c4325e2-6ec6-59f1-89df-36392f674530@ncentric.com>
-Date:   Tue, 29 Oct 2019 10:40:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732878AbfJ2JlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:41:21 -0400
+Received: from mout.web.de ([217.72.192.78]:35015 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732845AbfJ2JlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 05:41:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1572342068;
+        bh=7ZL4HdBgXcYe/RxvZqwRIZfjdHjgathOXOjI3o/giec=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=lTmmSq+HVcFsiEMRUF1yfACHphXnP8v3Jn9KAzFZ/YKkdnqlZHa5sIWth91urmjKJ
+         6seEXnU03xS7P+fYYc6Vy2cy6KUSpDs/uQ+4VxBMCzmw9i/PME5VaqNfG/9ILSdTs/
+         EBkVIZ5IKQ8Z46c29frreFSKOgFy/dXcZ5N0r6AU=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.243.156.63]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lc8Ph-1hiwIT27VN-00jX2c; Tue, 29
+ Oct 2019 10:41:08 +0100
+Subject: Re: phy: tegra: xusb: Complete exception handling in probe functions
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     linux-tegra@vger.kernel.org, JC Kuo <jckuo@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        Coccinelle <cocci@systeme.lip6.fr>
+References: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <3e3f40db-2422-c64d-3825-35f8c2471eb7@web.de>
+Date:   Tue, 29 Oct 2019 10:40:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-In-Reply-To: <b51030e8-7c56-0e24-4454-ff70f83d5ae8@newmedia-net.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fe6868a4-01f5-2832-9081-7643be0ab4a1@web.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cMCMA6+XbKkJ/93V15j0iHQogtzL5qc5U73UgyvflFR6fvahVFF
+ YfMtczXMHqbJcuc3iaHrMtyG17ud9XvyjaC6dYA37/9ouKzcfByraX7jhk05au3TGa2VTTP
+ Od5Aq/Cd8NSsgYZOYW5/Q02sJASTevdJx4GXQoU0NRks1k0r/8Lwg7XiO7iRMBX4QjlCI/H
+ +Z098SdSxlKjxbnGQqAWg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8X6osC7cb7A=:mgbXl19oHyKUxW0QKOISkk
+ EXjgJUCIdgv5c5xuSNdFXoYFchhGDWjwPCaAtarRmPGv+jvrDUgxAFcrAeZz3aT1TXWQKdYtx
+ wLaDznkCTBAhqzERjO3X0Tzrw5XlIr6CVxjPQMKmqeAP9pe6MeTn0/DX3aYp/ebCsr9/QMbZR
+ CJvyFOm0KNwK5o702ylC0UyS/OIoHPWbUieseAhcF+OvenlB9Ku5I0vNVQ0TY+S1wMSStcdgh
+ +iRRLMPzgUEx0aV8cv5a+NF9ubQb1GxhBRoP59J7/j2XaQenHoNUjM81eFVXKqbYjsg51D999
+ rGXTBOiYlH61v7B3YgIUwl8uGsW9eK3uXa7zPPT1u6HNVYnv5t076zSX86cjORyjqzev5pv8e
+ dcOi7hywEZh3nKK1WtM+eutFrnvEPIzInb+475DKyjLr4XgH/hutXo7WUxl7+o6ulcIpp+w2L
+ LB4KU4HEodzBk/9+f/kgeSfljevHrZpicyzOo03KJTWQCjgoNgOztOys0/T4EvJhhO6CScEgM
+ qFCjXCHDZ0AcGLbbRl2NYr0+ZgCz6Po8zNbTbIoDdK/4pUrGhZRYOJWX7S+aLUNRIE5V1bHVU
+ r1UgYkU8Eyz9ewsbZf2V10ab5usBUHWXvpfqeDyEE9/QgdPMxXivh1IK/eEzfs5yO7jUV0uo9
+ 7gCFeCPqIX8kU8MQrC20EJ0JX6UOBEMe0mxhHT2HNhBzCzYS60uE4Qp2MKNiNjKBD5E+/faxY
+ zYnllLQjb39kS22o7C6P9y8jyYxhGPNPBef6qR++KZ3YB2OkkHKXPjKu9hcN08TVSfDFcxiVR
+ 6vRD0USvExp1DHPIVO2atzgJm1UmpQFd6T8l2taqsnT79CaTlxntsKcajS5ruXh1lJvY1fMFz
+ eJG/2jNtQwaO2k2sK3SnNdRZlQgmZonUxgIOn7yUoLbqYhi9eIpCX6mBxabgdgQwD55ZS2iH8
+ dDCh5mrEH1N5sqlkn+32cvEc34aEHlZzX4/g5EBd6GJ5+cpTlWKLUEH2/MYQhZBmTqxXT3t3A
+ wxwIl/FTkM3NhDFebEi1Oxpb+BhL7XQSdcRBpQw9lTRdaf6bX/Z1aQszgYt9jkkeN4zGLfUXq
+ TeL0rOvdSbVLLkKXiq0XBVvGME+WmJ22Gf7+ARKA/R2+MhR1nkTOl2Gej2dsbNUnrD8NlCfSn
+ JLqRwkTQbQ6XJ45EJltTxXGVmw2S1pdu72OYjAOmaSZKNZL/5wHQMOaf6tcdqQAJ9VoHc13L5
+ 227xSTKgDXocLokbVbrugiPX/5MlKZZwd92ByV/LTlST6feRewEPTU0bpz9w=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> I have got the impression then that the exception handling is incomplete=
+ so far
+> at these source code places.
 
-On 29.10.19 09:58, Sebastian Gottschall wrote:
-> 35 km? for 802.11n with ht40 this is out of the ack timing range the 
-> chipset supports. so this should be considered at any troubles with 
-> connections
->
-(Please don't top-post)
+How do you think about to try the following small script for the semantic =
+patch
+language out on the directory =E2=80=9Cdrivers/phy/tegra=E2=80=9D?
 
-When we know a link can exceed ~ 21km, it's set to HT20 for this reason.
+@display@
+expression object;
+identifier exit;
+@@
+ ... when any
+ object =3D kzalloc(...)
+ ...
+ if (...)
+ {
+*kfree(object);
+ goto exit;
+ }
+ ...
+ if (...)
+*   goto unregister;
 
-Koen
 
-> Am 29.10.2019 um 09:41 schrieb Koen Vandeputte:
->>
->> On 28.10.19 13:21, Johannes Berg wrote:
->>> On Fri, 2019-10-25 at 12:21 +0200, Krzysztof Hałasa wrote:
->>>> Fix a bug where the mac80211 RX aggregation code sets a new 
->>>> aggregation
->>>> "session" at the remote station's request, but the head_seq_num
->>>> (the sequence number the receiver expects to receive) isn't reset.
->>>>
->>>> Spotted on a pair of AR9580 in IBSS mode.
->>>>
->>>> Signed-off-by: Krzysztof Halasa <khalasa@piap.pl>
->>>>
->>>> diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
->>>> index 4d1c335e06e5..67733bd61297 100644
->>>> --- a/net/mac80211/agg-rx.c
->>>> +++ b/net/mac80211/agg-rx.c
->>>> @@ -354,10 +354,13 @@ void ___ieee80211_start_rx_ba_session(struct 
->>>> sta_info *sta,
->>>>                */
->>>>               rcu_read_lock();
->>>>               tid_rx = rcu_dereference(sta->ampdu_mlme.tid_rx[tid]);
->>>> -            if (tid_rx && tid_rx->timeout == timeout)
->>>> +            if (tid_rx && tid_rx->timeout == timeout) {
->>>> +                tid_rx->ssn = start_seq_num;
->>>> +                tid_rx->head_seq_num = start_seq_num;
->>>>                   status = WLAN_STATUS_SUCCESS;
->>> This is wrong, this is the case of *updating an existing session*, we
->>> must not reset the head SN then.
->>>
->>> I think you just got very lucky (or unlucky) to have the same dialog
->>> token, because we start from 0 - maybe we should initialize it to a
->>> random value to flush out such issues.
->>>
->>> Really what I think probably happened is that one of your stations lost
->>> the connection to the other, and didn't tell it about it in any way 
->>> - so
->>> the other kept all the status alive.
->>>
->>> I suspect to make all this work well we need to not only have the fixes
->>> I made recently to actually send and parse deauth frames, but also to
->>> even send an auth and reset the state when we receive that, so if we
->>> move out of range and even the deauth frame is lost, we can still reset
->>> properly.
->>>
->>> In any case, this is not the right approach - we need to handle the
->>> "lost connection" case better I suspect, but since you don't say what
->>> really happened I don't really know that that's what you're seeing.
->>>
->>> johannes
->>
->> Hi all,
->>
->> I can confirm the issue as I'm also seeing this sometimes in the 
->> field here.
->>
->> Sometimes when a devices goes out of range and then re-enters,
->> the link refuses to "come up", as in rx looks to be "stuck" without 
->> any reports in system log or locking issues (lockdep enabled)
->>
->> I have dozens of devices installed offshore (802.11n based), both on 
->> static and moving assets,
->> which cover from short (250m) up to very long distances (~35km)
->>
->> So .. while there is some momentum for this issue,
->> I'm more than happy to provide extensive testing should fixes be 
->> posted regarding IBSS in general.
->>
->> Regards,
->>
->> Koen
->>
->>
+Will any search pattern variations become more interesting for correspondi=
+ng
+automatic software transformations?
+
+Regards,
+Markus
