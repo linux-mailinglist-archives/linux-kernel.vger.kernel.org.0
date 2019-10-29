@@ -2,144 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994F1E859E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA9B4E85C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731205AbfJ2KbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:31:18 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45242 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730955AbfJ2KbP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:31:15 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x21so2177203qto.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 03:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=9SS4b78ehrP4a9/DZbJX4AGCB0l2oYRtncqtM2VcVgs=;
-        b=G/LkZ5EFLI13fNYweg2QLrX9wPwyX1HFJIpSnMQHTrMXQvOr8WcBlj7L6PpPDNjdgP
-         i5InJ9pIYo4M2+ahXyCmJkm0/aSmAFV1b0ddTRW1LgRG7OVGwCri8wGtJhq7q7n0OHXS
-         /62wwsP9sjkBXi1sfsKUBwKdoX3XI/7IX8CepjzvKNmSryJQnKF34LTh2GQ9WhtDP2dt
-         IXSVXKbxiNcS5b+rYkiVMk/YKYGmnfMv31SeMxHd7e0Hp2u4HSyq7youtj+T3jqrMDT3
-         TABjTwTyDtWr5DElB4lPasN8uyXQjZI6Au4SUlUuoJnmXJBOg31XRn9SRwxaflUvjklQ
-         6j8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=9SS4b78ehrP4a9/DZbJX4AGCB0l2oYRtncqtM2VcVgs=;
-        b=o3FS934jgdpUrKOGrnYd5P6BTwnGvKuaDLw+zdoZe9O3wQrPUuRl5hlmS1w7iWxF5t
-         jlXQ/mQH/uRUs4v38aQ6MNDvqheTIWAADXDe48cq+dxvOXmQ5kyTXH6owHcFfPhuyBIm
-         3wyXZ55O/ST7VXiAHSSk/qC41zMcDR1DjJjyuUPp6bFSJGjJrI2U32KV+ezQbVe69TRW
-         SQJIRTye3M2UU43nfnKs8ELkRoyKVRNtw82dgAreTKT2bj77rSMVfDgm/V9utM+LERUh
-         PqQH2z0WO3jHnfWL3jlL7xWUZ/LAFKdOBQ9sryWf/YxigwFAaqasCKQO+jpzT6ra0MSy
-         6cJQ==
-X-Gm-Message-State: APjAAAWp0fKMR8F7ZXc+YRvNf04VLdVRCmcGzayWdTh5urxtEjigXMeH
-        ZqLK4F4H/ow7fe7GILJwVEM8yA==
-X-Google-Smtp-Source: APXvYqxu87KxuRTj39OXWAVjw/WFzSDMbE3Up95oGqmF/PZSf0Vx1vPkAAaomtV6kZQFzmiTSl4zEw==
-X-Received: by 2002:a0c:f6d2:: with SMTP id d18mr6856697qvo.155.1572345072935;
-        Tue, 29 Oct 2019 03:31:12 -0700 (PDT)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id t1sm7346140qkm.121.2019.10.29.03.31.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 03:31:12 -0700 (PDT)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH V8] mm/debug: Add tests validating architecture page table helpers
-Date:   Tue, 29 Oct 2019 06:31:11 -0400
-Message-Id: <B6AAFA3F-745D-48E2-98CC-CFB30934CE39@lca.pw>
-References: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-To:     Anshuman Khandual <Anshuman.Khandual@arm.com>
-X-Mailer: iPhone Mail (17A878)
+        id S1729039AbfJ2KeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:34:03 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9190 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726716AbfJ2KeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:34:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 03:34:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
+   d="asc'?scan'208";a="198884160"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2019 03:33:59 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Roger Quadros <rogerq@ti.com>, Peter Chen <peter.chen@nxp.com>
+Cc:     Pawel Laszczak <pawell@cadence.com>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: cdns3: gadget: Don't manage pullups
+In-Reply-To: <0c2c901c-a6f2-a81b-f5b1-e3f442d7c1ae@ti.com>
+References: <20191023090232.27237-1-rogerq@ti.com> <BYAPR07MB4709A6212601A75DCB1A25ACDD6B0@BYAPR07MB4709.namprd07.prod.outlook.com> <20191025031343.GA13392@b29397-desktop> <83a1da01-19d6-65a9-aecd-2027fd62a272@ti.com> <20191029031223.GA26815@b29397-desktop> <0c2c901c-a6f2-a81b-f5b1-e3f442d7c1ae@ti.com>
+Date:   Tue, 29 Oct 2019 12:33:56 +0200
+Message-ID: <875zk7j0x7.fsf@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-> On Oct 28, 2019, at 1:29 AM, Anshuman Khandual <Anshuman.Khandual@arm.com>=
- wrote:
->=20
-> This adds tests which will validate architecture page table helpers and
-> other accessors in their compliance with expected generic MM semantics.
-> This will help various architectures in validating changes to existing
-> page table helpers or addition of new ones.
->=20
-> This test covers basic page table entry transformations including but not
-> limited to old, young, dirty, clean, write, write protect etc at various
-> level along with populating intermediate entries with next page table page=
+Hi,
 
-> and validating them.
->=20
-> Test page table pages are allocated from system memory with required size
-> and alignments. The mapped pfns at page table levels are derived from a
-> real pfn representing a valid kernel text symbol. This test gets called
-> right after page_alloc_init_late().
->=20
-> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along wit=
-h
-> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to=
+Roger Quadros <rogerq@ti.com> writes:
 
-> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 an=
-d
-> arm64. Going forward, other architectures too can enable this after fixing=
+> On 29/10/2019 05:12, Peter Chen wrote:
+>> On 19-10-25 12:59:17, Roger Quadros wrote:
+>>> Peter,
+>>>
+>>> On 25/10/2019 06:13, Peter Chen wrote:
+>>>> On 19-10-23 09:17:45, Pawel Laszczak wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Reviewed-by: Pawel Laszczak <pawell@cadence.com>
+>>>>
+>>>> Hi Roger & Pawel,
+>>>>
+>>>> Assume gadget function has already enabled, if you switch host mode
+>>>> to device mode, with your changes, where the device mode will be enabl=
+ed
+>>>> again?
+>>>
+>>> When it switches from device mode to host the UDC is removed. When we s=
+witch
+>>> back from host to device mode the UDC is added, so,
+>>>
+>>> usb_add_gadget_udc_release()-> check_pending_gadget_drivers()->
+>>> udc_bind_to_driver()->usb_udc_connect_control()->usb_gadget_connect()->
+>>> gadget->ops->pullup()
+>>=20
+>> Thanks. I have another question how you decide when to store UDC name
+>> to /sys/kernel/config/usb_gadget/g1/UDC? Do you have a user daemon progr=
+am
+>> to monitor VBUS or external connector? At host mode, the store operation
+>> will fail due to there is NO UDC.
+>>=20
+>
+> Yes, user space needs to monitor /sys/class/usb_role/6000000.usb-role-swi=
+tch/role
+>
+> When it becomes "device" the UDC is available and it can prepare to confi=
+gure
+> the UDC.
+>
+> Could you please give your Ack for this patch if it is OK? Thanks.
 
-> build or runtime problems (if any) with their page table helpers.
->=20
-> Folks interested in making sure that a given platform's page table helpers=
+this is already in its way to Linus' tree:
 
-> conform to expected generic MM semantics should enable the above config
-> which will just trigger this test during boot. Any non conformity here wil=
-l
-> be reported as an warning which would need to be fixed. This test will hel=
-p
-> catch any changes to the agreed upon semantics expected from generic MM an=
-d
-> enable platforms to accommodate it thereafter.
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=3D=
+usb-linus&id=3Df3fb802efaef3662744a2215a51294d52a7cfc0e
 
-This looks like a perfect candidate to streamline with the new kunit framewo=
-rk, no?=
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl24FZQACgkQzL64meEa
+mQb8GxAAkVg88x3zxLiaMlbDSwSkB6A3rUU+t+PeKfW2HC4iQGxWsl3UU34sr1uk
+Lz/vit0HLb11mjHDt3J66hI7gxyqucMjsadiOy6e2H0dk3ehb2GKCEABPTho89l7
+flKFU1cZWqYDUreoL0C7Y2OFMkCU8L9kGUwP6RLinEhleGytnRXxF0IVitWDJYda
+qviXiOFLiAydkwriy1pVTU6gpdK4a8GDUfaoofsS792TD8jy/sOKnHEzLc918/f6
+a82W+Htz9wWuUokddvmw5nlpIE6IVQVWU1RpPnn5d19ZhIORGMg2fq3VEeh7n3s3
+C0np+xS5Re0UIbLoaXGgBjRCKdraCdaM92ODBx4e9HWpBuUwHPbFWY8aSLzerRSz
+kG8CXyN5eWfucdcVCHq9XUuesZwwB0wc+b/I67ayI+rD3wqK9+RV5MGyjdvMwlyG
+f/fZ41Y67JWqUzCAooYLTmdrxjSdSy/TQCbkiV8ghwGYUcUp6VPLxT3qABK+sX95
+3IoSmnIa+oH9ykFTBNLt14v3dKNU/WKdFdSyp6YQKAvUVX7EVQoQFud7+/M4HZi2
+3NlJpenqjvs68T4XmIeonF0/GxNCGFFdFH0DBrYTcWZ+2k2n/rbPNSDcBtpQ2/hF
+ZnSDN1clFqtkAbz5q7JohSYc1ZTjLCTbDa0drHYW97Lh0ylZ5nM=
+=je1a
+-----END PGP SIGNATURE-----
+--=-=-=--
