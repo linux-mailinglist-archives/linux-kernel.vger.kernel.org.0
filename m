@@ -2,86 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE35EE8E98
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB35E8EC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:57:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbfJ2Rsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:48:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58462 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfJ2Rsb (ORCPT
+        id S1728472AbfJ2R5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:57:07 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:43361 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfJ2R5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:48:31 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 19A3A60E20; Tue, 29 Oct 2019 17:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572371311;
-        bh=O1zkui5yJKuNG0ziv1PZdCM5bIolIL/i4n+wVBNcTf8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Pss4uR2XOAHi+P6+iIsbJtklIy7LEdUwnUmMasEZgrreYsfVACoMYlhHuoaANeljS
-         MGSIQwdPld8yx3uo91+EgG8gWkzzsKMQs1TJ90ynJtCGROIRQM8agdJIPd9sIUaTD6
-         7zjM7iR/au4gY7RID+wk/eoNNPi6/P33fwTjTxYM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Tue, 29 Oct 2019 13:57:06 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1EDDB60D6F;
-        Tue, 29 Oct 2019 17:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572371310;
-        bh=O1zkui5yJKuNG0ziv1PZdCM5bIolIL/i4n+wVBNcTf8=;
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 77DE622E07;
+        Tue, 29 Oct 2019 18:48:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
+        s=mail2016061301; t=1572371332;
+        bh=RCNspeC1Ti2bR8xaR18uPqh3L4hI0ngXx7w3MFF8udI=;
         h=From:To:Cc:Subject:Date:From;
-        b=fzhTJJ3BfFJIqC90U723NKKkxr+T8PTAvCjzUYcm/4yFeor7SPdhKDuBpEN6VKkz4
-         b4XnpFFrK2i+VNA1YCsIKmnGsjyNdns0ktlZOBuMQTsjn9llSWi2ZfBMdqDehO6/E1
-         YTNtXU/fFRqPjB85CfA8zpFw/b0q0TXKHhuH3yFg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1EDDB60D6F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/3] Add support for RPMHCC for SC7180
-Date:   Tue, 29 Oct 2019 23:18:16 +0530
-Message-Id: <1572371299-16774-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        b=tX4838poUDH8IDslIqg8j1gOEwLUI3122XfqbRIer1pvk+V3pgABHPskWha53Thl6
+         N/kPKE22LlJdqHvBEDjCqC5hFYyRL/QZacQDVEWBq/BGLuNlVsjslCK9inA59Bkn17
+         E7eFwQE2cCh0VVGWrn3ETVe09bNuaosvWVnXEH6Y=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     Michael Walle <michael@walle.cc>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 0/3] net: phy: initialize PHYs via device tree properties
+Date:   Tue, 29 Oct 2019 18:48:16 +0100
+Message-Id: <20191029174819.3502-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.101.4 at web
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[v2]
- * Fix indentation issues in YAML Documentation.
+I was trying to configure the Atheros PHY for my board. There are fixups
+all over the place, for example to enable the 125MHz clock output in almost
+any i.MX architecture. Instead of adding another fixup in architecture
+specific code, try to provide a generic way to init the PHY registers.
 
-[v1]
- * Update the Documentation binding of RPMHCC to YAML schemas.
- * Add RPMH clocks required to be supported on SC7180.
+This patch series tries to pick up the "broadcom,reg-init" and
+"marvell,reg-init" device tree properties idea and make it a more generic
+"reg-init" which is handled by phy_device instead of a particular phy
+driver.
 
-Taniya Das (3):
-  dt-bindings: clock: Add YAML schemas for the QCOM RPMHCC clock
-    bindings
-  dt-bindings: clock: Introduce RPMHCC bindings for SC7180
-  clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
+Michael Walle (3):
+  dt-bindings: net: phy: Add reg-init property
+  net: phy: export __phy_{read|write}_page
+  net: phy: Use device tree properties to initialize any PHYs
 
- .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 27 ------------
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     | 49 ++++++++++++++++++++++
- drivers/clk/qcom/clk-rpmh.c                        | 19 +++++++++
- 3 files changed, 68 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+ .../devicetree/bindings/net/ethernet-phy.yaml | 31 ++++++
+ MAINTAINERS                                   |  1 +
+ drivers/net/phy/phy-core.c                    | 24 ++++-
+ drivers/net/phy/phy_device.c                  | 97 ++++++++++++++++++-
+ include/dt-bindings/net/phy.h                 | 18 ++++
+ include/linux/phy.h                           |  2 +
+ 6 files changed, 170 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/net/phy.h
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+
+-- 
+2.20.1
 
