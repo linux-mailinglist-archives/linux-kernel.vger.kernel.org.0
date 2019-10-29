@@ -2,103 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B39D8E83B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E68DE83BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:03:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbfJ2JCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727933AbfJ2JCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:02:11 -0400
-Received: from rapoport-lnx (190.228.71.37.rev.sfr.net [37.71.228.190])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3456620717;
-        Tue, 29 Oct 2019 09:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572339726;
-        bh=bOYMkrPnkSbi4aKQxcu6uc3pK8uAB8m/hoLokCCVXGU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XIQpQH93iGh9XKVRHrIjP5M0pKowp+j/DYe81iC7yDYP/yrQaFN3kQc70I446NNUA
-         BFUwORbg2S1M1iQn+NkCvD1RLPVb2El1M1GCKPrABFs1gae9RsnIF4s7m6xaIrnC7B
-         2HPKTrYTdAhNRLx9kbkBmdZdMtgF9gkcj5QemTgA=
-Date:   Tue, 29 Oct 2019 10:01:58 +0100
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
- mappings
-Message-ID: <20191029090158.GB18773@rapoport-lnx>
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <87d0eieb0i.fsf@mid.deneb.enyo.de>
- <385EB6D4-A1B0-4617-B256-181AA1C3BDE3@kernel.org>
- <87h83s62mi.fsf@mid.deneb.enyo.de>
+        id S1730610AbfJ2JDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:03:24 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:34070 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730528AbfJ2JDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 05:03:22 -0400
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x9T93GNt030462
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 18:03:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x9T93GNt030462
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572339797;
+        bh=EAEi1K2U344N90FciSKHHARW6VFalhrkblUys0k8F4s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lfdriDdTUiZJM5D69Z4ZfXrw8v2evzbYiJkBZZJcxN3igEL8QYDKV7aWO/3wH08GL
+         vPb8ygyEzzZgM27ViIZwgXxrHSq+cSH2imNUAgwof1KfYcwwZmNxVGZ83ulU0RaeWr
+         71frB5KH8qc5rH1kQqFSACD3L4YcskmcX2PzrcoNBRnt9lfscTtt1fPKTykkm9WZIW
+         FEBgiVhfd9T/hgUFqHX5/prWNXe0U4D3gzKgiHr5fLsdW4I0orkB3GZRQrCNSBzxD3
+         MCvd5SBqRhvImHfaJCT9MNPJXQAF+tmZ9vvjrDEKaFgTBMbwh4/AHrKEUYmpVtSq8C
+         I226tWH91HXHw==
+X-Nifty-SrcIP: [209.85.217.50]
+Received: by mail-vs1-f50.google.com with SMTP id k15so8264702vsp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:03:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAWbigrM+cRbNjJcY6O7KgJ/Gw0OeZJ0cNWaU3Q4JxLv+87awXj8
+        kzMPSr//XQ93tC/hR0xEbLxsR+LP2O8l6B0DeUo=
+X-Google-Smtp-Source: APXvYqzhJe/yPQdN0tBDu6TBQc2K5WV2hMrLehNaG9v/mQdNrhhaM6o1wclLJNHU3Lmxj2DnZeGCs2BIox9cjEbnFao=
+X-Received: by 2002:a05:6102:726:: with SMTP id u6mr982037vsg.179.1572339795525;
+ Tue, 29 Oct 2019 02:03:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h83s62mi.fsf@mid.deneb.enyo.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191028153334.GA25863@linux-8ccs>
+In-Reply-To: <20191028153334.GA25863@linux-8ccs>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 29 Oct 2019 18:02:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQfeoPt1KApoa94RwVYo-LiPWxgit8=vzM2wfzHs+CajQ@mail.gmail.com>
+Message-ID: <CAK7LNAQfeoPt1KApoa94RwVYo-LiPWxgit8=vzM2wfzHs+CajQ@mail.gmail.com>
+Subject: Re: `make nsdeps` prints "Building modules, stage 2" twice
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Matthias Maennich <maennich@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 09:23:17PM +0100, Florian Weimer wrote:
-> * Mike Rapoport:
-> 
-> > On October 27, 2019 12:30:21 PM GMT+02:00, Florian Weimer
-> > <fw@deneb.enyo.de> wrote:
-> >>* Mike Rapoport:
-> >>
-> >>> The patch below aims to allow applications to create mappins that
-> >>have
-> >>> pages visible only to the owning process. Such mappings could be used
-> >>to
-> >>> store secrets so that these secrets are not visible neither to other
-> >>> processes nor to the kernel.
-> >>
-> >>How is this expected to interact with CRIU?
-> >
-> > CRIU dumps the memory contents using a parasite code from inside the
-> > dumpee address space, so it would work the same way as for the other
-> > mappings. Of course, at the restore time the exclusive mapping should
-> > be recreated with the appropriate flags.
-> 
-> Hmm, so it would use a bounce buffer to perform the extraction?
+On Tue, Oct 29, 2019 at 12:33 AM Jessica Yu <jeyu@kernel.org> wrote:
+>
+> Hi!
+>
+> When running `make nsdeps`, I've noticed that "Building modules, stage
+> 2" gets printed twice. Not a big deal, but a bit strange to see,
+> especially since the second print is actually from the nsdeps target
+> calling modpost again.
+>
+> $ make nsdeps O=/dev/shm/linux
+> make[1]: Entering directory '/dev/shm/linux'
+>   GEN     Makefile
+>   DESCEND  objtool
+>   CALL    /tmp/ppyu/linux/scripts/atomic/check-atomics.sh
+>   CALL    /tmp/ppyu/linux/scripts/checksyscalls.sh
+>   CHK     include/generated/compile.h
+>   Building modules, stage 2.
+>   MODPOST 3316 modules
+>   Building modules, stage 2.
+>   MODPOST 3316 modules
+> Adding namespace USB_STORAGE to module uas (if needed).
+> Adding namespace USB_STORAGE to module ums-alauda (if needed).
+> Adding namespace USB_STORAGE to module ums-cypress (if needed).
+> Adding namespace USB_STORAGE to module ums-datafab (if needed).
+> ....etc...
+>
+> It's due to calling the __modpost target twice, once for modules and
+> once for nsdeps. I guess we could have the nsdeps target just call
+> cmd_modpost, but then we still have the MODPOST XXXX modules line
+> printing twice. Is there a nicer way to fix this? Again, it's not
+> harmful, but probably confusing for people to see.
+>
+> Thanks,
+>
+> Jessica
 
-At first I thought that CRIU would extract the memory contents from these
-mappings just as it does now using vmsplice(). But it seems that such
-mappings won't play well with pipes, so CRIU will need a bounce buffer
-indeed.
- 
-> >>> I've only tested the basic functionality, the changes should be
-> >>verified
-> >>> against THP/migration/compaction. Yet, I'd appreciate early feedback.
-> >>
-> >>What are the expected semantics for VM migration?  Should it fail?
-> >
-> > I don't quite follow. If qemu would use such mappings it would be able
-> > to transfer them during live migration.
-> 
-> I was wondering if the special state is supposed to bubble up to the
-> host eventually.
+I can fix this correctly.
+Will send a patch soon.
 
-Well, that was not intended.
 
 -- 
-Sincerely yours,
-Mike.
+Best Regards
+Masahiro Yamada
