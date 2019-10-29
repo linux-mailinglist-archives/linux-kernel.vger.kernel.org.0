@@ -2,55 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA86E85D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8941E85FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:43:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbfJ2Kht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:37:49 -0400
-Received: from ms.lwn.net ([45.79.88.28]:44268 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbfJ2Khs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:37:48 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730072AbfJ2Knt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:43:49 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22045 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726965AbfJ2Knt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:43:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572345827;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8QKaEOxWqH0XbEXmeRTfx0XwaFmBJ9rzCJkgjIkFVeU=;
+        b=Tt+d8fz9rBLzEKRtR2jEWVJHoh/7v2uHuNhB644495Cp9YRg71PX4FOwIyi9ufLDFcaHQP
+        QpRb9aqbbLnz0e4iLRNMXTuxUirp7L2rgm5ZOVZSC5NwZaryLYOytLKZGw1DagJczBz15/
+        U5tdiNyMiwqjUDDfuxlLFtw7re22sZY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-280-f_q__00gOjOwW2LVCQTfjw-1; Tue, 29 Oct 2019 06:43:43 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 2D53A4FA;
-        Tue, 29 Oct 2019 10:37:46 +0000 (UTC)
-Date:   Tue, 29 Oct 2019 04:37:43 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Andre Azevedo <andre.azevedo@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org
-Subject: Re: [PATCH] Documentation/scheduler: fix links in sched-stats
-Message-ID: <20191029043743.793052a7@lwn.net>
-In-Reply-To: <20191026195554.GA30903@aap-ubuntu>
-References: <20191026195554.GA30903@aap-ubuntu>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B317E1005500;
+        Tue, 29 Oct 2019 10:43:39 +0000 (UTC)
+Received: from [10.72.12.223] (ovpn-12-223.pek2.redhat.com [10.72.12.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 902D960BF1;
+        Tue, 29 Oct 2019 10:42:12 +0000 (UTC)
+Subject: Re: [PATCH V5 4/6] mdev: introduce virtio device and its device ops
+To:     Zhu Lingshan <lingshan.zhu@linux.intel.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191023130752.18980-1-jasowang@redhat.com>
+ <20191023130752.18980-5-jasowang@redhat.com>
+ <df1eb77c-d159-da11-bb8f-df2c19089ac6@linux.intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <14410ac9-cc01-185a-5dcf-7f6c78aefd65@redhat.com>
+Date:   Tue, 29 Oct 2019 18:42:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <df1eb77c-d159-da11-bb8f-df2c19089ac6@linux.intel.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: f_q__00gOjOwW2LVCQTfjw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 Oct 2019 12:55:54 -0700
-Andre Azevedo <andre.azevedo@gmail.com> wrote:
 
-> The rain.com domain recently moved to pdxhosts.com, making the scheduler
-> documentation point to broken links. Fix the links in the scheduler
-> documentation.
-> 
-> CC: Rick Lindsley <ricklind@linux.vnet.ibm.com>
-> Signed-off-by: Andre Azevedo <andre.azevedo@gmail.com>
+On 2019/10/29 =E4=B8=8B=E5=8D=883:42, Zhu Lingshan wrote:
+>>
+>> +=C2=A0=C2=A0=C2=A0 void (*set_status)(struct mdev_device *mdev, u8 stat=
+us);
+>
+> Hi Jason
+>
+> Is it possible to make set_status() return an u8 or bool, because this
+> may fail in real hardware. Without a returned code, I am not sure=C2=A0
+> whether it is a good idea to set the status | NEED_RESET when fail.
+>
+> Thanks,
+> BR
+> Zhu Lingshan=20
 
-Working links are better than dead ones, so I've applied this.  It still
-appears to be rather old stuff, though - 2.6.x was a while ago at this
-point.  It would sure be nice to get this information current and in
-Documentation/ directly at some point ... 
 
-Thanks,
+Hi:
 
-jon
+
+It's possible but I'm not sure whether any user will care about it. E.g
+see virtio_add_status():
+
+void virtio_add_status(struct virtio_device *dev, unsigned int status)
+{
+=C2=A0=C2=A0=C2=A0 might_sleep();
+=C2=A0=C2=A0=C2=A0 dev->config->set_status(dev, dev->config->get_status(dev=
+) | status);
+}
+EXPORT_SYMBOL_GPL(virtio_add_status);
+
+And I believe how it work should be:
+
+virtio_add_status(xyz);
+
+status =3D virtio_get_status();
+
+if (!(status & xyz))
+
+=C2=A0=C2=A0=C2=A0 error;
+
+Thanks
+
+
+
