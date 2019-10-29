@@ -2,436 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC1EE9282
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B89BE9299
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfJ2WD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 18:03:28 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35528 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfJ2WD1 (ORCPT
+        id S1728603AbfJ2WGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 18:06:30 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45588 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728223AbfJ2WGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 18:03:27 -0400
-Received: by mail-oi1-f194.google.com with SMTP id n16so241885oig.2;
-        Tue, 29 Oct 2019 15:03:27 -0700 (PDT)
+        Tue, 29 Oct 2019 18:06:22 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k2so198358oij.12;
+        Tue, 29 Oct 2019 15:06:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cUW3qafGQZ750fGD9h9RZuScF1zWjOGQrLGHZ7tEizQ=;
-        b=W3IxkUQxoi9lWZFXDG/jVMEWtRRYe9nanrtfTuL94jAWqk9Deww/Ehp5GzT3fIYfos
-         vmilEO0+qylySTsDXtQOSlpzpiGtRVOJbI806C6x83CzaCWU7t+GLFv8Ed3u0zDmZ7ic
-         GrM4hdzmlgSLlVIT9sspBoit1UxMmvJkg7nw+k8Fkzwau9VO70nm2SbgR/Xxt6Z9bbo7
-         ECwTR/jelu9/MARrtfPepLAjTcrqJ+TBL7SGHKBJHLEIhkF2VvjMsQDPLWjQGesMwm+e
-         psr4zz264zggrOBNbtPTw7IlZYl2SpVfY8aWXR2glKLQu3IUfJuZjmO5VT7msKmC4TSQ
-         ys+w==
-X-Gm-Message-State: APjAAAWSPTz1PFkCjML8llyTPn8qP9vJTj9TcNNgshe4LSf8YCkCtBzD
-        J0v8P7IrV+77mfdv5XvgFA==
-X-Google-Smtp-Source: APXvYqx9W06LwJxwPis9UiQrq6ZSSR3fMqqMmOvoKtDpRW2hDimatvNpOcsnvx1ID8xjCRmsGSeL4w==
-X-Received: by 2002:aca:fc92:: with SMTP id a140mr5772895oii.153.1572386606526;
-        Tue, 29 Oct 2019 15:03:26 -0700 (PDT)
+        bh=vfqb9iayrD7twK1Yov7mjax5KVdTInGQjQseAedA/Nc=;
+        b=odIb8YvScJrkMmLmKHNymP0waXURvKZmCG5AtQ5ZHAJkGrMRbawhvdrjdElcVoWzkV
+         gRo8f5DzndHwcwpSg1ZWrBh/S5hPKmvubD9goCGzKWBv24+yk1yJoeqICS2p2tot//Bt
+         8qa2SFVmMQIhjTGAuHBBqSbx7MMjK+UAneeXAxZftG2OoSvs4gHLQJaKoDw2lRvJziaF
+         1plGzbndhd5s25zr6NEdMeQfNzcXOZWr6c1TWzgm4FJiLflHf/3MlWiQO3I0WdQawWgH
+         vxrgl5wO85vpSM5upH9PpEJxrB0S0UzSdDuIKNOIYtlwr+kVj2zzBOE1xXZsaxY04U1B
+         cgTQ==
+X-Gm-Message-State: APjAAAUyTJZjyDBmYiDJGKkBb7Y3Eu0zwLfrOUBwSf43rioVrKpooJVg
+        wsUwCOt/HYovSP4oO9fcZA==
+X-Google-Smtp-Source: APXvYqxwuc2I1yytREdN+EWBcO63dl9Z8r2Iv+fVZtPjjtDikI1+tT3JcyRAJk+RU3PXiiEyUtzOXg==
+X-Received: by 2002:aca:e104:: with SMTP id y4mr6256504oig.117.1572386781514;
+        Tue, 29 Oct 2019 15:06:21 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o23sm82768otp.79.2019.10.29.15.03.25
+        by smtp.gmail.com with ESMTPSA id h3sm90777otj.64.2019.10.29.15.06.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 15:03:25 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 17:03:25 -0500
+        Tue, 29 Oct 2019 15:06:20 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 17:06:20 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH 4/5] clk: sprd: Add dt-bindings include file for SC9863A
-Message-ID: <20191029220325.GA11991@bogus>
-References: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
- <20191025111338.27324-5-chunyan.zhang@unisoc.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        michael@amarulasolutions.com, Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v11 1/7] dt-bindings: sun6i-dsi: Document A64 MIPI-DSI
+ controller
+Message-ID: <20191029220620.GA14316@bogus>
+References: <20191025175625.8011-1-jagan@amarulasolutions.com>
+ <20191025175625.8011-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191025111338.27324-5-chunyan.zhang@unisoc.com>
+In-Reply-To: <20191025175625.8011-2-jagan@amarulasolutions.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 07:13:37PM +0800, Chunyan Zhang wrote:
+On Fri, Oct 25, 2019 at 11:26:19PM +0530, Jagan Teki wrote:
+> The MIPI DSI controller in Allwinner A64 is similar to A33.
 > 
-> This file defines all SC9863A clock indexes, it should be included in the
-> device tree in which there's device using the clocks.
+> But unlike A33, A64 doesn't have DSI_SCLK gating so it is valid
+> to have separate compatible for A64 on the same driver.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> DSI_SCLK uses mod clock-names on dt-bindings, so the same
+> is not required for A64.
+> 
+> On that note
+> - A64 require minimum of 1 clock like the bus clock
+> - A33 require minimum of 2 clocks like both bus, mod clocks
+> 
+> So, update dt-bindings so-that it can document both A33,
+> A64 bindings requirements.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  include/dt-bindings/clock/sprd,sc9863a-clk.h | 353 +++++++++++++++++++
->  1 file changed, 353 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+>  .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 20 +++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/dt-bindings/clock/sprd,sc9863a-clk.h b/include/dt-bindings/clock/sprd,sc9863a-clk.h
-> new file mode 100644
-> index 000000000000..bb57312441c7
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sprd,sc9863a-clk.h
-> @@ -0,0 +1,353 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Unisoc SC9863A platform clocks
-> + *
-> + * Copyright (C) 2019, Unisoc Communications Inc.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_SC9860_H_
-> +#define _DT_BINDINGS_CLK_SC9860_H_
-> +
-> +#define	CLK_MPLL0_GATE		0
-> +#define	CLK_DPLL0_GATE		1
-> +#define	CLK_LPLL_GATE		2
-> +#define	CLK_GPLL_GATE		3
-> +#define	CLK_DPLL1_GATE		4
-> +#define	CLK_MPLL1_GATE		5
-> +#define	CLK_MPLL2_GATE		6
-> +#define CLK_ISPPLL_GATE		7
-> +#define	CLK_PMU_APB_NUM		(CLK_ISPPLL_GATE + 1)
-> +
-> +#define	CLK_AUDIO_GATE		0
-> +#define CLK_RPLL		1
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> index dafc0980c4fa..2b7016ca382c 100644
+> --- a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> @@ -15,7 +15,9 @@ properties:
+>    "#size-cells": true
+>  
+>    compatible:
+> -    const: allwinner,sun6i-a31-mipi-dsi
+> +    oneOf:
+> +      - const: allwinner,sun6i-a31-mipi-dsi
+> +      - const: allwinner,sun50i-a64-mipi-dsi
 
-Inconsistent formatting. Use 1 space after #define.
+Use 'enum' instead of oneOf+const.
 
-> +#define CLK_RPLL_390M		2
-> +#define CLK_RPLL_260M		3
-> +#define CLK_RPLL_195M		4
-> +#define CLK_RPLL_26M		5
-> +#define CLK_ANLG_PHY_G5_NUM	(CLK_RPLL_26M + 1)
+With that fixed,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  
+>    reg:
+>      maxItems: 1
+> @@ -24,6 +26,8 @@ properties:
+>      maxItems: 1
+>  
+>    clocks:
+> +    minItems: 1
+> +    maxItems: 2
+>      items:
+>        - description: Bus Clock
+>        - description: Module Clock
+> @@ -63,13 +67,25 @@ required:
+>    - reg
+>    - interrupts
+>    - clocks
+> -  - clock-names
+>    - phys
+>    - phy-names
+>    - resets
+>    - vcc-dsi-supply
+>    - port
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +         compatible:
+> +           contains:
+> +             const: allwinner,sun6i-a31-mipi-dsi
+> +      then:
+> +        properties:
+> +          clocks:
+> +            minItems: 2
+> +        required:
+> +          - clock-names
 > +
-> +#define CLK_TWPLL		0
-> +#define CLK_TWPLL_768M		1
-> +#define CLK_TWPLL_384M		2
-> +#define CLK_TWPLL_192M		3
-> +#define CLK_TWPLL_96M		4
-> +#define CLK_TWPLL_48M		5
-> +#define CLK_TWPLL_24M		6
-> +#define CLK_TWPLL_12M		7
-> +#define CLK_TWPLL_512M		8
-> +#define CLK_TWPLL_256M		9
-> +#define CLK_TWPLL_128M		10
-> +#define CLK_TWPLL_64M		11
-> +#define CLK_TWPLL_307M2		12
-> +#define CLK_TWPLL_219M4		13
-> +#define CLK_TWPLL_170M6		14
-> +#define CLK_TWPLL_153M6		15
-> +#define CLK_TWPLL_76M8		16
-> +#define CLK_TWPLL_51M2		17
-> +#define CLK_TWPLL_38M4		18
-> +#define CLK_TWPLL_19M2		19
-> +#define CLK_LPLL		20
-> +#define CLK_LPLL_409M6		21
-> +#define CLK_LPLL_245M76		22
-> +#define CLK_GPLL		23
-> +#define CLK_ISPPLL		24
-> +#define CLK_ISPPLL_468M		25
-> +#define CLK_ANLG_PHY_G1_NUM	(CLK_ISPPLL_468M + 1)
-> +
-> +#define CLK_DPLL0		0
-> +#define CLK_DPLL1		1
-> +#define CLK_DPLL0_933M		2
-> +#define	CLK_DPLL0_622M3		3
-> +#define CLK_DPLL0_400M		4
-> +#define CLK_DPLL0_266M7		5
-> +#define CLK_DPLL0_123M1		6
-> +#define CLK_DPLL0_50M		7
-> +#define CLK_ANLG_PHY_G7_NUM	(CLK_DPLL0_50M + 1)
-> +
-> +#define CLK_MPLL0		0
-> +#define CLK_MPLL1		1
-> +#define CLK_MPLL2		2
-> +#define CLK_MPLL2_675M		3
-> +#define CLK_ANLG_PHY_G4_NUM	(CLK_MPLL2_675M + 1)
-> +
-> +#define CLK_AP_APB		0
-> +#define CLK_AP_CE		1
-> +#define CLK_NANDC_ECC		2
-> +#define CLK_NANDC_26M		3
-> +#define CLK_EMMC_32K		4
-> +#define CLK_SDIO0_32K		5
-> +#define CLK_SDIO1_32K		6
-> +#define CLK_SDIO2_32K		7
-> +#define CLK_OTG_UTMI		8
-> +#define CLK_AP_UART0		9
-> +#define CLK_AP_UART1		10
-> +#define CLK_AP_UART2		11
-> +#define CLK_AP_UART3		12
-> +#define CLK_AP_UART4		13
-> +#define CLK_AP_I2C0		14
-> +#define CLK_AP_I2C1		15
-> +#define CLK_AP_I2C2		16
-> +#define CLK_AP_I2C3		17
-> +#define CLK_AP_I2C4		18
-> +#define CLK_AP_I2C5		19
-> +#define CLK_AP_I2C6		20
-> +#define CLK_AP_SPI0		21
-> +#define CLK_AP_SPI1		22
-> +#define CLK_AP_SPI2		23
-> +#define CLK_AP_SPI3		24
-> +#define CLK_AP_IIS0		25
-> +#define CLK_AP_IIS1		26
-> +#define CLK_AP_IIS2		27
-> +#define CLK_SIM0		28
-> +#define CLK_SIM0_32K		29
-> +#define CLK_AP_CLK_NUM		(CLK_SIM0_32K + 1)
-> +
-> +#define CLK_13M			0
-> +#define CLK_6M5			1
-> +#define CLK_4M3			2
-> +#define CLK_2M			3
-> +#define CLK_250K		4
-> +#define CLK_RCO_25M		5
-> +#define CLK_RCO_4M		6
-> +#define CLK_RCO_2M		7
-> +#define CLK_EMC			8
-> +#define CLK_AON_APB		9
-> +#define CLK_ADI			10
-> +#define CLK_AUX0		11
-> +#define CLK_AUX1		12
-> +#define CLK_AUX2		13
-> +#define CLK_PROBE		14
-> +#define CLK_PWM0		15
-> +#define CLK_PWM1		16
-> +#define CLK_PWM2		17
-> +#define CLK_AON_THM		18
-> +#define CLK_AUDIF		19
-> +#define CLK_CPU_DAP		20
-> +#define CLK_CPU_TS		21
-> +#define CLK_DJTAG_TCK		22
-> +#define CLK_EMC_REF		23
-> +#define CLK_CSSYS		24
-> +#define CLK_AON_PMU		25
-> +#define CLK_PMU_26M		26
-> +#define CLK_AON_TMR		27
-> +#define CLK_POWER_CPU		28
-> +#define CLK_AP_AXI		29
-> +#define CLK_SDIO0_2X		30
-> +#define CLK_SDIO1_2X		31
-> +#define CLK_SDIO2_2X		32
-> +#define CLK_EMMC_2X		33
-> +#define CLK_DPU			34
-> +#define CLK_DPU_DPI		35
-> +#define CLK_OTG_REF		36
-> +#define CLK_SDPHY_APB		37
-> +#define CLK_ALG_IO_APB		38
-> +#define CLK_GPU_CORE		39
-> +#define CLK_GPU_SOC		40
-> +#define CLK_MM_EMC		41
-> +#define CLK_MM_AHB		42
-> +#define CLK_BPC			43
-> +#define CLK_DCAM_IF		44
-> +#define CLK_ISP			45
-> +#define CLK_JPG			46
-> +#define CLK_CPP			47
-> +#define CLK_SENSOR0		48
-> +#define CLK_SENSOR1		49
-> +#define CLK_SENSOR2		50
-> +#define CLK_MM_VEMC		51
-> +#define CLK_MM_VAHB		52
-> +#define CLK_VSP			53
-> +#define CLK_CORE0		54
-> +#define CLK_CORE1		55
-> +#define CLK_CORE2		56
-> +#define CLK_CORE3		57
-> +#define CLK_CORE4		58
-> +#define CLK_CORE5		59
-> +#define CLK_CORE6		60
-> +#define CLK_CORE7		61
-> +#define CLK_SCU			62
-> +#define CLK_ACE			63
-> +#define CLK_AXI_PERIPH		64
-> +#define CLK_AXI_ACP		65
-> +#define CLK_ATB			66
-> +#define CLK_DEBUG_APB		67
-> +#define CLK_GIC			68
-> +#define CLK_PERIPH		69
-> +#define CLK_AON_CLK_NUM		(CLK_VSP + 1)
-> +
-> +#define CLK_OTG_EB		0
-> +#define CLK_DMA_EB		1
-> +#define CLK_CE_EB		2
-> +#define CLK_NANDC_EB		3
-> +#define CLK_SDIO0_EB		4
-> +#define CLK_SDIO1_EB		5
-> +#define CLK_SDIO2_EB		6
-> +#define CLK_EMMC_EB		7
-> +#define CLK_EMMC_32K_EB		8
-> +#define CLK_SDIO0_32K_EB	9
-> +#define CLK_SDIO1_32K_EB	10
-> +#define CLK_SDIO2_32K_EB	11
-> +#define CLK_NANDC_26M_EB	12
-> +#define CLK_DMA_EB2		13
-> +#define CLK_CE_EB2		14
-> +#define CLK_AP_AHB_GATE_NUM	(CLK_CE_EB2 + 1)
-> +
-> +#define CLK_ADC_EB		0
-> +#define CLK_FM_EB		1
-> +#define CLK_TPC_EB		2
-> +#define CLK_GPIO_EB		3
-> +#define CLK_PWM0_EB		4
-> +#define CLK_PWM1_EB		5
-> +#define CLK_PWM2_EB		6
-> +#define CLK_PWM3_EB		7
-> +#define CLK_KPD_EB		8
-> +#define CLK_AON_SYST_EB		9
-> +#define CLK_AP_SYST_EB		10
-> +#define CLK_AON_TMR_EB		11
-> +#define CLK_AP_TMR0_EB		12
-> +#define CLK_EFUSE_EB		13
-> +#define CLK_EIC_EB		14
-> +#define CLK_INTC_EB		15
-> +#define CLK_ADI_EB		16
-> +#define CLK_AUDIF_EB		17
-> +#define CLK_AUD_EB		18
-> +#define CLK_VBC_EB		19
-> +#define CLK_PIN_EB		20
-> +#define CLK_IPI_EB		21
-> +#define CLK_SPLK_EB		22
-> +#define CLK_MSPI_EB		23
-> +#define CLK_AP_WDG_EB		24
-> +#define CLK_MM_EB		25
-> +#define CLK_AON_APB_CKG_EB	26
-> +#define CLK_CA53_TS0_EB		27
-> +#define CLK_CA53_TS1_EB		28
-> +#define CLK_CS53_DAP_EB		29
-> +#define CLK_I2C_EB		30
-> +#define CLK_PMU_EB		31
-> +#define CLK_THM_EB		32
-> +#define CLK_AUX0_EB		33
-> +#define CLK_AUX1_EB		34
-> +#define CLK_AUX2_EB		35
-> +#define CLK_PROBE_EB		36
-> +#define CLK_EMC_REF_EB		37
-> +#define CLK_CA53_WDG_EB		38
-> +#define CLK_AP_TMR1_EB		39
-> +#define CLK_AP_TMR2_EB		40
-> +#define CLK_DISP_EMC_EB		41
-> +#define CLK_ZIP_EMC_EB		42
-> +#define CLK_GSP_EMC_EB		43
-> +#define CLK_MM_VSP_EB		44
-> +#define CLK_MDAR_EB		45
-> +#define CLK_RTC4M0_CAL_EB	46
-> +#define CLK_RTC4M1_CAL_EB	47
-> +#define CLK_DJTAG_EB		48
-> +#define CLK_MBOX_EB		49
-> +#define CLK_AON_DMA_EB		50
-> +#define CLK_AON_APB_DEF_EB	51
-> +#define CLK_ORP_JTAG_EB		52
-> +#define CLK_DBG_EB		53
-> +#define CLK_DBG_EMC_EB		54
-> +#define CLK_CROSS_TRIG_EB	55
-> +#define CLK_SERDES_DPHY_EB	56
-> +#define CLK_ARCH_RTC_EB		57
-> +#define CLK_KPD_RTC_EB		58
-> +#define CLK_AON_SYST_RTC_EB	59
-> +#define CLK_AP_SYST_RTC_EB	60
-> +#define CLK_AON_TMR_RTC_EB	61
-> +#define CLK_AP_TMR0_RTC_EB	62
-> +#define CLK_EIC_RTC_EB		63
-> +#define CLK_EIC_RTCDV5_EB	64
-> +#define CLK_AP_WDG_RTC_EB	65
-> +#define CLK_CA53_WDG_RTC_EB	66
-> +#define CLK_THM_RTC_EB		67
-> +#define CLK_ATHMA_RTC_EB	68
-> +#define CLK_GTHMA_RTC_EB	69
-> +#define CLK_ATHMA_RTC_A_EB	70
-> +#define CLK_GTHMA_RTC_A_EB	71
-> +#define CLK_AP_TMR1_RTC_EB	72
-> +#define CLK_AP_TMR2_RTC_EB	73
-> +#define CLK_DXCO_LC_RTC_EB	74
-> +#define CLK_BB_CAL_RTC_EB	75
-> +#define CLK_GNU_EB		76
-> +#define CLK_DISP_EB		77
-> +#define CLK_MM_EMC_EB		78
-> +#define CLK_POWER_CPU_EB	79
-> +#define CLK_HW_I2C_EB		80
-> +#define CLK_MM_VSP_EMC_EB	81
-> +#define CLK_VSP_EB		82
-> +#define CLK_CSSYS_EB		83
-> +#define CLK_DMC_EB		84
-> +#define CLK_ROSC_EB		85
-> +#define CLK_S_D_CFG_EB		86
-> +#define CLK_S_D_REF_EB		87
-> +#define CLK_B_DMA_EB		88
-> +#define CLK_ANLG_EB		89
-> +#define CLK_ANLG_APB_EB		90
-> +#define CLK_BSMTMR_EB		91
-> +#define CLK_AP_AXI_EB		92
-> +#define CLK_AP_INTC0_EB		93
-> +#define CLK_AP_INTC1_EB		94
-> +#define CLK_AP_INTC2_EB		95
-> +#define CLK_AP_INTC3_EB		96
-> +#define CLK_AP_INTC4_EB		97
-> +#define CLK_AP_INTC5_EB		98
-> +#define CLK_SCC_EB		99
-> +#define CLK_DPHY_CFG_EB		100
-> +#define CLK_DPHY_REF_EB		101
-> +#define CLK_CPHY_CFG_EB		102
-> +#define CLK_OTG_REF_EB		103
-> +#define CLK_SERDES_EB		104
-> +#define CLK_AON_AP_EMC_EB	105
-> +#define CLK_AON_APB_GATE_NUM	(CLK_AON_AP_EMC_EB + 1)
-> +
-> +#define CLK_MAHB_CKG_EB		0
-> +#define CLK_MDCAM_EB		1
-> +#define CLK_MISP_EB		2
-> +#define CLK_MAHBCSI_EB		3
-> +#define CLK_MCSI_S_EB		4
-> +#define CLK_MCSI_T_EB		5
-> +#define CLK_DCAM_AXI_EB		6
-> +#define CLK_ISP_AXI_EB		7
-> +#define CLK_MCSI_EB		8
-> +#define CLK_MCSI_S_CKG_EB	9
-> +#define CLK_MCSI_T_CKG_EB	10
-> +#define CLK_SENSOR0_EB		11
-> +#define CLK_SENSOR1_EB		12
-> +#define CLK_SENSOR2_EB		13
-> +#define CLK_MCPHY_CFG_EB	14
-> +#define CLK_MM_GATE_NUM		(CLK_MCPHY_CFG_EB + 1)
-> +
-> +#define CLK_MIPI_CSI		0
-> +#define CLK_MIPI_CSI_S		1
-> +#define CLK_MIPI_CSI_M		2
-> +#define CLK_MM_CLK_NUM		(CLK_MIPI_CSI_M + 1)
-> +
-> +#define CLK_VCKG_EB		0
-> +#define CLK_VVSP_EB		1
-> +#define CLK_VJPG_EB		2
-> +#define CLK_VCPP_EB		3
-> +#define CLK_VSP_AHB_GATE_NUM	(CLK_VCPP_EB + 1)
-> +
-> +#define CLK_SIM0_EB		0
-> +#define CLK_IIS0_EB		1
-> +#define CLK_IIS1_EB		2
-> +#define CLK_IIS2_EB		3
-> +#define CLK_SPI0_EB		4
-> +#define CLK_SPI1_EB		5
-> +#define CLK_SPI2_EB		6
-> +#define CLK_I2C0_EB		7
-> +#define CLK_I2C1_EB		8
-> +#define CLK_I2C2_EB		9
-> +#define CLK_I2C3_EB		10
-> +#define CLK_I2C4_EB		11
-> +#define CLK_UART0_EB		12
-> +#define CLK_UART1_EB		13
-> +#define CLK_UART2_EB		14
-> +#define CLK_UART3_EB		15
-> +#define CLK_UART4_EB		16
-> +#define CLK_SIM0_32K_EB		17
-> +#define CLK_SPI3_EB		18
-> +#define CLK_I2C5_EB		19
-> +#define CLK_I2C6_EB		20
-> +#define CLK_AP_APB_GATE_NUM	(CLK_I2C6_EB + 1)
-> +
-> +#endif /* _DT_BINDINGS_CLK_SC9860_H_ */
+>  additionalProperties: false
+>  
+>  examples:
 > -- 
-> 2.20.1
-> 
+> 2.18.0.321.gffc6fa0e3
 > 
