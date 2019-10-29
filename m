@@ -2,175 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C82BE8507
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45777E850F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfJ2KFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:05:15 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38702 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfJ2KFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:05:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dJCDVLdqkAr+W3Koo7ilDlkhVjSvDu2e8VbFMsJFDkk=; b=x7FieTAbbc3QQFQx9uIkfh5bn
-        8iBDuintK8a7REjxu9NMJX0iAZqf6RQD1aHDsBfihVCLX3iPL+gxMB1uKKAYG5cfpiSx6JAdPpVqJ
-        MEon+piWO9vW2xyPJfG9VTPCRVHzHVfEKDAX5Lf9uIaVnAzsYlHnCA/ghmZCqf5OeeFmm6L3kXFP8
-        UApr0iWTdzi19vRvUcyj2A5lCWDTIcmgzQPwcsLEWTgMVUi88V+PIlMc0iOiqWB1LtE30Pt/7cGg4
-        EZZmjfNLqKIqo0QWsQV5yBWszoByyhwUbUEiUsf8BcVniwrkpdi05wkysKR81pcFfUlT4HJBN52yC
-        F3QIde5kg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iPONC-0001ax-J8; Tue, 29 Oct 2019 10:05:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727936AbfJ2KGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:06:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727578AbfJ2KGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:06:07 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1736330025A;
-        Tue, 29 Oct 2019 11:04:06 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BAE0420D7FEEA; Tue, 29 Oct 2019 11:05:06 +0100 (CET)
-Date:   Tue, 29 Oct 2019 11:05:06 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Scott Wood <swood@redhat.com>
-Subject: Re: [PATCH] timers/nohz: Update nohz load even if tick already
- stopped
-Message-ID: <20191029100506.GJ4114@hirez.programming.kicks-ass.net>
-References: <20191028150716.22890-1-frederic@kernel.org>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F16EE2087F;
+        Tue, 29 Oct 2019 10:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572343566;
+        bh=FMbuBN1oCdTYjXZWl1ed/CoUuwWzBee+m6QmA4X1wnQ=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=J6aDAZx4xqFMpkILuT9p6FzEtCKmEPbnIGD+C6pge10/Ms6Q0paV9BBE/RFW0qSYg
+         yLb4VqSYUMjDwubtIlvojneMZvdd1Z5kDgjEQb9zJX0eZoHaejuY0HfS7znCHey88W
+         HvsNnFg64Cyma4wDEPnewh+5iccuUnaQN6Kff8bA=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C4F163521071; Tue, 29 Oct 2019 03:06:05 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 03:06:05 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     madhuparnabhowmik04@gmail.com
+Cc:     paulmck@kernel.org, joel@joelfernandes.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] Documentation: RCU: NMI-RCU: Converted NMI-RCU.txt to
+ NMI-RCU.rst.
+Message-ID: <20191029100605.GI20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191028214252.17580-1-madhuparnabhowmik04@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028150716.22890-1-frederic@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191028214252.17580-1-madhuparnabhowmik04@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 04:07:16PM +0100, Frederic Weisbecker wrote:
-> From: Scott Wood <swood@redhat.com>
+On Tue, Oct 29, 2019 at 03:12:52AM +0530, madhuparnabhowmik04@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 > 
-> The way loadavg is tracked during nohz only pays attention to the load
-> upon entering nohz. This can be particularly noticeable if nohz is
-> entered while non-idle, and then the cpu goes idle and stays that way for
-> a long time. We've had reports of a loadavg near 150 on a mostly idle
-> system.
+> This patch converts NMI-RCU from txt to rst format.
+> Also adds NMI-RCU in the index.rst file.
 > 
-> Calling calc_load_nohz_start() regardless of whether the tick is already
-> stopped addresses the issue when going idle. Tracking load changes when
-> not going idle (e.g. multiple SCHED_FIFO tasks coming and going) is not
-> addressed by this patch.
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-Hurph, is that phenomena you describe NOHZ or NOHZ_FULL? Because that
-second thing you talk about, multiple SCHED_FIFO tasks running without a
-tick is definitely NOHZ_FULL.
+Applied for further review, thank you!  Assuming review goes well,
+I will be pushing this for v5.6 (not the upcoming merge window, but
+the one after it).
 
-I'm thinking all of this is NOHZ_FULL because IIRC we always start the
-tick when there is a runnable task. So your example of going idle in
-NOHZ already cannot happen for regular NOHZ.
+							Thanx, Paul
 
-And for loadavg vs NOHZ_FULL I don't much like this patch. It ductapes
-one symptom but doesn't address the actual issue. Let me go rediscover
-how loadavg-nohz works again, I so hate all this crap :/
-
-Bah, I can't get me head straight, but I'm thinking something like the
-below ought to do. Does it actually work?
-
----
- include/linux/sched/nohz.h |  2 ++
- kernel/sched/core.c        |  3 +++
- kernel/sched/loadavg.c     | 26 +++++++++++++++++++-------
- 3 files changed, 24 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
-index 1abe91ff6e4a..a2296004351f 100644
---- a/include/linux/sched/nohz.h
-+++ b/include/linux/sched/nohz.h
-@@ -16,9 +16,11 @@ static inline void nohz_balance_enter_idle(int cpu) { }
- #ifdef CONFIG_NO_HZ_COMMON
- void calc_load_nohz_start(void);
- void calc_load_nohz_stop(void);
-+void calc_load_nohz_remote(int cpu);
- #else
- static inline void calc_load_nohz_start(void) { }
- static inline void calc_load_nohz_stop(void) { }
-+static inline void calc_load_nohz_remote(int cpu) { }
- #endif /* CONFIG_NO_HZ_COMMON */
- 
- #if defined(CONFIG_NO_HZ_COMMON) && defined(CONFIG_SMP)
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index eb42b71faab9..209e50d48f80 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3666,6 +3666,8 @@ static void sched_tick_remote(struct work_struct *work)
- 	 * having one too much is no big deal because the scheduler tick updates
- 	 * statistics and checks timeslices in a time-independent way, regardless
- 	 * of when exactly it is running.
-+	 *
-+	 * XXX should we be checking tick_nohz_tick_stopped_cpu() under rq->lock ?
- 	 */
- 	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
- 		goto out_requeue;
-@@ -3686,6 +3688,7 @@ static void sched_tick_remote(struct work_struct *work)
- 	curr->sched_class->task_tick(rq, curr, 0);
- 
- out_unlock:
-+	calc_load_nohz_remote(cpu);
- 	rq_unlock_irq(rq, &rf);
- 
- out_requeue:
-diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
-index 28a516575c18..7549bd9b6853 100644
---- a/kernel/sched/loadavg.c
-+++ b/kernel/sched/loadavg.c
-@@ -231,16 +231,11 @@ static inline int calc_load_read_idx(void)
- 	return calc_load_idx & 1;
- }
- 
--void calc_load_nohz_start(void)
-+static void calc_load_nohz_fold(struct rq *rq)
- {
--	struct rq *this_rq = this_rq();
- 	long delta;
- 
--	/*
--	 * We're going into NO_HZ mode, if there's any pending delta, fold it
--	 * into the pending NO_HZ delta.
--	 */
--	delta = calc_load_fold_active(this_rq, 0);
-+	delta = calc_load_fold_active(rq, 0);
- 	if (delta) {
- 		int idx = calc_load_write_idx();
- 
-@@ -248,6 +243,23 @@ void calc_load_nohz_start(void)
- 	}
- }
- 
-+void calc_load_nohz_start(void)
-+{
-+	/*
-+	 * We're going into NO_HZ mode, if there's any pending delta, fold it
-+	 * into the pending NO_HZ delta.
-+	 */
-+	calc_load_nohz_fold(this_rq());
-+}
-+
-+void calc_load_nohz_remote(int cpu)
-+{
-+	/*
-+	 * XXX comment goes here.
-+	 */
-+	calc_load_nohz_fold(cpu_rq(cpu));
-+}
-+
- void calc_load_nohz_stop(void)
- {
- 	struct rq *this_rq = this_rq();
+> ---
+>  .../RCU/{NMI-RCU.txt => NMI-RCU.rst}          | 53 ++++++++++---------
+>  Documentation/RCU/index.rst                   |  1 +
+>  2 files changed, 29 insertions(+), 25 deletions(-)
+>  rename Documentation/RCU/{NMI-RCU.txt => NMI-RCU.rst} (73%)
+> 
+> diff --git a/Documentation/RCU/NMI-RCU.txt b/Documentation/RCU/NMI-RCU.rst
+> similarity index 73%
+> rename from Documentation/RCU/NMI-RCU.txt
+> rename to Documentation/RCU/NMI-RCU.rst
+> index 881353fd5bff..da5861f6a433 100644
+> --- a/Documentation/RCU/NMI-RCU.txt
+> +++ b/Documentation/RCU/NMI-RCU.rst
+> @@ -1,4 +1,7 @@
+> +.. _NMI_rcu_doc:
+> +
+>  Using RCU to Protect Dynamic NMI Handlers
+> +=========================================
+>  
+>  
+>  Although RCU is usually used to protect read-mostly data structures,
+> @@ -9,7 +12,7 @@ work in "arch/x86/oprofile/nmi_timer_int.c" and in
+>  "arch/x86/kernel/traps.c".
+>  
+>  The relevant pieces of code are listed below, each followed by a
+> -brief explanation.
+> +brief explanation.::
+>  
+>  	static int dummy_nmi_callback(struct pt_regs *regs, int cpu)
+>  	{
+> @@ -18,12 +21,12 @@ brief explanation.
+>  
+>  The dummy_nmi_callback() function is a "dummy" NMI handler that does
+>  nothing, but returns zero, thus saying that it did nothing, allowing
+> -the NMI handler to take the default machine-specific action.
+> +the NMI handler to take the default machine-specific action.::
+>  
+>  	static nmi_callback_t nmi_callback = dummy_nmi_callback;
+>  
+>  This nmi_callback variable is a global function pointer to the current
+> -NMI handler.
+> +NMI handler.::
+>  
+>  	void do_nmi(struct pt_regs * regs, long error_code)
+>  	{
+> @@ -53,11 +56,12 @@ anyway.  However, in practice it is a good documentation aid, particularly
+>  for anyone attempting to do something similar on Alpha or on systems
+>  with aggressive optimizing compilers.
+>  
+> -Quick Quiz:  Why might the rcu_dereference_sched() be necessary on Alpha,
+> -	     given that the code referenced by the pointer is read-only?
+> +Quick Quiz:
+> +		Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
+>  
+> +:ref:`Answer to Quick Quiz <answer_quick_quiz_NMI>`
+>  
+> -Back to the discussion of NMI and RCU...
+> +Back to the discussion of NMI and RCU...::
+>  
+>  	void set_nmi_callback(nmi_callback_t callback)
+>  	{
+> @@ -68,7 +72,7 @@ The set_nmi_callback() function registers an NMI handler.  Note that any
+>  data that is to be used by the callback must be initialized up -before-
+>  the call to set_nmi_callback().  On architectures that do not order
+>  writes, the rcu_assign_pointer() ensures that the NMI handler sees the
+> -initialized values.
+> +initialized values::
+>  
+>  	void unset_nmi_callback(void)
+>  	{
+> @@ -82,7 +86,7 @@ up any data structures used by the old NMI handler until execution
+>  of it completes on all other CPUs.
+>  
+>  One way to accomplish this is via synchronize_rcu(), perhaps as
+> -follows:
+> +follows::
+>  
+>  	unset_nmi_callback();
+>  	synchronize_rcu();
+> @@ -98,24 +102,23 @@ to free up the handler's data as soon as synchronize_rcu() returns.
+>  Important note: for this to work, the architecture in question must
+>  invoke nmi_enter() and nmi_exit() on NMI entry and exit, respectively.
+>  
+> +.. _answer_quick_quiz_NMI:
+>  
+> -Answer to Quick Quiz
+> -
+> -	Why might the rcu_dereference_sched() be necessary on Alpha, given
+> -	that the code referenced by the pointer is read-only?
+> +Answer to Quick Quiz:
+> +	Why might the rcu_dereference_sched() be necessary on Alpha, given that the code referenced by the pointer is read-only?
+>  
+> -	Answer: The caller to set_nmi_callback() might well have
+> -		initialized some data that is to be used by the new NMI
+> -		handler.  In this case, the rcu_dereference_sched() would
+> -		be needed, because otherwise a CPU that received an NMI
+> -		just after the new handler was set might see the pointer
+> -		to the new NMI handler, but the old pre-initialized
+> -		version of the handler's data.
+> +	The caller to set_nmi_callback() might well have
+> +	initialized some data that is to be used by the new NMI
+> +	handler.  In this case, the rcu_dereference_sched() would
+> +	be needed, because otherwise a CPU that received an NMI
+> +	just after the new handler was set might see the pointer
+> +	to the new NMI handler, but the old pre-initialized
+> +	version of the handler's data.
+>  
+> -		This same sad story can happen on other CPUs when using
+> -		a compiler with aggressive pointer-value speculation
+> -		optimizations.
+> +	This same sad story can happen on other CPUs when using
+> +	a compiler with aggressive pointer-value speculation
+> +	optimizations.
+>  
+> -		More important, the rcu_dereference_sched() makes it
+> -		clear to someone reading the code that the pointer is
+> -		being protected by RCU-sched.
+> +	More important, the rcu_dereference_sched() makes it
+> +	clear to someone reading the code that the pointer is
+> +	being protected by RCU-sched.
+> diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+> index 8d20d44f8fd4..627128c230dc 100644
+> --- a/Documentation/RCU/index.rst
+> +++ b/Documentation/RCU/index.rst
+> @@ -10,6 +10,7 @@ RCU concepts
+>     arrayRCU
+>     rcu
+>     listRCU
+> +   NMI-RCU
+>     UP
+>  
+>     Design/Memory-Ordering/Tree-RCU-Memory-Ordering
+> -- 
+> 2.17.1
+> 
