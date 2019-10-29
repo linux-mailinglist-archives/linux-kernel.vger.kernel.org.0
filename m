@@ -2,128 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67379E8BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5B7E8BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:32:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390232AbfJ2PkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 11:40:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:40768 "EHLO verein.lst.de"
+        id S2390038AbfJ2Pcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 11:32:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:53424 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390217AbfJ2Pj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 11:39:58 -0400
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id CD4CE68D0D; Tue, 29 Oct 2019 16:39:56 +0100 (CET)
-In-Reply-To: <20191029153815.C631668C4E@verein.lst.de>
-References: <20191029153815.C631668C4E@verein.lst.de>
-From:   Torsten Duwe <duwe@lst.de>
-Date:   Tue, 29 Oct 2019 13:16:57 +0100
-Subject: [PATCH v4 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on
- Teres-I
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <20191029153956.CD4CE68D0D@verein.lst.de>
+        id S2389319AbfJ2Pco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 11:32:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 385511F1;
+        Tue, 29 Oct 2019 08:32:44 -0700 (PDT)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B1733F71F;
+        Tue, 29 Oct 2019 08:32:43 -0700 (PDT)
+Subject: Re: [PATCH] arm64: cpufeature: Export Armv8.6 Matrix feature to
+ userspace
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, suzuki.poulose@arm.com,
+        Dave.Martin@arm.com
+References: <20191025171056.30641-1-julien.grall@arm.com>
+ <20191029111517.GE11590@willie-the-truck>
+ <f58cb01f-4543-6041-df2d-7ca7ba887bc9@arm.com>
+ <20191029113606.GB12103@willie-the-truck>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <6f175c28-1ac0-3da0-bbfa-a811a4adfed7@arm.com>
+Date:   Tue, 29 Oct 2019 15:32:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191029113606.GB12103@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Teres-I has an anx6345 bridge connected to the RGB666 LCD output, and
-the I2C controlling signals are connected to I2C0 bus.
+Hi Will,
 
-Enable it in the device tree, and enable the display engine, video mixer
-and tcon0 as well.
+On 29/10/2019 11:36, Will Deacon wrote:
+> On Tue, Oct 29, 2019 at 11:26:41AM +0000, Julien Grall wrote:
+>> On 29/10/2019 11:15, Will Deacon wrote:
+>>> On Fri, Oct 25, 2019 at 06:10:56PM +0100, Julien Grall wrote:
+>>>> This patch provides support for reporting the presence of Armv8.6
+>>>> Matrix and its optional features to userspace.
+>>>
+>>> Are you sure this is 8.6 and not earlier?
+>>
+>> This was introduced by Armv8.6 see [1] but allowed to be used by Armv8.2 and
+>> onwards.
+> 
+> That doesn't mean an awful lot though, especially then the features are
+> referred to in the docs as things like "ARMv8.2-F64MM".
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Torsten Duwe <duwe@suse.de>
----
- .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 45 ++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 4 deletions(-)
+It is arguable. The feature were announced for Armv8.6 but made available for 
+previous release.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-index 1069e7012c9c..970415106dcf 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-@@ -100,18 +100,41 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
- 
- 
--/* The ANX6345 eDP-bridge is on i2c0. There is no linux (mainline)
-- * driver for this chip at the moment, the bootloader initializes it.
-- * However it can be accessed with the i2c-dev driver from user space.
-- */
- &i2c0 {
- 	clock-frequency = <100000>;
- 	status = "okay";
-+
-+	anx6345: anx6345@38 {
-+		compatible = "analogix,anx6345";
-+		reg = <0x38>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
-+		dvdd25-supply = <&reg_dldo2>;
-+		dvdd12-supply = <&reg_dldo3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				anx6345_in: endpoint {
-+					remote-endpoint = <&tcon0_out_anx6345>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&mixer0 {
-+	status = "okay";
- };
- 
- &mmc0 {
-@@ -319,6 +342,20 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_anx6345: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&anx6345_in>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
+Anyway, I can remove the "Armv8.6" bits if that's the concern.
+
+Cheers,
+
 -- 
-2.16.4
-
+Julien Grall
