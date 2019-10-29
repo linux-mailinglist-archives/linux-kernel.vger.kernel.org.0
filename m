@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6EEE8C60
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:05:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 792B7E8C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390298AbfJ2QFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 12:05:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45836 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389902AbfJ2QFb (ORCPT
+        id S2390329AbfJ2QJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 12:09:05 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46024 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390268AbfJ2QJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 12:05:31 -0400
-Received: from [91.217.168.176] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iPTzr-0008CT-3h; Tue, 29 Oct 2019 16:05:27 +0000
-Date:   Tue, 29 Oct 2019 17:05:26 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: For review: documentation of clone3() system call
-Message-ID: <20191029160525.2zn6vnnyai5ahdj3@wittgenstein>
-References: <CAKgNAkjo2WHq+zESU1iuCHJJ0x-fTNrakS9-d1+BjzUuV2uf2Q@mail.gmail.com>
- <CAG48ez3q=BeNcuVTKBN79kJui4vC6nw0Bfq6xc-i0neheT17TA@mail.gmail.com>
- <20191028172143.4vnnjpdljfnexaq5@wittgenstein>
- <CAG48ez20hn8vToY+=C62nA-rbUfxh=JD6N-f7XVS3_GZOoPjxw@mail.gmail.com>
- <20191029112706.p5dd5yzpcgouo6n5@wittgenstein>
- <20191029142622.jxmssu4s4ndui7bw@wittgenstein>
- <CAG48ez1pH9fGacQF6m7=R39bDMRqNR_ML7d2v-e=-kVLJhBuPA@mail.gmail.com>
+        Tue, 29 Oct 2019 12:09:04 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k2so4270280oij.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 09:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y/GoSbHE+NLH7W2Mu8zFFQ7lEbuLzZk7XwxfHja+Yzg=;
+        b=Ru11L2IBkDIJZsYDjB85uuW3Hg6Ogmc7cMCeDS0TOGdpcjHv6AH0W1gpfdo3vWCyL/
+         OjExvMLYmUEHKRBLIVMuGNq/SdG8vAKBGNeKvaDY20WOV/aywssoBIVexPeIloKvk5Ls
+         Jj07IgPDrnplLyVcXn2HsuhY9ZVjD1C8Q0dNWikuxqoUeHG5E8n4OVE8gF6fFHXSQxP9
+         QAIGKqUxMCg6te++WPC0c4rNq8iRuOLIppaYeuzuavb1RLPTFjZ8GwMMTfbhi8sRSGY+
+         FT3RxuiLlo1mIG3sp9xz+zc1DI7rl+bYyUUUFcydf2U9uDwVBF08uQg7PNTX3HFh3xvc
+         edQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y/GoSbHE+NLH7W2Mu8zFFQ7lEbuLzZk7XwxfHja+Yzg=;
+        b=SsQpQIXL00ESC1ZMG7gEAjhTSzCrD9BixPtWcGCreWr1cRLaPwTZx3lOY0zmQxVknc
+         FCYavKJSlJPwfFKkA7e3JlPbS/Z47c6J4V3v/szGvcZ9RhESBqNVBA1R4aCKdps44STf
+         Z4A1pLpVI9kxCFNLa+5k4TTGgc2h2wOl4T6LcwI1WG5mnxO9LD52eGO+qzAuVKXbrMJy
+         cA4xzsdoUYcfZ+YOjgDBl/TiiRRWh4x832r907YEtA9O5jscp34EfHyMDMFYUVy0yDHh
+         lKL0Agz9s5uCKtrshbjwGpaLvEyw3Cbp72cuSJ85eg5l64gBrfjhUOpMBTGR/n+3K8Eg
+         L60A==
+X-Gm-Message-State: APjAAAUT2b6CK1igZd/AmP9cbqAjRHqbQpNqSEga1pTMm4mkmNylEfgq
+        h8+gBQYXmJ6PgwXs5uv5obC7ZiJg/VyBV3wpCBameA==
+X-Google-Smtp-Source: APXvYqyUdt6hrcGTDjR4iRzpaqwjYQyaEgSSfsTCCUv2cn8n1UmI7xc7BHLfG91xsZCfZGzbryCeEpK0xU9nqnkZcgM=
+X-Received: by 2002:aca:c3cf:: with SMTP id t198mr4927418oif.10.1572365343764;
+ Tue, 29 Oct 2019 09:09:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1pH9fGacQF6m7=R39bDMRqNR_ML7d2v-e=-kVLJhBuPA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20191028215919.83697-1-john.stultz@linaro.org>
+ <20191028215919.83697-6-john.stultz@linaro.org> <87k18nj4mj.fsf@gmail.com>
+In-Reply-To: <87k18nj4mj.fsf@gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 29 Oct 2019 09:08:53 -0700
+Message-ID: <CALAqxLXcD8V1o01yMrHpeoqU2MfJ=8d3dbzC8T-+aoovDUd8kA@mail.gmail.com>
+Subject: Re: [PATCH v4 5/9] usb: dwc3: Rework clock initialization to be more flexible
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jun Li <lijun.kernel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jack Pham <jackp@codeaurora.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 04:20:37PM +0100, Jann Horn wrote:
-> On Tue, Oct 29, 2019 at 3:26 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > On Tue, Oct 29, 2019 at 12:27:07PM +0100, Christian Brauner wrote:
-> > > On Mon, Oct 28, 2019 at 08:09:13PM +0100, Jann Horn wrote:
-> > > > On Mon, Oct 28, 2019 at 6:21 PM Christian Brauner
-> > > > <christian.brauner@ubuntu.com> wrote:
-> > > > > where stack + stack_size is addition on a void pointer which usually
-> > > > > clang and gcc are not very happy about.
-> > > > > I wanted to bring this up on the mailing list soon: If possible, I don't
-> > > > > want userspace to need to know about stack direction and just have stack
-> > > > > point to the beginning and then have the kernel do the + stack_size
-> > > > > after the copy_clone_args_from_user() if the arch needs it. For example,
-> > > > > by having a dumb helder similar to copy_thread_tls()/coyp_thread() that
-> > > > > either does the + stack_size or not. Right now, clone3() is supported on
-> > > > > parisc and afaict, the stack grows upwards for it. I'm not sure if there
-> > > > > are obvious reasons why that won't work or it would be a bad idea...
-> > > >
-> > > > That would mean adding a new clone flag that redefines how those
-> > > > parameters work and describing the current behavior in the manpage as
-> > > > the behavior without the flag (which doesn't exist on 5.3), right?
-> > >
-> > > I would break API and if someone reports breakage we'll revert and go
-> > > the more complicated route you outlined (see [1]).
+On Tue, Oct 29, 2019 at 2:14 AM Felipe Balbi <balbi@kernel.org> wrote:
+> John Stultz <john.stultz@linaro.org> writes:
+>
+> > The dwc3 core binding specifies three clocks:
+> >   ref, bus_early, and suspend
 > >
-> > @Jann, I think the following patch might even be enough?...
-> [...]
-> > +static inline void clone3_prepare_stack(struct kernel_clone_args *kargs)
-> > +{
-> > +#if !defined(CONFIG_STACK_GROWSUP) && !defined(CONFIG_IA64)
-> > +       kargs->stack += kargs->stack_size;
-> > +#endif
-> > +}
-> 
-> I guess it might work as long as nobody is actually using clone3 yet
-> and you can get this patch into the 5.3 stable tree and any distro
-> kernels on 5.3 before people do start using clone3?
+> > which are all controlled in the driver together.
+> >
+> > However some variants of the hardware my not have all three clks
+>                                         ^^
+>                                         may
+>
+> In fact *all* platforms have all three clocks. It's just that in some
+> cases clock pins are shorted together (or take input from same clock).
+>
+...
+> another option would be to pass three clocks with the same phandle. That
+> would even make sure that clock usage counts are correct, no?
 
-Yes, that would be my preferred approach. As I said doing it this way is
-pretty common. A recent example where we did this is the file_max
-sysctl.
+Hey Felipe!
 
-Christian
+So I actually had done that initially (and it seemed to work), but Rob
+suggested this way instead.
+I'm fine with either, as long as having multiple references to the
+same clk in the enable/disable paths doesn't cause trouble.
+
+Thanks so much for the review here!
+-john
