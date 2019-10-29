@@ -2,147 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1BD1E7E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 824B8E7E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfJ2COc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:14:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49012 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728497AbfJ2COc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:14:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3EB676032D; Tue, 29 Oct 2019 02:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572315271;
-        bh=mM+8iA4RCQ/3hHjKmFsx3ITFIQk6Ug1K0cEpK7e2uWE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iWqIr28Ex9TnplfbvamCnn7+4QboVgJkFcyEPJhmcxGWkpzrjwWpq/fqReUSZFP76
-         mf7HsLWrapY5HxyeItpgy2UAQwg3nEoxJKjKF2JiT2mHtJprXATqpv3E+abZCY2odo
-         ERRqU2V/UNBnHBoL/2ZDVOA4O1SDa7LAF1yamRUc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 67C116032D;
-        Tue, 29 Oct 2019 02:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572315270;
-        bh=mM+8iA4RCQ/3hHjKmFsx3ITFIQk6Ug1K0cEpK7e2uWE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XyngsHL5oH8sUvUQBv4U21wQB4g9pOhsl3g8zuJ+QgeFuOyulOzs5bFZ+e6g6Obv0
-         mJ4KPqSlQe1SINQBFHsPviCmtawLOqlp/0CKpa21AKYghIHGIqXv64L9jXApYIF1Xr
-         2wXQCXk8NEFHev0PQ15t9pWSXRUMrFOCbTzgWjBg=
+        id S1730591AbfJ2CZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:25:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:16789 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727987AbfJ2CZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 22:25:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 19:25:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,242,1569308400"; 
+   d="scan'208";a="224826095"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 28 Oct 2019 19:25:15 -0700
+Cc:     baolu.lu@linux.intel.com,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH v7 03/11] iommu/vt-d: Add custom allocator for IOASID
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1571946904-86776-4-git-send-email-jacob.jun.pan@linux.intel.com>
+ <ae437be4-e633-e670-0e1f-d07b4364f651@linux.intel.com>
+ <20191024214311.43d76a5c@jacob-builder>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDC60@SHSMSX104.ccr.corp.intel.com>
+ <e950cde8-8cd9-6089-c833-23d2ffb539d1@linux.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D5D0FF0@SHSMSX104.ccr.corp.intel.com>
+ <20191028154900.0be0a48f@jacob-builder>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <0d8bd9c3-4e01-ab12-8671-ff25a4821ed7@linux.intel.com>
+Date:   Tue, 29 Oct 2019 10:22:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20191028154900.0be0a48f@jacob-builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 29 Oct 2019 10:14:30 +0800
-From:   cang@codeaurora.org
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/5] scsi: Adjust DBD setting in mode sense for caching
- mode page per LLD
-In-Reply-To: <0ca52845-10ec-3310-83f7-81bdb635ec12@acm.org>
-References: <1572234608-32654-1-git-send-email-cang@codeaurora.org>
- <1572234608-32654-2-git-send-email-cang@codeaurora.org>
- <0ca52845-10ec-3310-83f7-81bdb635ec12@acm.org>
-Message-ID: <ecb93b31aaee952e94b31331c6025eda@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-28 22:58, Bart Van Assche wrote:
-> On 10/27/19 8:50 PM, Can Guo wrote:
->> Host sends MODE_SENSE_10 with caching mode page, to check if the 
->> device
->> supports the cache feature.
->> Some LLD standards requires DBD field to be set to 1.
-> 
-> Which LLD standard are you referring to? Please mention at least one
-> name of such a standard in the patch description.
-> 
+Hi,
 
-Hi Bart, Thank you for your review.
+On 10/29/19 6:49 AM, Jacob Pan wrote:
+>>>> I'm not sure whether tying above logic to SVA is the right
+>>>> approach. If vcmd interface doesn't work, the whole SM mode
+>>>> doesn't make sense which is based on PASID-granular protection
+>>>> (SVA is only one usage atop). If the only remaining usage of SM
+>>>> is to map gIOVA using reserved PASID#0, then why not disabling SM
+>>>> and just fallback to legacy mode?
+>>>>
+>>>> Based on that I prefer to disabling the SM mode completely (better
+>>>> through an interface), and move the logic out of CONFIG_INTEL_
+>>>> IOMMU_SVM
+>>>>   
+>>> Unfortunately, it is dangerous to disable SM after boot. SM uses
+>>> different root/device contexts and pasid table formats. Disabling SM
+>>> after boot requires changing above from SM format into legacy
+>>> format.
+>> You are correct.
+>>
+>>> Since ioasid registration failure is a rare case. How about moving
+>>> this part of code up to the early stage of intel_iommu_init() and
+>>> returning error if hardware present vcmd capability but software
+>>> fails to register a custom ioasid allocator?
+>>>    
+>> It makes sense to me.
+>>
+> sounds good to me too, the earlier the less to clean up.
 
-The LLD standard here is UFS. I will update the commit message and 
-re-upload it later.
+Actually, we even could return error directly and abort the iommu
+initialization. The registration of custom ioasid allocator fails only
+when memory runs out or software is buggy. In either cases, we should
+abort iommu initialization.
 
-Thanks,
+Best regards,
+baolu
 
-Can Guo
-
->> Change-Id: I0c8752c1888654942d6d7e6e0f6dc197033ac326
-> 
-> Change-IDs should be left out from upstream patches. Does the presence
-> of this ID mean that this patch has not been verified with checkpatch?
-> From the checkpatch source code:
-> 
-> # Check for unwanted Gerrit info
-> if ($in_commit_log && $line =~ /^\s*change-id:/i) {
-> 	ERROR("GERRIT_CHANGE_ID",
-> 	      "Remove Gerrit Change-Id's before submitting upstream.\n"\
-> 		 . $herecurr);
-> }
-> 
-
-Sorry, forgot to remove the change-id.
-
->> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->> index aab4ed8..6d8194f 100644
->> --- a/drivers/scsi/sd.c
->> +++ b/drivers/scsi/sd.c
->> @@ -2629,6 +2629,7 @@ static int sd_try_rc16_first(struct scsi_device 
->> *sdp)
->>   {
->>   	int len = 0, res;
->>   	struct scsi_device *sdp = sdkp->device;
->> +	struct Scsi_Host *host = sdp->host;
->>     	int dbd;
->>   	int modepage;
->> @@ -2660,7 +2661,10 @@ static int sd_try_rc16_first(struct scsi_device 
->> *sdp)
->>   		dbd = 8;
->>   	} else {
->>   		modepage = 8;
->> -		dbd = 0;
->> +		if (host->set_dbd_for_caching)
->> +			dbd = 8;
->> +		else
->> +			dbd = 0;
->>   	}
->>     	/* cautiously ask */
->> diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
->> index 2c3f0c5..3900987 100644
->> --- a/include/scsi/scsi_host.h
->> +++ b/include/scsi/scsi_host.h
->> @@ -650,6 +650,12 @@ struct Scsi_Host {
->>   	unsigned no_scsi2_lun_in_cdb:1;
->>     	/*
->> +	 * Set "DBD" field in mode_sense caching mode page in case it is
->> +	 * mandatory by LLD standard.
->> +	 */
->> +	unsigned set_dbd_for_caching:1;
->> +
->> +	/*
->>   	 * Optional work queue to be utilized by the transport
->>   	 */
->>   	char work_q_name[20];
-> 
-> Since this patch by itself has no effect, please resubmit this patch
-> together with the LLD patch that sets set_dbd_for_caching.
-> 
-> Thanks,
-> 
-> Bart.
