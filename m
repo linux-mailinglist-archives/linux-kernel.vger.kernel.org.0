@@ -2,132 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 411A0E8388
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D88BE838E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbfJ2Ixw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 04:53:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60248 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727377AbfJ2Ixv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 04:53:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3A1DB43E;
-        Tue, 29 Oct 2019 08:53:44 +0000 (UTC)
-Date:   Tue, 29 Oct 2019 09:53:36 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yunsheng Lin <linyunsheng@huawei.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
-        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
-        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, x86@kernel.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, len.brown@intel.com, axboe@kernel.dk,
-        dledford@redhat.com, jeffrey.t.kirsher@intel.com,
-        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
-        linux-mips@vger.kernel.org, rafael@kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        lenb@kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
-Message-ID: <20191029085336.GF31513@dhcp22.suse.cz>
-References: <20190925104108.GE4553@hirez.programming.kicks-ass.net>
- <47fa4cee-8528-7c23-c7de-7be1b65aa2ae@huawei.com>
- <bec80499-86d9-bf1f-df23-9044a8099992@arm.com>
- <a5f0fc80-8e88-b781-77ce-1213e5d62125@huawei.com>
- <20191010073212.GB18412@dhcp22.suse.cz>
- <6cc94f9b-0d79-93a8-5ec2-4f6c21639268@huawei.com>
- <20191011111539.GX2311@hirez.programming.kicks-ass.net>
- <7fad58d6-5126-e8b8-a7d8-a91814da53ba@huawei.com>
- <20191012074014.GA2037204@kroah.com>
- <1ec704df-97a5-04b7-1f20-8e3db19440a3@huawei.com>
+        id S1729980AbfJ2IyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:54:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726566AbfJ2IyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 04:54:21 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C04E20663;
+        Tue, 29 Oct 2019 08:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572339260;
+        bh=mkkA0nt6hx3V0z0UwVIpSj9LslS/iQ3ZT+43Z9OvzN0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rvOQbaioo47qLALm3l14AHXxcxc5IYfpvJjlT7KDT/WEkmyjOQKlnSyb7eRV3WHdu
+         fT9PRURUDToD06zrggmqZ8s9PCAusIcDS7FYlIzzysiQ+pR5BD6oYTZIy5palfhN14
+         W5T1c8taWx9dN6yvQ24GVdJ6SbVbEiiXmQ0VWT9s=
+Date:   Tue, 29 Oct 2019 09:54:01 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Subject: Re: [PATCH v11 4/7] drm/sun4i: dsi: Handle bus clock explicitly
+Message-ID: <20191029085401.gvqpwmmpyml75vis@hendrix>
+References: <20191025175625.8011-1-jagan@amarulasolutions.com>
+ <20191025175625.8011-5-jagan@amarulasolutions.com>
+ <20191028153427.pc3tnoz2d23filhx@hendrix>
+ <CAMty3ZCisTrFGjzHyqSofqFAsKSLV1n2xP5Li3Lonhdi0WUZVA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="unkpttpyvqhvobfg"
 Content-Disposition: inline
-In-Reply-To: <1ec704df-97a5-04b7-1f20-8e3db19440a3@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMty3ZCisTrFGjzHyqSofqFAsKSLV1n2xP5Li3Lonhdi0WUZVA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 28-10-19 17:20:33, Yunsheng Lin wrote:
-> On 2019/10/12 15:40, Greg KH wrote:
-> > On Sat, Oct 12, 2019 at 02:17:26PM +0800, Yunsheng Lin wrote:
-> >> add pci and acpi maintainer
-> >> cc linux-pci@vger.kernel.org and linux-acpi@vger.kernel.org
-> >>
-> >> On 2019/10/11 19:15, Peter Zijlstra wrote:
-> >>> On Fri, Oct 11, 2019 at 11:27:54AM +0800, Yunsheng Lin wrote:
-> >>>> But I failed to see why the above is related to making node_to_cpumask_map()
-> >>>> NUMA_NO_NODE aware?
-> >>>
-> >>> Your initial bug is for hns3, which is a PCI device, which really _MUST_
-> >>> have a node assigned.
-> >>>
-> >>> It not having one, is a straight up bug. We must not silently accept
-> >>> NO_NODE there, ever.
-> >>>
-> >>
-> >> I suppose you mean reporting a lack of affinity when the node of a pcie
-> >> device is not set by "not silently accept NO_NODE".
-> > 
-> > If the firmware of a pci device does not provide the node information,
-> > then yes, warn about that.
-> > 
-> >> As Greg has asked about in [1]:
-> >> what is a user to do when the user sees the kernel reporting that?
-> >>
-> >> We may tell user to contact their vendor for info or updates about
-> >> that when they do not know about their system well enough, but their
-> >> vendor may get away with this by quoting ACPI spec as the spec
-> >> considering this optional. Should the user believe this is indeed a
-> >> fw bug or a misreport from the kernel?
-> > 
-> > Say it is a firmware bug, if it is a firmware bug, that's simple.
-> > 
-> >> If this kind of reporting is common pratice and will not cause any
-> >> misunderstanding, then maybe we can report that.
-> > 
-> > Yes, please do so, that's the only way those boxes are ever going to get
-> > fixed.  And go add the test to the "firmware testing" tool that is based
-> > on Linux that Intel has somewhere, to give vendors a chance to fix this
-> > before they ship hardware.
-> > 
-> > This shouldn't be a big deal, we warn of other hardware bugs all the
-> > time.
-> 
-> Hi, all.
-> 
-> The warning for the above case has been added in [1].
-> 
-> So maybe it makes sense to make node_to_cpumask_map() NUMA_NO_NODE aware
-> now?
-> 
-> If Yes, this patch still can be applied to the latest linus' tree cleanly,
-> Do I need to resend it?
-> 
 
-By this patch you mean http://lkml.kernel.org/r/1568724534-146242-1-git-send-email-linyunsheng@huawei.com
-right?
+--unkpttpyvqhvobfg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I would just resend it unless there is still a clear disagreement over
-it.
+On Tue, Oct 29, 2019 at 04:03:56AM +0530, Jagan Teki wrote:
+> > > explicit handling of common clock would require since the A64
+> > > doesn't need to mention the clock-names explicitly in dts since it
+> > > support only one bus clock.
+> > >
+> > > Also pass clk_id NULL instead "bus" to regmap clock init function
+> > > since the single clock variants no need to mention clock-names
+> > > explicitly.
+> >
+> > You don't need explicit clock handling. Passing NULL as the argument
+> > in regmap_init_mmio_clk will make it use the first clock, which is the
+> > bus clock.
+>
+> Indeed I tried that, since NULL clk_id wouldn't enable the bus clock
+> during regmap_mmio_gen_context code, passing NULL triggering vblank
+> timeout.
 
-> [1] https://lore.kernel.org/linux-pci/1571467543-26125-1-git-send-email-linyunsheng@huawei.com/
+There's a bunch of users of NULL in tree, so finding out why NULL
+doesn't work is the way forward.
 
--- 
-Michal Hocko
-SUSE Labs
+Maxime
+
+--unkpttpyvqhvobfg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbf+KQAKCRDj7w1vZxhR
+xQUaAQCp7d+DSgK2CMprYRTRP+TGzpbEjN4u+W/Tt1seOujvoQEA9cGaIr4yjPsP
+iK0Vn3o2jO7HYtqHE03IewfUWRW4OgM=
+=D4qQ
+-----END PGP SIGNATURE-----
+
+--unkpttpyvqhvobfg--
