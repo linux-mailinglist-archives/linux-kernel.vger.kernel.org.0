@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB9ADE7F79
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:22:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA47E7F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfJ2FWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 01:22:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51472 "EHLO mx1.suse.de"
+        id S1731874AbfJ2FXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 01:23:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51778 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726091AbfJ2FWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 01:22:48 -0400
+        id S1726053AbfJ2FXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 01:23:31 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 40256B41C;
-        Tue, 29 Oct 2019 05:22:47 +0000 (UTC)
-Subject: Re: [PATCH v3 1/2] arm64: dts: realtek: Add oscillator for RTD129x
+        by mx1.suse.de (Postfix) with ESMTP id 57E43B428;
+        Tue, 29 Oct 2019 05:23:30 +0000 (UTC)
+Subject: Re: [PATCH v3 2/2] arm64: dts: realtek: Add watchdog node for RTD129x
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 References: <20191020153612.29889-1-afaerber@suse.de>
- <20191020153612.29889-2-afaerber@suse.de>
+ <20191020153612.29889-3-afaerber@suse.de>
 From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
 Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <3222d376-1e35-3bde-d5d6-674edcbc8e3d@suse.de>
-Date:   Tue, 29 Oct 2019 06:22:46 +0100
+Message-ID: <ab88ae16-cc8a-09d4-aefc-ba423b562e9b@suse.de>
+Date:   Tue, 29 Oct 2019 06:23:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191020153612.29889-2-afaerber@suse.de>
+In-Reply-To: <20191020153612.29889-3-afaerber@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -39,14 +39,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Am 20.10.19 um 17:36 schrieb Andreas Färber:
-> Add 27 MHz oscillator clock node.
+> Add the watchdog node to the RTD129x Device Tree.
 > 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> [AF: Moved from RTD1295 to new RTD129x]
 > Signed-off-by: Andreas Färber <afaerber@suse.de>
 > ---
->  v3: New (from previously blocking clk patch series)
+>  v2 -> v3:
+>  * rtd129x.dtsi was factored out of rtd1295.dtsi, add it there
 >  
->  arch/arm64/boot/dts/realtek/rtd129x.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  v1 -> v2: Unchanged
+>  
+>  arch/arm64/boot/dts/realtek/rtd129x.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
 Applied to linux-realtek.git v5.5/dt64:
 
