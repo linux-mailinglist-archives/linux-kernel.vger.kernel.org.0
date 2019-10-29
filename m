@@ -2,104 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1391E88B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F78E88AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:48:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbfJ2Msz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:48:55 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:29211 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfJ2Msw (ORCPT
+        id S2388018AbfJ2Ms1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:48:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46746 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728735AbfJ2Ms0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:48:52 -0400
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x9TCmfFx027174
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 21:48:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x9TCmfFx027174
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572353322;
-        bh=ycMbZtUGC8hAeSAW/0e73NsiRHYVtXuSSSSislazCQo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YAUcy1Z7BHMXba9aS3kuTWqBizqxh2nsY6KKf8NqU/9TG693QjR5ULDjRjcvElSX5
-         9hT3mLy2Rw33xULiDMG3PH6KeK4EfjHmaK+0AkkCezyfRCuup6N5dny5jlhrIhTn6X
-         bI65yK1I+qo82aZPAE593wmgQCG4+fM+2JaHN8FqINCunqwHK2+SwKHQPPmzw3pYZl
-         iWCCTbt74GJkAoJPcE/qHpiDL+MISObsQyKctJ7kO0vFGuLwBlFk+C86fmr59KV9uk
-         KdZ4EeqdKNng2wgNTbaTjgGkG+UPa7Iull+7lZf1bQsUFYBL1ep34iFskJNzPeafG/
-         Iw4Xh3aI/RF8A==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id o3so1995846ual.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 05:48:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAVzDgSWsmOFIQldRxz0hoMpBU4JMeXgb/p8oUbxnCIYviiAn5Sw
-        e03feQJBV8D924cb8m70pF/Ahj0xRli1E1tUd+w=
-X-Google-Smtp-Source: APXvYqwr5SQI/7GdRsDbwEwuTxIFeXAUGqui3bP5McMb++nicmAXwWPWoN0k7BAhA8CV+C1CSgivkmADZo9q3Yux+C4=
-X-Received: by 2002:a9f:3e81:: with SMTP id x1mr11462917uai.121.1572353320421;
- Tue, 29 Oct 2019 05:48:40 -0700 (PDT)
+        Tue, 29 Oct 2019 08:48:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id w8so10608373lji.13;
+        Tue, 29 Oct 2019 05:48:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H5IjjkjqkM+cui4b134pQ1dIG4WEHbpH+XP2ak65H3I=;
+        b=KpT2UtffyKfGyopW2sbTndkBF6BPdbMf15+6qlFfJ084//XET/eG2hAag9IsF+dwzz
+         /vgTUfxVND3Rh3gSEByZsVAYlEz8v6Z4hpUiommP5P7EypOLYePXZJMJTdgY9O629Wtj
+         JNBDOELMiYazkxqgZYeHgdhuWPdZWx2MflZePFVAotFkRpZxaG2UTv2KerN2kbxcGs7a
+         Vvmh9KOd20g9r23oVo5ZiwfPAfP/xCLDR0PeWb5fvJmTWjs5c5aDi73e5gXGUsXeGEfq
+         6LxylTVp+l7vUO2SfY41mvoErldiM+PKHJ4NwA1wys3nhkF15vNHMU0LgaYLcXWBm169
+         POGw==
+X-Gm-Message-State: APjAAAWoyEBrNz7RfnL/FvSIMmlb4fN4/HoMw8EktT0DS6xcIZsvelT9
+        kipNStm0QIcRju3GQZbrMOs=
+X-Google-Smtp-Source: APXvYqy4OsMdUjSkD96/aN4cxAwD7hbaqhesfGUgTcNpXVxwyLm+RZ8yNt2quaroqcQOf4GZqrSyRQ==
+X-Received: by 2002:a2e:481:: with SMTP id a1mr2604149ljf.209.1572353304285;
+        Tue, 29 Oct 2019 05:48:24 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g5sm6906406ljk.22.2019.10.29.05.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 05:48:23 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:48:12 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 4/5] dt-bindings: lm3692x: example for using fixed LED
+ node names.
+Message-ID: <5c90e1610725869967f84f1c680990f17399ccb2.1572351774.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1572351774.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20191028151427.31612-1-jeyu@kernel.org>
-In-Reply-To: <20191028151427.31612-1-jeyu@kernel.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 29 Oct 2019 21:48:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASzJEFw7Qo1e7qfNj0prZGrvN-DZs1wLkykaH=J03wXgw@mail.gmail.com>
-Message-ID: <CAK7LNASzJEFw7Qo1e7qfNj0prZGrvN-DZs1wLkykaH=J03wXgw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] scripts/nsdeps: use $MODORDER to obtain correct
- modules.order path
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Maennich <maennich@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1572351774.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 12:14 AM Jessica Yu <jeyu@kernel.org> wrote:
->
-> The nsdeps script calls generate_deps() for every module in the
-> modules.order file. It prepends $objtree to obtain the full path of the
-> top-level modules.order file. This produces incorrect results when
-> calling nsdeps for an external module, as only the ns dependencies for
-> in-tree modules listed in $objtree/modules.order are generated rather
-> than the ns dependencies for the external module. To fix this, just use
-> the MODORDER variable provided by kbuild - it uses the correct path for
-> the relevant modules.order file (either in-tree or the one produced by
-> the external module build).
->
-> Signed-off-by: Jessica Yu <jeyu@kernel.org>
-> ---
->
-> So, not being too familiar with kbuild, I am not sure if MODORDER was the
-> appropriate kbuild variable to use, but I could not find anything else that
-> gives us the modules.order path. Masahiro, please let me know if this is
-> appropriate usage.
+Use predefined LED node name to match the LED node in driver.
 
-Right, MODORDER allows you to get access to
-the right modules.order depending on what you are building
-although this patch alone is not useful since nsdeps does not work with
-external modules.
+It would be nice to offload common LED property parsing to
+LED core driver. One of the key things to allow this is somehow
+'pair' the LED DT node with LED driver initialization data.
 
+This patch uses LED node name as a 'key' in a same fashion
+as regulators do. The lm3692x was selected as demonstration
+example and this change is not intended to be feasible as such
+(surprize =]) This servers just as an example to initiate
+discussion as to how (if) we could pair the driver data and DT
+node.
 
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->  scripts/nsdeps | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/nsdeps b/scripts/nsdeps
-> index dda6fbac016e..54d2ab8f9e5c 100644
-> --- a/scripts/nsdeps
-> +++ b/scripts/nsdeps
-> @@ -52,7 +52,7 @@ generate_deps() {
->         done
->  }
->
-> -for f in `cat $objtree/modules.order`; do
-> +for f in `cat $MODORDER`; do
->         generate_deps $f
->  done
->
-> --
-> 2.16.4
->
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+index 4c2d923f8758..03866d491d01 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -5,7 +5,7 @@ white-LED driver designed for LCD display backlighting.
+ 
+ The main difference between the LM36922 and LM36923 is the number of
+ LED strings it supports.  The LM36922 supports two strings while the LM36923
+-supports three strings.
++supports three strings. LED sub-node must be named as "led_node_name_here".
+ 
+ Required properties:
+ 	- compatible:
+@@ -45,7 +45,7 @@ led-controller@36 {
+ 	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+ 	vled-supply = <&vbatt>;
+ 
+-	led@0 {
++	led_node_name_here {
+ 		reg = <0>;
+ 		function = LED_FUNCTION_BACKLIGHT;
+ 		color = <LED_COLOR_ID_WHITE>;
+-- 
+2.21.0
 
 
---
-Best Regards
-Masahiro Yamada
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
