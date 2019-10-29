@@ -2,312 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60340E8E0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFDFDE8DD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfJ2R1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:27:37 -0400
-Received: from mailrelay3-2.pub.mailoutpod1-cph3.one.com ([46.30.212.2]:52911
-        "EHLO mailrelay3-2.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726347AbfJ2R1h (ORCPT
+        id S2403766AbfJ2ROV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:14:21 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25211 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727692AbfJ2ROU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:27:37 -0400
-X-Greylist: delayed 962 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Oct 2019 13:27:33 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitmath.org; s=20140924;
-        h=content-transfer-encoding:content-type:in-reply-to:mime-version:date:
-         message-id:from:references:cc:to:subject:from;
-        bh=91UbllbaugNsaC3+pZV7RlwkED7ypx/A4kf/WI6hLuc=;
-        b=b6rKPRx+UnPs3LyJ/mUmWA08Z/PPY29nlys4f9cEm5zkkoZRif/D/0cMTaWKCiQqMEf/0oCDpXxkC
-         AeEyzlZki2//oQrDLt/DycMlkil7aNDaed7qdktl7xspRYM2bLL2nPGvDdbrha0EXM1k90mEHndgC2
-         u+9adOX3zDYt6+l0=
-X-HalOne-Cookie: 9f9087eeae64f66a48bc9d4ef987f9bf683bdb95
-X-HalOne-ID: 25027133-fa6f-11e9-b5f1-d0431ea8bb03
-Received: from [192.168.19.13] (unknown [98.128.166.173])
-        by mailrelay3.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id 25027133-fa6f-11e9-b5f1-d0431ea8bb03;
-        Tue, 29 Oct 2019 17:11:28 +0000 (UTC)
-Subject: Re: [PATCH v4 01/48] Input: introduce input_mt_report_slot_inactive
-To:     Jiada Wang <jiada_wang@mentor.com>, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20191029072010.8492-1-jiada_wang@mentor.com>
- <20191029072010.8492-2-jiada_wang@mentor.com>
-From:   Henrik Rydberg <rydberg@bitmath.org>
-Message-ID: <b3de4c05-d2d1-58f8-a447-d5e127574ac0@bitmath.org>
-Date:   Tue, 29 Oct 2019 18:13:09 +0100
+        Tue, 29 Oct 2019 13:14:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572369258;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KHCv+9FsqHGfuk8wUBArturJIiljIZ5g6WjkiyVu2GA=;
+        b=br7efCq/MJCUshXvP4Z8k2vN2T03FmPBQwsonVEpk0JTAsIRxGItYpI/qPpK2ppn+vk3em
+        BudFJhNFLeVjpj0g3U/X8uy94HN7aiH7uwnwF7TUI7ZaS+dHBsCBNxwASRFNlued0wjoo5
+        zK9SeNAhO7JLdGvnmPQjZjvacisnyCA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-73-42CTa6BTNMavShpXLU7zQg-1; Tue, 29 Oct 2019 13:14:15 -0400
+Received: by mail-wr1-f70.google.com with SMTP id h4so8867024wrx.15
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 10:14:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3zevxV+3XhilJwW93b7hTHVOh2RK/iBtiutNi3Bvz6U=;
+        b=dPHn9owh7eUt/N84U1ajdSBSdgv4ucVKbmw+QN5BSZmw8gd5GDUftfIzu2W5QWW2JV
+         uwcW/mCMeAdyJIuIbL1sZUJyvA6LQhEVz/gsTZYLB6v7hVAjpeAl1SLmxqEGD8/4I+mA
+         SCzvEpSdEIFDiF5Z3PuSYwy1H4NPPJaNvJ+4isXfQTj3VAxN1sRwINcyu+LHxHOZTvS+
+         kgECM1iTC+j/OmpBNL8VlcCjQhs8n0xFHRbv3WPeBlrJaPmPFnheEhV9mQCdoisvx+n0
+         aef/mzK8rBE6sIyRIAtS/haWkqTjfbDpx5OeRj4d5iLiS6z/CMmrScXf/7HLmUr/Ou+1
+         9V9A==
+X-Gm-Message-State: APjAAAXBxfa1elsPr2edImO1jZkKnWEU7ZFyBDv4QBYjjZj1YsUpexeF
+        0zczsRRx1weJv5woroGGp7TvZi3cuy3XCunOL/WFXqftq+vNpeZQWB61iA/vckj4vZZtQ7IVf1T
+        FJV0VjjJNgVpOCw73clLXkoLf
+X-Received: by 2002:a5d:68c3:: with SMTP id p3mr4206329wrw.82.1572369254348;
+        Tue, 29 Oct 2019 10:14:14 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyO6hWJJ1dPVajjbU5oiOtlqhmyeQKiD5NdVZRqPgSEoZEMFL/O0rAsEE6tySNMNIn7GUZfhw==
+X-Received: by 2002:a5d:68c3:: with SMTP id p3mr4206317wrw.82.1572369254103;
+        Tue, 29 Oct 2019 10:14:14 -0700 (PDT)
+Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
+        by smtp.gmail.com with ESMTPSA id v10sm14049083wrm.26.2019.10.29.10.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 10:14:13 -0700 (PDT)
+Subject: Re: [PATCH 0/2] add regulator driver and mfd cell for Intel Cherry
+ Trail Whiskey Cove PMIC
+To:     Andrey Zhizhikin <andrey.z@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        lgirdwood@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191025075335.GC32742@smile.fi.intel.com>
+ <20191025075540.GD32742@smile.fi.intel.com>
+ <166c9855-910d-a70c-ba86-6aebe5f2346d@intel.com>
+ <20191028124554.GF5015@sirena.co.uk>
+ <c5faf16d-892e-b36e-b448-9c59c2051b9e@redhat.com>
+ <CAHtQpK5ocb8mqnf2dwcT7hQ9f8rQLtkHJsPppDWgfRPitJk6_Q@mail.gmail.com>
+ <75d0e22f-c3fd-245c-c91e-2e3b6134b569@redhat.com>
+ <CAHtQpK5-wK-v2fS_cVT6f4evHDafFPv49XDNGO9B+daRR_bOkg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e9c958ea-f10f-668a-eb0b-117ff5f55632@redhat.com>
+Date:   Tue, 29 Oct 2019 18:14:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191029072010.8492-2-jiada_wang@mentor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAHtQpK5-wK-v2fS_cVT6f4evHDafFPv49XDNGO9B+daRR_bOkg@mail.gmail.com>
 Content-Language: en-US
+X-MC-Unique: 42CTa6BTNMavShpXLU7zQg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiada,
+Hi,
 
-> input_mt_report_slot_state() ignores the tool when the slot is closed.
-> which has caused a bit of confusion.
-> This patch introduces input_mt_report_slot_inactive() to report slot
-> inactive state.
-> replaces all input_mt_report_slot_state() with
-> input_mt_report_slot_inactive() in case of close of slot.
->
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+On 29-10-2019 17:57, Andrey Zhizhikin wrote:
+> Hi Hans!
+>=20
+> On Tue, Oct 29, 2019 at 1:04 PM Hans de Goede <hdegoede@redhat.com> wrote=
+:
+>>
+>> Hi,
+>>
+>> On 28-10-2019 16:01, Andrey Zhizhikin wrote:
+>>> Hi Hans,
+>>>
+>>> On Mon, Oct 28, 2019 at 2:26 PM Hans de Goede <hdegoede@redhat.com> wro=
+te:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 28-10-2019 13:45, Mark Brown wrote:
+>>>>> On Mon, Oct 28, 2019 at 02:41:46PM +0200, Adrian Hunter wrote:
+>>>>>> On 25/10/19 10:55 AM, Andy Shevchenko wrote:
+>>>>>
+>>>>>>> Since it's about UHS/SD, Cc to Adrian as well.
+>>>>>
+>>>>>> My only concern is that the driver might conflict with ACPI methods =
+trying
+>>>>>> to do the same thing, e.g. there is one ACPI SDHC instance from GPDW=
+in DSDT
+>>>>>> with code like this:
+>>>>
+>>>> Oh, right that is a very good point.
+>>>>
+>>>>> That's certainly what's idiomatic for ACPI (though machine specific
+>>>>> quirks are too!).  The safe thing to do would be to only register the
+>>>>> supply on systems where we know there's no ACPI method.
+>>>>
+>>>> Right, so as I mentioned before Andrey told me about the evaluation
+>>>> board he is using I was aware of only 3 Cherry Trail devices using
+>>>> the Whiskey Cove PMIC. The GPD win, the GPD pocket and the Lenovo
+>>>> Yoga book. I've checked the DSDT of all 3 and all 3 of them offer
+>>>> voltage control through the Intel _DSM method for voltage control.
+>>>>
+>>>> I've also actually tested this on the GPD win and 1.8V signalling
+>>>> works fine there without needing Andrey's patch.
+>>>
+>>> Thanks a lot for checking this one out! At least this proves now that
+>>> the only platform affected is in fact Intel Aero board, and the patch
+>>> as it is might not be necessary to accommodate for all CHT-based
+>>> products with Whiskey Cove.
+>>>
+>>>>
+>>>> So it seems that Andrey's patch should only be active on his
+>>>> dev-board, as actual production hardware ships with the _DSM method.
+>>>>
+>>>> I believe that the best solution is for the Whiskey Cove MFD driver:
+>>>> drivers/mfd/intel_soc_pmic_chtwc.c
+>>>>
+>>>> To only register the new cell on Andrey's evaluation board model
+>>>> (based in a DMI match I guess). Another option would be to do
+>>>> the DMI check in the regulator driver, but that would mean
+>>>> udev will needlessly modprobe the regulator driver on production
+>>>> hardware, so doing it in the MFD driver and not registering the cell
+>>>> seems best,
+>>>
+>>> I tend to lean to a solution to perform a DMI check in MFD rather than
+>>> in the regulator driver, since this would keep the regulator
+>>> more-or-less agnostic to the where it is running on.
+>>>
+>>> Or maybe it would even make more sense to create a board-specific hook
+>>> (like it was suggested for vqmmc voltage and sdmmc ACPI d of
+>>> consumer), and then only register a cell for Aero match? This would
+>>> actually keep the regulator consumer and mfd cell together and would
+>>> not allow the device-specific code to leak into generic driver
+>>> implementation. In this case I'd go with mfd_add_cell() if I get a DMI
+>>> match and register a vqmmc consumer in there.
+>>>
+>>> In that case, can you please tell me what you think about it and if
+>>> the drivers/acpi/acpi_lpss.c would still be an appropriate location to
+>>> put this code to?
+>>
+>> I do not think that drivers/acpi/acpi_lpss.c is a good place.
+>=20
+> Thanks a lot for clarifying this point, I was also not sure whether I
+> would need combine the platform-specific functionality with LPSS
+> implementation.
+>=20
+>>
+>> Thinking a bit more about this, my preferred solutions would be:
+>>
+>> 1. A BIOS update fixing the DSDT, as Andy suggested. Note we can
+>> lso use an overlay DSDT in the initrd, but that will only help users
+>> which take manual steps to add this to their initrd...
+>=20
+> This I believe would not be an option since the Aero platform has been
+> phased-out from Intel, and Insyde most probably would not do an update
+> on the BIOS. I can go with DSDT overlay, but I was not sure whether
+> this is a good way to solve this.
+>=20
+>>
+>> 2. A new drivers/platform/x86 driver binding to the dmi-ids of the Areo
+>> board, like e.g. drivers/platform/x86/intel_oaktrail.c is doing,
+>> unlike that one you do not need to register a platform_device from
+>> the module_init() function, you can just add the mfd-cell and the
+>> regulator constraints from the module_init() function.
+>=20
+> This would be my preferred solution, since in this case I can contain
+> all the Aero-specific modifications to it's own board file. If there
+> would be further modifications needed for it - they would be nicely
+> contained within that board file.
+>=20
+>>
+>> Assuming 1. is not an option (I do not know if Intel still
+>> supports the Aero), then 2 will nicely isolate all the Aero
+>> specific code into a driver which will only auto-load on
+>> the Aero.
+>=20
+> Just as I indicated above, chances that BIOS would receive an update
+> are between slim and nil. If no one have any objection, I'd prefer to
+> go with the approach [2] from above.
 
-NACK on this one.
+I agree that 2. probably is the best, so I say go for it :)
 
-We already discussed this patch and the potentially changed behavior to 
-existing setups stemming from ignoring the MT state.
+Regards,
 
-On the upside, what I can see this patch does exactly no difference to 
-the cases where the MT state is set, so it can be safely dropped without 
-affecting the rest of the patch series.
+Hans
 
-Thanks,
-
-Henrik
-
-> ---
->   drivers/hid/hid-alps.c                     | 3 +--
->   drivers/hid/hid-multitouch.c               | 6 ++----
->   drivers/input/input-mt.c                   | 2 +-
->   drivers/input/misc/xen-kbdfront.c          | 2 +-
->   drivers/input/mouse/elan_i2c_core.c        | 2 +-
->   drivers/input/touchscreen/atmel_mxt_ts.c   | 7 +++----
->   drivers/input/touchscreen/cyttsp4_core.c   | 5 ++---
->   drivers/input/touchscreen/cyttsp_core.c    | 2 +-
->   drivers/input/touchscreen/melfas_mip4.c    | 4 ++--
->   drivers/input/touchscreen/mms114.c         | 2 +-
->   drivers/input/touchscreen/raspberrypi-ts.c | 2 +-
->   drivers/input/touchscreen/stmfts.c         | 2 +-
->   include/linux/input/mt.h                   | 5 +++++
->   13 files changed, 22 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-> index ae79a7c66737..36ca1d815d53 100644
-> --- a/drivers/hid/hid-alps.c
-> +++ b/drivers/hid/hid-alps.c
-> @@ -387,8 +387,7 @@ static int u1_raw_event(struct alps_dev *hdata, u8 *data, int size)
->   				input_report_abs(hdata->input,
->   					ABS_MT_PRESSURE, z);
->   			} else {
-> -				input_mt_report_slot_state(hdata->input,
-> -					MT_TOOL_FINGER, 0);
-> +				input_mt_report_slot_inactive(hdata->input);
->   			}
->   		}
->   
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 3cfeb1629f79..15e6c04a76dd 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -896,7 +896,7 @@ static void mt_release_pending_palms(struct mt_device *td,
->   		clear_bit(slotnum, app->pending_palm_slots);
->   
->   		input_mt_slot(input, slotnum);
-> -		input_mt_report_slot_state(input, MT_TOOL_PALM, false);
-> +		input_mt_report_slot_inactive(input);
->   
->   		need_sync = true;
->   	}
-> @@ -1640,9 +1640,7 @@ static void mt_release_contacts(struct hid_device *hid)
->   		if (mt) {
->   			for (i = 0; i < mt->num_slots; i++) {
->   				input_mt_slot(input_dev, i);
-> -				input_mt_report_slot_state(input_dev,
-> -							   MT_TOOL_FINGER,
-> -							   false);
-> +				input_mt_report_slot_inactive(input_dev);
->   			}
->   			input_mt_sync_frame(input_dev);
->   			input_sync(input_dev);
-> diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
-> index a81e14148407..7626fe5bfe44 100644
-> --- a/drivers/input/input-mt.c
-> +++ b/drivers/input/input-mt.c
-> @@ -145,7 +145,7 @@ bool input_mt_report_slot_state(struct input_dev *dev,
->   	slot->frame = mt->frame;
->   
->   	if (!active) {
-> -		input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-> +		input_mt_report_slot_inactive(dev);
->   		return false;
->   	}
->   
-> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-> index 24bc5c5d876f..a1bba722b234 100644
-> --- a/drivers/input/misc/xen-kbdfront.c
-> +++ b/drivers/input/misc/xen-kbdfront.c
-> @@ -146,7 +146,7 @@ static void xenkbd_handle_mt_event(struct xenkbd_info *info,
->   		break;
->   
->   	case XENKBD_MT_EV_UP:
-> -		input_mt_report_slot_state(info->mtouch, MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(info->mtouch);
->   		break;
->   
->   	case XENKBD_MT_EV_SYN:
-> diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
-> index 8719da540383..3f9354baac4b 100644
-> --- a/drivers/input/mouse/elan_i2c_core.c
-> +++ b/drivers/input/mouse/elan_i2c_core.c
-> @@ -938,7 +938,7 @@ static void elan_report_contact(struct elan_tp_data *data,
->   		input_report_abs(input, ABS_MT_TOUCH_MINOR, minor);
->   	} else {
->   		input_mt_slot(input, contact_num);
-> -		input_mt_report_slot_state(input, MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(input);
->   	}
->   }
->   
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 24c4b691b1c9..6e758af343ea 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -822,8 +822,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
->   		 * have happened.
->   		 */
->   		if (status & MXT_T9_RELEASE) {
-> -			input_mt_report_slot_state(input_dev,
-> -						   MT_TOOL_FINGER, 0);
-> +			input_mt_report_slot_inactive(input_dev);
->   			mxt_input_sync(data);
->   		}
->   
-> @@ -839,7 +838,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
->   		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
->   	} else {
->   		/* Touch no longer active, close out slot */
-> -		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 0);
-> +		input_mt_report_slot_inactive(input_dev);
->   	}
->   
->   	data->update_input = true;
-> @@ -947,7 +946,7 @@ static void mxt_proc_t100_message(struct mxt_data *data, u8 *message)
->   		dev_dbg(dev, "[%u] release\n", id);
->   
->   		/* close out slot */
-> -		input_mt_report_slot_state(input_dev, 0, 0);
-> +		input_mt_report_slot_inactive(input_dev);
->   	}
->   
->   	data->update_input = true;
-> diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
-> index 4b22d49a0f49..a3a85e2348a2 100644
-> --- a/drivers/input/touchscreen/cyttsp4_core.c
-> +++ b/drivers/input/touchscreen/cyttsp4_core.c
-> @@ -744,8 +744,7 @@ static void cyttsp4_report_slot_liftoff(struct cyttsp4_mt_data *md,
->   
->   	for (t = 0; t < max_slots; t++) {
->   		input_mt_slot(md->input, t);
-> -		input_mt_report_slot_state(md->input,
-> -			MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(md->input);
->   	}
->   }
->   
-> @@ -845,7 +844,7 @@ static void cyttsp4_final_sync(struct input_dev *input, int max_slots, int *ids)
->   		if (ids[t])
->   			continue;
->   		input_mt_slot(input, t);
-> -		input_mt_report_slot_state(input, MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(input);
->   	}
->   
->   	input_sync(input);
-> diff --git a/drivers/input/touchscreen/cyttsp_core.c b/drivers/input/touchscreen/cyttsp_core.c
-> index 3f5d463dbeed..697aa2c158f7 100644
-> --- a/drivers/input/touchscreen/cyttsp_core.c
-> +++ b/drivers/input/touchscreen/cyttsp_core.c
-> @@ -340,7 +340,7 @@ static void cyttsp_report_tchdata(struct cyttsp *ts)
->   			continue;
->   
->   		input_mt_slot(input, i);
-> -		input_mt_report_slot_state(input, MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(input);
->   	}
->   
->   	input_sync(input);
-> diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
-> index 247c3aaba2d8..f67efdd040b2 100644
-> --- a/drivers/input/touchscreen/melfas_mip4.c
-> +++ b/drivers/input/touchscreen/melfas_mip4.c
-> @@ -391,7 +391,7 @@ static void mip4_clear_input(struct mip4_ts *ts)
->   	/* Screen */
->   	for (i = 0; i < MIP4_MAX_FINGERS; i++) {
->   		input_mt_slot(ts->input, i);
-> -		input_mt_report_slot_state(ts->input, MT_TOOL_FINGER, 0);
-> +		input_mt_report_slot_inactive(ts->input);
->   	}
->   
->   	/* Keys */
-> @@ -534,7 +534,7 @@ static void mip4_report_touch(struct mip4_ts *ts, u8 *packet)
->   	} else {
->   		/* Release event */
->   		input_mt_slot(ts->input, id);
-> -		input_mt_report_slot_state(ts->input, MT_TOOL_FINGER, 0);
-> +		input_mt_report_slot_inactive(ts->input);
->   	}
->   
->   	input_mt_sync_frame(ts->input);
-> diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
-> index a5ab774da4cc..8112bd77afae 100644
-> --- a/drivers/input/touchscreen/mms114.c
-> +++ b/drivers/input/touchscreen/mms114.c
-> @@ -550,7 +550,7 @@ static int __maybe_unused mms114_suspend(struct device *dev)
->   	/* Release all touch */
->   	for (id = 0; id < MMS114_MAX_TOUCH; id++) {
->   		input_mt_slot(input_dev, id);
-> -		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, false);
-> +		input_mt_report_slot_inactive(input_dev);
->   	}
->   
->   	input_mt_report_pointer_emulation(input_dev, true);
-> diff --git a/drivers/input/touchscreen/raspberrypi-ts.c b/drivers/input/touchscreen/raspberrypi-ts.c
-> index 69881265d121..147ea4f8f87b 100644
-> --- a/drivers/input/touchscreen/raspberrypi-ts.c
-> +++ b/drivers/input/touchscreen/raspberrypi-ts.c
-> @@ -102,7 +102,7 @@ static void rpi_ts_poll(struct input_polled_dev *dev)
->   	released_ids = ts->known_ids & ~modified_ids;
->   	for_each_set_bit(i, &released_ids, RPI_TS_MAX_SUPPORTED_POINTS) {
->   		input_mt_slot(input, i);
-> -		input_mt_report_slot_state(input, MT_TOOL_FINGER, 0);
-> +		input_mt_report_slot_inactive(input);
->   		modified_ids &= ~(BIT(i));
->   	}
->   	ts->known_ids = modified_ids;
-> diff --git a/drivers/input/touchscreen/stmfts.c b/drivers/input/touchscreen/stmfts.c
-> index b6f95f20f924..b54cc64e4ea6 100644
-> --- a/drivers/input/touchscreen/stmfts.c
-> +++ b/drivers/input/touchscreen/stmfts.c
-> @@ -198,7 +198,7 @@ static void stmfts_report_contact_release(struct stmfts_data *sdata,
->   	u8 slot_id = (event[0] & STMFTS_MASK_TOUCH_ID) >> 4;
->   
->   	input_mt_slot(sdata->input, slot_id);
-> -	input_mt_report_slot_state(sdata->input, MT_TOOL_FINGER, false);
-> +	input_mt_report_slot_inactive(sdata->input);
->   
->   	input_sync(sdata->input);
->   }
-> diff --git a/include/linux/input/mt.h b/include/linux/input/mt.h
-> index 9e409bb13642..ab9a34c312f9 100644
-> --- a/include/linux/input/mt.h
-> +++ b/include/linux/input/mt.h
-> @@ -97,6 +97,11 @@ static inline bool input_is_mt_axis(int axis)
->   	return axis == ABS_MT_SLOT || input_is_mt_value(axis);
->   }
->   
-> +static inline void input_mt_report_slot_inactive(struct input_dev *dev)
-> +{
-> +	input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-> +
-> +}
->   bool input_mt_report_slot_state(struct input_dev *dev,
->   				unsigned int tool_type, bool active);
->   
