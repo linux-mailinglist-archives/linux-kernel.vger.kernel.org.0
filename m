@@ -2,101 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D79E85F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB49E8603
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:45:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbfJ2KnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:43:05 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39711 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfJ2KnF (ORCPT
+        id S1727806AbfJ2Kpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:45:50 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:54759 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfJ2Kpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:43:05 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v138so8507207oif.6;
-        Tue, 29 Oct 2019 03:43:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WSjPNv90mxoa4Qm6nfEtDVRJH8OLwkZxWcgMkuqr8yo=;
-        b=bGxNvv0I7soLyaU5RO3amJ8UY4P89c8UoLbIQFC8q965tXolSK1ftj4zirr/CGRlA1
-         5MS6HF+1hByzBdb/Y3u99ivirCq+WerZVFPSbV7YX0YFzXVbAyGIhUbTuJvzX8vD2pJn
-         Q68h8y6hLKU2TLp9tDbc++GyNOS9xbtxsjqSswA/bKYLjm1HNgPvZqHJbqD0ye1fRV45
-         MWViArvUau9meYlU+AUAWlbHQeVT8xLGvE3D7FuMLDXpCmIpotcta3l0Vm3u0ZWi00k3
-         ihq3gc0uys5yl+gckypOnvF26QKTuqL6rnYWqroJNNKkBL88jXtqwa25nexyecyGuq3W
-         Kgbg==
-X-Gm-Message-State: APjAAAVBV/xCMJ738VF2TNJ75iauPibhbPUHLJ5/0zqI4VezmGHJJoMt
-        fsSiMfmsiZ1wR/rvhLbcw674JhKZdtAdC1f9DDg=
-X-Google-Smtp-Source: APXvYqzEI7Zev2Tj6Q3I2HWITMkXefnJLlyQjGXMoQC961y0B0n88iefi/CLfKVtZiYMOV/Mt2ZrHOzKRLY7NZFaPAw=
-X-Received: by 2002:aca:d4c6:: with SMTP id l189mr3312579oig.68.1572345784471;
- Tue, 29 Oct 2019 03:43:04 -0700 (PDT)
+        Tue, 29 Oct 2019 06:45:50 -0400
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x9TAjllJ013769
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 19:45:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x9TAjllJ013769
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572345948;
+        bh=ABgtHQoYN+OnWaETIQoMwES94nPToZvZJ0rO3T4xCq0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0ZK1Ea1HGyUC9VI9FxAlxXqejhflruqc+9jiOsRbQgXp+sQhJ3T+ASUvATJme46vY
+         p/Ve40hriQiqA4MWw8Jk6Gpq40rvULPKwRVsqdAM28BcRPqDOeHbhhelKvmNlU86np
+         2P1tFfd6pOgDsFrxqYcpWA3OABuy+7hrjuHy6KcHESDGFKsieFG0ZeSv9aXa9cUeVc
+         gXqjvPzHnGs3XZiYqjwh7jRZkR9CUi+b021BFAkDowCvvyAf3XAf4QXacBpjVpJtLa
+         Q/GJ8KX7a7L/3na01pFeWpufRGqxvY3iNztm+KelGQpw0/fIqYRjC2laD2W97fQdlw
+         OV7lj05eD3A6A==
+X-Nifty-SrcIP: [209.85.222.41]
+Received: by mail-ua1-f41.google.com with SMTP id q4so1493831uap.8
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 03:45:47 -0700 (PDT)
+X-Gm-Message-State: APjAAAUoGKhuexGdF2D4QY1FE4H2DU07B+cC2C1Su1rLalWuGYxN48X7
+        UKrUyQC8EvmNRnbBo4C8sIfT0IoVz0VXSCO4mGM=
+X-Google-Smtp-Source: APXvYqxVtM76QDu1/i4gL4jgyGxUhoOrTzYpbZmzaM9HNLJVzBsNPznTio5GCyhsoaRKAP1ZdoZ4bSlnuwn4lHJjHe8=
+X-Received: by 2002:a9f:2382:: with SMTP id 2mr10901980uao.95.1572345946290;
+ Tue, 29 Oct 2019 03:45:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <187a1a7d-80bd-a0e9-a0d9-7fc53bff8907@linux.intel.com> <20191022125950.GA133170@google.com>
-In-Reply-To: <20191022125950.GA133170@google.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 29 Oct 2019 11:42:53 +0100
-Message-ID: <CAJZ5v0jdxR4roEUC_Hs3puCzGY4ThdLsi_XcxfBUUxqruP4z7A@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] pci: intel: Add sysfs attributes to configure pcie link
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Dilip Kota <eswara.kota@linux.intel.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        gustavo.pimentel@synopsys.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        martin.blumenstingl@googlemail.com,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>
+References: <20191028151427.31612-1-jeyu@kernel.org> <20191028151427.31612-3-jeyu@kernel.org>
+In-Reply-To: <20191028151427.31612-3-jeyu@kernel.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 29 Oct 2019 19:45:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARpb8nU8EqBnLRCpstnFuw3YJ5UENu7PRza=H2YvCav-Q@mail.gmail.com>
+Message-ID: <CAK7LNARpb8nU8EqBnLRCpstnFuw3YJ5UENu7PRza=H2YvCav-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/4] nsdeps: remove stale .ns_deps files before generating
+ new ones
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Maennich <maennich@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 2:59 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Tue, Oct 29, 2019 at 12:14 AM Jessica Yu <jeyu@kernel.org> wrote:
 >
-> [+cc Rafael, linux-pm, beginning of discussion at
-> https://lore.kernel.org/r/d8574605f8e70f41ce1e88ccfb56b63c8f85e4df.1571638827.git.eswara.kota@linux.intel.com]
->
-> On Tue, Oct 22, 2019 at 05:27:38PM +0800, Dilip Kota wrote:
-> > On 10/22/2019 1:18 AM, Bjorn Helgaas wrote:
-> > > On Mon, Oct 21, 2019 at 02:38:50PM +0100, Andrew Murray wrote:
-> > > > On Mon, Oct 21, 2019 at 02:39:20PM +0800, Dilip Kota wrote:
-> > > > > PCIe RC driver on Intel Gateway SoCs have a requirement
-> > > > > of changing link width and speed on the fly.
-> > > Please add more details about why this is needed.  Since you're adding
-> > > sysfs files, it sounds like it's not actually the *driver* that needs
-> > > this; it's something in userspace?
->
-> > We have use cases to change the link speed and width on the fly.
-> > One is EMI check and other is power saving.  Some battery backed
-> > applications have to switch PCIe link from higher GEN to GEN1 and
-> > width to x1. During the cases like external power supply got
-> > disconnected or broken. Once external power supply is connected then
-> > switch PCIe link to higher GEN and width.
->
-> That sounds plausible, but of course nothing there is specific to the
-> Intel Gateway, so we should implement this generically so it would
-> work on all hardware.
->
-> I'm not sure what the interface should look like -- should it be a
-> low-level interface as you propose where userspace would have to
-> identify each link of interest, or is there some system-wide
-> power/performance knob that could tune all links?  Cc'd Rafael and
-> linux-pm in case they have ideas.
+> When adding or removing namespaces, calling `make` does not necessarily
+> remove existing stale .ns_deps files. That is, one could remove a
+> namespace, call make, and while modpost writes the correct, new .ns_deps
+> files, stale ones are not removed from the source tree, thus producing
+> incorrect results when running `make nsdeps`, i.e., inserting
+> MODULE_IMPORT_NS() statements for namespaces that have been removed.
+> Clean up old .ns_deps files before generating new ones with modpost.
 
-Frankly, I need some time to think about this and, in case you are
-wondering about whether or not it has been discussed with me already,
-it hasn't.
+Hmm, correct.
 
-At this point I can only say that since we have an ASPM interface,
-which IMO is not fantastic, it may be good to come up with a common
-link management interface.
+But, removing *.ns_deps every time is not an elegant solution.
 
-Cheers!
+
+I want to try a different approach.
+
+
+
+>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+>  Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Makefile b/Makefile
+> index ffd7a912fc46..22f9894b346b 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1685,6 +1685,8 @@ tags TAGS cscope gtags: FORCE
+>  PHONY += nsdeps
+>
+>  nsdeps: modules
+> +       @find $(if $(KBUILD_EXTMOD), $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
+> +               -name '*.ns_deps' -type f -print | xargs rm -f
+>         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost nsdeps
+>         $(Q)$(CONFIG_SHELL) $(srctree)/scripts/$@
+>
+> --
+> 2.16.4
+>
+
+
+--
+Best Regards
+
+Masahiro Yamada
