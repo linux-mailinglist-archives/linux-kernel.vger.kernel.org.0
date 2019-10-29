@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65644E7F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 05:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68263E7F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 05:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbfJ2Ej0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 00:39:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43218 "EHLO mx1.suse.de"
+        id S1731661AbfJ2EkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 00:40:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43328 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726708AbfJ2EjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 00:39:25 -0400
+        id S1729558AbfJ2EkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 00:40:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 41769AD14;
-        Tue, 29 Oct 2019 04:39:24 +0000 (UTC)
-Subject: Re: [PATCH v2 5/8] arm64: dts: realtek: Change dual-license from MIT
- to BSD
-To:     Rob Herring <robh@kernel.org>
+        by mx1.suse.de (Postfix) with ESMTP id 4ED98AF76;
+        Tue, 29 Oct 2019 04:40:07 +0000 (UTC)
+Subject: Re: [PATCH v2 6/8] arm64: dts: realtek: Add RTD1293 and Synology
+ DS418j
+To:     linux-realtek-soc@lists.infradead.org
 Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-realtek-soc@lists.infradead.org
+        linux-kernel@vger.kernel.org, info@synology.com,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
 References: <20191020040817.16882-1-afaerber@suse.de>
- <20191020040817.16882-6-afaerber@suse.de>
- <CAL_Jsq+OhiZZ4Ei3wg4s-1z+WsqQSvvRMNrK37Yq+1XR3-3_uA@mail.gmail.com>
+ <20191020040817.16882-7-afaerber@suse.de>
 From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
 Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <66c69519-6717-8c2e-dc92-05448535c181@suse.de>
-Date:   Tue, 29 Oct 2019 05:39:23 +0100
+Message-ID: <e0dbb014-e1e1-767c-64d1-ae21978b1d32@suse.de>
+Date:   Tue, 29 Oct 2019 05:40:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+OhiZZ4Ei3wg4s-1z+WsqQSvvRMNrK37Yq+1XR3-3_uA@mail.gmail.com>
+In-Reply-To: <20191020040817.16882-7-afaerber@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -41,38 +40,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 25.10.19 um 22:52 schrieb Rob Herring:
-> On Sat, Oct 19, 2019 at 11:08 PM Andreas Färber <afaerber@suse.de> wrote:
->>
->> Move the SPDX-License-Identifier to the top line and update to SPDX 2.0.
->> While at it, switch from GPLv2+/MIT to GPLv2+/BSD2c before adding more.
->>
->> Suggested-by: Rob Herring <robh@kernel.org>
->> Cc: Rob Herring <robh@kernel.org>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  v2: New
->>
->>  arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts | 3 +--
->>  arch/arm64/boot/dts/realtek/rtd1295.dtsi          | 3 +--
->>  arch/arm64/boot/dts/realtek/rtd129x.dtsi          | 3 +--
->>  3 files changed, 3 insertions(+), 6 deletions(-)
+Am 20.10.19 um 06:08 schrieb Andreas Färber:
+> Add Device Trees for RTD1293 SoC and Synology DiskStation DS418j NAS.
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> It's really only schema files that I'm pushing towards BSD2C. Maybe in
-> hindsight we should have done MIT as that's more common in the dts
-> files.
+> Cc: info@synology.com
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> ---
+>  v1 -> v2:
+>  * Moved SPDX-License-Identifier to top
+>  * Dropped "arm,armv8" (Rob)
+>  * Changed from MIT to BSD-2-Clause (Rob)
+>  * Dropped accidental enable-method and cpu-release-addr
+>  
+>  arch/arm64/boot/dts/realtek/Makefile           |  3 ++
+>  arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts | 30 +++++++++++++++
+>  arch/arm64/boot/dts/realtek/rtd1293.dtsi       | 51 ++++++++++++++++++++++++++
+>  3 files changed, 84 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts
+>  create mode 100644 arch/arm64/boot/dts/realtek/rtd1293.dtsi
 
-After discussion with Rob about whether to drop this change I dropped
-the misunderstood Suggested-by and applied this to linux-realtek.git
-v5.5/dt64 anyway:
+Applied to linux-realtek.git v5.5/dt64:
 
 https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-realtek.git/log/?h=v5.5/dt64
 
-I don't mind either license.
-
-Thanks,
+Regards,
 Andreas
 
 -- 
