@@ -2,73 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D83E83C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF90BE83CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbfJ2JEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:04:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfJ2JEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:04:38 -0400
-Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D85220717;
-        Tue, 29 Oct 2019 09:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572339877;
-        bh=IbQkjMguEXcLEaRwhCuLeXjDzwQdVquZPVX8W/lviKg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y0mtnxGHmEXBt6yS2fKXZGQbFQrC5WwQwo06fbCZFtkj/zq6Qp7C65laj9VBFfNbL
-         iz7eUSSaCvLEFeSxSh+ja53yFpQeQb3zVnAWvPCl9pZefXXFvXUuqPGTgmSKHHwLqn
-         8yXeGePrih8sWBtQparb0MBWo+ANNibjtA/KExko=
-Date:   Tue, 29 Oct 2019 05:04:35 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 095/100] USB: usb-skeleton: fix
- use-after-free after driver unbind
-Message-ID: <20191029090435.GJ1554@sasha-vm>
-References: <20191018220525.9042-1-sashal@kernel.org>
- <20191018220525.9042-95-sashal@kernel.org>
- <20191018222205.GA6978@kroah.com>
+        id S1730866AbfJ2JEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:04:50 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40277 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730831AbfJ2JEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 05:04:48 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iPNQe-00023m-5q; Tue, 29 Oct 2019 10:04:40 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iPNQd-0007Qk-2y; Tue, 29 Oct 2019 10:04:39 +0100
+Date:   Tue, 29 Oct 2019 10:04:39 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Ondrej Jirman <megous@megous.com>, linux-sunxi@googlegroups.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?iso-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@bootlin.com>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add touchscreen support for TBS A711 Tablet
+Message-ID: <20191029090439.ikgzrixv7wv2o6xb@pengutronix.de>
+References: <20191029005806.3577376-1-megous@megous.com>
+ <20191029041516.GE57214@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191018222205.GA6978@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191029041516.GE57214@dtor-ws>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:03:51 up 164 days, 15:22, 99 users,  load average: 0.12, 0.15,
+ 0.07
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 06:22:05PM -0400, Greg Kroah-Hartman wrote:
->On Fri, Oct 18, 2019 at 06:05:20PM -0400, Sasha Levin wrote:
->> From: Johan Hovold <johan@kernel.org>
->>
->> [ Upstream commit 6353001852776e7eeaab4da78922d4c6f2b076af ]
->>
->> The driver failed to stop its read URB on disconnect, something which
->> could lead to a use-after-free in the completion handler after driver
->> unbind in case the character device has been closed.
->>
->> Fixes: e7389cc9a7ff ("USB: skel_read really sucks royally")
->> Signed-off-by: Johan Hovold <johan@kernel.org>
->> Link: https://lore.kernel.org/r/20191009170944.30057-3-johan@kernel.org
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  drivers/usb/usb-skeleton.c | 1 +
->>  1 file changed, 1 insertion(+)
->
->This file does not even get built in the kernel tree, no need to
->backport anything for it :)
+Hi,
 
-I'll drop it, but you're taking patches for this driver:
-https://lore.kernel.org/patchwork/patch/1140673/ .
+On 19-10-28 21:15, Dmitry Torokhov wrote:
+> On Tue, Oct 29, 2019 at 01:58:03AM +0100, Ondrej Jirman wrote:
+> > This is a resurrection of https://lkml.org/lkml/2018/7/25/143
+> > 
+> > Compared to v4 of Mylène's series I've dropped all attempts to
+> > power off the chip during suspend. This patch just enables the
+> > regulator during probe and disables it on driver rmmod.
+> > 
+> > I've tested the driver with suspend/resume and touching the
+> > panel resumes my soc.
+> 
+> OK, I guess we can revisit when someone really needs power savings in
+> suspend...
+
+Please have a look on https://patchwork.kernel.org/cover/11149039/. I've
+already send patches for it.
+
+Regards,
+  Marco
+
+> I folded bindings into the driver change and applied, dts changes should
+> go through respective tree.
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
+> 
 
 -- 
-Thanks,
-Sasha
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
