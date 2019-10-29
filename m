@@ -2,79 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48FB1E8A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C26E8A7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:15:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389006AbfJ2OOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 10:14:04 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40565 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388274AbfJ2OOE (ORCPT
+        id S2389043AbfJ2OPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 10:15:30 -0400
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:53394 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389207AbfJ2OPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:14:04 -0400
-Received: by mail-ua1-f66.google.com with SMTP id i13so3844715uaq.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 07:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WRiAkOhbI4dV58chbNSol3Yacs8NwxdmyZ2dChnRtrM=;
-        b=xajKtnJrhLWyaOykhKGtlxEGtudWLdubnUwcx9nZIUmZ4B4YcwrOPiyj85JY+B6kxA
-         uT2KUH+00Vf5ICMMKVHjppY+r/euFqo4OijPnQeKEp5lNbBSxpgT1jL68LVXsnvoNTA5
-         s0f0EGVTrFfjcYf3jfJFCVHPjNHopZ/3FeHYPtMdAIRL0lJsT1x95wGkyZ5O3eTrynBR
-         tJw5mEIpEpxkuCVlRhHU7wNjXhJH4apI5dDYiIwN+Bx2LjcyVYa3HphmngId8dOU8EQ7
-         3dv0emRFlpZpV/ZQ24gLpSg/D/u4yH52OPvGqnZR6PfQn3c5lnm9ynCXkzLAY8NcZ2Zr
-         2jzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WRiAkOhbI4dV58chbNSol3Yacs8NwxdmyZ2dChnRtrM=;
-        b=WBCQr3Pzu6P3WprgKP3L4QFImPUMzYxCJi0SFea+RIG2EIfNBaGu79WBpPb91rHhGz
-         wSWwMY3XTZps/GoS8A/l2B35vb8KUNMu4X1Gd30/Ho/YFzLbeD94W8zzXn0ygPoq92yn
-         3jZ1CgmaoxGLgLhD9B1CRTWKnGZdHL82Qoq5wpegLkE1saxl6TTPO6ORAViRq1SSJ6z0
-         f84l8NEecQIgmYInUzoJjmscSTIk4h5Pl4/4rcEkjuUd1RUk1xfXALiIam5IdiUek0/M
-         J+5pFqqitbhME1EpfFi1+eUVT56Jc0pCGt+hn8ojVqAseSfDcX50MDmu3XigGusgc0QK
-         5r9Q==
-X-Gm-Message-State: APjAAAXhwLKe05QI84VsUIEs9xSYut+y/Gt+O0c6kVMUUjBCfomJ+M4U
-        XnRfQeiXlTG1gVvqoVNewMXRmRG0eCYgh7p6YEtgyQ==
-X-Google-Smtp-Source: APXvYqwXDN2mRvdj+26BcZ/ILI0ofvlyph74hhkrx25WZ8XAd6RsJ1WmNMUZxWgcMl8KizcybIyWzpVf3nQ5cmC3Sso=
-X-Received: by 2002:a9f:31a9:: with SMTP id v38mr4022990uad.33.1572358443061;
- Tue, 29 Oct 2019 07:14:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191021064413.19840-1-manivannan.sadhasivam@linaro.org> <20191021064413.19840-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20191021064413.19840-4-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Oct 2019 15:13:51 +0100
-Message-ID: <CACRpkdbSF8C=fY8s-=e=zVjTHu30_mA+MP=Y_J=jkSp96APWhw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] gpio: Add RDA Micro GPIO controller support
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-unisoc@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 Oct 2019 10:15:20 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 3731FC04BB;
+        Tue, 29 Oct 2019 14:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1572358520; bh=nGvMdw6v8QDeKK9JnNRRIrf2w9HChn1Wdr+DNEOBHYA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iNG18OtbHULWKiWvg4ptyuJZJ/uwepsJ4ZxfBLvqzEPhb6abo/kHUWLbhYAev+oYm
+         mAsJiltcGBwyFA0hqWlhQ9D7f1WoSnonrGO1w604iQQEH9JFOrkj2SAveDuU6AVn+m
+         a07foVBen1Qu8Ie+fjtuv0utJN9SvCUbfryp5dlPfOg4p+8gl37g3WYUY++x8FDpWc
+         wuGaWTo7OO1LzTcG+M0TA6XBfnZ0TZDOWq9dY6zKG6w4BXhkekfjCgJLD5KyPb/IJH
+         a4MRmhkwRsbWhKktXJ1/X4g5m3B0MFTyn50B91Gf5oqfL+2YrLcTZlR9WMdf7+bCMZ
+         LSqW4UXNqJx1A==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BA0ECA0057;
+        Tue, 29 Oct 2019 14:15:08 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/9] net: stmmac: Fixes for -net
+Date:   Tue, 29 Oct 2019 15:14:44 +0100
+Message-Id: <cover.1572355609.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 8:44 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+Misc fixes for stmmac.
 
-> Add support for GPIO controller from RDA Micro. This GPIO controller
-> is an in house IP, developed by RDA Micro (now Unisoc) for the use in
-> RDA88* series of SoCs. There are multiple GPIO ports present in all SoCs,
-> each capable of addressing 32 GPIOs. But only first 8 pins have the
-> interrupt capability.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Patch 1/9, corrects a sparse warning reported by kbuild.
 
-Not even 300 lines! Nice.
+Patch 2/9 and 3/9, use the correct variable type for bitrev32() calls.
 
-Patch applied!
+Patch 4/9, fixes the random failures the we were seing when running selftests.
 
-Yours,
-Linus Walleij
+Patch 5/9, prevents a crash that can occur when receiving AVB packets and with
+SPH feature enabled on XGMAC.
+
+Patch 6/9, fixes the correct settings for CBS on XGMAC.
+
+Patch 7/9, corrects the interpretation of AVB feature on XGMAC.
+
+Patch 8/9, disables Flow Control for AVB enabled queues on XGMAC.
+
+Patch 9/9, disables MMC interrupts on XGMAC, preventing a storm of interrupts.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (9):
+  net: stmmac: Fix sparse warning
+  net: stmmac: gmac4: bitrev32 returns u32
+  net: stmmac: xgmac: bitrev32 returns u32
+  net: stmmac: selftests: Must remove UC/MC addresses to prevent false
+    positives
+  net: stmmac: xgmac: Only get SPH header len if available
+  net: stmmac: xgmac: Fix TSA selection
+  net: stmmac: xgmac: Fix AV Feature detection
+  net: stmmac: xgmac: Disable Flow Control when 1 or more queues are in
+    AV
+  net: stmmac: xgmac: Disable MMC interrupts by default
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   4 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |   5 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   5 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 104 +++++++++++++++------
+ 8 files changed, 94 insertions(+), 39 deletions(-)
+
+-- 
+2.7.4
+
