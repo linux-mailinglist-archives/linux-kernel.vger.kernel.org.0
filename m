@@ -2,143 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681B9E7EA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E2BE7E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbfJ2Cqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:46:36 -0400
-Received: from avasout03.plus.net ([84.93.230.244]:52098 "EHLO
-        avasout03.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbfJ2Cqg (ORCPT
+        id S1730810AbfJ2Cl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:41:26 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34926 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730215AbfJ2ClZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:46:36 -0400
-X-Greylist: delayed 451 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Oct 2019 22:46:35 EDT
-Received: from [10.0.2.15] ([146.198.133.39])
-        by smtp with ESMTPA
-        id PHPLig50ftvkXPHPMiiAfY; Tue, 29 Oct 2019 02:39:04 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=plus.com; s=042019;
-        t=1572316744; bh=3Vd0JoyK9vjaMDPiEfIcd0bq4Da/dDRQVJRkigVYHx8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=GpkkkMh7LCwSC46u2HgfQp5jLrtQpvnvXOOoPPE85Jgqm00T26JxCjah0K5W5+0rR
-         mJmYjyA4sTgCc4oUlB5Y6OQrl/JTjpeJI7G7LKXlSXy8seGlvmq9c1F8pFEpFb4JON
-         oK1ko7oP1ONYTI7BT0fMScfL9/t7soQGTKDSVZ3lqqaLnLHBUN5Z4pFAYbOivCyF0s
-         6LQ704/BxQuu/PhnMSOStcStwKiX3nwnJLz8ta2txWo/gCOZV1NxBNQvgFCeSJTuOY
-         qOV+6sR/TTmNGy8kzsJyRwAqLfpLNSpH8jrnw9yzLbZZkWrPp2MSCnqoU6a/KHrshi
-         qWZsebbR10niA==
-X-Clacks-Overhead: "GNU Terry Pratchett"
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.3 cv=ePBtc0h1 c=1 sm=1 tr=0
- a=1Jh3712dEPwUcX5EWi7t+w==:117 a=1Jh3712dEPwUcX5EWi7t+w==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=X9G2ohcBEumEKn13xBoA:9
- a=DKryddvG6lcVqKu1:21 a=rVP9ElcGolyjnz41:21 a=QEXdDO2ut3YA:10
-X-AUTH: ramsayjones@:2500
-Subject: Re: [PATCH] compiler*.h: Add '__' prefix and suffix to all
- __attribute__ #defines
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Joe Perches <joe@perches.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-References: <7a15bc8ad7437dc3a044a4f9cd283500bd0b5f36.camel@perches.com>
- <CANiq72=B6XKwfkC9L4=+OxWtjxCp-94TWRG1a=pC=y636gzckA@mail.gmail.com>
- <19fd23e98bab65a1ee624445193bd2ed86108881.camel@perches.com>
- <20191028221523.vlzdk6dkcglxei6v@desk.local>
- <00c5ef125a4e62f538de7ddddc9d8fe7085794a3.camel@perches.com>
- <20191028230349.xlhm42ripxktx43y@desk.local>
-From:   Ramsay Jones <ramsay@ramsayjones.plus.com>
-Message-ID: <61eb73ad-5c30-0005-5031-6584df72ad5f@ramsayjones.plus.com>
-Date:   Tue, 29 Oct 2019 02:38:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 28 Oct 2019 22:41:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l10so11953201wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 19:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZeDXYfJYer9ewRjx0PKDp7gkl9UyDafoP/CtcLx8QMs=;
+        b=VLQKO+JOvP8uz/jmVZM9OjdCfHDXyDMWpkMpTUHQHfjmA84+CUWD7XxXQNaduG/DhK
+         WpLIlhGmDUXteBLSWlDLv3lLQKGl9plS/P7jNHsE1n2OgqkcjY1MB0T3Q0WBTvNA1F40
+         PLq6JygSU3JQITuvsF6azO0JElsbcTQp8BtSk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZeDXYfJYer9ewRjx0PKDp7gkl9UyDafoP/CtcLx8QMs=;
+        b=uib2oGZIQ8KfAN5LQ5P5Zw9AIUNUbKp/Vdmab/+DJg4Okzu7jsEtgl4I55Z3F0KE6O
+         AuTcleLIicfIbo5u9azkqyZ2CeapHN8pNISYE3BDMX3zkuhlyfq/tTUMpdfu5O7n6yYC
+         fl7CcRhX0PohM29mq1xpb1KIeytM0ycdWvmLXRsgPtsVG83tYzCIFcV21l4H+Q27tT9V
+         1FcF9upD+15I74YslBRwQX/0GMldbwMb0O+EIlInMWpHDc1vSIC6IoPDKfsU0gA+ki7F
+         hBw1tbEZB2JKG+0dJqShdgd//ThBnon/VeeRBuCJ+WlnvLWYWJvXkad2PpJG93ePKW/m
+         CJBA==
+X-Gm-Message-State: APjAAAXmmePq4nNLdwNHnxLp6nFDen6DRq9tKy8BgbREUtCFo1k8TpsD
+        E3Y+RQyz/DdmIkNwAGOrQOemzbr1JdbZxEG32929tg==
+X-Google-Smtp-Source: APXvYqyc+JXXHY09WmrhUa6gx/7O5d2iKpnoJiK3FXpiuNcBFCoy0/gMtIdx+mtcV6BqjcvdZ3c6ru0/7R8MCJ1fJrA=
+X-Received: by 2002:adf:e806:: with SMTP id o6mr15942278wrm.139.1572316882248;
+ Mon, 28 Oct 2019 19:41:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191028230349.xlhm42ripxktx43y@desk.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEudO0BYFP93zLmnvQvBsw9b3zbvwcui3UWZb2KiDSNITeNhS6viJIKbP91Qo/kw/DOJ7VRNfgQrPIxGeMaQTq4L4vbBys9/54pwW382cEvSzW+QT25o
- x1FQMt5JjfeNsrPFOLc592T0xL2hh0JH8RC49UNWroumG0PhSTd+x08zwoFlh2nCk9Nmr2HDLTqCcA==
+References: <20191025133007.11190-4-cychiang@chromium.org> <201910290345.w2EEW5S3%lkp@intel.com>
+In-Reply-To: <201910290345.w2EEW5S3%lkp@intel.com>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Tue, 29 Oct 2019 10:40:55 +0800
+Message-ID: <CAFv8NwJYrpT=hCFwWfbdRvC971X-XGS-mjEBJrggQTJ02nhv7g@mail.gmail.com>
+Subject: Re: [PATCH v8 3/6] ASoC: rockchip_max98090: Optionally support HDMI
+ use case
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Tzung-Bi Shih <tzungbi@chromium.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 29, 2019 at 3:10 AM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Cheng-Yi,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on rockchip/for-next]
+> [also build test ERROR on v5.4-rc5 next-20191028]
+> [if your patch is applied to the wrong git tree, please drop us a note to=
+ help
+> improve the system. BTW, we also suggest to use '--base' option to specif=
+y the
+> base tree in git format-patch, please see https://stackoverflow.com/a/374=
+06982]
+>
+> url:    https://github.com/0day-ci/linux/commits/Cheng-Yi-Chiang/Add-HDMI=
+-jack-support-on-RK3288/20191028-212502
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockc=
+hip.git for-next
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.4.0-14) 7.4.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=3Di386
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>    sound/soc/rockchip/snd-soc-rockchip-max98090: struct of_device_id is 1=
+96 bytes.  The last of 3 is:
+>    0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x72 0x6f 0x63 0x6b 0x63 0x68 0x69 0x70 0x2c 0x72 =
+0x6f 0x63 0x6b 0x63 0x68 0x69 0x70 0x2d 0x61 0x75 0x64 0x69 0x6f 0x2d 0x6d =
+0x61 0x78 0x39 0x38 0x30 0x39 0x30 0x2d 0x68 0x64 0x6d 0x69 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x10 0x00 =
+0x00 0x00
+> >> FATAL: sound/soc/rockchip/snd-soc-rockchip-max98090: struct of_device_=
+id is not terminated with a NULL entry!
 
+Please ignore this error for v8 patch series because the change in
+rockchip_max98090.c of of_device_id is removed in v9 patch series.
+Thanks!
 
-On 28/10/2019 23:03, Luc Van Oostenryck wrote:
-> On Mon, Oct 28, 2019 at 03:28:17PM -0700, Joe Perches wrote:
->> On Mon, 2019-10-28 at 23:15 +0100, Luc Van Oostenryck wrote:
->>> On Mon, Oct 28, 2019 at 10:59:47AM -0700, Joe Perches wrote:
->>>> On Mon, 2019-10-28 at 18:37 +0100, Miguel Ojeda wrote:
->>>>> Just in case: for these ones (i.e. __CHECKER__), did you check if
->>>>> sparse handles this syntax? (I don't recall myself if it does).
->>>>>
->>>>> Other than that, thanks for the cleanup too! I can pick it up in the
->>>>> the compiler-attributes tree and put it in -next.
->>>>
->>>> Thanks for asking and no, I did  not until just now.
->>>> Turns out sparse does _not_ handle these changes and
->>>> the checking fails for these __<changes>__.
->>>>
->>>> sparse would have to update parse.c or the __CHECKER__
->>>> changes would need to be reverted.
->>>>
->>>> Perhaps update parse.c like:
->>>
->>> ...
->>>
->>> Yes, this was missing. Thanks.
->>> Can I have your SoB for this?
->>
->> I'm not sure this actually works as there's
->> some possible sparse parsing changes in the
->> use of __context__.
-> 
-> Yes, indeed. The following shoud be squashed on top of
-> your patch (not tested yet on linux side):
-> 
-> -- Luc
-> 
-> diff --git a/parse.c b/parse.c
-> index 4464e2667..4b0a1566c 100644
-> --- a/parse.c
-> +++ b/parse.c
-> @@ -345,6 +345,7 @@ static struct symbol_op goto_op = {
->  
->  static struct symbol_op __context___op = {
->  	.statement = parse_context_statement,
-> +	.attribute = attribute_context,
-
-Hmm, so why is do we have a context_op and a __context___op?
-
->  };
->  
->  static struct symbol_op range_op = {
-> @@ -537,6 +538,7 @@ static struct init_keyword {
->  	{ "while",	NS_KEYWORD, .op = &while_op },
->  	{ "do",		NS_KEYWORD, .op = &do_op },
->  	{ "goto",	NS_KEYWORD, .op = &goto_op },
-> +	{ "context",	NS_KEYWORD, .op = &context_op },
->  	{ "__context__",NS_KEYWORD, .op = &__context___op },
-
-So, can '__context__' be used in a statement, as well as an
-attribute, while 'context' can only be used in an attribute?
-
-Confused.
-
-ATB,
-Ramsay Jones
-
->  	{ "__range__",	NS_KEYWORD, .op = &range_op },
->  	{ "asm",	NS_KEYWORD, .op = &asm_op },
-> @@ -560,8 +562,6 @@ static struct init_keyword {
->  	{ "__bitwise__",NS_KEYWORD,	MOD_BITWISE,	.op = &attr_bitwise_op },
->  	{ "address_space",NS_KEYWORD,	.op = &address_space_op },
->  	{ "__address_space__",NS_KEYWORD,	.op = &address_space_op },
-> -	{ "context",	NS_KEYWORD,	.op = &context_op },
-> -	{ "__context__",NS_KEYWORD,	.op = &context_op },
->  	{ "designated_init",	NS_KEYWORD,	.op = &designated_init_op },
->  	{ "__designated_init__",	NS_KEYWORD,	.op = &designated_init_op },
->  	{ "transparent_union",	NS_KEYWORD,	.op = &transparent_union_op },
-> 
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Ce=
+nter
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corpora=
+tion
