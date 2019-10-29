@@ -2,130 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED4FE8D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DC8E8DB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390858AbfJ2RBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:01:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        id S2390824AbfJ2RKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:10:17 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:37718 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390518AbfJ2RBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:01:11 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6584E21D7C
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 17:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572368469;
-        bh=CEfNBOwII3kRKjNTV1QnlKd06oaG8CbrkIl/0qlzYVo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=q3ICBVGcY42CD77N0qTsXJMlZjKwCidRWPAxH82TYrbs7YAGB3c7j/9/y7vR/rPZR
-         eDzCjhVK7kXCC1J3TLXjgEAjKbyUIb+2Sw6OzQcEHDflnMgQERH7a35eeLBeGOOIQO
-         H7iDIO3lp7G8rFWGFzKfkz3edX4IblThKLG68/UA=
-Received: by mail-wr1-f52.google.com with SMTP id q13so14443952wrs.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 10:01:09 -0700 (PDT)
-X-Gm-Message-State: APjAAAX5jAkdn8PSLv0ZaybVmL/ROPnf20B6etjwDNTLpMd5TJznS37B
-        0YseMihruPAwb0EKK4mMTRo6s1ZxMpNrWP3sPzlRyQ==
-X-Google-Smtp-Source: APXvYqxXiNG2A88b6n9p+z8Zlwh9YkfuUsw66nu2TCU6joSFqbJXpVXXmh37z2G7Eps4xr3l8sMAkLs+7YfDYfVvLGo=
-X-Received: by 2002:adf:f04e:: with SMTP id t14mr21415495wro.106.1572368466787;
- Tue, 29 Oct 2019 10:01:06 -0700 (PDT)
+        id S1727763AbfJ2RKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 13:10:16 -0400
+X-Greylist: delayed 517 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Oct 2019 13:10:15 EDT
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 8C8129AD; Tue, 29 Oct 2019 12:01:37 -0500 (CDT)
+Date:   Tue, 29 Oct 2019 12:01:37 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
+Message-ID: <20191029170137.GA21633@mail.hallyn.com>
+References: <20191025112917.22518-1-mszeredi@redhat.com>
+ <CAJfpegv1SA7b45_2g-GFYrc7ZsOmcQ2qv602n=85L4RknkOvKQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <CA5C22D9-BC3E-4B69-8DD9-4D3B75E40BD5@amacapital.net> <20191029093254.GE18773@rapoport-lnx>
-In-Reply-To: <20191029093254.GE18773@rapoport-lnx>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 29 Oct 2019 10:00:55 -0700
-X-Gmail-Original-Message-ID: <CALCETrUuuc4DS0cdMBtS550Wkp0x9ND3M3SgtaMgyRROnDR5Kg@mail.gmail.com>
-Message-ID: <CALCETrUuuc4DS0cdMBtS550Wkp0x9ND3M3SgtaMgyRROnDR5Kg@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user mappings
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegv1SA7b45_2g-GFYrc7ZsOmcQ2qv602n=85L4RknkOvKQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 2:33 AM Mike Rapoport <rppt@kernel.org> wrote:
->
-> On Mon, Oct 28, 2019 at 02:44:23PM -0600, Andy Lutomirski wrote:
+On Fri, Oct 25, 2019 at 01:35:20PM +0200, Miklos Szeredi wrote:
+> On Fri, Oct 25, 2019 at 1:30 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
 > >
-> > > On Oct 27, 2019, at 4:17 AM, Mike Rapoport <rppt@kernel.org> wrote:
-> > >
-> > > =EF=BB=BFFrom: Mike Rapoport <rppt@linux.ibm.com>
-> > >
-> > > Hi,
-> > >
-> > > The patch below aims to allow applications to create mappins that hav=
-e
-> > > pages visible only to the owning process. Such mappings could be used=
- to
-> > > store secrets so that these secrets are not visible neither to other
-> > > processes nor to the kernel.
-> > >
-> > > I've only tested the basic functionality, the changes should be verif=
-ied
-> > > against THP/migration/compaction. Yet, I'd appreciate early feedback.
+> > Hi Eric,
 > >
-> > I=E2=80=99ve contemplated the concept a fair amount, and I think you sh=
-ould
-> > consider a change to the API. In particular, rather than having it be a
-> > MAP_ flag, make it a chardev.  You can, at least at first, allow only
-> > MAP_SHARED, and admins can decide who gets to use it.  It might also pl=
-ay
-> > better with the VM overall, and you won=E2=80=99t need a VM_ flag for i=
-t =E2=80=94 you
-> > can just wire up .fault to do the right thing.
->
-> I think mmap()/mprotect()/madvise() are the natural APIs for such
-> interface.
+> > Can you please have a look at this patchset?
+> >
+> > The most interesting one is the last oneliner adding FS_USERNS_MOUNT;
+> > whether I'm correct in stating that this isn't going to introduce any
+> > holes, or not...
+> 
+> Forgot the git tree:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#ovl-unpriv
+> 
+> Thanks,
+> Miklos
 
-Then you have a whole bunch of questions to answer.  For example:
+I've looked through it, seemed sensible to me.
 
-What happens if you mprotect() or similar when the mapping is already
-in use in a way that's incompatible with MAP_EXCLUSIVE?
-
-Is it actually reasonable to malloc() some memory and then make it exclusiv=
-e?
-
-Are you permitted to map a file MAP_EXCLUSIVE?  What does it mean?
-
-What does MAP_PRIVATE | MAP_EXCLUSIVE do?
-
-How does one pass exclusive memory via SCM_RIGHTS?  (If it's a
-memfd-like or chardev interface, it's trivial.  mmap(), not so much.)
-
-And finally, there's my personal giant pet peeve: a major use of this
-will be for virtualization.  I suspect that a lot of people would like
-the majority of KVM guest memory to be unmapped from the host
-pagetables.  But people might also like for guest memory to be
-unmapped in *QEMU's* pagetables, and mmap() is a basically worthless
-interface for this.  Getting fd-backed memory into a guest will take
-some possibly major work in the kernel, but getting vma-backed memory
-into a guest without mapping it in the host user address space seems
-much, much worse.
-
-> Switching to a chardev doesn't solve the major problem of direct
-> map fragmentation and defeats the ability to use exclusive memory mapping=
-s
-> with the existing allocators, while mprotect() and madvise() do not.
->
-
-Will people really want to do malloc() and then remap it exclusive?
-This sounds dubiously useful at best.
+-serge
