@@ -2,105 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AF2E88CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68FCBE88E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbfJ2Myi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:54:38 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39964 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfJ2Myi (ORCPT
+        id S2388176AbfJ2M5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:57:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39220 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388137AbfJ2M5a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:54:38 -0400
-Received: by mail-lf1-f66.google.com with SMTP id f4so4438035lfk.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 05:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyC7yE5Zia5wjA+b3r/7nOVhr/nMlkQqP2NCwFPVhd4=;
-        b=ahjtDDP93botL/npzK6iP0iXdCdOLn32mOXHEjBGFtbQMGKtcWtlE+IS5ZWtLJ7pT0
-         F2aFfEq8Gn6S/gyR2+9YNq2+0CC3tm6JwKAP2+j+p2x1yjWBTFJWKBc3vza418nnG9GT
-         1bBO0Pujh56xJjkUUTHxc09oCwvo7zEO1iiFC8GhLGzA7W/Eof9Pd+mJZPLk5m18wn5Z
-         UGqe4hwR3G5+DEmOv9D9WtzNNCuZ4JJadOxc8xRl+xUEVOE1Kr7Y0AjY4z6vK5j5PqTE
-         khnaiC3qgdWxevSCZbI9fmzVKh1VI83sOWDkwsOUTvnU247+DRd2J6rYZLIVAUaCdLjr
-         TF2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyC7yE5Zia5wjA+b3r/7nOVhr/nMlkQqP2NCwFPVhd4=;
-        b=jihVynE4i44ng8E3gSl35+/79lRo3X9bGBgpcQPA2pFGsM/fbs7NsFkwOe/65Yy84A
-         RSY4cqv27+vM+YbSe1sbAcdWF59MId5g5WDT9qqGxndlFqIYmYpEjWkqIiAUy+fo6qQ9
-         ScOBTuvbp0D9pujihdZXsnWlurKVfcNSTQR+dzMEor89kzg4oUOhOvrwI0OmntXqzOO3
-         NSWhnjxDRamhXRYZOtjMCPSSWGGF/bNXyWb24TlLtWZdzBUxbgpRsc21okaZh+zPNAiQ
-         4TBvc74GUh2armxbV+Mp9KPerrwihiW4yITWCxtnCTsysGd9l40mgkesufyIMRfSo1y4
-         zGpQ==
-X-Gm-Message-State: APjAAAWYm+iGlaoG8QjQ0coeqzca7uvLIPRMrI1At6JhzzIqRPdotpUk
-        xXXCUw1TM6+VOjACwzDK6XE8thQwtMfUAyM0ZLQBRoXN
-X-Google-Smtp-Source: APXvYqzHz20RYYdTRga9BX249milFT+G7+sMud/tELdQ6UA7FiUzeNgB2BpFWr+IlVyOihjK4WcRi1i6ZxTK6Sk4hSA=
-X-Received: by 2002:a19:ca13:: with SMTP id a19mr2333981lfg.133.1572353675805;
- Tue, 29 Oct 2019 05:54:35 -0700 (PDT)
+        Tue, 29 Oct 2019 08:57:30 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TCunl9081036;
+        Tue, 29 Oct 2019 12:57:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ekEQjLDbbm8ZMI/y+AQ/ISG2wMrHvsYf9NqMlkttQWw=;
+ b=bekM1Zv1UT4/zMGEDvJLpyWrlkRCeKaYWzyeH882db96FgRw3l5qHyrPHjtnnV2Md2Kj
+ xzkVMOjR+uvGAFTiVDbZ3AXSA729A6UpZQ4Adhx3TVrn0oXwKaLOwb2xqmO5if7dpA5+
+ GKaatmiYkTlTUe5SqbE4AfgweaA8umSNunaw6HL5Z2xMSwoD46JO7NJgR5TE0IBGMeJB
+ Zqyv+KQRUPZEx38hF7osqf8AsW9sW8tYb6rbTBiTCaJSCRyWnjBX5wEl+sHUHGfPcC0B
+ TTTIcB0B5G+MtNYQ9nltyPfElXvEoidbsticef+RipU8Gq3l+fqrOoOSU+H0gTlYR/Lz hw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2vvdju950a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 12:57:27 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TChecX130593;
+        Tue, 29 Oct 2019 12:55:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vxh9y1ttw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 12:55:27 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9TCtQmg011003;
+        Tue, 29 Oct 2019 12:55:26 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Oct 2019 05:55:25 -0700
+Date:   Tue, 29 Oct 2019 15:55:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Dan Carpenter <dan.carpenter@oracle.co>,
+        linux-sparse@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: detecting misuse of of_get_property
+Message-ID: <20191029125519.GA1705@kadam>
+References: <ec277c12-c608-6326-7723-be8cab4f524a@rasmusvillemoes.dk>
+ <20191029104917.GI1944@kadam>
+ <20191029114750.a7inago2vd2o4lzl@ltop.local>
 MIME-Version: 1.0
-References: <20191009104611.15363-1-qais.yousef@arm.com> <CAKfTPtA6Fvc374oTfbHYkviAJbZebHkBg=w2O3f0oZ0m3ujVjA@mail.gmail.com>
- <20191029110224.awoi37pdquachqtd@e107158-lin.cambridge.arm.com>
- <CAKfTPtA=CzkTVwdCJL6ULYB628tWdGAvpD-sHfgSfL59PyYvxA@mail.gmail.com>
- <20191029114824.2kb4fygxxx72r3in@e107158-lin.cambridge.arm.com>
- <CAKfTPtD7e-dXhZ3mG36igArt=0f-mNc52vaJ1bb-jv5zB9bkgg@mail.gmail.com> <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
-In-Reply-To: <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 29 Oct 2019 13:54:24 +0100
-Message-ID: <CAKfTPtDnt6oh7X6dGnPUn70sLJXAQoxdkn0GCwdPvA8G4Wg0fA@mail.gmail.com>
-Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029114750.a7inago2vd2o4lzl@ltop.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=997
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910290126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019 at 13:46, Qais Yousef <qais.yousef@arm.com> wrote:
->
-> On 10/29/19 13:20, Vincent Guittot wrote:
-> > > > Making big cores the default CPUs for all RT tasks is not a minor
-> > > > change and IMO locality should stay the default behavior when there is
-> > > > no uclamp constraint
-> > >
-> > > How this is affecting locality? The task will always go to the big core, so it
-> > > should be local.
-> >
-> > local with the waker
-> > You will force rt task to run on big cluster although waker, data and
-> > interrupts can be on little one.
-> > So making big core as default is far from always being the best choice
->
-> This is loaded with assumptions IMO. AFAICT we don't know what's the best
-> choice.
->
-> First, the value of uclamp.min is outside of the scope of this patch. Unless
-> what you're saying is that when uclamp.min is 1024 then we should NOT choose a
-> big cpu then there's no disagreement about what this patch do. If that's what
-> you're objecting to please be more specific about how do you see this working
-> instead.
+On Tue, Oct 29, 2019 at 12:47:50PM +0100, Luc Van Oostenryck wrote:
+> On Tue, Oct 29, 2019 at 01:50:58PM +0300, Dan Carpenter wrote:
+> > +static void match_of_get_property(const char *fn, struct expression *expr, void *unused)
+> > +{
+> > +	struct expression *left = expr->left;
+> > +	struct symbol *type;
+> > +
+> > +	type = get_type(left);
+> > +	if (!type || type->type != SYM_PTR)
+> > +		return;
+> > +	type = get_base_type(type);
+> > +	if (type_bits(type) == 8)
+> > +		return;
+> > +	if (type->type == SYM_RESTRICT)
+> > +		return;
+> 
+> Wouldn't this also silently accept assignments to any bitwise
+> type: __le32, __be16, ... ? 
 
-My point is that this patch makes the big cores the default CPUs for
-RT tasks which is far from being a minor change and far from being an
-obvious default good choice
+It does, yes.  I'm not sure how big of an issue that is...  I always
+just throw a check together and test it before I decide if it's worth
+investing more time into it.
 
->
-> If your objection is purely based on the choice of uclamp.min then while
-> I agree that on modern systems the little cores are good enough for the
-> majority of RT tasks in average Android systems. But I don't feel confident to
-> reach this conclusion on low end systems where the little core doesn't have
-> enough grunt in many cases. So I see the current default is adequate and the
-> responsibility of further tweaking lies within the hands of the system admin.
->
-> --
-> Qais Yousef
+regards,
+dan carpenter
