@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A938E7DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 01:58:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0819DE7DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:02:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbfJ2A6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 20:58:17 -0400
-Received: from vps.xff.cz ([195.181.215.36]:51658 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727441AbfJ2A6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 20:58:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1572310693; bh=HlkHtBIrl2Pu/yMqJm7oISnuzbeLkbNyGnJaRkUbXDA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=txcdpDXcilixDJQpryeqFSA3pevzH5StDEHTo9UTXPMnP/dL0CHe2pudqWhYQZj80
-         IP8Cxqot5KkvVCez+SqRfMVZHgLADbC/uFtlc51DvMQ+XmNfu2erqlQsq5GvSWYvW0
-         hbyaWNp7IS8AmxyaR4wpE0zuLcdVHTABra9GsSTk=
-From:   Ondrej Jirman <megous@megous.com>
-To:     linux-sunxi@googlegroups.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] arm: dts: sun8i: a83t: a711: Add touchscreen node
-Date:   Tue, 29 Oct 2019 01:58:06 +0100
-Message-Id: <20191029005806.3577376-4-megous@megous.com>
-In-Reply-To: <20191029005806.3577376-1-megous@megous.com>
-References: <20191029005806.3577376-1-megous@megous.com>
+        id S1727695AbfJ2BCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 21:02:50 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47294 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726365AbfJ2BCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 21:02:49 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CCEF221C64DBA44192B8;
+        Tue, 29 Oct 2019 09:02:46 +0800 (CST)
+Received: from [127.0.0.1] (10.133.224.57) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
+ 09:02:38 +0800
+Subject: Re: [PATCH] arm64: print additional fault message when executing
+ non-exec memory
+To:     Will Deacon <will@kernel.org>
+CC:     <catalin.marinas@arm.com>, <james.morse@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
+References: <20191028090837.39652-1-zhengxiang9@huawei.com>
+ <20191028164150.GG5576@willie-the-truck>
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+Message-ID: <922ff695-62c4-5142-5efa-daeebd73459e@huawei.com>
+Date:   Tue, 29 Oct 2019 09:02:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191028164150.GG5576@willie-the-truck>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.224.57]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mylène Josserand <mylene.josserand@bootlin.com>
 
-Enable a FocalTech EDT-FT5x06 Polytouch touchscreen.
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 2019/10/29 0:41, Will Deacon wrote:
+> On Mon, Oct 28, 2019 at 05:08:37PM +0800, Xiang Zheng wrote:
+>> When attempting to executing non-executable memory, the fault message
+>> shows:
+>>
+>>   Unable to handle kernel read from unreadable memory at virtual address
+>>   ffff802dac469000
+>>
+>> This may confuse someone, so add a new fault message for instruction
+>> abort.
+>>
+>> Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+>> ---
+>>  arch/arm64/mm/fault.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>> index 9fc6db0bcbad..68bf4ec376d0 100644
+>> --- a/arch/arm64/mm/fault.c
+>> +++ b/arch/arm64/mm/fault.c
+>> @@ -318,6 +318,8 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
+>>  	if (is_el1_permission_fault(addr, esr, regs)) {
+>>  		if (esr & ESR_ELx_WNR)
+>>  			msg = "write to read-only memory";
+>> +		else if (is_el1_instruction_abort(esr))
+>> +			msg = "execute non-executable memory";
+> 
+> nit, please make this "execute from non-executable memory".
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-index 568b90ece342..19f520252dc5 100644
---- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
-@@ -164,6 +164,22 @@
- 	status = "okay";
- };
- 
-+&i2c0 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	touchscreen@38 {
-+		compatible = "edt,edt-ft5x06";
-+		reg = <0x38>;
-+		interrupt-parent = <&r_pio>;
-+		interrupts = <0 7 IRQ_TYPE_EDGE_FALLING>; /* PL7 */
-+		reset-gpios = <&pio 3 5 GPIO_ACTIVE_LOW>; /* PD5 */
-+		vcc-supply = <&reg_ldo_io0>;
-+		touchscreen-size-x = <1024>;
-+		touchscreen-size-y = <600>;
-+	};
-+};
-+
- &i2c1 {
- 	clock-frequency = <400000>;
- 	status = "okay";
+Thanks, I will make this in the next version of patch.
+
+> 
+> With that:
+> 
+> Acked-by: Will Deacon <will@kernel.org>
+> 
+> Will
+> 
+> .
+> 
+
 -- 
-2.23.0
+
+Thanks,
+Xiang
 
