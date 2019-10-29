@@ -2,63 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C38E7FF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E85A7E7FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 06:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732231AbfJ2FyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 01:54:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51868 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfJ2FyC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 01:54:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=e6RnrH2a/xpt2VMsLVKGZqzPeW9lRxkDro1R520eqQQ=; b=msOZSol4yz79J1fe4CsOfyuVj
-        CNdbmyX/M4AxqpDVZGCsWG8UgR3sLsHZh6JfVG+GKO4uyHeKWQ1Ur5pFeXzU15bwsQOFkGvMfKbre
-        bTdMpchI9RrZTKc0Mv16399xz+xAd06N/maT8aVXo+R8tyM7T5M8w4NVDZrvW34EfsuXuu1zVy6Sh
-        pspzdWcGYgQDYZdgQwSj3qWIaagT8+HBedyFlVzGHfCqYKpWwbvkNQsYLAXvLE8muByumox6rzgDv
-        2EjwSMepzaDya+Kk2ImMAJyCuCUMVth9KhyJgMHd3z6N21itwWxAhGOIqzpWaZ6xiULoghzuiHTcD
-        fUsb/qk1Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iPKS7-00084L-BP; Tue, 29 Oct 2019 05:53:59 +0000
-Date:   Mon, 28 Oct 2019 22:53:59 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Please add the zuf tree to linux-next
-Message-ID: <20191029055359.GA30787@infradead.org>
-References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
- <20191024023606.GA1884@infradead.org>
- <20191029160733.298c6539@canb.auug.org.au>
+        id S1732060AbfJ2F4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 01:56:09 -0400
+Received: from verein.lst.de ([213.95.11.211]:38036 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731519AbfJ2F4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 01:56:09 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C273A68AFE; Tue, 29 Oct 2019 06:56:05 +0100 (CET)
+Date:   Tue, 29 Oct 2019 06:56:05 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build failure after merge of the xfs tree
+Message-ID: <20191029055605.GA16630@lst.de>
+References: <20191029101151.54807d2f@canb.auug.org.au> <20191028231806.GA15222@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191029160733.298c6539@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191028231806.GA15222@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 04:07:33PM +1100, Stephen Rothwell wrote:
-> > > Please add the zuf tree below to the linux-next tree.
-> > > 	[https://github.com/NetApp/zufs-zuf zuf]  
+On Mon, Oct 28, 2019 at 04:18:06PM -0700, Darrick J. Wong wrote:
+> On Tue, Oct 29, 2019 at 10:11:51AM +1100, Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> > I don't remember us coming to the conclusion that this actually is
-> > useful doesn't just badly duplicate the fuse functionality.
+> > After merging the xfs tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
 > 
-> So is that a hard Nak on inclusion in linux-next at this time?
+> <groan> Yeah, that's the same thing reported by the kbuild robot an hour
+> ago.  FWIW I pushed a fixed branch but I guess it's too late for today,
+> oh well....
+> 
+> ...the root cause of course was the stray '}' in one of the commits,
+> that I didn't catch because compat ioctls are hard. :(
 
-As far as I'm concerned yes.  In the end we'll need to find rough
-consensus as I'm not the only one to decide, though.
+Weird.  My usual builds have compat ioclts enabled, and I never got
+any report like this.
