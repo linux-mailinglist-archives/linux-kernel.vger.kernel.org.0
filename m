@@ -2,79 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D26E89A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3739E89A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:37:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbfJ2Ngl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:36:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:58801 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388602AbfJ2Ngl (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:36:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 06:36:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,244,1569308400"; 
-   d="scan'208";a="211751713"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.210.130]) ([10.254.210.130])
-  by orsmga002.jf.intel.com with ESMTP; 29 Oct 2019 06:36:38 -0700
-Subject: Re: [PATCH v4 5/7] perf report: Sort by sampled cycles percent per
- block for stdio
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <20191028013330.18319-1-yao.jin@linux.intel.com>
- <20191028013330.18319-6-yao.jin@linux.intel.com>
- <20191029092747.GH28772@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <08921142-6e65-62e3-2a1c-9a78c7bc7d2e@linux.intel.com>
-Date:   Tue, 29 Oct 2019 21:36:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388759AbfJ2NhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:37:12 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40060 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfJ2NhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 09:37:12 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w9so2442142wmm.5;
+        Tue, 29 Oct 2019 06:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8lwcaYnJrBKyqIG9quTXehDwR3z8AXMYUrj3JaJqoL0=;
+        b=jSRS6F2qMonve33J/HWHD6MXsXHOUiX2hcdxSgsj/jPwNkKm6igjOBRq36WOFRR5I6
+         Tyel5I8PmE4Rdsb06RdIZoG8ZeFGfVo/zW6wrDRVjiK2jY9E/GpYEwFJ+YqlTdtyHbM0
+         vQDUMEVIqVhw39sowvaDpCss+lRM1dKJ9j3zzW9eHbjdZPsS3IrfKZt93f16cbOjLbdV
+         jMv8BH7H3CAONeKjNcqFV2Wxph+qJpXS07b40lVWLMkrn9qUSFSRzMYXujJVr5xRKJrp
+         HywHR+rr85QWTTFRKaFJCSwYxK8dONmTTc5oEVq+qqdFULzcRXrsaAMZYq/xZ+aL8Z2d
+         eQbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8lwcaYnJrBKyqIG9quTXehDwR3z8AXMYUrj3JaJqoL0=;
+        b=sMH3rQumdt75QueNIrXz/yi3r/kvlF0/8Hp+nUXlXMO+9G06llkF99wNUBIvAMj2IN
+         TrTeFx+DEjSNAJ+L84zOrq2xwMa6OSbd4U+dvjch88eOms2GXrIPsr9BY30hJv9wSlrL
+         Oz6G0vRPXpskf6cFDF9O/4MbO1GwYd91x+ZftDl+aHCBXFQwcxBk6nCDZwfax6SnknTu
+         aD3DyJ5XjaVx999bORDQnpJ2yrMeX7r3HAOxxRbOpcYKUsU/hHdYGXyZfD7mQ1q6EVrF
+         78Xnlpv9sMFD1SBJWxd86KzZNzF4c+DF69i/x0ma7YPuOW5VkgixeSwbRA56Y9m7z0iy
+         sPVA==
+X-Gm-Message-State: APjAAAVHOPe+zWav2IShNrygoXQkj1dYaHn4XIc6LbUfRZljATwcT7qk
+        5IfFTk1iTMvhvzseQMZEz0XOg7Ux
+X-Google-Smtp-Source: APXvYqwV+/m9LTZGb6jkb4Nea5n4oOgmFOuTdwUtlzkPVDv43LKJ7ejn3TwrfWT18J+SNbkZsz8ykQ==
+X-Received: by 2002:a1c:6308:: with SMTP id x8mr4243929wmb.140.1572356229436;
+        Tue, 29 Oct 2019 06:37:09 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id l15sm2819271wme.5.2019.10.29.06.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 06:37:07 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:37:06 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
+ time
+Message-ID: <20191029133706.GH508460@ulmo>
+References: <20190926191755.27131-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191029092747.GH28772@krava>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3ecMC0kzqsE2ddMN"
+Content-Disposition: inline
+In-Reply-To: <20190926191755.27131-1-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--3ecMC0kzqsE2ddMN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/2019 5:27 PM, Jiri Olsa wrote:
-> On Mon, Oct 28, 2019 at 09:33:28AM +0800, Jin Yao wrote:
-> 
-> SNIP
-> 
->> diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
->> index 0e27d6830011..7cf137b0451b 100644
->> --- a/tools/perf/util/hist.c
->> +++ b/tools/perf/util/hist.c
->> @@ -758,6 +758,10 @@ struct hist_entry *hists__add_entry_block(struct hists *hists,
->>   	struct hist_entry entry = {
->>   		.block_info = block_info,
->>   		.hists = hists,
->> +		.ms = {
->> +			.map = al->map,
->> +			.sym = al->sym,
->> +		},
-> 
-> this looks like separated fix, if thats the case
-> please explain the change and move it to separate patch
-> 
-> thanks,
-> jirka
-> 
+On Thu, Sep 26, 2019 at 10:17:54PM +0300, Dmitry Osipenko wrote:
+> It is possible to get a lockup if kernel decides to enter LP2 cpuidle
+> from some clk-notifier, in that case CCF's "prepare" mutex is kept locked
+> and thus clk_get_rate(pclk) blocks on the same mutex with interrupts being
+> disabled, hanging machine.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>=20
+> Changelog:
+>=20
+> v5: Clk notifier now takes powergates_lock to avoid potential racing with
+>     tegra_io_pad_*().
+>=20
+>     The original fallback to 100MHz when clk_get_rate() fails is preserved
+>     now.
+>=20
+> v4: Added clk-notifier to track PCLK rate-changes, which may become useful
+>     in the future. That's done in response to v3 review comment from Peter
+>     De Schrijver.
+>=20
+>     Now properly handling case where clk pointer is intentionally NULL on
+>     the driver's probe.
+>=20
+> v3: Changed commit's message because I actually recalled what was the
+>     initial reason for the patch, since the problem reoccurred once again.
+>=20
+> v2: Addressed review comments that were made by Jon Hunter to v1 by
+>     not moving the memory barrier, replacing one missed clk_get_rate()
+>     with pmc->rate, handling possible clk_get_rate() error on probe and
+>     slightly adjusting the commits message.
+>=20
+>  drivers/soc/tegra/pmc.c | 71 ++++++++++++++++++++++++++++++++---------
+>  1 file changed, 56 insertions(+), 15 deletions(-)
 
-Sorry, that should be the obsolete code. Thanks so much for pointing 
-this out.
+Applied to for-5.5/soc, thanks.
 
-Thanks
-Jin Yao
+Thierry
 
+--3ecMC0kzqsE2ddMN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24QIIACgkQ3SOs138+
+s6FSwxAAizux6FGJiu8C/lxKhpOifS4J9zZnsoI30S8mDSYeeRt1IqLcxtOXNiVL
+Ch4E4gBOE6MMI7PWaiWwvTPcJSD9dR9Fc4RMvs30DN1dapyuuBANuqsiSWjeok7v
+fomzpCvZl4BHwKP1FkNZTL39B5z9r4tdAP4DRQz3fOuMi3qU135f+RPJuVXkdmHk
+DfirDHIvTvNYJNUY7EZjUZvHvno7ai/yuUiHAayXghcUrP8xEk4iYxWfXonAoqWC
+TYVItuoUXz1KcBNPEpPKMIU2DstXE3IiDaTOB2wn9ooxI+nnKSN0It9DRQQTLc/Y
+0LrOSwMi0OhJV3FlMoFc82t582ZxSwTcSkF629p4CX+M9JEuvFZ7r3oEi/WkP+3+
+ZuMSQihQ02wjdzsX+zaxfV2SJRvGl8Q8HgbaZDwiVsY7ZpUeWT+ud8MzHCvV7WHE
+CJMjKPfhXep54kUTIzTK8prZ9JTq4HIHCnaljszzrvDDbcFtp1GfVlJTMdAYYlaV
+TZH5hPnzG3EkX2tF0ND0Ovfej1+t4ea9rwf6p0JywAfQxISawPKSPK91DoWw7vFN
+DcinaU1607kTJdfx1ucKWEUjx/h3eChE2baLeRfaF2xWRYlTvPCWcis7H68TZVSm
+axjmHvrRbHhjYRwOp0mha6ltwZgGiEu8x9LuliyVkqOQtJmIAUA=
+=ISZs
+-----END PGP SIGNATURE-----
+
+--3ecMC0kzqsE2ddMN--
