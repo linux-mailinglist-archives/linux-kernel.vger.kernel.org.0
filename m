@@ -2,34 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB39CE86EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B03DE8722
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:31:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbfJ2L2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:28:52 -0400
-Received: from vps.xff.cz ([195.181.215.36]:60276 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbfJ2L2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:28:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1572348530; bh=7CvZFllA5Lo3ke7W4E4r8AmPqCtcdtZ72Xnw6OysY14=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rCaxpPR2UhHDsQQ7Z4TX360K5iP0YBo4qKopDd7yNu0zAFiRBG39FmQ9J+Htaednr
-         +MeXaB5cGXQf1+HuM+Q9pUW0qPMz1zRzTeXAWk/vQpOEVEh39u8M7s7xZvekDuPRK7
-         JItx9M4N6QwfjCvlpk8RdiZC3Ybj8/1oWHZE2rkc=
-From:   Ondrej Jirman <megous@megous.com>
-To:     linux-sunxi@googlegroups.com
-Cc:     Ondrej Jirman <megous@megous.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ALLWINNER
-        A10),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm: sun4i: Add support for suspending the display driver
-Date:   Tue, 29 Oct 2019 12:28:46 +0100
-Message-Id: <20191029112846.3604925-1-megous@megous.com>
+        id S2387594AbfJ2L3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:29:52 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:37261 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731719AbfJ2L2x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 07:28:53 -0400
+Received: by mail-wr1-f45.google.com with SMTP id e11so13226115wrv.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=180LRLtVibZuNEGVjJ0cua0pIuWoyx489HZ44l4xhjA=;
+        b=PU3WiNMq4xmp4SOp6Nym7RsV7fF+pmSZrVhFa9Gghmlmjgf+AD0zD45oHeA/l0A9hd
+         dncbpaNvA995dWoQzYXMncMDHWjUz2K8lA2llvlp3SUG9GF9KX/AILx286Giop9GPLYs
+         VrQ+D1Ck9AbEKVZy+EqhtjTLkXLu+6cCvfD+j6dJmaOCgZUmJYTPoIsVO1cpLRDb4kDt
+         x8PvNumAgLUgcSLWhwLYtWnM5OlbC0DjZcxsOx4jUxNRlPNFTJe2gkVRvCD4YXaplNvJ
+         I983YTh9IAr2CrcP1nYaUEkvSTknzLXbW9/CkHu3DuIT6+tJi4jmB/nZeuZG6IqvZbHV
+         LWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=180LRLtVibZuNEGVjJ0cua0pIuWoyx489HZ44l4xhjA=;
+        b=NkksRnx3ujq95FwuBTrBq+2wJ0JA7Axa+oZ5GwjdTeXegS/tuWnrKkurU3nxck1X/k
+         CZATH4g0vecCBBQKubhvi5wW39DmuVCO8FNyO4RcsuYeGlp5cKf/pN1I39RaseSq2z1V
+         IXvlLfrZ7MD7hccaJuf6P2uM3VSBdwkPqCLGGn0rKP93XnkuuecrzdUtluF4SzfjiLhj
+         dDMcrJ81/6akZy4iAqwGHShoOfgJXUVEMKbDkgtOjihzKrbEc2SJShzWYZrjK/4xANZu
+         tXdKvY1iQtFerD2JFHYeS9gWGrmDc/np7xfWInVO+pne4QDE9CxDmrD9QT6t/5VfLsLt
+         KIrA==
+X-Gm-Message-State: APjAAAVPoqNkdw0Kv8S0BamqfD38KSi8Nib9sKhcx1zMFuzFu2Y0kKQO
+        uZqPA+zPal4QfTzkWSfdNYTZYQ==
+X-Google-Smtp-Source: APXvYqz/VlwMWdr1F9+5qfi54fdp3VoiqQnl4Rgoi5UDLE6O6zU2YfnT5c/Y4aEp2jbXV2z6+j0JDQ==
+X-Received: by 2002:a5d:4b42:: with SMTP id w2mr18948240wrs.360.1572348532034;
+        Tue, 29 Oct 2019 04:28:52 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id f20sm2373247wmb.6.2019.10.29.04.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 04:28:51 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     robh@kernel.org, broonie@kernel.org, lee.jones@linaro.org,
+        linus.walleij@linaro.org
+Cc:     vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 01/11] ASoC: dt-bindings: add dt bindings for WCD9340/WCD9341 audio codec
+Date:   Tue, 29 Oct 2019 11:26:50 +0000
+Message-Id: <20191029112700.14548-2-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
+References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,56 +66,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shut down the display engine during suspend.
+This patch adds bindings for wcd9340/wcd9341 audio codec which can
+support both SLIMbus and I2S/I2C interface.
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
-Changes in v2:
-- spaces -> tabs
+ .../bindings/sound/qcom,wcd934x.yaml          | 162 ++++++++++++++++++
+ 1 file changed, 162 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
 
- drivers/gpu/drm/sun4i/sun4i_drv.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index a5757b11b730..c519d7cfcf43 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -346,6 +346,27 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 	return count;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int sun4i_drv_drm_sys_suspend(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
+new file mode 100644
+index 000000000000..d6cfde6597db
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
+@@ -0,0 +1,162 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/qcom,wcd934x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	return drm_mode_config_helper_suspend(drm);
-+}
++title: Bindings for Qualcomm WCD9340/WCD9341 Audio Codec
 +
-+static int sun4i_drv_drm_sys_resume(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
++maintainers:
++  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 +
-+	return drm_mode_config_helper_resume(drm);
-+}
-+#endif
++description: |
++  Qualcomm WCD9340/WCD9341 Codec is a standalone Hi-Fi audio codec IC.
++  It has in-built Soundwire controller, pin controller, interrupt mux and
++  supports both I2S/I2C and SLIMbus audio interfaces.
 +
-+static const struct dev_pm_ops sun4i_drv_drm_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(sun4i_drv_drm_sys_suspend,
-+				sun4i_drv_drm_sys_resume)
-+};
++properties:
++  compatible:
++    const: slim217,250
 +
- static int sun4i_drv_probe(struct platform_device *pdev)
- {
- 	struct component_match *match = NULL;
-@@ -418,6 +439,7 @@ static struct platform_driver sun4i_drv_platform_driver = {
- 	.driver		= {
- 		.name		= "sun4i-drm",
- 		.of_match_table	= sun4i_drv_of_table,
-+		.pm = &sun4i_drv_drm_pm_ops,
- 	},
- };
- module_platform_driver(sun4i_drv_platform_driver);
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  reset-gpios:
++    description: GPIO spec for reset line to use
++    maxItems: 1
++
++  slim-ifc-dev:
++    description: SLIMBus Interface device phandle
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: extclk
++
++  vdd-buck-supply:
++    description: A reference to the 1.8V buck supply
++
++  vdd-buck-sido-supply:
++    description: A reference to the 1.8V SIDO buck supply
++
++  vdd-rx-supply:
++    description: A reference to the 1.8V rx supply
++
++  vdd-tx-supply:
++    description: A reference to the 1.8V tx supply
++
++  vdd-vbat-supply:
++    description: A reference to the vbat supply
++
++  vdd-io-supply:
++    description: A reference to the 1.8V I/O supply
++
++  vdd-micbias-supply:
++    description: A reference to the micbias supply
++
++  qcom,micbias1-microvolts:
++    description: micbias1 voltage between 1800000 - 2850000 microvolts
++
++  qcom,micbias2-microvolts:
++    description: micbias2 voltage between 1800000 - 2850000 microvolts
++
++  qcom,micbias3-microvolts:
++    description: micbias3 voltage between 1800000 - 2850000 microvolts
++
++  qcom,micbias4-microvolts:
++    description: micbias4 voltage between 1800000 - 2850000 microvolts
++
++  clock-output-names:
++    const: mclk
++
++  clock-frequency:
++    description: Clock frequency of output clk in Hz
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 1
++
++  '#clock-cells':
++    const: 0
++
++  '#sound-dai-cells':
++    const: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++patternProperties:
++  "^.*@[0-9a-f]+$":
++    type: object
++    description: |
++      WCD934x subnode for each slave devices. Bindings of each subnodes
++      depends on the specific driver providing the functionality and
++      documented in their respective bindings.
++
++    properties:
++      reg:
++        maxItems: 1
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - slim-ifc-dev
++  - interrupts
++  - interrupt-controller
++  - clock-frequency
++  - clock-output-names
++  - qcom,micbias1-microvolts
++  - qcom,micbias2-microvolts
++  - qcom,micbias3-microvolts
++  - qcom,micbias4-microvolts
++  - "#interrupt-cells"
++  - "#clock-cells"
++  - "#sound-dai-cells"
++  - "#address-cells"
++  - "#size-cells"
++
++examples:
++  - |
++    codec@1,0{
++        compatible = "slim217,250";
++        reg  = <1 0>;
++        reset-gpios = <&tlmm 64 0>;
++        slim-ifc-dev  = <&wcd9340_ifd>;
++        #sound-dai-cells = <1>;
++        interrupt-parent = <&tlmm>;
++        interrupts = <54 4>;
++        interrupt-controller;
++        #interrupt-cells = <1>;
++        #clock-cells = <0>;
++        clock-frequency = <9600000>;
++        clock-output-names = "mclk";
++        qcom,micbias1-microvolts = <1800000>;
++        qcom,micbias2-microvolts = <1800000>;
++        qcom,micbias3-microvolts = <1800000>;
++        qcom,micbias4-microvolts = <1800000>;
++        clock-names = "extclk";
++        clocks = <&rpmhcc 2>;
++
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        pinctrl@42 {
++            reg = <0x42 0x2>;
++        };
++    };
++
++...
 -- 
-2.23.0
+2.21.0
 
