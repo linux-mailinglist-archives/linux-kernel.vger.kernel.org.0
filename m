@@ -2,91 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0819DE7DC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A07E7DC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfJ2BCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 21:02:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47294 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726365AbfJ2BCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 21:02:49 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CCEF221C64DBA44192B8;
-        Tue, 29 Oct 2019 09:02:46 +0800 (CST)
-Received: from [127.0.0.1] (10.133.224.57) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
- 09:02:38 +0800
-Subject: Re: [PATCH] arm64: print additional fault message when executing
- non-exec memory
-To:     Will Deacon <will@kernel.org>
-CC:     <catalin.marinas@arm.com>, <james.morse@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
-References: <20191028090837.39652-1-zhengxiang9@huawei.com>
- <20191028164150.GG5576@willie-the-truck>
-From:   Xiang Zheng <zhengxiang9@huawei.com>
-Message-ID: <922ff695-62c4-5142-5efa-daeebd73459e@huawei.com>
-Date:   Tue, 29 Oct 2019 09:02:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1727733AbfJ2BGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 21:06:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:46730 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726365AbfJ2BGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 21:06:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 067DF31F;
+        Mon, 28 Oct 2019 18:06:13 -0700 (PDT)
+Received: from e107533-lin.cambridge.arm.com (e107533-lin.shanghai.arm.com [10.169.109.76])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB1D13F71E;
+        Mon, 28 Oct 2019 18:06:08 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 09:06:05 +0800
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Zhang Rui <rui.zhang@intel.com>, agross@kernel.org,
+        bjorn.andersson@linaro.org, daniel.lezcano@linaro.org,
+        edubezval@gmail.com, ilina@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tdas@codeaurora.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] clk: qcom: Initialise clock drivers earlier
+Message-ID: <20191029010605.GB27884@e107533-lin.cambridge.arm.com>
+References: <cover.1571314830.git.amit.kucheria@linaro.org>
+ <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571314830.git.amit.kucheria@linaro.org>
+ <20191017174723.8024521D7A@mail.kernel.org>
+ <20191018060345.wjflngfdnqa3gbsu@vireshk-i7>
+ <20191028172225.1B1CF20862@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191028164150.GG5576@willie-the-truck>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.224.57]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028172225.1B1CF20862@mail.kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 28, 2019 at 10:22:24AM -0700, Stephen Boyd wrote:
+> Quoting Viresh Kumar (2019-10-17 23:03:45)
+> > On 17-10-19, 10:47, Stephen Boyd wrote:
+> > > Quoting Amit Kucheria (2019-10-17 05:27:37)
+> > > > Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
+> > > > can have earlier access to cpufreq during booting.
+> > > >
+> > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > > ---
+> > >
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > >
+> > > Makes me sad again.
+> >
+> > I am wondering why it makes you sad ? :)
+> >
+>
+> We're playing games with initcall levels :(
+>
 
++1, which will come back and bite us hard soon :)
 
-On 2019/10/29 0:41, Will Deacon wrote:
-> On Mon, Oct 28, 2019 at 05:08:37PM +0800, Xiang Zheng wrote:
->> When attempting to executing non-executable memory, the fault message
->> shows:
->>
->>   Unable to handle kernel read from unreadable memory at virtual address
->>   ffff802dac469000
->>
->> This may confuse someone, so add a new fault message for instruction
->> abort.
->>
->> Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
->> ---
->>  arch/arm64/mm/fault.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->> index 9fc6db0bcbad..68bf4ec376d0 100644
->> --- a/arch/arm64/mm/fault.c
->> +++ b/arch/arm64/mm/fault.c
->> @@ -318,6 +318,8 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
->>  	if (is_el1_permission_fault(addr, esr, regs)) {
->>  		if (esr & ESR_ELx_WNR)
->>  			msg = "write to read-only memory";
->> +		else if (is_el1_instruction_abort(esr))
->> +			msg = "execute non-executable memory";
-> 
-> nit, please make this "execute from non-executable memory".
-
-Thanks, I will make this in the next version of patch.
-
-> 
-> With that:
-> 
-> Acked-by: Will Deacon <will@kernel.org>
-> 
-> Will
-> 
-> .
-> 
-
--- 
-
-Thanks,
-Xiang
-
+--
+Regards,
+Sudeep
