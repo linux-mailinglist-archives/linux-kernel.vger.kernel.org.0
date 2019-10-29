@@ -2,140 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC821E8270
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5ABE827A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:25:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfJ2HXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 03:23:18 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36121 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387670AbfJ2HXE (ORCPT
+        id S1726903AbfJ2HYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 03:24:38 -0400
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:43461 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfJ2HYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:23:04 -0400
-Received: by mail-ua1-f68.google.com with SMTP id f21so3192012uan.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 00:23:04 -0700 (PDT)
+        Tue, 29 Oct 2019 03:24:37 -0400
+Received: by mail-lj1-f176.google.com with SMTP id s4so13183993ljj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 00:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0SUH6/NtBC3ilVCpdONozL4mS3Prp0pIL3y1hHCcxAk=;
-        b=eMchEOvQ/jKSqC7IlUVOrUOu2sRq3JlNHSwrSwCVZV7hyYX+NwsA3oadySVIS2GMhv
-         Fvs0xOAQNNajFRHYthK70jYXsoHFLR0MqpOCX4UruR1XUSVhwPotDPQQJvLDpR6Qs35N
-         fO+lH1wwkAdlVyFMk0fkQlRl+r7cTgEooYDbw=
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SoFQNKQ4Qa81yrqKCpibxDMBO3sAN1LEi2FGE9F/8RA=;
+        b=Hy0//0hOS03mKb68HU9qDOg02jeHGzftxkWxOIgCuOU7CKTJ+k6iUZX7gjKOSvGQPl
+         4BICrmSElIBBlJfP3hi6Yo0Otz+bH5RNw0pVZLArmHAfxPetqDt+zD9HpnTKyeckCM+D
+         g8xjzcLF853wbCU3oVitJzkWqZdiNvQxj+RoY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0SUH6/NtBC3ilVCpdONozL4mS3Prp0pIL3y1hHCcxAk=;
-        b=FvrCwGacAnqLVQvraznTvPJd18Wo2/kP3vIac2V6sFlOfuyp8BYOOL4vBO4NoIlGJH
-         Bbc+RizlTnr576BUW6zDT4h5ehAPgBcpZPPWmydtpgyovapz4QIJdlmCPbxOQohfjow3
-         f+D5GD9NwOHaGoi7Pw01IPF7SIaSBorL+OwdYj99+53jiaJLtxEQF4ld3WBFPyDnKEsJ
-         UNGsrk6DkRqW5nBRdGAZGsUWp3oayYke7+8UVWcUpAfHjAGSLZqiBO/NNrbwqOeI/yVr
-         8EO3l1IxyH/FryQoHKuMxARLdsDgHvRlJQzLruSsgrbt0TGNoA94DTnCAhzdvLhvJ1/b
-         GoYA==
-X-Gm-Message-State: APjAAAWayI0jdXz7GDK4EDs6h/Z84bPAaVQwGfGfpsTlJodcr1SgDmww
-        VMo2z8qid/Fnhb9p53i4n3Pkldgg3KKpcKjELi9TCqUDg4A=
-X-Google-Smtp-Source: APXvYqwu6KYbConXB0iKr6Mov1RGaa3I/esweFtuANMt32BxSyqi5DbWOfQ88/Vd4VamORlLwO9ez57AWW6x/2gTwcw=
-X-Received: by 2002:ab0:6503:: with SMTP id w3mr7651016uam.17.1572333783797;
- Tue, 29 Oct 2019 00:23:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SoFQNKQ4Qa81yrqKCpibxDMBO3sAN1LEi2FGE9F/8RA=;
+        b=d6o0DrI7gJKLk5aWlJ2Zde4n+lxFFUHhrdtkpAhngcdVZOlrB/bRLsrwprH6eN/FSJ
+         O4gHLrkFRoqrJhjU3bG8FBrwg8INjVMI7KrLT+u22/hYnexvw+CXV4WQltzVJWIeMbZV
+         HyYD+FuBd1sYzWADvpsMJ9mnkWUarrmPygQvkC1l5R0jvbYGitPNpeH1zf92VGOEiF19
+         O1yicS0Kyv/qd9Xq970pPy4dBAvOfwHyf9Rp1lraezeQQ8aLI5vu6Nx8H22bUnkzxRyF
+         lXyhI8E00/YoKrKJkhQQnmVGy+SIVdyEIs49r/t1Cl1MPTsFSbVeZbfCtZ1fXTyBCEWU
+         47jw==
+X-Gm-Message-State: APjAAAU+rsGmxywjV/xuJ5RhAMoxxhBu6YfQrruTLyrlZGeiA0CkHcph
+        gnmMGMA9ylCMe5CCico10HYYeqlyLGv9suE9
+X-Google-Smtp-Source: APXvYqxZ8IhrFy/tgteftGXSXlOqZ4BXScz2I7670qyE6XtdMubwJllvBbNMdBuHGKwNyqbFNN3qLw==
+X-Received: by 2002:a2e:b0c9:: with SMTP id g9mr1293910ljl.95.1572333873850;
+        Tue, 29 Oct 2019 00:24:33 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id p88sm9377100ljp.13.2019.10.29.00.24.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 00:24:33 -0700 (PDT)
+Subject: Re: detecting misuse of of_get_property
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.co>,
+        linux-sparse@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <ec277c12-c608-6326-7723-be8cab4f524a@rasmusvillemoes.dk>
+ <20191028224914.enpqjkcvbxyeexnl@desk.local>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <2dcd6ac3-8a01-a11c-3532-5a8eb83ccdf5@rasmusvillemoes.dk>
+Date:   Tue, 29 Oct 2019 08:24:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191023024348.225969-1-ikjn@chromium.org> <20191025194101.GA4734@bogus>
-In-Reply-To: <20191025194101.GA4734@bogus>
-From:   Ikjoon Jang <ikjn@chromium.org>
-Date:   Tue, 29 Oct 2019 15:22:52 +0800
-Message-ID: <CAATdQgDxC_1EH4cBqf7deEqRjtRU1s4o=L8vOztvVZ7NS_q9Mw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: input: Add DT bindings for Whiskers switch
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Nicolas Boitchat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191028224914.enpqjkcvbxyeexnl@desk.local>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 26, 2019 at 3:41 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Oct 23, 2019 at 10:43:48AM +0800, Ikjoon Jang wrote:
-> > Add the DT binding document for Hammer's TABLET_MODE switch.
->
-> This doesn't have any properties. Why does it need to be in DT? Just
-> have the EC driver instantiate it.
->
-> >
-> > Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
-> > ---
-> >  .../devicetree/bindings/input/cros-cbas.yaml  | 22 +++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/input/cros-cbas.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/input/cros-cbas.yaml b/Documentation/devicetree/bindings/input/cros-cbas.yaml
-> > new file mode 100644
-> > index 000000000000..3bc989c6a295
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/input/cros-cbas.yaml
-> > @@ -0,0 +1,22 @@
-> > +# SPDX-License-Identifier: GPL-2.0
->
-> (GPL-2.0-only OR BSD-2-Clause) for new bindings please.
+On 28/10/2019 23.49, Luc Van Oostenryck wrote:
+> On Mon, Oct 28, 2019 at 08:32:42PM +0100, Rasmus Villemoes wrote:
+>> Hi,
+>>
+>> I just spent some time trying to convert some so far PPC-only drivers to
+>> be more generic. One of the things I had to do was convert stuff like
+>>
+>>   u32 *val = of_get_property(np, "bla", NULL);
+>>   do_stuff_with(*val);
+>>
+>> with
+>>
+>>   of_property_read_u32(np, "bla", &val);
+>>   do_stuff_with(val);
+>>
+>> (error checking omitted for simplicity). The problem is that
+>> of_get_property() just returns void*. When the property is just a
+>> string, there's no problem interpreting that as a char*. But when the
+>> property is a number of array of numbers, I'd like some way to flag
+>> casting it to u32* as an error - if you cast it to a (pointer to integer
+>> type wider than char), it must be to a __be32*. Is there some way
+>> sparse/smatch could help find such cases?
+> 
+> If I understand you correctly, you would need a kind of 'soft'
+> bitwise pointer?
 
-This will be GPL-2.0-only in next patch.
+Yes, that's a very good way of putting it.
 
->
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/input/cros-cbas.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: ChromeOS Hammer's Base Attached Switch
-> > +
-> > +maintainers:
-> > +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > +
-> > +description:
-> > +  This device is used to signal when a detachable base is attached to a
-> > +  Chrome OS tablet. The node for this device must be under a cros-ec node
-> > +  like google,cros-ec-spi or google,cros-ec-i2c.
->
-> This should probably just be part of an EC schema where it can be
-> enforced that this is a child node. It could be either embedded into it
-> or referenced. I'd lean toward the former given this is only a
-> compatible string...
+> I guess it shouldn't be too hard to add a new flag which would
+> allow cast of bitwise pointers to pointers to char/void (see
+> at end of evaluate.c:evaluate_cast()).
 
-Sorry for basic questions here but I'm a bit confused,
-"embedding" means that cros-ec.txt should be converted
-into json schema first and embed this child bindings into there?
+Hm, yeah, but it should also allow casting to __be32* , but not u32* or
+__le32* (though somebody must have gone out of their way to introduce a
+bug in the latter case). Don't spend too much time on it, I was just
+wondering if there was an easy (maybe already existing) way.
 
-Many Chrome OS tablets have a switch exposed by 'cros-ec-keyb' device
-which is directly controlled by EC. But this 'cros_cbas' switch device is for
-other types of tablets which need additional logics on EC and HID.
-
-Currently it doesn't need to have other properties, but maybe it could require
-additional properties or device links in the future, plus this device
-is not just
-a EC subdevice, so I'd prefer this to be a separate binding.
-
->
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: google,cros-cbas
-> > +
-> > +required:
-> > +  - compatible
->
-> Add here:
->
-> additionalProperties: false.
-
-Okay, I will add this in a new patch set , thank you!
-
->
-> > --
-> > 2.23.0.866.gb869b98d4c-goog
-> >
+Thanks,
+Rasmus
