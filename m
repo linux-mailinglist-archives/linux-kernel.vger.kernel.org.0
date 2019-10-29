@@ -2,213 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96EE1E7E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:23:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A322FE7E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730547AbfJ2CXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:23:22 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39518 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbfJ2CXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:23:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=weWtSFC8Dm8rRDFq7Ws7YUnkyjq/k0sSGCP9VGBKkyw=; b=fJVzoelD4VQgmU1U+f7c/xTlQ5
-        sNvBmfgwFgZ1JPMBhPUlhZdvJCN3484WQZFbgDu/hxD5WOBoL1rKBHhHw7VXRoCgqM0cln5ylX5WF
-        lnCX5riYaxwMGB21OgC97MCdQTdzWPkaGQ9c9zui7QlgA7bM7TgZ3MiOfStUM5RKTEvM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iPHA1-0001NW-4d; Tue, 29 Oct 2019 03:23:05 +0100
-Date:   Tue, 29 Oct 2019 03:23:05 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     netdev@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 net-next 05/12] dt-bindings: net: ti: add new cpsw
- switch driver bindings
-Message-ID: <20191029022305.GK15259@lunn.ch>
-References: <20191024100914.16840-1-grygorii.strashko@ti.com>
- <20191024100914.16840-6-grygorii.strashko@ti.com>
+        id S1730657AbfJ2CZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:25:51 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25904 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727987AbfJ2CZu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 22:25:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572315949;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Cg6FL8Z4Oi0Duw5nqpZmkZl+hK4mK8GPQGyMFpvz9kE=;
+        b=FDPnGskH2/WbXLNHgSXiuFZs0oQq0oWG29wOFjsLe6sZL4Wqo2/+yMSut8e3p2gq2A5W9z
+        y4oBVmxrkAMIF69z92xY7pAMQ1PDf8+VbzBVr3grCJYyVCzLUowYtVBrLRTD+2eLxp5Vhx
+        XMo0NdZRqzM5SWiIk+IbRiYDlk2qrXc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-288-8x8w1UA6NZOwtEZSwEzdbg-1; Mon, 28 Oct 2019 22:25:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35EC28017DD;
+        Tue, 29 Oct 2019 02:25:46 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C23295C1D6;
+        Tue, 29 Oct 2019 02:25:38 +0000 (UTC)
+Date:   Tue, 29 Oct 2019 10:25:33 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gal Pressman <galpress@amazon.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scatterlist: Speed up for_each_sg() loop macro
+Message-ID: <20191029022533.GE22088@ming.t460p>
+References: <20191025213359.7538-1-sultan@kerneltoast.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20191025213359.7538-1-sultan@kerneltoast.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: 8x8w1UA6NZOwtEZSwEzdbg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191024100914.16840-6-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +TI SoC Ethernet Switch Controller Device Tree Bindings (new)
-> +------------------------------------------------------
-> +
-> +The 3-port switch gigabit ethernet subsystem provides ethernet packet
-> +communication and can be configured as an ethernet switch.
+On Fri, Oct 25, 2019 at 02:33:58PM -0700, Sultan Alsawaf wrote:
+> From: Sultan Alsawaf <sultan@kerneltoast.com>
+>=20
+> Scatterlists are chained in predictable arrays of up to
+> SG_MAX_SINGLE_ALLOC sg structs in length. Using this knowledge, speed up
+> for_each_sg() by using constant operations to determine when to simply
+> increment the sg pointer by one or get the next sg array in the chain.
+>=20
+> Rudimentary measurements with a trivial loop body show that this yields
+> roughly a 2x performance gain.
+>=20
+> The following simple test module proves the correctness of the new loop
+> definition by testing all the different edge cases of sg chains:
+> #include <linux/module.h>
+> #include <linux/scatterlist.h>
+> #include <linux/slab.h>
+>=20
+> static int __init test_for_each_sg(void)
+> {
+> =09static const gfp_t gfp_flags =3D GFP_KERNEL | __GFP_NOFAIL;
+>         struct scatterlist *sg;
+>         struct sg_table *table;
+>         long old =3D 0, new =3D 0;
+>         unsigned int i, nents;
+>=20
+>         table =3D kmalloc(sizeof(*table), gfp_flags);
+>         for (nents =3D 1; nents <=3D 3 * SG_MAX_SINGLE_ALLOC; nents++) {
+>                 BUG_ON(sg_alloc_table(table, nents, gfp_flags));
+>                 for (sg =3D table->sgl; sg; sg =3D sg_next(sg))
+>                         old ^=3D (long)sg;
+>                 for_each_sg(table->sgl, sg, nents, i)
+>                         new ^=3D (long)sg;
+>                 sg_free_table(table);
+>         }
+>=20
+>         BUG_ON(old !=3D new);
+>         kfree(table);
+>         return 0;
+> }
+> module_init(test_for_each_sg);
+>=20
+> Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+> ---
+>  include/linux/scatterlist.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+> index 556ec1ea2574..73f7fd6702d7 100644
+> --- a/include/linux/scatterlist.h
+> +++ b/include/linux/scatterlist.h
+> @@ -146,7 +146,10 @@ static inline void sg_set_buf(struct scatterlist *sg=
+, const void *buf,
+>   * Loop over each sg element, following the pointer to a new list if nec=
+essary
+>   */
+>  #define for_each_sg(sglist, sg, nr, __i)=09\
+> -=09for (__i =3D 0, sg =3D (sglist); __i < (nr); __i++, sg =3D sg_next(sg=
+))
+> +=09for (__i =3D 0, sg =3D (sglist); __i < (nr);=09=09\
+> +=09     likely(++__i % (SG_MAX_SINGLE_ALLOC - 1) ||=09\
+> +=09=09    (__i + 1) >=3D (nr)) ? sg++ :=09=09=09\
+> +=09=09    (sg =3D sg_chain_ptr(sg + 1)))
+> =20
 
-Hi Grygorii
+sg_alloc_table_chained() may put a small sglist as the first chunk, then
+chained with big one, and your patch breaks such usage.
 
-Maybe referring it to a 3-port switch will cause confusion, since in
-this use case, it only has 2 ports, and you only list two ports in the
-device tree.
 
-> It provides the
-> +gigabit media independent interface (GMII),reduced gigabit media
-> +independent interface (RGMII), reduced media independent interface (RMII),
-> +the management data input output (MDIO) for physical layer device (PHY)
-> +management.
-> +
-> +Required properties:
-> +- compatible : be one of the below:
-> +	  "ti,cpsw-switch" for backward compatible
-> +	  "ti,am335x-cpsw-switch" for AM335x controllers
-> +	  "ti,am4372-cpsw-switch" for AM437x controllers
-> +	  "ti,dra7-cpsw-switch" for DRA7x controllers
-> +- reg : physical base address and size of the CPSW module IO range
-> +- ranges : shall contain the CPSW module IO range available for child devices
-> +- clocks : should contain the CPSW functional clock
-> +- clock-names : should be "fck"
-> +	See bindings/clock/clock-bindings.txt
-> +- interrupts : should contain CPSW RX_THRESH, RX, TX, MISC interrupts
-> +- interrupt-names : should contain "rx_thresh", "rx", "tx", "misc"
-> +	See bindings/interrupt-controller/interrupts.txt
-> +
-> +Optional properties:
-> +- syscon : phandle to the system control device node which provides access to
-> +	efuse IO range with MAC addresses
-> +
-> +Required Sub-nodes:
-> +- ethernet-ports : contains CPSW external ports descriptions
-> +	Required properties:
-> +	- #address-cells : Must be 1
-> +	- #size-cells : Must be 0
-> +	- reg : CPSW port number. Should be 1 or 2
-> +	- phys : phandle on phy-gmii-sel PHY (see phy/ti-phy-gmii-sel.txt)
-> +	- phy-mode : See [1]
-> +	- phy-handle : See [1]
-> +
-> +	Optional properties:
-> +	- label : Describes the label associated with this port
-> +	- ti,dual-emac-pvid : Specifies default PORT VID to be used to segregate
-> +		ports. Default value - CPSW port number.
-> +	- mac-address : See [1]
-> +	- local-mac-address : See [1]
-> +
-> +- mdio : CPSW MDIO bus block description
-> +	- bus_freq : MDIO Bus frequency
-> +	See bindings/net/mdio.txt and davinci-mdio.txt
-> +
-> +- cpts : The Common Platform Time Sync (CPTS) module description
-> +	- clocks : should contain the CPTS reference clock
-> +	- clock-names : should be "cpts"
-> +	See bindings/clock/clock-bindings.txt
-> +
-> +	Optional properties - all ports:
-> +	- cpts_clock_mult : Numerator to convert input clock ticks into ns
-> +	- cpts_clock_shift : Denominator to convert input clock ticks into ns
-> +			  Mult and shift will be calculated basing on CPTS
-> +			  rftclk frequency if both cpts_clock_shift and
-> +			  cpts_clock_mult properties are not provided.
-> +
-> +[1] See Documentation/devicetree/bindings/net/ethernet-controller.yaml
-> +
-> +Examples:
-> +
-> +mac_sw: switch@0 {
-> +	compatible = "ti,dra7-cpsw-switch","ti,cpsw-switch";
-> +	reg = <0x0 0x4000>;
-> +	ranges = <0 0 0x4000>;
-> +	clocks = <&gmac_main_clk>;
-> +	clock-names = "fck";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	syscon = <&scm_conf>;
-> +	status = "disabled";
-> +
-> +	interrupts = <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>;
-> +	interrupt-names = "rx_thresh", "rx", "tx", "misc"
-> +
-> +	ethernet-ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpsw_port1: port@1 {
-> +			reg = <1>;
-> +			label = "port1";
-> +			/* Filled in by U-Boot */
-> +			mac-address = [ 00 00 00 00 00 00 ];
-> +			phys = <&phy_gmii_sel 1>;
-> +		};
-> +
-> +		cpsw_port2: port@2 {
-> +			reg = <2>;
-> +			label = "wan";
-> +			/* Filled in by U-Boot */
-> +			mac-address = [ 00 00 00 00 00 00 ];
-> +			phys = <&phy_gmii_sel 2>;
-> +		};
-> +	};
-> +
-> +	davinci_mdio_sw: mdio@1000 {
-> +		compatible = "ti,cpsw-mdio","ti,davinci_mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		ti,hwmods = "davinci_mdio";
-> +		bus_freq = <1000000>;
-> +		reg = <0x1000 0x100>;
-> +	};
-> +
-> +	cpts {
-> +		clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 25>;
-> +		clock-names = "cpts";
-> +	};
-> +};
-> +
-> +&mac_sw {
-> +	pinctrl-names = "default", "sleep";
-> +	status = "okay";
-> +};
-> +
-> +&cpsw_port1 {
-> +	phy-handle = <&ethphy0_sw>;
-> +	phy-mode = "rgmii";
-> +	ti,dual_emac_pvid = <1>;
-> +};
-> +
-> +&cpsw_port2 {
-> +	phy-handle = <&ethphy1_sw>;
-> +	phy-mode = "rgmii";
-> +	ti,dual_emac_pvid = <2>;
-> +};
-> +
-> +&davinci_mdio_sw {
-> +	ethphy0_sw: ethernet-phy@0 {
-> +		reg = <0>;
-> +	};
-> +
-> +	ethphy1_sw: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +};
+Thanks,
+Ming
 
-In an example, it is unusual to split things up like this. I
-understand that parts of this will be in the dtsi file, and parts in
-the .dts file, but examples generally keep it all as one. And when you
-re-write this in YAML so it can be used to validated real DTs, you
-will have to combine it.
-
-     Andrew
