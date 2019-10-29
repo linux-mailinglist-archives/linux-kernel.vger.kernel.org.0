@@ -2,94 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A26E8C6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 634CCE8C65
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390356AbfJ2QKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 12:10:30 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17867 "EHLO pegase1.c-s.fr"
+        id S2390304AbfJ2QHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 12:07:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62698 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390165AbfJ2QK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 12:10:29 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 472c4g1g6lz9v10P;
-        Tue, 29 Oct 2019 17:10:27 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TpSeXOFU; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id UpHV0XhQAQYQ; Tue, 29 Oct 2019 17:10:27 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 472c4g0Tzcz9v10L;
-        Tue, 29 Oct 2019 17:10:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1572365427; bh=tYE4s7/uuajXlCR0ChE0EZH9O5AUjNkXcOLUIcjs8NY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TpSeXOFUE6NM+JYOdlv64UW/+4WUPFrGoh6k/O+xW8QDuERdgv/D7VGAmufQO+FN1
-         fIXCp5L6bMBYoYiAfV/u7tcK2KH038p2p1K3CJmCtNvTTH7ywxZIjUCdosgqOj4iTS
-         MwKfe1IXwrU0ed97mqGh403IgJyyisv4QNCd1O+s=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 96B7E8B86F;
-        Tue, 29 Oct 2019 17:10:28 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 7udaYobtxUaO; Tue, 29 Oct 2019 17:10:28 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 35F7F8B86A;
-        Tue, 29 Oct 2019 17:10:28 +0100 (CET)
-Subject: Re: [PATCH v2 1/8] powerpc/32: Add VDSO version of getcpu
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1566491310.git.christophe.leroy@c-s.fr>
- <27d699092118ee8d21741c08a6ff7e4c65effdf2.1566491310.git.christophe.leroy@c-s.fr>
- <87h85aw3r9.fsf@mpe.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <5088c94c-3c80-0799-08a2-f1d53b95380b@c-s.fr>
-Date:   Tue, 29 Oct 2019 17:10:28 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2390135AbfJ2QHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 12:07:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 09:07:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,244,1569308400"; 
+   d="scan'208";a="283283458"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 29 Oct 2019 09:07:14 -0700
+Date:   Tue, 29 Oct 2019 09:11:39 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
+Message-ID: <20191029091139.7ddc155f@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5DE3D3@SHSMSX104.ccr.corp.intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-10-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDDA6@SHSMSX104.ccr.corp.intel.com>
+        <20191025103337.1e51c0c9@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7B8@SHSMSX104.ccr.corp.intel.com>
+        <20191028090231.4777c6a9@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D5DE3D3@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <87h85aw3r9.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 29 Oct 2019 07:57:21 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-
-Le 18/09/2019 à 07:51, Michael Ellerman a écrit :
+> > From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
+> > Sent: Tuesday, October 29, 2019 12:03 AM
+> > 
+> > On Mon, 28 Oct 2019 06:03:36 +0000
+> > "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> >   
+> > > > > > +	.sva_bind_gpasid	= intel_svm_bind_gpasid,
+> > > > > > +	.sva_unbind_gpasid	=
+> > > > > > intel_svm_unbind_gpasid, +#endif  
+> > > > >
+> > > > > again, pure PASID management logic should be separated from
+> > > > > SVM. 
+> > > > I am not following, these two functions are SVM functionality,
+> > > > not pure PASID management which is already separated in
+> > > > ioasid.c  
+> > >
+> > > I should say pure "scalable mode" logic. Above callbacks are not
+> > > related to host SVM per se. They are serving gpasid requests from
+> > > guest side, thus part of generic scalable mode capability.  
+> > Got your point, but we are sharing data structures with host SVM,
+> > it is very difficult and inefficient to separate the two.  
 > 
-> We are still in the middle of the years long process of removing the
-> "magic" syscall on 64-bit:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/exceptions-64s.S?commit=4d856f72c10ecb060868ed10ff1b1453943fc6c8#n1578
->   
-> 
-> Can we not add another one on 32-bit?
-> 
-> Is it really such a fast path that it's worth putting a wart in the
-> syscall entry like that?
-> 
-> Is there some other method? On s390 they have a per-cpu VDSO page, that
-> would be a nice option. How we do that would be specific to a particular
-> MMU, and maybe not even possible with some MMUs. So maybe that's not
-> feasible.
+> I don't think difficulty is the reason against such direction. We
+> need do things right. :-) I'm fine with putting it in a TODO list,
+> but at least need the right information in the 1st place to tell that
+> current way is just a short-term approach, and we should revisit
+> later.
+I guess the fundamental question is: Should the scalable mode logic,
+i.e. guest SVA at PASID granu device, be perceived as part of the
+overall SVA functionality?
 
-Ok, for now I remove the fast syscall and only keep the VDSO getcpu() 
-for non SMP.
+My view is yes, we shall share SVA and gSVA whenever we can.
 
-I think we may in the future implement a per-cpu VDSO page that will be 
-mapped to the process based on the CPU it is running on. I need to look 
-at that in more details.
+The longer term, which I am working on right now, is to converge
+intel_svm_bind_mm to the generic iommu_sva_bind_device() and use common
+data structures as well. It is conceivable that these common structures
+span across hardware architectures, also guest vs host SVA usages.
 
-Christophe
+i.e. iommu_ops have
+iommu_sva_bind_gpasid() for SM/gSVA
+iommu_sva_bind_device() for native SVA
 
+Or I am missing your point completely?
