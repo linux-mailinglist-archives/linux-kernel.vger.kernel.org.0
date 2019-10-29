@@ -2,95 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E68DE83BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6147BE83BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:03:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbfJ2JDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:03:24 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:34070 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730528AbfJ2JDW (ORCPT
+        id S1730515AbfJ2JDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:03:12 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:60414 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727933AbfJ2JDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:03:22 -0400
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x9T93GNt030462
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 18:03:16 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x9T93GNt030462
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572339797;
-        bh=EAEi1K2U344N90FciSKHHARW6VFalhrkblUys0k8F4s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lfdriDdTUiZJM5D69Z4ZfXrw8v2evzbYiJkBZZJcxN3igEL8QYDKV7aWO/3wH08GL
-         vPb8ygyEzzZgM27ViIZwgXxrHSq+cSH2imNUAgwof1KfYcwwZmNxVGZ83ulU0RaeWr
-         71frB5KH8qc5rH1kQqFSACD3L4YcskmcX2PzrcoNBRnt9lfscTtt1fPKTykkm9WZIW
-         FEBgiVhfd9T/hgUFqHX5/prWNXe0U4D3gzKgiHr5fLsdW4I0orkB3GZRQrCNSBzxD3
-         MCvd5SBqRhvImHfaJCT9MNPJXQAF+tmZ9vvjrDEKaFgTBMbwh4/AHrKEUYmpVtSq8C
-         I226tWH91HXHw==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id k15so8264702vsp.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:03:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAWbigrM+cRbNjJcY6O7KgJ/Gw0OeZJ0cNWaU3Q4JxLv+87awXj8
-        kzMPSr//XQ93tC/hR0xEbLxsR+LP2O8l6B0DeUo=
-X-Google-Smtp-Source: APXvYqzhJe/yPQdN0tBDu6TBQc2K5WV2hMrLehNaG9v/mQdNrhhaM6o1wclLJNHU3Lmxj2DnZeGCs2BIox9cjEbnFao=
-X-Received: by 2002:a05:6102:726:: with SMTP id u6mr982037vsg.179.1572339795525;
- Tue, 29 Oct 2019 02:03:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191028153334.GA25863@linux-8ccs>
-In-Reply-To: <20191028153334.GA25863@linux-8ccs>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 29 Oct 2019 18:02:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQfeoPt1KApoa94RwVYo-LiPWxgit8=vzM2wfzHs+CajQ@mail.gmail.com>
-Message-ID: <CAK7LNAQfeoPt1KApoa94RwVYo-LiPWxgit8=vzM2wfzHs+CajQ@mail.gmail.com>
-Subject: Re: `make nsdeps` prints "Building modules, stage 2" twice
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Matthias Maennich <maennich@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Tue, 29 Oct 2019 05:03:12 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.2)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1iPNP6-0004Ha-89; Tue, 29 Oct 2019 10:03:04 +0100
+Message-ID: <dbbc8c3e898ec499f30a6ac1f262666ced6905fb.camel@sipsolutions.net>
+Subject: Re: [PATCH v2] 802.11n IBSS: wlan0 stops receiving packets due to
+ aggregation after sender reboot
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Krzysztof =?UTF-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 29 Oct 2019 10:03:02 +0100
+In-Reply-To: <30465e05-3465-f496-d57f-5e115551f5cb@ncentric.com> (sfid-20191029_094137_778584_BACBC770)
+References: <m34l02mh71.fsf@t19.piap.pl> <m37e4tjfbu.fsf@t19.piap.pl>
+         <e5b07b4ce51f806ce79b1ae06ff3cbabbaa4873d.camel@sipsolutions.net>
+         <30465e05-3465-f496-d57f-5e115551f5cb@ncentric.com>
+         (sfid-20191029_094137_778584_BACBC770)
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 12:33 AM Jessica Yu <jeyu@kernel.org> wrote:
->
-> Hi!
->
-> When running `make nsdeps`, I've noticed that "Building modules, stage
-> 2" gets printed twice. Not a big deal, but a bit strange to see,
-> especially since the second print is actually from the nsdeps target
-> calling modpost again.
->
-> $ make nsdeps O=/dev/shm/linux
-> make[1]: Entering directory '/dev/shm/linux'
->   GEN     Makefile
->   DESCEND  objtool
->   CALL    /tmp/ppyu/linux/scripts/atomic/check-atomics.sh
->   CALL    /tmp/ppyu/linux/scripts/checksyscalls.sh
->   CHK     include/generated/compile.h
->   Building modules, stage 2.
->   MODPOST 3316 modules
->   Building modules, stage 2.
->   MODPOST 3316 modules
-> Adding namespace USB_STORAGE to module uas (if needed).
-> Adding namespace USB_STORAGE to module ums-alauda (if needed).
-> Adding namespace USB_STORAGE to module ums-cypress (if needed).
-> Adding namespace USB_STORAGE to module ums-datafab (if needed).
-> ....etc...
->
-> It's due to calling the __modpost target twice, once for modules and
-> once for nsdeps. I guess we could have the nsdeps target just call
-> cmd_modpost, but then we still have the MODPOST XXXX modules line
-> printing twice. Is there a nicer way to fix this? Again, it's not
-> harmful, but probably confusing for people to see.
->
-> Thanks,
->
-> Jessica
+On Tue, 2019-10-29 at 09:41 +0100, Koen Vandeputte wrote:
 
-I can fix this correctly.
-Will send a patch soon.
+> I can confirm the issue as I'm also seeing this sometimes in the field here.
+> 
+> Sometimes when a devices goes out of range and then re-enters,
+> the link refuses to "come up", as in rx looks to be "stuck" without any 
+> reports in system log or locking issues (lockdep enabled)
 
+Right. I've recently debugged this due to issues in distributed
+beaconing (rather than moving in/out of range), but I guess it would be
+relatively simple to reproduce this with wmediumd, if that can be
+controlled dynamically?
 
--- 
-Best Regards
-Masahiro Yamada
+What kernel are you running? You could check if you have
+
+95697f9907bf ("mac80211: accept deauth frames in IBSS mode")
+4b08d1b6a994 ("mac80211: IBSS: send deauth when expiring inactive STAs")
+
+which might help somewhat, but don't fully cover the case of moving out
+of range.
+
+johannes
+
