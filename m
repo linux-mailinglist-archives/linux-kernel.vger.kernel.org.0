@@ -2,115 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E64E836D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:43:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFA5E8376
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfJ2Ine (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 04:43:34 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39441 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfJ2Ind (ORCPT
+        id S1730031AbfJ2Int (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:43:49 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35789 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729662AbfJ2Ins (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 04:43:33 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y3so14328947ljj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 01:43:32 -0700 (PDT)
+        Tue, 29 Oct 2019 04:43:48 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l10so12648460wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 01:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HGXd6rlxFLbtpjrAQ8G1Qtj9aAnpBTx6NO8SjG7PtjI=;
-        b=RB8kpGegZFDbX4ehO3+DnkUXso3PSM4ypigva4bxla2UhzbfYW3VFanbaz6VAqTIp9
-         vC4VW/N/DNc5sYKbDVzBAZWHMwSNqKbSozM7z9NZGI9mkDa0OXo0Om0mCpyDwNoaV8lk
-         b3mRrhW7uAmiDR3MvGYepqftbS6Qixnz1xrt0=
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U88yheObN+4ggJffRHrczNdJdHrli+5k282weA3zmys=;
+        b=UWxTNpUj0SpmspSoeCVT8jWoJw3f34L0dLvZYLStfybqEFBCPn2e2AlgHmO0xhvKGm
+         grjbzGyIrKbP7lal6JDVcB+aInE+hHfT06WpRjlM7fFAlIF2Hjh+x4p92KBB66jvpE04
+         +QZSbvcAXfUbscunom8hd1nr1oMy9rEwVVEZaa4wTytbntlAryf+Yw+XNmBWbVIDLVzC
+         /oCHObbo6+47ZgaTp7NhAQMTxqfzgpt2lC6UqRUX7Sm23lwPVXJ9VMs/mbtKCxIH3cGk
+         XUI/fK+UDK79JK6ztv22QRiRQOMI6Gwa1snOn8g5PAIH4B1k00fs+fo4MSZ6ZK7/G+T7
+         v2hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HGXd6rlxFLbtpjrAQ8G1Qtj9aAnpBTx6NO8SjG7PtjI=;
-        b=Ztu7BaaksRHls9mnFr4C2X/U6PHgwVe4ZwDNPKW4atmTVoi4Lk09Y6IF96niTfosPE
-         /cQP6i25lnAm91LqWM969g9G2a8vlhOtkjA1IpUSOAl3ggGoZwxg78xFUfLL9cq9kEpQ
-         wkYGQhrgo4W/6zc+NAqHc2WMKGVyowCegtM22MgtieUmjwvkMdRGd5XJzTnKOPIKiNuL
-         MgsOXvJMZp2UeKZgBT0jp1cpun2qhVTjjmwF793hfpSPL5Dvt7Kmygal0T4DI3Lnyo3w
-         kVrI7eENwGgSFBj4z/o5sZTs6DeZrJGfZGM9oJgre8HggkEEZeungO5JJ6NnQEVtmn99
-         +utQ==
-X-Gm-Message-State: APjAAAUOKQFymZmEBD24ogf3SYaD5lJRIhVSoIRJZJ8L6o4jotd0j3US
-        P+V2Db0gnqZEJBuPR0u1iBD5Fs2m2sirXvY6
-X-Google-Smtp-Source: APXvYqzEDMxdj01ErGn8mE4rCnBBCxTZ6HkGNRiI9Uh8UyBsOyPj0DTCwoKDupc4z5w1cSudjzX3Qg==
-X-Received: by 2002:a2e:4751:: with SMTP id u78mr1617787lja.210.1572338611332;
-        Tue, 29 Oct 2019 01:43:31 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 77sm13198495lfj.41.2019.10.29.01.43.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 01:43:30 -0700 (PDT)
-Subject: ppc: inlining iowrite32be and friends (was: Re: [PATCH v2 03/23] soc:
- fsl: qe: avoid ppc-specific io accessors)
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-4-linux@rasmusvillemoes.dk>
- <886d5218-6d6b-824c-3ab9-63aafe41ff40@c-s.fr>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <02a8a449-e421-f70f-4bf9-50a94324834b@rasmusvillemoes.dk>
-Date:   Tue, 29 Oct 2019 09:43:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U88yheObN+4ggJffRHrczNdJdHrli+5k282weA3zmys=;
+        b=gc4LxweHV2wjise3WUj8dXv2tohpqMpROqkf+WmEHYh5ILrh16Oowkm2vpLdO22mFF
+         CyKAt1BGDmprJ6Gy84Hek4qIB3y985Z9Ig1/Ea9Od6mFvztMMrnvkM0FhJTtsuUTJ3o9
+         btJcfE78AjIbt6Fe5JtTqGi+PubMmh176CcVtlvrA7SQvrsg3hNN+4MmLoDuBVL0sB6p
+         VXjq7zJUgks/YZYfOqc1Voxg7biecEb2qL+Zh0Vu9zrunEgKFFBDdtU+0XEy5aAmFTTx
+         G8Hy36od8pv8YpKn5SLWGsjcwMnN9MbQBQQPO3dfReUsd7L5m+lCLTTdp1wUMOWyi3v7
+         4LFg==
+X-Gm-Message-State: APjAAAUnQt5+Ez+SrqcCM4uy12k8SA6ROqNDwJOqRJ2hq3xXCypbf9fo
+        HycEQALsEw+6tTcztHck4957PA==
+X-Google-Smtp-Source: APXvYqxRRsQAmnunlnuxpBCGvAUEzg9Kx7yBGFf0A1pBDmvOd/v+CXTq3tGGCyX6dcNLA0ezvj2JBw==
+X-Received: by 2002:a05:6000:1c9:: with SMTP id t9mr19959327wrx.171.1572338626088;
+        Tue, 29 Oct 2019 01:43:46 -0700 (PDT)
+Received: from netronome.com (fred-musen.rivierenbuurt.horms.nl. [2001:470:7eb3:404:a2a4:c5ff:fe4c:9ce9])
+        by smtp.gmail.com with ESMTPSA id u10sm2793363wmj.0.2019.10.29.01.43.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 01:43:46 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 09:43:44 +0100
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Saurav Girepunje <saurav.girepunje@gmail.com>,
+        kvalo@codeaurora.org, davem@davemloft.net, swinslow@gmail.com,
+        will@kernel.org, opensource@jilayne.com, baijiaju1990@gmail.com,
+        tglx@linutronix.de, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, saurav.girepunje@hotmail.com
+Subject: Re: [PATCH] b43: Fix use true/false for bool type
+Message-ID: <20191029084344.GD23615@netronome.com>
+References: <20191028190204.GA27248@saurav>
+ <20191029082427.GB23615@netronome.com>
+ <055503c8dce7546a8253de1d795ad71870eeb362.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <886d5218-6d6b-824c-3ab9-63aafe41ff40@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <055503c8dce7546a8253de1d795ad71870eeb362.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2019 08.43, Christophe Leroy wrote:
+On Tue, Oct 29, 2019 at 01:30:34AM -0700, Joe Perches wrote:
+> On Tue, 2019-10-29 at 09:24 +0100, Simon Horman wrote:
+> > I wonder why bools rather than a bitmask was chosen
+> > for this field, it seems rather space intensive in its current form.
+> 
+> 4 bools is not intensive.
+
+Thanks, point taken.
+
+> 
+> > > diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+> []
+> > > @@ -3600,7 +3600,7 @@ static void b43_tx_work(struct work_struct *work)
+> []
+> > > -				wl->tx_queue_stopped[queue_num] = 1;
+> > > +				wl->tx_queue_stopped[queue_num] = true;
 > 
 > 
-> Le 25/10/2019 à 14:40, Rasmus Villemoes a écrit :
->> In preparation for allowing to build QE support for architectures
->> other than PPC, replace the ppc-specific io accessors. Done via
->>
->> $ spatch --sp-file io.cocci --in-place drivers/soc/fsl/qe/
->>
-
-> As discussed already, this patch changes io accesors from inline to
-> outline, this has a performance impact on powerpc32 like 83xx.
-> 
-> Could you please include in your series before this patch a patch to
-> change generic io accessors to inline on powerpc ?
-
-Well, it's complicated. I was hoping someone could explain why those are
-OOL in the first place. The history of arch/powerpc/kernel/iomap.c and
-the makefile fragment including it is a bit messy - first of all, the
-file itself talks about "ppc64 implementation" but is obviously used for
-all ppc32 (while the ppc64 platforms that set PPC_INDIRECT_PIO also get
-GENERIC_IOMAP, i.e. lib/iomap.c).
-
-So, what I wanted to do was to make the accessors inline when
-!PPC_INDIRECT_PIO && !PPC_INDIRECT_MMIO. But then I need to avoid
-including asm-generic/iomap.h, because that declares these as extern.
-OTOH, I think I do need some of the declarations from that file, e.g. at
-least pci_iounmap, and perhaps also the *_rep versions, unless they
-should also be inlined.
-
-I'm happy to give it a try, but I think that belongs in a separate
-series. The first few attempts are almost certain to generate some 0day
-reports.
-
-Question for powerpc maintainers: Is there a fundamental reason
-iowrite32be and friends are out-of-line on PPC32 (more generally, the
-PPC platforms that set neither PPC_INDIRECT_PIO or PPC_INDIRECT_MMIO)?
-If so, there's no point trying to make them inline, and I'd have to
-address Christophe's concern by introducing private qe_iowrite32be()
-etc. wrappers.
-
-Thanks,
-Rasmus
