@@ -2,131 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7557BE9126
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F86E912A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbfJ2U7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:59:05 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27536 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727545AbfJ2U7E (ORCPT
+        id S1729109AbfJ2U7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:59:13 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46654 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbfJ2U7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:59:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572382743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K1UD13lunqkCUm4GY9cPRpg96TpPCTqtU0JUYdMep3E=;
-        b=eYRzzOXfClwXI7484IpGHhZ6quNLBApV0ADtWPop/rUoDvFfyMPCgQ9Xd04m4+tOmyUS2W
-        W/zGmuAzYO50ifqSY1M7WvF8Lc+SC9USauaitjuvsHV8d3rvsFXREm0n+9Q2tR1mzzkaNa
-        rj7kpwBGoHUvje1jyXZYljISA/UemXo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-419-05YHT3TWMtGZ6h4GPNF9Aw-1; Tue, 29 Oct 2019 16:59:00 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 88AFC8017DD;
-        Tue, 29 Oct 2019 20:58:58 +0000 (UTC)
-Received: from krava (ovpn-204-88.brq.redhat.com [10.40.204.88])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E5ED019C69;
-        Tue, 29 Oct 2019 20:58:55 +0000 (UTC)
-Date:   Tue, 29 Oct 2019 21:58:55 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCHv2 0/2] perf tools: Share struct map after clone
-Message-ID: <20191029205855.GA20826@krava>
-References: <20191016082226.10325-1-jolsa@kernel.org>
- <20191023075517.GA22919@krava>
+        Tue, 29 Oct 2019 16:59:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z22so7593957edr.13;
+        Tue, 29 Oct 2019 13:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CjYSqe0NVHv7PBpKzZgujNqWXOTQ3EeJ6Ic+T4FxfJc=;
+        b=saVdvDEiiNLvD7aTOsNw9iGbWLFMyQr2XnMdQEk/CKnERA3bYRYYJMDhfo9s7f84rR
+         IYfl94E0OLzR1MnA81gWde9+vp5sviFozxoV3G0Id2LHsUymKcg1nupt3GOttgxkjynf
+         IOinaAKgXTM1ITqNCP66LGTvFN7TegzBwLGTi1iSUlQU6xZUoiSQYt2mT9uXFbn5qkpq
+         uaYET9A1mYQ9BBprxvF9e8Ph1lFe3BDrHj1GuHKrjXHM7+O+gRtyh/59+vBdjNWAkNHD
+         5YOOHTMMGWmxZ/0FrGonK+v416+okaZBE876ZvCPhII/Nj8+Lxrce1d+923CTIKyZF4V
+         k5iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CjYSqe0NVHv7PBpKzZgujNqWXOTQ3EeJ6Ic+T4FxfJc=;
+        b=K6ihzJoezm5sw4VpJZrhO/0v12QeX+76GEjJzQNNUYU4AUmInZpmRdJaCcuPonGf9y
+         ycG686O+QYDMR1a01jHneS+uTMPK+oErms++Wio4SVNdrqZjJ+M3nAMDOCQ9u/01CMrH
+         CGbBTLH8I4u4lXNgoAxxH0gBNgmx2b1JfxoshoTzEMXXTocaeB+lCRjriQDLQYjspEdK
+         d9deAAwo+OyhcUTbeNz1Q1EW4lbYqWLfsS5MhGQScJcFZZJi2vrSXc0d7dB/uZ8+9HOh
+         LI10n6shoz26CsJ+EgsIHNxwvudDY4SiIM7Hl+Eym0w/qMsz/Shy01uF49tKdTPQGhtt
+         hhoA==
+X-Gm-Message-State: APjAAAUM9mCFdCdJoK3xPrIPQbgzDhosIAw72Qd6FM70DWBvMh4qT9QA
+        f/EBTOdT+UXHUPLQ4dKYpp0=
+X-Google-Smtp-Source: APXvYqwEVdyt82IAftK6qhuzMhSmKVkdVaK7Wiqe8LHdMahMC6kx1TfFwhmOwDTxu6Fxbae7h/ZUyg==
+X-Received: by 2002:a17:906:4ec9:: with SMTP id i9mr5435592ejv.8.1572382748939;
+        Tue, 29 Oct 2019 13:59:08 -0700 (PDT)
+Received: from [10.67.50.53] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d12sm689932edt.57.2019.10.29.13.59.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 13:59:08 -0700 (PDT)
+Subject: Re: [PATCH 0/3] net: phy: initialize PHYs via device tree properties
+To:     Michael Walle <michael@walle.cc>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20191029174819.3502-1-michael@walle.cc>
+ <519d52d2-cd83-b544-591b-ca9d9bb16dfa@gmail.com>
+ <4B4A80A7-05C8-441A-B224-7CC01E3D8C30@walle.cc>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ mQGiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz7QnRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+iGYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSC5BA0ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU4hPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJ7kCDQRXG8fwARAA6q/pqBi5PjHcOAUgk2/2LR5LjjesK50bCaD4JuNc
+ YDhFR7Vs108diBtsho3w8WRd9viOqDrhLJTroVckkk74OY8r+3t1E0Dd4wHWHQZsAeUvOwDM
+ PQMqTUBFuMi6ydzTZpFA2wBR9x6ofl8Ax+zaGBcFrRlQnhsuXLnM1uuvS39+pmzIjasZBP2H
+ UPk5ifigXcpelKmj6iskP3c8QN6x6GjUSmYx+xUfs/GNVSU1XOZn61wgPDbgINJd/THGdqiO
+ iJxCLuTMqlSsmh1+E1dSdfYkCb93R/0ZHvMKWlAx7MnaFgBfsG8FqNtZu3PCLfizyVYYjXbV
+ WO1A23riZKqwrSJAATo5iTS65BuYxrFsFNPrf7TitM8E76BEBZk0OZBvZxMuOs6Z1qI8YKVK
+ UrHVGFq3NbuPWCdRul9SX3VfOunr9Gv0GABnJ0ET+K7nspax0xqq7zgnM71QEaiaH17IFYGS
+ sG34V7Wo3vyQzsk7qLf9Ajno0DhJ+VX43g8+AjxOMNVrGCt9RNXSBVpyv2AMTlWCdJ5KI6V4
+ KEzWM4HJm7QlNKE6RPoBxJVbSQLPd9St3h7mxLcne4l7NK9eNgNnneT7QZL8fL//s9K8Ns1W
+ t60uQNYvbhKDG7+/yLcmJgjF74XkGvxCmTA1rW2bsUriM533nG9gAOUFQjURkwI8jvMAEQEA
+ AYkCaAQYEQIACQUCVxvH8AIbAgIpCRBhV5kVtWN2DsFdIAQZAQIABgUCVxvH8AAKCRCH0Jac
+ RAcHBIkHD/9nmfog7X2ZXMzL9ktT++7x+W/QBrSTCTmq8PK+69+INN1ZDOrY8uz6htfTLV9+
+ e2W6G8/7zIvODuHk7r+yQ585XbplgP0V5Xc8iBHdBgXbqnY5zBrcH+Q/oQ2STalEvaGHqNoD
+ UGyLQ/fiKoLZTPMur57Fy1c9rTuKiSdMgnT0FPfWVDfpR2Ds0gpqWePlRuRGOoCln5GnREA/
+ 2MW2rWf+CO9kbIR+66j8b4RUJqIK3dWn9xbENh/aqxfonGTCZQ2zC4sLd25DQA4w1itPo+f5
+ V/SQxuhnlQkTOCdJ7b/mby/pNRz1lsLkjnXueLILj7gNjwTabZXYtL16z24qkDTI1x3g98R/
+ xunb3/fQwR8FY5/zRvXJq5us/nLvIvOmVwZFkwXc+AF+LSIajqQz9XbXeIP/BDjlBNXRZNdo
+ dVuSU51ENcMcilPr2EUnqEAqeczsCGpnvRCLfVQeSZr2L9N4svNhhfPOEscYhhpHTh0VPyxI
+ pPBNKq+byuYPMyk3nj814NKhImK0O4gTyCK9b+gZAVvQcYAXvSouCnTZeJRrNHJFTgTgu6E0
+ caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
+ 6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9Za0Dx0yyp44iD1OvHtkEI
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <c9447284-1c20-6dc7-8629-e62c61a7b4a8@gmail.com>
+Date:   Tue, 29 Oct 2019 13:59:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191023075517.GA22919@krava>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: 05YHT3TWMtGZ6h4GPNF9Aw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <4B4A80A7-05C8-441A-B224-7CC01E3D8C30@walle.cc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 09:55:17AM +0200, Jiri Olsa wrote:
-> On Wed, Oct 16, 2019 at 10:22:24AM +0200, Jiri Olsa wrote:
-> > hi,
-> > Andi reported that maps cloning is eating lot of memory and
-> > it's probably unnecessary, because they keep the same data.
-> >=20
-> > This 'maps sharing' seems to save lot of heap for reports with
-> > many forks/cloned mmaps (over 60% in example below).
-> >=20
-> > Profile kernel build:
-> >=20
-> >   $ perf record make -j 40
-> >=20
-> > Get heap profile (tools/perf directory):
-> >=20
-> >   $ <install gperftools>
-> >   $ make TCMALLOC=3D1
-> >   $ HEAPPROFILE=3D/tmp/heapprof ./perf report -i perf.data --stdio > ou=
-t
-> >   $ pprof ./perf /tmp/heapprof.000*
-> >=20
-> > Before:
-> >=20
-> >   (pprof) top
-> >   Total: 2335.5 MB
-> >     1735.1  74.3%  74.3%   1735.1  74.3% memdup
-> >      402.0  17.2%  91.5%    402.0  17.2% zalloc
-> >      140.2   6.0%  97.5%    145.8   6.2% map__new
-> >       33.6   1.4%  98.9%     33.6   1.4% symbol__new
-> >       12.4   0.5%  99.5%     12.4   0.5% alloc_event
-> >        6.2   0.3%  99.7%      6.2   0.3% nsinfo__new
-> >        5.5   0.2% 100.0%      5.5   0.2% nsinfo__copy
-> >        0.3   0.0% 100.0%      0.3   0.0% dso__new
-> >        0.1   0.0% 100.0%      0.1   0.0% do_read_string
-> >        0.0   0.0% 100.0%      0.0   0.0% __GI__IO_file_doallocate
-> >=20
-> > After:
-> >=20
-> >   (pprof) top
-> >   Total: 784.5 MB
-> >      385.8  49.2%  49.2%    385.8  49.2% memdup
-> >      285.8  36.4%  85.6%    285.8  36.4% zalloc
-> >       80.4  10.3%  95.9%     83.7  10.7% map__new
-> >       19.1   2.4%  98.3%     19.1   2.4% symbol__new
-> >        6.2   0.8%  99.1%      6.2   0.8% alloc_event
-> >        3.6   0.5%  99.6%      3.6   0.5% nsinfo__new
-> >        3.2   0.4% 100.0%      3.2   0.4% nsinfo__copy
-> >        0.2   0.0% 100.0%      0.2   0.0% dso__new
-> >        0.0   0.0% 100.0%      0.0   0.0% do_read_string
-> >        0.0   0.0% 100.0%      0.0   0.0% elf_fill
-> >=20
-> > v2 changes:
-> >   - rebased to Arnaldo's perf/core
-> >   - patch 1 already taken
-> >=20
-> > Also available in here:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-> >   perf/map_shared
->=20
-> I rebased to latest perf/core and pushed the branch out
+On 10/29/19 1:54 PM, Michael Walle wrote:
+> Am 29. Oktober 2019 18:59:07 MEZ schrieb Florian Fainelli <f.fainelli@gmail.com>:
+>> On 10/29/19 10:48 AM, Michael Walle wrote:
+>>> I was trying to configure the Atheros PHY for my board. There are
+>> fixups
+>>> all over the place, for example to enable the 125MHz clock output in
+>> almost
+>>> any i.MX architecture. Instead of adding another fixup in
+>> architecture
+>>> specific code, try to provide a generic way to init the PHY
+>> registers.
+>>>
+>>> This patch series tries to pick up the "broadcom,reg-init" and
+>>> "marvell,reg-init" device tree properties idea and make it a more
+>> generic
+>>> "reg-init" which is handled by phy_device instead of a particular phy
+>>> driver.
+>>
+>> These two examples are actually quite bad and were symptomatic of a few
+>> things at the time:
+>>
+>> - rush to get a specific feature/device supported without thinking
+>> about
+>> the big picture
+>> - lack of appropriate review on the Device Tree bindings
+>>
+>> Fortunately, the last item is now not happening anymore.
+>>
+>> The problem with letting that approach go through is that the Device
+>> Tree can now hold a configuration policy which is passed through as-is
+>>from DT to the PHY device, this is bad on so many different levels,
+>> starting with abstraction.
+> 
+> I see.
+> 
+>> If all you need is to enable a particular clock, introduce device
+>> specific properties that describe the hardware, and make the necessary
+>> change to the local driver that needs to act on those. You can always
+>> define a more generic scope property if you see a recurring pattern.
+> 
+> Could you have a quick look at the following patch I made for u-boot, which adds a binding for the Atheros PHY. If that is the right direction. Yeah, I should have made it first to Linux to get some feedback on the binding :p
+> 
+> https://patchwork.ozlabs.org/patch/1184516/
+> 
+> I'd then prepare another patch for Linux based on your suggestions. 
 
-rebased and pushed out
-
-jirka
-
+This looks like the right direction IMHO.
+-- 
+Florian
