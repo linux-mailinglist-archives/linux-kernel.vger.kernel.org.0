@@ -2,154 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E8CE906F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E36CDE906B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfJ2UA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:00:26 -0400
-Received: from mga14.intel.com ([192.55.52.115]:32665 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbfJ2UAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:00:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 13:00:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,245,1569308400"; 
-   d="scan'208";a="202963403"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 29 Oct 2019 13:00:22 -0700
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id 0AA915804A2;
-        Tue, 29 Oct 2019 13:00:22 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v9 5/8] PCI/AER: Allow clearing Error Status Register in
- FF mode
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-References: <20191028232251.GA205542@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <be6df02f-a14f-d80e-0fa2-ff34f19cbcb9@linux.intel.com>
-Date:   Tue, 29 Oct 2019 12:58:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727497AbfJ2UAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:00:18 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33705 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfJ2UAR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 16:00:17 -0400
+Received: by mail-io1-f66.google.com with SMTP id n17so3104080ioa.0;
+        Tue, 29 Oct 2019 13:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XFtN+XGvbR1I6A3qEJqZM9z+JSUPPupQU7FJEjlcOXU=;
+        b=JR0vw0hbABPx+plRSJz53fHZYUuZWTk8x9Ldf8KysVTFsqAdiLX5uJclKbxOrENE1g
+         ep4egRhA43e4I41wtOAZnVzpZZ571NfsusYWFfT2J/zYBa3lH0T4UmLZWCYRcI+MxsNJ
+         aOmVc1Cxe2dtHba9THbRElcuj4PYfhy97dr2W7qYK7Q/6QYSvxCg2fwtWtqHZBKWmpyF
+         Eu70sAcN7VRfGZ8Bzq2uOBHoiPXK1m5akC293s7wCfw/Myw7zauakKhKHk3eT7zD342Z
+         Ww8rStz+26KaU9L0l0n3+FsTxZ7vfN4z2rZH3DrgiZBS4xLJ9T28FDuXeZa+CP7jlHGm
+         8Hvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XFtN+XGvbR1I6A3qEJqZM9z+JSUPPupQU7FJEjlcOXU=;
+        b=dEViGdBeqwWzxb0k1guYu4SOMe4SY6dbpicjXbSM5OMVHjRfi4THoeHI4begW9LHtg
+         mk4rVSdYKS5hcGA0MrZJFComCas4dXYHMtH7LTX0y7Ezbsfx3IzNfA4tKvPdXSZLfOSx
+         ju6M69S3jriEGw7FVACzpiVYeuajhX8ERFyzFcQnr8jKyGnNrs7TijtrJiCtvCf82G3M
+         cVzYKciSHo3PcK0Nv3jVyS/yeTxh0uEX6SwlTka09qi+RBmsedu+bQkptgTi5EWnR/M1
+         w5RvlS4/5kkJn5L2sAnjEAKhL/X9ENlKPmpcQwqWRDU3+ZSS152SAiw0BQiKfDYMYxh0
+         gVug==
+X-Gm-Message-State: APjAAAW9ChvLcOi/VHE9rkJ5TIU7XAHX07q+SGcsKHY1qhkA62KUwtpD
+        WdHI9sXAyhT9jwv1CNWLWBPmmgzmZas=
+X-Google-Smtp-Source: APXvYqytZC735/YDLLdQj1rP8iMwjXHtXvM9JN0dpSLnDJtr39J5ZpCT/eVDRirnkaX5JYzzbPHFXg==
+X-Received: by 2002:a6b:b486:: with SMTP id d128mr5670385iof.47.1572379213067;
+        Tue, 29 Oct 2019 13:00:13 -0700 (PDT)
+Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
+        by smtp.googlemail.com with ESMTPSA id v14sm420iob.59.2019.10.29.13.00.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 13:00:10 -0700 (PDT)
+From:   Jim Cromie <jim.cromie@gmail.com>
+To:     jbaron@akamai.com, linux-kernel@vger.kernel.org
+Cc:     linux@rasmusvillemoes.dk, greg@kroah.com,
+        Jim Cromie <jim.cromie@gmail.com>,
+        clang-built-linux@googlegroups.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
+Subject: [PATCH 01/16] dyndbg: drop trim_prefix, obsoleted by __FILE__s relative path
+Date:   Tue, 29 Oct 2019 14:00:00 -0600
+Message-Id: <20191029200001.9640-1-jim.cromie@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191028232251.GA205542@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Regarding:
+commit 2b6783191da7 ("dynamic_debug: add trim_prefix() to provide source-root relative paths")
+commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__ a relative path")
 
-On 10/28/19 4:22 PM, Bjorn Helgaas wrote:
-> On Thu, Oct 03, 2019 at 04:39:01PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> As per PCI firmware specification r3.2 Downstream Port Containment
->> Related Enhancements ECN, sec 4.5.1, table 4-6,
-> That table adds bit 7, "DPC config control" to the _OSC control field
-> and talks about modifying registers in the DPC capability.
->
-> It doesn't say anything about firmware-first or about the OS modifying
-> registers in the AER capability.  But this patch doesn't do anything
-> related to DPC or _OSC.
+2nd commit broke dynamic-debug's "file $fullpath" query form, but
+nobody noticed because 1st commit trimmed prefixes from control-file
+output, so the click-copy-pasting of fullpaths into new queries had
+ceased; that query form became unused.
 
-Expectation of clearing AER registers is not explicitly mentioned in 
-above DPC ECN. But it
-has been clarified in the following update to this ECN.
+So remove the function and callers; its purpose was to strip the
+prefix from __FILE__, which is now gone.  Further, there is no loss of
+query selectivity, and no real value in iteratively trimming ^/\w+
+prefix and testing for a match.
 
-Please check the implementation note in page 10 of
-https://members.pcisig.com/wg/PCI-SIG/document/previewpdf/13563.
+Also drop "file $fullpath" from docs, and tweak example to cite column
+1 of control-file as valid "file $input".
 
-It  specifies that in EDR mode, firmware expects OS to clear error 
-registers (Check for
-following string "Bring Portout of DPC, clear port error status, assign 
-bus numbers to child
-devices").
+cc: clang-built-linux@googlegroups.com
 
-I will include this ECN reference in follow up update.
+I built one clang-kernel a while ago to see if this patch broke
+things, it did not, but I may have messed up something.
 
->
->> Error Disconnect
->> Recover (EDR) support allows OS to handle error recovery and
->> clearing Error Registers even in FF mode. So remove FF mode checks in
->> pci_cleanup_aer_uncorrect_error_status(), pci_aer_clear_fatal_status()
->> and pci_cleanup_aer_error_status_regs() functions.
->>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> Acked-by: Keith Busch <keith.busch@intel.com>
->> ---
->>   drivers/pci/pcie/aer.c | 12 ++----------
->>   1 file changed, 2 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->> index b45bc47d04fe..e1509bb900c5 100644
->> --- a/drivers/pci/pcie/aer.c
->> +++ b/drivers/pci/pcie/aer.c
->> @@ -383,9 +383,6 @@ int pci_cleanup_aer_uncorrect_error_status(struct pci_dev *dev)
->>   	if (!pos)
->>   		return -EIO;
->>   
->> -	if (pcie_aer_get_firmware_first(dev))
->> -		return -EIO;
->> -
->>   	/* Clear status bits for ERR_NONFATAL errors only */
->>   	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
->>   	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &sev);
->> @@ -406,9 +403,6 @@ void pci_aer_clear_fatal_status(struct pci_dev *dev)
->>   	if (!pos)
->>   		return;
->>   
->> -	if (pcie_aer_get_firmware_first(dev))
->> -		return;
->> -
->>   	/* Clear status bits for ERR_FATAL errors only */
->>   	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
->>   	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &sev);
->> @@ -430,9 +424,6 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
->>   	if (!pos)
->>   		return -EIO;
->>   
->> -	if (pcie_aer_get_firmware_first(dev))
->> -		return -EIO;
->> -
->>   	port_type = pci_pcie_type(dev);
->>   	if (port_type == PCI_EXP_TYPE_ROOT_PORT) {
->>   		pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &status);
->> @@ -455,7 +446,8 @@ void pci_aer_init(struct pci_dev *dev)
->>   	if (dev->aer_cap)
->>   		dev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
->>   
->> -	pci_cleanup_aer_error_status_regs(dev);
->> +	if (!pcie_aer_get_firmware_first(dev))
->> +		pci_cleanup_aer_error_status_regs(dev);
-> This effectively moves the "if (pcie_aer_get_firmware_first())" check
-> from pci_cleanup_aer_error_status_regs() into one of the callers.  But
-> there are two other callers: pci_aer_init() and pci_restore_state().
-> Do they need the change, or do you want to cleanup the AER error
-> registers there, but not here?
-Good catch. I have added this check to pci_aer_init(). But it needs to 
-be added to
-pci_restore_state() as well. Instead of moving the checks to the caller, 
-If you agree,
-I could change the API to pci_cleanup_aer_error_status_regs(struct 
-pci_dev *dev, bool skip_ff_check) and
-let the caller decide whether they want skip the check or not.
->
->>   }
->>   
->>   void pci_aer_exit(struct pci_dev *dev)
->> -- 
->> 2.21.0
->>
+Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+---
+ .../admin-guide/dynamic-debug-howto.rst       | 19 +++++++++----------
+ lib/dynamic_debug.c                           | 19 +++----------------
+ 2 files changed, 12 insertions(+), 26 deletions(-)
+
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 252e5ef324e5..e011f8907116 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -62,10 +62,10 @@ statements via::
+ 
+   nullarbor:~ # cat <debugfs>/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:323 [svcxprt_rdma]svc_rdma_cleanup =_ "SVCRDMA Module Removed, deregister RPC RDMA transport\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:341 [svcxprt_rdma]svc_rdma_init =_ "\011max_inline       : %d\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:340 [svcxprt_rdma]svc_rdma_init =_ "\011sq_depth         : %d\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:338 [svcxprt_rdma]svc_rdma_init =_ "\011max_requests     : %d\012"
++  net/sunrpc/svc_rdma.c:323 [svcxprt_rdma]svc_rdma_cleanup =_ "SVCRDMA Module Removed, deregister RPC RDMA transport\012"
++  net/sunrpc/svc_rdma.c:341 [svcxprt_rdma]svc_rdma_init =_ "\011max_inline       : %d\012"
++  net/sunrpc/svc_rdma.c:340 [svcxprt_rdma]svc_rdma_init =_ "\011sq_depth         : %d\012"
++  net/sunrpc/svc_rdma.c:338 [svcxprt_rdma]svc_rdma_init =_ "\011max_requests     : %d\012"
+   ...
+ 
+ 
+@@ -85,7 +85,7 @@ the debug statement callsites with any non-default flags::
+ 
+   nullarbor:~ # awk '$3 != "=_"' <debugfs>/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svcsock.c:1603 [sunrpc]svc_send p "svc_process: st_sendto returned %d\012"
++  net/sunrpc/svcsock.c:1603 [sunrpc]svc_send p "svc_process: st_sendto returned %d\012"
+ 
+ Command Language Reference
+ ==========================
+@@ -158,13 +158,12 @@ func
+ 	func svc_tcp_accept
+ 
+ file
+-    The given string is compared against either the full pathname, the
+-    src-root relative pathname, or the basename of the source file of
+-    each callsite.  Examples::
++    The given string is compared against either the src-root relative
++    pathname, or the basename of the source file of each callsite.
++    Examples::
+ 
+ 	file svcsock.c
+-	file kernel/freezer.c
+-	file /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svcsock.c
++	file kernel/freezer.c	# ie column 1 of control file
+ 
+ module
+     The given string is compared against the module name
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index c60409138e13..ba35199edd9c 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -67,17 +67,6 @@ static LIST_HEAD(ddebug_tables);
+ static int verbose;
+ module_param(verbose, int, 0644);
+ 
+-/* Return the path relative to source root */
+-static inline const char *trim_prefix(const char *path)
+-{
+-	int skip = strlen(__FILE__) - strlen("lib/dynamic_debug.c");
+-
+-	if (strncmp(path, __FILE__, skip))
+-		skip = 0; /* prefix mismatch, don't skip */
+-
+-	return path + skip;
+-}
+-
+ static struct { unsigned flag:8; char opt_char; } opt_array[] = {
+ 	{ _DPRINTK_FLAGS_PRINT, 'p' },
+ 	{ _DPRINTK_FLAGS_INCL_MODNAME, 'm' },
+@@ -162,9 +151,7 @@ static int ddebug_change(const struct ddebug_query *query,
+ 			if (query->filename &&
+ 			    !match_wildcard(query->filename, dp->filename) &&
+ 			    !match_wildcard(query->filename,
+-					   kbasename(dp->filename)) &&
+-			    !match_wildcard(query->filename,
+-					   trim_prefix(dp->filename)))
++					    kbasename(dp->filename)))
+ 				continue;
+ 
+ 			/* match against the function */
+@@ -199,7 +186,7 @@ static int ddebug_change(const struct ddebug_query *query,
+ #endif
+ 			dp->flags = newflags;
+ 			vpr_info("changed %s:%d [%s]%s =%s\n",
+-				 trim_prefix(dp->filename), dp->lineno,
++				 dp->filename, dp->lineno,
+ 				 dt->mod_name, dp->function,
+ 				 ddebug_describe_flags(dp, flagbuf,
+ 						       sizeof(flagbuf)));
+@@ -827,7 +814,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+ 	}
+ 
+ 	seq_printf(m, "%s:%u [%s]%s =%s \"",
+-		   trim_prefix(dp->filename), dp->lineno,
++		   dp->filename, dp->lineno,
+ 		   iter->table->mod_name, dp->function,
+ 		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
+ 	seq_escape(m, dp->format, "\t\r\n\"");
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+2.21.0
 
