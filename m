@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7EEFF3090
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:52:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F9EF3093
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:52:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389358AbfKGNwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:52:21 -0500
-Received: from verein.lst.de ([213.95.11.211]:57452 "EHLO verein.lst.de"
+        id S2389431AbfKGNw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:52:27 -0500
+Received: from verein.lst.de ([213.95.11.211]:57486 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389290AbfKGNwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:52:20 -0500
+        id S2389365AbfKGNwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:52:25 -0500
 Received: by verein.lst.de (Postfix, from userid 2005)
-        id 01C2168C4E; Thu,  7 Nov 2019 14:52:18 +0100 (CET)
+        id BD63768C4E; Thu,  7 Nov 2019 14:52:22 +0100 (CET)
 In-Reply-To: <20191107135018.0A04068BE1@verein.lst.de>
 References: <20191107135018.0A04068BE1@verein.lst.de>
 From:   Torsten Duwe <duwe@lst.de>
 Date:   Tue, 29 Oct 2019 13:16:57 +0100
-Subject: [PATCH v5 4/7] drm/bridge: Prepare Analogix anx6345 support
+Subject: [PATCH v5 6/7] dt-bindings: Add ANX6345 DP/eDP transmitter binding
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -34,77 +34,132 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <20191107135218.01C2168C4E@verein.lst.de>
+Message-Id: <20191107135222.BD63768C4E@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bit definitions required for the anx6345 and add a
-sanity check in anx_dp_aux_transfer.
+The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
+for portable devices.
+
+Add a binding document for it.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Torsten Duwe <duwe@suse.de>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c     | 2 +-
- drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h     | 8 ++++++++
- drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h | 3 +++
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ .../bindings/display/bridge/anx6345.yaml           | 102 ++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.yaml
 
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-@@ -116,7 +116,7 @@ ssize_t anx_dp_aux_transfer(struct regma
- 	else	/* For non-zero-sized set the length field. */
- 		ctrl1 |= (msg->size - 1) << SP_AUX_LENGTH_SHIFT;
- 
--	if ((msg->request & DP_AUX_I2C_READ) == 0) {
-+	if ((msg->size > 0) && ((msg->request & DP_AUX_I2C_READ) == 0)) {
- 		/* When WRITE | MOT write values to data buffer */
- 		err = regmap_bulk_write(map_dptx,
- 					SP_DP_BUF_DATA0_REG, buffer,
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
-@@ -72,7 +72,11 @@
- #define SP_CHA_STA			BIT(2)
- /* Bits for DP System Control Register 3 */
- #define SP_HPD_STATUS			BIT(6)
-+#define SP_HPD_FORCE			BIT(5)
-+#define SP_HPD_CTRL			BIT(4)
- #define SP_STRM_VALID			BIT(2)
-+#define SP_STRM_FORCE			BIT(1)
-+#define SP_STRM_CTRL			BIT(0)
- /* Bits for DP System Control Register 4 */
- #define SP_ENHANCED_MODE		BIT(3)
- 
-@@ -117,6 +121,9 @@
- #define SP_LINK_BW_SET_MASK		0x1f
- #define SP_INITIAL_SLIM_M_AUD_SEL	BIT(5)
- 
-+/* DP Lane Count Setting Register */
-+#define SP_DP_LANE_COUNT_SET_REG	0xa1
+diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.yaml b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+new file mode 100644
+index 000000000000..094e8e8a5faa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+@@ -0,0 +1,102 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/anx6345.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- /* DP Training Pattern Set Register */
- #define SP_DP_TRAINING_PATTERN_SET_REG	0xa2
- 
-@@ -130,6 +137,7 @@
- 
- /* DP Link Training Control Register */
- #define SP_DP_LT_CTRL_REG		0xa8
-+#define SP_DP_LT_INPROGRESS		0x80
- #define SP_LT_ERROR_TYPE_MASK		0x70
- #  define SP_LT_NO_ERROR		0x00
- #  define SP_LT_AUX_WRITE_ERROR		0x01
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h
-@@ -177,6 +177,9 @@
- #define SP_VBIT				BIT(1)
- #define SP_AUDIO_LAYOUT			BIT(0)
- 
-+/* Analog Debug Register 1 */
-+#define SP_ANALOG_DEBUG1_REG		0xdc
++title: Analogix ANX6345 eDP Transmitter Device Tree Bindings
 +
- /* Analog Debug Register 2 */
- #define SP_ANALOG_DEBUG2_REG		0xdd
- #define SP_FORCE_SW_OFF_BYPASS		0x20
++maintainers:
++  - Torsten Duwe <duwe@lst.de>
++
++description: |
++  The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
++  portable devices.
++
++properties:
++  compatible:
++    const: analogix,anx6345
++
++  reg:
++    maxItems: 1
++    description: base I2C address of the device
++
++  reset-gpios:
++    maxItems: 1
++    description: GPIO connected to active low reset
++
++  dvdd12-supply:
++    maxItems: 1
++    description: Regulator for 1.2V digital core power.
++
++  dvdd25-supply:
++    maxItems: 1
++    description: Regulator for 2.5V digital core power.
++
++  ports:
++    type: object
++
++    properties:
++      port@0:
++        type: object
++        description: |
++          Video port for LVTTL input
++
++      port@1:
++        type: object
++        description: |
++          Video port for eDP output (panel or connector).
++          May be omitted if EDID works reliably.
++
++    required:
++      - port@0
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - dvdd12-supply
++  - dvdd25-supply
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      anx6345: anx6345@38 {
++        compatible = "analogix,anx6345";
++        reg = <0x38>;
++        reset-gpios = <&pio42 1 /* GPIO_ACTIVE_LOW */>;
++        dvdd25-supply = <&reg_dldo2>;
++        dvdd12-supply = <&reg_fldo1>;
++
++        ports {
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          anx6345_in: port@0 {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reg = <0>;
++            anx6345_in_tcon0: endpoint@0 {
++              reg = <0>;
++              remote-endpoint = <&tcon0_out_anx6345>;
++            };
++          };
++
++          anx6345_out: port@1 {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reg = <1>;
++            anx6345_out_panel: endpoint@0 {
++              reg = <0>;
++              remote-endpoint = <&panel_in_edp>;
++            };
++          };
++        };
++      };
++    };
