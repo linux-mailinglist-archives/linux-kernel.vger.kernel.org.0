@@ -2,102 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DE1BE8818
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E82E881B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfJ2M0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:26:34 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34220 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727102AbfJ2M0d (ORCPT
+        id S1731656AbfJ2M1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:27:07 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43068 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfJ2M1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:26:33 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9TCQQMv063478;
-        Tue, 29 Oct 2019 07:26:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572351987;
-        bh=KcKoz19cXM5HLBkQayGtrDbv0pk6Rspdk0DQiHTWR5c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EyiQUBfatKmd5vuIiIUsUJ/HcuDqnqr2e1CpE+Y41LAlefq5XG9EVQQjaZWYKZ2dn
-         BxxHyBw6NYgPdK5bW8yGMbDiGcxOD365pkR7zU2A4arJB9xWJSyfSBVIJQQ47x3bXv
-         F+ao2qL9PvhgAFSDkmfhCfSfCSk2/BnIIcdh3alI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9TCQQNV017567;
-        Tue, 29 Oct 2019 07:26:26 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 29
- Oct 2019 07:26:14 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 29 Oct 2019 07:26:26 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9TCQOn7020114;
-        Tue, 29 Oct 2019 07:26:24 -0500
-Subject: Re: [PATCH] usb: cdns3: gadget: reset EP_CLAIMED flag while unloading
-To:     Sanket Parmar <sparmar@cadence.com>, <gregkh@linuxfoundation.org>,
-        <felipe.balbi@linux.intel.com>
-CC:     <pawell@cadence.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kurahul@cadence.com>,
-        <peter.chen@nxp.com>, <nsekhar@ti.com>
-References: <20191029122441.5816-1-sparmar@cadence.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <d7f94cd4-774c-5281-4437-1a160d196bb2@ti.com>
-Date:   Tue, 29 Oct 2019 14:26:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 29 Oct 2019 08:27:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b19so7206716otq.10;
+        Tue, 29 Oct 2019 05:27:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LE4PO0l8sU/LMs15ntY9NP1K54bi7Rn7T6Rvaa70k0c=;
+        b=jatZl43+T1OAL+mtytfjxt5ONLw4ptfpIwjE/JagPLOYGBYq/xH8KNU31Q2e8/OUfk
+         KdwfOk/JyAyhm66p+WV02Wjne4coodHaH62OzyGp+SM5zRYdtvFY+n+DPmn053NASUJw
+         /XKETfGQ89DTKXBzDNbBuN0hntOJjAikGZ4OhLMx804Z92xHgXjN4k3udfRuCNDYu0X6
+         zug7YnivB7sronBUKD7tGI8IS/goFzrvd/zQzJQn8Rs1qauC3TW60o57visQ0X+9KREY
+         jFd8lug7DZFU/vTqqn5ZewOhWWmevmEY2MxEF0k8YQnDB7kmJLohL96bDxSgZ2+qjDSJ
+         y7pw==
+X-Gm-Message-State: APjAAAV83eqM4xEgaS1L/Pbj3QLLXwwUIBNi0zzP0/JyaJKUpilSIzOU
+        NQADShGSmTq2BkP2CHlQfg==
+X-Google-Smtp-Source: APXvYqz/kSbsYZbjOtemCxn0+8PVX7DGw9O5oetqGXvmK6OEFhe1CXtflAPDXmoOIX77jKZU/YDcDg==
+X-Received: by 2002:a9d:7a90:: with SMTP id l16mr7208693otn.295.1572352026208;
+        Tue, 29 Oct 2019 05:27:06 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l7sm1629839otf.39.2019.10.29.05.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 05:27:05 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 07:27:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v1 2/3] dt-bindings: clock: Introduce RPMHCC bindings for
+ SC7180
+Message-ID: <20191029122704.GA8251@bogus>
+References: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
+ <1571393364-32697-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20191029122441.5816-1-sparmar@cadence.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571393364-32697-3-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29/10/2019 14:24, Sanket Parmar wrote:
-> EP_CLAIMED flag is used to track the claimed endpoints. While unloading the
-> module, Reset EP_CLAIMED flag for all enabled endpoints. So that it can be
-> reused.
+On Fri, 18 Oct 2019 15:39:23 +0530, Taniya Das wrote:
+> Add compatible for SC7180 RPMHCC.
 > 
-> Signed-off-by: Sanket Parmar <sparmar@cadence.com>
-
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
-> Hi Greg/Felipe,
-> 
-> This can be used for -rc as it is bug fix.
-> 
-> Regards,
-> Sanket
-> 
->   drivers/usb/cdns3/gadget.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-> index 9050b380ab83..2fb78322ed3c 100644
-> --- a/drivers/usb/cdns3/gadget.c
-> +++ b/drivers/usb/cdns3/gadget.c
-> @@ -2381,6 +2381,8 @@ static int cdns3_gadget_udc_stop(struct usb_gadget *gadget)
->   		writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
->   		readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
->   					  !(val & EP_CMD_EPRST), 1, 100);
-> +
-> +		priv_ep->flags &= ~EP_CLAIMED;
->   	}
->   
->   	/* disable interrupt for device */
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
--- 
-cheers,
--roger
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Acked-by: Rob Herring <robh@kernel.org>
