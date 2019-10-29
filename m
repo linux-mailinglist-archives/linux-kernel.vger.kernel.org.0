@@ -2,262 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D022CE89FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E8AE8A02
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389069AbfJ2NvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:51:21 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21310 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388802AbfJ2NvT (ORCPT
+        id S2389106AbfJ2NwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:52:02 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55123 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388453AbfJ2NwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:51:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572357077;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y0QBgHuOvRpTy/yL3LM7SM8CMC4Q19dnHgWxMUVqqv8=;
-        b=BrndHw0jmHMALkz2VXjjICiv++XqMlx2ObTAUhRWj4SPTY+ELT9GdjSzwi/EWqxeljdKIU
-        U+D/2I4h05P80VqPvxrH8T0aaWqLNWm/sIGUj10R2Ggy8NI/dX80tuQPoWo5RF1tND79xA
-        FDKQMN1vCBu3NmMu+IVrZxyIhjOuFc4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-47-bJqNWw5sMByygSuEXLqKlA-1; Tue, 29 Oct 2019 09:51:13 -0400
-Received: by mail-wr1-f72.google.com with SMTP id q14so8459066wrw.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 06:51:13 -0700 (PDT)
+        Tue, 29 Oct 2019 09:52:02 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g7so2654126wmk.4;
+        Tue, 29 Oct 2019 06:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DZGYQwf14hKZet/V1q9ny5mdIhjZ2BWooRO8zX5IoAs=;
+        b=hyfI2BbhCltIGCnc3C05WqwgQbthE0YNyda/cizpRg3IC4zO8xcHM3pQFop6RtlhUC
+         r5JzxnVoq4XEdf65KfxoTnOkPIsIWvbvjWUDpPmy+cYGRQiwKve2oKvuMHtIHnyYAhd7
+         HLhGQURzkQYt/4eUU5SgSYp7g5sAFY0UKVx+mT8hslb5YdHeqWJBHPoW0l/Yd7gtSVwT
+         gmnunxZIoEZ4muf5QI8kaycNU4UEy6LAHXItxErbUN3Q8eu0TBucVw9Q7S5Wa+fdwEJq
+         ZpK2EaYqaZZ4tfZR4IMGQwjDDP9mNLkLFdDFaWtv7XyBpCoGcLYiY1x8jJSe9fi3wkZo
+         L9lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Pci9O/Y1uGzGl4VbZQrWCqVtKu7mWU+rWUzr+zqpUus=;
-        b=snk0DqAAJZ1vYQSBRDSRYc3RPwLeejNYJ5A9dtDHlxtM9/bWmSWuh9qNusFRQ5Ou2N
-         6SvTZlCt7UYj2GSyZ3W531mgtAqfQP+e3RAJCokKzQDBF5SG91ymY3pZ8oNzAwjxuDVH
-         DXpsCYI/hovqP8Y9bcIArP3/Qk+JGRxAWDja/axq0nmjb2+AHdM8jwBt4Pb5ePedNnRC
-         0NmsDh0quBTe77Ll/TSubzWXStVusqv8Ueb28dFGNFa/nkTYGJLDY4Mgke9iN8Yj13F5
-         gzj2k6sOwtHY3st8m9GUa+mYlL1l4XR/DJ9HGSmMFxQXX8bC3U+TGT25+PRv6J2X+362
-         E/qQ==
-X-Gm-Message-State: APjAAAW0GBSIKfSKS6W9wP782p2AqJanWQnH5Qti/B6yt4Wh2rCIO9kh
-        3oom2il11CLB/dVjZ/4n5fkd5d+/L6tldKZ+u/T+KEhVFYoRg567n9fl3fYbufk0zSqtxlBQDuV
-        8rF0mFyL61ylRTeb4yrQYFPKI
-X-Received: by 2002:adf:fc10:: with SMTP id i16mr19093182wrr.157.1572357072804;
-        Tue, 29 Oct 2019 06:51:12 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxG5wt0T0t9KCOCTG4DWyEMa2fhof6y77Xio3y/jp2lKJcEoqrdOFiVxJqSgiyOI0edNNmXKA==
-X-Received: by 2002:adf:fc10:: with SMTP id i16mr19093157wrr.157.1572357072538;
-        Tue, 29 Oct 2019 06:51:12 -0700 (PDT)
-Received: from mcroce-redhat.mxp.redhat.com (nat-pool-mxp-t.redhat.com. [149.6.153.186])
-        by smtp.gmail.com with ESMTPSA id 189sm2556920wmc.7.2019.10.29.06.51.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DZGYQwf14hKZet/V1q9ny5mdIhjZ2BWooRO8zX5IoAs=;
+        b=c7xeHyqf8v17AHe/Q9zGzQsIjSKz0uFq/silvIb1IcZzTL167EyUE1i9yhY+BsMjEs
+         i9gOVUqyroaSwVtRGCpQXj9EhH268GZvMLFGzniVoKTiw+fQ7bzwW5P+RwVZnsysbIBz
+         xZnVSfSesE3JR3+sPljfINciBiLwpC4oj5iO0LbK7bg2pRkWCNU96+hIeH3er44ZV6lT
+         rt/vtJGYFlovmprf3f49ahpCDY5C6HoR2rZA8kDrux0D/gAV7/5rfWdL9lpM/WJwLUtj
+         vDX8fIAiIsjWQNhZ6N8+a4t+oDXc4QdrNkwjJyTnrrg9p24osyE8vvwFeSmA9rc2fHM5
+         yf6w==
+X-Gm-Message-State: APjAAAUHEGE2UVzOD4GlY6ukvzuTFIRbaD3j6RMDtwc9ZnRIgqYiT1K4
+        rFoyXUT42ORL+9T6LGr7W1o=
+X-Google-Smtp-Source: APXvYqwwqob0oWcxcAV1a0Vd0fsoT8ZMQdgJlXVrrU+CJ35YiKg7XpAUbXeHfBKeszvuKk0Y7T+kHA==
+X-Received: by 2002:a1c:650b:: with SMTP id z11mr4184746wmb.149.1572357115633;
+        Tue, 29 Oct 2019 06:51:55 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id k3sm14278833wro.77.2019.10.29.06.51.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 06:51:11 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S . Miller " <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Paul Blakey <paulb@mellanox.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 4/4] bonding: balance ICMP echoes in layer3+4 mode
-Date:   Tue, 29 Oct 2019 14:50:53 +0100
-Message-Id: <20191029135053.10055-5-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191029135053.10055-1-mcroce@redhat.com>
-References: <20191029135053.10055-1-mcroce@redhat.com>
+        Tue, 29 Oct 2019 06:51:53 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:51:52 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 00/15] memory: tegra: Introduce Tegra30 EMC driver
+Message-ID: <20191029135152.GJ508460@ulmo>
+References: <20190811210043.20122-1-digetx@gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: bJqNWw5sMByygSuEXLqKlA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8tZVdKiiYitVG083"
+Content-Disposition: inline
+In-Reply-To: <20190811210043.20122-1-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bonding uses the L4 ports to balance flows between slaves. As the ICMP
-protocol has no ports, those packets are sent all to the same device:
 
-    # tcpdump -qltnni veth0 ip |sed 's/^/0: /' &
-    # tcpdump -qltnni veth1 ip |sed 's/^/1: /' &
-    # ping -qc1 192.168.0.2
-    1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 315, seq 1, leng=
-th 64
-    1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 315, seq 1, length=
- 64
-    # ping -qc1 192.168.0.2
-    1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 316, seq 1, leng=
-th 64
-    1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 316, seq 1, length=
- 64
-    # ping -qc1 192.168.0.2
-    1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 317, seq 1, leng=
-th 64
-    1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 317, seq 1, length=
- 64
+--8tZVdKiiYitVG083
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But some ICMP packets have an Identifier field which is
-used to match packets within sessions, let's use this value in the hash
-function to balance these packets between bond slaves:
+On Mon, Aug 12, 2019 at 12:00:28AM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This series introduces driver for the External Memory Controller (EMC)
+> found on Tegra30 chips, it controls the external DRAM on the board. The
+> purpose of this driver is to program memory timing for external memory on
+> the EMC clock rate change. The driver was tested using the ACTMON devfreq
+> driver that performs memory frequency scaling based on memory-usage load.
+>=20
+> Changelog:
+>=20
+> v10: - Addressed review comments that were made by Rob Herring to v9 by
+>        dropping unnecessary reg descriptions, specifying valid ranges and
+>        using boolean type where appropriate in the device-tree patches.
+>=20
+> v9: - Fixed memory corruption bug that was uncovered after introducing
+>       some extra optimizations to the devfreq driver that allows CPU
+>       to stay longer in the LP2 cpuidle state. The corruption is caused by
+>       a very late AUTO-REFRESH re-enabling due to a possible schedule on
+>       waiting for clk-change completion, the re-enabling is now a part of
+>       "EMC exec-after-clkchange" hardware sequence.
+>=20
+>     - Added "type: object" to T124 MC YAML, that was missed in v8 by acci=
+dent.
+>=20
+> v8: - Added two new patches:
+>=20
+>         memory: tegra20-emc: Increase handshake timeout
+>         memory: tegra20-emc: wait_for_completion_timeout() doesn't return=
+ error
+>=20
+>       Turned out that memory-clk handshake may take much more time under
+>       some circumstances. The second patch is a minor cleanup. The same
+>       changes are also applied to the Terga30 EMC driver addition-patch.
+>=20
+>       The pattern-properties of YAML bindings gained "type: object", for
+>       consistency.
+>=20
+> v7: - Addressed review comments that were made by Rob Herring to v6 by
+>       removing old Terga30 Memory Controller binding once it's converted
+>       to YAML, by using explicit patterns for the sub-nodes and specifying
+>       min/max clock rates in the YAML.
+>=20
+>     - Two patches that were added in v6 are removed from the series:
+>=20
+>         clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+>         ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off =
+PLLP
+>=20
+>       Because the problem with the PLLP is resolved now, turned out it was
+>       a bug in the CPU-suspend code.
+>=20
+>     - The "Introduce Tegra30 EMC driver" patch got a fix for the "Same Fr=
+eq"
+>       bit typo, it's a bit 27 and not 16.
+>=20
+> v6: - Tegra124 Memory Controller binding factored out into standalone
+>       binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
+>       programming, which is not required for Tegra30. This makes the
+>       upstream MC registers specification to match downstream exactly,
+>       easing porting of boards memory timings configuration to upstream.
+>=20
+>     - Tegra30/124 Memory Controller binding converted to YAML.
+>=20
+>     - Tegra30 External Memory Controller binding now is in YAML format.
+>=20
+>     - Added workaround for hanging during LP2 when EMC runs off PLLP on
+>       Tegra30 in this new patches:
+>=20
+>         clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+>         ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off =
+PLLP
+>=20
+>     - Added info message to the Tegra20/30 EMC drivers, telling about
+>       RAM code and a number of available timings:
+>=20
+>         memory: tegra20-emc: Print a brief info message about the timings
+>=20
+> v5: - Addressed review comments that were made by Thierry Reding to v4 by
+>       adding appropriate copyrights to the source code headers and making
+>       Tegra30 EMC driver to use common Tegra20 CLK API directly instead
+>       of having a dummy-proxy functions specifically for Tegra30.
+>=20
+>     - Addressed review comments that were made by Stephen Boyd to v4 by
+>       rewording commit message of the "Add custom EMC clock implementatio=
+n"
+>       patch and adding clarifying comment (to that patch as well) which
+>       tells why EMC is a critical clock.
+>=20
+>     - Added suspend-resume to Tegra30 EMC driver to error out if EMC driv=
+er
+>       is in a "bad state" as it will likely cause a hang on entering susp=
+end.
+>=20
+>     - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
+>       because the replaced clocks are actually should be removed altogeth=
+er
+>       in the "Drop setting EMC rate to max on probe" patch and that was
+>       missed by an accident.
+>=20
+>     - Added "tegra20-emc: Pre-configure debug register" patch which ensur=
+es
+>       that inappropriate HW debug features are disabled at a probe time.
+>       The same change is also made in the "Introduce Tegra30 EMC driver"
+>       patch.
+>=20
+>     - Added ACKs to the patches from Peter De Schrijver that he gave to v4
+>       since all of the v5 changes are actually very minor.
+>=20
+> v4: - Addressed review comments that were made by Peter De Schrijver to v3
+>       by adding fence_udelay() after writes in the "Add custom EMC clock
+>       implementation" patch.
+>=20
+>     - Added two new minor patches:
+>=20
+>         memory: tegra: Ensure timing control debug features are disabled
+>         memory: tegra: Consolidate registers definition into one place
+>=20
+>       The first one is needed to ensure that EMC driver will work
+>       properly regardless of hardware configuration left after boot.
+>       The second patch is just a minor code cleanup.
+>=20
+>     - The "Introduce Tegra30 EMC driver" got also few very minor changes.
+>       Now every possible error case is handled, nothing is ignored.
+>       The EMC_DBG register is explicitly initialized during probe to be
+>       on the safe side.
+>=20
+> v3: - Addressed review comments that were made by Stephen Boyd to v2 by
+>       adding explicit typing for the callback variable, by including
+>       "clk-provider.h" directly in the code and by dropping __clk_lookup
+>       usage where possible.
+>=20
+>     - Added more patches into this series:
+>=20
+>         memory: tegra20-emc: Drop setting EMC rate to max on probe
+>         memory: tegra20-emc: Adapt for clock driver changes
+>         memory: tegra20-emc: Include io.h instead of iopoll.h
+>         memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+>=20
+>       Initially I was going to include these patches into other patchset,
+>       but changed my mind after rearranging things a tad. The "Adapt for
+>       clock driver changes" patch is directly related to the clock changes
+>       done in the first patch of this series, the rest are minor cleanups
+>       that are fine to include here as well.
+>=20
+>     - Added some more words to the commit message of "Add binding for NVI=
+DIA
+>       Tegra30 External Memory Controller" patch, clarifying why common DDR
+>       timing device-tree form isn't suitable for Tegra30.
+>=20
+>     - The Tegra30 EMC driver now explicitly selects the registers access
+>       mode (EMC_DBG mux), not relying on the setting left from bootloader.
+>=20
+> v2: - Added support for changing MC clock diver configuration based on
+>       Memory Controller (MC) configuration which is part of the memory
+>       timing.
+>=20
+>     - Merged the "Add custom EMC clock implementation" patch into this
+>       series because the "Introduce Tegra30 EMC driver" patch directly
+>       depends on it. Please note that Tegra20 EMC driver will need to be
+>       adapted for the clock changes as well, I'll send out the Tegra20
+>       patches after this series will be applied because of some other
+>       dependencies (devfreq) and because the temporary breakage won't
+>       be critical (driver will just error out on probe).
+>=20
+>     - EMC driver now performs MC configuration validation by checking
+>       that the number of MC / EMC timings matches and that the timings
+>       rate is the same.
+>=20
+>     - EMC driver now supports timings that want to change the MC clock
+>       configuration.
+>=20
+>     - Other minor prettifying changes of the code.
+>=20
+> Dmitry Osipenko (15):
+>   clk: tegra20/30: Add custom EMC clock implementation
+>   memory: tegra20-emc: Drop setting EMC rate to max on probe
+>   memory: tegra20-emc: Adapt for clock driver changes
+>   memory: tegra20-emc: Include io.h instead of iopoll.h
+>   memory: tegra20-emc: Pre-configure debug register
+>   memory: tegra20-emc: Print a brief info message about the timings
+>   memory: tegra20-emc: Increase handshake timeout
+>   memory: tegra20-emc: wait_for_completion_timeout() doesn't return
+>     error
+>   dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+>   dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+>   dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
+>     Controller
+>   memory: tegra: Introduce Tegra30 EMC driver
+>   memory: tegra: Ensure timing control debug features are disabled
+>   memory: tegra: Consolidate registers definition into common header
+>   ARM: dts: tegra30: Add External Memory Controller node
 
-    # ping -qc1 192.168.0.2
-    0: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 303, seq 1, leng=
-th 64
-    0: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 303, seq 1, length=
- 64
-    # ping -qc1 192.168.0.2
-    1: IP 192.168.0.1 > 192.168.0.2: ICMP echo request, id 304, seq 1, leng=
-th 64
-    1: IP 192.168.0.2 > 192.168.0.1: ICMP echo reply, id 304, seq 1, length=
- 64
+Applied these to for-5.5/clk, for-5.5/dt-bindings, for-5.5/memory and
+for-5.5/arm/dt, thanks.
 
-Aso, let's use a flow_dissector_key which defines FLOW_DISSECTOR_KEY_ICMP,
-so we can balance pings encapsulated in a tunnel when using mode encap3+4:
+Thierry
 
-    # ping -q 192.168.1.2 -c1
-    0: IP 192.168.0.1 > 192.168.0.2: GREv0, length 102: IP 192.168.1.1 > 19=
-2.168.1.2: ICMP echo request, id 585, seq 1, length 64
-    0: IP 192.168.0.2 > 192.168.0.1: GREv0, length 102: IP 192.168.1.2 > 19=
-2.168.1.1: ICMP echo reply, id 585, seq 1, length 64
-    # ping -q 192.168.1.2 -c1
-    1: IP 192.168.0.1 > 192.168.0.2: GREv0, length 102: IP 192.168.1.1 > 19=
-2.168.1.2: ICMP echo request, id 586, seq 1, length 64
-    1: IP 192.168.0.2 > 192.168.0.1: GREv0, length 102: IP 192.168.1.2 > 19=
-2.168.1.1: ICMP echo reply, id 586, seq 1, length 64
+--8tZVdKiiYitVG083
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- drivers/net/bonding/bond_main.c | 77 ++++++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 7 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_mai=
-n.c
-index 21d8fcc83c9c..3e496e746cc6 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -200,6 +200,51 @@ atomic_t netpoll_block_tx =3D ATOMIC_INIT(0);
-=20
- unsigned int bond_net_id __read_mostly;
-=20
-+static const struct flow_dissector_key flow_keys_bonding_keys[] =3D {
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_CONTROL,
-+=09=09.offset =3D offsetof(struct flow_keys, control),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_BASIC,
-+=09=09.offset =3D offsetof(struct flow_keys, basic),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_IPV4_ADDRS,
-+=09=09.offset =3D offsetof(struct flow_keys, addrs.v4addrs),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_IPV6_ADDRS,
-+=09=09.offset =3D offsetof(struct flow_keys, addrs.v6addrs),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_TIPC,
-+=09=09.offset =3D offsetof(struct flow_keys, addrs.tipckey),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_PORTS,
-+=09=09.offset =3D offsetof(struct flow_keys, ports),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_ICMP,
-+=09=09.offset =3D offsetof(struct flow_keys, icmp),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_VLAN,
-+=09=09.offset =3D offsetof(struct flow_keys, vlan),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_FLOW_LABEL,
-+=09=09.offset =3D offsetof(struct flow_keys, tags),
-+=09},
-+=09{
-+=09=09.key_id =3D FLOW_DISSECTOR_KEY_GRE_KEYID,
-+=09=09.offset =3D offsetof(struct flow_keys, keyid),
-+=09},
-+};
-+
-+static struct flow_dissector flow_keys_bonding __read_mostly;
-+
- /*-------------------------- Forward declarations ------------------------=
----*/
-=20
- static int bond_init(struct net_device *bond_dev);
-@@ -3263,10 +3308,14 @@ static bool bond_flow_dissect(struct bonding *bond,=
- struct sk_buff *skb,
- =09const struct iphdr *iph;
- =09int noff, proto =3D -1;
-=20
--=09if (bond->params.xmit_policy > BOND_XMIT_POLICY_LAYER23)
--=09=09return skb_flow_dissect_flow_keys(skb, fk, 0);
-+=09if (bond->params.xmit_policy > BOND_XMIT_POLICY_LAYER23) {
-+=09=09memset(fk, 0, sizeof(*fk));
-+=09=09return __skb_flow_dissect(NULL, skb, &flow_keys_bonding,
-+=09=09=09=09=09  fk, NULL, 0, 0, 0, 0);
-+=09}
-=20
- =09fk->ports.ports =3D 0;
-+=09memset(&fk->icmp, 0, sizeof(fk->icmp));
- =09noff =3D skb_network_offset(skb);
- =09if (skb->protocol =3D=3D htons(ETH_P_IP)) {
- =09=09if (unlikely(!pskb_may_pull(skb, noff + sizeof(*iph))))
-@@ -3286,8 +3335,14 @@ static bool bond_flow_dissect(struct bonding *bond, =
-struct sk_buff *skb,
- =09} else {
- =09=09return false;
- =09}
--=09if (bond->params.xmit_policy =3D=3D BOND_XMIT_POLICY_LAYER34 && proto >=
-=3D 0)
--=09=09fk->ports.ports =3D skb_flow_get_ports(skb, noff, proto);
-+=09if (bond->params.xmit_policy =3D=3D BOND_XMIT_POLICY_LAYER34 && proto >=
-=3D 0) {
-+=09=09if (proto =3D=3D IPPROTO_ICMP || proto =3D=3D IPPROTO_ICMPV6)
-+=09=09=09skb_flow_get_icmp_tci(skb, &fk->icmp, skb->data,
-+=09=09=09=09=09      skb_transport_offset(skb),
-+=09=09=09=09=09      skb_headlen(skb));
-+=09=09else
-+=09=09=09fk->ports.ports =3D skb_flow_get_ports(skb, noff, proto);
-+=09}
-=20
- =09return true;
- }
-@@ -3314,10 +3369,14 @@ u32 bond_xmit_hash(struct bonding *bond, struct sk_=
-buff *skb)
- =09=09return bond_eth_hash(skb);
-=20
- =09if (bond->params.xmit_policy =3D=3D BOND_XMIT_POLICY_LAYER23 ||
--=09    bond->params.xmit_policy =3D=3D BOND_XMIT_POLICY_ENCAP23)
-+=09    bond->params.xmit_policy =3D=3D BOND_XMIT_POLICY_ENCAP23) {
- =09=09hash =3D bond_eth_hash(skb);
--=09else
--=09=09hash =3D (__force u32)flow.ports.ports;
-+=09} else {
-+=09=09if (flow.icmp.id)
-+=09=09=09memcpy(&hash, &flow.icmp, sizeof(hash));
-+=09=09else
-+=09=09=09memcpy(&hash, &flow.ports.ports, sizeof(hash));
-+=09}
- =09hash ^=3D (__force u32)flow_get_u32_dst(&flow) ^
- =09=09(__force u32)flow_get_u32_src(&flow);
- =09hash ^=3D (hash >> 16);
-@@ -4901,6 +4960,10 @@ static int __init bonding_init(void)
- =09=09=09goto err;
- =09}
-=20
-+=09skb_flow_dissector_init(&flow_keys_bonding,
-+=09=09=09=09flow_keys_bonding_keys,
-+=09=09=09=09ARRAY_SIZE(flow_keys_bonding_keys));
-+
- =09register_netdevice_notifier(&bond_netdev_notifier);
- out:
- =09return res;
---=20
-2.21.0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24Q/YACgkQ3SOs138+
+s6FSng/9GvNX2ESlUyo+ZW9xuN96/Lggg7Wh/rONstjJj8PeURp4Wyg9R+m01i9S
+OKJaGKFDEcOOFC/cChD/plozuId2HBEXoVnwjExRF0MWabOWfNmFc2qp87Gq8Ucu
+KGZOhHcXluq+bffxPAlKlHb0DbuPEPLDf6KXhRa77FC+8N3SwCZ/KMMtkLVqLW4F
+X6t86MyVU35CoidXfzx+Y9tPbenuOJBEREFkFE/0AsveLJUd1Q1j287zR/wGdupZ
+WKzH2PScDnjHSS+XRv+25mij0RN4nbHjT+1oUW6XAyf2L/PzaatT5qibcFpm1KAn
+hZDQbBwt5b+wwuy7O1nSBxkAH2yv6kkq4Ll0K+potQeI7GqBtXD2wmNoXTMiklzM
+SsxJpDS9orJmdH5BZDwX+g1DUHhm3WWunYR0bafrRCvxPRjGuOQ8T9SzH9rL6vuR
+7Dty/TzBURBktNoVxdIzVWqmiIj9QVSH9Aze9ghGrHMaPVI3+P5jVRjSPJPlSHpX
+cXEqLla2Xh+BhXjc+yNVYmpQvOTv1U0XcBUSWmEZycV1v4PYj6UAPqCYAw2xAKCz
+UPeHl6MVG+cAVtWuDkPpHYccyGx99fR83okiqOGhlGkCjW4xX0YoOVMal4DqYrxx
+wMKew82EmDMHh/7J1wJ81SojwUCYB0OC941Y3FlBCsIsTCGQoV8=
+=zmek
+-----END PGP SIGNATURE-----
 
+--8tZVdKiiYitVG083--
