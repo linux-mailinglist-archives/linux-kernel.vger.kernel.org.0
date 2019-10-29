@@ -2,83 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A7BE8512
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0550E850C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:05:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfJ2KGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:06:20 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39132 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbfJ2KGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:06:20 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DAF571A09BE;
-        Tue, 29 Oct 2019 11:06:17 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A2F41A09CC;
-        Tue, 29 Oct 2019 11:06:13 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8253840307;
-        Tue, 29 Oct 2019 18:06:07 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] ARM: dts: imx7ulp-evk: Use APLL_PFD1 as usdhc's clock source
-Date:   Tue, 29 Oct 2019 18:02:52 +0800
-Message-Id: <1572343372-6303-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727453AbfJ2KFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:05:50 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37234 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJ2KFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:05:50 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q130so1709103wme.2;
+        Tue, 29 Oct 2019 03:05:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VwVCJvBkvTdm9BSUnd9jdf4FOOPb5NaI8k+d4L1wBU4=;
+        b=Q4zxjV67mrd/xnpNh5n6mQlH9CT33ulNoVoUUUuEoaeLQOiTFigDf29n3Jn/RqTGTg
+         54Kp7ZymjvHUe+HVDNTz3LoElSoytx0PJ+YmHQkO4N4XU59PxV3e6WIykGj8MmxzMbMq
+         ZPoLuTg1S63uun3TOKI72DBC3P6tmPoAiGqd2rlV8v/qCVvl/+nwmH2yMbOtxsp044Z9
+         Ff1+z6i/m45tKwe/PRRVlEo4qEY2sV1aUNycXrIIDFnnUFZNsVRk1qBu5OsdT9lYMnoN
+         ySZOC9MczHXIqI7CB7S9UGBTQAoTgDrhHiMKhld37CeukpTix6ArNGmRTC7US3jjFvGn
+         UD5A==
+X-Gm-Message-State: APjAAAUTl2HB8Dz+2PWYKn0p27tM9KbZh7mZAgYpxLiGoIg7zYz5o7As
+        T/IRqf5elBSLYcOCz4T+0tGDMgQoAdM=
+X-Google-Smtp-Source: APXvYqw5btc3uQXDpSHksE3uGXSr3w8/dvCp3XGFGivwHvwVClXWQs9OVelli8XsNivum7XMd+LniQ==
+X-Received: by 2002:a1c:2344:: with SMTP id j65mr3455802wmj.38.1572343547384;
+        Tue, 29 Oct 2019 03:05:47 -0700 (PDT)
+Received: from pi (100.50.158.77.rev.sfr.net. [77.158.50.100])
+        by smtp.gmail.com with ESMTPSA id c144sm2358614wmd.1.2019.10.29.03.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 03:05:46 -0700 (PDT)
+Received: from johan by pi with local (Exim 4.92.2)
+        (envelope-from <johan@pi>)
+        id 1iPOMW-000205-8U; Tue, 29 Oct 2019 11:04:28 +0100
+Date:   Tue, 29 Oct 2019 11:04:28 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 095/100] USB: usb-skeleton: fix
+ use-after-free after driver unbind
+Message-ID: <20191029100428.GA4691@localhost>
+References: <20191018220525.9042-1-sashal@kernel.org>
+ <20191018220525.9042-95-sashal@kernel.org>
+ <20191018222205.GA6978@kroah.com>
+ <20191029090435.GJ1554@sasha-vm>
+ <20191029094321.GA582711@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029094321.GA582711@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX7ULP does NOT support runtime switching clock source for PCC,
-APLL_PFD1 by default is usdhc's clock source, so just use it
-in kernel to avoid below kernel dump during kernel boot up and
-make sure kernel can boot up with SD root file-system.
+On Tue, Oct 29, 2019 at 10:43:21AM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Oct 29, 2019 at 05:04:35AM -0400, Sasha Levin wrote:
+> > On Fri, Oct 18, 2019 at 06:22:05PM -0400, Greg Kroah-Hartman wrote:
+> > > On Fri, Oct 18, 2019 at 06:05:20PM -0400, Sasha Levin wrote:
+> > > > From: Johan Hovold <johan@kernel.org>
+> > > > 
+> > > > [ Upstream commit 6353001852776e7eeaab4da78922d4c6f2b076af ]
+> > > > 
+> > > > The driver failed to stop its read URB on disconnect, something which
+> > > > could lead to a use-after-free in the completion handler after driver
+> > > > unbind in case the character device has been closed.
+> > > > 
+> > > > Fixes: e7389cc9a7ff ("USB: skel_read really sucks royally")
+> > > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > > Link: https://lore.kernel.org/r/20191009170944.30057-3-johan@kernel.org
+> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > > > ---
+> > > >  drivers/usb/usb-skeleton.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > 
+> > > This file does not even get built in the kernel tree, no need to
+> > > backport anything for it :)
+> > 
+> > I'll drop it, but you're taking patches for this driver:
+> > https://lore.kernel.org/patchwork/patch/1140673/ .
+> 
+> Ah yeah, I probably shouldn't have taken stable backports for that, my
+> fault.
 
-[    3.035892] Loading compiled-in X.509 certificates
-[    3.136301] sdhci-esdhc-imx 40370000.mmc: Got CD GPIO
-[    3.242886] mmc0: Reset 0x1 never completed.
-[    3.247190] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-[    3.253751] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000002
-[    3.260218] mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000001
-[    3.266775] mmc0: sdhci: Argument:  0x00009a64 | Trn mode: 0x00000000
-[    3.273333] mmc0: sdhci: Present:   0x00088088 | Host ctl: 0x00000002
-[    3.279794] mmc0: sdhci: Power:     0x00000000 | Blk gap:  0x00000080
-[    3.286350] mmc0: sdhci: Wake-up:   0x00000008 | Clock:    0x0000007f
-[    3.292901] mmc0: sdhci: Timeout:   0x0000008c | Int stat: 0x00000000
-[    3.299364] mmc0: sdhci: Int enab:  0x007f010b | Sig enab: 0x00000000
-[    3.305918] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00008402
-[    3.312471] mmc0: sdhci: Caps:      0x07eb0000 | Caps_1:   0x0000b400
-[    3.318934] mmc0: sdhci: Cmd:       0x0000113a | Max curr: 0x00ffffff
-[    3.325488] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x0039b37f
-[    3.332040] mmc0: sdhci: Resp[2]:   0x325b5900 | Resp[3]:  0x00400e00
-[    3.338501] mmc0: sdhci: Host ctl2: 0x00000000
-[    3.343051] mmc0: sdhci: ============================================
+Note that this was all due to
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx7ulp-evk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	https://lkml.kernel.org/r/20190930161205.18803-2-johan@kernel.org
 
-diff --git a/arch/arm/boot/dts/imx7ulp-evk.dts b/arch/arm/boot/dts/imx7ulp-evk.dts
-index f1093d2..a863a2b 100644
---- a/arch/arm/boot/dts/imx7ulp-evk.dts
-+++ b/arch/arm/boot/dts/imx7ulp-evk.dts
-@@ -78,7 +78,7 @@
- 
- &usdhc0 {
- 	assigned-clocks = <&pcc2 IMX7ULP_CLK_USDHC0>;
--	assigned-clock-parents = <&scg1 IMX7ULP_CLK_NIC1_DIV>;
-+	assigned-clock-parents = <&scg1 IMX7ULP_CLK_APLL_PFD1>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc0>;
- 	cd-gpios = <&gpio_ptc 10 GPIO_ACTIVE_LOW>;
--- 
-2.7.4
+which fixed a PM bug due to an API change that was backported to stable.
 
+I considered it comparable to a documentation fix to make sure that the
+template driver matched the new API, hence the stable tag.
+
+Johan
