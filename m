@@ -2,142 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAC1E90D2
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6BDE90D3
 	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfJ2Ue6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:34:58 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:39139 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfJ2Ue5 (ORCPT
+        id S1727567AbfJ2UfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:35:00 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34178 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfJ2UfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:34:57 -0400
-Received: by mail-yw1-f68.google.com with SMTP id k127so78302ywc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 13:34:55 -0700 (PDT)
+        Tue, 29 Oct 2019 16:35:00 -0400
+Received: by mail-qt1-f195.google.com with SMTP id e14so75096qto.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 13:34:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3e7RG+yymRb8+UsDjN9H9kt+0y+nm/jojOW5ivlVFvw=;
-        b=efsmSO4ZMSKlzNExqN+trF4cPvgy7drS2gKPDQSANIsrX4igow0dM/O50BYeZbKDQM
-         hiazdisICBi094slGKVMuxcYklIV2arLTepYlLiueeUMimvvjusFE9SSZRoC6ZOR/aoU
-         +1dcTTm3FY/2R3dglgtSpuJI0IVzLNEfJFJWc=
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=rNPiP7HMD7KMQV99QdX+LzykDSaTG5JEZ6AOiiXzRmY=;
+        b=iC2geyj5QYn8iFm0j123TV3i5BNKwCmptfXfpk3BsvSSJi9nw50gDvOL8sX08Fa11g
+         hcp9kVP+d0NmLED9+YTNs7JhRfsAU00YBtWqsOtDcTpO/1/GmOnyiZECY9nmgJo3nX2M
+         zWQIXu7/k407rd1NyCRyz793ECdZQ2onFxFSPBqUuG6LwAEfAJsd7w+rncIxpM4g96rm
+         wfhmPLNgfFLvuaz2tghTOBVKxFtqVXJ5EvE+DDWTeqk3R17zb3LJXmbfWXAv9QIx1NDP
+         UkxQV9oEudQkgSB5WnkPPbf0AKcwNIt2hbbqCjLxeENQKsqtiPSI5SVtKXAy10k7UeW/
+         h0mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3e7RG+yymRb8+UsDjN9H9kt+0y+nm/jojOW5ivlVFvw=;
-        b=k6x6rk0pxzrDom/cMyrsCdU4dVZ50wbze8NjIWbEJfPEAs5ojWu5loCHelxZ+nD454
-         6zdqXFIT9vXED3IpiKxPg5F7yVHDHEdAjgscrMFIKM3iY/qdOZw71RnqWqk/8DO62akQ
-         WZEQSCzuRY3cT2v/BOv5NkVbLBEBjgTSdhRhg/E7LuoBp328w37FweO9hMdFgQnJrgyr
-         J7XfYlN1dN9ogMrwOIp4cwQD0oT2VD4ONhe5pxil5mdV0vmghuIurEOaXwM4clVsCT43
-         WLoZRInCKUtDFLcrAMoXU4BASp26q2+zuXjLDyN7XKcO/kPO46DudMFX2IebmWAzFx6N
-         +jyg==
-X-Gm-Message-State: APjAAAX0rReDhrgS6u1pm82DzN3NGkSxpuEEaeDrr8xEZNfP6Ro3IH1g
-        tfGuXDR+VF5oCGB03s3gBhbOZg==
-X-Google-Smtp-Source: APXvYqw53pPyegiei3tZ7Yzm+loCH8bzg7nHRm+d4aamBP2EMIXnNiwJny609a7DNSN6g3lneI+8Qg==
-X-Received: by 2002:a81:bd05:: with SMTP id b5mr19023466ywi.243.1572381295382;
-        Tue, 29 Oct 2019 13:34:55 -0700 (PDT)
-Received: from sinkpad (192-222-189-155.qc.cable.ebox.net. [192.222.189.155])
-        by smtp.gmail.com with ESMTPSA id l68sm4501863ywf.95.2019.10.29.13.34.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 13:34:54 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 16:34:47 -0400
-From:   Julien Desfossez <jdesfossez@digitalocean.com>
-To:     Dario Faggioli <dfaggioli@suse.com>
-Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20191029203447.GA13345@sinkpad>
-References: <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
- <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com>
- <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com>
- <20190911140204.GA52872@aaronlu>
- <7b001860-05b4-4308-df0e-8b60037b8000@linux.intel.com>
- <20190912120400.GA16200@aaronlu>
- <CAERHkrsrszO4hJqVy=g7P74h9d_YJzW7GY4ptPKykTX-mc9Mdg@mail.gmail.com>
- <20190915141402.GA1349@aaronlu>
- <277737d6034b3da072d3b0b808d2fa6e110038b0.camel@suse.com>
- <d30d343a8d9bf2c2e2977be7ac8370f26fd4df3d.camel@suse.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=rNPiP7HMD7KMQV99QdX+LzykDSaTG5JEZ6AOiiXzRmY=;
+        b=FiUGwM2Qxmwkr8C0twUTAuMngGPuxJgga6cV2lBcGfbC2cw/3s78LkcZyXLdGXlwzg
+         NL+Aaris6cSILmTUwvGCvS3xRIgZJfxg8RiaR9v1NXgtNA87U6hDujyM3YRAH7ronXoi
+         Imnd8Gb2V7Xt381V4HcZOebuiQkfNaCRoIT8IveAZcCdaiFLG/OGwccWGGXteK5px9pz
+         srZkZb2bdDUDfvefbQsJaEoSbAALWE2TgRv15nU6P+El1q3Brevs9s1q4M/A7c+cFjNS
+         +rtvv9q9mjd7f4dlAhA/ZROFKSYLZNDYss4jnDWkly7JnTwUOWNxxGifLgx666NVPCrK
+         Lh9Q==
+X-Gm-Message-State: APjAAAWXFXxBvm0mDlt4HqXKEG4/BBOTK3+utrtKLm045+y9EyNRGy4E
+        aRcC1q45qPEvoSFmYCwS5hRVYUQQY9s4E7p7kOq1///m
+X-Google-Smtp-Source: APXvYqzZtu0QPSJd/ZkvilZ9g/poZZo57u9OvLmevaw3szHLakir292i2u1TATD4HPIBlycZBwX2mcNo18XVKe5Zb5M=
+X-Received: by 2002:a05:6214:24:: with SMTP id b4mr17464562qvr.144.1572381298675;
+ Tue, 29 Oct 2019 13:34:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d30d343a8d9bf2c2e2977be7ac8370f26fd4df3d.camel@suse.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:ad4:5244:0:0:0:0:0 with HTTP; Tue, 29 Oct 2019 13:34:58
+ -0700 (PDT)
+From:   King Anthony <kinganthony761033@gmail.com>
+Date:   Wed, 30 Oct 2019 00:34:58 +0400
+Message-ID: <CABUyjWQx5KoK1e4c02dXx1eJNvf3CdJrhJjSd48WO5ObtTb_Vg@mail.gmail.com>
+Subject: BUSINESS PROPOSAL
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-Oct-2019 10:20:57 AM, Dario Faggioli wrote:
-> > Hello,
-> > 
-> > As anticipated, I've been trying to follow the development of this
-> > feature and, in the meantime, I have done some benchmarks.
-> > 
-> > I actually have a lot of data (and am planning for more), so I am
-> > sending a few emails, each one with a subset of the numbers in it,
-> > instead than just one which would be beyond giant! :-)
-> > 
+-- 
+Dear Friend,
+My name is King and I am an investor. I will like to invest in your
+country I need a reliable person to help me to invest in your
+country.Can you find means to contact me with your private contact.
 
-Hi Dario,
+waiting to hear from you soon.
 
-Thank you for this comprehensive set of tests and analyses !
+Thanks Mr King Anthony
 
-It confirms the trend we are seeing for the VM cases. Basically when the
-CPUs are overcommitted, core scheduling helps compared to noHT. But when
-we have I/O in the mix (sysbench-oltp), then it becomes a bit less
-clear, it depends if the CPU is still overcommitted or not. About the
-2nd VM that is doing the background noise, is it enough to fill up the
-disk queues or is its disk throughput somewhat limited ? Have you
-compared the results if you disable the disk noise ?
-
-Our approach for bare-metal tests is a bit different, we are
-constraining a set of processes only on a limited set of cpus, but I
-like your approach because it pushes more the number of processes
-against the whole system. And I have no explanation for why sysbench
-thread vs process is so different.
-
-And it also confirms, core scheduling has trouble scaling with the
-number of threads, it works pretty well in VMs because the number of
-threads is limited by the number of vcpus, but the bare-metal cases show
-a major scaling issue (which is not too surprising).
-
-I am curious, for the tagging in KVM, do you move all the vcpus into the
-same cgroup before tagging ?  Did you leave the emulator threads
-untagged at all time ?
-
-For the overhead (without tagging), have you tried bisecting the
-patchset to see which patch introduces the overhead ? it is more than I
-had in mind.
-
-And for the cases when core scheduling improves the performance compared
-to the baseline numbers, could it be related to frequency scaling (more
-work to do means a higher chance of running at a higher frequency) ?
-
-We are almost ready to send the v4 patchset (most likely tomorrow), it
-has been rebased on v5.3.5, so stay tuned and ready for another set of
-tests ;-)
-
-Thanks,
-
-Julien
+Warm regards
