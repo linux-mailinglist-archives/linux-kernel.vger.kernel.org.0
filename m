@@ -2,96 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC36E882E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8488AE882C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732373AbfJ2M3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:29:45 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49067 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729867AbfJ2M3p (ORCPT
+        id S1730112AbfJ2M3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:29:38 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43648 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfJ2M3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:29:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572352183;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=isE3WXtq6TdHNbe0eCrSyqXMPps4oLg4qOCvldTLLWc=;
-        b=PQb4u8csqYgokGPJ+pAuNvs0jtrNIiVUznhmHMewx/W62qsi3ddwbsN2Gwy7kOojZrXRG4
-        XIrFAybkOz6+qghRwJUnYdpal0/ZmrNXaVkH+mAMtO7V/U0WIuMUrvO9XXkvMKtBReL6es
-        i5UjvELgbWAMHPMBDDX7zjgXtlVnw80=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-322-5xRQ-dLzNiCOO_F_zL5VZg-1; Tue, 29 Oct 2019 08:29:39 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 21D0A801E64;
-        Tue, 29 Oct 2019 12:29:38 +0000 (UTC)
-Received: from [10.36.118.15] (unknown [10.36.118.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6906960C4B;
-        Tue, 29 Oct 2019 12:29:34 +0000 (UTC)
-Subject: Re: [PATCH 1/3] KVM: arm/arm64: vgic: Remove the declaration of
- kvm_send_userspace_msi()
-To:     Zenghui Yu <yuzenghui@huawei.com>, maz@kernel.org,
-        james.morse@arm.com, julien.thierry.kdev@gmail.com,
-        suzuki.poulose@arm.com
-Cc:     wanghaibin.wang@huawei.com, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191029071919.177-1-yuzenghui@huawei.com>
- <20191029071919.177-2-yuzenghui@huawei.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <a38976ea-8c10-6fde-67a8-a25aa13c964e@redhat.com>
-Date:   Tue, 29 Oct 2019 13:29:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Oct 2019 08:29:37 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s5so8716285oie.10;
+        Tue, 29 Oct 2019 05:29:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=okLPsosnjsIdAglbOpT+46TAv0woYLu5g4KKw1XBUMA=;
+        b=lM6VWrT9du2QY1TbvJlMHZnGLobKPcF0GBn/06Edvjns67NhXPGISiqeOwl2ETwdrY
+         INXVaQHFjA1L/4WVeluNbRdooUk3HM2vgDvjPfPA9lCQv0pqVEhwEQjPtNnFP/ZKiQzM
+         4LM9i48qE0MpSwjC4GESNTcSY7cHIwcbttPYUwWo4QMeH0zZoql8yMhhQQ9RMaf9LBeF
+         MelIXESTwTIGurwE2q/V9ppC0b0WaJ3F5+TgTU++Srwc5nB7P8Se0FGV+tY8lCznHzfu
+         7+b2Z+AIu9w4jvcOwvr5vFurwWybYGdh6JCDBLIO3TzfGz55q64NFPzJQe6Ig1vTFvn6
+         fqNg==
+X-Gm-Message-State: APjAAAUknjtybA0IwoxlJ1rOKgGS4FL985J6ues4fGxDkmPiNf9yxwvm
+        O+bqd5M9b59sJmsj6KNmNA==
+X-Google-Smtp-Source: APXvYqyO8DH2IEhStv2gSlye9+VbvTmQX6+T9WxWt66DaOIg31GxlTrzat5+Bsvuee/7K8GJyRccXw==
+X-Received: by 2002:aca:4896:: with SMTP id v144mr3970672oia.16.1572352176888;
+        Tue, 29 Oct 2019 05:29:36 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m4sm4653250otm.14.2019.10.29.05.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 05:29:36 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 07:29:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: at91: Document Kizboxmini boards
+ binding
+Message-ID: <20191029122935.GA8412@bogus>
+References: <20191018140304.31547-1-kamel.bouhara@bootlin.com>
+ <20191018140304.31547-2-kamel.bouhara@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20191029071919.177-2-yuzenghui@huawei.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: 5xRQ-dLzNiCOO_F_zL5VZg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191018140304.31547-2-kamel.bouhara@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zenghui,
-
-On 10/29/19 8:19 AM, Zenghui Yu wrote:
-> The callsite of kvm_send_userspace_msi() is currently arch agnostic.
-> There seems no reason to keep an extra declaration of it in arm_vgic.h
-> (we already have one in include/linux/kvm_host.h).
->=20
-> Remove it.
->=20
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+On Fri, Oct 18, 2019 at 04:03:03PM +0200, Kamel Bouhara wrote:
+> Document devicetree's bindings for the SAM9G25 Kizbox Mini boards of
+> Overkiz SAS.
+> 
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
 > ---
->  include/kvm/arm_vgic.h | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-> index af4f09c02bf1..0fb240ec0a2a 100644
-> --- a/include/kvm/arm_vgic.h
-> +++ b/include/kvm/arm_vgic.h
-> @@ -378,8 +378,6 @@ static inline int kvm_vgic_get_max_vcpus(void)
->  =09return kvm_vgic_global_state.max_gic_vcpus;
->  }
-> =20
-> -int kvm_send_userspace_msi(struct kvm *kvm, struct kvm_msi *msi);
-> -
->  /**
->   * kvm_vgic_setup_default_irq_routing:
->   * Setup a default flat gsi routing table mapping all SPIs
->=20
+>  .../devicetree/bindings/arm/atmel-at91.yaml        | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> index 1e72e3e6e025..666462988179 100644
+> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> @@ -35,6 +35,20 @@ properties:
+>                - atmel,at91sam9x60
+>            - const: atmel,at91sam9
+>  
+> +      - description: Overkiz kizbox Mini Mother Board
+> +        items:
+> +          - const: overkiz,kizboxmini-mb
+> +          - const: atmel,at91sam9g25
+> +          - const: atmel,at91sam9x5
+> +          - const: atmel,at91sam9
+> +
+> +      - description: Overkiz kizbox Mini RailDIN
+> +        items:
+> +          - const: overkiz,kizboxmini-rd
+> +          - const: atmel,at91sam9g25
+> +          - const: atmel,at91sam9x5
+> +          - const: atmel,at91sam9
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+These 2 can also be combined into 1 entry.
 
-Thanks
-
-Eric
-
+> +
+>        - items:
+>            - enum:
+>                - atmel,at91sam9g15
+> -- 
+> 2.23.0
+> 
