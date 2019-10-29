@@ -2,101 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB1DE92F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:15:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 875DEE92F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:20:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfJ2WPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 18:15:18 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20625 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbfJ2WPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 18:15:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 15:15:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,245,1569308400"; 
-   d="diff'?scan'208";a="225127666"
-Received: from spandruv-mobl3.jf.intel.com ([10.255.229.217])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Oct 2019 15:15:16 -0700
-Message-ID: <aaff9d379a325e5500651ca2f2e2ec7e21c245e3.camel@linux.intel.com>
-Subject: Re: "Force HWP min perf before offline" triggers unchecked MSR
- access errors
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Qian Cai <cai@lca.pw>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>, Len Brown <lenb@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 29 Oct 2019 15:15:16 -0700
-In-Reply-To: <53fc01bf9ef25012a1a43b87954b62a02101d85c.camel@linux.intel.com>
-References: <CAJZ5v0g6_-HBEKfHtfe8LFG9PKosGeUW3-gwTBW6F32OwFwO3g@mail.gmail.com>
-         <A94C23C3-E6B9-4390-B380-C49D87731D81@lca.pw>
-         <53fc01bf9ef25012a1a43b87954b62a02101d85c.camel@linux.intel.com>
-Content-Type: multipart/mixed; boundary="=-EbG5otTQwJdOLYnc5Foy"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
+        id S1726207AbfJ2WU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 18:20:27 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23215 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725880AbfJ2WU1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 18:20:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572387625;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5eWT9nPy+R5O4U/dHhPn5efOlyKUPzVBsOetLDlPYDU=;
+        b=ZJqLNtPx8t6Dsd2vNGTSkF0rZnjWsErulJaYS8hyITSvEvUl2zIS5Q0PAIBeEkteUhzfZI
+        Nyo+OumAxmssXG7f4hk4AXoZ8Q/Tw/tKvGMkd8hqvYl2uIjNlj6xc52uq3WV9e8BMv9H/Y
+        flyBgsRGRWuNMyDjy42HVnwl/kFfTXg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-424-dv88SZ0uMyG58oCKmZGY9g-1; Tue, 29 Oct 2019 18:20:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 835A45E6;
+        Tue, 29 Oct 2019 22:20:20 +0000 (UTC)
+Received: from gondolin (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1D7919D70;
+        Tue, 29 Oct 2019 22:20:13 +0000 (UTC)
+Date:   Tue, 29 Oct 2019 23:19:17 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, freude@linux.ibm.com,
+        mjrosato@linux.ibm.com, pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        jjherne@linux.ibm.com
+Subject: Re: [PATCH] s390: vfio-ap: disable IRQ in remove callback results
+ in kernel OOPS
+Message-ID: <20191029231917.0e6a62b9.cohuck@redhat.com>
+In-Reply-To: <1572386946-22566-1-git-send-email-akrowiak@linux.ibm.com>
+References: <1572386946-22566-1-git-send-email-akrowiak@linux.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: dv88SZ0uMyG58oCKmZGY9g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 29 Oct 2019 18:09:06 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
---=-EbG5otTQwJdOLYnc5Foy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+> From: aekrowia <akrowiak@linux.ibm.com>
 
-On Tue, 2019-10-29 at 15:13 -0700, Srinivas Pandruvada wrote:
-> On Tue, 2019-10-29 at 18:01 -0400, Qian Cai wrote:
-> > > On Oct 29, 2019, at 5:47 PM, Rafael J. Wysocki <rafael@kernel.org
-> > > >
-> > > wrote:
-> > > 
-> > > The MSR_IA32_ENERGY_PERF_BIAS MSR appears to be not present,
-> > > which
-> > > should be caught by the X86_FEATURE_EPB check in
-> > > intel_pstate_set_epb().
-> > > 
-> > > Do you run this in a guest perchance?
-> > 
-> > No, it is a baremetal HPE server. The dmesg does say something like
-> > energy perf bias changed from performance to normal, and the
-> > cpuflag
-> > contains epb which I thought that would pass the feature check? I
-> > could upload the whole dmesg a bit later if that helps.
-> 
-> Try the attached change. You have a Skylake server with no EPP
-> support.
-> This is odd.
-> 
-Sorry.
-Ignore the previous one. It had some unrelated change.
+Some accident seems to have happened to your git config.
 
-> Thanks,
-> Srinivas
-> 
+>=20
+> When an AP adapter card is configured off via the SE or the SCLP
+> Deconfigure Adjunct Processor command and the AP bus subsequently detects
+> that the adapter card is no longer in the AP configuration, the card
+> device representing the adapter card as well as each of its associated
+> AP queue devices will be removed by the AP bus. If one or more of the
+> affected queue devices is bound to the VFIO AP device driver, its remove
+> callback will be invoked for each queue to be removed. The remove callbac=
+k
+> resets the queue and disables IRQ processing. If interrupt processing was
+> never enabled for the queue, disabling IRQ processing will fail resulting
+> in a kernel OOPS.
+>=20
+> This patch verifies IRQ processing is enabled before attempting to disabl=
+e
+> interrupts for the queue.
+>=20
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Signed-off-by: aekrowia <akrowiak@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio=
+_ap_drv.c
+> index be2520cc010b..42d8308fd3a1 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -79,7 +79,8 @@ static void vfio_ap_queue_dev_remove(struct ap_device *=
+apdev)
+>  =09apid =3D AP_QID_CARD(q->apqn);
+>  =09apqi =3D AP_QID_QUEUE(q->apqn);
+>  =09vfio_ap_mdev_reset_queue(apid, apqi, 1);
+> -=09vfio_ap_irq_disable(q);
+> +=09if (q->saved_isc !=3D VFIO_AP_ISC_INVALID)
+> +=09=09vfio_ap_irq_disable(q);
 
---=-EbG5otTQwJdOLYnc5Foy
-Content-Disposition: attachment; filename="epb_power.diff"
-Content-Type: text/x-patch; name="epb_power.diff"; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Hm... would it make sense to move that check into vfio_ap_irq_disable()
+instead? Or are we sure that in all other cases the irq processing had
+been enabled before?
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYyBiL2RyaXZlcnMvY3B1
-ZnJlcS9pbnRlbF9wc3RhdGUuYwppbmRleCA5ZjAyZGU5YTFiNDcuLmVhYjhiMDQ4ZGM5ZiAxMDA2
-NDQKLS0tIGEvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCisrKyBiL2RyaXZlcnMvY3B1
-ZnJlcS9pbnRlbF9wc3RhdGUuYwpAQCAtODUxLDcgKzg1MSw3IEBAIHN0YXRpYyB2b2lkIGludGVs
-X3BzdGF0ZV9od3BfZm9yY2VfbWluX3BlcmYoaW50IGNwdSkKIAlpZiAoYm9vdF9jcHVfaGFzKFg4
-Nl9GRUFUVVJFX0hXUF9FUFApKQogCQl2YWx1ZSB8PSBIV1BfRU5FUkdZX1BFUkZfUFJFRkVSRU5D
-RShIV1BfRVBQX1BPV0VSU0FWRSk7CiAJZWxzZQotCQlpbnRlbF9wc3RhdGVfc2V0X2VwYihjcHUs
-IEhXUF9FUFBfQkFMQU5DRV9QT1dFUlNBVkUpOworCQlpbnRlbF9wc3RhdGVfc2V0X2VwYihjcHUs
-IDB4MEYpOwogCiAJd3Jtc3JsX29uX2NwdShjcHUsIE1TUl9IV1BfUkVRVUVTVCwgdmFsdWUpOwog
-fQo=
+Also, if that oops is reasonably easy to trigger, it would probably
+make sense to cc:stable. (Or is this a new problem?)
 
-
---=-EbG5otTQwJdOLYnc5Foy--
+>  =09kfree(q);
+>  =09mutex_unlock(&matrix_dev->lock);
+>  }
 
