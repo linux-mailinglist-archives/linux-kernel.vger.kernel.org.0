@@ -2,86 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6BAE8A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56EEFE8A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388832AbfJ2OJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 10:09:05 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:46473 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfJ2OJD (ORCPT
+        id S2389024AbfJ2OJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 10:09:31 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44104 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfJ2OJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:09:03 -0400
-Received: by mail-io1-f72.google.com with SMTP id y25so11198047ioc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 07:09:02 -0700 (PDT)
+        Tue, 29 Oct 2019 10:09:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e10so9646567pgd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 07:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WobDQl+ZOmcJRtws6Kg/bAZe9wMlwbuZqxsY+56Wc1A=;
+        b=kuv0pAGsJqTozhp8CyzPokAc41FCgexaugwyipCaSbbNqgzJJwe/dXEJoLsRbd9h9v
+         Q6i+AvzHkUM+eTBBUb2k+tctzM0/KTzXFxR7fDfxT0BsPlk4657QqCO+dTv+rRM3g/Ik
+         YcyzdV0mMhADwrEcQi16MkVgni7w9CQyRTreGUwNyfspnysmvqhskQi27G5IqCSz5Iq/
+         3phxXw17mTQeft7HRBYJ93ACkYZFSppx+XB5w4n4vK27+8TegivPjyFK6YNEdgXlZqFU
+         JH3Wf0sEj0wpXqFb4xMMmXPvA8scJ1M5ouV8SZt35bE3GbaBqqhMq+S/RtNDAjMFtvlN
+         mghQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ZXDP0wwnNkRnGcZ/hxzyUBVhVAKO5MP3N/7b/HrN89M=;
-        b=Yev3uIo9kbd0LxOSDzr2p6twbm9HGyEnK+GPCyTWvR9j3NgYo2VJLr8JajHjEJmxoX
-         kR7HrAWNUknW7TB5tS1YlweV+z8Y3xw8JXDQw8++04j2+L+obK1t98P3FbBLY5cDtAx0
-         AotxDAijj6sqYTn2JVRk8/pxkYFwzlZgsQSYmzkeFy87ruL11WscMx0slz5I+Luou26f
-         VY5vGzK4C2N/rm5uA2yKmZxW5QETg7hzgwXawpxIFOhZXHzp6MlrPLEyZ+MVXt6YyDbf
-         /31gPjy4IS7qJCNJpdue5H5DH2BoAXgeMkwqnRx8ipHdZdQzax7/6AllvUmmU4jgVwDI
-         Lhcw==
-X-Gm-Message-State: APjAAAUdZhQTCI63kcaWKcs+JMDTlFOX7cDd768lp3FY6Rfw8l7xq9sI
-        u1Eu+eSXGR17M8yoU8xnVkmKrUEl0S3L4rmXa24Dff3fJNW8
-X-Google-Smtp-Source: APXvYqyEO6WTdX2TT1MAC5wh+aMxnQAZiQ9NAP9Ue+ASML0EMHR89Lk5xJp5JZTyc5Ij4tXWW9iYcXeag4DdS0UpQCxA/Rt7L8JZ
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WobDQl+ZOmcJRtws6Kg/bAZe9wMlwbuZqxsY+56Wc1A=;
+        b=Hix1VbEscHOLC7ggOWH4KipKvuJfuf+Eqn99StcORUJv+WjMyjJKcuRtU69sMEExuW
+         kskLDwiu59Z5vmuekdhPFo5HeuoSd3XNeGKoP4+RtmA2G63GRonvaJRwKIi3ttrxiTPR
+         iYDRzJF+qSf07lcXhDtD9TivT2izOtuScuhttrvgzJ542RMm1wRHgv7X1INT4QB1iHA8
+         3F5np6ew24q7CIcuQhqCT7Iwj2UU117sNENDsMYjupu6f8O2Mx72+e3EglFoz7ZqlJPE
+         Ks73AEDQ9GjVwMTALIy5YHn6uGz1uj6BpFjlHCxpXAffiXX82Pu0pPdfoYMEKxACjF8M
+         WdAw==
+X-Gm-Message-State: APjAAAUxds6IXzcDwH54H5PiHljEHdB9rX35p9i3lGAdYyVB7vvgKxlE
+        TDugihrn7XNKy88GOHukFnG8UC79Ssk=
+X-Google-Smtp-Source: APXvYqzUTfhAjmZNJ8ZltcFF97u9OKZKgpjJ8JkrX8PSbYYAvBKfi+ADJHxDcrOY+BP8Au/UnWqYxQ==
+X-Received: by 2002:a63:200e:: with SMTP id g14mr27746054pgg.91.1572358169909;
+        Tue, 29 Oct 2019 07:09:29 -0700 (PDT)
+Received: from pek-khao-d2.corp.ad.wrs.com (unknown-103-217.windriver.com. [147.11.103.217])
+        by smtp.gmail.com with ESMTPSA id h25sm1665420pfn.47.2019.10.29.07.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 07:09:28 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 22:09:21 +0800
+From:   Kevin Hao <haokexin@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] dump_stack: Avoid the livelock of the dump_lock
+Message-ID: <20191029140921.GF23786@pek-khao-d2.corp.ad.wrs.com>
+References: <20191029092423.17825-1-haokexin@gmail.com>
+ <CAHk-=wjU9ASiPYFqmGJtOqG-0KtuNtu-aNPPY4M1AbcPdrfz7A@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:8394:: with SMTP id p20mr28056667ilk.73.1572358141217;
- Tue, 29 Oct 2019 07:09:01 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 07:09:01 -0700
-In-Reply-To: <0000000000009ea5720595dc03a3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007792ff05960d289d@google.com>
-Subject: Re: BUG: MAX_LOCKDEP_KEYS too low!
-From:   syzbot <syzbot+692f39f040c1f415567b@syzkaller.appspotmail.com>
-To:     a@unstable.cc, alex.aring@gmail.com, allison@lohutok.net,
-        andrew@lunn.ch, andy@greyhouse.net, ap420073@gmail.com,
-        aroulin@cumulusnetworks.com, ast@domdv.de,
-        b.a.t.m.a.n@lists.open-mesh.org, bridge@lists.linux-foundation.org,
-        cleech@redhat.com, daniel@iogearbox.net, davem@davemloft.net,
-        dcaratti@redhat.com, dsa@cumulusnetworks.com, edumazet@google.com,
-        f.fainelli@gmail.com, fw@strlen.de, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, gvaradar@cisco.com, haiyangz@microsoft.com,
-        idosch@mellanox.com, info@metux.net, ivan.khoronzhuk@linaro.org,
-        j.vosburgh@gmail.com, j@w1.fi, jakub.kicinski@netronome.com,
-        jhs@mojatatu.com, jiri@mellanox.com, jiri@resnulli.us,
-        johan.hedberg@gmail.com, johannes.berg@intel.com,
-        john.hurley@netronome.com, jwi@linux.ibm.com,
-        kstewart@linuxfoundation.org, kvalo@codeaurora.org,
-        kys@microsoft.com, lariel@mellanox.com, linmiaohe@huawei.com,
-        linux-bluetooth@vger.kernel.org, linux-hams@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ppp@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-wpan@vger.kernel.org, liuhangbin@gmail.com,
-        marcel@holtmann.org, mareklindner@neomailbox.ch
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UBnjLfzoMQYIXCvq"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjU9ASiPYFqmGJtOqG-0KtuNtu-aNPPY4M1AbcPdrfz7A@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
 
-commit ab92d68fc22f9afab480153bd82a20f6e2533769
-Author: Taehee Yoo <ap420073@gmail.com>
-Date:   Mon Oct 21 18:47:51 2019 +0000
+--UBnjLfzoMQYIXCvq
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-     net: core: add generic lockdep keys
+On Tue, Oct 29, 2019 at 01:46:40PM +0100, Linus Torvalds wrote:
+> Sorry for html crud, I'm at a conference without my laptop, so reading em=
+ail on
+> my phone..
+>=20
+> On Tue, Oct 29, 2019, 10:31 Kevin Hao <haokexin@gmail.com> wrote:
+>=20
+>     In the current code, we uses the atomic_cmpxchg() to serialize the
+>     output of the dump_stack(), but this implementation suffers the
+>     thundering herd problem. Actually we can use a spinlock here and leve=
+rage
+>     the
+>=20
+>     implementation of the spinlock(either ticket or queued spinlock) to
+>     mediate such kind of livelock. Since the dump_stack() runs with the
+>     irq disabled, so use the raw_spinlock_t to make it safe for rt kernel.
+>=20
+>=20
+> The problem with this is that I think it will deadlock easily with NMI's,=
+ won't
+> it?
+>=20
+> There is a window between getting the spin lock and setting 'dump_cpu' wh=
+ere an
+> incoming NMI would then deadlock because it also tries to get the lock, b=
+ecause
+> it hasn't seen the fact that this cpu already got it.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12e05224e00000
-start commit:   60c1769a Add linux-next specific files for 20191028
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=11e05224e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e05224e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb86688f30db053d
-dashboard link: https://syzkaller.appspot.com/bug?extid=692f39f040c1f415567b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10be9ed0e00000
+Indeed, sorry I missed that.
 
-Reported-by: syzbot+692f39f040c1f415567b@syzkaller.appspotmail.com
-Fixes: ab92d68fc22f ("net: core: add generic lockdep keys")
+>=20
+> The cmpxchg is supposed to protect against that, and make the locking be =
+atomic
+> with the CPU setting.
+>=20
+> Can you try instead to make the retry loop not jump right back to the cmp=
+xchg,
+> but start looping just reading the CPU value, and only jumping back when =
+it
+> becomes -1?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Do you mean something like this?
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 5cff72f18c4a..a0f1293a3638 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -107,6 +107,7 @@ asmlinkage __visible void dump_stack(void)
+ 	} else {
+ 		local_irq_restore(flags);
+ 		cpu_relax();
++		while (atomic_read(&dump_lock) !=3D -1);
+ 		goto retry;
+ 	}
+=20
+It does help. I will send a v2 if it pass more stress test.
+
+Thanks,
+Kevin
+
+>=20
+> =A0 =A0 =A0 Linus
+
+--UBnjLfzoMQYIXCvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEHc6qFoLCZqgJD98Zk1jtMN6usXEFAl24SBEACgkQk1jtMN6u
+sXGMuwf+OUOSTXauyoNMAE+7QY0v8cAL7bHXX7y4n14f9FsHp7xQ5FKG3RO0dlDJ
+XOVsDpDUjdire3V0wl4rjdsAIqGSl/MmC+4II2FtO5SJcjwEEarx+iRwJXEhQuMu
+FoY+BtA0B3lbL/QYgFfowEuYVIxeNEHf70Bmzd9koRyG1n9UCD4laMeOjrXsyG+M
+QWpF5iaIi9KTp1/8ymoQrgOi8/9r6RoNeG8BoeOHg49mqTaT/gVTZ1JFRuurHxgC
+Ry8kxWRlZuXGwr9mh0HPdL6i7dxDIOrYM84k9cegRKsq5tD0cPWrt+rQdpTHafY9
+3dO1OuNliCSMug35mKMbkVEc3z0ZdA==
+=D2oW
+-----END PGP SIGNATURE-----
+
+--UBnjLfzoMQYIXCvq--
