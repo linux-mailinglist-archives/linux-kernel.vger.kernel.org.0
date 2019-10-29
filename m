@@ -2,97 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB1BE9243
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46165E923B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfJ2VnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 17:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48666 "EHLO mail.kernel.org"
+        id S1729025AbfJ2Vmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 17:42:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:37363 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727706AbfJ2VnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 17:43:03 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA86420717;
-        Tue, 29 Oct 2019 21:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572385382;
-        bh=Y0G509BJm+yUUQOdD74mNDRT351ZkhaUs2G/wLyvPt8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VszNvjPDVLpbwpHef9kVv6cX6abIk/GOjL1tztsbGBbPgHmUSOyNvOuGudxchQymo
-         /JxicG6Pxh0AqtIi6l3VurnFM6B+qd1oRnt7v0cgxlVwDu86EzZntFagmwDAfsPpC+
-         sxs2GxE0au8V5xpnn5exTG+HQY/qrayPCgAQfL4A=
-Date:   Tue, 29 Oct 2019 14:43:00 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
-        =?ISO-8859-1?Q?J=E9?= =?ISO-8859-1?Q?r=F4me?= Glisse 
-        <jglisse@redhat.com>, Ralph Campbell <rcampbell@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm/khugepaged: Fix might_sleep() warn with
- CONFIG_HIGHPTE=y
-Message-Id: <20191029144300.160811015055490f042975d6@linux-foundation.org>
-In-Reply-To: <20191029212513.23566-1-ville.syrjala@linux.intel.com>
-References: <20191029140209.e70385637d3617ad43869f31@linux-foundation.org>
-        <20191029212513.23566-1-ville.syrjala@linux.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+        id S1727706AbfJ2Vmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 17:42:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 14:42:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,245,1569308400"; 
+   d="scan'208";a="374692453"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by orsmga005.jf.intel.com with ESMTP; 29 Oct 2019 14:42:37 -0700
+From:   thor.thayer@linux.intel.com
+To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH] arm64: dts: agilex: add SMMU clocks
+Date:   Tue, 29 Oct 2019 16:44:18 -0500
+Message-Id: <1572385458-14225-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019 23:25:13 +0200 Ville Syrjala <ville.syrjala@linux.intel=
-.com> wrote:
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-> From: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
->=20
-> I got some khugepaged spew on a 32bit x86:
->=20
-> [  217.490026] BUG: sleeping function called from invalid context at incl=
-ude/linux/mmu_notifier.h:346
-> [  217.492826] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 25,=
- name: khugepaged
-> [  217.495589] INFO: lockdep is turned off.
-> [  217.498371] CPU: 1 PID: 25 Comm: khugepaged Not tainted 5.4.0-rc5-elk+=
- #206
-> [  217.501233] Hardware name: System manufacturer P5Q-EM/P5Q-EM, BIOS 220=
-3    07/08/2009
-> [  217.501697] Call Trace:
-> [  217.501697]  dump_stack+0x66/0x8e
-> [  217.501697]  ___might_sleep.cold.96+0x95/0xa6
-> [  217.501697]  __might_sleep+0x2e/0x80
-> [  217.501697]  collapse_huge_page.isra.51+0x5ac/0x1360
-> [  217.501697]  ? __alloc_pages_nodemask+0xec/0xf80
-> [  217.501697]  ? __alloc_pages_nodemask+0x191/0xf80
-> [  217.501697]  ? trace_hardirqs_on+0x4a/0xf0
-> [  217.501697]  khugepaged+0x9a9/0x20f0
-> [  217.501697]  ? _raw_spin_unlock+0x21/0x30
-> [  217.501697]  ? trace_hardirqs_on+0x4a/0xf0
-> [  217.501697]  ? wait_woken+0xa0/0xa0
-> [  217.501697]  kthread+0xf5/0x110
-> [  217.501697]  ? collapse_pte_mapped_thp+0x3b0/0x3b0
-> [  217.501697]  ? kthread_create_worker_on_cpu+0x20/0x20
-> [  217.501697]  ret_from_fork+0x2e/0x38
->=20
-> Looks like it's due to CONFIG_HIGHPTE=3Dy pte_offset_map()->kmap_atomic()
-> vs. mmu_notifier_invalidate_range_start(). Let's do the naive approach
-> and just reorder the two operations.
+Add the SMMU clocks needed for Agilex SMMU.
 
-Thanks.
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I'll add=20
-Fixes: 810e24e009cf71 ("mm/mmu_notifiers: annotate with might_sleep()")
-Cc: <stable@vger.kernel.org>
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+index fd9a22fff1fe..12f7e182c018 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+@@ -348,6 +348,9 @@
+ 				<0 162 4>, <0 163 4>, <0 164 4>, <0 165 4>,
+ 				<0 166 4>, <0 167 4>, <0 168 4>, <0 169 4>;
+ 			stream-match-mask = <0x7ff0>;
++			clocks = <&clkmgr AGILEX_MPU_L2RAM_CLK>,
++				 <&clkmgr AGILEX_L3_MAIN_FREE_CLK>,
++				 <&clkmgr AGILEX_L4_MAIN_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
 
-although 810e24e009cf71 merely exposed the bug.
