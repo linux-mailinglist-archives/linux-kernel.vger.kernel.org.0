@@ -2,174 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89530E7E62
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:04:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF44BE7E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbfJ2CEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:04:53 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44398 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfJ2CEx (ORCPT
+        id S1729100AbfJ2CLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:11:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35649 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726526AbfJ2CLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:04:53 -0400
-Received: by mail-ot1-f68.google.com with SMTP id n48so8416741ota.11;
-        Mon, 28 Oct 2019 19:04:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HFyv8biFiEa7dI7+8/hKQK/SKrkibEovMGYz51a6e3Q=;
-        b=PMiab0SYWy7QtcAdn43dh73BY3tnpVkIcwbDaOwCh7kPydf1wRsJuUpQlAIakxRqiX
-         kn3tOrIsY2FcXuC6/h+Rq4tgNsJFibYnsBhEFUqih2CEBzpilllXvVvjFVp4vHEvgAH2
-         RNX1kRdmMGJtUYHNHxsaqsSkkAL+3KzA3gwWYmxpNfOi+z81Uxv7NA4fbMU/w4siHZYU
-         jcqI4ofCAolAGpC4gZ/L50YMpfCFkLmSxFwoUj3ircqPd7Pe1n4RLhX7lZJ2AAWRSZSk
-         z3hTSxjFM9FzQkc7Ive5dkOpBoLjDhKXSAU5qLuZAa5NnqNaeoUwNM1+AX67K/q7zQkt
-         Lijw==
-X-Gm-Message-State: APjAAAWX9D/mIfsckQJH2rFXpc05JwoC4y1i3whItrvq8q2MNZKvY9HB
-        JWu+WJby3v1kGsJ8WBwfZQ==
-X-Google-Smtp-Source: APXvYqz/PKQhwGT0k8RL1Zb/NY7UEotlPlxCE0kRl2Ne5SNWKtblnq+z4dve81EPfyp+V4p8my/E/A==
-X-Received: by 2002:a9d:469d:: with SMTP id z29mr16109164ote.309.1572314692113;
-        Mon, 28 Oct 2019 19:04:52 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n1sm154935oij.13.2019.10.28.19.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 19:04:51 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 21:04:50 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
- RPMHCC clock bindings
-Message-ID: <20191029020450.GA16322@bogus>
-References: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
- <1571393364-32697-2-git-send-email-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1571393364-32697-2-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 28 Oct 2019 22:11:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572315082;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=dxTh2aeqRz/SGJhGd2rcrJamUtecUG5SfHtNNQiPowQ=;
+        b=Y+v5+bk6YwtI2mpkP5oyPc9wsbwiSQZBXw+MbPHb1gJUXMNBQ/+sdnqOMxagh7Spw65azf
+        bErDWsT3kcs3Mg1X4LXnInzUJxfO42votSbM7tzdFU9sk1zzdJHwEVmqH+6WuQylDHLs5e
+        TZ0hG5PiKUKKkFY8g4vnSSygheXI0iY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-189-3v9Rw4OyMQKzV50YZkpVqw-1; Mon, 28 Oct 2019 22:11:19 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 682FB2B6;
+        Tue, 29 Oct 2019 02:11:17 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-41.pek2.redhat.com [10.72.12.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 631911001B28;
+        Tue, 29 Oct 2019 02:11:04 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
+        horms@verge.net.au, kexec@lists.infradead.org
+Subject: [PATCH 0/2 v7] x86/kdump: Fix 'kmem -s' reported an invalid freepointer when SME was active
+Date:   Tue, 29 Oct 2019 10:10:57 +0800
+Message-Id: <20191029021059.22070-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: 3v9Rw4OyMQKzV50YZkpVqw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 03:39:22PM +0530, Taniya Das wrote:
-> The RPMHCC clock provider have a bunch of generic properties that
-> are needed in a device tree. Add a YAML schemas for those.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 27 ------------
->  .../devicetree/bindings/clock/qcom,rpmhcc.yaml     | 49 ++++++++++++++++++++++
->  2 files changed, 49 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> deleted file mode 100644
-> index 365bbde..0000000
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -Qualcomm Technologies, Inc. RPMh Clocks
-> --------------------------------------------------------
-> -
-> -Resource Power Manager Hardened (RPMh) manages shared resources on
-> -some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> -other hardware subsystems via RSC to control clocks.
-> -
-> -Required properties :
-> -- compatible : must be one of:
-> -	       "qcom,sdm845-rpmh-clk"
-> -	       "qcom,sm8150-rpmh-clk"
-> -
-> -- #clock-cells : must contain 1
-> -- clocks: a list of phandles and clock-specifier pairs,
-> -	  one for each entry in clock-names.
-> -- clock-names: Parent board clock: "xo".
-> -
-> -Example :
-> -
-> -#include <dt-bindings/clock/qcom,rpmh.h>
-> -
-> -	&apps_rsc {
-> -		rpmhcc: clock-controller {
-> -			compatible = "qcom,sdm845-rpmh-clk";
-> -			#clock-cells = <1>;
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> new file mode 100644
-> index 0000000..326bfd7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/qcom,rpmhcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. RPMh Clocks Bindings
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Resource Power Manager Hardened (RPMh) manages shared resources on
-> +  some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> +  other hardware subsystems via RSC to control clocks.
-> +
-> +properties:
-> +  compatible :
+In purgatory(), the main things are as below:
 
-drop space     ^
+[1] verify sha256 hashes for various segments.
+    Lets keep these codes, and do not touch the logic.
 
-> +    enum:
-> +       - qcom,sdm845-rpmh-clk
-> +       - qcom,sm8150-rpmh-clk
+[2] copy the first 640k content to a backup region.
+    Lets safely remove it and clean all code related to backup region.
 
-Wrong indent (1 char too many).
+This patch series will remove the backup region, because the current
+handling of copying the first 640k runs into problems when SME is
+active(https://bugzilla.kernel.org/show_bug.cgi?id=3D204793).
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    maxItems: 1
+The low 1MiB region will always be reserved when the crashkernel kernel
+command line option is specified. And this way makes it unnecessary to
+do anything with the low 1MiB region, because the memory allocated later
+won't fall into the low 1MiB area.
 
-Can drop this. Implied by items list.
+This series includes two patches:
+[1] x86/kdump: always reserve the low 1MiB when the crashkernel option
+    is specified
+    The low 1MiB region will always be reserved when the crashkernel
+    kernel command line option is specified, which ensures that the
+    memory allocated later won't fall into the low 1MiB area.
 
-> +    items:
-> +      - const: xo
-> +
-> +  '#clock-cells':
-> +      const: 1
-> +
-> +required:
-> +  - compatible
-> +  - '#clock-cells'
-> +
-> +examples:
-> +  # Example for GCC for SDM845: The below node should be defined inside
-> +  # &apps_rsc node.
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    rpmhcc: clock-controller {
-> +      compatible = "qcom,sdm845-rpmh-clk";
-> +      clocks = <&xo_board>;
-> +      clock-names = "xo";
-> +      #clock-cells = <1>;
-> +    };
-> +...
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
+[2] x86/kdump: clean up all the code related to the backup region
+    Remove the backup region and clean up.
+
+Changes since v1:
+[1] Add extra checking condition: when the crashkernel option is
+    specified, reserve the low 640k area.
+
+Changes since v2:
+[1] Reserve the low 1MiB region when the crashkernel option is only
+    specified.(Suggested by Eric)
+
+[2] Remove the unused crash_copy_backup_region()
+
+[3] Remove the backup region and clean up
+
+[4] Split them into three patches
+
+Changes since v3:
+[1] Improve the first patch's log
+
+[2] Improve the third patch based on Eric's suggestions
+
+Changes since v4:
+[1] Correct some typos, and also improve the first patch's log
+
+[2] Add a new function kexec_reserve_low_1MiB() in kernel/kexec_core.c
+    and which is called by reserve_real_mode(). (Suggested by Boris)
+
+Changes since v5:
+[1] Call the cmdline_find_option() instead of strstr() to check the
+    crashkernel option. (Suggested by Hatayama)
+
+[2] Add a weak function kexec_reserve_low_1MiB() in kernel/kexec_core.c,
+    and implement the kexec_reserve_low_1MiB() in arch/x86/kernel/
+    machine_kexec_64.c so that it does not cause the compile error
+    on non-x86 kernel, and also ensures that it can work well on x86
+    kernel.
+
+Changes since v6:
+[1] Move the kexec_reserve_low_1MiB() to arch/x86/kernel/crash.c and
+    also move its declaration function to arch/x86/include/asm/crash.h
+    (Suggested by Dave Young)
+
+[2] Adjust the corresponding header files.
+
+Lianbo Jiang (2):
+  x86/kdump: always reserve the low 1MiB when the crashkernel option is
+    specified
+  x86/kdump: clean up all the code related to the backup region
+
+ arch/x86/include/asm/crash.h       |   6 ++
+ arch/x86/include/asm/kexec.h       |  10 ---
+ arch/x86/include/asm/purgatory.h   |  10 ---
+ arch/x86/kernel/crash.c            | 102 ++++++++---------------------
+ arch/x86/kernel/machine_kexec_64.c |  47 -------------
+ arch/x86/purgatory/purgatory.c     |  19 ------
+ arch/x86/realmode/init.c           |   2 +
+ 7 files changed, 34 insertions(+), 162 deletions(-)
+
+--=20
+2.17.1
+
