@@ -2,103 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B242E82A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07440E82C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfJ2HqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 03:46:03 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37689 "EHLO mga14.intel.com"
+        id S1728172AbfJ2HvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 03:51:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfJ2HqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:46:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 00:46:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
-   d="scan'208";a="198851286"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2019 00:46:02 -0700
-Received: from [10.226.39.46] (ekotax-MOBL.gar.corp.intel.com [10.226.39.46])
-        by linux.intel.com (Postfix) with ESMTP id C0779580372;
-        Tue, 29 Oct 2019 00:45:58 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] dwc: PCI: intel: PCIe RC controller driver
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lorenzo.pieralisi@arm.com, andrew.murray@arm.com, robh@kernel.org,
-        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-        hch@infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
-References: <20191022130905.GA133961@google.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <f74cdada-c58b-7238-9be1-8b001ca1fb84@linux.intel.com>
-Date:   Tue, 29 Oct 2019 15:45:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725776AbfJ2HvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 03:51:22 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A6320862;
+        Tue, 29 Oct 2019 07:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572335481;
+        bh=6tlkf+68BBehN6NWoxxSf2mpJUjTFaOogiNKGoJC7bY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qV00x03f338JdvJ8sD/N37vqFpuGbrwN7BQvxXmDTNpn7dHPEk2t3zHB5EAarZMah
+         NE93pTwnI5a7XjKftR2rVc8OPq2N3Uu3XkgoZKiTta6Z8OsNHLrUgGz+B7nS2DzKEc
+         OYa7bgOM7aEXanYx0H/FiEjifC3Xvy1boi1qvMkM=
+Date:   Tue, 29 Oct 2019 08:45:58 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Ondrej Jirman <megous@megous.com>
+Cc:     linux-sunxi@googlegroups.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:DRM DRIVERS FOR ALLWINNER A10" 
+        <dri-devel@lists.freedesktop.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: sun4i: Add support for suspending the display driver
+Message-ID: <20191029074558.rarf2avdwg6r365j@hendrix>
+References: <20191028214313.3463732-1-megous@megous.com>
 MIME-Version: 1.0
-In-Reply-To: <20191022130905.GA133961@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="etwovadxcnmgzzzn"
+Content-Disposition: inline
+In-Reply-To: <20191028214313.3463732-1-megous@megous.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 10/22/2019 9:09 PM, Bjorn Helgaas wrote:
-> On Tue, Oct 22, 2019 at 05:07:47PM +0800, Dilip Kota wrote:
->> On 10/22/2019 1:17 AM, Bjorn Helgaas wrote:
->>> On Mon, Oct 21, 2019 at 02:39:19PM +0800, Dilip Kota wrote:
->>>> Add support to PCIe RC controller on Intel Gateway SoCs.
->>>> PCIe controller is based of Synopsys DesignWare pci core.
->>>>
->>>> Intel PCIe driver requires Upconfig support, fast training
->>>> sequence configuration and link speed change. So adding the
->>>> respective helper functions in the pcie DesignWare framework.
->>>> It also programs hardware autonomous speed during speed
->>>> configuration so defining it in pci_regs.h.
->>>>
->>>> +static void intel_pcie_link_setup(struct intel_pcie_port *lpp)
->>>> +{
->>>> +	u32 val;
->>>> +
->>>> +	val = pcie_rc_cfg_rd(lpp, PCIE_CAP_OFST + PCI_EXP_LNKCAP);
->>>> +	lpp->max_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, val);
->>>> +	lpp->max_width = FIELD_GET(PCI_EXP_LNKCAP_MLW, val);
->>>> +
->>>> +	val = pcie_rc_cfg_rd(lpp, PCIE_CAP_OFST + PCI_EXP_LNKCTL);
->>>> +
->>>> +	val &= ~(PCI_EXP_LNKCTL_LD | PCI_EXP_LNKCTL_ASPMC);
->>>> +	val |= (PCI_EXP_LNKSTA_SLC << 16) | PCI_EXP_LNKCTL_CCC |
->>>> +	       PCI_EXP_LNKCTL_RCB;
->>> PCI_EXP_LNKCTL_CCC is RW.  But doesn't it depend on the components on
->>> both ends of the link?  Do you know what device is at the other end?
->>> I would have assumed that you'd have to start with CCC==0, which
->>> should be most conservative, then set CCC=1 only if you know both ends
->>> have a common clock.
->> PCIe RC and endpoint device are having the common clock so set the CCC=1.
-> How do you know what the endpoint device is?  Is this driver only for
-> a specific embedded configuration where the endpoint is always
-> soldered down?  There's no possibility of this RC being used with a
-> connector?
+--etwovadxcnmgzzzn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+On Mon, Oct 28, 2019 at 10:43:13PM +0100, Ondrej Jirman wrote:
+> Shut down the display engine during suspend.
 >
-> Shouldn't this be either discoverable or configurable via DT or
-> something?  pcie_aspm_configure_common_clock() seems to do something
-> similar, but I can't really vouch for its correctness.
-
-(sorry for the late reply, i am back today from sick leave)
-
-I see pcie_aspm_configure_common_clock() is getting called during pcie 
-root bus bridge scanning and programming the CCC.
-
-So, CCC configuration can be removed here in intel_pcie_link_setup().
-
-Regards,
-Dilip
-
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_drv.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 >
-> Bjorn
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> index a5757b11b730..c519d7cfcf43 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -346,6 +346,27 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+>  	return count;
+>  }
+>
+> +#ifdef CONFIG_PM_SLEEP
+> +static int sun4i_drv_drm_sys_suspend(struct device *dev)
+> +{
+> +        struct drm_device *drm = dev_get_drvdata(dev);
+> +
+> +        return drm_mode_config_helper_suspend(drm);
+> +}
+> +
+> +static int sun4i_drv_drm_sys_resume(struct device *dev)
+> +{
+> +        struct drm_device *drm = dev_get_drvdata(dev);
+> +
+> +        return drm_mode_config_helper_resume(drm);
+> +}
+> +#endif
+
+It looks like you've used spaces instead of tabs to indent. The rest
+of the patch is fine though.
+
+Maxime
+
+--etwovadxcnmgzzzn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbfuNgAKCRDj7w1vZxhR
+xavJAP4yYAzBMFxdoeP+c8qATt84FYIsJ8KJOBusx6+6zRv0swD9ETG+/4EFeHLd
+11lcmTIUtbetqxDMq0qB9BUz4ozo0g8=
+=T1AE
+-----END PGP SIGNATURE-----
+
+--etwovadxcnmgzzzn--
