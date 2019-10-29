@@ -2,56 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E8CAE8759
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72516E8761
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:44:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733142AbfJ2Lnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:43:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43149 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732186AbfJ2Lnj (ORCPT
+        id S2387776AbfJ2LoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:44:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34403 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732753AbfJ2Lnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:43:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n1so5814875wra.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:38 -0700 (PDT)
+        Tue, 29 Oct 2019 07:43:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v3so1797180wmh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QzRJPD/1HGldywpr2/SZcm47DrBumEiDLx/FHjXP3jg=;
-        b=nVPcvWXaGDmiEurjXX9F2sU/zrnuaMQomuye3kEdvlC0gsQRugtHZLRRgPbONylqq7
-         KrHB1hsyc0qAcRXuq1sphNGEhfrQFbZd6IQiejeChPrvUlTXRpIjThoKbZ698vvhOcDL
-         h5+WcaLbrhdzw/yUdORO2K9nEGR1OWak8GzgwVK+SErUEeZ6cR23g0nUCJu632gc+AfB
-         9iAjsiKGaMxn5Zt7WO9aXTaNFZXo2oxvRiZu5ys5Hd/VlcbWnWlFshcOO9oEAk4U0GNg
-         TCIBMmg/7YwzmU2t2qHtoYCm553UPSgqa93Fpv1rY9UwYFFkNYZ56G5weeMO79FKOuDc
-         fTdA==
+        bh=Va6MSqjXMXOuH0/T0+D19S3ciaF7zVif/RgFuA01Sso=;
+        b=va5cB1ZklVNGl3C12ght31B13O5YkcCeJWs0i9v0xC8laA4F4Og/WthKoO00k8ZqKO
+         qC+/nx2544Jb1mkZL7x7o8T7RucpNp0IQDxN0PSeXqEoYAAb2KxZF+Y4Oide8h2v4oim
+         +33SAaifLx8lgHs27Uqd3d0fpBEZ5hjgQWT/vsK2tpec5Re4TgmUfp9XgEGKOf7w39jT
+         Io8nWOkZh1LFfQN7fbjJ8TDCLhRK7ogOAL88orEZEjZxf38nXupEd3hh2IbwVc9C8YzD
+         FRZmPrNCZWY8BzpLQIEVnSBnp9j4QF71Q02uVptbORMyP/N/sAfIoTN/69ux1KS29gMS
+         RGOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QzRJPD/1HGldywpr2/SZcm47DrBumEiDLx/FHjXP3jg=;
-        b=OrQLdttfb3JroL3v4JbLsF7uyYiIMuNXx+iUP1Utm+T8vq/K+o1Helt8cEozg3i1tt
-         7twTB/5uZJn99cmth5wnIj10uXMynLNRj1+eSHuwptxq/ORGR8ZgYzeAugKIvRxnvY7h
-         5S3TPxWvHDlZuJlJSRWyA8nDjxrp+v9uSPxe9KrUHhdSzYgJmTrg8LwrhM7C4ztoMNee
-         OmsLLf3eaBXYPLbD+IloxjooxbyWE0k+udiZi2n65n7mbGX05OA1ahP948ZiwzIGEz//
-         t/8mpinD5lBbCtWJ7zm/V5NDIY2wJDAeMatchQd05VWyGvP2Ay3RVq/BI4sdA1iRLitg
-         KoXw==
-X-Gm-Message-State: APjAAAVmJgmWdHJsuS9QQOetvwxyYe1Qo8BFQz96Jy7g7mniVjMP3xK+
-        JHTy5Cj06LYgrw+sThxBW8g+QQ==
-X-Google-Smtp-Source: APXvYqx+vYmeYGxMf7Gpn3l3ztO27XzHKD6H862Ti1fndO/+/Fr5FfhNmCTEm1yKcLm68cld3Y0tlg==
-X-Received: by 2002:adf:f342:: with SMTP id e2mr20681695wrp.61.1572349417802;
-        Tue, 29 Oct 2019 04:43:37 -0700 (PDT)
+        bh=Va6MSqjXMXOuH0/T0+D19S3ciaF7zVif/RgFuA01Sso=;
+        b=S36SfIU2Dyb8f2uPtPzKMsTg8zMj08ETlRM2Mq8AcFcaGl+DzioVQ/e9CCLDCvxXFe
+         Akqx4+Ny7Myr0ezeuUlzjeW4CdlGxXJ1ReHwHV++45yM/ep1jMuztJZxqhD5hA2Rr1eq
+         /NEJptMTTCxm6VNgDv+tor2p4JI4o+7E+hJ00i8BWYNkYlFRL+LjKNtyuq71prZkBhB0
+         KyubAGJ+DrIi7ZHGYt8h4T2i49DuF6rcFF4XYpjXSsXwAd8W4lomkGB2v5pNRyz8lEjc
+         DLSJZEobjC82/Gg87xne0O+NoGOrYIli/sOFKzCxBuWv3Qulwhww9d0w+I7IB6/bZHTp
+         bkaw==
+X-Gm-Message-State: APjAAAVTjy9XKcldQplJzMLG+nes1rvhsY7hawJD3Mmosyb9fA1Yppqq
+        gezV46FZGkrcQskten8bFbVbsQ==
+X-Google-Smtp-Source: APXvYqz3aYxKbkVC72uUTOH9Kqm0ueWCz5iTwmcIVoh0eGR3udTgjIv7o1poPw7PYY5lzKv230Uw6w==
+X-Received: by 2002:a1c:7911:: with SMTP id l17mr3658550wme.21.1572349419351;
+        Tue, 29 Oct 2019 04:43:39 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.36
+        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 04:43:36 -0700 (PDT)
+        Tue, 29 Oct 2019 04:43:38 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+Cc:     linux-kernel@vger.kernel.org, Freeman Liu <freeman.liu@unisoc.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Rob Herring <robh@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 05/10] nvmem: imx-ocotp: reset error status on probe
-Date:   Tue, 29 Oct 2019 11:42:35 +0000
-Message-Id: <20191029114240.14905-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 06/10] dt-bindings: nvmem: Add Spreadtrum eFuse controller documentation
+Date:   Tue, 29 Oct 2019 11:42:36 +0000
+Message-Id: <20191029114240.14905-7-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
 References: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
@@ -62,34 +64,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Freeman Liu <freeman.liu@unisoc.com>
 
-If software running before the OCOTP driver is loaded left the
-controller with the error status pending, the driver will never
-be able to complete the read timing setup. Reset the error status
-on probe to make sure the controller is in usable state.
+This patch adds the binding documentation for Spreadtrum eFuse controller.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/imx-ocotp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/nvmem/sprd-efuse.txt  | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
 
-diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index dff2f3c357f5..fc40555ca4cd 100644
---- a/drivers/nvmem/imx-ocotp.c
-+++ b/drivers/nvmem/imx-ocotp.c
-@@ -521,6 +521,10 @@ static int imx_ocotp_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
- 
-+	clk_prepare_enable(priv->clk);
-+	imx_ocotp_clr_err_if_set(priv->base);
-+	clk_disable_unprepare(priv->clk);
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt b/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+new file mode 100644
+index 000000000000..96b6feec27f0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+@@ -0,0 +1,39 @@
++= Spreadtrum eFuse device tree bindings =
 +
- 	priv->params = of_device_get_match_data(&pdev->dev);
- 	imx_ocotp_nvmem_config.size = 4 * priv->params->nregs;
- 	imx_ocotp_nvmem_config.dev = dev;
++Required properties:
++- compatible: Should be "sprd,ums312-efuse".
++- reg: Specify the address offset of efuse controller.
++- clock-names: Should be "enable".
++- clocks: The phandle and specifier referencing the controller's clock.
++- hwlocks: Reference to a phandle of a hwlock provider node.
++
++= Data cells =
++Are child nodes of eFuse, bindings of which as described in
++bindings/nvmem/nvmem.txt
++
++Example:
++
++	ap_efuse: efuse@32240000 {
++		compatible = "sprd,ums312-efuse";
++		reg = <0 0x32240000 0 0x10000>;
++		clock-names = "enable";
++		hwlocks = <&hwlock 8>;
++		clocks = <&aonapb_gate CLK_EFUSE_EB>;
++
++		/* Data cells */
++		thermal_calib: calib@10 {
++			reg = <0x10 0x2>;
++		};
++	};
++
++= Data consumers =
++Are device nodes which consume nvmem data cells.
++
++Example:
++
++	thermal {
++		...
++
++		nvmem-cells = <&thermal_calib>;
++		nvmem-cell-names = "calibration";
++	};
 -- 
 2.21.0
 
