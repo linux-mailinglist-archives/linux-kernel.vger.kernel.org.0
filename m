@@ -2,108 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAEB9E82D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:57:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B568E82DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfJ2H5Y convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 03:57:24 -0400
-Received: from mga06.intel.com ([134.134.136.31]:52465 "EHLO mga06.intel.com"
+        id S1728449AbfJ2IAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:00:35 -0400
+Received: from ms.lwn.net ([45.79.88.28]:42020 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727443AbfJ2H5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:57:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 00:57:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
-   d="scan'208";a="224890907"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Oct 2019 00:57:23 -0700
-Received: from fmsmsx606.amr.corp.intel.com (10.18.126.86) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 29 Oct 2019 00:57:23 -0700
-Received: from fmsmsx606.amr.corp.intel.com (10.18.126.86) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 29 Oct 2019 00:57:22 -0700
-Received: from shsmsx106.ccr.corp.intel.com (10.239.4.159) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 29 Oct 2019 00:57:22 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
- SHSMSX106.ccr.corp.intel.com ([169.254.10.248]) with mapi id 14.03.0439.000;
- Tue, 29 Oct 2019 15:57:21 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-CC:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>
-Subject: RE: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
-Thread-Topic: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
-Thread-Index: AQHViqRYHs7rkU/ej0S5OBwc0DBZHqdq78JwgAApg4CABHtLgIAAIj+AgAGQXhA=
-Date:   Tue, 29 Oct 2019 07:57:21 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D5DE3D3@SHSMSX104.ccr.corp.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-10-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDDA6@SHSMSX104.ccr.corp.intel.com>
-        <20191025103337.1e51c0c9@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7B8@SHSMSX104.ccr.corp.intel.com>
- <20191028090231.4777c6a9@jacob-builder>
-In-Reply-To: <20191028090231.4777c6a9@jacob-builder>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDI5YWJlMTMtZTdmYS00Njk4LTk3NTEtYjZmNzM4YjExYjkwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieVFHdUhSeEh5alAwcUtaNk5rNENId2hcL003RW03VVBncGprUXFNY3AySGdYOW5uU1h4KzA3TWI0amhjOUszc3YifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726233AbfJ2IAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 04:00:34 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 30A994FA;
+        Tue, 29 Oct 2019 08:00:30 +0000 (UTC)
+Date:   Tue, 29 Oct 2019 02:00:27 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-crypto@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v2] kernel-doc: rename the kernel-doc directive
+ 'functions' to 'identifiers'
+Message-ID: <20191029020027.516a6bce@lwn.net>
+In-Reply-To: <20191029003120.llve32crfw63ovpw@mail.google.com>
+References: <20191020131717.28990-1-changbin.du@gmail.com>
+        <20191024121940.1d6a64df@lwn.net>
+        <87woctb9cj.fsf@intel.com>
+        <20191025144802.uixg2crhw6h7gghq@mail.google.com>
+        <87v9s99q9l.fsf@intel.com>
+        <20191029003120.llve32crfw63ovpw@mail.google.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Jacob Pan [mailto:jacob.jun.pan@linux.intel.com]
-> Sent: Tuesday, October 29, 2019 12:03 AM
-> 
-> On Mon, 28 Oct 2019 06:03:36 +0000
-> "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> 
-> > > > > +	.sva_bind_gpasid	= intel_svm_bind_gpasid,
-> > > > > +	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
-> > > > > +#endif
-> > > >
-> > > > again, pure PASID management logic should be separated from SVM.
-> > > >
-> > > I am not following, these two functions are SVM functionality, not
-> > > pure PASID management which is already separated in ioasid.c
-> >
-> > I should say pure "scalable mode" logic. Above callbacks are not
-> > related to host SVM per se. They are serving gpasid requests from
-> > guest side, thus part of generic scalable mode capability.
-> Got your point, but we are sharing data structures with host SVM, it is
-> very difficult and inefficient to separate the two.
+On Tue, 29 Oct 2019 08:31:22 +0800
+Changbin Du <changbin.du@gmail.com> wrote:
 
-I don't think difficulty is the reason against such direction. We need 
-do things right. :-) I'm fine with putting it in a TODO list, but at least
-need the right information in the 1st place to tell that current way
-is just a short-term approach, and we should revisit later.
+> Here python is different from C. Both empty string and None are False in python.
+> Note such condition is common in python.
 
-thanks
-Kevin
+Treating both as a False value is reasonably common.  Treating them
+elsewhere in the same code block as separate values is less
+so; that's the part I would prefer to avoid.
 
+Thanks,
+
+jon
