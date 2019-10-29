@@ -2,129 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19541E87CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:12:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4088E87AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:04:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732567AbfJ2MMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:12:31 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:53398 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730269AbfJ2MMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:12:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Eiamd8BZfLfRuXNZB2AmOrEcDfBpZ/Uhno+/TVo4R04=; b=BkgtdoluLOQ/wU6W7bXTn08LW
-        /CDuKs2U9LxRap16ydtYGsiNXTM8KbS90p4L6IK0pCK43+VyuxVM6vfrB3VPq6+MrVpVx8WCnItMp
-        EfjmhjJ9/MjaDb6GpE3b+e8em1ltjaLqKgXZVH7B7eA7xn5VzDAsOc3W9PNOAz7PLQS+8=;
-Received: from [2a02:790:ff:919:7ee9:d3ff:fe1f:a246] (helo=localhost)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iPQMJ-00070z-HR; Tue, 29 Oct 2019 13:12:26 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iPLGh-00077y-7E; Tue, 29 Oct 2019 07:46:15 +0100
-Date:   Tue, 29 Oct 2019 07:46:03 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     lee.jones@linaro.org, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        phh@phh.me, b.galvani@gmail.com, stefan@agner.ch,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH 5/5] rtc: rtc-rc5t583: add ricoh rc5t619 RTC driver
-Message-ID: <20191029074603.499a3940@kemnade.info>
-In-Reply-To: <20191023231717.GU3125@piout.net>
-References: <20191021054104.26155-1-andreas@kemnade.info>
-        <20191021054104.26155-6-andreas@kemnade.info>
-        <20191021101528.GU3125@piout.net>
-        <20191021231359.1cada218@kemnade.info>
-        <20191023231717.GU3125@piout.net>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1730932AbfJ2MEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:04:06 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:36570 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725776AbfJ2MEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:04:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572350644;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jvgXMnyR+qFPIgq3x7UQVAePc1noeiiHjN5z3scYxoU=;
+        b=hjYzaQotacB75S6mI2wM4UEEVRKIHFsscI2MksPn1hpBtj479bLtvIbHR9q6YbBuFeg0L1
+        yFDVKhTHIuHkpWrhH4iWbZxRoZSMtqDaI6j2fPuuk+oHihbY6yY2vZ50PBIc3koY9pkmYh
+        xkrx0j+GxkvCrYN45mQAr+70HnpV1dA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-BTTxfLiMMkWkbh01R_j2aA-1; Tue, 29 Oct 2019 08:04:01 -0400
+Received: by mail-wr1-f69.google.com with SMTP id e14so8194332wrm.21
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 05:04:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NBPlc0B6TWwWIwpU7GCTNC0HlWnEvS0+W5IS4/kqxso=;
+        b=nBzI6GoEM8jvKM5ojemAeYXSObJ8JRIDNoWJXUQ7PaJWd38I/Z66kBxlbF2wEhxCRy
+         TrXHH16Ta4ISt/kiXyA5t7xi+LCOUJuo9LiyCKXQLF3gG9cre3Od1XQBVw6Q7XxD88uh
+         lu9FLA1yPXAKIy83NZ4ps7H6ABjm3mu5uM/SLj4Y7HKM2fwJtt2HCBwhMit7ZEqrH7y2
+         lDNTmbIn6iz94822/jvhKRObonXg5FNhkE2k5WCpMjAbzs9rqSWHmgurFBUT2LIrIXv7
+         vAMYApvmgXJa8BSvja8FgnzNqvKlVVZIlhCEvEKfzjpI5t6M3ED3FyVmx0ztiDL3KW2I
+         TMWA==
+X-Gm-Message-State: APjAAAU3oyADUf01zn5txUlorE+i8E9rEhg0P1pTU17X0h0h11Cnhd/m
+        slHTvAOIEgcHoGCgfSvMvsOByxDNvhXxOzZTAChfElioXhKthmzqkwfCD/fhmIxd+F35d5vfeSu
+        K1YvfazFeoDjIc7nu/h/Sd0ro
+X-Received: by 2002:adf:d850:: with SMTP id k16mr20314080wrl.204.1572350640426;
+        Tue, 29 Oct 2019 05:04:00 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzluOgThTp1RTm4PKCiTSOxkXxjLtxq0IAkenvNtk0vg89dh3tWAzsuFI7GuOYTTB6uihPRWA==
+X-Received: by 2002:adf:d850:: with SMTP id k16mr20314052wrl.204.1572350640090;
+        Tue, 29 Oct 2019 05:04:00 -0700 (PDT)
+Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
+        by smtp.gmail.com with ESMTPSA id 26sm2736418wmi.17.2019.10.29.05.03.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 05:03:59 -0700 (PDT)
+Subject: Re: [PATCH 0/2] add regulator driver and mfd cell for Intel Cherry
+ Trail Whiskey Cove PMIC
+To:     Andrey Zhizhikin <andrey.z@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        lgirdwood@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+References: <20191024142939.25920-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191025075335.GC32742@smile.fi.intel.com>
+ <20191025075540.GD32742@smile.fi.intel.com>
+ <166c9855-910d-a70c-ba86-6aebe5f2346d@intel.com>
+ <20191028124554.GF5015@sirena.co.uk>
+ <c5faf16d-892e-b36e-b448-9c59c2051b9e@redhat.com>
+ <CAHtQpK5ocb8mqnf2dwcT7hQ9f8rQLtkHJsPppDWgfRPitJk6_Q@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <75d0e22f-c3fd-245c-c91e-2e3b6134b569@redhat.com>
+Date:   Tue, 29 Oct 2019 13:03:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY"; protocol="application/pgp-signature"
-X-Spam-Score: -1.0 (-)
+In-Reply-To: <CAHtQpK5ocb8mqnf2dwcT7hQ9f8rQLtkHJsPppDWgfRPitJk6_Q@mail.gmail.com>
+Content-Language: en-US
+X-MC-Unique: BTTxfLiMMkWkbh01R_j2aA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, 24 Oct 2019 01:17:17 +0200
-Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
-
-[...]
-> > > Is the RTC 1900-2099 or 2000-2199? Please include the ouput of rtc-ra=
-nge
-> > > in the commit log:
-> > >=20
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.gi=
-t/tree/rtc-range.c
-> > >  =20
-> > # ./rtc-range=20
-> >=20
-> > Testing 2000-02-28 23:59:59.
-> > OK
-> >=20
-> > Testing 2038-01-19 03:14:07.
-> > OK
-> >=20
-> > Testing 2069-12-31 23:59:59.
-> > OK
-> >=20
-> > Testing 2099-12-31 23:59:59.
-> > KO RTC_RD_TIME returned 22 (line 138)
-> >=20
-> > Testing 2100-02-28 23:59:59.
-> > KO RTC_RD_TIME returned 22 (line 138)
-> >=20
-> > Testing 2106-02-07 06:28:15.
-> > OK
-> >=20
-> > Testing 2262-04-11 23:47:16.
-> > KO  Read back 2102-04-11 23:47:16.
-> >=20
-> > I think it is 1900 to 2099.
-> >  =20
+On 28-10-2019 16:01, Andrey Zhizhikin wrote:
+> Hi Hans,
 >=20
-> It is, I'm very curious to know why it doesn't roll over properly from
-> 2099-12-31 23:59:59 to 1900-01-01 00:00:00.
+> On Mon, Oct 28, 2019 at 2:26 PM Hans de Goede <hdegoede@redhat.com> wrote=
+:
+>>
+>> Hi,
+>>
+>> On 28-10-2019 13:45, Mark Brown wrote:
+>>> On Mon, Oct 28, 2019 at 02:41:46PM +0200, Adrian Hunter wrote:
+>>>> On 25/10/19 10:55 AM, Andy Shevchenko wrote:
+>>>
+>>>>> Since it's about UHS/SD, Cc to Adrian as well.
+>>>
+>>>> My only concern is that the driver might conflict with ACPI methods tr=
+ying
+>>>> to do the same thing, e.g. there is one ACPI SDHC instance from GPDWin=
+ DSDT
+>>>> with code like this:
+>>
+>> Oh, right that is a very good point.
+>>
+>>> That's certainly what's idiomatic for ACPI (though machine specific
+>>> quirks are too!).  The safe thing to do would be to only register the
+>>> supply on systems where we know there's no ACPI method.
+>>
+>> Right, so as I mentioned before Andrey told me about the evaluation
+>> board he is using I was aware of only 3 Cherry Trail devices using
+>> the Whiskey Cove PMIC. The GPD win, the GPD pocket and the Lenovo
+>> Yoga book. I've checked the DSDT of all 3 and all 3 of them offer
+>> voltage control through the Intel _DSM method for voltage control.
+>>
+>> I've also actually tested this on the GPD win and 1.8V signalling
+>> works fine there without needing Andrey's patch.
 >=20
-It rolls over correcly, but rtc_valid_tm() bails out if
-year < 70.
+> Thanks a lot for checking this one out! At least this proves now that
+> the only platform affected is in fact Intel Aero board, and the patch
+> as it is might not be necessary to accommodate for all CHT-based
+> products with Whiskey Cove.
+>=20
+>>
+>> So it seems that Andrey's patch should only be active on his
+>> dev-board, as actual production hardware ships with the _DSM method.
+>>
+>> I believe that the best solution is for the Whiskey Cove MFD driver:
+>> drivers/mfd/intel_soc_pmic_chtwc.c
+>>
+>> To only register the new cell on Andrey's evaluation board model
+>> (based in a DMI match I guess). Another option would be to do
+>> the DMI check in the regulator driver, but that would mean
+>> udev will needlessly modprobe the regulator driver on production
+>> hardware, so doing it in the MFD driver and not registering the cell
+>> seems best,
+>=20
+> I tend to lean to a solution to perform a DMI check in MFD rather than
+> in the regulator driver, since this would keep the regulator
+> more-or-less agnostic to the where it is running on.
+>=20
+> Or maybe it would even make more sense to create a board-specific hook
+> (like it was suggested for vqmmc voltage and sdmmc ACPI d of
+> consumer), and then only register a cell for Aero match? This would
+> actually keep the regulator consumer and mfd cell together and would
+> not allow the device-specific code to leak into generic driver
+> implementation. In this case I'd go with mfd_add_cell() if I get a DMI
+> match and register a vqmmc consumer in there.
+>=20
+> In that case, can you please tell me what you think about it and if
+> the drivers/acpi/acpi_lpss.c would still be an appropriate location to
+> put this code to?
 
-I am preparing a v2 of this series.
+I do not think that drivers/acpi/acpi_lpss.c is a good place.
+
+Thinking a bit more about this, my preferred solutions would be:
+
+1. A BIOS update fixing the DSDT, as Andy suggested. Note we can
+lso use an overlay DSDT in the initrd, but that will only help users
+which take manual steps to add this to their initrd...
+
+2. A new drivers/platform/x86 driver binding to the dmi-ids of the Areo
+board, like e.g. drivers/platform/x86/intel_oaktrail.c is doing,
+unlike that one you do not need to register a platform_device from
+the module_init() function, you can just add the mfd-cell and the
+regulator constraints from the module_init() function.
+
+Assuming 1. is not an option (I do not know if Intel still
+supports the Aero), then 2 will nicely isolate all the Aero
+specific code into a driver which will only auto-load on
+the Aero.
 
 Regards,
-Andreas
 
---Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Hans
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl234CwACgkQl4jFM1s/
-ye9YORAAlarwaf3wXAvD0muX8zYJ4SLGZ+jOO9JLBcR8mAWjevZg/fsK0juGopPO
-FJrDvCIYOQ42i92/nNuALcQz4uGbsUqnYQB9KvxDwGeYIMRijjPciNeYgBwegPrk
-QpwhWFXKQQrcgvGb/KvZMxmHnoFmOMDY4qa+ZmxhzCtRr0FKC57lGa+isTcihxm7
-0LAb35kb2Vqx+O4LZsS5agDiToJT6oW3bDG7MwjTkgul1Z+8mMitr43zIlVM6OcI
-ASt8rNddP++fOsexd3ossl9EH+/cpOe2m6S/Qgm2vwTxpEr9lmeQ4KYKpb6b8FqP
-ZfOznrGGNZgzOGjx/3EIUBFXvTrISmcmdQymj0Y0P0omqc+qeGnCt5K6LDdcBcQU
-83XcaAPAhIkz2cHmQ6FRTpIRoM5O+bjt1fduQF458vfasNicCE1jPUozYJsVgCzh
-aetmPqSviPt3ha2d9hq1A96+L+zFel0F60KqwI1jrnxpu4Q59Q7d5uGBcHBnnqk8
-BT7EZe6DCnHRPVDGPipjqHdefeQu+2FXcrQPbLxfuNewDowj5KDCRQyFVAgNjvFy
-sFL/anHT15WFB3tt425cChaTC2V2U3QfguUuOFhYJ7EUqLA5TAKWwcTUV7WqlUap
-udFGCx9RREvi9WkCTXpD06y4Geg/MAaUvrNZxKcYFRqVGGHmMEw=
-=XPEe
------END PGP SIGNATURE-----
-
---Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY--
