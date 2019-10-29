@@ -2,213 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927ACE913B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B19E9140
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfJ2VJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 17:09:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53019 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfJ2VJN (ORCPT
+        id S1728574AbfJ2VLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 17:11:50 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42983 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfJ2VLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 17:09:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p21so4142363wmg.2;
-        Tue, 29 Oct 2019 14:09:10 -0700 (PDT)
+        Tue, 29 Oct 2019 17:11:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a15so2932480wrf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 14:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BUoGJwSxJZnzTzRzbKG9r3Bd5xV9RD8EdFVeCglJJKM=;
-        b=M72u9xP651IDrqyAP1W9+3ztPWQmKEmEDM6woo81AXjKia2Qeazt06FsrzzkgmGm4t
-         ZjYlC7K2KRKXNaIx2Aip93P/AaSajOo79uPHvO8icn3/XNQ7sQA4JYKctwD4xiyFEs36
-         524KpAo5On1fiqLfg9tQRxWUGhOdfjkAQ2hdifcslaxWO7oLEcpjtGJc07SeETnRhTqh
-         ra+L2/GP5WuXClQPc0KxoUnaAyb3tcEm/HKdkhGpksj/h2y7uWQjfwqsRYVnbN18G+oy
-         463WQKbcLd60Q2vdyzKBLKStzIoafRICFiZnIhrXML/XoVQCx/Ea1dmbXGlBpx/tInim
-         D/tA==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jzc5SphXTBrdUOnsHcsz6Kv2zKhcckogB+EMxfSC+W4=;
+        b=GzRBZMknZ6PJjqjSg7LcletNje7HHjxj2/Py6Vgos74AI/KzFBUTImuNepZmauCZxp
+         xW9pq09rGBWK5BFK4Lbsy/PHbnCyKiNI+z3dC5Xh1hPQxChHD8YO/kd7p1RYrjoiLLQi
+         x/or0KdFUGqKLXyadfMjgS/sUeKYoEVgYJ/2A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BUoGJwSxJZnzTzRzbKG9r3Bd5xV9RD8EdFVeCglJJKM=;
-        b=dWPmvclxipkppZko5hhn8/M+2IhqJeIZTsQw+0zpiYsye/8U9KV6+mpnHQwkjQ82Cb
-         raFJP9B4d4S8t2tzNn4ysRvWndfQfi6Qx8s+b2qEg9LZQd4Zq9fN7Nj9VNK2TsMdd5Av
-         hWDD77Y9QH0F+g5ZcWTgFQZMc3ZNpptDeqc4FiAUDSTG3wNdyB22NUklIGRyyD6+X3Lm
-         e1CTxcGzCxWzmrcITyTtWjyUshF2u9C2j3W/sYSg7FhFP+SpYHsk82Z1UM5hl/k95qGl
-         CHJKvFGBrA8TxPA+cC+CVocIB9ZPs501muc6bDgbMnyY/AYrTDa6AQ2voLYjW5h0pNu5
-         MVEA==
-X-Gm-Message-State: APjAAAU5VcpFeuOxUsH70vXgNvWS2EcNmNww1/wgwxMIAN/C0fPUnooV
-        EEeRqglMS4g4cWHSq4F5CVOBozMcX8HK73Yx
-X-Google-Smtp-Source: APXvYqyfwDMQTLJ/uCGRK0UbAbP0pNbA3toLQOfF3euQOdDemoymiSE2k0pNHSW1SSAt/JngL1jh7w==
-X-Received: by 2002:a05:600c:22d9:: with SMTP id 25mr6047627wmg.166.1572383349612;
-        Tue, 29 Oct 2019 14:09:09 -0700 (PDT)
-Received: from localhost.localdomain ([46.218.74.72])
-        by smtp.gmail.com with ESMTPSA id f8sm4044206wmb.37.2019.10.29.14.09.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 14:09:08 -0700 (PDT)
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
+        bh=jzc5SphXTBrdUOnsHcsz6Kv2zKhcckogB+EMxfSC+W4=;
+        b=W3UAJqJlx4/2A6AaCWMMASLW42DbM0QSbKl4WxX3ItTUoYPodDvA2dPIx9dIzS2q3p
+         3hmEzkaBPl7ngaa6MfgU0l5z6XML8UWk6Q9n5VrG1D7A7YP1qfE53+ZXGz2QDOJQCXAg
+         6aNp42RVteyjyse2ArOSbcUDa78PypjE7FtbFouKmGsi9jXnMIcqyogZ9Y49LjfzysuP
+         o/Tmu/I+HuKszOv9kP/WM+sRqHAUJnySLhWHTxCdPQazWfsS9439VxFKsSmJykU0BRYP
+         GfHui0YSwK7Dpk62CgALa7kPW2CgXozD2KTkHW7BfC+iGszz2T9BZwB9tf4mVfw1LTjL
+         yWZg==
+X-Gm-Message-State: APjAAAUSpAkr2a9YLqHIHLHSGCRxMkczvrR8uzM4UGbmt+TM3h003kxx
+        wsQiOqFvhIM/7GXJLSOranF7F42G34idxUkd
+X-Google-Smtp-Source: APXvYqywIRKIxrTc5gINIOm/p9vuLkFieHMMNMHKw0+1nObWCoreZtWPnevND5QedwZIF87dCvk6eA==
+X-Received: by 2002:a05:6000:92:: with SMTP id m18mr22618873wrx.105.1572383507160;
+        Tue, 29 Oct 2019 14:11:47 -0700 (PDT)
+Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
+        by smtp.gmail.com with ESMTPSA id l26sm4251157wmg.3.2019.10.29.14.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 14:11:46 -0700 (PDT)
+Subject: Re: [PATCH 4/7] module: avoid code duplication in
+ include/linux/export.h
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Maennich <maennich@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: iio: adc: Migrate MCP3911 documentation to yaml
-Date:   Tue, 29 Oct 2019 22:11:42 +0100
-Message-Id: <20191029211142.14650-1-marcus.folkesson@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+ <20190927093603.9140-5-yamada.masahiro@socionext.com>
+ <f2e28d6b-77c5-5fe2-0bc4-b24955de9954@rasmusvillemoes.dk>
+ <20191029191925.GA19316@linux-8ccs>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <a2e6bdc2-3d35-a3dc-13ef-1ce32f77ef17@rasmusvillemoes.dk>
+Date:   Tue, 29 Oct 2019 22:11:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191029191925.GA19316@linux-8ccs>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite bindings to use json-schema vocabulary.
+On 29/10/2019 20.19, Jessica Yu wrote:
+> +++ Rasmus Villemoes [27/09/19 13:07 +0200]:
+>> On 27/09/2019 11.36, Masahiro Yamada wrote:
+>>>
+>>> A typical kernel configuration has 10K exported symbols, so it
+>>> increases 10KB in rough estimation.
+>>>
+>>> I did not come up with a good idea to refactor it without increasing
+>>> the code size.
+>>
+>> Can't we put the "aMS" flags on the __ksymtab_strings section? That
+>> would make the empty strings free, and would also deduplicate the
+>> USB_STORAGE string. And while almost per definition we don't have exact
+>> duplicates among the names of exported symbols, we might have both a foo
+>> and __foo, so that could save even more.
+>>
+>> I don't know if we have it already, but we'd need each arch to tell us
+>> what symbol to use for @ in @progbits (e.g. % for arm). It seems most
+>> are fine with @, so maybe a generic version could be
+>>
+>> #ifndef ARCH_SECTION_TYPE_CHAR
+>> #define ARCH_SECTION_TYPE_CHAR "@"
+>> #endif
+>>
+>> and then it would be
+>> section("__ksymtab_strings,\"aMS\","ARCH_SECTION_TYPE_CHAR"progbits,1")
+> 
+> FWIW, I've just tinkered with this, and unfortunately the strings
+> don't get deduplicated for kernel modules :-(
+> 
+> Apparently ld does not do the deduplication for SHF_MERGE|SHF_STRINGS
+> sections for relocatable files (ld -r), which kernel modules are. See:
+> 
+>    https://sourceware.org/ml/binutils/2009-07/msg00291.html
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- .../devicetree/bindings/iio/adc/mcp3911.txt   | 30 --------
- .../bindings/iio/adc/microchip,mcp3911.yaml   | 72 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 73 insertions(+), 31 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iio/adc/mcp3911.txt
- create mode 100644 Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
+I know <https://patches-gcc.linaro.org/patch/5858/> :)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/mcp3911.txt b/Documentation/devicetree/bindings/iio/adc/mcp3911.txt
-deleted file mode 100644
-index 3071f48fb30b..000000000000
---- a/Documentation/devicetree/bindings/iio/adc/mcp3911.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--* Microchip MCP3911 Dual channel analog front end (ADC)
--
--Required properties:
-- - compatible: Should be "microchip,mcp3911"
-- - reg: SPI chip select number for the device
--
--Recommended properties:
-- - spi-max-frequency: Definition as per
--	 Documentation/devicetree/bindings/spi/spi-bus.txt.
--	 Max frequency for this chip is 20MHz.
--
--Optional properties:
-- - clocks: Phandle and clock identifier for sampling clock
-- - interrupt-parent: Phandle to the parent interrupt controller
-- - interrupts: IRQ line for the ADC
-- - microchip,device-addr: Device address when multiple MCP3911 chips are present on the
--	same SPI bus. Valid values are 0-3. Defaults to 0.
-- - vref-supply: Phandle to the external reference voltage supply.
--
--Example:
--adc@0 {
--	compatible = "microchip,mcp3911";
--	reg = <0>;
--	interrupt-parent = <&gpio5>;
--	interrupts = <15 IRQ_TYPE_EDGE_RISING>;
--	spi-max-frequency = <20000000>;
--	microchip,device-addr = <0>;
--	vref-supply = <&vref_reg>;
--	clocks = <&xtal>;
--};
-diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-new file mode 100644
-index 000000000000..bfcf6a5fb44e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/bindings/iio/adc/microchip,mcp3911.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Microchip MCP3911 Dual channel analog front end (ADC)
-+
-+maintainers:
-+  - Marcus Folkesson <marcus.folkesson@gmail.com>
-+  - Kent Gustavsson <nedo80@gmail.com>
-+
-+description: |
-+  Bindings for the Microchip MCP3911 Dual channel ADC device. Datasheet can be
-+  found here: https://ww1.microchip.com/downloads/en/DeviceDoc/20002286C.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - microchip,mcp3911
-+
-+  reg:
-+    description: SPI chip select number for the device
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    description: |
-+      Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt.
-+    maximum: 20000000
-+    maxItems: 1
-+
-+  clocks:
-+    description: Phandle and clock identifier for sampling clock
-+    maxItems: 1
-+
-+  interrupts:
-+    description: IRQ line of the ADC
-+    maxItems: 1
-+
-+  microchip,device-addr:
-+    description: Device address when multiple MCP3911 chips are present on the same SPI bus.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [0, 1, 2, 3]
-+      - default: 0
-+
-+  vref-supply:
-+    description: Phandle to the external reference voltage supply.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      adc@0 {
-+        compatible = "microchip,mcp3911";
-+        reg = <0>;
-+        interrupt-parent = <&gpio5>;
-+        interrupts = <15 2>;
-+        spi-max-frequency = <20000000>;
-+        microchip,device-addr = <0>;
-+        vref-supply = <&vref_reg>;
-+        clocks = <&xtal>;
-+      };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e51a68bf8ca8..fbccc9d450ff 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10723,7 +10723,7 @@ M:	Kent Gustavsson <kent@minoris.se>
- L:	linux-iio@vger.kernel.org
- S:	Supported
- F:	drivers/iio/adc/mcp3911.c
--F:	Documentation/devicetree/bindings/iio/adc/mcp3911.txt
-+F:	Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
- 
- MICROCHIP NAND DRIVER
- M:	Tudor Ambarus <tudor.ambarus@microchip.com>
--- 
-2.23.0
+> But, the strings do get deduplicated for vmlinux. Not sure if we can
+> find a workaround for modules or if the benefit is significant enough
+> if it only for vmlinux.
+
+I think it's definitely worth if, even if it "only" benefits vmlinux for
+now. And I still hope to revisit the --force-section-merge some day, but
+it's very far down my priority list.
+
+Rasmus
+
 
