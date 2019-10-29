@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC0DE88E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:58:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0BFE88C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:52:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388187AbfJ2M6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:58:25 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:22235 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfJ2M6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:58:24 -0400
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x9TCw2dG012049
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 21:58:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x9TCw2dG012049
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572353883;
-        bh=HrCvaHFmrS5y9/Pm9TPIG1FtoBKHhaBS1kbDIT2tZyI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tSBY/GyL/fSzY3Hx62G6OjoSOpXFt0JDgXeC769iaR33H+gHK3UnYHOjjIZKTBLy/
-         dl9Iw/NRcQJL71Umqo3RLESx7n2reS4bOoz9fdhfCU8wUfN7E8m/8wb1oBZ/rT3uOB
-         K3mFlKqek2FUF7/6dKaGnXWzocXpQijJZGE3fW71OChCORQXIxbMu8KLS9GW/MhYce
-         Qxaw5Eu4GNqv0y63HxQM4jCBgttsYkd5f1yrCimpO0B770kwPkOF6f6z+rr6b375Po
-         WMGSoMoZFGUr4Lrju5jdr4u5k6n2nFes7ywauKVttGdkQA9ICsF/uLxk/tzZAGqqk1
-         ZSkYJF964g5aA==
-X-Nifty-SrcIP: [209.85.222.47]
-Received: by mail-ua1-f47.google.com with SMTP id d19so1584790uaq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 05:58:03 -0700 (PDT)
-X-Gm-Message-State: APjAAAV36Dr8ufFdK89KDp5Ie7foXnpeN48lhzgUNugT3VF4LCwEb3PV
-        qYPYup69B1kXKPA5Y5FdcBcaW3xT8H3BDki5NmY=
-X-Google-Smtp-Source: APXvYqzuglrrCHYurEqlfVJ/a7pyeI8BXx7S+bDeGmsw3bm6TIECc8I/QoPuskL80QIWZmBbr7lFtBPqcJlJ/18J73s=
-X-Received: by 2002:ab0:658d:: with SMTP id v13mr4905800uam.40.1572353882089;
- Tue, 29 Oct 2019 05:58:02 -0700 (PDT)
+        id S2388076AbfJ2MwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:52:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34256 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729253AbfJ2MwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:52:09 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 15E5B4C1CDE853A6DEBF;
+        Tue, 29 Oct 2019 20:52:07 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
+ 20:52:00 +0800
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     <richard@nod.at>, <s.hauer@pengutronix.de>, <dedekind1@gmail.com>,
+        <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] ubifs: do_kill_orphans: Fix a memory leak bug
+Date:   Tue, 29 Oct 2019 20:58:23 +0800
+Message-ID: <1572353903-104711-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20191028151427.31612-1-jeyu@kernel.org> <20191028151427.31612-4-jeyu@kernel.org>
-In-Reply-To: <20191028151427.31612-4-jeyu@kernel.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 29 Oct 2019 21:57:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8WDQ3PX8iwQNj5eNQADFMnKNVo3+uC8dt3rCPWK8a-w@mail.gmail.com>
-Message-ID: <CAK7LNAQ8WDQ3PX8iwQNj5eNQADFMnKNVo3+uC8dt3rCPWK8a-w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] scripts/nsdeps: make sure to pass all module source
- files to spatch
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Maennich <maennich@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 12:14 AM Jessica Yu <jeyu@kernel.org> wrote:
->
-> The nsdeps script passes a list of the module source files to
-> generate_deps_for_ns() as a space delimited string named $mod_source_files,
-> which then passes it to spatch. But since $mod_source_files is not encased
-> in quotes, each source file in that string is treated as a separate shell
-> function argument (as $2, $3, $4, etc.).  However, the spatch invocation
-> only refers to $2, so only the first file out of $mod_source_files is
-> processed by spatch.
->
-> This causes problems (namely, the MODULE_IMPORT_NS() statement doesn't
-> get inserted) when a module is composed of many source files and the
-> "main" module file containing the MODULE_LICENSE() statement is not the
-> first file listed in $mod_source_files. Fix this by encasing
-> $mod_source_files in quotes so that the entirety of the string is
-> treated as a single argument and can be referred to as $2.
->
-> Signed-off-by: Jessica Yu <jeyu@kernel.org>
-> ---
->  scripts/nsdeps | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/nsdeps b/scripts/nsdeps
-> index 9ddcd5cb96b1..5055b059a81b 100644
-> --- a/scripts/nsdeps
-> +++ b/scripts/nsdeps
-> @@ -36,7 +36,7 @@ generate_deps() {
->                                               | sed -E "s%(^|\s)([^/][^ ]*)%\1$srctree/\2%g"`
->         for ns in `cat $ns_deps_file`; do
->                 echo "Adding namespace $ns to module $mod_name (if needed)."
-> -               generate_deps_for_ns $ns $mod_source_files
-> +               generate_deps_for_ns $ns "$mod_source_files"
->                 # sort the imports
->                 for source_file in $mod_source_files; do
->                         sed '/MODULE_IMPORT_NS/Q' $source_file > ${source_file}.tmp
+If there are more than one valid snod on the sleb->nodes list,
+do_kill_orphans will malloc ino more than once without releasing
+previous ino's memory. Finally, it will trigger memory leak.
 
-I think this change is correct, but
-did you succeed in nsdeps for composite modules
-with this patch only?
+Fixes: ee1438ce5dc4 ("ubifs: Check link count of inodes when...")
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+---
+ fs/ubifs/orphan.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-I think the following is needed too:
-
-
-diff --git a/scripts/nsdeps b/scripts/nsdeps
-index dda6fbac016e..5a23ea616446 100644
---- a/scripts/nsdeps
-+++ b/scripts/nsdeps
-@@ -31,9 +31,9 @@ generate_deps() {
-        local mod_file=`echo $@ | sed -e 's/\.ko/\.mod/'`
-        local ns_deps_file=`echo $@ | sed -e 's/\.ko/\.ns_deps/'`
-        if [ ! -f "$ns_deps_file" ]; then return; fi
--       local mod_source_files=`cat $mod_file | sed -n 1p                      \
-+       local mod_source_files="`cat $mod_file | sed -n 1p
-         \
-                                              | sed -e 's/\.o/\.c/g'           \
--                                             | sed "s|[^ ]* *|${srctree}/&|g"`
-+                                             | sed "s|[^ ]* *|${srctree}/&|g"`"
-        for ns in `cat $ns_deps_file`; do
-                echo "Adding namespace $ns to module $mod_name (if needed)."
-                generate_deps_for_ns $ns $mod_source_files
-
-
-Without this, a module that consists of two files
-will be expanded to:
-
-local mod_source_files=source1.c source2.c
-
-
-
+diff --git a/fs/ubifs/orphan.c b/fs/ubifs/orphan.c
+index 3b4b411..54d6db6 100644
+--- a/fs/ubifs/orphan.c
++++ b/fs/ubifs/orphan.c
+@@ -631,12 +631,17 @@ static int do_kill_orphans(struct ubifs_info *c, struct ubifs_scan_leb *sleb,
+ 	ino_t inum;
+ 	int i, n, err, first = 1;
+ 
++	ino = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
++	if (!ino)
++		return -ENOMEM;
++
+ 	list_for_each_entry(snod, &sleb->nodes, list) {
+ 		if (snod->type != UBIFS_ORPH_NODE) {
+ 			ubifs_err(c, "invalid node type %d in orphan area at %d:%d",
+ 				  snod->type, sleb->lnum, snod->offs);
+ 			ubifs_dump_node(c, snod->node);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto out_free;
+ 		}
+ 
+ 		orph = snod->node;
+@@ -663,20 +668,18 @@ static int do_kill_orphans(struct ubifs_info *c, struct ubifs_scan_leb *sleb,
+ 				ubifs_err(c, "out of order commit number %llu in orphan node at %d:%d",
+ 					  cmt_no, sleb->lnum, snod->offs);
+ 				ubifs_dump_node(c, snod->node);
+-				return -EINVAL;
++				err = -EINVAL;
++				goto out_free;
+ 			}
+ 			dbg_rcvry("out of date LEB %d", sleb->lnum);
+ 			*outofdate = 1;
+-			return 0;
++			err = 0;
++			goto out_free;
+ 		}
+ 
+ 		if (first)
+ 			first = 0;
+ 
+-		ino = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
+-		if (!ino)
+-			return -ENOMEM;
+-
+ 		n = (le32_to_cpu(orph->ch.len) - UBIFS_ORPH_NODE_SZ) >> 3;
+ 		for (i = 0; i < n; i++) {
+ 			union ubifs_key key1, key2;
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
