@@ -2,91 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0FBE852C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71024E854D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:15:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfJ2KNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:13:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:46905 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728641AbfJ2KNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:13:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 472S8M3QkSz9sP3;
-        Tue, 29 Oct 2019 21:13:07 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1572343987;
-        bh=uI8deBIoQAH9dUj+VilXBuXzEDBg9aiumzk3Bni0Y5s=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=cs2hdJYzsR8uXUBkRv/tii8mwkG/u3ntLr9XeIv/GVCulY5K0myfhD63CT1ARYAm3
-         leqp1px0zmE8Z1tGttSZCGrJyVj7LG5pa14zT16FkVfXVKQL7SQdgNC+AS32l2M8C3
-         W+e5YDcEY72Dss36tAHgvk5I9WnH8gSrUBbD4aC/KUmuTC52fWaXogDrOKaW2moXUj
-         MYpc90/cBzm/B48Y79HGAhDoch3Ws3Z4CQebyUJAsgFOX2AhpOLmVQahjn/bbKTZUN
-         2oZYGaqyA1ZhciSOcD91Fxp+gw5pD1EG4WprDTBTEz/0KfCDRwdH1ZzMF+efT7gZli
-         BVWizJI5ZFyrQ==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Qian Cai <cai@lca.pw>
-Cc:     peterz@infradead.org, paulmck@linux.ibm.com, npiggin@gmail.com,
-        benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: Re: [PATCH] powerpc/powernv/smp: fix a warning at CPU hotplug
-In-Reply-To: <1572295467-14686-1-git-send-email-cai@lca.pw>
-References: <1572295467-14686-1-git-send-email-cai@lca.pw>
-Date:   Tue, 29 Oct 2019 21:13:02 +1100
-Message-ID: <875zk7hnbl.fsf@mpe.ellerman.id.au>
+        id S1730812AbfJ2KPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:15:35 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41458 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730034AbfJ2KPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:15:33 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9TACQqB029013;
+        Tue, 29 Oct 2019 11:14:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=2+X7n8kYh+eyI478R9QoZl24SqMf0i4AANekeGpV2V0=;
+ b=bo1IIq9EpbnkuyFLVKyyKelvOegHh+jMBkCnJYrALmj5rXUptONPwJPkUiSbJNfxvbqW
+ b3bAvPbmSTpdwI55NOzN6Ai8GA8kdT9pLpDx5sRz59UnspekXsF8Z/iyGUtoGNA9C/Pl
+ DsghnDfiT2lvQjRTpKzMyV1Hf6AUbEqszlMLrkwSgvY+TOiGR3riJAfemo2LhqrhWwbF
+ TLtSL5If407AEum3azpX+o5704/raW/XvSCuQYKGHJsqYsehftECe1gi3uSdp1xv3Nmj
+ A5edU4met2LnAgatEGmkG7xO5CXMezOdFUI0MYkOuBSMOxdPZEFq430gm6Kh84razTLI Lw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vvd1gpp0a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Oct 2019 11:14:52 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 90C0A100034;
+        Tue, 29 Oct 2019 11:14:50 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7783D2B28D8;
+        Tue, 29 Oct 2019 11:14:50 +0100 (CET)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 29 Oct
+ 2019 11:14:50 +0100
+Received: from localhost (10.201.22.222) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 29 Oct 2019 11:14:49
+ +0100
+From:   Christophe Roullier <christophe.roullier@st.com>
+To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <christophe.roullier@st.com>, <andrew@lunn.ch>
+Subject: [PATCH 0/5] net: ethernet: stmmac: some fixes and optimizations
+Date:   Tue, 29 Oct 2019 11:14:36 +0100
+Message-ID: <20191029101441.17290-1-christophe.roullier@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.22.222]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-29_03:2019-10-28,2019-10-29 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qian Cai <cai@lca.pw> writes:
-> The commit e78a7614f387 ("idle: Prevent late-arriving interrupts from
-> disrupting offline") introduced a warning on powerpc with CPU hotplug,
->
-> WARNING: CPU: 1 PID: 0 at arch/powerpc/platforms/powernv/smp.c:160
-> pnv_smp_cpu_kill_self+0x5c/0x330
-> Call Trace:
->  cpu_die+0x48/0x64
->  arch_cpu_idle_dead+0x30/0x50
->  do_idle+0x2e4/0x460
->  cpu_startup_entry+0x3c/0x40
->  start_secondary+0x7a8/0xa80
->  start_secondary_resume+0x10/0x14
->
-> because it calls local_irq_disable() before arch_cpu_idle_dead().
->
-> Fixes: e78a7614f387 ("idle: Prevent late-arriving interrupts from disrupting offline")
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  arch/powerpc/platforms/powernv/smp.c | 1 -
->  1 file changed, 1 deletion(-)
+Some improvements (manage syscfg as optional clock, update slew rate of
+ETH_MDIO pin, Enable gating of the MAC TX clock during TX low-power mode)
+Fix warning build message when W=1
 
-Thanks.
+Christophe Roullier (5):
+  net: ethernet: stmmac: Add support for syscfg clock
+  net: ethernet: stmmac: fix warning when w=1 option is used during
+    build
+  ARM: dts: stm32: remove syscfg clock on stm32mp157c ethernet
+  ARM: dts: stm32: adjust slew rate for Ethernet
+  ARM: dts: stm32: Enable gating of the MAC TX clock during TX low-power
+    mode on stm32mp157c
 
-But Nick already sent a fix for this, I just need to review/test it and
-get it merged, see:
-  https://patchwork.ozlabs.org/patch/1181275/
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     |  9 +++-
+ arch/arm/boot/dts/stm32mp157c.dtsi            |  7 ++--
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 42 ++++++++++++-------
+ 3 files changed, 38 insertions(+), 20 deletions(-)
 
+-- 
+2.17.1
 
-cheers
-
-> diff --git a/arch/powerpc/platforms/powernv/smp.c b/arch/powerpc/platforms/powernv/smp.c
-> index fbd6e6b7bbf2..51f4e07b9168 100644
-> --- a/arch/powerpc/platforms/powernv/smp.c
-> +++ b/arch/powerpc/platforms/powernv/smp.c
-> @@ -157,7 +157,6 @@ static void pnv_smp_cpu_kill_self(void)
->  	 * This hard disables local interurpts, ensuring we have no lazy
->  	 * irqs pending.
->  	 */
-> -	WARN_ON(irqs_disabled());
->  	hard_irq_disable();
->  	WARN_ON(lazy_irq_pending());
->  
-> -- 
-> 1.8.3.1
