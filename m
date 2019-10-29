@@ -2,405 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB32E7EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 05:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529C4E7F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 05:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfJ2EG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 00:06:58 -0400
-Received: from mga09.intel.com ([134.134.136.24]:62900 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbfJ2EG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 00:06:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 21:06:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,242,1569308400"; 
-   d="scan'208";a="203457593"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 28 Oct 2019 21:06:57 -0700
-Date:   Mon, 28 Oct 2019 21:11:21 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
-Message-ID: <20191028211121.4ba2f332@jacob-builder>
-In-Reply-To: <e4ac7f82-a224-3388-88ae-1ce52d2eec58@linux.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1571946904-86776-10-git-send-email-jacob.jun.pan@linux.intel.com>
-        <a9a1c3ed-0134-f531-fbf1-789f6cc78ce3@linux.intel.com>
-        <20191028152945.13bc22fa@jacob-builder>
-        <e4ac7f82-a224-3388-88ae-1ce52d2eec58@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728227AbfJ2EMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 00:12:09 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:41970 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfJ2EMJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 00:12:09 -0400
+Received: by mail-yb1-f193.google.com with SMTP id b2so338036ybr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2019 21:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2BYY/sxGVGNJfh/SsPcdKwe2M6CkjZTIkoXy6HiKASE=;
+        b=Q+NZprl8Kz0qCbd6RKrUNLgatmVl0SBgHfQ3g5YIWr5qkFbgaNry0+Dx5RN5n+5hBx
+         wUmxW9iWZmFEaffhGIWVC3prXa5xuc4f5Fz43baoQrenTV7OeXqkai2Q4EEnNXFbNGEu
+         OxxDE+Wg1PrVo6A4W7U+4Oj08jkIyRq9F9JZuqFMparfxCLCxXdDWz6BV7asJi+7d8Qu
+         tO5b9xOAA2I81+KLzqiWnc8iPxY1Ll5Zo3sxdF3uCcl7JZi54maPUZOY4oZzL9mrbZTA
+         /lTBfWzGIVpWJmd7eaAKS+PI72pgSMFic5C7vmp0NCrbwu3ig9C0oVZJSEdqSuCSiPkC
+         qzzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2BYY/sxGVGNJfh/SsPcdKwe2M6CkjZTIkoXy6HiKASE=;
+        b=MVBrD8g1N8fv0yHY5uXU20/H8Omr+Wr0pTteSy4axH8hkAhb0j6VfFkNrEshxJKORf
+         TOy/d+IQnvaHnKu5XjFsfPsHheyy4xMMNolI8Gto74N/4gitx35XAd1a2OV0tBdOcmZp
+         8wUKfNEWF19G0F8SR3dC6c/G0dNCl26vfS8lxWtb+Y34AXbIqXdPdiDopKAdV3J9hvRa
+         kmZF6OZ6W+YdkPKIoiQtcxsRAnV7i6D4KNjOYXWjeJSuJEXR7ZrPiVgLtHLEZh2Deodr
+         OW3pC9/BHQLXQ+c6bPNH8uGhR9KKMgVDy2f5zpVBpOtOnis746qSKfgQriSy9/iDBT55
+         Dedw==
+X-Gm-Message-State: APjAAAX12Wu5TKCH/P3xrNqu9i6JeM9zzpoqv7HPIM0aW291TnHZkT2S
+        Wt9GEZtjolqLWOrWV5dZvi9IiQ==
+X-Google-Smtp-Source: APXvYqyB/e5iiXbCIk7Of5d1zjpXNGmmvg7YYvbpWo9spISg7ei3Xy7A9HhxLClOp8PIe8aBDMHtaw==
+X-Received: by 2002:a25:2d49:: with SMTP id s9mr16663628ybe.450.1572322328007;
+        Mon, 28 Oct 2019 21:12:08 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li1038-5.members.linode.com. [45.33.96.5])
+        by smtp.gmail.com with ESMTPSA id x139sm5989209ywg.13.2019.10.28.21.12.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Oct 2019 21:12:07 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 12:11:59 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Coresight ML <coresight@lists.linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v3 3/6] perf cs-etm: Support thread stack
+Message-ID: <20191029041159.GA25758@leoy-ThinkPad-X240s>
+References: <20191005091614.11635-1-leo.yan@linaro.org>
+ <20191005091614.11635-4-leo.yan@linaro.org>
+ <20191011175353.GA13688@xps15>
+ <20191022050304.GB32731@leoy-ThinkPad-X240s>
+ <CANLsYkwx1Z2eFz4JqKe9UB8tFqpSdx-kakMHnL1rkUttLZeX1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkwx1Z2eFz4JqKe9UB8tFqpSdx-kakMHnL1rkUttLZeX1w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019 10:54:48 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+Hi Mathieu,
 
-> Hi,
+On Mon, Oct 28, 2019 at 04:43:57PM -0600, Mathieu Poirier wrote:
+> On Mon, 21 Oct 2019 at 23:03, Leo Yan <leo.yan@linaro.org> wrote:
+> >
+> > Hi Mathieu,
+> >
+> > On Fri, Oct 11, 2019 at 11:53:53AM -0600, Mathieu Poirier wrote:
+> > > On Sat, Oct 05, 2019 at 05:16:11PM +0800, Leo Yan wrote:
+> > > > Since Arm CoreSight doesn't support thread stack, the decoding cannot
+> > > > display symbols with indented spaces to reflect the stack depth.
+> > > >
+> > > > This patch adds support thread stack for Arm CoreSight, this allows
+> > > > 'perf script' to display properly for option '-F,+callindent'.
+> > > >
+> > > > Before:
+> > > >
+> > > >   # perf script -F,+callindent
+> > > >             main  2808          1          branches: coresight_test1                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> > > >             main  2808          1          branches: printf@plt                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> > > >             main  2808          1          branches: printf@plt                           aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> > > >             main  2808          1          branches: _init                                aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> > > >             main  2808          1          branches: _dl_fixup                            ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > > >             main  2808          1          branches: _dl_lookup_symbol_x                  ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > > >   [...]
+> > > >
+> > > > After:
+> > > >
+> > > >   # perf script -F,+callindent
+> > > >             main  2808          1          branches:                 coresight_test1                                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
+> > > >             main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+> > > >             main  2808          1          branches:                     printf@plt                                       aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
+> > > >             main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+> > > >             main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
+> > > >             main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+> > > >   [...]
+> > > >
+> > > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > > ---
+> > > >  tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 44 insertions(+)
+> > > >
+> > > > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > > > index 58ceba7b91d5..780abbfd1833 100644
+> > > > --- a/tools/perf/util/cs-etm.c
+> > > > +++ b/tools/perf/util/cs-etm.c
+> > > > @@ -1117,6 +1117,45 @@ static void cs_etm__copy_insn(struct cs_etm_queue *etmq,
+> > > >                        sample->insn_len, (void *)sample->insn);
+> > > >  }
+> > > >
+> > > > +static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
+> > > > +                               struct cs_etm_traceid_queue *tidq)
+> > > > +{
+> > > > +   struct cs_etm_auxtrace *etm = etmq->etm;
+> > > > +   u8 trace_chan_id = tidq->trace_chan_id;
+> > > > +   int insn_len;
+> > > > +   u64 from_ip, to_ip;
+> > > > +
+> > > > +   if (etm->synth_opts.thread_stack) {
+> > > > +           from_ip = cs_etm__last_executed_instr(tidq->prev_packet);
+> > > > +           to_ip = cs_etm__first_executed_instr(tidq->packet);
+> > > > +
+> > > > +           insn_len = cs_etm__instr_size(etmq, trace_chan_id,
+> > > > +                                         tidq->prev_packet->isa, from_ip);
+> > > > +
+> > > > +           /*
+> > > > +            * Create thread stacks by keeping track of calls and returns;
+> > > > +            * any call pushes thread stack, return pops the stack, and
+> > > > +            * flush stack when the trace is discontinuous.
+> > > > +            */
+> > > > +           thread_stack__event(tidq->thread, tidq->prev_packet->cpu,
+> > > > +                               tidq->prev_packet->flags,
+> > > > +                               from_ip, to_ip, insn_len,
+> > > > +                               etmq->buffer->buffer_nr);
+> > >
+> > > Details are a little fuzzy in my head but I'm pretty sure
+> > > we want trace_chan_id here.
+> >
+> > I spent some time to look into this question, and I think we don't
+> > need to add extra info for trace_chan_id.
+> >
+> > The main reason is for CPU wide tracing, if one task is migrated from
+> > CPU_a to CPU_b, if we append 'trace_chan_id' for the buffer number, then
+> > it will tell the thread_stack that the buffer has been changed (or it
+> > will be considered the trace is discontinuous), then thread stack will
+> > be flushed.  Actually, this is not what we want; if a task is migrated
+> > from one CPU to another, we still need to keep its thread stack if the
+> > trace data comes from the same buffer_nr.
 > 
-> On 10/29/19 6:29 AM, Jacob Pan wrote:
-> > Hi Baolu,
-> > 
-> > Appreciate the thorough review, comments inline.  
-> 
-> You are welcome.
-> 
-> > 
-> > On Sat, 26 Oct 2019 10:01:19 +0800
-> > Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> >   
-> >> Hi,
-> >>  
-> 
-> [...]
-> 
-> >>> +			 * allow multiple bind calls with the
-> >>> same PASID and pdev.
-> >>> +			 */
-> >>> +			sdev->users++;
-> >>> +			goto out;
-> >>> +		}  
-> >>
-> >> I remember I ever pointed this out before. But I forgot how we
-> >> addressed it. So forgive me if this has been addressed.
-> >>
-> >> What if we have a valid bound svm but @dev doesn't belong to it
-> >> (a.k.a. @dev not in svm->devs list)?
-> >>  
-> > If we are binding a new device to an existing/active PASID, the code
-> > will allocate a new sdev and add that to the svm->devs list.  
-> 
-> But allocating a new sdev and adding device is in below else branch,
-> so it will never reach there, right?
-> 
-No, allocating sdev is outside else branch.
-> >>> +	} else {
-> >>> +		/* We come here when PASID has never been bond to
-> >>> a device. */
-> >>> +		svm = kzalloc(sizeof(*svm), GFP_KERNEL);
-> >>> +		if (!svm) {
-> >>> +			ret = -ENOMEM;
-> >>> +			goto out;
-> >>> +		}
-> >>> +		/* REVISIT: upper layer/VFIO can track host
-> >>> process that bind the PASID.
-> >>> +		 * ioasid_set = mm might be sufficient for vfio
-> >>> to check pasid VMM
-> >>> +		 * ownership.
-> >>> +		 */
-> >>> +		svm->mm = get_task_mm(current);
-> >>> +		svm->pasid = data->hpasid;
-> >>> +		if (data->flags & IOMMU_SVA_GPASID_VAL) {
-> >>> +			svm->gpasid = data->gpasid;
-> >>> +			svm->flags |= SVM_FLAG_GUEST_PASID;
-> >>> +		}
-> >>> +		ioasid_set_data(data->hpasid, svm);
-> >>> +		INIT_LIST_HEAD_RCU(&svm->devs);
-> >>> +		INIT_LIST_HEAD(&svm->list);
-> >>> +
-> >>> +		mmput(svm->mm);
-> >>> +	}  
-> >>
-> >> A blank line, please.  
-> > looks good.  
-> >>  
-> >>> +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
-> >>> +	if (!sdev) {
-> >>> +		if (list_empty(&svm->devs))
-> >>> +			kfree(svm);  
-> >>
-> >> This is dangerous. This might leave a wild pointer bound with
-> >> gpasid. 
-> > why is that? can you please explain?
-> > if the list is empty that means we just allocated the new svm, no
-> > users. why can't we free it here?  
-> 
-> svm has been associated with the pasid private data. It needs to be
-> unbound from pasid before getting freed. Otherwise, a wild pointer
-> will be left.
-> 
-> 	ioasid_set_data(pasid, NULL);
-> 	kfree(svm);
-> 
-Right, I need to clear the private data here. Thanks!
+> After reviewing the code I conclude that using etmq->buffer->buffer_nr
+> is the correct way to proceed.
 
-> >   
-> >>> +		ret = -ENOMEM;
-> >>> +		goto out;
-> >>> +	}
-> >>> +	sdev->dev = dev;
-> >>> +	sdev->users = 1;
-> >>> +
-> >>> +	/* Set up device context entry for PASID if not enabled
-> >>> already */
-> >>> +	ret = intel_iommu_enable_pasid(iommu, sdev->dev);
-> >>> +	if (ret) {
-> >>> +		dev_err(dev, "Failed to enable PASID
-> >>> capability\n");
-> >>> +		kfree(sdev);
-> >>> +		goto out;
-> >>> +	}
-> >>> +
-> >>> +	/*
-> >>> +	 * For guest bind, we need to set up PASID table entry as
-> >>> follows:
-> >>> +	 * - FLPM matches guest paging mode
-> >>> +	 * - turn on nested mode
-> >>> +	 * - SL guest address width matching
-> >>> +	 */
-> >>> +	ret = intel_pasid_setup_nested(iommu,
-> >>> +				dev,
-> >>> +				(pgd_t *)data->gpgd,
-> >>> +				data->hpasid,
-> >>> +				&data->vtd,
-> >>> +				ddomain,
-> >>> +				data->addr_width);
-> >>> +	if (ret) {
-> >>> +		dev_err(dev, "Failed to set up PASID %llu in
-> >>> nested mode, Err %d\n",
-> >>> +			data->hpasid, ret);  
-> >>
-> >> This error handling is insufficient. You should at least:
-> >>
-> >> 1. free sdev  
-> > already done below
-> >   
-> >> 2. if list_empty(&svm->devs)
-> >> 	unbound the svm from gpasid
-> >> 	free svm
-> >>  
-> > yes, agreed.
-> >   
-> >> The same for above error handling. Add a branch for error recovery
-> >> at the end of function might help here.
-> >>  
-> > not sure which code is the same as above? could you point it out?  
-> 
-> Above last comment. :-)
-> 
-Got it.
-> >>> +		kfree(sdev);
-> >>> +		goto out;
-> >>> +	}
-> >>> +	svm->flags |= SVM_FLAG_GUEST_MODE;
-> >>> +
-> >>> +	init_rcu_head(&sdev->rcu);
-> >>> +	list_add_rcu(&sdev->list, &svm->devs);
-> >>> + out:
-> >>> +	mutex_unlock(&pasid_mutex);
-> >>> +	return ret;
-> >>> +}
-> >>> +
-> >>> +int intel_svm_unbind_gpasid(struct device *dev, int pasid)
-> >>> +{
-> >>> +	struct intel_svm_dev *sdev;
-> >>> +	struct intel_iommu *iommu;
-> >>> +	struct intel_svm *svm;
-> >>> +	int ret = -EINVAL;
-> >>> +
-> >>> +	mutex_lock(&pasid_mutex);
-> >>> +	iommu = intel_svm_device_to_iommu(dev);
-> >>> +	if (!iommu)
-> >>> +		goto out;  
-> >>
-> >> Make it symmetrical with bind function.
-> >>
-> >> 	if (WARN_ON(!iommu))
-> >> 		goto out;
-> >>  
-> > sounds good.  
-> >>> +
-> >>> +	svm = ioasid_find(NULL, pasid, NULL);
-> >>> +	if (IS_ERR_OR_NULL(svm)) {
-> >>> +		ret = PTR_ERR(svm);  
-> >>
-> >> If svm == NULL, this function will return success. This is not
-> >> expected, right?
-> >>  
-> > good catch, will fix.  
-> >>> +		goto out;
-> >>> +	}
-> >>> +
-> >>> +	for_each_svm_dev(svm, dev) {
-> >>> +		ret = 0;
-> >>> +		sdev->users--;
-> >>> +		if (!sdev->users) {
-> >>> +			list_del_rcu(&sdev->list);
-> >>> +			intel_pasid_tear_down_entry(iommu, dev,
-> >>> svm->pasid);
-> >>> +			/* TODO: Drain in flight PRQ for the
-> >>> PASID since it
-> >>> +			 * may get reused soon, we don't want to
-> >>> +			 * confuse with its previous life.
-> >>> +			 * intel_svm_drain_prq(dev, pasid);
-> >>> +			 */
-> >>> +			kfree_rcu(sdev, rcu);
-> >>> +
-> >>> +			if (list_empty(&svm->devs)) {
-> >>> +				list_del(&svm->list);
-> >>> +				kfree(svm);
-> >>> +				/*
-> >>> +				 * We do not free PASID here
-> >>> until explicit call
-> >>> +				 * from VFIO to free. The PASID
-> >>> life cycle
-> >>> +				 * management is largely tied to
-> >>> VFIO management
-> >>> +				 * of assigned device life
-> >>> cycles. In case of
-> >>> +				 * guest exit without a explicit
-> >>> free PASID call,
-> >>> +				 * the responsibility lies in
-> >>> VFIO layer to free
-> >>> +				 * the PASIDs allocated for the
-> >>> guest.
-> >>> +				 * For security reasons, VFIO has
-> >>> to track the
-> >>> +				 * PASID ownership per guest
-> >>> anyway to ensure
-> >>> +				 * that PASID allocated by one
-> >>> guest cannot be
-> >>> +				 * used by another.
-> >>> +				 */
-> >>> +				ioasid_set_data(pasid, NULL);  
-> >>
-> >> Exchange order. First unbind svm from gpasid and then free svm.
-> >>  
-> > I am not following, aren't we already doing free svm after unbind?
-> > please explain.  
-> 
-> I meant
-> 
-> 	ioasid_set_data(pasid, NULL);
-> 	kfree(svm);
-> 
-> in reverse order, it leaves a short window when svm is freed, but
-> pasid private data is still kept svm (wild pointer).
-> 
-> 
-Right. will fix
-> >>> +			}
-> >>> +		}
-> >>> +		break;
-> >>> +	}
-> >>> + out:
-> >>> +	mutex_unlock(&pasid_mutex);
-> >>> +
-> >>> +	return ret;
-> >>> +}
-> >>> +
-> >>>    int intel_svm_bind_mm(struct device *dev, int *pasid, int
-> >>> flags, struct svm_dev_ops *ops) {
-> >>>    	struct intel_iommu *iommu =
-> >>> intel_svm_device_to_iommu(dev); diff --git
-> >>> a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h index
-> >>> 3dba6ad3e9ad..6c74c71b1ebf 100644 ---
-> >>> a/include/linux/intel-iommu.h +++ b/include/linux/intel-iommu.h
-> >>> @@ -673,7 +673,9 @@ int intel_iommu_enable_pasid(struct
-> >>> intel_iommu *iommu, struct device *dev); int
-> >>> intel_svm_init(struct intel_iommu *iommu); extern int
-> >>> intel_svm_enable_prq(struct intel_iommu *iommu); extern int
-> >>> intel_svm_finish_prq(struct intel_iommu *iommu); -
-> >>> +extern int intel_svm_bind_gpasid(struct iommu_domain *domain,
-> >>> +		struct device *dev, struct iommu_gpasid_bind_data
-> >>> *data); +extern int intel_svm_unbind_gpasid(struct device *dev,
-> >>> int pasid); struct svm_dev_ops;
-> >>>    
-> >>>    struct intel_svm_dev {
-> >>> @@ -690,9 +692,13 @@ struct intel_svm_dev {
-> >>>    struct intel_svm {
-> >>>    	struct mmu_notifier notifier;
-> >>>    	struct mm_struct *mm;
-> >>> +
-> >>>    	struct intel_iommu *iommu;
-> >>>    	int flags;
-> >>>    	int pasid;
-> >>> +	int gpasid; /* Guest PASID in case of vSVA bind with
-> >>> non-identity host
-> >>> +		     * to guest PASID mapping.
-> >>> +		     */
-> >>>    	struct list_head devs;
-> >>>    	struct list_head list;
-> >>>    };
-> >>> diff --git a/include/linux/intel-svm.h b/include/linux/intel-svm.h
-> >>> index 94f047a8a845..a2c189ad0b01 100644
-> >>> --- a/include/linux/intel-svm.h
-> >>> +++ b/include/linux/intel-svm.h
-> >>> @@ -44,6 +44,23 @@ struct svm_dev_ops {
-> >>>     * do such IOTLB flushes automatically.
-> >>>     */
-> >>>    #define SVM_FLAG_SUPERVISOR_MODE	(1<<1)
-> >>> +/*
-> >>> + * The SVM_FLAG_GUEST_MODE flag is used when a guest process bind
-> >>> to a device.
-> >>> + * In this case the mm_struct is in the guest kernel or
-> >>> userspace, its life
-> >>> + * cycle is managed by VMM and VFIO layer. For IOMMU driver, this
-> >>> API provides
-> >>> + * means to bind/unbind guest CR3 with PASIDs allocated for a
-> >>> device.
-> >>> + */
-> >>> +#define SVM_FLAG_GUEST_MODE	(1<<2)  
-> >>
-> >> How about keeping this aligned with top by adding a tab?
-> >>  
-> > sounds good.  
-> >> BIT macro is preferred. Hence, make it BIT(1), BIT(2), BIT(3) is
-> >> preferred.
-> >>  
-> > I know, but the existing mainline code is not using BIT, so I wanted
-> > to keep coding style consistent. Perhaps a separate cleanup patch
-> > will do later.  
-> 
-> It makes sense to me.
-> 
-> >>> +/*
-> >>> + * The SVM_FLAG_GUEST_PASID flag is used when a guest has its own
-> >>> PASID space,
-> >>> + * which requires guest and host PASID translation at both
-> >>> directions. We keep
-> >>> + * track of guest PASID in order to provide lookup service to
-> >>> device drivers.
-> >>> + * One such example is a physical function (PF) driver that
-> >>> supports mediated
-> >>> + * device (mdev) assignment. Guest programming of mdev
-> >>> configuration space can
-> >>> + * only be done with guest PASID, therefore PF driver needs to
-> >>> find the matching
-> >>> + * host PASID to program the real hardware.
-> >>> + */
-> >>> +#define SVM_FLAG_GUEST_PASID	(1<<3)  
-> >>
-> >> Ditto.
-> >>
-> >> Best regards,
-> >> baolu  
-> > 
-> > [Jacob Pan]
-> >   
-> 
-> Best regards,
-> baolu
+Thanks for reviewing and confirmation.
 
-[Jacob Pan]
+> That being said you have sent this new set [1], which is a rework of
+> some of the code you have in the current set.  As such the only way
+> forward is for you to wait until [1] I has been applied and rebase the
+> remaining work in this set on top of it.
+
+Right.
+
+Seems the shared link is incorrect :)  Let's firstly focus on the patch
+set: 'perf cs-etm: Fix synthesizing instruction samples' [2] and after
+it is merged I will send new patch set for cs-etm callchain support as
+soon as possible.
+
+Thanks,
+Leo Yan
+
+[2] https://patchwork.kernel.org/cover/11209991/
+
+> Let me know if you have questions.
+> 
+> Thanks,
+> Mathieu
+> 
+> [1]. https://patchwork.kernel.org/cover/11130213/
+> 
+> >
+> > To be honest, I struggled to understand what's the purpose for
+> > 'buffer->buffer_nr', from the code, I think 'buffer->buffer_nr' is
+> > mainly used to trace the splitted buffers (e.g. the buffers are splitted
+> > into different queues so the trace data coming from different trace
+> > chunk?).  Now I observe 'buffer->buffer_nr' is always zero since the
+> > buffer is not used with splitted mode.  If later we support 1:1 map
+> > between tracers and sinks, then we need to set 'buffer->buffer_nr' so
+> > can reflect the correct buffer mapping, but we don't need to use
+> > trace_chan_id as extra info at here.
+> >
+> > Please let me know what you think about this?  If you agree with this,
+> > I will send out patch v4 soon with addressing other comments.
+> >
+> > Thanks,
+> > Leo Yan
+> >
+> > > > +   } else {
+> > > > +           /*
+> > > > +            * The thread stack can be output via thread_stack__process();
+> > > > +            * thus the detailed information about paired calls and returns
+> > > > +            * will be facilitated by Python script for the db-export.
+> > > > +            *
+> > > > +            * Need to set trace buffer number and flush thread stack if the
+> > > > +            * trace buffer number has been alternate.
+> > > > +            */
+> > > > +           thread_stack__set_trace_nr(tidq->thread,
+> > > > +                                      tidq->prev_packet->cpu,
+> > > > +                                      etmq->buffer->buffer_nr);
+> > >
+> > > Same here.
+> > >
+> > > > +   }
+> > > > +}
+> > > > +
+> > > >  static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
+> > > >                                         struct cs_etm_traceid_queue *tidq,
+> > > >                                         u64 addr, u64 period)
+> > > > @@ -1393,6 +1432,9 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
+> > > >             tidq->period_instructions = instrs_over;
+> > > >     }
+> > > >
+> > > > +   if (tidq->prev_packet->last_instr_taken_branch)
+> > > > +           cs_etm__add_stack_event(etmq, tidq);
+> > > > +
+> > > >     if (etm->sample_branches) {
+> > > >             bool generate_sample = false;
+> > > >
+> > > > @@ -2593,6 +2635,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+> > > >             itrace_synth_opts__set_default(&etm->synth_opts,
+> > > >                             session->itrace_synth_opts->default_no_sample);
+> > > >             etm->synth_opts.callchain = false;
+> > > > +           etm->synth_opts.thread_stack =
+> > > > +                           session->itrace_synth_opts->thread_stack;
+> > > >     }
+> > > >
+> > > >     err = cs_etm__synth_events(etm, session);
+> > > > --
+> > > > 2.17.1
+> > > >
