@@ -2,75 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D33E8851
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBCFE8858
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfJ2Min (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:38:43 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:33928 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfJ2Min (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:38:43 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x9TCcFU9026616;
-        Tue, 29 Oct 2019 21:38:21 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x9TCcFU9026616
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572352702;
-        bh=rRs8Ed7t4bAer/X1dc9tlKv3gE2rP5G57gkcJJvIIzs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wx5lpNCAWh0/fyhSglgPtgut//wljqNN4vx7Lbqx1ZhuPpRivg83hoCLnyCcntuzu
-         U9RPsoIpsytpjbkToeJY+5WYt82+HYbs0pJd3BtbJMfMcBPcgOHuPZ2a+NbVs/4KBY
-         AKaFq3Ky3cZ2t+BemZLqYWnSPrH/mekrlSpwcMCUWODxeoUYzmpnP8MVzO2qdSAZdt
-         s27bGUd7tePUX8QCrh9dwaykFQx/SvgZ/ao/EBBNfww0FW6fZ59oWvrTJFa6Sda5U6
-         aU/iw2JlhQxBCOIFNY5eUHLyP/Je4/BknAL4de9oZJP9A5eA20yaCwVQIkIN8cP014
-         Qgm4BCvojQSxw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Jessica Yu <jeyu@kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] mospost: remove unneeded local variable in contains_namespace()
-Date:   Tue, 29 Oct 2019 21:38:09 +0900
-Message-Id: <20191029123809.29301-5-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191029123809.29301-1-yamada.masahiro@socionext.com>
-References: <20191029123809.29301-1-yamada.masahiro@socionext.com>
+        id S1732591AbfJ2MjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:39:07 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40206 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727039AbfJ2MjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:39:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=N+ehmygc9BxX7lvA6aGJbMWaouzap7HiKg9Ic+o14PY=; b=HUuX5n8dhPbVxklcvlDuEpP910
+        2rrsNVRDtRIw8JqhZZIZtKDKW3KskJktVniS2bR6T4YczrftrnaBNVRyuIcjmxQRcvtK3FmnHGg+V
+        +4Z8fxRY43XE3ox5a/XAlk7bYEsFboxxfF7KmzZqs+8P3hQUmkmNawSUeeX+B1/0i+z0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iPQly-0004C1-Jz; Tue, 29 Oct 2019 13:38:54 +0100
+Date:   Tue, 29 Oct 2019 13:38:54 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        James Hogan <jhogan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>
+Subject: Re: [PATCH v4 5/5] net: dsa: add support for Atheros AR9331 build-in
+ switch
+Message-ID: <20191029123854.GN15259@lunn.ch>
+References: <20191022055743.6832-1-o.rempel@pengutronix.de>
+ <20191022055743.6832-6-o.rempel@pengutronix.de>
+ <20191023005850.GG5707@lunn.ch>
+ <20191029071404.pl34q4rmadusc2u5@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029071404.pl34q4rmadusc2u5@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The local variable, ns_entry, is unneeded.
+Hi Oleksij
 
-While I was here, I also cleaned up the comparison with NULL or 0.
+> > > +static void ar9331_sw_port_disable(struct dsa_switch *ds, int port)
+> > > +{
+> > > +	struct ar9331_sw_priv *priv = (struct ar9331_sw_priv *)ds->priv;
+> > > +	struct regmap *regmap = priv->regmap;
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_write(regmap, AR9331_SW_REG_PORT_STATUS(port), 0);
+> > > +	if (ret)
+> > > +		dev_err_ratelimited(priv->dev, "%s: %i\n", __func__, ret);
+> > > +}
+> > 
+> > I've asked this before, but i don't remember the answer. Why are
+> > port_enable and port_disable the same?
+> 
+> I have only MAC TX/RX enable bit. This bit is set by phylink_mac_link_up and
+> removed by phylink_mac_link_down.
+> The port enable I use only to set predictable state of the port
+> register: all bits cleared. May be i should just drop port enable
+> function? What do you think? 
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+At minimum, it needs a comment about why enable and disable are the
+same. If i keep asking, others will as well.
 
- scripts/mod/modpost.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+If there is nothing useful to do, then drop it.
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index f7425f5d4ab0..f70b924f379f 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -239,10 +239,8 @@ static struct symbol *find_symbol(const char *name)
- static bool contains_namespace(struct namespace_list *list,
- 			       const char *namespace)
- {
--	struct namespace_list *ns_entry;
--
--	for (ns_entry = list; ns_entry != NULL; ns_entry = ns_entry->next)
--		if (strcmp(ns_entry->namespace, namespace) == 0)
-+	for (; list; list = list->next)
-+		if (!strcmp(list->namespace, namespace))
- 			return true;
- 
- 	return false;
--- 
-2.17.1
+   Andrew
 
