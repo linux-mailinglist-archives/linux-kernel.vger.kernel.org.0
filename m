@@ -2,69 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4DCE852A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FA9E8530
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 11:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbfJ2KMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 06:12:05 -0400
-Received: from gentwo.org ([3.19.106.255]:37920 "EHLO gentwo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfJ2KMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 06:12:05 -0400
-Received: by gentwo.org (Postfix, from userid 1002)
-        id 199B33EF15; Tue, 29 Oct 2019 10:12:04 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id 1877F3EF14;
-        Tue, 29 Oct 2019 10:12:04 +0000 (UTC)
-Date:   Tue, 29 Oct 2019 10:12:04 +0000 (UTC)
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Mike Rapoport <rppt@kernel.org>
-cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
- mappings
-In-Reply-To: <20191029085551.GA18773@rapoport-lnx>
-Message-ID: <alpine.DEB.2.21.1910291011090.5411@www.lameter.com>
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org> <1572171452-7958-2-git-send-email-rppt@kernel.org> <20191028123124.ogkk5ogjlamvwc2s@box> <20191028130018.GA7192@rapoport-lnx> <20191028131623.zwuwguhm4v4s5imh@box> <alpine.DEB.2.21.1910290706360.3769@www.lameter.com>
- <20191029085551.GA18773@rapoport-lnx>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1729072AbfJ2KOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 06:14:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38782 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJ2KOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 06:14:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=X1R5IVBASQ5ORVml6FyX2cr6AOsLH2Mknjf9io4LIe8=; b=1yhI3BeqAbf7io9KPunNhkjBt
+        DMZBPHf0OXV1rwba2CMC0qnqdHjFe9PEA3U2Wu7gxdBkYxL0gSBOvFmqGmo+R4N9NpV+r9/rW67If
+        5y2uJfVHiA3Mp48dL6Ips2wGNBOH0dEhxahiI83qaal1nVyKAnqlzTF3v9wj6cFt0jqhP1Y4SqfCa
+        XiHp26Pg7OL3p72pAbQjP+WK9ZkKWxzlhmja24RX9SS1LVQzLZbHxN6r4e82qHUC6/+PYbmnZ8fCb
+        NhH/c7qrHGi+OzmWM/xr7+1C3vA5zdJ7ZsYrkcDU6mG4K+1BVgKKK6X5M/5RmhBYIMW9QMJGyubTF
+        EcN6dbBZA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPOUo-0001oh-Km; Tue, 29 Oct 2019 10:13:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2F656300596;
+        Tue, 29 Oct 2019 11:11:59 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5F1392B3F7754; Tue, 29 Oct 2019 11:13:00 +0100 (CET)
+Date:   Tue, 29 Oct 2019 11:13:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Saurav Girepunje <saurav.girepunje@gmail.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        saurav.girepunje@hotmail.com
+Subject: Re: [PATCH] arch: x86: kvm: mmu.c: use true/false for bool type
+Message-ID: <20191029101300.GK4114@hirez.programming.kicks-ass.net>
+References: <20191029094104.GA11220@saurav>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029094104.GA11220@saurav>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 29, 2019 at 03:11:04PM +0530, Saurav Girepunje wrote:
+> Use true/false for bool type "dbg" in mmu.c
+> 
+> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+> ---
+>  arch/x86/kvm/mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 24c23c66b226..c0b1df69ce0f 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -68,7 +68,7 @@ enum {
+>  #undef MMU_DEBUG
+>  
+>  #ifdef MMU_DEBUG
+> -static bool dbg = 0;
+> +static bool dbg = true;
 
-
-On Tue, 29 Oct 2019, Mike Rapoport wrote:
-
-> I've talked with Thomas yesterday and he suggested something similar:
->
-> When the MAP_EXCLUSIVE request comes for the first time, we allocate a huge
-> page for it and then use this page as a pool of 4K pages for subsequent
-> requests. Once this huge page is full we allocate a new one and append it
-> to the pool. When all the 4K pages that comprise the huge page are freed
-> the huge page is collapsed.
-
-Or write a device driver that allows you to mmap a secure area and avoid
-all core kernel modifications?
-
-/dev/securemem or so?
-
-It may exist already.
-
+You're actually changing the value from false to true. Please, if you
+don't know C, don't touch things.
