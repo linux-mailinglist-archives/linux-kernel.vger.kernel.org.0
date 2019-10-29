@@ -2,98 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61950E8777
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19541E87CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387748AbfJ2LuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:50:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49558 "EHLO mail.kernel.org"
+        id S1732567AbfJ2MMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:12:31 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:53398 "EHLO mail.andi.de1.cc"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727799AbfJ2LuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:50:13 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5318521D7C;
-        Tue, 29 Oct 2019 11:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572349813;
-        bh=p2adGSsLxFxJ6cJw5+JhARA/vjF5DCxuALEJz8Rs+gg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ykT8g89+JWnDxsAJIOKwWqOE7A55myYIXLzfivx+uV0Dc6SF+5RuHkqtR5M6IDv1J
-         AU4L9D/f+lTo9naAOu80Tc4BUjrFLT4WBKFWJGCM3WBRVAJ0djYZArXJ1OcSZceRo2
-         H/hLX75tkDBzcYUerj12rnOXHPZrt3Tgrd4h9Bqo=
-Date:   Tue, 29 Oct 2019 11:50:08 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] arm64: cpufeature: Enable Qualcomm Falkor errata 1009
- for Kryo
-Message-ID: <20191029115008.GD12103@willie-the-truck>
-References: <20191029060604.1208925-1-bjorn.andersson@linaro.org>
+        id S1730269AbfJ2MMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:12:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Eiamd8BZfLfRuXNZB2AmOrEcDfBpZ/Uhno+/TVo4R04=; b=BkgtdoluLOQ/wU6W7bXTn08LW
+        /CDuKs2U9LxRap16ydtYGsiNXTM8KbS90p4L6IK0pCK43+VyuxVM6vfrB3VPq6+MrVpVx8WCnItMp
+        EfjmhjJ9/MjaDb6GpE3b+e8em1ltjaLqKgXZVH7B7eA7xn5VzDAsOc3W9PNOAz7PLQS+8=;
+Received: from [2a02:790:ff:919:7ee9:d3ff:fe1f:a246] (helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iPQMJ-00070z-HR; Tue, 29 Oct 2019 13:12:26 +0100
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1iPLGh-00077y-7E; Tue, 29 Oct 2019 07:46:15 +0100
+Date:   Tue, 29 Oct 2019 07:46:03 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     lee.jones@linaro.org, a.zummo@towertech.it,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        phh@phh.me, b.galvani@gmail.com, stefan@agner.ch,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH 5/5] rtc: rtc-rc5t583: add ricoh rc5t619 RTC driver
+Message-ID: <20191029074603.499a3940@kemnade.info>
+In-Reply-To: <20191023231717.GU3125@piout.net>
+References: <20191021054104.26155-1-andreas@kemnade.info>
+        <20191021054104.26155-6-andreas@kemnade.info>
+        <20191021101528.GU3125@piout.net>
+        <20191021231359.1cada218@kemnade.info>
+        <20191023231717.GU3125@piout.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029060604.1208925-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY"; protocol="application/pgp-signature"
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 11:06:04PM -0700, Bjorn Andersson wrote:
-> The Kryo cores share errata 1009 with Falkor, so add their model
-> definitions and enable it for them as well.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/include/asm/cputype.h | 4 ++++
->  arch/arm64/kernel/cpu_errata.c   | 2 ++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-> index b1454d117cd2..8067476ea2e4 100644
-> --- a/arch/arm64/include/asm/cputype.h
-> +++ b/arch/arm64/include/asm/cputype.h
-> @@ -84,6 +84,8 @@
->  #define QCOM_CPU_PART_FALKOR_V1		0x800
->  #define QCOM_CPU_PART_FALKOR		0xC00
->  #define QCOM_CPU_PART_KRYO		0x200
-> +#define QCOM_CPU_PART_KRYO_GOLD		0x211
-> +#define QCOM_CPU_PART_KRYO_SILVER	0x205
+--Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Can you double-check this, please? My Pixel-1 phone claims something with
-0x201, but I don't know if that's what you were aiming for. It would be
-great if Qualcomm could document these register fields somewhere, especially
-since we're trying to work around their hardware errata for them.
+On Thu, 24 Oct 2019 01:17:17 +0200
+Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
 
-That said...
+[...]
+> > > Is the RTC 1900-2099 or 2000-2199? Please include the ouput of rtc-ra=
+nge
+> > > in the commit log:
+> > >=20
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.gi=
+t/tree/rtc-range.c
+> > >  =20
+> > # ./rtc-range=20
+> >=20
+> > Testing 2000-02-28 23:59:59.
+> > OK
+> >=20
+> > Testing 2038-01-19 03:14:07.
+> > OK
+> >=20
+> > Testing 2069-12-31 23:59:59.
+> > OK
+> >=20
+> > Testing 2099-12-31 23:59:59.
+> > KO RTC_RD_TIME returned 22 (line 138)
+> >=20
+> > Testing 2100-02-28 23:59:59.
+> > KO RTC_RD_TIME returned 22 (line 138)
+> >=20
+> > Testing 2106-02-07 06:28:15.
+> > OK
+> >=20
+> > Testing 2262-04-11 23:47:16.
+> > KO  Read back 2102-04-11 23:47:16.
+> >=20
+> > I think it is 1900 to 2099.
+> >  =20
+>=20
+> It is, I'm very curious to know why it doesn't roll over properly from
+> 2099-12-31 23:59:59 to 1900-01-01 00:00:00.
+>=20
+It rolls over correcly, but rtc_valid_tm() bails out if
+year < 70.
 
->  #define NVIDIA_CPU_PART_DENVER		0x003
->  #define NVIDIA_CPU_PART_CARMEL		0x004
-> @@ -109,6 +111,8 @@
->  #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
->  #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
->  #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
-> +#define MIDR_QCOM_KRYO_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_GOLD)
-> +#define MIDR_QCOM_KRYO_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_SILVER)
->  #define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
->  #define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
->  #define MIDR_FUJITSU_A64FX MIDR_CPU_MODEL(ARM_CPU_IMP_FUJITSU, FUJITSU_CPU_PART_A64FX)
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index cdd8df033536..315780e7bee7 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -627,6 +627,8 @@ static const struct midr_range arm64_harden_el2_vectors[] = {
->  static const struct midr_range arm64_repeat_tlbi_cpus[] = {
->  #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
->  	MIDR_RANGE(MIDR_QCOM_FALKOR_V1, 0, 0, 0, 0),
-> +	MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_GOLD),
-> +	MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_SILVER),
+I am preparing a v2 of this series.
 
-... why aren't you following what we do for E1003 and using the
-'is_kryo_midr' callback to match these CPUs?
+Regards,
+Andreas
 
-Will
+--Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl234CwACgkQl4jFM1s/
+ye9YORAAlarwaf3wXAvD0muX8zYJ4SLGZ+jOO9JLBcR8mAWjevZg/fsK0juGopPO
+FJrDvCIYOQ42i92/nNuALcQz4uGbsUqnYQB9KvxDwGeYIMRijjPciNeYgBwegPrk
+QpwhWFXKQQrcgvGb/KvZMxmHnoFmOMDY4qa+ZmxhzCtRr0FKC57lGa+isTcihxm7
+0LAb35kb2Vqx+O4LZsS5agDiToJT6oW3bDG7MwjTkgul1Z+8mMitr43zIlVM6OcI
+ASt8rNddP++fOsexd3ossl9EH+/cpOe2m6S/Qgm2vwTxpEr9lmeQ4KYKpb6b8FqP
+ZfOznrGGNZgzOGjx/3EIUBFXvTrISmcmdQymj0Y0P0omqc+qeGnCt5K6LDdcBcQU
+83XcaAPAhIkz2cHmQ6FRTpIRoM5O+bjt1fduQF458vfasNicCE1jPUozYJsVgCzh
+aetmPqSviPt3ha2d9hq1A96+L+zFel0F60KqwI1jrnxpu4Q59Q7d5uGBcHBnnqk8
+BT7EZe6DCnHRPVDGPipjqHdefeQu+2FXcrQPbLxfuNewDowj5KDCRQyFVAgNjvFy
+sFL/anHT15WFB3tt425cChaTC2V2U3QfguUuOFhYJ7EUqLA5TAKWwcTUV7WqlUap
+udFGCx9RREvi9WkCTXpD06y4Geg/MAaUvrNZxKcYFRqVGGHmMEw=
+=XPEe
+-----END PGP SIGNATURE-----
+
+--Sig_/t.bt3Q4nWziP.Q+C7kPJ5iY--
