@@ -2,95 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08005E8857
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 904E2E8867
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:40:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbfJ2MjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:39:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39420 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbfJ2MjB (ORCPT
+        id S1731885AbfJ2MkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:40:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54094 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfJ2MkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:39:01 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v138so8765307oif.6;
-        Tue, 29 Oct 2019 05:39:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P0pAlxPefnZPIRefBhrT3Sgrq5uaOunz9Aa6ST/gasM=;
-        b=a9GMEaVy6BI23jdRobm7TRmkyUXXe7W0Fijpt3f6MBnFaEa50XUXGjv+HjHtTk89Rq
-         7GoPuaVez8Tg6NoctCtE9GZY76eEV6WXh7hk3A9Yo02OcUM6/+GgUKW3U0kGwVBD9OSk
-         Lk2YKCH4IV8sQhdn49eJ2IT6nUSiHOlhBjUukOBTn+s6uA7D0bz0LI6HfLmIx8Hy2kc7
-         o53mV9WubZ0mEdA0a7G+I3pFvGYX5Msh4pjyPNzHnZ/AvPtR2sac0DazgaYhlXhp08iV
-         aBunKKxy7tlnmW2YDJtCipcRQB+bl4PPKO242guzwo/ET9zJlOcoEXI0TObLUBDLmVky
-         Qb+A==
-X-Gm-Message-State: APjAAAWwAfUFMLCxl+my3cJKfDFjk02+mvWmcR3q1ZfafaBTrrZaCLam
-        eTtxkm7elZ7HjWCWZ52+lA==
-X-Google-Smtp-Source: APXvYqxt+//5ED9g7iyU7AWAtvtc4k6r5HOC14j46hy0je9ALb9EwgOj5H8dxKh8G41DIjRra9VFYg==
-X-Received: by 2002:a54:4885:: with SMTP id r5mr3723686oic.3.1572352740007;
-        Tue, 29 Oct 2019 05:39:00 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t10sm3873234oib.49.2019.10.29.05.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 05:38:59 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 07:38:58 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: at91: Document SmartKiz board
- binding
-Message-ID: <20191029123858.GA24145@bogus>
-References: <20191018140658.31703-1-kamel.bouhara@bootlin.com>
- <20191018140658.31703-2-kamel.bouhara@bootlin.com>
+        Tue, 29 Oct 2019 08:40:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sMcCsiPZroEcuV8OSVTJGo4oXf0H1fQaUisPb3xX7L8=; b=KnyYMMfRnAFyBc2hjQAOkZ1Ai
+        pITPlePXil77rCv1X/hxMOgpBLXAXV0JrtL3VwKyl9l4T1zvUg7L+kqLs91pWMH0VyxFEsbXFlHZR
+        IyHXs7ZNFAK2i2e+3Q8hBzD8AHG64LyO7H3VuTQvynBLUw4X6LWPw7jeHwPEVM8QvARYSN1YDMNi+
+        JsHg5NVOED7Oxxyh9lDXZLkJpDDn1tPrKpEJKNq3+qyS62yAgroqEzriILDOPof6ms48gX4AGdmN5
+        MGdW8Tk5qIcVrMXu4F+bcSKSjcaX3ZRJRg07oT7RtllhE7UpwUvFLN3TZNw6XZBPvNtNso4eu7KXD
+        cok5eK38A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPQmv-0000x4-1h; Tue, 29 Oct 2019 12:39:53 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 630913040CB;
+        Tue, 29 Oct 2019 13:38:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 26FAC20D7FF19; Tue, 29 Oct 2019 13:39:49 +0100 (CET)
+Date:   Tue, 29 Oct 2019 13:39:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, thomas.lendacky@amd.com
+Subject: AMD TLB errata, (Was: [PATCH RFC] mm: add MAP_EXCLUSIVE to create
+ exclusive user mappings)
+Message-ID: <20191029123949.GL4114@hirez.programming.kicks-ass.net>
+References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+ <1572171452-7958-2-git-send-email-rppt@kernel.org>
+ <20191028123124.ogkk5ogjlamvwc2s@box>
+ <20191028130018.GA7192@rapoport-lnx>
+ <20191028131623.zwuwguhm4v4s5imh@box>
+ <CAA9_cmd7f2y2AAT6646S=tco3yfyLgCAC4Qp=1iTQaJqrQcOwQ@mail.gmail.com>
+ <20191029064318.s4n4gidlfjun3d47@box>
+ <20191029085602.GI4114@hirez.programming.kicks-ass.net>
+ <20191029110024.yjytp22lhd2vekrv@box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191018140658.31703-2-kamel.bouhara@bootlin.com>
+In-Reply-To: <20191029110024.yjytp22lhd2vekrv@box>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 04:06:57PM +0200, Kamel Bouhara wrote:
-> Document devicetree's bindings for the SAM9G25 SmartKiz board of
-> Overkiz SAS.
+On Tue, Oct 29, 2019 at 02:00:24PM +0300, Kirill A. Shutemov wrote:
+> On Tue, Oct 29, 2019 at 09:56:02AM +0100, Peter Zijlstra wrote:
+> > On Tue, Oct 29, 2019 at 09:43:18AM +0300, Kirill A. Shutemov wrote:
+> > > But some CPUs don't like to have two TLB entries for the same memory with
+> > > different sizes at the same time. See for instance AMD erratum 383.
+> > > 
+> > > Getting it right would require making the range not present, flush TLB and
+> > > only then install huge page. That's what we do for userspace.
+> > > 
+> > > It will not fly for the direct mapping. There is no reasonable way to
+> > > exclude other CPU from accessing the range while it's not present (call
+> > > stop_machine()? :P). Moreover, the range may contain the code that doing
+> > > the collapse or data required for it...
+> > > 
+> > > BTW, looks like current __split_large_page() in pageattr.c is susceptible
+> > > to the errata. Maybe we can get away with the easy way...
+> > 
+> > As you write above, there is just no way we can have a (temporary) hole
+> > in the direct map.
+> > 
+> > We are careful about that other errata, and make sure both translations
+> > are identical wrt everything else.
 > 
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/arm/atmel-at91.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> index 666462988179..f8053268cfa5 100644
-> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> @@ -49,8 +49,16 @@ properties:
->            - const: atmel,at91sam9x5
->            - const: atmel,at91sam9
->  
-> +      - description: Overkiz SmartKiz Board
-> +        items:
-> +          - const: overkiz,smartkiz
-> +          - const: atmel,at91sam9g25
-> +          - const: atmel,at91sam9x5
-> +          - const: atmel,at91sam9
-> +
->        - items:
->            - enum:
-> +              - atmel,at91sam9g25
->                - atmel,at91sam9g15
->                - atmel,at91sam9g25
+> It's not clear if it is enough to avoid the issue. "under a highly specific
+> and detailed set of conditions" is not very specific set of conditions :P
 
-Duplicated... You did check this with 'make dt_binding_check', right?
+Yeah, I know ... :/ Tom is there any chance you could shed a little more
+light on that errata?
 
->                - atmel,at91sam9g35
-> -- 
-> 2.23.0
-> 
