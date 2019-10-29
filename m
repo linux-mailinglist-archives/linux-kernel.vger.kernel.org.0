@@ -2,87 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA22E83AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBA1AE838B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfJ2I7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 04:59:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20767 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730295AbfJ2I7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 04:59:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 01:59:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
-   d="scan'208";a="202780671"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 29 Oct 2019 01:59:23 -0700
-Received: from [10.226.39.46] (ekotax-MOBL.gar.corp.intel.com [10.226.39.46])
-        by linux.intel.com (Postfix) with ESMTP id 14985580372;
-        Tue, 29 Oct 2019 01:59:17 -0700 (PDT)
-Subject: Re: [PATCH v4 2/3] dwc: PCI: intel: PCIe RC controller driver
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lorenzo.pieralisi@arm.com, robh@kernel.org,
-        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
-        hch@infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
-References: <cover.1571638827.git.eswara.kota@linux.intel.com>
- <c46ba3f4187fe53807948b4f10996b89a75c492c.1571638827.git.eswara.kota@linux.intel.com>
- <20191021130339.GP47056@e119886-lin.cambridge.arm.com>
- <661f7e9c-a79f-bea6-08d8-4df54f500019@linux.intel.com>
- <20191025090926.GX47056@e119886-lin.cambridge.arm.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <6f8b2e72-caa3-30b8-4c76-8ad7bb321ce2@linux.intel.com>
-Date:   Tue, 29 Oct 2019 16:59:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729903AbfJ2Ix6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:53:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41284 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729834AbfJ2Ix6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 04:53:58 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D8AEA5E32F7D3CF7C640;
+        Tue, 29 Oct 2019 16:53:55 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
+ 16:53:48 +0800
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     <richard@nod.at>, <s.hauer@pengutronix.de>, <dedekind1@gmail.com>,
+        <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ubifs: do_kill_orphans: Fix a memory leak bug
+Date:   Tue, 29 Oct 2019 17:01:10 +0800
+Message-ID: <1572339670-68694-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20191025090926.GX47056@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If there are more than one valid snod on the sleb->nodes list,
+do_kill_orphans will malloc ino more than once without releasing
+previous ino's memory. Finally, it will trigger memory leak.
 
-On 10/25/2019 5:09 PM, Andrew Murray wrote:
-> On Tue, Oct 22, 2019 at 05:04:21PM +0800, Dilip Kota wrote:
->> Hi Andrew Murray,
->>
->> On 10/21/2019 9:03 PM, Andrew Murray wrote:
->>> On Mon, Oct 21, 2019 at 02:39:19PM +0800, Dilip Kota wrote:
->>>> +
->>>> +void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts)
->>>> +{
->>>> +	u32 val;
->>>> +
->>>> +	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
->>>> +	val &= ~PORT_LOGIC_N_FTS;
->>>> +	val |= n_fts;
->>>> +	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
->>>> +}
->>> I notice that pcie-artpec6.c (artpec6_pcie_set_nfts) also writes the FTS
->>> and defines a bunch of macros to support this. It doesn't make sense to
->>> duplicate this there. Therefore I think we need to update pcie-artpec6.c
->>> to use this new function.
->> I think we can do in a separate patch after these changes get merged and
->> keep this patch series for intel PCIe driver and required changes in PCIe
->> DesignWare framework.
-> The pcie-artpec6.c is a DWC driver as well. So I think we can do all this
-> together. This helps reduce the technical debt that will otherwise build up
-> in duplicated code.
-I agree with you to remove duplicated code, but at this point not sure 
-what all drivers has defined FTS configuration.
-Reviewing all other DWC drivers and removing them can be done in one 
-single separate patch.
+Fixes: ee1438ce5dc4 ("ubifs: Check link count of inodes when...")
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+---
+ fs/ubifs/orphan.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Regards,
-Dilip
+diff --git a/fs/ubifs/orphan.c b/fs/ubifs/orphan.c
+index 3b4b411..f211ed3 100644
+--- a/fs/ubifs/orphan.c
++++ b/fs/ubifs/orphan.c
+@@ -673,9 +673,11 @@ static int do_kill_orphans(struct ubifs_info *c, struct ubifs_scan_leb *sleb,
+ 		if (first)
+ 			first = 0;
+ 
+-		ino = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
+-		if (!ino)
+-			return -ENOMEM;
++		if (!ino) {
++			ino = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
++			if (!ino)
++				return -ENOMEM;
++		}
+ 
+ 		n = (le32_to_cpu(orph->ch.len) - UBIFS_ORPH_NODE_SZ) >> 3;
+ 		for (i = 0; i < n; i++) {
+-- 
+2.7.4
+
