@@ -2,93 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2073E874E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD986E8756
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:43:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbfJ2LkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:40:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbfJ2LkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:40:02 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39E53217D9;
-        Tue, 29 Oct 2019 11:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572349201;
-        bh=b0Yx/pOD5w63B522OXKc4nLFXgNhCQem4ZHf05cCJ/g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZmaImj/3fhMnxq2LJucsm59PXeqHQgfZdnKGWM3z08zi1lSOJM6NqcZfdRb0MtxXa
-         U+z49SFHLkVTLSkePIR15C+hnvOLdZa9MwpR8XToJkzrtTEdsNdz5EguB9DH9PLqOQ
-         p4aS4h+HcZc4G4k6QhPXz1ZwG3PmNOigtBkTEXNY=
-Date:   Tue, 29 Oct 2019 11:39:57 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] arm64: cpufeature: Enable Qualcomm erratas
-Message-ID: <20191029113956.GC12103@willie-the-truck>
-References: <20191029060432.1208859-1-bjorn.andersson@linaro.org>
+        id S1732107AbfJ2Lnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:43:33 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:40530 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfJ2Lnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 07:43:33 -0400
+Received: by mail-wr1-f49.google.com with SMTP id o28so13272088wro.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j9twwSC3KKkX5NFClf9qDXmGQTEsyZtLZnuYbLSSEf4=;
+        b=b0xhsRa4PgyoD/ivXLDHLynLZKDNsDv8stCFmPfrCWBct1zqVjx0KAv0WKvo1SM3AS
+         luPu6Ys0V+MxMYEYBm5SKmBDLVUsleflRREBAb43y9ZnzCXcwM5PeNmGytxyrSDDAp65
+         VgP+1xWBJu44cu+xDU4ECkTiKNzpMAJcqro+LpM3u6/j9YZ8nNMXwlwV1pgIupLbGVji
+         cbyHSKsEarveG2p7vbysdXaO6/F/pEIgRBJd2Wvh0ks+Yz23qVFilC+Eyb1VBcnr5pGS
+         jJSNjIRaJIVckoqIJgR0bf0nOMQXNF9yI/y3k6ZBffBkXk/F7SZsFzSJJCrMifM67YBT
+         fnug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j9twwSC3KKkX5NFClf9qDXmGQTEsyZtLZnuYbLSSEf4=;
+        b=EWtCFrNvjuXOY/eyVFotMVIrcw2+QTIMHxExSQffo5TsHCVeW6wqVCofv9cbf7KCim
+         e/Aege613JYXZSqL45dYDnJgo6nqVAF3ifAoN5+6RkQsi5+PqVNCxpmXoV2dMw0EUA4N
+         SPcqcN5dqq0NhxNNncrVhaTGuI9xCfhxHzeqtlgK+ehMvMQjhcPzg+c98pxZwXpDWeCC
+         9kS1AoHxf9v7FR+76EHict6do8C/Gu0UZyavNrJ94+lilEI1sSGOAA8h4xhwP90DO+TP
+         Q+M+6MgV+R2L/xNSBtG7Z7kdQ7xdxfEmZ7RyEHSI9czA9FfxvZT8MPrKLOgPSGwatSfy
+         0l+A==
+X-Gm-Message-State: APjAAAWKI9KQzsafnF+bFY5tHXBAZ+1z1PEOoTvKG874EcGpT69DlWIz
+        xvUnG4GkqtBkE5IovwTakv5WAw==
+X-Google-Smtp-Source: APXvYqw9eq/aeSJ7zg4mRQRc49zW6dvlZNmR9bTpdIDTMMnJX/vFxp1dccUkocf1RCYpXl047Lsyew==
+X-Received: by 2002:adf:ef4f:: with SMTP id c15mr19929451wrp.296.1572349411116;
+        Tue, 29 Oct 2019 04:43:31 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 04:43:30 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 00/10] nvmem: patches(set 1) for 5.5
+Date:   Tue, 29 Oct 2019 11:42:30 +0000
+Message-Id: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029060432.1208859-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 11:04:32PM -0700, Bjorn Andersson wrote:
-> With the introduction of 'cce360b54ce6 ("arm64: capabilities: Filter the
-> entries based on a given mask")' the Qualcomm erratas are no long
-> applied.
-> 
-> The result of not applying errata 1003 is that MSM8996 runs into various
-> RCU stalls and fails to boot most of the times.
-> 
-> Give both 1003 and 1009 a "type" to ensure they are not filtered out in
-> update_cpu_capabilities().
+Hi Greg,
 
-Oh nasty. Thanks for debugging and fixing this.
+Here are some nvmem patches for 5.5 which includes:
+- New provider for Rockchip OTP and Spreadtrum eFuse.
+- Hole region support in imx scu driver.
+- few trivial fixes.
 
-> Fixes: cce360b54ce6 ("arm64: capabilities: Filter the entries based on a given mask")
-> Cc: stable@vger.kernel.org
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Suggested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/kernel/cpu_errata.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index df9465120e2f..cdd8df033536 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -780,6 +780,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->  	{
->  		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
->  		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-> +		.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU,
->  		.matches = cpucap_multi_entry_cap_matches,
+Can you please queue them up for 5.5.
 
-This should probably be ARM64_CPUCAP_LOCAL_CPU_ERRATUM instead, but I'll
-want Suzuki's ack before I take the change.
+thanks,
+srini
 
->  		.match_list = qcom_erratum_1003_list,
->  	},
-> @@ -788,6 +789,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->  	{
->  		.desc = "Qualcomm erratum 1009, ARM erratum 1286807",
->  		.capability = ARM64_WORKAROUND_REPEAT_TLBI,
-> +		.type = ARM64_CPUCAP_SCOPE_LOCAL_CPU,
->  		ERRATA_MIDR_RANGE_LIST(arm64_repeat_tlbi_cpus),
+Baolin Wang (1):
+  nvmem: sc27xx: Change to use devm_hwspin_lock_request_specific() to
+    request one hwlock
 
-ERRATA_MIDR_RANGE_LIST sets the type already, so I think this is redundant.
+Finley Xiao (1):
+  nvmem: add Rockchip OTP driver
 
-Will
+Freeman Liu (2):
+  dt-bindings: nvmem: Add Spreadtrum eFuse controller documentation
+  nvmem: sprd: Add Spreadtrum SoCs eFuse support
+
+Heiko Stuebner (1):
+  dt-bindings: nvmem: add binding for Rockchip OTP controller
+
+Lucas Stach (1):
+  nvmem: imx-ocotp: reset error status on probe
+
+Peng Fan (2):
+  nvmem: imx: scu: support hole region check
+  nvmem: imx: scu: support write
+
+Sebastian Reichel (1):
+  nvmem: core: fix nvmem_cell_write inline function
+
+Srinivas Kandagatla (1):
+  nvmem: imx: scu: fix dependency in Kconfig
+
+ .../bindings/nvmem/rockchip-otp.txt           |  25 ++
+ .../devicetree/bindings/nvmem/sprd-efuse.txt  |  39 ++
+ drivers/nvmem/Kconfig                         |  23 +
+ drivers/nvmem/Makefile                        |   4 +
+ drivers/nvmem/imx-ocotp-scu.c                 | 120 ++++-
+ drivers/nvmem/imx-ocotp.c                     |   4 +
+ drivers/nvmem/rockchip-otp.c                  | 268 +++++++++++
+ drivers/nvmem/sc27xx-efuse.c                  |  13 +-
+ drivers/nvmem/sprd-efuse.c                    | 424 ++++++++++++++++++
+ include/linux/nvmem-consumer.h                |   2 +-
+ 10 files changed, 903 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/rockchip-otp.txt
+ create mode 100644 Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+ create mode 100644 drivers/nvmem/rockchip-otp.c
+ create mode 100644 drivers/nvmem/sprd-efuse.c
+
+-- 
+2.21.0
+
