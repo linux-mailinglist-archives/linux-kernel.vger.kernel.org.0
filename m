@@ -2,81 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E0CAE7E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:37:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C11EE7E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbfJ2Cge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:36:34 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3266 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727775AbfJ2Cge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:36:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2019 19:36:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,242,1569308400"; 
-   d="scan'208";a="224828056"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Oct 2019 19:36:31 -0700
-Cc:     baolu.lu@linux.intel.com,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v7 09/11] iommu/vt-d: Add bind guest PASID support
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1571946904-86776-10-git-send-email-jacob.jun.pan@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D5CDDA6@SHSMSX104.ccr.corp.intel.com>
- <20191025103337.1e51c0c9@jacob-builder>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7B8@SHSMSX104.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <75d15d99-d8f8-c09f-e9a7-64c17d037e0e@linux.intel.com>
-Date:   Tue, 29 Oct 2019 10:33:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730773AbfJ2Chs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:37:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54466 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbfJ2Chr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 22:37:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 00DC360D90; Tue, 29 Oct 2019 02:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572316667;
+        bh=SpU3CouSAnfBg2a8tqmWgQF4wwGKcI6vsq0WXo5HUl4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ie1MOmbgTAeYF+m8vDl1wmUKSVVpG9QzjFDquymWY+eL+3yB+55bJxNXC64SNRl2B
+         lk1/4a7CPWoQGLPKucl7QYyKQ69X2p+tihcN/DrwjpT008rwhxkvviKF7lQCv3LYiF
+         oMYb5FB8Dft367WR6p9pt0mQsclaEedxzsEFq1zQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 86D5A6092D;
+        Tue, 29 Oct 2019 02:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572316665;
+        bh=SpU3CouSAnfBg2a8tqmWgQF4wwGKcI6vsq0WXo5HUl4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZFqIiXjPMPXRBiaOU6BWJKwUP6zRSxUi3It+FSBQIJGrQczlInzJ2e41kUonmyE3+
+         HwK1ckJNXOtI7CSwQ0FVxzn3X3FRC3ZbWlkZdIKgV9Ep/QZCsDXjB/nnkmIRfXJqIp
+         jLQE5fDcNDmdqT5N8i0qL9i4fJt03/bV2lpmKHuE=
 MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D5DB7B8@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Oct 2019 10:37:45 +0800
+From:   cang@codeaurora.org
+To:     Avri Altman <Avri.Altman@wdc.com>
+Cc:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Evan Green <evgreen@chromium.org>,
+        Janek Kotas <jank@cadence.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] scsi: ufs: Add command logging infrastructure
+In-Reply-To: <MN2PR04MB6991C2AF4DDEDD84C7887258FC6B0@MN2PR04MB6991.namprd04.prod.outlook.com>
+References: <1571808560-3965-1-git-send-email-cang@codeaurora.org>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DCF0AFE@hasmsx108.ger.corp.intel.com>
+ <MN2PR04MB6991C2AF4DDEDD84C7887258FC6B0@MN2PR04MB6991.namprd04.prod.outlook.com>
+Message-ID: <01eb3c55e35738f2853fbc7175a12eaa@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 10/28/19 2:03 PM, Tian, Kevin wrote:
->>>>   	.dev_disable_feat	= intel_iommu_dev_disable_feat,
->>>>   	.is_attach_deferred	=
->>>> intel_iommu_is_attach_deferred, .pgsize_bitmap		=
->>>> INTEL_IOMMU_PGSIZES, +#ifdef CONFIG_INTEL_IOMMU_SVM
->>>> +	.sva_bind_gpasid	= intel_svm_bind_gpasid,
->>>> +	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
->>>> +#endif
->>> again, pure PASID management logic should be separated from SVM.
->>>
->> I am not following, these two functions are SVM functionality, not
->> pure PASID management which is already separated in ioasid.c
-> I should say pure "scalable mode" logic. Above callbacks are not
-> related to host SVM per se. They are serving gpasid requests from
-> guest side, thus part of generic scalable mode capability.
+On 2019-10-23 18:33, Avri Altman wrote:
+>> 
+>> > Add the necessary infrastructure to keep timestamp history of
+>> > commands, events and other useful info for debugging complex issues.
+>> > This helps in diagnosing events leading upto failure.
+>> 
+>> Why not use tracepoints, for that?
+> Ack on Tomas's comment.
+> Are there any pieces of information that you need not provided by the
+> upiu tracer?
 > 
+> Thanks,
+> Avri
 
-Currently these two callbacks are for sva only and the patch has been
-queued by Joerg for the next rc1. It could be extended to be generic.
-But it deserves a separated patch.
+In extreme cases, when the UFS runs into bad state, system may crash. 
+There may not be a chance to collect trace. If trace is not collected 
+and failure is hard to be reproduced, some command logs prints would be 
+very helpful to help understand what was going on before we run into 
+failure.
 
-Best regards,
-baolu
+Thanks,
+Can Guo
+
