@@ -2,118 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03833E8350
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:38:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A18E835D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 09:41:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfJ2IiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 04:38:08 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:46232 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbfJ2IiI (ORCPT
+        id S1729740AbfJ2Ill (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 04:41:41 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38381 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfJ2Ilk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 04:38:08 -0400
-Received: by mail-il1-f200.google.com with SMTP id i74so8658960ild.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 01:38:08 -0700 (PDT)
+        Tue, 29 Oct 2019 04:41:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 22so1435821wms.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 01:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ncentric-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=DUE+XOir+sEq8Jjt6ZqFoZP8jxttvHmbtNjKbTObY9Y=;
+        b=pPHnC2jzOsNQtFwKWKM84eQfcMIczrZRRakDJasaSgNDYqEpq5bkSkEmSQokHT5Ic7
+         TRSTsQEjnG5bXDRhJwN6zbp6rsw+ArB8T4EtOiOcOm+FLZcBXvf/mOhOEDupb0/h79/2
+         poyjiibNRB2bUGgklHNODDYzLXaLXEHJlmgyQgv7uWTBAE9SPXY9QfUbhN8hAWurOdOA
+         2IQgVfDF1Ep1VFPJ/UuLp4xFEBXmOI7/OemGOj7GR8w2XjcHS1V9Q30wADyPsF9qP9hz
+         HO1g0lEOtJPqfjsd5amgxY+Ff1OAs2aF2+t0sb2auBJJ7qKfq4gT+RdxkUC4rQOgEz65
+         2EYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=yW+jCv0zd4b+sIjQ5SBw5MYgudn7HjMjQQA3P/FMSgM=;
-        b=qiWdofOxG2WT+wRy8Tz0C6EB09Q/gK/jWIIfhQ/yh3hFqFJnGGJ4oqWfE2tjgRH8cS
-         r+Z+BFKyqSsLH1ldU0UIqnjuHFzfF1kNsQAAm1R4WCQj8NdBvaPjQpTzOE32V4sBps4C
-         PynnyI0vdGeX6TdNFewnzvvPxeVnDsOLd/NQZsZu7ZuskocDBiU2Zn8pSUlZqcRLODwf
-         oCzDitOcPgCuewCupbcDp1Yya7z7JaLKakP1oPD/X2ge1uEYhMapcANkAx1UkBAgy13u
-         juiZ8oBNRQXOdMqKm/LzfW0F1RwjQZrkYaon5kIGe7WoozOqjqHSm/mLpOCs21enPm23
-         d66Q==
-X-Gm-Message-State: APjAAAUvLvUIRmT/b4HrFKOgZi1JSFqG/A9OngiHoomvNNLZ37RrWO8x
-        iJP1roMlBIK2VlRkTFerrAl37XwbVmr7bR9Tm7b3N3RyJjfP
-X-Google-Smtp-Source: APXvYqzJ8QwrCvVd34SJmF0g9JoVfI9omz/GkkPDZySU+/8+eicOV4ZLM9iGms3K1tN+Z9Y50lBPJF2xwqhrITxlTvucG3B5iBmD
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=DUE+XOir+sEq8Jjt6ZqFoZP8jxttvHmbtNjKbTObY9Y=;
+        b=LZWbhLnKwjdrx5dnLIkA0wFuV9CSF72rm1d3m0VbaS4AQ8dZoLRXsPqmna1quGLC3i
+         +TDUn41Zp7cH/GqAqCdWrV0x0220RIuK7mb1LrtZswGzIw8Sj2ekFen0Gi00/SNQcfp/
+         eb+qxtne2KebWnUwD/8Ws1qqPvBKmKQJEpT8f+G0pA8OHC2uJTWrMDWlH1ykqqMhnzsg
+         /k3gsQOGqyZ1Qd1rZ0mEACtVH10a1TiyCnit1EhEL/Q2VSAsAeXooQ0Cq7NMFyEfrncy
+         O9VqF9jqiH+QnPvw/MIWg//d1M3+Az46HycoPtxJNHRVfdg5rO8rFMa7PjBUtPqazDy0
+         jqQA==
+X-Gm-Message-State: APjAAAX+B5lTi6JQJBBpkKCs0jMI6TqFkx3CX5jJyz3Zn2TDeMfwPl1e
+        P7sc4heu4rCS0IFPWgoyCX9VNSBGHGU=
+X-Google-Smtp-Source: APXvYqyftOvlRJ9dg8wL3C+zw81qRJgiCNNRVg6nEmYDGwPHS05minYwSNVy0ezRwvY2ORWwUG3b8g==
+X-Received: by 2002:a1c:a4c5:: with SMTP id n188mr2887218wme.30.1572338496714;
+        Tue, 29 Oct 2019 01:41:36 -0700 (PDT)
+Received: from [192.168.3.176] (d515300d8.static.telenet.be. [81.83.0.216])
+        by smtp.gmail.com with ESMTPSA id u21sm2275041wmu.27.2019.10.29.01.41.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 01:41:36 -0700 (PDT)
+Subject: Re: [PATCH v2] 802.11n IBSS: wlan0 stops receiving packets due to
+ aggregation after sender reboot
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        =?UTF-8?Q?Krzysztof_Ha=c5=82asa?= <khalasa@piap.pl>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <m34l02mh71.fsf@t19.piap.pl> <m37e4tjfbu.fsf@t19.piap.pl>
+ <e5b07b4ce51f806ce79b1ae06ff3cbabbaa4873d.camel@sipsolutions.net>
+From:   Koen Vandeputte <koen.vandeputte@ncentric.com>
+Message-ID: <30465e05-3465-f496-d57f-5e115551f5cb@ncentric.com>
+Date:   Tue, 29 Oct 2019 09:41:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:c7d2:: with SMTP id s18mr15406571jao.88.1572338287787;
- Tue, 29 Oct 2019 01:38:07 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 01:38:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001c46d5059608892f@google.com>
-Subject: general protection fault in process_one_work
-From:   syzbot <syzbot+9ed8f68ab30761f3678e@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, jakub.kicinski@netronome.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <e5b07b4ce51f806ce79b1ae06ff3cbabbaa4873d.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+On 28.10.19 13:21, Johannes Berg wrote:
+> On Fri, 2019-10-25 at 12:21 +0200, Krzysztof Hałasa wrote:
+>> Fix a bug where the mac80211 RX aggregation code sets a new aggregation
+>> "session" at the remote station's request, but the head_seq_num
+>> (the sequence number the receiver expects to receive) isn't reset.
+>>
+>> Spotted on a pair of AR9580 in IBSS mode.
+>>
+>> Signed-off-by: Krzysztof Halasa <khalasa@piap.pl>
+>>
+>> diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
+>> index 4d1c335e06e5..67733bd61297 100644
+>> --- a/net/mac80211/agg-rx.c
+>> +++ b/net/mac80211/agg-rx.c
+>> @@ -354,10 +354,13 @@ void ___ieee80211_start_rx_ba_session(struct sta_info *sta,
+>>   			 */
+>>   			rcu_read_lock();
+>>   			tid_rx = rcu_dereference(sta->ampdu_mlme.tid_rx[tid]);
+>> -			if (tid_rx && tid_rx->timeout == timeout)
+>> +			if (tid_rx && tid_rx->timeout == timeout) {
+>> +				tid_rx->ssn = start_seq_num;
+>> +				tid_rx->head_seq_num = start_seq_num;
+>>   				status = WLAN_STATUS_SUCCESS;
+> This is wrong, this is the case of *updating an existing session*, we
+> must not reset the head SN then.
+>
+> I think you just got very lucky (or unlucky) to have the same dialog
+> token, because we start from 0 - maybe we should initialize it to a
+> random value to flush out such issues.
+>
+> Really what I think probably happened is that one of your stations lost
+> the connection to the other, and didn't tell it about it in any way - so
+> the other kept all the status alive.
+>
+> I suspect to make all this work well we need to not only have the fixes
+> I made recently to actually send and parse deauth frames, but also to
+> even send an auth and reset the state when we receive that, so if we
+> move out of range and even the deauth frame is lost, we can still reset
+> properly.
+>
+> In any case, this is not the right approach - we need to handle the
+> "lost connection" case better I suspect, but since you don't say what
+> really happened I don't really know that that's what you're seeing.
+>
+> johannes
 
-HEAD commit:    38207291 bpf: Prepare btf_ctx_access for non raw_tp use case
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14173c0f600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41648156aa09be10
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ed8f68ab30761f3678e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Hi all,
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I can confirm the issue as I'm also seeing this sometimes in the field here.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9ed8f68ab30761f3678e@syzkaller.appspotmail.com
+Sometimes when a devices goes out of range and then re-enters,
+the link refuses to "come up", as in rx looks to be "stuck" without any 
+reports in system log or locking issues (lockdep enabled)
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9149 Comm: kworker/1:3 Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events nsim_dev_trap_report_work
-RIP: 0010:nsim_dev_trap_report_work+0xc4/0xaf0  
-drivers/net/netdevsim/dev.c:409
-Code: 89 45 d0 0f 84 8b 07 00 00 49 bc 00 00 00 00 00 fc ff df e8 3e ae ef  
-fc 48 8b 45 d0 48 05 68 01 00 00 48 89 45 90 48 c1 e8 03 <42> 80 3c 20 00  
-0f 85 b1 09 00 00 48 8b 45 d0 48 8b 98 68 01 00 00
-RSP: 0018:ffff88806c98fc90 EFLAGS: 00010a06
-RAX: 1bd5a0000000004d RBX: 0000000000000000 RCX: ffffffff84836e22
-RDX: 0000000000000000 RSI: ffffffff84836db2 RDI: 0000000000000001
-RBP: ffff88806c98fd30 R08: ffff88806c9863c0 R09: ffffed100d75f3d9
-R10: ffffed100d75f3d8 R11: ffff88806baf9ec7 R12: dffffc0000000000
-R13: ffff88806baf9ec0 R14: ffff8880a9a13900 R15: ffff8880ae934500
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efdd0c9e000 CR3: 000000009cc1b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace ba29cd1c27f63d86 ]---
-RIP: 0010:nsim_dev_trap_report_work+0xc4/0xaf0  
-drivers/net/netdevsim/dev.c:409
-Code: 89 45 d0 0f 84 8b 07 00 00 49 bc 00 00 00 00 00 fc ff df e8 3e ae ef  
-fc 48 8b 45 d0 48 05 68 01 00 00 48 89 45 90 48 c1 e8 03 <42> 80 3c 20 00  
-0f 85 b1 09 00 00 48 8b 45 d0 48 8b 98 68 01 00 00
-RSP: 0018:ffff88806c98fc90 EFLAGS: 00010a06
-RAX: 1bd5a0000000004d RBX: 0000000000000000 RCX: ffffffff84836e22
-RDX: 0000000000000000 RSI: ffffffff84836db2 RDI: 0000000000000001
-RBP: ffff88806c98fd30 R08: ffff88806c9863c0 R09: ffffed100d75f3d9
-R10: ffffed100d75f3d8 R11: ffff88806baf9ec7 R12: dffffc0000000000
-R13: ffff88806baf9ec0 R14: ffff8880a9a13900 R15: ffff8880ae934500
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efdd0c9e000 CR3: 000000009cc1b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+I have dozens of devices installed offshore (802.11n based), both on 
+static and moving assets,
+which cover from short (250m) up to very long distances (~35km)
 
+So .. while there is some momentum for this issue,
+I'm more than happy to provide extensive testing should fixes be posted 
+regarding IBSS in general.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Regards,
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Koen
+
