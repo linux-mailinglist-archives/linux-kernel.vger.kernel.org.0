@@ -2,107 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC1AE9094
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD8EEE90A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:15:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfJ2UIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:08:07 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35456 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfJ2UIH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:08:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m7so64744lji.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 13:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fW2Zh/fTxEZOQPa2raWuuwC2pp8Sz2KHBFNnTB4eWEs=;
-        b=RUiChNT+/TnFFn5bjZwy2byqh22AKTbCJCBObmS8MMm0mlDFMZ3+ZUQvfEUKFxPfHG
-         gKxqOXG9HM6Q9ws432DlC69CJ1HXXWAvsTZqvIDSOMrVjajWeWOgimDKr+6kQy+WHMTC
-         b29b5ymq9R3f4xru5r7JFju+iQs56sx4I/u3o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fW2Zh/fTxEZOQPa2raWuuwC2pp8Sz2KHBFNnTB4eWEs=;
-        b=JBeaY6EJspOGWR3Gh1zmdZ3IRl/Aqd7K/gEKgc/bAEst7QGZ1hyQ6+lk4L1ULMkp1G
-         Wge9V45PsXd0l+wRIMLWnESBOkD4De2zIG7sutX1l4Ka3/33wT/6VZKMFlr7oDt8ksDb
-         9JSfezlHp1EROyf1yZfbT75mGBk6T7wI6RFe/mVbTcvkXqCHtfyjjHAwsdrsEfDpDYSP
-         yahTwPzmWdcY7Cn0PPFqh/ey28VmZ5Mghq/euh5gJ9T0HyXJBgHjMx6PizqRaF5AGMcj
-         kU8UO9GhLXn2ZcJlQ3nPe7NhCxKFwxVrB9+CwoVUeVxVF9X/lfWkwZs6LiIc32W3T0B4
-         WoBQ==
-X-Gm-Message-State: APjAAAVXiyi8DKGuW1OaUmiMEsIx4Hq9lZwFC6RNvYoSOQE0JFMvS9ZZ
-        /YM22biPgIHtguUZ1B5+298TWBDB0ac=
-X-Google-Smtp-Source: APXvYqzrxTfHZiXkL4r08L/mBr55DZk5LZ8cDufkeXKRww3LG076jKVtRPf00+Gs2EEPUjqjgwsFZQ==
-X-Received: by 2002:a2e:8204:: with SMTP id w4mr3977803ljg.212.1572379683232;
-        Tue, 29 Oct 2019 13:08:03 -0700 (PDT)
-Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id w20sm9606082lff.46.2019.10.29.13.07.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 13:08:00 -0700 (PDT)
-Subject: Re: [PATCH net-next v2 4/4] bonding: balance ICMP echoes in layer3+4
- mode
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Paul Blakey <paulb@mellanox.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191029135053.10055-1-mcroce@redhat.com>
- <20191029135053.10055-5-mcroce@redhat.com>
- <5be14e4e-807f-486d-d11a-3113901e72fe@cumulusnetworks.com>
- <a7ef0f1b-e7f5-229c-3087-6eaed9652185@cumulusnetworks.com>
- <CAGnkfhwmPxFhhEawxgTp9qt_Uw=HiN3kDVk9f33mr7wEJyp1NA@mail.gmail.com>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <568200b1-fa27-6cb2-7586-d79829b24e4c@cumulusnetworks.com>
-Date:   Tue, 29 Oct 2019 22:07:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726689AbfJ2UP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:15:27 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4073 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbfJ2UP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 16:15:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 13:15:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,245,1569308400"; 
+   d="scan'208";a="283348320"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga001.jf.intel.com with SMTP; 29 Oct 2019 13:15:14 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 29 Oct 2019 22:15:13 +0200
+Date:   Tue, 29 Oct 2019 22:15:13 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org
+Subject: khugepaged might_sleep() warn due to CONFIG_HIGHPTE=y
+Message-ID: <20191029201513.GG1208@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGnkfhwmPxFhhEawxgTp9qt_Uw=HiN3kDVk9f33mr7wEJyp1NA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2019 21:45, Matteo Croce wrote:
-> On Tue, Oct 29, 2019 at 7:41 PM Nikolay Aleksandrov
-> <nikolay@cumulusnetworks.com> wrote:
->>
->> On 29/10/2019 20:35, Nikolay Aleksandrov wrote:
->>> Hi Matteo,
->>> Wouldn't it be more useful and simpler to use some field to choose the slave (override the hash
->>> completely) in a deterministic way from user-space ?
->>> For example the mark can be interpreted as a slave id in the bonding (should be
->>> optional, to avoid breaking existing setups). ping already supports -m and
->>> anything else can set it, this way it can be used to do monitoring for a specific
->>> slave with any protocol and would be a much simpler change.
->>> User-space can then implement any logic for the monitoring case and as a minor bonus
->>> can monitor the slaves in parallel. And the opposite as well - if people don't want
->>> these balanced for some reason, they wouldn't enable it.
->>>
->>
->> Ooh I just noticed you'd like to balance replies as well. Nevermind
->>
-> 
-> Also, the bonding could be in a router in the middle so no way to read the mark.
-> 
+Hi,
 
-Yeah, of course. I was just thinking from the host monitoring POV as I thought
-that was the initial intent (reading the last set's discussion).
+I got some khugepaged spew on a 32bit x86:
 
-Anyway the patch looks good to me,
-Reviewed-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+[  217.490026] BUG: sleeping function called from invalid context at include/linux/mmu_notifier.h:346
+[  217.492826] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 25, name: khugepaged
+[  217.495589] INFO: lockdep is turned off.
+[  217.498371] CPU: 1 PID: 25 Comm: khugepaged Not tainted 5.4.0-rc5-elk+ #206
+[  217.501233] Hardware name: System manufacturer P5Q-EM/P5Q-EM, BIOS 2203    07/08/2009
+[  217.501697] Call Trace:
+[  217.501697]  dump_stack+0x66/0x8e
+[  217.501697]  ___might_sleep.cold.96+0x95/0xa6
+[  217.501697]  __might_sleep+0x2e/0x80
+[  217.501697]  collapse_huge_page.isra.51+0x5ac/0x1360
+[  217.501697]  ? __alloc_pages_nodemask+0xec/0xf80
+[  217.501697]  ? __alloc_pages_nodemask+0x191/0xf80
+[  217.501697]  ? trace_hardirqs_on+0x4a/0xf0
+[  217.501697]  khugepaged+0x9a9/0x20f0
+[  217.501697]  ? _raw_spin_unlock+0x21/0x30
+[  217.501697]  ? trace_hardirqs_on+0x4a/0xf0
+[  217.501697]  ? wait_woken+0xa0/0xa0
+[  217.501697]  kthread+0xf5/0x110
+[  217.501697]  ? collapse_pte_mapped_thp+0x3b0/0x3b0
+[  217.501697]  ? kthread_create_worker_on_cpu+0x20/0x20
+[  217.501697]  ret_from_fork+0x2e/0x38
 
+Looks like it's due to CONFIG_HIGHPTE=y pte_offset_map()->kmap_atomic() vs.
+mmu_notifier_invalidate_range_start().
+
+My naive idea would be to just reorder those things, but not sure
+if there's some magic ordering constraint here. At least the machine
+still boots when I do it :)
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0a1b4b484ac5..f05d27b7183d 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1028,12 +1028,13 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 
+ 	anon_vma_lock_write(vma->anon_vma);
+ 
+-	pte = pte_offset_map(pmd, address);
+-	pte_ptl = pte_lockptr(mm, pmd);
+-
+ 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, NULL, mm,
+ 				address, address + HPAGE_PMD_SIZE);
+ 	mmu_notifier_invalidate_range_start(&range);
++
++	pte = pte_offset_map(pmd, address);
++	pte_ptl = pte_lockptr(mm, pmd);
++
+ 	pmd_ptl = pmd_lock(mm, pmd); /* probably unnecessary */
+ 	/*
+ 	 * After this gup_fast can't run anymore. This also removes
+
+-- 
+Ville Syrjälä
+Intel
