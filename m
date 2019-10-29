@@ -2,104 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2C7E921B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A81E9221
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 22:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbfJ2Vei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 17:34:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44005 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbfJ2Vei (ORCPT
+        id S1729625AbfJ2Ves (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 17:34:48 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46579 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728567AbfJ2Ves (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 17:34:38 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 3so5817pfb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 14:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=czQOnB8XGZh1drUQRgi49wj4hvdzWXuEnHlZa/FCwwU=;
-        b=jJCcL1OzsUe+bTt3PewqduHXFL93EB/nCB4OSiHOVahR0Ylu4ChCUJH4ZGtQZSpHit
-         y/K9Ro6QZlNcEtPfRnEWcEodVFKxVZYen8dfHq+uhuWXx4db3dLwXYNIzmfgTk3baazY
-         O8GkJZ1Bkn6fMAfPcej6FxUcsb6rdVbnpzNwY=
+        Tue, 29 Oct 2019 17:34:48 -0400
+Received: by mail-oi1-f195.google.com with SMTP id c2so126693oic.13;
+        Tue, 29 Oct 2019 14:34:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=czQOnB8XGZh1drUQRgi49wj4hvdzWXuEnHlZa/FCwwU=;
-        b=ZzUm/OGARdSc4TDhVdMWeKf1QYcW/OBwcNeTWRiYX3s8RO0zlS/EdOhWpXcN/ABeO9
-         ZadidGfcGZGBOIKAa8x6WMPoZdB4khQXi1fTncCY7Gvat4LTSURwmIHrNJo3X6H0akXK
-         xT5PYw+FEwg+K1uDvQQYw2t/VDlXSAtprg+mRtTLuy6zqNTOB+CmDQdOO+A6+pKeIIsW
-         UmbUw7C+fcg1WhmcnCbMmz24h3F2e8oMBYOcsQzKYDHeIkCLUhOYWJZ3HONB/qlobe4B
-         GkqnmohFybZpafAanA97L2wIpw/INffn0v3ATcm4q4vbXlb8stlYonStBarNoqZp+bhi
-         HpJg==
-X-Gm-Message-State: APjAAAWlqjXb+dwKXYFTVF+pdx9ox/orGO4ngRwhkeNf2ta1/nfHcjvI
-        CYzxcI5QRL/LVcVq1StJl5PzTQ==
-X-Google-Smtp-Source: APXvYqzDkl6Dlr2YTkZfRwU7n8Cd5bbpx8yPw330Hmh+iHEb7mfXtE+8pXQMv6X1a32OfqrVoZekEg==
-X-Received: by 2002:a63:1c4:: with SMTP id 187mr30059349pgb.57.1572384877513;
-        Tue, 29 Oct 2019 14:34:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q185sm57411pfc.153.2019.10.29.14.34.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xKnMFA8khBrgWosC3rLpBnkIJRXhAp6FK2NOqhcPbYw=;
+        b=UYA3GOAhCXRpDTw5MvqgZM3HKhzGw9Xr+mUh7Y5SZ/JYbTL1eyytayURK9JRm5aNWo
+         /LouV0Vo690wotZDXAKMBGPk5BZeBT40fojKL41gUma7D+X2zllReHXhT/sN9L+3KxRK
+         3pD8cpmg9IVDSs4AE5cv8bjGrq1Eoyk0dB1uvTFSY4fwnrQpzzXwVAGUQf+A1WZhWyY+
+         AAlUoOlsrBfNgtYuzzIVU5ojml2vwnjg/qppw96ovMRdnQrNO9UipQj4LvS5yi8qxtop
+         LjlTApTJu7VExSB20XmV1Ly60XTpxJYJnNr2UHlvMFMNZpvTZY3fcx8lfJVry1rJmuX6
+         q5dw==
+X-Gm-Message-State: APjAAAVdsNDbq2L2UW6BIsiXji/JzlVlGgd6Ere2brb1YfzQuvTvQGO/
+        8nBP8AXWRNucFoavvH886pYRxqM=
+X-Google-Smtp-Source: APXvYqyFk3qlj8sA9FQfR00eawHaunkPpkZvCBKKxoWVP3TT0JlnTrtIaOyo0Zk5UoJLfGt6z9xs8Q==
+X-Received: by 2002:aca:b03:: with SMTP id 3mr6118637oil.103.1572384887426;
+        Tue, 29 Oct 2019 14:34:47 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a88sm80434otb.0.2019.10.29.14.34.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 14:34:36 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Semmle Security Reports <security-reports@semmle.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] usb: core: Remove redundant vmap checks
-Date:   Tue, 29 Oct 2019 14:34:23 -0700
-Message-Id: <20191029213423.28949-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191029213423.28949-1-keescook@chromium.org>
-References: <20191029213423.28949-1-keescook@chromium.org>
+        Tue, 29 Oct 2019 14:34:46 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 16:34:45 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mpm@selenic.com, herbert@gondor.apana.org.au, robh+dt@kernel.org,
+        mark.rutland@arm.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        arnd@arndb.de, Tudor.Ambarus@microchip.com,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: Re: [PATCH 1/2] dt-bindings: rng: atmel-trng: add new compatible
+Message-ID: <20191029213445.GA7474@bogus>
+References: <20191024170452.2145-1-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191024170452.2145-1-codrin.ciubotariu@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the vmap area checks are being performed in the DMA
-infrastructure directly, there is no need to repeat them in USB.
+On Thu, 24 Oct 2019 20:04:51 +0300, Codrin Ciubotariu wrote:
+> Add compatible for new IP found on sam9x60 SoC.
+> 
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/rng/atmel-trng.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/usb/core/hcd.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index f225eaa98ff8..281568d464f9 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1410,10 +1410,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 		if (hcd->self.uses_pio_for_control)
- 			return ret;
- 		if (hcd_uses_dma(hcd)) {
--			if (is_vmalloc_addr(urb->setup_packet)) {
--				WARN_ONCE(1, "setup packet is not dma capable\n");
--				return -EAGAIN;
--			} else if (object_is_on_stack(urb->setup_packet)) {
-+			if (object_is_on_stack(urb->setup_packet)) {
- 				WARN_ONCE(1, "setup packet is on stack\n");
- 				return -EAGAIN;
- 			}
-@@ -1479,9 +1476,6 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 					ret = -EAGAIN;
- 				else
- 					urb->transfer_flags |= URB_DMA_MAP_PAGE;
--			} else if (is_vmalloc_addr(urb->transfer_buffer)) {
--				WARN_ONCE(1, "transfer buffer not dma capable\n");
--				ret = -EAGAIN;
- 			} else if (object_is_on_stack(urb->transfer_buffer)) {
- 				WARN_ONCE(1, "transfer buffer is on stack\n");
- 				ret = -EAGAIN;
--- 
-2.17.1
-
+Acked-by: Rob Herring <robh@kernel.org>
