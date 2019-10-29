@@ -2,107 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A26D1F2F44
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4045F3096
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2019 14:52:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389091AbfKGN2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 7 Nov 2019 08:28:09 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35973 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389055AbfKGN2I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Nov 2019 08:28:08 -0500
-Received: by mail-lf1-f68.google.com with SMTP id m6so1611922lfl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2019 05:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wRJUigE76AyzxKPdwIXmFrxCAtwRa7ubQV/YC/3pAas=;
-        b=eHPgKGH9xEN9hvukhqJLmmua/oS1+CUUAE74DWq5vPa7giYMlc+U3F+6XIkpMpMJVj
-         yin0QkebMhmVmf+VmXaYUXtv1lH9PwEf7IXHiothg1gQpqQ6/sqRR6yPdH/GXhXfWHqj
-         gd+Wi3sPvg6Rg2+d+nOcd8qxtDwZC76OERewVj7MtTcFXQoKPag2+MX55GLfjLA39hQn
-         TrIW0RqReLaUcqK2gJQlX4pL+XSiUd5UWzqvpYJS/YpixQ2tjA3Nj7AJiVKNNAHmrx2F
-         2UzWWOmR2J3UfXttJ46kdPIIMd26uPHCpD1zyhsLDgwAbOg8PqTlCAUpiiR86l37VagS
-         8ojw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wRJUigE76AyzxKPdwIXmFrxCAtwRa7ubQV/YC/3pAas=;
-        b=fotqAHJwU3UJ3pPde/JP8RC1wqlaIRni9wpO/Tb3zAELAJDJPPtGIECZW1rUDjxdb2
-         h8MTKu0aSRt2/lSBJb0WBfJKSCJZ4J4mxaWwYU4gWXY3go8lPFuVQ1rvzctzr1x3+bHD
-         RfoRhqjBqIfu8Bh6Z5zpjWvAbZH6bexFfke+TmgnpMoOcuURIICumBudop0rVued7hCi
-         cVYZofBZ3lDOFpGZC00zxnl8Llbj0Ffu9qlfnmCGsgb7EQ9j0TJxixsiB87YOspARSEP
-         +quoADKaLrrPkVQaURLUlQsXOJGBC1up1ZkBF/dZdr8GMXen6NroUEgqLnLmERhJLk6r
-         NxnQ==
-X-Gm-Message-State: APjAAAVjg1oQrPRHquz2AxIAcDP5sS17HZj+Fe1C53ISzlEzUcf5UG8h
-        EE8DhXqCHDi4YlxOUbOSvHtcQg==
-X-Google-Smtp-Source: APXvYqxbU3kzG4ljeyOS1yo2AT52ALE36CZwu3aUQA9YevpCoCrU7SNcyrErntjJvYRlXZD3N4YuPQ==
-X-Received: by 2002:ac2:5deb:: with SMTP id z11mr2563233lfq.35.1573133285907;
-        Thu, 07 Nov 2019 05:28:05 -0800 (PST)
-Received: from mimer.lan (h-137-65.A159.priv.bahnhof.se. [81.170.137.65])
-        by smtp.gmail.com with ESMTPSA id y20sm3151507ljd.99.2019.11.07.05.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 05:28:05 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     nicolas.dichtel@6wind.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, Jonas Bonn <jonas@norrbonn.se>
-Subject: [PATCH v3 6/6] net: ipv6: allow setting address on interface outside current namespace
-Date:   Thu,  7 Nov 2019 14:27:55 +0100
-Message-Id: <20191107132755.8517-7-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191107132755.8517-1-jonas@norrbonn.se>
-References: <20191107132755.8517-1-jonas@norrbonn.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2389448AbfKGNwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 7 Nov 2019 08:52:30 -0500
+Received: from verein.lst.de ([213.95.11.211]:57503 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389401AbfKGNw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Nov 2019 08:52:27 -0500
+Received: by verein.lst.de (Postfix, from userid 2005)
+        id 82A2468C7B; Thu,  7 Nov 2019 14:52:25 +0100 (CET)
+In-Reply-To: <20191107135018.0A04068BE1@verein.lst.de>
+References: <20191107135018.0A04068BE1@verein.lst.de>
+From:   Torsten Duwe <duwe@lst.de>
+Date:   Tue, 29 Oct 2019 13:16:57 +0100
+Subject: [PATCH v5 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on
+ Teres-I
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <20191107135225.82A2468C7B@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows an interface outside of the current namespace to be
-selected when setting a new IPv6 address for a device.  This uses the
-IFA_TARGET_NETNSID attribute to select the namespace in which to search
-for the interface to act upon.
+Teres-I has an anx6345 bridge connected to the RGB666 LCD output, and
+the I2C controlling signals are connected to I2C0 bus.
 
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
+Enable it in the device tree, and enable the display engine, video mixer
+and tcon0 as well.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Torsten Duwe <duwe@suse.de>
 ---
- net/ipv6/addrconf.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 45 ++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 4 deletions(-)
 
-diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
-index 34ccef18b40e..06a49670fe62 100644
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -4721,6 +4721,7 @@ inet6_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		  struct netlink_ext_ack *extack)
- {
- 	struct net *net = sock_net(skb->sk);
-+	struct net *tgt_net;
- 	struct ifaddrmsg *ifm;
- 	struct nlattr *tb[IFA_MAX+1];
- 	struct in6_addr *peer_pfx;
-@@ -4758,6 +4759,18 @@ inet6_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		cfg.preferred_lft = ci->ifa_prefered;
- 	}
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index 1069e7012c9c..970415106dcf 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -100,18 +100,41 @@
+ 	status = "okay";
+ };
  
-+	if (tb[IFA_TARGET_NETNSID]) {
-+		s32 netnsid = nla_get_s32(tb[IFA_TARGET_NETNSID]);
++&de {
++	status = "okay";
++};
 +
-+		tgt_net = rtnl_get_net_ns_capable(NETLINK_CB(skb).sk, netnsid);
-+		if (IS_ERR(tgt_net)) {
-+			NL_SET_ERR_MSG(extack,
-+				"ipv6: Invalid target network namespace id");
-+			return PTR_ERR(tgt_net);
-+		}
-+		net = tgt_net;
-+	}
+ &ehci1 {
+ 	status = "okay";
+ };
+ 
+ 
+-/* The ANX6345 eDP-bridge is on i2c0. There is no linux (mainline)
+- * driver for this chip at the moment, the bootloader initializes it.
+- * However it can be accessed with the i2c-dev driver from user space.
+- */
+ &i2c0 {
+ 	clock-frequency = <100000>;
+ 	status = "okay";
 +
- 	dev =  __dev_get_by_index(net, ifm->ifa_index);
- 	if (!dev)
- 		return -ENODEV;
++	anx6345: anx6345@38 {
++		compatible = "analogix,anx6345";
++		reg = <0x38>;
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
++		dvdd25-supply = <&reg_dldo2>;
++		dvdd12-supply = <&reg_dldo3>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				anx6345_in: endpoint {
++					remote-endpoint = <&tcon0_out_anx6345>;
++				};
++			};
++		};
++	};
++};
++
++&mixer0 {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -319,6 +342,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++
++	status = "okay";
++};
++
++&tcon0_out {
++	tcon0_out_anx6345: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&anx6345_in>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
-2.20.1
+2.16.4
 
