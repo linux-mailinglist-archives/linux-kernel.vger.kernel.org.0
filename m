@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67DE3E86E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC2AE86E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731401AbfJ2L2S convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 07:28:18 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:49958 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730764AbfJ2L2N (ORCPT
+        id S1731497AbfJ2L2U convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 07:28:20 -0400
+Received: from skedge03.snt-world.com ([91.208.41.68]:45738 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731221AbfJ2L2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:28:13 -0400
+        Tue, 29 Oct 2019 07:28:16 -0400
 Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id E5AE8752064;
-        Tue, 29 Oct 2019 12:28:10 +0100 (CET)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 32CBA60CF62;
+        Tue, 29 Oct 2019 12:28:14 +0100 (CET)
 Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
  (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 29 Oct
- 2019 12:28:10 +0100
+ 2019 12:28:13 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Tue, 29 Oct 2019 12:28:10 +0100
+ 15.01.1713.004; Tue, 29 Oct 2019 12:28:13 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
@@ -38,13 +38,13 @@ CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 09/11] dt-bindings: arm: fsl: Add more Kontron i.MX6UL/ULL
- compatibles
-Thread-Topic: [PATCH v2 09/11] dt-bindings: arm: fsl: Add more Kontron
- i.MX6UL/ULL compatibles
-Thread-Index: AQHVjkvxJf9DvecheUeH2Pta62B2lw==
-Date:   Tue, 29 Oct 2019 11:28:10 +0000
-Message-ID: <20191029112655.15058-10-frieder.schrempf@kontron.de>
+Subject: [PATCH v2 10/11] MAINTAINERS: Add an entry for Kontron Electronics
+ ARM board support
+Thread-Topic: [PATCH v2 10/11] MAINTAINERS: Add an entry for Kontron
+ Electronics ARM board support
+Thread-Index: AQHVjkvzp/N7dg+mjkCwTQSNv+vrJQ==
+Date:   Tue, 29 Oct 2019 11:28:13 +0000
+Message-ID: <20191029112655.15058-11-frieder.schrempf@kontron.de>
 References: <20191029112655.15058-1-frieder.schrempf@kontron.de>
 In-Reply-To: <20191029112655.15058-1-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -58,7 +58,7 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: E5AE8752064.AF1BF
+X-SnT-MailScanner-ID: 32CBA60CF62.AF66E
 X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
@@ -75,54 +75,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Add the compatibles for Kontron i.MX6UL N6311 SoM and boards and
-the compatibles for Kontron i.MX6ULL N6411 SoM and boards.
+Kontron Electronics GmbH produces several ARM boards, that are
+planned to be upstreamed eventually. For now we have some
+i.MX6UL/ULL based SoMs and boards, that are already available
+in the kernel.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/fsl.yaml | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 1b4b4e6573b5..6d718272725d 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -162,6 +162,7 @@ properties:
-           - enum:
-               - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
-               - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
-+              - kontron,imx6ul-n6311-som  # Kontron N6311 SOM
-           - const: fsl,imx6ul
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 296de2b51c83..a461d31ee98d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9103,6 +9103,12 @@ F:	include/linux/kmod.h
+ F:	lib/test_kmod.c
+ F:	tools/testing/selftests/kmod/
  
-       - description: Kontron N6310 S Board
-@@ -170,6 +171,12 @@ properties:
-           - const: kontron,imx6ul-n6310-som
-           - const: fsl,imx6ul
- 
-+      - description: Kontron N6311 S Board
-+        items:
-+          - const: kontron,imx6ul-n6311-s
-+          - const: kontron,imx6ul-n6311-som
-+          - const: fsl,imx6ul
++KONTRON ELECTRONICS ARM BOARDS SUPPORT
++M:	Frieder Schrempf <frieder.schrempf@kontron.de>
++S:	Maintained
++F:	arch/arm/boot/dts/imx6ul-kontron-*
++F:	arch/arm/boot/dts/imx6ull-kontron-*
 +
-       - description: Kontron N6310 S 43 Board
-         items:
-           - const: kontron,imx6ul-n6310-s-43
-@@ -181,6 +188,13 @@ properties:
-         items:
-           - enum:
-               - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
-+              - kontron,imx6ull-n6411-som # Kontron N6411 SOM
-+          - const: fsl,imx6ull
-+
-+      - description: Kontron N6411 S Board
-+        items:
-+          - const: kontron,imx6ull-n6411-s
-+          - const: kontron,imx6ull-n6411-som
-           - const: fsl,imx6ull
- 
-       - description: i.MX6ULZ based Boards
+ KPROBES
+ M:	Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+ M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
 -- 
 2.17.1
