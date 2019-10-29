@@ -2,59 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F47E8757
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F60DE875A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbfJ2Lng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:43:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42533 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732175AbfJ2Lnf (ORCPT
+        id S1733286AbfJ2Lnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:43:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43138 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732187AbfJ2Lnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:43:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a15so993205wrf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:32 -0700 (PDT)
+        Tue, 29 Oct 2019 07:43:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n1so5814671wra.10
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 04:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=E7GmRR93JXMtsBPLgTPcSF+DdecbegkmwqCROqs/zCo=;
-        b=SPsYUDh87ek/LEsl2pLRTOHXHTOSZkY1ug6v4kRxoySUvzA3QwbVsJ/DAZzx1BtS5O
-         Q1kkghVx0x1HWl78TTh2NRTZdXRnPsmbZUOC6FO1Uhiu712tDOsDzvm9O3eA7jgcmLRp
-         8XCSG8Zi6myBdXmlNfcGeroKgbk2Y0glD62yNYaaw6syFojWYLdURZQEDi02SteaOfyv
-         4d0W6rb6b5VzSFNizVDQHe2JOmK4NC80ggBD3Ca3TLWZRzfqoJEyKAETUm5Xhg5aJxOQ
-         biPjM06c77DsVi72WVTesbyY1+5N5MGyZqcZZRFq52aCIbA0zXKeOAglOsG1ILd61fwR
-         e3/g==
+        bh=H2CJ5u7SoLyb47H63oMSiNuFZvWZvb1TPdq7zIJAX2Q=;
+        b=QEWMcBQuQdPrxlY8iVWmlO5NK7qirG7I/rEGKCjgzqZr+2kStOAgMQOOLpcCXEdCrH
+         gLFpZGd1ABHlwBEB8BxPRzO3UHFR2gGn6DcaipPACK1S8OQYampSi+qAhdnlQdJqn32R
+         zpFruHwfyjQCCuRnjK4wEOFaXytfLlrK1r7TykgwIFj/YWfDcfXLj1IxJpP3PHUlyKkV
+         9rXRbm5rSIBRhj5TMe5a+74bJjFa8wiaqA2+3PToAwLTQGRK/Yu23dj1kHtT5D0ibiZF
+         xYHMxoAvL8qPdYVmQ6az6INdUbuPBrZvZQLD/kch8XQPWsqMAPJ2OzKPoy/OOasMvg+r
+         QOSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=E7GmRR93JXMtsBPLgTPcSF+DdecbegkmwqCROqs/zCo=;
-        b=mrrUL0MHeSRss1Z2cla6sG7xi8JmBTnS+Jv2ZFDK2bqR+BFNfo/Gmk7L4G/9Q3EcOJ
-         Oiff+QDJ8cmajyXEwbtjsQM7xydAH0WZhh+a37AupMMSlLkaUCxbQFK7rI4Nw4UoaJ1T
-         txB6YBEAuQ1hZtf0ZjzULxPLUNn5nWlOHJ2r13J+FpF5lT/iXWao3tssXvyy9W2xezfP
-         WM5lgnig4WCRR2cnPbeffEB3w+7gyEAc5zr4mrksXncHtN4If6VV9GmXb8rCk6rSNxGU
-         6ljbMbRys/nPJBHfBfDFDPWIT388u8HmZMj3/v06ws4v9pV3bASjH1gJz1PLZDfbhHos
-         BjBw==
-X-Gm-Message-State: APjAAAWVanLWT3/Ke2xAwRrRyfzrOd0JbEOqkDK8Obu5gJW64dQ3khu0
-        iT5xtHF0cjDaeIdVrVFUb5OM1g==
-X-Google-Smtp-Source: APXvYqxU/K/9NUTB1xWWAWcFUiUXqgyLfoA1iwNSldsJd5+rfUjno13F1LdZiuhRMXAnl6t3t4pMNQ==
-X-Received: by 2002:adf:f686:: with SMTP id v6mr20738489wrp.141.1572349412339;
-        Tue, 29 Oct 2019 04:43:32 -0700 (PDT)
+        bh=H2CJ5u7SoLyb47H63oMSiNuFZvWZvb1TPdq7zIJAX2Q=;
+        b=s0fBhh2ULiMX7FNy3S4wXKxQOk3G/po1P39snK77m72+8IVFY6tZfhNa4w+thRf8w7
+         FhFZr1F0sa19PquIdvuqDJdt/k3XsIT9BbmHJxOutZDh7iPdVjnCtAaO0Nw+WMkDncbU
+         vno1B5OuUfqYYNexVwxS/tb5iwbax91aAwM4TxTncfLFTs/uVNN6DhS4JFJGKGyLHjKp
+         8q7EWlmkL/RAtGyL//6E73k6rSfo+sMsScbdmiA7/M5htdtqK2PUGtoC4bYLL1SkjrXQ
+         NJe2i/+RV9VT+DN9aYgkFmwfF/BLidDK1XV8fKFSWjQIXMBBkKj+W8cyI+h9Wecp0Xkc
+         1ntw==
+X-Gm-Message-State: APjAAAUAVBmlj7fPZ4AZptGkZHZK95Rb73BitqfYHPQ+dtFC988KsJiV
+        cKInREJcYh9z6LgEt2cJ4ZO7UA==
+X-Google-Smtp-Source: APXvYqxXfxvgGbwhHQ7KAWaxfMcQB/qbTX5lVDL9LdHipKZwJ+PU0EN2cUVZBjtPgqLWjIb7dzn2vw==
+X-Received: by 2002:a5d:498a:: with SMTP id r10mr20169245wrq.129.1572349413896;
+        Tue, 29 Oct 2019 04:43:33 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.31
+        by smtp.gmail.com with ESMTPSA id q25sm26559864wra.3.2019.10.29.04.43.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 04:43:31 -0700 (PDT)
+        Tue, 29 Oct 2019 04:43:33 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kbuild test robot <lkp@intel.com>,
-        Han Nandor <nandor.han@vaisala.com>,
+Cc:     linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 01/10] nvmem: core: fix nvmem_cell_write inline function
-Date:   Tue, 29 Oct 2019 11:42:31 +0000
-Message-Id: <20191029114240.14905-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 02/10] nvmem: sc27xx: Change to use devm_hwspin_lock_request_specific() to request one hwlock
+Date:   Tue, 29 Oct 2019 11:42:32 +0000
+Message-Id: <20191029114240.14905-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
 References: <20191029114240.14905-1-srinivas.kandagatla@linaro.org>
@@ -65,39 +62,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+From: Baolin Wang <baolin.wang@linaro.org>
 
-nvmem_cell_write's buf argument uses different types based on
-the configuration of CONFIG_NVMEM. The function prototype for
-enabled NVMEM uses 'void *' type, but the static dummy function
-for disabled NVMEM uses 'const char *' instead. Fix the different
-behaviour by always expecting a 'void *' typed buf argument.
+Change to use devm_hwspin_lock_request_specific() to help to simplify the
+cleanup code for drivers requesting one hwlock. Thus we can remove the
+redundant sc27xx_efuse_remove() and platform_set_drvdata().
 
-Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reboot mode write interface")
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: Han Nandor <nandor.han@vaisala.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Reviewed-By: Han Nandor <nandor.han@vaisala.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- include/linux/nvmem-consumer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvmem/sc27xx-efuse.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index 8f8be5b00060..5c17cb733224 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -118,7 +118,7 @@ static inline void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len)
+diff --git a/drivers/nvmem/sc27xx-efuse.c b/drivers/nvmem/sc27xx-efuse.c
+index c6ee21018d80..ab5e7e0bc3d8 100644
+--- a/drivers/nvmem/sc27xx-efuse.c
++++ b/drivers/nvmem/sc27xx-efuse.c
+@@ -211,7 +211,7 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	efuse->hwlock = hwspin_lock_request_specific(ret);
++	efuse->hwlock = devm_hwspin_lock_request_specific(&pdev->dev, ret);
+ 	if (!efuse->hwlock) {
+ 		dev_err(&pdev->dev, "failed to request hwspinlock\n");
+ 		return -ENXIO;
+@@ -219,7 +219,6 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
+ 
+ 	mutex_init(&efuse->mutex);
+ 	efuse->dev = &pdev->dev;
+-	platform_set_drvdata(pdev, efuse);
+ 
+ 	econfig.stride = 1;
+ 	econfig.word_size = 1;
+@@ -232,21 +231,12 @@ static int sc27xx_efuse_probe(struct platform_device *pdev)
+ 	nvmem = devm_nvmem_register(&pdev->dev, &econfig);
+ 	if (IS_ERR(nvmem)) {
+ 		dev_err(&pdev->dev, "failed to register nvmem config\n");
+-		hwspin_lock_free(efuse->hwlock);
+ 		return PTR_ERR(nvmem);
+ 	}
+ 
+ 	return 0;
  }
  
- static inline int nvmem_cell_write(struct nvmem_cell *cell,
--				    const char *buf, size_t len)
-+				   void *buf, size_t len)
- {
- 	return -EOPNOTSUPP;
- }
+-static int sc27xx_efuse_remove(struct platform_device *pdev)
+-{
+-	struct sc27xx_efuse *efuse = platform_get_drvdata(pdev);
+-
+-	hwspin_lock_free(efuse->hwlock);
+-	return 0;
+-}
+-
+ static const struct of_device_id sc27xx_efuse_of_match[] = {
+ 	{ .compatible = "sprd,sc2731-efuse" },
+ 	{ }
+@@ -254,7 +244,6 @@ static const struct of_device_id sc27xx_efuse_of_match[] = {
+ 
+ static struct platform_driver sc27xx_efuse_driver = {
+ 	.probe = sc27xx_efuse_probe,
+-	.remove = sc27xx_efuse_remove,
+ 	.driver = {
+ 		.name = "sc27xx-efuse",
+ 		.of_match_table = sc27xx_efuse_of_match,
 -- 
 2.21.0
 
