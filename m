@@ -2,137 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A032E90A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A181E90D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfJ2UO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:14:59 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36536 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJ2UO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:14:59 -0400
-Received: by mail-vs1-f68.google.com with SMTP id q21so120125vsg.3;
-        Tue, 29 Oct 2019 13:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oUPe8+g8QO9sbSdgxCxbpw5Ik2ET6/dUf4DYcYcM6yo=;
-        b=BFzI+Hef2YM7faql8YQLVbAj/vTVRqfN6eo0ORO5IJf70grC0sFJ268g2mBt34wWMe
-         Qomx8NknUb/aEVhhw+DwoNrDzLExV28KK6fywNgG5aJJEGFhhtixUzjJbRdip7uP/o0x
-         vCbyQVEnk4YE+H8dGTWMJvPoqFH5T54Tb1OZVLhHJM26GqEePtGwGfUbLHJWbMZkTpkn
-         lCPNJB7oFjQONippofSVpo1QMMhA3sZ/KArvgGnVOJiVA4gks7uClrIJQlvv1tUC6/ed
-         Wgc0lYwWM5F2awtR9wO7VAO2Ql8NL3rgR3mQ7ZbzV/q0FOsvaVAewDlocjZraHrz4Csw
-         VkHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oUPe8+g8QO9sbSdgxCxbpw5Ik2ET6/dUf4DYcYcM6yo=;
-        b=j9CkuvtAj3qteTsGjXGRJZ1C7QDC0Ac3RMPgpKDt2CpZUSUNaJQC3KO5/I8e4lFshd
-         Twb1rkZrItBclIQl8khTsupvfl8uG6HqPV37exEe6/LXZ28XTYlPO1nX1PXsT4DbhYHF
-         TNCWmN86lbsufUz1+qrOP8bt0ICORYqci2ouTFw0oSVioruAnVCrfS7LERyo/Zk1j2wT
-         L5nu6H6ASY6jq5tgMFsLU7hH3RRufgyA0ypS6unuQDxg0CPy0QQxTB4fbyVa8Ky+auob
-         KiDYWyvzfzCWdgPY9Pg6d9AbBkHr9vqQs+MtnnbtUMVZkyCRW1NF2d5wkngZx3oGiI8e
-         ftDg==
-X-Gm-Message-State: APjAAAWzsyf5TjQ7W4NjA+T6YJteW+BRTs2qZ1w4ssNqaiJ6i2XgDmt2
-        P3xUriVXYAkFigBxoIKGjTA7KPrH8Ns2wBolhQQU7zvf
-X-Google-Smtp-Source: APXvYqy0iF0H7fg/gsdfMDCBT84OIlFj1y2W5tngZwsKJpQshGzllj3js0Eni7wBdglkOB28ZATWs+uadUcUC67yoJo=
-X-Received: by 2002:a67:fb45:: with SMTP id e5mr2737596vsr.96.1572380097240;
- Tue, 29 Oct 2019 13:14:57 -0700 (PDT)
+        id S1727719AbfJ2Ufl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:35:41 -0400
+Received: from mail-eopbgr1300090.outbound.protection.outlook.com ([40.107.130.90]:9568
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725840AbfJ2Ufk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 16:35:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S1tYbms5fbQirDHDEUAIsA50fGY4ywTdG45wtlS1u7J3bvch1QasoteKRLtoMtAERaFr7QtgseULNi/6DKSCLt0RqDW8rub80LLBN8i1vcD66Sx6CacBxFTPJaVlmpjpXCbB909bRIInpOaJp9zx9eUS1jriPohDw56E54LU2R0kvWKXZ1+c+OKHlN9suRD8b86dOIGARD+2xigHIcDzMemnP1THYhfonHxRlgTg8JQPfX0pHeDZfzAS7p6j0ciWFw0Q8/57/ECGysrD0rHZz7NltQLvnX7QdWLDaQ+i4e0bJw0jOqP5YciRHwad653A6srzLENYTqWteHiQMD2uwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Pc/y84ms+LINoM7P53jhItcF0pSiiIH1nV50ZtbHgY=;
+ b=od3hmuxhh3mIQkM068UXoQD055iZBkVNqFhrazJ8NcEDO3BjvvWPjcW8VbP44KWgdgqPfRel+fI/ItVRTn1kyjoh767M1JJLqQ/Wh7TO9E8IPaP88PoeBpb/q7bP0EQbBqlbfyLA5s0xfpyPxBTsV7rixgt/KfFYdnpoiqt3tbInJHeBvC02vTDzIiPR+7ZSiei849jato2+elfEJpKlqb7iij9GnGrFwW/+hXGCGUIzPSw7bGPj46rRhFmvyR6Hmndaf29UTvUpVBd0Y6LGO7tfanWg+JTGJOZGJEClTI/5ahmmJeBnP76rEoJkNsuHNh7Jn0dwbCrXwtX8GKFVzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Pc/y84ms+LINoM7P53jhItcF0pSiiIH1nV50ZtbHgY=;
+ b=ae149p71W+xMVLN+2ctjO54vapdjbAQDREtD08sUj5px6fXgysb8sB2/yswMr4v86yEPAEgaiu1H6RbanIn3jlpcYY2adfDrFv4+t2CioDE9geHmY6xveSBlAtOHiHPgsE/5bnwR3D0G6XZTs8fMrb+nqWcQd+qJSZPeFDOjoFw=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0187.APCP153.PROD.OUTLOOK.COM (10.170.188.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.8; Tue, 29 Oct 2019 20:33:46 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::69f1:c9:209a:1809]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::69f1:c9:209a:1809%2]) with mapi id 15.20.2408.014; Tue, 29 Oct 2019
+ 20:33:46 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Michael Kelley <mikelley@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        vkuznets <vkuznets@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "will@kernel.org" <will@kernel.org>,
+        "Ganapatrao.Kulkarni@cavium.com" <Ganapatrao.Kulkarni@cavium.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "josephl@nvidia.com" <josephl@nvidia.com>,
+        "m.szyprowski@samsumg.com" <m.szyprowski@samsumg.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+Subject: RE: [PATCH 1/1] x86/hyperv: Initialize clockevents earlier in CPU
+ onlining
+Thread-Topic: [PATCH 1/1] x86/hyperv: Initialize clockevents earlier in CPU
+ onlining
+Thread-Index: AQHVjTTCcywpG+T+tUGFemPgvP9gmKdx7AXg
+Date:   Tue, 29 Oct 2019 20:33:46 +0000
+Message-ID: <PU1P153MB0169592424FCCD3226B88BEFBF610@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <1572228459-10550-1-git-send-email-mikelley@microsoft.com>
+In-Reply-To: <1572228459-10550-1-git-send-email-mikelley@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-10-29T20:33:43.0988779Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=c0fa1d8b-e2ac-449b-a836-39e1450d2dd9;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:0:bd0f:4dcd:2cf8:bf81]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b266981f-c948-4748-8474-08d75caf4c78
+x-ms-traffictypediagnostic: PU1P153MB0187:|PU1P153MB0187:|PU1P153MB0187:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <PU1P153MB01875C58E9D6E15AC6735B27BF610@PU1P153MB0187.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0205EDCD76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(39860400002)(366004)(136003)(189003)(199004)(476003)(11346002)(10290500003)(2201001)(446003)(8676002)(81166006)(81156014)(8936002)(25786009)(478600001)(316002)(86362001)(6246003)(14454004)(22452003)(46003)(486006)(33656002)(10090500001)(6436002)(8990500004)(229853002)(6116002)(110136005)(74316002)(99286004)(102836004)(2501003)(6506007)(14444005)(55016002)(7696005)(9686003)(256004)(186003)(7736002)(66446008)(66556008)(1511001)(76116006)(52536014)(305945005)(64756008)(76176011)(66946007)(71190400001)(66476007)(2906002)(71200400001)(5660300002)(7416002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0187;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FrdJk77NEpAYc5nVmZwTktgr1V8xM6KpZ+o+Nmz+hVUw9N39gQzHVuMn0B4GiTQiypOZriRIzl5YaRttNhPoUqjarJ3cUJdPNHCGEgBOJbZRXs0youo5qdQLXyYVOudB89+dJFQCGrNu+GsXyb7XWaQYrQHxCSElqUQU6GdP+sSElLXLONFUX2jEDYwzIlsXM/aTbkdviIDfXlH9Y0TZ9S+eF+ywEJzDq0gYfd0MEi5IHyuf+l4Nt681HsyyVLgWa7+LX6GucGp7P77o9vg96d0Hwy4ftsaQWLe7mfLY7F5mJaOBcbcxFxP1SCzWvGWbw0XpzjWn6PDDqjd2KQFNL0vQZqqzS18Rk8GxvkOJ37oE7YRWfkgobE9CV+DBx8x+BbCrc5cysvRyn+TH7FFzg2uT8vdI0WDeQHf4pUjgOgstrAVjnjCcedWvobg5c4Ce
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20191025103919.128171-1-christian.gmeiner@gmail.com> <6026247c6700516988111c77a8e951e03d09e96e.camel@pengutronix.de>
-In-Reply-To: <6026247c6700516988111c77a8e951e03d09e96e.camel@pengutronix.de>
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-Date:   Tue, 29 Oct 2019 22:14:55 +0100
-Message-ID: <CAH9NwWeDgJTFw0stQ9QnB8dkuc6x9XrJJMdjjB-a7Ov-mgxahw@mail.gmail.com>
-Subject: Re: [PATCH] etnaviv: fix dumping of iommuv2
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        stable@vger.kernel.org,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux+etnaviv@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b266981f-c948-4748-8474-08d75caf4c78
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2019 20:33:46.4425
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ryEL13LhFPJcuXTaBdYOq9O719OFeoRk1FhrN9uRyG3z+/xgWlhS7pbB9uakqahLXdjm2L5oBjne5BXnxgX9OA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lucas,
+> From: Michael Kelley <mikelley@microsoft.com>
+> Sent: Sunday, October 27, 2019 7:10 PM
+> ...
+> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 
-Am Di., 29. Okt. 2019 um 18:18 Uhr schrieb Lucas Stach <l.stach@pengutronix.de>:
->
-> Hi Christian,
->
-> On Fr, 2019-10-25 at 12:39 +0200, Christian Gmeiner wrote:
-> > etnaviv_iommuv2_dump_size(..) returns the number of PTE * SZ_4K but etnaviv_iommuv2_dump(..)
-> > increments buf pointer even if there is no PTE. This results in a bad buf pointer which gets
-> > used for memcpy(..).
-> >
-> > [  264.408474] 8<--- cut here ---
-> > [  264.412048] Unable to handle kernel paging request at virtual address f1a2c268
-> > [  264.419321] pgd = e5846004
-> > [  264.422069] [f1a2c268] *pgd=00000000
-> > [  264.425702] Internal error: Oops: 805 [#1] SMP ARM
-> > [  264.430520] Modules linked in:
-> > [  264.433616] CPU: 2 PID: 130 Comm: kworker/2:2 Tainted: G        W         5.4.0-rc4 #10
-> > [  264.441643] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-> > [  264.448227] Workqueue: events drm_sched_job_timedout
-> > [  264.453237] PC is at memcpy+0x50/0x330
-> > [  264.457012] LR is at 0x2
-> > [  264.459572] pc : [<c0c04650>]    lr : [<00000002>]    psr: 200f0013
-> > [  264.465863] sp : ec96fe64  ip : 00000002  fp : 00000140
-> > [  264.471112] r10: 00003000  r9 : ec688040  r8 : 00000002
-> > [  264.476364] r7 : 00000002  r6 : 00000002  r5 : 00000002  r4 : 00000002
-> > [  264.482917] r3 : 00000002  r2 : 00000f60  r1 : f162a020  r0 : f1a2c268
-> > [  264.489472] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> > [  264.496635] Control: 10c5387d  Table: 3d26804a  DAC: 00000051
-> > [  264.502407] Process kworker/2:2 (pid: 130, stack limit = 0xe8f69f3d)
-> > [  264.508786] Stack: (0xec96fe64 to 0xec970000)
-> > [  264.513180] fe60:          f1622000 f162218c f162c000 414e5445 f1a2c268 00000ffc c0655a8c
-> > [  264.521394] fe80: 00000000 0000012a f162c268 c064fd78 c0657350 c0187f64 00000001 00000000
-> > [  264.529606] fea0: ed0f9c00 00000001 00000002 435d587d ec688140 ec688100 ed0f9c00 ec688040
-> > [  264.537818] fec0: ed0f9c00 c1308b28 ec96ff1c c13e55b0 c13e41c8 c0657358 ec688260 ed0f9c18
-> > [  264.546029] fee0: ec688100 c0641278 ec688260 ec2f6180 ee1ba700 ee1bda00 c1308b28 c0149b98
-> > [  264.554240] ff00: 00000001 00000000 c0149ae4 c0c21fb0 00000000 00000000 c014a194 c1a4be34
-> > [  264.562452] ff20: c1870740 00000000 c1015384 435d587d ffffe000 ec2f6180 ec2f6194 ee1ba700
-> > [  264.570663] ff40: 00000008 ee1ba734 c1305900 ee1ba700 ffffe000 c014a0e4 ec9537a4 c0c28e64
-> > [  264.578874] ff60: ec96e000 00000000 ec2be780 ec2f99c0 ec96e000 ec2f6180 c014a0b8 ec13fe90
-> > [  264.587086] ff80: ec2be7b8 c0152890 ec96e000 ec2f99c0 c0152750 00000000 00000000 00000000
-> > [  264.595296] ffa0: 00000000 00000000 00000000 c01010b4 00000000 00000000 00000000 00000000
-> > [  264.603506] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > [  264.611716] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> > [  264.619944] [<c0c04650>] (memcpy) from [<c0655a8c>] (etnaviv_iommuv2_dump+0x58/0x60)
-> > [  264.627738] [<c0655a8c>] (etnaviv_iommuv2_dump) from [<c064fd78>] (etnaviv_core_dump+0x140/0x45c)
-> > [  264.636658] [<c064fd78>] (etnaviv_core_dump) from [<c0657358>] (etnaviv_sched_timedout_job+0x8c/0xb8)
-> > [  264.645923] [<c0657358>] (etnaviv_sched_timedout_job) from [<c0641278>] (drm_sched_job_timedout+0x38/0x88)
-> > [  264.655631] [<c0641278>] (drm_sched_job_timedout) from [<c0149b98>] (process_one_work+0x2c4/0x7e4)
-> > [  264.664633] [<c0149b98>] (process_one_work) from [<c014a0e4>] (worker_thread+0x2c/0x59c)
-> > [  264.672765] [<c014a0e4>] (worker_thread) from [<c0152890>] (kthread+0x140/0x158)
-> > [  264.680200] [<c0152890>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-> > [  264.687448] Exception stack(0xec96ffb0 to 0xec96fff8)
-> > [  264.692530] ffa0:                                     00000000 00000000 00000000 00000000
-> > [  264.700741] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > [  264.708949] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > [  264.715599] Code: f5d1f05c f5d1f07c e8b151f8 e2522020 (e8a051f8)
-> > [  264.721727] ---[ end trace 8afcd79e9e2725b3 ]---
->
-> Code change is fine, but the commit message has a lot of lines over 80
-> characters and generally the kernel trace is mostly noise. I trimmed it
-> out and applied it to my fixes branch. If you don't agree with my
-> changes, please shout now as I'm planning on sending the fixes pull
-> tomorrow.
->
+Should we add the 2 lines:
 
-I am fine with that!
+Cc: stable@vger.kernel.org
+Fixes: fd1fea6834d0 ("clocksource/drivers: Make Hyper-V clocksource ISA agn=
+ostic")
 
--- 
-thanks
---
-Christian Gmeiner, MSc
+fd1fea6834d0() removes the clockevents_unbind_device() call and this patch =
+adds it back.
 
-https://christian-gmeiner.info/privacypolicy
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -323,8 +323,15 @@ void __init hyperv_init(void)
+>=20
+>  	x86_init.pci.arch_init =3D hv_pci_init;
+>=20
+> +	if (hv_stimer_alloc())
+> +		goto remove_hypercall_page;
+> +
+
+The error handling is imperfect here: when I force hv_stimer_alloc() to ret=
+urn
+-ENOMEM, I get a panic in hv_apic_eoi_write(). It looks it is because we ha=
+ve cleared=20
+the pointer 'hv_vp_assist_page' to NULL, but hv_apic_eoi_write() is still i=
+n-use.
+
+In case hv_stimer_alloc() fails, can we set 'direct_mode_enabled' to false
+and go on with the legacy Hyper-V timer or LAPIC timer? If not, maybe
+we can use a BUG_ON() to explicitly panic?
+
+>  	return;
+>=20
+> +remove_hypercall_page:
+> +	hypercall_msr.as_uint64 =3D 0;
+> +	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+> +	hv_hypercall_pg =3D NULL;
+>  remove_cpuhp_state:
+>  	cpuhp_remove_state(cpuhp);
+>  free_vp_assist_page:
+
+> -void hv_stimer_cleanup(unsigned int cpu)
+> +static int hv_stimer_cleanup(unsigned int cpu)
+>  {
+>  	struct clock_event_device *ce;
+>=20
+>  	/* Turn off clockevent device */
+>  	if (ms_hyperv.features & HV_MSR_SYNTIMER_AVAILABLE) {
+>  		ce =3D per_cpu_ptr(hv_clock_event, cpu);
+> +
+> +		/*
+> +		 * In the legacy case where Direct Mode is not enabled
+> +		 * (which can only be on x86/64), stimer cleanup happens
+> +		 * relatively early in the CPU offlining process. We
+> +		 * must unbind the stimer-based clockevent device so
+> +		 * that the LAPIC timer can take over until clockevents
+> +		 * are no longer needed in the offlining process. The
+> +		 * unbind should not be done when Direct Mode is enabled
+> +		 * because we may be on an architecture where there are
+> +		 * no other clockevents devices to fallback to.
+> +		 */
+> +		if (!direct_mode_enabled)
+> +			clockevents_unbind_device(ce, cpu);
+>  		hv_ce_shutdown(ce);
+
+In the legacy stimer0 mode, IMO this hv_ce_shutdown() is unnecessary,=20
+because "clockevents_unbind_device(ce, cpu)" automatically calls=20
+ce->set_state_shutdown(), if ce is active:
+clockevents_unbind
+   __clockevents_unbind
+    clockevents_replace
+      tick_install_replacement
+        clockevents_exchange_device
+          clockevents_switch_state(old, CLOCK_EVT_STATE_DETACHED)
+            __clockevents_switch_state
+
+And, in both modes (legacy mode and direct mode), it looks incorrect to
+call hv_ce_shutdown() if the current processid id !=3D 'cpu', because
+hv_ce_shutdown() -> hv_init_timer() can only access the current CPU's
+MSR. Maybe we should use an IPI to run hv_ce_shutdown() on the target
+CPU in direct mode?
+
+> -int hv_stimer_alloc(int sint)
+> +int hv_stimer_alloc(void)
+> ...
+> +		ret =3D cpuhp_setup_state(CPUHP_AP_HYPERV_TIMER_STARTING,
+> +				"clockevents/hyperv/stimer:starting",
+> +				hv_stimer_init, hv_stimer_cleanup);
+> +		if (ret < 0)
+> +			goto free_stimer0_irq;
+> +		stimer0_cpuhp =3D ret;
+>  	}
+> +	return ret;
+
+stimer0_cpuhp is 0 when the call is successful, so IMO the logic in=20
+hv_stimer_free() is incorrect. Please see below.
+
+>  void hv_stimer_free(void)
+>  {
+> -	if (direct_mode_enabled && (stimer0_irq !=3D 0)) {
+> -		hv_remove_stimer0_irq(stimer0_irq);
+> -		stimer0_irq =3D 0;
+> +	if (direct_mode_enabled) {
+> +		if (stimer0_cpuhp) {
+> +			cpuhp_remove_state(stimer0_cpuhp);
+> +			stimer0_cpuhp =3D 0;
+> +		}
+> +		if (stimer0_irq) {
+> +			hv_remove_stimer0_irq(stimer0_irq);
+> +			stimer0_irq =3D 0;
+> +		}
+>  	}
+
+IMO this should be=20
+if (direct_mode_enabled) {
+        if (stimer0_cpuhp =3D=3D 0)
+                cpuhp_remove_state(CPUHP_AP_HYPERV_TIMER_STARTING);
+
+        if (stimer0_irq) {
+                hv_remove_stimer0_irq(stimer0_irq);
+                stimer0_irq =3D 0;
+        }
+}
+
+BTW, the default value of 'stimer0_cpuhp' is 0, which means success.
+Should we change the default value to a non-zero value, e.g. -1 ?
+
+>  	free_percpu(hv_clock_event);
+>  	hv_clock_event =3D NULL;
+> @@ -190,14 +274,11 @@ void hv_stimer_free(void)
+>  void hv_stimer_global_cleanup(void)
+>  {
+>  	int	cpu;
+> -	struct clock_event_device *ce;
+>=20
+> -	if (ms_hyperv.features & HV_MSR_SYNTIMER_AVAILABLE) {
+> -		for_each_present_cpu(cpu) {
+> -			ce =3D per_cpu_ptr(hv_clock_event, cpu);
+> -			clockevents_unbind_device(ce, cpu);
+> -		}
+> +	for_each_present_cpu(cpu) {
+> +		hv_stimer_cleanup(cpu);
+
+hv_stimer_cleanup() -> hv_ce_shutdown() -> hv_init_timer() can not
+access a remote CPU's MSR.
+
+> @@ -2310,7 +2305,6 @@ static void hv_crash_handler(struct pt_regs *regs)
+>  	 */
+>  	vmbus_connection.conn_state =3D DISCONNECTED;
+>  	cpu =3D smp_processor_id();
+> -	hv_stimer_cleanup(cpu);
+>  	hv_synic_cleanup(cpu);
+>  	hyperv_cleanup();
+
+Why should we remove the line hv_stimer_cleanup() in the crash handler?
+In the crash handler, IMO we'd better disable the timer before we proceed.
+
+Thanks,
+-- Dexuan
