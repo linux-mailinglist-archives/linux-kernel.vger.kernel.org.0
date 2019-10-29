@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABC8E868C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA0CE867C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:17:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbfJ2LSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 07:18:03 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:7476 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733257AbfJ2LRu (ORCPT
+        id S1733270AbfJ2LRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:17:30 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:36152 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733120AbfJ2LR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:17:50 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+        Tue, 29 Oct 2019 07:17:28 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
   Tudor.Ambarus@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="Tudor.Ambarus@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -23,38 +23,38 @@ Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
   a:smtpout.microchip.com a:mx1.microchip.iphmx.com
   a:mx2.microchip.iphmx.com include:servers.mcsv.net
   include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: Ir0aWu0bPsGqI/ntL52Z4QSml1kGts9XHolk6cKk0gtu88MrDB7rwhkZc7ljuwgl0ryOjMM4w4
- xu3wz1BTT+oyv3c/DS8x84NkhemwByzZWvEmEGW+pTDB6bed0VM/yTaERDssmnXkMQSqPMIBC5
- Ha7e8AhxsNSjvuuYNMbyxQf7wm8vphpN+8jbMHq9Qn0QDkDgUkSTc/idP3iHVfV5j+VgR+84c4
- lvCoAhlsIGM3MmO+mgrV9uFcP2m4f1N2oYpqdcnaQLEz9LnQ8XtYsovCZpqlBMqgJejYQaXQ8o
- vWI=
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: fAD8nx1o1uN79GuSyGQTgU4D34mLvnZSrvM0ruXef5249hfGaiqvCCozI+3xYquSqqpKrBy/c0
+ ytUM7AlzHXag0FAiOGaQWOIMphx9/wJpHo4I43HxId71x5+TKAqbvlk7VlQ+1XYkwcaWq82g0q
+ fzQ/OVobaWIScrHyV8/C2UbzTTxVds1IqduABF/wOlyyi6PJa3obuaAJUUvddNUghwHiUZo6la
+ hOOteHBZnA7CT4Krp43jBRJhajie9dYtFcSGi5xCUV4Lil+Qg7nV7ngQEFH5lrN1z4/+W47e46
+ DTs=
 X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
-   d="scan'208";a="54794595"
+   d="scan'208";a="53292124"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2019 04:17:25 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2019 04:17:28 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 29 Oct 2019 04:17:25 -0700
+ 15.1.1713.5; Tue, 29 Oct 2019 04:17:26 -0700
 Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Tue, 29 Oct 2019 04:17:25 -0700
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 29 Oct 2019 04:17:26 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Hy6aOX2mvdgo9/vyzREDmT1oS9kZ5kuv+9BmBFnlrvs26UuFCxk6xr4zJtCYT4rzFYbOiEsTvF9h1mxF5Ee3M8oHwdda311CZaoSTSwwQJom9yUyqRrmAzg80E3UZAg9ZcHnXbmx6lMZUErSL8DrSe+x6BbNKJggV7PinhIjuDUupue9UBox85+TFJRUZSt2MnwtQ+eRFVdPGF7d24KwRoOeRQZI2Yz81O4lUa/WzID7zNs9ilOEwErBuI5k/X9yA/ixnDxBOle9tlDXAbczx3ggMBQpPIQiqNFS2tb3UiltkbDPI53ViqYi1oQRTAuFzjIGey9YIgnL7N7DuJtfrw==
+ b=bfcThFf754Dp9vRJ70xJLs8GvCpAbXjrQ+boBAxS8eDB24zvTMRKMVm0aa/VL7884ZrTN4RSN3JNNJT93s1QAMB7ZMLocO0QQXN45l1m1ljW7p2KNsV6uNOdUVDvRZubSmpfMnHgGtITFJe7VYUXsx4CyYkOkA09N3aOHJtZZ/3SXjWk2wkKzsmL4S2Aydf6p9IuBUbSPzDvtSb1MZywfr1AmAzpahtUvPNcbvp4vBekISv1Axo+2q7nOJ+xlbohwv7NM0RymErKayJ4z+bOzElcOLMxBerCgK43/eQsYwCDTdmqnwCS50dMWo8IKucdk2Wm1CPWf9jV9B+BG4SmOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WUIkCysP8RN2CW0rbdpVenxhzbOkMv50ogI94zvlUPw=;
- b=ep33uTGJCOgMem/hA2hG0JpKPNaXzjH0sboVoK+cXoruvui7STGTdgHMtNEJI6f+0JLp7T7sERCaXx1aCOUmPXNgFA+oa0jUaRRQxMGd2+Bj1FEs6wuzU/UQqWHaTryPNCimRU1hxnwraKP9UbbpgFkhWeMXOYKerXjDyM6cD3jnZQnn1wPfsRlaRNukPIfdwBEQqhkeS9KYlAGPUYfr7Y35QEvOzDC9gDWbh6gny5zgLPqjnzBV3ZPe48BnCYytIuKMmEo5N+x9jf8SbIuGYV5NnispdcFoQpH792uexv6xCRm+0oUi0O+rdte5vKBdKeyCVMyvwrA0kqQZGVtbBg==
+ bh=qbOmAw99AAsvhPySsv2SDCjCV/q2cG4sH6npCUjkG1c=;
+ b=mGOIUikya1vhFFG4gaa5bmg7yK9aDJO8PzqZc70zT7SimrEkPGtiGg8nlX0quOuW9VrZZSRygnDcId0C2S04UoTD5R5TwFLMU3zrGR4CFecZfePoSz2P1Ta8pmoSNpLp43oW9zUadbUkwHIWi7nomE8ltTEPhVzRs/caC1LsCsrE4GyJWqrk34CoJ/JRTmHvSPL9lNgi2vVcdDuHWN1yf6t7McZb3Mwxy6QkER78ictE3FIGdAiyagOVAK2FoQpACuYJLMPKwm89e9gnGiK1ebdEamMDQKSjwGkm6GSL9mw1TkbAEMGncktaLewL56p11DZt129mJM6oyUgVS4YPKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microchip.com; dmarc=pass action=none
  header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
@@ -62,26 +62,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector2-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WUIkCysP8RN2CW0rbdpVenxhzbOkMv50ogI94zvlUPw=;
- b=bm/KPKV4BiGAEEYgda8TQZf5gVi2ipnLD50v1Wh3OLmIZxLtM3hPcQtX8FRXB6O5Awx9a+W/hepr1S1VC40w1959wonWMZ4rr0wtI0QDWL0Of7U6Gug119fS3fnfqOAjD8+9XNg3VpXS5Y1caVIXp1RyEiTxrOU1IsFxxR3qPpY=
+ bh=qbOmAw99AAsvhPySsv2SDCjCV/q2cG4sH6npCUjkG1c=;
+ b=sHNuYaMf+NJLTfDCcd4zFtDZrmxbpM2GjnU5BJvaNj8auG7d6/Jc20GTQbHkVY30S4uzjamMudEgmUkJImV4+R1zrrNpCA52c0g46YOVt8sg9aMIsnvOW0qCszbtOAlugCiVISVsJ/mOCN0YdkTz7s7okwQy45ijHxcTiyNQ7SI=
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
  MN2PR11MB3823.namprd11.prod.outlook.com (20.178.254.86) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.20; Tue, 29 Oct 2019 11:17:24 +0000
+ 15.20.2387.20; Tue, 29 Oct 2019 11:17:25 +0000
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2387.027; Tue, 29 Oct 2019
- 11:17:24 +0000
+ 11:17:25 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
         <boris.brezillon@collabora.com>
 CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v3 22/32] mtd: spi-nor: Fix errno on Quad Enable methods
-Thread-Topic: [PATCH v3 22/32] mtd: spi-nor: Fix errno on Quad Enable methods
-Thread-Index: AQHVjkpwgf80Qk/d80OBxtzGd1q11Q==
-Date:   Tue, 29 Oct 2019 11:17:24 +0000
-Message-ID: <20191029111615.3706-23-tudor.ambarus@microchip.com>
+Subject: [PATCH v3 23/32] mtd: spi-nor: Check all the bits written, not just
+ the BP ones
+Thread-Topic: [PATCH v3 23/32] mtd: spi-nor: Check all the bits written, not
+ just the BP ones
+Thread-Index: AQHVjkpx863xm7AhdUG2gmkUJjOvGg==
+Date:   Tue, 29 Oct 2019 11:17:25 +0000
+Message-ID: <20191029111615.3706-24-tudor.ambarus@microchip.com>
 References: <20191029111615.3706-1-tudor.ambarus@microchip.com>
 In-Reply-To: <20191029111615.3706-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
@@ -95,28 +97,28 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [83.166.207.93]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 82f6880b-489a-47a2-1c5d-08d75c6192ad
+x-ms-office365-filtering-correlation-id: de62ffc1-2b02-4eb5-aecc-08d75c6193ae
 x-ms-traffictypediagnostic: MN2PR11MB3823:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB3823B2FDACC938565A00BD14F0610@MN2PR11MB3823.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2000;
+x-microsoft-antispam-prvs: <MN2PR11MB3823E7463321F96E1C48ED41F0610@MN2PR11MB3823.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
 x-forefront-prvs: 0205EDCD76
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(136003)(376002)(396003)(189003)(199004)(478600001)(8676002)(4326008)(8936002)(66066001)(14454004)(36756003)(6512007)(107886003)(86362001)(11346002)(2616005)(476003)(486006)(6436002)(1076003)(2201001)(71200400001)(71190400001)(446003)(81156014)(81166006)(6486002)(50226002)(99286004)(66946007)(386003)(316002)(52116002)(6506007)(102836004)(76176011)(26005)(2501003)(305945005)(186003)(6116002)(110136005)(25786009)(2906002)(256004)(54906003)(3846002)(64756008)(66446008)(66556008)(66476007)(5660300002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3823;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(136003)(376002)(396003)(189003)(199004)(478600001)(8676002)(4326008)(8936002)(66066001)(14454004)(36756003)(6512007)(107886003)(86362001)(11346002)(2616005)(476003)(486006)(6436002)(1076003)(2201001)(71200400001)(71190400001)(446003)(81156014)(81166006)(6486002)(50226002)(99286004)(66946007)(386003)(316002)(52116002)(6506007)(102836004)(76176011)(26005)(2501003)(305945005)(186003)(6116002)(110136005)(25786009)(2906002)(14444005)(256004)(54906003)(3846002)(64756008)(66446008)(66556008)(66476007)(5660300002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3823;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: p37BXP5g7bhUXShKh2vzYz5e/R7Wmqxoo9ps05GFbc2OQdTmwdMl0Ds4LQphTg1Jn29UIbSypzJDW/t7OgJqFXTFvsVI8fiCh63RAwwJag3Aaf3tXxhl4pLYOQ3aYXTVnRw3O54iRPcYBc7LWGIrripCrVSrcnFpXBoyf4M9vyyziuxzrRuDW4OdspfH6G7REhXPQjm+YpG2ym3FiaYiQfT67wK+2aGNVDQoHINV2RJfDH6jn/c12XOnWUrA9LQR8KVwg3mhHRsEHqeUy2f+RRCje/N+xkbzRgC1oZ/zpqKvCLxn0vlqZs/4gHZTpJvNSvdAIMtqSaoFIjylei+Jf6CS49UD9ppmioZ5EYZRQmHswdgeZIvzVfacGttGRKHxcYyrPVNVjd9863LIbK71r5RytbzG/OTaBdoopGinlpmXRs8gYjhKBrhS87iUZMqy
+x-microsoft-antispam-message-info: VTS1oBQ5oFRH551HTvUT4Ra7KtsIOyLCxrWpNbQwIhOu9CiISwUvIGpN+SHlWxW0curQniHLNvIIWjg8ciUUMIMDq3/sXMX0TGRld6N5aYfYseNzBbd9/K1f/TLTvwyIhZI476BtyOiWUdJP3GxBo5iZJDYY2CYX3v1ibRAQGGUrnFv4WJXnCt5qArcit3levVRE2n5sMLgSP4KINjH4lELkIubVxY2gqMqJctLt38W4AtSnA1EyjtToEuXBuRD4AgEnGgKN3folXSBtB5L9NL/8a0hMIUW17vEy0eiOLKIAjIcbTW1nGiFRUwquA2Mbi1JH63ixlfZO+VMmdwp+1/H9YcZcuntqS2O98ZDi9qN0wPbsm49cs6iRqhzrPJS6a4xFSn7BpGavAGckHh2dRtMMldmRG5cqNfXi5g2AYSHKQpOHBTaDXVy70MTbL171
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82f6880b-489a-47a2-1c5d-08d75c6192ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2019 11:17:24.1164
+X-MS-Exchange-CrossTenant-Network-Message-Id: de62ffc1-2b02-4eb5-aecc-08d75c6193ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2019 11:17:25.7465
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FSrB4V2eU+TRwyUnQyGJwuhV7gPBzi+NIU2PX4e+8oZzryEL4a+VaYXKMhNFEYsIdkx1ezGvxEuYFKiNRN0X1dRYissl/zDBSkzpmlYZZEM=
+X-MS-Exchange-CrossTenant-userprincipalname: omwbmU6RYQYVzWOuKW1jtXeXP/6OOT0keKiJho3e7eklTXesEIPnkhhgeiKZsnDA2k/G43BtBco6/ojGnqBrQyZm0iZGX9etvOcbeLkWRbs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3823
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -125,47 +127,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-When the Read-Modify-Write-Read-Back Quad Enable methods failed on
-the Read-Back, they returned -EINVAL. Since this is an I/O error,
-return -EIO.
+Check that all the bits written in the write_sr_and_check() method
+match the status_new received value. Failing to write the other bits
+is dangerous too, extend the check.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mtd/spi-nor/spi-nor.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 721e5307fabf..21a974b88c3b 100644
+index 21a974b88c3b..5b30fc73fdba 100644
 --- a/drivers/mtd/spi-nor/spi-nor.c
 +++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1964,7 +1964,7 @@ static int macronix_quad_enable(struct spi_nor *nor)
+@@ -960,8 +960,7 @@ static int spi_nor_write_sr(struct spi_nor *nor, const =
+u8 *sr, size_t len)
+ }
 =20
- 	if (!(nor->bouncebuf[0] & SR_QUAD_EN_MX)) {
- 		dev_err(nor->dev, "Macronix Quad bit not set\n");
--		return -EINVAL;
-+		return -EIO;
- 	}
+ /* Write status register and ensure bits in mask match written values */
+-static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new,
+-				      u8 mask)
++static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new)
+ {
+ 	int ret;
 =20
- 	return 0;
-@@ -2042,7 +2042,7 @@ static int spansion_read_cr_quad_enable(struct spi_no=
-r *nor)
+@@ -975,7 +974,7 @@ static int spi_nor_write_sr_and_check(struct spi_nor *n=
+or, u8 status_new,
+ 	if (ret)
+ 		return ret;
 =20
- 	if (!(sr_cr[1] & CR_QUAD_EN_SPAN)) {
- 		dev_err(nor->dev, "Spansion Quad bit not set\n");
--		return -EINVAL;
-+		return -EIO;
- 	}
+-	return ((nor->bouncebuf[0] & mask) !=3D (status_new & mask)) ? -EIO : 0;
++	return (nor->bouncebuf[0] !=3D status_new) ? -EIO : 0;
+ }
 =20
- 	return 0;
-@@ -2086,7 +2086,7 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+ /**
+@@ -1774,7 +1773,7 @@ static int stm_lock(struct spi_nor *nor, loff_t ofs, =
+uint64_t len)
+ 	if ((status_new & mask) < (status_old & mask))
+ 		return -EINVAL;
 =20
- 	if (!(*sr2 & SR2_QUAD_EN_BIT7)) {
- 		dev_err(nor->dev, "SR2 Quad bit not set\n");
--		return -EINVAL;
-+		return -EIO;
- 	}
+-	return spi_nor_write_sr_and_check(nor, status_new, mask);
++	return spi_nor_write_sr_and_check(nor, status_new);
+ }
 =20
- 	return 0;
+ /*
+@@ -1859,7 +1858,7 @@ static int stm_unlock(struct spi_nor *nor, loff_t ofs=
+, uint64_t len)
+ 	if ((status_new & mask) > (status_old & mask))
+ 		return -EINVAL;
+=20
+-	return spi_nor_write_sr_and_check(nor, status_new, mask);
++	return spi_nor_write_sr_and_check(nor, status_new);
+ }
+=20
+ /*
 --=20
 2.9.5
 
