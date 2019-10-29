@@ -2,158 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDF0E84D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9759FE84E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387406AbfJ2Jx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:53:26 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:20090 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733219AbfJ2JxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:53:15 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 472RjP0YmVz9tysn;
-        Tue, 29 Oct 2019 10:53:13 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=j7y9a+K9; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id JZ3dxNw6HqIR; Tue, 29 Oct 2019 10:53:13 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 472RjN6bbxz9tysj;
-        Tue, 29 Oct 2019 10:53:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1572342792; bh=TCrhP+fHjEwhqhayxChxYVaqoEzg6qg5Ds3vR7E6918=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=j7y9a+K9udCNcXQEy5sKva9CDGUBEV8QZcWF5jpwFjT3vofCJ8ZuGviEiybi6XA+O
-         MZ1lgfGglVYjGijuEUpxAb0ycQAVeqJgPmSvLMfVJrClkxC0uKxjWmvWY6MQo7W1LA
-         8698yJxbb9fOLPIR+Qadcd25waCg1AQ0+dGuTHPU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F3C208B84C;
-        Tue, 29 Oct 2019 10:53:13 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id zIiGWarGdYZl; Tue, 29 Oct 2019 10:53:13 +0100 (CET)
-Received: from localhost.localdomain (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BC7FD8B755;
-        Tue, 29 Oct 2019 10:53:13 +0100 (CET)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id 88A226B6FD; Tue, 29 Oct 2019 09:53:13 +0000 (UTC)
-Message-Id: <7f80e4489a44b53962cf2c813e63038332fcf457.1572342582.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1572342582.git.christophe.leroy@c-s.fr>
-References: <cover.1572342582.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 8/8] powerpc/vdso32: miscellaneous optimisations
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 29 Oct 2019 09:53:13 +0000 (UTC)
+        id S1732542AbfJ2Jxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:53:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38253 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733162AbfJ2Jxq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 05:53:46 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y8so10229907edu.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 02:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:openpgp:message-id:date:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=HGDKIfiK4WqAtiXxg2PaSaV3tKJwX+/+66kephvgEMc=;
+        b=snicYa4xa75qBwamypvTLqSPyFkZPl5dVyOqrJzmSnFo9ZWuJnc5ulCdFp8WlWQHOl
+         0AuO/24CzCPv7qVgEFhoukv2GFOuJ1bWq1gG2vGzILd3Sn50nx7Fi9m6nayEaiWTNeWY
+         ZCadVMAYdVU8FMtX8KFyDOyJIcHoqkuUGtzHURxZSnjPpu6p02UHO+TMXf7o5/0gNxYn
+         X+HUMTxEw5ceA3gawdZXe2RtYoL4PpaXATQWnklS4ADEMVGaVtRb2ZGtSlttNdf8qviH
+         SrQ8FWJCTqwBRF+wvNq/NxQJiignNV7jT9hOeVxyd31CXmFMEC2a4MK+EqJ4CMbagW3M
+         Jqgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:message-id
+         :date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HGDKIfiK4WqAtiXxg2PaSaV3tKJwX+/+66kephvgEMc=;
+        b=Y47JY08dyccPKkhqnzCu5TbyOE8Hv41btOhRTSSFcKQSk2LNWFZqXkdF+DKNbD2JQq
+         Ji0KaKpQJ+90ZBnzhNGePVm7dqbOU1zIqz3MbxJg0WqJJvlhYjc8pIMAavEme/76XjeB
+         LsN7YBtuaMHab2nfUshfEvDV9SwvMjvGPBazjif6k81LQdAGD0at8ZOHZ/USNNsO1nD0
+         Fmp2VtMfFKP7jnfWK9qKDCh+a8TDGSbsza3Q9A3srx2Df6zb74PHvpwNwQZreCenBN9u
+         AHZhuk2sOdyNLlAYCrDchZujP9v9CuNjCDoiccdXuqi29iEzy5QiTkGSoXhtq5zhFg8A
+         JXuQ==
+X-Gm-Message-State: APjAAAUuF+hpHl6iXv2ZCwTOABWcxCI9uqjNxhT+6OSjCwvvjypWOBg3
+        pufuwUdwULimmKUva+VY67ku3Q==
+X-Google-Smtp-Source: APXvYqyFyb/NYxsK1RWq4WxvayVYls/goH6XAAk9FVVYjH3wL1Zb5+8jNZclhKtCmGdk5NT+7BUT2g==
+X-Received: by 2002:a50:eb92:: with SMTP id y18mr23242997edr.244.1572342824719;
+        Tue, 29 Oct 2019 02:53:44 -0700 (PDT)
+Received: from [192.168.27.135] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id x6sm664005edc.50.2019.10.29.02.53.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 02:53:44 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [RFC PATCH 4/4] interconnect: qcom: sdm845: Split qnodes into
+ their respective NoCs
+To:     David Dai <daidavid1@codeaurora.org>, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org
+Cc:     evgreen@google.com, sboyd@kernel.org, ilina@codeaurora.org,
+        seansw@qti.qualcomm.com, elder@linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1571278852-8023-1-git-send-email-daidavid1@codeaurora.org>
+ <1571278852-8023-5-git-send-email-daidavid1@codeaurora.org>
+Openpgp: preference=signencrypt
+Message-ID: <9f879f99-527d-50bc-d5ef-5a72d4a65c4d@linaro.org>
+Date:   Tue, 29 Oct 2019 11:53:42 +0200
+MIME-Version: 1.0
+In-Reply-To: <1571278852-8023-5-git-send-email-daidavid1@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various optimisations by inverting branches and removing
-redundant instructions.
+Hi David,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/vdso32/datapage.S     |  3 +--
- arch/powerpc/kernel/vdso32/getcpu.S       |  6 +++---
- arch/powerpc/kernel/vdso32/gettimeofday.S | 18 +++++++++---------
- 3 files changed, 13 insertions(+), 14 deletions(-)
+On 17.10.19 г. 5:20 ч., David Dai wrote:
+> In order to better represent the hardware and its different Network-On-Chip
+> devices, split the sdm845 provider driver into NoC specific providers.
+> Remove duplicate functionality already provided by the icc rpmh and
+> bcm voter drivers to calculate and commit bandwidth requests to hardware.
+> 
+> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+> ---
+>  drivers/interconnect/qcom/sdm845.c | 727 +++++++++++--------------------------
+>  1 file changed, 206 insertions(+), 521 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
+> index 502a6c2..a731f4d 100644
+> --- a/drivers/interconnect/qcom/sdm845.c
+> +++ b/drivers/interconnect/qcom/sdm845.c
+[..]
+>  static int qnoc_probe(struct platform_device *pdev)
+>  {
+> @@ -808,6 +480,12 @@ static int qnoc_probe(struct platform_device *pdev)
+>  	qp->bcms = desc->bcms;
+>  	qp->num_bcms = desc->num_bcms;
+>  
+> +	qp->voter = of_bcm_voter_get(qp->dev, NULL);
 
-diff --git a/arch/powerpc/kernel/vdso32/datapage.S b/arch/powerpc/kernel/vdso32/datapage.S
-index 1095d818f94a..217bb630f8f9 100644
---- a/arch/powerpc/kernel/vdso32/datapage.S
-+++ b/arch/powerpc/kernel/vdso32/datapage.S
-@@ -30,11 +30,10 @@ V_FUNCTION_BEGIN(__kernel_get_syscall_map)
-   .cfi_startproc
- 	mflr	r12
-   .cfi_register lr,r12
--	mr	r4,r3
-+	mr.	r4,r3
- 	get_datapage	r3, r0
- 	mtlr	r12
- 	addi	r3,r3,CFG_SYSCALL_MAP32
--	cmpli	cr0,r4,0
- 	beqlr
- 	li	r0,NR_syscalls
- 	stw	r0,0(r4)
-diff --git a/arch/powerpc/kernel/vdso32/getcpu.S b/arch/powerpc/kernel/vdso32/getcpu.S
-index 90b39af14383..ff5e214fec41 100644
---- a/arch/powerpc/kernel/vdso32/getcpu.S
-+++ b/arch/powerpc/kernel/vdso32/getcpu.S
-@@ -25,10 +25,10 @@ V_FUNCTION_BEGIN(__kernel_getcpu)
- 	rlwinm  r7,r5,16,31-15,31-0
- 	beq	cr0,1f
- 	stw	r6,0(r3)
--1:	beq	cr1,2f
--	stw	r7,0(r4)
--2:	crclr	cr0*4+so
-+1:	crclr	cr0*4+so
- 	li	r3,0			/* always success */
-+	beqlr	cr1
-+	stw	r7,0(r4)
- 	blr
-   .cfi_endproc
- V_FUNCTION_END(__kernel_getcpu)
-diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
-index 181e66a15fe2..bad0b39fa2a2 100644
---- a/arch/powerpc/kernel/vdso32/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
-@@ -34,10 +34,9 @@ V_FUNCTION_BEGIN(__kernel_gettimeofday)
- 	mflr	r12
-   .cfi_register lr,r12
- 
--	mr	r10,r3			/* r10 saves tv */
-+	mr.	r10,r3			/* r10 saves tv */
- 	mr	r11,r4			/* r11 saves tz */
- 	get_datapage	r9, r0
--	cmplwi	r10,0			/* check if tv is NULL */
- 	beq	3f
- 	LOAD_REG_IMMEDIATE(r7, 1000000)	/* load up USEC_PER_SEC */
- 	bl	__do_get_tspec@local	/* get sec/usec from tb & kernel */
-@@ -45,15 +44,16 @@ V_FUNCTION_BEGIN(__kernel_gettimeofday)
- 	stw	r4,TVAL32_TV_USEC(r10)
- 
- 3:	cmplwi	r11,0			/* check if tz is NULL */
--	beq	1f
-+	mtlr	r12
-+	crclr	cr0*4+so
-+	li	r3,0
-+	beqlr
-+
- 	lwz	r4,CFG_TZ_MINUTEWEST(r9)/* fill tz */
- 	lwz	r5,CFG_TZ_DSTTIME(r9)
- 	stw	r4,TZONE_TZ_MINWEST(r11)
- 	stw	r5,TZONE_TZ_DSTTIME(r11)
- 
--1:	mtlr	r12
--	crclr	cr0*4+so
--	li	r3,0
- 	blr
-   .cfi_endproc
- V_FUNCTION_END(__kernel_gettimeofday)
-@@ -247,10 +247,10 @@ V_FUNCTION_BEGIN(__kernel_time)
- 	lwz	r3,STAMP_XTIME+TSPEC_TV_SEC(r9)
- 
- 	cmplwi	r11,0			/* check if t is NULL */
--	beq	2f
--	stw	r3,0(r11)		/* store result at *t */
--2:	mtlr	r12
-+	mtlr	r12
- 	crclr	cr0*4+so
-+	beqlr
-+	stw	r3,0(r11)		/* store result at *t */
- 	blr
-   .cfi_endproc
- V_FUNCTION_END(__kernel_time)
--- 
-2.13.3
+I assume that we could have a second optional bcm-voter? The
+"qcom,bcm-voter-names" DT property is not used anywhere, is it needed? Maybe
+give an example in patch 1.
 
+> +	if (IS_ERR(qp->voter)) {
+> +		dev_err(&pdev->dev, "bcm_voter err:%d\n", PTR_ERR(qp->voter));
+
+Should be %ld
+
+> +		return PTR_ERR(qp->voter);
+> +	}
+> +
+>  	ret = icc_provider_add(provider);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "error adding interconnect provider\n");
+
+Nit: I would also put patch 2/4 at the end of the series.
+
+Thanks,
+Georgi
