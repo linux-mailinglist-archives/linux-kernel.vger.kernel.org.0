@@ -2,105 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1657E8FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 20:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D32CE8FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 20:19:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfJ2TSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 15:18:04 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33588 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731113AbfJ2TR6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 15:17:58 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 71so25911qkl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 12:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MiZaBDLtkGC2+waxhGGq8xdyCqxWB6WzvPaoZbLYYg8=;
-        b=Ton5hZMNO5L6j3O6Z0aT/yd/JiU0tb2UFOa3Lt4/kYYMZRYpDjtEhDgH+720i0OupF
-         oOnyZm3MWbhesFgyeSTZMO2C4rlW40SbvQTgVbrDzGTbsB+MCNT2dtw1NqXVERP3v93q
-         CfLXpAjFiJczmrrYHI5uQxwcpb0W+HooWILvY4wO18bocUIcM6ZWZLRnMJdyYFjZqDR7
-         qp7/3Jv9hJIwBrvNKRdCaI8HcGUznwlTqz4HFP5XqBMniwEt/ZU+BFYCynbOB4SbZOiR
-         cTNabChaoEJORLIHlrYYUF4fopM6WGtGw2+BqnLTzl7aLh1EVKUsJ6UrzYBejZZhyUO5
-         sCjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MiZaBDLtkGC2+waxhGGq8xdyCqxWB6WzvPaoZbLYYg8=;
-        b=nFB6iPnuGwHzM54R1lK8C82pEEfJUGGTdUyRyLKX3/hrjRiNOgbH+tYPurFNAlbYrf
-         OQIvymgPYdJnExW7dfIGYZL6HVushh/XNW0YIMgAx9jBJFMDFuJ5y31qc62cADzhYg3p
-         /oQlIARzXrYq5qnJC4BcvGAWQkCVHLn0p2roplHuGGF1E9knucMoJmzgvrW1wS4zPKoE
-         v/6eBobg4WkBk8nthkttN0secaEWw10x/slOz2wcSXQoMXWHNtkCp692jg2z7FKqRgv9
-         mFHcml2IrgmYnD/diZbNJI81hCRJoEJvPSFXKkFxuD086zhtXGmDFDPGd3gpTRBXVlxS
-         ug6Q==
-X-Gm-Message-State: APjAAAVfE4MJ/l4/8ZTFlPtNC1z3kNsOw7uNlkaw+OmIW5x0Z5SgK4SW
-        3SMxcQVeFfypnQK+SpGtaHVweQ==
-X-Google-Smtp-Source: APXvYqyfe73AOsu7OurMFcQnitG+NcgjcutExlfR6KLT234Oi1qps677i71FzyM0AyWOVZFNarrx0w==
-X-Received: by 2002:a37:ad1a:: with SMTP id f26mr11054372qkm.170.1572376677332;
-        Tue, 29 Oct 2019 12:17:57 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id l186sm2596650qkc.58.2019.10.29.12.17.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 12:17:56 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iPX08-00031S-0a; Tue, 29 Oct 2019 16:17:56 -0300
-Date:   Tue, 29 Oct 2019 16:17:56 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Lijun Ou <oulijun@huawei.com>,
-        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Shaobo Xu <xushaobo2@huawei.com>,
-        Shamir Rabinovitch <shamir.rabinovitch@oracle.com>,
-        Xi Wang <wangxi11@huawei.com>, Tao Tian <tiantao6@huawei.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hns: Fix build error again
-Message-ID: <20191029191755.GA11530@ziepe.ca>
-References: <20191007211826.3361202-1-arnd@arndb.de>
+        id S1729705AbfJ2TTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 15:19:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbfJ2TTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 15:19:32 -0400
+Received: from linux-8ccs (unknown [92.117.159.222])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7090220659;
+        Tue, 29 Oct 2019 19:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572376771;
+        bh=yMFBENXBzPYHJDxwTp9VyBRameOLEOvTCdOceGJIy8Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T/l34ni9ZBUJCqv9+ALck3bG73n6eZygSioJ5tSqUXR2QBr6j7VbsJOULaHjNZ0iZ
+         WM6omtRNjDPj5HR9dRpiI1/6XvTJcA7tBrMveGr0m9Ua8PxtjjlyY56z8JrHBQTkUS
+         Vgz+4h+3Q2TyYE0b2i3nHJXRBjJjQONQ9inI2+vU=
+Date:   Tue, 29 Oct 2019 20:19:25 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Maennich <maennich@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] module: avoid code duplication in
+ include/linux/export.h
+Message-ID: <20191029191925.GA19316@linux-8ccs>
+References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+ <20190927093603.9140-5-yamada.masahiro@socionext.com>
+ <f2e28d6b-77c5-5fe2-0bc4-b24955de9954@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20191007211826.3361202-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <f2e28d6b-77c5-5fe2-0bc4-b24955de9954@rasmusvillemoes.dk>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 11:18:08PM +0200, Arnd Bergmann wrote:
-> This is not the first attempt to fix building random configurations,
-> unfortunately the attempt in commit a07fc0bb483e ("RDMA/hns: Fix build
-> error") caused a new problem when CONFIG_INFINIBAND_HNS_HIP06=m
-> and CONFIG_INFINIBAND_HNS_HIP08=y:
-> 
-> drivers/infiniband/hw/hns/hns_roce_main.o:(.rodata+0xe60): undefined reference to `__this_module'
-> 
-> Revert commits a07fc0bb483e ("RDMA/hns: Fix build error") and
-> a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment") to get
-> back to the previous state, then fix the issues described there
-> differently, by adding more specific dependencies: INFINIBAND_HNS
-> can now only be built-in if at least one of HNS or HNS3 are
-> built-in, and the individual back-ends are only available if
-> that code is reachable from the main driver.
-> 
-> Fixes: a07fc0bb483e ("RDMA/hns: Fix build error")
-> Fixes: a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment")
-> Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
-> Fixes: 08805fdbeb2d ("RDMA/hns: Split hw v1 driver from hns roce driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/infiniband/hw/hns/Kconfig  | 17 ++++++++++++++---
->  drivers/infiniband/hw/hns/Makefile |  8 ++++++--
->  2 files changed, 20 insertions(+), 5 deletions(-)
++++ Rasmus Villemoes [27/09/19 13:07 +0200]:
+>On 27/09/2019 11.36, Masahiro Yamada wrote:
+>> include/linux/export.h has lots of code duplication between
+>> EXPORT_SYMBOL and EXPORT_SYMBOL_NS.
+>>
+>> To improve the maintainability and readability, unify the
+>> implementation.
+>>
+>> When the symbol has no namespace, pass the empty string "" to
+>> the 'ns' parameter.
+>>
+>> The drawback of this change is, it grows the code size.
+>> When the symbol has no namespace, sym->namespace was previously
+>> NULL, but it is now am empty string "". So, it increases 1 byte
+>> for every no namespace EXPORT_SYMBOL.
+>>
+>> A typical kernel configuration has 10K exported symbols, so it
+>> increases 10KB in rough estimation.
+>>
+>> I did not come up with a good idea to refactor it without increasing
+>> the code size.
+>
+>Can't we put the "aMS" flags on the __ksymtab_strings section? That
+>would make the empty strings free, and would also deduplicate the
+>USB_STORAGE string. And while almost per definition we don't have exact
+>duplicates among the names of exported symbols, we might have both a foo
+>and __foo, so that could save even more.
+>
+>I don't know if we have it already, but we'd need each arch to tell us
+>what symbol to use for @ in @progbits (e.g. % for arm). It seems most
+>are fine with @, so maybe a generic version could be
+>
+>#ifndef ARCH_SECTION_TYPE_CHAR
+>#define ARCH_SECTION_TYPE_CHAR "@"
+>#endif
+>
+>and then it would be
+>section("__ksymtab_strings,\"aMS\","ARCH_SECTION_TYPE_CHAR"progbits,1")
 
-Applied to for-next, let us give it some time in linux-next I guess?
+FWIW, I've just tinkered with this, and unfortunately the strings
+don't get deduplicated for kernel modules :-(
+
+Apparently ld does not do the deduplication for SHF_MERGE|SHF_STRINGS
+sections for relocatable files (ld -r), which kernel modules are. See:
+
+    https://sourceware.org/ml/binutils/2009-07/msg00291.html
+
+But, the strings do get deduplicated for vmlinux. Not sure if we can
+find a workaround for modules or if the benefit is significant enough
+if it only for vmlinux.
 
 Thanks,
-Jason
+
+Jessica
+
