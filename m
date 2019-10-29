@@ -2,110 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 415EFE8EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9908BE8EA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbfJ2R5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:57:07 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:40997 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfJ2R5G (ORCPT
+        id S1728759AbfJ2Rsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:48:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58992 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbfJ2Rsv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:57:06 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 42D7822EE4;
-        Tue, 29 Oct 2019 18:48:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
-        s=mail2016061301; t=1572371333;
-        bh=PbfA7H2lwRKfSuMsRBe42p6Zb1q6FIEe3795UNqR4bI=;
+        Tue, 29 Oct 2019 13:48:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E737E60F7B; Tue, 29 Oct 2019 17:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572371330;
+        bh=Bv52zoG1yUwsLTDP8YRJdB1oLS50hHY8teFP3i3xLWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YFoia7pxEXBX7aG7MOFMI+VAK0xmtS6JrxS3qPeIwCIefNCalHFpgCJH9/Tajj4kT
-         GgH1SKAvQo7VvEwg0bCVRWp+DI+AI+35kzGvVFlBpVIU4/KpT29Uqmw+JX1ih7tfzh
-         eGz7XqYya37WWQv1Er3sU7yd7rzJ3O0PZYVwWnkU=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     Michael Walle <michael@walle.cc>
-Subject: [PATCH 2/3] net: phy: export __phy_{read|write}_page
-Date:   Tue, 29 Oct 2019 18:48:18 +0100
-Message-Id: <20191029174819.3502-3-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191029174819.3502-1-michael@walle.cc>
-References: <20191029174819.3502-1-michael@walle.cc>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.101.4 at web
-X-Virus-Status: Clean
+        b=CfqlIoo8MCPeOosSy3t9vIocxSHAFYNWyFshjOIwT/c/VYcCw6efpA5+GXLKv6m+8
+         3LLCr9+H9hpTY002UErvvN9U0XSP/AUXLHSkPO+T0LpaWG1VhQ4Vw0QoOOujnA0QsU
+         YRuxoYUM9AUK2qfgvQBGIS7d34saiLhM3lpkA0uc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCE2960F7B;
+        Tue, 29 Oct 2019 17:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572371329;
+        bh=Bv52zoG1yUwsLTDP8YRJdB1oLS50hHY8teFP3i3xLWA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MD/4wgbedBgyoJrDGC84uH15rjYR4ONCJc1ET1Zz/CtynPGHWHDbG13ov4BrHABxV
+         r3MwZ8XmS+8FHPx2xy+ZV4THKyTfBQxpnvWXOpdhihn5513qmvswISlFOaylRDtyVM
+         tax0AVeeE1K6nST4lIGwsTc7hfcdoxtqmxvF5yv8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCE2960F7B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
+Date:   Tue, 29 Oct 2019 23:18:19 +0530
+Message-Id: <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1572371299-16774-1-git-send-email-tdas@codeaurora.org>
+References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also check if the op is actually available. Otherwise return -ENOTSUPP.
+Add support for clock RPMh driver to vote for ARC and VRM managed
+clock resources.
 
-Signed-off-by: Michael Walle <michael@walle.cc>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/net/phy/phy-core.c | 24 ++++++++++++++++++++++--
- include/linux/phy.h        |  2 ++
- 2 files changed, 24 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
-index 9412669b579c..70f93e405e91 100644
---- a/drivers/net/phy/phy-core.c
-+++ b/drivers/net/phy/phy-core.c
-@@ -687,15 +687,35 @@ int phy_modify_mmd(struct phy_device *phydev, int devad, u32 regnum,
- }
- EXPORT_SYMBOL_GPL(phy_modify_mmd);
- 
--static int __phy_read_page(struct phy_device *phydev)
-+/**
-+ * __phy_read_page - get currently selected page
-+ * @phydev: the phy_device struct
-+ *
-+ * Get the current PHY page. On error, returns a negative errno, otherwise
-+ * returns the selected page number.
-+ */
-+int __phy_read_page(struct phy_device *phydev)
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 20d4258..3f3e08b 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -391,6 +391,24 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
+ 	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
+ };
+
++static struct clk_hw *sc7180_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
++	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
++	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
++	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
++	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
++	.clks = sc7180_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sc7180_rpmh_clocks),
++};
++
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+ 					 void *data)
  {
-+	if (!phydev->drv->read_page)
-+		return -ENOTSUPP;
- 	return phydev->drv->read_page(phydev);
- }
-+EXPORT_SYMBOL_GPL(__phy_read_page);
- 
--static int __phy_write_page(struct phy_device *phydev, int page)
-+/**
-+ * __phy_write_page - set the current page
-+ * @phydev: the phy_device struct
-+ * @page: desired page
-+ *
-+ * Set the current PHY page. On error, returns a negative errno.
-+ */
-+int __phy_write_page(struct phy_device *phydev, int page)
- {
-+	if (!phydev->drv->write_page)
-+		return -ENOTSUPP;
- 	return phydev->drv->write_page(phydev, page);
- }
-+EXPORT_SYMBOL_GPL(__phy_write_page);
- 
- /**
-  * phy_save_page() - take the bus lock and save the current page
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 9a0e981df502..70eca3cb25ff 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -797,6 +797,8 @@ int __phy_modify_mmd(struct phy_device *phydev, int devad, u32 regnum,
- 		     u16 mask, u16 set);
- int phy_modify_mmd(struct phy_device *phydev, int devad, u32 regnum,
- 		   u16 mask, u16 set);
-+int __phy_read_page(struct phy_device *phydev);
-+int __phy_write_page(struct phy_device *phydev, int page);
- 
- /**
-  * __phy_set_bits - Convenience function for setting bits in a PHY register
--- 
-2.20.1
+@@ -471,6 +489,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+ 	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
++	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
