@@ -2,69 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23978E8F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C006E8F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfJ2SWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 14:22:41 -0400
-Received: from utopia.booyaka.com ([74.50.51.50]:45992 "EHLO
-        utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfJ2SWk (ORCPT
+        id S1729794AbfJ2SZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 14:25:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48686 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfJ2SZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 14:22:40 -0400
-Received: (qmail 19504 invoked by uid 1019); 29 Oct 2019 18:22:39 -0000
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 29 Oct 2019 18:22:39 -0000
-Date:   Tue, 29 Oct 2019 18:22:39 +0000 (UTC)
-From:   Paul Walmsley <paul@pwsan.com>
-To:     Yash Shah <yash.shah@sifive.com>
-cc:     "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "logang@deltatee.com" <logang@deltatee.com>,
-        "sorear2@gmail.com" <sorear2@gmail.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "alex@ghiti.fr" <alex@ghiti.fr>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "Palmer Dabbelt \\( Sifive\\)" <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        "Anup.Patel@wdc.com" <Anup.Patel@wdc.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "allison@lohutok.net" <allison@lohutok.net>
-Subject: RE: [PATCH v2] RISC-V: Add PCIe I/O BAR memory mapping
-In-Reply-To: <CH2PR13MB3368A6E99DAB164A52D2954A8C610@CH2PR13MB3368.namprd13.prod.outlook.com>
-Message-ID: <alpine.DEB.2.21.999.1910291822280.15841@utopia.booyaka.com>
-References: <1571992163-6811-1-git-send-email-yash.shah@sifive.com> <alpine.DEB.2.21.9999.1910250852420.28076@viisi.sifive.com> <CH2PR13MB3368A6E99DAB164A52D2954A8C610@CH2PR13MB3368.namprd13.prod.outlook.com>
-User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
+        Tue, 29 Oct 2019 14:25:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TI5FDj175951;
+        Tue, 29 Oct 2019 18:23:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=pvaGyOZDLlNqbGIv4aiDa+8jV2u8TRmd0Sg/3CdaYfQ=;
+ b=GayfmIV97A/7KomJSAsydyBuszzE+3RDo1LCbszbUU03PKeOPpUsle4oX8Bz1eM7+QTg
+ w17fUSx26ItlguIpsL8eUG0ZQzM19hMSpsyOjpclWpMjsMwnIU1OJ0G/0HZ9jt9TcWPu
+ nc2WRwGPQVL9Ox2RSIbuHMSbPWSSss3mVfWN2ZOT14JMBpQIsvN3gB/FH1OC1i7XgMgI
+ pKVgT+27FvJ6I9IkQhR7tVJmBVx3R9ZIPK8kaaHl/VEpXSNaajWQENUJs13sEKJacAWV
+ fQuop4wCqvSb1Q1wLkFTAlw40mAmIgY55WNYNdaRCm4j8RVgdThKmUpTxLYJCbEjnlRz Jw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2vvdjub9ee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 18:23:39 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TI8BBK179764;
+        Tue, 29 Oct 2019 18:23:39 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2vxpfdgt2e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 18:23:39 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9TINU14011472;
+        Tue, 29 Oct 2019 18:23:30 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Oct 2019 11:23:30 -0700
+Date:   Tue, 29 Oct 2019 21:23:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andrea Righi <righi.andrea@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Peter Rosin <peda@axentia.se>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        security@kernel.org, Kees Cook <keescook@chromium.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH] fbdev: potential information leak in do_fb_ioctl()
+Message-ID: <20191029182320.GA17569@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290160
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910290160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019, Yash Shah wrote:
+The "fix" struct has a 2 byte hole after ->ywrapstep and the
+"fix = info->fix;" assignment doesn't necessarily clear it.  It depends
+on the compiler.
 
-> > On Fri, 25 Oct 2019, Yash Shah wrote:
-> > 
-> > > For legacy I/O BARs (non-MMIO BARs) to work correctly on RISC-V Linux,
-> > > we need to establish a reserved memory region for them, so that
-> > > drivers that wish to use the legacy I/O BARs can issue reads and
-> > > writes against a memory region that is mapped to the host PCIe
-> > > controller's I/O BAR mapping.
-> > >
-> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > 
-> > Thanks.  And just to confirm: this is a fix, right?  Without this 
-> > patch, legacy PCIe I/O resources won't be accessible on RISC-V?
-> 
-> Yes, this is a fix.
+Fixes: 1f5e31d7e55a ("fbmem: don't call copy_from/to_user() with mutex held")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I have 13 more similar places to patch...  I'm not totally sure I
+understand all the issues involved.
 
-Thanks, queued for v5.4-rc.
+ drivers/video/fbdev/core/fbmem.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 6f6fc785b545..b4ce6a28aed9 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1109,6 +1109,7 @@ static long do_fb_ioctl(struct fb_info *info, unsigned int cmd,
+ 			ret = -EFAULT;
+ 		break;
+ 	case FBIOGET_FSCREENINFO:
++		memset(&fix, 0, sizeof(fix));
+ 		lock_fb_info(info);
+ 		fix = info->fix;
+ 		if (info->flags & FBINFO_HIDE_SMEM_START)
+-- 
+2.20.1
 
-- Paul
