@@ -2,99 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8488AE882C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B492E8836
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbfJ2M3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:29:38 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43648 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfJ2M3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:29:37 -0400
-Received: by mail-oi1-f193.google.com with SMTP id s5so8716285oie.10;
-        Tue, 29 Oct 2019 05:29:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=okLPsosnjsIdAglbOpT+46TAv0woYLu5g4KKw1XBUMA=;
-        b=lM6VWrT9du2QY1TbvJlMHZnGLobKPcF0GBn/06Edvjns67NhXPGISiqeOwl2ETwdrY
-         INXVaQHFjA1L/4WVeluNbRdooUk3HM2vgDvjPfPA9lCQv0pqVEhwEQjPtNnFP/ZKiQzM
-         4LM9i48qE0MpSwjC4GESNTcSY7cHIwcbttPYUwWo4QMeH0zZoql8yMhhQQ9RMaf9LBeF
-         MelIXESTwTIGurwE2q/V9ppC0b0WaJ3F5+TgTU++Srwc5nB7P8Se0FGV+tY8lCznHzfu
-         7+b2Z+AIu9w4jvcOwvr5vFurwWybYGdh6JCDBLIO3TzfGz55q64NFPzJQe6Ig1vTFvn6
-         fqNg==
-X-Gm-Message-State: APjAAAUknjtybA0IwoxlJ1rOKgGS4FL985J6ues4fGxDkmPiNf9yxwvm
-        O+bqd5M9b59sJmsj6KNmNA==
-X-Google-Smtp-Source: APXvYqyO8DH2IEhStv2gSlye9+VbvTmQX6+T9WxWt66DaOIg31GxlTrzat5+Bsvuee/7K8GJyRccXw==
-X-Received: by 2002:aca:4896:: with SMTP id v144mr3970672oia.16.1572352176888;
-        Tue, 29 Oct 2019 05:29:36 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m4sm4653250otm.14.2019.10.29.05.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 05:29:36 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 07:29:35 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: at91: Document Kizboxmini boards
- binding
-Message-ID: <20191029122935.GA8412@bogus>
-References: <20191018140304.31547-1-kamel.bouhara@bootlin.com>
- <20191018140304.31547-2-kamel.bouhara@bootlin.com>
+        id S1732037AbfJ2Mao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:30:44 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40428 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726362AbfJ2Mao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:30:44 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 836A69BEE590D4A6CFA9;
+        Tue, 29 Oct 2019 20:30:41 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
+ 20:30:32 +0800
+Subject: Re: [PATCH 3/3] KVM: arm/arm64: vgic: Don't rely on the wrong pending
+ table
+To:     Auger Eric <eric.auger@redhat.com>, <maz@kernel.org>,
+        <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
+        <suzuki.poulose@arm.com>
+CC:     <wanghaibin.wang@huawei.com>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191029071919.177-1-yuzenghui@huawei.com>
+ <20191029071919.177-4-yuzenghui@huawei.com>
+ <5e4d1a2f-7107-efe3-9dde-626662e31ac5@redhat.com>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <825b87df-618f-7f2d-0fe9-4cec240c88bf@huawei.com>
+Date:   Tue, 29 Oct 2019 20:30:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191018140304.31547-2-kamel.bouhara@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5e4d1a2f-7107-efe3-9dde-626662e31ac5@redhat.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 04:03:03PM +0200, Kamel Bouhara wrote:
-> Document devicetree's bindings for the SAM9G25 Kizbox Mini boards of
-> Overkiz SAS.
+On 2019/10/29 20:17, Auger Eric wrote:
+> Hi Zenghui, Marc,
 > 
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> ---
->  .../devicetree/bindings/arm/atmel-at91.yaml        | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> index 1e72e3e6e025..666462988179 100644
-> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> @@ -35,6 +35,20 @@ properties:
->                - atmel,at91sam9x60
->            - const: atmel,at91sam9
->  
-> +      - description: Overkiz kizbox Mini Mother Board
-> +        items:
-> +          - const: overkiz,kizboxmini-mb
-> +          - const: atmel,at91sam9g25
-> +          - const: atmel,at91sam9x5
-> +          - const: atmel,at91sam9
-> +
-> +      - description: Overkiz kizbox Mini RailDIN
-> +        items:
-> +          - const: overkiz,kizboxmini-rd
-> +          - const: atmel,at91sam9g25
-> +          - const: atmel,at91sam9x5
-> +          - const: atmel,at91sam9
+> On 10/29/19 8:19 AM, Zenghui Yu wrote:
+>> It's possible that two LPIs locate in the same "byte_offset" but target
+>> two different vcpus, where their pending status are indicated by two
+>> different pending tables.  In such a scenario, using last_byte_offset
+>> optimization will lead KVM relying on the wrong pending table entry.
+>> Let us use last_ptr instead, which can be treated as a byte index into
+>> a pending table and also, can be vcpu specific.
+>>
+>> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+>> ---
+>>
+>> If this patch has done the right thing, we can even add the:
+>>
+>> Fixes: 280771252c1b ("KVM: arm64: vgic-v3: KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES")
+>>
+>> But to be honest, I'm not clear about what has this patch actually fixed.
+>> Pending tables should contain all zeros before we flush vgic_irq's pending
+>> status into guest's RAM (thinking that guest should never write anything
+>> into it). So the pending table entry we've read from the guest memory
+>> seems always be zero. And we will always do the right thing even if we
+>> rely on the wrong pending table entry.
+>>
+>> I think I must have some misunderstanding here... Please fix me.
+>>
+>>   virt/kvm/arm/vgic/vgic-v3.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>> index 5ef93e5041e1..7cd2e2f81513 100644
+>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>> @@ -363,8 +363,8 @@ int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq)
+>>   int vgic_v3_save_pending_tables(struct kvm *kvm)
+>>   {
+>>   	struct vgic_dist *dist = &kvm->arch.vgic;
+>> -	int last_byte_offset = -1;
+>>   	struct vgic_irq *irq;
+>> +	gpa_t last_ptr = -1;
+>>   	int ret;
+>>   	u8 val;
+>>   
+>> @@ -384,11 +384,11 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+>>   		bit_nr = irq->intid % BITS_PER_BYTE;
+>>   		ptr = pendbase + byte_offset;
+>>   
+>> -		if (byte_offset != last_byte_offset) {
+>> +		if (ptr != last_ptr) {
+>>   			ret = kvm_read_guest_lock(kvm, ptr, &val, 1);
+>>   			if (ret)
+>>   				return ret;
+>> -			last_byte_offset = byte_offset;
+>> +			last_ptr = ptr;
+>>   		}
+>>   
+>>   		stored = val & (1U << bit_nr);
+>>
+> Acked-by: Eric Auger <eric.auger@redhat.com>
 
-These 2 can also be combined into 1 entry.
+Thanks Eric,
 
-> +
->        - items:
->            - enum:
->                - atmel,at91sam9g15
-> -- 
-> 2.23.0
-> 
+
+Zenghui
+
