@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 334EAE8982
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF87BE898E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:31:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388561AbfJ2N3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:29:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55219 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfJ2N3v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:29:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g7so2571472wmk.4;
-        Tue, 29 Oct 2019 06:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZyrQT++JHzLcRfuKcgHsyUe0SmNfdkUBvT+LupMK3wE=;
-        b=ldhtE7i195ivrWivpGZUMMDIfoQ6Ye6gbJsIq43K18miEvSx5uYCNouD8x5utAhviE
-         5aR3r0L0D58JT2r4fiiw4YBWG1tZ6bb4qVp4JeRr2Ci9c4OKXFq21Uc5DyRpXRqCjBKV
-         Too8aJeQMF3MGc1W7oVhq9Y6xfsAPk7V9lhpq0lR7V9eI0C773R/cEcb/J8CeCVwOS+R
-         5iMZZMxcLynllufl/Pyu3lmBEuEgUCT/m2opoie5nDt2qSHF/X2lMl1xSfEmMRZ9G9ct
-         JWN5itJhL16pMGZpHPORERxRbBZFBfmWD5Os9nFU3teFsWflsTVxjd3cM8fCoH2NNOMe
-         +Wrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZyrQT++JHzLcRfuKcgHsyUe0SmNfdkUBvT+LupMK3wE=;
-        b=KVbG5GeTE+ivt1WXg7RzYpLEVY7S0gTk+aH0W0FFi2wEm0+lEglntvrBCL+8+d/+qs
-         blxG9+MNOlaV9MlA1q1mhMcoeCj57+sfL62okiZ4WSwACTKE8QZnCDfUnbH3hT3+MTM9
-         DJcLIp7efLSJGq2bx5atdAiOGcxqj7M3EOk/nuK82baXoeqL3wBtLnKq1gNjixiCgY0j
-         qWiGieQcqWZRSg5LXoidGXl9rlqurEI1SdnLiLBY3PfbziUyudE/gC1IEaoYS0hVrgt7
-         sOqpkD9k7Tnh9Nxjx6cgjOZROzR/MJoclYfZJGoDNb1NGOVUESXdWMsgHmdJDxCt+Dsn
-         DfIw==
-X-Gm-Message-State: APjAAAVKb41d6ti/PlN0Z2ohWF4HSYPQ+uzGezFlCoJ8FKLg7mcPN0td
-        iltjawRhtxou2JlLXUrVDbY=
-X-Google-Smtp-Source: APXvYqxVOR2/ernxtfHe/O0saeRgpwaX6roQc9/VnbXSJO0ROt+1HZfqwRfBD/S0aVS9NS8im21nVg==
-X-Received: by 2002:a05:600c:2317:: with SMTP id 23mr4044683wmo.140.1572355789192;
-        Tue, 29 Oct 2019 06:29:49 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id p21sm2489874wmc.25.2019.10.29.06.29.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 06:29:47 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 14:29:46 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: dts: tegra124: nyan-big: Add timings for RAM
- codes 4 and 6
-Message-ID: <20191029132946.GF508460@ulmo>
-References: <20190723033744.4219-1-digetx@gmail.com>
+        id S2388615AbfJ2Nbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:31:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5219 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388602AbfJ2Nbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 09:31:32 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B145089EF28F21D4DC20;
+        Tue, 29 Oct 2019 21:31:27 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 29 Oct 2019
+ 21:31:19 +0800
+Subject: Re: [PATCH 3/3] KVM: arm/arm64: vgic: Don't rely on the wrong pending
+ table
+To:     Auger Eric <eric.auger@redhat.com>, Marc Zyngier <maz@kernel.org>
+CC:     <suzuki.poulose@arm.com>, <linux-kernel@vger.kernel.org>,
+        <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
+        <wanghaibin.wang@huawei.com>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20191029071919.177-1-yuzenghui@huawei.com>
+ <20191029071919.177-4-yuzenghui@huawei.com> <86mudjykfa.wl-maz@kernel.org>
+ <f8a30e65-7077-301a-1558-7fc504b5e891@huawei.com>
+ <e2141f6a-c530-46d5-d5d9-26806b02d55b@redhat.com>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <01638947-ce47-2e09-68f0-a95eb6e9b2d0@huawei.com>
+Date:   Tue, 29 Oct 2019 21:31:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
-Content-Disposition: inline
-In-Reply-To: <20190723033744.4219-1-digetx@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <e2141f6a-c530-46d5-d5d9-26806b02d55b@redhat.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric,
 
---1Y7d0dPL928TPQbc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2019/10/29 20:49, Auger Eric wrote:
+> On 10/29/19 1:27 PM, Zenghui Yu wrote:
+>> okay, the remaining question is that in vgic_v3_save_pending_tables():
+>>
+>>      stored = val & (1U << bit_nr);
+>>      if (stored == irq->pending_latch)
+>>          continue;
+>>
+>>      if (irq->pending_latch)
+>>          val |= 1 << bit_nr;
+>>      else
+>>          val &= ~(1 << bit_nr);
+>>
+>> Do we really have a scenario where irq->pending_latch==false and
+>> stored==true (corresponds to the above "else") and then we clear
+>> pending status of this LPI in guest memory?
+>> I can not think out one now.
+> 
+> if you save, restore and save again. On the 1st save the LPI may be
+> pending, it gets stored. On the second save the LPI may be not pending
+> anymore?
 
-On Tue, Jul 23, 2019 at 06:37:44AM +0300, Dmitry Osipenko wrote:
-> Add timings for RAM codes 4 and 6 and a timing for 528mHz of RAM code 1,
-> which was missed due to the clock driver bug that is fixed now in all of
-> stable kernels.
->=20
-> Tested-by: Steev Klimaszewski <steev@kali.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->=20
-> Changelog:
->=20
-> v2: Improved commit's message a tad.
->=20
->  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi | 7917 ++++++++++++++----
->  1 file changed, 6272 insertions(+), 1645 deletions(-)
+I assume you mean the "restore" by vgic_its_restore_ite().
 
-Applied to for-5.5/arm/dt, thanks.
+While restoring a LPI, we will sync the pending status from guest
+pending table (into the software pending_latch), and clear the
+corresponding bit in guest memory.
+See vgic_v3_lpi_sync_pending_status().
 
-Thierry
+So on the second save, the LPI can be not pending, the guest pending
+table will also indicate not pending.
 
---1Y7d0dPL928TPQbc
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Zenghui
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24PsgACgkQ3SOs138+
-s6HRhRAApan8ZzBX81Q/qwmDIQQNXoQw7XUsmTuuTdWXo4RjmCsIDH7oOjzG4r/4
-QMujhT5FlJECfZOKffZJv2X19jz24TzCHdEmJP5bR8A95KaDZEp3KoT278etnzee
-a05vW1hBf42mEvI6d5z48+i4k1uzhaBVeBTGN3GwaCbmskpc8efztRYJDvAONWfD
-P81N2uBarekZlLTkvY9VNVdE0C3DfyGaAPUlzyiPZHYcPFVYLEKU1dsB1UcZRiE6
-fdn62simDa1zZEAlIAN+Oh06Cp106UwUq4ktALQR/p8NyJTPQpByNwldSoXutB5P
-gzMyFYUdq5j7Xd2GE1dozlkB3+OnSvUzC6OlNVAs1in2V4xOVj3CBUFy924U9Xo5
-MKTkes0FJMsQUEP3WiLHBhp8oTJWxt6REJtEXIQBLVFjIyYfqHPKCx+dx/u08r9x
-RNMVlyVM+lTR/POTX5QW3/GMnqwv4f7KMUntN+A3+fpwiJFzPspLQZJ2ZUM1akcA
-siUMc9C21YSw4tJ+z6tGHZBvY8mGzFBIr0PPFhhvDFTxRO30YTfTPybgtNAHzmdz
-4O22fcpzcTuDYloX9sRQ3lQhJD8TkS12d8jDRIE2SbT/AcIkDH8FEoeHRZAhOiE1
-BG8Qwb4dahKDaKDoMYpq2YmiXDGZ1nFJP5UuNMvXmBxqt1dU3t4=
-=ZqeM
------END PGP SIGNATURE-----
-
---1Y7d0dPL928TPQbc--
