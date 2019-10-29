@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCD8E8BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67379E8BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390108AbfJ2Pjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 11:39:44 -0400
-Received: from verein.lst.de ([213.95.11.211]:40659 "EHLO verein.lst.de"
+        id S2390232AbfJ2PkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 11:40:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:40768 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731480AbfJ2Pjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 11:39:44 -0400
+        id S2390217AbfJ2Pj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 11:39:58 -0400
 Received: by verein.lst.de (Postfix, from userid 2005)
-        id 32AC268C65; Tue, 29 Oct 2019 16:39:41 +0100 (CET)
+        id CD4CE68D0D; Tue, 29 Oct 2019 16:39:56 +0100 (CET)
 In-Reply-To: <20191029153815.C631668C4E@verein.lst.de>
 References: <20191029153815.C631668C4E@verein.lst.de>
 From:   Torsten Duwe <duwe@lst.de>
 Date:   Tue, 29 Oct 2019 13:16:57 +0100
-Subject: [PATCH v4 1/7] drm/bridge: move ANA78xx driver to analogix
- subdirectory
+Subject: [PATCH v4 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on
+ Teres-I
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -35,111 +35,95 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <20191029153941.32AC268C65@verein.lst.de>
+Message-Id: <20191029153956.CD4CE68D0D@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Teres-I has an anx6345 bridge connected to the RGB666 LCD output, and
+the I2C controlling signals are connected to I2C0 bus.
 
-As ANA78xx chips are designed and produced by Analogix Semiconductor,
-Inc, move their driver codes into analogix subdirectory.
+Enable it in the device tree, and enable the display engine, video mixer
+and tcon0 as well.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Torsten Duwe <duwe@suse.de>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/bridge/Kconfig                           | 10 ----------
- drivers/gpu/drm/bridge/Makefile                          |  4 ++--
- drivers/gpu/drm/bridge/analogix/Kconfig                  | 10 ++++++++++
- drivers/gpu/drm/bridge/analogix/Makefile                 |  1 +
- drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.c |  0
- drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.h |  0
- 6 files changed, 13 insertions(+), 12 deletions(-)
- rename drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.c (100%)
- rename drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.h (100%)
+ .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 45 ++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 1cc9f502c1f2..6c48722130fd 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -16,16 +16,6 @@ config DRM_PANEL_BRIDGE
- menu "Display Interface Bridges"
- 	depends on DRM && DRM_BRIDGE
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index 1069e7012c9c..970415106dcf 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -100,18 +100,41 @@
+ 	status = "okay";
+ };
  
--config DRM_ANALOGIX_ANX78XX
--	tristate "Analogix ANX78XX bridge"
--	select DRM_KMS_HELPER
--	select REGMAP_I2C
--	---help---
--	  ANX78XX is an ultra-low power Full-HD SlimPort transmitter
--	  designed for portable devices. The ANX78XX transforms
--	  the HDMI output of an application processor to MyDP
--	  or DisplayPort.
--
- config DRM_CDNS_DSI
- 	tristate "Cadence DPI/DSI bridge"
- 	select DRM_KMS_HELPER
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 4934fcf5a6f8..a6c7dd7727ea 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -1,5 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
- obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
- obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
- obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
-@@ -12,8 +11,9 @@ obj-$(CONFIG_DRM_SII9234) += sii9234.o
- obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
--obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
- obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
- obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
++&de {
++	status = "okay";
++};
 +
-+obj-y += analogix/
- obj-y += synopsys/
-diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
-index e930ff9b5cd4..29ba1b21019e 100644
---- a/drivers/gpu/drm/bridge/analogix/Kconfig
-+++ b/drivers/gpu/drm/bridge/analogix/Kconfig
-@@ -1,4 +1,14 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+config DRM_ANALOGIX_ANX78XX
-+	tristate "Analogix ANX78XX bridge"
-+	select DRM_KMS_HELPER
-+	select REGMAP_I2C
-+	help
-+	  ANX78XX is an ultra-low power Full-HD SlimPort transmitter
-+	  designed for portable devices. The ANX78XX transforms
-+	  the HDMI output of an application processor to MyDP
-+	  or DisplayPort.
+ &ehci1 {
+ 	status = "okay";
+ };
+ 
+ 
+-/* The ANX6345 eDP-bridge is on i2c0. There is no linux (mainline)
+- * driver for this chip at the moment, the bootloader initializes it.
+- * However it can be accessed with the i2c-dev driver from user space.
+- */
+ &i2c0 {
+ 	clock-frequency = <100000>;
+ 	status = "okay";
 +
- config DRM_ANALOGIX_DP
- 	tristate
- 	depends on DRM
-diff --git a/drivers/gpu/drm/bridge/analogix/Makefile b/drivers/gpu/drm/bridge/analogix/Makefile
-index fdbf3fd2f087..6fcbfd3ee560 100644
---- a/drivers/gpu/drm/bridge/analogix/Makefile
-+++ b/drivers/gpu/drm/bridge/analogix/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- analogix_dp-objs := analogix_dp_core.o analogix_dp_reg.o
-+obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
- obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix_dp.o
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-similarity index 100%
-rename from drivers/gpu/drm/bridge/analogix-anx78xx.c
-rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
-similarity index 100%
-rename from drivers/gpu/drm/bridge/analogix-anx78xx.h
-rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
++	anx6345: anx6345@38 {
++		compatible = "analogix,anx6345";
++		reg = <0x38>;
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
++		dvdd25-supply = <&reg_dldo2>;
++		dvdd12-supply = <&reg_dldo3>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				anx6345_in: endpoint {
++					remote-endpoint = <&tcon0_out_anx6345>;
++				};
++			};
++		};
++	};
++};
++
++&mixer0 {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -319,6 +342,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++
++	status = "okay";
++};
++
++&tcon0_out {
++	tcon0_out_anx6345: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&anx6345_in>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
 2.16.4
 
