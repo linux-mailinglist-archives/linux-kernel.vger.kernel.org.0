@@ -2,66 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E327E8219
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:22:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC821E8270
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbfJ2HVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 03:21:01 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:39672 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728547AbfJ2HUi (ORCPT
+        id S1729293AbfJ2HXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 03:23:18 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36121 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387670AbfJ2HXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:20:38 -0400
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 558EF2E1492;
-        Tue, 29 Oct 2019 10:20:35 +0300 (MSK)
-Received: from iva8-b53eb3f76dc7.qloud-c.yandex.net (iva8-b53eb3f76dc7.qloud-c.yandex.net [2a02:6b8:c0c:2ca1:0:640:b53e:b3f7])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id z9I2k0eD4G-KYl0QrA6;
-        Tue, 29 Oct 2019 10:20:35 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572333635; bh=ybO1Y2oq7Ib/EvpNL4QHXvV2p9s8Wjfoqf8YgObcVK8=;
-        h=In-Reply-To:Message-ID:Date:References:To:From:Subject:Cc;
-        b=1gVT2E7Kb5Wqsk8xqwFHfzj7ey/Sl4tf7LsGReR8lVZTJGvNiRGkSpFZ1P5QfOlfu
-         RvJTvz7WRKdqCJVKcQwyLkrIDZPWJSPaOtDl0Ot7x+vSMd4u+m8FLisUobJl6N8inN
-         gCis+y8CafSp6pnnkNV/iTjpVANuGMIcwXZx4REs=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
-        by iva8-b53eb3f76dc7.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id NZ48FxkpSN-KYWaqv0C;
-        Tue, 29 Oct 2019 10:20:34 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] ext4: deaccount delayed allocations at freeing inode in
- ext4_evict_inode()
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org
-Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
-        Eric Whitney <enwlinux@gmail.com>
-References: <157233344808.4027.17162642259754563372.stgit@buzz>
-Message-ID: <427b6718-0893-0f0f-f5db-5ad45b949a09@yandex-team.ru>
-Date:   Tue, 29 Oct 2019 10:20:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 29 Oct 2019 03:23:04 -0400
+Received: by mail-ua1-f68.google.com with SMTP id f21so3192012uan.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 00:23:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0SUH6/NtBC3ilVCpdONozL4mS3Prp0pIL3y1hHCcxAk=;
+        b=eMchEOvQ/jKSqC7IlUVOrUOu2sRq3JlNHSwrSwCVZV7hyYX+NwsA3oadySVIS2GMhv
+         Fvs0xOAQNNajFRHYthK70jYXsoHFLR0MqpOCX4UruR1XUSVhwPotDPQQJvLDpR6Qs35N
+         fO+lH1wwkAdlVyFMk0fkQlRl+r7cTgEooYDbw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0SUH6/NtBC3ilVCpdONozL4mS3Prp0pIL3y1hHCcxAk=;
+        b=FvrCwGacAnqLVQvraznTvPJd18Wo2/kP3vIac2V6sFlOfuyp8BYOOL4vBO4NoIlGJH
+         Bbc+RizlTnr576BUW6zDT4h5ehAPgBcpZPPWmydtpgyovapz4QIJdlmCPbxOQohfjow3
+         f+D5GD9NwOHaGoi7Pw01IPF7SIaSBorL+OwdYj99+53jiaJLtxEQF4ld3WBFPyDnKEsJ
+         UNGsrk6DkRqW5nBRdGAZGsUWp3oayYke7+8UVWcUpAfHjAGSLZqiBO/NNrbwqOeI/yVr
+         8EO3l1IxyH/FryQoHKuMxARLdsDgHvRlJQzLruSsgrbt0TGNoA94DTnCAhzdvLhvJ1/b
+         GoYA==
+X-Gm-Message-State: APjAAAWayI0jdXz7GDK4EDs6h/Z84bPAaVQwGfGfpsTlJodcr1SgDmww
+        VMo2z8qid/Fnhb9p53i4n3Pkldgg3KKpcKjELi9TCqUDg4A=
+X-Google-Smtp-Source: APXvYqwu6KYbConXB0iKr6Mov1RGaa3I/esweFtuANMt32BxSyqi5DbWOfQ88/Vd4VamORlLwO9ez57AWW6x/2gTwcw=
+X-Received: by 2002:ab0:6503:: with SMTP id w3mr7651016uam.17.1572333783797;
+ Tue, 29 Oct 2019 00:23:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <157233344808.4027.17162642259754563372.stgit@buzz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <20191023024348.225969-1-ikjn@chromium.org> <20191025194101.GA4734@bogus>
+In-Reply-To: <20191025194101.GA4734@bogus>
+From:   Ikjoon Jang <ikjn@chromium.org>
+Date:   Tue, 29 Oct 2019 15:22:52 +0800
+Message-ID: <CAATdQgDxC_1EH4cBqf7deEqRjtRU1s4o=L8vOztvVZ7NS_q9Mw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: input: Add DT bindings for Whiskers switch
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Boitchat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2019 10.17, Konstantin Khlebnikov wrote:
-> If inode->i_blocks is zero then ext4_evict_inode() skips ext4_truncate().
-> Delayed allocation extents are freed later in ext4_clear_inode() but this
-> happens when quota reference is already dropped. This leads to leak of
-> reserved space in quota block, which disappears after umount-mount.
-> 
-> This seems broken for a long time but worked somehow until recent changes
-> in delayed allocation.
+On Sat, Oct 26, 2019 at 3:41 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Oct 23, 2019 at 10:43:48AM +0800, Ikjoon Jang wrote:
+> > Add the DT binding document for Hammer's TABLET_MODE switch.
+>
+> This doesn't have any properties. Why does it need to be in DT? Just
+> have the EC driver instantiate it.
+>
+> >
+> > Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> > ---
+> >  .../devicetree/bindings/input/cros-cbas.yaml  | 22 +++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/input/cros-cbas.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/input/cros-cbas.yaml b/Documentation/devicetree/bindings/input/cros-cbas.yaml
+> > new file mode 100644
+> > index 000000000000..3bc989c6a295
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/input/cros-cbas.yaml
+> > @@ -0,0 +1,22 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+>
+> (GPL-2.0-only OR BSD-2-Clause) for new bindings please.
 
-FYI, perf cannot correctly parse related perf events without this:
+This will be GPL-2.0-only in next patch.
 
-https://lore.kernel.org/lkml/157228145325.7530.4974461761228678289.stgit@buzz/
+>
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/input/cros-cbas.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: ChromeOS Hammer's Base Attached Switch
+> > +
+> > +maintainers:
+> > +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > +
+> > +description:
+> > +  This device is used to signal when a detachable base is attached to a
+> > +  Chrome OS tablet. The node for this device must be under a cros-ec node
+> > +  like google,cros-ec-spi or google,cros-ec-i2c.
+>
+> This should probably just be part of an EC schema where it can be
+> enforced that this is a child node. It could be either embedded into it
+> or referenced. I'd lean toward the former given this is only a
+> compatible string...
+
+Sorry for basic questions here but I'm a bit confused,
+"embedding" means that cros-ec.txt should be converted
+into json schema first and embed this child bindings into there?
+
+Many Chrome OS tablets have a switch exposed by 'cros-ec-keyb' device
+which is directly controlled by EC. But this 'cros_cbas' switch device is for
+other types of tablets which need additional logics on EC and HID.
+
+Currently it doesn't need to have other properties, but maybe it could require
+additional properties or device links in the future, plus this device
+is not just
+a EC subdevice, so I'd prefer this to be a separate binding.
+
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: google,cros-cbas
+> > +
+> > +required:
+> > +  - compatible
+>
+> Add here:
+>
+> additionalProperties: false.
+
+Okay, I will add this in a new patch set , thank you!
+
+>
+> > --
+> > 2.23.0.866.gb869b98d4c-goog
+> >
