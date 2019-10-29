@@ -2,133 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05082E8AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A20DE8AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 15:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389422AbfJ2Oh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 10:37:26 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50787 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389185AbfJ2OhZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:37:25 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 11so2871925wmk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 07:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a8mYbXXK5+KQUQaIvwcfrpjKf765samV6cQUxQNL5/o=;
-        b=O31fbQcpDlQPaRDMeDghKQyKCpUZLsxpwu5wp8yldw9TK1V9CNDL4LgeBq9uR+2RGU
-         ZjKJfJPZgpHiq3YdbZwMZPw9/RupSHfV+4O4Z5Nbe1YaYCM2hI3wpBupabJz6x77n3ug
-         GhibiP9aLjoivl9amK7q9d+E+dGxrhAdMc4FJ2by+d54SbGyhS1b78g5i6PG1E6lhXMb
-         CsYCOCOtkiSbxWs+bpBnQIA4YRmFwor5bXbUBkgsl8kWWHlNRjYCJmNf0ngNRywGoNv4
-         PAKHgYlpuy54myGByRZTIBDXAyFCUqGvePGyDkK2up/0Xj/5VJTozHUssa87+G31WlCK
-         WZ3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a8mYbXXK5+KQUQaIvwcfrpjKf765samV6cQUxQNL5/o=;
-        b=TFoBe1/t46CoT32MFCMgO1uqw79WJANVs52mhdfxWaXdf+jZorpzZE9qfsupKlgv8g
-         ktDHVMAsVbfouHlNYIYpZxrHva2t09JXSD3KRA/NcYmNux3JLBguqfcwC8mCao8OLkG+
-         qr8ToGscZaLFQ6knb3PMk+TqqN6Cn9fLKACDRJTL4KzZpOjgkM/gM80iwWMdKxkYbXKa
-         aDmX7fJd3cBIdSugYsqvOEFGdaKQp4kxuuzNsugqUF6O4KaG3ssKgP+cC36x90RTyPqz
-         n1WX1A8KeEUm0iGwIy7I2FXHTTUF5HXQxkY6c/rRjT7xp3LdRYqtOCffRsAPWZoYHbL0
-         SeOQ==
-X-Gm-Message-State: APjAAAV+IUyJqnrEwL9b7EuGWcFy8olWOgEn/ro2GOPeYOkIJ6zUr9LR
-        uIY+Sp6EO2+ZKM6IT/7XTmcwJg==
-X-Google-Smtp-Source: APXvYqzxpBRLFqGiJ7f1v7UKKd7e/gFBpwDGG+pYQ2pl8w7igd0rtuIooHzTdvIWuV6CCe5R2FioCw==
-X-Received: by 2002:a05:600c:410:: with SMTP id q16mr4391860wmb.169.1572359843859;
-        Tue, 29 Oct 2019 07:37:23 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id b66sm3229561wmh.39.2019.10.29.07.37.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 07:37:23 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 14:37:22 +0000
-From:   Matthias Maennich <maennich@google.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Warning message from 'make nsdeps' when namespace is lower cases
-Message-ID: <20191029143722.GB33177@google.com>
-References: <CAK7LNAQ8Wi1zED0rYJhk9tYi5-jgCoyeHNtofvgKet4ZTzKFcA@mail.gmail.com>
- <alpine.DEB.2.21.1910291437450.2179@hadrien>
+        id S2389492AbfJ2OjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 10:39:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54584 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388885AbfJ2OjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 10:39:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7CB12B29A;
+        Tue, 29 Oct 2019 14:39:06 +0000 (UTC)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, jpoimboe@redhat.com,
+        joe.lawrence@redhat.com
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jikos@kernel.org, pmladek@suse.com, nstange@suse.de,
+        live-patching@vger.kernel.org, Miroslav Benes <mbenes@suse.cz>
+Subject: [PATCH v2 0/3] s390/livepatch: Implement reliable stack tracing for the consistency model
+Date:   Tue, 29 Oct 2019 15:39:01 +0100
+Message-Id: <20191029143904.24051-1-mbenes@suse.cz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1910291437450.2179@hadrien>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+The livepatch consistency model requires reliable stack tracing
+architecture support in order to work properly. In order to achieve
+this, two main issues have to be solved. First, reliable and consistent
+call chain backtracing has to be ensured. Second, the unwinder needs to
+be able to detect stack corruptions and return errors.
 
-On Tue, Oct 29, 2019 at 02:38:36PM +0100, Julia Lawall wrote:
->
->
->On Tue, 29 Oct 2019, Masahiro Yamada wrote:
->
->> Hi.
->>
->> When I was playing with 'make nsdeps',
->> I saw a new warning.
->>
->> If I rename USB_STORAGE to usb_storage,
->> I see 'warning: line 15: should usb_storage be a metavariable?'
->> Why? I think it comes from spatch.
->
->Yes, it would come from spatch.
->
->> It should be technically OK to use either upper or lower cases
->> for the namespace name.
->
->What is normally wanted?  Uppercase or lowercase?
+The former should be guaranteed (see 3/3 for details), the latter is
+implemented by the patch set (mainly 3/3).
 
-There is no (documented) preference or convention yet. The existing
-namespaces (USB_STORAGE and MCB) use upper case. While technically both
-should work, I have a personal preference for consistently using upper
-case. Is there a way to suppress this warning as I agree that it might
-be confusing?
+It passes livepatch kselftests (with timeout disabled, see
+https://lore.kernel.org/live-patching/20191025115041.23186-1-mbenes@suse.cz/)
+and tests from https://github.com/lpechacek/qa_test_klp.
 
-Cheers,
-Matthias
+Changes since v1 and questions follow:
+- rebased on top of v5.4-rc5. It also meant rebasing on top of
+  ARCH_STACKWALK, which made the outcome nicer and addressed some of
+  Joe's remarks.
+- sp alignment is checked in both _start and _next_frame cases
+- ftrace_graph_ret_addr() calling cleanup
 
->
->julia
->
->>
->> Just apply the following, and try 'make nsdeps'.
->>
->>
->> diff --git a/drivers/usb/storage/Makefile b/drivers/usb/storage/Makefile
->> index 46635fa4a340..6f817d65c26b 100644
->> --- a/drivers/usb/storage/Makefile
->> +++ b/drivers/usb/storage/Makefile
->> @@ -8,7 +8,7 @@
->>
->>  ccflags-y := -I $(srctree)/drivers/scsi
->>
->> -ccflags-y += -DDEFAULT_SYMBOL_NAMESPACE=USB_STORAGE
->> +ccflags-y += -DDEFAULT_SYMBOL_NAMESPACE=usb_storage
->>
->>  obj-$(CONFIG_USB_UAS)          += uas.o
->>  obj-$(CONFIG_USB_STORAGE)      += usb-storage.o
->>
->>
->>
->>
->>
->>
->>
->>
->>
->>
->> --
->> Best Regards
->> Masahiro Yamada
->>
+- I tried to use the existing infrastructure as much as possible with
+  one exception. I kept unwind_next_frame_reliable() next to the
+  ordinary unwind_next_frame(). I did not come up with a nice solution
+  how to integrate it. The reliable unwinding is executed on a task
+  stack only, which leads to a nice simplification. My integration
+  attempts only obfuscated the existing unwind_next_frame() which is
+  already not easy to read. Ideas are definitely welcome.
+
+- although not nice (Josh mentioned it in his review), I kept checking
+  for kretprobe_trampoline in the main loop. It could go into _start and
+  _next_frame callbacks, but more changes would be required (changing a
+  function return type, ordinary unwinding does not need it). So I did
+  not think it was worth it. I could change it in v3, of course.
+
+Miroslav Benes (3):
+  s390/unwind: drop unnecessary code around calling
+    ftrace_graph_ret_addr()
+  s390/unwind: prepare the unwinding interface for reliable stack traces
+  s390/livepatch: Implement reliable stack tracing for the consistency
+    model
+
+ arch/s390/Kconfig                  |  1 +
+ arch/s390/include/asm/stacktrace.h |  3 +-
+ arch/s390/include/asm/unwind.h     | 15 +++---
+ arch/s390/kernel/dumpstack.c       | 16 +++++-
+ arch/s390/kernel/perf_event.c      |  2 +-
+ arch/s390/kernel/stacktrace.c      | 48 +++++++++++++++++-
+ arch/s390/kernel/unwind_bc.c       | 79 ++++++++++++++++++++++++------
+ arch/s390/oprofile/init.c          |  2 +-
+ 8 files changed, 139 insertions(+), 27 deletions(-)
+
+-- 
+2.23.0
+
