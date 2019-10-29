@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC2AE86E6
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD2FE86E5
 	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:28:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbfJ2L2U convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 07:28:20 -0400
-Received: from skedge03.snt-world.com ([91.208.41.68]:45738 "EHLO
+        id S1731657AbfJ2L2V convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 07:28:21 -0400
+Received: from skedge03.snt-world.com ([91.208.41.68]:45760 "EHLO
         skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731221AbfJ2L2Q (ORCPT
+        with ESMTP id S1731422AbfJ2L2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:28:16 -0400
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        Tue, 29 Oct 2019 07:28:19 -0400
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 32CBA60CF62;
-        Tue, 29 Oct 2019 12:28:14 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 33AF660CF51;
+        Tue, 29 Oct 2019 12:28:17 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 29 Oct
- 2019 12:28:13 +0100
+ 2019 12:28:16 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Tue, 29 Oct 2019 12:28:13 +0100
+ 15.01.1713.004; Tue, 29 Oct 2019 12:28:16 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
@@ -38,13 +38,13 @@ CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 10/11] MAINTAINERS: Add an entry for Kontron Electronics
- ARM board support
-Thread-Topic: [PATCH v2 10/11] MAINTAINERS: Add an entry for Kontron
- Electronics ARM board support
-Thread-Index: AQHVjkvzp/N7dg+mjkCwTQSNv+vrJQ==
-Date:   Tue, 29 Oct 2019 11:28:13 +0000
-Message-ID: <20191029112655.15058-11-frieder.schrempf@kontron.de>
+Subject: [PATCH v2 11/11] ARM: dts: imx6ul-kontron-n6310-s-43: Add missing
+ includes for GPIOs and IRQs
+Thread-Topic: [PATCH v2 11/11] ARM: dts: imx6ul-kontron-n6310-s-43: Add
+ missing includes for GPIOs and IRQs
+Thread-Index: AQHVjkv1caDmIh8k/USvzgDB9794sg==
+Date:   Tue, 29 Oct 2019 11:28:16 +0000
+Message-ID: <20191029112655.15058-12-frieder.schrempf@kontron.de>
 References: <20191029112655.15058-1-frieder.schrempf@kontron.de>
 In-Reply-To: <20191029112655.15058-1-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -58,7 +58,7 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 32CBA60CF62.AF66E
+X-SnT-MailScanner-ID: 33AF660CF51.AF070
 X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
@@ -75,32 +75,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Kontron Electronics GmbH produces several ARM boards, that are
-planned to be upstreamed eventually. For now we have some
-i.MX6UL/ULL based SoMs and boards, that are already available
-in the kernel.
-
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Fixes: 1ea4b76cdfde ("ARM: dts: imx6ul-kontron-n6310: Add Kontron i.MX6UL N6310 SoM and boards")
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/imx6ul-kontron-n6310-s-43.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 296de2b51c83..a461d31ee98d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9103,6 +9103,12 @@ F:	include/linux/kmod.h
- F:	lib/test_kmod.c
- F:	tools/testing/selftests/kmod/
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6310-s-43.dts b/arch/arm/boot/dts/imx6ul-kontron-n6310-s-43.dts
+index 5bad29683cc3..295bc3138fea 100644
+--- a/arch/arm/boot/dts/imx6ul-kontron-n6310-s-43.dts
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6310-s-43.dts
+@@ -7,6 +7,9 @@
  
-+KONTRON ELECTRONICS ARM BOARDS SUPPORT
-+M:	Frieder Schrempf <frieder.schrempf@kontron.de>
-+S:	Maintained
-+F:	arch/arm/boot/dts/imx6ul-kontron-*
-+F:	arch/arm/boot/dts/imx6ull-kontron-*
+ #include "imx6ul-kontron-n6310-s.dts"
+ 
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/gpio/gpio.h>
 +
- KPROBES
- M:	Naveen N. Rao <naveen.n.rao@linux.ibm.com>
- M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+ / {
+ 	model = "Kontron N6310 S 43";
+ 	compatible = "kontron,imx6ul-n6310-s-43", "kontron,imx6ul-n6310-s",
 -- 
 2.17.1
