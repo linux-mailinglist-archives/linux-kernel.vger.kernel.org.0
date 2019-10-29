@@ -2,280 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82091E8C29
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A74E8C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 16:53:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390194AbfJ2Pwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 11:52:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55824 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390070AbfJ2Pww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 11:52:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F353B5AB;
-        Tue, 29 Oct 2019 15:52:50 +0000 (UTC)
-Subject: Re: [PATCH 3/3] ARM: dts: Prepare Realtek RTD1195 and MeLE X1000
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191021021035.7032-1-afaerber@suse.de>
- <20191021021035.7032-4-afaerber@suse.de> <20191029154129.GA24908@bogus>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <6e6087af-6a62-f0ff-07af-48e4836c38e6@suse.de>
-Date:   Tue, 29 Oct 2019 16:52:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2390255AbfJ2Pxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 11:53:42 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40126 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389960AbfJ2Pxk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 11:53:40 -0400
+Received: by mail-qt1-f195.google.com with SMTP id o49so20902005qta.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 08:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+O32B4WO5xsVzYjwCARGC2wmDrcO5IMKYkCtwpSW9S4=;
+        b=olxdYvHtQ+lAzgIO9gCunN5ZtpEo6noFKPjq6MSM14x/aZ47VUyw1DJ1Z8zGBRvDcz
+         YlJRAASqoY/mkJwbch7DoFud/9AtxnOduknjZKBCRVmXkxhkRPE+mghCq4K6W3vHLxl+
+         JI3TGYZt07BVM2ps4YjK0poUnHXY1XtmBUZPiGJ8QexaILBPySH+vVUc7hKQlhZ8jD35
+         D2fRnQmDafFz16IfKZ5gZRdbyykVSd9ZXNQEaXkjl1jWAJMqolUS3xk/9mTMeqcBNbac
+         RShAVpGcGhDU5+kc6qikF/730RuUhWbhGTvs9m2ORlia0j2XnIPBZ8WVI5NtfoJ0F4hs
+         WE0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+O32B4WO5xsVzYjwCARGC2wmDrcO5IMKYkCtwpSW9S4=;
+        b=hQXCjobw178rwxqQsziv8f/pFU0ZG1e4clkQ3n2b4jdsYIYMriqEP+3yGyszkDMlQK
+         sHviY0B6MBvPbcXC0K1Q4P4UdrviR8XKezVFpJS69ctTs2tXUsgD8E5sNuug/yg2H8rk
+         fzbuchdgqifnbkeb7sdBlLPCdf3KgyH84NhCJeE/sEg0EQJBxE7an4H8t5R+SdnRJvgi
+         IrHLxyblYbvOS+nknpyMye61qXWNS0TscHgWcOll3mho9LX5gKDYtkldE6dXy4dsnXlS
+         hdhS0NFBHzerx1IVeH3mhBVNjBYsynDQxE8htoFbj0kCvz4y9PDpIU30Me97cNASw+sX
+         XTeQ==
+X-Gm-Message-State: APjAAAVxeTiBl0fdrqv+z0cF7BKBGyCuSGEQ6CY0ATz87NLFS6m/2EF8
+        v2+siHzS+Y/C75mA3kHurQ==
+X-Google-Smtp-Source: APXvYqwxtAUs+WfWN5IXmrtdDq4IkbfvkPXCT6SsKAFjQqJCDAPLgv0I/ofeU3hdcXXxy9XzoWeSig==
+X-Received: by 2002:a0c:eb90:: with SMTP id x16mr23871176qvo.140.1572364419427;
+        Tue, 29 Oct 2019 08:53:39 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id t127sm8632867qkf.43.2019.10.29.08.53.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Oct 2019 08:53:39 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 11:53:32 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] x86/boot: Get the max address from SRAT
+Message-ID: <20191029155331.7o3pewdafrbua5hd@gabell>
+References: <20190830214707.1201-1-msys.mizuma@gmail.com>
+ <20190830214707.1201-4-msys.mizuma@gmail.com>
+ <20190905135134.GC20805@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <20191029154129.GA24908@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905135134.GC20805@MiWiFi-R3L-srv>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 29.10.19 um 16:41 schrieb Rob Herring:
-> On Mon, Oct 21, 2019 at 04:10:35AM +0200, Andreas Färber wrote:
->> Add Device Trees for Realtek RTD1195 SoC and MeLE X1000 TV box.
->>
->> Reuse the existing RTD1295 watchdog compatible for now.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  arch/arm/boot/dts/Makefile               |   2 +
->>  arch/arm/boot/dts/rtd1195-mele-x1000.dts |  30 ++++++++
->>  arch/arm/boot/dts/rtd1195.dtsi           | 128 +++++++++++++++++++++++++++++++
->>  3 files changed, 160 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/rtd1195-mele-x1000.dts
->>  create mode 100644 arch/arm/boot/dts/rtd1195.dtsi
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 73d33611c372..89a951485da8 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -858,6 +858,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->>  dtb-$(CONFIG_ARCH_RDA) += \
->>  	rda8810pl-orangepi-2g-iot.dtb \
->>  	rda8810pl-orangepi-i96.dtb
->> +dtb-$(CONFIG_ARCH_REALTEK) += \
->> +	rtd1195-mele-x1000.dtb
->>  dtb-$(CONFIG_ARCH_REALVIEW) += \
->>  	arm-realview-pb1176.dtb \
->>  	arm-realview-pb11mp.dtb \
->> diff --git a/arch/arm/boot/dts/rtd1195-mele-x1000.dts b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
->> new file mode 100644
->> index 000000000000..ce9a255950d3
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/rtd1195-mele-x1000.dts
->> @@ -0,0 +1,30 @@
->> +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
->> +/*
->> + * Copyright (c) 2017 Andreas Färber
+On Thu, Sep 05, 2019 at 09:51:34PM +0800, Baoquan He wrote:
+> On 08/30/19 at 05:47pm, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > Get the max address from SRAT and write it into boot_params->max_addr.
+> > 
+> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > ---
+> >  arch/x86/boot/compressed/acpi.c | 24 ++++++++++++++++++------
+> >  1 file changed, 18 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+> > index 908a1bfab..ba2bc5ab9 100644
+> > --- a/arch/x86/boot/compressed/acpi.c
+> > +++ b/arch/x86/boot/compressed/acpi.c
+> > @@ -362,16 +362,24 @@ static unsigned long get_acpi_srat_table(void)
+> >  	return 0;
+> >  }
+> >  
+> > -static void subtable_parse(struct acpi_subtable_header *sub_table, int *num)
+> > +static void subtable_parse(struct acpi_subtable_header *sub_table, int *num,
+> > +		unsigned long *max_addr)
+> >  {
+> >  	struct acpi_srat_mem_affinity *ma;
+> > +	unsigned long addr;
+> >  
+> >  	ma = (struct acpi_srat_mem_affinity *)sub_table;
+> >  
+> > -	if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
+> > -		immovable_mem[*num].start = ma->base_address;
+> > -		immovable_mem[*num].size = ma->length;
+> > -		(*num)++;
+> > +	if (ma->length) {
+> > +		if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
+> > +			addr = ma->base_address + ma->length;
+> > +			if (addr > *max_addr)
+> > +				*max_addr = addr;
 > 
-> 2019?
+> Can we return max_addr or only pass out the max_addr, then let the
+> max_addr compared and got outside of subtable_parse()? This can keep
+> subtable_parse() really only doing parsing work.
 
-Nope, I am flushing out old queues, and updating SPDX line does not
-really warrant a copyright bump IMO. The changes below would though.
-
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "rtd1195.dtsi"
->> +
->> +/ {
->> +	compatible = "mele,x1000", "realtek,rtd1195";
->> +	model = "MeLE X1000";
->> +
->> +	aliases {
->> +		serial0 = &uart0;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:115200n8";
->> +	};
->> +
->> +	memory {
-> 
-> memory@0
-
-Will test.
-
-> 
->> +		device_type = "memory";
->> +		reg = <0x0 0x40000000>;
->> +	};
->> +};
->> +
->> +&uart0 {
->> +	status = "okay";
->> +};
->> diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
->> new file mode 100644
->> index 000000000000..475740c67d26
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/rtd1195.dtsi
->> @@ -0,0 +1,128 @@
->> +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
->> +/*
->> + * Copyright (c) 2017 Andreas Färber
->> + */
->> +
->> +/memreserve/ 0x00000000 0x0000c000; /* boot code */
->> +/memreserve/ 0x0000c000 0x000f4000;
->> +/memreserve/ 0x01b00000 0x00400000; /* audio */
->> +/memreserve/ 0x01ffe000 0x00004000; /* rpc ringbuf */
->> +/memreserve/ 0x10000000 0x00100000; /* secure */
->> +/memreserve/ 0x17fff000 0x00001000;
->> +/memreserve/ 0x18000000 0x00100000; /* rbus */
->> +/memreserve/ 0x18100000 0x01000000; /* nor */
-> 
-> You shouldn't have the same entries here and in /reserved-memory. There 
-> was a time before /reserved-memory was fully supported, but we should be 
-> well past that now.
-
-I am dealing with a v2012.07 based downstream U-Boot that I do not have
-sources for, so I wouldn't be so sure there... It will only respect
-memreserve I think, whereas reserved-memory below is for the kernel, no?
-
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +/ {
->> +	compatible = "realtek,rtd1195";
->> +	interrupt-parent = <&gic>;
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu0: cpu@0 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a7";
->> +			reg = <0x0>;
->> +			clock-frequency = <1000000000>;
->> +		};
->> +
->> +		cpu1: cpu@1 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a7";
->> +			reg = <0x1>;
->> +			clock-frequency = <1000000000>;
->> +		};
->> +	};
->> +
->> +	reserved-memory {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		secure@10000000 {
->> +			reg = <0x10000000 0x100000>;
->> +			no-map;
->> +		};
->> +
->> +		rbus@18000000 {
->> +			reg = <0x18000000 0x100000>;
->> +			no-map;
-> 
-> This doesn't look right as it overlaps the register space. 
-
-Will try dropping it. James?
-
->> +		};
->> +
->> +		nor@18100000 {
->> +			reg = <0x18100000 0x1000000>;
->> +			no-map;
->> +		};
-
-Same issue here, I guess?
+Sounds great! I'll change subtable_parse() to return max_addr.
 
 Thanks,
-Andreas
+Masa
 
->> +	};
->> +
->> +	arm-pmu {
->> +		compatible = "arm,cortex-a7-pmu";
->> +		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
->> +			     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
->> +		interrupt-affinity = <&cpu0>, <&cpu1>;
->> +	};
->> +
->> +	timer {
->> +		compatible = "arm,armv7-timer";
->> +		interrupts = <GIC_PPI 13
->> +			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 14
->> +			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 11
->> +			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 10
->> +			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>;
->> +		clock-frequency = <27000000>;
->> +	};
->> +
->> +	osc27M: osc {
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <27000000>;
->> +		#clock-cells = <0>;
->> +		clock-output-names = "osc27M";
->> +	};
->> +
->> +	soc {
->> +		compatible = "simple-bus";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		wdt: watchdog@18007680 {
->> +			compatible = "realtek,rtd1295-watchdog";
->> +			reg = <0x18007680 0x100>;
->> +			clocks = <&osc27M>;
->> +		};
->> +
->> +		uart0: serial@18007800 {
->> +			compatible = "snps,dw-apb-uart";
->> +			reg = <0x18007800 0x400>;
->> +			reg-shift = <2>;
->> +			reg-io-width = <4>;
->> +			clock-frequency = <27000000>;
->> +			status = "disabled";
->> +		};
->> +
->> +		uart1: serial@1801b200 {
->> +			compatible = "snps,dw-apb-uart";
->> +			reg = <0x1801b200 0x100>;
->> +			reg-shift = <2>;
->> +			reg-io-width = <4>;
->> +			clock-frequency = <27000000>;
->> +			status = "disabled";
->> +		};
->> +
->> +		gic: interrupt-controller@ff011000 {
->> +			compatible = "arm,cortex-a7-gic";
->> +			reg = <0xff011000 0x1000>,
->> +			      <0xff012000 0x2000>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <3>;
->> +		};
->> +	};
->> +};
->> -- 
->> 2.16.4
->>
-
-
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+> 
+> Personal opinion, see what maintainers and other reviewers will say.
+> 
+> Thanks
+> Baoquan
+> 
+> > +		} else {
+> > +			immovable_mem[*num].start = ma->base_address;
+> > +			immovable_mem[*num].size = ma->length;
+> > +			(*num)++;
+> > +		}
+> >  	}
+> >  }
+> >  
+> > @@ -391,6 +399,7 @@ int count_immovable_mem_regions(void)
+> >  	struct acpi_subtable_header *sub_table;
+> >  	struct acpi_table_header *table_header;
+> >  	char arg[MAX_ACPI_ARG_LENGTH];
+> > +	unsigned long max_addr = 0;
+> >  	int num = 0;
+> >  
+> >  	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+> > @@ -409,7 +418,7 @@ int count_immovable_mem_regions(void)
+> >  		sub_table = (struct acpi_subtable_header *)table;
+> >  		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+> >  
+> > -			subtable_parse(sub_table, &num);
+> > +			subtable_parse(sub_table, &num, &max_addr);
+> >  
+> >  			if (num >= MAX_NUMNODES*2) {
+> >  				debug_putstr("Too many immovable memory regions, aborting.\n");
+> > @@ -418,6 +427,9 @@ int count_immovable_mem_regions(void)
+> >  		}
+> >  		table += sub_table->length;
+> >  	}
+> > +
+> > +	boot_params->max_addr = max_addr;
+> > +
+> >  	return num;
+> >  }
+> >  #endif /* CONFIG_RANDOMIZE_BASE && CONFIG_MEMORY_HOTREMOVE */
+> > -- 
+> > 2.18.1
+> > 
