@@ -2,129 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C50DE83FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC319E83FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 10:15:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbfJ2JPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 05:15:13 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41732 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729876AbfJ2JPN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:15:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iENbg+FdOJeAwjiRGinPqnU5SrOnnqln7JfFosCjnn4=; b=H3JkTkscyd9P7wDj27DHoHwRV
-        ZRLlduecjL1PLM71TFPypN4uUjukvtpEwLe45Re5UyWtlmfQ55pC0oEwBwzNSBGA9mdpSKkar7DvS
-        C8uZI25CEO34oBSLmWGrDtIOw8+XhRSUPcWrRS1VqFAnl6QiWXMCnSNRKG2I/w+l5yeK8Ve6ccaFd
-        1kjTwJQC0uIRYBCqvwAKUUVFcjzl7zH1qSQfaUZ74Sd5xHV7727LW8I9aOM+ZO9u6CTKqyVE9H+5l
-        yGLChwVob0lycs2Ve0oYi0oEp7pS8SKVsAdUf5ucOk+GdclZo0OQre6e+Gxy0LKFV0L1PNZImYAr5
-        eJT2c0JBw==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:48926)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iPNaK-0000fQ-HD; Tue, 29 Oct 2019 09:14:40 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iPNaD-0004Vk-Up; Tue, 29 Oct 2019 09:14:33 +0000
-Date:   Tue, 29 Oct 2019 09:14:33 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Saurav Girepunje <saurav.girepunje@gmail.com>
-Cc:     joern@lazybastard.org, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, saurav.girepunje@hotmail.com
-Subject: Re: [PATCH] mtd: devices: phram.c: Fix use true/false for bool type
-Message-ID: <20191029091433.GG25745@shell.armlinux.org.uk>
-References: <20191029032142.GA6758@saurav>
+        id S1731530AbfJ2JPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 05:15:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:57692 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731459AbfJ2JPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 05:15:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 02:15:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
+   d="scan'208";a="401085508"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.122])
+  by fmsmga006.fm.intel.com with ESMTP; 29 Oct 2019 02:15:35 -0700
+Date:   Tue, 29 Oct 2019 11:15:35 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     David Howells <dhowells@redhat.com>, Petr Vorel <pvorel@suse.cz>,
+        shuah <shuah@kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] selftest/trustedkeys: TPM 1.2 trusted keys test
+Message-ID: <20191029091535.GB9896@linux.intel.com>
+References: <1571944467-13097-1-git-send-email-zohar@linux.ibm.com>
+ <20191028203014.GA8279@linux.intel.com>
+ <1572295513.4532.270.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191029032142.GA6758@saurav>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1572295513.4532.270.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 08:51:42AM +0530, Saurav Girepunje wrote:
-> Return type for security_extensions_enabled() is bool
-> so use true/false.
-
-This doesn't seem to bear any resemblence to the subject line.
-
-> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
-> ---
->  arch/arm/mm/nommu.c         |  2 +-
->  drivers/mtd/devices/phram.c | 11 +++++------
->  2 files changed, 6 insertions(+), 7 deletions(-)
+On Mon, Oct 28, 2019 at 04:45:13PM -0400, Mimi Zohar wrote:
+> On Mon, 2019-10-28 at 22:30 +0200, Jarkko Sakkinen wrote:
+> > On Thu, Oct 24, 2019 at 03:14:27PM -0400, Mimi Zohar wrote:
+> > > Create, save and load trusted keys test
+> > > 
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > 
+> > > Change log v1:
+> > > - Replace the directions for using Trousers to take ownership of the TPM
+> > > with directions for using the IBM TSS.
+> > > - Differentiate between different types of errors.  Recent bug is causing
+> > > "add_key: Timer expired".
+> > > ---
+> > 
+> > Is not really usable as a selftest because of 3rd party dependencies.
 > 
-> diff --git a/arch/arm/mm/nommu.c b/arch/arm/mm/nommu.c
-> index 24ecf8d30a1e..1fed74f93c66 100644
-> --- a/arch/arm/mm/nommu.c
-> +++ b/arch/arm/mm/nommu.c
-> @@ -56,7 +56,7 @@ static inline bool security_extensions_enabled(void)
->  	if ((read_cpuid_id() & 0x000f0000) == 0x000f0000)
->  		return cpuid_feature_extract(CPUID_EXT_PFR1, 4) ||
->  			cpuid_feature_extract(CPUID_EXT_PFR1, 20);
-> -	return 0;
-> +	return true;
+> As part of diagnosing trusted keys failure, there is some
+> hints/directions as to how to take TPM 1.2 ownership, but it does not
+> take ownership.  The previous version included directions for using
+> Trousers.  This version provides directions for using the IBM TSS.
+>  Feel free to include additional hints/directions.
 
-This isn't explained in the commit.  You explain why it should return
-true or false, but you don't explain why converting this from returning
-0, aka false, to returning true is necessary.
+You must write your own minimal user space that can be included
+to the kernel. Otherwise, we cannot take it.
 
->  }
->  
->  unsigned long setup_vectors_base(void)
-> diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
-> index 86ae13b756b5..931e5c2481b5 100644
-> --- a/drivers/mtd/devices/phram.c
-> +++ b/drivers/mtd/devices/phram.c
-> @@ -239,27 +239,26 @@ static int phram_setup(const char *val)
->  
->  	ret = parse_name(&name, token[0]);
->  	if (ret)
-> -		goto exit;
-> +		return ret;
->  
->  	ret = parse_num64(&start, token[1]);
->  	if (ret) {
-> +		kfree(name);
->  		parse_err("illegal start address\n");
-> -		goto parse_err;
->  	}
->  
->  	ret = parse_num64(&len, token[2]);
->  	if (ret) {
-> +		kfree(name);
->  		parse_err("illegal device length\n");
-> -		goto parse_err;
->  	}
->  
->  	ret = register_device(name, start, len);
->  	if (!ret)
->  		pr_info("%s device: %#llx at %#llx\n", name, len, start);
-> +	else
-> +		kfree(name);
->  
-> -parse_err:
-> -	kfree(name);
-> -exit:
->  	return ret;
->  }
-
-At least this partially matches the subject line but it looks unrelated
-to the other changes.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+/Jarkko
