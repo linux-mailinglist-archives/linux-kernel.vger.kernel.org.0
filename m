@@ -2,109 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCB2E90EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5124EE910D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 21:48:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfJ2UlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 16:41:09 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45026 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfJ2UlJ (ORCPT
+        id S1728408AbfJ2UsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 16:48:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33888 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728221AbfJ2UsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:41:09 -0400
-Received: by mail-yw1-f66.google.com with SMTP id i123so72190ywe.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 13:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WuY6ILKiiGGehm6YMQNOxmZrHgw01PTiEn52jmhZoaA=;
-        b=FfDtwyMjgbdzfnIywo4X2W9uOXHiEeV/UWv+Yjsjxo4A7EFWaS9lFQhbP34vclGHMR
-         svX5wINVFqncLJsg/29M7iOeC1BedLpK2jJRy5rYBbhotctqIOXIrGEWfUz3zZEJs09A
-         AYdTCSo8OlcK+gRVC3Tg9/AUoF2Wcsmvsno/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WuY6ILKiiGGehm6YMQNOxmZrHgw01PTiEn52jmhZoaA=;
-        b=gOOBwhs3Z4Zt3Rozd6qjqTieu5txQSv1kSt/RFL6V9mmKuKpGM3Dnux21EcU/7o+6u
-         106ogxTfk5yjB2YfoM6Nkd124ZmZtCSxMwO49/Lqsrymdu95JOttkX1q/+srhcfZULXt
-         x4MfImc8e9aJsD9gBfOxMXg2p9YpaJdfej/RTpdmigwXhUtAKRFP4HP3rJuI0FU4sYcG
-         VEgZlaQ3BzyjlKruAmXApvU/LI+/d3L7wtdH9o7+zZvf3NdUlqGa1Wv5Bz/bpRQF/PkW
-         2BWPWgbA2/yb1+DoXfc9pDUkqSJQ92nTrODmaMhHMW4lpnLeskRLN1hY2y4/IEyzoGok
-         8zmA==
-X-Gm-Message-State: APjAAAWK4eZeM+GIvdndGD6/0/8dYhZa1lROVZuYy26j7YrAgVYdGHB2
-        pYu3c6s3qZvKu6rR0wxXKJB2mQ==
-X-Google-Smtp-Source: APXvYqzxnfmUiCYcK8IzDBpxXis52+iJCDi0yjqy3P5ViycIwFvgRsE2b8oY/jVgHxqU4WPTRGCADA==
-X-Received: by 2002:a81:4fd7:: with SMTP id d206mr18526059ywb.344.1572381667243;
-        Tue, 29 Oct 2019 13:41:07 -0700 (PDT)
-Received: from sinkpad (192-222-189-155.qc.cable.ebox.net. [192.222.189.155])
-        by smtp.gmail.com with ESMTPSA id m5sm9687909ywj.27.2019.10.29.13.41.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 13:41:06 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 16:40:58 -0400
-From:   Julien Desfossez <jdesfossez@digitalocean.com>
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     Aubrey Li <aubrey.intel@gmail.com>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20191029204058.GB13345@sinkpad>
-References: <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
- <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com>
- <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com>
- <20190911140204.GA52872@aaronlu>
- <7b001860-05b4-4308-df0e-8b60037b8000@linux.intel.com>
- <20190912120400.GA16200@aaronlu>
- <CAERHkrsrszO4hJqVy=g7P74h9d_YJzW7GY4ptPKykTX-mc9Mdg@mail.gmail.com>
- <20190915141402.GA1349@aaronlu>
- <CAERHkrs9u24NrcNUwHq8mTW922Ffhy9rPkBGVN_afm1RBhabsQ@mail.gmail.com>
- <ade66e6d-cc52-4575-2f8f-e4d96c07a33c@linux.intel.com>
+        Tue, 29 Oct 2019 16:48:14 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TKiW4O115974;
+        Tue, 29 Oct 2019 20:47:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=pI3ti0ePmGZJmgoJvow9aItPjDGChrv+DSqwfVKgoOU=;
+ b=ZUYU7X1LDu3k1Td4/HmXAjtE5shf0ZSFxtw1I9QgKjkkrrQdeI+h+pi5r0fncHDlKfRu
+ DY2uCVSY5nwCiKkMUhH40iPEBjuSoM5U0ggGY8O5jnaWkv42KMGU/LfpKUNK7aAets2P
+ 2hXzix2oEGaCTS2y8EXKMAaYWGs+BgQLP9OTNyvHax28BLp5B6kXWvj3eOBxcG0i8spe
+ heGo4+e0rYlKMOaTDNMXqUEd3oOxURXVV6mVFF76bRQqm+9dZR/T/+BRjsCciypuUo10
+ wj8kB0OLPMyAnkSIfa+F6SHmH04XojpdVu8eVZNUc6uf3TcMtElcjd2wpK6Mi39m7KIh /w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2vvdjuc1jg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 20:47:43 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TKhZgd177368;
+        Tue, 29 Oct 2019 20:47:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vxpenx5w4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 20:47:42 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9TKldLr021831;
+        Tue, 29 Oct 2019 20:47:40 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Oct 2019 13:47:39 -0700
+Subject: Re: [PATCH] hugetlbfs: fix error handling in init_hugetlbfs_fs()
+To:     cgxu519@mykernel.net
+Cc:     linux-mm <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20191017103822.8610-1-cgxu519@mykernel.net>
+ <ba6cd4a4-a1cd-82c0-5ea1-5e20112f8f6b@oracle.com>
+ <16e15cd0096.1068d5c9f40168.8315245997167313680@mykernel.net>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <94b6244d-2c24-e269-b12c-e3ba694b242d@oracle.com>
+Date:   Tue, 29 Oct 2019 13:47:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ade66e6d-cc52-4575-2f8f-e4d96c07a33c@linux.intel.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <16e15cd0096.1068d5c9f40168.8315245997167313680@mykernel.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290180
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910290181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-Sep-2019 01:40:58 PM, Tim Chen wrote:
-> I think the test that's of interest is to see my load balancing added on top
-> of Aaron's fairness patch, instead of using my previous version of
-> forced idle approach in coresched-v3-v5.1.5-test-tim branch. 
->  
-> I've added my two load balance patches on top of Aaron's patches
-> in coresched-v3-v5.1.5-test-core_vruntime branch and put it in
+On 10/28/19 9:36 PM, Chengguang Xu wrote:
+>  ---- 在 星期二, 2019-10-29 05:27:01 Mike Kravetz <mike.kravetz@oracle.com> 撰写 ----
+>  > Subject: [PATCH] mm/hugetlbfs: fix error handling when setting up mounts
+>  > 
+>  > It is assumed that the hugetlbfs_vfsmount[] array will contain
+>  > either a valid vfsmount pointer or NULL for each hstate after
+>  > initialization.  Changes made while converting to use fs_context
+>  > broke this assumption.
+>  > 
+>  > Reported-by: Chengguang Xu <cgxu519@mykernel.net>
+>  > Fixes: 32021982a324 ("hugetlbfs: Convert to fs_context")
+>  > Cc: stable@vger.kernel.org
+>  > Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+>  > ---
+>  >  fs/hugetlbfs/inode.c | 10 ++++++----
+>  >  1 file changed, 6 insertions(+), 4 deletions(-)
+>  > 
+>  > diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+>  > index a478df035651..178389209561 100644
+>  > --- a/fs/hugetlbfs/inode.c
+>  > +++ b/fs/hugetlbfs/inode.c
+>  > @@ -1470,15 +1470,17 @@ static int __init init_hugetlbfs_fs(void)
+>  >      i = 0;
+>  >      for_each_hstate(h) {
+>  >          mnt = mount_one_hugetlbfs(h);
+>  > -        if (IS_ERR(mnt) && i == 0) {
+>  > +        if (IS_ERR(mnt)) {
+>  > +            hugetlbfs_vfsmount[i] = NULL;
+>  >              error = PTR_ERR(mnt);
+>  > -            goto out;
+>  > +        } else {
+>  > +            hugetlbfs_vfsmount[i] = mnt;
+>  >          }
+>  > -        hugetlbfs_vfsmount[i] = mnt;
+>  >          i++;
+>  >      }
+>  >  
+>  > -    return 0;
+>  > +    if (hugetlbfs_vfsmount[default_hstate_idx] != NULL)
+>  > +        return 0;
 > 
-> https://github.com/pdxChen/gang/tree/coresched-v3-v5.1.5-test-core_vruntime-lb
+> Maybe we should umount other non-null entries and release
+> used inodes for safety in error case.
 
-We have been trying to benchmark with the load balancer patches and have
-experienced some hard lockups with the saturated test cases, but we
-don't have traces for now.
+Yes, even the original code did not clean up properly in the case of
+all mount errors.  This will explicitly mount the default_hstate_idx
+hstate first.  Then, optionally mount other hstates.  It will make the
+error handling and cleanup more explicit.
 
-Since we are mostly focused on testing the rebased v4 currently, we will
-post it without those patches and then we can try to debug more.
+From 7291f1da0d494cb64f6d219943c59a02e6d4fca7 Mon Sep 17 00:00:00 2001
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Date: Mon, 28 Oct 2019 14:08:42 -0700
+Subject: [PATCH] mm/hugetlbfs: fix error handling when setting up mounts
 
-Thanks,
+It is assumed that the hugetlbfs_vfsmount[] array will contain
+either a valid vfsmount pointer or NULL for each hstate after
+initialization.  Changes made while converting to use fs_context
+broke this assumption.
 
-Julien
+While fixing the hugetlbfs_vfsmount issue, it was discovered that
+init_hugetlbfs_fs never did correctly clean up when encountering
+a vfs mount error.
+
+Reported-by: Chengguang Xu <cgxu519@mykernel.net>
+Fixes: 32021982a324 ("hugetlbfs: Convert to fs_context")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ fs/hugetlbfs/inode.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index a478df035651..26e3906c18fe 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1461,28 +1461,41 @@ static int __init init_hugetlbfs_fs(void)
+ 					sizeof(struct hugetlbfs_inode_info),
+ 					0, SLAB_ACCOUNT, init_once);
+ 	if (hugetlbfs_inode_cachep == NULL)
+-		goto out2;
++		goto out;
+ 
+ 	error = register_filesystem(&hugetlbfs_fs_type);
+ 	if (error)
+-		goto out;
++		goto out_free;
+ 
++	/* default hstate mount is required */
++	mnt = mount_one_hugetlbfs(&hstates[default_hstate_idx]);
++	if (IS_ERR(mnt)) {
++		error = PTR_ERR(mnt);
++		goto out_unreg;
++	}
++	hugetlbfs_vfsmount[default_hstate_idx] = mnt;
++
++	/* other hstates are optional */
+ 	i = 0;
+ 	for_each_hstate(h) {
++		if (i == default_hstate_idx)
++			continue;
++
+ 		mnt = mount_one_hugetlbfs(h);
+-		if (IS_ERR(mnt) && i == 0) {
+-			error = PTR_ERR(mnt);
+-			goto out;
+-		}
+-		hugetlbfs_vfsmount[i] = mnt;
++		if (IS_ERR(mnt))
++			hugetlbfs_vfsmount[i] = NULL;
++		else
++			hugetlbfs_vfsmount[i] = mnt;
+ 		i++;
+ 	}
+ 
+ 	return 0;
+ 
+- out:
++ out_unreg:
++	(void)unregister_filesystem(&hugetlbfs_fs_type);
++ out_free:
+ 	kmem_cache_destroy(hugetlbfs_inode_cachep);
+- out2:
++ out:
+ 	return error;
+ }
+ fs_initcall(init_hugetlbfs_fs)
+-- 
+2.20.1
+
+
