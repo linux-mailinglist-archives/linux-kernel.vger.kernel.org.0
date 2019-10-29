@@ -2,90 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8D1AE82C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B242E82A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 08:46:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfJ2HuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 03:50:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48936 "EHLO mail.kernel.org"
+        id S1727296AbfJ2HqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 03:46:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37689 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfJ2HuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 03:50:11 -0400
-Received: from localhost (unknown [91.217.168.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FB9420862;
-        Tue, 29 Oct 2019 07:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572335410;
-        bh=AkPGUGUQ7O22I++5egFOxpSLRIAUQwOIcbOTmbPzHKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sRKSF5K/AlN5GrAdeqvLE9SchQtrj4GYEsnLBDPbHIQSQguy+fQXaGLqUjlvzL9lf
-         JgbRpztgCCHo/DRg11StqXpDwmhSuslAj7iGSiPsWGsNomMgtMkB47UrFYm8+DaBOD
-         qp6ceIoXULz1mumBJkSp4AJ80UsxaoB7myQIDrQ8=
-Date:   Tue, 29 Oct 2019 08:44:49 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Ondrej Jirman <megous@megous.com>
-Cc:     linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: sun8i-a83t-tbs-a711: Fix WiFi resume from
- suspend
-Message-ID: <20191029074449.jx2acknfds2idyjt@hendrix>
-References: <20191028215859.3467317-1-megous@megous.com>
+        id S1726222AbfJ2HqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 03:46:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 00:46:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,243,1569308400"; 
+   d="scan'208";a="198851286"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2019 00:46:02 -0700
+Received: from [10.226.39.46] (ekotax-MOBL.gar.corp.intel.com [10.226.39.46])
+        by linux.intel.com (Postfix) with ESMTP id C0779580372;
+        Tue, 29 Oct 2019 00:45:58 -0700 (PDT)
+Subject: Re: [PATCH v4 2/3] dwc: PCI: intel: PCIe RC controller driver
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, andrew.murray@arm.com, robh@kernel.org,
+        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+        hch@infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+References: <20191022130905.GA133961@google.com>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <f74cdada-c58b-7238-9be1-8b001ca1fb84@linux.intel.com>
+Date:   Tue, 29 Oct 2019 15:45:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="52ug3nnncgfccqfd"
-Content-Disposition: inline
-In-Reply-To: <20191028215859.3467317-1-megous@megous.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191022130905.GA133961@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---52ug3nnncgfccqfd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Oct 28, 2019 at 10:58:58PM +0100, Ondrej Jirman wrote:
-> Without enabling keep-power-in-suspend, we can't wake the device
-> up using WOL packet, and the log is flooded with these messages
-> on resume:
+On 10/22/2019 9:09 PM, Bjorn Helgaas wrote:
+> On Tue, Oct 22, 2019 at 05:07:47PM +0800, Dilip Kota wrote:
+>> On 10/22/2019 1:17 AM, Bjorn Helgaas wrote:
+>>> On Mon, Oct 21, 2019 at 02:39:19PM +0800, Dilip Kota wrote:
+>>>> Add support to PCIe RC controller on Intel Gateway SoCs.
+>>>> PCIe controller is based of Synopsys DesignWare pci core.
+>>>>
+>>>> Intel PCIe driver requires Upconfig support, fast training
+>>>> sequence configuration and link speed change. So adding the
+>>>> respective helper functions in the pcie DesignWare framework.
+>>>> It also programs hardware autonomous speed during speed
+>>>> configuration so defining it in pci_regs.h.
+>>>>
+>>>> +static void intel_pcie_link_setup(struct intel_pcie_port *lpp)
+>>>> +{
+>>>> +	u32 val;
+>>>> +
+>>>> +	val = pcie_rc_cfg_rd(lpp, PCIE_CAP_OFST + PCI_EXP_LNKCAP);
+>>>> +	lpp->max_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, val);
+>>>> +	lpp->max_width = FIELD_GET(PCI_EXP_LNKCAP_MLW, val);
+>>>> +
+>>>> +	val = pcie_rc_cfg_rd(lpp, PCIE_CAP_OFST + PCI_EXP_LNKCTL);
+>>>> +
+>>>> +	val &= ~(PCI_EXP_LNKCTL_LD | PCI_EXP_LNKCTL_ASPMC);
+>>>> +	val |= (PCI_EXP_LNKSTA_SLC << 16) | PCI_EXP_LNKCTL_CCC |
+>>>> +	       PCI_EXP_LNKCTL_RCB;
+>>> PCI_EXP_LNKCTL_CCC is RW.  But doesn't it depend on the components on
+>>> both ends of the link?  Do you know what device is at the other end?
+>>> I would have assumed that you'd have to start with CCC==0, which
+>>> should be most conservative, then set CCC=1 only if you know both ends
+>>> have a common clock.
+>> PCIe RC and endpoint device are having the common clock so set the CCC=1.
+> How do you know what the endpoint device is?  Is this driver only for
+> a specific embedded configuration where the endpoint is always
+> soldered down?  There's no possibility of this RC being used with a
+> connector?
 >
-> sunxi-mmc 1c10000.mmc: send stop command failed
-> sunxi-mmc 1c10000.mmc: data error, sending stop command
-> sunxi-mmc 1c10000.mmc: send stop command failed
-> sunxi-mmc 1c10000.mmc: data error, sending stop command
+> Shouldn't this be either discoverable or configurable via DT or
+> something?  pcie_aspm_configure_common_clock() seems to do something
+> similar, but I can't really vouch for its correctness.
+
+(sorry for the late reply, i am back today from sick leave)
+
+I see pcie_aspm_configure_common_clock() is getting called during pcie 
+root bus bridge scanning and programming the CCC.
+
+So, CCC configuration can be removed here in intel_pcie_link_setup().
+
+Regards,
+Dilip
+
 >
-> So to make the WiFi really a wakeup-source, we need to keep it powered
-> during suspend.
->
-> Fixes: 0e23372080def7 ("arm: dts: sun8i: Add the TBS A711 tablet devicetree")
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-
-Applied, thanks!
-
-(I don't have my ssh key with me, so it might take a while before it's
-pushed...)
-
-Maxime
-
---52ug3nnncgfccqfd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbft8QAKCRDj7w1vZxhR
-xYcyAP0WvrLuHa2aHuAm4rNH4xTo173mvgoO36v3gZZf8d3BUAD/YggPtA5vvV6x
-KMIL0fCiPgWcqxx9dW2Qa+7cXZeLsgk=
-=Ctt+
------END PGP SIGNATURE-----
-
---52ug3nnncgfccqfd--
+> Bjorn
