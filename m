@@ -2,79 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFF6E89A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D30CE89A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 14:36:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388702AbfJ2Ng1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 09:36:27 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40051 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfJ2Ng1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:36:27 -0400
-Received: from mail-yw1-f69.google.com ([209.85.161.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1iPRfd-0004jR-4Q
-        for linux-kernel@vger.kernel.org; Tue, 29 Oct 2019 13:36:25 +0000
-Received: by mail-yw1-f69.google.com with SMTP id o130so9797320ywo.17
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 06:36:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rwtNqWivpFIQgbUVsKN05tdEedk/c2ICmFFDz7gAHHg=;
-        b=qzpxkmC7InOE3YiM5zc+JDzcAOdAro9n7gSDsi6b7nQaTU1SikSokVUJZJS3xoHNeq
-         5IwNxsIdxLDQDqDCKQoF0uwr6qWiNHCn5/hNHBa4prcHKfcaTkcPBmS45tMV6K4H9dPH
-         3SLKo487sQWSH342zrsQ6fGnW2B3C77QOx/S0vAgcJZarXUBmekcYde2SQDmpZm+I7oA
-         gz2ruguimmEXfSEgX6G8YNYIDyLQbZrAyXLSbvOknc4SdrivizcHvjcTd9mD+XfERY6f
-         ie+CwEm5dEMGklR8bcn1By24qV7vSVA+DabFNnjfQRDN42bK+CMjqp3TY2aQYU3Uup8s
-         /X0Q==
-X-Gm-Message-State: APjAAAUKHTLfSDvcHi/+9rr9QeK8QfF8E/ovwzhwgPDEf68z5CdZ/jGG
-        A6ndBk2PTdmfmXfLr+Y1PzFDH/6IaCUzjKPCKMoWFHcup+d8L8jMaJQ0tCJlualulka4ZS/7UqQ
-        ybCgqwqRHAV5/wxBa8wPCkYuo7axSJYdn7m29WfeMIQ==
-X-Received: by 2002:a81:500a:: with SMTP id e10mr17707255ywb.58.1572356184087;
-        Tue, 29 Oct 2019 06:36:24 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzWRUgkWNbdDnzVotQDun7zMckaFR1TaoB4O5PCly4//oAwUlzOU76kcVYnSSfbVTEjaG0pKg==
-X-Received: by 2002:a81:500a:: with SMTP id e10mr17707210ywb.58.1572356183528;
-        Tue, 29 Oct 2019 06:36:23 -0700 (PDT)
-Received: from localhost ([2605:a601:ac3:9720:f461:b9b9:429:65bd])
-        by smtp.gmail.com with ESMTPSA id x201sm17900019ywx.34.2019.10.29.06.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 06:36:22 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 08:36:21 -0500
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Dmitry Tunin <hanipouspilot@gmail.com>
-Cc:     wireless-regdb@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Russian entry is incorrect. According to the last
- regulations document of Feb 29, 2016, 160 MHz channels and 802.11ad are
- allowed.
-Message-ID: <20191029133621.GP30813@ubuntu-xps13>
-References: <1566636490-3438-1-git-send-email-hanipouspilot@gmail.com>
+        id S2388734AbfJ2Ngm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 09:36:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388602AbfJ2Ngl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 09:36:41 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B2EC2086A;
+        Tue, 29 Oct 2019 13:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572356201;
+        bh=hqFAc7xsziLWsBPWZq0srOVOjk5w2lCAS39jmUgm6gA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y9476nuo8bL5TAGLC1+v92LCKfTum9lzcCJ0X92LJuxjup0fFTLFO7wB0Bhntyo6J
+         lJGsUV1gi36/3Xq8xAArCCWPjXmpbVXjjfro7Emn4fZWKX1aHQioTrmWa44hJUOJhu
+         24Z4tAxVgNRAoyf+ND9k9NbTBj7XRuBb4VsRh5do=
+Date:   Tue, 29 Oct 2019 13:36:36 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Xiang Zheng <zhengxiang9@huawei.com>
+Cc:     catalin.marinas@arm.com, james.morse@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wanghaibin.wang@huawei.com
+Subject: Re: [PATCH v2] arm64: print additional fault message when executing
+ non-exec memory
+Message-ID: <20191029133635.GA12800@willie-the-truck>
+References: <20191029124131.32028-1-zhengxiang9@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566636490-3438-1-git-send-email-hanipouspilot@gmail.com>
+In-Reply-To: <20191029124131.32028-1-zhengxiang9@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 11:48:10AM +0300, Dmitry Tunin wrote:
-> http://rfs-rf.ru/upload/medialibrary/c1a/prilozhenie-1-k-resheniyu-gkrch-_-16_36_03.pdf
+On Tue, Oct 29, 2019 at 08:41:31PM +0800, Xiang Zheng wrote:
+> When attempting to executing non-executable memory, the fault message
+> shows:
 > 
-> Note that there was never a DFS requirement in Russia, but always was
-> NO-OUTDOOR on 5GHz.
-> Maximum power is 200mW that is ~23dBm on all 5GHz channels.
-> Also Russia has never been regulated by ETSI.
+>   Unable to handle kernel read from unreadable memory at virtual address
+>   ffff802dac469000
 > 
-> EIRP has been reduced by 4dBm because of TPC requirement.
+> This may confuse someone, so add a new fault message for instruction
+> abort.
 > 
-> Signed-off-by: Dmitry Tunin <hanipouspilot@gmail.com>
+> Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+> ---
+>  arch/arm64/mm/fault.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index 9fc6db0bcbad..9adec86d0f8a 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -318,6 +318,8 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
+>  	if (is_el1_permission_fault(addr, esr, regs)) {
+>  		if (esr & ESR_ELx_WNR)
+>  			msg = "write to read-only memory";
+> +		else if (is_el1_instruction_abort(esr))
+> +			msg = "execute from non-executable memory";
+>  		else
+>  			msg = "read from unreadable memory";
+>  	} else if (addr < PAGE_SIZE) {
 
-Sorry for the delay. Applied, with some slight adjustments to the commit
-message. Thanks!
+Acked-by: Will Deacon <will@kernel.org>
+
+Will
