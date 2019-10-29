@@ -2,96 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF24AE8D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148DBE8D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:48:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390517AbfJ2QqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 12:46:07 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:50522 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726225AbfJ2QqH (ORCPT
+        id S2390258AbfJ2Qsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 12:48:33 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39761 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfJ2Qsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 12:46:07 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9TGgwJm026459;
-        Tue, 29 Oct 2019 17:45:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=UqBLShJCTgixGdbgFzma65RAxEtmlze/XM6cp3uTtSQ=;
- b=cepqO2/65Lz5Bhz53U3SzJUY4oirqjrlIoH/Xf+rSA2N//WoxU5JLEhRHpUN3ewF7gGZ
- CBifsmb2jZkxvxCRk8n3NH/w6WvggYteTIFuPgl+Ud0KoO634ZIP6zVBpoyMXtaif00o
- peULpGUwSho/30zIo6YEpkwg/Ixy9v/wUzSaTEW3a9RCxLVSCgx0/2WU1NwetLjsL0mY
- r2jaah/jM/2cfkZuQzhOp7kmTAni0V+sD3FE/kgc2QjBzT/eF/rAGYDX+FpPDvBWyUck
- 46adMW/HVVtT+QfANEaVFtVds4QZt0/vSNpOTknykhlkI6+u8espWryGMyR47znJEL+k Bw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vvbm0gwdg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Oct 2019 17:45:46 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6704810002A;
-        Tue, 29 Oct 2019 17:45:46 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 56EFE2A748A;
-        Tue, 29 Oct 2019 17:45:46 +0100 (CET)
-Received: from localhost (10.75.127.50) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 29 Oct 2019 17:45:45
- +0100
-From:   Pascal Paillet <p.paillet@st.com>
-To:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <rui.zhang@intel.com>, <edubezval@gmail.com>,
-        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
-        <david.hernandezsanchez@st.com>,
-        <wsa+renesas@sang-engineering.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC:     <p.paillet@st.com>
-Subject: [PATCH 4/4] ARM: dts: stm32: remove thermal passive trip point on stm32mp157c
-Date:   Tue, 29 Oct 2019 17:45:37 +0100
-Message-ID: <20191029164537.1561-5-p.paillet@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191029164537.1561-1-p.paillet@st.com>
-References: <20191029164537.1561-1-p.paillet@st.com>
+        Tue, 29 Oct 2019 12:48:33 -0400
+Received: by mail-ot1-f65.google.com with SMTP id t8so4231763otl.6;
+        Tue, 29 Oct 2019 09:48:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RI8zG1ufEnYzuTEZN0YEn2eCjXsRH9KIe+0owaMHLI8=;
+        b=Jp+EDBQ03Oi1hXUFxgucFPFvYyqIEQ7kTSRuJQLY6R4AggAZBPDLHaEusBN0PbrXGO
+         NN4H6GPyNDHwCU+JF+hj3H3xo4ajTs8cFGlIdp7dUW04vDsUbGnr/hLF6HYd8DNXhHUU
+         q5I+tk6ZO2QDs8XHsoBoqCLBXQkBSV5ctm03R4EuUHZCDeTryL/3T7PHgBOA2nMzzHHj
+         tPEnVzB+LDotsaXlSOVukIk2mQRonRqNzJ5Nc8Uv/jpdayRMTmMa3u6rQ0QX1szUjPv6
+         6arjpE5S19GWexPqr40daXmfSF2vQiH6MtYj6PH6AQAJnveHc99FGjPLhwYLDKGPwLeX
+         5fQA==
+X-Gm-Message-State: APjAAAVqdkjfMbutJM5Mn3oUB/Zkeukr692mi/ojPLDZrGg18cz18W9J
+        LSWB7c2Ow/oQ0dpFG8woOA==
+X-Google-Smtp-Source: APXvYqx+s5uJ0NhlC8JcM6u6lCZ7knvuS4ijj/TCsIhKf8B7RMJaGqDUPbcv5jvl2mAHW5AjZ8bxqg==
+X-Received: by 2002:a9d:7756:: with SMTP id t22mr11833715otl.43.1572367711861;
+        Tue, 29 Oct 2019 09:48:31 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d27sm2365348ote.11.2019.10.29.09.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 09:48:31 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 11:48:30 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Beniamin Bia <beniamin.bia@analog.com>
+Cc:     jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, paulmck@linux.ibm.com,
+        mchehab+samsung@kernel.org, linus.walleij@linaro.org,
+        nicolas.ferre@microchip.com, biabeniamin@outlook.com
+Subject: Re: [PATCH 3/4] dt-binding: iio: Add documentation for AD7091R5
+Message-ID: <20191029164830.GA21417@bogus>
+References: <20191021170608.26412-1-beniamin.bia@analog.com>
+ <20191021170608.26412-3-beniamin.bia@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-29_05:2019-10-28,2019-10-29 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021170608.26412-3-beniamin.bia@analog.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove thermal passive trip point.
+On Mon, Oct 21, 2019 at 08:06:07PM +0300, Beniamin Bia wrote:
+> Documentation for AD7091R5 ADC was added.
+> 
+> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad7091r5.yaml        | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+> new file mode 100644
+> index 000000000000..d041cd76804e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Signed-off-by: Pascal Paillet <p.paillet@st.com>
-Change-Id: I494313cf467eea491236e73bd2fbe1803345586f
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
+(GPL-2.0-only OR BSD-2-Clause) for new bindings please.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 9b11654a0a39..799b2aedd2c9 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -91,12 +91,6 @@
- 			thermal-sensors = <&dts>;
- 
- 			trips {
--				cpu_alert1: cpu-alert1 {
--					temperature = <85000>;
--					hysteresis = <0>;
--					type = "passive";
--				};
--
- 				cpu-crit {
- 					temperature = <120000>;
- 					hysteresis = <0>;
--- 
-2.17.1
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7091r5.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD7091R5 4-Channel 12-Bit ADC
+> +
+> +maintainers:
+> +  - Beniamin Bia <beniamin.bia@analog.com>
+> +
+> +description: |
+> +  Analog Devices AD7091R5 4-Channel 12-Bit ADC
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7091r-5.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7091R5
 
+lowercase 'r' or be consistent with the filename.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  avcc-supply:
+> +    description:
+> +      Phandle to the Avcc power supply
+> +    maxItems: 1
+
+Not an array, so you can drop this.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+Add:
+
+additionalProperties: false
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+
+adc@2f
+
+> +                compatible = "adi,ad7091r5";
+
+Doesn't match the schema.
+
+> +                reg = <0x2F>;
+
+Lowercase hex.
+
+> +
+> +                interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
+> +                interrupt-parent = <&gpio>;
+> +        };
+> +    };
+> +...
+> -- 
+> 2.17.1
+> 
