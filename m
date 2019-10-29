@@ -2,189 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 169E1E88BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2AF2E88CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 13:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388066AbfJ2Muv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 08:50:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37946 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728666AbfJ2Muu (ORCPT
+        id S2388023AbfJ2Myi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 08:54:38 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39964 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbfJ2Myi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:50:50 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w8so7569306plq.5;
-        Tue, 29 Oct 2019 05:50:50 -0700 (PDT)
+        Tue, 29 Oct 2019 08:54:38 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f4so4438035lfk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 05:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MHCaGl9fv6YiMB+mVXvY7+SwWe5TfLaQW4JqhO/2TUs=;
-        b=KLggDLj5bLWsqGiu6yICcD8zHkDhXoVdKvMrRM0ALxMgVvsWASHOS15cGLDTwOY9st
-         BAuDlhvNLGklQjQfQ4KeIvxP6MRQZTtFEZB74ckR9l9/PDDSgGr8558SSkTuDn1XHIF9
-         Fq/TvzvMgDxGK8TpgQNsC1y9PcaJs+EnjC6eygFpmu6VF3H4RncpE84LiSsZxWkSKAW9
-         kBqEVw46Vxc6OblZTZYqc+46Nce/xhtL4HhDFEiWcUydkTPmz7cT2nqHSFtqsWxI1nOq
-         x2rTPMfE6ZETgta8pgS6fX0daFl97Q3j6SQApJ1V+Wsbxjt7LYM68TnSCzbB7j+a7qaw
-         C8Og==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iyC7yE5Zia5wjA+b3r/7nOVhr/nMlkQqP2NCwFPVhd4=;
+        b=ahjtDDP93botL/npzK6iP0iXdCdOLn32mOXHEjBGFtbQMGKtcWtlE+IS5ZWtLJ7pT0
+         F2aFfEq8Gn6S/gyR2+9YNq2+0CC3tm6JwKAP2+j+p2x1yjWBTFJWKBc3vza418nnG9GT
+         1bBO0Pujh56xJjkUUTHxc09oCwvo7zEO1iiFC8GhLGzA7W/Eof9Pd+mJZPLk5m18wn5Z
+         UGqe4hwR3G5+DEmOv9D9WtzNNCuZ4JJadOxc8xRl+xUEVOE1Kr7Y0AjY4z6vK5j5PqTE
+         khnaiC3qgdWxevSCZbI9fmzVKh1VI83sOWDkwsOUTvnU247+DRd2J6rYZLIVAUaCdLjr
+         TF2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MHCaGl9fv6YiMB+mVXvY7+SwWe5TfLaQW4JqhO/2TUs=;
-        b=f571NOhx4tZ4C3FqeYbyIv+KeneUg1f2drA6M1GMqy2t4RIRmq6g9E6MDKPxdqbr9j
-         ddyig8dwLCiSnceiw5yRSXtoGi70vNS3ARs01NInDyDboDHkN2mtj9ZpQdMrYsGaMqe+
-         oiPH3XdTnCXz/XEF3crutQ9T0Qyxzh1eSXlyqamql2E1o2aKEsARMMVudgl0lAn9lyGE
-         89GpcT7QdzzNMdj75GTwsicI2kXFByg2Q9MWijPynvSD9G9YVATGqzKGYlVeT29+YV5r
-         aOXzOt+T/lc8tpEOkZRcmLeN+6LVU/nrl+YyYfxOT0ilsPXZwNjQWKTNswNp5aLnCiV8
-         j7Ww==
-X-Gm-Message-State: APjAAAV3z4FUfOQwhNADtDydrIvhowDfsd5XUPELtarK/sLZd/4w+B1J
-        f9T5cr2jXXEn0VS/SstL9BdFzYa/
-X-Google-Smtp-Source: APXvYqy030+UQ0PBOHJyB30/XeP04Yed8jt7GTDmTcLbJqWokWgJNB0cgJe6h23eYPuNiNtx3Nf5uw==
-X-Received: by 2002:a17:902:b711:: with SMTP id d17mr3764796pls.298.1572353449619;
-        Tue, 29 Oct 2019 05:50:49 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o185sm13968333pfg.136.2019.10.29.05.50.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 05:50:49 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 05:50:48 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     rentao.bupt@gmail.com
-Cc:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        taoren@fb.com
-Subject: Re: [PATCH 2/3] hwmon: (pmbus) add BEL PFE3000 power supply driver
-Message-ID: <20191029125048.GA32552@roeck-us.net>
-References: <20191028234904.12441-1-rentao.bupt@gmail.com>
- <20191028234904.12441-3-rentao.bupt@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iyC7yE5Zia5wjA+b3r/7nOVhr/nMlkQqP2NCwFPVhd4=;
+        b=jihVynE4i44ng8E3gSl35+/79lRo3X9bGBgpcQPA2pFGsM/fbs7NsFkwOe/65Yy84A
+         RSY4cqv27+vM+YbSe1sbAcdWF59MId5g5WDT9qqGxndlFqIYmYpEjWkqIiAUy+fo6qQ9
+         ScOBTuvbp0D9pujihdZXsnWlurKVfcNSTQR+dzMEor89kzg4oUOhOvrwI0OmntXqzOO3
+         NSWhnjxDRamhXRYZOtjMCPSSWGGF/bNXyWb24TlLtWZdzBUxbgpRsc21okaZh+zPNAiQ
+         4TBvc74GUh2armxbV+Mp9KPerrwihiW4yITWCxtnCTsysGd9l40mgkesufyIMRfSo1y4
+         zGpQ==
+X-Gm-Message-State: APjAAAWYm+iGlaoG8QjQ0coeqzca7uvLIPRMrI1At6JhzzIqRPdotpUk
+        xXXCUw1TM6+VOjACwzDK6XE8thQwtMfUAyM0ZLQBRoXN
+X-Google-Smtp-Source: APXvYqzHz20RYYdTRga9BX249milFT+G7+sMud/tELdQ6UA7FiUzeNgB2BpFWr+IlVyOihjK4WcRi1i6ZxTK6Sk4hSA=
+X-Received: by 2002:a19:ca13:: with SMTP id a19mr2333981lfg.133.1572353675805;
+ Tue, 29 Oct 2019 05:54:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028234904.12441-3-rentao.bupt@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191009104611.15363-1-qais.yousef@arm.com> <CAKfTPtA6Fvc374oTfbHYkviAJbZebHkBg=w2O3f0oZ0m3ujVjA@mail.gmail.com>
+ <20191029110224.awoi37pdquachqtd@e107158-lin.cambridge.arm.com>
+ <CAKfTPtA=CzkTVwdCJL6ULYB628tWdGAvpD-sHfgSfL59PyYvxA@mail.gmail.com>
+ <20191029114824.2kb4fygxxx72r3in@e107158-lin.cambridge.arm.com>
+ <CAKfTPtD7e-dXhZ3mG36igArt=0f-mNc52vaJ1bb-jv5zB9bkgg@mail.gmail.com> <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20191029124630.ivfbpenue3fw33qt@e107158-lin.cambridge.arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 29 Oct 2019 13:54:24 +0100
+Message-ID: <CAKfTPtDnt6oh7X6dGnPUn70sLJXAQoxdkn0GCwdPvA8G4Wg0fA@mail.gmail.com>
+Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 04:49:03PM -0700, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
-> 
-> Add the driver to support BEL PFE3000 which is 3000 Wat AC to DC power
+On Tue, 29 Oct 2019 at 13:46, Qais Yousef <qais.yousef@arm.com> wrote:
+>
+> On 10/29/19 13:20, Vincent Guittot wrote:
+> > > > Making big cores the default CPUs for all RT tasks is not a minor
+> > > > change and IMO locality should stay the default behavior when there is
+> > > > no uclamp constraint
+> > >
+> > > How this is affecting locality? The task will always go to the big core, so it
+> > > should be local.
+> >
+> > local with the waker
+> > You will force rt task to run on big cluster although waker, data and
+> > interrupts can be on little one.
+> > So making big core as default is far from always being the best choice
+>
+> This is loaded with assumptions IMO. AFAICT we don't know what's the best
+> choice.
+>
+> First, the value of uclamp.min is outside of the scope of this patch. Unless
+> what you're saying is that when uclamp.min is 1024 then we should NOT choose a
+> big cpu then there's no disagreement about what this patch do. If that's what
+> you're objecting to please be more specific about how do you see this working
+> instead.
 
-which is a ...
+My point is that this patch makes the big cores the default CPUs for
+RT tasks which is far from being a minor change and far from being an
+obvious default good choice
 
-Watt
-
-> supply. The chip has 8 pages.
-
-FWIW, that is a bit misleading here. It isn't really 8 pages. I would suggest
-to drop that comment (or, if you insist, at least add "two of which are
-reserved").
-
-> 
-> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
-> ---
->  drivers/hwmon/pmbus/bel-pfe.c | 65 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/bel-pfe.c b/drivers/hwmon/pmbus/bel-pfe.c
-> index 117f9af21bf3..7b6c90b056c9 100644
-> --- a/drivers/hwmon/pmbus/bel-pfe.c
-> +++ b/drivers/hwmon/pmbus/bel-pfe.c
-> @@ -10,9 +10,21 @@
->  #include <linux/init.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
-> +#include <linux/pmbus.h>
-> +
->  #include "pmbus.h"
->  
-> -enum chips {pfe1100};
-> +enum chips {pfe1100, pfe3000};
-> +
-> +/*
-> + * Disable status check for pfe3000 devices, because some devices report
-> + * communication error (invalid command) for VOUT_MODE command (0x20)
-> + * although correct VOUT_MODE (0x16) is returned: it leads to incorrect
-> + * exponent in linear mode.
-> + */
-> +static struct pmbus_platform_data pfe3000_plat_data = {
-> +	.flags = PMBUS_SKIP_STATUS_CHECK,
-> +};
->  
->  static struct pmbus_driver_info pfe_driver_info[] = {
->  	[pfe1100] = {
-> @@ -34,6 +46,45 @@ static struct pmbus_driver_info pfe_driver_info[] = {
->  			   PMBUS_HAVE_STATUS_TEMP |
->  			   PMBUS_HAVE_FAN12,
->  	},
-> +
-> +	[pfe3000] = {
-> +		.pages = 8,
-> +		.format[PSC_VOLTAGE_IN] = linear,
-> +		.format[PSC_VOLTAGE_OUT] = linear,
-> +		.format[PSC_CURRENT_IN] = linear,
-> +		.format[PSC_CURRENT_OUT] = linear,
-> +		.format[PSC_POWER] = linear,
-> +		.format[PSC_TEMPERATURE] = linear,
-> +		.format[PSC_FAN] = linear,
-> +
-> +		/* Page 0: V1. */
-> +		.func[0] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-> +			   PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
-> +			   PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12 |
-> +			   PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
-> +			   PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT |
-> +			   PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
-> +			   PMBUS_HAVE_TEMP3 | PMBUS_HAVE_STATUS_TEMP |
-> +			   PMBUS_HAVE_VCAP,
-> +
-> +		/* Page 1: Vsb. */
-> +		.func[1] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-> +			   PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
-> +			   PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT |
-> +			   PMBUS_HAVE_POUT,
-> +
-> +		/*
-> +		 * Page 2: V1 Ishare.
-> +		 * Page 4: V1 Cathode.
-> +		 * Page 5: Vsb Cathode.
-> +		 * Page 6: V1 Sense.
-> +		 * Page 3 and 7 are reserved.
-
-If page 7 is reserved, and doesn't have any attributes, it doesn't really
-make sense to claim support for 8 pages above. I would suugest to make it 7.
-
-> +		 */
-> +		.func[2] = PMBUS_HAVE_VOUT,
-> +		.func[4] = PMBUS_HAVE_VOUT,
-> +		.func[5] = PMBUS_HAVE_VOUT,
-> +		.func[6] = PMBUS_HAVE_VOUT,
-> +	},
->  };
->  
->  static int pfe_pmbus_probe(struct i2c_client *client,
-> @@ -42,11 +93,23 @@ static int pfe_pmbus_probe(struct i2c_client *client,
->  	int model;
->  
->  	model = (int)id->driver_data;
-> +
-> +	/*
-> +	 * PFE3000-12-069RA devices may not stay in page 0 during device
-> +	 * probe which leads to probe failure (read status word failed).
-> +	 * So let's set the device to page 0 at the beginning.
-> +	 */
-> +	if (model == pfe3000) {
-> +		client->dev.platform_data = &pfe3000_plat_data;
-> +		i2c_smbus_write_byte_data(client, PMBUS_PAGE, 0);
-> +	}
-> +
->  	return pmbus_do_probe(client, id, &pfe_driver_info[model]);
->  }
->  
->  static const struct i2c_device_id pfe_device_id[] = {
->  	{"pfe1100", pfe1100},
-> +	{"pfe3000", pfe3000},
->  	{}
->  };
->  
+>
+> If your objection is purely based on the choice of uclamp.min then while
+> I agree that on modern systems the little cores are good enough for the
+> majority of RT tasks in average Android systems. But I don't feel confident to
+> reach this conclusion on low end systems where the little core doesn't have
+> enough grunt in many cases. So I see the current default is adequate and the
+> responsibility of further tweaking lies within the hands of the system admin.
+>
+> --
+> Qais Yousef
