@@ -2,255 +2,422 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 346EFEDD33
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:59:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA87EDD67
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbfKDK7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:59:35 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38131 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfKDK7f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:59:35 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d23so10070637edr.5;
-        Mon, 04 Nov 2019 02:59:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YYx9cA98hYZwadO4BwMOGO3D3OfaJvfz6Uw8V9dkUG0=;
-        b=dPOxPWzB04d+bFgtUofKlq/P4eMVVn2zpT9bZstQjJfM0H+m3/1CE1Ji2o6gN7qAv5
-         GEZ2Vg/yszGVj0jvdjRMSin2WkkOexoIwcxtDl0bU0S5sQJrSyKkwhpIYTIt8jKNR3cv
-         xQGwgEKfsdDk3m1hmk6BLXxIyKo2hU30hfmyOB3XzIqE9t/Rjp+AKr+lMM+QedEo/e57
-         jodTFWFpXhBhk+dN4DgwBm/3JXj+J6ydatJMJgt1usHVcYRUFsW+zI4AAY+P6cTs0nWD
-         Z+zIITpX3tav5AqVaVrS2HIqR113JeDM7o2b7fo5UAeabAy1Uk4CRDKbdPZgdO2/UbdQ
-         ynig==
-X-Gm-Message-State: APjAAAU6o+Xh7YQzW4hF+OadDDixQcNzwDgxLHmcKaCEzHLq/N5o0SBJ
-        JN6jdSdaMs71/Pbfl872EZ8=
-X-Google-Smtp-Source: APXvYqzMW9zD8g+O5xk16u7hoxQfhguwNNj1wZ8UUrKr3Q1PO558Sogl+j/Qle1rFc3DwEoFDGtZ/Q==
-X-Received: by 2002:aa7:dd9a:: with SMTP id g26mr5676768edv.85.1572865172738;
-        Mon, 04 Nov 2019 02:59:32 -0800 (PST)
-Received: from pi3 ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id m26sm81314edr.16.2019.11.04.02.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 02:59:32 -0800 (PST)
-Date:   Mon, 4 Nov 2019 11:59:30 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Matheus Castello <matheus@castello.eng.br>
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
-        lee.jones@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] power: supply: max17040: Config alert SOC low
- level threshold from FDT
-Message-ID: <20191104105930.GA30857@pi3>
-References: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
- <20191031184134.30621-1-matheus@castello.eng.br>
- <20191031184134.30621-4-matheus@castello.eng.br>
- <20191101152755.GC28931@pi3>
- <c18ab487-6242-4ac2-b2c2-ef78c899521a@castello.eng.br>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c18ab487-6242-4ac2-b2c2-ef78c899521a@castello.eng.br>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1728718AbfKDLGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:06:13 -0500
+Received: from verein.lst.de ([213.95.11.211]:38220 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728444AbfKDLGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:06:11 -0500
+Received: by verein.lst.de (Postfix, from userid 2005)
+        id C05F068C4E; Mon,  4 Nov 2019 12:06:07 +0100 (CET)
+In-Reply-To: <20191104110400.F319F68BE1@verein.lst.de>
+References: <20191104110400.F319F68BE1@verein.lst.de>
+From:   Torsten Duwe <duwe@lst.de>
+Date:   Tue, 29 Oct 2019 13:16:57 +0100
+Subject: [PATCH v5 3/7] drm/bridge: extract some Analogix I2C DP common code
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <20191104110607.C05F068C4E@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 01:52:13PM -0300, Matheus Castello wrote:
-> 
-> 
-> Em 11/1/19 12:27 PM, Krzysztof Kozlowski escreveu:
-> > On Thu, Oct 31, 2019 at 03:41:33PM -0300, Matheus Castello wrote:
-> > > For configuration of fuel gauge alert for a low level state of charge
-> > > interrupt we add a function to config level threshold and a device tree
-> > > binding property to set it in flatned device tree node.
-> > > 
-> > > Now we can use "maxim,alert-low-soc-level" property with the values from
-> > > 1% up to 32% to configure alert interrupt threshold.
-> > > 
-> > > Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> > > ---
-> > >   drivers/power/supply/max17040_battery.c | 88 +++++++++++++++++++++----
-> > >   1 file changed, 74 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
-> > > index 75459f76d02c..802575342c72 100644
-> > > --- a/drivers/power/supply/max17040_battery.c
-> > > +++ b/drivers/power/supply/max17040_battery.c
-> > > @@ -29,6 +29,9 @@
-> > >   #define MAX17040_DELAY		1000
-> > >   #define MAX17040_BATTERY_FULL	95
-> > > 
-> > > +#define MAX17040_ATHD_MASK		0xFFC0
-> > > +#define MAX17040_ATHD_DEFAULT_POWER_UP	4
-> > > +
-> > >   struct max17040_chip {
-> > >   	struct i2c_client		*client;
-> > >   	struct delayed_work		work;
-> > > @@ -43,6 +46,8 @@ struct max17040_chip {
-> > >   	int soc;
-> > >   	/* State Of Charge */
-> > >   	int status;
-> > > +	/* Low alert threshold from 32% to 1% of the State of Charge */
-> > > +	u32 low_soc_alert_threshold;
-> > >   };
-> > > 
-> > >   static int max17040_get_property(struct power_supply *psy,
-> > > @@ -99,6 +104,22 @@ static void max17040_reset(struct i2c_client *client)
-> > >   	max17040_write_reg(client, MAX17040_CMD, 0x0054);
-> > >   }
-> > > 
-> > > +static int max17040_set_low_soc_threshold_alert(struct i2c_client *client,
-> > > +	u32 level)
-> > > +{
-> > > +	int ret;
-> > > +	u16 data;
-> > > +
-> > > +	level = 32 - level;
-> > > +	data = max17040_read_reg(client, MAX17040_RCOMP);
-> > > +	/* clear the alrt bit and set LSb 5 bits */
-> > > +	data &= MAX17040_ATHD_MASK;
-> > > +	data |= level;
-> > > +	ret = max17040_write_reg(client, MAX17040_RCOMP, data);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >   static void max17040_get_vcell(struct i2c_client *client)
-> > >   {
-> > >   	struct max17040_chip *chip = i2c_get_clientdata(client);
-> > > @@ -115,7 +136,6 @@ static void max17040_get_soc(struct i2c_client *client)
-> > >   	u16 soc;
-> > > 
-> > >   	soc = max17040_read_reg(client, MAX17040_SOC);
-> > > -
-> > >   	chip->soc = (soc >> 8);
-> > >   }
-> > > 
-> > > @@ -161,6 +181,24 @@ static void max17040_get_status(struct i2c_client *client)
-> > >   		chip->status = POWER_SUPPLY_STATUS_FULL;
-> > >   }
-> > > 
-> > > +static int max17040_get_of_data(struct max17040_chip *chip)
-> > > +{
-> > > +	struct device *dev = &chip->client->dev;
-> > > +	struct device_node *np = dev->of_node;
-> > > +	int ret = 0;
-> > > +
-> > > +	if (of_property_read_u32(np, "maxim,alert-low-soc-level",
-> > > +			&chip->low_soc_alert_threshold)) {
-> > 
-> > Please align the line break with line above. checkpatch --strict might
-> > give you hints about this.
-> > >> +		chip->low_soc_alert_threshold = MAX17040_ATHD_DEFAULT_POWER_UP;
-> > > +	/* check if low_soc_alert_threshold is between 1% and 32% */
-> > 
-> > The comment looks misleading here, like it belongs to previous block.
-> > Maybe put it inside else if {} block?
-> > 
-> > > +	} else if (chip->low_soc_alert_threshold <= 0 ||
-> > > +			chip->low_soc_alert_threshold >= 33){
-> > 
-> > Missing space before {.
-> > 
-> > > +		ret = -EINVAL;
-> > > +	}
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >   static void max17040_check_changes(struct i2c_client *client)
-> > >   {
-> > >   	max17040_get_vcell(client);
-> > > @@ -192,6 +230,10 @@ static irqreturn_t max17040_thread_handler(int id, void *dev)
-> > >   	/* send uevent */
-> > >   	power_supply_changed(chip->battery);
-> > > 
-> > > +	/* reset alert bit */
-> > > +	max17040_set_low_soc_threshold_alert(client,
-> > > +		chip->low_soc_alert_threshold);
-> > 
-> > Unless the continuation exceeds 80 character limit, please align it with
-> > previous line.
-> > 
-> > > +
-> > >   	return IRQ_HANDLED;
-> > >   }
-> > > 
-> > > @@ -216,6 +258,7 @@ static int max17040_probe(struct i2c_client *client,
-> > >   	struct i2c_adapter *adapter = client->adapter;
-> > >   	struct power_supply_config psy_cfg = {};
-> > >   	struct max17040_chip *chip;
-> > > +	int ret;
-> > > 
-> > >   	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE))
-> > >   		return -EIO;
-> > > @@ -226,6 +269,12 @@ static int max17040_probe(struct i2c_client *client,
-> > > 
-> > >   	chip->client = client;
-> > >   	chip->pdata = client->dev.platform_data;
-> > > +	ret = max17040_get_of_data(chip);
-> > > +	if (ret) {
-> > > +		dev_err(&client->dev,
-> > > +			"failed: low SOC alert OF data out of bounds\n");
-> > > +		return ret;
-> > > +	}
-> > > 
-> > >   	i2c_set_clientdata(client, chip);
-> > >   	psy_cfg.drv_data = chip;
-> > > @@ -242,20 +291,31 @@ static int max17040_probe(struct i2c_client *client,
-> > > 
-> > >   	/* check interrupt */
-> > >   	if (client->irq) {
-> > > -		int ret;
-> > > -		unsigned int flags;
-> > > -
-> > > -		dev_info(&client->dev, "IRQ: enabled\n");
-> > > -		flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
-> > > -		ret = devm_request_threaded_irq(&client->dev, client->irq, NULL,
-> > > -						max17040_thread_handler, flags,
-> > > -						chip->battery->desc->name,
-> > > -						chip);
-> > > -
-> > > -		if (ret) {
-> > > -			client->irq = 0;
-> > > +		if (of_device_is_compatible(client->dev.of_node,
-> > > +			"maxim,max77836-battery")) {
-> > 
-> > Alignment.
-> > 
-> > > +			ret = max17040_set_low_soc_threshold_alert(client,
-> > > +				chip->low_soc_alert_threshold);
-> > 
-> > Ditto.
-> > 
-> > > +			if (ret) {
-> > > +				dev_err(&client->dev,
-> > > +					"Failed to set low SOC alert: err %d\n",
-> > > +					ret);
-> > > +				return ret;
-> > > +			}
-> > > +
-> > > +			dev_info(&client->dev, "IRQ: enabled\n");
-> > > +			ret = devm_request_threaded_irq(&client->dev,
-> > > +				client->irq, NULL, max17040_thread_handler,
-> > > +				(client->flags | IRQF_ONESHOT),
-> > 
-> > This looks unrelated. Befor ethis were IRQF_TRIGGER_FALLING |
-> > IRQF_ONESHOT, now you use client->flags. There is no reason why this
-> > commit should change >
-> 
-> I am using client->flags here to not overwrite the flag passed in device
-> tree. Let me know what you think about it: if I should leave it as in the
-> previous commit, or should I modify the previous commit too.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-I still do not get why this change is here and how is related to this
-commit.
+Some code can be shared within different DP bridges by Analogix.
+Extract them to analogix_dp.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Torsten Duwe <duwe@suse.de>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/bridge/analogix/Makefile           |   2 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 146 +-----------------
+ .../gpu/drm/bridge/analogix/analogix-i2c-dptx.c    | 165 +++++++++++++++++++++
+ .../gpu/drm/bridge/analogix/analogix-i2c-dptx.h    |   3 +
+ 4 files changed, 170 insertions(+), 146 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/bridge/analogix/Makefile b/drivers/gpu/drm/bridge/analogix/Makefile
+index 6fcbfd3ee560..7623b9b80167 100644
+--- a/drivers/gpu/drm/bridge/analogix/Makefile
++++ b/drivers/gpu/drm/bridge/analogix/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-analogix_dp-objs := analogix_dp_core.o analogix_dp_reg.o
++analogix_dp-objs := analogix_dp_core.o analogix_dp_reg.o analogix-i2c-dptx.o
+ obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+ obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix_dp.o
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+index 3c7cc5af735c..c36e2c9445a3 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+@@ -35,8 +35,6 @@
+ #define I2C_IDX_RX_P1		4
+ 
+ #define XTAL_CLK		270 /* 27M */
+-#define AUX_CH_BUFFER_SIZE	16
+-#define AUX_WAIT_TIMEOUT_MS	15
+ 
+ static const u8 anx78xx_i2c_addresses[] = {
+ 	[I2C_IDX_TX_P0] = TX_P0,
+@@ -99,153 +97,11 @@ static int anx78xx_clear_bits(struct regmap *map, u8 reg, u8 mask)
+ 	return regmap_update_bits(map, reg, mask, 0);
+ }
+ 
+-static bool anx78xx_aux_op_finished(struct anx78xx *anx78xx)
+-{
+-	unsigned int value;
+-	int err;
+-
+-	err = regmap_read(anx78xx->map[I2C_IDX_TX_P0], SP_DP_AUX_CH_CTRL2_REG,
+-			  &value);
+-	if (err < 0)
+-		return false;
+-
+-	return (value & SP_AUX_EN) == 0;
+-}
+-
+-static int anx78xx_aux_wait(struct anx78xx *anx78xx)
+-{
+-	unsigned long timeout;
+-	unsigned int status;
+-	int err;
+-
+-	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
+-
+-	while (!anx78xx_aux_op_finished(anx78xx)) {
+-		if (time_after(jiffies, timeout)) {
+-			if (!anx78xx_aux_op_finished(anx78xx)) {
+-				DRM_ERROR("Timed out waiting AUX to finish\n");
+-				return -ETIMEDOUT;
+-			}
+-
+-			break;
+-		}
+-
+-		usleep_range(1000, 2000);
+-	}
+-
+-	/* Read the AUX channel access status */
+-	err = regmap_read(anx78xx->map[I2C_IDX_TX_P0], SP_AUX_CH_STATUS_REG,
+-			  &status);
+-	if (err < 0) {
+-		DRM_ERROR("Failed to read from AUX channel: %d\n", err);
+-		return err;
+-	}
+-
+-	if (status & SP_AUX_STATUS) {
+-		DRM_ERROR("Failed to wait for AUX channel (status: %02x)\n",
+-			  status);
+-		return -ETIMEDOUT;
+-	}
+-
+-	return 0;
+-}
+-
+-static int anx78xx_aux_address(struct anx78xx *anx78xx, unsigned int addr)
+-{
+-	int err;
+-
+-	err = regmap_write(anx78xx->map[I2C_IDX_TX_P0], SP_AUX_ADDR_7_0_REG,
+-			   addr & 0xff);
+-	if (err)
+-		return err;
+-
+-	err = regmap_write(anx78xx->map[I2C_IDX_TX_P0], SP_AUX_ADDR_15_8_REG,
+-			   (addr & 0xff00) >> 8);
+-	if (err)
+-		return err;
+-
+-	/*
+-	 * DP AUX CH Address Register #2, only update bits[3:0]
+-	 * [7:4] RESERVED
+-	 * [3:0] AUX_ADDR[19:16], Register control AUX CH address.
+-	 */
+-	err = regmap_update_bits(anx78xx->map[I2C_IDX_TX_P0],
+-				 SP_AUX_ADDR_19_16_REG,
+-				 SP_AUX_ADDR_19_16_MASK,
+-				 (addr & 0xf0000) >> 16);
+-
+-	if (err)
+-		return err;
+-
+-	return 0;
+-}
+-
+ static ssize_t anx78xx_aux_transfer(struct drm_dp_aux *aux,
+ 				    struct drm_dp_aux_msg *msg)
+ {
+ 	struct anx78xx *anx78xx = container_of(aux, struct anx78xx, aux);
+-	u8 ctrl1 = msg->request;
+-	u8 ctrl2 = SP_AUX_EN;
+-	u8 *buffer = msg->buffer;
+-	int err;
+-
+-	/* The DP AUX transmit and receive buffer has 16 bytes. */
+-	if (WARN_ON(msg->size > AUX_CH_BUFFER_SIZE))
+-		return -E2BIG;
+-
+-	/* Zero-sized messages specify address-only transactions. */
+-	if (msg->size < 1)
+-		ctrl2 |= SP_ADDR_ONLY;
+-	else	/* For non-zero-sized set the length field. */
+-		ctrl1 |= (msg->size - 1) << SP_AUX_LENGTH_SHIFT;
+-
+-	if ((msg->request & DP_AUX_I2C_READ) == 0) {
+-		/* When WRITE | MOT write values to data buffer */
+-		err = regmap_bulk_write(anx78xx->map[I2C_IDX_TX_P0],
+-					SP_DP_BUF_DATA0_REG, buffer,
+-					msg->size);
+-		if (err)
+-			return err;
+-	}
+-
+-	/* Write address and request */
+-	err = anx78xx_aux_address(anx78xx, msg->address);
+-	if (err)
+-		return err;
+-
+-	err = regmap_write(anx78xx->map[I2C_IDX_TX_P0], SP_DP_AUX_CH_CTRL1_REG,
+-			   ctrl1);
+-	if (err)
+-		return err;
+-
+-	/* Start transaction */
+-	err = regmap_update_bits(anx78xx->map[I2C_IDX_TX_P0],
+-				 SP_DP_AUX_CH_CTRL2_REG, SP_ADDR_ONLY |
+-				 SP_AUX_EN, ctrl2);
+-	if (err)
+-		return err;
+-
+-	err = anx78xx_aux_wait(anx78xx);
+-	if (err)
+-		return err;
+-
+-	msg->reply = DP_AUX_I2C_REPLY_ACK;
+-
+-	if ((msg->size > 0) && (msg->request & DP_AUX_I2C_READ)) {
+-		/* Read values from data buffer */
+-		err = regmap_bulk_read(anx78xx->map[I2C_IDX_TX_P0],
+-				       SP_DP_BUF_DATA0_REG, buffer,
+-				       msg->size);
+-		if (err)
+-			return err;
+-	}
+-
+-	err = anx78xx_clear_bits(anx78xx->map[I2C_IDX_TX_P0],
+-				 SP_DP_AUX_CH_CTRL2_REG, SP_ADDR_ONLY);
+-	if (err)
+-		return err;
+-
+-	return msg->size;
++	return anx_dp_aux_transfer(anx78xx->map[I2C_IDX_TX_P0], msg);
+ }
+ 
+ static int anx78xx_set_hpd(struct anx78xx *anx78xx)
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
+new file mode 100644
+index 000000000000..60707bb5afe7
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
+@@ -0,0 +1,165 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright(c) 2016, Analogix Semiconductor.
++ *
++ * Based on anx7808 driver obtained from chromeos with copyright:
++ * Copyright(c) 2013, Google Inc.
++ */
++#include <linux/regmap.h>
++
++#include <drm/drm.h>
++#include <drm/drm_dp_helper.h>
++#include <drm/drm_print.h>
++
++#include "analogix-i2c-dptx.h"
++
++#define AUX_WAIT_TIMEOUT_MS	15
++#define AUX_CH_BUFFER_SIZE	16
++
++static int anx_i2c_dp_clear_bits(struct regmap *map, u8 reg, u8 mask)
++{
++	return regmap_update_bits(map, reg, mask, 0);
++}
++
++static bool anx_dp_aux_op_finished(struct regmap *map_dptx)
++{
++	unsigned int value;
++	int err;
++
++	err = regmap_read(map_dptx, SP_DP_AUX_CH_CTRL2_REG, &value);
++	if (err < 0)
++		return false;
++
++	return (value & SP_AUX_EN) == 0;
++}
++
++static int anx_dp_aux_wait(struct regmap *map_dptx)
++{
++	unsigned long timeout;
++	unsigned int status;
++	int err;
++
++	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
++
++	while (!anx_dp_aux_op_finished(map_dptx)) {
++		if (time_after(jiffies, timeout)) {
++			if (!anx_dp_aux_op_finished(map_dptx)) {
++				DRM_ERROR("Timed out waiting AUX to finish\n");
++				return -ETIMEDOUT;
++			}
++
++			break;
++		}
++
++		usleep_range(1000, 2000);
++	}
++
++	/* Read the AUX channel access status */
++	err = regmap_read(map_dptx, SP_AUX_CH_STATUS_REG, &status);
++	if (err < 0) {
++		DRM_ERROR("Failed to read from AUX channel: %d\n", err);
++		return err;
++	}
++
++	if (status & SP_AUX_STATUS) {
++		DRM_ERROR("Failed to wait for AUX channel (status: %02x)\n",
++			  status);
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
++
++static int anx_dp_aux_address(struct regmap *map_dptx, unsigned int addr)
++{
++	int err;
++
++	err = regmap_write(map_dptx, SP_AUX_ADDR_7_0_REG, addr & 0xff);
++	if (err)
++		return err;
++
++	err = regmap_write(map_dptx, SP_AUX_ADDR_15_8_REG,
++			   (addr & 0xff00) >> 8);
++	if (err)
++		return err;
++
++	/*
++	 * DP AUX CH Address Register #2, only update bits[3:0]
++	 * [7:4] RESERVED
++	 * [3:0] AUX_ADDR[19:16], Register control AUX CH address.
++	 */
++	err = regmap_update_bits(map_dptx, SP_AUX_ADDR_19_16_REG,
++				 SP_AUX_ADDR_19_16_MASK,
++				 (addr & 0xf0000) >> 16);
++
++	if (err)
++		return err;
++
++	return 0;
++}
++
++ssize_t anx_dp_aux_transfer(struct regmap *map_dptx,
++				struct drm_dp_aux_msg *msg)
++{
++	u8 ctrl1 = msg->request;
++	u8 ctrl2 = SP_AUX_EN;
++	u8 *buffer = msg->buffer;
++	int err;
++
++	/* The DP AUX transmit and receive buffer has 16 bytes. */
++	if (WARN_ON(msg->size > AUX_CH_BUFFER_SIZE))
++		return -E2BIG;
++
++	/* Zero-sized messages specify address-only transactions. */
++	if (msg->size < 1)
++		ctrl2 |= SP_ADDR_ONLY;
++	else	/* For non-zero-sized set the length field. */
++		ctrl1 |= (msg->size - 1) << SP_AUX_LENGTH_SHIFT;
++
++	if ((msg->request & DP_AUX_I2C_READ) == 0) {
++		/* When WRITE | MOT write values to data buffer */
++		err = regmap_bulk_write(map_dptx,
++					SP_DP_BUF_DATA0_REG, buffer,
++					msg->size);
++		if (err)
++			return err;
++	}
++
++	/* Write address and request */
++	err = anx_dp_aux_address(map_dptx, msg->address);
++	if (err)
++		return err;
++
++	err = regmap_write(map_dptx, SP_DP_AUX_CH_CTRL1_REG, ctrl1);
++	if (err)
++		return err;
++
++	/* Start transaction */
++	err = regmap_update_bits(map_dptx, SP_DP_AUX_CH_CTRL2_REG,
++				 SP_ADDR_ONLY | SP_AUX_EN, ctrl2);
++	if (err)
++		return err;
++
++	err = anx_dp_aux_wait(map_dptx);
++	if (err)
++		return err;
++
++	msg->reply = DP_AUX_I2C_REPLY_ACK;
++
++	if ((msg->size > 0) && (msg->request & DP_AUX_I2C_READ)) {
++		/* Read values from data buffer */
++		err = regmap_bulk_read(map_dptx,
++				       SP_DP_BUF_DATA0_REG, buffer,
++				       msg->size);
++		if (err)
++			return err;
++	}
++
++	err = anx_i2c_dp_clear_bits(map_dptx, SP_DP_AUX_CH_CTRL2_REG,
++				    SP_ADDR_ONLY);
++	if (err)
++		return err;
++
++	return msg->size;
++}
++EXPORT_SYMBOL_GPL(anx_dp_aux_transfer);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
+index 6295be668cae..430a039c10cd 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
+@@ -244,4 +244,7 @@
+ /* DP AUX Buffer Data Registers */
+ #define SP_DP_BUF_DATA0_REG		0xf0
+ 
++ssize_t anx_dp_aux_transfer(struct regmap *map_dptx,
++				struct drm_dp_aux_msg *msg);
++
+ #endif
+-- 
+2.16.4
 
