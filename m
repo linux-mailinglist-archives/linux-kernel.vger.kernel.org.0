@@ -2,121 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D683E86E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A11E86E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 12:28:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbfJ2L2N convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 29 Oct 2019 07:28:13 -0400
-Received: from skedge03.snt-world.com ([91.208.41.68]:45694 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730794AbfJ2L2L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 07:28:11 -0400
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1731245AbfJ2L2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 07:28:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730928AbfJ2L2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 07:28:13 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 77A1F60CF62;
-        Tue, 29 Oct 2019 12:28:04 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 29 Oct
- 2019 12:28:04 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Tue, 29 Oct 2019 12:28:04 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 07/11] ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply
- and overcurrent polarity to usb nodes
-Thread-Topic: [PATCH v2 07/11] ARM: dts: imx6ul-kontron-n6x1x-s: Add
- vbus-supply and overcurrent polarity to usb nodes
-Thread-Index: AQHVjkvtzuEd7ia9eEiSRBR9LAU6oA==
-Date:   Tue, 29 Oct 2019 11:28:04 +0000
-Message-ID: <20191029112655.15058-8-frieder.schrempf@kontron.de>
-References: <20191029112655.15058-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20191029112655.15058-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        by mail.kernel.org (Postfix) with ESMTPSA id 8125720663;
+        Tue, 29 Oct 2019 11:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572348492;
+        bh=gUKSWXcfLp8N08IRMS8CZHuXSpvN/MYddgCzXmwoF9M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bxj8AS+8cI/vcQNfxyl1kIVwj3qJo1XrsnWZH/ctVDmfFv3wClysaq7Qv16Ahnqbn
+         BE9/4th5Hmp6Zh3JuiO+lah/XUd9501j1WSLEhIfkHn9tJ4okP+yaDh2ET0jvhJkrG
+         wBSCsuH9JzWJbcapYM0Yaci8LSvaKrU1P/KePTMw=
+Date:   Tue, 29 Oct 2019 11:28:07 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: Re: [patch V2 00/17] entry: Provide generic implementation for host
+ and guest entry/exit work
+Message-ID: <20191029112806.GA12103@willie-the-truck>
+References: <20191023122705.198339581@linutronix.de>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 77A1F60CF62.A0BE3
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023122705.198339581@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Hi Thomas,
 
-To silence the warnings shown by the driver at boot time, we add a
-fixed regulator for the 5V supply of usbotg2 and specify the polarity
-of the overcurrent signal for usbotg1.
+On Wed, Oct 23, 2019 at 02:27:05PM +0200, Thomas Gleixner wrote:
+> When working on a way to move out the posix cpu timer expiry out of the
+> timer interrupt context, I noticed that KVM is not handling pending task
+> work before entering a guest. A quick hack was to add that to the x86 KVM
+> handling loop. The discussion ended with a request to make this a generic
+> infrastructure possible with also moving the per arch implementations of
+> the enter from and return to user space handling generic.
+> 
+>   https://lore.kernel.org/r/89E42BCC-47A8-458B-B06A-D6A20D20512C@amacapital.net
+> 
+> The series implements the syscall enter/exit and the general exit to
+> userspace work handling along with the pre guest enter functionality.
+> 
+> Changes vs. RFC version:
+> 
+>   - Dropped ARM64 conversion as requested by ARM64 folks
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+If you fancy another crack at arm64 on your way back from Lyon, we've now
+got more of the asm->C conversion queued up here:
 
-diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-index 2299cad900af..d3eb21aa9014 100644
---- a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
-@@ -45,6 +45,13 @@
- 		regulator-max-microvolt = <3300000>;
- 	};
- 
-+	reg_5v: regulator-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
- 	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb_otg1_vbus";
-@@ -191,6 +198,7 @@
- 	srp-disable;
- 	hnp-disable;
- 	adp-disable;
-+	over-current-active-low;
- 	vbus-supply = <&reg_usb_otg1_vbus>;
- 	status = "okay";
- };
-@@ -198,6 +206,7 @@
- &usbotg2 {
- 	dr_mode = "host";
- 	disable-over-current;
-+	vbus-supply = <&reg_5v>;
- 	status = "okay";
- };
- 
--- 
-2.17.1
+https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=for-next/entry-s-to-c
+
+No worries if not, but figured it was worth letting you know anyway.
+
+Will
