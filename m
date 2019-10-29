@@ -2,202 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A4CE7E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:57:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2916E7E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbfJ2B5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 21:57:12 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45398 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbfJ2B5M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 21:57:12 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k2so2543582oij.12;
-        Mon, 28 Oct 2019 18:57:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UUvsimCWepZAnu4Afn/bbCgm53OKcJoilG//7RIuHsg=;
-        b=iRuK7P4JlwgjNx2UilTnYZC8yt72wuwI0f7o3uBvYYvW+k6B60ac4ekq25iZsxJMzI
-         Bb9Q+qJhgHAVqEhWfEuaw7iLy7RO95xd5MxMnp7nYL9zgpzQ6O00MXbVxS2I8IisqksZ
-         mSSRWIgX35wtaMHxO3jT8KUvTlUBkxEG8rxvSQe4gdA0LjAEWRJZhYl4NI3/aDynDApu
-         +lWq7QID2gfr0u2caERXCQ0Ay49jwByUHXIxm4hNblr1YRXzNv+X4lQonDPnlXnUCyku
-         W64LkYiZWRx/2AjeXOHfJmOcxzRAJOyWU2TGJhGNYNi8TgwSyhox+q7soubwv4sFeWP9
-         M/MQ==
-X-Gm-Message-State: APjAAAUYchHzgw3IZvafEYwExHAikY7Tc41OrqSkdjKXTbx6M8JF/pCd
-        XciF5nk1UMYVnTZwPu7y3A==
-X-Google-Smtp-Source: APXvYqxkbrUEED6jWLHlJsz7uKLNRWrYdrAjFf7ywC8zRjX5a6SE2q7TJluJR4FujLl9xIx8TCkqYw==
-X-Received: by 2002:a05:6808:341:: with SMTP id j1mr1814643oie.106.1572314230268;
-        Mon, 28 Oct 2019 18:57:10 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s66sm4217236otb.65.2019.10.28.18.57.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 18:57:09 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 20:57:08 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     kishon@ti.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: phy: renesas: usb2-phy: convert bindings to
- json-schema
-Message-ID: <20191029015708.GA29561@bogus>
-References: <1571387933-23397-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        id S1729992AbfJ2BzB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 28 Oct 2019 21:55:01 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:34612 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728432AbfJ2BzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Oct 2019 21:55:01 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 856F7CB7E9BC2DB3B145;
+        Tue, 29 Oct 2019 09:54:58 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x9T1sbGV017474;
+        Tue, 29 Oct 2019 09:54:37 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019102909544831-171950 ;
+          Tue, 29 Oct 2019 09:54:48 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     steven.price@arm.com, robh@kernel.org
+Cc:     tomeu.vizoso@collabora.com, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
+        wang.liang82@zte.com.cn
+Subject: [PATCH v4] drm/panfrost: fix -Wmissing-prototypes warnings
+Date:   Tue, 29 Oct 2019 09:57:30 +0800
+Message-Id: <1572314250-6463-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1571387933-23397-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-10-29 09:54:48,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-10-29 09:54:39
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse-fl2.zte.com.cn x9T1sbGV017474
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 05:38:53PM +0900, Yoshihiro Shimoda wrote:
-> Convert Renesas R-Car generation 3 USB 2.0 PHY bindings documentation
-> to json-schema.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  70 --------------
->  .../devicetree/bindings/phy/renesas,usb2-phy.yaml  | 106 +++++++++++++++++++++
->  2 files changed, 106 insertions(+), 70 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+We get these warnings when build kernel W=1:
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:35:6: warning: no previous prototype for ‘panfrost_perfcnt_clean_cache_done’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:40:6: warning: no previous prototype for ‘panfrost_perfcnt_sample_done’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:190:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_enable’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:218:5: warning: no previous prototype for ‘panfrost_ioctl_perfcnt_dump’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:250:6: warning: no previous prototype for ‘panfrost_perfcnt_close’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:264:5: warning: no previous prototype for ‘panfrost_perfcnt_init’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_perfcnt.c:320:6: warning: no previous prototype for ‘panfrost_perfcnt_fini’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_mmu.c:227:6: warning: no previous prototype for ‘panfrost_mmu_flush_range’ [-Wmissing-prototypes]
+drivers/gpu/drm/panfrost/panfrost_mmu.c:435:5: warning: no previous prototype for ‘panfrost_mmu_map_fault_addr’ [-Wmissing-prototypes]
 
+For file panfrost_mmu.c, make functions static to fix this.
+For file panfrost_perfcnt.c, include header file can fix this.
 
-> diff --git a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
-> new file mode 100644
-> index 00000000..0f109c2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
-> @@ -0,0 +1,106 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/renesas,usb2-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas R-Car generation 3 USB 2.0 PHY
-> +
-> +maintainers:
-> +  - Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Reviewed-by: Steven Price <steven.price@arm.com>
+---
 
-This:
+v4: make the parameters aligned.
 
-> +      - items:
-> +          - enum:
-> +              - renesas,usb2-phy-r8a77470 # RZ/G1C
+v3: using tab size of 8 other than 4.
 
-You can simplify to just:
+v2: align parameter line and modify comment. Thanks to Steve.
+---
+ drivers/gpu/drm/panfrost/panfrost_mmu.c     | 9 +++++----
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 1 +
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-         - const: renesas,usb2-phy-r8a77470 # RZ/G1C
+diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+index bdd9905..87e7963 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
++++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+@@ -224,9 +224,9 @@ static size_t get_pgsize(u64 addr, size_t size)
+ 	return SZ_2M;
+ }
+ 
+-void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
+-			      struct panfrost_mmu *mmu,
+-			      u64 iova, size_t size)
++static void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
++				     struct panfrost_mmu *mmu,
++				     u64 iova, size_t size)
+ {
+ 	if (mmu->as < 0)
+ 		return;
+@@ -432,7 +432,8 @@ void panfrost_mmu_pgtable_free(struct panfrost_file_priv *priv)
+ 
+ #define NUM_FAULT_PAGES (SZ_2M / PAGE_SIZE)
+ 
+-int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
++static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
++				       u64 addr)
+ {
+ 	int ret, i;
+ 	struct panfrost_gem_object *bo;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+index 83c57d3..2dba192 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
++++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+@@ -16,6 +16,7 @@
+ #include "panfrost_issues.h"
+ #include "panfrost_job.h"
+ #include "panfrost_mmu.h"
++#include "panfrost_perfcnt.h"
+ #include "panfrost_regs.h"
+ 
+ #define COUNTERS_PER_BLOCK		64
+-- 
+1.8.3.1
 
-> +      - items:
-> +          - enum:
-> +              - renesas,usb2-phy-r7s9210  # RZ/A2
-> +              - renesas,usb2-phy-r8a774a1 # RZ/G2M
-> +              - renesas,usb2-phy-r8a774b1 # RZ/G2N
-> +              - renesas,usb2-phy-r8a774c0 # RZ/G2E
-> +              - renesas,usb2-phy-r8a7795  # R-Car H3
-> +              - renesas,usb2-phy-r8a7796  # R-Car M3-W
-> +              - renesas,usb2-phy-r8a77965 # R-Car M3-N
-> +              - renesas,usb2-phy-r8a77990 # R-Car E3
-> +              - renesas,usb2-phy-r8a77995 # R-Car D3
-> +          - const: renesas,rcar-gen3-usb2-phy
-> +
-> +  reg:
-> +    # base address and length of the registers block for the PHY.
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    # clock phandle and specifier pair(s).
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    # for RZ/A2
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: fck
-> +      - const: usb_x1
-> +
-> +  '#phy-cells':
-> +    # see phy-bindings.txt in the same directory
-
-Drop this so we don't have to fix later.
-
-> +    enum: [0, 1]  # and 0 is deprecated.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    minItems: 1
-> +    maxItems: 2
-
-Needs 'items' to define each entry.
-
-> +
-> +  vbus-supply:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-
-Can drop this, *-supply already has a type.
-
-> +    description: |
-> +      Phandle to a regulator that provides power to the VBUS. This regulator
-> +      will be managed during the PHY power on/off sequence.
-> +
-> +  renesas,no-otg-pins:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description: |
-> +      specify when a board does not provide proper otg pins.
-> +
-> +  dr_mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-I think we already have a common definition, so just 'true' is enough.
-
-> +    description: |
-> +      indicates the working mode for the PHY. Can be "host", "peripheral", or
-> +      "otg". Should be set if otg controller is not used.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#phy-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/r8a7795-sysc.h>
-> +
-> +    usb-phy@ee080200 {
-> +        compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
-> +        reg = <0 0xee080200 0 0x700>;
-> +        interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&cpg CPG_MOD 703>;
-> +        #phy-cells = <1>;
-> +    };
-> +
-> +    usb-phy@ee0a0200 {
-> +        compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
-> +        reg = <0 0xee0a0200 0 0x700>;
-> +        clocks = <&cpg CPG_MOD 702>;
-> +        #phy-cells = <1>;
-> +    };
-> -- 
-> 2.7.4
-> 
