@@ -2,118 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C27E8F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB01E8F88
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 19:49:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731848AbfJ2Sro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 14:47:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59344 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729528AbfJ2Sro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 14:47:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96353AFF3;
-        Tue, 29 Oct 2019 18:47:41 +0000 (UTC)
-Date:   Tue, 29 Oct 2019 19:47:39 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        syzbot+13f93c99c06988391efe@syzkaller.appspotmail.com,
-        elver@google.com
-Subject: Re: [PATCH] mm: memcontrol: fix data race in
- mem_cgroup_select_victim_node
-Message-ID: <20191029184739.GP31513@dhcp22.suse.cz>
-References: <20191029005405.201986-1-shakeelb@google.com>
- <20191029090347.GG31513@dhcp22.suse.cz>
- <CALvZod648GRvjd_LqViFzLRwxnzSrLZzjaNBOJju4xkDQkvrXw@mail.gmail.com>
+        id S1732039AbfJ2StA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 14:49:00 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36819 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbfJ2Ss7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 14:48:59 -0400
+Received: by mail-qt1-f193.google.com with SMTP id x14so11436496qtq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 11:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mBUiIVf6q/rDqLGc4EbfJoNVg3DysopyacsfY5Sz0rU=;
+        b=Xo7LHzaW43U8o6mcJCauwekkaCS8YEhpkpkagMIwN/jZ0apzbn5nHima/pnzMZua/+
+         JStfCOUTVbXR3bIf1ilcPakL9HLApdoJEJvc4ijJDOWp+8nJ7AvwqNQrhJE9FcBqjsRd
+         ZzFHoVV5Xd1fGLtG5CueYXxz7V1nlaJHV7+6msXJH28FQMQ3Ex6w7hfPH5oiZcuvAM02
+         FK0dpSepSjOE+Qa5hCmSJ2R2PHIlqaudY+IN90GWYEVLgj5H5xlr7e+hSq9hM1QrL0O2
+         QC/ajDfQw9nSTmBwT5mF75IamIsioqf8neBaTwDvCef8SV+e/ph85Rf4XHc/+7/J+xc5
+         Iz6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mBUiIVf6q/rDqLGc4EbfJoNVg3DysopyacsfY5Sz0rU=;
+        b=g50WAOP1kygqcu1D95yRcGFx2sZb2HWj/JQ3W6sFJ015MkH6BcYT9yI8+RLH0isfg1
+         oe5FzFDZ/CftcZwEJ9hWL4UsLIw5Gw0z2ybi7GTdo0+ZzzsORrYyC1oRr4Uz9quv1dGW
+         H3yW0LG2msMIBCth+us7Ei8U8o3f9iUfk6cPrYlbqnxpsexV90GfXuW2MN+h4Kw/VxlT
+         tgxSxcUiZ6fLcP/APnvFzOTfkDfqgQH3SFVkVaAo/9ZTRk88BU8tyarDFeBXAlOiAW7z
+         jxGZuIkSBZxJRSfSvqlBRNLoTDg8q2dL5l4iE53SBBhTiYr+ruFvvt4P6vA6ZH3V+7Ec
+         426g==
+X-Gm-Message-State: APjAAAUhfkBi2zBXjR1L3daUUcBlLcAoIDndY+nKrXcBSeEubsjHrKQE
+        3fIUV9TLuSS+4T7zupJFa9aw8w==
+X-Google-Smtp-Source: APXvYqxbq8sEpBANn34j7OgqEdFYPUH4UG0c5lXSYLMQHHWzdbk20oOcrI1SuaPPaI+VL1EC8bBI5Q==
+X-Received: by 2002:ac8:524e:: with SMTP id y14mr596415qtn.172.1572374936686;
+        Tue, 29 Oct 2019 11:48:56 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id t16sm746715qkt.99.2019.10.29.11.48.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Oct 2019 11:48:56 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iPWY3-0002OO-LR; Tue, 29 Oct 2019 15:48:55 -0300
+Date:   Tue, 29 Oct 2019 15:48:55 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+57a3b121df74c4eccbc7@syzkaller.appspotmail.com>,
+        bvanassche@acm.org, danitg@mellanox.com, dledford@redhat.com,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, mhjungk@gmail.com, parav@mellanox.com,
+        shamir.rabinovitch@oracle.com, swise@opengridcomputing.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Subject: Re: KASAN: use-after-free Read in cma_cancel_listens
+Message-ID: <20191029184855.GH6128@ziepe.ca>
+References: <20191024115700.11852-1-hdanton@sina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALvZod648GRvjd_LqViFzLRwxnzSrLZzjaNBOJju4xkDQkvrXw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191024115700.11852-1-hdanton@sina.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-10-19 11:09:29, Shakeel Butt wrote:
-> +Marco
+On Thu, Oct 24, 2019 at 07:57:00PM +0800, Hillf Danton wrote:
+> Detect and avoid repeated cancelation.
 > 
-> On Tue, Oct 29, 2019 at 2:03 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Mon 28-10-19 17:54:05, Shakeel Butt wrote:
-> > > Syzbot reported the following bug:
-> > >
-> > > BUG: KCSAN: data-race in mem_cgroup_select_victim_node / mem_cgroup_select_victim_node
-> > >
-> > > write to 0xffff88809fade9b0 of 4 bytes by task 8603 on cpu 0:
-> > >  mem_cgroup_select_victim_node+0xb5/0x3d0 mm/memcontrol.c:1686
-> > >  try_to_free_mem_cgroup_pages+0x175/0x4c0 mm/vmscan.c:3376
-> > >  reclaim_high.constprop.0+0xf7/0x140 mm/memcontrol.c:2349
-> > >  mem_cgroup_handle_over_high+0x96/0x180 mm/memcontrol.c:2430
-> > >  tracehook_notify_resume include/linux/tracehook.h:197 [inline]
-> > >  exit_to_usermode_loop+0x20c/0x2c0 arch/x86/entry/common.c:163
-> > >  prepare_exit_to_usermode+0x180/0x1a0 arch/x86/entry/common.c:194
-> > >  swapgs_restore_regs_and_return_to_usermode+0x0/0x40
-> > >
-> > > read to 0xffff88809fade9b0 of 4 bytes by task 7290 on cpu 1:
-> > >  mem_cgroup_select_victim_node+0x92/0x3d0 mm/memcontrol.c:1675
-> > >  try_to_free_mem_cgroup_pages+0x175/0x4c0 mm/vmscan.c:3376
-> > >  reclaim_high.constprop.0+0xf7/0x140 mm/memcontrol.c:2349
-> > >  mem_cgroup_handle_over_high+0x96/0x180 mm/memcontrol.c:2430
-> > >  tracehook_notify_resume include/linux/tracehook.h:197 [inline]
-> > >  exit_to_usermode_loop+0x20c/0x2c0 arch/x86/entry/common.c:163
-> > >  prepare_exit_to_usermode+0x180/0x1a0 arch/x86/entry/common.c:194
-> > >  swapgs_restore_regs_and_return_to_usermode+0x0/0x40
-> > >
-> > > mem_cgroup_select_victim_node() can be called concurrently which reads
-> > > and modifies memcg->last_scanned_node without any synchrnonization. So,
-> > > read and modify memcg->last_scanned_node with READ_ONCE()/WRITE_ONCE()
-> > > to stop potential reordering.
-> >
-> > I am sorry but I do not understand the problem and the fix. Why does the
-> > race happen and why does _ONCE fixes it? There is still no
-> > synchronization. Do you want to prevent from memcg->last_scanned_node
-> > reloading?
-> >
-> 
-> The problem is memcg->last_scanned_node can read and modified
-> concurrently. Though to me it seems like a tolerable race and not
-> worth to add an explicit lock.
+> +++ b/drivers/infiniband/core/cma.c
+> @@ -1747,7 +1747,9 @@ static void cma_cancel_listens(struct rd
+>  	 * additional listen requests.
+>  	 */
+>  	mutex_lock(&lock);
+> -	list_del(&id_priv->list);
+> +	if (list_empty(&id_priv->list))
+> +		goto unlock;
+> +	list_del_init(&id_priv->list);
+>  
+>  	while (!list_empty(&id_priv->listen_list)) {
+>  		dev_id_priv = list_entry(id_priv->listen_list.next,
+> @@ -1760,6 +1762,7 @@ static void cma_cancel_listens(struct rd
+>  		rdma_destroy_id(&dev_id_priv->id);
+>  		mutex_lock(&lock);
+>  	}
+> +unlock:
+>  	mutex_unlock(&lock);
+>  }
 
-Agreed
+Hum, it seems like a harmless change, but the real issue here is that
+cma_cancel_listens() was called twice at all.
 
-> My aim was to make KCSAN happy here to
-> look elsewhere for the concurrency bugs. However I see that it might
-> complain next on memcg->scan_nodes.
+It seems pretty clear that the intent was it would be called on the
+state, and the state is transitioned away before it is called. Ie see
+how cma_cancel_operation() works with the 'state' argument.
 
-I would really refrain from adding whatever measure to silence some
-tool without a deeper understanding of why that is needed. $FOO_ONCE
-will prevent compiler from making funcy stuff. But this is an int and
-I would be really surprised if $FOO_ONCE made any practical difference.
+So the only way to trigger this is to race two state transitions,
+which means this is the usual syzkaller bug, the 'cma_exch'
+synchronization scheme is just totally broken.
 
-> Now taking a step back, I am questioning the whole motivation behind
-> mem_cgroup_select_victim_node(). Since we pass ZONELIST_FALLBACK
-> zonelist to the reclaimer, the shrink_node will be called for all
-> potential nodes. Also we don't short circuit the traversal of
-> shrink_node for all nodes on nr_reclaimed and we scan (size_on_node >>
-> priority) for all nodes, I don't see the reason behind having round
-> robin order of node traversal.
-> 
-> I am thinking of removing the whole mem_cgroup_select_victim_node()
-> heuristic. Please let me know if there are any objections.
-
-I would have to think more about this but this surely sounds like a
-preferable way than adding $FOO_ONCE to silence the tool.
-
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+Jason
