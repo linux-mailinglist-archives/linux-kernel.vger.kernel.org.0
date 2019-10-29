@@ -2,455 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D31EE8E5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21200E8E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbfJ2Rj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:39:28 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:55501 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729421AbfJ2Rj1 (ORCPT
+        id S1728019AbfJ2ReG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:34:06 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36004 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfJ2ReG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:39:27 -0400
-X-Greylist: delayed 1166 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Oct 2019 13:35:48 EDT
-Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9THFVp6006400
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Oct 2019 18:15:31 +0100
-Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9THFVsQ168934;
-        Tue, 29 Oct 2019 18:15:31 +0100
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        KP Singh <kpsingh@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next v11 7/7] landlock: Add user and kernel documentation for Landlock
-Date:   Tue, 29 Oct 2019 18:15:05 +0100
-Message-Id: <20191029171505.6650-8-mic@digikod.net>
-X-Mailer: git-send-email 2.24.0.rc1
-In-Reply-To: <20191029171505.6650-1-mic@digikod.net>
-References: <20191029171505.6650-1-mic@digikod.net>
+        Tue, 29 Oct 2019 13:34:06 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c22so3324688wmd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 10:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=96w2dzfTRVYhxtpmysIMVp5R//097wsFBHWIwR4IIVo=;
+        b=L2Ux0FBszqSEPU0Go7wCMkFu6MAIwHtl7G9CVTGJwzncwV1Nmno1Z1yAIFiup0UHP5
+         CJ63jwv3gJSJ3BxB0HgkBEgmo569yMFty7jHvuzFnZ/bqp69FN6XwWi1mz6z6D0yGjXY
+         baXb2ftwfehPBnscLhB9pAiCzgt4XSirDOjNqm7RvFpuNIdjlLC/tB7EeYyPffWybjrj
+         1092cg60X4dD0HnfH1WEH6vR2/8MqQWqLEvAEiivGytQ9uABGmXEY7EpAXp19POcKnUk
+         KbNY/96GrDEOlqFx20daq3ryInKraw9c8IxMSe0BlLcizgVwNbV1zLZ4N1CT+bJxBpey
+         WSzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=96w2dzfTRVYhxtpmysIMVp5R//097wsFBHWIwR4IIVo=;
+        b=EaVyZxW7PZvqv6d+ZcpUwZ5Y5IgHg0HGZGa2LJvEEafTOa4YtsOpFO/R4nJrs5igqE
+         hOcS+nVUYh6zB3EqHraYXts1ZsI+/N6mL+FA/Bmq0Gj1ledCzYVOH6d5vAqHHHUswoJ5
+         3e1DLVKuVTAodAJcmZxyfnSYGvkcFY65R6Cy4ImHPOoo/xhM1V+kUQ+Pl7wh5nPFOPrS
+         gEKJWgd89F04nE71dABCNvBtsOMc5BrJSZvuv8SaUkI/wdsNRib8ZI3YHPwv+kWbd0Sd
+         3/rDh2d5aPHvZomsDyU9G6FrY+uoA+ub83sowedRkaUkC3Pc+xRsyaKsFov2s9QFoOti
+         j8yA==
+X-Gm-Message-State: APjAAAUuEe/YibdtlkRFnfwWbavKQz4e0KAH2+fLYrE8wu+CTHFMfTXn
+        Y/0JYEdPJaXLhmcyyaDwbUtYDQ==
+X-Google-Smtp-Source: APXvYqwpqvya2KY9lPmFPtxEfiK4pcEq4AiggrcI/0x483wqTyFrOpifuSEBRCnZHhlClrriS1UWBA==
+X-Received: by 2002:a05:600c:21d3:: with SMTP id x19mr5141533wmj.121.1572370442694;
+        Tue, 29 Oct 2019 10:34:02 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:7037:cc11:eb05:9c6a? ([2a01:e34:ed2f:f020:7037:cc11:eb05:9c6a])
+        by smtp.googlemail.com with ESMTPSA id q12sm9529657wrw.91.2019.10.29.10.34.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2019 10:34:02 -0700 (PDT)
+Subject: Re: [PATCH 2/4] thermal: stm32: fix IRQ flood on low threshold
+To:     Joe Perches <joe@perches.com>, Pascal Paillet <p.paillet@st.com>,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, rui.zhang@intel.com,
+        edubezval@gmail.com, amit.kucheria@verdurent.com,
+        david.hernandezsanchez@st.com, wsa+renesas@sang-engineering.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Andy Whitcroft <apw@canonical.com>
+References: <20191029164537.1561-1-p.paillet@st.com>
+ <20191029164537.1561-3-p.paillet@st.com>
+ <8952e975-3bad-4b7d-49ff-b74af942008c@linaro.org>
+ <f668de19e156bd7a1bf599d9ce1f9d4f4fca4095.camel@perches.com>
+ <026e676e-0a6c-81ca-3af4-2832118b9ddf@linaro.org>
+ <9dd814577107edc42c4469ee7c923e062a2b5368.camel@perches.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f9376dfb-c20a-59ce-f00e-4f89fed3c341@linaro.org>
+Date:   Tue, 29 Oct 2019 18:34:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <9dd814577107edc42c4469ee7c923e062a2b5368.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documentation can be built with the Sphinx framework.
+On 29/10/2019 18:24, Joe Perches wrote:
+> On Tue, 2019-10-29 at 18:21 +0100, Daniel Lezcano wrote:
+>> On 29/10/2019 18:15, Joe Perches wrote:
+>>> On Tue, 2019-10-29 at 18:11 +0100, Daniel Lezcano wrote:
+>>>> On 29/10/2019 17:45, Pascal Paillet wrote:
+>>>>> Fix IRQ flood on low threshold by too ways:
+>>>>
+>>>> Can you state the issue first ?
+>>>>
+>>>>> - improve temperature reading resolution,
+>>>>> - add an hysteresis to the low threshold: on low threshold interrupt,
+>>>>> it is not possible to get the temperature value that has fired the
+>>>>> interrupt. The time to acquire a new value is enough for the CPU to
+>>>>> become hotter than the current low threshold.
+>>> []
+>>>>> Signed-off-by: Pascal Paillet <p.paillet@st.com>
+>>>>> Change-Id: I3b63b8aab38fd651a165c4e69a2d090b3c6f5db3
+>>>>
+>>>> Please remove the Change-Id tag.
+>>>>
+>>>> Joe, Andy? checkpatch does not see the Change-Id, is it the expected
+>>>> behavior?
+>>>
+>>> Yes.  It's after a sign-off so checkpatch doesn't care.
+>>
+>> Ah, I guess it is for Gerrit but we don't want those Change-Id in the
+>> kernel history, right?
+> 
+> So remove it from the patch.
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Will Drewry <wad@chromium.org>
----
+It was not a sarcastic question. I just wanted to be sure the Change-Id
+is something we always want to remove. There are some of them in the
+kernel log and I got a doubt.
 
-Changes since v10:
-* replace the filesystem hooks with the ptrace one
-* remove the triggers
-* update example
-* add documenation for Landlock domains and seccomp interaction
-* reference more kernel documenation (e.g. LSM hooks)
+checkpatch is perfectly fine for me.
 
-Changes since v9:
-* update with expected attach type and expected attach triggers
+  -- Daniel
 
-Changes since v8:
-* remove documentation related to chaining and tagging according to this
-  patch series
 
-Changes since v7:
-* update documentation according to the Landlock revamp
-
-Changes since v6:
-* add a check for ctx->event
-* rename BPF_PROG_TYPE_LANDLOCK to BPF_PROG_TYPE_LANDLOCK_RULE
-* rename Landlock version to ABI to better reflect its purpose and add a
-  dedicated changelog section
-* update tables
-* relax no_new_privs recommendations
-* remove ABILITY_WRITE related functions
-* reword rule "appending" to "prepending" and explain it
-* cosmetic fixes
-
-Changes since v5:
-* update the rule hierarchy inheritance explanation
-* briefly explain ctx->arg2
-* add ptrace restrictions
-* explain EPERM
-* update example (subtype)
-* use ":manpage:"
----
- Documentation/security/index.rst           |   1 +
- Documentation/security/landlock/index.rst  |  22 ++++
- Documentation/security/landlock/kernel.rst | 139 ++++++++++++++++++++
- Documentation/security/landlock/user.rst   | 142 +++++++++++++++++++++
- 4 files changed, 304 insertions(+)
- create mode 100644 Documentation/security/landlock/index.rst
- create mode 100644 Documentation/security/landlock/kernel.rst
- create mode 100644 Documentation/security/landlock/user.rst
-
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index fc503dd689a7..4d213e76ddf4 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -15,3 +15,4 @@ Security Documentation
-    self-protection
-    siphash
-    tpm/index
-+   landlock/index
-diff --git a/Documentation/security/landlock/index.rst b/Documentation/security/landlock/index.rst
-new file mode 100644
-index 000000000000..1eced757b05d
---- /dev/null
-+++ b/Documentation/security/landlock/index.rst
-@@ -0,0 +1,22 @@
-+=========================================
-+Landlock LSM: programmatic access control
-+=========================================
-+
-+:Author: Mickaël Salaün
-+
-+Landlock is a stackable Linux Security Module (LSM) that makes it possible to
-+create security sandboxes, programmable access-controls or safe endpoint
-+security agents.  This kind of sandbox is expected to help mitigate the
-+security impact of bugs or unexpected/malicious behaviors in user-space
-+applications.  The current version allows only a process with the global
-+CAP_SYS_ADMIN capability to create such sandboxes but the ultimate goal of
-+Landlock is to empower any process, including unprivileged ones, to securely
-+restrict themselves.  Landlock is inspired by seccomp-bpf but instead of
-+filtering syscalls and their raw arguments, a Landlock rule can inspect the use
-+of kernel objects like processes and hence make a decision according to the
-+kernel semantic.
-+
-+.. toctree::
-+
-+    user
-+    kernel
-diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
-new file mode 100644
-index 000000000000..0be906f92c3e
---- /dev/null
-+++ b/Documentation/security/landlock/kernel.rst
-@@ -0,0 +1,139 @@
-+==============================
-+Landlock: kernel documentation
-+==============================
-+
-+eBPF properties
-+===============
-+
-+To get an expressive language while still being safe and small, Landlock is
-+based on eBPF. Landlock should be usable by untrusted processes and must
-+therefore expose a minimal attack surface. The eBPF bytecode is minimal,
-+powerful, widely used and designed to be used by untrusted applications. Thus,
-+reusing the eBPF support in the kernel enables a generic approach while
-+minimizing new code.
-+
-+An eBPF program has access to an eBPF context containing some fields used to
-+inspect the current object. These arguments may be used directly (e.g. raw
-+value) or passed to helper functions according to their types (e.g. pointer).
-+It is then possible to do complex access checks without race conditions or
-+inconsistent evaluation (i.e.  `incorrect mirroring of the OS code and state
-+<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
-+
-+A Landlock hook describes a particular access type.  For now, there is one hook
-+dedicated to ptrace related operations: BPF_LANDLOCK_PTRACE.  A Landlock
-+program is tied to one hook.  This makes it possible to statically check
-+context accesses, potentially performed by such program, and hence prevents
-+kernel address leaks and ensure the right use of hook arguments with eBPF
-+functions.  Any user can add multiple Landlock programs per Landlock hook.
-+They are stacked and evaluated one after the other, starting from the most
-+recent program, as seccomp-bpf does with its filters.  Underneath, a hook is an
-+abstraction over a set of LSM hooks.
-+
-+
-+Guiding principles
-+==================
-+
-+Unprivileged use
-+----------------
-+
-+* Landlock helpers and context should be usable by any unprivileged and
-+  untrusted program while following the system security policy enforced by
-+  other access control mechanisms (e.g. DAC, LSM), even if a global
-+  CAP_SYS_ADMIN is currently required.
-+
-+
-+Landlock hook and context
-+-------------------------
-+
-+* A Landlock hook shall be focused on access control on kernel objects instead
-+  of syscall filtering (i.e. syscall arguments), which is the purpose of
-+  seccomp-bpf.
-+* A Landlock context provided by a hook shall express the minimal and more
-+  generic interface to control an access for a kernel object.
-+* A hook shall guaranty that all the BPF function calls from a program are
-+  safe.  Thus, the related Landlock context arguments shall always be of the
-+  same type for a particular hook.  For example, a network hook could share
-+  helpers with a file hook because of UNIX socket.  However, the same helpers
-+  may not be compatible for a file system handle and a net handle.
-+* Multiple hooks may use the same context interface.
-+
-+
-+Landlock helpers
-+----------------
-+
-+* Landlock helpers shall be as generic as possible while at the same time being
-+  as simple as possible and following the syscall creation principles (cf.
-+  *Documentation/adding-syscalls.txt*).
-+* The only behavior change allowed on a helper is to fix a (logical) bug to
-+  match the initial semantic.
-+* Helpers shall be reentrant, i.e. only take inputs from arguments (e.g. from
-+  the BPF context), to enable a hook to use a cache.  Future program options
-+  might change this cache behavior.
-+* It is quite easy to add new helpers to extend Landlock.  The main concern
-+  should be about the possibility to leak information from the kernel that may
-+  not be accessible otherwise (i.e. side-channel attack).
-+
-+
-+Landlock domain
-+===============
-+
-+A Landlock domain is a set of eBPF programs.  There is a list for each
-+different program types that can be run on a specific Landlock hook (e.g.
-+ptrace).  A domain is tied to a set of subjects (i.e. tasks).
-+
-+A Landlock program should not try (nor be able) to infer which subject is
-+currently enforced, but to have a unique security policy for all subjects tied
-+to the same domain.  This make the reasoning much easier and help avoid
-+pitfalls.
-+
-+.. kernel-doc:: security/landlock/common.h
-+    :functions: landlock_domain
-+
-+.. kernel-doc:: security/landlock/domain_manage.c
-+    :functions: landlock_prepend_prog
-+
-+
-+Adding a Landlock program with seccomp
-+--------------------------------------
-+
-+The :manpage:`seccomp(2)` syscall can be used with the
-+`SECCOMP_PREPEND_LANDLOCK_PROG` operation to prepend a Landlock program to the
-+current task's domain.
-+
-+.. kernel-doc:: security/landlock/domain_syscall.c
-+    :functions: landlock_seccomp_prepend_prog
-+
-+
-+Running a list of Landlock programs
-+-----------------------------------
-+
-+.. kernel-doc:: security/landlock/bpf_run.c
-+    :functions: landlock_access_denied
-+
-+
-+LSM hooks
-+=========
-+
-+.. kernel-doc:: security/landlock/hooks_ptrace.c
-+    :functions: hook_ptrace_access_check
-+
-+.. kernel-doc:: security/landlock/hooks_ptrace.c
-+    :functions: hook_ptrace_traceme
-+
-+
-+Questions and answers
-+=====================
-+
-+Why a program does not return an errno or a kill code?
-+------------------------------------------------------
-+
-+seccomp filters can return multiple kind of code, including an errno value or a
-+kill signal, which may be convenient for access control.  Those return codes
-+are hardwired in the userland ABI.  Instead, Landlock's approach is to return a
-+bitmask to allow or deny an action, which is much simpler and more generic.
-+Moreover, we do not really have a choice because, unlike to seccomp, Landlock
-+programs are not enforced at the syscall entry point but may be executed at any
-+point in the kernel (through LSM hooks) where an errno return code may not make
-+sense.  However, with this simple ABI and with the ability to call helpers,
-+Landlock may gain features similar to seccomp-bpf in the future while being
-+compatible with previous programs.
-diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
-new file mode 100644
-index 000000000000..e7aa9a260a86
---- /dev/null
-+++ b/Documentation/security/landlock/user.rst
-@@ -0,0 +1,142 @@
-+================================
-+Landlock: userland documentation
-+================================
-+
-+Landlock programs
-+=================
-+
-+eBPF programs are used to create security programs.  They are contained and can
-+call only a whitelist of dedicated functions. Moreover, they can only loop
-+under strict conditions, which protects from denial of service.  More
-+information on BPF can be found in *Documentation/networking/filter.txt*.
-+
-+
-+Writing a program
-+-----------------
-+
-+To enforce a security policy, a thread first needs to create a Landlock
-+program.  The easiest way to write an eBPF program depicting a security program
-+is to write it in the C language.  As described in *samples/bpf/README.rst*,
-+LLVM can compile such programs.  A simple eBPF program can also be written by
-+hand has done in *tools/testing/selftests/landlock/*.
-+
-+Once the eBPF program is created, the next step is to create the metadata
-+describing the Landlock program.  This metadata includes an expected attach
-+type which contains the hook type to which the program is tied.
-+
-+A hook is a policy decision point which exposes the same context type for
-+each program evaluation.
-+
-+A Landlock hook describes the kind of kernel object for which a program will be
-+triggered to allow or deny an action.  For example, the hook
-+BPF_LANDLOCK_PTRACE can be triggered every time a landlocked thread performs a
-+set of action related to debugging (cf. :manpage:`ptrace(2)`) or if the kernel
-+needs to know if a process manipulation requested by something else is
-+legitimate.
-+
-+The next step is to fill a :c:type:`struct bpf_load_program_attr
-+<bpf_load_program_attr>` with BPF_PROG_TYPE_LANDLOCK_HOOK, the expected attach
-+type and other BPF program metadata.  This bpf_attr must then be passed to the
-+:manpage:`bpf(2)` syscall alongside the BPF_PROG_LOAD command.  If everything
-+is deemed correct by the kernel, the thread gets a file descriptor referring to
-+this program.
-+
-+In the following code, the *insn* variable is an array of BPF instructions
-+which can be extracted from an ELF file as is done in bpf_load_file() from
-+*samples/bpf/bpf_load.c*.
-+
-+.. code-block:: c
-+
-+    int prog_fd;
-+    struct bpf_load_program_attr load_attr;
-+
-+    memset(&load_attr, 0, sizeof(struct bpf_load_program_attr));
-+    load_attr.prog_type = BPF_PROG_TYPE_LANDLOCK_HOOK;
-+    load_attr.expected_attach_type = BPF_LANDLOCK_PTRACE;
-+    load_attr.insns = insns;
-+    load_attr.insns_cnt = sizeof(insn) / sizeof(struct bpf_insn);
-+    load_attr.license = "GPL";
-+
-+    prog_fd = bpf_load_program_xattr(&load_attr, log_buf, log_buf_sz);
-+    if (prog_fd == -1)
-+        exit(1);
-+
-+
-+Enforcing a program
-+-------------------
-+
-+Once the Landlock program has been created or received (e.g. through a UNIX
-+socket), the thread willing to sandbox itself (and its future children) should
-+perform the following two steps.
-+
-+The thread should first request to never be allowed to get new privileges with a
-+call to :manpage:`prctl(2)` and the PR_SET_NO_NEW_PRIVS option.  More
-+information can be found in *Documentation/prctl/no_new_privs.txt*.
-+
-+.. code-block:: c
-+
-+    if (prctl(PR_SET_NO_NEW_PRIVS, 1, NULL, 0, 0))
-+        exit(1);
-+
-+A thread can apply a program to itself by using the :manpage:`seccomp(2)` syscall.
-+The operation is SECCOMP_PREPEND_LANDLOCK_PROG, the flags must be empty and the
-+*args* argument must point to a valid Landlock program file descriptor.
-+
-+.. code-block:: c
-+
-+    if (seccomp(SECCOMP_PREPEND_LANDLOCK_PROG, 0, &fd))
-+        exit(1);
-+
-+If the syscall succeeds, the program is now enforced on the calling thread and
-+will be enforced on all its subsequently created children of the thread as
-+well.  Once a thread is landlocked, there is no way to remove this security
-+policy, only stacking more restrictions is allowed.  The program evaluation is
-+performed from the newest to the oldest.
-+
-+When a syscall ask for an action on a kernel object, if this action is denied,
-+then an EACCES errno code is returned through the syscall.
-+
-+
-+.. _inherited_programs:
-+
-+Inherited programs
-+------------------
-+
-+Every new thread resulting from a :manpage:`clone(2)` inherits Landlock program
-+restrictions from its parent.  This is similar to the seccomp inheritance as
-+described in *Documentation/prctl/seccomp_filter.txt* or any other LSM dealing
-+with task's :manpage:`credentials(7)`.
-+
-+
-+Ptrace restrictions
-+-------------------
-+
-+A sandboxed process has less privileges than a non-sandboxed process and must
-+then be subject to additional restrictions when manipulating another process.
-+To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-+process, a sandboxed process should have a subset of the target process
-+programs.  This security policy can easily be implemented like in
-+*tools/testing/selftests/landlock/test_ptrace.c*.
-+
-+
-+Landlock structures and constants
-+=================================
-+
-+Contexts
-+--------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :functions: landlock_context_ptrace
-+
-+
-+Return types
-+------------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :functions: landlock_ret
-+
-+
-+Additional documentation
-+========================
-+
-+See https://landlock.io
 -- 
-2.23.0
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
