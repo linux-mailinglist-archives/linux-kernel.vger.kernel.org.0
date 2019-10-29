@@ -2,146 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E0D8E8CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A9BE8CCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 17:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390530AbfJ2Qcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 12:32:50 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:48287 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390458AbfJ2Qcr (ORCPT
+        id S2390487AbfJ2QfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 12:35:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33652 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390384AbfJ2QfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 12:32:47 -0400
-Received: by mail-vk1-f201.google.com with SMTP id x65so2176492vkd.15
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 09:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=5pfhpJx7UO/QNtR11zCiFnLuGkt6GlpMBjgSmMf75Tg=;
-        b=FC4xXf2uZAMPwsrS2OpWFIPtkzQx1/R/4h+oW4oVwrQSAmMY3j5rAXXvMIeTt9HmO9
-         bMgeC7X+vkpdUJYjwYDUosbLI4zFUtwgcVTuzIWYTJ9hUePQyte5w3EAEsvviWkBiDBw
-         ZvatJYjaTa//8dRWOc9DabyKXKa7mCRRFBFM1LTwR2cQ6+Fn89H6Txtv25QUDc8ApcUh
-         DCvHhH1qFVpZ78NPfAOQdj2EGmuC0sFyJ/fiN3XEPYw+XSTxfk+ZPF3+Ww2kZSkK9H0X
-         om/im8oCdPDqb+vmEjGkPIrKOJ4wy/QciLWGnGESCIAjXG98sVXNPhY5BNk1hcMY2nep
-         Zm+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5pfhpJx7UO/QNtR11zCiFnLuGkt6GlpMBjgSmMf75Tg=;
-        b=bMINYd8wKTtdqzUXcFEdvjdBJPUlWAxDFtPdOsWdNtWsxgl3KbAXpD8yuk7pI9Qopy
-         0qlUzOMIFstVeINFDMMyhkPSrvKpHwnAoWhUHyWr0gJcYWuCyo+WQC/7PlohoexyPS6S
-         m6IYCfdcNtwYe+gI/j8cgqH5/UIhyabfDBa8qnP9h9Zc1Au/ciCy5rBPJqPF/GlCklck
-         Gf5pBsWqUXh1nzrT6xPelaZtZDvNH4ABEc4H9yKUBO1HcGxH+PjQY8Nh0H/UfGpZwx7d
-         tP11p/M28hhlhOA7oNSOdhsoM9/BeKOOHicvCZ2tXZIqgMYeFghU7pQbdi2FIDIcf/Cs
-         MvZQ==
-X-Gm-Message-State: APjAAAXAW8IYMjoTnCkO7AD/M+LpumDZVhSEygK4JjTtRRgnCwYeOp55
-        JYUwujJ3CdY3Yftel+cTU456t7ysmhc46XXF
-X-Google-Smtp-Source: APXvYqxnbDwJOsZb5FOgMj5h3yqf55yEZtrdQcWRE/7f4Xr3yFQjgNOipnGlkQAkFoahpht83RtnwLlnW8nrG+uK
-X-Received: by 2002:a1f:41c4:: with SMTP id o187mr12070271vka.102.1572366766673;
- Tue, 29 Oct 2019 09:32:46 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 17:32:29 +0100
-In-Reply-To: <cover.1572366574.git.andreyknvl@google.com>
-Message-Id: <e49d5d154e5da6c9ada521d2b7ce10a49ce9f98b.1572366574.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1572366574.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v3 3/3] vhost, kcov: collect coverage from vhost_worker
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-usb@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Windsor <dwindsor@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 Oct 2019 12:35:00 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9TGLwCm067020
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 12:34:59 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vxqqvkrbe-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 12:34:59 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 29 Oct 2019 16:34:57 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 29 Oct 2019 16:34:53 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9TGYquB44433852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 16:34:52 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B77FA4051;
+        Tue, 29 Oct 2019 16:34:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD884A4040;
+        Tue, 29 Oct 2019 16:34:51 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.85])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 29 Oct 2019 16:34:51 +0000 (GMT)
+Date:   Tue, 29 Oct 2019 17:34:50 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     gor@linux.ibm.com, borntraeger@de.ibm.com, jpoimboe@redhat.com,
+        joe.lawrence@redhat.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jikos@kernel.org, pmladek@suse.com,
+        nstange@suse.de, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] s390/livepatch: Implement reliable stack tracing
+ for the consistency model
+References: <20191029143904.24051-1-mbenes@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029143904.24051-1-mbenes@suse.cz>
+X-TM-AS-GCONF: 00
+x-cbid: 19102916-0016-0000-0000-000002BED94E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102916-0017-0000-0000-000033203281
+Message-Id: <20191029163450.GI5646@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-29_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=486 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910290145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds kcov_remote_start()/kcov_remote_stop() annotations to the
-vhost_worker() function, which is responsible for processing vhost works.
-Since vhost_worker() threads are spawned per vhost device instance
-the common kcov handle is used for kcov_remote_start()/stop() annotations
-(see Documentation/dev-tools/kcov.rst for details). As the result kcov can
-now be used to collect coverage from vhost worker threads.
+On Tue, Oct 29, 2019 at 03:39:01PM +0100, Miroslav Benes wrote:
+> - I tried to use the existing infrastructure as much as possible with
+>   one exception. I kept unwind_next_frame_reliable() next to the
+>   ordinary unwind_next_frame(). I did not come up with a nice solution
+>   how to integrate it. The reliable unwinding is executed on a task
+>   stack only, which leads to a nice simplification. My integration
+>   attempts only obfuscated the existing unwind_next_frame() which is
+>   already not easy to read. Ideas are definitely welcome.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- drivers/vhost/vhost.c | 6 ++++++
- drivers/vhost/vhost.h | 1 +
- 2 files changed, 7 insertions(+)
+Ah, now I see. So patch 2 seems to be leftover(?). Could you just send
+how the result would look like?
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 36ca2cf419bf..f44340b41494 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -30,6 +30,7 @@
- #include <linux/sched/signal.h>
- #include <linux/interval_tree_generic.h>
- #include <linux/nospec.h>
-+#include <linux/kcov.h>
- 
- #include "vhost.h"
- 
-@@ -357,7 +358,9 @@ static int vhost_worker(void *data)
- 		llist_for_each_entry_safe(work, work_next, node, node) {
- 			clear_bit(VHOST_WORK_QUEUED, &work->flags);
- 			__set_current_state(TASK_RUNNING);
-+			kcov_remote_start_common(dev->kcov_handle);
- 			work->fn(work);
-+			kcov_remote_stop();
- 			if (need_resched())
- 				schedule();
- 		}
-@@ -546,6 +549,7 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 
- 	/* No owner, become one */
- 	dev->mm = get_task_mm(current);
-+	dev->kcov_handle = kcov_common_handle();
- 	worker = kthread_create(vhost_worker, dev, "vhost-%d", current->pid);
- 	if (IS_ERR(worker)) {
- 		err = PTR_ERR(worker);
-@@ -571,6 +575,7 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 	if (dev->mm)
- 		mmput(dev->mm);
- 	dev->mm = NULL;
-+	dev->kcov_handle = 0;
- err_mm:
- 	return err;
- }
-@@ -682,6 +687,7 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- 	if (dev->worker) {
- 		kthread_stop(dev->worker);
- 		dev->worker = NULL;
-+		dev->kcov_handle = 0;
- 	}
- 	if (dev->mm)
- 		mmput(dev->mm);
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index e9ed2722b633..a123fd70847e 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -173,6 +173,7 @@ struct vhost_dev {
- 	int iov_limit;
- 	int weight;
- 	int byte_weight;
-+	u64 kcov_handle;
- };
- 
- bool vhost_exceeds_weight(struct vhost_virtqueue *vq, int pkts, int total_len);
--- 
-2.24.0.rc0.303.g954a862665-goog
+I'd really like to have only one function, since some of the sanity
+checks you added also make sense for what we already have - so code
+would diverge from the beginning.
 
