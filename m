@@ -2,184 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 908FFE8EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:57:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C63C4E8EAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 18:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfJ2R5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 13:57:10 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:37493 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfJ2R5H (ORCPT
+        id S1727504AbfJ2Rv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 13:51:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33136 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfJ2Rv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:57:07 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        Tue, 29 Oct 2019 13:51:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E957760FF4; Tue, 29 Oct 2019 17:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572371487;
+        bh=bftFcLSwZqHPkXi1F7N9wDRTevZ/aidKfDH06FT0MTs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FjrjwM1qFc3qxgoaWtnh7W8rxak6gcGl0vA9Wi3TkigH8bTiC+5lU5QR5k8tgUoRp
+         2egWQzqboPyWn3bRQmXA3gduVUsX03yAE5OjmBfQi/Uicbn+dDq/bG+RTx4/JLhmcl
+         ZjliZ01gNF6PK0zwhLI3+XlmrzIg7aRKGoKh3zFQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 7B83422EE9;
-        Tue, 29 Oct 2019 18:48:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
-        s=mail2016061301; t=1572371333;
-        bh=lNMSL0kfIVGkynQCj6WK3Ply+NekAQJSK8m2Xt6TTEM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MBjNk3HPwEXhCqQElLjAIzGLECRccCBdIJwL+4YMhG3y29LQvXkxR17ymzdDJ2blT
-         c+n1B5+eo7+Vvrt8rrnSWqkCVsm0nBX5UbkK2pSjZQcZ+NpocJ3VO9yVgc6WH47g8F
-         bImRkrpqx/1rr0woWFZqA5k7wjXt2AAdJDmoHdVE=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     Michael Walle <michael@walle.cc>
-Subject: [PATCH 3/3] net: phy: Use device tree properties to initialize any PHYs
-Date:   Tue, 29 Oct 2019 18:48:19 +0100
-Message-Id: <20191029174819.3502-4-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191029174819.3502-1-michael@walle.cc>
-References: <20191029174819.3502-1-michael@walle.cc>
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1C3160927;
+        Tue, 29 Oct 2019 17:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572371485;
+        bh=bftFcLSwZqHPkXi1F7N9wDRTevZ/aidKfDH06FT0MTs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Vmxg6f9I6CsqxhG2qQxoCeMZ/wMemRYoIBQo8OJ5PYixGobQz36E7Q4s0FoxcyRei
+         rVjNutek6jnmhBSCL5D4d7UK1hi9oaWab6xzBymhJe72gPzt3Xi5EhSpdNTs/b24WI
+         pimxF6XZZgLel4GJ0sSFrel73RYZFs1aiwMdAZdY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1C3160927
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] arm64: cpufeature: Enable Qualcomm Falkor errata 1009 for
+ Kryo
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+References: <20191029060604.1208925-1-bjorn.andersson@linaro.org>
+ <20191029115008.GD12103@willie-the-truck>
+ <16ccb343-8253-0224-e957-c73f51f110a1@codeaurora.org>
+ <d9700408-b11e-b5c8-db9d-f70ccd1bde73@codeaurora.org>
+ <20191029171149.GB13281@willie-the-truck> <20191029172431.GY571@minitux>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <b22e4ff5-5f2c-3987-8f48-49de0c57e8c6@codeaurora.org>
+Date:   Tue, 29 Oct 2019 11:51:23 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191029172431.GY571@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.101.4 at web
-X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some PHYs drivers, like the marvell and the broadcom one, are able to
-initialize PHY registers via device tree properties. This patch adds a
-more generic property which applies to any PHY. It supports clause-22,
-clause-45 and paged PHY writes.
+On 10/29/2019 10:24 AM, Bjorn Andersson wrote:
+> On Tue 29 Oct 10:11 PDT 2019, Will Deacon wrote:
+> 
+>> On Tue, Oct 29, 2019 at 09:07:53AM -0600, Jeffrey Hugo wrote:
+>>> On 10/29/2019 7:44 AM, Jeffrey Hugo wrote:
+>>>> On 10/29/2019 4:50 AM, Will Deacon wrote:
+>>>>> On Mon, Oct 28, 2019 at 11:06:04PM -0700, Bjorn Andersson wrote:
+>>>>>> The Kryo cores share errata 1009 with Falkor, so add their model
+>>>>>> definitions and enable it for them as well.
+>>>>>>
+>>>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>>>> ---
+>>>>>>    arch/arm64/include/asm/cputype.h | 4 ++++
+>>>>>>    arch/arm64/kernel/cpu_errata.c   | 2 ++
+>>>>>>    2 files changed, 6 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/include/asm/cputype.h
+>>>>>> b/arch/arm64/include/asm/cputype.h
+>>>>>> index b1454d117cd2..8067476ea2e4 100644
+>>>>>> --- a/arch/arm64/include/asm/cputype.h
+>>>>>> +++ b/arch/arm64/include/asm/cputype.h
+>>>>>> @@ -84,6 +84,8 @@
+>>>>>>    #define QCOM_CPU_PART_FALKOR_V1        0x800
+>>>>>>    #define QCOM_CPU_PART_FALKOR        0xC00
+>>>>>>    #define QCOM_CPU_PART_KRYO        0x200
+>>>>>> +#define QCOM_CPU_PART_KRYO_GOLD        0x211
+>>>>>> +#define QCOM_CPU_PART_KRYO_SILVER    0x205
+>>>>
+>>>> These are not Kryo part numbers (8998+).  They are Hydra ones.
+>>>>
+>>>>>
+>>>>> Can you double-check this, please? My Pixel-1 phone claims something with
+>>>>> 0x201, but I don't know if that's what you were aiming for. It would be
+>>>>> great if Qualcomm could document these register fields somewhere,
+>>>>> especially
+>>>>> since we're trying to work around their hardware errata for them.
+>>>>
+>>>> I wish I could point you to public documentation.  I don't happen to
+>>>> know where it is.  As far as 8996 goes, there are quite a few part
+>>>> numbers.  The ones I could find are:
+>>>> 201
+>>>> 205
+>>>> 211
+>>>> 241
+>>>> 251
+>>>>
+>>>> 281 happens to be QDF2432
+>>>
+>>>  From asking around, I found someone in the know.  We don't have public
+>>> documentation, but I can follow up to try to create something - its likely
+>>> going to take a bit.  I was given the following information to share.  This
+>>> is specific to Hydra only-
+>>>
+>>> MIDR[15:12] = PART[11:8]
+>>> Hydra and technology node differentiator (0x1 = Hydra 16nm; 0x2 = Hydra
+>>> 14nm; 0x3 = Hydra 10nm)
+>>>
+>>> MIDR[11:10] = PART[7:6]
+>>> This corresponds to the cluster revision number
+>>>
+>>> MIDR[9:8] = PART[5:4]
+>>> Technology variant within the node
+>>>
+>>> MIDR[7:6] = PART[3:2]
+>>> 0b00 = 512KB L2
+>>> 0b01 = 1MB L2
+>>> 0b10 = 2MB L2
+>>> 0b11 = 4MB L2
+>>>
+>>> MIDR[5:4] = PART[1:0]
+>>> 0b00 = uni-core
+>>> 0b01 = dual-core cluster
+>>> 0b10 = tri-core cluster
+>>> 0b11 = quad-core cluster
+>>
+>> Thanks for digging up the details, Jeffrey. As far as I can tell, our
+>> 'is_kryo_midr()' function will return 'true' for all of these, so I think
+>> that's what we should be using for this erratum workaround. Would that work
+>> for you?
+>>
+> 
+> Yes, I agree. There's a fair amount of variants involved, so let's go
+> for is_kryo_midr() (which should be is_hydra_midr()).
+> 
 
-Hopefully, some board maintainers will pick this up and switch to this
-instead of adding more phy_fixups in architecture specific code,
-although it is board specific. For example have a look at
-arch/arm/mach-imx/ for phy_register_fixup.
+I also agree, but believe that it should be renamed to is_hydra_midr() 
+as Bjorn suggests, since there is a "kryo" architecture which has 
+different part ids, and I think continuing to use "kryo" for the current 
+errata will be confusing if there is errata for the kryo architecture in 
+the future.
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/net/phy/phy_device.c | 97 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 96 insertions(+), 1 deletion(-)
+Of course, it doesn't help that marketing seems to have used "kryo" for 
+both architectures.
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 9d2bbb13293e..3c4cbaf72c27 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -30,6 +30,9 @@
- #include <linux/mdio.h>
- #include <linux/io.h>
- #include <linux/uaccess.h>
-+#include <linux/of.h>
-+
-+#include <dt-bindings/net/phy.h>
- 
- MODULE_DESCRIPTION("PHY library");
- MODULE_AUTHOR("Andy Fleming");
-@@ -1064,6 +1067,95 @@ static int phy_poll_reset(struct phy_device *phydev)
- 	return 0;
- }
- 
-+/**
-+ * phy_of_reg_init - Set and/or override configuration registers.
-+ * @phydev: target phy_device struct
-+ *
-+ * Description: Set and/or override some configuration registers based
-+ *   on the reg-init property stored in the of_node for the phydev.
-+ *
-+ *   reg-init = <dev reg mask value>,...;
-+ *   There may be one or more sets of <dev reg mask value>:
-+ */
-+static int phy_of_reg_init(struct phy_device *phydev)
-+{
-+	struct device_node *node = phydev->mdio.dev.of_node;
-+	int oldpage = -1, savedpage = -1;
-+	const __be32 *paddr;
-+	int len, i;
-+	int ret;
-+
-+	if (!IS_ENABLED(CONFIG_OF_MDIO))
-+		return 0;
-+
-+	if (!node)
-+		return 0;
-+
-+	paddr = of_get_property(node, "reg-init", &len);
-+	if (!paddr || len < (4 * sizeof(*paddr)))
-+		return 0;
-+
-+	mutex_lock(&phydev->mdio.bus->mdio_lock);
-+
-+	savedpage = -1;
-+	len /= sizeof(*paddr);
-+	for (i = 0; i < len - 3; i += 4) {
-+		u32 dev = be32_to_cpup(paddr + i);
-+		u16 reg = be32_to_cpup(paddr + i + 1);
-+		u16 mask = be32_to_cpup(paddr + i + 2);
-+		u16 val_bits = be32_to_cpup(paddr + i + 3);
-+		int page = dev & 0xffff;
-+		int devad = dev & 0x1f;
-+		int val;
-+
-+		if (dev & PHY_REG_PAGE) {
-+			if (savedpage < 0) {
-+				savedpage = __phy_read_page(phydev);
-+				if (savedpage < 0) {
-+					ret = savedpage;
-+					goto err;
-+				}
-+				oldpage = savedpage;
-+			}
-+			if (oldpage != page) {
-+				ret = __phy_write_page(phydev, page);
-+				if (ret < 0)
-+					goto err;
-+				oldpage = page;
-+			}
-+		}
-+
-+		val = 0;
-+		if (mask) {
-+			if (dev & PHY_REG_C45)
-+				val = __phy_read_mmd(phydev, devad, reg);
-+			else
-+				val = __phy_read(phydev, reg);
-+			if (val < 0) {
-+				ret = val;
-+				goto err;
-+			}
-+			val &= mask;
-+		}
-+		val |= val_bits;
-+
-+		if (dev & PHY_REG_C45)
-+			ret = __phy_write_mmd(phydev, devad, reg, val);
-+		else
-+			ret = __phy_write(phydev, reg, val);
-+		if (ret < 0)
-+			goto err;
-+	}
-+
-+err:
-+	if (savedpage >= 0)
-+		__phy_write_page(phydev, savedpage);
-+
-+	mutex_unlock(&phydev->mdio.bus->mdio_lock);
-+
-+	return ret;
-+}
-+
- int phy_init_hw(struct phy_device *phydev)
- {
- 	int ret = 0;
-@@ -1087,7 +1179,10 @@ int phy_init_hw(struct phy_device *phydev)
- 	if (phydev->drv->config_init)
- 		ret = phydev->drv->config_init(phydev);
- 
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+
-+	return phy_of_reg_init(phydev);
- }
- EXPORT_SYMBOL(phy_init_hw);
- 
 -- 
-2.20.1
-
+Jeffrey Hugo
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
