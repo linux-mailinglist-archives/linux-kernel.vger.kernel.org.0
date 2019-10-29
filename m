@@ -2,138 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCADE9318
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CB4E931D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 23:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfJ2Wog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 18:44:36 -0400
-Received: from mail-eopbgr50066.outbound.protection.outlook.com ([40.107.5.66]:22950
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725830AbfJ2Wog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 18:44:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BkFpA6Q+GhzLGDenxbmSIDGxZVop0PIszwCyNdBvkDiXCSOB9NPmD8QFJiqmtw3dnVCbGuz4AQUBjI8QjMbYbzwa8yflcicdGwfGlYMGH9vCBtz5rwhqfj3l9DwgmdbwhF586w6H1cZTiaTVMvGgmu3d1CZbjY8+GnLedSFYeoAx1Y/hjmvf2p0HVM1RpE/d9AwPVIQ4oyBPIzd5hWO51Kce/5zN6I6OGi0BVRpj5FmKJ2UiMx9sO3C18ZCAM4DVbj9mh3cKn1chsqs/UQ8G03uslUwgeZ65UwaKFtlZ156eRu3o9bpi2Q9hbnqSSL6KHXP/wsWvnpggF0fOxcXG6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GRBpJvjoxoG+b5Dpj6WaVjn3b9s8OVOD0L9cM3sVYf0=;
- b=Xp6QeNgc3kF8lrjlDxxm7h9SIOiNdC/4gmlQVGNgG4yyzP8Ek6hkLy+FBTCT4itCZgj9pU9rUd51KFoQYpkMsWTPyukcdzV51KIUf+UoGhcAnubFCHJwQnk1mXl5Qfft+gKJQmQetkwutG08I3NLzA8kL838iTuW7eyTM/pE0svtRYmlAm3SS3m6cSE8UMp9UDe1cpGrH/0f0px3gHyDxKBT71e9lY7Ku9m5ZnIxJy/WJt3jLu3vx1w+T6tisKWZT6l8g+snsYu9wKVmaW4ZosK+J/xIYBsFHLDTbC2tGInFXundHGgUanYmrZXaRtjBnex/9OExpvisrpn+8q15yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GRBpJvjoxoG+b5Dpj6WaVjn3b9s8OVOD0L9cM3sVYf0=;
- b=ammmhVMdEYiOh6hOtUAP72gs3FQ2RCPWlwwpsnMDvd1uf8pmv4DaeyjctPvAUSy2RyaSJ5T2txpQ+KLtAsqkXS1mtp+bJVpjtr3CTCSH1T87dp+WSVlS77hQsRrmJSlDdTTz1ABAoG5rkMMErIo/FEleZE9xC1hWjCoyY4LG8YA=
-Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.234.30) by
- VE1PR04MB6543.eurprd04.prod.outlook.com (20.179.235.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.24; Tue, 29 Oct 2019 22:44:32 +0000
-Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
- ([fe80::c93:c279:545b:b6b6]) by VE1PR04MB6687.eurprd04.prod.outlook.com
- ([fe80::c93:c279:545b:b6b6%3]) with mapi id 15.20.2387.027; Tue, 29 Oct 2019
- 22:44:32 +0000
-From:   Leo Li <leoyang.li@nxp.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        Valentin Longchamp <valentin.longchamp@keymile.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: RE: [PATCH v2 20/23] serial: make SERIAL_QE depend on PPC32
-Thread-Topic: [PATCH v2 20/23] serial: make SERIAL_QE depend on PPC32
-Thread-Index: AQHVizGGK1AbHr0Ag0SyT1h3bdNPg6dyPcDA
-Date:   Tue, 29 Oct 2019 22:44:32 +0000
-Message-ID: <VE1PR04MB6687CA599C89D46076C9B3518F610@VE1PR04MB6687.eurprd04.prod.outlook.com>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-21-linux@rasmusvillemoes.dk>
-In-Reply-To: <20191025124058.22580-21-linux@rasmusvillemoes.dk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leoyang.li@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a3e55dcc-d939-4d99-6d34-08d75cc19112
-x-ms-traffictypediagnostic: VE1PR04MB6543:|VE1PR04MB6543:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VE1PR04MB6543B7A877FD5E98318097AD8F610@VE1PR04MB6543.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0205EDCD76
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(396003)(366004)(136003)(346002)(13464003)(189003)(199004)(476003)(7736002)(81166006)(8936002)(486006)(8676002)(11346002)(9686003)(81156014)(6246003)(446003)(55016002)(74316002)(6436002)(33656002)(2906002)(5660300002)(186003)(26005)(305945005)(229853002)(7696005)(14454004)(102836004)(76176011)(6506007)(316002)(25786009)(66066001)(52536014)(54906003)(110136005)(256004)(4326008)(478600001)(66476007)(66446008)(64756008)(66556008)(66946007)(76116006)(86362001)(71200400001)(71190400001)(99286004)(6116002)(3846002)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6543;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: YQgycBYrXi9jcB4wzGPw0x8N9jH4WK21MqUtjzhkBpmZIghiEAOOKu95oQ+s1h4NNlNBIKFLw+kXzXQmaJSOSLHeZZL2sUjTFGFadFX87W02zHlR7e+o19Bn8cktNA+xXo35fJQjSzYHkodh1oLlNCwk1wu0QlwNRbghIg+e60zM6ZV+2Q34J48zZ8gib1Ak2LfHmP4cV5pj2nNQCUuclzzUMDb0LTZ5kCURPRX/4pqv/d1QPrqiZA7cFlqS4R/GpKZx9oGJk4AijRp3YuGILMMBpeQJ/jUkgiimVcIp9wUo3OqVEEyHbE9bvH+bytZlRS0PYNtM5ivRcYFONzDwWnPTzl4ieBWzBIOZYxAI2JyPmXGod+P0B3Du7vwwmniurHv8iX+r/CcZtg9vAK03peKraFexNBnasoSd6uBJQUuSMn0zbdwXmMRPdazQHTcX
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3e55dcc-d939-4d99-6d34-08d75cc19112
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2019 22:44:32.6792
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0ExFPY5twVtJy4ZezuXPXbnyoeFBTa9UfIfdDgB9+Xcj8txvBAnc+XTeR3HI0E9gZNrc2dMjoI7reZh7W6qfmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6543
+        id S1726858AbfJ2WsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 18:48:10 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34585 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbfJ2WsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 18:48:09 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b128so151812pfa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 15:48:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LQ8Qq7jCZpxsKtLYDFTpehYmUC9HA19Dv23SRX5tr0Y=;
+        b=D+47El4njGa+rVKveuA304hGPrxRVZEOG4+ThZ+OgTA2ti7ygzy2LcTSJG+JnTP1RL
+         1KAksUSOAOP/jiGquelX6euedqRzqJuC6oLmNuB1FPoWMtaz5pNbuClyU2H8//v3/G3K
+         BJCf4eBKKgxUjJZv+AUCNOqsHVD6ycXSBFAkk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LQ8Qq7jCZpxsKtLYDFTpehYmUC9HA19Dv23SRX5tr0Y=;
+        b=PG6qoNm8q50i/RirndnRKga7391sBqK31IgnFi53PNXxkicO2Hh57Iuij2mmUnmhtZ
+         ddd1+WAylpYyo0PCJ6yVjWt/0m7K+2eVSd9i2oXejFhABvSe80EA7UKS10rzlC4xpKm8
+         KK7vqO2sHQXQKqSlZVYK98XeUNzbpeeqr+LwA7IBo6FBNAtmGyGt2i0qzycNFvQ7e/fI
+         SZ4wewHlXjDbXHU60+U4VSeDnaI2CeAXbiwB3aRhkG4OMT5BM3M4jQSjYsngBkFYPEBF
+         oz+IoGUtb8HSYqQA3NlMI5C0mRkYZuRtyoY2JyhkufgTdcOzWqMSvgaS3jk6tbmaq0Bd
+         MlfQ==
+X-Gm-Message-State: APjAAAUBnEMMkAIAKbTW8Vf4qrIBWnZiMLKZ2CPdpMDcy1tlVSlIGmK3
+        fIXrAtyjbUp5zbzFIbYe30wWjw==
+X-Google-Smtp-Source: APXvYqxR452ixoOqB9MdhuF8AoQ916LwgIgccEmyoBHPIHalW51Ehhi0QpmMQ5l0LjPLP71VpIzqFQ==
+X-Received: by 2002:a63:4e13:: with SMTP id c19mr30498840pgb.225.1572389288371;
+        Tue, 29 Oct 2019 15:48:08 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t15sm160672pfh.31.2019.10.29.15.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 15:48:05 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] treewide: Use sizeof_member() macro
+Date:   Tue, 29 Oct 2019 15:47:53 -0700
+Message-Id: <20191029224756.28618-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+v3: resend, adjusted for minimizing linux-next interference
+v2: https://lore.kernel.org/lkml/20191010232345.26594-1-keescook@chromium.org
+v1: https://lore.kernel.org/lkml/201909261026.6E3381876C@keescook
 
+This is basically a resend of the heads-up for this tree I'm carrying
+for the v5.5 merge window to replace the various struct member sizeof
+macros with sizeof_member(). The CC list was insane, so I trimmed it to
+the major areas that get touched.
 
-> -----Original Message-----
-> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Sent: Friday, October 25, 2019 7:41 AM
-> To: Qiang Zhao <qiang.zhao@nxp.com>; Leo Li <leoyang.li@nxp.com>;
-> Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; Scott Wood <oss@buserror.net>; Valentin
-> Longchamp <valentin.longchamp@keymile.com>; Rasmus Villemoes
-> <linux@rasmusvillemoes.dk>; linux-serial@vger.kernel.org
-> Subject: [PATCH v2 20/23] serial: make SERIAL_QE depend on PPC32
->=20
-> Currently SERIAL_QE depends on QUICC_ENGINE, which in turn depends on
-> PPC32, so this doesn't add any extra dependency. However, the QUICC
-> Engine IP block also exists on some arm boards, so this serves as prepara=
-tion
-> for removing the PPC32 dependency from QUICC_ENGINE and build the QE
-> support in drivers/soc/fsl/qe, while preventing allmodconfig/randconfig
-> failures due to SERIAL_QE not being supported yet.
->=20
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Linus, if Alexey's argument on naming[1] does not convince you, please
+advise on what you want the final macro to be named and I will adjust. :)
 
-I think your purpose of this series is to make the QE UART not depending on=
- PPC32.  If it does accomplish that then we don't need this change.
+Dave, I converted your "no objection"[2] into an Acked-by; please yell
+if this is not desired.
 
-> ---
->  drivers/tty/serial/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig inde=
-x
-> 67a9eb3f94ce..78246f535809 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -1056,6 +1056,7 @@ config SERIAL_LANTIQ  config SERIAL_QE
->  	tristate "Freescale QUICC Engine serial port support"
->  	depends on QUICC_ENGINE
-> +	depends on PPC32
->  	select SERIAL_CORE
->  	select FW_LOADER
->  	help
-> --
-> 2.23.0
+Thanks!
+
+-Kees
+
+[1] https://www.openwall.com/lists/kernel-hardening/2019/07/02/2
+[2] https://lore.kernel.org/lkml/20191002.132121.402975401040540710.davem@davemloft.net
+
+Pankaj Bharadiya (3):
+  MIPS: OCTEON: Replace SIZEOF_FIELD() macro
+  linux/stddef.h: Add sizeof_member() macro
+  treewide: Use sizeof_member() macro
+
+ Documentation/process/coding-style.rst        |   2 +-
+ .../it_IT/process/coding-style.rst            |   2 +-
+ .../zh_CN/process/coding-style.rst            |   2 +-
+ arch/arc/kernel/unwind.c                      |   6 +-
+ arch/arm64/include/asm/processor.h            |  10 +-
+ .../cavium-octeon/executive/cvmx-bootmem.c    |   9 +-
+ arch/powerpc/net/bpf_jit32.h                  |   4 +-
+ arch/powerpc/net/bpf_jit_comp.c               |  16 +-
+ arch/sparc/net/bpf_jit_comp_32.c              |   8 +-
+ arch/x86/kernel/fpu/xstate.c                  |   2 +-
+ block/blk-core.c                              |   4 +-
+ crypto/adiantum.c                             |   4 +-
+ crypto/essiv.c                                |   2 +-
+ drivers/firmware/efi/efi.c                    |   2 +-
+ drivers/gpu/drm/i915/gvt/scheduler.c          |   2 +-
+ drivers/infiniband/hw/efa/efa_verbs.c         |   2 +-
+ drivers/infiniband/hw/hfi1/sdma.c             |   2 +-
+ drivers/infiniband/hw/hfi1/verbs.h            |   4 +-
+ .../ulp/opa_vnic/opa_vnic_ethtool.c           |   2 +-
+ drivers/input/keyboard/applespi.c             |   2 +-
+ drivers/md/raid5-ppl.c                        |   2 +-
+ drivers/media/platform/omap3isp/isppreview.c  |  24 +--
+ drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c  |   4 +-
+ .../ethernet/cavium/liquidio/octeon_console.c |  16 +-
+ .../net/ethernet/emulex/benet/be_ethtool.c    |   2 +-
+ .../hisilicon/hns3/hns3pf/hclge_main.c        |   2 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_tm.c |   2 +-
+ .../net/ethernet/huawei/hinic/hinic_ethtool.c |   8 +-
+ .../net/ethernet/intel/fm10k/fm10k_ethtool.c  |   2 +-
+ .../net/ethernet/intel/i40e/i40e_ethtool.c    |   2 +-
+ .../net/ethernet/intel/i40e/i40e_lan_hmc.c    |   2 +-
+ .../net/ethernet/intel/iavf/iavf_ethtool.c    |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool.c  |  10 +-
+ .../net/ethernet/intel/ice/ice_lan_tx_rx.h    |   2 +-
+ drivers/net/ethernet/intel/igb/igb_ethtool.c  |   4 +-
+ drivers/net/ethernet/intel/igc/igc_ethtool.c  |   4 +-
+ .../net/ethernet/intel/ixgb/ixgb_ethtool.c    |   4 +-
+ drivers/net/ethernet/intel/ixgbevf/ethtool.c  |   4 +-
+ drivers/net/ethernet/marvell/mv643xx_eth.c    |   4 +-
+ .../net/ethernet/mellanox/mlx4/en_ethtool.c   |   2 +-
+ .../ethernet/mellanox/mlx5/core/fpga/ipsec.c  |   6 +-
+ .../net/ethernet/mellanox/mlx5/core/fs_core.c |   4 +-
+ .../ethernet/mellanox/mlxsw/spectrum_fid.c    |   4 +-
+ .../ethernet/mellanox/mlxsw/spectrum_ptp.c    |   2 +-
+ drivers/net/ethernet/netronome/nfp/bpf/jit.c  |  10 +-
+ drivers/net/ethernet/netronome/nfp/bpf/main.c |   2 +-
+ .../net/ethernet/netronome/nfp/bpf/offload.c  |   2 +-
+ .../net/ethernet/netronome/nfp/flower/main.h  |   2 +-
+ .../oki-semi/pch_gbe/pch_gbe_ethtool.c        |   2 +-
+ drivers/net/ethernet/qlogic/qede/qede.h       |   2 +-
+ .../ethernet/qlogic/qlcnic/qlcnic_ethtool.c   |   2 +-
+ .../ethernet/samsung/sxgbe/sxgbe_ethtool.c    |   2 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |   4 +-
+ drivers/net/ethernet/ti/cpsw_ethtool.c        |   6 +-
+ drivers/net/ethernet/ti/netcp_ethss.c         |  32 ++--
+ drivers/net/fjes/fjes_ethtool.c               |   2 +-
+ drivers/net/geneve.c                          |   2 +-
+ drivers/net/hyperv/netvsc_drv.c               |   2 +-
+ drivers/net/usb/sierra_net.c                  |   2 +-
+ drivers/net/usb/usbnet.c                      |   2 +-
+ drivers/net/vxlan.c                           |   4 +-
+ .../net/wireless/marvell/libertas/debugfs.c   |   2 +-
+ drivers/net/wireless/marvell/mwifiex/util.h   |   4 +-
+ drivers/s390/net/qeth_core_main.c             |   2 +-
+ drivers/s390/net/qeth_core_mpc.h              |  10 +-
+ drivers/scsi/aacraid/aachba.c                 |   4 +-
+ drivers/scsi/be2iscsi/be_cmds.h               |   2 +-
+ drivers/scsi/cxgbi/libcxgbi.c                 |   2 +-
+ drivers/scsi/smartpqi/smartpqi_init.c         |   6 +-
+ drivers/staging/qlge/qlge_ethtool.c           |   2 +-
+ drivers/target/iscsi/cxgbit/cxgbit_main.c     |   2 +-
+ drivers/usb/atm/usbatm.c                      |   2 +-
+ drivers/usb/gadget/function/f_fs.c            |   2 +-
+ fs/befs/linuxvfs.c                            |   2 +-
+ fs/crypto/keyring.c                           |   2 +-
+ fs/ext2/super.c                               |   2 +-
+ fs/ext4/super.c                               |   2 +-
+ fs/freevxfs/vxfs_super.c                      |   2 +-
+ fs/fuse/virtio_fs.c                           |   2 +-
+ fs/orangefs/super.c                           |   2 +-
+ fs/ufs/super.c                                |   2 +-
+ fs/verity/enable.c                            |   2 +-
+ include/linux/filter.h                        |  12 +-
+ include/linux/kvm_host.h                      |   2 +-
+ include/linux/phy_led_triggers.h              |   2 +-
+ include/linux/slab.h                          |   2 +-
+ include/linux/stddef.h                        |  13 +-
+ include/net/garp.h                            |   2 +-
+ include/net/ip_tunnels.h                      |   6 +-
+ include/net/mrp.h                             |   2 +-
+ include/net/netfilter/nf_conntrack_helper.h   |   2 +-
+ include/net/netfilter/nf_tables_core.h        |   2 +-
+ include/net/sock.h                            |   2 +-
+ ipc/util.c                                    |   2 +-
+ kernel/bpf/cgroup.c                           |   2 +-
+ kernel/bpf/local_storage.c                    |   4 +-
+ kernel/fork.c                                 |   2 +-
+ kernel/signal.c                               |  12 +-
+ kernel/utsname.c                              |   2 +-
+ net/802/mrp.c                                 |   6 +-
+ net/batman-adv/main.c                         |   2 +-
+ net/bridge/br.c                               |   2 +-
+ net/caif/caif_socket.c                        |   2 +-
+ net/core/dev.c                                |   2 +-
+ net/core/filter.c                             | 140 +++++++++---------
+ net/core/flow_dissector.c                     |  10 +-
+ net/core/skbuff.c                             |   2 +-
+ net/core/xdp.c                                |   4 +-
+ net/dccp/proto.c                              |   2 +-
+ net/ipv4/ip_gre.c                             |   4 +-
+ net/ipv4/ip_vti.c                             |   4 +-
+ net/ipv4/raw.c                                |   2 +-
+ net/ipv4/tcp.c                                |   2 +-
+ net/ipv6/ip6_gre.c                            |   4 +-
+ net/ipv6/raw.c                                |   2 +-
+ net/iucv/af_iucv.c                            |   2 +-
+ net/netfilter/nf_tables_api.c                 |   4 +-
+ net/netfilter/nfnetlink_cthelper.c            |   2 +-
+ net/netfilter/nft_ct.c                        |  12 +-
+ net/netfilter/nft_masq.c                      |   2 +-
+ net/netfilter/nft_nat.c                       |   6 +-
+ net/netfilter/nft_redir.c                     |   2 +-
+ net/netfilter/nft_tproxy.c                    |   4 +-
+ net/netfilter/xt_RATEEST.c                    |   2 +-
+ net/netlink/af_netlink.c                      |   2 +-
+ net/openvswitch/datapath.c                    |   2 +-
+ net/openvswitch/flow.h                        |   4 +-
+ net/rxrpc/af_rxrpc.c                          |   2 +-
+ net/sched/act_ct.c                            |   4 +-
+ net/sched/cls_flower.c                        |   2 +-
+ net/sctp/socket.c                             |   4 +-
+ net/unix/af_unix.c                            |   2 +-
+ security/integrity/ima/ima_policy.c           |   4 +-
+ sound/soc/codecs/hdmi-codec.c                 |   2 +-
+ tools/testing/selftests/bpf/bpf_util.h        |   6 +-
+ virt/kvm/kvm_main.c                           |   2 +-
+ 136 files changed, 340 insertions(+), 336 deletions(-)
+
+-- 
+2.17.1
 
