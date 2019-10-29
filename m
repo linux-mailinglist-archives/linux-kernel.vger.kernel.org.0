@@ -2,58 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2984E7E50
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 02:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A84E7E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730351AbfJ2B7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 21:59:42 -0400
-Received: from sonic315-21.consmr.mail.ne1.yahoo.com ([66.163.190.147]:46264
-        "EHLO sonic315-21.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728298AbfJ2B7m (ORCPT
+        id S1729947AbfJ2CB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:01:29 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33447 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbfJ2CB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 21:59:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1572314380; bh=dRX5d8v++xfAAoPIT3VpAbTnk4dfpHOyQKhLrN2OBJk=; h=Date:From:Reply-To:Subject:From:Subject; b=C1W/ve3ggBZt85fRx4XW4enIrbGA/3miDrvXseF6LyFP1nPafAImrkV68+PLVAr30h2EW2XkizLtroxTeLBS5CjmFKGJSdmShiWRE41x54Sk0RhHem+LZXne30Z7D71fNvUwo8NbW51nPiun+10h6HRKF47SJFslF5gfec+xMOJU2IlVwI72/jKYG2ODElSaxPDAeghEfzkywRyPLFUp7rW7s9cpdIO3KqT3BUNrJJ/abQ4NZWLBhyVbiw91rUtFJTe/AXeFR0fGR3oISmWUvsYsyMIRqp9qbXd/Dw/LXNEko4oTdwlRs7n726lqM+gXFLiwLRDwCtcNzYlWSt2CBQ==
-X-YMail-OSG: 2Ft7jn8VM1lb6b1moIqrJ4OgevpmydgG0T6Cntkyy44pA4.il_9G3oUp.TNoqlp
- 5l0HhxrH5yP6YUQ1mF9cDQXq2eVPrvMluOwc6h8OWMJowG9KAz4zahXYMXoc3fGNqfElI5yUwAq0
- FvRypN.xi6o27QiPtmLHZeA_2ZkY3c47sot7coUfxXHk.yrExIwzd9oOvtIEgfHSjHrdFISInPi2
- QeUzDnlqdRPZ0AiwKWneuf7h.Zf8_HRoYHU33TUsntEs6qI4mqe8.AzZNOLbGY_2dAXeQsxM9c8d
- Khl5nPyLzhQvG9Jd61wepA7kKN5HYUEOjHzid8B19muZEI7WrcAYMkvlZqKxzlFLWh9uLrc04UkO
- TnRoimo9iY0GQnq4Mdn9ZrnB9Xr9.dMhOrFYzSu8gtl79MaAMJ4cEvpIFkaHxuxjMCxqPNm_NIhS
- qNWBjt57g80qscLZPkagL4MgcBSmgnNiM7DiVrlZz1YNheHOvQjDznwkzLnZsyx..7Mu0F0eSPD4
- xYRKr8FhGfQ20YICBU_3qzlMyQPto.VxENDrvEp.cmetE2zZwEcQN2UO96q1kMvrwkwI1EFuFWgX
- 2szorJS2dDyC5rEhgMKzOZ4lkuBvbcJUvGxmAqZAiqLKo10gtTORYBdBREe4tfgj5t6WT09e6Rl.
- u8Gfdpxokc4KAygCaGPqAsDMCaRPGUIH2Dpf5z0b8nmIpZU7SUeFX5P.LxCBL775SxsLwP2iye3P
- X6h.rH_vdM3bZjTN37p5c4DROTfSYWgIA.MYGc1nvxR8FWOznUh1rzZB6M5.bAYj1VQM8B_OB8BW
- puvoX3hO7MOZG_ck00B7Diw30UP_kvSJ6X7GKu1.ByVbrvSJgU6dg8AJl_tC4n0uv7Zdj_EbJocO
- KwZWgrMu4VGVZ9o4T8mGaaZQTdVfiShmqr2yZkadaD9u64iB.z.TUNeRK87_s1.qLni2uF5XYwCp
- q1JjPLYj5Yhzv_wmqC4S2pTBBiQeuLhZoG3SFl9hxDRQCxwfRE1QVXlEvFfHrdxN.ozloCtqNjMJ
- y3NMayB5gA6C9stHQ86YTfxp1Y8BAt7ORhCSzX8UXLj9mmVxx4LxN9ITr_z5Iz4N17X3bMPZCmoR
- uiB5hEhr.d1JoUJNc.c1JNHLrYAuwe_SRp5qTkfltiWNnV7LJm43Fc2bEA8rmFZVmGjci.IRUxqM
- mLwszWHW7jT6i_6SF7..Lg9Q7rVcZOEc6f3mALt2HsRu2R6FY5sHB7l7bT8PlxJ2WAbbg7SzxQqf
- nX7XxBBGdge0d.Q.6E6ohxV60bdu00EJb9f5BfvA2l_cJVFu2ZRuDeglx.yPmoG7jmPj9M1mPrH0
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 29 Oct 2019 01:59:40 +0000
-Date:   Tue, 29 Oct 2019 01:59:40 +0000 (UTC)
-From:   Miss Abibatu Ali <abibatuali01@gmail.com>
-Reply-To: abibatu22ali@gmail.com
-Message-ID: <1718773719.3584868.1572314380229@mail.yahoo.com>
-Subject: Hello
+        Mon, 28 Oct 2019 22:01:28 -0400
+Received: by mail-ot1-f66.google.com with SMTP id u13so8470280ote.0;
+        Mon, 28 Oct 2019 19:01:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9BL3Z1A/tEWwa5UAepvAQv367j/DZhoKZ8WMU7Awauw=;
+        b=FMo/udJcoTk0koZYwYsmVgGNItWh8z0WloKRvpMwU5KFk4L4iPkw3Qc0HNe9lpJaSu
+         BMjvVmJftHpWpRJfB5j5LG5sqqaVZmsFTQBIiHULUvnHQYPMFMM4KxsqXV2lWrxePXYz
+         fX2kmpJNUqiBjr/+k0FfEyQhR5tiejdter/ZORVWZDjanxVwqFENknL1mynh4YoZ7K/c
+         l49KSl/WqrrIKWbmaItuykfg0gD0P6iL26Kn6q8JCFA6Jip3bPA74v64LufYJ46BrRCa
+         09c2MuzaUcGqs0jiMhJ5rlx0MvvYTYSW4Ck1s0ix4GCRSTaaAflZosIsiZpGc1euLgXb
+         TMPw==
+X-Gm-Message-State: APjAAAUZLtYBtTmd9WQB9qwSR9VYGUxhKu2va6g+Rzx5eGIInGbyB09n
+        0+Da3203XYbcI0gFZVBeHQ==
+X-Google-Smtp-Source: APXvYqxTMdckI8FQ4OvetDPaspVzeYA6kfan5ggpGK9XdwPtUCWnW0VVdmXnlKq6EvrM8Js1EYCC2Q==
+X-Received: by 2002:a9d:538d:: with SMTP id w13mr15641639otg.184.1572314486742;
+        Mon, 28 Oct 2019 19:01:26 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h17sm2203144otr.53.2019.10.28.19.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 19:01:26 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 21:01:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: power: add Amlogic secure power
+ domains bindings
+Message-ID: <20191029020125.GA11182@bogus>
+References: <1571391167-79679-1-git-send-email-jianxin.pan@amlogic.com>
+ <1571391167-79679-2-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571391167-79679-2-git-send-email-jianxin.pan@amlogic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
-I'm "Mrs.Abibatu Ali" married to Mr. Ali ( an International Contractor and Oil Merchant/ jointly in Exposition of Agro  Equipment ) who died in  Burkina Faso attack,  i am 64 years old and diagnosed of cancer for about 2 years ago  and my husband informed me that he deposited the sum of (17.3Million USD Only) with a Finance house) in  UAGADOUGOU BURKINA FASO.
+On Fri, Oct 18, 2019 at 05:32:44PM +0800, Jianxin Pan wrote:
+> Add the bindings for the Amlogic Secure power domains, controlling the
+> secure power domains.
+> 
+> The bindings targets the Amlogic A1 and C1 compatible SoCs, in which the
+> power domain registers are in secure world.
+> 
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  .../bindings/power/amlogic,meson-sec-pwrc.yaml     | 42 ++++++++++++++++++++++
+>  include/dt-bindings/power/meson-a1-power.h         | 32 +++++++++++++++++
+>  2 files changed, 74 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>  create mode 100644 include/dt-bindings/power/meson-a1-power.h
+> 
+> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+> new file mode 100644
+> index 00000000..88d8261
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +# Copyright (c) 2019 Amlogic, Inc
+> +# Author: Jianxin Pan <jianxin.pan@amlogic.com>
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/power/amlogic,meson-sec-pwrc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson Secure Power Domains
+> +
+> +maintainers:
+> +  - Jianxin Pan <jianxin.pan@amlogic.com>
+> +
+> +description: |+
+> +  Meson Secure Power Domains used in A1/C1 SoCs.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,meson-a1-pwrc
+> +
+> +  "#power-domain-cells":
+> +    const: 1
+> +
+> +  secure-monitor:
+> +    description: phandle to the secure-monitor node
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-I want you to help me to use this money  for a charity project before I die, for the Poor, Less-privileged and  ORPHANAGES in
-your country.  Please kindly respond
+Like the watchdog, make this a child or the secure firmware node. Or 
+just add '#power-domain-cells' to it. You don't really need a child node 
+here if there's not other resources in DT for this.
 
-quickly for further details.
-
-Yours fairly friend,
-Mrs. Abibatu Ali 
+Rob
