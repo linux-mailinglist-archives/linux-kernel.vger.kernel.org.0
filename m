@@ -2,400 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC3E3E7E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:11:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC11E7E6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2019 03:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbfJ2CLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 28 Oct 2019 22:11:49 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56796 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726526AbfJ2CLt (ORCPT
+        id S1728576AbfJ2CLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 28 Oct 2019 22:11:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47852 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfJ2CLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Oct 2019 22:11:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572315107;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YWtZV7F5sQs3G1fdZGdL14jE9TBt9hAob9l1pOhMaWs=;
-        b=enr/bh7IZdhYQqasW552vgvM3VdHzyBPITS93EQAHipp7AMQllUpGRjyhE/nIvKtrRpkhV
-        3EX0glJ8Q7xSfSDhYQcCWLCnUlcoCG9IHEE+L0se8GDqTkiBM/rtl7erDbCsIf62GUnHOU
-        s6HajHz7ZUhKR6Sd3Y70P6ShqCbzXro=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-76-YuQjeBkNN-qKV_2EYk3oIw-1; Mon, 28 Oct 2019 22:11:43 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3115E1800D56;
-        Tue, 29 Oct 2019 02:11:42 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-41.pek2.redhat.com [10.72.12.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2971B100032E;
-        Tue, 29 Oct 2019 02:11:29 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
-        dhowells@redhat.com, Thomas.Lendacky@amd.com,
-        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
-        horms@verge.net.au, kexec@lists.infradead.org
-Subject: [PATCH 2/2 v7] x86/kdump: clean up all the code related to the backup region
-Date:   Tue, 29 Oct 2019 10:10:59 +0800
-Message-Id: <20191029021059.22070-3-lijiang@redhat.com>
-In-Reply-To: <20191029021059.22070-1-lijiang@redhat.com>
-References: <20191029021059.22070-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: YuQjeBkNN-qKV_2EYk3oIw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Mon, 28 Oct 2019 22:11:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1CF8A60D93; Tue, 29 Oct 2019 02:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572315067;
+        bh=Afg2ZB0Ny7/9nO5a+P8vyHoOw/fBrPUC0+z5jmTbZpg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SaFeHVwTm6hca0SBB+7L2FdB+k4dtvpXYljauLFK1nyBC8YxLgHA6tqtaS6xUkpZf
+         8hcLRsBYOt3uObIcVyugAtBQqXFz80YTDMkLhao7oqOXLJ/FHQS3e+l/WtdZ6I1UEE
+         mJ+9+71icZlYEmkvWtq/AqZ5AG9ciqG6Uh+YYsuI=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 60AF860D77;
+        Tue, 29 Oct 2019 02:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572315065;
+        bh=Afg2ZB0Ny7/9nO5a+P8vyHoOw/fBrPUC0+z5jmTbZpg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e+kZSsC95ZomIt4Ot4nGXsn7rCEwPDXMHuEFb0UH0DYBInIZjTXbofoYNkZAwZTCm
+         0xwDmRWw80q0wAzqojMfafNtkV9GPhQoOhArecDnMwwNLu/aqeZdAk8R8OrKM0KPnk
+         QbuQS5PY690J9aO+sbcAVNCOd78gSP0MMY7hdZp0=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Oct 2019 10:11:05 +0800
+From:   cang@codeaurora.org
+To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] [PATCH v1 1/2] scsi: ufs: Introduce a vops for resetting
+ host controller
+In-Reply-To: <BN7PR08MB568444BD52F49775D7EEB363DB6B0@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1571804009-29787-1-git-send-email-cang@codeaurora.org>
+ <1571804009-29787-2-git-send-email-cang@codeaurora.org>
+ <BN7PR08MB568444BD52F49775D7EEB363DB6B0@BN7PR08MB5684.namprd08.prod.outlook.com>
+Message-ID: <ebd83f54b99a544a15fca681196bb8f3@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the crashkernel kernel command line option is specified, the
-low 1MiB memory will always be reserved, which makes that the memory
-allocated later won't fall into the low 1MiB area, thereby, it's not
-necessary to create a backup region and also no need to copy the first
-640k content to a backup region.
+On 2019-10-23 18:39, Bean Huo (beanhuo) wrote:
+> Hi, Can Guo
+> Actually, we already have DME_RESET,  this is not enough for Qualcomm 
+> host?
+> Thanks,
+> 
+> //Bean
+> 
 
-Currently, the code related to the backup region can be safely removed,
-so lets clean up.
+Hi Bean,
 
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
- arch/x86/include/asm/kexec.h       | 10 ----
- arch/x86/include/asm/purgatory.h   | 10 ----
- arch/x86/kernel/crash.c            | 87 ++++--------------------------
- arch/x86/kernel/machine_kexec_64.c | 47 ----------------
- arch/x86/purgatory/purgatory.c     | 19 -------
- 5 files changed, 11 insertions(+), 162 deletions(-)
+Yes, for Qualcomm hosts, we need this to fully reset the whole UFS 
+controller block
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index 5e7d6b46de97..6802c59e8252 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -66,10 +66,6 @@ struct kimage;
- # define KEXEC_ARCH KEXEC_ARCH_X86_64
- #endif
-=20
--/* Memory to backup during crash kdump */
--#define KEXEC_BACKUP_SRC_START=09(0UL)
--#define KEXEC_BACKUP_SRC_END=09(640 * 1024UL - 1)=09/* 640K */
--
- /*
-  * This function is responsible for capturing register states if coming
-  * via panic otherwise just fix up the ss and sp if coming via kernel
-@@ -154,12 +150,6 @@ struct kimage_arch {
- =09pud_t *pud;
- =09pmd_t *pmd;
- =09pte_t *pte;
--=09/* Details of backup region */
--=09unsigned long backup_src_start;
--=09unsigned long backup_src_sz;
--
--=09/* Physical address of backup segment */
--=09unsigned long backup_load_addr;
-=20
- =09/* Core ELF header buffer */
- =09void *elf_headers;
-diff --git a/arch/x86/include/asm/purgatory.h b/arch/x86/include/asm/purgat=
-ory.h
-index 92c34e517da1..5528e9325049 100644
---- a/arch/x86/include/asm/purgatory.h
-+++ b/arch/x86/include/asm/purgatory.h
-@@ -6,16 +6,6 @@
- #include <linux/purgatory.h>
-=20
- extern void purgatory(void);
--/*
-- * These forward declarations serve two purposes:
-- *
-- * 1) Make sparse happy when checking arch/purgatory
-- * 2) Document that these are required to be global so the symbol
-- *    lookup in kexec works
-- */
--extern unsigned long purgatory_backup_dest;
--extern unsigned long purgatory_backup_src;
--extern unsigned long purgatory_backup_sz;
- #endif=09/* __ASSEMBLY__ */
-=20
- #endif /* _ASM_PURGATORY_H */
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index 144f519aef29..baf32a3c6f8c 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -188,8 +188,6 @@ void native_machine_crash_shutdown(struct pt_regs *regs=
-)
-=20
- #ifdef CONFIG_KEXEC_FILE
-=20
--static unsigned long crash_zero_bytes;
--
- static int get_nr_ram_ranges_callback(struct resource *res, void *arg)
- {
- =09unsigned int *nr_ranges =3D arg;
-@@ -232,6 +230,11 @@ static int elf_header_exclude_ranges(struct crash_mem =
-*cmem)
- {
- =09int ret =3D 0;
-=20
-+=09/* Exclude the low 1MiB because it is always reserved */
-+=09ret =3D crash_exclude_mem_range(cmem, 0, 1<<20);
-+=09if (ret)
-+=09=09return ret;
-+
- =09/* Exclude crashkernel region */
- =09ret =3D crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end)=
-;
- =09if (ret)
-@@ -261,9 +264,7 @@ static int prepare_elf_headers(struct kimage *image, vo=
-id **addr,
- =09=09=09=09=09unsigned long *sz)
- {
- =09struct crash_mem *cmem;
--=09Elf64_Ehdr *ehdr;
--=09Elf64_Phdr *phdr;
--=09int ret, i;
-+=09int ret;
-=20
- =09cmem =3D fill_up_crash_elf_data();
- =09if (!cmem)
-@@ -282,22 +283,7 @@ static int prepare_elf_headers(struct kimage *image, v=
-oid **addr,
- =09/* By default prepare 64bit headers */
- =09ret =3D  crash_prepare_elf64_headers(cmem,
- =09=09=09=09IS_ENABLED(CONFIG_X86_64), addr, sz);
--=09if (ret)
--=09=09goto out;
-=20
--=09/*
--=09 * If a range matches backup region, adjust offset to backup
--=09 * segment.
--=09 */
--=09ehdr =3D (Elf64_Ehdr *)*addr;
--=09phdr =3D (Elf64_Phdr *)(ehdr + 1);
--=09for (i =3D 0; i < ehdr->e_phnum; phdr++, i++)
--=09=09if (phdr->p_type =3D=3D PT_LOAD &&
--=09=09=09=09phdr->p_paddr =3D=3D image->arch.backup_src_start &&
--=09=09=09=09phdr->p_memsz =3D=3D image->arch.backup_src_sz) {
--=09=09=09phdr->p_offset =3D image->arch.backup_load_addr;
--=09=09=09break;
--=09=09}
- out:
- =09vfree(cmem);
- =09return ret;
-@@ -336,19 +322,11 @@ static int memmap_exclude_ranges(struct kimage *image=
-, struct crash_mem *cmem,
- =09=09=09=09 unsigned long long mend)
- {
- =09unsigned long start, end;
--=09int ret =3D 0;
-=20
- =09cmem->ranges[0].start =3D mstart;
- =09cmem->ranges[0].end =3D mend;
- =09cmem->nr_ranges =3D 1;
-=20
--=09/* Exclude Backup region */
--=09start =3D image->arch.backup_load_addr;
--=09end =3D start + image->arch.backup_src_sz - 1;
--=09ret =3D crash_exclude_mem_range(cmem, start, end);
--=09if (ret)
--=09=09return ret;
--
- =09/* Exclude elf header region */
- =09start =3D image->arch.elf_load_addr;
- =09end =3D start + image->arch.elf_headers_sz - 1;
-@@ -371,11 +349,11 @@ int crash_setup_memmap_entries(struct kimage *image, =
-struct boot_params *params)
- =09memset(&cmd, 0, sizeof(struct crash_memmap_data));
- =09cmd.params =3D params;
-=20
--=09/* Add first 640K segment */
--=09ei.addr =3D image->arch.backup_src_start;
--=09ei.size =3D image->arch.backup_src_sz;
--=09ei.type =3D E820_TYPE_RAM;
--=09add_e820_entry(params, &ei);
-+=09/* Add the low 1MiB */
-+=09cmd.type =3D E820_TYPE_RAM;
-+=09flags =3D IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-+=09walk_iomem_res_desc(IORES_DESC_NONE, flags, 0, (1<<20)-1, &cmd,
-+=09=09=09memmap_entry_callback);
-=20
- =09/* Add ACPI tables */
- =09cmd.type =3D E820_TYPE_ACPI;
-@@ -424,55 +402,12 @@ int crash_setup_memmap_entries(struct kimage *image, =
-struct boot_params *params)
- =09return ret;
- }
-=20
--static int determine_backup_region(struct resource *res, void *arg)
--{
--=09struct kimage *image =3D arg;
--
--=09image->arch.backup_src_start =3D res->start;
--=09image->arch.backup_src_sz =3D resource_size(res);
--
--=09/* Expecting only one range for backup region */
--=09return 1;
--}
--
- int crash_load_segments(struct kimage *image)
- {
- =09int ret;
- =09struct kexec_buf kbuf =3D { .image =3D image, .buf_min =3D 0,
- =09=09=09=09  .buf_max =3D ULONG_MAX, .top_down =3D false };
-=20
--=09/*
--=09 * Determine and load a segment for backup area. First 640K RAM
--=09 * region is backup source
--=09 */
--
--=09ret =3D walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_EN=
-D,
--=09=09=09=09image, determine_backup_region);
--
--=09/* Zero or postive return values are ok */
--=09if (ret < 0)
--=09=09return ret;
--
--=09/* Add backup segment. */
--=09if (image->arch.backup_src_sz) {
--=09=09kbuf.buffer =3D &crash_zero_bytes;
--=09=09kbuf.bufsz =3D sizeof(crash_zero_bytes);
--=09=09kbuf.memsz =3D image->arch.backup_src_sz;
--=09=09kbuf.buf_align =3D PAGE_SIZE;
--=09=09/*
--=09=09 * Ideally there is no source for backup segment. This is
--=09=09 * copied in purgatory after crash. Just add a zero filled
--=09=09 * segment for now to make sure checksum logic works fine.
--=09=09 */
--=09=09ret =3D kexec_add_buffer(&kbuf);
--=09=09if (ret)
--=09=09=09return ret;
--=09=09image->arch.backup_load_addr =3D kbuf.mem;
--=09=09pr_debug("Loaded backup region at 0x%lx backup_start=3D0x%lx memsz=
-=3D0x%lx\n",
--=09=09=09 image->arch.backup_load_addr,
--=09=09=09 image->arch.backup_src_start, kbuf.memsz);
--=09}
--
- =09/* Prepare elf headers and add a segment */
- =09ret =3D prepare_elf_headers(image, &kbuf.buffer, &kbuf.bufsz);
- =09if (ret)
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_k=
-exec_64.c
-index 5dcd438ad8f2..16e125a50b33 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -298,48 +298,6 @@ static void load_segments(void)
- =09=09);
- }
-=20
--#ifdef CONFIG_KEXEC_FILE
--/* Update purgatory as needed after various image segments have been prepa=
-red */
--static int arch_update_purgatory(struct kimage *image)
--{
--=09int ret =3D 0;
--
--=09if (!image->file_mode)
--=09=09return 0;
--
--=09/* Setup copying of backup region */
--=09if (image->type =3D=3D KEXEC_TYPE_CRASH) {
--=09=09ret =3D kexec_purgatory_get_set_symbol(image,
--=09=09=09=09"purgatory_backup_dest",
--=09=09=09=09&image->arch.backup_load_addr,
--=09=09=09=09sizeof(image->arch.backup_load_addr), 0);
--=09=09if (ret)
--=09=09=09return ret;
--
--=09=09ret =3D kexec_purgatory_get_set_symbol(image,
--=09=09=09=09"purgatory_backup_src",
--=09=09=09=09&image->arch.backup_src_start,
--=09=09=09=09sizeof(image->arch.backup_src_start), 0);
--=09=09if (ret)
--=09=09=09return ret;
--
--=09=09ret =3D kexec_purgatory_get_set_symbol(image,
--=09=09=09=09"purgatory_backup_sz",
--=09=09=09=09&image->arch.backup_src_sz,
--=09=09=09=09sizeof(image->arch.backup_src_sz), 0);
--=09=09if (ret)
--=09=09=09return ret;
--=09}
--
--=09return ret;
--}
--#else /* !CONFIG_KEXEC_FILE */
--static inline int arch_update_purgatory(struct kimage *image)
--{
--=09return 0;
--}
--#endif /* CONFIG_KEXEC_FILE */
--
- int machine_kexec_prepare(struct kimage *image)
- {
- =09unsigned long start_pgtable;
-@@ -353,11 +311,6 @@ int machine_kexec_prepare(struct kimage *image)
- =09if (result)
- =09=09return result;
-=20
--=09/* update purgatory as needed */
--=09result =3D arch_update_purgatory(image);
--=09if (result)
--=09=09return result;
--
- =09return 0;
- }
-=20
-diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.=
-c
-index 3b95410ff0f8..2961234d0795 100644
---- a/arch/x86/purgatory/purgatory.c
-+++ b/arch/x86/purgatory/purgatory.c
-@@ -14,28 +14,10 @@
-=20
- #include "../boot/string.h"
-=20
--unsigned long purgatory_backup_dest __section(.kexec-purgatory);
--unsigned long purgatory_backup_src __section(.kexec-purgatory);
--unsigned long purgatory_backup_sz __section(.kexec-purgatory);
--
- u8 purgatory_sha256_digest[SHA256_DIGEST_SIZE] __section(.kexec-purgatory)=
-;
-=20
- struct kexec_sha_region purgatory_sha_regions[KEXEC_SEGMENT_MAX] __section=
-(.kexec-purgatory);
-=20
--/*
-- * On x86, second kernel requries first 640K of memory to boot. Copy
-- * first 640K to a backup region in reserved memory range so that second
-- * kernel can use first 640K.
-- */
--static int copy_backup_region(void)
--{
--=09if (purgatory_backup_dest) {
--=09=09memcpy((void *)purgatory_backup_dest,
--=09=09       (void *)purgatory_backup_src, purgatory_backup_sz);
--=09}
--=09return 0;
--}
--
- static int verify_sha256_digest(void)
- {
- =09struct kexec_sha_region *ptr, *end;
-@@ -66,7 +48,6 @@ void purgatory(void)
- =09=09for (;;)
- =09=09=09;
- =09}
--=09copy_backup_region();
- }
-=20
- /*
---=20
-2.17.1
+Can Guo
 
+>> 
+>> Some UFS host controllers need their specific implementations of 
+>> resetting to
+>> get them into a good state. Provide a new vops to allow the platform 
+>> driver to
+>> implement this own reset operation.
+>> 
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> ---
+>>  drivers/scsi/ufs/ufshcd.c | 16 ++++++++++++++++  
+>> drivers/scsi/ufs/ufshcd.h | 10
+>> ++++++++++
+>>  2 files changed, 26 insertions(+)
+>> 
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
+>> index
+>> c28c144..161e3c4 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -3859,6 +3859,14 @@ static int ufshcd_link_recovery(struct ufs_hba 
+>> *hba)
+>>  	ufshcd_set_eh_in_progress(hba);
+>>  	spin_unlock_irqrestore(hba->host->host_lock, flags);
+>> 
+>> +	ret = ufshcd_vops_full_reset(hba);
+>> +	if (ret)
+>> +		dev_warn(hba->dev, "%s: full reset returned %d\n",
+>> +				  __func__, ret);
+>> +
+>> +	/* Reset the attached device */
+>> +	ufshcd_vops_device_reset(hba);
+>> +
+>>  	ret = ufshcd_host_reset_and_restore(hba);
+>> 
+>>  	spin_lock_irqsave(hba->host->host_lock, flags); @@ -6241,6 +6249,11
+>> @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
+>>  	int retries = MAX_HOST_RESET_RETRIES;
+>> 
+>>  	do {
+>> +		err = ufshcd_vops_full_reset(hba);
+>> +		if (err)
+>> +			dev_warn(hba->dev, "%s: full reset returned %d\n",
+>> +					__func__, err);
+>> +
+>>  		/* Reset the attached device */
+>>  		ufshcd_vops_device_reset(hba);
+>> 
+>> @@ -8384,6 +8397,9 @@ int ufshcd_init(struct ufs_hba *hba, void 
+>> __iomem
+>> *mmio_base, unsigned int irq)
+>>  		goto exit_gating;
+>>  	}
+>> 
+>> +	/* Reset controller to power on reset (POR) state */
+>> +	ufshcd_vops_full_reset(hba);
+>> +
+>>  	/* Reset the attached device */
+>>  	ufshcd_vops_device_reset(hba);
+>> 
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h 
+>> index
+>> e0fe247..253b9ea 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -296,6 +296,8 @@ struct ufs_pwr_mode_info {
+>>   * @apply_dev_quirks: called to apply device specific quirks
+>>   * @suspend: called during host controller PM callback
+>>   * @resume: called during host controller PM callback
+>> + * @full_reset: called for handling variant specific implementations 
+>> of
+>> + *              resetting the hci
+>>   * @dbg_register_dump: used to dump controller debug information
+>>   * @phy_initialization: used to initialize phys
+>>   * @device_reset: called to issue a reset pulse on the UFS device @@ 
+>> -325,6
+>> +327,7 @@ struct ufs_hba_variant_ops {
+>>  	int	(*apply_dev_quirks)(struct ufs_hba *);
+>>  	int     (*suspend)(struct ufs_hba *, enum ufs_pm_op);
+>>  	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
+>> +	int	(*full_reset)(struct ufs_hba *hba);
+>>  	void	(*dbg_register_dump)(struct ufs_hba *hba);
+>>  	int	(*phy_initialization)(struct ufs_hba *);
+>>  	void	(*device_reset)(struct ufs_hba *hba);
+>> @@ -1076,6 +1079,13 @@ static inline int ufshcd_vops_resume(struct 
+>> ufs_hba
+>> *hba, enum ufs_pm_op op)
+>>  	return 0;
+>>  }
+>> 
+>> +static inline int ufshcd_vops_full_reset(struct ufs_hba *hba) {
+>> +	if (hba->vops && hba->vops->full_reset)
+>> +		return hba->vops->full_reset(hba);
+>> +	return 0;
+>> +}
+>> +
+>>  static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba) 
+>>  {
+>>  	if (hba->vops && hba->vops->dbg_register_dump)
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
