@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF935EDD69
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A23EDD60
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfKDLGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 06:06:15 -0500
-Received: from verein.lst.de ([213.95.11.211]:38236 "EHLO verein.lst.de"
+        id S1728557AbfKDLGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:06:08 -0500
+Received: from verein.lst.de ([213.95.11.211]:38186 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbfKDLGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:06:13 -0500
+        id S1726364AbfKDLGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:06:08 -0500
 Received: by verein.lst.de (Postfix, from userid 2005)
-        id B1C6868C7B; Mon,  4 Nov 2019 12:06:09 +0100 (CET)
+        id E364A68BE1; Mon,  4 Nov 2019 12:06:03 +0100 (CET)
 In-Reply-To: <20191104110400.F319F68BE1@verein.lst.de>
 References: <20191104110400.F319F68BE1@verein.lst.de>
 From:   Torsten Duwe <duwe@lst.de>
 Date:   Tue, 29 Oct 2019 13:16:57 +0100
-Subject: [PATCH v5 4/7] drm/bridge: Prepare Analogix anx6345 support
+Subject: [PATCH v5 1/7] drm/bridge: move ANA78xx driver to analogix
+ subdirectory
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -34,86 +35,111 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <20191104110609.B1C6868C7B@verein.lst.de>
+Message-Id: <20191104110603.E364A68BE1@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bit definitions required for the anx6345 and add a
-sanity check in anx_dp_aux_transfer.
+From: Icenowy Zheng <icenowy@aosc.io>
+
+As ANA78xx chips are designed and produced by Analogix Semiconductor,
+Inc, move their driver codes into analogix subdirectory.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Torsten Duwe <duwe@suse.de>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c     | 2 +-
- drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h     | 8 ++++++++
- drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h | 3 +++
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/Kconfig                           | 10 ----------
+ drivers/gpu/drm/bridge/Makefile                          |  4 ++--
+ drivers/gpu/drm/bridge/analogix/Kconfig                  | 10 ++++++++++
+ drivers/gpu/drm/bridge/analogix/Makefile                 |  1 +
+ drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.c |  0
+ drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.h |  0
+ 6 files changed, 13 insertions(+), 12 deletions(-)
+ rename drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.c (100%)
+ rename drivers/gpu/drm/bridge/{ => analogix}/analogix-anx78xx.h (100%)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-index 60707bb5afe7..fe40bab21530 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-@@ -116,7 +116,7 @@ ssize_t anx_dp_aux_transfer(struct regmap *map_dptx,
- 	else	/* For non-zero-sized set the length field. */
- 		ctrl1 |= (msg->size - 1) << SP_AUX_LENGTH_SHIFT;
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 1cc9f502c1f2..6c48722130fd 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -16,16 +16,6 @@ config DRM_PANEL_BRIDGE
+ menu "Display Interface Bridges"
+ 	depends on DRM && DRM_BRIDGE
  
--	if ((msg->request & DP_AUX_I2C_READ) == 0) {
-+	if ((msg->size > 0) && ((msg->request & DP_AUX_I2C_READ) == 0)) {
- 		/* When WRITE | MOT write values to data buffer */
- 		err = regmap_bulk_write(map_dptx,
- 					SP_DP_BUF_DATA0_REG, buffer,
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
-index 430a039c10cd..24bc67ac5479 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.h
-@@ -74,7 +74,11 @@
- #define SP_CHA_STA			BIT(2)
- /* Bits for DP System Control Register 3 */
- #define SP_HPD_STATUS			BIT(6)
-+#define SP_HPD_FORCE			BIT(5)
-+#define SP_HPD_CTRL			BIT(4)
- #define SP_STRM_VALID			BIT(2)
-+#define SP_STRM_FORCE			BIT(1)
-+#define SP_STRM_CTRL			BIT(0)
- /* Bits for DP System Control Register 4 */
- #define SP_ENHANCED_MODE		BIT(3)
- 
-@@ -119,6 +123,9 @@
- #define SP_LINK_BW_SET_MASK		0x1f
- #define SP_INITIAL_SLIM_M_AUD_SEL	BIT(5)
- 
-+/* DP Lane Count Setting Register */
-+#define SP_DP_LANE_COUNT_SET_REG	0xa1
+-config DRM_ANALOGIX_ANX78XX
+-	tristate "Analogix ANX78XX bridge"
+-	select DRM_KMS_HELPER
+-	select REGMAP_I2C
+-	---help---
+-	  ANX78XX is an ultra-low power Full-HD SlimPort transmitter
+-	  designed for portable devices. The ANX78XX transforms
+-	  the HDMI output of an application processor to MyDP
+-	  or DisplayPort.
+-
+ config DRM_CDNS_DSI
+ 	tristate "Cadence DPI/DSI bridge"
+ 	select DRM_KMS_HELPER
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index 4934fcf5a6f8..a6c7dd7727ea 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+ obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
+ obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+ obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
+@@ -12,8 +11,9 @@ obj-$(CONFIG_DRM_SII9234) += sii9234.o
+ obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+-obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+ obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+ obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
+ obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
 +
- /* DP Training Pattern Set Register */
- #define SP_DP_TRAINING_PATTERN_SET_REG	0xa2
- 
-@@ -132,6 +139,7 @@
- 
- /* DP Link Training Control Register */
- #define SP_DP_LT_CTRL_REG		0xa8
-+#define SP_DP_LT_INPROGRESS		0x80
- #define SP_LT_ERROR_TYPE_MASK		0x70
- #  define SP_LT_NO_ERROR		0x00
- #  define SP_LT_AUX_WRITE_ERROR		0x01
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h b/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h
-index c1030e0f74cc..9fa6f426f990 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-txcommon.h
-@@ -179,6 +179,9 @@
- #define SP_VBIT				BIT(1)
- #define SP_AUDIO_LAYOUT			BIT(0)
- 
-+/* Analog Debug Register 1 */
-+#define SP_ANALOG_DEBUG1_REG		0xdc
++obj-y += analogix/
+ obj-y += synopsys/
+diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
+index e930ff9b5cd4..29ba1b21019e 100644
+--- a/drivers/gpu/drm/bridge/analogix/Kconfig
++++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+@@ -1,4 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++config DRM_ANALOGIX_ANX78XX
++	tristate "Analogix ANX78XX bridge"
++	select DRM_KMS_HELPER
++	select REGMAP_I2C
++	help
++	  ANX78XX is an ultra-low power Full-HD SlimPort transmitter
++	  designed for portable devices. The ANX78XX transforms
++	  the HDMI output of an application processor to MyDP
++	  or DisplayPort.
 +
- /* Analog Debug Register 2 */
- #define SP_ANALOG_DEBUG2_REG		0xdd
- #define SP_FORCE_SW_OFF_BYPASS		0x20
+ config DRM_ANALOGIX_DP
+ 	tristate
+ 	depends on DRM
+diff --git a/drivers/gpu/drm/bridge/analogix/Makefile b/drivers/gpu/drm/bridge/analogix/Makefile
+index fdbf3fd2f087..6fcbfd3ee560 100644
+--- a/drivers/gpu/drm/bridge/analogix/Makefile
++++ b/drivers/gpu/drm/bridge/analogix/Makefile
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ analogix_dp-objs := analogix_dp_core.o analogix_dp_reg.o
++obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+ obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix_dp.o
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.c
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.h
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
 -- 
 2.16.4
 
