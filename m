@@ -2,293 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D35E9BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 13:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AEDE9BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 13:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfJ3M5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 08:57:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55568 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726097AbfJ3M5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 08:57:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9A676B49A;
-        Wed, 30 Oct 2019 12:57:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 265741E485C; Wed, 30 Oct 2019 13:57:03 +0100 (CET)
-Date:   Wed, 30 Oct 2019 13:57:03 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     =?utf-8?B?0JTQvNC40YLRgNC40Lkg0JzQvtC90LDRhdC+0LI=?= 
-        <dmtrmonakhov@yandex-team.ru>
-Cc:     Jan Kara <jack@suse.cz>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
+        id S1726259AbfJ3M7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 08:59:20 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:48349 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfJ3M7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 08:59:20 -0400
+Received: from [10.28.19.135] (10.28.19.135) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 30 Oct
+ 2019 20:59:28 +0800
+Subject: Re: [PATCH v3 2/4] dt-bindings: watchdog: add new binding for meson
+ secure watchdog
+To:     Rob Herring <robh@kernel.org>
+CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.com>, Li Xi <lixi@ddn.com>
-Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling
- statfs results
-Message-ID: <20191030125703.GM28525@quack2.suse.cz>
-References: <157225912326.3929.8539227851002947260.stgit@buzz>
- <20191030105953.GC28525@quack2.suse.cz>
- <2625831572437163@vla1-6bb9290e4d68.qloud-c.yandex.net>
+        <devicetree@vger.kernel.org>
+References: <1571983984-11771-1-git-send-email-xingyu.chen@amlogic.com>
+ <1571983984-11771-3-git-send-email-xingyu.chen@amlogic.com>
+ <20191025203030.GA28391@bogus>
+ <1914e315-3cb7-9251-f871-0024e0e4f68b@amlogic.com>
+ <CAL_JsqLr-Cgu4yZFGTfO=qpFPLBZ1gb-1+DZ35eQX3dUsadm4g@mail.gmail.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <2808a8c9-a835-2706-f300-0deb924d3686@amlogic.com>
+Date:   Wed, 30 Oct 2019 20:59:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <CAL_JsqLr-Cgu4yZFGTfO=qpFPLBZ1gb-1+DZ35eQX3dUsadm4g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2625831572437163@vla1-6bb9290e4d68.qloud-c.yandex.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.28.19.135]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 30-10-19 15:06:13, Дмитрий Монахов wrote:
->  
->  
-> 30.10.2019, 13:59, "Jan Kara" <jack@suse.cz>:
-> 
-> 
->     On Mon 28-10-19 13:38:43, Konstantin Khlebnikov wrote:
-> 
->          Right now ext4_statfs_project() does quota lookup by id every time.
->          This is costly operation, especially if there is no inode who hold
->          reference to this quota and dqget() reads it from disk each time.
-> 
->          Function ext4_statfs_project() could be moved into generic quota code,
->          it is required for every filesystem which uses generic project quota.
-> 
->          Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
->          Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->          ---
->           fs/ext4/super.c | 25 ++++++++++++++++---------
->           1 file changed, 16 insertions(+), 9 deletions(-)
-> 
->          diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->          index dd654e53ba3d..f841c66aa499 100644
->          --- a/fs/ext4/super.c
->          +++ b/fs/ext4/super.c
->          @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block
->         *sb, int *flags, char *data)
->           }
-> 
->           #ifdef CONFIG_QUOTA
->          -static int ext4_statfs_project(struct super_block *sb,
->          - kprojid_t projid, struct kstatfs *buf)
->          +static int ext4_statfs_project(struct inode *inode, struct kstatfs
->         *buf)
->           {
->          - struct kqid qid;
->          + struct super_block *sb = inode->i_sb;
->                   struct dquot *dquot;
->                   u64 limit;
->                   u64 curblock;
->          + int err;
->          +
->          + err = dquot_initialize(inode);
-> 
-> 
->     Hum, I'm kind of puzzled here: Your patch seems to be concerned with
->     performance but how is this any faster than what we do now?
->     dquot_initialize() will look up three dquots instead of one in the current
->     code? Oh, I guess you are concerned about *repeated* calls to statfs() and
->     thus repeated lookups of dquot structure? And this patch effectively caches
->     looked up dquots in the inode?
-> 
->     That starts to make some sense but still, even if dquot isn't cached in any
->     inode, we still hold on to it (it's in the free_list) until shrinker evicts
->     it. So lookup of such dquot should be just a hash table lookup which should
->     be very fast. Then there's the cost of dquot_acquire() / dquot_release()
->     that get always called on first / last get of a dquot. So are you concerned
->     about that cost? Or do you really see IO happening to fetch quota structure
->     on each statfs call again and again?
-> 
-> Hi,
-> No IO, only useless synchronization on journal
-> Repeaded statfs result in dquot_acquire()/ dquot_release() which result in two
-> ext4_journal_starts
-> perf record -e 'ext4:*' -e 'jbd2:*'  stat -f  volume
-> perf script
->            stat 520596 [002] 589927.123955:                      
-> ext4:ext4_journal_start: dev 252,2 blocks, 73 rsv_blocks, 0 caller
-> ext4_acquire_dquot
->             stat 520596 [002] 589927.123958:                      
->  jbd2:jbd2_handle_start: dev 252,2 tid 187859 type 6 line_no 5550
-> requested_blocks 73
->             stat 520596 [002] 589927.123959:                      
->  jbd2:jbd2_handle_stats: dev 252,2 tid 187859 type 6 line_no 5550 interval 0
-> sync 0 requested_blocks 73 dirtied_blocks 0
->             stat 520596 [002] 589927.123960:                      
-> ext4:ext4_journal_start: dev 252,2 blocks, 9 rsv_blocks, 0 caller
-> ext4_release_dquot
->             stat 520596 [002] 589927.123961:                      
->  jbd2:jbd2_handle_start: dev 252,2 tid 187859 type 6 line_no 5566
-> requested_blocks 9
->             stat 520596 [002] 589927.123962:                      
->  jbd2:jbd2_handle_stats: dev 252,2 tid 187859 type 6 line_no 5566 interval 0
-> sync 0 requested_blocks 9 dirtied_blocks 0
-> On host under io load this will be blocked on __jbd2_log_wait_for_space() which
-> is no what people expects from statfs()
+Hi,Rob
 
-OK, makes sense.
-
->     The only situation where I could seethat happening is when the quota
->     structure would be actually completely
->     empty (i.e., not originally present in the quota file). But then this
->     cannot be a case when there's actually an inode belonging to this
->     project...
+On 2019/10/30 4:51, Rob Herring wrote:
+> On Mon, Oct 28, 2019 at 3:35 AM Xingyu Chen <xingyu.chen@amlogic.com> wrote:
+>>
+>> Hi, Rob
+>>
+>> On 2019/10/26 4:30, Rob Herring wrote:
+>>> On Fri, Oct 25, 2019 at 02:13:02PM +0800, Xingyu Chen wrote:
+>>>> The binding targets the Meson-A/C series compatible SoCs, in which the
+>>>> watchdog registers are in secure world.
+>>>>
+>>>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>>>> ---
+>>>>    .../bindings/watchdog/amlogic,meson-sec-wdt.yaml   | 34 ++++++++++++++++++++++
+>>>>    1 file changed, 34 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml b/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>> new file mode 100644
+>>>> index 00000000..0bbc807
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>> @@ -0,0 +1,34 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>> +# Copyright (c) 2019 Amlogic, Inc
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: "http://devicetree.org/schemas/power/amlogic,meson-sec-wdt.yaml#"
+>>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>>> +
+>>>> +title: Amlogic Meson Secure Watchdog Timer
+>>>> +
+>>>> +maintainers:
+>>>> +  - Xingyu Chen <xingyu.chen@amlogic.com>
+>>>> +
+>>>> +description: |+
+>>>> +  Secure Watchdog Timer used in Meson-A/C series Compatible SoCs
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - amlogic,meson-sec-wdt
+>>>
+>>> If there are no other properties, then you don't need this. Just have
+>>> the secure firmware driver instantiate the watchdog.
+>> I'am very sorry i don't understand how to initialize the watchdog driver
+>> if the compatible property is removed, Could you give me more
+>> suggestions or examples ？ Thank you very much.
 > 
->     So I'm really curious about the details of what you are seeing as the
->     changelog / patch doesn't quite make sense to me yet.
+> platform_device_register_simple() from the secure firmware driver.
+Thanks for your help. The device node of wdt looks useless if I use this 
+function to register device. if so, how should I get the pointer to 
+secure-monitor in wdt driver ? or should I use directly arm_smccc to 
+access the secfw ?
 > 
->  
-> This indeed happens if project quota goes out of sync, which is quite simple
-> for non journaled  quota case.
-> And this provoke huge IO penalty on each statfs
-
-Yes, but then I wonder how it can happen that project quota is out of sync
-because ext4 does not support non-journalled project quotas (project quotas
-must be stored in hidden system inodes). So it is a fs bug if project quota
-goes out of sync.
-
-Anyway, case 1 you mentioned above still makes sense so please just update
-the changelog explaining more details about the problem and why your
-patch helps that. Thanks!
-
-								Honza
-
->  
-> $perf record -e 'ext4:*' -e 'jbd2:*'  stat -f  volume-with-staled-quota
-> $perf script
->             stat 528212 [002] 591269.007915:                      
-> ext4:ext4_journal_start: dev 252,2 blocks, 73 rsv_blocks, 0 caller
-> ext4_acquire_dquot
->             stat 528212 [002] 591269.007919:                      
->  jbd2:jbd2_handle_start: dev 252,2 tid 188107 type 6 line_no 5550
-> requested_blocks 73
->             stat 528212 [002] 591269.007922:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 0
->             stat 528212 [002] 591269.007923:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [0/1) 190361090 W
->             stat 528212 [002] 591269.007926:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007926:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007928:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007928:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007929:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007930:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007931:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
->             stat 528212 [002] 591269.007931:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
->             stat 528212 [002] 591269.007933:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
->             stat 528212 [002] 591269.007933:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
->             stat 528212 [002] 591269.007936:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007936:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007938:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
->             stat 528212 [002] 591269.007938:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
->             stat 528212 [002] 591269.007940:                      
->  jbd2:jbd2_handle_stats: dev 252,2 tid 188107 type 6 line_no 5550 interval 0
-> sync 0 requested_blocks 73 dirtied_blocks 2
->             stat 528212 [002] 591269.007941:                      
-> ext4:ext4_journal_start: dev 252,2 blocks, 9 rsv_blocks, 0 caller
-> ext4_release_dquot
->             stat 528212 [002] 591269.007941:                      
->  jbd2:jbd2_handle_start: dev 252,2 tid 188107 type 6 line_no 5566
-> requested_blocks 9
->             stat 528212 [002] 591269.007942:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 0
->             stat 528212 [002] 591269.007943:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [0/1) 190361090 W
->             stat 528212 [002] 591269.007944:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007944:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007945:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007954:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007954:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007955:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007956:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
->             stat 528212 [002] 591269.007956:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
->             stat 528212 [002] 591269.007957:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
->             stat 528212 [002] 591269.007957:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
->             stat 528212 [002] 591269.007958:            
->  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
->             stat 528212 [002] 591269.007958:              
-> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
->             stat 528212 [002] 591269.007959:                      
->  jbd2:jbd2_handle_stats: dev 252,2 tid 188107 type 6 line_no 5566 interval 0
-> sync 0 requested_blocks 9 dirtied_blocks 0
+> Rob
 > 
+> .
 > 
-> 
->      
-> 
->          + if (err)
->          + return err;
->          +
->          + spin_lock(&inode->i_lock);
->          + dquot = ext4_get_dquots(inode)[PRJQUOTA];
->          + if (!dquot)
->          + goto out_unlock;
-> 
->          - qid = make_kqid_projid(projid);
->          - dquot = dqget(sb, qid);
->          - if (IS_ERR(dquot))
->          - return PTR_ERR(dquot);
->                   spin_lock(&dquot->dq_dqb_lock);
-> 
->                   limit = (dquot->dq_dqb.dqb_bsoftlimit ?
->          @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct
->         super_block *sb,
->                   }
-> 
->                   spin_unlock(&dquot->dq_dqb_lock);
->          - dqput(dquot);
->          +out_unlock:
->          + spin_unlock(&inode->i_lock);
->          +
->                   return 0;
->           }
->           #endif
->          @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry,
->         struct kstatfs *buf)
->           #ifdef CONFIG_QUOTA
->                   if (ext4_test_inode_flag(dentry->d_inode,
->         EXT4_INODE_PROJINHERIT) &&
->                       sb_has_quota_limits_enabled(sb, PRJQUOTA))
->          - ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
->          + ext4_statfs_project(dentry->d_inode, buf);
->           #endif
->                   return 0;
->           }
->          
-> 
->     --
->     Jan Kara <jack@suse.com>
->     SUSE Labs, CR
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
