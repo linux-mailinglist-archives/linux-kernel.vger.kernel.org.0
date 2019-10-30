@@ -2,61 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3ABFE9516
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF0EE9514
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfJ3Cvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 22:51:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727093AbfJ3Cvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 22:51:55 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E969BDF9E86883B783AE;
-        Wed, 30 Oct 2019 10:51:37 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 30 Oct 2019 10:51:31 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <n-horiguchi@ah.jp.nec.com>, <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <zhongjiang@huawei.com>
-Subject: [PATCH] mm/hwpoison-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
-Date:   Wed, 30 Oct 2019 10:47:40 +0800
-Message-ID: <1572403660-44718-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1727021AbfJ3CuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 22:50:23 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:43316 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726747AbfJ3CuX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 22:50:23 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TgfhIsK_1572403814;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TgfhIsK_1572403814)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 30 Oct 2019 10:50:17 +0800
+Subject: Re: mbind() breaks its API definition since v5.2 by commit
+ d883544515aa (mm: mempolicy: make the behavior consistent when MPOL_MF_MOVE*
+ and MPOL_MF_STRICT were specified)
+To:     Li Xinhai <lixinhai.lxh@gmail.com>, linux-mm <linux-mm@kvack.org>,
+        akpm <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Linux API <linux-api@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        lixinhai_lxh <lixinhai_lxh@126.com>
+References: <2019103010274679257634@gmail.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <dc4864bf-8fa3-f5c8-f68c-57edc68d4662@linux.alibaba.com>
+Date:   Tue, 29 Oct 2019 19:50:11 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <2019103010274679257634@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
-operation rather than DEFINE_SIMPLE_ATTRIBUTE.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- mm/hwpoison-inject.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/hwpoison-inject.c b/mm/hwpoison-inject.c
-index 5b7430b..e488876 100644
---- a/mm/hwpoison-inject.c
-+++ b/mm/hwpoison-inject.c
-@@ -67,8 +67,8 @@ static int hwpoison_unpoison(void *data, u64 val)
- 	return unpoison_memory(val);
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(hwpoison_fops, NULL, hwpoison_inject, "%lli\n");
--DEFINE_SIMPLE_ATTRIBUTE(unpoison_fops, NULL, hwpoison_unpoison, "%lli\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(hwpoison_fops, NULL, hwpoison_inject, "%lli\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(unpoison_fops, NULL, hwpoison_unpoison, "%lli\n");
- 
- static void pfn_inject_exit(void)
- {
--- 
-1.7.12.4
+On 10/29/19 7:27 PM, Li Xinhai wrote:
+> One change in do_mbind() of this commit has suspicious usage of return value of
+> queue_pages_range(), excerpt as below:
+>
+> ---
+> @@ -1243,10 +1265,15 @@ static long do_mbind(unsigned long start, unsigned long len,
+>   	if (err)
+>   		goto mpol_out;
+>   
+> -	err = queue_pages_range(mm, start, end, nmask,
+> +	ret = queue_pages_range(mm, start, end, nmask,
+>   			  flags | MPOL_MF_INVERT, &pagelist);
+> -	if (!err)
+> -		err = mbind_range(mm, start, end, new);
+> +
+> +	if (ret < 0) {      /////// convert to all possible 'ret' to '-EIO' <<<<
+> +		err = -EIO;
+> +		goto up_out;
+> +	}
+> +
+> +	err = mbind_range(mm, start, end, new);
+>   
+>   	if (!err) {
+>   		int nr_failed = 0;
+> ---
+>
+> Note that inside queue_pages_range(), the call to walk_page_range() may return
+> errors from 'test_walk' of 'struct mm_walk_ops', e.g. -EFAULT. Now, those error
+> codes are no longer reported to user space application.
+>
+>  From user space, the mbind() call need to reported error, with EFAULT, as example:
+> EFAULT
+> Part or all of the memory range specified by nodemask and maxnode points
+> outside your accessible address space. Or, there was an unmapped hole in the
+> specified memory range specified by addr and len.
+
+Thanks for catching this. That commit was aimed to correct the return 
+values for some corner cases in mbind(), but it should not alter the 
+errno for other failure cases, i.e. -EFAULT.
+
+Could you please try the below patch (build test only)?
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 4ae967b..99df43a 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1286,7 +1286,7 @@ static long do_mbind(unsigned long start, unsigned 
+long len,
+                           flags | MPOL_MF_INVERT, &pagelist);
+
+         if (ret < 0) {
+-               err = -EIO;
++               err = ret;
+                 goto up_out;
+         }
+
+
+>
+> Please correct me if this is the intended change(and will have updated API
+> definition), or something was misunderstood.
+>
+> -Xinhai
 
