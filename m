@@ -2,114 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F169E9EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B61E9EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfJ3PU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:20:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46345 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfJ3PU6 (ORCPT
+        id S1727069AbfJ3PWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:22:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46545 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfJ3PWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:20:58 -0400
-Received: by mail-ed1-f66.google.com with SMTP id z22so2029668edr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:20:57 -0700 (PDT)
+        Wed, 30 Oct 2019 11:22:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z22so2033187edr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3WelAeH2c+ewUFXMqzibHzNrbO0iv8d5R7fbVULwLqc=;
-        b=aUtgADL5DK0nImfhe/gfmEFtgWdBGRsYsp06B7dPmIh6ijzq/OsArBiemDsg8NxCO2
-         DY6MdSqBP+xrfoWYwvyzkYHeILfLsJFHI+xpo41raCQITr+AhKMITt7bzSz+uHKU0dNE
-         7Psn8QOTNIvxhPhsQ92pJZOSzcQAYuXG3mRLJecqPX+e4lWKMN0vaJ52eg26VQpYxW4+
-         9YIUTtJUxAv7Q/lbJZynFXrOqG5IRw4qjlBatFFyXEei2CbqaMrLJYHsscQLHqAhOKeh
-         bmInSTZG6AAgtkiinMYvPV10YusjDcEfu00m7/PzjBF5W4JCjGQVmcE8K0Qok6T7nenB
-         kJ7w==
+        bh=HvMNKSCrNMxtROTkfOzlYhe7iouX9dJL649o/i6yCrk=;
+        b=EsBv0DhfbRnsI0WEmZMkwydFvbWFPsRbbEbAZtBPdh9M083h/c5NSHWDtPHC75mpyi
+         38XxlW39llSU8Ey7FQ3jEGYG3AJ4j39pFedtJGqpBXXE7G60UbKP/Vgay8/DWkhOK9ca
+         ppA9WpqjfIpe0BN7xKE16kev55IHzH0ZowCMFiN0NOAiBU3s85SiaXzh10AgadtBLV92
+         LMVZPV5pJ36JH6+CSwu+4r8Ib5OyjjmdR1NTiM+El6cGes9BHX+eeX0qHGRG/895/rrc
+         XQb4s25qvWM6DoKEUtF/1vNKC6O9qHdO+iR7/YajL7kT0OZbHeeeuJ++73oS8loCcolq
+         ZxcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3WelAeH2c+ewUFXMqzibHzNrbO0iv8d5R7fbVULwLqc=;
-        b=NwR0S0qk4jOzXm/5NIXiJUlx0AIh8CLtTcUuSdAtKcK5yDal45N1YbDjPZ520azBOb
-         qe0huOMR0VDOl86faOlLO0KAVGzWabK07vxCroIr6lIHRKwG3G5mdIMQfKU8s9yeY4Xs
-         8Q3olm9v99NYbYB7hYRxNZXmyVfPH8qKuEISdEAvuX+4PI6/habGCQYpjI3aZ1/l27lO
-         FHxkn3reJz4LVAAetc6KiCSmmk6lbzqGzMkEC1NKO9qmuQfR3KqF7T5tbm8RDo1Cgs/9
-         8y99o6iWwJcGxmWM2Z3V4FB/xvaho7IxFjPvkatAVKg87FEFYv/a130nmYLIrMPR8YTT
-         iAiw==
-X-Gm-Message-State: APjAAAXfHUYj9fNV+1XmjzYCeiPt1M01cu0kkezU4Ik5xl1rU1KT170e
-        V0G3XUiKkVvvXkfpnzKbhqJLGKowVz7PQWyTb3wP3g==
-X-Google-Smtp-Source: APXvYqwFwie01ABPFi/VnwYag197buGFTQ/FM/qpCjhAqJ0fW94Xei/rjs0hwu+Rrk6alIe27zn9uJYl3/OHuXZQoxc=
-X-Received: by 2002:a17:906:6993:: with SMTP id i19mr9566232ejr.259.1572448855629;
- Wed, 30 Oct 2019 08:20:55 -0700 (PDT)
+        bh=HvMNKSCrNMxtROTkfOzlYhe7iouX9dJL649o/i6yCrk=;
+        b=opshjPL4uAldE9Ks6mLqLLdCoHMYRveLpO6f4YbwLJfm5uR20pNU8TLPX90raKRjRa
+         DYq3cfw2GQVOkeROXh5mGx3dUtQPOahYfFIhf2GDeVIWDrZ6w68bo4e17jTDc7c3p6sy
+         KVKkOlUWV5iin8ozjiVEpv2136RMpkH0pjt9bEyjoe7zDZObOjyqIPBVy/ZhxXkBmZdA
+         AOT1US4jc28DIO5rHaSHyFkl1qGWtgldis55CMoLhymS2tFBmqdt50+4/7LLdKNXCRdx
+         WgB/P6NLWtKwFMU3fz0ZP00v4OTW0uPl8HU9vujsQA49Jjc3Mm+wFQbk4jU8MxmNjAbs
+         8IMg==
+X-Gm-Message-State: APjAAAVSUPPlud4WPTYZ20dIg5J0JLL4TmLGDTWrrMl0gYXBwos1+Wgf
+        fH01t3vS9u/UmuC6yGL6hKUXRqVF+LbhQl+CdN7W1Q==
+X-Google-Smtp-Source: APXvYqxkf+B29MLZi9AVfIHKME6DTKtd6/WLRp0HEHJrp2xexHMw3qaJaeHTNMiTJ6l3DYnaI0D3OibgfJIzJo6C3zo=
+X-Received: by 2002:a17:906:b2c1:: with SMTP id cf1mr7523ejb.155.1572448926920;
+ Wed, 30 Oct 2019 08:22:06 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191030131122.8256-1-vincent.whitchurch@axis.com>
- <20191030132958.GD31513@dhcp22.suse.cz> <20191030140216.i26n22asgafckfxy@axis.com>
- <20191030141259.GE31513@dhcp22.suse.cz>
-In-Reply-To: <20191030141259.GE31513@dhcp22.suse.cz>
+In-Reply-To: <20191030131122.8256-1-vincent.whitchurch@axis.com>
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 30 Oct 2019 11:20:44 -0400
-Message-ID: <CA+CK2bDObV=N1Y+LhDX=tYsTX3HZ+mbB=8aXT=fPX254hKEUBQ@mail.gmail.com>
+Date:   Wed, 30 Oct 2019 11:21:56 -0400
+Message-ID: <CA+CK2bDDPn-nmoM7mYS0X8xUBF6q8_scpZY5-YQQXvGAdoCRpQ@mail.gmail.com>
 Subject: Re: [PATCH] mm/sparse: Consistently do not zero memmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vincent Whitchurch <rabinv@axis.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 10:13 AM Michal Hocko <mhocko@kernel.org> wrote:
+> (I noticed this because on my ARM64 platform, with 1 GiB of memory the
+>  first [and only] section is allocated from the zeroing path while with
+>  2 GiB of memory the first 1 GiB section is allocated from the
+>  non-zeroing path.)
 >
-> [Add Pavel - the email thread starts http://lkml.kernel.org/r/20191030131122.8256-1-vincent.whitchurch@axis.com
->  but it used your old email address]
->
-> On Wed 30-10-19 15:02:16, Vincent Whitchurch wrote:
-> > On Wed, Oct 30, 2019 at 02:29:58PM +0100, Michal Hocko wrote:
-> > > On Wed 30-10-19 14:11:22, Vincent Whitchurch wrote:
-> > > > (I noticed this because on my ARM64 platform, with 1 GiB of memory the
-> > > >  first [and only] section is allocated from the zeroing path while with
-> > > >  2 GiB of memory the first 1 GiB section is allocated from the
-> > > >  non-zeroing path.)
-> > >
-> > > Do I get it right that sparse_buffer_init couldn't allocate memmap for
-> > > the full node for some reason and so sparse_init_nid would have to
-> > > allocate one for each memory section?
-> >
-> > Not quite.  The sparsemap_buf is successfully allocated with the correct
-> > size in sparse_buffer_init(), but sparse_buffer_alloc() fails to
-> > allocate the same size from it.
-> >
-> > The reason it fails is that sparse_buffer_alloc() for some reason wants
-> > to return a pointer which is aligned to the allocation size.  But the
-> > sparsemap_buf was only allocated with PAGE_SIZE alignment so there's not
-> > enough space to align it.
-> >
-> > I don't understand the reason for this alignment requirement since the
-> > fallback path also allocates with PAGE_SIZE alignment.  I'm guessing the
-> > alignment is for the VMEMAP code which also uses sparse_buffer_alloc()?
->
-> I am not 100% sure TBH. Aligning makes some sense when mapping the
-> memmaps to page tables but that would suggest that sparse_buffer_init
-> is using a wrong alignment then. It is quite wasteful to allocate
-> alarge misaligned block like that.
->
-> Your patch still makes sense but this is something to look into.
->
-> Pavel?
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-I remember thinking about this large alignment, as it looked out of
-place to me also.
-It was there to keep memmap in single chunks on larger x86 machines.
-Perhaps it can be revisited now.
-
-The patch that introduced this alignment:
-9bdac914240759457175ac0d6529a37d2820bc4d
-
-vmemmap_alloc_block_buf
-+       ptr = (void *)ALIGN((unsigned long)vmemmap_buf, size);
-
-Pasha
+LGTM, Thank you!
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
