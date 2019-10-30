@@ -2,71 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B004E9806
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A3C4E97FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:20:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfJ3IXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:23:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36268 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726020AbfJ3IXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:23:47 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0216D3CB2703485D07D3;
-        Wed, 30 Oct 2019 16:23:43 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 30 Oct 2019 16:23:34 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <stefan.popa@analog.com>,
-        <zhongjiang@huawei.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] iio: imu: adis16400: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
-Date:   Wed, 30 Oct 2019 16:19:41 +0800
-Message-ID: <1572423581-59762-3-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1572423581-59762-1-git-send-email-zhongjiang@huawei.com>
-References: <1572423581-59762-1-git-send-email-zhongjiang@huawei.com>
+        id S1726203AbfJ3IUk convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 30 Oct 2019 04:20:40 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:35385 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbfJ3IUk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 04:20:40 -0400
+Received: from xps13 (67.173.185.81.rev.sfr.net [81.185.173.67])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 0599F200011;
+        Wed, 30 Oct 2019 08:20:35 +0000 (UTC)
+Date:   Wed, 30 Oct 2019 09:20:36 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Saurav Girepunje <saurav.girepunje@gmail.com>
+Cc:     joern@lazybastard.org, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at,
+        vigneshr@ti.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, saurav.girepunje@hotmail.com
+Subject: Re: [PATCH v1] mtd: devices: phram.c: Fix multiple kfree statement
+ from phram_setup
+Message-ID: <20191030092036.38cf4f11@xps13>
+In-Reply-To: <20191029170849.GA6279@saurav>
+References: <20191029170849.GA6279@saurav>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
-operation rather than DEFINE_SIMPLE_ATTRIBUTE.
+Saurav,
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/iio/imu/adis16400.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Saurav Girepunje <saurav.girepunje@gmail.com> wrote on Tue, 29 Oct 2019
+22:38:49 +0530:
 
-diff --git a/drivers/iio/imu/adis16400.c b/drivers/iio/imu/adis16400.c
-index 0575ff7..8195bc9 100644
---- a/drivers/iio/imu/adis16400.c
-+++ b/drivers/iio/imu/adis16400.c
-@@ -256,7 +256,7 @@ static int adis16400_show_product_id(void *arg, u64 *val)
- 
- 	return 0;
- }
--DEFINE_SIMPLE_ATTRIBUTE(adis16400_product_id_fops,
-+DEFINE_DEBUGFS_ATTRIBUTE(adis16400_product_id_fops,
- 	adis16400_show_product_id, NULL, "%lld\n");
- 
- static int adis16400_show_flash_count(void *arg, u64 *val)
-@@ -273,7 +273,7 @@ static int adis16400_show_flash_count(void *arg, u64 *val)
- 
- 	return 0;
- }
--DEFINE_SIMPLE_ATTRIBUTE(adis16400_flash_count_fops,
-+DEFINE_DEBUGFS_ATTRIBUTE(adis16400_flash_count_fops,
- 	adis16400_show_flash_count, NULL, "%lld\n");
- 
- static int adis16400_debugfs_init(struct iio_dev *indio_dev)
--- 
-1.7.12.4
+Are you a robot?
 
+> Remove multiple kfree statement from phram_setup() in phram.c
+
+This does not describe what you are doing, you don't remove them you
+factorize them. And honestly I am not convinced this change is useful
+in old code.
+
+> 
+> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+> ---
+> 
+> Change in v1:
+
+Your first version is v1, how can you be at v1? It is almost v3 already!
+
+> 
+> - Add change suggested by Miquel Raynal <miquel.raynal@bootlin.com>
+>   "The goto statement should not describe from where it is called but the
+>    action it is supposed to take. 'goto free_nam;' would be better."
+
+This is a copy/paste of what I have said. What I want you to write is:
+
+"
+- Rename the goto statement to describe bla bla bla.
+- Fix the typo in the goto label.
+"
+
+> 
+>  drivers/mtd/devices/phram.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
+> index c467286ca007..38f95a1517ac 100644
+> --- a/drivers/mtd/devices/phram.c
+> +++ b/drivers/mtd/devices/phram.c
+> @@ -243,22 +243,22 @@ static int phram_setup(const char *val)
+>  
+>  	ret = parse_num64(&start, token[1]);
+>  	if (ret) {
+> -		kfree(name);
+>  		parse_err("illegal start address\n");
+> +		goto free_nam;
+
+Come one...
+
+
+Thanks,
+Miquèl
