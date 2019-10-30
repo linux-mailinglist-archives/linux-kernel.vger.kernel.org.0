@@ -2,130 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82D20EA044
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 223C5EA03A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbfJ3Pyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38598 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728443AbfJ3Pyq (ORCPT
+        id S1728396AbfJ3Pyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:54:36 -0400
+Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:50861 "EHLO
+        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728347AbfJ3Py3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:46 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 22so2740290wms.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1b/PjoEJ3+h+SBh6G5LSt0fwIln3xfl7/abE1bFQX1U=;
-        b=hzrosYqSyPDygsna85h8qSrUmUaQQxMkX5BA098fJ6vDLGNeTe4eqqS0Yy3jBSOVtU
-         yi7+0L13abxGIkDRQBOEgU7GdtxmdESHz+6KLsloe65u6oPwjmoLHEVN6T4EuRTryQfL
-         y7lk5lyyh2Rim0xK+TCKTlVwj7Asgp17IIy8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1b/PjoEJ3+h+SBh6G5LSt0fwIln3xfl7/abE1bFQX1U=;
-        b=HJcZ5LPWbj1fPnoh6Q4fM8NvYCjSCwUA7bXpBEaEQStmGnZADzAvT+dWAS7mG87BpL
-         UJ9Ek8nsefHtmPQhbFjzL4jRG86WoC5aG3/OEkVIJcteEi4nynFBicbeZo4dq0U8t4Jt
-         jAfUE6j5gIFnIGnahUN39LEOOl26cMkKX4p55qm7jqhE9SBzmQzHlg5FuRjjPucJDGUS
-         QqsBW9JHdM8gnp53wZyoRt9ne+XhgHIZZnNI8hfS1byKkQWFNl/KTrkpDVHMmLWtmvBa
-         ENGoUZohfEd0D8Tl6wWrFTl7hjcIAOTM0sQ6csodomtxl3JbrZMJ1W+R3letb8WMSO8v
-         W1vQ==
-X-Gm-Message-State: APjAAAU9Io21Qwt/OYslJqMv74YjDNL9r4c5wUYduDJ+dxwExEa0E3DU
-        28ZHRGnT0LjRblse0NS1TEFGJA==
-X-Google-Smtp-Source: APXvYqwTXl2Q1WUFHg7qhZXHybLGgpjxpJN/y8w39Em85vfeW8+DSA1Q4Ev7vK/bL1ZYJYTV+ebZhg==
-X-Received: by 2002:a1c:7719:: with SMTP id t25mr174595wmi.56.1572450884321;
-        Wed, 30 Oct 2019 08:54:44 -0700 (PDT)
-Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id g184sm499931wma.8.2019.10.30.08.54.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Oct 2019 08:54:43 -0700 (PDT)
-From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vikas Gupta <vikas.gupta@broadcom.com>,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Subject: [PATCH net-next V4 2/3] bnxt_en: Add support to invoke OP-TEE API to reset firmware
-Date:   Wed, 30 Oct 2019 21:24:23 +0530
-Message-Id: <1572450864-16761-3-git-send-email-sheetal.tigadoli@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
-References: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
+        Wed, 30 Oct 2019 11:54:29 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id 4D25E987E2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 15:54:27 +0000 (GMT)
+Received: (qmail 12748 invoked from network); 30 Oct 2019 15:54:27 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 30 Oct 2019 15:54:27 -0000
+Date:   Wed, 30 Oct 2019 15:54:24 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, pauld@redhat.com, valentin.schneider@arm.com,
+        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com
+Subject: Re: [PATCH v4 05/11] sched/fair: use rq->nr_running when balancing
+ load
+Message-ID: <20191030155424.GK3016@techsingularity.net>
+References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
+ <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+On Fri, Oct 18, 2019 at 03:26:32PM +0200, Vincent Guittot wrote:
+> cfs load_balance only takes care of CFS tasks whereas CPUs can be used by
+> other scheduling class. Typically, a CFS task preempted by a RT or deadline
+> task will not get a chance to be pulled on another CPU because the
+> load_balance doesn't take into account tasks from other classes.
+> Add sum of nr_running in the statistics and use it to detect such
+> situation.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-In error recovery process when firmware indicates that it is
-completely down, initiate a firmware reset by calling OP-TEE API.
+Patch is ok but it'll be easier in the future to mix up sum_nr_running
+and sum_h_nr_running in the future. Might be best to make sum_nr_running
+sum_any_running and the hierarchy one sum_cfs_running. I don't feel
+strongly either way, because it's almost certainly due to the fact I
+almost never care about non-cfs tasks when thinking about the scheduler.
 
-Cc: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 13 +++++++++++--
- drivers/net/ethernet/broadcom/bnxt/bnxt.h |  3 +++
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 8cdf71f8824d..c24caaaf05ca 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -10581,14 +10581,23 @@ static void bnxt_fw_reset_writel(struct bnxt *bp, int reg_idx)
- static void bnxt_reset_all(struct bnxt *bp)
- {
- 	struct bnxt_fw_health *fw_health = bp->fw_health;
--	int i;
-+	int i, rc;
-+
-+	if (bp->fw_cap & BNXT_FW_CAP_ERR_RECOVER_RELOAD) {
-+#ifdef CONFIG_TEE_BNXT_FW
-+		rc = tee_bnxt_fw_load();
-+		if (rc)
-+			netdev_err(bp->dev, "Unable to reset FW rc=%d\n", rc);
-+		bp->fw_reset_timestamp = jiffies;
-+#endif
-+		return;
-+	}
- 
- 	if (fw_health->flags & ERROR_RECOVERY_QCFG_RESP_FLAGS_HOST) {
- 		for (i = 0; i < fw_health->fw_reset_seq_cnt; i++)
- 			bnxt_fw_reset_writel(bp, i);
- 	} else if (fw_health->flags & ERROR_RECOVERY_QCFG_RESP_FLAGS_CO_CPU) {
- 		struct hwrm_fw_reset_input req = {0};
--		int rc;
- 
- 		bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_FW_RESET, -1, -1);
- 		req.resp_addr = cpu_to_le64(bp->hwrm_cmd_kong_resp_dma_addr);
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index d333589811a5..09437150f818 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -25,6 +25,9 @@
- #include <net/dst_metadata.h>
- #include <net/xdp.h>
- #include <linux/dim.h>
-+#ifdef CONFIG_TEE_BNXT_FW
-+#include <linux/firmware/broadcom/tee_bnxt_fw.h>
-+#endif
- 
- struct page_pool;
- 
 -- 
-2.17.1
-
+Mel Gorman
+SUSE Labs
