@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E252EA369
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FA6EA370
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbfJ3Sef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 14:34:35 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:45396 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbfJ3Sea (ORCPT
+        id S1728278AbfJ3Sew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 14:34:52 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:41417 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728182AbfJ3Sec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 14:34:30 -0400
-Received: by mail-yb1-f194.google.com with SMTP id q143so1290753ybg.12
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:29 -0700 (PDT)
+        Wed, 30 Oct 2019 14:34:32 -0400
+Received: by mail-yw1-f68.google.com with SMTP id j131so1184866ywa.8
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=bvG8yeMiWehpYWmsEhmZrRBzQ/KLeRP0kdYcoAuh+Ag=;
-        b=gdzWXXbKeE5D6zaJ9uerEsRUOkxrxdmScqSaicrvmuj5TfYMrri0nid6IyseVMjHHy
-         6sGskBkw0HIhghgDaWsygrIs3IQ++dvAQhdNg1mEELSls3VthJB+sNYfEkJgthlAe/vQ
-         LXPwmhs8D1y/ThK+PFuHJ9M5VzI7VGU2s0ZDs=
+        bh=e+89YRcmk1O/FMy0n4jL4cWpTuvw/qC5kgSeWA8MCIo=;
+        b=iY3TrIc9QP23eyLvfOX9opzG/1sSREIwR79LorZsQ+XW+DT/cIIbALiQKVynPPsj3o
+         6lkA/DLhVxCNMMVQRP1grGcISdGsNzhcIrW/rWcsiCMNmJLxPtzcOiV1IF+BQhFhgDUm
+         UNZlsMpVenfqsas1Vd7Orh6EVm3926HrTsX0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=bvG8yeMiWehpYWmsEhmZrRBzQ/KLeRP0kdYcoAuh+Ag=;
-        b=KoTCU/AqdexkaDwOM4lmKVS3NVo/tbhdOrR1GjEPbcWslxooqFzaRX8gETLRSnEXmt
-         yvdHmGO3cQrCsiyMwKcp8M3mq1OiO23PdanNjyAhaCA0g4uaGFln+Eb5fHRiqpbpO6sM
-         j2ASxXhRIuZnt4z2S3fhxAhQQ8S/pqQn6MNCXzSc6SBvgwJx/mU8b1XJxE29gp3XkV6Z
-         XZWboZU06I4yg3sY5OR/684skmhWx5nxjSvtUT2jyH2uYaySox4oa7Rmng4i3BTqFz/A
-         lL4dD4+tN3cRtNTEAXwDtph3bhmntCAKzYAT1BA2Yhcq0Mhc/AC5svdnMIdehszWfOFm
-         rFoA==
-X-Gm-Message-State: APjAAAVXBMUyv6+7uY7WdlApd3H7qi191u/XyTPWuNdfUTgssQvdJbEy
-        fCssnRpK1K7QCJXS6uPQiVoNCQ==
-X-Google-Smtp-Source: APXvYqy2azq7Sa1Yjndq9VXjGDHF4OtrvPHzA2ymnfByDXYZao0SyrxB90oyimfX8fnEhCB1bwmZuA==
-X-Received: by 2002:a25:c5c4:: with SMTP id v187mr656072ybe.32.1572460469281;
-        Wed, 30 Oct 2019 11:34:29 -0700 (PDT)
+        bh=e+89YRcmk1O/FMy0n4jL4cWpTuvw/qC5kgSeWA8MCIo=;
+        b=paKbRzPPnFfyaP+vJNUzFK8AL8zoan/V5kmT2IKEaHYJY6+ex4K+7TBLNjWf130BHW
+         P6igZ9oTqWvP9E03J7WyeQzCeQHPqHf/V0eFDdGPTNBJk45CuKHjPXcnKnu0DJMdDLGR
+         FOhQ6V7+ObF17V5/intT0wzwXBqxHqacbEXeSJtG8Ud3urc7zViCJK2NVRSnGnXRai4K
+         a28upfOTgzmVEFTjK76EMKFwComWxyVWBBboApXZmYJ5pxYXbIum7ucNb8kViJqzkwxg
+         OX/wy2ID5UtBltjzX5QP3LLZ21cT6ibc5gfEe1P3JYdLG60gWecE7dRBnrM3Pq3Tg8E6
+         n8nw==
+X-Gm-Message-State: APjAAAW04zZUM4NSxfcsMFk/cSsYbA+68tjIcWEWma/aSKEeQjOhr2/8
+        xEivdOqiVemaJZrA9PqU9CGC9Q==
+X-Google-Smtp-Source: APXvYqzLXNhGp140MEehLun5dVgYcRMpwIGYHHPVEYSB2zkyksphy99KjqyE9EM2eCOz2yL+kYpbDQ==
+X-Received: by 2002:a81:8242:: with SMTP id s63mr899957ywf.176.1572460470934;
+        Wed, 30 Oct 2019 11:34:30 -0700 (PDT)
 Received: from vpillai-dev.sfo2.internal.digitalocean.com ([138.68.32.68])
-        by smtp.gmail.com with ESMTPSA id s84sm818549yws.22.2019.10.30.11.34.28
+        by smtp.gmail.com with ESMTPSA id d205sm722151ywh.75.2019.10.30.11.34.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Oct 2019 11:34:28 -0700 (PDT)
+        Wed, 30 Oct 2019 11:34:30 -0700 (PDT)
 From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
 To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
         Julien Desfossez <jdesfossez@digitalocean.com>,
@@ -57,10 +57,11 @@ Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Aaron Lu <ziqian.lzq@antfin.com>
-Subject: [RFC PATCH v4 17/19] sched/fair: wrapper for cfs_rq->min_vruntime
-Date:   Wed, 30 Oct 2019 18:33:30 +0000
-Message-Id: <7b14ed09002916e6ccba1989b9beb2433be31dc2.1572437285.git.vpillai@digitalocean.com>
+        Aaron Lu <ziqian.lzq@antfin.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Subject: [RFC PATCH v4 18/19] sched/fair: core wide vruntime comparison
+Date:   Wed, 30 Oct 2019 18:33:31 +0000
+Message-Id: <de8cdd84373ccadd585bbf3af849aafb1ca65a66.1572437285.git.vpillai@digitalocean.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1572437285.git.vpillai@digitalocean.com>
 References: <cover.1572437285.git.vpillai@digitalocean.com>
@@ -73,132 +74,199 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Aaron Lu <aaron.lu@linux.alibaba.com>
 
-Add a wrapper function cfs_rq_min_vruntime(cfs_rq) to
-return cfs_rq->min_vruntime.
+This patch provides a vruntime based way to compare two cfs task's
+priority, be it on the same cpu or different threads of the same core.
 
-It will be used in the following patch, no functionality
-change.
+When the two tasks are on the same CPU, we just need to find a common
+cfs_rq both sched_entities are on and then do the comparison.
+
+When the two tasks are on differen threads of the same core, the root
+level sched_entities to which the two tasks belong will be used to do
+the comparison.
+
+An ugly illustration for the cross CPU case:
+
+   cpu0         cpu1
+ /   |  \     /   |  \
+se1 se2 se3  se4 se5 se6
+    /  \            /   \
+  se21 se22       se61  se62
+
+Assume CPU0 and CPU1 are smt siblings and task A's se is se21 while
+task B's se is se61. To compare priority of task A and B, we compare
+priority of se2 and se6. Whose vruntime is smaller, who wins.
+
+To make this work, the root level se should have a common cfs_rq min
+vuntime, which I call it the core cfs_rq min vruntime.
+
+When we adjust the min_vruntime of rq->core, we need to propgate
+that down the tree so as to not cause starvation of existing tasks
+based on previous vruntime.
 
 Signed-off-by: Aaron Lu <ziqian.lzq@antfin.com>
+Signed-off-by: Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Signed-off-by: Julien Desfossez <jdesfossez@digitalocean.com>
 ---
- kernel/sched/fair.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ kernel/sched/core.c  | 15 +------
+ kernel/sched/fair.c  | 99 +++++++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/sched.h |  2 +
+ 3 files changed, 102 insertions(+), 14 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 18fbaa85ec30..09e5c77e54c3 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -117,19 +117,8 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
+ 	if (pa == -1) /* dl_prio() doesn't work because of stop_class above */
+ 		return !dl_time_before(a->dl.deadline, b->dl.deadline);
+ 
+-	if (pa == MAX_RT_PRIO + MAX_NICE)  { /* fair */
+-		u64 vruntime = b->se.vruntime;
+-
+-		/*
+-		 * Normalize the vruntime if tasks are in different cpus.
+-		 */
+-		if (task_cpu(a) != task_cpu(b)) {
+-			vruntime -= task_cfs_rq(b)->min_vruntime;
+-			vruntime += task_cfs_rq(a)->min_vruntime;
+-		}
+-
+-		return !((s64)(a->se.vruntime - vruntime) <= 0);
+-	}
++	if (pa == MAX_RT_PRIO + MAX_NICE) /* fair */
++		return cfs_prio_less(a, b);
+ 
+ 	return false;
+ }
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 840d27628d36..ab32b22b0574 100644
+index ab32b22b0574..e8dd78a8c54d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -450,6 +450,11 @@ find_matching_se(struct sched_entity **se, struct sched_entity **pse)
+@@ -450,9 +450,105 @@ find_matching_se(struct sched_entity **se, struct sched_entity **pse)
  
  #endif	/* CONFIG_FAIR_GROUP_SCHED */
  
-+static inline u64 cfs_rq_min_vruntime(struct cfs_rq *cfs_rq)
++static inline struct cfs_rq *root_cfs_rq(struct cfs_rq *cfs_rq)
 +{
-+	return cfs_rq->min_vruntime;
++	return &rq_of(cfs_rq)->cfs;
 +}
 +
++static inline bool is_root_cfs_rq(struct cfs_rq *cfs_rq)
++{
++	return cfs_rq == root_cfs_rq(cfs_rq);
++}
++
++static inline struct cfs_rq *core_cfs_rq(struct cfs_rq *cfs_rq)
++{
++	return &rq_of(cfs_rq)->core->cfs;
++}
++
+ static inline u64 cfs_rq_min_vruntime(struct cfs_rq *cfs_rq)
+ {
+-	return cfs_rq->min_vruntime;
++	if (!sched_core_enabled(rq_of(cfs_rq)))
++		return cfs_rq->min_vruntime;
++
++	if (is_root_cfs_rq(cfs_rq))
++		return core_cfs_rq(cfs_rq)->min_vruntime;
++	else
++		return cfs_rq->min_vruntime;
++}
++
++static void coresched_adjust_vruntime(struct cfs_rq *cfs_rq, u64 delta)
++{
++	struct sched_entity *se, *next;
++
++	if (!cfs_rq)
++		return;
++
++	cfs_rq->min_vruntime -= delta;
++	rbtree_postorder_for_each_entry_safe(se, next,
++			&cfs_rq->tasks_timeline.rb_root, run_node) {
++		if (se->vruntime > delta)
++			se->vruntime -= delta;
++		if (se->my_q)
++			coresched_adjust_vruntime(se->my_q, delta);
++	}
++}
++
++static void update_core_cfs_rq_min_vruntime(struct cfs_rq *cfs_rq)
++{
++	struct cfs_rq *cfs_rq_core;
++
++	if (!sched_core_enabled(rq_of(cfs_rq)))
++		return;
++
++	if (!is_root_cfs_rq(cfs_rq))
++		return;
++
++	cfs_rq_core = core_cfs_rq(cfs_rq);
++	if (cfs_rq_core != cfs_rq &&
++	    cfs_rq->min_vruntime < cfs_rq_core->min_vruntime) {
++		u64 delta = cfs_rq_core->min_vruntime - cfs_rq->min_vruntime;
++		coresched_adjust_vruntime(cfs_rq_core, delta);
++	}
++}
++
++bool cfs_prio_less(struct task_struct *a, struct task_struct *b)
++{
++	struct sched_entity *sea = &a->se;
++	struct sched_entity *seb = &b->se;
++	bool samecpu = task_cpu(a) == task_cpu(b);
++	struct task_struct *p;
++	s64 delta;
++
++	if (samecpu) {
++		/* vruntime is per cfs_rq */
++		while (!is_same_group(sea, seb)) {
++			int sea_depth = sea->depth;
++			int seb_depth = seb->depth;
++
++			if (sea_depth >= seb_depth)
++				sea = parent_entity(sea);
++			if (sea_depth <= seb_depth)
++				seb = parent_entity(seb);
++		}
++
++		delta = (s64)(sea->vruntime - seb->vruntime);
++		goto out;
++	}
++
++	/* crosscpu: compare root level se's vruntime to decide priority */
++	while (sea->parent)
++		sea = sea->parent;
++	while (seb->parent)
++		seb = seb->parent;
++	delta = (s64)(sea->vruntime - seb->vruntime);
++
++out:
++	p = delta > 0 ? b : a;
++	trace_printk("picked %s/%d %s: %Ld %Ld %Ld\n", p->comm, p->pid,
++			samecpu ? "samecpu" : "crosscpu",
++			sea->vruntime, seb->vruntime, delta);
++
++	return delta > 0;
+ }
+ 
  static __always_inline
- void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec);
- 
-@@ -486,7 +491,7 @@ static void update_min_vruntime(struct cfs_rq *cfs_rq)
- 	struct sched_entity *curr = cfs_rq->curr;
- 	struct rb_node *leftmost = rb_first_cached(&cfs_rq->tasks_timeline);
- 
--	u64 vruntime = cfs_rq->min_vruntime;
-+	u64 vruntime = cfs_rq_min_vruntime(cfs_rq);
- 
- 	if (curr) {
- 		if (curr->on_rq)
-@@ -506,7 +511,7 @@ static void update_min_vruntime(struct cfs_rq *cfs_rq)
- 	}
+@@ -512,6 +608,7 @@ static void update_min_vruntime(struct cfs_rq *cfs_rq)
  
  	/* ensure we never gain time by being placed backwards. */
--	cfs_rq->min_vruntime = max_vruntime(cfs_rq->min_vruntime, vruntime);
-+	cfs_rq->min_vruntime = max_vruntime(cfs_rq_min_vruntime(cfs_rq), vruntime);
+ 	cfs_rq->min_vruntime = max_vruntime(cfs_rq_min_vruntime(cfs_rq), vruntime);
++	update_core_cfs_rq_min_vruntime(cfs_rq);
  #ifndef CONFIG_64BIT
  	smp_wmb();
  	cfs_rq->min_vruntime_copy = cfs_rq->min_vruntime;
-@@ -3816,7 +3821,7 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq) {}
- static void check_spread(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- #ifdef CONFIG_SCHED_DEBUG
--	s64 d = se->vruntime - cfs_rq->min_vruntime;
-+	s64 d = se->vruntime - cfs_rq_min_vruntime(cfs_rq);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 311ab1e2a00e..4844e703298a 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2537,3 +2537,5 @@ static inline bool sched_energy_enabled(void)
+ static inline bool sched_energy_enabled(void) { return false; }
  
- 	if (d < 0)
- 		d = -d;
-@@ -3829,7 +3834,7 @@ static void check_spread(struct cfs_rq *cfs_rq, struct sched_entity *se)
- static void
- place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int initial)
- {
--	u64 vruntime = cfs_rq->min_vruntime;
-+	u64 vruntime = cfs_rq_min_vruntime(cfs_rq);
- 
- 	/*
- 	 * The 'current' period is already promised to the current tasks,
-@@ -3922,7 +3927,7 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 * update_curr().
- 	 */
- 	if (renorm && curr)
--		se->vruntime += cfs_rq->min_vruntime;
-+		se->vruntime += cfs_rq_min_vruntime(cfs_rq);
- 
- 	update_curr(cfs_rq);
- 
-@@ -3933,7 +3938,7 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 * fairness detriment of existing tasks.
- 	 */
- 	if (renorm && !curr)
--		se->vruntime += cfs_rq->min_vruntime;
-+		se->vruntime += cfs_rq_min_vruntime(cfs_rq);
- 
- 	/*
- 	 * When enqueuing a sched_entity, we must:
-@@ -4046,7 +4051,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 * can move min_vruntime forward still more.
- 	 */
- 	if (!(flags & DEQUEUE_SLEEP))
--		se->vruntime -= cfs_rq->min_vruntime;
-+		se->vruntime -= cfs_rq_min_vruntime(cfs_rq);
- 
- 	/* return excess runtime on last dequeue */
- 	return_cfs_rq_runtime(cfs_rq);
-@@ -6542,7 +6547,7 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
- 			min_vruntime = cfs_rq->min_vruntime;
- 		} while (min_vruntime != min_vruntime_copy);
- #else
--		min_vruntime = cfs_rq->min_vruntime;
-+		min_vruntime = cfs_rq_min_vruntime(cfs_rq);
- #endif
- 
- 		se->vruntime -= min_vruntime;
-@@ -10007,7 +10012,7 @@ static void task_fork_fair(struct task_struct *p)
- 		resched_curr(rq);
- 	}
- 
--	se->vruntime -= cfs_rq->min_vruntime;
-+	se->vruntime -= cfs_rq_min_vruntime(cfs_rq);
- 	rq_unlock(rq, &rf);
- }
- 
-@@ -10127,7 +10132,7 @@ static void detach_task_cfs_rq(struct task_struct *p)
- 		 * cause 'unlimited' sleep bonus.
- 		 */
- 		place_entity(cfs_rq, se, 0);
--		se->vruntime -= cfs_rq->min_vruntime;
-+		se->vruntime -= cfs_rq_min_vruntime(cfs_rq);
- 	}
- 
- 	detach_entity_cfs_rq(se);
-@@ -10141,7 +10146,7 @@ static void attach_task_cfs_rq(struct task_struct *p)
- 	attach_entity_cfs_rq(se);
- 
- 	if (!vruntime_normalized(p))
--		se->vruntime += cfs_rq->min_vruntime;
-+		se->vruntime += cfs_rq_min_vruntime(cfs_rq);
- }
- 
- static void switched_from_fair(struct rq *rq, struct task_struct *p)
+ #endif /* CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
++
++bool cfs_prio_less(struct task_struct *a, struct task_struct *b);
 -- 
 2.17.1
 
