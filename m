@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67708E98B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:02:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAE01E98CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfJ3JC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:02:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7949 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbfJ3JC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:02:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 02:02:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,246,1569308400"; 
-   d="scan'208";a="225264093"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Oct 2019 02:02:51 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 5/9] usb: dwc3: Rework clock initialization to be more flexible
-In-Reply-To: <CALAqxLXcD8V1o01yMrHpeoqU2MfJ=8d3dbzC8T-+aoovDUd8kA@mail.gmail.com>
-References: <20191028215919.83697-1-john.stultz@linaro.org> <20191028215919.83697-6-john.stultz@linaro.org> <87k18nj4mj.fsf@gmail.com> <CALAqxLXcD8V1o01yMrHpeoqU2MfJ=8d3dbzC8T-+aoovDUd8kA@mail.gmail.com>
-Date:   Wed, 30 Oct 2019 11:02:51 +0200
-Message-ID: <87h83qhah0.fsf@gmail.com>
+        id S1726751AbfJ3JD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 05:03:56 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:21613 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726177AbfJ3JD4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 05:03:56 -0400
+X-UUID: 5c5d35fef1344567b3c5a1e569a2523a-20191030
+X-UUID: 5c5d35fef1344567b3c5a1e569a2523a-20191030
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <luhua.xu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 26910532; Wed, 30 Oct 2019 17:03:51 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 30 Oct 2019 17:03:47 +0800
+Received: from localhost.localdomain (10.15.20.246) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 30 Oct 2019 17:03:47 +0800
+From:   Luhua Xu <luhua.xu@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Luhua Xu <luhua.xu@mediatek.com>
+Subject: [PATCH V2] spi: add power control when set_cs
+Date:   Wed, 30 Oct 2019 17:03:54 +0800
+Message-ID: <1572426234-30019-1-git-send-email-luhua.xu@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Luhua Xu" <luhua.xu@mediatek.com>
 
-Hi,
+As to set_cs takes effect immediately, power spi
+is needed when setup spi.
 
-John Stultz <john.stultz@linaro.org> writes:
-> On Tue, Oct 29, 2019 at 2:14 AM Felipe Balbi <balbi@kernel.org> wrote:
->> John Stultz <john.stultz@linaro.org> writes:
->>
->> > The dwc3 core binding specifies three clocks:
->> >   ref, bus_early, and suspend
->> >
->> > which are all controlled in the driver together.
->> >
->> > However some variants of the hardware my not have all three clks
->>                                         ^^
->>                                         may
->>
->> In fact *all* platforms have all three clocks. It's just that in some
->> cases clock pins are shorted together (or take input from same clock).
->>
-> ...
->> another option would be to pass three clocks with the same phandle. That
->> would even make sure that clock usage counts are correct, no?
->
-> Hey Felipe!
->
-> So I actually had done that initially (and it seemed to work), but Rob
-> suggested this way instead.
-> I'm fine with either, as long as having multiple references to the
-> same clk in the enable/disable paths doesn't cause trouble.
->
-> Thanks so much for the review here!
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Luhua Xu <luhua.xu@mediatek.com>
+---
+V2:
+- move set_cs PM control from .set_cs callback in
+  vendor driver to spi_setup in spi framework.
 
-same as the other patch, if we're supposed to describe the HW, then we
-should describe what's actually happening.
 
+ drivers/spi/spi.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index f9502db..19007e0 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -3091,7 +3091,20 @@ int spi_setup(struct spi_device *spi)
+ 	if (spi->controller->setup)
+ 		status = spi->controller->setup(spi);
+ 
+-	spi_set_cs(spi, false);
++	if (spi->controller->auto_runtime_pm && spi->controller->set_cs) {
++		status = pm_runtime_get_sync(spi->controller->dev.parent);
++		if (status < 0) {
++			pm_runtime_put_noidle(spi->controller->dev.parent);
++			dev_err(&spi->controller->dev, "Failed to power device: %d\n",
++				status);
++			return status;
++		}
++		spi_set_cs(spi, false);
++		pm_runtime_mark_last_busy(spi->controller->dev.parent);
++		pm_runtime_put_autosuspend(spi->controller->dev.parent);
++	} else {
++		spi_set_cs(spi, false);
++	}
+ 
+ 	if (spi->rt && !spi->controller->rt) {
+ 		spi->controller->rt = true;
 -- 
-balbi
+2.6.4
+
