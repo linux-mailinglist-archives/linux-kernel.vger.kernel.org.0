@@ -2,90 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E879BE9C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1280E9C7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:41:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfJ3NlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:41:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45426 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfJ3NlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:41:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 06:41:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
-   d="scan'208";a="283555445"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
-  by orsmga001.jf.intel.com with ESMTP; 30 Oct 2019 06:41:05 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "Kang\, Luwei" <luwei.kang@intel.com>
-Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini\@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
-        "Christopherson\, Sean J" <sean.j.christopherson@intel.com>,
-        "vkuznets\@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli\@tencent.com" <wanpengli@tencent.com>,
-        "jmattson\@google.com" <jmattson@google.com>,
-        "joro\@8bytes.org" <joro@8bytes.org>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        "bp\@alien8.de" <bp@alien8.de>, "hpa\@zytor.com" <hpa@zytor.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "ak\@linux.intel.com" <ak@linux.intel.com>,
-        "thomas.lendacky\@amd.com" <thomas.lendacky@amd.com>,
-        "acme\@kernel.org" <acme@kernel.org>,
-        "mark.rutland\@arm.com" <mark.rutland@arm.com>,
-        "jolsa\@redhat.com" <jolsa@redhat.com>,
-        "namhyung\@kernel.org" <namhyung@kernel.org>,
-        alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH v1 3/8] KVM: x86: Allocate performance counter for PEBS event
-In-Reply-To: <20191030094941.GQ4097@hirez.programming.kicks-ass.net>
-References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com> <1572217877-26484-4-git-send-email-luwei.kang@intel.com> <20191029144612.GK4097@hirez.programming.kicks-ass.net> <82D7661F83C1A047AF7DC287873BF1E173835B1A@SHSMSX104.ccr.corp.intel.com> <20191030094941.GQ4097@hirez.programming.kicks-ass.net>
-Date:   Wed, 30 Oct 2019 15:41:04 +0200
-Message-ID: <87k18mfj0v.fsf@ashishki-desk.ger.corp.intel.com>
+        id S1726680AbfJ3NlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:41:21 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57556 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfJ3NlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:41:21 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UDfJcf105474;
+        Wed, 30 Oct 2019 08:41:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572442879;
+        bh=nuh0+MxenUuhUre7iHpI+wRVCfPMgfGvU9dOBIMvWTA=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=EmHSYXAamBvFs4kkQnEg82kU23sdkgXLu2ck2D5ITZLfykyL7yS55oKtWCNvoqD19
+         il827f/X6EMD5uZKLOvnYyxiczoHczAI4ctu5F12iQ75F8kQUdAl8VTpz48hS7oSC4
+         4TL+9YsimZU+EylNb/rMTBtKDnBx6ftyWNA11s4Q=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9UDfJc4127724
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Oct 2019 08:41:19 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
+ Oct 2019 08:41:06 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 30 Oct 2019 08:41:06 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with SMTP id x9UDfJ4X090566;
+        Wed, 30 Oct 2019 08:41:19 -0500
+Date:   Wed, 30 Oct 2019 08:41:18 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Hans Verkuil <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 02/19] dt-bindings: media: cal: update binding example
+Message-ID: <20191030134118.5uc4xttzh7wzpucd@ti.com>
+References: <20191018153437.20614-1-bparrot@ti.com>
+ <20191018153437.20614-3-bparrot@ti.com>
+ <20191029132157.GA27757@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191029132157.GA27757@bogus>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
+Rob Herring <robh@kernel.org> wrote on Tue [2019-Oct-29 08:21:57 -0500]:
+> On Fri, Oct 18, 2019 at 10:34:20AM -0500, Benoit Parrot wrote:
+> > Update binding example to show proper endpoint properties and linkage.
+> > 
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  .../devicetree/bindings/media/ti-cal.txt      | 32 ++++++++++---------
+> >  1 file changed, 17 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/ti-cal.txt b/Documentation/devicetree/bindings/media/ti-cal.txt
+> > index 782f801b12a9..6b56fddcfc4a 100644
+> > --- a/Documentation/devicetree/bindings/media/ti-cal.txt
+> > +++ b/Documentation/devicetree/bindings/media/ti-cal.txt
+> > @@ -27,7 +27,6 @@ Documentation/devicetree/bindings/media/video-interfaces.txt.
+> >  Example:
+> >  	cal: cal@4845b000 {
+> >  		compatible = "ti,dra72-cal";
+> > -		ti,hwmods = "cal";
+> >  		reg = <0x4845B000 0x400>,
+> >  		      <0x4845B800 0x40>,
+> >  		      <0x4845B900 0x40>;
+> > @@ -45,9 +44,10 @@ Example:
+> >  
+> >  			csi2_0: port@0 {
+> >  				reg = <0>;
+> > -				endpoint {
+> > -					slave-mode;
+> > -					remote-endpoint = <&ar0330_1>;
+> > +				csi2_phy0: endpoint@0 {
+> 
+> Unit address without 'reg' is not correct.
 
-> On Wed, Oct 30, 2019 at 04:06:36AM +0000, Kang, Luwei wrote:
->> > >  static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
->> > >  				  unsigned config, bool exclude_user,
->> > >  				  bool exclude_kernel, bool intr,
->> > > -				  bool in_tx, bool in_tx_cp)
->> > > +				  bool in_tx, bool in_tx_cp, bool pebs)
->> > >  {
->> > >  	struct perf_event *event;
->> > >  	struct perf_event_attr attr = {
->> > > @@ -111,9 +111,12 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
->> > >  		.exclude_user = exclude_user,
->> > >  		.exclude_kernel = exclude_kernel,
->> > >  		.config = config,
->> > > +		.precise_ip = pebs ? 1 : 0,
->> > > +		.aux_output = pebs ? 1 : 0,
->> > 
->> > srsly?
->> 
->> Hi Peter,
->>     Thanks for review. For aux_output, I think it should be set 1 when the guest wants to enabled PEBS by Intel PT.
->>      For precise_ip, it is the precise level in perf and set by perf command line in KVM guest, this may not reflect the accurate value (can be 0~3) here. Here set to 1 is used to allocate a counter for PEBS event and set the MSR_IA32_PEBS_ENABLE register. For PMU virtualization, KVM will trap the guest's write operation to PMU registers and allocate/free event counter from host if a counter enable/disable in guest. We can't always deduce the exact parameter of perf command line from the value of the guest writers to the register.
->
-> Please, teach your MUA to wrap on 78 chars.
->
-> The thing I really fell over is the gratuitous 'bool ? 1 : 0'. But yes,
+Ok so just "endpoint" then?
 
-Notice the .exclude_kernel assignment above that does the same thing the
-other way around.
+> 
+> > +					remote-endpoint = <&csi2_cam0>;
+> > +					clock-lanes = <0>;
+> > +					data-lanes = <1 2>;
+> >  				};
+> >  			};
+> >  			csi2_1: port@1 {
+> > @@ -57,19 +57,21 @@ Example:
+> >  	};
+> >  
+> >  	i2c5: i2c@4807c000 {
+> > -		ar0330@10 {
+> > -			compatible = "ti,ar0330";
+> > -			reg = <0x10>;
+> > +		status = "okay";
+> 
+> Don't show status in examples.
 
-Regards,
---
-Alex
+Ok.
+
+> 
+> > +		clock-frequency = <400000>;
+> >  
+> > -			port {
+> > -				#address-cells = <1>;
+> > -				#size-cells = <0>;
+> > +		ov5640@3c {
+> 
+> camera-sensor@3c
+
+Ok.
+
+> 
+> > +			compatible = "ovti,ov5640";
+> > +			reg = <0x3c>;
+> > +
+> > +			clocks = <&clk_ov5640_fixed>;
+> > +			clock-names = "xclk";
+> >  
+> > -				ar0330_1: endpoint {
+> > -					reg = <0>;
+> > -					clock-lanes = <1>;
+> > -					data-lanes = <0 2 3 4>;
+> > -					remote-endpoint = <&csi2_0>;
+> > +			port {
+> > +				csi2_cam0: endpoint {
+> > +					remote-endpoint = <&csi2_phy0>;
+> > +					clock-lanes = <0>;
+> > +					data-lanes = <1 2>;
+> >  				};
+> >  			};
+> >  		};
+> > -- 
+> > 2.17.1
+> > 
