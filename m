@@ -2,110 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3967E98A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC054E98A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfJ3JBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:01:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44614 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfJ3JBt (ORCPT
+        id S1726578AbfJ3JB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 05:01:58 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37362 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfJ3JB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:01:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q26so1106268pfn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 02:01:48 -0700 (PDT)
+        Wed, 30 Oct 2019 05:01:58 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p13so695365pll.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 02:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=kpSRFHljLQ0J6Aa39FyB0oJMuowSc24OXLDuKR7Ck/s=;
-        b=A80fnsT/E7nj2Ov92k3bVojidqaYptmKqqmVzQ9eDtAXYzdCIZUun6ojfahw9juGV5
-         CLchvGnjYY3XhTcSBYDrHxHiI9GY3ND5l5AlXK6mjtbM4+YIIe1dDnqZ10R38umWZdSe
-         Wqx9SLSZI925uZtYX9fv+4af5LzMAylUcUB5nolBnO0w7TbQ4JcugrpS/PZwEkOguN5N
-         kGv36A+VJTiE+CS2M+2QZ8633UQ1LeKHeq2I0yM+WXr36WYPECSfVwwA0vKK7IeiLALz
-         DCdzmj+/wxKmS/u2iwMy9ui21OXRuYerjN1TJihod0mbqiA8eI+FRy9YuiE1Ddmdd/9u
-         Tl1w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=m5azgLhd2I2E3q9JQtIgUVQ0suPVCkYbQEeRBm5oMb8=;
+        b=SNIJd0jrHsBMX6/ZKZfmY+w36WI2FQ8qqZCU7AAOSX1m1BH+waTBtt4HsR5Cpitl0M
+         qizjCUyqfRXUfN6QTVJOMhqIJjxSn2xIGAaLdkeydUjLLMvQqr564H7wMctcKfSwSKhI
+         34pcDje4oDfteKOd0sOIWEPkpGduCiO9uBJes8AEfdXJj//H+RJxVEhKME1VjEfcglcv
+         bQtYVMecgFVUuv8CqgXp3WMq/wv1mpqGjiGcc+F8WXGpzrls96q4j9uVNmvQtTjNZqOy
+         xRH30D1vP/r22R/QtbgSOmLCKl/U61AlaG9mLcczOCemky44THQcAFq/cMwg0aH4OZ4p
+         j7dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kpSRFHljLQ0J6Aa39FyB0oJMuowSc24OXLDuKR7Ck/s=;
-        b=acCxleCWoeHYusgXR0/JkXLXkGY1/Usn4lATdmJ96jHZwX7pEk56z5d+pB8JT1BRJk
-         SyEkjIGjW7O+czqk5DU+5Gt6QfmlgxnGGzdcyzS9gX0Qi91W/9FS2RcoLeMTVdKzAJE2
-         XtoqjK/8CCIUXYY8Ow/feXSatIaol60m6vi0svUShQPb1e/+/FaeWMElePAHqL6cDhRm
-         medl/1r69wFz0ncubSyDq09LWY/qqRqEb3xS2gSAjiymtMNUbw3MVMPKOuah82Z6O16l
-         MH/384YVdcD2lfw44sPc274BG0KE3gw+TR02xbmKdT48mzRywZAPMjsORyAt5jfFVBDx
-         Jmcg==
-X-Gm-Message-State: APjAAAWThwNF0etNhM05oog/B7srbeSiT1zuppewNRAa6GVa/IxmA3OW
-        7PuBXaIUsGnQPREchVJYJWsX
-X-Google-Smtp-Source: APXvYqxFNDmc/qWrzrj9GwR1BCqms0oXxFmPJfU70XQNMQp+JjQOACLC2ny3hrW0lsC9IOYN91metA==
-X-Received: by 2002:a63:fe15:: with SMTP id p21mr31736118pgh.26.1572426108054;
-        Wed, 30 Oct 2019 02:01:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=m5azgLhd2I2E3q9JQtIgUVQ0suPVCkYbQEeRBm5oMb8=;
+        b=ThrIprzM7+SGwkCHD307UWzAa6HDkNdZ0z7+pFfVl2jfaKSkVH3e2uKlZWtz8PzJp+
+         DyxYrDuFpqxZ6HXzw3wOzG5rjo+UuFqPGeh8zeVXIE/Qf8sGSSc1RPs4HgBZoHDLMXfo
+         PjiOPoJlsUVOR2/Tj0jRCD7eenaeZ8QcsU29aNXR2pYXx20QmYcpLfY2U4vcGp4qFZgy
+         Mlzz2+s7Tx5f1L7RsupC0l9W3c64QkRxtAsHXBiBbmy9nUGkQXlHX5esIFlPpoAbyL/+
+         kn846WU1CsRtC4GkvXkuYkXgoSio7LzPjDJa6Mpp5rRtaBsN+OvCXepIQI90ACMZlmA3
+         oJSw==
+X-Gm-Message-State: APjAAAXHaDySFcTIQ68u5Sg6Y1JSmHfn5Te9Wd+IoxlFpc3R1894pH53
+        Vv6VkMmNvbHLqkzs2KE47h3X
+X-Google-Smtp-Source: APXvYqx1+RxRWncZTcuyUZhz6kgWlf5fD+XfO4AMeFborkT4X05rfAgRFXHGr0HdkiWpGhfJT+G4fg==
+X-Received: by 2002:a17:902:d891:: with SMTP id b17mr3445548plz.310.1572426117078;
+        Wed, 30 Oct 2019 02:01:57 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:618e:77d9:c9fa:423a:3851:8df4])
-        by smtp.gmail.com with ESMTPSA id g24sm2070351pfi.81.2019.10.30.02.01.40
+        by smtp.gmail.com with ESMTPSA id g24sm2070351pfi.81.2019.10.30.02.01.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 02:01:47 -0700 (PDT)
+        Wed, 30 Oct 2019 02:01:56 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org
 Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
         darshak.patel@einfochips.com, prajose.john@einfochips.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/4] Add support for Thor96 board
-Date:   Wed, 30 Oct 2019 14:31:20 +0530
-Message-Id: <20191030090124.24900-1-manivannan.sadhasivam@linaro.org>
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v2 1/4] dt-bindings: leds: Document commonly used LED triggers
+Date:   Wed, 30 Oct 2019 14:31:21 +0530
+Message-Id: <20191030090124.24900-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191030090124.24900-1-manivannan.sadhasivam@linaro.org>
+References: <20191030090124.24900-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This commit documents the LED triggers used commonly in the SoCs. Not
+all triggers are documented as some of them are very application specific.
+Most of the triggers documented here are currently used in devicetrees
+of many SoCs.
 
-This patchset adds support for Thor96 board from Einfochips. This board is
-one of the 96Boards Consumer Edition platform powered by the NXP i.MX8MQ
-SoC.
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../devicetree/bindings/leds/common.txt         | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Following are the features supported currently:
-
-1. uSD
-2. WiFi/BT
-3. Ethernet
-4. EEPROM (M24256)
-5. NOR Flash (W25Q256JW)
-6. 2xUSB3.0 ports and 1xUSB2.0 port at HS expansion
-
-More information about this board can be found in Arrow website:
-https://www.arrow.com/en/products/i.imx8-thor96/arrow-development-tools
-
-Link to 96Boards CE Specification: https://linaro.co/ce-specification
-
-Expecting patch 1 to go through LED/Rob's tree, 4 through MTD tree
-and 2,3 through Freescale tree.
-
-Thanks,
-Mani
-
-Changes in v2:
-
-* Added patch for documenting commonly used LED triggers
-* Added Reviewed-by tags for bindings patch
-* Changed, fsl,uart-has-rtscts to uart-has-rtscts in dts
-* Modified the commit message of MTD patch
-
-Manivannan Sadhasivam (4):
-  dt-bindings: leds: Document commonly used LED triggers
-  dt-bindings: arm: Add devicetree binding for Thor96 Board
-  arm64: dts: freescale: Add devicetree support for Thor96 board
-  mtd: spi-nor: Add support for w25q256jw
-
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- .../devicetree/bindings/leds/common.txt       |  17 +
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../boot/dts/freescale/imx8mq-thor96.dts      | 581 ++++++++++++++++++
- drivers/mtd/spi-nor/spi-nor.c                 |   2 +
- 5 files changed, 602 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-thor96.dts
-
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 9fa6f9795d50..2a6806161590 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -55,6 +55,23 @@ Optional properties for child nodes:
+      "timer" - LED flashes at a fixed, configurable rate
+      "pattern" - LED alters the brightness for the specified duration with one
+                  software timer (requires "led-pattern" property)
++     "mmc[N]" - LED indicates [N]th MMC storage activity
++     "flash" - LED indicates camera flash state
++     "torch" - LED indicates camera torch state
++     "audio-mute" - LED indicates audio mute state
++     "audio-micmute" - LED indicates mic mute state
++     "bluetooth-power" - LED indicates bluetooth power state
++     "usb-gadget" - LED indicates USB gadget activity
++     "usb-host" - LED indicates USB host activity
++     "mtd" - LED indicates MTD memory activity
++     "nand-disk" - LED indicates NAND memory activity (deprecated),
++                  in new implementations use "mtd"
++     "disk-read" - LED indicates disk read activity
++     "disk-write" - LED indicates disk write activity
++     "none" - No trigger assigned to the LED. This is the default mode
++              if trigger is absent
++     "cpu" - LED indicates activity of all CPUs
++     "cpu[N]" - LED indicates activity of [N]th CPU
+ 
+ - led-pattern : Array of integers with default pattern for certain triggers.
+                 Each trigger may parse this property differently:
 -- 
 2.17.1
 
