@@ -2,53 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7232DE9C38
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8AE4E9C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbfJ3NZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39622 "EHLO mail.kernel.org"
+        id S1726506AbfJ3NZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:25:14 -0400
+Received: from mga07.intel.com ([134.134.136.100]:37920 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbfJ3NZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:25:06 -0400
-Subject: Re: [git pull] IOMMU Fixes for Linux v5.4-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572441905;
-        bh=DmmVLnO2Nuchx2VqNQqfcDQaXZjO+KlZLc+j/LGWQWM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=U3qiA9LOdmlhEL7fiTwaa9JI3b9W86IMZcgvOdjUPWk+8ov2+TbcurOUJFDBmj821
-         C/WBIK7gqxh22pTats0caYT0PijkX6KdBiLa5aAyCTPLviO1SwQtY//ltxXS3mbJSg
-         UUwkV2F/1zKz/N3KUK1FkIBVcb4U+Je/asLHcD/w=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191030130251.GA11315@8bytes.org>
-References: <20191030130251.GA11315@8bytes.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191030130251.GA11315@8bytes.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
- tags/iommu-fixes-v5.4-rc5
-X-PR-Tracked-Commit-Id: 160c63f909ffbc797c0bbe23310ac1eaf2349d2f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 320000e72ec0613e164ce9608d865396fb2da278
-Message-Id: <157244190549.19806.13453430741450004166.pr-tracker-bot@kernel.org>
-Date:   Wed, 30 Oct 2019 13:25:05 +0000
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+        id S1726239AbfJ3NZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:25:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 06:25:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
+   d="scan'208";a="211322245"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 30 Oct 2019 06:25:09 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 30 Oct 2019 15:25:09 +0200
+Date:   Wed, 30 Oct 2019 15:25:09 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "logang@deltatee.com" <logang@deltatee.com>
+Subject: Re: [PATCH v10 4/4] PCI: Allow extend_bridge_window() to shrink
+ resource if necessary
+Message-ID: <20191030132509.GE2593@lahna.fi.intel.com>
+References: <SL2P216MB0187C1ACBE716693FD5622BD80600@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SL2P216MB0187C1ACBE716693FD5622BD80600@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 30 Oct 2019 14:02:57 +0100:
+On Wed, Oct 30, 2019 at 12:47:44PM +0000, Nicholas Johnson wrote:
+> Remove checks for resource size in extend_bridge_window(). This is
+> necessary to allow the pci_bus_distribute_available_resources() to
+> function when the kernel parameter pci=hpmemsize=nn[KMG] is used to
+> allocate resources. Because the kernel parameter sets the size of all
+> hotplug bridges to be the same, there are problems when nested hotplug
+> bridges are encountered. Fitting a downstream hotplug bridge with size X
+> and normal bridges with non-zero size Y into parent hotplug bridge with
+> size X is impossible, and hence the downstream hotplug bridge needs to
+> shrink to fit into its parent.
+> 
+> Add check for if bridge is extended or shrunken and adjust pci_dbg to
+> reflect this.
+> 
+> Reset the resource if its new size is zero (if we have run out of a
+> bridge window resource) to prevent the PCI resource assignment code from
+> attempting to assign a zero-sized resource.
+> 
+> Rename extend_bridge_window() to adjust_bridge_window() to reflect the
+> fact that the window can now shrink.
+> 
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.4-rc5
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/320000e72ec0613e164ce9608d865396fb2da278
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
