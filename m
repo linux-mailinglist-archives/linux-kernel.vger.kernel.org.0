@@ -2,122 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05481E97FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:19:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47849E9804
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfJ3ITp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:19:45 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:22758 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725822AbfJ3ITp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:19:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572423584;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tGP8/Cq/uIP6+eazYurLTr329KXGMw2YjLoiUkgJNCw=;
-        b=JSDcl6LZWYcSgXZeDubSupTVoEvXEQKl1OeK/yVq7WCNXPM1l0G/YIGkBFClkmEiFQkjUn
-        1tuoElZkQKbZBvrIZRdHRvmUIFRz8onSPWkF8b18k+8YcaXI3n1E3kzLh/JLFRSjWW9CuF
-        vxd2N9MIayLJLv7WsMptI0LRmajLisE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-58-CSJ1tpiVO8yEP9kAKb589Q-1; Wed, 30 Oct 2019 04:19:40 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F500107AD28;
-        Wed, 30 Oct 2019 08:19:38 +0000 (UTC)
-Received: from [10.36.116.222] (ovpn-116-222.ams2.redhat.com [10.36.116.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 91E5D60C4B;
-        Wed, 30 Oct 2019 08:19:34 +0000 (UTC)
-Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
- mappings
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
- <1572171452-7958-2-git-send-email-rppt@kernel.org>
- <085ed07e-e646-f7a4-0370-06f33a2a4e4a@redhat.com>
- <20191030081529.GB20624@rapoport-lnx>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <9eae3941-64cf-4ea1-0287-0e64bab192c6@redhat.com>
-Date:   Wed, 30 Oct 2019 09:19:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726134AbfJ3IXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:23:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36248 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725923AbfJ3IXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 04:23:47 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id ED353CCB77D6F525F10E;
+        Wed, 30 Oct 2019 16:23:42 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 30 Oct 2019 16:23:33 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <jic23@kernel.org>
+CC:     <Michael.Hennerich@analog.com>, <stefan.popa@analog.com>,
+        <zhongjiang@huawei.com>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] iio: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
+Date:   Wed, 30 Oct 2019 16:19:39 +0800
+Message-ID: <1572423581-59762-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20191030081529.GB20624@rapoport-lnx>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: CSJ1tpiVO8yEP9kAKb589Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.10.19 09:15, Mike Rapoport wrote:
-> On Tue, Oct 29, 2019 at 12:02:34PM +0100, David Hildenbrand wrote:
->> On 27.10.19 11:17, Mike Rapoport wrote:
->>> From: Mike Rapoport <rppt@linux.ibm.com>
->>>
->>> The mappings created with MAP_EXCLUSIVE are visible only in the context=
- of
->>> the owning process and can be used by applications to store secret
->>> information that will not be visible not only to other processes but to=
- the
->>> kernel as well.
->>>
->>> The pages in these mappings are removed from the kernel direct map and
->>> marked with PG_user_exclusive flag. When the exclusive area is unmapped=
-,
->>> the pages are mapped back into the direct map.
->>>
->>
->> Just a thought, the kernel is still able to indirectly read the contents=
- of
->> these pages by doing a kdump from kexec environment, right?
->=20
-> Right.
->=20
->> Also, I wonder
->> what would happen if you map such pages via /dev/mem into another user s=
-pace
->> application and e.g., use them along with kvm [1].
->=20
-> Do you mean that one application creates MAP_EXCLUSIVE and another
-> applications accesses the same physical pages via /dev/mem?
+The issue is detected with the help of coccinelle.
 
-Exactly.
+zhong jiang (2):
+  iio: imu: adis16460: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs
+    fops
+  iio: imu: adis16400: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs
+    fops
 
->=20
-> With /dev/mem all physical memory is visible...
+ drivers/iio/imu/adis16400.c | 4 ++--
+ drivers/iio/imu/adis16460.c | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Okay, so the statement "information that will not be visible not only to=20
-other processes but to the kernel as well" is not correct. There are=20
-easy ways to access that information if you really want to (might=20
-require root permissions, though).
-
---=20
-
-Thanks,
-
-David / dhildenb
+-- 
+1.7.12.4
 
