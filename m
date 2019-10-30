@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5871CEA029
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8ADAEA02C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbfJ3PyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55292 "EHLO mail.kernel.org"
+        id S1728278AbfJ3PyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:54:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728245AbfJ3Pxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:53:55 -0400
+        id S1728255AbfJ3Px5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:53:57 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 780B021882;
-        Wed, 30 Oct 2019 15:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B472208C0;
+        Wed, 30 Oct 2019 15:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450834;
-        bh=rfJoh8q2ttJiOkExTu/CY0Vkr6sPogKzCVxD224wjXY=;
+        s=default; t=1572450837;
+        bh=E3vOxg8kySeuRFePBSSnqG+X2RodkIAx0DqkS8qfbuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YDEqS+lr+8ByaQlf/e4leFH04fS749bmNLu207stFznFLd+t/SV3kGL0FMISyINvA
-         wVW4q/FzKQ3xRE7rWh6hbSVfty37FZbSUxdM8y29O8mno000jyvEYbzGzYnug/ignu
-         JCZA4FxDUKm3Weg/i6YG+m/MXZtGcQCwhoVVWgvk=
+        b=mZiQP7R5gt4XxMdspHK+JSyzSn5gjSZYkkzATZboeLo/ODwmV3joCUBULKca0hZ6D
+         W1G9kMSKuHEkTcka2wKBStQdmdHQDHzj4tcl7HSi4WO4i7LnkxbDjpGsS6+OCY3W8h
+         UXmyjgrbggBASrus/FFCvaafDZqsb7tFGBdV3w18=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhengjun Xing <zhengjun.xing@linux.intel.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 61/81] tracing: Fix "gfp_t" format for synthetic events
-Date:   Wed, 30 Oct 2019 11:49:07 -0400
-Message-Id: <20191030154928.9432-61-sashal@kernel.org>
+Cc:     Stefan Wahren <wahrenst@gmx.net>,
+        Fredrik Yhlen <fredrik.yhlen@endian.se>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 62/81] ARM: dts: bcm2837-rpi-cm3: Avoid leds-gpio probing issue
+Date:   Wed, 30 Oct 2019 11:49:08 -0400
+Message-Id: <20191030154928.9432-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030154928.9432-1-sashal@kernel.org>
 References: <20191030154928.9432-1-sashal@kernel.org>
@@ -44,56 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+From: Stefan Wahren <wahrenst@gmx.net>
 
-[ Upstream commit 9fa8c9c647be624e91b09ecffa7cd97ee0600b40 ]
+[ Upstream commit 626c45d223e22090511acbfb481e0ece1de1356d ]
 
-In the format of synthetic events, the "gfp_t" is shown as "signed:1",
-but in fact the "gfp_t" is "unsigned", should be shown as "signed:0".
+bcm2835-rpi.dtsi defines the behavior of the ACT LED, which is available
+on all Raspberry Pi boards. But there is no driver for this particual
+GPIO on CM3 in mainline yet, so this node was left incomplete without
+the actual GPIO definition. Since commit 025bf37725f1 ("gpio: Fix return
+value mismatch of function gpiod_get_from_of_node()") this causing probe
+issues of the leds-gpio driver for users of the CM3 dtsi file.
 
-The issue can be reproduced by the following commands:
+  leds-gpio: probe of leds failed with error -2
 
-echo 'memlatency u64 lat; unsigned int order; gfp_t gfp_flags; int migratetype' > /sys/kernel/debug/tracing/synthetic_events
-cat  /sys/kernel/debug/tracing/events/synthetic/memlatency/format
+Until we have the necessary GPIO driver hide the ACT node for CM3
+to avoid this.
 
-name: memlatency
-ID: 2233
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
-
-        field:u64 lat;  offset:8;       size:8; signed:0;
-        field:unsigned int order;       offset:16;      size:4; signed:0;
-        field:gfp_t gfp_flags;  offset:24;      size:4; signed:1;
-        field:int migratetype;  offset:32;      size:4; signed:1;
-
-print fmt: "lat=%llu, order=%u, gfp_flags=%x, migratetype=%d", REC->lat, REC->order, REC->gfp_flags, REC->migratetype
-
-Link: http://lkml.kernel.org/r/20191018012034.6404-1-zhengjun.xing@linux.intel.com
-
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reported-by: Fredrik Yhlen <fredrik.yhlen@endian.se>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Fixes: a54fe8a6cf66 ("ARM: dts: add Raspberry Pi Compute Module 3 and IO board")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_events_hist.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index dd310d3b58431..725b9b35f933c 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -674,6 +674,8 @@ static bool synth_field_signed(char *type)
- {
- 	if (str_has_prefix(type, "u"))
- 		return false;
-+	if (strcmp(type, "gfp_t") == 0)
-+		return false;
+diff --git a/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi b/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi
+index 81399b2c5af9e..d4f0e455612d4 100644
+--- a/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi
++++ b/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi
+@@ -8,6 +8,14 @@
+ 		reg = <0 0x40000000>;
+ 	};
  
- 	return true;
- }
++	leds {
++		/*
++		 * Since there is no upstream GPIO driver yet,
++		 * remove the incomplete node.
++		 */
++		/delete-node/ act;
++	};
++
+ 	reg_3v3: fixed-regulator {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "3V3";
 -- 
 2.20.1
 
