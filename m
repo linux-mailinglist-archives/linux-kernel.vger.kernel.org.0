@@ -2,98 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87181E9542
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C1D2E953D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:20:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfJ3DYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 23:24:02 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45620 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfJ3DYC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 23:24:02 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y24so286084plr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 20:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=El42Y0XtiI+o9O978XwDgCnNFlXF0pvLOTIJT8A8LpQ=;
-        b=PPnotDkw8xhuli7tHUxeUaV7VDi30OZQZ0OQXY3L9YmBxe3Z8KR+LIWeIR/kEg2iS6
-         J/BYzmyEJMB8ARXgD6iCkCz2VzEEqHM4oGEtN0awcB/b2CAt3w4J44I6Nf7TUfZzukjt
-         GTJnO/GSZosf7gyQo11LY1FU65qYdqbdcwyJERHrLYwpt63n5r66JCPIg7EPB+iKeNSH
-         fp1pkK+g9u+p/exBl0e3pJv7CR00TrPfrfLJG/kWdGnAK3+YcC6NWIC7CKcdk2RKrkSz
-         +eTg0qI9L9EG8jft/+4A8aKk7kmRaM449mynTHKQ/A5/sbf8ehnSN+aSM8MLVJeZAX4c
-         Owxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=El42Y0XtiI+o9O978XwDgCnNFlXF0pvLOTIJT8A8LpQ=;
-        b=r60ZG5yMnimO2ed/eKpTTFq7gHWLqITdHbndfb8e4XvIREkPwnrJ4mi7XzCKBx/3nY
-         nOE8NP8INTFpqu33/FljO+pwPft7Jqdc6alpcA0JGO1PQ77CN3AdGn42QSl5pPR6qR4Z
-         8EaU/1k0dCjpj275zo4OjidIqTdFxQGcaaJ+zp0xCOLyLL7meB6Mh/XOaLeYU/wA5WOa
-         wIyGIC8p0sMMlXjLoDp6+7Rlkh5D9Gqv+54mRJyW1aKqn8USro+IGMS7M1IoVcsSb7vz
-         6LCxyR+SDPsQBR+1C0pO4vzDbujLKAzTXG+EOjb9Y8/lhw+7TTiRosmQLcjcz5WrdoM0
-         Cezw==
-X-Gm-Message-State: APjAAAXdZdTCCQxMvWnYqcXlbXmN724h+pl56+5y8uykSBJGJm6XiyeM
-        roisF8VwagZFjivHOVhkpG4iDuiddes=
-X-Google-Smtp-Source: APXvYqwfAecs0cQjB3BULuTSJfaphx+9J4Y0vW2E1krxC0eROt5aGr7rzl7CU7+eJXQwzN7Y1WCmCQ==
-X-Received: by 2002:a17:902:aa82:: with SMTP id d2mr2203329plr.24.1572405841058;
-        Tue, 29 Oct 2019 20:24:01 -0700 (PDT)
-Received: from pek-lpggp6.wrs.com (unknown-103-217.windriver.com. [147.11.103.217])
-        by smtp.gmail.com with ESMTPSA id j22sm556020pff.42.2019.10.29.20.23.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 20:24:00 -0700 (PDT)
-From:   Kevin Hao <haokexin@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v2] dump_stack: Avoid the livelock of the dump_lock
-Date:   Wed, 30 Oct 2019 11:16:37 +0800
-Message-Id: <20191030031637.6025-1-haokexin@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        id S1727015AbfJ3DUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 23:20:41 -0400
+Received: from mail-eopbgr150073.outbound.protection.outlook.com ([40.107.15.73]:34126
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726714AbfJ3DUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 23:20:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PJsjcYu0Jg9nFaDd2BEbu4hvCNRpynhiCUb7if0B4GqdJmw6V2nrImZCJikC2vxrLVYylnAN0UJMZHaZ5gLS3fb4z5OBWFwSwu6U9CxpeES9jYcv/LXLcrTThryPbjvl1BmKZiX5pSvrPYDFDOvAiHZ+e4OqPp1mgvwIUQvpc//DRLoBzg2BR8wTLukAuFTYHXo3rH3T6CrBR80KxGm5wojofrUiXc6FDNMP5AtbR9qbvgVFSggbA2ZZIEsDF7/1nUlURGcOPmlUfZtWdyNM1AMrV5O3GG5vLhNY036t3mlxUEcb/H6tZXZMm0Z9Q6p8d4fTFq6qV8T9q8vfJDsXBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLNSISLapK4Z2YP3UBIQrnOMNr128jRtjyOSl7lUNaI=;
+ b=DkUBOITUFz6VxD2Rthr/nKOAB1baOxGZ0ze0QhY5tKdhIFTtuElPOauE62cvhqkp4zK1zErdb1W0IXfwJmMNzsyPnEAXoZllsIjN32yitsdmMOQkZ3ooI0ko6rzv5MayriNeIyN9MtJ4gef4vU5cR/ef8JdKUB8ezLSZ1ZJn7cqb9QNQEIUf+1TRXUmCTF7tXzk2MMZI7/dmSw8navRyn3jdtbmGXtFhkNdlhROPdKHGwc1oFZ4JFEYK6Ie1GQa0E5X0hmZm9KLo27uzMRo4c7d84PIDnA3CrqPRKCc7tu7MElANfCVrWJuXGje4QF9ilkT8WTfyM4sHxUhN6weQ+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLNSISLapK4Z2YP3UBIQrnOMNr128jRtjyOSl7lUNaI=;
+ b=oA7XHMkn4VvW+ocI0cv0bRbITYmucILWsHIsE+FcH61zhJnoq4epfe9jj6+eCUmP8xFdDDKERiQaik1YTbE5Pl2B4mo+czo3dy3kHNei1pCm6hXZMZw/lMkruTjjhH5jGWJO4OB5Bqbt+WBZkPpgfofEtjCMdfNo6trFRivoRdc=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.232.225) by
+ VE1PR04MB6493.eurprd04.prod.outlook.com (20.179.233.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.20; Wed, 30 Oct 2019 03:20:36 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::e052:9278:76a3:27c]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::e052:9278:76a3:27c%6]) with mapi id 15.20.2387.025; Wed, 30 Oct 2019
+ 03:20:36 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+CC:     "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: fsl_asrc: Add support for imx8qm
+Thread-Topic: [PATCH 2/2] ASoC: fsl_asrc: Add support for imx8qm
+Thread-Index: AdWO0NDdBvdDnhxySQ6SCTWiiQjucg==
+Date:   Wed, 30 Oct 2019 03:20:35 +0000
+Message-ID: <VE1PR04MB64795758EBC0C898FBFFB3A5E3600@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b6f04f17-b62b-4b2e-ccfa-08d75ce821a8
+x-ms-traffictypediagnostic: VE1PR04MB6493:
+x-microsoft-antispam-prvs: <VE1PR04MB6493EB7A5287BC8F9B0F2A0CE3600@VE1PR04MB6493.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 02065A9E77
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(396003)(136003)(366004)(189003)(199004)(4326008)(186003)(14454004)(6246003)(102836004)(6506007)(6916009)(26005)(7696005)(81166006)(7736002)(25786009)(7416002)(305945005)(74316002)(33656002)(8676002)(3846002)(99286004)(2906002)(478600001)(9686003)(55016002)(6116002)(486006)(81156014)(476003)(54906003)(66946007)(66446008)(76116006)(229853002)(1411001)(71190400001)(66556008)(6436002)(5660300002)(64756008)(316002)(66066001)(71200400001)(256004)(66476007)(14444005)(86362001)(8936002)(52536014)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6493;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: K5Nr/IcHptbGJkbZh0SiL9H0DjEfXMpYaQ5G7bn19/F4Qlj66aarfUV9Pjqo65IHfV7cyLBZOBLv2a9tdBP3BF+KKXvckQZaNkPI05/dqJx29A2k2LVyN+N20ZO9xw960Fn60TbbmYHixqa3T3u4x5XYPIdDg512y+B6hMFrS/IKnbBGs5Y0FZL7chpzu4w1G3XysepQu0QX33aaf2U3s+4YWBhHOy+8U7tqx1rizn5N8NhzSLzEN6O+a9glFtE+aPrDkM/a3D9KoycHGZ/X6Amr3XwYrveyt5zTOzVkPBXJZeQPQbPsMUubLDalMySYZmdFXZICMqyc+GVCIOEGOPsJIm0+T6esYZr8GHk8zGssA1JfbVv/DhSEtl7B/nHX0r8Cdgo31RRLNsXbDpuDjVbBjId11O31rmrXNVgUH8UqnRt6MojBX5wqxs1efo4+
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6f04f17-b62b-4b2e-ccfa-08d75ce821a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 03:20:35.8965
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yZUwQQ7tZOe4eZ8YIDA/7FOdBpwyMF191F0HCRuJc1KCIf4eF9JrVa1nS7NOejTRrXsreo0TOYuj74m/8h0zhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6493
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the current code, we use the atomic_cmpxchg() to serialize the
-output of the dump_stack(), but this implementation suffers the
-thundering herd problem. We have observed such kind of livelock on a
-Marvell cn96xx board(24 cpus) when heavily using the dump_stack() in
-a kprobe handler. Actually we can let the competitors to wait for
-the releasing of the lock before jumping to atomic_cmpxchg(). This
-will definitely mitigate the thundering herd problem. Thanks Linus
-for the suggestion.
+Hi
 
-Fixes: b58d977432c8 ("dump_stack: serialize the output from dump_stack()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kevin Hao <haokexin@gmail.com>
----
-v2:
- 1. Use the method suggested by Linus.
- 2. Since this fix seems pretty simple, maybe it deserve to be
-    backported to stable kernel. So CC the stable.
+>=20
+> On Tue, Oct 29, 2019 at 05:17:09PM +0800, Shengjiu Wang wrote:
+> > There are two asrc module in imx8qm, each module has different clock
+> > configuration, and the DMA type is EDMA.
+> >
+> > So in this patch, we define the new clocks, refine the clock map, and
+> > include struct fsl_asrc_soc_data for different soc usage.
+> >
+> > The EDMA channel is fixed with each dma request, one dma request
+> > corresponding to one dma channel. So we need to request dma channel
+> > with dma request of asrc module.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  sound/soc/fsl/fsl_asrc.c     | 91 +++++++++++++++++++++++++++++-------
+> >  sound/soc/fsl/fsl_asrc.h     | 65 +++++++++++++++++++++++++-
+> >  sound/soc/fsl/fsl_asrc_dma.c | 39 ++++++++++++----
+> >  3 files changed, 167 insertions(+), 28 deletions(-)
+>=20
+> > diff --git a/sound/soc/fsl/fsl_asrc_dma.c
+> > b/sound/soc/fsl/fsl_asrc_dma.c index d6146de9acd2..dbb07a486504
+> 100644
+> > --- a/sound/soc/fsl/fsl_asrc_dma.c
+> > +++ b/sound/soc/fsl/fsl_asrc_dma.c
+> > @@ -199,19 +199,40 @@ static int fsl_asrc_dma_hw_params(struct
+> > snd_soc_component *component,
+> >
+> >       /* Get DMA request of Back-End */
+> >       tmp_chan =3D dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
+> > -     tmp_data =3D tmp_chan->private;
+> > -     pair->dma_data.dma_request =3D tmp_data->dma_request;
+> > -     dma_release_channel(tmp_chan);
+> > +     /* tmp_chan may be NULL for it is already allocated by Back-End *=
+/
+> > +     if (tmp_chan) {
+> > +             tmp_data =3D tmp_chan->private;
+> > +             if (tmp_data)
+> > +                     pair->dma_data.dma_request =3D
+> > + tmp_data->dma_request;
+>=20
+> If this patch is supposed to add a !tmp_chan case for EDMA, we probably
+> shouldn't mute the !tmp_data case because dma_request will be NULL,
+> although the code previously didn't have a check either. I mean we might
+> need to error-out for !tmp_chan. Or...
+> is this intentional?
+>=20
 
- lib/dump_stack.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Yes, intentional. May be we can change to=20
 
-diff --git a/lib/dump_stack.c b/lib/dump_stack.c
-index 5cff72f18c4a..0062dfcafd63 100644
---- a/lib/dump_stack.c
-+++ b/lib/dump_stack.c
-@@ -106,7 +106,11 @@ asmlinkage __visible void dump_stack(void)
- 		was_locked = 1;
- 	} else {
- 		local_irq_restore(flags);
--		cpu_relax();
-+		/*
-+		 * Wait the lock to release before jumping to atomic_cmpxchg()
-+		 * in order to mitigate the thundering herd problem.
-+		 */
-+		do { cpu_relax(); } while (atomic_read(&dump_lock) != -1);
- 		goto retry;
- 	}
- 
--- 
-2.14.4
+        if (!asrc_priv->soc->use_edma) {
+                /* Get DMA request of Back-End */
+                tmp_chan =3D dma_request_slave_channel(dev_be, tx ? "tx" : =
+"rx");
+                tmp_data =3D tmp_chan->private;
+                pair->dma_data.dma_request =3D tmp_data->dma_request;
+                dma_release_channel(tmp_chan);
 
+                /* Get DMA request of Front-End */
+                tmp_chan =3D fsl_asrc_get_dma_channel(pair, dir);
+                tmp_data =3D tmp_chan->private;
+                pair->dma_data.dma_request2 =3D tmp_data->dma_request;
+                pair->dma_data.peripheral_type =3D tmp_data->peripheral_typ=
+e;
+                pair->dma_data.priority =3D tmp_data->priority;
+                dma_release_channel(tmp_chan);
+        }
+
+Best regards
+Wang shengjiu
