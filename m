@@ -2,54 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50836E980A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C40DE980E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:24:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfJ3IY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:24:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:9739 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbfJ3IY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:24:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 01:24:25 -0700
-X-IronPort-AV: E=Sophos;i="5.68,246,1569308400"; 
-   d="scan'208";a="193894229"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 01:24:21 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 50839208A0; Wed, 30 Oct 2019 10:24:21 +0200 (EET)
-Date:   Wed, 30 Oct 2019 10:24:21 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: smiapp: unlock on error in
- smiapp_start_streaming()
-Message-ID: <20191030082421.GE10211@paasikivi.fi.intel.com>
-References: <20191029182401.GB17569@mwanda>
+        id S1726524AbfJ3IYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:24:41 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46113 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbfJ3IYl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 04:24:41 -0400
+X-Originating-IP: 81.185.173.67
+Received: from localhost.localdomain (67.173.185.81.rev.sfr.net [81.185.173.67])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 04E3AE000D;
+        Wed, 30 Oct 2019 08:24:37 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        open list <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "open list:BROADCOM STB NAND FLASH DRIVER" 
+        <linux-mtd@lists.infradead.org>,
+        "open list:BROADCOM STB NAND FLASH DRIVER" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v2] mtd: rawnand: brcmnand: Fix NULL pointer assignment
+Date:   Wed, 30 Oct 2019 09:24:35 +0100
+Message-Id: <20191030082435.11939-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191021164555.5330-1-f.fainelli@gmail.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029182401.GB17569@mwanda>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: 0e04b2ff7123378c7b41a0bf8156a466a49d730a
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 09:24:01PM +0300, Dan Carpenter wrote:
-> We added two new error paths to smiapp_start_streaming(), but we can't
-> return directly without dropping the "sensor->mutex" lock.
+On Mon, 2019-10-21 at 16:45:54 UTC, Florian Fainelli wrote:
+> Sparse complained about the following:
 > 
-> Fixes: f8c4352c1bef ("media: smiapp: Move binning configuration to streaming start")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> drivers/mtd/nand/raw/brcmnand/brcmnand.c:921:40: warning: Using plain integer as NULL pointer
+> 
+> fix this issue by assigning the pointer to NULL.
+> 
+> Fixes: c1ac2dc34b51 ("mtd: rawnand: brcmnand: When oops in progress use pio and interrupt polling")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Thanks, Dan!
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
--- 
-Sakari Ailus
+Miquel
