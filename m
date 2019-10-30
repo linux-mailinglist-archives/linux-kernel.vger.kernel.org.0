@@ -2,181 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9023BE9E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A85EAE9E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfJ3O5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:57:06 -0400
-Received: from mail-eopbgr820043.outbound.protection.outlook.com ([40.107.82.43]:31296
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726518AbfJ3O5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:57:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WXxkB0FnqHeCOtqZcXfBjp884+JgkkOdnqCjlCUTC0XzhNTSOCDEcjkceoZM/MnnbbnCRAcN0icm3UjPQ8wAsL3f46Y/IdFoyBcYqbxxXM8fuwpfhuAtQJrMS9dyTqWF5B6C7zAgLCPLQtCKw1hICBi+JuvXHfOxXrmApF3d5dNmWr2bEahvrTgadZu4RJxXeO/rdkC5lOXtqSNFWnx+gcJ79hv73R09VM89DY6qePXIVFofOtsLGq3vf4nGljqsZF0VQKMopuBGhiKhiY5+s+gXrhMHi8fU/tReDxH0NJQw6ACSxmfL5iTECAcgO0ib67RuWTPwH+rEqsbt0Jveeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bAdktAW9j4STi0PjJe5ciUX6edDsIPVGCzG750c0d38=;
- b=PZDvhQgQBtl83mFTklkHTOcOii6tZaTdpZ24zmHXTSjCNaGJZMi6de0njpIx+cUvNJp0TWIJ0qjdXpbMmkrvdc2OE/a4267N61NA+P1w/scVYBVNZVxdSa4E4o8peHK3IScMuARFMZNgKbAV31aHvG0TPbSpZIO6sA0q3GkT2ebmuZ59dQi30Ih2yPwOMKK6uyss7JcQkqdwgFdz+OC7Ym/rxFC/zAfcKayBCYKdVDTusE8mJpc8S79ovhIJ6h638dbiaSDGk7Cq87l3Ppnf4lu44DFtjN0igJDxLvX74wH0cu0uXStTtyCrXRxPS43o2rO3B6FU2AE1Kylba3fBTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bAdktAW9j4STi0PjJe5ciUX6edDsIPVGCzG750c0d38=;
- b=eWOq8MTgxavFXXNzmL3RAiUbqXEiahPuaWePrlJLFEVsfUTBtfafDY4qvIx1M7EOuOu7vGqDN8DJg1YALdoc7diMXh1Y3rnK0E06YfmmFj6T7pc2zahpYeS5j7tZXty4HmVGhbarQy4cTd8Ud1+dxZX3VZp4Rgj3HHcnsFazsPA=
-Received: from MWHPR05MB3376.namprd05.prod.outlook.com (10.174.175.149) by
- MWHPR05MB3390.namprd05.prod.outlook.com (10.174.175.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.15; Wed, 30 Oct 2019 14:57:03 +0000
-Received: from MWHPR05MB3376.namprd05.prod.outlook.com
- ([fe80::4098:2c39:d8d3:a209]) by MWHPR05MB3376.namprd05.prod.outlook.com
- ([fe80::4098:2c39:d8d3:a209%7]) with mapi id 15.20.2408.018; Wed, 30 Oct 2019
- 14:57:02 +0000
-From:   Jorgen Hansen <jhansen@vmware.com>
-To:     'Stefano Garzarella' <sgarzare@redhat.com>
-CC:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dexuan Cui <decui@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH net-next 03/14] vsock: remove include/linux/vm_sockets.h
- file
-Thread-Topic: [PATCH net-next 03/14] vsock: remove include/linux/vm_sockets.h
- file
-Thread-Index: AQHViYgoRCd14Ilyok2RZer4OBK3yadzUUBA
-Date:   Wed, 30 Oct 2019 14:57:02 +0000
-Message-ID: <MWHPR05MB3376B0A779F775D0603EE752DA600@MWHPR05MB3376.namprd05.prod.outlook.com>
-References: <20191023095554.11340-1-sgarzare@redhat.com>
- <20191023095554.11340-4-sgarzare@redhat.com>
-In-Reply-To: <20191023095554.11340-4-sgarzare@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jhansen@vmware.com; 
-x-originating-ip: [146.247.47.49]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1cfc3b3e-4577-4ef1-7daa-08d75d496c77
-x-ms-traffictypediagnostic: MWHPR05MB3390:
-x-microsoft-antispam-prvs: <MWHPR05MB33901C0168DD59B355EDE4BCDA600@MWHPR05MB3390.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:291;
-x-forefront-prvs: 02065A9E77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(366004)(396003)(39860400002)(376002)(199004)(189003)(81156014)(33656002)(52536014)(55016002)(54906003)(4326008)(81166006)(2906002)(316002)(86362001)(25786009)(8676002)(478600001)(7416002)(256004)(14444005)(6436002)(14454004)(66066001)(8936002)(99286004)(9686003)(6116002)(71190400001)(64756008)(6246003)(102836004)(66476007)(66946007)(76116006)(6916009)(229853002)(53546011)(71200400001)(66446008)(74316002)(486006)(7696005)(6506007)(186003)(11346002)(476003)(446003)(26005)(7736002)(305945005)(3846002)(76176011)(5660300002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR05MB3390;H:MWHPR05MB3376.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: GrfTeYI96Gjg0M0ECtMpFDQ2PVdyCmY9FwdbgIDp29scDRyuYpTKfYGqj0juNV8PfjWlYKTzjlkgkZrUvOcJ6q2Oadw8M+mzoN7IqV9slKshEkGjul65wk5a60zklgp5gO1akYTucGLggR/KatC2AIghmhhkRlT1rv6WoCBDJSwnWhXnFx/2SWUNFas5+swI2K0zsLTbIShL+KJNSvoKUS4Y83jjUPRr0rmLhDFWocTxcvs5Oj4oQoKo12eDo34bi+DU/MdNFaaEVc+Opr1xW2LeL4e+0tjXaTsB/HuhWnOvwC8q0ystgjLWukdC41eczI/6Atbu+9JqoysDwRuQHtxN5OgjOOnTYF4sHPVO0Qn4gaclEQwADBhI1y3iOyOzI98qI2SrkOh5ET7ugByxjmtEa3wYWra/f22YH7PeK3V86ZhLuRpPOivyzHcPlis+
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726958AbfJ3O6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:58:07 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:42437 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfJ3O6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 10:58:07 -0400
+Received: by mail-ua1-f67.google.com with SMTP id v2so773326uam.9
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 07:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hNZcxEruvf8VcEgV12QG1AuNsmpJsv+vCmtArpIWJMY=;
+        b=g0iggF+JgdTMYAr4mMgTLxZq7FZRkSb9aix7YOJppOGXwFuU39AeIlzKfye3jEC+Nf
+         E5WhW0ayBApGA3e6LQAmfNOehFs4XaZLnjzC7ylbmSjiSkkzxa18yngDgVAy+YPdf8YF
+         xzh4k4+vYJeNRay2Ay7FbZtxHpdDy9kXgIqZ559GP/rkZsw7YZC2nCN1T+d6UFyqsohT
+         mV0Yy+ut1dtfibK++DcGkXDlgi70hfa8+iO/DVyt7lOw3AwJKDbcj0I3v6f5sNIdnQZ0
+         DMRds/mSHEGNJOcd+6X5gfZlsom9I6uJ2Ww9uxmaFKR2KXDWn8SKCIRg7ZG/yv2Ldf++
+         lVbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hNZcxEruvf8VcEgV12QG1AuNsmpJsv+vCmtArpIWJMY=;
+        b=II3clAKDWpNp6aJcobhWuX2y4ZdNAsM00ULC4px9S7dw2An3P9fnfNZwCUn+odRp4o
+         08S7YfWDn0GQD+mbU1VQ36iAlRHQuxRy8uxcssBpWbZ+3uuGwGjuyFLsKsQkntTSB9OI
+         wCJazvw18x+sEDULNewFzauwC5zXdYthPymScOvo9uXdceBUrOew/jWwUl70k3P9vIxv
+         JMoZVaiPeagcDjBVgafI54YyyIfv/Y9LMX899btAXMEKkh8WOseiyLkpQ/ksNwaenzKq
+         Xmd8fklzPHvqZUAMDekhImBnZy1i+0RhnO0B64N49oAzQEuaqxhYK3gFOapi+xm/VSAK
+         QzEQ==
+X-Gm-Message-State: APjAAAXambNOSpt0ubO3e78bj31nqYepY3VKhqY+pDPOV3EpK4zRpDqm
+        uZ47hMJhu4UtwZLF1LSFShxotZBckxbBaExckD2evQ==
+X-Google-Smtp-Source: APXvYqxwRGxtAP844tj/7wkb9yqnOyn/FSj46ZD8hZRQHKMQoF9toDZna5qDMU5k6nneyPMsHKvQq6HgHENy9Dudpy8=
+X-Received: by 2002:ab0:7095:: with SMTP id m21mr23352ual.15.1572447485669;
+ Wed, 30 Oct 2019 07:58:05 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cfc3b3e-4577-4ef1-7daa-08d75d496c77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 14:57:02.9670
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bZtiOJ8MWBPmqBlit5l/TzsLAuC/r83GSsc+YDEyft+y87KO1ffEcdV2DR7bumQQxAhgMsGV5Lv+ZfgkD2/kDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR05MB3390
+References: <1572345042-101207-1-git-send-email-manish.narani@xilinx.com> <1572345042-101207-4-git-send-email-manish.narani@xilinx.com>
+In-Reply-To: <1572345042-101207-4-git-send-email-manish.narani@xilinx.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 30 Oct 2019 15:57:29 +0100
+Message-ID: <CAPDyKFqRmFPaiM=AoiWvy5xhYj=fHTt+S1wu8o0W67Nc5ZZ1kA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/8] dt-bindings: mmc: arasan: Add optional properties
+ for Arasan SDHCI
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>, jolly.shah@xilinx.com,
+        nava.manne@xilinx.com, rajan.vaja@xilinx.com,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        git@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Stefano Garzarella [mailto:sgarzare@redhat.com]
-> Sent: Wednesday, October 23, 2019 11:56 AM
-> Subject: [PATCH net-next 03/14] vsock: remove include/linux/vm_sockets.h
-> file
->=20
-> This header file now only includes the "uapi/linux/vm_sockets.h".
-> We can include directly it when needed.
->=20
-> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+On Tue, 29 Oct 2019 at 11:30, Manish Narani <manish.narani@xilinx.com> wrote:
+>
+> Add optional properties for Arasan SDHCI which are used to set clk delays
+> for different speed modes in the controller.
+>
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
 > ---
->  include/linux/vm_sockets.h            | 13 -------------
->  include/net/af_vsock.h                |  2 +-
->  include/net/vsock_addr.h              |  2 +-
->  net/vmw_vsock/vmci_transport_notify.h |  1 -
->  4 files changed, 2 insertions(+), 16 deletions(-)  delete mode 100644
-> include/linux/vm_sockets.h
->=20
-> diff --git a/include/linux/vm_sockets.h b/include/linux/vm_sockets.h
-> deleted file mode 100644 index 7dd899ccb920..000000000000
-> --- a/include/linux/vm_sockets.h
-> +++ /dev/null
-> @@ -1,13 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -/*
-> - * VMware vSockets Driver
-> - *
-> - * Copyright (C) 2007-2013 VMware, Inc. All rights reserved.
-> - */
-> -
-> -#ifndef _VM_SOCKETS_H
-> -#define _VM_SOCKETS_H
-> -
-> -#include <uapi/linux/vm_sockets.h>
-> -
-> -#endif /* _VM_SOCKETS_H */
-> diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h index
-> 80ea0f93d3f7..c660402b10f2 100644
-> --- a/include/net/af_vsock.h
-> +++ b/include/net/af_vsock.h
-> @@ -10,7 +10,7 @@
->=20
->  #include <linux/kernel.h>
->  #include <linux/workqueue.h>
-> -#include <linux/vm_sockets.h>
-> +#include <uapi/linux/vm_sockets.h>
->=20
->  #include "vsock_addr.h"
->=20
-> diff --git a/include/net/vsock_addr.h b/include/net/vsock_addr.h index
-> 57d2db5c4bdf..cf8cc140d68d 100644
-> --- a/include/net/vsock_addr.h
-> +++ b/include/net/vsock_addr.h
-> @@ -8,7 +8,7 @@
->  #ifndef _VSOCK_ADDR_H_
->  #define _VSOCK_ADDR_H_
->=20
-> -#include <linux/vm_sockets.h>
-> +#include <uapi/linux/vm_sockets.h>
->=20
->  void vsock_addr_init(struct sockaddr_vm *addr, u32 cid, u32 port);  int
-> vsock_addr_validate(const struct sockaddr_vm *addr); diff --git
-> a/net/vmw_vsock/vmci_transport_notify.h
-> b/net/vmw_vsock/vmci_transport_notify.h
-> index 7843f08d4290..a1aa5a998c0e 100644
-> --- a/net/vmw_vsock/vmci_transport_notify.h
-> +++ b/net/vmw_vsock/vmci_transport_notify.h
-> @@ -11,7 +11,6 @@
->  #include <linux/types.h>
->  #include <linux/vmw_vmci_defs.h>
->  #include <linux/vmw_vmci_api.h>
-> -#include <linux/vm_sockets.h>
->=20
->  #include "vmci_transport.h"
->=20
-> --
-> 2.21.0
+>  .../devicetree/bindings/mmc/arasan,sdhci.txt     | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> index b51e40b2e0c5..c0f505b6cab5 100644
+> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> @@ -46,6 +46,22 @@ Optional Properties:
+>      properly. Test mode can be used to force the controller to function.
+>    - xlnx,int-clock-stable-broken: when present, the controller always reports
+>      that the internal clock is stable even when it is not.
+> +  - arasan-clk-phase-legacy: Input/Output Clock Delay pair in degrees for Legacy Mode.
+> +  - arasan-clk-phase-mmc-hs: Input/Output Clock Delay pair degrees for MMC HS.
+> +  - arasan-clk-phase-sd-hs: Input/Output Clock Delay pair in degrees for SD HS.
+> +  - arasan-clk-phase-uhs-sdr12: Input/Output Clock Delay pair in degrees for SDR12.
+> +  - arasan-clk-phase-uhs-sdr25: Input/Output Clock Delay pair in degrees for SDR25.
+> +  - arasan-clk-phase-uhs-sdr50: Input/Output Clock Delay pair in degrees for SDR50.
+> +  - arasan-clk-phase-uhs-sdr104: Input/Output Clock Delay pair in degrees for SDR104.
+> +  - arasan-clk-phase-uhs-ddr50: Input/Output Clock Delay pair in degrees for SD DDR50.
+> +  - arasan-clk-phase-mmc-ddr52: Input/Output Clock Delay pair in degrees for MMC DDR52.
+> +  - arasan-clk-phase-mmc-hs200: Input/Output Clock Delay pair in degrees for MMC HS200.
+> +  - arasan-clk-phase-mmc-hs400: Input/Output Clock Delay pair in degrees for MMC HS400.
 
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+I don't mind if you convert these to common mmc bindings.
+
+I think other controllers/platforms may find them useful, at least at
+some point, if not already.
+
+> +
+> +  Above mentioned are the clock (phase) delays which are to be configured in the
+> +  controller while switching to particular speed mode. The range of values are
+> +  0 to 359 degrees. If not specified, driver will configure the default value
+> +  defined for particular mode in it.
+>
+>  Example:
+>         sdhci@e0100000 {
+> --
+> 2.17.1
+>
+
+Kind regards
+Uffe
