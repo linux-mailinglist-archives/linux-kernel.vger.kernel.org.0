@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D74FE9797
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:08:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23E4CE9838
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:36:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfJ3IIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:08:13 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33328 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfJ3IIM (ORCPT
+        id S1726119AbfJ3Igd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:36:33 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:51778 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726028AbfJ3Igd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:08:12 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c184so1057320pfb.0;
-        Wed, 30 Oct 2019 01:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZMISj/ns6B4cF3UhPoAMo+kmbpNZlZvaXYeyqScyGFM=;
-        b=gPQddsZE9bsl5uNjvCgbqdth67MQP3Qtt+YqM73jh/W5xsp2tzkoj0/mibl3pfrwzT
-         iWqmSXaf1dmbkXZhdlLTqo9OVlNQMk/PbwGk3My+1ByP3dLacdwAf0MUZvwQ6WNvHBtV
-         OmDvO0rNUhtooTqI4MnwbDj6GWWuoWjjZgbeMiRIKNat1/evUm37tipgKHqLTNbaysVI
-         kCfIT8ZSvQHO+nAQ7pBVACAPiY8YIdnI1BhgkjXLuYuawVQfG35lbO/b2o1HszAoMf5n
-         7mjgXO52exBNvQ+9rog9gi/wszb8ATyVWAB7kWAKpQt7b2w9GMw/zTIbxUSbkE6kuulU
-         U7vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZMISj/ns6B4cF3UhPoAMo+kmbpNZlZvaXYeyqScyGFM=;
-        b=Ebtr4t3GO7rZGcqJw4bYNu4Axv++9nzgZ35oNpq/Z4Au3pJyZ6R4woKio9fOOON5g+
-         IqT4p8O6ruodtAiBl0/sLLWiP4C87Br/Yc7GlmUC6yyGXpa8sD9JIRPDvKpwlZQM8Mwd
-         ox0Jwd4EpIpxUkvsaVq2N510nu4nTWnA0iG6sHJ4VdQ8+w8a1mfRCMrNv5JlqGq/6H6A
-         sz9f2q2AlhOjR8wLuNJlheIOEhNCy8e0ogSoqbHy+E3EIZKYz5nOw3+rn7mPzfN9CWlN
-         WoRPodIKbVUTVlPmYZbXd15ZTFZxtULfPXn0TU9bFwfDG23zE6EUrTec8NWVkG5LDPD5
-         K9/Q==
-X-Gm-Message-State: APjAAAWMQXD76mPxxCTT/6n51qE+lBE8e5nyNdq61Suq6kMb6bnKrR0k
-        xPDLGy63aLXFZR2tZqX1/bQ=
-X-Google-Smtp-Source: APXvYqzE9e1rdKwPzXpv8ZeTxli7VKdejkS4sb4tOMCYGPkpkK0oCg8f28IClskVmrJekjNbiVKNiw==
-X-Received: by 2002:a63:5d04:: with SMTP id r4mr32369447pgb.22.1572422890492;
-        Wed, 30 Oct 2019 01:08:10 -0700 (PDT)
-Received: from centOS76.localdomain ([131.228.66.14])
-        by smtp.gmail.com with ESMTPSA id z13sm2062923pgz.42.2019.10.30.01.08.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Oct 2019 01:08:09 -0700 (PDT)
-From:   Wally Zhao <wallyzhao@gmail.com>
-To:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, davem@davemloft.net,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     wally.zhao@nokia-sbell.com, Wally Zhao <wallyzhao@gmail.com>
-Subject: [PATCH] sctp: set ooo_okay properly for Transmit Packet Steering
-Date:   Wed, 30 Oct 2019 12:07:17 -0400
-Message-Id: <1572451637-14085-1-git-send-email-wallyzhao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 30 Oct 2019 04:36:33 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 71E17634C87;
+        Wed, 30 Oct 2019 10:35:45 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iPjSC-0001cI-Hz; Wed, 30 Oct 2019 10:35:44 +0200
+Date:   Wed, 30 Oct 2019 10:35:44 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com, peter.griffin@linaro.org
+Subject: Re: [PATCH v3 2/2] media: i2c: Add IMX296 CMOS image sensor driver
+Message-ID: <20191030083544.GG5017@valkosipuli.retiisi.org.uk>
+References: <20191025175908.14260-1-manivannan.sadhasivam@linaro.org>
+ <20191025175908.14260-3-manivannan.sadhasivam@linaro.org>
+ <20191029121320.GA5017@valkosipuli.retiisi.org.uk>
+ <20191030062634.GA11637@Mani-XPS-13-9360>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030062634.GA11637@Mani-XPS-13-9360>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike tcp_transmit_skb,
-sctp_packet_transmit does not set ooo_okay explicitly,
-causing unwanted Tx queue switching when multiqueue is in use;
-Tx queue switching may cause out-of-order packets.
-Change sctp_packet_transmit to allow Tx queue switching only for
-the first in flight packet, to avoid unwanted Tx queue switching.
+On Wed, Oct 30, 2019 at 11:56:34AM +0530, Manivannan Sadhasivam wrote:
+> Hi Sakari,
+> 
+> Thanks for the review!
 
-Signed-off-by: Wally Zhao <wallyzhao@gmail.com>
----
- net/sctp/output.c | 4 ++++
- 1 file changed, 4 insertions(+)
+You're welcome!
 
-diff --git a/net/sctp/output.c b/net/sctp/output.c
-index dbda7e7..5ff75cc 100644
---- a/net/sctp/output.c
-+++ b/net/sctp/output.c
-@@ -626,6 +626,10 @@ int sctp_packet_transmit(struct sctp_packet *packet, gfp_t gfp)
- 	/* neighbour should be confirmed on successful transmission or
- 	 * positive error
- 	 */
-+
-+	/* allow switch tx queue only for the first in flight pkt */
-+	head->ooo_okay = asoc->outqueue.outstanding_bytes == 0;
-+
- 	if (tp->af_specific->sctp_xmit(head, tp) >= 0 &&
- 	    tp->dst_pending_confirm)
- 		tp->dst_pending_confirm = 0;
+> 
+> On Tue, Oct 29, 2019 at 02:13:20PM +0200, Sakari Ailus wrote:
+> > Hi Manivannan,
+> > 
+> > On Fri, Oct 25, 2019 at 11:29:08PM +0530, Manivannan Sadhasivam wrote:
+
+...
+
+> > > +static struct i2c_driver imx296_i2c_driver = {
+> > > +	.probe_new  = imx296_probe,
+> > > +	.remove = imx296_remove,
+> > > +	.driver = {
+> > > +		.name  = "imx296",
+> > > +		.pm = &imx296_pm_ops,
+> > > +		.of_match_table = of_match_ptr(imx296_of_match),
+> > 
+> > No need for of_match_ptr here.
+> > 
+> 
+> AFAIK, of_match_ptr is needed for !OF case. Else we need to manually add
+> #ifdef clut to make it NULL. Does the situation changed now?
+
+ACPI based systems can also make use of the compatible string for matching
+drivers with devices through of_match_table. This may sometimes be the most
+practical approach. I.e. you don't need ifdefs either.
+
 -- 
-1.8.3.1
+Regards,
 
+Sakari Ailus
