@@ -2,96 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB3DEA60C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:17:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73746EA5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfJ3WRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 18:17:53 -0400
-Received: from mail-bgr052100128070.outbound.protection.outlook.com ([52.100.128.70]:6318
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726268AbfJ3WRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:17:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TrgfscCbC0XH7/9furjEZy5prBFTdqD0QynsD3fyeNvwWRbp7YoqE6osQqokAxnGd06xiPm0afRAEkH5GvQ6/SSZJJzh/Qb17Yr4Z3azhqOgxn8Ef+rL1fozQson6JlBhLaNmp1X+DvZdup8j8qQd3t4Qo7xhi8HySOyjaY0HtPvoPD+0xcNTnTsQQ9iul2vCxrkNU7+ph0xRtIGNE2IVvGMo8PVKGi5je8E24afIHD5L0yaiJk0xYOQ8IXRB71Lf/7uVS2/Ezc3eEWKPViVGopgcgvoPx1MgrVfMiYTdKmqKtSvrhXssVzLffk7d1V8P3jWys6UJsmkhvgwzLFSqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ajbqNiUWrHn4UVc7Wow1U28fxgN776bdgvtODo9SY2w=;
- b=H2xze1OAPA2Wt7C60UyGfnADCFkUgJ3qy2RL537kaBuqN2gX4NrjQbcxfVJqld6EhLas+vepJ94uXr2xJPemuAMYTZufyTkQV6RIFuSh/OBRF3vHYlRsVVleATNs6ry/HsM5i2g3VGrodnQTNBFAJ/OazgvD+2zFfz1cKDVa+0i2e2TtzkoKx1oDI7uc4PILs7HUnQ94h7tIXV/mcSLfFtfVUx/bPIg/Fj4x7Ko2tzNyCvesZf5mIgrlNZU0kvO9k8OcfFRjNwOto6FVnxm7W82UyaM++ukpkvWuQmlbUigqhLPSdBW+z7KJhtCtmGs6JtnmFxTBAzgZz01YuVLFTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=poligran.edu.co; dmarc=pass action=none
- header.from=poligran.edu.co; dkim=pass header.d=poligran.edu.co; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=POLIGRAN.onmicrosoft.com; s=selector2-POLIGRAN-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ajbqNiUWrHn4UVc7Wow1U28fxgN776bdgvtODo9SY2w=;
- b=VGP/byHm96XVs7eGVc/6dY69O4USLA9em3IPzsOtMBpsi4gpVkdPXyZlH4eYI/IbSngVws3Y9vBGv5m5Cf7jQpGkOE6KoYvmzg8tdqziIoiylzZZ7kHhu9/6XcalOVStcPewmPbb+2CIc4f0D6XCJ6fBdRi9Ah5kM3wPHEUxmXE=
-Received: from BN6PR03MB3107.namprd03.prod.outlook.com (10.174.234.16) by
- BN6PR03MB2835.namprd03.prod.outlook.com (10.175.126.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.25; Wed, 30 Oct 2019 22:17:51 +0000
-Received: from BN6PR03MB3107.namprd03.prod.outlook.com
- ([fe80::4b7:7cfe:3c8b:26a1]) by BN6PR03MB3107.namprd03.prod.outlook.com
- ([fe80::4b7:7cfe:3c8b:26a1%5]) with mapi id 15.20.2387.028; Wed, 30 Oct 2019
- 22:17:51 +0000
-From:   LEONARDO CEBALLOS VALLEJO <leceballos1@poligran.edu.co>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Spec.
-Thread-Topic: Spec.
-Thread-Index: AQHVj2PlzL2gYn703UKz3q+yh7rr6w==
-Date:   Wed, 30 Oct 2019 20:52:09 +0000
-Message-ID: <BN6PR03MB31078FD9638CC54ECB774251A3600@BN6PR03MB3107.namprd03.prod.outlook.com>
-Reply-To: "gleltd@hotmail.com" <gleltd@hotmail.com>
-Accept-Language: es-CO, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM3PR07CA0083.eurprd07.prod.outlook.com
- (2603:10a6:207:6::17) To BN6PR03MB3107.namprd03.prod.outlook.com
- (2603:10b6:405:44::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leceballos1@poligran.edu.co; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [197.211.58.110]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 681a2f19-a41e-461c-e4d2-08d75d7b0840
-x-ms-traffictypediagnostic: BN6PR03MB2835:
-x-microsoft-antispam-prvs: <BN6PR03MB28357B91AC25D0107292C99EA3600@BN6PR03MB2835.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2089;
-x-forefront-prvs: 02065A9E77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(366004)(396003)(376002)(199004)(189003)(86362001)(102836004)(305945005)(62860400002)(52536014)(386003)(55236004)(3480700005)(43066004)(8796002)(8676002)(2906002)(5003540100004)(66806009)(74316002)(5660300002)(6506007)(6436002)(88552002)(6916009)(7736002)(55016002)(9686003)(8936002)(66446008)(81166006)(5640700003)(81156014)(66556008)(66946007)(64756008)(33656002)(2351001)(186003)(476003)(25786009)(14444005)(486006)(6246003)(316002)(71190400001)(3846002)(71200400001)(256004)(6116002)(66476007)(478600001)(10916006)(558084003)(786003)(229853002)(7116003)(2501003)(26005)(2860700004)(99286004)(6666004)(52116002)(7696005)(14454004)(66066001);DIR:OUT;SFP:1501;SCL:1;SRVR:BN6PR03MB2835;H:BN6PR03MB3107.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: poligran.edu.co does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JOp+d8JFagFFZQgDUAfjr62boWaCG2kuU/vEyicCct3WJ6BpdC6mHhe5ryhH7r8UPqXMuaXF7n3G0KWtUuzJ2DyG240kx9g7lZcCqPM9T3onRyrjFq2/FkZBILgzid21KFoP900exrZNMxElwJjTQSPEVyXt/M+Jco00+7C82DhAJNqEJeUB1LxCNOianCrzpCOImvRAHFELP28kRcN7lZaSXyGPJyV58aGr1HjwSpoiQDy7dphtPJg/mVf1D4YSbN9vvMDDE81/Elp42mlXDQfmMp6P9fmRM3a/27edCva4BXQOaW/4wir/dLcexsnRorb80+PPTRnkKsMvmqdg3IyIJLimi4UnqVCtZBWYsm12fppZD/eLD1IWEFd44NjkB2C3eXKvonAY2TOME7UlMVQATR9RJv0X5Z4/lJvwIk7Au3nQMrgxEGDHhWskAPus
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <B6CBF6EE740DFD42BD1CB58253390F89@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726711AbfJ3WJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 18:09:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfJ3WJY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 18:09:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LDHbgfB76rTN8r9CILX2s5kzAZbtKVtwbuHFVM2PVVo=; b=QHsP4VXYRFu9SW8jGB6LM9xEa
+        Oftw4Mb+e/a25f1n+PfCZLBYUBv7hEOC0fihpZnRm9lqKNO6DsMyCwjxsaZLq+cysfApG8Bg1V6hd
+        4e1kEHEpTZD/96Ik8rs/zFPBmZY02xRPMAFEVtkNjjT65m2A9B14ZJGC03Ed3f8vkUebDf3RYLv8L
+        a8GsxN8GU6VOUk7uiyqOHS0vrnLA9H1Ee/I/2RBeTJCEVWCbDI17UoOeF9z/KEizuXCLQzgPHveIp
+        NATHAUUz7Ymyx/4DLtq88D/w7yMLqAjMQe1aI2LwmYzKNcNQIgOws4K2QtauRq5BDDF8ARFXRXBNP
+        Tsi/O746A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPvq6-0004GJ-Sq; Wed, 30 Oct 2019 21:49:14 +0000
+Date:   Wed, 30 Oct 2019 14:49:14 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>, mbrugger@suse.com,
+        f.fainelli@gmail.com, wahrenst@gmx.net,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH RFC 1/5] dma/direct: turn ARCH_ZONE_DMA_BITS into a
+ variable
+Message-ID: <20191030214914.GA15939@infradead.org>
+References: <20191014183108.24804-1-nsaenzjulienne@suse.de>
+ <20191014183108.24804-2-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-X-OriginatorOrg: poligran.edu.co
-X-MS-Exchange-CrossTenant-Network-Message-Id: 681a2f19-a41e-461c-e4d2-08d75d7b0840
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 20:52:09.8624
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: dd505be5-ec69-47f5-92df-caa55febf5fa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y0uBhgV3mxZ+gZ2+dHIC8f1+pbszlbSZGCnmFmxknbV/3tjiihldbKhEnLhaD1WipHjrPDlB8keVTHYF/vGcePOhhIXhLKyARLbSvDsWvdg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2835
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191014183108.24804-2-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello linux-kernel@vger.kernel.org
+On Mon, Oct 14, 2019 at 08:31:03PM +0200, Nicolas Saenz Julienne wrote:
+> Some architectures, notably ARM, are interested in tweaking this
+> depending on their runtime DMA addressing limitations.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-My company is interested in your quality product, kindly send your company =
-latest catalog/price list for urgent order.
-
-Leonardo(Export Manager)
-Pacific Packaging Industries
-Block 1, Suite 101,office land
-building, USA
-Tel: (791) 271-7458
+Do you want me to pick this up for the 5.5 dma-mapping tree, or do you
+want me to wait for the rest to settle?
