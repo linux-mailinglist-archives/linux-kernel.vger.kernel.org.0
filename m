@@ -2,153 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7ED5EA675
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A6DEA694
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfJ3WnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 18:43:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32778 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfJ3WnI (ORCPT
+        id S1727629AbfJ3Wto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 18:49:44 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5214 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfJ3Wtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:43:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u23so2538452pgo.0;
-        Wed, 30 Oct 2019 15:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y0oPUoFzTii7ISlKgBqFiFMQKVFEygUTi9cyMnkiLCk=;
-        b=Hu5aYBUcdoSDd90QlvKV/W8VXrJZeQw3jJdITe9I0iSl/Lt8Jm0Y03uMXbwhymKSe1
-         Eg/QToOWKxh6uOdgU38ghvs1Y+zwBpbgMmqRxZsgR8j4cK+EoLtPQvFUNwLEdfAHiXkH
-         1fKRURZoRJJU01e0ljT5raVLUFZaONGBW+vEwoH8mUBFQYqFCDM8jdlGYloZBCPlq770
-         VDvAAYHT5RF8XtZmrHoVbaLJyu7CMVcvgnXLeXKDDGPw6v7IZSIhn26BQDlHKFO0D6xM
-         pdkczxZlkBPvfxnEqve1mTorhjZJYw/jaiyDvaCeAttFaU+m6qECOYbFWGJmsMTpcDvZ
-         vEHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y0oPUoFzTii7ISlKgBqFiFMQKVFEygUTi9cyMnkiLCk=;
-        b=RG44ZwCbdHn3cAb+J88iYW5ZCag1KqaYf0F1/45q0g0HCq4ngFW7QThtpx9QggN0Go
-         VlebkohWH1LfL3+oRyXfGhVrxATscnJV2ZX+8/dwGPgcE8ZLThYdtFpe+k+aE5xJrBRW
-         Vf9SUrO6lbmrBLJnBrB7kAxoinhcgcFXAHQ4jnPvxA8JMWzQ/zuKPp3vuEnQX+33hQfq
-         kQN9XHrzQe5gW17SA1M6exDVhYunIGQsHyRO8iJ/Kpd4RTgPBwvmfu2aOS+yDCIHZEUm
-         n1PC2WWvwBX/kzt7S4lRP9GigpKbblOQzTv8oGZdla4QilMw6jGFqwA3PxYUZEynzdo5
-         zVvQ==
-X-Gm-Message-State: APjAAAVQz/h1QwCtOFqd1gURf9ysd+WJLXuzuJ4AmMSWwKkWK78Hf4mq
-        bmaNzvOjxUru0kEuhb9KIGY=
-X-Google-Smtp-Source: APXvYqyBfb9xuS39HM2yTn0aXyuVgz6M19c7eUmnE1VDN25ZFMX/dAt+2dtxP09MoQIhtjclqeUCog==
-X-Received: by 2002:a17:90a:5d0f:: with SMTP id s15mr2135497pji.126.1572475387770;
-        Wed, 30 Oct 2019 15:43:07 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id x7sm1100750pff.0.2019.10.30.15.43.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 15:43:06 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 15:43:04 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v6 00/15] software node: add support for reference
- properties
-Message-ID: <20191030224304.GH57214@dtor-ws>
-References: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
+        Wed, 30 Oct 2019 18:49:43 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dba13850001>; Wed, 30 Oct 2019 15:49:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 30 Oct 2019 15:49:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 30 Oct 2019 15:49:34 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 30 Oct
+ 2019 22:49:34 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 30 Oct 2019 22:49:33 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dba137b0002>; Wed, 30 Oct 2019 15:49:32 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 00/19] mm/gup: track dma-pinned pages: FOLL_PIN, FOLL_LONGTERM
+Date:   Wed, 30 Oct 2019 15:49:11 -0700
+Message-ID: <20191030224930.3990755-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572475781; bh=hGPWt3QMTkMrTVgcNxptwRVsRQFog4chezBSn5RrX48=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=oSHxJf1EatQQbMkaqcITETA6JEtlVNEdgum3xhm5ffOxR+XNpeSZn2n8WTQHBmpXQ
+         XlkO24RsW/LfP+8EN9BTaQwIJCQeS6tAdSrqh0UNPmHthTKHhTKpacZ0s3MALr4vP4
+         itdh7PP+CYbjuibtGti4rkBun1FGTraZnTUXeqaBCjMHeV5JXay6xNR7ZezCZ5Svft
+         FFN/X5vLeUp/Ci4mFUSlT4/inZ55UOWuZDRaqx1HBrshBWu8j4oFc9DE2XSBK2JNQX
+         6Jh4/4uKc510NHecCig4JLuKjY+bJQdP2CLVRpOkMVKoGbX2eD/Zh91jJYPyPfFHGf
+         vWCpcQszWYTnQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+Hi,
 
-On Wed, Oct 23, 2019 at 01:02:18PM -0700, Dmitry Torokhov wrote:
-> These series implement "references" properties for software nodes as true
-> properties, instead of managing them completely separately.
-> 
-> The first 10 patches are generic cleanups and consolidation and
-> unification of the existing code; patch #11 implements moving of small
-> properties inline when copying property entries; patch #12 implements
-> PROPERTY_ENTRY_REF() and friends; patch #13 converts the user of
-> references to the property syntax, and patch #14 removes the remains of
-> references as entities that are managed separately.
-> 
-> Patch #15 adds unit tests to verify that the handling of property
-> entries is correct.
+This applies cleanly to linux-next and mmotm, and also to linux.git if
+linux-next's commit 20cac10710c9 ("mm/gup_benchmark: fix MAP_HUGETLB
+case") is first applied there.
 
-Do you have any concerns with the series? I think Andy did all the
-reviewing that he could...
+This provides tracking of dma-pinned pages. This is a prerequisite to
+solving the larger problem of proper interactions between file-backed
+pages, and [R]DMA activities, as discussed in [1], [2], [3], and in
+a remarkable number of email threads since about 2017. :)
 
-Thanks!
+A new internal gup flag, FOLL_PIN is introduced, and thoroughly
+documented in the last patch's Documentation/vm/pin_user_pages.rst.
 
-> 
-> Changes in v6:
-> - rebased onto next-20191023
-> - fixed patch moving small properties inline
-> - fixed handling boolean properties after is_array -> is_inline
->   conversion
-> - changed comments around is_inline "stored directly" vs embedded
->   in one place (Andy)
-> - added unit tests for property entries based on KUnit framework
-> - added Any's reviewed-by/acked-by
-> 
-> Changes in v5:
-> - rebased onto next-20191011
-> 
-> Changes in v4:
-> - dealt with union aliasing concerns
-> - inline small properties on copy
-> 
-> Changes in v3:
-> - added various cleanups before implementing reference properties
-> 
-> Changes in v2:
-> - reworked code so that even single-entry reference properties are
->   stored as arrays (i.e. the software_node_ref_args instances are
->   not part of property_entry structure) to avoid size increase.
->   From user's POV nothing is changed, one can still use PROPERTY_ENTRY_REF
->   macro to define reference "inline".
-> - dropped unused DEV_PROP_MAX
-> - rebased on linux-next
-> 
-> Dmitry Torokhov (15):
->   software node: remove DEV_PROP_MAX
->   software node: introduce PROPERTY_ENTRY_ARRAY_XXX_LEN()
->   efi/apple-properties: use PROPERTY_ENTRY_U8_ARRAY_LEN
->   software node: mark internal macros with double underscores
->   software node: clean up property_copy_string_array()
->   software node: get rid of property_set_pointer()
->   software node: remove property_entry_read_uNN_array functions
->   software node: unify PROPERTY_ENTRY_XXX macros
->   software node: simplify property_entry_read_string_array()
->   software node: rename is_array to is_inline
->   software node: move small properties inline when copying
->   software node: implement reference properties
->   platform/x86: intel_cht_int33fe: use inline reference properties
->   software node: remove separate handling of references
->   software node: add basic tests for property entries
-> 
->  drivers/base/swnode.c                         | 263 ++++------
->  drivers/base/test/Makefile                    |   2 +
->  drivers/base/test/property-entry-test.c       | 472 ++++++++++++++++++
->  drivers/firmware/efi/apple-properties.c       |  18 +-
->  .../platform/x86/intel_cht_int33fe_typec.c    |  81 +--
->  include/linux/property.h                      | 178 +++----
->  6 files changed, 702 insertions(+), 312 deletions(-)
->  create mode 100644 drivers/base/test/property-entry-test.c
-> 
-> -- 
-> 2.23.0.866.gb869b98d4c-goog
-> 
+I believe that this will provide a good starting point for doing the
+layout lease work that Ira Weiny has been working on. That's because
+these new wrapper functions provide a clean, constrained, systematically
+named set of functionality that, again, is required in order to even
+know if a page is "dma-pinned".
 
--- 
-Dmitry
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    put_user_page()
+
+Because there are interdependencies with FOLL_LONGTERM, a similar
+conversion as for FOLL_PIN, was applied. The change was from this:
+
+    get_user_pages(FOLL_LONGTERM) (also sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_longterm_pages() (sets FOLL_PIN | FOLL_LONGTERM)
+    put_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Patch summary:
+
+* Patches 1-4: refactoring and preparatory cleanup, independent fixes
+    (Patch 4: V4L2-core bug fix (can be separately applied))
+
+* Patch 5: introduce pin_user_pages(), FOLL_PIN, but no functional
+           changes yet
+* Patches 6-11: Convert existing put_user_page() callers, to use the
+                new pin*()
+* Patch 12: Activate tracking of FOLL_PIN pages.
+* Patches 13-15: convert FOLL_LONGTERM callers
+* Patches: 16-17: gup_benchmark and run_vmtests support
+* Patch 18: enforce FOLL_LONGTERM as a gup-internal (only) flag
+* Patch 19: Documentation/vm/pin_user_pages.rst
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testing:
+
+* I've done some overall kernel testing (LTP, and a few other goodies),
+  and some directed testing to exercise some of the changes. And as you
+  can see, gup_benchmark is enhanced to exercise this. Basically, I've been
+  able to runtime test the core get_user_pages() and pin_user_pages() and
+  related routines, but not so much on several of the call sites--but those
+  are generally just a couple of lines changed, each.
+
+  Not much of the kernel is actually using this, which on one hand
+  reduces risk quite a lot. But on the other hand, testing coverage
+  is low. So I'd love it if, in particular, the Infiniband and PowerPC
+  folks could do a smoke test of this series for me.
+
+  Also, my runtime testing for the call sites so far is very weak:
+
+    * io_uring: Some directed tests from liburing exercise this, and they p=
+ass.
+    * process_vm_access.c: A small directed test passes.
+    * gup_benchmark: the enhanced version hits the new gup.c code, and pass=
+es.
+    * infiniband (still only have crude "IB pingpong" working, on a
+                  good day: it's not exercising my conversions at runtime..=
+.)
+    * VFIO: compiles (I'm vowing to set up a run time test soon, but it's
+                      not ready just yet)
+    * powerpc: it compiles...
+    * drm/via: compiles...
+    * goldfish: compiles...
+    * net/xdp: compiles...
+    * media/v4l2: compiles...
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next:
+
+* Get the block/bio_vec sites converted to use pin_user_pages().
+
+* Work with Ira and Dave Chinner to weave this together with the
+  layout lease stuff.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019): https://lwn.net/A=
+rticles/784574/
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018): https://lwn.net/Articles/=
+774411/
+[3] The trouble with get_user_pages() (Apr 30, 2018): https://lwn.net/Artic=
+les/753027/
+
+John Hubbard (19):
+  mm/gup: pass flags arg to __gup_device_* functions
+  mm/gup: factor out duplicate code from four routines
+  goldish_pipe: rename local pin_user_pages() routine
+  media/v4l2-core: set pages dirty upon releasing DMA buffers
+  mm/gup: introduce pin_user_pages*() and FOLL_PIN
+  goldish_pipe: convert to pin_user_pages() and put_user_page()
+  infiniband: set FOLL_PIN, FOLL_LONGTERM via pin_longterm_pages*()
+  mm/process_vm_access: set FOLL_PIN via pin_user_pages_remote()
+  drm/via: set FOLL_PIN via pin_user_pages_fast()
+  fs/io_uring: set FOLL_PIN via pin_user_pages()
+  net/xdp: set FOLL_PIN via pin_user_pages()
+  mm/gup: track FOLL_PIN pages
+  media/v4l2-core: pin_longterm_pages (FOLL_PIN) and put_user_page()
+    conversion
+  vfio, mm: pin_longterm_pages (FOLL_PIN) and put_user_page() conversion
+  powerpc: book3s64: convert to pin_longterm_pages() and put_user_page()
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+  mm/gup: remove support for gup(FOLL_LONGTERM)
+  Documentation/vm: add pin_user_pages.rst
+
+ Documentation/vm/index.rst                  |   1 +
+ Documentation/vm/pin_user_pages.rst         | 213 +++++++
+ arch/powerpc/mm/book3s64/iommu_api.c        |  15 +-
+ drivers/gpu/drm/via/via_dmablit.c           |   2 +-
+ drivers/infiniband/core/umem.c              |   5 +-
+ drivers/infiniband/core/umem_odp.c          |  10 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |   4 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   3 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |   8 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c         |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c   |  10 +-
+ drivers/platform/goldfish/goldfish_pipe.c   |  35 +-
+ drivers/vfio/vfio_iommu_type1.c             |  15 +-
+ fs/io_uring.c                               |   5 +-
+ include/linux/mm.h                          | 133 ++++-
+ include/linux/mmzone.h                      |   2 +
+ include/linux/page_ref.h                    |  10 +
+ mm/gup.c                                    | 622 ++++++++++++++++----
+ mm/gup_benchmark.c                          |  81 ++-
+ mm/huge_memory.c                            |  32 +-
+ mm/hugetlb.c                                |  28 +-
+ mm/memremap.c                               |   4 +-
+ mm/process_vm_access.c                      |  28 +-
+ mm/vmstat.c                                 |   2 +
+ net/xdp/xdp_umem.c                          |   4 +-
+ tools/testing/selftests/vm/gup_benchmark.c  |  28 +-
+ tools/testing/selftests/vm/run_vmtests      |  22 +
+ 29 files changed, 1066 insertions(+), 272 deletions(-)
+ create mode 100644 Documentation/vm/pin_user_pages.rst
+
+--=20
+2.23.0
+
