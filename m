@@ -2,422 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE20FEA0D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E182EA157
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfJ3Pyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:49 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33387 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbfJ3Pyh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s1so2931420wro.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4YzRbzXHDwEZUWeycZELiP0pty4+6/o4gDkFPhnT8OY=;
-        b=JKQVjyNCoXr/ISzEyaBucSF87/4cvXuDdIbba7rWupl4Pn570qm4lsjzKBjDPs19ij
-         bX+stszlhAwaE+HRR9oMCB6JUOAvM8lNheO1pJsbpkFWtmXvcaPgMIxXrh0kL7UkWtRO
-         b2XcoYEImfdqXVjXfjn57tLHLCD4RdwmZvutk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4YzRbzXHDwEZUWeycZELiP0pty4+6/o4gDkFPhnT8OY=;
-        b=bQ5S+09e5tIkbBI1vA6aACynN5yCxmAGK7+Q4cC/fF60qxBpDwRN8mGpj4HRKj1Knq
-         NKGAVTOLt0fBpMa3jp0iGJSWBNc5CV6wG4BS4CEAghhFDW6MaiDq4jb4jDeQbPn6dfp5
-         QjZVeQQ/uJzNJ4wKy2uGw7ES/kashnDME5pgxsZOEmkU8t3mOdqEGCebNqss/yuPwhKK
-         FMOQzH2kyyZTOvK21Ea+Kfv3bzdh1fs7v/enTJJZ49vzpS6FxqQKDzUOn9m+mYbn217g
-         JXLHV6owh0+q3XzB8R5NByUkuimT8GrZivYyU5jZ0gWQ1JYSs9LDQ1IPCFiUskRcNoEx
-         /Cxg==
-X-Gm-Message-State: APjAAAV4NfxhrDRgTLzcBuns45k67tLeFIvN10+rIiAtLJsiMi45zjXb
-        Z8iDLvHRLfcSo484ctGXt1i0GA==
-X-Google-Smtp-Source: APXvYqx+jfiQ+yfJoTCsoJ3/Dv3J78t1irAaFIsXygWucvsPYL+WCDWKJXCqkTVBx/DoJQf9ZAGGOA==
-X-Received: by 2002:adf:f58b:: with SMTP id f11mr501229wro.85.1572450874040;
-        Wed, 30 Oct 2019 08:54:34 -0700 (PDT)
-Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id g184sm499931wma.8.2019.10.30.08.54.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Oct 2019 08:54:33 -0700 (PDT)
-From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vikas Gupta <vikas.gupta@broadcom.com>,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Subject: [PATCH net-next V4 1/3] firmware: broadcom: add OP-TEE based BNXT f/w manager
-Date:   Wed, 30 Oct 2019 21:24:22 +0530
-Message-Id: <1572450864-16761-2-git-send-email-sheetal.tigadoli@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
-References: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
+        id S1727898AbfJ3QBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:01:16 -0400
+Received: from cmta20.telus.net ([209.171.16.93]:47520 "EHLO cmta20.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728433AbfJ3Pyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:44 -0400
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id PqIvi7EwiN5I9PqIxinjBg; Wed, 30 Oct 2019 09:54:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1572450882; bh=va9ZeCOWgJyIDlEFl6M6pjvQjVeC+2/miiQxAuzQXuw=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=mui5mngII4Cr08aLE2TSnBe18qLGzj3Fnl/1mXH8xr9mxl2aeaNJCe/YJNrWZ0iRi
+         9WKxVSZ3TV/nlfKTECXjQfiFmgo5HPtIrJPc9KE2od8lk4XjuTlYhKtxQKQ5NrlH9U
+         dpfcqu7AdjSuhKTueaUNHI78y9FZ2aVSjOKLAG5Epr/3biHkt1L98EPBLyX5EtHg9z
+         TOP58PpoAX/TOX4+fYZCZS+8GCcoOiHJhbqpsXPOjoDZ6aMVy/NbWRThXg5N1gKaZ7
+         QcbTfz7UjBNBOdiN5s+kI2yjTPIW5QTZFbpXnakvUVxlwU8KcpGIyZQ6vU4MwhekpJ
+         jVLyq/R/myTkg==
+X-Telus-Authed: none
+X-Authority-Analysis: v=2.3 cv=K/Fc4BeI c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
+ a=IkcTkHD0fZMA:10 a=eBx6XaJ-_6BMZ4NUrjMA:9 a=QEXdDO2ut3YA:10
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        <vincent.guittot@linaro.org>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Ingo Molnar'" <mingo@kernel.org>,
+        "'Linus Torvalds'" <torvalds@linux-foundation.org>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>, <sargun@sargun.me>,
+        <tj@kernel.org>, <xiexiuqi@huawei.com>, <xiezhipeng1@huawei.com>
+References: <1572018904-5234-1-git-send-email-dsmythies@telus.net>       <10eef14e434375ef4bb7cf23ecb987b3591064a6.camel@linux.intel.com> <f13946cfc3f6f57230df7d0c2aad860940826148.camel@linux.intel.com>
+In-Reply-To: <f13946cfc3f6f57230df7d0c2aad860940826148.camel@linux.intel.com>
+Subject: RE: [PATCH] Revert "sched/fair: Fix O(nr_cgroups) in the load balancing path"
+Date:   Wed, 30 Oct 2019 08:54:35 -0700
+Message-ID: <000101d58f3a$56ab4e00$0401ea00$@net>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdWOk25ZLh1n5QSOSl6606YjpTTIPAAHXaFw
+X-CMAE-Envelope: MS4wfAK0Ix1CXAhs4CHrotliPBpoRLO6Z9SD182WqfbxwzU3/Cy65szMFlj3C3QQ9vXIP6/O0EGZ8N4PHtb+f5GZOjJZAhvFA6I6Jyts4Y3myZCuNJ3VxEGJ
+ 5LQ35PKieM/L40Dvp8IoxAa4KpmhZ/ZH19GcMUD94LnzX1ACqNmT4Ntfk70BmjmWE19db53VCwkyWfjLTTvaSpHy/tKDVJnPRWIMzYLG205WUmQYERLXITrr
+ 9F5BVkTyaTikxmoWOkxECGXWRZj+OuW/xCWSW7Lw2HDeYFO1mwtBCfN94BT5StgJYMIgW6lBHIDNXtXDTylRl+ckgAiK3BvnrdGldSZiJaXNcMZZitdkOYF8
+ KL3GRq/4GWtsJFOIofF5I7Vm9I2skbtHNd9+iyqDuYfwa9K+qcesMT4qP+t0BxuItrC4TIv3GjUint2eJDI0bMnptSODNwgbCvsfDNXnmGgoB1tIRnkYgv/o
+ Km4Jjcf4/xh7knpn59SsSjEzcsKNiN/nz/Mg5ZInG2GTHv4nYH/2a7KUVsAMF4ABb8JUcQv/1S+LJmjf
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vikas Gupta <vikas.gupta@broadcom.com>
+On 2019.10.29 13:00 Srinivas Pandruvada wrote:
+> On Tue, 2019-10-29 at 12:34 -0700, Srinivas Pandruvada wrote:
+>> On Fri, 2019-10-25 at 08:55 -0700, Doug Smythies wrote:
+>> 
+>> [...]
+>> 
+>>> Experiment method:
+>>> 
+>>> enable only idle state 1
+>> Dountil stopped
+>>>   apply a 100% load (all CPUs)
+>>>   after awhile (about 50 seconds) remove the load.
+>>>   allow a short transient delay (1 second).
+>>>   measure the processor package joules used over the next 149
+>>> seconds.
+>>> Enduntil
+>>> 
+>>> Kernel k5.4-rc2 + reversion (this method)
+>>> Average processor package power: 9.148 watts (128 samples, > 7
+>>> hours)
+>>> Minimum: 9.02 watts
+>>> Maximum: 9.29 watts
+>>> Note: outlyer data point group removed, as it was assumed the
+>>> computer
+>>> had something to do and wasn't actually "idle".
+>>> 
+>>> Kernel 5.4-rc2:
+>>> Average processor package power: 9.969 watts (150 samples, > 8
+>>> hours)
+>>> Or 9% more energy for the idle phases of the work load.
+>>> Minimum: 9.15 watts
+>>> Maximum: 13.79 watts (51% more power)
 
-This driver registers on TEE bus to interact with OP-TEE based
-BNXT firmware management modules
+>>  Hi Doug,
 
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
-Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
----
- drivers/firmware/broadcom/Kconfig             |   8 +
- drivers/firmware/broadcom/Makefile            |   1 +
- drivers/firmware/broadcom/tee_bnxt_fw.c       | 279 ++++++++++++++++++
- include/linux/firmware/broadcom/tee_bnxt_fw.h |  14 +
- 4 files changed, 302 insertions(+)
- create mode 100644 drivers/firmware/broadcom/tee_bnxt_fw.c
- create mode 100644 include/linux/firmware/broadcom/tee_bnxt_fw.h
+Hi Srinivas,
 
-diff --git a/drivers/firmware/broadcom/Kconfig b/drivers/firmware/broadcom/Kconfig
-index d03ed8e43ad7..79505addde3d 100644
---- a/drivers/firmware/broadcom/Kconfig
-+++ b/drivers/firmware/broadcom/Kconfig
-@@ -22,3 +22,11 @@ config BCM47XX_SPROM
- 	  In case of SoC devices SPROM content is stored on a flash used by
- 	  bootloader firmware CFE. This driver provides method to ssb and bcma
- 	  drivers to read SPROM on SoC.
-+
-+config TEE_BNXT_FW
-+	bool "Broadcom BNXT firmware manager"
-+	depends on (ARCH_BCM_IPROC && OPTEE) || COMPILE_TEST
-+	default ARCH_BCM_IPROC
-+	help
-+	  This module help to manage firmware on Broadcom BNXT device. The module
-+	  registers on tee bus and invoke calls to manage firmware on BNXT device.
-diff --git a/drivers/firmware/broadcom/Makefile b/drivers/firmware/broadcom/Makefile
-index 72c7fdc20c77..17c5061c47a7 100644
---- a/drivers/firmware/broadcom/Makefile
-+++ b/drivers/firmware/broadcom/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_BCM47XX_NVRAM)		+= bcm47xx_nvram.o
- obj-$(CONFIG_BCM47XX_SPROM)		+= bcm47xx_sprom.o
-+obj-$(CONFIG_TEE_BNXT_FW)		+= tee_bnxt_fw.o
-diff --git a/drivers/firmware/broadcom/tee_bnxt_fw.c b/drivers/firmware/broadcom/tee_bnxt_fw.c
-new file mode 100644
-index 000000000000..5b7ef89eb701
---- /dev/null
-+++ b/drivers/firmware/broadcom/tee_bnxt_fw.c
-@@ -0,0 +1,279 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Broadcom.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+#include <linux/tee_drv.h>
-+#include <linux/uuid.h>
-+
-+#include <linux/firmware/broadcom/tee_bnxt_fw.h>
-+
-+#define MAX_SHM_MEM_SZ	SZ_4M
-+
-+#define MAX_TEE_PARAM_ARRY_MEMB		4
-+
-+enum ta_cmd {
-+	/*
-+	 * TA_CMD_BNXT_FASTBOOT - boot bnxt device by copying f/w into sram
-+	 *
-+	 *	param[0] unused
-+	 *	param[1] unused
-+	 *	param[2] unused
-+	 *	param[3] unused
-+	 *
-+	 * Result:
-+	 *	TEE_SUCCESS - Invoke command success
-+	 *	TEE_ERROR_ITEM_NOT_FOUND - Corrupt f/w image found on memory
-+	 */
-+	TA_CMD_BNXT_FASTBOOT = 0,
-+
-+	/*
-+	 * TA_CMD_BNXT_COPY_COREDUMP - copy the core dump into shm
-+	 *
-+	 *	param[0] (inout memref) - Coredump buffer memory reference
-+	 *	param[1] (in value) - value.a: offset, data to be copied from
-+	 *			      value.b: size of data to be copied
-+	 *	param[2] unused
-+	 *	param[3] unused
-+	 *
-+	 * Result:
-+	 *	TEE_SUCCESS - Invoke command success
-+	 *	TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+	 *	TEE_ERROR_ITEM_NOT_FOUND - Corrupt core dump
-+	 */
-+	TA_CMD_BNXT_COPY_COREDUMP = 3,
-+};
-+
-+/**
-+ * struct tee_bnxt_fw_private - OP-TEE bnxt private data
-+ * @dev:		OP-TEE based bnxt device.
-+ * @ctx:		OP-TEE context handler.
-+ * @session_id:		TA session identifier.
-+ */
-+struct tee_bnxt_fw_private {
-+	struct device *dev;
-+	struct tee_context *ctx;
-+	u32 session_id;
-+	struct tee_shm *fw_shm_pool;
-+};
-+
-+static struct tee_bnxt_fw_private pvt_data;
-+
-+static void prepare_args(int cmd,
-+			 struct tee_ioctl_invoke_arg *arg,
-+			 struct tee_param *param)
-+{
-+	memset(arg, 0, sizeof(*arg));
-+	memset(param, 0, MAX_TEE_PARAM_ARRY_MEMB * sizeof(*param));
-+
-+	arg->func = cmd;
-+	arg->session = pvt_data.session_id;
-+	arg->num_params = MAX_TEE_PARAM_ARRY_MEMB;
-+
-+	/* Fill invoke cmd params */
-+	switch (cmd) {
-+	case TA_CMD_BNXT_COPY_COREDUMP:
-+		param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-+		param[0].u.memref.shm = pvt_data.fw_shm_pool;
-+		param[0].u.memref.size = MAX_SHM_MEM_SZ;
-+		param[0].u.memref.shm_offs = 0;
-+		param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
-+		break;
-+	case TA_CMD_BNXT_FASTBOOT:
-+	default:
-+		/* Nothing to do */
-+		break;
-+	}
-+}
-+
-+/**
-+ * tee_bnxt_fw_load() - Load the bnxt firmware
-+ *		    Uses an OP-TEE call to start a secure
-+ *		    boot process.
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int tee_bnxt_fw_load(void)
-+{
-+	int ret = 0;
-+	struct tee_ioctl_invoke_arg arg;
-+	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMB];
-+
-+	if (!pvt_data.ctx)
-+		return -ENODEV;
-+
-+	prepare_args(TA_CMD_BNXT_FASTBOOT, &arg, param);
-+
-+	ret = tee_client_invoke_func(pvt_data.ctx, &arg, param);
-+	if (ret < 0 || arg.ret != 0) {
-+		dev_err(pvt_data.dev,
-+			"TA_CMD_BNXT_FASTBOOT invoke failed TEE err: %x, ret:%x\n",
-+			arg.ret, ret);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tee_bnxt_fw_load);
-+
-+/**
-+ * tee_bnxt_copy_coredump() - Copy coredump from the allocated memory
-+ *			    Uses an OP-TEE call to copy coredump
-+ * @buf:	destination buffer where core dump is copied into
-+ * @offset:	offset from the base address of core dump area
-+ * @size:	size of the dump
-+ *
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int tee_bnxt_copy_coredump(void *buf, u32 offset, u32 size)
-+{
-+	struct tee_ioctl_invoke_arg arg;
-+	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMB];
-+	void *core_data;
-+	u32 rbytes = size;
-+	u32 nbytes = 0;
-+	int ret = 0;
-+
-+	if (!pvt_data.ctx)
-+		return -ENODEV;
-+
-+	prepare_args(TA_CMD_BNXT_COPY_COREDUMP, &arg, param);
-+
-+	while (rbytes)  {
-+		nbytes = rbytes;
-+
-+		nbytes = min_t(u32, rbytes, param[0].u.memref.size);
-+
-+		/* Fill additional invoke cmd params */
-+		param[1].u.value.a = offset;
-+		param[1].u.value.b = nbytes;
-+
-+		ret = tee_client_invoke_func(pvt_data.ctx, &arg, param);
-+		if (ret < 0 || arg.ret != 0) {
-+			dev_err(pvt_data.dev,
-+				"TA_CMD_BNXT_COPY_COREDUMP invoke failed TEE err: %x, ret:%x\n",
-+				arg.ret, ret);
-+			return -EINVAL;
-+		}
-+
-+		core_data = tee_shm_get_va(pvt_data.fw_shm_pool, 0);
-+		if (IS_ERR(core_data)) {
-+			dev_err(pvt_data.dev, "tee_shm_get_va failed\n");
-+			return PTR_ERR(core_data);
-+		}
-+
-+		memcpy(buf, core_data, nbytes);
-+
-+		rbytes -= nbytes;
-+		buf += nbytes;
-+		offset += nbytes;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tee_bnxt_copy_coredump);
-+
-+static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-+{
-+	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
-+}
-+
-+static int tee_bnxt_fw_probe(struct device *dev)
-+{
-+	struct tee_client_device *bnxt_device = to_tee_client_device(dev);
-+	int ret, err = -ENODEV;
-+	struct tee_ioctl_open_session_arg sess_arg;
-+	struct tee_shm *fw_shm_pool;
-+
-+	memset(&sess_arg, 0, sizeof(sess_arg));
-+
-+	/* Open context with TEE driver */
-+	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
-+					       NULL);
-+	if (IS_ERR(pvt_data.ctx))
-+		return -ENODEV;
-+
-+	/* Open session with Bnxt load Trusted App */
-+	memcpy(sess_arg.uuid, bnxt_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
-+	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-+	sess_arg.num_params = 0;
-+
-+	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
-+	if (ret < 0 || sess_arg.ret != 0) {
-+		dev_err(dev, "tee_client_open_session failed, err: %x\n",
-+			sess_arg.ret);
-+		err = -EINVAL;
-+		goto out_ctx;
-+	}
-+	pvt_data.session_id = sess_arg.session;
-+
-+	pvt_data.dev = dev;
-+
-+	fw_shm_pool = tee_shm_alloc(pvt_data.ctx, MAX_SHM_MEM_SZ,
-+				    TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-+	if (IS_ERR(fw_shm_pool)) {
-+		tee_client_close_context(pvt_data.ctx);
-+		dev_err(pvt_data.dev, "tee_shm_alloc failed\n");
-+		err = PTR_ERR(fw_shm_pool);
-+		goto out_sess;
-+	}
-+
-+	pvt_data.fw_shm_pool = fw_shm_pool;
-+
-+	return 0;
-+
-+out_sess:
-+	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
-+out_ctx:
-+	tee_client_close_context(pvt_data.ctx);
-+
-+	return err;
-+}
-+
-+static int tee_bnxt_fw_remove(struct device *dev)
-+{
-+	tee_shm_free(pvt_data.fw_shm_pool);
-+	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
-+	tee_client_close_context(pvt_data.ctx);
-+	pvt_data.ctx = NULL;
-+
-+	return 0;
-+}
-+
-+static const struct tee_client_device_id tee_bnxt_fw_id_table[] = {
-+	{UUID_INIT(0x6272636D, 0x2019, 0x0716,
-+		    0x42, 0x43, 0x4D, 0x5F, 0x53, 0x43, 0x48, 0x49)},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(tee, tee_bnxt_fw_id_table);
-+
-+static struct tee_client_driver tee_bnxt_fw_driver = {
-+	.id_table	= tee_bnxt_fw_id_table,
-+	.driver		= {
-+		.name		= KBUILD_MODNAME,
-+		.bus		= &tee_bus_type,
-+		.probe		= tee_bnxt_fw_probe,
-+		.remove		= tee_bnxt_fw_remove,
-+	},
-+};
-+
-+static int __init tee_bnxt_fw_mod_init(void)
-+{
-+	return driver_register(&tee_bnxt_fw_driver.driver);
-+}
-+
-+static void __exit tee_bnxt_fw_mod_exit(void)
-+{
-+	driver_unregister(&tee_bnxt_fw_driver.driver);
-+}
-+
-+module_init(tee_bnxt_fw_mod_init);
-+module_exit(tee_bnxt_fw_mod_exit);
-+
-+MODULE_AUTHOR("Vikas Gupta <vikas.gupta@broadcom.com>");
-+MODULE_DESCRIPTION("Broadcom bnxt firmware manager");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/firmware/broadcom/tee_bnxt_fw.h b/include/linux/firmware/broadcom/tee_bnxt_fw.h
-new file mode 100644
-index 000000000000..f24c82d6ef73
---- /dev/null
-+++ b/include/linux/firmware/broadcom/tee_bnxt_fw.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: BSD-2-Clause */
-+/*
-+ * Copyright 2019 Broadcom.
-+ */
-+
-+#ifndef _BROADCOM_TEE_BNXT_FW_H
-+#define _BROADCOM_TEE_BNXT_FW_H
-+
-+#include <linux/types.h>
-+
-+int tee_bnxt_fw_load(void);
-+int tee_bnxt_copy_coredump(void *buf, u32 offset, u32 size);
-+
-+#endif /* _BROADCOM_TEE_BNXT_FW_H */
--- 
-2.17.1
+>> 
+>> Do you have intel_pstate_tracer output?
+
+Yes, I have many many runs of intel_pstate_tracer.py
+and many plots of pstate and CPU frequency lingering high
+for a very very long time after the load is removed.
+Here is one example (my reference: results/teo041):
+
+The load is removed at test time 539.047 seconds,
+and requested pstates do start to fall. Example,
+cpu 4 at time 539.052, pstate request goes from
+38 (the max for an i7-2600K) to 32. The last CPU
+to reduce the pstate request is CPU 0 at time
+539.714, but only to 25.
+
+Then, CPU 4 doesn't run the driver for another
+5.9 seconds, and even then only reduces its request
+to pstate 21.
+
+CPU 4 remains the defining CPU, and doesn't run the
+driver again until time 577.235 seconds, at which time
+its pstate request drops to 18, even with 0 load.
+So, 38 seconds, and still only at pstate 18.
+
+>> I guess that when started
+>> request to measure the measure joules, it started at higher P-state
+>> without revert.
+
+No, not really. The main difference is in the time it takes to fully
+drop to the lowest pstate.
+
+>> Other way is check by fixing the max and min scaling frequency to
+>> some frequency, then we shouldn't see power difference.
+
+Yes, I did that, to learn the numbers.
+
+> I mean not significant power difference.
+
+For idle state 1, at least for my processor (i7-2600K), the difference
+is huge. Keep in mind that (at least for my processor) a CPU in idle
+state 1 does not relinquish its vote into the CPU frequency PLL, thus
+the highest request dictates the CPU frequency.
+
+Here are the idle state 1 powers (42 percent is the minimum for my
+processor. For reference, with all idle state enabled, the idle
+power is 3.68 watts and the processor package temperature is about
+25 degrees, independent of the requested pstate):
+
+Min-percent watts	temp
+42		8.7	35
+50		10.0	36
+60		12.0	37
+70		14.4	38
+80		17.3	41
+90		21	43
+100		21	43
+
+Note that the 90 (pstate 35) and 100 (pstate 38)
+powers are the same due to this (I assume):
+
+cpu5: MSR_TURBO_RATIO_LIMIT: 0x23242526
+35 * 100.0 = 3500.0 MHz max turbo 4 active cores
+36 * 100.0 = 3600.0 MHz max turbo 3 active cores
+37 * 100.0 = 3700.0 MHz max turbo 2 active cores
+38 * 100.0 = 3800.0 MHz max turbo 1 active cores
+
+And can be verified by looking at the request
+And granted MSRs directly:
+
+At 100% min percent:
+
+Requested:
+doug@s15:~/temp-k-git/linux$ sudo rdmsr --bitfield 15:8 -d -a 0x199
+38
+38
+38
+38
+38
+38
+38
+38
+
+Granted:
+doug@s15:~/temp-k-git/linux$ sudo rdmsr --bitfield 15:8 -d -a 0x198
+35
+35
+35
+35
+35
+35
+35
+35
+
+> Also to get real numbers, need
+> to use some power meter measuring CPU power.
+
+Well, I have one, but for the box AC only. It just didn't seem
+worth the overhead. Yes, I used the joules MSR directly. I also
+do a sanity check by checking that the processor package temperature
+makes sense for the calculated processor package watts. I added a
+temperature column above.
+
+> If I can get your script,
+> I may be able to measure that.
+
+Hmmm... This was actually a saga all by itself, mainly my own
+fault. I am running a bit of a mess here so that I could minimize 
+the time between the multiple load drops from 100% to 0% so as
+to make it easier to follow via the intel_pstate_tracer data.
+Load methods aside, the rest is pretty simple:
+
+doug@s15:~/idle$ cat load-no-load-forever2
+#!/bin/dash
+
+#
+# load-no-load-forever2. Smyhies 2019.10.21
+#       Just trying to get some debug data.
+#       apply load (real, not via disabling all idle
+#       states) then no load. loop forever.
+#       load version 2.
+
+echo "load-no-load-forever2. Start. Doug Smythies 2019.10.21"
+
+while [ 1 ];
+do
+  ~/c/waiter 9 2 4 2000000000 0 1 > /dev/null
+  sleep 1
+  sudo ~/c/measure_energy 149
+done
+
+Where "measure_energy.c" just samples the
+joules MSR over an interval, sometimes a longer
+interval than turbostat will allow (with full
+accuracy), because I know that the joules counter
+did not wrap around.
+In a separate e-mail I'll send you the c programs,
+although I seem to recall that Intel strips out
+attached c programs from e-mails.
+
+Hope this helps.
+
+... Doug
+
 
