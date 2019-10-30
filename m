@@ -2,76 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6748AE9C9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E910E9C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfJ3NsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:48:00 -0400
-Received: from mga17.intel.com ([192.55.52.151]:28792 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfJ3Nr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:47:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 06:47:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
-   d="scan'208";a="190281946"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 30 Oct 2019 06:47:39 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 2/2] perf: Disallow aux_output for kernel events
-Date:   Wed, 30 Oct 2019 15:47:31 +0200
-Message-Id: <20191030134731.5437-3-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191030134731.5437-1-alexander.shishkin@linux.intel.com>
-References: <20191030134731.5437-1-alexander.shishkin@linux.intel.com>
+        id S1726345AbfJ3NtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:49:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41414 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfJ3NtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2hu8C/OlAF3UH78qpfVOcPr9SOx8LcpHWXFVL8G1r8Q=; b=NQDZIhFxSbs2gs8rfDITE4u9T
+        58DTiOUQJvIYlPWr9J3GQRXq6hy8jX6TbWXILOfJ2nHA20JV3hv6Kg81aPH5NKhUmvRWHWkLO3kHb
+        A68VaPpc7JM2A1hgrR0aG/QQf4UPzDqAizcdTYtJO1+ZPOVU+PJJf8MYqrwi1AUYBgDwQpNDvSBBL
+        K4dAl4blYxXpVud/HF1C1jhtpYVvWyr1Y7s+BHmM5U7zUeShTrGSv5zW4VYwwyWwQx7nvdOooZ+0w
+        B19hKVp4tJ4FeZZVJ6UJ5X7R5kTf/xJbXZKthx7w/D4Kgd4xdyGpWs+evHH87u8Lbw7etA5XTnWgX
+        /iPrS+tng==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPoLQ-00058L-NB; Wed, 30 Oct 2019 13:49:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4904D3006D0;
+        Wed, 30 Oct 2019 14:48:00 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6F08C2B435A44; Wed, 30 Oct 2019 14:49:01 +0100 (CET)
+Date:   Wed, 30 Oct 2019 14:49:01 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, mgorman@suse.de, dsmythies@telus.net
+Subject: Re: [PATCH] sched/pelt: fix update of blocked pelt ordering
+Message-ID: <20191030134901.GP4131@hirez.programming.kicks-ass.net>
+References: <1572434309-32512-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572434309-32512-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit
+On Wed, Oct 30, 2019 at 12:18:29PM +0100, Vincent Guittot wrote:
+> update_cfs_rq_load_avg() can call cpufreq_update_util() to trigger an
+> update of the frequency. Make sure that RT, DL and IRQ pelt signals have
+> been updated before calling cpufreq
+> 
+> Fixes: 371bf4273269 ("sched/rt: Add rt_rq utilization tracking")
+> Fixes: 3727e0e16340 ("sched/dl: Add dl_rq utilization tracking")
+> Fixes: 91c27493e78d ("sched/irq: Add IRQ utilization tracking")
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-  ab43762ef0109 ("perf: Allow normal events to output AUX data")
-
-added 'aux_output' bit to the attribute structure, which relies on AUX
-events and grouping, neither of which is supported for the kernel events.
-This notwithstanding, attempts have been made to use it in the kernel
-code, suggesting the necessity of an explicit hard -EINVAL.
-
-Fix this by rejecting attributes with aux_output set for kernel events.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- kernel/events/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index d2f16546a2ab..d31cf601c710 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11415,6 +11415,13 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
- 	struct perf_event *event;
- 	int err;
- 
-+	/*
-+	 * Grouping is not supported for kernel events, neither is 'AUX',
-+	 * make sure the caller's intentions are adjusted.
-+	 */
-+	if (attr->aux_output)
-+		return -EINVAL;
-+
- 	event = perf_event_alloc(attr, cpu, task, NULL, NULL,
- 				 overflow_handler, context, -1);
- 	if (IS_ERR(event)) {
--- 
-2.23.0
-
+Thanks!
