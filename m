@@ -2,102 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD589EA1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11796EA1EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfJ3QgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:36:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:37870 "EHLO foss.arm.com"
+        id S1726945AbfJ3Qjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:39:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbfJ3QgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 12:36:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27E4131F;
-        Wed, 30 Oct 2019 09:36:02 -0700 (PDT)
-Received: from [10.188.222.161] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E77D53F6C4;
-        Wed, 30 Oct 2019 09:35:57 -0700 (PDT)
-Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Phil Auld <pauld@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <20191021075038.GA27361@gmail.com>
- <CAKfTPtCcvKuf1Gt0W-BeEbQxFP_co14jdv_L5zEpS==Ecibabg@mail.gmail.com>
- <20191024123844.GB2708@pauld.bos.csb> <20191024134650.GD2708@pauld.bos.csb>
- <CAKfTPtB0VruWXq+wGgvNOMFJvvZQiZyi2AgBoJP3Uaeduu2Lqg@mail.gmail.com>
- <20191025133325.GA2421@pauld.bos.csb>
- <CAKfTPtDWV7AkzMNuJtkN-pLmDcK41LwNiX0Wr8UT+vMFHAx6Qg@mail.gmail.com>
- <20191030143937.GC1686@pauld.bos.csb>
- <564ca629-5c34-dbd1-8e64-2da6910b18a3@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <bf96be8a-2358-b9ab-b8eb-d0b8b94ed0d7@arm.com>
-Date:   Wed, 30 Oct 2019 17:35:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726903AbfJ3Qjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 12:39:32 -0400
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78A97218AC;
+        Wed, 30 Oct 2019 16:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572453571;
+        bh=uPpsLnIwswK4MvCgYfMrudAcG0whDitorkLSfI+nb3Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xdkOfd1yvSJdwDk7TNjX9HOowIi2HLFtg17p6P0NFVvETxTk1VqoKCMxbdUwfIY0G
+         DZEaIhwLkmobqT0No607KZqrpOI73RtwYdp6hgKBYTEm/tdOwc6pELf22IPS+wmtY1
+         dpYphs9pdwMIH6/RoQNz9Eu0TDrTa7y2xV7Z/TMQ=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 66E5F5FB7D; Thu, 31 Oct 2019 00:39:28 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Markus Mayer <mmayer@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] thermal: brcmstb: enable hwmon
+Date:   Thu, 31 Oct 2019 00:38:07 +0800
+Message-Id: <20191030163807.17817-1-wens@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <564ca629-5c34-dbd1-8e64-2da6910b18a3@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Chen-Yu Tsai <wens@csie.org>
 
+By defaul of-based thermal driver do not have hwmon entries registered.
 
-On 30/10/2019 17:24, Dietmar Eggemann wrote:
-> On 30.10.19 15:39, Phil Auld wrote:
->> Hi Vincent,
->>
->> On Mon, Oct 28, 2019 at 02:03:15PM +0100 Vincent Guittot wrote:
-> 
-> [...]
-> 
->>>> When you say slow versus fast wakeup paths what do you mean? I'm still
->>>> learning my way around all this code.
->>>
->>> When task wakes up, we can decide to
->>> - speedup the wakeup and shorten the list of cpus and compare only
->>> prev_cpu vs this_cpu (in fact the group of cpu that share their
->>> respective LLC). That's the fast wakeup path that is used most of the
->>> time during a wakeup
->>> - or start to find the idlest CPU of the system and scan all domains.
->>> That's the slow path that is used for new tasks or when a task wakes
->>> up a lot of other tasks at the same time
-> 
-> [...]
-> 
-> Is the latter related to wake_wide()? If yes, is the SD_BALANCE_WAKE
-> flag set on the sched domains on your machines? IMHO, otherwise those
-> wakeups are not forced into the slowpath (if (unlikely(sd))?
-> 
-> I had this discussion the other day with Valentin S. on #sched and we
-> were not sure how SD_BALANCE_WAKE is set on sched domains on
-> !SD_ASYM_CPUCAPACITY systems.
-> 
+Do this explicitly so users can use standard hwmon interfaces and tools
+to read the temperature.
 
-Well from the code nobody but us (asymmetric capacity systems) set
-SD_BALANCE_WAKE. I was however curious if there were some folks who set it
-with out of tree code for some reason.
+This is based on similar changes for bcm2835_thermal in commit
+d56c19d07e0b ("thermal: bcm2835: enable hwmon explicitly").
 
-As Dietmar said, not having SD_BALANCE_WAKE means you'll never go through
-the slow path on wakeups, because there is no domain with SD_BALANCE_WAKE for
-the domain loop to find. Depending on your topology you most likely will
-go through it on fork or exec though.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
 
-IOW wake_wide() is not really widening the wakeup scan on wakeups using
-mainline topology code (disregarding asymmetric capacity systems), which
-sounds a bit... off.
+This patch was only compile tested. A similar patch [1] was submitted to
+the downstream kernel, which I did build and actually run on a Raspberry
+Pi 4.
+
+This one for mainline is much simpler, as it does not need to deal with
+the error path or device removal, due to the use of devres.
+
+ [1] https://github.com/raspberrypi/linux/pull/3307
+
+---
+ drivers/thermal/broadcom/brcmstb_thermal.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
+index 5825ac581f56..8353aaa4d624 100644
+--- a/drivers/thermal/broadcom/brcmstb_thermal.c
++++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+@@ -21,6 +21,8 @@
+ #include <linux/of_device.h>
+ #include <linux/thermal.h>
+ 
++#include "../thermal_hwmon.h"
++
+ #define AVS_TMON_STATUS			0x00
+  #define AVS_TMON_STATUS_valid_msk	BIT(11)
+  #define AVS_TMON_STATUS_data_msk	GENMASK(10, 1)
+@@ -343,6 +345,12 @@ static int brcmstb_thermal_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	/* hwmon not enabled by default. Enable it here. */
++	thermal->tzp->no_hwmon = false;
++	ret = thermal_add_hwmon_sysfs(thermal);
++	if (ret)
++		return ret;
++
+ 	dev_info(&pdev->dev, "registered AVS TMON of-sensor driver\n");
+ 
+ 	return 0;
+-- 
+2.20.1
+
