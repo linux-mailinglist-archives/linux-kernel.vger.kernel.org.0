@@ -2,184 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B78EA02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A168E9FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:51:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbfJ3PyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbfJ3PyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:00 -0400
-Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB9DA20874;
-        Wed, 30 Oct 2019 15:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450839;
-        bh=2kUUZAC+wtzg7AMNOy1KGj2017jVYF+ynzXc66sbHiY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ewn/aYDFDR4hyW/GvIg8aa5IK7WkNvqLJOI1oTlbHl/un53oNYDVEG4Bb4kzSmDxH
-         3F4WvESegvHXLJeSvGd1N2TM4BLu+mIrwRgMS5HfaIb9mzWWaedZFf/01ouFqAnIct
-         rzEqej8SBLv/25Dl2TsyZ8wFygu+QO1i1jdTZBKY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joel Stanley <joel@jms.id.au>, Tao Ren <taoren@fb.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 63/81] i2c: aspeed: fix master pending state handling
-Date:   Wed, 30 Oct 2019 11:49:09 -0400
-Message-Id: <20191030154928.9432-63-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191030154928.9432-1-sashal@kernel.org>
-References: <20191030154928.9432-1-sashal@kernel.org>
+        id S1727655AbfJ3Puw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:50:52 -0400
+Received: from sonic308-55.consmr.mail.gq1.yahoo.com ([98.137.68.31]:34057
+        "EHLO sonic308-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727629AbfJ3Puv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:50:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1572450650; bh=tlzW+EHXjriGMcNx2q7rBODiO5QJOtbDYR9mIItAx7c=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=PxRXFHyq1BwiPdfBCGkKlBIYlzsV/0JFMaOvTMvltrSJynguwBjBs7AkNjF+0/9tc97g3hhMCH/YXfA4n8rnZCm09eIomwM+iC4V+nUs7Pp+1KoWWCUWAkKM89LZBOwfetEXoQYH9haIJbFDq3emBaM7br9SdLUZGZVAo+CTeq4QbbUrJ8fBGFOzE1h9b3xy6o+H2NjaCZLd+qiqnsikTXSRQVpHUCZga3N4+Bdd17FCbbwCsDfJ6ZZoq5Lxm4n+/TWPib+Re/tW/LbqBGXN2cyZv0XOSofNp4QCBpA5JpI1Z3J5nwWmWvNccsJjm3B3FnyMed5agi1tRAoHtvIChQ==
+X-YMail-OSG: HIJd13kVM1k4sA98h6t_XGpmpEp2jWNj1U_XV4n9OX8AN520dD71uJ8PHv13D_2
+ omE8WRCjHn2967vQv6JzS0UQvmrmTABhtz6ArxefHcIfykBA8jAEENwHE8KAOALswyI6xDB04TWw
+ xMPOXBf374r6q35M60hA93Y0HJGpQY.alMyw6IG4Xn8rGK7hs8sC1kBz.jBJ8yQHYPN7qcbE.9WA
+ hH.s3tJQM6M8ACyYaL2xKXG6iZ_1JkVUAaJSBTSiFpijnnAliKPJX2Rj4QIShn6aqLwaJOWk21vj
+ 1wVoKWoOJlq.CqsKW_nl4VwVwA6.Um2Whv7JJ4d8_N3l4MkHWbKX9ztRdYjbdq7RepB7Wi1KPA1z
+ R2orOR3UY_cxKJALXVe6h7b2XxmzlVMzbHWmvq8wrUXchPz0SYrbFsC.2gCLV3jNcJHzwZsTIFkO
+ yK4eiFSoIOc0KgoMWxbzdFYJmIuWgHkI8ECvE7OXPSOH16aOm7MFUIbjEyZNGkXhrlaZZl4rrjj9
+ r3eJkJDhL98V_zFDSqG_lMbTf6mNh9KcdENQUmTeIrfTqSqy8GoeTvR1qeXRG8KFu.ww9_ogRZjz
+ 0kf3mcqo42r05UCCwsGep.4zdIUmryoimEOz6Zd0bdND3jslLc5_1Y8ADEfwJzfyTd34XqVS5L3Z
+ bOwX2xusZjxw4w17.rnBBHXLmr5prGlcu5.UssPW4NXC.lkwUN39Q3GTIas1VGO8Xbo56YDnvyAX
+ DeJc6Tj_EqzdW.YVfBLrYct2lqEIBpIhl9puQ0Oksx9F5RiQ1y_xRgd_SqGlj6b4vcECOrZ4my1r
+ v9.ca5Br_axLga54rozxFcp7fIXqo5gIwFK_ek2fLTnvWGWV.EWcG.ggyshNL9b6LM_fXHbZdMjT
+ S_A0qQV2QvWBnY8GAjatPCNxgae4Hd8Iauw8Xqia7qfoZIf2J_dhqazdSyeHSGRD7fX80x7lp7O1
+ D7EO33CSUhEllw7EUu8Zi9a6rTDLbrLaAGFdwaedVb_7J_5K.9jyFKt7vARtP4ybn7U2Qn_wr.zv
+ 8hHxG69aQSusZpFtKIDCoICNsPZKbbw_RPI32wmSvnGBFBH0fsGNANC9bAobaM623daFV1GOCamV
+ f8XfQ21vn1mkUsR6RCVNwMuHxlSSB44jYQsnwhtc33zSX29N9wlpo54zbXoj.aELxlrPC7YhaJu1
+ YlLlVO6DgLja30t54lFBbj6V1j5k6EcBDQ1XLqC0aNoI0rXtZQRYBPL4kNdW2R5E5rRrr8nIUrdV
+ .akd01OnBIOijzH9Hy_GSuDLg6i0scWI7MokVOSHS5Ll_fdrx2xQz.rFA9fGeWaAkMgxDSs8wHWr
+ R8LZxzmW34m0mgMDRWVEFwpgh55_JjkHl2ONqcZMpN7WEOMGgOgiHJ2qQcsZzrwiO.80SS0zYA6E
+ -
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Wed, 30 Oct 2019 15:50:50 +0000
+Received: by smtp419.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ecf34bf87d460b3002b31f8cc4759825;
+          Wed, 30 Oct 2019 15:50:47 +0000 (UTC)
+Date:   Wed, 30 Oct 2019 23:50:37 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: bio_alloc should never fail
+Message-ID: <20191030155020.GA3953@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20191030035518.65477-1-gaoxiang25@huawei.com>
+ <20aa40bd-280d-d223-9f73-d9ed7dbe4f29@huawei.com>
+ <20191030091542.GA24976@architecture4>
+ <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
+ <20191030104345.GB170703@architecture4>
+ <20191030151444.GC16197@mit.edu>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030151444.GC16197@mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mailer: WebService/1.1.14593 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Hi Ted,
 
-[ Upstream commit 1f0d9cbeec9bb0a1c2013342836f2c9754d6502b ]
+On Wed, Oct 30, 2019 at 11:14:45AM -0400, Theodore Y. Ts'o wrote:
+> On Wed, Oct 30, 2019 at 06:43:45PM +0800, Gao Xiang wrote:
+> > > You're right, in low memory scenario, allocation with bioset will be faster, as
+> > > you mentioned offline, maybe we can add/use a priviate bioset like btrfs did
+> > > rather than using global one, however, we'd better check how deadlock happen
+> > > with a bioset mempool first ...
+> > 
+> > Okay, hope to get hints from Jaegeuk and redo this patch then...
+> 
+> It's not at all clear to me that using a private bioset is a good idea
+> for f2fs.  That just means you're allocating a separate chunk of
+> memory just for f2fs, as opposed to using the global pool.  That's an
+> additional chunk of non-swapable kernel memory that's not going to be
+> available, in *addition* to the global mempool.  
+> 
+> Also, who else would you be contending for space with the global
+> mempool?  It's not like an mobile handset is going to have other users
+> of the global bio mempool.
+> 
+> On a low-end mobile handset, memory is at a premium, so wasting memory
+> to no good effect isn't going to be a great idea.
 
-In case of master pending state, it should not trigger a master
-command, otherwise data could be corrupted because this H/W shares
-the same data buffer for slave and master operations. It also means
-that H/W command queue handling is unreliable because of the buffer
-sharing issue. To fix this issue, it clears command queue if a
-master command is queued in pending state to use S/W solution
-instead of H/W command queue handling. Also, it refines restarting
-mechanism of the pending master command.
+Thanks for your reply. I agree with your idea.
 
-Fixes: 2e57b7cebb98 ("i2c: aspeed: Add multi-master use case support")
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Acked-by: Joel Stanley <joel@jms.id.au>
-Tested-by: Tao Ren <taoren@fb.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/i2c/busses/i2c-aspeed.c | 54 +++++++++++++++++++++------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
+Actually I think after this version patch is applied, all are the same
+as the previous status (whether some deadlock or not).
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index fa66951b05d06..7b098ff5f5dd3 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -108,6 +108,12 @@
- #define ASPEED_I2CD_S_TX_CMD				BIT(2)
- #define ASPEED_I2CD_M_TX_CMD				BIT(1)
- #define ASPEED_I2CD_M_START_CMD				BIT(0)
-+#define ASPEED_I2CD_MASTER_CMDS_MASK					       \
-+		(ASPEED_I2CD_M_STOP_CMD |				       \
-+		 ASPEED_I2CD_M_S_RX_CMD_LAST |				       \
-+		 ASPEED_I2CD_M_RX_CMD |					       \
-+		 ASPEED_I2CD_M_TX_CMD |					       \
-+		 ASPEED_I2CD_M_START_CMD)
- 
- /* 0x18 : I2CD Slave Device Address Register   */
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
-@@ -336,18 +342,19 @@ static void aspeed_i2c_do_start(struct aspeed_i2c_bus *bus)
- 	struct i2c_msg *msg = &bus->msgs[bus->msgs_index];
- 	u8 slave_addr = i2c_8bit_addr_from_msg(msg);
- 
--	bus->master_state = ASPEED_I2C_MASTER_START;
--
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	/*
- 	 * If it's requested in the middle of a slave session, set the master
- 	 * state to 'pending' then H/W will continue handling this master
- 	 * command when the bus comes back to the idle state.
- 	 */
--	if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
-+	if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE) {
- 		bus->master_state = ASPEED_I2C_MASTER_PENDING;
-+		return;
-+	}
- #endif /* CONFIG_I2C_SLAVE */
- 
-+	bus->master_state = ASPEED_I2C_MASTER_START;
- 	bus->buf_index = 0;
- 
- 	if (msg->flags & I2C_M_RD) {
-@@ -422,20 +429,6 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
- 		}
- 	}
- 
--#if IS_ENABLED(CONFIG_I2C_SLAVE)
--	/*
--	 * A pending master command will be started by H/W when the bus comes
--	 * back to idle state after completing a slave operation so change the
--	 * master state from 'pending' to 'start' at here if slave is inactive.
--	 */
--	if (bus->master_state == ASPEED_I2C_MASTER_PENDING) {
--		if (bus->slave_state != ASPEED_I2C_SLAVE_INACTIVE)
--			goto out_no_complete;
--
--		bus->master_state = ASPEED_I2C_MASTER_START;
--	}
--#endif /* CONFIG_I2C_SLAVE */
--
- 	/* Master is not currently active, irq was for someone else. */
- 	if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE ||
- 	    bus->master_state == ASPEED_I2C_MASTER_PENDING)
-@@ -462,11 +455,15 @@ static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 		/*
- 		 * If a peer master starts a xfer immediately after it queues a
--		 * master command, change its state to 'pending' then H/W will
--		 * continue the queued master xfer just after completing the
--		 * slave mode session.
-+		 * master command, clear the queued master command and change
-+		 * its state to 'pending'. To simplify handling of pending
-+		 * cases, it uses S/W solution instead of H/W command queue
-+		 * handling.
- 		 */
- 		if (unlikely(irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH)) {
-+			writel(readl(bus->base + ASPEED_I2C_CMD_REG) &
-+				~ASPEED_I2CD_MASTER_CMDS_MASK,
-+			       bus->base + ASPEED_I2C_CMD_REG);
- 			bus->master_state = ASPEED_I2C_MASTER_PENDING;
- 			dev_dbg(bus->dev,
- 				"master goes pending due to a slave start\n");
-@@ -629,6 +626,14 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 			irq_handled |= aspeed_i2c_master_irq(bus,
- 							     irq_remaining);
- 	}
-+
-+	/*
-+	 * Start a pending master command at here if a slave operation is
-+	 * completed.
-+	 */
-+	if (bus->master_state == ASPEED_I2C_MASTER_PENDING &&
-+	    bus->slave_state == ASPEED_I2C_SLAVE_INACTIVE)
-+		aspeed_i2c_do_start(bus);
- #else
- 	irq_handled = aspeed_i2c_master_irq(bus, irq_remaining);
- #endif /* CONFIG_I2C_SLAVE */
-@@ -691,6 +696,15 @@ static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
- 		     ASPEED_I2CD_BUS_BUSY_STS))
- 			aspeed_i2c_recover_bus(bus);
- 
-+		/*
-+		 * If timed out and the state is still pending, drop the pending
-+		 * master command.
-+		 */
-+		spin_lock_irqsave(&bus->lock, flags);
-+		if (bus->master_state == ASPEED_I2C_MASTER_PENDING)
-+			bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
-+		spin_unlock_irqrestore(&bus->lock, flags);
-+
- 		return -ETIMEDOUT;
- 	}
- 
--- 
-2.20.1
+So I'm curious about the original issue in commit 740432f83560
+("f2fs: handle failed bio allocation"). Since f2fs manages multiple write
+bios with its internal fio but it seems the commit is not helpful to
+resolve potential mempool deadlock (I'm confused since no calltrace,
+maybe I'm wrong)...
 
+I think it should be gotten clear first and think how to do next..
+(I tend not to add another private bioset since it's unshareable as you
+ said as well...)
+
+Thanks,
+Gao Xiang
+
+> 
+> Regards,
+> 
+> 						- Ted
+> 
+>
+ 
