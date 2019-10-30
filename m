@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D43E9A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:30:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9FBE9A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfJ3KaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:30:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33023 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfJ3KaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:30:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c184so1309408pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 03:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=K9dz1flpb3x7Oxzcj/V7nFSU5z6F4ELP/G1doRSrpMo=;
-        b=nu+IXLvmOAq7s8CzjblbRsMl9s1YCbJSabDqRwE0hwrJ/jWNE1VoJNn3CtNpshp7bn
-         KAvU7g5AuzoxbYtLNYtVdACU8ywpdh9X11ZxVCB1iHnj9gPma3cF5VcA7v2PD7HuUNeN
-         jx/lj6aQqxFULwQ0gfSJBWxNUDmtLTW8RpK+riRVkADQNw1fEVuaeJ8GjGnaR7QXT2Q6
-         bbX+6MDCMBKwe+5CW35hCXo3Bm+oJd+bo9/eiyxVb7MvHsXrqd+MgE/+eISN3F6vtmOf
-         JAZKTj75qbzIFmsYgkBZA3wDd0FnzQpG4Rj3uj1wQLmw0WlJA4N37k8kxR8uVk1065jw
-         0yXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=K9dz1flpb3x7Oxzcj/V7nFSU5z6F4ELP/G1doRSrpMo=;
-        b=FJ8QgW8E7G5f47vrugV8oPWqSssStUC81iPUHSigjM5f3x/+/ZwDp0EshEHIQIJaiw
-         QvA4uScnhUjBq9z/lPCFqLqv7dU6J5TlZSxDuF7Pjemhl+RUEXSJsbvU3u3EXPMI9FTZ
-         1AWNPKbR39YWSS4Is6SOfDbyjexrazB55fCtLGhJvK/a5z9w9+O7kb3Ztlmuc/2xjdWw
-         YxxxhLS9g2ulHf4I7Uo9WJHDuh+glHjR3SMLU4Io+0jHLTenMHnNyjuEp8MkzkD0xNax
-         BcAdXuek/WxArqH7hMBWmi09IqZixFqomdjqlPx/If994FcFCsOwbASE7/5gGtm4A9M9
-         d82A==
-X-Gm-Message-State: APjAAAXV9U+4VzcgKuHIUj8+YvmDuNTo9VAIeZfkxIgaQd0U6KmLF10f
-        lEn27T7tVW1Nkb5PuID9MULYD/J/SnuoyJ+3Wzc=
-X-Google-Smtp-Source: APXvYqwpQBaz98Y/9V9H6sJ1Db37/4ZcSGCis4zDiJBavLcl0GEgrodGSi2UtX77t+2DyWsFZLFrE7IN/tTNVFhDrr0=
-X-Received: by 2002:a17:90a:714a:: with SMTP id g10mr12870225pjs.13.1572431406696;
- Wed, 30 Oct 2019 03:30:06 -0700 (PDT)
+        id S1726741AbfJ3KfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:35:23 -0400
+Received: from smtp1.axis.com ([195.60.68.17]:1741 "EHLO smtp1.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfJ3KfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:35:23 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Oct 2019 06:35:22 EDT
+IronPort-SDR: ve5p2pZNlvpDL2krbZnIKB2D9SwTBZKOjF0PY2JWzUWzbkxJYfhyJuAEAhD8N7aY7IwgMrL1Zu
+ MbyHMzRC6yElgKfYimu97StkUmT8BAAKziXK1M/R4Zb+ubqt67DIJOCFoNXil2wj7odpBQD3pY
+ kPOugSZr7DeRoTvMIM22FuSeKfBf8L/HSQWVYNK5EUjWDQqjdSOka08z4IufXIr873n2TPRgHC
+ HJzxrs0l+l5F4Wmy6Z+9x/l15Vee7sRD11o0OMJo9sGKsCZ2f1M+ypV1Ww7zuwOZWVOkBkRdI7
+ bDE=
+X-IronPort-AV: E=Sophos;i="5.68,247,1569276000"; 
+   d="scan'208";a="1996420"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     axboe@kernel.dk
+Cc:     linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH] buffer: Work around I/O errors due to ARM CPU bug
+Date:   Wed, 30 Oct 2019 11:28:10 +0100
+Message-Id: <20191030102810.20744-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1572423756-59943-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1572423756-59943-1-git-send-email-zhongjiang@huawei.com>
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-Date:   Wed, 30 Oct 2019 19:29:55 +0900
-Message-ID: <CAC5umygBcEic4HXCWfFKj0ZJHo8RRzPkO959051eYoH7y4C39A@mail.gmail.com>
-Subject: Re: [PATCH] fault-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define
- debugfs fops
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=E5=B9=B410=E6=9C=8830=E6=97=A5(=E6=B0=B4) 17:26 zhong jiang <zhongjian=
-g@huawei.com>:
->
-> It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
-> operation rather than DEFINE_SIMPLE_ATTRIBUTE.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  lib/fault-inject.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/fault-inject.c b/lib/fault-inject.c
-> index 8186ca8..4e61326 100644
-> --- a/lib/fault-inject.c
-> +++ b/lib/fault-inject.c
-> @@ -164,7 +164,7 @@ static int debugfs_ul_get(void *data, u64 *val)
->         return 0;
->  }
->
-> -DEFINE_SIMPLE_ATTRIBUTE(fops_ul, debugfs_ul_get, debugfs_ul_set, "%llu\n=
-");
-> +DEFINE_DEBUGFS_ATTRIBUTE(fops_ul, debugfs_ul_get, debugfs_ul_set, "%llu\=
-n");
->
->  static void debugfs_create_ul(const char *name, umode_t mode,
->                               struct dentry *parent, unsigned long *value=
-)
+On my dual-core ARM Cortex-A9, reading from squashfs (over
+dm-verity/ubi/mtd) in a loop for hundreds of hours inevitably results in
+a read failure in squashfs_read_data().  The errors occur because the
+buffer_uptodate() check fails after wait_on_buffer().  Further debugging
+shows that the bh was in fact uptodate and that there is no actual I/O
+error in the lower layers.
 
-Nowadays we have debugfs_create_ulong(), so should we use it instead of
-debugfs_create_ul() defined in this file and remove the definision
-altogether?
+The problem appears to be caused by the read-after-read hazards in the
+ARM Cortex-A9 MPCore (erratum #761319, see [1]).  The new value of the
+BH_Lock flag is seen but the new value of BH_Uptodate is not even though
+both the bits are read from the same memory location.  Work around it by
+adding a DMB between the two reads of bh->flags.
+
+ 27c:	9d08      	ldr	r5, [sp, #32]
+ 27e:	2400      	movs	r4, #0
+ 280:	e006      	b.n	290 <squashfs_read_data+0x290>
+ 282:	6803      	ldr	r3, [r0, #0]
+ 284:	07da      	lsls	r2, r3, #31
+ 286:	f140 810d 	bpl.w	4a4 <squashfs_read_data+0x4a4>
+ 28a:	3401      	adds	r4, #1
+ 28c:	42bc      	cmp	r4, r7
+ 28e:	da08      	bge.n	2a2 <squashfs_read_data+0x2a2>
+ 290:	f855 0f04 	ldr.w	r0, [r5, #4]!
+ 294:	6803      	ldr	r3, [r0, #0]
+ 296:	0759      	lsls	r1, r3, #29
+ 298:	d5f3      	bpl.n	282 <squashfs_read_data+0x282>
+ 29a:	f7ff fffe 	bl	0 <__wait_on_buffer>
+
+With this barrier, no failures have been seen in 2500+ hours of the same
+test.
+
+[1] http://infocenter.arm.com/help/topic/com.arm.doc.uan0004a/UAN0004A_a9_read_read.pdf
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ include/linux/buffer_head.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 7b73ef7f902d..4ef909a91f8c 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -352,6 +352,14 @@ static inline void wait_on_buffer(struct buffer_head *bh)
+ 	might_sleep();
+ 	if (buffer_locked(bh))
+ 		__wait_on_buffer(bh);
++
++#ifdef CONFIG_ARM
++	/*
++	 * Work around ARM Cortex-A9 MPcore Read-after-Read Hazards (erratum
++	 * 761319).
++	 */
++	smp_rmb();
++#endif
+ }
+ 
+ static inline int trylock_buffer(struct buffer_head *bh)
+-- 
+2.20.0
+
