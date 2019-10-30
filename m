@@ -2,2283 +2,1727 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5E3E9C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2EEE9CAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfJ3NqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:46:15 -0400
-Received: from mga12.intel.com ([192.55.52.136]:43714 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbfJ3NqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:46:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 06:46:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
-   d="scan'208";a="211325228"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2019 06:46:10 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iPoIb-0001Al-FV; Wed, 30 Oct 2019 21:46:09 +0800
-Date:   Wed, 30 Oct 2019 21:45:04 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     kbuild-all@lists.01.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] compiler*.h: Add '__' prefix and suffix to all
- __attribute__ #defines
-Message-ID: <201910302156.ztNhOS2z%lkp@intel.com>
-References: <7a15bc8ad7437dc3a044a4f9cd283500bd0b5f36.camel@perches.com>
+        id S1726643AbfJ3NwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:52:20 -0400
+Received: from UHIL19PA36.eemsg.mail.mil ([214.24.21.195]:61475 "EHLO
+        UHIL19PA36.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfJ3NwT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:52:19 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Oct 2019 09:52:17 EDT
+X-EEMSG-check-017: 43428378|UHIL19PA36_ESA_OUT02.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.68,247,1569283200"; 
+   d="scan'208";a="43428378"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UHIL19PA36.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 30 Oct 2019 13:45:09 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1572443109; x=1603979109;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=iMEVS40A1FiqP4IWbD/mGLZ6xNdi0PkGrUCZqiuaHOQ=;
+  b=UuviGDgGWE4CAqWpyO1Z6gLI+xu0+nbTf43ionlSGOYnb4uYg9cCcoAN
+   IiDQeYeXr0wnGhmOP5CHIAcAD0y1QuPIkXFWLbzUdqQIju2k6WSddNI+I
+   L1/DtUtIj9XGhQtvuIIW5RSKvYtQXMDlWkRaEQyDzw1MzJcZSZJyn+G+c
+   xrRZmu6RzRd1f4SydkOL64JRkbE9+fj2sDo2PX6/4hCwJhchFS8g5JYpM
+   K2uilIX4Vv2DRsdD6JwxZHTEjYfrF3sR//zySgYDRLiqLejrHfXJRS4Ot
+   aunrIAwaopUuoeY8BP+gJZCnJQjUL/GGCAj3Lri40otO6uyn/ek+eff3r
+   g==;
+X-IronPort-AV: E=Sophos;i="5.68,247,1569283200"; 
+   d="scan'208";a="34870679"
+IronPort-PHdr: =?us-ascii?q?9a23=3AwaP6iBX/VrgLMYJ4RXsItzYHIWLV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZheHvKdThVPEFb/W9+hDw7KP9fy5AipZuc3K7StKWacPfi?=
+ =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
+ =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYd+JKs9xR?=
+ =?us-ascii?q?vEr3VVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWgGufixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
+ =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
+ =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
+ =?us-ascii?q?YTrUTCETP2mEXxlqOWcFkr+vO05Oj9Z7Xmp5ucO5d1igH4LKsuhtSyDfk3Pw?=
+ =?us-ascii?q?UBRWSW+fmw2Kf98UD2XrlGlOA6nrHcsJ/AJMQboqC5AxVS0oYm8xu/FCqp0M?=
+ =?us-ascii?q?8DkHkbLFNKZBKHj4/zN1HIO/D3F+2zg1urkDd13/zGJKHuAo3RLnjfl7fsZb?=
+ =?us-ascii?q?R95FRGyAowztBf4IhYCqobL/LwWU/xtdrYAQE/MwGvx+bnCdN91p4RWG6VA6?=
+ =?us-ascii?q?+ZNr/SvkGM5u41P+aMY4oVsi7nK/c5//7ukWM5mVgFcKmt3JsXbm24H/t/L0?=
+ =?us-ascii?q?Waf3XsmNEBHnkOvgclUuzqh0ONUSRJa3axQa08/Dc7B5yiDYvZQYCtmrOB1j?=
+ =?us-ascii?q?+hHpJKfmBGFkyMEXDweoSLWPoBaTmfIsx/nTweU7iuVYsh2QuptA/gxLptNv?=
+ =?us-ascii?q?DU9TEAtZL/yNh14PXelRUz9TxyEsSc3HiBT3p7nmIHXDI2wq9/rlJnyluZ0q?=
+ =?us-ascii?q?h3neZYFdpN6PNNSAs6MoTcz+NiAdDoRg3BZsuJSEqhQti+Gz4xTcoxw9oVbk?=
+ =?us-ascii?q?Z5GtWiiA3D3iWzD78bkLyLGZo0/b/G0HjtJsZ9zHDG2LMmj1k8TctFLXemib?=
+ =?us-ascii?q?Jn9wjPG47JlF2UmLuweqQCwiHB7meDwnCIvEFDTgFwV77IXXEZZkvKs9v54l?=
+ =?us-ascii?q?nOQKOpCbQiKgFB09KNKrNWat31ilVLXOzjN8rEbGK3gWuwBwyEya+MbIrwem?=
+ =?us-ascii?q?UdxzndCE8ckwAT43mGLxM+BiCno2/FDTxuE07vbF3o8eVktHy7SUo0xRmQb0?=
+ =?us-ascii?q?J9z7q15gIVhfuERvMV3rIEvz0hqzBuE1a7xN/WEcSPqBdhfKpGfdMx+ktI1W?=
+ =?us-ascii?q?XctwZlJJyvM7hihkICcwRwp07u0Q13CoBcnsc2tnwqyA5yKb+d0F5abTOXw4?=
+ =?us-ascii?q?3/Or3NJWnu5hygd6nW2lTG2taM5qgP8Og4q0nkvAyxDUot7W9n09ZL3HeG/J?=
+ =?us-ascii?q?rLDA0SUY/3Ukss9hh6oa3abTc554/OyXJsNqy0uCfY2901HOsl1gqgf9BHPa?=
+ =?us-ascii?q?OfFA/9Cc0bC9KtKOMwh1iobwsIPeFI+64xPsOmbeCL2K+tPOZ8gj2miX5L75?=
+ =?us-ascii?q?x60kKJ7yB8UPLH344Zw/GE2QuKTzf8g02gssDrg49EYiseHmqiySf+Ao5Rab?=
+ =?us-ascii?q?Z/fYcNCWeyPcK3ws9yiILqW35d7FSjHU8J2Ne1eRqOaFzwxRdf1UIKrny9mC?=
+ =?us-ascii?q?u5zyZ4kyoprqWBwizB3+TiewQBOm5IQ2lvllPsIYmyj9AHU0mkdQkplB255U?=
+ =?us-ascii?q?nkw6hXvrhwL27WQU1QZSj5M3liUrestrqFe8NP9JwosSFYUemnZVCaS7j9ow?=
+ =?us-ascii?q?YG0yP5GGtewjE7dj6wtprkgRNwkHidI2prrHrFZcFwwg/S5N/GSv5QxDYGXz?=
+ =?us-ascii?q?d4hiPXBli6JNSp/NOUl4vdveC6TW6uSppTcSzzx4OaqCS7/XFqAQG4n/2rgd?=
+ =?us-ascii?q?LnCRM33jX/19lrSyrIqhXxbpP22KukKehnZFVnBEfg68pmHYFziokwhJYL2X?=
+ =?us-ascii?q?ganZiV/30HkXzzMdVHw6L+bWINRToVzN7J/AjpwkpjLmiGx4jhTHWS3tNhZ8?=
+ =?us-ascii?q?WmYmMRwi89691KCLuT7LFfnit6vEC4rQTPbvh5hDsdzuEu6HECieETpAUt1j?=
+ =?us-ascii?q?mdAqwVHURAPizjjRWI48q+rKVKfmmvd7ew2VF/ndCnELGNvAVcVGzldZclGC?=
+ =?us-ascii?q?969t9/P07U0H3v9oHkf8HdbcgSthKKlRfAk+pVJ4wqlvcRiipnPmX9vXIhy+?=
+ =?us-ascii?q?EllxBhwZa6vI2fIWV34K25GgJYNiHyZ84L5j7ik7tRntyX34+zBJlgFTQLXJ?=
+ =?us-ascii?q?3nTf+zETISs+jnOBiKEDEmtnibHr/fFxeF6Eh6t3LPD4yrN3aPKXkB0NViRQ?=
+ =?us-ascii?q?WdK1JFgAEaXTU6nJ05GxuwxMP/bUh55ioe5kLiphRQzeJoMgH1Un3Dqwewdj?=
+ =?us-ascii?q?c0VJ+fIQJS7gFD4UfVLMOf4vtoHy5G4pKhsRaNKm2HZwVIFG0JX0uECE3+Pr?=
+ =?us-ascii?q?mq+9bN6PaYBuWgIPvUe7mOqvJRV+2OxZ2x1otq5TGMNt+APnN6Ff00xlJDXW?=
+ =?us-ascii?q?xlG8TegzgPUDEXlzjTYM6ApBew4DZ4otqk8PTqRQ3g+IuPBKFJPNVu/RC2nb?=
+ =?us-ascii?q?mMN+qKiCllLjZY08BE+Xid6rEF310VwxpndDqsF7kG/XrPRbjTmagRFBcYaC?=
+ =?us-ascii?q?J1Oc1g66M6wxkLOMjHh9ez3bl92Lp9D1ZDSEykmcyzY8EOC3+yOUmBB0uRMr?=
+ =?us-ascii?q?mCYzrRzIW/cfPiYb5dluNZs1u3oznfW0viOCmT0iLmRzixPuxWyiKWJhpTvM?=
+ =?us-ascii?q?e6aBk+J3LkSYfddhCjMNJxxQYzyLkwi2KCYXUQKhBgYkhNqfuW9ioejfJhTT?=
+ =?us-ascii?q?8SpkF5JPWJzn7Kp9LTLYwb5L4yWHV5?=
+X-IPAS-Result: =?us-ascii?q?A2DOAQDVkrld/wHyM5BkGwEBAQEBAQEFAQEBEQEBAwMBA?=
+ =?us-ascii?q?QGBfYF0LIFBMiqEKI8HUQEBAQaBNoljj0qBZwkBAQEBAQEBAQE0AQIBAYFMg?=
+ =?us-ascii?q?nQCg2YkOBMCDAEBAQQBAQEBAQUDAQFshUOCOykBgmwBAQEBAgEaAQgEEUEQC?=
+ =?us-ascii?q?xgCAiMDAgJGEQYBDAYCAQGCXz+CUwUgsl11fzOFToNCgUiBDiiKToFDGHiBB?=
+ =?us-ascii?q?4EQASeCaz6ECgQQASaDEIJeBJVZG0aXNIIugjOSeAYbhG2QRoQrjkCVDhhQX?=
+ =?us-ascii?q?IUNIoFYKwgCGAghDzuCbFAQFIMRAReOPyUDMAELeQEBiyYBASQDBIISAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 30 Oct 2019 13:45:08 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x9UDj5kd023335;
+        Wed, 30 Oct 2019 09:45:06 -0400
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+Date:   Wed, 30 Oct 2019 09:45:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a15bc8ad7437dc3a044a4f9cd283500bd0b5f36.camel@perches.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On 10/28/19 5:03 PM, Jarkko Sakkinen wrote:
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the SGX hosted software entity is disallowed to
+> access the memory inside the enclave enforced by the CPU. We call these
+> entities as enclaves.
+> 
+> This commit implements a driver that provides an ioctl API to construct
+> and run enclaves. Enclaves are constructed from pages residing in
+> reserved physical memory areas. The contents of these pages can only be
+> accessed when they are mapped as part of an enclave, by a hardware
+> thread running inside the enclave.
+> 
+> The starting state of an enclave consists of a fixed measured set of
+> pages that are copied to the EPC during the construction process by
+> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> that defines the enclave properties.
+> 
+> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> the EPC and EINIT check a given signed measurement and moves the enclave
+> into a state ready for execution.
+> 
+> An initialized enclave can only be accessed through special Thread Control
+> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> function converts a thread into enclave mode and continues the execution in
+> the offset defined by the TCS provided to EENTER. An enclave is exited
+> through syscall, exception, interrupts or by explicitly calling another
+> ENCLU leaf EEXIT.
+> 
+> The permissions, which enclave page is added will set the limit for maximum
+> permissions that can be set for mmap() and mprotect(). This will
+> effectively allow to build different security schemes between producers and
+> consumers of enclaves. Later on we can increase granularity with LSM hooks
+> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+> consumers)
 
-I love your patch! Perhaps something to improve:
+Where do things stand wrt to ensuring that SGX cannot be used to 
+introduce executable mappings that were never authorized by the LSM (or 
+never measured by IMA)?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.4-rc5 next-20191029]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> Cc: linux-security-module@vger.kernel.org
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>   Documentation/ioctl/ioctl-number.rst |   1 +
+>   arch/x86/include/uapi/asm/sgx.h      |  64 +++
+>   arch/x86/kernel/cpu/sgx/Makefile     |   3 +
+>   arch/x86/kernel/cpu/sgx/driver.c     | 252 ++++++++++
+>   arch/x86/kernel/cpu/sgx/driver.h     |  32 ++
+>   arch/x86/kernel/cpu/sgx/encl.c       | 329 ++++++++++++++
+>   arch/x86/kernel/cpu/sgx/encl.h       |  87 ++++
+>   arch/x86/kernel/cpu/sgx/ioctl.c      | 656 +++++++++++++++++++++++++++
+>   arch/x86/kernel/cpu/sgx/main.c       |  10 +
+>   arch/x86/kernel/cpu/sgx/reclaim.c    |   1 +
+>   10 files changed, 1435 insertions(+)
+>   create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>   create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+>   create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+>   create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+>   create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+>   create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.rst b/Documentation/ioctl/ioctl-number.rst
+> index bef79cd4c6b4..f9f3ea9606fc 100644
+> --- a/Documentation/ioctl/ioctl-number.rst
+> +++ b/Documentation/ioctl/ioctl-number.rst
+> @@ -321,6 +321,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                        <mailto:tlewis@mindspring.com>
+>   0xA3  90-9F  linux/dtlk.h
+>   0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+>   0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+>   0xAB  00-1F  linux/nbd.h
+>   0xAC  00-1F  linux/raw.h
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> new file mode 100644
+> index 000000000000..e0f79ebdfd8a
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -0,0 +1,64 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +#ifndef _UAPI_ASM_X86_SGX_H
+> +#define _UAPI_ASM_X86_SGX_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +/**
+> + * enum sgx_epage_flags - page control flags
+> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
+> + *			ENCLS[EEXTEND] operations.
+> + */
+> +enum sgx_page_flags {
+> +	SGX_PAGE_MEASURE	= 0x01,
+> +};
+> +
+> +#define SGX_MAGIC 0xA4
+> +
+> +#define SGX_IOC_ENCLAVE_CREATE \
+> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
+> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+> +#define SGX_IOC_ENCLAVE_INIT \
+> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +
+> +/**
+> + * struct sgx_enclave_create - parameter structure for the
+> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
+> + * @src:	address for the SECS page data
+> + */
+> +struct sgx_enclave_create  {
+> +	__u64	src;
+> +};
+> +
+> +/**
+> + * struct sgx_enclave_add_pages - parameter structure for the
+> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> + * @src:	start address for the page data
+> + * @offset:	starting page offset
+> + * @length:	length of the data (multiple of the page size)
+> + * @secinfo:	address for the SECINFO data
+> + * @flags:	page control flags
+> + */
+> +struct sgx_enclave_add_pages {
+> +	__u64	src;
+> +	__u64	offset;
+> +	__u64	length;
+> +	__u64	secinfo;
+> +	__u64	flags;
+> +};
+> +
+> +/**
+> + * struct sgx_enclave_init - parameter structure for the
+> + *                           %SGX_IOC_ENCLAVE_INIT ioctl
+> + * @sigstruct:	address for the SIGSTRUCT data
+> + */
+> +struct sgx_enclave_init {
+> +	__u64 sigstruct;
+> +};
+> +
+> +#endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+> index 874492d9e3bd..3ddcdabab081 100644
+> --- a/arch/x86/kernel/cpu/sgx/Makefile
+> +++ b/arch/x86/kernel/cpu/sgx/Makefile
+> @@ -1,4 +1,7 @@
+>   obj-y += \
+> +	driver.o \
+> +	encl.o \
+>   	encls.o \
+> +	ioctl.o \
+>   	main.o \
+>   	reclaim.o
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> new file mode 100644
+> index 000000000000..c724dcccf2e2
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -0,0 +1,252 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/cdev.h>
+> +#include <linux/mman.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/security.h>
+> +#include <linux/suspend.h>
+> +#include <asm/traps.h>
+> +#include "driver.h"
+> +#include "encl.h"
+> +
+> +MODULE_DESCRIPTION("Intel SGX Enclave Driver");
+> +MODULE_AUTHOR("Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>");
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +
+> +struct workqueue_struct *sgx_encl_wq;
+> +u64 sgx_encl_size_max_32;
+> +u64 sgx_encl_size_max_64;
+> +u32 sgx_misc_reserved_mask;
+> +u64 sgx_attributes_reserved_mask;
+> +u64 sgx_xfrm_reserved_mask = ~0x3;
+> +u32 sgx_xsave_size_tbl[64];
+> +
+> +static int sgx_open(struct inode *inode, struct file *file)
+> +{
+> +	struct sgx_encl *encl;
+> +	int ret;
+> +
+> +	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
+> +	if (!encl)
+> +		return -ENOMEM;
+> +
+> +	atomic_set(&encl->flags, 0);
+> +	kref_init(&encl->refcount);
+> +	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+> +	mutex_init(&encl->lock);
+> +	INIT_LIST_HEAD(&encl->mm_list);
+> +	spin_lock_init(&encl->mm_lock);
+> +
+> +	ret = init_srcu_struct(&encl->srcu);
+> +	if (ret) {
+> +		kfree(encl);
+> +		return ret;
+> +	}
+> +
+> +	file->private_data = encl;
+> +
+> +	return 0;
+> +}
+> +
+> +static int sgx_release(struct inode *inode, struct file *file)
+> +{
+> +	struct sgx_encl *encl = file->private_data;
+> +	struct sgx_encl_mm *encl_mm;
+> +
+> +	for ( ; ; )  {
+> +		spin_lock(&encl->mm_lock);
+> +
+> +		if (list_empty(&encl->mm_list)) {
+> +			encl_mm = NULL;
+> +		} else {
+> +			encl_mm = list_first_entry(&encl->mm_list,
+> +						   struct sgx_encl_mm, list);
+> +			list_del_rcu(&encl_mm->list);
+> +		}
+> +
+> +		spin_unlock(&encl->mm_lock);
+> +
+> +		/* The list is empty, ready to go. */
+> +		if (!encl_mm)
+> +			break;
+> +
+> +		synchronize_srcu(&encl->srcu);
+> +		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+> +		kfree(encl_mm);
+> +	};
+> +
+> +	mutex_lock(&encl->lock);
+> +	atomic_or(SGX_ENCL_DEAD, &encl->flags);
+> +	mutex_unlock(&encl->lock);
+> +
+> +	kref_put(&encl->refcount, sgx_encl_release);
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_COMPAT
+> +static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+> +			      unsigned long arg)
+> +{
+> +	return sgx_ioctl(filep, cmd, arg);
+> +}
+> +#endif
+> +
+> +static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	struct sgx_encl *encl = file->private_data;
+> +	int ret;
+> +
+> +	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end,
+> +			       vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sgx_encl_mm_add(encl, vma->vm_mm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	vma->vm_ops = &sgx_vm_ops;
+> +	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+> +	vma->vm_private_data = encl;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long sgx_get_unmapped_area(struct file *file,
+> +					   unsigned long addr,
+> +					   unsigned long len,
+> +					   unsigned long pgoff,
+> +					   unsigned long flags)
+> +{
+> +	if (flags & MAP_PRIVATE)
+> +		return -EINVAL;
+> +
+> +	if (flags & MAP_FIXED)
+> +		return addr;
+> +
+> +	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+> +}
+> +
+> +static const struct file_operations sgx_encl_fops = {
+> +	.owner			= THIS_MODULE,
+> +	.open			= sgx_open,
+> +	.release		= sgx_release,
+> +	.unlocked_ioctl		= sgx_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl		= sgx_compat_ioctl,
+> +#endif
+> +	.mmap			= sgx_mmap,
+> +	.get_unmapped_area	= sgx_get_unmapped_area,
+> +};
+> +
+> +static struct bus_type sgx_bus_type = {
+> +	.name	= "sgx",
+> +};
+> +
+> +static struct device sgx_encl_dev;
+> +static struct cdev sgx_encl_cdev;
+> +static dev_t sgx_devt;
+> +
+> +static void sgx_dev_release(struct device *dev)
+> +{
+> +}
+> +
+> +static __init int sgx_dev_init(const char *name, struct device *dev,
+> +			       struct cdev *cdev,
+> +			       const struct file_operations *fops, int minor)
+> +{
+> +	int ret;
+> +
+> +	device_initialize(dev);
+> +
+> +	dev->bus = &sgx_bus_type;
+> +	dev->devt = MKDEV(MAJOR(sgx_devt), minor);
+> +	dev->release = sgx_dev_release;
+> +
+> +	ret = dev_set_name(dev, name);
+> +	if (ret) {
+> +		put_device(dev);
+> +		return ret;
+> +	}
+> +
+> +	cdev_init(cdev, fops);
+> +	cdev->owner = THIS_MODULE;
+> +	return 0;
+> +}
+> +
+> +int __init sgx_drv_init(void)
+> +{
+> +	unsigned int eax, ebx, ecx, edx;
+> +	u64 attr_mask, xfrm_mask;
+> +	int ret;
+> +	int i;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
+> +		pr_info("The public key MSRs are not writable\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = bus_register(&sgx_bus_type);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = alloc_chrdev_region(&sgx_devt, 0, SGX_DRV_NR_DEVICES, "sgx");
+> +	if (ret < 0)
+> +		goto err_bus;
+> +
+> +	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> +	sgx_misc_reserved_mask = ~ebx | SGX_MISC_RESERVED_MASK;
+> +	sgx_encl_size_max_64 = 1ULL << ((edx >> 8) & 0xFF);
+> +	sgx_encl_size_max_32 = 1ULL << (edx & 0xFF);
+> +
+> +	cpuid_count(SGX_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> +
+> +	attr_mask = (((u64)ebx) << 32) + (u64)eax;
+> +	sgx_attributes_reserved_mask = ~attr_mask | SGX_ATTR_RESERVED_MASK;
+> +
+> +	if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
+> +		xfrm_mask = (((u64)edx) << 32) + (u64)ecx;
+> +
+> +		for (i = 2; i < 64; i++) {
+> +			cpuid_count(0x0D, i, &eax, &ebx, &ecx, &edx);
+> +			if ((1 << i) & xfrm_mask)
+> +				sgx_xsave_size_tbl[i] = eax + ebx;
+> +		}
+> +
+> +		sgx_xfrm_reserved_mask = ~xfrm_mask;
+> +	}
+> +
+> +	ret = sgx_dev_init("sgx/enclave", &sgx_encl_dev, &sgx_encl_cdev,
+> +			   &sgx_encl_fops, 0);
+> +	if (ret)
+> +		goto err_chrdev_region;
+> +
+> +	sgx_encl_wq = alloc_workqueue("sgx-encl-wq",
+> +				      WQ_UNBOUND | WQ_FREEZABLE, 1);
+> +	if (!sgx_encl_wq) {
+> +		ret = -ENOMEM;
+> +		goto err_encl_dev;
+> +	}
+> +
+> +	ret = cdev_device_add(&sgx_encl_cdev, &sgx_encl_dev);
+> +	if (ret)
+> +		goto err_encl_wq;
+> +
+> +	return 0;
+> +
+> +err_encl_wq:
+> +	destroy_workqueue(sgx_encl_wq);
+> +
+> +err_encl_dev:
+> +	put_device(&sgx_encl_dev);
+> +
+> +err_chrdev_region:
+> +	unregister_chrdev_region(sgx_devt, SGX_DRV_NR_DEVICES);
+> +
+> +err_bus:
+> +	bus_unregister(&sgx_bus_type);
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+> new file mode 100644
+> index 000000000000..e95c6e86c0c6
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/driver.h
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +#ifndef __ARCH_SGX_DRIVER_H__
+> +#define __ARCH_SGX_DRIVER_H__
+> +
+> +#include <crypto/hash.h>
+> +#include <linux/kref.h>
+> +#include <linux/mmu_notifier.h>
+> +#include <linux/radix-tree.h>
+> +#include <linux/rwsem.h>
+> +#include <linux/sched.h>
+> +#include <linux/workqueue.h>
+> +#include <uapi/asm/sgx.h>
+> +#include "sgx.h"
+> +
+> +#define SGX_DRV_NR_DEVICES	2
+> +#define SGX_EINIT_SPIN_COUNT	20
+> +#define SGX_EINIT_SLEEP_COUNT	50
+> +#define SGX_EINIT_SLEEP_TIME	20
+> +
+> +extern struct workqueue_struct *sgx_encl_wq;
+> +extern u64 sgx_encl_size_max_32;
+> +extern u64 sgx_encl_size_max_64;
+> +extern u32 sgx_misc_reserved_mask;
+> +extern u64 sgx_attributes_reserved_mask;
+> +extern u64 sgx_xfrm_reserved_mask;
+> +extern u32 sgx_xsave_size_tbl[64];
+> +
+> +long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+> +
+> +int sgx_drv_init(void);
+> +
+> +#endif /* __ARCH_X86_SGX_DRIVER_H__ */
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
+> new file mode 100644
+> index 000000000000..cd2b8dbb0eca
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/encl.c
+> @@ -0,0 +1,329 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#include <linux/lockdep.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/suspend.h>
+> +#include <linux/sched/mm.h>
+> +#include "arch.h"
+> +#include "encl.h"
+> +#include "sgx.h"
+> +
+> +static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+> +						unsigned long addr)
+> +{
+> +	struct sgx_encl_page *entry;
+> +	unsigned int flags;
+> +
+> +	/* If process was forked, VMA is still there but vm_private_data is set
+> +	 * to NULL.
+> +	 */
+> +	if (!encl)
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	flags = atomic_read(&encl->flags);
+> +
+> +	if ((flags & SGX_ENCL_DEAD) || !(flags & SGX_ENCL_INITIALIZED))
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	entry = radix_tree_lookup(&encl->page_tree, addr >> PAGE_SHIFT);
+> +	if (!entry)
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	/* Page is already resident in the EPC. */
+> +	if (entry->epc_page)
+> +		return entry;
+> +
+> +	return ERR_PTR(-EFAULT);
+> +}
+> +
+> +static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
+> +				     struct mm_struct *mm)
+> +{
+> +	struct sgx_encl_mm *encl_mm =
+> +		container_of(mn, struct sgx_encl_mm, mmu_notifier);
+> +	struct sgx_encl_mm *tmp = NULL;
+> +
+> +	/*
+> +	 * The enclave itself can remove encl_mm.  Note, objects can't be moved
+> +	 * off an RCU protected list, but deletion is ok.
+> +	 */
+> +	spin_lock(&encl_mm->encl->mm_lock);
+> +	list_for_each_entry(tmp, &encl_mm->encl->mm_list, list) {
+> +		if (tmp == encl_mm) {
+> +			list_del_rcu(&encl_mm->list);
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&encl_mm->encl->mm_lock);
+> +
+> +	if (tmp == encl_mm) {
+> +		synchronize_srcu(&encl_mm->encl->srcu);
+> +		mmu_notifier_put(mn);
+> +	}
+> +}
+> +
+> +static void sgx_mmu_notifier_free(struct mmu_notifier *mn)
+> +{
+> +	struct sgx_encl_mm *encl_mm =
+> +		container_of(mn, struct sgx_encl_mm, mmu_notifier);
+> +
+> +	kfree(encl_mm);
+> +}
+> +
+> +static const struct mmu_notifier_ops sgx_mmu_notifier_ops = {
+> +	.release		= sgx_mmu_notifier_release,
+> +	.free_notifier		= sgx_mmu_notifier_free,
+> +};
+> +
+> +static struct sgx_encl_mm *sgx_encl_find_mm(struct sgx_encl *encl,
+> +					    struct mm_struct *mm)
+> +{
+> +	struct sgx_encl_mm *encl_mm = NULL;
+> +	struct sgx_encl_mm *tmp;
+> +	int idx;
+> +
+> +	idx = srcu_read_lock(&encl->srcu);
+> +
+> +	list_for_each_entry_rcu(tmp, &encl->mm_list, list) {
+> +		if (tmp->mm == mm) {
+> +			encl_mm = tmp;
+> +			break;
+> +		}
+> +	}
+> +
+> +	srcu_read_unlock(&encl->srcu, idx);
+> +
+> +	return encl_mm;
+> +}
+> +
+> +int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
+> +{
+> +	struct sgx_encl_mm *encl_mm;
+> +	int ret;
+> +
+> +	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * mm_structs are kept on mm_list until the mm or the enclave dies,
+> +	 * i.e. once an mm is off the list, it's gone for good, therefore it's
+> +	 * impossible to get a false positive on @mm due to a stale mm_list.
+> +	 */
+> +	if (sgx_encl_find_mm(encl, mm))
+> +		return 0;
+> +
+> +	encl_mm = kzalloc(sizeof(*encl_mm), GFP_KERNEL);
+> +	if (!encl_mm)
+> +		return -ENOMEM;
+> +
+> +	encl_mm->encl = encl;
+> +	encl_mm->mm = mm;
+> +	encl_mm->mmu_notifier.ops = &sgx_mmu_notifier_ops;
+> +
+> +	ret = __mmu_notifier_register(&encl_mm->mmu_notifier, mm);
+> +	if (ret) {
+> +		kfree(encl_mm);
+> +		return ret;
+> +	}
+> +
+> +	spin_lock(&encl->mm_lock);
+> +	list_add_rcu(&encl_mm->list, &encl->mm_list);
+> +	spin_unlock(&encl->mm_lock);
+> +
+> +	synchronize_srcu(&encl->srcu);
+> +
+> +	return 0;
+> +}
+> +
+> +static void sgx_vma_open(struct vm_area_struct *vma)
+> +{
+> +	struct sgx_encl *encl = vma->vm_private_data;
+> +
+> +	if (!encl)
+> +		return;
+> +
+> +	if (sgx_encl_mm_add(encl, vma->vm_mm))
+> +		vma->vm_private_data = NULL;
+> +}
+> +
+> +static unsigned int sgx_vma_fault(struct vm_fault *vmf)
+> +{
+> +	unsigned long addr = (unsigned long)vmf->address;
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	struct sgx_encl *encl = vma->vm_private_data;
+> +	struct sgx_encl_page *entry;
+> +	int ret = VM_FAULT_NOPAGE;
+> +	unsigned long pfn;
+> +
+> +	if (!encl)
+> +		return VM_FAULT_SIGBUS;
+> +
+> +	mutex_lock(&encl->lock);
+> +
+> +	entry = sgx_encl_load_page(encl, addr);
+> +	if (IS_ERR(entry)) {
+> +		if (unlikely(PTR_ERR(entry) != -EBUSY))
+> +			ret = VM_FAULT_SIGBUS;
+> +
+> +		goto out;
+> +	}
+> +
+> +	if (!follow_pfn(vma, addr, &pfn))
+> +		goto out;
+> +
+> +	ret = vmf_insert_pfn(vma, addr, PFN_DOWN(entry->epc_page->desc));
+> +	if (ret != VM_FAULT_NOPAGE) {
+> +		ret = VM_FAULT_SIGBUS;
+> +		goto out;
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&encl->lock);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sgx_encl_may_map() - Check if a requested VMA mapping is allowed
+> + * @encl:		an enclave
+> + * @start:		lower bound of the address range, inclusive
+> + * @end:		upper bound of the address range, exclusive
+> + * @vm_prot_bits:	requested protections of the address range
+> + *
+> + * Iterate through the enclave pages contained within [@start, @end) to verify
+> + * the permissions requested by @vm_prot_bits do not exceed that of any enclave
+> + * page to be mapped.  Page addresses that do not have an associated enclave
+> + * page are interpreted to zero permissions.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -EACCES if VMA permissions exceed enclave page permissions
+> + */
+> +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> +		     unsigned long end, unsigned long vm_prot_bits)
+> +{
+> +	unsigned long idx, idx_start, idx_end;
+> +	struct sgx_encl_page *page;
+> +
+> +	/* PROT_NONE always succeeds. */
+> +	if (!vm_prot_bits)
+> +		return 0;
+> +
+> +	idx_start = PFN_DOWN(start);
+> +	idx_end = PFN_DOWN(end - 1);
+> +
+> +	for (idx = idx_start; idx <= idx_end; ++idx) {
+> +		mutex_lock(&encl->lock);
+> +		page = radix_tree_lookup(&encl->page_tree, idx);
+> +		mutex_unlock(&encl->lock);
+> +
+> +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+> +			return -EACCES;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
+> +			    unsigned long end, unsigned long prot)
+> +{
+> +	return sgx_encl_may_map(vma->vm_private_data, start, end,
+> +				calc_vm_prot_bits(prot, 0));
+> +}
+> +
+> +const struct vm_operations_struct sgx_vm_ops = {
+> +	.open = sgx_vma_open,
+> +	.fault = sgx_vma_fault,
+> +	.may_mprotect = sgx_vma_mprotect,
+> +};
+> +
+> +/**
+> + * sgx_encl_find - find an enclave
+> + * @mm:		mm struct of the current process
+> + * @addr:	address in the ELRANGE
+> + * @vma:	the resulting VMA
+> + *
+> + * Find an enclave identified by the given address. Give back a VMA that is
+> + * part of the enclave and located in that address. The VMA is given back if it
+> + * is a proper enclave VMA even if an &sgx_encl instance does not exist yet
+> + * (enclave creation has not been performed).
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -EINVAL if an enclave was not found,
+> + *   -ENOENT if the enclave has not been created yet
+> + */
+> +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> +		  struct vm_area_struct **vma)
+> +{
+> +	struct vm_area_struct *result;
+> +	struct sgx_encl *encl;
+> +
+> +	result = find_vma(mm, addr);
+> +	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> +		return -EINVAL;
+> +
+> +	encl = result->vm_private_data;
+> +	*vma = result;
+> +
+> +	return encl ? 0 : -ENOENT;
+> +}
+> +
+> +/**
+> + * sgx_encl_destroy() - destroy enclave resources
+> + * @encl:	an &sgx_encl instance
+> + */
+> +void sgx_encl_destroy(struct sgx_encl *encl)
+> +{
+> +	struct sgx_encl_page *entry;
+> +	struct radix_tree_iter iter;
+> +	void **slot;
+> +
+> +	atomic_or(SGX_ENCL_DEAD, &encl->flags);
+> +
+> +	radix_tree_for_each_slot(slot, &encl->page_tree, &iter, 0) {
+> +		entry = *slot;
+> +
+> +		if (entry->epc_page) {
+> +			sgx_free_page(entry->epc_page);
+> +			encl->secs_child_cnt--;
+> +			entry->epc_page = NULL;
+> +		}
+> +
+> +		radix_tree_delete(&entry->encl->page_tree,
+> +				  PFN_DOWN(entry->desc));
+> +		kfree(entry);
+> +	}
+> +
+> +	if (!encl->secs_child_cnt && encl->secs.epc_page) {
+> +		sgx_free_page(encl->secs.epc_page);
+> +		encl->secs.epc_page = NULL;
+> +	}
+> +}
+> +
+> +/**
+> + * sgx_encl_release - Destroy an enclave instance
+> + * @kref:	address of a kref inside &sgx_encl
+> + *
+> + * Used together with kref_put(). Frees all the resources associated with the
+> + * enclave and the instance itself.
+> + */
+> +void sgx_encl_release(struct kref *ref)
+> +{
+> +	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
+> +
+> +	sgx_encl_destroy(encl);
+> +
+> +	if (encl->backing)
+> +		fput(encl->backing);
+> +
+> +	WARN_ON_ONCE(!list_empty(&encl->mm_list));
+> +
+> +	/* Detect EPC page leak's. */
+> +	WARN_ON_ONCE(encl->secs_child_cnt);
+> +	WARN_ON_ONCE(encl->secs.epc_page);
+> +
+> +	kfree(encl);
+> +}
+> diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
+> new file mode 100644
+> index 000000000000..1d1bc5d590ee
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/encl.h
+> @@ -0,0 +1,87 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/**
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +#ifndef _X86_ENCL_H
+> +#define _X86_ENCL_H
+> +
+> +#include <linux/cpumask.h>
+> +#include <linux/kref.h>
+> +#include <linux/list.h>
+> +#include <linux/mm_types.h>
+> +#include <linux/mmu_notifier.h>
+> +#include <linux/mutex.h>
+> +#include <linux/notifier.h>
+> +#include <linux/radix-tree.h>
+> +#include <linux/srcu.h>
+> +#include <linux/workqueue.h>
+> +#include "sgx.h"
+> +
+> +/**
+> + * enum sgx_encl_page_desc - defines bits for an enclave page's descriptor
+> + * %SGX_ENCL_PAGE_ADDR_MASK:		Holds the virtual address of the page.
+> + *
+> + * The page address for SECS is zero and is used by the subsystem to recognize
+> + * the SECS page.
+> + */
+> +enum sgx_encl_page_desc {
+> +	/* Bits 11:3 are available when the page is not swapped. */
+> +	SGX_ENCL_PAGE_ADDR_MASK		= PAGE_MASK,
+> +};
+> +
+> +#define SGX_ENCL_PAGE_ADDR(page) \
+> +	((page)->desc & SGX_ENCL_PAGE_ADDR_MASK)
+> +
+> +struct sgx_encl_page {
+> +	unsigned long desc;
+> +	unsigned long vm_max_prot_bits;
+> +	struct sgx_epc_page *epc_page;
+> +	struct sgx_encl *encl;
+> +};
+> +
+> +enum sgx_encl_flags {
+> +	SGX_ENCL_CREATED	= BIT(0),
+> +	SGX_ENCL_INITIALIZED	= BIT(1),
+> +	SGX_ENCL_DEBUG		= BIT(2),
+> +	SGX_ENCL_DEAD		= BIT(3),
+> +	SGX_ENCL_IOCTL		= BIT(4),
+> +};
+> +
+> +struct sgx_encl_mm {
+> +	struct sgx_encl *encl;
+> +	struct mm_struct *mm;
+> +	struct list_head list;
+> +	struct mmu_notifier mmu_notifier;
+> +};
+> +
+> +struct sgx_encl {
+> +	atomic_t flags;
+> +	u64 secs_attributes;
+> +	u64 allowed_attributes;
+> +	unsigned int page_cnt;
+> +	unsigned int secs_child_cnt;
+> +	struct mutex lock;
+> +	struct list_head mm_list;
+> +	spinlock_t mm_lock;
+> +	struct file *backing;
+> +	struct kref refcount;
+> +	struct srcu_struct srcu;
+> +	unsigned long base;
+> +	unsigned long size;
+> +	unsigned long ssaframesize;
+> +	struct radix_tree_root page_tree;
+> +	struct sgx_encl_page secs;
+> +	cpumask_t cpumask;
+> +};
+> +
+> +extern const struct vm_operations_struct sgx_vm_ops;
+> +
+> +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> +		  struct vm_area_struct **vma);
+> +void sgx_encl_destroy(struct sgx_encl *encl);
+> +void sgx_encl_release(struct kref *ref);
+> +int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
+> +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> +		     unsigned long end, unsigned long vm_prot_bits);
+> +
+> +#endif /* _X86_ENCL_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> new file mode 100644
+> index 000000000000..691efac24ed7
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -0,0 +1,656 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-19 Intel Corporation.
+> +
+> +#include <asm/mman.h>
+> +#include <linux/mman.h>
+> +#include <linux/delay.h>
+> +#include <linux/file.h>
+> +#include <linux/hashtable.h>
+> +#include <linux/highmem.h>
+> +#include <linux/ratelimit.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/slab.h>
+> +#include <linux/suspend.h>
+> +#include "driver.h"
+> +#include "encl.h"
+> +#include "encls.h"
+> +
+> +static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
+> +{
+> +	u32 size_max = PAGE_SIZE;
+> +	u32 size;
+> +	int i;
+> +
+> +	for (i = 2; i < 64; i++) {
+> +		if (!((1 << i) & xfrm))
+> +			continue;
+> +
+> +		size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
+> +		if (miscselect & SGX_MISC_EXINFO)
+> +			size += SGX_SSA_MISC_EXINFO_SIZE;
+> +
+> +		if (size > size_max)
+> +			size_max = size;
+> +	}
+> +
+> +	return PFN_UP(size_max);
+> +}
+> +
+> +static int sgx_validate_secs(const struct sgx_secs *secs,
+> +			     unsigned long ssaframesize)
+> +{
+> +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> +		return -EINVAL;
+> +
+> +	if (secs->base & (secs->size - 1))
+> +		return -EINVAL;
+> +
+> +	if (secs->miscselect & sgx_misc_reserved_mask ||
+> +	    secs->attributes & sgx_attributes_reserved_mask ||
+> +	    secs->xfrm & sgx_xfrm_reserved_mask)
+> +		return -EINVAL;
+> +
+> +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
+> +		if (secs->size > sgx_encl_size_max_64)
+> +			return -EINVAL;
+> +	} else if (secs->size > sgx_encl_size_max_32)
+> +		return -EINVAL;
+> +
+> +	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
+> +	    !(secs->xfrm & XFEATURE_MASK_SSE) ||
+> +	    (((secs->xfrm >> XFEATURE_BNDREGS) & 1) !=
+> +	     ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
+> +		return -EINVAL;
+> +
+> +	if (!secs->ssa_frame_size || ssaframesize > secs->ssa_frame_size)
+> +		return -EINVAL;
+> +
+> +	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
+> +	    memchr_inv(secs->reserved2, 0, sizeof(secs->reserved2)) ||
+> +	    memchr_inv(secs->reserved3, 0, sizeof(secs->reserved3)) ||
+> +	    memchr_inv(secs->reserved4, 0, sizeof(secs->reserved4)))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
+> +						 unsigned long offset,
+> +						 u64 secinfo_flags)
+> +{
+> +	struct sgx_encl_page *encl_page;
+> +	unsigned long prot;
+> +
+> +	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
+> +	if (!encl_page)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	encl_page->desc = encl->base + offset;
+> +	encl_page->encl = encl;
+> +
+> +	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
+> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
+> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
+> +
+> +	/*
+> +	 * TCS pages must always RW set for CPU access while the SECINFO
+> +	 * permissions are *always* zero - the CPU ignores the user provided
+> +	 * values and silently overwrites them with zero permissions.
+> +	 */
+> +	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
+> +		prot |= PROT_READ | PROT_WRITE;
+> +
+> +	/* Calculate maximum of the VM flags for the page. */
+> +	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
+> +
+> +	return encl_page;
+> +}
+> +
+> +static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+> +{
+> +	unsigned long encl_size = secs->size + PAGE_SIZE;
+> +	struct sgx_epc_page *secs_epc;
+> +	unsigned long ssaframesize;
+> +	struct sgx_pageinfo pginfo;
+> +	struct sgx_secinfo secinfo;
+> +	struct file *backing;
+> +	long ret;
+> +
+> +	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
+> +		return -EINVAL;
+> +
+> +	ssaframesize = sgx_calc_ssaframesize(secs->miscselect, secs->xfrm);
+> +	if (sgx_validate_secs(secs, ssaframesize)) {
+> +		pr_debug("invalid SECS\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
+> +				   VM_NORESERVE);
+> +	if (IS_ERR(backing))
+> +		return PTR_ERR(backing);
+> +
+> +	encl->backing = backing;
+> +
+> +	secs_epc = sgx_try_alloc_page();
+> +	if (IS_ERR(secs_epc)) {
+> +		ret = PTR_ERR(secs_epc);
+> +		goto err_out_backing;
+> +	}
+> +
+> +	encl->secs.epc_page = secs_epc;
+> +
+> +	pginfo.addr = 0;
+> +	pginfo.contents = (unsigned long)secs;
+> +	pginfo.metadata = (unsigned long)&secinfo;
+> +	pginfo.secs = 0;
+> +	memset(&secinfo, 0, sizeof(secinfo));
+> +
+> +	ret = __ecreate((void *)&pginfo, sgx_epc_addr(secs_epc));
+> +	if (ret) {
+> +		pr_debug("ECREATE returned %ld\n", ret);
+> +		goto err_out;
+> +	}
+> +
+> +	if (secs->attributes & SGX_ATTR_DEBUG)
+> +		atomic_or(SGX_ENCL_DEBUG, &encl->flags);
+> +
+> +	encl->secs.encl = encl;
+> +	encl->secs_attributes = secs->attributes;
+> +	encl->allowed_attributes |= SGX_ATTR_ALLOWED_MASK;
+> +	encl->base = secs->base;
+> +	encl->size = secs->size;
+> +	encl->ssaframesize = secs->ssa_frame_size;
+> +
+> +	/*
+> +	 * Set SGX_ENCL_CREATED only after the enclave is fully prepped.  This
+> +	 * allows setting and checking enclave creation without having to take
+> +	 * encl->lock.
+> +	 */
+> +	atomic_or(SGX_ENCL_CREATED, &encl->flags);
+> +
+> +	return 0;
+> +
+> +err_out:
+> +	sgx_free_page(encl->secs.epc_page);
+> +	encl->secs.epc_page = NULL;
+> +
+> +err_out_backing:
+> +	fput(encl->backing);
+> +	encl->backing = NULL;
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
+> + * @filep:	open file to /dev/sgx
+> + * @arg:	userspace pointer to a struct sgx_enclave_create instance
+> + *
+> + * Allocate kernel data structures for a new enclave and execute ECREATE after
+> + * verifying the correctness of the provided SECS.
+> + *
+> + * Note, enforcement of restricted and disallowed attributes is deferred until
+> + * sgx_ioc_enclave_init(), only the architectural correctness of the SECS is
+> + * checked by sgx_ioc_enclave_create().
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+> +{
+> +	struct sgx_enclave_create ecreate;
+> +	struct page *secs_page;
+> +	struct sgx_secs *secs;
+> +	int ret;
+> +
+> +	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
+> +		return -EFAULT;
+> +
+> +	secs_page = alloc_page(GFP_HIGHUSER);
+> +	if (!secs_page)
+> +		return -ENOMEM;
+> +
+> +	secs = kmap(secs_page);
+> +	if (copy_from_user(secs, (void __user *)ecreate.src, sizeof(*secs))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	ret = sgx_encl_create(encl, secs);
+> +
+> +out:
+> +	kunmap(secs_page);
+> +	__free_page(secs_page);
+> +	return ret;
+> +}
+> +
+> +static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
+> +{
+> +	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
+> +	u64 pt = secinfo->flags & SGX_SECINFO_PAGE_TYPE_MASK;
+> +
+> +	if (pt != SGX_SECINFO_REG && pt != SGX_SECINFO_TCS)
+> +		return -EINVAL;
+> +
+> +	if ((perm & SGX_SECINFO_W) && !(perm & SGX_SECINFO_R))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * CPU will silently overwrite the permissions as zero, which means
+> +	 * that we need to validate it ourselves.
+> +	 */
+> +	if (pt == SGX_SECINFO_TCS && perm)
+> +		return -EINVAL;
+> +
+> +	if (secinfo->flags & SGX_SECINFO_RESERVED_MASK)
+> +		return -EINVAL;
+> +
+> +	if (memchr_inv(secinfo->reserved, 0, sizeof(secinfo->reserved)))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __sgx_encl_add_page(struct sgx_encl *encl,
+> +			       struct sgx_encl_page *encl_page,
+> +			       struct sgx_epc_page *epc_page,
+> +			       struct sgx_secinfo *secinfo, unsigned long src)
+> +{
+> +	struct sgx_pageinfo pginfo;
+> +	struct vm_area_struct *vma;
+> +	struct page *src_page;
+> +	int ret;
+> +
+> +	/* Query vma's VM_MAYEXEC as an indirect path_noexec() check. */
+> +	if (encl_page->vm_max_prot_bits & VM_EXEC) {
+> +		vma = find_vma(current->mm, src);
+> +		if (!vma)
+> +			return -EFAULT;
+> +
+> +		if (!(vma->vm_flags & VM_MAYEXEC))
+> +			return -EACCES;
+> +	}
+> +
+> +	ret = get_user_pages(src, 1, 0, &src_page, NULL);
+> +	if (ret < 1)
+> +		return ret;
+> +
+> +	pginfo.secs = (unsigned long)sgx_epc_addr(encl->secs.epc_page);
+> +	pginfo.addr = SGX_ENCL_PAGE_ADDR(encl_page);
+> +	pginfo.metadata = (unsigned long)secinfo;
+> +	pginfo.contents = (unsigned long)kmap_atomic(src_page);
+> +
+> +	ret = __eadd(&pginfo, sgx_epc_addr(epc_page));
+> +
+> +	kunmap_atomic((void *)pginfo.contents);
+> +	put_page(src_page);
+> +
+> +	return ret ? -EFAULT : 0;
+> +}
+> +
+> +static int __sgx_encl_extend(struct sgx_encl *encl,
+> +			     struct sgx_epc_page *epc_page)
+> +{
+> +	int ret;
+> +	int i;
+> +
+> +	for (i = 0; i < 16; i++) {
+> +		ret = __eextend(sgx_epc_addr(encl->secs.epc_page),
+> +				sgx_epc_addr(epc_page) + (i * 0x100));
+> +		if (ret) {
+> +			if (encls_failed(ret))
+> +				ENCLS_WARN(ret, "EEXTEND");
+> +			return -EFAULT;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int sgx_encl_add_page(struct sgx_encl *encl,
+> +			     struct sgx_enclave_add_pages *addp,
+> +			     struct sgx_secinfo *secinfo)
+> +{
+> +	struct sgx_encl_page *encl_page;
+> +	struct sgx_epc_page *epc_page;
+> +	int ret;
+> +
+> +	encl_page = sgx_encl_page_alloc(encl, addp->offset, secinfo->flags);
+> +	if (IS_ERR(encl_page))
+> +		return PTR_ERR(encl_page);
+> +
+> +	epc_page = sgx_try_alloc_page();
+> +	if (IS_ERR(epc_page)) {
+> +		kfree(encl_page);
+> +		return PTR_ERR(epc_page);
+> +	}
+> +
+> +	if (atomic_read(&encl->flags) &
+> +	    (SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD)) {
+> +		ret = -EFAULT;
+> +		goto err_out_free;
+> +	}
+> +
+> +	down_read(&current->mm->mmap_sem);
+> +	mutex_lock(&encl->lock);
+> +
+> +	/*
+> +	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
+> +	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
+> +	 * to userspace errors (or kernel/hardware bugs).
+> +	 */
+> +	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
+> +				encl_page);
+> +	if (ret)
+> +		goto err_out_unlock;
+> +
+> +	ret = __sgx_encl_add_page(encl, encl_page, epc_page, secinfo,
+> +				  addp->src);
+> +	if (ret)
+> +		goto err_out;
+> +
+> +	/*
+> +	 * Complete the "add" before doing the "extend" so that the "add"
+> +	 * isn't in a half-baked state in the extremely unlikely scenario the
+> +	 * the enclave will be destroyed in response to EEXTEND failure.
+> +	 */
+> +	encl_page->encl = encl;
+> +	encl_page->epc_page = epc_page;
+> +	encl->secs_child_cnt++;
+> +
+> +	if (addp->flags & SGX_PAGE_MEASURE) {
+> +		ret = __sgx_encl_extend(encl, epc_page);
+> +		if (ret)
+> +			sgx_encl_destroy(encl);
+> +	}
+> +
+> +	mutex_unlock(&encl->lock);
+> +	up_read(&current->mm->mmap_sem);
+> +	return ret;
+> +
+> +err_out:
+> +	radix_tree_delete(&encl_page->encl->page_tree,
+> +			  PFN_DOWN(encl_page->desc));
+> +
+> +err_out_unlock:
+> +	mutex_unlock(&encl->lock);
+> +	up_read(&current->mm->mmap_sem);
+> +
+> +err_out_free:
+> +	sgx_free_page(epc_page);
+> +	kfree(encl_page);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
+> + * @encl:       pointer to an enclave instance (via ioctl() file pointer)
+> + * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
+> + *
+> + * Add (EADD) one or more pages to an uninitialized enclave, and optionally
+> + * extend (EEXTEND) the measurement with the contents of the page. The range of
+> + * pages must be virtually contiguous. The SECINFO and measurement mask are
+> + * applied to all pages, i.e. pages with different properties must be added in
+> + * separate calls.
+> + *
+> + * A SECINFO for a TCS is required to always contain zero permissions because
+> + * CPU silently zeros them. Allowing anything else would cause a mismatch in
+> + * the measurement.
+> + *
+> + * mmap()'s protection bits are capped by the page permissions. For each page
+> + * address, the maximum protection bits are computed with the following
+> + * heuristics:
+> + *
+> + * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
+> + * 2. A TCS page: PROT_R | PROT_W.
+> + * 3. No page: PROT_NONE.
+> + *
+> + * mmap() is not allowed to surpass the minimum of the maximum protection bits
+> + * within the given address range.
+> + *
+> + * As stated above, a non-existent page is interpreted as a page with no
+> + * permissions. In effect, this allows mmap() with PROT_NONE to be used to seek
+> + * an address range for the enclave that can be then populated into SECS.
+> + *
+> + * @arg->addr, @arg->src and @arg->length are adjusted to reflect the
+> + * remaining pages that need to be added to the enclave, e.g. userspace can
+> + * re-invoke SGX_IOC_ENCLAVE_ADD_PAGES using the same struct in response to an
+> + * ERESTARTSYS error.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -EINVAL if any input param or the SECINFO contains invalid data,
+> + *   -EACCES if an executable source page is located in a noexec partition,
+> + *   -ENOMEM if any memory allocation, including EPC, fails,
+> + *   -ERESTARTSYS if a pending signal is recognized
+> + */
+> +static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+> +{
+> +	struct sgx_enclave_add_pages addp;
+> +	struct sgx_secinfo secinfo;
+> +	int ret;
+> +
+> +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&addp, arg, sizeof(addp)))
+> +		return -EFAULT;
+> +
+> +	if (!IS_ALIGNED(addp.offset, PAGE_SIZE) ||
+> +	    !IS_ALIGNED(addp.src, PAGE_SIZE))
+> +		return -EINVAL;
+> +
+> +	if (!(access_ok(addp.src, PAGE_SIZE)))
+> +		return -EFAULT;
+> +
+> +	if (addp.length & (PAGE_SIZE - 1))
+> +		return -EINVAL;
+> +
+> +	if (addp.offset + addp.length - PAGE_SIZE >= encl->size)
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&secinfo, (void __user *)addp.secinfo,
+> +			   sizeof(secinfo)))
+> +		return -EFAULT;
+> +
+> +	if (sgx_validate_secinfo(&secinfo))
+> +		return -EINVAL;
+> +
+> +	for ( ; addp.length > 0; addp.length -= PAGE_SIZE) {
+> +		if (signal_pending(current)) {
+> +			ret = -ERESTARTSYS;
+> +			break;
+> +		}
+> +
+> +		if (need_resched())
+> +			cond_resched();
+> +
+> +		ret = sgx_encl_add_page(encl, &addp, &secinfo);
+> +		if (ret)
+> +			break;
+> +
+> +		addp.offset += PAGE_SIZE;
+> +		addp.src += PAGE_SIZE;
+> +	}
+> +
+> +	if (copy_to_user(arg, &addp, sizeof(addp)))
+> +		return -EFAULT;
+> +
+> +	return ret;
+> +}
+> +
+> +static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
+> +			      void *hash)
+> +{
+> +	SHASH_DESC_ON_STACK(shash, tfm);
+> +
+> +	shash->tfm = tfm;
+> +
+> +	return crypto_shash_digest(shash, modulus, SGX_MODULUS_SIZE, hash);
+> +}
+> +
+> +static int sgx_get_key_hash(const void *modulus, void *hash)
+> +{
+> +	struct crypto_shash *tfm;
+> +	int ret;
+> +
+> +	tfm = crypto_alloc_shash("sha256", 0, CRYPTO_ALG_ASYNC);
+> +	if (IS_ERR(tfm))
+> +		return PTR_ERR(tfm);
+> +
+> +	ret = __sgx_get_key_hash(tfm, modulus, hash);
+> +
+> +	crypto_free_shash(tfm);
+> +	return ret;
+> +}
+> +
+> +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+> +			 struct sgx_einittoken *token)
+> +{
+> +	u64 mrsigner[4];
+> +	int ret;
+> +	int i;
+> +	int j;
+> +
+> +	/* Check that the required attributes have been authorized. */
+> +	if (encl->secs_attributes & ~encl->allowed_attributes)
+> +		return -EINVAL;
+> +
+> +	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&encl->lock);
+> +
+> +	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
+> +		ret = -EFAULT;
+> +		goto err_out;
+> +	}
+> +
+> +	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
+> +		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
+> +			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
+> +					mrsigner);
+> +			if (ret == SGX_UNMASKED_EVENT)
+> +				continue;
+> +			else
+> +				break;
+> +		}
+> +
+> +		if (ret != SGX_UNMASKED_EVENT)
+> +			break;
+> +
+> +		msleep_interruptible(SGX_EINIT_SLEEP_TIME);
+> +
+> +		if (signal_pending(current)) {
+> +			ret = -ERESTARTSYS;
+> +			goto err_out;
+> +		}
+> +	}
+> +
+> +	if (ret & ENCLS_FAULT_FLAG) {
+> +		if (encls_failed(ret))
+> +			ENCLS_WARN(ret, "EINIT");
+> +
+> +		sgx_encl_destroy(encl);
+> +		ret = -EFAULT;
+> +	} else if (ret) {
+> +		pr_debug("EINIT returned %d\n", ret);
+> +		ret = -EPERM;
+> +	} else {
+> +		atomic_or(SGX_ENCL_INITIALIZED, &encl->flags);
+> +	}
+> +
+> +err_out:
+> +	mutex_unlock(&encl->lock);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
+> + *
+> + * @filep:	open file to /dev/sgx
+> + * @arg:	userspace pointer to a struct sgx_enclave_init instance
+> + *
+> + * Flush any outstanding enqueued EADD operations and perform EINIT.  The
+> + * Launch Enclave Public Key Hash MSRs are rewritten as necessary to match
+> + * the enclave's MRSIGNER, which is caculated from the provided sigstruct.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   SGX error code on EINIT failure,
+> + *   -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+> +{
+> +	struct sgx_einittoken *einittoken;
+> +	struct sgx_sigstruct *sigstruct;
+> +	struct sgx_enclave_init einit;
+> +	struct page *initp_page;
+> +	int ret;
+> +
+> +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&einit, arg, sizeof(einit)))
+> +		return -EFAULT;
+> +
+> +	initp_page = alloc_page(GFP_HIGHUSER);
+> +	if (!initp_page)
+> +		return -ENOMEM;
+> +
+> +	sigstruct = kmap(initp_page);
+> +	einittoken = (struct sgx_einittoken *)
+> +		((unsigned long)sigstruct + PAGE_SIZE / 2);
+> +	memset(einittoken, 0, sizeof(*einittoken));
+> +
+> +	if (copy_from_user(sigstruct, (void __user *)einit.sigstruct,
+> +			   sizeof(*sigstruct))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	ret = sgx_encl_init(encl, sigstruct, einittoken);
+> +
+> +out:
+> +	kunmap(initp_page);
+> +	__free_page(initp_page);
+> +	return ret;
+> +}
+> +
+> +
+> +long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct sgx_encl *encl = filep->private_data;
+> +	int ret, encl_flags;
+> +
+> +	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
+> +	if (encl_flags & SGX_ENCL_IOCTL)
+> +		return -EBUSY;
+> +
+> +	if (encl_flags & SGX_ENCL_DEAD)
+> +		return -EFAULT;
+> +
+> +	switch (cmd) {
+> +	case SGX_IOC_ENCLAVE_CREATE:
+> +		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
+> +		break;
+> +	case SGX_IOC_ENCLAVE_ADD_PAGES:
+> +		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
+> +		break;
+> +	case SGX_IOC_ENCLAVE_INIT:
+> +		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+> +		break;
+> +	default:
+> +		ret = -ENOIOCTLCMD;
+> +		break;
+> +	}
+> +
+> +	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index 6a37df61ae32..36a295a0272b 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/ratelimit.h>
+>   #include <linux/sched/signal.h>
+>   #include <linux/slab.h>
+> +#include "driver.h"
+>   #include "encls.h"
+>   
+>   struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> @@ -196,6 +197,8 @@ static bool __init sgx_page_cache_init(void)
+>   
+>   static void __init sgx_init(void)
+>   {
+> +	int ret;
+> +
+>   	if (!boot_cpu_has(X86_FEATURE_SGX))
+>   		return;
+>   
+> @@ -205,8 +208,15 @@ static void __init sgx_init(void)
+>   	if (!sgx_page_reclaimer_init())
+>   		goto err_page_cache;
+>   
+> +	ret = sgx_drv_init();
+> +	if (ret)
+> +		goto err_kthread;
+> +
+>   	return;
+>   
+> +err_kthread:
+> +	kthread_stop(ksgxswapd_tsk);
+> +
+>   err_page_cache:
+>   	sgx_page_cache_teardown();
+>   }
+> diff --git a/arch/x86/kernel/cpu/sgx/reclaim.c b/arch/x86/kernel/cpu/sgx/reclaim.c
+> index f071158d34f6..bdb42f4326aa 100644
+> --- a/arch/x86/kernel/cpu/sgx/reclaim.c
+> +++ b/arch/x86/kernel/cpu/sgx/reclaim.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/sched/mm.h>
+>   #include <linux/sched/signal.h>
+>   #include "encls.h"
+> +#include "driver.h"
+>   
+>   struct task_struct *ksgxswapd_tsk;
+>   
+> 
 
-url:    https://github.com/0day-ci/linux/commits/Joe-Perches/compiler-h-Add-__-prefix-and-suffix-to-all-__attribute__-defines/20191030-054036
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 23fdb198ae81f47a574296dab5167c5e136a02ba
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_codec.c:111:49: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_codec.c:111:49: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_codec.c:111:49: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:141:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:141:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:141:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:421:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:421:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:421:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:719:37: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:719:37: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:719:37: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:726:32: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:726:32: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:726:32: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:874:41: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:874:41: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:874:41: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:960:67: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:960:67: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:960:67: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_codec.c:1404:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/hda/hda_codec.c:1589:20: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:1808:48: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:1839:47: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:1839:47: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:1839:47: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_codec.c:2016:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2097:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/hda_codec.c:2174:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/hda_codec.c:2393:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2400:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2406:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2413:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2578:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2660:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:2668:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:3338:37: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_codec.c:3471:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_jack.c:254:55: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_jack.c:254:55: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_jack.c:254:55: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_sysfs.c:156:38: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_sysfs.c:156:38: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_sysfs.c:156:38: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_sysfs.c:585:45: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_sysfs.c:585:45: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_sysfs.c:585:45: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/sound/hda_register.h:319:16: sparse: sparse: cast from restricted __le32
->> sound/pci/hda/hda_controller.c:567:33: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/hda_controller.c:567:33: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/hda/hda_controller.c:745:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_controller.c:745:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_controller.c:745:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_controller.c:1351:69: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_controller.c:1351:69: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_controller.c:1351:69: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_proc.c:816:54: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_proc.c:816:54: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_proc.c:816:54: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_beep.c:209:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_beep.c:209:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_beep.c:209:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/hda_generic.c:67:44: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_generic.c:67:44: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_generic.c:67:44: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:69:50: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:69:50: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:69:50: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_generic.c:952:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:955:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:963:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:1974:47: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:1974:47: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:1974:47: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:2271:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/hda_generic.c:2313:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/hda_generic.c:2404:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:2516:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:2678:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:2846:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:2901:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/hda_generic.c:2992:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:3428:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:3485:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:3509:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:3990:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:4739:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/hda_generic.c:6115:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:6115:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_generic.c:6115:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/hda/patch_realtek.c:314:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_realtek.c:314:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_realtek.c:314:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_realtek.c:1030:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_realtek.c:1031:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_realtek.c:1112:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_realtek.c:1112:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_realtek.c:1112:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_realtek.c:2762:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_realtek.c:2764:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_cmedia.c:41:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cmedia.c:41:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cmedia.c:41:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_cmedia.c:70:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_cmedia.c:70:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_cmedia.c:70:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cmedia.c:94:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_analog.c:37:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_analog.c:38:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_analog.c:206:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_analog.c:206:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_analog.c:206:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_analog.c:497:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_analog.c:780:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/hda/patch_sigmatel.c:829:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:831:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:833:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:882:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:935:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1079:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1082:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1085:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1088:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1091:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:1094:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_sigmatel.c:2962:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_sigmatel.c:4464:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_sigmatel.c:4464:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_sigmatel.c:4464:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_si3054.c:120:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_si3054.c:121:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_si3054.c:176:20: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/patch_si3054.c:176:20: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/hda/patch_si3054.c:267:59: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_si3054.c:267:59: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_si3054.c:267:59: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_cirrus.c:574:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cirrus.c:574:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cirrus.c:574:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_cirrus.c:937:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/hda/patch_cirrus.c:976:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_ca0110.c:48:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_ca0110.c:48:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_ca0110.c:48:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/hda/patch_ca0132.c:2613:43: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/patch_ca0132.c:2997:51: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_ca0132.c:2997:51: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_ca0132.c:2997:51: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_ca0132.c:3001:63: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_ca0132.c:3001:63: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_ca0132.c:3001:63: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_ca0132.c:5199:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5213:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5280:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5332:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5386:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5437:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5482:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5538:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5602:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_ca0132.c:5659:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/hda/patch_ca0132.c:6060:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6096:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6111:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6123:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6140:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6157:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6174:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6190:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6208:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6225:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6237:17: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6298:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6299:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6300:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6301:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6302:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6303:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6304:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6305:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6306:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6308:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6310:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6312:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6314:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6325:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6326:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6327:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6328:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6329:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6330:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6331:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6332:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6333:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6334:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6335:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6336:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_ca0132.c:6337:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_ca0132.c:6347:9: sparse: sparse: too many warnings
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_conexant.c:52:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_conexant.c:53:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_conexant.c:500:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_conexant.c:507:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_conexant.c:980:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_conexant.c:980:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_conexant.c:980:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/hda/patch_via.c:104:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_via.c:104:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_via.c:104:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_via.c:244:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_via.c:254:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_via.c:255:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_via.c:485:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_via.c:584:25: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/patch_via.c:584:25: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/hda/patch_via.c:879:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/hda/patch_via.c:914:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_via.c:916:19: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/hda/patch_via.c:928:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/hda/patch_hdmi.c:328:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/hda/patch_hdmi.c:387:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/hda/patch_hdmi.c:2377:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_hdmi.c:2377:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_hdmi.c:2377:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_hdmi.c:3132:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_hdmi.c:3132:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/patch_hdmi.c:3132:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/patch_hdmi.c:3326:20: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/patch_hdmi.c:3326:20: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/hda/patch_hdmi.c:3326:20: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/patch_hdmi.c:3326:20: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:3347:38: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:3347:38: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:3347:38: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:3347:38: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:4025:37: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:4025:37: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:4025:37: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/patch_hdmi.c:4025:37: sparse: sparse: cast from restricted snd_pcm_format_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/uapi/linux/byteorder/little_endian.h:50:17: sparse: sparse: cast from restricted __le64
-   include/uapi/linux/byteorder/little_endian.h:66:17: sparse: sparse: cast from restricted __le16
-   include/uapi/linux/byteorder/little_endian.h:66:17: sparse: sparse: cast from restricted __le16
->> sound/pci/hda/hda_eld.c:569:19: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/hda/hda_eld.c:569:19: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/hda_eld.c:579:44: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/hda_eld.c:579:44: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/hda/hda_eld.c:584:44: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/hda/hda_eld.c:584:44: sparse: sparse: cast from restricted snd_pcm_format_t
-   include/linux/unaligned/access_ok.h:45:26: sparse: sparse: cast to restricted __le32
-   include/linux/unaligned/access_ok.h:45:26: sparse: sparse: cast to restricted __le32
-   include/linux/unaligned/access_ok.h:40:26: sparse: sparse: cast to restricted __le16
-   include/linux/unaligned/access_ok.h:40:26: sparse: sparse: cast to restricted __le16
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/hda/hda_intel.c:815:23: sparse: sparse: cast from restricted __le32
->> sound/pci/hda/hda_intel.c:1071:42: sparse: sparse: cast to restricted pci_power_t
->> sound/pci/hda/hda_intel.c:1706:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_intel.c:1706:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/hda/hda_intel.c:1706:37: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_intel.c:2104:58: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_intel.c:2104:58: sparse: sparse: cast to restricted gfp_t
-   sound/pci/hda/hda_intel.c:2104:58: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/ice1712/ice1712.c:269:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/ice1712.c:718:33: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/ice1712/ice1712.c:718:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:718:55: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:718:55: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:737:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:737:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:737:55: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:737:55: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:755:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:755:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:755:55: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:755:55: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:1122:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:1122:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:1141:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1712.c:1141:33: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/ice1712/ice1712.c:1324:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1712.c:1368:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1377:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1391:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1400:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1410:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1422:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1602:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1712.c:1629:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1712.c:1654:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1706:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1715:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1743:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1865:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1930:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1961:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:1992:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:2152:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:2160:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:2172:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1712.c:2202:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1712.c:2212:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1712.c:2235:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/ice1712.c:2524:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ice1712.c:2524:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ice1712.c:2524:37: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/delta.c:424:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/delta.c:717:61: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/delta.c:717:61: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/delta.c:717:61: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/delta.c:757:1: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/delta.c:759:1: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/delta.c:761:1: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/delta.c:763:1: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/delta.c:765:1: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/hoontech.c:163:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/hoontech.c:163:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/hoontech.c:163:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/hoontech.c:308:61: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/hoontech.c:308:61: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/hoontech.c:308:61: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/ews.c:439:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ews.c:439:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ews.c:439:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/ews.c:534:61: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/ews.c:534:61: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/ews.c:534:61: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ews.c:602:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:610:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:709:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:718:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:796:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:797:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:798:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:799:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:800:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:933:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:939:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:941:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:942:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ews.c:943:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/ak4xxx.c:118:47: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ak4xxx.c:118:47: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ak4xxx.c:118:47: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/ice1712/ice1724.c:917:33: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/ice1712/ice1724.c:917:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1724.c:935:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1724.c:935:33: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1724.c:956:33: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/ice1712/ice1724.c:956:33: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/ice1712/ice1724.c:1570:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1724.c:1597:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/ice1724.c:1699:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:1732:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:1741:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:1777:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:1837:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1724.c:1951:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:1982:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:2013:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:2130:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:2138:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/ice1724.c:2150:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/ice1724.c:2174:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/ice1724.c:2528:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ice1724.c:2528:37: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/ice1724.c:2528:37: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/revo.c:150:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/revo.c:150:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/revo.c:150:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:473:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:473:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:473:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:518:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:518:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/revo.c:518:64: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:629:47: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/aureon.c:349:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:735:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:785:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:838:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:935:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:1021:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:1179:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:1232:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/aureon.c:1250:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/aureon.c:1394:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1401:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1411:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1419:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1430:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1438:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1449:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1457:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1468:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1476:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1487:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1495:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1509:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1516:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1526:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1533:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1543:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1551:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1558:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1565:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1575:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1583:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1594:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1602:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1613:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1621:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1632:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1640:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1651:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1659:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1670:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1680:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1688:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1699:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1707:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1718:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1726:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1737:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1745:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1756:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1764:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1775:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1782:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1790:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1801:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1812:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1819:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1826:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1833:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1840:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/aureon.c:1847:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/aureon.c:2091:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/aureon.c:2091:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/aureon.c:2091:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/aureon.c:2106:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/aureon.c:2106:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/aureon.c:2106:56: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/pontis.c:102:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/pontis.c:157:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/pontis.c:442:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/pontis.c:534:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:544:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:554:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:562:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:570:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:577:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/pontis.c:584:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/pontis.c:745:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/pontis.c:745:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/pontis.c:745:56: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/prodigy192.c:135:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/prodigy192.c:227:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/prodigy192.c:351:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:360:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:371:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:379:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:390:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:399:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:410:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy192.c:583:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/prodigy192.c:724:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/prodigy192.c:724:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/prodigy192.c:724:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/prodigy_hifi.c:244:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/prodigy_hifi.c:289:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:353:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/prodigy_hifi.c:401:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/prodigy_hifi.c:452:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/prodigy_hifi.c:575:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/prodigy_hifi.c:746:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:756:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:766:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:777:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:788:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:799:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:810:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:820:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:828:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:836:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:843:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/prodigy_hifi.c:850:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/prodigy_hifi.c:1079:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/prodigy_hifi.c:1079:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/prodigy_hifi.c:1079:56: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1084:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1084:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1084:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1162:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1162:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1162:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1167:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1167:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/prodigy_hifi.c:1167:39: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/juli.c:348:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/juli.c:375:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/juli.c:383:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/juli.c:391:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/juli.c:417:21: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/juli.c:585:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/juli.c:585:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/juli.c:585:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/juli.c:619:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/juli.c:619:64: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/juli.c:619:64: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/phase.c:128:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/phase.c:128:56: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/phase.c:128:56: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/phase.c:321:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/phase.c:415:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:415:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:415:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:421:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:421:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:421:56: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/phase.c:468:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/phase.c:524:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/phase.c:628:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/phase.c:750:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:757:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:767:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:775:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:786:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:794:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:805:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:813:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:824:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:832:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:843:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:851:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:865:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:872:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:882:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/phase.c:889:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/wtm.c:184:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wtm.c:319:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/wtm.c:482:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:493:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:501:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:510:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:518:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:530:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wtm.c:538:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/wtm.c:584:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/wtm.c:584:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/wtm.c:584:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/se.c:423:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/se.c:588:22: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/se.c:663:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/se.c:663:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/se.c:663:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/quartet.c:725:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:733:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:741:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:748:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:749:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:750:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:751:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:752:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:753:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:754:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:755:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:756:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:757:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/quartet.c:775:21: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/quartet.c:991:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/quartet.c:991:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/quartet.c:991:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/quartet.c:1027:59: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/quartet.c:1027:59: sparse: sparse: cast to restricted gfp_t
-   sound/pci/ice1712/quartet.c:1027:59: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:629:47: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/maya44.c:163:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/maya44.c:430:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:442:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:454:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:466:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:476:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:486:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:493:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:501:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/maya44.c:508:26: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/maya44.c:677:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/maya44.c:677:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/maya44.c:677:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/psc724.c:191:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/psc724.c:342:22: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/psc724.c:389:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/psc724.c:389:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/ice1712/psc724.c:389:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/wm8766.c:32:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:43:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:54:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:65:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:72:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:79:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:86:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:92:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:98:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:104:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:110:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:116:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:122:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:128:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:187:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/ice1712/wm8766.c:282:22: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wm8766.c:294:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:299:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8766.c:306:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/ice1712/wm8776.c:42:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/ice1712/wm8776.c:135:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:146:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:155:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:161:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:173:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:180:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:189:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:195:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:201:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:207:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:216:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:222:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:233:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:242:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:248:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:254:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:260:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:266:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:272:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:281:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:290:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:300:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:311:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:321:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:331:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:340:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:351:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:362:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:372:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:382:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:394:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:401:25: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:461:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:556:22: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/ice1712/wm8776.c:568:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:573:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/ice1712/wm8776.c:580:14: sparse: sparse: cast to restricted snd_ctl_elem_type_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/korg1212/korg1212.c:1226:31: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/korg1212/korg1212.c:1226:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/korg1212/korg1212.c:1247:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/korg1212/korg1212.c:1247:31: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/korg1212/korg1212.c:1718:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/korg1212/korg1212.c:1782:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/korg1212/korg1212.c:1908:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/korg1212/korg1212.c:2023:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/korg1212/korg1212.c:2023:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/korg1212/korg1212.c:2023:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2024:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2024:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2024:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2025:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:9: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:57: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2026:81: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2029:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/korg1212/korg1212.c:2037:33: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/korg1212/korg1212.c:2164:47: sparse: sparse: cast to restricted gfp_t
->> sound/pci/korg1212/korg1212.c:2164:47: sparse: sparse: cast to restricted gfp_t
->> sound/pci/korg1212/korg1212.c:2164:47: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
-   sound/pci/lola/lola.c:92:42: sparse: sparse: cast to restricted __le32
-   sound/pci/lola/lola.c:93:46: sparse: sparse: cast to restricted __le32
->> sound/pci/lola/lola.c:125:26: sparse: sparse: cast from restricted __le32
-   sound/pci/lola/lola.c:126:23: sparse: sparse: cast from restricted __le32
->> sound/pci/lola/lola.c:572:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/lola/lola.c:572:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/lola/lola.c:572:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/lola/lola_pcm.c:193:34: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/lola/lola_pcm.c:193:34: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:194:34: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:194:34: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:195:34: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:195:34: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:196:34: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:196:34: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/lola/lola_pcm.c:320:26: sparse: sparse: cast to restricted __le32
-   sound/pci/lola/lola_pcm.c:321:26: sparse: sparse: cast to restricted __le32
-   sound/pci/lola/lola_pcm.c:324:26: sparse: sparse: cast to restricted __le32
-   sound/pci/lola/lola_pcm.c:329:37: sparse: sparse: cast to restricted __le32
-   sound/pci/lola/lola_pcm.c:373:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:376:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:379:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lola/lola_pcm.c:382:14: sparse: sparse: cast to restricted snd_pcm_format_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/lola/lola_mixer.c:505:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/lola/lola_mixer.c:571:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/lola/lola_mixer.c:602:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/lola/lola_mixer.c:637:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/lola/lola_mixer.c:664:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/lola/lola_mixer.c:718:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/lx6464es/lx6464es.c:77:30: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/lx6464es/lx6464es.c:77:30: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:78:30: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:78:30: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:79:30: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:79:30: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:80:30: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/lx6464es/lx6464es.c:80:30: sparse: sparse: cast from restricted snd_pcm_format_t
->> sound/pci/lx6464es/lx6464es.c:861:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/lx6464es/lx6464es.c:892:18: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
->> sound/pci/lx6464es/lx6464es.c:975:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/lx6464es/lx6464es.c:975:39: sparse: sparse: cast to restricted gfp_t
->> sound/pci/lx6464es/lx6464es.c:975:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
->> sound/pci/mixart/mixart.c:259:45: sparse: sparse: cast to restricted gfp_t
->> sound/pci/mixart/mixart.c:259:45: sparse: sparse: cast to restricted gfp_t
->> sound/pci/mixart/mixart.c:259:45: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
->> sound/pci/mixart/mixart.c:524:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:528:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:532:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:536:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:540:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:544:14: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:548:15: sparse: sparse: cast to restricted snd_pcm_format_t
-   include/sound/pcm_params.h:313:17: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:671:31: sparse: sparse: cast to restricted snd_pcm_format_t
->> sound/pci/mixart/mixart.c:671:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:672:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:672:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:672:57: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:672:57: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:673:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:673:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:673:58: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:673:58: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:674:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:674:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:674:59: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:674:59: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:692:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:692:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:693:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:693:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:693:57: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:693:57: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:694:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:694:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:694:58: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:694:58: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:695:31: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:695:31: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:695:59: sparse: sparse: cast to restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:695:59: sparse: sparse: cast from restricted snd_pcm_format_t
-   sound/pci/mixart/mixart.c:1042:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart.c:1042:39: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart.c:1042:39: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:690:38: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart.c:1191:23: sparse: sparse: cast from restricted __be32
->> sound/pci/mixart/mixart.c:1194:47: sparse: sparse: too many warnings
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_core.c:41:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:42:19: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:52:22: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:58:9: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:58:9: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:77:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_core.c:78:32: sparse: sparse: too many warnings
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/pci.h:165:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:168:34: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:171:40: sparse: sparse: cast to restricted pci_channel_state_t
-   include/linux/pci.h:178:32: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:181:28: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:184:27: sparse: sparse: cast to restricted pcie_reset_state_t
-   include/linux/pci.h:190:47: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:192:32: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:194:35: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:196:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:198:43: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:200:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:202:38: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:204:37: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:206:44: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:208:39: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:210:46: sparse: sparse: cast to restricted pci_dev_flags_t
-   include/linux/pci.h:220:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:221:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:222:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:223:36: sparse: sparse: cast to restricted pci_bus_flags_t
-   include/linux/pci.h:741:32: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:744:39: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:747:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:750:38: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:753:37: sparse: sparse: cast to restricted pci_ers_result_t
-   include/linux/pci.h:756:41: sparse: sparse: cast to restricted pci_ers_result_t
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast to restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:45:24: sparse: sparse: cast from restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:103:31: sparse: sparse: cast from restricted __be16
->> sound/pci/mixart/mixart_hwdep.c:103:31: sparse: sparse: cast from restricted __be16
->> sound/pci/mixart/mixart_hwdep.c:103:31: sparse: sparse: cast from restricted __be16
->> sound/pci/mixart/mixart_hwdep.c:103:31: sparse: sparse: cast from restricted __be16
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:35: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:104:80: sparse: sparse: cast from restricted __be16
-   sound/pci/mixart/mixart_hwdep.c:104:80: sparse: sparse: cast from restricted __be16
-   sound/pci/mixart/mixart_hwdep.c:104:80: sparse: sparse: cast from restricted __be16
-   sound/pci/mixart/mixart_hwdep.c:104:80: sparse: sparse: cast from restricted __be16
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:110:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:111:66: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:112:54: sparse: sparse: cast from restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:137:49: sparse: sparse: cast to restricted gfp_t
->> sound/pci/mixart/mixart_hwdep.c:137:49: sparse: sparse: cast to restricted gfp_t
->> sound/pci/mixart/mixart_hwdep.c:137:49: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:329:13: sparse: sparse: cast to restricted gfp_t
-   include/linux/slab.h:336:24: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:138:59: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:138:59: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:138:59: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:139:51: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:139:51: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:139:51: sparse: sparse: cast to restricted gfp_t
-   sound/pci/mixart/mixart_hwdep.c:339:25: sparse: sparse: cast to restricted __be32
-   sound/pci/mixart/mixart_hwdep.c:339:25: sparse: sparse: cast from restricted __be32
->> sound/pci/mixart/mixart_hwdep.c:339:25: sparse: sparse: too many warnings
---
-   include/linux/mm_types.h:673:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:674:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:675:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:676:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:677:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:678:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:679:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:680:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:681:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:682:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:683:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:684:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:685:36: sparse: sparse: cast to restricted vm_fault_t
-   include/linux/mm_types.h:686:36: sparse: sparse: cast to restricted vm_fault_t
->> sound/pci/mixart/mixart_mixer.c:332:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
->> sound/pci/mixart/mixart_mixer.c:395:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/mixart/mixart_mixer.c:439:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/mixart/mixart_mixer.c:811:23: sparse: sparse: cast to restricted snd_ctl_elem_type_t
-   sound/pci/mixart/mixart_mixer.c:889:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/mixart/mixart_mixer.c:942:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/mixart/mixart_mixer.c:1015:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-   sound/pci/mixart/mixart_mixer.c:1082:25: sparse: sparse: cast to restricted snd_ctl_elem_iface_t
-
-vim +111 sound/pci/hda/hda_codec.c
-
-a12d3e1e1cb67b Takashi Iwai 2011-04-07  105  
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  106  static int add_conn_list(struct hda_codec *codec, hda_nid_t nid, int len,
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  107  			 const hda_nid_t *list)
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  108  {
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  109  	struct hda_conn_list *p;
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  110  
-a2d4560f0be9a4 Takashi Iwai 2019-05-31 @111  	p = kmalloc(struct_size(p, conns, len), GFP_KERNEL);
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  112  	if (!p)
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  113  		return -ENOMEM;
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  114  	p->len = len;
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  115  	p->nid = nid;
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  116  	memcpy(p->conns, list, len * sizeof(hda_nid_t));
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  117  	list_add(&p->list, &codec->conn_list);
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  118  	return 0;
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  119  }
-ee8e765b0b6c92 Takashi Iwai 2013-01-03  120  
-
-:::::: The code at line 111 was first introduced by commit
-:::::: a2d4560f0be9a48cd342992fbec0688ea05d564b ALSA: hda: Use struct_size()
-
-:::::: TO: Takashi Iwai <tiwai@suse.de>
-:::::: CC: Takashi Iwai <tiwai@suse.de>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
