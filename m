@@ -2,58 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6314AE9789
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 301DCE978B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbfJ3ICo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:02:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40234 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfJ3ICo (ORCPT
+        id S1726347AbfJ3IDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:03:24 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:40501 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfJ3IDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:02:44 -0400
-Received: from [91.217.168.176] (helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iPiwE-0007tC-Oe; Wed, 30 Oct 2019 08:02:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mailbox: ti-msgmgr: fix spelling mistake "queuid" -> "queue id"
-Date:   Wed, 30 Oct 2019 09:02:41 +0100
-Message-Id: <20191030080241.11262-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 30 Oct 2019 04:03:24 -0400
+Received: by mail-il1-f196.google.com with SMTP id d83so1297075ilk.7
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 01:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=LqFfQlPX22DAu2QQKOl89RuFCVvQ73FaW2DTKQWr2N8=;
+        b=l0vYPah4wTPHZJawmtrZzxfnbMqWFBruSBwhoiny920aPMawcP0qvwMdz1Iq4oFErF
+         xhPdAV7/ACTUz0kzQ8zLEK0ew+LW6WfVr/H8baxdy74XaeMmmHoETP2Ccr8njTUF9GEe
+         j+zarkmIt+fjLDEGBUpbPFSLhNWVSGFlsoFIDd0OjC1EmVjwlGGsEWJVto0FV/3TghiL
+         X3TxeawS2Ztx4xXuKyr8KZ1OMhY4D9UScHs6q5OxIHT6w8KvR+BTFc7tz0tVJELa9qbB
+         tiutiEhaJFU51uN2IxAZMUtWhPUh+w4flEpmviaG3gFIwvB/Jy3Pu/IhyD1fECCkl2QY
+         lSEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=LqFfQlPX22DAu2QQKOl89RuFCVvQ73FaW2DTKQWr2N8=;
+        b=FakEct0jxx/1Az4zpmUYqDI1TNNGpEDC/oGBzPjapWbOBgfUHTu22HRskePLDGCnH2
+         JXX5NSR/kmsrr40nbcNnW5BG4HuFTMBX8OYz08s0JP0IQ8jTCuIF+WaYfTMK/u0b6C+j
+         35afDo4ireoOSVZilhp/YZWCRCPgo5q6xNngui1bdSI1mEt42ydpmETk9dMTwp90JRrr
+         Uip5XN7lkreND5MjryLzGpeJSSOizqJCvWdz8rOnzkCR74rM8Tbycj2hfiT5JsadSN4U
+         X7fQQcSFVgLTIFHzA4hLMdfjjsAsS6kUF5I7JMeVmwDzyqZ9Yh0ozsacz10ntVbz/2nZ
+         XVnw==
+X-Gm-Message-State: APjAAAWrsE3X7O+TiN1fXA20FplgzO3ygKap/ihLczxu2abVSmRkBZiG
+        vgzANKof7KG2n4/n3LEWp/hHS5truCc=
+X-Google-Smtp-Source: APXvYqwsxsTealkBSzXUDPGAKeJYeaYcUdHD/8GBgI8GmTRJS3xk2OHkmsBNyh1BSALOxYVarlZppA==
+X-Received: by 2002:a05:6e02:792:: with SMTP id q18mr30146916ils.58.1572422603154;
+        Wed, 30 Oct 2019 01:03:23 -0700 (PDT)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id t27sm222986ila.17.2019.10.30.01.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 01:03:22 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 01:03:13 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH] MAINTAINERS: Change to my personal email address
+In-Reply-To: <20191030043916.27916-1-palmer@dabbelt.com>
+Message-ID: <alpine.DEB.2.21.9999.1910300102590.23683@viisi.sifive.com>
+References: <20191030043916.27916-1-palmer@dabbelt.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 29 Oct 2019, Palmer Dabbelt wrote:
 
-There is a spelling mistake in a dev_err message. Fix it.
+> From: Palmer Dabbelt <palmer@sifive.com>
+> 
+> I'm leaving SiFive in a bit less than two weeks, which means I'll be
+> losing my @sifive email address.  I don't have my new email address yet,
+> so I'm switching over to my personal address instead.
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mailbox/ti-msgmgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, queued for v5.4-rc.
 
-diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
-index 88047d835211..f33b173c0bd0 100644
---- a/drivers/mailbox/ti-msgmgr.c
-+++ b/drivers/mailbox/ti-msgmgr.c
-@@ -592,7 +592,7 @@ static int ti_msgmgr_queue_setup(int idx, struct device *dev,
- 	qinst->queue_id = qd->queue_id;
- 
- 	if (qinst->queue_id > d->queue_count) {
--		dev_err(dev, "Queue Data [idx=%d] queuid %d > %d\n",
-+		dev_err(dev, "Queue Data [idx=%d] queue id %d > %d\n",
- 			idx, qinst->queue_id, d->queue_count);
- 		return -ERANGE;
- 	}
--- 
-2.20.1
 
+- Paul
