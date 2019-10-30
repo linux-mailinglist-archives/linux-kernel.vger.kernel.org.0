@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56490EA372
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CB1EA365
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfJ3SfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 14:35:05 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:44315 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbfJ3SeY (ORCPT
+        id S1728176AbfJ3Sea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 14:34:30 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:34362 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbfJ3SeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 14:34:24 -0400
-Received: by mail-yb1-f194.google.com with SMTP id g38so973924ybe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:23 -0700 (PDT)
+        Wed, 30 Oct 2019 14:34:25 -0400
+Received: by mail-yw1-f68.google.com with SMTP id d192so1203868ywa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=3GPDQAeMcQQT62Q845FuVNuwzSvchMT+iWwfl79i+24=;
-        b=PXceGjAeGQnRGUzgKv4WbgZO87ieYLoqMdRstwFQUQekFx53x7xcO4BsPzWnXk5LDz
-         isZv9akR3fCD9upPi7Kyk4gnFKYJp6ClNcTuLOSLntTyVw689Ynx2dlV+a7R7PCl3b4Z
-         TE65eesWcODstwx7ZMFiEycygZqGBJk9qoz5Y=
+        bh=cJyRbleLwiHo0wJViOBsze9IwthH4NQ1gXdn+1ViqSA=;
+        b=OLc4PtHh3QFFGzqUzAt19Tv+zExtPx9Kg2r0U3WWiRZ/0kegJ11A13LA+jPL4dldKO
+         uzziV8jJRqqp9zPpbYP60frlmah+DKb39By1dnXVK56RVi3i0ybdDVz6z9JLcog9+Kv5
+         6PTIw78WVM0Sl1/Mm1dq1d4TWpFvuUiD2GJo8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=3GPDQAeMcQQT62Q845FuVNuwzSvchMT+iWwfl79i+24=;
-        b=SWCuo5JYLAwmAgysoqBA6pXJtSooEX07XoAgcqayBVDb7CO+d+hZ2ApYKwq9fNtu6g
-         VMIafOBjwAnGh57L86xfxyZjQM83w7fgoVNZ+m3ga+/a/FuA5xrHDCS3bv9nGrmRlhBv
-         rRBhA2kr4M+zraBnrLIFXiuMTHArYEkoMpuXPUgFOwXs8T4ZFQmpxInqmmQWPvo82oZW
-         gOpeEOG+4pduCwBZ63E6DFTJBdo8E+uPlocGOA10KUEHiMnnlISo6s2UDYYlFBotI5cI
-         5HRgYzmVBCDKCyml0W0kYSTF0527OTVtFQWsmp6V2iugL0+lDPHbzumU6V0c4TXb+2C4
-         vtYw==
-X-Gm-Message-State: APjAAAVg6Tee7AHtUx3MO+LhktMNeWFjdYciE4kQ6qUHNY9zmTifsu7X
-        5qWPx9oIIFd4yLiszwFtWr5l4w==
-X-Google-Smtp-Source: APXvYqwSrq4UDIzBc0ksxJz9ZUjjncfEKHBGERkKnprBkBt7l95RbblmYn3a32T5NAtKXh+QIE7pGA==
-X-Received: by 2002:a25:4b04:: with SMTP id y4mr624750yba.480.1572460463260;
-        Wed, 30 Oct 2019 11:34:23 -0700 (PDT)
+        bh=cJyRbleLwiHo0wJViOBsze9IwthH4NQ1gXdn+1ViqSA=;
+        b=IYsiN9UTSVBqTewhjEzTAM4KSI+WqGf0WuZ/1LNZ9AihIQxOPaMd8h9NfSJD+5qE4K
+         Rbahl6Gn3z8YrVzAmZ+LnuHuDPHIN8N8GFQfBhCMUVcrLsf6NQ3mPBljd2x7+axBPv2u
+         x9cN83gx81c8ZrqYqDiNGGKtYh3na8Oy3t5NvWqxpGDmgUrdlN8Z34Ba45WKW1QW8j7m
+         qYFkSkUEIn0PP8NQkWicp+rf/fOyvPkJXourM/cU6rG0sDRsaSLQbJ11XpQSZ3EDnHA5
+         y6ih7V1Ed2It38OdIaauLB3PjKWS8w8+La9mkLu+WEi/c9RqyocpDdc+OKwH/fOWSjRq
+         Sgvw==
+X-Gm-Message-State: APjAAAUggxcrIXCE+k3ADpbVPgFZi1TuC23SMp4jMiQk10MTlJm2ehuP
+        IZAlFboSEsnfq0XIgwXYuWJp/A==
+X-Google-Smtp-Source: APXvYqwIXkLd9KWV3wzecGEdXt74WOiBQ1y6hP7x4UEF1nJh0TDgih9kth5Wb1QDF2YxAXN2eGcAug==
+X-Received: by 2002:a81:a141:: with SMTP id y62mr844268ywg.376.1572460464758;
+        Wed, 30 Oct 2019 11:34:24 -0700 (PDT)
 Received: from vpillai-dev.sfo2.internal.digitalocean.com ([138.68.32.68])
-        by smtp.gmail.com with ESMTPSA id i5sm300228ywe.110.2019.10.30.11.34.22
+        by smtp.gmail.com with ESMTPSA id k34sm382744ywh.49.2019.10.30.11.34.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Oct 2019 11:34:22 -0700 (PDT)
+        Wed, 30 Oct 2019 11:34:24 -0700 (PDT)
 From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
 To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
         Julien Desfossez <jdesfossez@digitalocean.com>,
@@ -55,12 +55,10 @@ Cc:     linux-kernel@vger.kernel.org, Dario Faggioli <dfaggioli@suse.com>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>
-Subject: [RFC PATCH v4 13/19] sched: Add core wide task selection and scheduling.
-Date:   Wed, 30 Oct 2019 18:33:26 +0000
-Message-Id: <a38626d94310c3dea5a0c91e874a15796f01ba7c.1572437285.git.vpillai@digitalocean.com>
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [RFC PATCH v4 14/19] sched/fair: Add a few assertions
+Date:   Wed, 30 Oct 2019 18:33:27 +0000
+Message-Id: <95872a66360f949c4c862145a009b22099669b14.1572437285.git.vpillai@digitalocean.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1572437285.git.vpillai@digitalocean.com>
 References: <cover.1572437285.git.vpillai@digitalocean.com>
@@ -73,356 +71,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-Instead of only selecting a local task, select a task for all SMT
-siblings for every reschedule on the core (irrespective which logical
-CPU does the reschedule).
-
-NOTE: there is still potential for siblings rivalry.
-NOTE: this is far too complicated; but thus far I've failed to
-      simplify it further.
-
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Julien Desfossez <jdesfossez@digitalocean.com>
-Signed-off-by: Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- kernel/sched/core.c  | 271 ++++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/sched.h |   6 +-
- 2 files changed, 274 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 27af86aa9a8b..10b20de100e3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3932,7 +3932,7 @@ static inline void schedule_debug(struct task_struct *prev)
-  * Pick up the highest-prio task:
-  */
- static inline struct task_struct *
--pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+__pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
- 	const struct sched_class *class;
- 	struct task_struct *p;
-@@ -3977,6 +3977,268 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	BUG();
- }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e3b7e8ba1420..840d27628d36 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5984,6 +5984,11 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	struct sched_domain *sd;
+ 	int i, recent_used_cpu;
  
-+#ifdef CONFIG_SCHED_CORE
-+
-+static inline bool cookie_equals(struct task_struct *a, unsigned long cookie)
-+{
-+	return is_idle_task(a) || (a->core_cookie == cookie);
-+}
-+
-+static inline bool cookie_match(struct task_struct *a, struct task_struct *b)
-+{
-+	if (is_idle_task(a) || is_idle_task(b))
-+		return true;
-+
-+	return a->core_cookie == b->core_cookie;
-+}
-+
-+// XXX fairness/fwd progress conditions
-+/*
-+ * Returns
-+ * - NULL if there is no runnable task for this class.
-+ * - the highest priority task for this runqueue if it matches
-+ *   rq->core->core_cookie or its priority is greater than max.
-+ * - Else returns idle_task.
-+ */
-+static struct task_struct *
-+pick_task(struct rq *rq, const struct sched_class *class, struct task_struct *max)
-+{
-+	struct task_struct *class_pick, *cookie_pick;
-+	unsigned long cookie = rq->core->core_cookie;
-+
-+	class_pick = class->pick_task(rq);
-+	if (!class_pick)
-+		return NULL;
-+
-+	if (!cookie) {
-+		/*
-+		 * If class_pick is tagged, return it only if it has
-+		 * higher priority than max.
-+		 */
-+		if (max && class_pick->core_cookie &&
-+		    prio_less(class_pick, max))
-+			return idle_sched_class.pick_task(rq);
-+
-+		return class_pick;
-+	}
-+
 +	/*
-+	 * If class_pick is idle or matches cookie, return early.
++	 * per-cpu select_idle_mask usage
 +	 */
-+	if (cookie_equals(class_pick, cookie))
-+		return class_pick;
++	lockdep_assert_irqs_disabled();
 +
-+	cookie_pick = sched_core_find(rq, cookie);
-+
-+	/*
-+	 * If class > max && class > cookie, it is the highest priority task on
-+	 * the core (so far) and it must be selected, otherwise we must go with
-+	 * the cookie pick in order to satisfy the constraint.
-+	 */
-+	if (prio_less(cookie_pick, class_pick) &&
-+	    (!max || prio_less(max, class_pick)))
-+		return class_pick;
-+
-+	return cookie_pick;
-+}
-+
-+static struct task_struct *
-+pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+{
-+	struct task_struct *next, *max = NULL;
-+	const struct sched_class *class;
-+	const struct cpumask *smt_mask;
-+	int i, j, cpu;
-+	bool need_sync = false;
-+
-+	if (!sched_core_enabled(rq))
-+		return __pick_next_task(rq, prev, rf);
-+
-+	/*
-+	 * If there were no {en,de}queues since we picked (IOW, the task
-+	 * pointers are all still valid), and we haven't scheduled the last
-+	 * pick yet, do so now.
-+	 */
-+	if (rq->core->core_pick_seq == rq->core->core_task_seq &&
-+	    rq->core->core_pick_seq != rq->core_sched_seq) {
-+		WRITE_ONCE(rq->core_sched_seq, rq->core->core_pick_seq);
-+
-+		next = rq->core_pick;
-+		if (next != prev) {
-+			put_prev_task(rq, prev);
-+			set_next_task(rq, next);
-+		}
-+		return next;
-+	}
-+
-+	prev->sched_class->put_prev_task(rq, prev, rf);
-+	if (!rq->nr_running)
-+		newidle_balance(rq, rf);
-+
-+	cpu = cpu_of(rq);
-+	smt_mask = cpu_smt_mask(cpu);
-+
-+	/*
-+	 * core->core_task_seq, core->core_pick_seq, rq->core_sched_seq
-+	 *
-+	 * @task_seq guards the task state ({en,de}queues)
-+	 * @pick_seq is the @task_seq we did a selection on
-+	 * @sched_seq is the @pick_seq we scheduled
-+	 *
-+	 * However, preemptions can cause multiple picks on the same task set.
-+	 * 'Fix' this by also increasing @task_seq for every pick.
-+	 */
-+	rq->core->core_task_seq++;
-+	need_sync = !!rq->core->core_cookie;
-+
-+	/* reset state */
-+	rq->core->core_cookie = 0UL;
-+	for_each_cpu(i, smt_mask) {
-+		struct rq *rq_i = cpu_rq(i);
-+
-+		rq_i->core_pick = NULL;
-+
-+		if (rq_i->core_forceidle) {
-+			need_sync = true;
-+			rq_i->core_forceidle = false;
-+		}
-+
-+		if (i != cpu)
-+			update_rq_clock(rq_i);
-+	}
-+
-+	/*
-+	 * Try and select tasks for each sibling in decending sched_class
-+	 * order.
-+	 */
-+	for_each_class(class) {
-+again:
-+		for_each_cpu_wrap(i, smt_mask, cpu) {
-+			struct rq *rq_i = cpu_rq(i);
-+			struct task_struct *p;
-+
-+			if (cpu_is_offline(i))
-+				continue;
-+
-+			if (rq_i->core_pick)
-+				continue;
-+
-+			/*
-+			 * If this sibling doesn't yet have a suitable task to
-+			 * run; ask for the most elegible task, given the
-+			 * highest priority task already selected for this
-+			 * core.
-+			 */
-+			p = pick_task(rq_i, class, max);
-+			if (!p) {
-+				/*
-+				 * If there weren't no cookies; we don't need
-+				 * to bother with the other siblings.
-+				 */
-+				if (i == cpu && !need_sync)
-+					goto next_class;
-+
-+				continue;
-+			}
-+
-+			/*
-+			 * Optimize the 'normal' case where there aren't any
-+			 * cookies and we don't need to sync up.
-+			 */
-+			if (i == cpu && !need_sync && !p->core_cookie) {
-+				next = p;
-+				goto done;
-+			}
-+
-+			rq_i->core_pick = p;
-+
-+			/*
-+			 * If this new candidate is of higher priority than the
-+			 * previous; and they're incompatible; we need to wipe
-+			 * the slate and start over. pick_task makes sure that
-+			 * p's priority is more than max if it doesn't match
-+			 * max's cookie.
-+			 *
-+			 * NOTE: this is a linear max-filter and is thus bounded
-+			 * in execution time.
-+			 */
-+			if (!max || !cookie_match(max, p)) {
-+				struct task_struct *old_max = max;
-+
-+				rq->core->core_cookie = p->core_cookie;
-+				max = p;
-+
-+				if (old_max) {
-+					for_each_cpu(j, smt_mask) {
-+						if (j == i)
-+							continue;
-+
-+						cpu_rq(j)->core_pick = NULL;
-+					}
-+					goto again;
-+				} else {
-+					/*
-+					 * Once we select a task for a cpu, we
-+					 * should not be doing an unconstrained
-+					 * pick because it might starve a task
-+					 * on a forced idle cpu.
-+					 */
-+					need_sync = true;
-+				}
-+
-+			}
-+		}
-+next_class:;
-+	}
-+
-+	rq->core->core_pick_seq = rq->core->core_task_seq;
-+	next = rq->core_pick;
-+	rq->core_sched_seq = rq->core->core_pick_seq;
-+
-+	/*
-+	 * Reschedule siblings
-+	 *
-+	 * NOTE: L1TF -- at this point we're no longer running the old task and
-+	 * sending an IPI (below) ensures the sibling will no longer be running
-+	 * their task. This ensures there is no inter-sibling overlap between
-+	 * non-matching user state.
-+	 */
-+	for_each_cpu(i, smt_mask) {
-+		struct rq *rq_i = cpu_rq(i);
-+
-+		if (cpu_is_offline(i))
-+			continue;
-+
-+		WARN_ON_ONCE(!rq_i->core_pick);
-+
-+		if (is_idle_task(rq_i->core_pick) && rq_i->nr_running)
-+			rq_i->core_forceidle = true;
-+
-+		if (i == cpu)
-+			continue;
-+
-+		if (rq_i->curr != rq_i->core_pick)
-+			resched_curr(rq_i);
-+
-+		/* Did we break L1TF mitigation requirements? */
-+		WARN_ON_ONCE(!cookie_match(next, rq_i->core_pick));
-+	}
-+
-+done:
-+	set_next_task(rq, next);
-+	return next;
-+}
-+
-+#else /* !CONFIG_SCHED_CORE */
-+
-+static struct task_struct *
-+pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-+{
-+	return __pick_next_task(rq, prev, rf);
-+}
-+
-+#endif /* CONFIG_SCHED_CORE */
-+
- /*
-  * __schedule() is the main scheduler function.
+ 	if (available_idle_cpu(target))
+ 		return target;
+ 
+@@ -6439,8 +6444,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+  * certain conditions an idle sibling CPU if the domain has SD_WAKE_AFFINE set.
   *
-@@ -6290,7 +6552,7 @@ static void migrate_tasks(struct rq *dead_rq, struct rq_flags *rf)
- 		/*
- 		 * pick_next_task() assumes pinned rq->lock:
- 		 */
--		next = pick_next_task(rq, &fake_task, rf);
-+		next = __pick_next_task(rq, &fake_task, rf);
- 		BUG_ON(!next);
- 		put_prev_task(rq, next);
+  * Returns the target CPU number.
+- *
+- * preempt must be disabled.
+  */
+ static int
+ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
+@@ -6451,6 +6454,11 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 	int want_affine = 0;
+ 	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
  
-@@ -6760,7 +7022,12 @@ void __init sched_init(void)
- 
- #ifdef CONFIG_SCHED_CORE
- 		rq->core = NULL;
-+		rq->core_pick = NULL;
- 		rq->core_enabled = 0;
-+		rq->core_tree = RB_ROOT;
-+		rq->core_forceidle = false;
++	/*
++	 * required for stable ->cpus_allowed
++	 */
++	lockdep_assert_held(&p->pi_lock);
 +
-+		rq->core_cookie = 0UL;
- #endif
- 	}
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0442a5abec01..fa92f6d3c73b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -999,11 +999,16 @@ struct rq {
- #ifdef CONFIG_SCHED_CORE
- 	/* per rq */
- 	struct rq		*core;
-+	struct task_struct	*core_pick;
- 	unsigned int		core_enabled;
-+	unsigned int		core_sched_seq;
- 	struct rb_root		core_tree;
-+	bool			core_forceidle;
- 
- 	/* shared state */
- 	unsigned int		core_task_seq;
-+	unsigned int		core_pick_seq;
-+	unsigned long		core_cookie;
- #endif
- };
- 
-@@ -1864,7 +1869,6 @@ static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- 
- static inline void set_next_task(struct rq *rq, struct task_struct *next)
- {
--	WARN_ON_ONCE(rq->curr != next);
- 	next->sched_class->set_next_task(rq, next);
- }
+ 	if (sd_flag & SD_BALANCE_WAKE) {
+ 		record_wakee(p);
  
 -- 
 2.17.1
