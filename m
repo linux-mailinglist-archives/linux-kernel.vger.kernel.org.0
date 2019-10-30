@@ -2,385 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3339BE9B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 12:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E33BBE9AFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 12:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfJ3Lp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 07:45:56 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57392 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbfJ3Lp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 07:45:56 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F6E2200481;
-        Wed, 30 Oct 2019 12:45:50 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B18E9200092;
-        Wed, 30 Oct 2019 12:45:43 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0DD29402B7;
-        Wed, 30 Oct 2019 19:45:35 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/2] ASoC: fsl_asrc: Add support for imx8qm
-Date:   Wed, 30 Oct 2019 19:41:27 +0800
-Message-Id: <2000eb7ee4c086020157bfc209dd02cf1a1cbffc.1572435604.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <6465fb7dfaa68b6693584bcfa696894628d45fe9.1572435604.git.shengjiu.wang@nxp.com>
-References: <6465fb7dfaa68b6693584bcfa696894628d45fe9.1572435604.git.shengjiu.wang@nxp.com>
-In-Reply-To: <6465fb7dfaa68b6693584bcfa696894628d45fe9.1572435604.git.shengjiu.wang@nxp.com>
-References: <6465fb7dfaa68b6693584bcfa696894628d45fe9.1572435604.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726325AbfJ3Lnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 07:43:32 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:44558 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726088AbfJ3Lnc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 07:43:32 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 4B6692E14E5;
+        Wed, 30 Oct 2019 14:43:28 +0300 (MSK)
+Received: from iva4-c987840161f8.qloud-c.yandex.net (iva4-c987840161f8.qloud-c.yandex.net [2a02:6b8:c0c:3da5:0:640:c987:8401])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 82dg4vUT95-hRe8nwYV;
+        Wed, 30 Oct 2019 14:43:28 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572435808; bh=pA6mNmTIWq/Cwxmgu8JH1E701Iel80nhtPksH0lcKiI=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=ipAlUMbdXEs+AwZT4OP3cjhssAs6ZCUz0BCfWWjCwxLEL3py+H3xgj0DZ7wEvkOnB
+         XPqF5Z2EGRueUUaT+DMVrAJzi2/G4zGw17UD4anJdfklWOLpCsDqMjcb3xz+kR5XFU
+         BEFbpkC5qnFv6fhBCEYRPeIfeWR8NKQ7z3dNMrec=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
+        by iva4-c987840161f8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id 5J6hnNaLMQ-hRW0aKlN;
+        Wed, 30 Oct 2019 14:43:27 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling statfs
+ results
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Li Xi <lixi@ddn.com>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+References: <157225912326.3929.8539227851002947260.stgit@buzz>
+ <20191030105953.GC28525@quack2.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <dfb9185a-f16d-0a6f-06e1-219b7af59cd3@yandex-team.ru>
+Date:   Wed, 30 Oct 2019 14:43:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191030105953.GC28525@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two asrc module in imx8qm, each module has different
-clock configuration, and the DMA type is EDMA.
+On 30/10/2019 13.59, Jan Kara wrote:
+> On Mon 28-10-19 13:38:43, Konstantin Khlebnikov wrote:
+>> Right now ext4_statfs_project() does quota lookup by id every time.
+>> This is costly operation, especially if there is no inode who hold
+>> reference to this quota and dqget() reads it from disk each time.
+>>
+>> Function ext4_statfs_project() could be moved into generic quota code,
+>> it is required for every filesystem which uses generic project quota.
+>>
+>> Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>> ---
+>>   fs/ext4/super.c |   25 ++++++++++++++++---------
+>>   1 file changed, 16 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index dd654e53ba3d..f841c66aa499 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+>>   }
+>>   
+>>   #ifdef CONFIG_QUOTA
+>> -static int ext4_statfs_project(struct super_block *sb,
+>> -			       kprojid_t projid, struct kstatfs *buf)
+>> +static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
+>>   {
+>> -	struct kqid qid;
+>> +	struct super_block *sb = inode->i_sb;
+>>   	struct dquot *dquot;
+>>   	u64 limit;
+>>   	u64 curblock;
+>> +	int err;
+>> +
+>> +	err = dquot_initialize(inode);
+> 
+> Hum, I'm kind of puzzled here: Your patch seems to be concerned with
+> performance but how is this any faster than what we do now?
+> dquot_initialize() will look up three dquots instead of one in the current
+> code? Oh, I guess you are concerned about *repeated* calls to statfs() and
+> thus repeated lookups of dquot structure? And this patch effectively caches
+> looked up dquots in the inode?
+> 
+> That starts to make some sense but still, even if dquot isn't cached in any
+> inode, we still hold on to it (it's in the free_list) until shrinker evicts
+> it. So lookup of such dquot should be just a hash table lookup which should
+> be very fast. Then there's the cost of dquot_acquire() / dquot_release()
+> that get always called on first / last get of a dquot. So are you concerned
+> about that cost? Or do you really see IO happening to fetch quota structure
+> on each statfs call again and again? The only situation where I could see
+> that happening is when the quota structure would be actually completely
+> empty (i.e., not originally present in the quota file). But then this
+> cannot be a case when there's actually an inode belonging to this
+> project...
+> 
+> So I'm really curious about the details of what you are seeing as the
+> changelog / patch doesn't quite make sense to me yet.
 
-So in this patch, we define the new clocks, refine the clock map,
-and include struct fsl_asrc_soc_data for different soc usage.
+Yep, we have seen than disaster with non-present quota blocks.
+For consistent quota performance loss should be much less significant,
+but caching would not hurt.
 
-The EDMA channel is fixed with each dma request, one dma request
-corresponding to one dma channel. So we need to request dma
-channel with dma request of asrc module.
+Tools like "df" calls statfs for all mountpoints.
+These inodes are never reclaimed because pinned by vfsmount.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
-Changes in v2
-- use !use_edma to wrap code in fsl_asrc_dma
-- add Acked-by: Nicolin Chen
-
- sound/soc/fsl/fsl_asrc.c     | 91 +++++++++++++++++++++++++++++-------
- sound/soc/fsl/fsl_asrc.h     | 65 +++++++++++++++++++++++++-
- sound/soc/fsl/fsl_asrc_dma.c | 42 +++++++++++------
- 3 files changed, 166 insertions(+), 32 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index a3cfceea7d2f..9dc5b5a93fb0 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -43,24 +43,55 @@ static struct snd_pcm_hw_constraint_list fsl_asrc_rate_constraints = {
-  */
- static unsigned char input_clk_map_imx35[] = {
- 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
- };
- 
- static unsigned char output_clk_map_imx35[] = {
- 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
- };
- 
- /* i.MX53 uses the same map for input and output */
- static unsigned char input_clk_map_imx53[] = {
- /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
- 	0x0, 0x1, 0x2, 0x7, 0x4, 0x5, 0x6, 0x3, 0x8, 0x9, 0xa, 0xb, 0xc, 0xf, 0xe, 0xd,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
- };
- 
- static unsigned char output_clk_map_imx53[] = {
- /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
- 	0x8, 0x9, 0xa, 0x7, 0xc, 0x5, 0x6, 0xb, 0x0, 0x1, 0x2, 0x3, 0x4, 0xf, 0xe, 0xd,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
- };
- 
--static unsigned char *clk_map[2];
-+/* i.MX8QM uses the same map for input and output */
-+static unsigned char input_clk_map_imx8_0[] = {
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+};
-+
-+static unsigned char output_clk_map_imx8_0[] = {
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+};
-+
-+static unsigned char input_clk_map_imx8_1[] = {
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0xb, 0xc, 0xf, 0xf, 0xd, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	0x4, 0x5, 0x6, 0xf, 0x8, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+};
-+
-+static unsigned char output_clk_map_imx8_1[] = {
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0xb, 0xc, 0xf, 0xf, 0xd, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	0x4, 0x5, 0x6, 0xf, 0x8, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+};
- 
- /**
-  * Select the pre-processing and post-processing options
-@@ -353,8 +384,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
- 	}
- 
- 	/* Validate input and output clock sources */
--	clk_index[IN] = clk_map[IN][config->inclk];
--	clk_index[OUT] = clk_map[OUT][config->outclk];
-+	clk_index[IN] = asrc_priv->soc->inclk_map[config->inclk];
-+	clk_index[OUT] = asrc_priv->soc->outclk_map[config->outclk];
- 
- 	/* We only have output clock for ideal ratio mode */
- 	clk = asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
-@@ -398,13 +429,13 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
- 	/* Set the channel number */
- 	channels = config->channel_num;
- 
--	if (asrc_priv->channel_bits < 4)
-+	if (asrc_priv->soc->channel_bits < 4)
- 		channels /= 2;
- 
- 	/* Update channels for current pair */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRCNCR,
--			   ASRCNCR_ANCi_MASK(index, asrc_priv->channel_bits),
--			   ASRCNCR_ANCi(index, channels, asrc_priv->channel_bits));
-+			   ASRCNCR_ANCi_MASK(index, asrc_priv->soc->channel_bits),
-+			   ASRCNCR_ANCi(index, channels, asrc_priv->soc->channel_bits));
- 
- 	/* Default setting: Automatic selection for processing mode */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRCTR,
-@@ -531,7 +562,7 @@ static int fsl_asrc_dai_startup(struct snd_pcm_substream *substream,
- 	struct fsl_asrc *asrc_priv = snd_soc_dai_get_drvdata(dai);
- 
- 	/* Odd channel number is not valid for older ASRC (channel_bits==3) */
--	if (asrc_priv->channel_bits == 3)
-+	if (asrc_priv->soc->channel_bits == 3)
- 		snd_pcm_hw_constraint_step(substream->runtime, 0,
- 					   SNDRV_PCM_HW_PARAM_CHANNELS, 2);
- 
-@@ -964,14 +995,10 @@ static int fsl_asrc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	if (of_device_is_compatible(np, "fsl,imx35-asrc")) {
--		asrc_priv->channel_bits = 3;
--		clk_map[IN] = input_clk_map_imx35;
--		clk_map[OUT] = output_clk_map_imx35;
--	} else {
--		asrc_priv->channel_bits = 4;
--		clk_map[IN] = input_clk_map_imx53;
--		clk_map[OUT] = output_clk_map_imx53;
-+	asrc_priv->soc = of_device_get_match_data(&pdev->dev);
-+	if (!asrc_priv->soc) {
-+		dev_err(&pdev->dev, "failed to get soc data\n");
-+		return -ENODEV;
- 	}
- 
- 	ret = fsl_asrc_init(asrc_priv);
-@@ -1113,9 +1140,39 @@ static const struct dev_pm_ops fsl_asrc_pm = {
- 	SET_SYSTEM_SLEEP_PM_OPS(fsl_asrc_suspend, fsl_asrc_resume)
- };
- 
-+static const struct fsl_asrc_soc_data fsl_asrc_imx35_data = {
-+	.use_edma = false,
-+	.channel_bits = 3,
-+	.inclk_map = input_clk_map_imx35,
-+	.outclk_map = output_clk_map_imx35,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx53_data = {
-+	.use_edma = false,
-+	.channel_bits = 4,
-+	.inclk_map = input_clk_map_imx53,
-+	.outclk_map = output_clk_map_imx53,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx8qm_0_data = {
-+	.use_edma = true,
-+	.channel_bits = 4,
-+	.inclk_map = input_clk_map_imx8_0,
-+	.outclk_map = output_clk_map_imx8_0,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx8qm_1_data = {
-+	.use_edma = true,
-+	.channel_bits = 4,
-+	.inclk_map = input_clk_map_imx8_1,
-+	.outclk_map = output_clk_map_imx8_1,
-+};
-+
- static const struct of_device_id fsl_asrc_ids[] = {
--	{ .compatible = "fsl,imx35-asrc", },
--	{ .compatible = "fsl,imx53-asrc", },
-+	{ .compatible = "fsl,imx35-asrc", .data = &fsl_asrc_imx35_data },
-+	{ .compatible = "fsl,imx53-asrc", .data = &fsl_asrc_imx53_data },
-+	{ .compatible = "fsl,imx8qm-asrc0", .data = &fsl_asrc_imx8qm_0_data },
-+	{ .compatible = "fsl,imx8qm-asrc1", .data = &fsl_asrc_imx8qm_1_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, fsl_asrc_ids);
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index 2b57e8c53728..8decbe670c3e 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -308,6 +308,29 @@ enum asrc_inclk {
- 	INCLK_SSI3_TX = 0x0b,
- 	INCLK_SPDIF_TX = 0x0c,
- 	INCLK_ASRCK1_CLK = 0x0f,
-+
-+	/* clocks for imx8 */
-+	INCLK_AUD_PLL_DIV_CLK0 = 0x10,
-+	INCLK_AUD_PLL_DIV_CLK1 = 0x11,
-+	INCLK_AUD_CLK0         = 0x12,
-+	INCLK_AUD_CLK1         = 0x13,
-+	INCLK_ESAI0_RX_CLK     = 0x14,
-+	INCLK_ESAI0_TX_CLK     = 0x15,
-+	INCLK_SPDIF0_RX        = 0x16,
-+	INCLK_SPDIF1_RX        = 0x17,
-+	INCLK_SAI0_RX_BCLK     = 0x18,
-+	INCLK_SAI0_TX_BCLK     = 0x19,
-+	INCLK_SAI1_RX_BCLK     = 0x1a,
-+	INCLK_SAI1_TX_BCLK     = 0x1b,
-+	INCLK_SAI2_RX_BCLK     = 0x1c,
-+	INCLK_SAI3_RX_BCLK     = 0x1d,
-+	INCLK_ASRC0_MUX_CLK    = 0x1e,
-+
-+	INCLK_ESAI1_RX_CLK     = 0x20,
-+	INCLK_ESAI1_TX_CLK     = 0x21,
-+	INCLK_SAI6_TX_BCLK     = 0x22,
-+	INCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
-+	INCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
- };
- 
- enum asrc_outclk {
-@@ -325,6 +348,29 @@ enum asrc_outclk {
- 	OUTCLK_SSI3_RX = 0x0b,
- 	OUTCLK_SPDIF_RX = 0x0c,
- 	OUTCLK_ASRCK1_CLK = 0x0f,
-+
-+	/* clocks for imx8 */
-+	OUTCLK_AUD_PLL_DIV_CLK0 = 0x10,
-+	OUTCLK_AUD_PLL_DIV_CLK1 = 0x11,
-+	OUTCLK_AUD_CLK0         = 0x12,
-+	OUTCLK_AUD_CLK1         = 0x13,
-+	OUTCLK_ESAI0_RX_CLK     = 0x14,
-+	OUTCLK_ESAI0_TX_CLK     = 0x15,
-+	OUTCLK_SPDIF0_RX        = 0x16,
-+	OUTCLK_SPDIF1_RX        = 0x17,
-+	OUTCLK_SAI0_RX_BCLK     = 0x18,
-+	OUTCLK_SAI0_TX_BCLK     = 0x19,
-+	OUTCLK_SAI1_RX_BCLK     = 0x1a,
-+	OUTCLK_SAI1_TX_BCLK     = 0x1b,
-+	OUTCLK_SAI2_RX_BCLK     = 0x1c,
-+	OUTCLK_SAI3_RX_BCLK     = 0x1d,
-+	OUTCLK_ASRCO_MUX_CLK    = 0x1e,
-+
-+	OUTCLK_ESAI1_RX_CLK     = 0x20,
-+	OUTCLK_ESAI1_TX_CLK     = 0x21,
-+	OUTCLK_SAI6_TX_BCLK     = 0x22,
-+	OUTCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
-+	OUTCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
- };
- 
- #define ASRC_CLK_MAX_NUM	16
-@@ -387,6 +433,21 @@ struct dma_block {
- 	unsigned int length;
- };
- 
-+/**
-+ * fsl_asrc_soc_data: soc specific data
-+ *
-+ * @use_edma: using edma as dma device or not
-+ * @channel_bits: width of ASRCNCR register for each pair
-+ * @inclk_map: clock map for input clock
-+ * @outclk_map: clock map for output clock
-+ */
-+struct fsl_asrc_soc_data {
-+	bool use_edma;
-+	unsigned int channel_bits;
-+	unsigned char *inclk_map;
-+	unsigned char *outclk_map;
-+};
-+
- /**
-  * fsl_asrc_pair: ASRC Pair private data
-  *
-@@ -431,7 +492,7 @@ struct fsl_asrc_pair {
-  * @asrck_clk: clock sources to driver ASRC internal logic
-  * @lock: spin lock for resource protection
-  * @pair: pair pointers
-- * @channel_bits: width of ASRCNCR register for each pair
-+ * @soc: soc specific data
-  * @channel_avail: non-occupied channel numbers
-  * @asrc_rate: default sample rate for ASoC Back-Ends
-  * @asrc_width: default sample width for ASoC Back-Ends
-@@ -450,7 +511,7 @@ struct fsl_asrc {
- 	spinlock_t lock;
- 
- 	struct fsl_asrc_pair *pair[ASRC_PAIR_MAX_NUM];
--	unsigned int channel_bits;
-+	const struct fsl_asrc_soc_data *soc;
- 	unsigned int channel_avail;
- 
- 	int asrc_rate;
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index d6146de9acd2..f871fdb9d1c6 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -197,21 +197,37 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
- 	dma_cap_set(DMA_SLAVE, mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	/* Get DMA request of Back-End */
--	tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
--	tmp_data = tmp_chan->private;
--	pair->dma_data.dma_request = tmp_data->dma_request;
--	dma_release_channel(tmp_chan);
-+	/*
-+	 * For EDMA DEV_TO_DEV channel, we don't need to configure
-+	 * dma_request and dma_request2, we can get dma channel through
-+	 * dma_request_slave_channel directly.
-+	 * Compare with SDMA channel, EDMA channel is bound with dma
-+	 * request event of each peripheral, and it is fixed. Not like SDMA,
-+	 * the channel is allocated dynamically. So when DMA is EDMA, we
-+	 * can only get EDMA channel through dma-names of Front-End device.
-+	 */
-+	if (!asrc_priv->soc->use_edma) {
-+		/* Get DMA request of Back-End */
-+		tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
-+		tmp_data = tmp_chan->private;
-+		pair->dma_data.dma_request = tmp_data->dma_request;
-+		dma_release_channel(tmp_chan);
- 
--	/* Get DMA request of Front-End */
--	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
--	tmp_data = tmp_chan->private;
--	pair->dma_data.dma_request2 = tmp_data->dma_request;
--	pair->dma_data.peripheral_type = tmp_data->peripheral_type;
--	pair->dma_data.priority = tmp_data->priority;
--	dma_release_channel(tmp_chan);
-+		/* Get DMA request of Front-End */
-+		tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
-+		tmp_data = tmp_chan->private;
-+		pair->dma_data.dma_request2 = tmp_data->dma_request;
-+		pair->dma_data.peripheral_type = tmp_data->peripheral_type;
-+		pair->dma_data.priority = tmp_data->priority;
-+		dma_release_channel(tmp_chan);
-+
-+		pair->dma_chan[dir] =
-+			dma_request_channel(mask, filter, &pair->dma_data);
-+	} else {
-+		pair->dma_chan[dir] =
-+			fsl_asrc_get_dma_channel(pair, dir);
-+	}
- 
--	pair->dma_chan[dir] = dma_request_channel(mask, filter, &pair->dma_data);
- 	if (!pair->dma_chan[dir]) {
- 		dev_err(dev, "failed to request DMA channel for Back-End\n");
- 		return -EINVAL;
--- 
-2.21.0
-
+> 
+> 								Honza
+> 
+> 
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	spin_lock(&inode->i_lock);
+>> +	dquot = ext4_get_dquots(inode)[PRJQUOTA];
+>> +	if (!dquot)
+>> +		goto out_unlock;
+>>   
+>> -	qid = make_kqid_projid(projid);
+>> -	dquot = dqget(sb, qid);
+>> -	if (IS_ERR(dquot))
+>> -		return PTR_ERR(dquot);
+>>   	spin_lock(&dquot->dq_dqb_lock);
+>>   
+>>   	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+>> @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
+>>   	}
+>>   
+>>   	spin_unlock(&dquot->dq_dqb_lock);
+>> -	dqput(dquot);
+>> +out_unlock:
+>> +	spin_unlock(&inode->i_lock);
+>> +
+>>   	return 0;
+>>   }
+>>   #endif
+>> @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
+>>   #ifdef CONFIG_QUOTA
+>>   	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
+>>   	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
+>> -		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
+>> +		ext4_statfs_project(dentry->d_inode, buf);
+>>   #endif
+>>   	return 0;
+>>   }
+>>
