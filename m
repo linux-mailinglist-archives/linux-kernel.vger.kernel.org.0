@@ -2,80 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B333CE98E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21809E98EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfJ3JJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:09:52 -0400
-Received: from mga17.intel.com ([192.55.52.151]:8496 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfJ3JJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:09:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 02:09:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,246,1569308400"; 
-   d="scan'208";a="198621558"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2019 02:09:51 -0700
-Date:   Wed, 30 Oct 2019 02:09:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Reto Buerki <reet@codelabs.ch>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] KVM: x86: nVMX GUEST_CR3 bug fix, and then some...
-Message-ID: <20191030090950.GA12481@linux.intel.com>
-References: <20190927214523.3376-1-sean.j.christopherson@intel.com>
- <8414d3e8-9a68-e817-de5a-3e9ca6dc85bb@codelabs.ch>
- <20191029150304.GA29542@nodbug.lucina.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191029150304.GA29542@nodbug.lucina.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726540AbfJ3JL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 05:11:29 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34333 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfJ3JL3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 05:11:29 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v3so3808138wmh.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 02:11:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=bOJ34PW9YadKMWVy7Lq7RFshOmanpmOaFJ0/LQDvOqk=;
+        b=cPwCZVCovU/2CggOdtlONW+HZ6vJ7trmhL6nPvJqYuw/oD1PyHK17o3Tz6pwRytnQ8
+         CrPypUXTHXlG8BoCEPtuwAzA9U1uWgHRJQwmCInvns67XnF+kWFy0hMm3NOG5UyoT/cq
+         0ycPALIj/Vgu//Ye9inmkdYDNjuKDw+Hrd34RhvLlFEbc/kSbr/R3mRY1RMC4gZiT9rN
+         EhnO++bBeYFzwPbTyiwXLJy9yvyiFFpxsBU07mk+fw/ft6vj7n0T73TZxecfbyBi6YRG
+         vHcwmIrVz1R9pDf4v4cEcKi7LrjFnFzQ2c9pm5tvv48nHEtON21c7C45Avw6axIGDOI3
+         6ZSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bOJ34PW9YadKMWVy7Lq7RFshOmanpmOaFJ0/LQDvOqk=;
+        b=aZUtjsJfo3TsCgNYRT2h7XSTgEIx945/RvAuErKE5SUqlHVKCcEkeUJLmLfJxaGdKy
+         EFGhlsvDDQW5Q+z2FUXikLoubQ95Uipud3hh9dmzCRyauJfUJ6mj2JdGojZZU+IrqHen
+         q2QFvgIJz3jdbMiO9UpYTZDD1GhV6Lz5Y9k5szjj9g+jO2WFPDIF1ft+Gs0SoPJGkd2v
+         miMSrbq0pscZUxRPDyeegJz3nmabW9GNh/RwiuX0ftDWCyq4jagnCthkiBe8L74VciYZ
+         cRvmPusmmpMCkn0d1Zj1fMT2mOGGjlz92stImmfzWodUjM00M7siG+MWW2WvdhWL+FlT
+         HhYg==
+X-Gm-Message-State: APjAAAUlm26o04gNIRV0qeVfaYkQVwpIWgP78nz4gl1haPdoquVMKqhf
+        0GHxoszT74kugoTLxE0CLUBTYB4qEk0=
+X-Google-Smtp-Source: APXvYqy0w7naVwNgnhQ/SgNL4RSoXuzbGVisLCeRIfRNlMZSRXD/MvlZHZRncQDBE1MAoEA51vnfOg==
+X-Received: by 2002:a7b:c94f:: with SMTP id i15mr8250697wml.8.1572426686603;
+        Wed, 30 Oct 2019 02:11:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e34:ed2f:f020:2c7f:2fc:5551:ee55])
+        by smtp.gmail.com with ESMTPSA id t24sm2608394wra.55.2019.10.30.02.11.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 02:11:26 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     daniel.lezcano@linaro.org
+Cc:     Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        linux-pm@vger.kernel.org (open list:THERMAL/CPU_COOLING),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] thermal: cpu_cooling: Remove pointless dependency on CONFIG_OF
+Date:   Wed, 30 Oct 2019 10:10:36 +0100
+Message-Id: <20191030091038.678-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 04:03:04PM +0100, Martin Lucina wrote:
-> (Cc:s trimmed)
-> 
-> Hi,
-> 
-> On Monday, 30.09.2019 at 12:42, Reto Buerki wrote:
-> > On 9/27/19 11:45 PM, Sean Christopherson wrote:
-> > > Sean Christopherson (8):
-> > >   KVM: nVMX: Always write vmcs02.GUEST_CR3 during nested VM-Enter
-> > >   KVM: VMX: Skip GUEST_CR3 VMREAD+VMWRITE if the VMCS is up-to-date
-> > >   KVM: VMX: Consolidate to_vmx() usage in RFLAGS accessors
-> > >   KVM: VMX: Optimize vmx_set_rflags() for unrestricted guest
-> > >   KVM: x86: Add WARNs to detect out-of-bounds register indices
-> > >   KVM: x86: Fold 'enum kvm_ex_reg' definitions into 'enum kvm_reg'
-> > >   KVM: x86: Add helpers to test/mark reg availability and dirtiness
-> > >   KVM: x86: Fold decache_cr3() into cache_reg()
-> > > 
-> > >  arch/x86/include/asm/kvm_host.h |  5 +-
-> > >  arch/x86/kvm/kvm_cache_regs.h   | 67 +++++++++++++++++------
-> > >  arch/x86/kvm/svm.c              |  5 --
-> > >  arch/x86/kvm/vmx/nested.c       | 14 ++++-
-> > >  arch/x86/kvm/vmx/vmx.c          | 94 ++++++++++++++++++---------------
-> > >  arch/x86/kvm/x86.c              | 13 ++---
-> > >  arch/x86/kvm/x86.h              |  6 +--
-> > >  7 files changed, 123 insertions(+), 81 deletions(-)
-> > 
-> > Series:
-> > Tested-by: Reto Buerki <reet@codelabs.ch>
-> 
-> Any chance of this series making it into 5.4? Unless I'm looking in the
-> wrong place, I don't see the changes in either kvm.git or Linus' tree.
+The option CONFIG_CPU_THERMAL depends on CONFIG_OF in the Kconfig.
 
-It's queued up in kvm.git for 5.5.  That being said, the first patch
-should go into 5.4 (it's also tagged for stable).  The next round of KVM
-fixes for 5.4 will probably be delayed due to KVM Forum.
+It it pointless to check if CONFIG_OF is set in the header file as
+this is always true if CONFIG_CPU_THERMAL is true. Remove it.
 
-Paolo?
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ include/linux/cpu_cooling.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/cpu_cooling.h b/include/linux/cpu_cooling.h
+index bae54bb7c048..72d1c9c5e538 100644
+--- a/include/linux/cpu_cooling.h
++++ b/include/linux/cpu_cooling.h
+@@ -47,7 +47,7 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
+ }
+ #endif	/* CONFIG_CPU_THERMAL */
+ 
+-#if defined(CONFIG_THERMAL_OF) && defined(CONFIG_CPU_THERMAL)
++#ifdef CONFIG_CPU_THERMAL
+ /**
+  * of_cpufreq_cooling_register - create cpufreq cooling device based on DT.
+  * @policy: cpufreq policy.
+@@ -60,6 +60,6 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
+ {
+ 	return NULL;
+ }
+-#endif /* defined(CONFIG_THERMAL_OF) && defined(CONFIG_CPU_THERMAL) */
++#endif /* CONFIG_CPU_THERMAL */
+ 
+ #endif /* __CPU_COOLING_H__ */
+-- 
+2.17.1
+
