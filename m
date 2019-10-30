@@ -2,53 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3179EA55B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 22:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB1E6EA55E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 22:28:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfJ3V0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 17:26:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35738 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfJ3V0K (ORCPT
+        id S1727158AbfJ3V2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 17:28:30 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39936 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbfJ3V2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 17:26:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QAldfIZdfUsmWLWzOiJRMY3GvzhRHkvLuPhvI79W9ls=; b=VRHi7s/T9ZtPoBK3F7Zs53zRF
-        0HzDQB8rdbAdmMQDaExnfod3SW5ufMCnQtNUPbS9BA9yqOBc+3xTdK2CG1yswov9gBhCZGlfEfB8n
-        F2zlBgq3kUJvY8Trzov/KUZW8WjNokCsscCRmSWfWs87P8kviNeGwZigv+P58wvHeaeG7Q8nwQKFV
-        zBiXmHIZiiDTzemVEabr73lBZUrlbuVdnGTKba7hh/gbbRSbmYYS8lSd3I+3vifR+nmkkO+FIMFKf
-        wNcfJb371tEGed8DqE6Q3fRnTxqce3X79Br6nXU9iS2DyX1dRdVLXXMSPmo5e0qB3odoXy3xWus6Y
-        RgDgqjylA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iPvTj-0004rm-0j; Wed, 30 Oct 2019 21:26:07 +0000
-Date:   Wed, 30 Oct 2019 14:26:06 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: SGI-IP27: fix exception handler replication
-Message-ID: <20191030212606.GB4251@infradead.org>
-References: <20191030105819.11266-1-tbogendoerfer@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030105819.11266-1-tbogendoerfer@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 30 Oct 2019 17:28:30 -0400
+Received: by mail-qk1-f193.google.com with SMTP id y81so4450163qkb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 14:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=uytARhU4JI/IWniohgI1h0y5qFI/5ABlfCC5CreFQxg=;
+        b=W6qOtwyIBZjyUMzGqRXB6G/6qHMzRhvEGhB7sUAOb/7Q0fbDCI2YDLOkQh1eth0aoc
+         zqIciVQ+G3mGv+zctMK+TFdzw+XCwGqxXmtEkh94OX70f68eyfnbtWgJfSzHi1PcSZ3G
+         CAVcLdYgMbOSQHcqkV5VQE+QYliMeOEGx1e3ND3k2EIB6yapWK8ru7QD/5ztb7f5pujO
+         Pak0KSIiHl0AOG8ds3zA4UFJLxn3Jca/4N83l505TqjgpGl49Ei9pRJNsnmva3l2tOss
+         yS6VPCeMMoksJcTTHiqXoVHSDlPTvqMOf0mX5pLpaldc8m3ZG6ktwT8DHh/Vcz49xOu2
+         jpxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uytARhU4JI/IWniohgI1h0y5qFI/5ABlfCC5CreFQxg=;
+        b=eGl2xgc59EfDMHxSV+kBXjQfibXP8cJBP1dTUCqWPfGGBIIOoirSKasjqmEaRjD+tG
+         Qz5HJLmhL2iGYUgHLt1LSpAlEc4SAdKmqz+H+TxRlsKdPzz+JdJ0sNQXBSSH9wkmU+M7
+         lQhxcXJQD2J4vuosjiu3U9LmkW6wmf06C/tE8YTum1Eqva28uqipDR2tPaVWnq/U0PXY
+         XEnLDTT0mPMPth9zmbecFLRxjpU9dQBjtB20UO4XrCehCbN3xAx0IxqYiXVoUm7lSjRG
+         E4FXVFwWBL8Z9UAX2oTW0qK4GRhgS3ooVqWLiZt8QN12fj21QvJ11OUewtGy4F877+z9
+         Jsvw==
+X-Gm-Message-State: APjAAAXoFJ7wndh+oTucuLESDfsQ6V//9ceQpX9QMA14mmR/oLLYgADt
+        yx03JJRlTPGUXd8A6GABvREG6A==
+X-Google-Smtp-Source: APXvYqxcwYAkthju/bxaBiwmlQyXIhoDs08LzlEAC4htL2+UH1+5Ji7t08N+xcWqICHjkBR79GnO+g==
+X-Received: by 2002:a37:8a05:: with SMTP id m5mr1950049qkd.181.1572470907914;
+        Wed, 30 Oct 2019 14:28:27 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id 15sm670984qke.120.2019.10.30.14.28.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 14:28:27 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     dan.j.williams@intel.com
+Cc:     vishal.l.verma@intel.com, dave.jiang@intel.com,
+        keith.busch@intel.com, ira.weiny@intel.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] nvdimm/btt: fix variable 'rc' set but not used
+Date:   Wed, 30 Oct 2019 17:28:09 -0400
+Message-Id: <1572470889-28754-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 11:58:19AM +0100, Thomas Bogendoerfer wrote:
-> Commit b3ffcd0d800c ("mips/sgi-ip35: Initial rough-in of minimal platform
-> definition.")
+drivers/nvdimm/btt.c: In function 'btt_read_pg':
+drivers/nvdimm/btt.c:1264:8: warning: variable 'rc' set but not used
+[-Wunused-but-set-variable]
+    int rc;
+        ^~
 
-I can't actually find that commit anywhere.
+Add a ratelimited message in case a storm of errors is encountered.
+
+Fixes: d9b83c756953 ("libnvdimm, btt: rework error clearing")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v2: include the block address that is returning an error per Dan.
+
+ drivers/nvdimm/btt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
+index 3e9f45aec8d1..10313be78221 100644
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -1266,6 +1266,12 @@ static int btt_read_pg(struct btt *btt, struct bio_integrity_payload *bip,
+ 			/* Media error - set the e_flag */
+ 			rc = btt_map_write(arena, premap, postmap, 0, 1,
+ 				NVDIMM_IO_ATOMIC);
++
++			if (rc)
++				dev_warn_ratelimited(to_dev(arena),
++					"Error persistently tracking bad blocks at %#x\n",
++					premap);
++
+ 			goto out_rtt;
+ 		}
+ 
+-- 
+1.8.3.1
+
