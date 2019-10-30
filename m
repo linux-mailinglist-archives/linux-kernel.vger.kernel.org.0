@@ -2,106 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD50E9BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 13:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F40DE9BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 13:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfJ3Mw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 08:52:56 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38537 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfJ3Mwz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 08:52:55 -0400
-Received: by mail-vs1-f66.google.com with SMTP id b123so1551246vsb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 05:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BchOSg6wnAs4oKRFihXNzsMJLvwqYQWlHqnAgNcHqY8=;
-        b=TY3HOcZXz3quEBuy7fHsMjhrFE0WkkI7EiCmK49VpTfpnIsZOpSHpopNmfwVkz8Loh
-         j7WR7bpjzfPHFNOhi4AvUlT5fkpWGB5a2+blG9sqLaQ0qLlAmRE/YKYUe80eFDTMfmdS
-         eQ1kQYm3whnddeyBwN1hufnAu6Ylyygm8FNZ9mvx5DKuZ1NRJwaWg4ODXSSb6WSfrFTT
-         tg3X8+ZU6lo7iuYKitQ6sS68cPTcOCCoCEVcrBARr8RcYMJhBJ5VZgPWinNSZizGujWE
-         i0cNwm0CPsjCf6cWj8NulOk/tWGveONmIaK6fo91j/mFiKcbIa4noDvXNifRGP/EPDfz
-         O83w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BchOSg6wnAs4oKRFihXNzsMJLvwqYQWlHqnAgNcHqY8=;
-        b=Oo7mCLZGfpRsqPCYcZsywSDK324PuJHw7x7IrkdJthodvyPgZhA6ag3oCJTe+a5j7n
-         0RR7YZY2B0dyf+L6/9EnQNkxMc+WlU2RL+MbnfuQoeU3lanf4rjv2WwFabIoHeMAn0SX
-         7LDb0M3l8g97VVHzHHW2a2QSBYoGuFDPv/hL6ApSuBa76iQWk2iY8Dpr9KQ3fhU5qGw8
-         q9gZ1EEJ7x9us2TGvB74l7YjanrNSWetUT9nmsFr8nGol4y1SxQLSiioMT0udGI4R7jA
-         iM6dUMTPeWo6X8vqLT5mEZ0k4hKDZnDfgsHLNIP0vV4aTCjTq67rK3ITDTfbLUSjvip2
-         Df4g==
-X-Gm-Message-State: APjAAAXI3BuIsBVT06B635+snq5vvbwHDQlGFT6t3XTYdFVvS7eohpAM
-        HHbTbClQDuXBXRGmdEvZA2G4kBt0RMM2H5uA+AECRg==
-X-Google-Smtp-Source: APXvYqxVw//+Wgw8nFkhN3PD2FIEz9ZpIotZHS4tQoRA6wZN9M1ZQ5BvDlHzy+Peb34DIK5RTHEG3BZHeIhnPS3zorU=
-X-Received: by 2002:a67:f5c1:: with SMTP id t1mr4971361vso.9.1572439974693;
- Wed, 30 Oct 2019 05:52:54 -0700 (PDT)
+        id S1726334AbfJ3M5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 08:57:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45386 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbfJ3M5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 08:57:17 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D58B047779B32F6F8190;
+        Wed, 30 Oct 2019 20:57:12 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 30 Oct 2019
+ 20:57:02 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <skomatineni@nvidia.com>, <digetx@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: tegra: Fix build error without CONFIG_PM_SLEEP
+Date:   Wed, 30 Oct 2019 20:56:50 +0800
+Message-ID: <20191030125650.36776-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20191022114910.652-1-colin.king@canonical.com> <cc9ea171-dfdc-f28e-59a4-26ab55155b8b@linaro.org>
-In-Reply-To: <cc9ea171-dfdc-f28e-59a4-26ab55155b8b@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 30 Oct 2019 18:22:43 +0530
-Message-ID: <CAHLCerNvsZDT-FF4a+wsCqi4Fwf04e-rzaVq0qwsUtEWQL6kSQ@mail.gmail.com>
-Subject: Re: [PATCH][next] drivers: thermal: tsens: fix potential integer
- overflow on multiply
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Andy Gross <agross@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 1:10 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 22/10/2019 13:49, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently a multiply operation is being performed on two int values
-> > and the result is being assigned to a u64, presumably because the
-> > end result is expected to be probably larger than an int. However,
-> > because the multiply is an int multiply one can get overflow. Avoid
-> > the overflow by casting degc to a u64 to force a u64 multiply.
-> >
-> > Addresses-Coverity: ("Unintentional integer overflow")
-> > Fixes: fbfe1a042cfd ("drivers: thermal: tsens: Add interrupt support")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/thermal/qcom/tsens-common.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> > index 03bf1b8133ea..3d7855106ecd 100644
-> > --- a/drivers/thermal/qcom/tsens-common.c
-> > +++ b/drivers/thermal/qcom/tsens-common.c
-> > @@ -92,7 +92,7 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *p1,
-> >
-> >  static inline u32 degc_to_code(int degc, const struct tsens_sensor *s)
-> >  {
-> > -     u64 code = (degc * s->slope + s->offset) / SLOPE_FACTOR;
-> > +     u64 code = ((u64)degc * s->slope + s->offset) / SLOPE_FACTOR;
->
->
-> -       u64 code = ((u64)degc * s->slope + s->offset) / SLOPE_FACTOR;
-> +       u64 code = div_u64(((u64)degc * s->slope + s->offset),
-> SLOPE_FACTOR);
+If CONFIG_PM_SLEEP is n, build fails:
 
-This implementation should handle 32-bit architectures too. Colin,
-could you respin?
+drivers/clk/tegra/clk-tegra210.c:3426:13: error:
+ tegra210_clk_suspend undeclared here (not in a function); did you mean tegra_clk_ndspeed?
+  .suspend = tegra210_clk_suspend,
+             ^~~~~~~~~~~~~~~~~~~~
+             tegra_clk_ndspeed
+drivers/clk/tegra/clk-tegra210.c:3427:12: error:
+ tegra210_clk_resume undeclared here (not in a function); did you mean tegra210_clk_suspend?
+  .resume = tegra210_clk_resume,
 
-Regards,
-Amit
+Use ifdef to guard this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 27d10d548c04 ("clk: tegra: Add suspend and resume support on Tegra210")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index d038fed..762cd18 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3423,8 +3423,10 @@ static void tegra210_cpu_clock_resume(void)
+ #endif
+ 
+ static struct syscore_ops tegra_clk_syscore_ops = {
++#ifdef CONFIG_PM_SLEEP
+ 	.suspend = tegra210_clk_suspend,
+ 	.resume = tegra210_clk_resume,
++#endif
+ };
+ 
+ static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
+-- 
+2.7.4
+
+
