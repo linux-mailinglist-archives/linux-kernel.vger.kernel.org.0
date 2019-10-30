@@ -2,90 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E241E98A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:02:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E260E98B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfJ3JBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:01:55 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32433 "EHLO mga06.intel.com"
+        id S1726680AbfJ3JCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 05:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726284AbfJ3JBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:01:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 02:01:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,246,1569308400"; 
-   d="scan'208";a="193903444"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga008.jf.intel.com with ESMTP; 30 Oct 2019 02:01:49 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 6/9] usb: dwc3: Rework resets initialization to be more flexible
-In-Reply-To: <CALAqxLX47uELsGbdociUKdC6KgDba-1SBVALmgjD3=jxh=fd8g@mail.gmail.com>
-References: <20191028215919.83697-1-john.stultz@linaro.org> <20191028215919.83697-7-john.stultz@linaro.org> <87h83rj4ha.fsf@gmail.com> <CALAqxLX47uELsGbdociUKdC6KgDba-1SBVALmgjD3=jxh=fd8g@mail.gmail.com>
-Date:   Wed, 30 Oct 2019 11:01:49 +0200
-Message-ID: <87k18mhaiq.fsf@gmail.com>
+        id S1726084AbfJ3JCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 05:02:20 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE7742083E;
+        Wed, 30 Oct 2019 09:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572426138;
+        bh=qDDn6Pqi5gdg0xPqXhf/M0A/TQfM681Mptbd731RAOg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RC/Tpy5ZNRHF6PoKQHXz0uRgEcUe20OnXfZiM9/V4ayevaeTbGlZ8JzjHjG1AUlS9
+         8O0uw5k1oePaQb9QFj44dStIAfTgZQ83ebpLqpPJvdiXGIC8qx6cNmVXubeg6p56xz
+         FJykEcfDv0CQTfU91w/FA2gg0o47M6sP4JfcB294=
+Date:   Wed, 30 Oct 2019 10:02:14 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Meng Zhuo <mengzhuo1203@gmail.com>, linux-mips@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.14 027/119] MIPS: elf_hwcap: Export userspace ASEs
+Message-ID: <20191030090214.GA628862@kroah.com>
+References: <20191027203259.948006506@linuxfoundation.org>
+ <20191027203308.417745883@linuxfoundation.org>
+ <c7cea5a0-bb68-b8ad-0548-6f246465a8b6@flygoat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c7cea5a0-bb68-b8ad-0548-6f246465a8b6@flygoat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 29, 2019 at 06:50:38PM +0800, Jiaxun Yang wrote:
+> 
+> 在 2019/10/28 上午5:00, Greg Kroah-Hartman 写道:
+> > From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> > 
+> > [ Upstream commit 38dffe1e4dde1d3174fdce09d67370412843ebb5 ]
+> > 
+> > A Golang developer reported MIPS hwcap isn't reflecting instructions
+> > that the processor actually supported so programs can't apply optimized
+> > code at runtime.
+> > 
+> > Thus we export the ASEs that can be used in userspace programs.
+> > 
+> > Reported-by: Meng Zhuo <mengzhuo1203@gmail.com>
+> > Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> > Cc: linux-mips@vger.kernel.org
+> > Cc: Paul Burton <paul.burton@mips.com>
+> > Cc: <stable@vger.kernel.org> # 4.14+
+> > Signed-off-by: Paul Burton <paul.burton@mips.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >   arch/mips/include/uapi/asm/hwcap.h | 11 ++++++++++
+> >   arch/mips/kernel/cpu-probe.c       | 33 ++++++++++++++++++++++++++++++
+> >   2 files changed, 44 insertions(+)
+> > 
+> > diff --git a/arch/mips/include/uapi/asm/hwcap.h b/arch/mips/include/uapi/asm/hwcap.h
+> > index 600ad8fd68356..2475294c3d185 100644
+> > --- a/arch/mips/include/uapi/asm/hwcap.h
+> > +++ b/arch/mips/include/uapi/asm/hwcap.h
+> > @@ -5,5 +5,16 @@
+> >   /* HWCAP flags */
+> >   #define HWCAP_MIPS_R6		(1 << 0)
+> >   #define HWCAP_MIPS_MSA		(1 << 1)
+> > +#define HWCAP_MIPS_MIPS16	(1 << 3)
+> > +#define HWCAP_MIPS_MDMX     (1 << 4)
+> > +#define HWCAP_MIPS_MIPS3D   (1 << 5)
+> > +#define HWCAP_MIPS_SMARTMIPS (1 << 6)
+> > +#define HWCAP_MIPS_DSP      (1 << 7)
+> > +#define HWCAP_MIPS_DSP2     (1 << 8)
+> > +#define HWCAP_MIPS_DSP3     (1 << 9)
+> > +#define HWCAP_MIPS_MIPS16E2 (1 << 10)
+> > +#define HWCAP_LOONGSON_MMI  (1 << 11)
+> > +#define HWCAP_LOONGSON_EXT  (1 << 12)
+> > +#define HWCAP_LOONGSON_EXT2 (1 << 13)
+> >   #endif /* _UAPI_ASM_HWCAP_H */
+> > diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+> > index 3007ae1bb616a..c38cd62879f4e 100644
+> > --- a/arch/mips/kernel/cpu-probe.c
+> > +++ b/arch/mips/kernel/cpu-probe.c
+> > @@ -2080,6 +2080,39 @@ void cpu_probe(void)
+> >   		elf_hwcap |= HWCAP_MIPS_MSA;
+> >   	}
+> > +	if (cpu_has_mips16)
+> > +		elf_hwcap |= HWCAP_MIPS_MIPS16;
+> > +
+> > +	if (cpu_has_mdmx)
+> > +		elf_hwcap |= HWCAP_MIPS_MDMX;
+> > +
+> > +	if (cpu_has_mips3d)
+> > +		elf_hwcap |= HWCAP_MIPS_MIPS3D;
+> > +
+> > +	if (cpu_has_smartmips)
+> > +		elf_hwcap |= HWCAP_MIPS_SMARTMIPS;
+> > +
+> > +	if (cpu_has_dsp)
+> > +		elf_hwcap |= HWCAP_MIPS_DSP;
+> > +
+> > +	if (cpu_has_dsp2)
+> > +		elf_hwcap |= HWCAP_MIPS_DSP2;
+> > +
+> > +	if (cpu_has_dsp3)
+> > +		elf_hwcap |= HWCAP_MIPS_DSP3;
+> > +
+> > +	if (cpu_has_loongson_mmi)
+> > +		elf_hwcap |= HWCAP_LOONGSON_MMI;
+> > +
+> > +	if (cpu_has_loongson_mmi)
+> > +		elf_hwcap |= HWCAP_LOONGSON_CAM;
+> 
+> Hi:
+> 
+> Sorry, there is a typo causing build failure.
+> 
+> Should be:
 
-Hi,
+Can you resend this in a format we can apply it in?
 
-John Stultz <john.stultz@linaro.org> writes:
+thanks,
 
-> On Tue, Oct 29, 2019 at 2:17 AM Felipe Balbi <balbi@kernel.org> wrote:
->> John Stultz <john.stultz@linaro.org> writes:
->> > The dwc3 core binding specifies one reset.
->> >
->> > However some variants of the hardware my not have more.
->>                                         ^^
->>                                         may
->>
->> According to synopsys databook, there's a single *input* reset signal on
->> this IP. What is this extra reset you have?
->>
->> Is this, perhaps, specific to your glue layer around the synopsys ip?
->
-> Likely (again, I unfortunately don't have a ton of detail on the hardware).
->
->> Should, perhaps, your extra reset be managed by the glue layer?
->
-> So yes the dwc3-of-simple does much of this already (it handles
-> multiple resets, and variable clocks), but unfortunately we seem to
-> need new bindings for each device added?  I think the suggestion from
-> Rob was due to the sprawl of bindings for the glue code, and the extra
-> complexity of the parent node.  So I believe Rob just thought it made
-> sense to collapse this down into the core?
->
-> I'm not really passionate about either approach, and am happy to
-> rework (as long as there is eventual progress :).
-> Just let me know what you'd prefer.
-
-Well, I was under the impression we were supposed to describe the
-HW. Synopsys IP has a single reset input :-p
-
--- 
-balbi
+greg k-h
