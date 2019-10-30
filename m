@@ -2,109 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C94F6EA1E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC127EA1F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfJ3QjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:39:24 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:30140 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbfJ3QjY (ORCPT
+        id S1726877AbfJ3QmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:42:25 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36256 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbfJ3QmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 12:39:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1572453562;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Dn40tVbbGhA5NczjSxQCCaGadlXd23pRkpE7OM8NH5A=;
-        b=fQ0EYHGnVog07STSSHN1xVxozHHsN1q4avo/yikt4Mxs6niBW/Cdu/5zgLCk+NknRz
-        SmNRpolDwU+UIeiqmzeCT+C3pSkjtOO/zj/9G147LyD6NkvbKecOWHn8y3f3K/BV6+SW
-        Aoe71lBhAUSOVyfPZ9N/LZq30ueX3+6pqPRy2dYvJC8PXvW/0bfxfUIJaljRVIkoWeKA
-        DxRucbYmwLKbIchByJSYqPL8lKXugDik8xh7XqG+iGMmEQrGEAfXlu5XA+IgSB0yB9fy
-        Qa4a9MmcRAs7qNT9p9WT1E22l1J04kZ/xRF1MRVCRA4SeSWhEalK3DuDGNQ2Zo07+NQy
-        SYaw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBp5hRw/qOxWRk4dCymhdRVSmPRBIbFC67m67z0KUz0RNG8vGE966zI"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2001:16b8:2638:1d00:3142:f353:47a0:b4bd]
-        by smtp.strato.de (RZmta 44.29.0 AUTH)
-        with ESMTPSA id L09db3v9UGdC5Tu
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 30 Oct 2019 17:39:12 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 1/7] dt-bindings: gpu: pvrsgx: add initial bindings
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20191030161604.GA5610@atomide.com>
-Date:   Wed, 30 Oct 2019 17:39:11 +0100
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <61AAD023-6B22-4F81-A3B3-7C9571F967B2@goldelico.com>
-References: <cover.1571424390.git.hns@goldelico.com> <f0fb68dc7bc027e5e911721852f6bc6fa2d77a63.1571424390.git.hns@goldelico.com> <20191030161604.GA5610@atomide.com>
-To:     Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 30 Oct 2019 12:42:25 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UGgGo3022436;
+        Wed, 30 Oct 2019 11:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572453736;
+        bh=CCnWjmaSyDBwAcmvj4tdp75fEghlw9n17xSgZDvLzNE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=G7iNEDdFUPcnPrnB6iIhtbadYxsLdvJ468QBIY76uglRR0emhbIterApk1mDITTX+
+         7YG7kigZ9c0gxebCsDrFWezYd9p+Mcd+72VOduJlH7zenLNKn5gSarWsOWcjWYzGdm
+         kfOZbtkrfVrELd7jL8ignpzn0VWBgdfupBeTDqTg=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9UGgGCp126766
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Oct 2019 11:42:16 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
+ Oct 2019 11:42:15 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 30 Oct 2019 11:42:15 -0500
+Received: from [10.250.35.43] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9UGgFwM011148;
+        Wed, 30 Oct 2019 11:42:15 -0500
+Subject: Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     kbuild test robot <lkp@intel.com>
+CC:     <kbuild-all@lists.01.org>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191028183629.11779-7-dmurphy@ti.com>
+ <201910302027.2hNdR993%lkp@intel.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <bb3473ba-ddfc-2b51-4a75-c23c5bf3bc62@ti.com>
+Date:   Wed, 30 Oct 2019 11:41:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <201910302027.2hNdR993%lkp@intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello
 
-> Am 30.10.2019 um 17:16 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * H. Nikolaus Schaller <hns@goldelico.com> [191018 18:47]:
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpu/img,pvrsgx.txt
->> @@ -0,0 +1,76 @@
->> +Imagination PVR/SGX GPU
->> +
->> +Only the Imagination SGX530, SGX540 and SGX544 GPUs are currently =
-covered by this binding.
->> +
->> +Required properties:
->> +- compatible:	Should be one of
->> +		"img,sgx530-121", "img,sgx530", =
-"ti,omap-omap3-sgx530-121";
->> +		  - BeagleBoard ABC, OpenPandora 600MHz
->> +		"img,sgx530-125", "img,sgx530", =
-"ti,omap-omap3-sgx530-125";
->> +		  - BeagleBoard XM, GTA04, OpenPandora 1GHz
->> +		"img,sgx530-125", "img,sgx530", =
-"ti,omap-am3517-sgx530-125";
->> +		"img,sgx530-125", "img,sgx530", =
-"ti,omap-am335x-sgx530-125";
->> +		  - BeagleBone Black
->> +		"img,sgx540-120", "img,sgx540", =
-"ti,omap-omap4-sgx540-120";
->> +		  - Pandaboard (ES)
->> +		"img,sgx544-112", "img,sgx544", =
-"ti,omap-omap4-sgx544-112";
->> +		"img,sgx544-116", "img,sgx544", =
-"ti,omap-omap5-sgx544-116";
->> +		  - OMAP5 UEVM, Pyra Handheld
->> +		"img,sgx544-116", "img,sgx544", =
-"ti,omap-dra7-sgx544-116";
->=20
-> FYI, the compatible names above have unnecessary omap in them:
->=20
-> "ti,omap-omap3-sgx530-121" should be "ti,omap3-sgx530-121"
-> "ti,omap-am335x-sgx530-125" should be "ti,am335x-sgx530-125";
-> "ti,omap-dra7-sgx544-116" should be "ti,dra7-sgx544-116"
->=20
-> And so on.
+On 10/30/19 7:07 AM, kbuild test robot wrote:
+> Hi Dan,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on j.anaszewski-leds/for-next]
+> [also build test ERROR on v5.4-rc5 next-20191029]
 
-Yes,
-Rob already noted a while ago and our latest private code has it fixed.
+I went to both these references and I do not see this patchset on either 
+of these.
 
-There is no progress towards a v2 since I am still fighting with the new
-yaml format he also requested...
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+>
+> url:    https://github.com/0day-ci/linux/commits/Dan-Murphy/Multicolor-Framework/20191030-144320
+It appears here though
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git for-next
 
-BR and thanks,
-Nikolaus
+Does not appear here
+
+Finally not sure why the MIPS compiler is complaining about this but the 
+ARM and x86 is not
+
+Dan
 
