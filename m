@@ -2,111 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E59E0E9D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 588C8E9D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfJ3O3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:29:54 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46971 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfJ3O3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:29:54 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 89so2228737oth.13;
-        Wed, 30 Oct 2019 07:29:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LMfeOlvx6eLj9u8wcVjU8j/3tqXZ55VLld17C/fRM+o=;
-        b=KXgQhjcQ6o+d1I35/G5kwAlyytym1XvmL30MxV8CKXiMEyoGyqlJx/gcWLBA1vLSN7
-         xqmNr0DH/snI+fdkwzhc1akCZItqMXZq5+BjJhmEprY2do+zbgMl55PSENysI2rxRb9G
-         67OT7Y8x4qqoahcoW86t9VYfVeJlysuN28TU3T2ph7HD7CUxr6QN3bkqckxz1eevJz8D
-         uxqU9moCK6DVKvI9eA5Pqt/nAPxaPt10WbKGmHWlFId2zLatg3/tIi5NWRFzPQ3S7+/s
-         RhXxb6iYJqjEHrWKOYP8mYUFX+qz1WlqtQ0b3M+o24IiW42dL9BS5STOVlE5NHWL4v6C
-         a9yg==
-X-Gm-Message-State: APjAAAXovf7x06qSWFlhxLTMRoe0Kx/lyRC2j91p64/4XAv95DWrApfE
-        KgqLXTvn+E9dN2OKMWJidlGXmvol4w==
-X-Google-Smtp-Source: APXvYqx+eBfjpYHuthtmmpS/yKuaO2Fxm/sTUZz0uJRp1IDCuerAIXzxDA1q1VJzYfDKZiAUqvmNqQ==
-X-Received: by 2002:a9d:7ac5:: with SMTP id m5mr138924otn.356.1572445793274;
-        Wed, 30 Oct 2019 07:29:53 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w33sm75635otb.68.2019.10.30.07.29.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 07:29:52 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 09:29:52 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        info@logictechno.com, j.bauer@endrich.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: display: panel: add bindings for
- logic technologies displays
-Message-ID: <20191030142952.GB31293@bogus>
-References: <20191027142609.12754-1-marcel@ziswiler.com>
- <20191027142609.12754-3-marcel@ziswiler.com>
+        id S1726730AbfJ3Oao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbfJ3Oan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 10:30:43 -0400
+Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8909A2087E;
+        Wed, 30 Oct 2019 14:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572445843;
+        bh=S5Tw7Z8qftyyZYiz2DVEWd/JEwXROqSdvVTEKK+A4Tw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ikVSX1Ldv+wRdChyKOspjMgvpcUguXBUqVvoG+TbQSOaU47YVqzrmhFRjaNgtuHB1
+         jK1iAIlRWrBhCExn8WE/Ay95K7+cZpwHuhkFAZhLyd7zY9mKSUjGJ5ZzDKh1t2oFCO
+         BJb90GygVSm06hpz3cgib+Uw/uG2DqE3o/bo9HSI=
+From:   Will Deacon <will@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Will Deacon <will@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>
+Subject: [PATCH v4 00/10] Rework REFCOUNT_FULL using atomic_fetch_* operations
+Date:   Wed, 30 Oct 2019 14:30:25 +0000
+Message-Id: <20191030143035.19440-1-will@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191027142609.12754-3-marcel@ziswiler.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 03:26:09PM +0100, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Add bindings for the following 3 previously added display panels
-> manufactured by Logic Technologies Limited:
-> 
-> - LT161010-2NHC e.g. as found in the Toradex Capacitive Touch Display
-> 7" Parallel [1]
-> - LT161010-2NHR e.g. as found in the Toradex Resistive Touch Display 7"
-> Parallel [2]
-> - LT170410-2WHC e.g. as found in the Toradex Capacitive Touch Display
-> 10.1" LVDS [3]
-> 
-> Those panels may also be distributed by Endrich Bauelemente Vertriebs
-> GmbH [4].
-> 
-> [1] https://docs.toradex.com/104497-7-inch-parallel-capacitive-touch-display-800x480-datasheet.pdf
-> [2] https://docs.toradex.com/104498-7-inch-parallel-resistive-touch-display-800x480.pdf
-> [3] https://docs.toradex.com/105952-10-1-inch-lvds-capacitive-touch-display-1280x800-datasheet.pdf
-> [4] https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - New patch adding display panel bindings as well as suggested by Rob.
-> 
->  .../panel/logictechno,lt161010-2nhc.yaml      | 44 +++++++++++++++++++
->  .../panel/logictechno,lt161010-2nhr.yaml      | 44 +++++++++++++++++++
->  .../panel/logictechno,lt170410-2whc.yaml      | 44 +++++++++++++++++++
->  3 files changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/logictechno,lt161010-2nhc.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/panel/logictechno,lt161010-2nhr.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/panel/logictechno,lt170410-2whc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/logictechno,lt161010-2nhc.yaml b/Documentation/devicetree/bindings/display/panel/logictechno,lt161010-2nhc.yaml
-> new file mode 100644
-> index 000000000000..0dfe94d38a47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/logictechno,lt161010-2nhc.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: GPL-2.0
+Hi all,
 
-Except the license for new bindings should be: 
+This is version four of the patches I previously posted here:
 
-(GPL-2.0-only OR BSD-2-Clause)
+  v1: https://lkml.kernel.org/r/20190802101000.12958-1-will@kernel.org
+  v2: https://lkml.kernel.org/r/20190827163204.29903-1-will@kernel.org
+  v3: https://lkml.kernel.org/r/20191007154703.5574-1-will@kernel.org
 
-Rob
+Changes since v3 include:
+
+  - Add description of racy behaviour include/linux/refcount.h
+  - Fix saturation behaviour in refcount_sub_and_test()
+  - Added Acks and Tested-bys
+
+Cheers,
+
+Will
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Cc: Jan Glauber <jglauber@marvell.com>
+
+--->8
+
+Will Deacon (10):
+  lib/refcount: Define constants for saturation and max refcount values
+  lib/refcount: Ensure integer operands are treated as signed
+  lib/refcount: Remove unused refcount_*_checked() variants
+  lib/refcount: Move bulk of REFCOUNT_FULL implementation into header
+  lib/refcount: Improve performance of generic REFCOUNT_FULL code
+  lib/refcount: Move saturation warnings out of line
+  lib/refcount: Consolidate REFCOUNT_{MAX,SATURATED} definitions
+  refcount: Consolidate implementations of refcount_t
+  lib/refcount: Remove unused 'refcount_error_report()' function
+  drivers/lkdtm: Remove references to CONFIG_REFCOUNT_FULL
+
+ arch/Kconfig                       |  21 ---
+ arch/arm/Kconfig                   |   1 -
+ arch/arm64/Kconfig                 |   1 -
+ arch/s390/configs/debug_defconfig  |   1 -
+ arch/x86/Kconfig                   |   1 -
+ arch/x86/include/asm/asm.h         |   6 -
+ arch/x86/include/asm/refcount.h    | 126 --------------
+ arch/x86/mm/extable.c              |  49 ------
+ drivers/gpu/drm/i915/Kconfig.debug |   1 -
+ drivers/misc/lkdtm/refcount.c      |  11 +-
+ include/linux/kernel.h             |   7 -
+ include/linux/refcount.h           | 269 ++++++++++++++++++++++++-----
+ kernel/panic.c                     |  11 --
+ lib/refcount.c                     | 255 +++------------------------
+ 14 files changed, 257 insertions(+), 503 deletions(-)
+ delete mode 100644 arch/x86/include/asm/refcount.h
+
+-- 
+2.24.0.rc0.303.g954a862665-goog
+
