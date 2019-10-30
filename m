@@ -2,327 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADCEE9522
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6C1E952B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfJ3C40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 22:56:26 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:45816 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbfJ3C40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 22:56:26 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id A8A80AC2; Tue, 29 Oct 2019 21:56:21 -0500 (CDT)
-Date:   Tue, 29 Oct 2019 21:56:21 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        Florent Revest <revest@chromium.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        KP Singh <kpsingh@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v11 2/7] landlock: Add the management of domains
-Message-ID: <20191030025621.GA27626@mail.hallyn.com>
-References: <20191029171505.6650-1-mic@digikod.net>
- <20191029171505.6650-3-mic@digikod.net>
+        id S1727222AbfJ3C7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 22:59:45 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:61863 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfJ3C7o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 22:59:44 -0400
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x9U2xZt1025589;
+        Wed, 30 Oct 2019 11:59:36 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x9U2xZt1025589
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572404376;
+        bh=zQxDpruBzRyBKppwP5ufPnzpMr/EBdaseHOs9UiGMV8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OxfsEQxgLNHEqymRgTqaLPInL64onTfT/jX7yOp8c2pSL1h5cnBoLl39FYdgY8MXA
+         yyG0PeMARKzREXlhJAgOhpZDJW1c6s8gwrv3UqVxyfxd+/TYM5hkrZTE8JPzpdB6ns
+         +lxc/N+/0YDobhp8hCs8+JwleD5eZGozzBKxjf6zQ3l/0Ye9p5xxNzkLE8MfEH6PG0
+         FzCOj4bMSD+fOAITzfAWBTWI6j6w8VfZKvr385MRgVTebnVdodd9vaOgxrn8zjUNy0
+         e56WlrWlD/lPSpQj5ErYNrm1XvipAtzaeOUlmtoCcawHMNEyxpCxqoYc0x4VTOJOyd
+         jZTKyEfq5GtUw==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id d126so147609vkb.1;
+        Tue, 29 Oct 2019 19:59:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAXAkBYDm71cA3Fy3pnXsuX0sL1Vo0YvMSIF6P9b/PMi/Z7SRRzw
+        Fntm7W95YnpDcy0D6SQ943gu7hDukxJzkLsP/sY=
+X-Google-Smtp-Source: APXvYqyx4HWyZkPpQ4DmBVc4L5u+YULsarpybloXOc9/eX/T4/sYK5FeUYOgK1GaKScUCfxLZMXJrhqF6cCjNcJ1yPA=
+X-Received: by 2002:a1f:4b05:: with SMTP id y5mr13116072vka.12.1572404375169;
+ Tue, 29 Oct 2019 19:59:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191029171505.6650-3-mic@digikod.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAK7LNASG4GzaU6SR=ThfJpjrqmC53xmcSMAWqppciWbx3jMgdw@mail.gmail.com>
+ <20191029150119.19823-1-e5ten.arch@gmail.com>
+In-Reply-To: <20191029150119.19823-1-e5ten.arch@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 30 Oct 2019 11:58:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT0HdWrHaubdjNuVSEdQWvqj6SkXNybs5LvEd2i9Ku1cA@mail.gmail.com>
+Message-ID: <CAK7LNAT0HdWrHaubdjNuVSEdQWvqj6SkXNybs5LvEd2i9Ku1cA@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: support byacc as alternative YACC to bison
+To:     Ethan Sommer <e5ten.arch@gmail.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 06:15:00PM +0100, Mickaël Salaün wrote:
-> A Landlock domain is a set of eBPF programs.  There is a list for each
-> different program types that can be run on a specific Landlock hook
-> (e.g. ptrace).  A domain is tied to a set of subjects (i.e. tasks).  A
-> Landlock program should not try (nor be able) to infer which subject is
-> currently enforced, but to have a unique security policy for all
-> subjects tied to the same domain.  This make the reasoning much easier
-> and help avoid pitfalls.
-> 
-> The next commits tie a domain to a task's credentials thanks to
-> seccomp(2), but we could use cgroups or a security file-system to
-> enforce a sysadmin-defined policy .
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Will Drewry <wad@chromium.org>
+On Wed, Oct 30, 2019 at 12:02 AM Ethan Sommer <e5ten.arch@gmail.com> wrote:
+>
+> Switches to a more portable set of flags for generating the same file
+> names instead of the bison-specific --defines, uses the more portable -V
+> instead of --version, and explicitly defines YYSTYPE in lex.l, which
+> bison implicitly defines if not present but byacc does not.
+>
+> Add %locations to dtc-parser.y to explicitly enable location tracking
+> for byacc, and define YYERROR_CALL explicitly to prevent the locations
+> directive from causing it to be defined to a 2-parameter call to
+> yyerror, which dtc-parser.y defines to accept one parameter.
+>
+> Requires byacc to be built with --enable-btyacc.
+>
+> Signed-off-by: Ethan Sommer <e5ten.arch@gmail.com>
 > ---
-> 
-> Changes since v10:
-> * rename files and names to clearly define a domain
-> * create a standalone patch to ease review
-> ---
+>  scripts/Makefile.host     | 2 +-
+>  scripts/dtc/dtc-parser.y  | 4 ++++
+>  scripts/genksyms/Makefile | 2 +-
+>  scripts/genksyms/lex.l    | 2 ++
+>  4 files changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+> index 4c51c95d40f4..64e98e1d4825 100644
+> --- a/scripts/Makefile.host
+> +++ b/scripts/Makefile.host
+> @@ -11,7 +11,7 @@ $(obj)/%.lex.c: $(src)/%.l FORCE
+>  # YACC
+>  # ---------------------------------------------------------------------------
+>  quiet_cmd_bison = YACC    $(basename $@).[ch]
+> -      cmd_bison = $(YACC) -o $(basename $@).c --defines=$(basename $@).h -t -l $<
+> +      cmd_bison = $(YACC) -b $(basename $(basename $@)) -d -t -l $<
 
-[...]
 
-> +/**
-> + * store_landlock_prog - prepend and deduplicate a Landlock prog_list
-> + *
-> + * Prepend @prog to @init_domain while ignoring @prog if they are already in
-> + * @ref_domain.  Whatever is the result of this function call, you can call
-> + * bpf_prog_put(@prog) after.
-> + *
-> + * @init_domain: empty domain to prepend to
-> + * @ref_domain: domain to check for duplicate programs
-> + * @prog: program to prepend
-> + *
-> + * Return -errno on error or 0 if @prog was successfully stored.
-> + */
-> +static int store_landlock_prog(struct landlock_domain *init_domain,
-> +		const struct landlock_domain *ref_domain,
-> +		struct bpf_prog *prog)
-> +{
-> +	struct landlock_prog_list *tmp_list = NULL;
-> +	int err;
-> +	size_t hook;
-> +	enum landlock_hook_type last_type;
-> +	struct bpf_prog *new = prog;
-> +
-> +	/* allocate all the memory we need */
-> +	struct landlock_prog_list *new_list;
-> +
-> +	last_type = get_hook_type(new);
-> +
-> +	/* ignore duplicate programs */
+Hmm, this is unfortunate since there is no common way to
+specify the header path directly.
 
-This comment should be "don't allow" rather than "ignore", right?
+I am not sure how much effort we should invent
+to support non-GNU implementation
+since we already rely on various GNU tools.
 
-> +	if (ref_domain) {
-> +		struct landlock_prog_list *ref;
-> +
-> +		hook = get_hook_index(get_hook_type(new));
-> +		for (ref = ref_domain->programs[hook]; ref;
-> +				ref = ref->prev) {
-> +			if (ref->prog == new)
-> +				return -EINVAL;
-> +		}
-> +	}
-> +
-> +	new = bpf_prog_inc(new);
-> +	if (IS_ERR(new)) {
-> +		err = PTR_ERR(new);
-> +		goto put_tmp_list;
-> +	}
-> +	new_list = kzalloc(sizeof(*new_list), GFP_KERNEL);
-> +	if (!new_list) {
-> +		bpf_prog_put(new);
-> +		err = -ENOMEM;
-> +		goto put_tmp_list;
-> +	}
-> +	/* ignore Landlock types in this tmp_list */
-> +	new_list->prog = new;
-> +	new_list->prev = tmp_list;
-> +	refcount_set(&new_list->usage, 1);
-> +	tmp_list = new_list;
-> +
-> +	if (!tmp_list)
-> +		/* inform user space that this program was already added */
+If we decide to support byacc,
+we must carry the restriction
+that bans GNU-extension.
 
-I'm not following this.  You just kzalloc'd new_list, pointed
-tmp_list to new_list, so how could tmp_list be NULL?  Was there
-a bad code reorg here, or am i being dense?
 
-> +		return -EEXIST;
+
+
+
+
+>  $(obj)/%.tab.c $(obj)/%.tab.h: $(src)/%.y FORCE
+>         $(call if_changed,bison)
+> diff --git a/scripts/dtc/dtc-parser.y b/scripts/dtc/dtc-parser.y
+> index 2ed4dc1f07fd..40dcf4f149da 100644
+> --- a/scripts/dtc/dtc-parser.y
+> +++ b/scripts/dtc/dtc-parser.y
+> @@ -2,6 +2,8 @@
+>  /*
+>   * (C) Copyright David Gibson <dwg@au1.ibm.com>, IBM Corporation.  2005.
+>   */
+> +%locations
 > +
-> +	/* properly store the list (without error cases) */
-> +	while (tmp_list) {
-> +		struct landlock_prog_list *new_list;
+>  %{
+>  #include <stdio.h>
+>  #include <inttypes.h>
+> @@ -17,6 +19,8 @@ extern void yyerror(char const *s);
+>                 treesource_error = true; \
+>         } while (0)
+>
+> +#define YYERROR_CALL(msg) yyerror(msg)
 > +
-> +		new_list = tmp_list;
-> +		tmp_list = tmp_list->prev;
-> +		/* do not increment the previous prog list usage */
-> +		hook = get_hook_index(get_hook_type(new_list->prog));
-> +		new_list->prev = init_domain->programs[hook];
-> +		/* no need to add from the last program to the first because
-> +		 * each of them are a different Landlock type */
-> +		smp_store_release(&init_domain->programs[hook], new_list);
-> +	}
-> +	return 0;
+>  extern struct dt_info *parser_output;
+>  extern bool treesource_error;
+>  %}
+> diff --git a/scripts/genksyms/Makefile b/scripts/genksyms/Makefile
+> index 78629f515e78..397c2dc8182b 100644
+> --- a/scripts/genksyms/Makefile
+> +++ b/scripts/genksyms/Makefile
+> @@ -15,7 +15,7 @@ genksyms-objs := genksyms.o parse.tab.o lex.lex.o
+>  ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+>
+>  quiet_cmd_bison_no_warn = $(quiet_cmd_bison)
+> -      cmd_bison_no_warn = $(YACC) --version >/dev/null; \
+> +      cmd_bison_no_warn = $(YACC) -V >/dev/null; \
+>                           $(cmd_bison) 2>/dev/null
+>
+>  $(obj)/pars%.tab.c $(obj)/pars%.tab.h: $(src)/pars%.y FORCE
+> diff --git a/scripts/genksyms/lex.l b/scripts/genksyms/lex.l
+> index e265c5d96861..0580c088527f 100644
+> --- a/scripts/genksyms/lex.l
+> +++ b/scripts/genksyms/lex.l
+> @@ -19,6 +19,8 @@
+>  #include "genksyms.h"
+>  #include "parse.tab.h"
+>
+> +extern YYSTYPE yylval;
 > +
-> +put_tmp_list:
-> +	put_landlock_prog_list(tmp_list);
-> +	return err;
-> +}
-> +
-> +/* limit Landlock programs set to 256KB */
-> +#define LANDLOCK_PROGRAMS_MAX_PAGES (1 << 6)
-> +
-> +/**
-> + * landlock_prepend_prog - attach a Landlock prog_list to @current_domain
-> + *
-> + * Whatever is the result of this function call, you can call
-> + * bpf_prog_put(@prog) after.
-> + *
-> + * @current_domain: landlock_domain pointer, must be (RCU-)locked (if needed)
-> + *                  to prevent a concurrent put/free. This pointer must not be
-> + *                  freed after the call.
-> + * @prog: non-NULL Landlock prog_list to prepend to @current_domain. @prog will
-> + *        be owned by landlock_prepend_prog() and freed if an error happened.
-> + *
-> + * Return @current_domain or a new pointer when OK. Return a pointer error
-> + * otherwise.
-> + */
-> +struct landlock_domain *landlock_prepend_prog(
-> +		struct landlock_domain *current_domain,
-> +		struct bpf_prog *prog)
-> +{
-> +	struct landlock_domain *new_domain = current_domain;
-> +	unsigned long pages;
-> +	int err;
-> +	size_t i;
-> +	struct landlock_domain tmp_domain = {};
-> +
-> +	if (prog->type != BPF_PROG_TYPE_LANDLOCK_HOOK)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* validate memory size allocation */
-> +	pages = prog->pages;
-> +	if (current_domain) {
-> +		size_t i;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(current_domain->programs); i++) {
-> +			struct landlock_prog_list *walker_p;
-> +
-> +			for (walker_p = current_domain->programs[i];
-> +					walker_p; walker_p = walker_p->prev)
-> +				pages += walker_p->prog->pages;
-> +		}
-> +		/* count a struct landlock_domain if we need to allocate one */
-> +		if (refcount_read(&current_domain->usage) != 1)
-> +			pages += round_up(sizeof(*current_domain), PAGE_SIZE)
-> +				/ PAGE_SIZE;
-> +	}
-> +	if (pages > LANDLOCK_PROGRAMS_MAX_PAGES)
-> +		return ERR_PTR(-E2BIG);
-> +
-> +	/* ensure early that we can allocate enough memory for the new
-> +	 * prog_lists */
-> +	err = store_landlock_prog(&tmp_domain, current_domain, prog);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	/*
-> +	 * Each task_struct points to an array of prog list pointers.  These
-> +	 * tables are duplicated when additions are made (which means each
-> +	 * table needs to be refcounted for the processes using it). When a new
-> +	 * table is created, all the refcounters on the prog_list are bumped
-> +	 * (to track each table that references the prog). When a new prog is
-> +	 * added, it's just prepended to the list for the new table to point
-> +	 * at.
-> +	 *
-> +	 * Manage all the possible errors before this step to not uselessly
-> +	 * duplicate current_domain and avoid a rollback.
-> +	 */
-> +	if (!new_domain) {
-> +		/*
-> +		 * If there is no Landlock domain used by the current task,
-> +		 * then create a new one.
-> +		 */
-> +		new_domain = new_landlock_domain();
-> +		if (IS_ERR(new_domain))
-> +			goto put_tmp_lists;
-> +	} else if (refcount_read(&current_domain->usage) > 1) {
-> +		/*
-> +		 * If the current task is not the sole user of its Landlock
-> +		 * domain, then duplicate it.
-> +		 */
-> +		new_domain = new_landlock_domain();
-> +		if (IS_ERR(new_domain))
-> +			goto put_tmp_lists;
-> +		for (i = 0; i < ARRAY_SIZE(new_domain->programs); i++) {
-> +			new_domain->programs[i] =
-> +				READ_ONCE(current_domain->programs[i]);
-> +			if (new_domain->programs[i])
-> +				refcount_inc(&new_domain->programs[i]->usage);
-> +		}
-> +
-> +		/*
-> +		 * Landlock domain from the current task will not be freed here
-> +		 * because the usage is strictly greater than 1. It is only
-> +		 * prevented to be freed by another task thanks to the caller
-> +		 * of landlock_prepend_prog() which should be locked if needed.
-> +		 */
-> +		landlock_put_domain(current_domain);
-> +	}
-> +
-> +	/* prepend tmp_domain to new_domain */
-> +	for (i = 0; i < ARRAY_SIZE(tmp_domain.programs); i++) {
-> +		/* get the last new list */
-> +		struct landlock_prog_list *last_list =
-> +			tmp_domain.programs[i];
-> +
-> +		if (last_list) {
-> +			while (last_list->prev)
-> +				last_list = last_list->prev;
-> +			/* no need to increment usage (pointer replacement) */
-> +			last_list->prev = new_domain->programs[i];
-> +			new_domain->programs[i] = tmp_domain.programs[i];
-> +		}
-> +	}
-> +	return new_domain;
-> +
-> +put_tmp_lists:
-> +	for (i = 0; i < ARRAY_SIZE(tmp_domain.programs); i++)
-> +		put_landlock_prog_list(tmp_domain.programs[i]);
-> +	return new_domain;
-> +}
-> diff --git a/security/landlock/domain_manage.h b/security/landlock/domain_manage.h
-> new file mode 100644
-> index 000000000000..5b5b49f6e3e8
-> --- /dev/null
-> +++ b/security/landlock/domain_manage.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - domain management headers
-> + *
-> + * Copyright © 2016-2019 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2019 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_DOMAIN_MANAGE_H
-> +#define _SECURITY_LANDLOCK_DOMAIN_MANAGE_H
-> +
-> +#include <linux/filter.h>
-> +
-> +#include "common.h"
-> +
-> +void landlock_get_domain(struct landlock_domain *dom);
-> +void landlock_put_domain(struct landlock_domain *dom);
-> +
-> +struct landlock_domain *landlock_prepend_prog(
-> +		struct landlock_domain *current_domain,
-> +		struct bpf_prog *prog);
-> +
-> +#endif /* _SECURITY_LANDLOCK_DOMAIN_MANAGE_H */
-> -- 
+>  /* We've got a two-level lexer here.  We let flex do basic tokenization
+>     and then we categorize those basic tokens in the second stage.  */
+>  #define YY_DECL                static int yylex1(void)
+> --
 > 2.23.0
+>
+
+
+--
+Best Regards
+Masahiro Yamada
