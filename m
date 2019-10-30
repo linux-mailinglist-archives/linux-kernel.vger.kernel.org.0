@@ -2,133 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E32CEA1D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F6DEA1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfJ3QgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:36:01 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38270 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfJ3QgB (ORCPT
+        id S1726846AbfJ3QgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:36:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726261AbfJ3QgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 12:36:01 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w8so1229667plq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 09:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6F55+54+eU8QzDjEOXqTDVs2Ok1yox6C3hLmR+t3oZM=;
-        b=TP1mC0gLnHHHVfKFAZsLiSJm6cfVt7RCHpHMKMy1P6iz5El9WzTs6CPypDWYj+lbBA
-         c397v0UUs7AuZ0aNOi1vg5XFvPVmY4Adm8GGwTfrMVRxY2AliI83rMNHUaMkCb7F3cOl
-         OCUOfADoOj6UN/wgSbMIWCLgSeJMLtdGqV22fHSpBaBOmvMcZhtAtu8GJmndvyaBna2e
-         Fu/nEwZic+B0n1xmz9bngOmmsLayhotdv/AijNTp49BNtBflcemDa69o562VCj3fTwY4
-         umGEGwXV4pMe74CBAyjXDJuiYagYka6smdKOcXfoTWChixsdjekYhQhNtbBIqtVCzEFt
-         zmAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6F55+54+eU8QzDjEOXqTDVs2Ok1yox6C3hLmR+t3oZM=;
-        b=l/iLBqrZX5nzbC5uXSndgdukWdyX/0qlktPndJipHeZRey0rguwn/oF01P/61WaNWL
-         A3ppdc2w5XsCC4K3X4uuG/p608orm8HYsAp25zv/bP39rNuCb4Db6+8xpWLnorkQuq6S
-         ZFBgXqFkw1pkvK8HQejLGGrRvTTqZN9Ng6PLwZFjqsCvtV0FJV887YVGgHtbab1I5TOF
-         xus2Dc+RU6E4q6CY6y3mIpUBsoeKlTeECBEhEYN3DFeCoxTgpijBqDIwWEQZ0eLuHlr7
-         X0jJysNwCGqTPotoov6WTi70+l6cKNyq7J43uGYfzyGm+DjqjFQZcYT+G6V/mrBI4nnJ
-         QPVA==
-X-Gm-Message-State: APjAAAVn30ScLGAbvMev042jzxMRRfjj6Hg2JUoSv/c6bU+vEaeyDThV
-        uJmDF5qF15Akz8xV0emc0/j2K5BkEffielz3iC5n1w==
-X-Google-Smtp-Source: APXvYqz/XrmygQKOZIZMirbxCR595GwMGW3lSvzbOMljT8nFXLLU/3fTEEpDU6SCw+BYZiuwvhLi0vmy7C2+JQ37VTU=
-X-Received: by 2002:a17:902:b685:: with SMTP id c5mr915542pls.297.1572453359938;
- Wed, 30 Oct 2019 09:35:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191024224631.118656-1-davidgow@google.com> <0cb1d948-0da3-eb0f-c58f-ae3a785dd0dd@kernel.org>
- <CABVgOSmCHbGjZBjeWSbPEZbJw22SaBQnoO77xxNzN_ugAwzNiQ@mail.gmail.com>
- <20191030104217.GA18421@kadam> <42a8270d-ed6f-d29f-5e71-7b76a074b63e@kernel.org>
-In-Reply-To: <42a8270d-ed6f-d29f-5e71-7b76a074b63e@kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 30 Oct 2019 09:35:48 -0700
-Message-ID: <CAFd5g47OZ8x9=etJUj4Sgsw38VQb0j=omOUsubc7+pb2rJi0bQ@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v6] lib/list-test: add a test for the
- 'list' doubly linked list
-To:     shuah <shuah@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        David Gow <davidgow@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Wed, 30 Oct 2019 12:36:07 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9UGPvRL081612
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 12:36:05 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vycvwkkyp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 12:36:05 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 30 Oct 2019 16:36:03 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 30 Oct 2019 16:35:57 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9UGZtxl35848306
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Oct 2019 16:35:55 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD11AA405B;
+        Wed, 30 Oct 2019 16:35:55 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B9C6A4054;
+        Wed, 30 Oct 2019 16:35:53 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.134.98])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Oct 2019 16:35:52 +0000 (GMT)
+Subject: Re: [PATCH v9 5/8] ima: make process_buffer_measurement() generic
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>
+Date:   Wed, 30 Oct 2019 12:35:52 -0400
+In-Reply-To: <6c94bfc0-d3ce-202b-6927-f664ee513fa9@linux.microsoft.com>
+References: <20191024034717.70552-1-nayna@linux.ibm.com>
+         <20191024034717.70552-6-nayna@linux.ibm.com>
+         <6c94bfc0-d3ce-202b-6927-f664ee513fa9@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19103016-0028-0000-0000-000003B12C1E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19103016-0029-0000-0000-00002473720A
+Message-Id: <1572453352.5707.3.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910300149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 9:27 AM shuah <shuah@kernel.org> wrote:
->
-> On 10/30/19 4:42 AM, Dan Carpenter wrote:
-> > On Wed, Oct 30, 2019 at 01:02:11AM -0700, David Gow wrote:
-> >>> ERROR: that open brace { should be on the previous line
-> >>> #869: FILE: lib/list-test.c:680:
-> >>> +static void list_test_list_for_each_entry_reverse(struct kunit *test)
-> >>> +{
-> >>>
-> >>>
-> >>> I am seeing these error and warns. As per our hallway conversation, the
-> >>> "for_each*" in the test naming is tripping up checkpatch.pl
-> >>>
-> >>> For now you can change the name a bit to not trip checkpatch and maybe
-> >>> explore fixing checkpatch to differentiate between function names
-> >>> with "for_each" in them vs. the actual for_each usages in the code.
-> >>
-> >> Thanks, Shuah.
-> >>
-> >> Yes, the problem here is that checkpatch.pl believes that anything
-> >> with "for_each" in its name must be a loop, so expects that the open
-> >> brace is placed on the same line as for a for loop.
-> >>
-> >> Longer term, I think it'd be nicer, naming-wise, to fix or work around
-> >> this issue in checkpatch.pl itself, as that'd allow the tests to
-> >> continue to follow a naming pattern of "list_test_[x]", where [x] is
-> >> the name of the function/macro being tested. Of course, short of
-> >> trying to fit a whole C parser in checkpatch.pl, that's going to
-> >> involve some compromises as well.
-> >
-> > Just make it a black list of the 5 most common for_each macros.
-> >
->
-> How does black listing work in the context of checkpatch.pl?
->
-> >>
-> >> In the meantime, I'm sending out v7 which replaces "for_each" with
-> >> "for__each" (adding the extra underscore), so that checkpatch is
-> >> happy.
->
-> This change is required just to quiet checkpatch and I am not happy
-> about asking for this change. At the same time, I am concerned about
-> git hooks failing on this patch.
->
-> >
-> > It's better to ignore checkpatch and other scripts when they are wrong.
-> > (unless the warning message inspires you to make the code more readable
-> > for humans).
-> >
->
-> It gets confusing when to ignore and when not to. It takes work to
-> figure out and it is subjective.
->
-> It would be great if we can consistently rely on a tool that is used as
-> a criteria for patches to accept patches.
+On Wed, 2019-10-30 at 08:22 -0700, Lakshmi Ramasubramanian wrote:
+> On 10/23/19 8:47 PM, Nayna Jain wrote:
+> 
+> Hi Nayna,
+> 
+> > process_buffer_measurement() is limited to measuring the kexec boot
+> > command line. This patch makes process_buffer_measurement() more
+> > generic, allowing it to measure other types of buffer data (e.g.
+> > blacklisted binary hashes or key hashes).
+> 
+> Now that process_buffer_measurement() is being made generic to measure 
+> any buffer, it would be good to add a tag to indicate what type of 
+> buffer is being measured.
+> 
+> For example, if the buffer is kexec command line the log could look like:
+> 
+>   "kexec_cmdline: <command line data>"
+> 
+> Similarly, if the buffer is blacklisted binary hash:
+> 
+>   "blacklist hash: <data>".
+> 
+> If the buffer is key hash:
+> 
+>   "<name of the keyring>: key data".
+> 
+> This would greatly help the consumer of the IMA log to know the type of 
+> data represented in each IMA log entry.
 
-Agreed. I can see the point of not wanting to write an exception into
-checkpatch for every exception of it's general rules; however, it
-would be nice if there was a way to maybe have a special comment or
-something that could turn off a checkpatch error. That way, a
-checkpatch error/warning always means some action should be taken, and
-if a rule is being ignored, there is always documentation as to why.
+Both the existing kexec command line and the new blacklist buffer
+measurement pass that information in the eventname.   The [PATCH 7/8]
+"ima: check against blacklisted hashes for files with modsig" patch
+description includes an example.
 
-Otherwise, I don't feel strongly about this.
+Mimi
 
-Cheers
