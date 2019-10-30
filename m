@@ -2,123 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DB6E94EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AADE94F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 03:01:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfJ3CAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 22:00:16 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39663 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfJ3CAP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 22:00:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t12so212474plo.6;
-        Tue, 29 Oct 2019 19:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4D0rSlERGCFg+HpPsc22n7LM+0fvKRRRI5LIsVOytZs=;
-        b=kPlnOSEFYvjvNe+/OznUbYQJqwKtp3lF/al1O8JlJtS+0XL9rPvJ87r97ZvdCTBsi5
-         MJ0O8OhYwzUFiHHklCGf5gobsgOyxBKXLxgdHBvIeG7B6CbGIEctpz7jPIZ4gVVN9lo8
-         e/SMNfQz8X/gF1dKFtQZ0W2PvtWvtdRQTzlDW7N0B+zlB5rHqE+/OBJq0jzva2GcbTDW
-         3meHJc18Ph4ciGRlGaNpX8zLoRI/gPwEXVpQ5qfLwMgK8ACadwmnGSMdAxeYvYHqCDf7
-         m9H1uhihuFaKUyWJ/APcNunpWA6e7tM3PK2W5KQX/IoAvnULJsT5aJPcttTFNV0xrljE
-         R+1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4D0rSlERGCFg+HpPsc22n7LM+0fvKRRRI5LIsVOytZs=;
-        b=fCR0ld6jLmcyjA6LOdMuCdiUPm4G2gs7+oeAerHbRiej6ghiiNq/JAxTUJ6s4jhcw8
-         EoTAcyrdDLDyMYJWSCaSPXMetlQ5DHTfwdgKljAuMVU9ueb5dCDRCnpZElx8nWG98IAd
-         BqVMOpiPPo1sGLSZU+qoniwcxKvWEscNa5yfl5I0bONooE8+JbousgKkKn1jPD67/kmX
-         qV2N+Sw2VK9aCeYyt7Pbpnlwhfy76lnKKIikUT/fpE/pbI57awOH1YPpXaFVCN+g61fj
-         fwXSu6tPhU5NqT6udlXE1XmsnDZ3V0whKls5qBMGwu9P/fWAUK4tDsnCi94M4xjogHwb
-         F+2A==
-X-Gm-Message-State: APjAAAV8nCaBpCeQ9UediVePnA4RI5e+UtNreOonkQhuCwC+2FhdbIl0
-        q4yilRS4KTSnymhbCAr+khP6KRxx
-X-Google-Smtp-Source: APXvYqzGBAiKExeeLxijQTKVrm2LZ9v6yQdLvEB9xYpsjKHx10zoEGZB6ZnEqBgozW66wfdGEtiP/A==
-X-Received: by 2002:a17:902:7784:: with SMTP id o4mr1893970pll.111.1572400814949;
-        Tue, 29 Oct 2019 19:00:14 -0700 (PDT)
-Received: from [192.168.1.60] (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
-        by smtp.gmail.com with ESMTPSA id 184sm420534pfu.58.2019.10.29.19.00.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 19:00:14 -0700 (PDT)
-Subject: Re: [PATCH V2 7/7] USB: serial: f81232: Add gpiolib to GPIO device
-To:     Johan Hovold <johan@kernel.org>
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
- <20190923022449.10952-8-hpeter+linux_kernel@gmail.com>
- <20191023122208.GW24768@localhost>
-From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Message-ID: <ef91b42d-e81d-ecdd-c688-0cb3f0b94906@gmail.com>
-Date:   Wed, 30 Oct 2019 10:00:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727045AbfJ3CB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 22:01:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54430 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726025AbfJ3CB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 22:01:56 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 76DF0634D4CC540C04D3;
+        Wed, 30 Oct 2019 10:01:55 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 30 Oct 2019 10:01:44 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <alexander.deucher@amd.com>
+CC:     <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <zhongjiang@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/amd/display: remove redundant null pointer check before kfree
+Date:   Wed, 30 Oct 2019 09:57:53 +0800
+Message-ID: <1572400673-42535-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20191023122208.GW24768@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+kfree has taken null pointer into account. hence it is safe to remove
+the unnecessary check.
 
-Johan Hovold 於 2019/10/23 下午 08:22 寫道:
-> On Mon, Sep 23, 2019 at 10:24:49AM +0800, Ji-Ze Hong (Peter Hong) wrote:
->> The Fintek F81534A series contains 3 GPIOs per UART and The max GPIOs
->> is 12x3 = 36 GPIOs and this patch will implements GPIO device as a
->> gpiochip to control all GPIO pins even transforms to transceiver pins.
-> 
-> Depending to your answer to my question whether these pins are truly
-> general purpose or not, this may not be the right interface.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Our F81534A series contains F81532A/534A/535/536. For the following link
-of F81534A pin-out:
-	https://imgur.com/a/AZHqQ1N
-
-We had 2 type about GPIO pins, MODEx_y & GPIOxx. All MODEx_y & GPIOxx
-are GPIOs and can be controlled by GPIO device, but they had some
-difference about usage.
-	MODEx_y:
-		1. 3 pins(x: 0/1/2) can be access by UART port y.
-		2. Used to control UART's transceiver normally, but it
-		   also can be configure as GPIO when UART disabled by
-		   H/W (DTR strap to GND).
-	GPIOxx:
-		1. Access only by GPIO device.
-
-The series patch only support RS233 mode for all serial port, So we'll
-direct set all MODEx_y to (0/0/1) for our demo board for default. If
-user really want to use the pin, we had provide the gpiolib with GPIO
-device, but we'll recommend user to use GPIOxy first.
-
-Is any suggest about this ? Could I maintain this for this series patch?
-
->> +
->> +	status = devm_gpiochip_add_data(&intf->dev, &priv->chip, priv);
->> +	if (status) {
->> +		dev_err(&intf->dev, "failed to register gpiochip: %d\n",
->> +				status);
->> +		return status;
->> +	}
-> 
-> Have you tried disconnecting the device with gpios requested? This used
-> to break gpiolib, but was fixed. Just want to make sure it hasn't
-> regressed.
-
-I had try export GPIOs and detach the F81534A in kernel 5.0.0, it seems
-no problem. Is any link about this issue for me to do more test ?
-
-Thanks
-
+diff --git a/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c b/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
+index cf6ef38..6f730b5 100644
+--- a/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
++++ b/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
+@@ -174,9 +174,7 @@ static bool hdmi_14_process_transaction(
+ 			link->ctx,
+ 			link,
+ 			&i2c_command);
+-
+-	if (buff)
+-		kfree(buff);
++	kfree(buff);
+ 
+ 	return result;
+ }
 -- 
-With Best Regards,
-Peter Hong
+1.7.12.4
+
