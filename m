@@ -2,173 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3DFE994E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8219E992B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfJ3JjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:39:18 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37613 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfJ3JjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:39:18 -0400
-Received: by mail-pl1-f196.google.com with SMTP id p13so742500pll.4;
-        Wed, 30 Oct 2019 02:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1YGXo/SF75Yt2VzSc2ZhTmUHp1jTQNYYmgSwhHo/iHE=;
-        b=T01tsbGOKACg8rjHZVgIdjsyfJausHFmH+b2g77sqkgKM7KmQxZx70eFw3IbyIobfb
-         MH5Z+VSbM1Asv23w19JsyWwD2RzIr2tBjJiaPmNRI2j2gnU6iEXAHdzDClI0KIpJBnwi
-         9Y6QKPx9aH9HCago4K9+pCkbx+5gtTGuFtcROqyPHrHbG9LSKRBmD92dXiPzrHpKOHZE
-         gr2DkSaYyFWTw18zLL1jdwglNRx0ZcgAm1vV+dptbCmCz9eQt42+jd9Ec4nFIW4uOUbr
-         yZ8t8g8lwRon4e3zydIetmoQQ62dwAjzQuZ/2chUofLPFp+ZC/p2HXrsHk0WRkjoRG4t
-         SM5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1YGXo/SF75Yt2VzSc2ZhTmUHp1jTQNYYmgSwhHo/iHE=;
-        b=KAcsjuwDCTSoXRBiJDM1L4mQ0j03mM9j9hKQ/Ak9ZpShu1KZee9Cz7VilBJCM0zM65
-         eW33qBVsXZXc8LRIHvQcevQC58lABiWgz6cny+icWW7lKJPKIK3lu2r9BP1WwvK7gGmL
-         QSQVhPhc2eT28CsaaOYXxEiof17EK89y6DabbWaVrdW3/uIshacqIauztuXXkq5+F+fT
-         Ht0e5yPvkU3TtaWwpmhzCWYByra8dDe4P7qUkMGUPUwA9qJRyUw7WMLhmDdsnlzpYBR7
-         VkAT3SPqcxHAlgdwB/8VTmYXXuAb6Ebb26k4LQ0N4mFOBDkvSUA9+ReWcX5hVhuy+VEU
-         oOAA==
-X-Gm-Message-State: APjAAAV/6S99R+Z9T4SHHpHoy6IA75n874/wFT/8EkrHaDBIcvEJIca5
-        RUUZ0gaWP08hg0BlypMqjyw=
-X-Google-Smtp-Source: APXvYqx2bsz0q1YEMomF7tg/QE6FaJHQoLR84yjHPoMEDBHwD4lQZ294O5HfQO+LsqTI8UdPhs9pyA==
-X-Received: by 2002:a17:902:a609:: with SMTP id u9mr3503407plq.180.1572428356669;
-        Wed, 30 Oct 2019 02:39:16 -0700 (PDT)
-Received: from archlinux.GovzHome.Local ([2407:7000:aa08:9602:1f09:3b2d:1861:4613])
-        by smtp.gmail.com with ESMTPSA id i17sm1876190pfo.106.2019.10.30.02.39.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 02:39:16 -0700 (PDT)
-From:   sanjay.govind9@gmail.com
-Cc:     sanjay.govind9@gmail.com, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: sony: Add support for Guitar Hero Guitars
-Date:   Wed, 30 Oct 2019 22:29:56 +1300
-Message-Id: <20191030092956.17934-1-sanjay.govind9@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        id S1726203AbfJ3Jar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 05:30:47 -0400
+Received: from mga01.intel.com ([192.55.52.88]:4690 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfJ3Jar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 05:30:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 02:30:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
+   d="scan'208";a="198625928"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2019 02:30:45 -0700
+Date:   Wed, 30 Oct 2019 02:30:45 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191030093045.GB12481@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191029092920.GA14494@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029092920.GA14494@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanjay Govind <sanjay.govind9@gmail.com>
+On Tue, Oct 29, 2019 at 11:29:20AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Oct 28, 2019 at 11:03:12PM +0200, Jarkko Sakkinen wrote:
+> > +/**
+> > + * sgx_ioc_enclave_add_pages() - The handler for %SGX_IOC_ENCLAVE_ADD_PAGES
+> > + * @encl:       pointer to an enclave instance (via ioctl() file pointer)
+> > + * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
+> > + *
+> > + * Add (EADD) one or more pages to an uninitialized enclave, and optionally
+> > + * extend (EEXTEND) the measurement with the contents of the page. The range of
+> > + * pages must be virtually contiguous. The SECINFO and measurement mask are
+> > + * applied to all pages, i.e. pages with different properties must be added in
+> > + * separate calls.
+> > + *
+> > + * A SECINFO for a TCS is required to always contain zero permissions because
+> > + * CPU silently zeros them. Allowing anything else would cause a mismatch in
+> > + * the measurement.
+> > + *
+> > + * mmap()'s protection bits are capped by the page permissions. For each page
+> > + * address, the maximum protection bits are computed with the following
+> > + * heuristics:
+> > + *
+> > + * 1. A regular page: PROT_R, PROT_W and PROT_X match the SECINFO permissions.
+> > + * 2. A TCS page: PROT_R | PROT_W.
+> > + * 3. No page: PROT_NONE.
+> > + *
+> > + * mmap() is not allowed to surpass the minimum of the maximum protection bits
+> > + * within the given address range.
+> > + *
+> > + * As stated above, a non-existent page is interpreted as a page with no
+> > + * permissions. In effect, this allows mmap() with PROT_NONE to be used to seek
+> > + * an address range for the enclave that can be then populated into SECS.
+> > + *
+> > + * @arg->addr, @arg->src and @arg->length are adjusted to reflect the
+> > + * remaining pages that need to be added to the enclave, e.g. userspace can
+> > + * re-invoke SGX_IOC_ENCLAVE_ADD_PAGES using the same struct in response to an
+> > + * ERESTARTSYS error.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   -EINVAL if any input param or the SECINFO contains invalid data,
+> > + *   -EACCES if an executable source page is located in a noexec partition,
+> > + *   -ENOMEM if any memory allocation, including EPC, fails,
+> > + *   -ERESTARTSYS if a pending signal is recognized
+> > + */
+> > +static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+> 
+> This should return the number of pages processed instead of zero on
+> success. Kernel needs to be able to cap the amount it will process.
 
-Guitar Hero Guitars use the accelerometer x axis for tilt. Currently,
-they are treated as a regular HID device, and this does not allow the
-usage of the accelerometer. Add in support for both the PS3 and the 
-PC guitars (they are the same guitars, with different vids and pids).
-
-Signed-off-by: Sanjay Govind <sanjay.govind9@gmail.com>
----
- drivers/hid/hid-ids.h  |  5 +++++
- drivers/hid/hid-sony.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 447e8db21174..1d640f94c5bc 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -40,6 +40,9 @@
- #define USB_VENDOR_ID_ACTIONSTAR	0x2101
- #define USB_DEVICE_ID_ACTIONSTAR_1011	0x1011
- 
-+#define USB_VENDOR_ID_ACTIVISION 0x1430
-+#define USB_DEVICE_ID_ACTIVISION_GUITAR 0x474c
-+
- #define USB_VENDOR_ID_ADS_TECH		0x06e1
- #define USB_DEVICE_ID_ADS_TECH_RADIO_SI470X	0xa155
- 
-@@ -1031,6 +1034,7 @@
- 
- 
- #define USB_VENDOR_ID_SONY			0x054c
-+#define USB_VENDOR_ID_SONY2			0x12BA
- #define USB_DEVICE_ID_SONY_VAIO_VGX_MOUSE	0x024b
- #define USB_DEVICE_ID_SONY_VAIO_VGP_MOUSE	0x0374
- #define USB_DEVICE_ID_SONY_PS3_BDREMOTE		0x0306
-@@ -1042,6 +1046,7 @@
- #define USB_DEVICE_ID_SONY_NAVIGATION_CONTROLLER	0x042f
- #define USB_DEVICE_ID_SONY_BUZZ_CONTROLLER		0x0002
- #define USB_DEVICE_ID_SONY_WIRELESS_BUZZ_CONTROLLER	0x1000
-+#define USB_DEVICE_ID_SONY_GUITAR_CONTROLLER 0x0100
- 
- #define USB_VENDOR_ID_SINO_LITE			0x1345
- #define USB_DEVICE_ID_SINO_LITE_CONTROLLER	0x3008
-diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-index 4c6ed6ef31f1..410c855fb830 100644
---- a/drivers/hid/hid-sony.c
-+++ b/drivers/hid/hid-sony.c
-@@ -56,6 +56,7 @@
- #define NSG_MR5U_REMOTE_BT        BIT(14)
- #define NSG_MR7U_REMOTE_BT        BIT(15)
- #define SHANWAN_GAMEPAD           BIT(16)
-+#define GH_GUITAR_CONTROLLER      BIT(17)
- 
- #define SIXAXIS_CONTROLLER (SIXAXIS_CONTROLLER_USB | SIXAXIS_CONTROLLER_BT)
- #define MOTION_CONTROLLER (MOTION_CONTROLLER_USB | MOTION_CONTROLLER_BT)
-@@ -507,6 +508,8 @@ struct motion_output_report_02 {
- #define SIXAXIS_INPUT_REPORT_ACC_X_OFFSET 41
- #define SIXAXIS_ACC_RES_PER_G 113
- 
-+#define GUITAR_TILT_USAGE 44
-+
- static DEFINE_SPINLOCK(sony_dev_list_lock);
- static LIST_HEAD(sony_device_list);
- static DEFINE_IDA(sony_device_id_allocator);
-@@ -757,6 +760,20 @@ static int navigation_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	return -1;
- }
- 
-+static int guitar_mapping(struct hid_device *hdev, struct hid_input *hi,
-+			  struct hid_field *field, struct hid_usage *usage,
-+			  unsigned long **bit, int *max)
-+{
-+	if ((usage->hid & HID_USAGE_PAGE) == HID_UP_MSVENDOR) {
-+		unsigned int abs = usage->hid & HID_USAGE;
-+
-+		if (abs == GUITAR_TILT_USAGE) {
-+			hid_map_usage_clear(hi, usage, bit, max, EV_ABS, ABS_RY);
-+			return 1;
-+		}
-+	}
-+	return 0;
-+}
- 
- static int sixaxis_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			  struct hid_field *field, struct hid_usage *usage,
-@@ -1340,6 +1357,9 @@ static int sony_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	if (sc->quirks & SIXAXIS_CONTROLLER)
- 		return sixaxis_mapping(hdev, hi, field, usage, bit, max);
- 
-+	if (sc->quirks & GH_GUITAR_CONTROLLER)
-+		return guitar_mapping(hdev, hi, field, usage, bit, max);
-+
- 	if (sc->quirks & DUALSHOCK4_CONTROLLER)
- 		return ds4_mapping(hdev, hi, field, usage, bit, max);
- 
-@@ -2950,6 +2970,12 @@ static int sony_resume(struct hid_device *hdev)
- #endif
- 
- static const struct hid_device_id sony_devices[] = {
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_ACTIVISION, USB_DEVICE_ID_ACTIVISION_GUITAR),
-+		.driver_data = GH_GUITAR_CONTROLLER },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY2, USB_DEVICE_ID_SONY_GUITAR_CONTROLLER),
-+		.driver_data = GH_GUITAR_CONTROLLER },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS3_CONTROLLER),
-+		.driver_data = SIXAXIS_CONTROLLER_USB },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS3_CONTROLLER),
- 		.driver_data = SIXAXIS_CONTROLLER_USB },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_NAVIGATION_CONTROLLER),
--- 
-2.23.0
-
+Why?  The number of pages processed is effectively returned via the params
+on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
+And I don't see any reason to add an arbitrary cap on the number of pages,
+e.g. SGX plays nice with the scheduler and signals, and restricting the
+number of EPC pages available to a process via cgroups (returning -ENOMEM)
+is a better solution for managing EPC.
