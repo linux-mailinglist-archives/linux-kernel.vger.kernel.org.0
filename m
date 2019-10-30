@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF53EA15D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E6E2EA0D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfJ3QBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:01:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55708 "EHLO mail.kernel.org"
+        id S1728386AbfJ3Pyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:54:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728301AbfJ3PyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:17 -0400
+        id S1727581AbfJ3Py1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:27 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31F5120874;
-        Wed, 30 Oct 2019 15:54:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB10821734;
+        Wed, 30 Oct 2019 15:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450856;
-        bh=A8OJ0gmDn66ao2MoOx6aQnaAj57Lc5OKhEELCpvSyIg=;
+        s=default; t=1572450867;
+        bh=k/o8s5hjllQkz92e/He/Ehay8Se6ofgwmK05UD4sSKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbTI4sGqhdtgCGlPpKZa1bFAZ9mvCiMscKeHF9vCjop2ktnGKNoKjZC4qwgRT59Bu
-         loHqyF/IxGTBfDx9yHBlbC4cLRSuUktG0dv71+mg3VBJMFfBxU77rxy2m5+5YuHR0b
-         dQXJv1fiwR458xC0b2Qe2sALsUqmruPTp8qizESk=
+        b=0GKp9K0+RgTeQ1n7vZIZDlKE40Yu3xzCU9+lBsEX/ti9mU37JRJY7DkHVwHT5Lydb
+         Iq//i0IdKixVJz85O/yN8ZQkyvO3nR4skA94wt3DlL5ND/R5Qv0KuePcXoNvDInGeB
+         iYP5SSLVJN6pw3wscXMSA0OKjwR6mEtwir+lD6Nc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Ondrej Jirman <megous@megous.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 03/38] arm64: dts: allwinner: a64: pine64-plus: Add PHY regulator delay
-Date:   Wed, 30 Oct 2019 11:53:31 -0400
-Message-Id: <20191030155406.10109-3-sashal@kernel.org>
+Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/38] regulator: pfuze100-regulator: Variable "val" in pfuze100_regulator_probe() could be uninitialized
+Date:   Wed, 30 Oct 2019 11:53:36 -0400
+Message-Id: <20191030155406.10109-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155406.10109-1-sashal@kernel.org>
 References: <20191030155406.10109-1-sashal@kernel.org>
@@ -44,44 +42,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Yizhuo <yzhai003@ucr.edu>
 
-[ Upstream commit 2511366797fa6ab4a404b4b000ef7cd262aaafe8 ]
+[ Upstream commit 1252b283141f03c3dffd139292c862cae10e174d ]
 
-Depending on kernel and bootloader configuration, it's possible that
-Realtek ethernet PHY isn't powered on properly. According to the
-datasheet, it needs 30ms to power up and then some more time before it
-can be used.
+In function pfuze100_regulator_probe(), variable "val" could be
+initialized if regmap_read() fails. However, "val" is used to
+decide the control flow later in the if statement, which is
+potentially unsafe.
 
-Fix that by adding 100ms ramp delay to regulator responsible for
-powering PHY.
-
-Fixes: 94dcfdc77fc5 ("arm64: allwinner: pine64-plus: Enable dwmac-sun8i")
-Suggested-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+Link: https://lore.kernel.org/r/20190929170957.14775-1-yzhai003@ucr.edu
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/regulator/pfuze100-regulator.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-index 24f1aac366d64..d5b6e8159a335 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-@@ -63,3 +63,12 @@
- 		reg = <1>;
- 	};
- };
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 31c3a236120a8..69a377ab26041 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -710,7 +710,13 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 
+ 		/* SW2~SW4 high bit check and modify the voltage value table */
+ 		if (i >= sw_check_start && i <= sw_check_end) {
+-			regmap_read(pfuze_chip->regmap, desc->vsel_reg, &val);
++			ret = regmap_read(pfuze_chip->regmap,
++						desc->vsel_reg, &val);
++			if (ret) {
++				dev_err(&client->dev, "Fails to read from the register.\n");
++				return ret;
++			}
 +
-+&reg_dc1sw {
-+	/*
-+	 * Ethernet PHY needs 30ms to properly power up and some more
-+	 * to initialize. 100ms should be plenty of time to finish
-+	 * whole process.
-+	 */
-+	regulator-enable-ramp-delay = <100000>;
-+};
+ 			if (val & sw_hi) {
+ 				if (pfuze_chip->chip_id == PFUZE3000 ||
+ 					pfuze_chip->chip_id == PFUZE3001) {
 -- 
 2.20.1
 
