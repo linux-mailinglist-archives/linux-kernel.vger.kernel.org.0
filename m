@@ -2,90 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D148E9D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F95E9D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:21:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfJ3OU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:20:58 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44210 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfJ3OU6 (ORCPT
+        id S1726687AbfJ3OVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:21:33 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:46241 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfJ3OVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:20:58 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UEKpqT099629;
-        Wed, 30 Oct 2019 09:20:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572445251;
-        bh=h6h3Qct4hHjh3WsRqxxeJYzZZhBniGFIESojv6iYpo4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tLFK+PV5UGf39undFQtz4JsZrh9rMrUSOJ0yJIB+T2x6ZkPtt82HXPunlXUkPQkdL
-         +CB4ulmsBvCYrjiEPetCwDLMU4aLumsLO/jRw3LP8GcRaOjcARjU03Qap2/Sa1xKFV
-         abgo5uxMhvbRhnMLOxgfAa4Ta5ipuKI6//0IfNdE=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9UEKphm056166
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Oct 2019 09:20:51 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
- Oct 2019 09:20:38 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 30 Oct 2019 09:20:38 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9UEKmD5011862;
-        Wed, 30 Oct 2019 09:20:49 -0500
-Subject: Re: [PATCH v2] usb: cdns3: gadget: Fix g_audio use case when
- connected to Super-Speed host
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <felipe.balbi@linux.intel.com>, <pawell@cadence.com>,
-        <peter.chen@nxp.com>, <nsekhar@ti.com>, <kurahul@cadence.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191029151514.28495-1-rogerq@ti.com>
- <20191030121607.21739-1-rogerq@ti.com> <20191030133011.GA703854@kroah.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <56fb2de5-a017-e910-972f-532e33dfdbd6@ti.com>
-Date:   Wed, 30 Oct 2019 16:20:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 30 Oct 2019 10:21:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572445291;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=joBUg/8LLvLAx6tJ+C+Ow4ZMZTAOPeKx8j+cSlr0+Rc=;
+        b=UEBALLbJbODzpX9laanNwmRJbPaqkJ8eF7LFBKEWOP8tUr6DI6FcORQpb8O3x9+o7tAIJF
+        UoJgGZpwD4z/2eI6mzQMbDxnftwu1cFcvxu32AOuo8D8o0Z9dRYKq2oisKv+ahUE+II3V+
+        DpCFZ7SZELvQKAt55gbV4xAjss8S9Sg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-6-UkCuo7D2PL-i8Nnb9m9KVw-1; Wed, 30 Oct 2019 10:21:28 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 248762EDD;
+        Wed, 30 Oct 2019 14:21:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.206.16])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6289760876;
+        Wed, 30 Oct 2019 14:21:11 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 30 Oct 2019 15:21:25 +0100 (CET)
+Date:   Wed, 30 Oct 2019 15:21:10 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
+        juri.lelli@redhat.com, williams@redhat.com, bristot@redhat.com,
+        longman@redhat.com, dave@stgolabs.net, jack@suse.com
+Subject: Re: [PATCH] locking/percpu_rwsem: Rewrite to not use rwsem
+Message-ID: <20191030142110.GA17800@redhat.com>
+References: <20190805140241.GI2332@hirez.programming.kicks-ass.net>
+ <20190806161741.GC21454@redhat.com>
+ <20190806171515.GR2349@hirez.programming.kicks-ass.net>
+ <20190807095657.GA24112@redhat.com>
+ <20191029184739.GA3079@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20191030133011.GA703854@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191029184739.GA3079@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: UkCuo7D2PL-i8Nnb9m9KVw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/29, Peter Zijlstra wrote:
+>
+> I like that symmetry, but see below ...
 
+...
 
-On 30/10/2019 15:30, Greg KH wrote:
-> On Wed, Oct 30, 2019 at 02:16:07PM +0200, Roger Quadros wrote:
->> Take into account gadget driver's speed limit when programming
->> controller speed.
->>
->> Fixes: commit 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
-> 
-> No need for "commit", doesn't the documentation say the correct format?
-> I haven't looked in a while...
-> 
+> > void __percpu_up_read(struct percpu_rw_semaphore *sem)
+> > {
+> > =09smp_mb();
+> >
+> > =09__this_cpu_dec(*sem->read_count);
+> >
+> =09preempt_enable();
+> > =09wake_up(&sem->waiters);
+> =09preempt_disable()
+>
+> and this (sadly) means there's a bunch of back-to-back
+> preempt_disable()+preempt_enable() calls.
 
-Sorry, my bad.
+Hmm. Where did these enable+disable come from?
 
-> I can edit it out this time...
+=09void __percpu_up_read(struct percpu_rw_semaphore *sem)
+=09{
+=09=09smp_mb();
 
-Thanks!
-> 
-> greg k-h
-> 
+=09=09__this_cpu_dec(*sem->read_count);
 
--- 
-cheers,
--roger
+=09=09wake_up(&sem->waiters);
+=09}
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+should work just fine?
+
+Oleg.
+
