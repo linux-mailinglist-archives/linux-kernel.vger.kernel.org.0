@@ -2,69 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9453CE9EA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E0CE9E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfJ3PPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:15:15 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52948 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727169AbfJ3PPO (ORCPT
+        id S1726986AbfJ3PO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:14:57 -0400
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:55409 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfJ3PO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:15:14 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9UFEjKE010180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Oct 2019 11:14:46 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 16ABD420456; Wed, 30 Oct 2019 11:14:45 -0400 (EDT)
-Date:   Wed, 30 Oct 2019 11:14:45 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: bio_alloc should never fail
-Message-ID: <20191030151444.GC16197@mit.edu>
-References: <20191030035518.65477-1-gaoxiang25@huawei.com>
- <20aa40bd-280d-d223-9f73-d9ed7dbe4f29@huawei.com>
- <20191030091542.GA24976@architecture4>
- <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
- <20191030104345.GB170703@architecture4>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030104345.GB170703@architecture4>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 30 Oct 2019 11:14:56 -0400
+Received: by mail-vs1-f73.google.com with SMTP id m15so339299vsj.22
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=I6jD1WRmo86OM3bsIakAOe6JbGStvpAqVOoE2BT6rcU=;
+        b=Wk6g1uSOgxeYU9rbcErk6qD765qn6dLXwOR9Sy+xNuM+iSx5iBdg5gG2x3a++IBKQb
+         84T0d4ucZUMKle4HVIWjA7+kM7liZ+jdSvu5S72G9nLnxC8+IfznBaDiBXd5jfrDbi+V
+         GXsmqRHSNni4QTUgb/R1L7M9JJmll/eHRXNOw74/u040fGpS1lY951aQgcwc0xnMV2g9
+         KEWuO4+yEdntOCRBrpfM+FlwKXSpi0NsEn1eWPeDnvlTNVkyzpco0VbnwYsrFdOioqp5
+         HW5OIhZEVuWMjaDh8dXwKyp/VxgS4svDjrtiFCWiyBDbce+eDtOgoBsIWbRTjaJMsqJo
+         fD7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=I6jD1WRmo86OM3bsIakAOe6JbGStvpAqVOoE2BT6rcU=;
+        b=uWGYEvhbCCRx+cgl/3o6lo3xZdvd0C8cdVDnf6+LEOGn0EFwrWF0pjCVxbpsAM/YKe
+         IseGGPP7Snu3S3jhbs5OJnSAZdaCV9XNV/ufAZ1/RBdx6U2RtS/Vd1QXnInmhUOGqUa0
+         tS5Oh6rFmi//fF+HO2dP8QxIcAOnE/m9ra1NWe6AUbkbKkgMEBLt/RbIg0HwX8Y7NJ38
+         NDyTPSf4FCJrYPH8PI0ZMKNdN+gZuqswj1jaV1UzepfccCwPG76KB8GjVywzPrRPheV4
+         pmoK9RBj8eU3y/Z9MUWvfj60mrjdqkkRvF1N7+lsiG78M51o+m8hu+oGEu/nXRulKNNd
+         W08g==
+X-Gm-Message-State: APjAAAUB1e2o9HSBep8B1hpVl5oR3PYOMd88mPZAvFzmiKlaLQH1pmFs
+        r2EHzRK5IGR4h5SZcnUlfmxYfO4+VBJr
+X-Google-Smtp-Source: APXvYqzVXv3phZKJ6kK18tzuCBHmUvTKTyupg+8nDEpD/+f+55XCt8xAN1D0dRe2E3jxVYD4dOA87TGf/mZD
+X-Received: by 2002:a67:fe86:: with SMTP id b6mr5198734vsr.162.1572448494253;
+ Wed, 30 Oct 2019 08:14:54 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 15:14:47 +0000
+Message-Id: <20191030151451.7961-1-qperret@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
+Subject: [PATCH v9 0/4] Make IPA use PM_EM
+From:   Quentin Perret <qperret@google.com>
+To:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
+        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
+        catalin.marinas@arm.com, will@kernel.org, daniel.lezcano@linaro.org
+Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
+        mka@chromium.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 06:43:45PM +0800, Gao Xiang wrote:
-> > You're right, in low memory scenario, allocation with bioset will be faster, as
-> > you mentioned offline, maybe we can add/use a priviate bioset like btrfs did
-> > rather than using global one, however, we'd better check how deadlock happen
-> > with a bioset mempool first ...
-> 
-> Okay, hope to get hints from Jaegeuk and redo this patch then...
+This removes the IPA-specific energy model code in favor of PM_EM which
+does the same thing in a generic way. For more details, please read the
+cover letter of the v7:
 
-It's not at all clear to me that using a private bioset is a good idea
-for f2fs.  That just means you're allocating a separate chunk of
-memory just for f2fs, as opposed to using the global pool.  That's an
-additional chunk of non-swapable kernel memory that's not going to be
-available, in *addition* to the global mempool.  
+https://lore.kernel.org/lkml/20190812084235.21440-1-quentin.perret@arm.com/
 
-Also, who else would you be contending for space with the global
-mempool?  It's not like an mobile handset is going to have other users
-of the global bio mempool.
+Changes in v9:
+ - Rebased on 5.4-rc5 and fixed conflicts with pm_qos changes
 
-On a low-end mobile handset, memory is at a premium, so wasting memory
-to no good effect isn't going to be a great idea.
+Changes in v8:
+ - Fixed checkpatch errors (Rui)
 
-Regards,
+Changes in v7
+ - Added patch 02/04 to fix the build error reported by the kbuild bot
 
-						- Ted
+Changes in v6
+ - Added Daniel's and Viresh's Acked-by to all patches
+
+Changes in v5:
+ - Changed patch 02 to guard IPA-specific code in cpu_cooling.c with
+   appropriate ifdefery (Daniel)
+ - Rebased on 5.2-rc2
+
+Changes in v4:
+ - Added Viresh's Acked-by to all 3 patches
+ - Improved commit message of patch 3/3 to explain how it has no
+   functional impact on existing users (Eduardo)
+
+Changes in v3:
+ - Changed warning message for unordered tables to something more
+   explicit (Viresh)
+ - Changed WARN() into a pr_err() for consistency
+
+Changes in v2:
+ - Fixed patch 01/03 to actually enable CONFIG_ENERGY_MODEL
+ - Added "depends on ENERGY_MODEL" to IPA (Daniel)
+ - Added check to bail out if the freq table is unsorted (Viresh)
+
+Quentin Perret (4):
+  arm64: defconfig: Enable CONFIG_ENERGY_MODEL
+  PM / EM: Declare EM data types unconditionally
+  thermal: cpu_cooling: Make the power-related code depend on IPA
+  thermal: cpu_cooling: Migrate to using the EM framework
+
+ arch/arm64/configs/defconfig  |   1 +
+ drivers/thermal/Kconfig       |   1 +
+ drivers/thermal/cpu_cooling.c | 404 ++++++++++++++--------------------
+ include/linux/energy_model.h  |   3 +-
+ 4 files changed, 167 insertions(+), 242 deletions(-)
+
+-- 
+2.24.0.rc0.303.g954a862665-goog
+
