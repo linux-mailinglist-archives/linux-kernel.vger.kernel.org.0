@@ -2,34 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD42EA047
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C68FCEA049
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfJ3PzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:55:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
+        id S1727966AbfJ3PzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728488AbfJ3PzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:55:00 -0400
+        id S1728512AbfJ3PzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:55:02 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CFC920874;
-        Wed, 30 Oct 2019 15:54:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F31D52087E;
+        Wed, 30 Oct 2019 15:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450899;
-        bh=8Q9g2juXNBV5no/rSw06P+H5qP7c3cfW0hVwZxa0L+4=;
+        s=default; t=1572450902;
+        bh=1fs3qqd4O57VF5HWpCFLDPCsDsLjL3x6D7m8D8Cgxq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=chaIhKWBeE8sWnKC9dATe7EU9HvzfBlUt+cpxc/ZYi5/+DzhNqKEcHxlnVnsUkvd7
-         ZLdxox8W9P/lrReV08QfHAa4XQKmEngMwGlsIUwmz/veP7MRTV5LKyj55Bzt4BuoGM
-         qqdpXNP0T/hmbsDm8hcL2KRwjfyG+UZx1kFR/jKU=
+        b=fbUh0OOvNu36ULyD3QAh03yHE3rRhXGWbKDyeMi9tPi96WsY6hSiR5pVp1fgwQWOI
+         E5iNGjLClfi7hoY1Gj5Yus3ZRsMnesnVJAxVEy5KzI0WKKvZWf6NaLKI7UaZQ5gFON
+         1Up9MhjpEYdwyzzPifm2ZP3iYXKcx38OXoiShAPU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <Anson.Huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 19/38] ARM: dts: imx7s: Correct GPT's ipg clock source
-Date:   Wed, 30 Oct 2019 11:53:47 -0400
-Message-Id: <20191030155406.10109-19-sashal@kernel.org>
+Cc:     Yunfeng Ye <yeyunfeng@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Feilong Lin <linfeilong@huawei.com>,
+        Hu Shiyuan <hushiyuan@huawei.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 20/38] perf c2c: Fix memory leak in build_cl_output()
+Date:   Wed, 30 Oct 2019 11:53:48 -0400
+Message-Id: <20191030155406.10109-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155406.10109-1-sashal@kernel.org>
 References: <20191030155406.10109-1-sashal@kernel.org>
@@ -42,62 +49,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 252b9e21bcf46b0d16f733f2e42b21fdc60addee ]
+[ Upstream commit ae199c580da1754a2b051321eeb76d6dacd8707b ]
 
-i.MX7S/D's GPT ipg clock should be from GPT clock root and
-controlled by CCM's GPT CCGR, using correct clock source for
-GPT ipg clock instead of IMX7D_CLK_DUMMY.
+There is a memory leak problem in the failure paths of
+build_cl_output(), so fix it.
 
-Fixes: 3ef79ca6bd1d ("ARM: dts: imx7d: use imx7s.dtsi as base device tree")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Feilong Lin <linfeilong@huawei.com>
+Cc: Hu Shiyuan <hushiyuan@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/4d3c0178-5482-c313-98e1-f82090d2d456@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx7s.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/builtin-c2c.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index a7f697b0290ff..90f5bdfa9b3ce 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -443,7 +443,7 @@
- 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x302d0000 0x10000>;
- 				interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_GPT1_ROOT_CLK>,
- 					 <&clks IMX7D_GPT1_ROOT_CLK>;
- 				clock-names = "ipg", "per";
- 			};
-@@ -452,7 +452,7 @@
- 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x302e0000 0x10000>;
- 				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_GPT2_ROOT_CLK>,
- 					 <&clks IMX7D_GPT2_ROOT_CLK>;
- 				clock-names = "ipg", "per";
- 				status = "disabled";
-@@ -462,7 +462,7 @@
- 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x302f0000 0x10000>;
- 				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_GPT3_ROOT_CLK>,
- 					 <&clks IMX7D_GPT3_ROOT_CLK>;
- 				clock-names = "ipg", "per";
- 				status = "disabled";
-@@ -472,7 +472,7 @@
- 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x30300000 0x10000>;
- 				interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_GPT4_ROOT_CLK>,
- 					 <&clks IMX7D_GPT4_ROOT_CLK>;
- 				clock-names = "ipg", "per";
- 				status = "disabled";
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 763c2edf52e7d..1452e5153c604 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2626,6 +2626,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 	bool add_sym   = false;
+ 	bool add_dso   = false;
+ 	bool add_src   = false;
++	int ret = 0;
+ 
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -2644,7 +2645,8 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 			add_dso = true;
+ 		} else if (strcmp(tok, "offset")) {
+ 			pr_err("unrecognized sort token: %s\n", tok);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto err;
+ 		}
+ 	}
+ 
+@@ -2667,13 +2669,15 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 		add_sym ? "symbol," : "",
+ 		add_dso ? "dso," : "",
+ 		add_src ? "cl_srcline," : "",
+-		"node") < 0)
+-		return -ENOMEM;
++		"node") < 0) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+ 	c2c.show_src = add_src;
+-
++err:
+ 	free(buf);
+-	return 0;
++	return ret;
+ }
+ 
+ static int setup_coalesce(const char *coalesce, bool no_source)
 -- 
 2.20.1
 
