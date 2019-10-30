@@ -2,178 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 924B5EA2D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 18:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2624EA2E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 18:58:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfJ3RyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 13:54:07 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45134 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbfJ3RyH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 13:54:07 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y7so2468819edo.12
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 10:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A22yCdXQ4wKxgH4FAev2UDTCLWsAjVrVdIRX9CE3m0o=;
-        b=l3ydEFAxhV6GSwc0Uekxe9DWSEGrLEvvsyW2uiGILGo5a5+4/dX/LFaAiiWs3ETJf0
-         /alX2ZRFbpNS6xLFBOYB7v9Y9IDIgCWqxQ9zC0fm45MEx2BzDPamEeMFqL1WqWtxK+wD
-         NCIm4g+UGf6XE/hQjwN7cmEnrKV/rPqZtQmwuOhw8z3wVvXooRPprO/loxEftX4bEiz0
-         v0/iPuZUJ6FUH2Q87CPeRu+woeVSJajyaQrKFchJnzzcez+DiRT2hhGLJI0tMX1+Z3dk
-         rolkWrWPYRMnvmwQwfVK3f5IH51jqJmii5XDNJNw8ja5qephOK3CIpwbb3RZcrNWO7nX
-         c0sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A22yCdXQ4wKxgH4FAev2UDTCLWsAjVrVdIRX9CE3m0o=;
-        b=IuvplAQFZ/BOWPE2f/7veQ9HiovugNOSjXzvanFiPGF9gNisDZQld4f6WXpnDVZaME
-         3OWkyuGZOjsglXqM9Tj6vH6pj3yl9o8ekMqbXWKtD7iVPgc7/h1GNOh9/SG4cbGKhUZV
-         D7D5Dt9Jny6NGFxI157CrVBwMoHboYjFOUBYJL8peEnwLopmAClnY6COICAfVf0JY319
-         WQBu9QQxuFWwqBWiLUQLsHSDKfQ8sz8rRKkSWnVmpwNLG6eWgo+u1/O+bJ21IJujj2gs
-         BijxxmvuEjVm/aeG3M5Rr5IHZOhMttKimDg5Tpp1D4MgambdLjiaHuF1u04WcD55haBP
-         SdYg==
-X-Gm-Message-State: APjAAAWqYl3BDkBH88bwy5DtrlD8Zvye0wvQ4jYEbxQupoA1KInwWdYG
-        a4J6FqR+V9feca6RbN3IzlJ7tLVHmOFCFF3sOZL3BQ==
-X-Google-Smtp-Source: APXvYqwXBr9TvyBOuA23CYTQrGdthPHx6833Rsz1sxp6rOkkNopRuVVjppCyiRTYsh+Pzp3vC6PPHsMO7EdmlYXVe1M=
-X-Received: by 2002:a50:9254:: with SMTP id j20mr1136893eda.0.1572458043602;
- Wed, 30 Oct 2019 10:54:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191030131122.8256-1-vincent.whitchurch@axis.com>
- <20191030132958.GD31513@dhcp22.suse.cz> <20191030140216.i26n22asgafckfxy@axis.com>
- <20191030141259.GE31513@dhcp22.suse.cz> <CA+CK2bDObV=N1Y+LhDX=tYsTX3HZ+mbB=8aXT=fPX254hKEUBQ@mail.gmail.com>
- <20191030153150.GI31513@dhcp22.suse.cz> <CA+CK2bA3gM4pMSj-wDWgAPNoPtcjwd59_6VivKA2Uf2GriASsw@mail.gmail.com>
- <20191030173123.GK31513@dhcp22.suse.cz>
-In-Reply-To: <20191030173123.GK31513@dhcp22.suse.cz>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 30 Oct 2019 13:53:52 -0400
-Message-ID: <CA+CK2bA_Cb95mu6XRLy3nnjNoRwMHR2OQuRAPGU-uzPXbBth1g@mail.gmail.com>
-Subject: Re: [PATCH] mm/sparse: Consistently do not zero memmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "osalvador@suse.de" <osalvador@suse.de>,
+        id S1727685AbfJ3R6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 13:58:50 -0400
+Received: from mga01.intel.com ([192.55.52.88]:47720 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727166AbfJ3R6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 13:58:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 10:58:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,248,1569308400"; 
+   d="scan'208";a="203954492"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga006.jf.intel.com with ESMTP; 30 Oct 2019 10:58:49 -0700
+Subject: Re: [PATCH RFC] mm: add MAP_EXCLUSIVE to create exclusive user
+ mappings
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>
+Cc:     "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>
+References: <1572171452-7958-1-git-send-email-rppt@kernel.org>
+ <1572171452-7958-2-git-send-email-rppt@kernel.org>
+ <20191028123124.ogkk5ogjlamvwc2s@box> <20191028130018.GA7192@rapoport-lnx>
+ <20191028131623.zwuwguhm4v4s5imh@box>
+ <20191028135521.GB4097@hirez.programming.kicks-ass.net>
+ <0a35765f7412937c1775daa05177b20113760aee.camel@intel.com>
+ <20191028210052.GM4643@worktop.programming.kicks-ass.net>
+ <69c57f7fa9a1be145827673b37beff155a3adc3c.camel@intel.com>
+ <20191030100418.GV4097@hirez.programming.kicks-ass.net>
+ <b4d87f54b02cfccb58442f791485cad1ac080063.camel@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <775eb0cf-7189-a314-5dde-f720b56ec3b2@intel.com>
+Date:   Wed, 30 Oct 2019 10:58:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <b4d87f54b02cfccb58442f791485cad1ac080063.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 1:31 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Wed 30-10-19 12:53:41, Pavel Tatashin wrote:
-> > On Wed, Oct 30, 2019 at 11:31 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > >
-> > > On Wed 30-10-19 11:20:44, Pavel Tatashin wrote:
-> > > > On Wed, Oct 30, 2019 at 10:13 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > > >
-> > > > > [Add Pavel - the email thread starts http://lkml.kernel.org/r/20191030131122.8256-1-vincent.whitchurch@axis.com
-> > > > >  but it used your old email address]
-> > > > >
-> > > > > On Wed 30-10-19 15:02:16, Vincent Whitchurch wrote:
-> > > > > > On Wed, Oct 30, 2019 at 02:29:58PM +0100, Michal Hocko wrote:
-> > > > > > > On Wed 30-10-19 14:11:22, Vincent Whitchurch wrote:
-> > > > > > > > (I noticed this because on my ARM64 platform, with 1 GiB of memory the
-> > > > > > > >  first [and only] section is allocated from the zeroing path while with
-> > > > > > > >  2 GiB of memory the first 1 GiB section is allocated from the
-> > > > > > > >  non-zeroing path.)
-> > > > > > >
-> > > > > > > Do I get it right that sparse_buffer_init couldn't allocate memmap for
-> > > > > > > the full node for some reason and so sparse_init_nid would have to
-> > > > > > > allocate one for each memory section?
-> > > > > >
-> > > > > > Not quite.  The sparsemap_buf is successfully allocated with the correct
-> > > > > > size in sparse_buffer_init(), but sparse_buffer_alloc() fails to
-> > > > > > allocate the same size from it.
-> > > > > >
-> > > > > > The reason it fails is that sparse_buffer_alloc() for some reason wants
-> > > > > > to return a pointer which is aligned to the allocation size.  But the
-> > > > > > sparsemap_buf was only allocated with PAGE_SIZE alignment so there's not
-> > > > > > enough space to align it.
-> > > > > >
-> > > > > > I don't understand the reason for this alignment requirement since the
-> > > > > > fallback path also allocates with PAGE_SIZE alignment.  I'm guessing the
-> > > > > > alignment is for the VMEMAP code which also uses sparse_buffer_alloc()?
-> > > > >
-> > > > > I am not 100% sure TBH. Aligning makes some sense when mapping the
-> > > > > memmaps to page tables but that would suggest that sparse_buffer_init
-> > > > > is using a wrong alignment then. It is quite wasteful to allocate
-> > > > > alarge misaligned block like that.
-> > > > >
-> > > > > Your patch still makes sense but this is something to look into.
-> > > > >
-> > > > > Pavel?
-> > > >
-> > > > I remember thinking about this large alignment, as it looked out of
-> > > > place to me also.
-> > > > It was there to keep memmap in single chunks on larger x86 machines.
-> > > > Perhaps it can be revisited now.
-> > >
-> > > Don't we need 2MB aligned memmaps for their PMD mappings?
-> >
-> > Yes, PMD_SIZE should be the alignment here. It just does not make
-> > sense to align to size.
->
-> What about this? It still aligns to the size but that should be
-> correctly done to the section size level.
->
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 72f010d9bff5..ab1e6175ac9a 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -456,8 +456,7 @@ struct page __init *__populate_section_memmap(unsigned long pfn,
->         if (map)
->                 return map;
->
-> -       map = memblock_alloc_try_nid(size,
-> -                                         PAGE_SIZE, addr,
-> +       map = memblock_alloc_try_nid(size, size, addr,
->                                           MEMBLOCK_ALLOC_ACCESSIBLE, nid);
->         if (!map)
->                 panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%pa\n",
-> @@ -474,8 +473,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
->  {
->         phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
->         WARN_ON(sparsemap_buf); /* forgot to call sparse_buffer_fini()? */
-> +       /*
-> +        * Pre-allocated buffer is mainly used by __populate_section_memmap
-> +        * and we want it to be properly aligned to the section size - this is
-> +        * especially the case for VMEMMAP which maps memmap to PMDs
-> +        */
->         sparsemap_buf =
-> -               memblock_alloc_try_nid_raw(size, PAGE_SIZE,
-> +               memblock_alloc_try_nid_raw(size, section_map_size(),
->                                                 addr,
->                                                 MEMBLOCK_ALLOC_ACCESSIBLE, nid);
->         sparsemap_buf_end = sparsemap_buf + size;
+On 10/30/19 10:48 AM, Edgecombe, Rick P wrote:
+> On Wed, 2019-10-30 at 11:04 +0100, Peter Zijlstra wrote:
+>>> You mean shatter performance?
+>>
+>> Shatter (all) large pages.
+> 
+> So it looks like this is already happening then to some degree. It's not just
+> BPF either, any module_alloc() user is going to do something similar with the
+> direct map alias of the page they got for the text.
+> 
+> So there must be at least some usages where breaking the direct map down, for
+> like a page to store a key or something, isn't totally horrible.
 
-This looks good, I think we should also change alignment in fallback
-of vmemmap_alloc_block() to be
-section_map_size().
+The systems that really need large pages are the large ones.  They have
+the same TLBs and data structures as really little systems, but orders
+of magnitude more address space.  Modules and BPF are a (hopefully) drop
+in the bucket on small systems and they're really inconsequential on
+really big systems.
 
-+++ b/mm/sparse-vmemmap.c
-@@ -65,9 +65,10 @@ void * __meminit vmemmap_alloc_block(unsigned long
-size, int node)
-                        warned = true;
-                }
-                return NULL;
--       } else
--               return __earlyonly_bootmem_alloc(node, size, size,
-+       } else {
-+               return __earlyonly_bootmem_alloc(node, size, section_map_size(),
-                                __pa(MAX_DMA_ADDRESS));
-+       }
- }
+Modules also require privilege.
 
-Pasha
-
-
->
-> --
-> Michal Hocko
-> SUSE Labs
+Allowing random user apps to fracture the direct map for every page of
+their memory or *lots* of pages of their memory is an entirely different
+kind of problem from modules.  It takes a "drop in the bucket"
+fracturing and turns it into the common case.
