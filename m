@@ -2,83 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39278E9AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 12:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C88EE9B07
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 12:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfJ3LkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 07:40:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:19024 "EHLO mga02.intel.com"
+        id S1726780AbfJ3LpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 07:45:03 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50696 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbfJ3LkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 07:40:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 04:40:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,247,1569308400"; 
-   d="scan'208";a="205765879"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Oct 2019 04:40:06 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Sanket Parmar <sparmar@cadence.com>, gregkh@linuxfoundation.org
-Cc:     sparmar@cadence.com, pawell@cadence.com, linux-usb@vger.kernel.org,
-        rogerq@ti.com, linux-kernel@vger.kernel.org, kurahul@cadence.com,
-        peter.chen@nxp.com, nsekhar@ti.com
-Subject: Re: [PATCH] usb: cdns3: gadget: reset EP_CLAIMED flag while unloading
-In-Reply-To: <20191029122441.5816-1-sparmar@cadence.com>
-References: <20191029122441.5816-1-sparmar@cadence.com>
-Date:   Wed, 30 Oct 2019 13:40:05 +0200
-Message-ID: <8736fafomi.fsf@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726488AbfJ3LpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 07:45:02 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F41A21A0065;
+        Wed, 30 Oct 2019 12:45:00 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1B371A0463;
+        Wed, 30 Oct 2019 12:44:54 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 32EEB402E2;
+        Wed, 30 Oct 2019 19:44:47 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 1/2] ASoC: dt-bindings: fsl_asrc: add compatible string for imx8qm
+Date:   Wed, 30 Oct 2019 19:41:26 +0800
+Message-Id: <6465fb7dfaa68b6693584bcfa696894628d45fe9.1572435604.git.shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In order to support the two asrc modules in imx8qm, we need to
+add compatible string "fsl,imx8qm-asrc0" and "fsl,imx8qm-asrc1"
 
-Hi Greg,
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ Documentation/devicetree/bindings/sound/fsl,asrc.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sanket Parmar <sparmar@cadence.com> writes:
-
-> EP_CLAIMED flag is used to track the claimed endpoints. While unloading the
-> module, Reset EP_CLAIMED flag for all enabled endpoints. So that it can be
-> reused.
->
-> Signed-off-by: Sanket Parmar <sparmar@cadence.com>
-
-if you want to take this as a patch:
-
-Acked-by: Felipe Balbi <balbi@kernel.org>
-
-> ---
-> Hi Greg/Felipe,
->
-> This can be used for -rc as it is bug fix.
->
-> Regards,
-> Sanket
->
->  drivers/usb/cdns3/gadget.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-> index 9050b380ab83..2fb78322ed3c 100644
-> --- a/drivers/usb/cdns3/gadget.c
-> +++ b/drivers/usb/cdns3/gadget.c
-> @@ -2381,6 +2381,8 @@ static int cdns3_gadget_udc_stop(struct usb_gadget *gadget)
->  		writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
->  		readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
->  					  !(val & EP_CMD_EPRST), 1, 100);
-> +
-> +		priv_ep->flags &= ~EP_CLAIMED;
->  	}
->  
->  	/* disable interrupt for device */
-> -- 
-> 2.17.1
->
-
+diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+index 1d4d9f938689..cd2bd3daa7e1 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
++++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+@@ -8,7 +8,8 @@ three substreams within totally 10 channels.
+ 
+ Required properties:
+ 
+-  - compatible		: Contains "fsl,imx35-asrc" or "fsl,imx53-asrc".
++  - compatible		: Contains "fsl,imx35-asrc", "fsl,imx53-asrc",
++			  "fsl,imx8qm-asrc0" or "fsl,imx8qm-asrc1".
+ 
+   - reg			: Offset and length of the register set for the device.
+ 
 -- 
-balbi
+2.21.0
+
