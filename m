@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC82EA030
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 779B4EA032
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbfJ3PyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55658 "EHLO mail.kernel.org"
+        id S1728330AbfJ3PyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:54:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbfJ3PyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:16 -0400
+        id S1727813AbfJ3PyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:19 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E94218DE;
-        Wed, 30 Oct 2019 15:54:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D79521734;
+        Wed, 30 Oct 2019 15:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450854;
-        bh=E/66I8gVAHeHm9drdzDI89rAtaP9NZE3+thIh4jkC9U=;
+        s=default; t=1572450858;
+        bh=Pkh8O6u6Xi3YkNZ+kgSiq60tEkoy6kaOzhQaxlLsPqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2RyF+/Z44iuJbEKh6psUyYAFMjocTpTX47oDT6opEKzeSN4tYAbdkAdwEznlXosIt
-         D4m4sRgxmxmjARgJaWY1Yo3AGEEqFHoisL+ZKh3XBwC5V/6fCR7P0L3WogrKphFSas
-         bvgZRi4yuQKHM7yQNG0FsJD1Ue2YzAiLKiXwlqlA=
+        b=13HjwxueiSx+RBCJKaoKMIdjQGzaZ1Ss1amqlGss+lGaNZeREkI1HqRsZa22pKKio
+         o2OGXZAkpEjFyuX2tMbLq0HJT4Uk6UjXkAVWKQlxDNu/0VY9Jm+LyFEPNArvB1SfIF
+         avB1AtHqhHAdEW0g+56rRLXWTRMsMvSrBQfDf9zc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.19 02/38] ASoC: wm8994: Do not register inapplicable controls for WM1811
-Date:   Wed, 30 Oct 2019 11:53:30 -0400
-Message-Id: <20191030155406.10109-2-sashal@kernel.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 04/38] arm64: dts: allwinner: a64: sopine-baseboard: Add PHY regulator delay
+Date:   Wed, 30 Oct 2019 11:53:32 -0400
+Message-Id: <20191030155406.10109-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155406.10109-1-sashal@kernel.org>
 References: <20191030155406.10109-1-sashal@kernel.org>
@@ -45,146 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-[ Upstream commit ca2347190adb5e4eece73a2b16e96e651c46246b ]
+[ Upstream commit ccdf3aaa27ded6db9a93eed3ca7468bb2353b8fe ]
 
-In case of WM1811 device there are currently being registered controls
-referring to registers not existing on that device.
-It has been noticed when getting values of "AIF1ADC2 Volume", "AIF1DAC2
-Volume" controls was failing during ALSA state restoring at boot time:
- "amixer: Mixer hw:0 load error: Device or resource busy"
+It turns out that sopine-baseboard needs same fix as pine64-plus
+for ethernet PHY. Here too Realtek ethernet PHY chip needs additional
+power on delay to properly initialize. Datasheet mentions that chip
+needs 30 ms to be properly powered on and that it needs some more time
+to be initialized.
 
-Reading some registers through I2C was failing with EBUSY error and
-indeed these registers were not available according to the datasheet.
+Fix that by adding 100ms ramp delay to regulator responsible for
+powering PHY.
 
-To fix this controls not available on WM1811 are moved to a separate
-array and registered only for WM8994 and WM8958.
+Note that issue was found out and fix tested on pine64-lts, but it's
+basically the same as sopine-baseboard, only layout and connectors
+differ.
 
-There are some further differences between WM8994 and WM1811,
-e.g. registers 603h, 604h, 605h, which are not covered in this patch.
-
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Link: https://lore.kernel.org/r/20190920130218.32690-2-s.nawrocki@samsung.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: bdfe4cebea11 ("arm64: allwinner: a64: add Ethernet PHY regulator for several boards")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm8994.c | 43 +++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 17 deletions(-)
+ .../boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts      | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
-index 14f1b0c0d286a..01acb8da2f48e 100644
---- a/sound/soc/codecs/wm8994.c
-+++ b/sound/soc/codecs/wm8994.c
-@@ -537,13 +537,10 @@ static SOC_ENUM_SINGLE_DECL(dac_osr,
- static SOC_ENUM_SINGLE_DECL(adc_osr,
- 			    WM8994_OVERSAMPLING, 1, osr_text);
- 
--static const struct snd_kcontrol_new wm8994_snd_controls[] = {
-+static const struct snd_kcontrol_new wm8994_common_snd_controls[] = {
- SOC_DOUBLE_R_TLV("AIF1ADC1 Volume", WM8994_AIF1_ADC1_LEFT_VOLUME,
- 		 WM8994_AIF1_ADC1_RIGHT_VOLUME,
- 		 1, 119, 0, digital_tlv),
--SOC_DOUBLE_R_TLV("AIF1ADC2 Volume", WM8994_AIF1_ADC2_LEFT_VOLUME,
--		 WM8994_AIF1_ADC2_RIGHT_VOLUME,
--		 1, 119, 0, digital_tlv),
- SOC_DOUBLE_R_TLV("AIF2ADC Volume", WM8994_AIF2_ADC_LEFT_VOLUME,
- 		 WM8994_AIF2_ADC_RIGHT_VOLUME,
- 		 1, 119, 0, digital_tlv),
-@@ -560,8 +557,6 @@ SOC_ENUM("AIF2DACR Source", aif2dacr_src),
- 
- SOC_DOUBLE_R_TLV("AIF1DAC1 Volume", WM8994_AIF1_DAC1_LEFT_VOLUME,
- 		 WM8994_AIF1_DAC1_RIGHT_VOLUME, 1, 96, 0, digital_tlv),
--SOC_DOUBLE_R_TLV("AIF1DAC2 Volume", WM8994_AIF1_DAC2_LEFT_VOLUME,
--		 WM8994_AIF1_DAC2_RIGHT_VOLUME, 1, 96, 0, digital_tlv),
- SOC_DOUBLE_R_TLV("AIF2DAC Volume", WM8994_AIF2_DAC_LEFT_VOLUME,
- 		 WM8994_AIF2_DAC_RIGHT_VOLUME, 1, 96, 0, digital_tlv),
- 
-@@ -569,17 +564,12 @@ SOC_SINGLE_TLV("AIF1 Boost Volume", WM8994_AIF1_CONTROL_2, 10, 3, 0, aif_tlv),
- SOC_SINGLE_TLV("AIF2 Boost Volume", WM8994_AIF2_CONTROL_2, 10, 3, 0, aif_tlv),
- 
- SOC_SINGLE("AIF1DAC1 EQ Switch", WM8994_AIF1_DAC1_EQ_GAINS_1, 0, 1, 0),
--SOC_SINGLE("AIF1DAC2 EQ Switch", WM8994_AIF1_DAC2_EQ_GAINS_1, 0, 1, 0),
- SOC_SINGLE("AIF2 EQ Switch", WM8994_AIF2_EQ_GAINS_1, 0, 1, 0),
- 
- WM8994_DRC_SWITCH("AIF1DAC1 DRC Switch", WM8994_AIF1_DRC1_1, 2),
- WM8994_DRC_SWITCH("AIF1ADC1L DRC Switch", WM8994_AIF1_DRC1_1, 1),
- WM8994_DRC_SWITCH("AIF1ADC1R DRC Switch", WM8994_AIF1_DRC1_1, 0),
- 
--WM8994_DRC_SWITCH("AIF1DAC2 DRC Switch", WM8994_AIF1_DRC2_1, 2),
--WM8994_DRC_SWITCH("AIF1ADC2L DRC Switch", WM8994_AIF1_DRC2_1, 1),
--WM8994_DRC_SWITCH("AIF1ADC2R DRC Switch", WM8994_AIF1_DRC2_1, 0),
--
- WM8994_DRC_SWITCH("AIF2DAC DRC Switch", WM8994_AIF2_DRC_1, 2),
- WM8994_DRC_SWITCH("AIF2ADCL DRC Switch", WM8994_AIF2_DRC_1, 1),
- WM8994_DRC_SWITCH("AIF2ADCR DRC Switch", WM8994_AIF2_DRC_1, 0),
-@@ -598,9 +588,6 @@ SOC_SINGLE("Sidetone HPF Switch", WM8994_SIDETONE, 6, 1, 0),
- SOC_ENUM("AIF1ADC1 HPF Mode", aif1adc1_hpf),
- SOC_DOUBLE("AIF1ADC1 HPF Switch", WM8994_AIF1_ADC1_FILTERS, 12, 11, 1, 0),
- 
--SOC_ENUM("AIF1ADC2 HPF Mode", aif1adc2_hpf),
--SOC_DOUBLE("AIF1ADC2 HPF Switch", WM8994_AIF1_ADC2_FILTERS, 12, 11, 1, 0),
--
- SOC_ENUM("AIF2ADC HPF Mode", aif2adc_hpf),
- SOC_DOUBLE("AIF2ADC HPF Switch", WM8994_AIF2_ADC_FILTERS, 12, 11, 1, 0),
- 
-@@ -641,6 +628,24 @@ SOC_SINGLE("AIF2DAC 3D Stereo Switch", WM8994_AIF2_DAC_FILTERS_2,
- 	   8, 1, 0),
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index c21f2331add60..285cb7143b96c 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -113,6 +113,12 @@
  };
  
-+/* Controls not available on WM1811 */
-+static const struct snd_kcontrol_new wm8994_snd_controls[] = {
-+SOC_DOUBLE_R_TLV("AIF1ADC2 Volume", WM8994_AIF1_ADC2_LEFT_VOLUME,
-+		 WM8994_AIF1_ADC2_RIGHT_VOLUME,
-+		 1, 119, 0, digital_tlv),
-+SOC_DOUBLE_R_TLV("AIF1DAC2 Volume", WM8994_AIF1_DAC2_LEFT_VOLUME,
-+		 WM8994_AIF1_DAC2_RIGHT_VOLUME, 1, 96, 0, digital_tlv),
-+
-+SOC_SINGLE("AIF1DAC2 EQ Switch", WM8994_AIF1_DAC2_EQ_GAINS_1, 0, 1, 0),
-+
-+WM8994_DRC_SWITCH("AIF1DAC2 DRC Switch", WM8994_AIF1_DRC2_1, 2),
-+WM8994_DRC_SWITCH("AIF1ADC2L DRC Switch", WM8994_AIF1_DRC2_1, 1),
-+WM8994_DRC_SWITCH("AIF1ADC2R DRC Switch", WM8994_AIF1_DRC2_1, 0),
-+
-+SOC_ENUM("AIF1ADC2 HPF Mode", aif1adc2_hpf),
-+SOC_DOUBLE("AIF1ADC2 HPF Switch", WM8994_AIF1_ADC2_FILTERS, 12, 11, 1, 0),
-+};
-+
- static const struct snd_kcontrol_new wm8994_eq_controls[] = {
- SOC_SINGLE_TLV("AIF1DAC1 EQ1 Volume", WM8994_AIF1_DAC1_EQ_GAINS_1, 11, 31, 0,
- 	       eq_tlv),
-@@ -4262,13 +4267,15 @@ static int wm8994_component_probe(struct snd_soc_component *component)
- 	wm8994_handle_pdata(wm8994);
+ &reg_dc1sw {
++	/*
++	 * Ethernet PHY needs 30ms to properly power up and some more
++	 * to initialize. 100ms should be plenty of time to finish
++	 * whole process.
++	 */
++	regulator-enable-ramp-delay = <100000>;
+ 	regulator-name = "vcc-phy";
+ };
  
- 	wm_hubs_add_analogue_controls(component);
--	snd_soc_add_component_controls(component, wm8994_snd_controls,
--			     ARRAY_SIZE(wm8994_snd_controls));
-+	snd_soc_add_component_controls(component, wm8994_common_snd_controls,
-+				       ARRAY_SIZE(wm8994_common_snd_controls));
- 	snd_soc_dapm_new_controls(dapm, wm8994_dapm_widgets,
- 				  ARRAY_SIZE(wm8994_dapm_widgets));
- 
- 	switch (control->type) {
- 	case WM8994:
-+		snd_soc_add_component_controls(component, wm8994_snd_controls,
-+					       ARRAY_SIZE(wm8994_snd_controls));
- 		snd_soc_dapm_new_controls(dapm, wm8994_specific_dapm_widgets,
- 					  ARRAY_SIZE(wm8994_specific_dapm_widgets));
- 		if (control->revision < 4) {
-@@ -4288,8 +4295,10 @@ static int wm8994_component_probe(struct snd_soc_component *component)
- 		}
- 		break;
- 	case WM8958:
-+		snd_soc_add_component_controls(component, wm8994_snd_controls,
-+					       ARRAY_SIZE(wm8994_snd_controls));
- 		snd_soc_add_component_controls(component, wm8958_snd_controls,
--				     ARRAY_SIZE(wm8958_snd_controls));
-+					       ARRAY_SIZE(wm8958_snd_controls));
- 		snd_soc_dapm_new_controls(dapm, wm8958_dapm_widgets,
- 					  ARRAY_SIZE(wm8958_dapm_widgets));
- 		if (control->revision < 1) {
 -- 
 2.20.1
 
