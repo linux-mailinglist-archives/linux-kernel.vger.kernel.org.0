@@ -2,154 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A7B4E9570
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE7DE9578
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfJ3Dyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 23:54:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5649 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726747AbfJ3Dyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 23:54:39 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 133EAF416A0042295C05;
-        Wed, 30 Oct 2019 11:54:35 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 30 Oct
- 2019 11:54:25 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     Jonathan Corbet <corbet@lwn.net>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH] f2fs: bio_alloc should never fail
-Date:   Wed, 30 Oct 2019 11:55:18 +0800
-Message-ID: <20191030035518.65477-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727091AbfJ3D7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 23:59:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42056 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfJ3D7B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 23:59:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Otea3GUj7Y6yguIprmqpsQUijyiqZsI5ui8Xykspypg=; b=AypR2kirE85cx/HxaOLtBJvgy
+        M141UOXaRHiXPhK9e6+ousO4gSfopG3UVn6f+hCqcMTsi7536slqOuBBmzbj0TljXhEbgrYtdNFrK
+        DLu60Cq6znXVZRBBPVAGK4O6PBK6YKsK/ZDFxki6Dlkd/AwhQZy0F0xg1wPe3JkU7j2GwPln5kjsN
+        WbnI5mEzm3pjrD5bOLffg8ang/9H8QCH3c9+0SkzFqcnwc5BegGaYVf9jf8Gm0apRE6GyRhJ9IKfe
+        3MBwdhrY4QcbwcKXfP8cGmMJEzkjv134bZZs3J359/h7TE3LrJCwp8WyOphqVlnEvoj6AJQOl4o1d
+        DWqeFdpVQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPf8O-0005RW-Nc; Wed, 30 Oct 2019 03:59:00 +0000
+Subject: Re: [PATCH] scripts:prune-kernel:prune kernel and modules dir from
+ the system
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     bfields@fieldses.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191029030030.31659-1-unixbhaskar@gmail.com>
+ <de2a4604-e3ba-dab1-c72c-a0ff451541cf@infradead.org>
+ <20191030024312.GA1251@ArchLinux>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d9f7acd6-e948-4eb7-41ef-4d9a2cafe15a@infradead.org>
+Date:   Tue, 29 Oct 2019 20:58:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191030024312.GA1251@ArchLinux>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-remove such useless code and related fault injection.
+On 10/29/19 7:43 PM, Bhaskar Chowdhury wrote:
+> On 17:05 Tue 29 Oct 2019, Randy Dunlap wrote:
+> 
+>> Hi,
+> Thank you Randy, my answers are inline , kindly look.
+> 
+> The modified version(implemented your suggestions) of the script and their interaction will send in next patch mail.
+>>
+>>
+>> This patch does not delete the original script loop, so that still follows
+>> after the 'done' above.  Was that intentional?
+> This is confuse me! not sure  what you meant. Did you meant to say
+> the do loop inside does not match with this pair???
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- Documentation/filesystems/f2fs.txt |  1 -
- fs/f2fs/data.c                     |  6 ++----
- fs/f2fs/f2fs.h                     | 21 ---------------------
- fs/f2fs/segment.c                  |  5 +----
- fs/f2fs/super.c                    |  1 -
- 5 files changed, 3 insertions(+), 31 deletions(-)
+I mean that the old loop that begins with
+for f in "$@"
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 7e1991328473..3477c3e4c08b 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -172,7 +172,6 @@ fault_type=%d          Support configuring fault injection type, should be
-                        FAULT_KVMALLOC		0x000000002
-                        FAULT_PAGE_ALLOC		0x000000004
-                        FAULT_PAGE_GET		0x000000008
--                       FAULT_ALLOC_BIO		0x000000010
-                        FAULT_ALLOC_NID		0x000000020
-                        FAULT_ORPHAN		0x000000040
-                        FAULT_BLOCK		0x000000080
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5755e897a5f0..3b88dcb15de6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -288,7 +288,7 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 	struct bio *bio;
- 
--	bio = f2fs_bio_alloc(sbi, npages, true);
-+	bio = bio_alloc(GFP_NOIO, npages);
- 
- 	f2fs_target_device(sbi, fio->new_blkaddr, bio);
- 	if (is_read_io(fio->op)) {
-@@ -682,9 +682,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	struct bio_post_read_ctx *ctx;
- 	unsigned int post_read_steps = 0;
- 
--	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
--	if (!bio)
--		return ERR_PTR(-ENOMEM);
-+	bio = bio_alloc(GFP_KERNEL, min_t(int, nr_pages, BIO_MAX_PAGES));
- 	f2fs_target_device(sbi, blkaddr, bio);
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4024790028aa..40012f874be0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -44,7 +44,6 @@ enum {
- 	FAULT_KVMALLOC,
- 	FAULT_PAGE_ALLOC,
- 	FAULT_PAGE_GET,
--	FAULT_ALLOC_BIO,
- 	FAULT_ALLOC_NID,
- 	FAULT_ORPHAN,
- 	FAULT_BLOCK,
-@@ -2210,26 +2209,6 @@ static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
- 	return entry;
- }
- 
--static inline struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi,
--						int npages, bool no_fail)
--{
--	struct bio *bio;
--
--	if (no_fail) {
--		/* No failure on bio allocation */
--		bio = bio_alloc(GFP_NOIO, npages);
--		if (!bio)
--			bio = bio_alloc(GFP_NOIO | __GFP_NOFAIL, npages);
--		return bio;
--	}
--	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
--		f2fs_show_injection_info(FAULT_ALLOC_BIO);
--		return NULL;
--	}
--
--	return bio_alloc(GFP_KERNEL, npages);
--}
--
- static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
- 	if (sbi->gc_mode == GC_URGENT)
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 808709581481..28457c878d0d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -552,10 +552,7 @@ static int __submit_flush_wait(struct f2fs_sb_info *sbi,
- 	struct bio *bio;
- 	int ret;
- 
--	bio = f2fs_bio_alloc(sbi, 0, false);
--	if (!bio)
--		return -ENOMEM;
--
-+	bio = bio_alloc(GFP_KERNEL, 0);
- 	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
- 	bio_set_dev(bio, bdev);
- 	ret = submit_bio_wait(bio);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1443cee15863..51945dd27f00 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -44,7 +44,6 @@ const char *f2fs_fault_name[FAULT_MAX] = {
- 	[FAULT_KVMALLOC]	= "kvmalloc",
- 	[FAULT_PAGE_ALLOC]	= "page alloc",
- 	[FAULT_PAGE_GET]	= "page get",
--	[FAULT_ALLOC_BIO]	= "alloc bio",
- 	[FAULT_ALLOC_NID]	= "alloc nid",
- 	[FAULT_ORPHAN]		= "orphan",
- 	[FAULT_BLOCK]		= "no more block",
+is still there after your patch.
+
+
 -- 
-2.17.1
+~Randy
 
