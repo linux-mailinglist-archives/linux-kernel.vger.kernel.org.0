@@ -2,59 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E48FE992D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF805E992E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 10:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfJ3Jbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 05:31:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5228 "EHLO huawei.com"
+        id S1726315AbfJ3Jcr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 30 Oct 2019 05:32:47 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:52083 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726028AbfJ3Jbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:31:50 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4F3B979BCF39E7193C8F;
-        Wed, 30 Oct 2019 17:31:49 +0800 (CST)
-Received: from [127.0.0.1] (10.133.219.218) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 30 Oct 2019
- 17:31:44 +0800
-Message-ID: <5DB9587F.8050705@huawei.com>
-Date:   Wed, 30 Oct 2019 17:31:43 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1726028AbfJ3Jcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 05:32:47 -0400
+Received: from BJHW-Mail-Ex14.internal.baidu.com (unknown [10.127.64.37])
+        by Forcepoint Email with ESMTPS id 38CB867CA021E;
+        Wed, 30 Oct 2019 17:32:40 +0800 (CST)
+Received: from BJHW-Mail-Ex13.internal.baidu.com (10.127.64.36) by
+ BJHW-Mail-Ex14.internal.baidu.com (10.127.64.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 30 Oct 2019 17:32:41 +0800
+Received: from BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) by
+ BJHW-Mail-Ex13.internal.baidu.com ([100.100.100.36]) with mapi id
+ 15.01.1713.004; Wed, 30 Oct 2019 17:32:41 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "tj@kernel.org" <tj@kernel.org>,
+        "lizefan@huawei.com" <lizefan@huawei.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
+Subject: mount cgroup with "already mounted or cgroup busy"
+Thread-Topic: mount cgroup with "already mounted or cgroup busy"
+Thread-Index: AdWPA9906A1LJjv0Rpi5m0VcmmdBIA==
+Date:   Wed, 30 Oct 2019 09:32:41 +0000
+Message-ID: <11be9352e1e54ebebad078b1dac7b670@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.22.198.13]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fault-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define
- debugfs fops
-References: <1572423756-59943-1-git-send-email-zhongjiang@huawei.com> <20191030091051.GA634735@kroah.com>
-In-Reply-To: <20191030091051.GA634735@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.219.218]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/30 17:10, Greg KH wrote:
-> On Wed, Oct 30, 2019 at 04:22:36PM +0800, zhong jiang wrote:
->> It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
->> operation rather than DEFINE_SIMPLE_ATTRIBUTE.
-> Why does this matter?  What does this change?  You are changing how some
-> of the file reference counting works now, are you sure this is ok?
-I think that it is more correct to use DEFINE_DEBUGFS_ATTRIBUTE(), since they are debugfs attrs.
-It is designed and defined for debugfs fops.  
+Hi:
 
-Of course,  Use DEFINE_SIMPLE_ATTRIBUTE here  to define debugfs attrs is feasible  functionally.
+I meet a issue, and not sure if it is normal
+Using the below script, the last line mount will fail after unmount
+And it will fail until reboot system
 
-Thanks,
-zhong jiang
-> thanks,
->
-> greg k-h
->
-> .
->
+mount -t cgroup -o cpu,cpuset xx cgroup
+mkdir cgroup/x
+rmdir cgroup/x
+umount cgroup
+mount -t cgroup -o cpu xx cgroup
+mount: xx already mounted or cgroup busy
+
+but if I add sleep, it will success
+
+mount -t cgroup -o cpu,cpuset xx cgroup
+mkdir cgroup/x
+rmdir cgroup/x
+sleep 10  <<<<==========
+umount cgroup
+mount -t cgroup -o cpu xx cgroup
+
+- Li RongQing
 
 
