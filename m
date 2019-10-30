@@ -2,138 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4601E9F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C72F3E9F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:33:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfJ3PcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:32:18 -0400
-Received: from mail-eopbgr770107.outbound.protection.outlook.com ([40.107.77.107]:37446
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727356AbfJ3PcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:32:15 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q7rY27M9kkM42i+APQBywF+by8fMb+77J2eJ2u5oyU68Thca9q9oC1EOqkBYrBHcAVYYjl3bvTsehRcJ/KquzR0WpsVawseeX99Lb7o8aLpdTMnZyW3sbvroECVimWihL57i77Ez+XNBKYDYGs60qvENE0Z4KHMpx4ihqAXWFIBT9f13z7M5ufT41rHQS2e+J2q7N2DFeYQHIem34geMJn/78miYy8Mh3eAW6xYhiRyLaLONVJu3HPfccTZVHrL68VKGxyUZcOK75ss8Z/U5oHMQwq/6kzgFTorS6q5CEGxlF39U5x7UASz30qaNUIV4hpJY4Sj1W85FLHxrP7n47w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zu/WBYk6iHDxjDjFlbiieOrrFMHBcVANvZq8rQv20f4=;
- b=YKqEGVzarcsRLdJJEhzS3ZXRXzPNeNo0IvBAruQiwxqPZG+iypxk0fNYrTXxlaZn2ZkgZn7r8mH3mPl9cONJmTg7eWj/gbVoJoLydWA0Yhc+yGNKws8h5OnBYcUsySabuCgBf6xCpW4yw6XtNFJGmRhwemqUTQnNiwn/N9VSi11BaTYN0XDRKuuGAeO5vUwZ3R8vscQgvO5tJsV6LjcjdAuNCtKjpmyrmz7uqiobC/DrLv2A+f/uwd0JvsPM/R38+cQFgAtJ+JZYy+o7f6qt2AxSpo75mQfxqwz0zh/xhjG29WZMeBO9pvd30ODPPsARKT08Pot1bKlACOBZBlDk+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zu/WBYk6iHDxjDjFlbiieOrrFMHBcVANvZq8rQv20f4=;
- b=SFaro0Ph0eLRvDAFbNmY/5EnuYjELj/C5GkdAGjuz0RTqUUFWWsJIzXmWAAEQHd0m7vjq1oQSuNQAO9zvXle+WneDjm5wMsC4RqyMNyK+MOZ3uR+42K8tGPN0UBaBn8RZdC33i8SHcpinqb5yRyTgUghAbkd5caoQMGVbaxH/Xg=
-Received: from DM6PR21MB1242.namprd21.prod.outlook.com (20.179.50.86) by
- DM6PR21MB1323.namprd21.prod.outlook.com (20.179.53.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.9; Wed, 30 Oct 2019 15:32:13 +0000
-Received: from DM6PR21MB1242.namprd21.prod.outlook.com
- ([fe80::756e:8d3f:e463:3bf7]) by DM6PR21MB1242.namprd21.prod.outlook.com
- ([fe80::756e:8d3f:e463:3bf7%3]) with mapi id 15.20.2408.016; Wed, 30 Oct 2019
- 15:32:13 +0000
-From:   Haiyang Zhang <haiyangz@microsoft.com>
-To:     "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH net, 2/2] hv_netvsc: Fix error handling in netvsc_attach()
-Thread-Topic: [PATCH net, 2/2] hv_netvsc: Fix error handling in
- netvsc_attach()
-Thread-Index: AQHVjzczuqsG+5QrCUWDw911uTLagA==
-Date:   Wed, 30 Oct 2019 15:32:13 +0000
-Message-ID: <1572449471-5219-3-git-send-email-haiyangz@microsoft.com>
-References: <1572449471-5219-1-git-send-email-haiyangz@microsoft.com>
-In-Reply-To: <1572449471-5219-1-git-send-email-haiyangz@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR01CA0027.prod.exchangelabs.com (2603:10b6:300:101::13)
- To DM6PR21MB1242.namprd21.prod.outlook.com (2603:10b6:5:169::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=lkmlhyz@microsoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 2
-x-mailer: git-send-email 1.8.3.1
-x-originating-ip: [13.77.154.182]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0197f6b9-e245-4dd2-03ea-08d75d4e5659
-x-ms-traffictypediagnostic: DM6PR21MB1323:|DM6PR21MB1323:|DM6PR21MB1323:
-x-ms-exchange-transport-forked: True
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <DM6PR21MB1323A373CDBFB58BCFCE8407AC600@DM6PR21MB1323.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 02065A9E77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(366004)(396003)(346002)(189003)(199004)(5660300002)(2906002)(4720700003)(54906003)(110136005)(71190400001)(71200400001)(25786009)(10290500003)(8936002)(22452003)(2501003)(478600001)(6512007)(52116002)(4326008)(6436002)(7846003)(6392003)(8676002)(81156014)(6486002)(81166006)(10090500001)(486006)(476003)(66446008)(14444005)(256004)(305945005)(2616005)(7736002)(5024004)(50226002)(186003)(66946007)(26005)(64756008)(66556008)(66476007)(6506007)(386003)(102836004)(76176011)(2201001)(99286004)(3846002)(316002)(446003)(6116002)(11346002)(66066001)(14454004)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1323;H:DM6PR21MB1242.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fWFCJzcEdcBGTSloI1df3qs0MeSjYxkluZa07UPw5b16u9SDjTY2tVFq7bt1YtoZ8A8ntC+NTJut4XrkTKA5Z6CvGObUPgz6PCV1tFSaoKUNwvKtAs2oKshEJ9Y4WNh55TUTY3oQKaZoEbDeo2neBu83oypkEfF1s4bMdHDFDbCs9pNjK7qB2BVp6J8epVws3GUVe6jRz3gtqW1HxwEyUvUQIUWtjHlZcw/77fbO0FQ/kg6lk7vTqugrDTiW7jvvXYTU1kWJYUO27S9rHJPpTk33iUTVE3ledGdzOWvoXh4MATealEPeQJMmozJs3KVfgLsWe5h/CATallzUGZAjRtfeyF50zohBioRH1jvAs5ItXU9+moH7oWb48Ag84GkSvwdaKm1LwwBVRtNFrOamVRr5a2ryMblNJ/eND9phtV0xMO8pit1KriSRgzys3eQx
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727307AbfJ3Pdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:33:33 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:59627 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726255AbfJ3Pdc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:33:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572449611;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jPxLc22m28c+kEUKzIvK5d4SLQMacaKmaA/P7n/BVkA=;
+        b=G8an5jEjRdDfAPc2WL7fmf7UNvMfm9f9NeR/sV00rkgEjNaAFonuOeq0Zf/St2ufauUyTt
+        FTK0z5XJKQsiFqd9YGHu/2HQOfGzC+iNqgJOXaXCLVOTCMBPpPg2eaRcAKf5eHUcY0wQes
+        Byf0do7l1uUENE6DfGyoOLXrmuGulbw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-k9J2UT_uPduup4A7VGRLgg-1; Wed, 30 Oct 2019 11:33:28 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5ACB92F2A;
+        Wed, 30 Oct 2019 15:33:27 +0000 (UTC)
+Received: from [10.36.116.178] (ovpn-116-178.ams2.redhat.com [10.36.116.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC2ED60BE0;
+        Wed, 30 Oct 2019 15:33:25 +0000 (UTC)
+Subject: Re: [PATCH v2] mm/sparse.c: mark populate_section_memmap as __meminit
+To:     Ilya Leoshkevich <iii@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20191030151639.41486-1-iii@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <26d03485-054e-40cc-2a04-151f9d96fdae@redhat.com>
+Date:   Wed, 30 Oct 2019 16:33:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0197f6b9-e245-4dd2-03ea-08d75d4e5659
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 15:32:13.6239
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WliqyzkC1zF2GEzUWqvXmyfLrIIh3Oy2yrIo4F+bl9L0pmRk2jwwGTNW0j6LbR2xmurG64lDe+hItFHCnQ1xbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1323
+In-Reply-To: <20191030151639.41486-1-iii@linux.ibm.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: k9J2UT_uPduup4A7VGRLgg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If rndis_filter_open() fails, we need to remove the rndis device created
-in earlier steps, before returning an error code. Otherwise, the retry of
-netvsc_attach() from its callers will fail and hang.
+On 30.10.19 16:16, Ilya Leoshkevich wrote:
+> Building the kernel on s390 with -Og produces the following warning:
+>=20
+> WARNING: vmlinux.o(.text+0x28dabe): Section mismatch in reference from th=
+e function populate_section_memmap() to the function .meminit.text:__popula=
+te_section_memmap()
+> The function populate_section_memmap() references
+> the function __meminit __populate_section_memmap().
+> This is often because populate_section_memmap lacks a __meminit
+> annotation or the annotation of __populate_section_memmap is wrong.
+>=20
+> While -Og is not supported, in theory this might still happen with
+> another compiler or on another architecture. So fix this by using the
+> correct section annotations.
+>=20
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
+>=20
+> v1 -> v2: Do not touch mm/sparse.c version of __populate_section_memmap:
+> its __init annotation is correct, since it is only called during init
+> phase (by sparse_init_nid), and contains the call to another __init
+> function. Spotted by kbuild test robot <lkp@intel.com> and Oscar
+> Salvador <osalvador@suse.de>.
+>=20
+> I was notified that v1 has already been included into
+> http://ozlabs.org/~akpm/mmots/broken-out. Since this is not a git
+> repository, I've decided to send a v2 instead of the fix. Please let me
+> know if I should send a fix instead.
 
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/netvsc_drv.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+That's fine, Andrew will simply replace the patch.
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_dr=
-v.c
-index 734e411..a14fc8e 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -982,7 +982,7 @@ static int netvsc_attach(struct net_device *ndev,
- 	if (netif_running(ndev)) {
- 		ret =3D rndis_filter_open(nvdev);
- 		if (ret)
--			return ret;
-+			goto err;
-=20
- 		rdev =3D nvdev->extension;
- 		if (!rdev->link_state)
-@@ -990,6 +990,13 @@ static int netvsc_attach(struct net_device *ndev,
- 	}
-=20
- 	return 0;
-+
-+err:
-+	netif_device_detach(ndev);
-+
-+	rndis_filter_device_remove(hdev, nvdev);
-+
-+	return ret;
- }
-=20
- static int netvsc_set_channels(struct net_device *net,
+Acked-by: David Hildenbrand <david@redhat.com>
+
 --=20
-1.8.3.1
+
+Thanks,
+
+David / dhildenb
 
