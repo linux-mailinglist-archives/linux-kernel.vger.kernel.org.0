@@ -2,68 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5D8EA59C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 22:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE4AEEA59E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 22:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfJ3Vjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 17:39:51 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46940 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfJ3Vjv (ORCPT
+        id S1727300AbfJ3Vkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 17:40:36 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:40413 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfJ3Vkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 17:39:51 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3EE6B14C6834A;
-        Wed, 30 Oct 2019 14:39:50 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 14:39:49 -0700 (PDT)
-Message-Id: <20191030.143949.809392632168787466.davem@davemloft.net>
-To:     vivien.didelot@gmail.com
-Cc:     linux-kernel@vger.kernel.org, f.fainelli@gmail.com, andrew@lunn.ch,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 1/7] net: dsa: list DSA links in the fabric
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191028195220.2371843-2-vivien.didelot@gmail.com>
-References: <20191028195220.2371843-1-vivien.didelot@gmail.com>
-        <20191028195220.2371843-2-vivien.didelot@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 30 Oct 2019 14:39:50 -0700 (PDT)
+        Wed, 30 Oct 2019 17:40:36 -0400
+Received: from belgarion ([90.55.204.252])
+        by mwinf5d15 with ME
+        id KxgY2100E5TFNlm03xgYfx; Wed, 30 Oct 2019 22:40:34 +0100
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Wed, 30 Oct 2019 22:40:34 +0100
+X-ME-IP: 90.55.204.252
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: Re: [PATCH 46/46] ARM: pxa: move plat-pxa to drivers/soc/
+References: <20191018154052.1276506-1-arnd@arndb.de>
+        <20191018154201.1276638-46-arnd@arndb.de>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Wed, 30 Oct 2019 22:40:32 +0100
+In-Reply-To: <20191018154201.1276638-46-arnd@arndb.de> (Arnd Bergmann's
+        message of "Fri, 18 Oct 2019 17:42:01 +0200")
+Message-ID: <87wocllxnz.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivien Didelot <vivien.didelot@gmail.com>
-Date: Mon, 28 Oct 2019 15:52:14 -0400
+Arnd Bergmann <arnd@arndb.de> writes:
 
-> @@ -122,6 +124,29 @@ static struct dsa_port *dsa_tree_find_port_by_node(struct dsa_switch_tree *dst,
->  	return NULL;
->  }
->  
-> +struct dsa_link *dsa_link_touch(struct dsa_port *dp, struct dsa_port *link_dp)
-> +{
-> +	struct dsa_switch *ds = dp->ds;
-> +	struct dsa_switch_tree *dst = ds->dst;
-> +	struct dsa_link *dl;
+> There are two drivers in arch/arm/plat-pxa: mfp and ssp. Both
+> of them should ideally not be needed at all, as there are
+> proper subsystems to replace them.
+>
+> OTOH, they are self-contained and can simply be normal
+> SoC drivers, so move them over there to eliminate one more
+> of the plat-* directories.
+>
+> Cc: Lubomir Rintel <lkundrak@v3.sk>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+For the pxa part :
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Please fix the reverse christmas tree here, two suggestions:
+Cheers.
 
-	struct dsa_switch *ds = dp->ds;
-	struct dsa_switch_tree *dst;
-	struct dsa_link *dl;
-
-	dst = ds->dst;
-
-Or, alternatively, since the dst variable is used only once, get rid of it
-and change:
-
-> +	list_add_tail(&dl->list, &dst->rtable);
-
-to
-
-> +	list_add_tail(&dl->list, &ds->dst->rtable);
+--
+Robert
