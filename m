@@ -2,128 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B6BEA606
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC8EEA622
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfJ3WQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 18:16:10 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46108 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfJ3WQJ (ORCPT
+        id S1727051AbfJ3W0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 18:26:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43847 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfJ3W0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:16:09 -0400
-Received: by mail-il1-f195.google.com with SMTP id m16so3540408iln.13;
-        Wed, 30 Oct 2019 15:16:09 -0700 (PDT)
+        Wed, 30 Oct 2019 18:26:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id s4so4434703ljj.10;
+        Wed, 30 Oct 2019 15:26:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6aG6jaBQjykZMmoKoaVIScDbAeprHhorDd6ERUFUGTc=;
-        b=F/WgYu38dQJ2we3ACG0fFRAum6GXnziWqvKxwc8o0MXX4MEMwQjV5ERndrF8qyP56o
-         v1SGNFDy6uxA/Qt380IHl6jVwBQlM2/PcH3LoRrBS/B/d32S9STTGSiPf8zyyv0dWAG/
-         kIyzrcu1RagGogthigCxLj//XMUBsTIdMniQ1B8oZfLrdg2F/l0T3xzIkDP7PvV/D6r/
-         kGcWQCxBhCGCy/pFiwiGNyQFPrOyy1tea67MLK7UErHj9vUy4GXdkkTjdqfF2UeV4oHo
-         r2CdQkzRIUGOD0TXx1oG8704nL8dDxiPNuyeoNx0Zh654jg3a1ExuijDav1Y2jU6SLrR
-         ss8Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ghyKzMOt9noacqcW8gijvIBX51lIWlQ2FC12YmCxtvQ=;
+        b=P8p3TGCy8MV1WlfFblsWQyXzqgtkUuF8eoQE8T02IWdtjfi22N4gyn720vMo//QKEQ
+         w5kXkpijc3XFD1OQpXnmtxZqQa0kdFqv7Dm0mm1q4wmGYLrwp3V5PEHOTrv/auteZs19
+         fSTD87LuiG0fsjhKpRTC+xcBPKKDoXP9XjuAny8X+1R/aXVir8oBfViVnv01uv94yWcO
+         yx8d2JeqK9utaXL+rSBrE01+y1oxUJ2Mm+zK1DEAOmVvr7Vtzw4h0DvtGNa7ETzEbIJZ
+         gNcb5+BTIwFA+OsVB2qwv7pqduJv0ZvTxyxvP5G8x9/JB1y9JScpVSrnOtRz2hJzXkD8
+         rUWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6aG6jaBQjykZMmoKoaVIScDbAeprHhorDd6ERUFUGTc=;
-        b=GZdgG2YVsLv1tHRBDRWwOfWGdQ+GnTvUi8rY6pBZpzFf51VMCRL/wWHoUyyS2ICf1Z
-         yZLmqO9zJRKaePIAajBgb/1p73BoMmNsmSbtbK9t8yqvclLEtZ00lLFfidf+m+Jp5uW3
-         ysaSKgDtuTMflGkO4e90AgGOZNufn/AKzZ8p5Bq4cdbCZ1bvilYEcSq+sc4uOxhPRcti
-         rxmSEMiY4ZVH2O18eg/ARV98zBgUfCCin3al2BJOBvPVTO02O1AzqKdLgTmagZxQacgX
-         JBtNG2O41xZQNG51DBWVHUrXpB7v7W2n0yJ9mZkXrP8KfNd7Bi/JxEPxQIWxMEL7lcPW
-         NQPg==
-X-Gm-Message-State: APjAAAU1RrSKfItOOhsCed499ApftW2gakTY+NNfJvkD+AHLUUffM4WF
-        i8JBQBzVP9I3xCfixgl/HzbY6tdMNNraYi4+VT0=
-X-Google-Smtp-Source: APXvYqwv8oUCajfo1pOFHmNy6b86xLBgxyYuXpSl7PVowx/iM+uUjWJhp9J3RH+BSJI98acLMwAdZJwdE8J8nyDheQA=
-X-Received: by 2002:a92:8703:: with SMTP id m3mr2573584ild.131.1572473768596;
- Wed, 30 Oct 2019 15:16:08 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ghyKzMOt9noacqcW8gijvIBX51lIWlQ2FC12YmCxtvQ=;
+        b=qO5yiVGh/W6RC3giileWFs9dr8b8nL8olbC5TgNhQu4PcvjjxDWSiqAy/BILoW0Y35
+         avcdcnmByyaQbzoSC/Obc23wFQnXnFSUpDmMS6kamb+YGLMLBi1C7gdNfXry70w8URRS
+         +S7AiFtuvzeDfYOFuHBT4uW1Y7Ta+F7XBc9HIIqG0FhmWcbrmnvIfEVAyGivyqR6+xVv
+         hUxLFZm7JD8CRtor1vYQbD/n3ehvjIHM+voVfwmkDz9iXFbGS8ngWE7GfexlJ1GHKNf8
+         3ztfT0JNtSImqB13MMN3gQCnYnuoQGW7xN7gWhg8m01kG1gGn4GzzrEAKCpGbT2xu43N
+         pZpg==
+X-Gm-Message-State: APjAAAULExtgXV9J594wbNYoc6Ay1EWnwZgDUgW9TlzZ9NiEFS+/42d2
+        eM93N5Ld2SC9mjp3izBnu9g6k34I
+X-Google-Smtp-Source: APXvYqxKePoldR1zNVEQWFMsbOhcscgsBBrkafCI669vkMg6MuihGz3TFUtR0jB78Klpzab6EvBjiw==
+X-Received: by 2002:a2e:3919:: with SMTP id g25mr1392037lja.232.1572474373677;
+        Wed, 30 Oct 2019 15:26:13 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id y189sm1010882lfc.9.2019.10.30.15.26.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2019 15:26:12 -0700 (PDT)
+Subject: Re: [PATCH -next] gpu: host1x: Fix compile test failure
+To:     YueHaibing <yuehaibing@huawei.com>, thierry.reding@gmail.com,
+        mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191030135458.27960-1-yuehaibing@huawei.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
+Date:   Thu, 31 Oct 2019 01:26:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com> <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk>
-In-Reply-To: <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Oct 2019 23:16:23 +0100
-Message-ID: <CAOi1vP9paV2-2_S0NgfbZDE6+5kqHXVc9xabHVC-2Ss1MmXkCg@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191030135458.27960-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 9:35 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 30/10/2019 17.19, Ilya Dryomov wrote:
-> > On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
-> >>  /*
-> >> - * We use a start+len construction, which provides full use of the
-> >> - * allocated memory.
-> >> - * -- Florian Coosmann (FGC)
-> >> - *
-> >> + * We use head and tail indices that aren't masked off, except at the point of
-> >> + * dereference, but rather they're allowed to wrap naturally.  This means there
-> >> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
-> >> + * -- David Howells 2019-09-23.
-> >
-> > Hi David,
-> >
-> > Is "ring size < INT_MAX" constraint correct?
->
-> No. As long as one always uses a[idx % size] to access the array, the
-> only requirement is that size is representable in an unsigned int. Then
-> because one also wants to do the % using simple bitmasking, that further
-> restricts one to sizes that are a power of 2, so the end result is that
-> the max size is 2^31 (aka INT_MAX+1).
+30.10.2019 16:54, YueHaibing пишет:
+> If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
+> COMPILE_TEST is y, building fails:
+> 
+> drivers/gpu/host1x/dev.o: In function `host1x_remove':
+> dev.c:(.text+0x624): undefined reference to `put_iova_domain'
+> dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
+> dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
+> dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
+> 
+> Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/host1x/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+> index cf987a3..354232d 100644
+> --- a/drivers/gpu/host1x/Kconfig
+> +++ b/drivers/gpu/host1x/Kconfig
+> @@ -2,7 +2,7 @@
+>  config TEGRA_HOST1X
+>  	tristate "NVIDIA Tegra host1x driver"
+>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+> -	select IOMMU_IOVA if IOMMU_SUPPORT
+> +	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+>  	help
+>  	  Driver for the NVIDIA Tegra host1x hardware.
+>  
+> 
 
-I think the fact that indices are free running and wrap at a power of
-two already restricts you to sizes the are a power of two, independent
-of how you do masking.  If you switch to a[idx % size], size still has
-to be a power of two for things to work when idx wraps.  Consider:
+It should be better to unconditionally select IOMMU_IOVA here.
 
-  size = 6
-  head = tail = 4294967292, empty buffer
+The same could be done for drivers/staging/media/tegra-vde/ and
+drivers/gpu/host1x/, please see [1].
 
-  push  4294967292 % 6 = 0
-  push  4294967293 % 6 = 1
-  push  4294967294 % 6 = 2
-  push  4294967295 % 6 = 3
-  push           0 % 6 = 0  <-- expected 4, overwrote a[0]
-
->
-> > I've never had to implement this free running indices scheme, but
-> > the way I've always visualized it is that the top bit of the index is
-> > used as a lap (as in a race) indicator, leaving 31 bits to work with
-> > (in case of unsigned ints).  Should that be
-> >
-> >   ring size <= 2^31
-> >
-> > or more precisely
-> >
-> >   ring size is a power of two <= 2^31
->
-> Exactly. But it's kind of moot since the ring size would never be
-> allowed to grow anywhere near that.
-
-Thanks for confirming.  Even if it's kind of moot, I think it should be
-corrected to avoid confusion.
-
-                Ilya
+[1] https://lore.kernel.org/linux-iommu/20190829154902.GC19842@ulmo/
