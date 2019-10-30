@@ -2,210 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DAAFE99C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:13:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33847E99D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbfJ3KNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:13:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726071AbfJ3KNV (ORCPT
+        id S1726673AbfJ3KQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:16:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49804 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfJ3KQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:13:21 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9UA9PCN075459
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 06:13:19 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vy672msq4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 06:13:19 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 30 Oct 2019 10:13:17 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 30 Oct 2019 10:13:15 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9UADEog53411954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Oct 2019 10:13:14 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 032ECA404D;
-        Wed, 30 Oct 2019 10:13:14 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2175EA4055;
-        Wed, 30 Oct 2019 10:13:11 +0000 (GMT)
-Received: from [9.199.158.87] (unknown [9.199.158.87])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Oct 2019 10:13:10 +0000 (GMT)
-Subject: Re: [PATCH] ext4: bio_alloc never fails
-To:     Gao Xiang <gaoxiang25@huawei.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20191030042618.124220-1-gaoxiang25@huawei.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 30 Oct 2019 15:43:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 30 Oct 2019 06:16:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1zcHzV6zD9O31in8kloh0B+z/m7z7NmzyB+w3XnQ5n0=; b=R7ox8vy3ZnrhdMdpFSPLH1wLK
+        vjbto6CkcTHdr4TJVIm3ERYb4ndeFEeQFraxfzpfbDzos7ani8v/0uI6sWTJELWdkjkKUalPdsQTS
+        tl22rW36Q/iROk+G23RItInYa+B+jvCzzSVzNfAC0wiLxfcUuKVXCXZdr3FIIXlZ4Dfyn1uQ24eFC
+        tl9g8DX8oZgSYA/CFZEIb+KktE50EeCeJONwTWEYqijdFf1mF+EN+3YEMjzL688bnj5c8oJDrn7AL
+        PYm6mywIXQC9HQN6Xo3gs0E/F0l18VtctAko4q2TDwWxQR7TP7OZ6PppUcsHNZII8/TcsME8CL183
+        RgJzDI4Sg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPl0D-0007W8-HX; Wed, 30 Oct 2019 10:14:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C03D4300596;
+        Wed, 30 Oct 2019 11:13:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DCD862B4574F7; Wed, 30 Oct 2019 11:14:49 +0100 (CET)
+Date:   Wed, 30 Oct 2019 11:14:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
+        bp@alien8.de, rth@twiddle.net, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, len.brown@intel.com,
+        axboe@kernel.dk, dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, rafael@kernel.org, mhocko@kernel.org,
+        gregkh@linuxfoundation.org, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Message-ID: <20191030101449.GW4097@hirez.programming.kicks-ass.net>
+References: <1572428068-180880-1-git-send-email-linyunsheng@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20191030042618.124220-1-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19103010-0016-0000-0000-000002BF14B1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19103010-0017-0000-0000-000033207124
-Message-Id: <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-30_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910300100
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572428068-180880-1-git-send-email-linyunsheng@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/30/19 9:56 AM, Gao Xiang wrote:
-> Similar to [1] [2], it seems a trivial cleanup since
-> bio_alloc can handle memory allocation as mentioned in
-> fs/direct-io.c (also see fs/block_dev.c, fs/buffer.c, ..)
+On Wed, Oct 30, 2019 at 05:34:28PM +0800, Yunsheng Lin wrote:
+> When passing the return value of dev_to_node() to cpumask_of_node()
+> without checking if the device's node id is NUMA_NO_NODE, there is
+> global-out-of-bounds detected by KASAN.
 > 
-
-AFAIU, the reason is that, bio_alloc with __GFP_DIRECT_RECLAIM
-flags guarantees bio allocation under some given restrictions,
-as stated in fs/direct-io.c
-So here it is ok to not check for NULL value from bio_alloc.
-
-I think we can update above info too in your commit msg.
-
-> [1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
-> [2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> ---
->   fs/ext4/page-io.c  | 11 +++--------
->   fs/ext4/readpage.c |  2 --
->   2 files changed, 3 insertions(+), 10 deletions(-)
+> From the discussion [1], NUMA_NO_NODE really means no node affinity,
+> which also means all cpus should be usable. So the cpumask_of_node()
+> should always return all cpus online when user passes the node id as
+> NUMA_NO_NODE, just like similar semantic that page allocator handles
+> NUMA_NO_NODE.
 > 
-> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-> index 12ceadef32c5..f1f7b6601780 100644
-> --- a/fs/ext4/page-io.c
-> +++ b/fs/ext4/page-io.c
-> @@ -358,14 +358,12 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
->   	io->io_end = NULL;
->   }
+> But we cannot really copy the page allocator logic. Simply because the
+> page allocator doesn't enforce the near node affinity. It just picks it
+> up as a preferred node but then it is free to fallback to any other numa
+> node. This is not the case here and node_to_cpumask_map will only restrict
+> to the particular node's cpus which would have really non deterministic
+> behavior depending on where the code is executed. So in fact we really
+> want to return cpu_online_mask for NUMA_NO_NODE.
 > 
-> -static int io_submit_init_bio(struct ext4_io_submit *io,
-> -			      struct buffer_head *bh)
-> +static void io_submit_init_bio(struct ext4_io_submit *io,
-> +			       struct buffer_head *bh)
->   {
->   	struct bio *bio;
+> Also there is a debugging version of node_to_cpumask_map() for x86 and
+> arm64, which is only used when CONFIG_DEBUG_PER_CPU_MAPS is defined, this
+> patch changes it to handle NUMA_NO_NODE as normal node_to_cpumask_map().
 > 
->   	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-> -	if (!bio)
-> -		return -ENOMEM;
->   	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
->   	bio_set_dev(bio, bh->b_bdev);
->   	bio->bi_end_io = ext4_end_bio;
-> @@ -373,7 +371,6 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
->   	io->io_bio = bio;
->   	io->io_next_block = bh->b_blocknr;
->   	wbc_init_bio(io->io_wbc, bio);
-> -	return 0;
->   }
-> 
->   static int io_submit_add_bh(struct ext4_io_submit *io,
-> @@ -388,9 +385,7 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
->   		ext4_io_submit(io);
->   	}
->   	if (io->io_bio == NULL) {
-> -		ret = io_submit_init_bio(io, bh);
-> -		if (ret)
-> -			return ret;
-> +		io_submit_init_bio(io, bh);
->   		io->io_bio->bi_write_hint = inode->i_write_hint;
->   	}
->   	ret = bio_add_page(io->io_bio, page, bh->b_size, bh_offset(bh));
+> [1] https://lkml.org/lkml/2019/9/11/66
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Suggested-by: Michal Hocko <mhocko@kernel.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: Paul Burton <paul.burton@mips.com> # MIPS bits
 
+Still:
 
-Also we can further simplify it like below. Please check.
-
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index f1f7b6601780..a3a2edeb3bbf 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -373,7 +373,7 @@ static void io_submit_init_bio(struct ext4_io_submit 
-*io,
-  	wbc_init_bio(io->io_wbc, bio);
-  }
-
--static int io_submit_add_bh(struct ext4_io_submit *io,
-+static void io_submit_add_bh(struct ext4_io_submit *io,
-  			    struct inode *inode,
-  			    struct page *page,
-  			    struct buffer_head *bh)
-@@ -393,7 +393,6 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
-  		goto submit_and_retry;
-  	wbc_account_cgroup_owner(io->io_wbc, page, bh->b_size);
-  	io->io_next_block++;
--	return 0;
-  }
-
-  int ext4_bio_write_page(struct ext4_io_submit *io,
-@@ -495,30 +494,23 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
-  	do {
-  		if (!buffer_async_write(bh))
-  			continue;
--		ret = io_submit_add_bh(io, inode, bounce_page ?: page, bh);
--		if (ret) {
--			/*
--			 * We only get here on ENOMEM.  Not much else
--			 * we can do but mark the page as dirty, and
--			 * better luck next time.
--			 */
--			break;
--		}
-+		io_submit_add_bh(io, inode, bounce_page ?: page, bh);
-  		nr_submitted++;
-  		clear_buffer_dirty(bh);
-  	} while ((bh = bh->b_this_page) != head);
-
--	/* Error stopped previous loop? Clean up buffers... */
--	if (ret) {
--	out:
--		fscrypt_free_bounce_page(bounce_page);
--		printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
--		redirty_page_for_writepage(wbc, page);
--		do {
--			clear_buffer_async_write(bh);
--			bh = bh->b_this_page;
--		} while (bh != head);
--	}
-+	goto unlock;
-+
-+out:
-+	fscrypt_free_bounce_page(bounce_page);
-+	printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
-+	redirty_page_for_writepage(wbc, page);
-+	do {
-+		clear_buffer_async_write(bh);
-+		bh = bh->b_this_page;
-+	} while (bh != head);
-+
-+unlock:
-  	unlock_page(page);
-  	/* Nothing submitted - we have to end page writeback */
-  	if (!nr_submitted)
-
-
--ritesh
-
+Nacked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
