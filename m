@@ -2,225 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4794FE96AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 07:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC0DE96C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 07:49:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfJ3GqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 02:46:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33413 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbfJ3GqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 02:46:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u23so820803pgo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 23:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cUna80mgrJuvwZng2S/zg9eJ2aJtl1v9W/4Z7bansiw=;
-        b=aF/kblen9t7CI7DHz9bX09InKfJirCrxV3h4upoRTtuntFzgf+ordcplUGhDX3hTlI
-         enA6URTjG0DKHNBi7J0mrKJnZ4kpZEXgZiuT0h9iNBlprIQJyJtZIMrytcelto9jQO7H
-         MsopDsGzlopi41nNk+mnCl/lntEhDo13NN+XSceDsf0olDyv6lrE4MwZ8tOAOOOVRf37
-         hs6uKnu6Ueo6jwa5fJv4IwEn/6bbxawQmu6ZcBnZkngNeMEiroT/u7fHnv6vpuw5IYke
-         qnmMpHgGEebHdKWzYqH8bpUg+biG8CfvSfTg7sNHuFlVv8ytyegGt6zi0ypgzbIHLwXW
-         LJDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cUna80mgrJuvwZng2S/zg9eJ2aJtl1v9W/4Z7bansiw=;
-        b=YlUQNFt4F6EdcPmc7UN5wsAHYlarCCaPjQrbAV30A3mfYQZJr0jlXA/hZXvnpOlbj3
-         opXuWlQA0yC9c+6WAPmSf4wBsxzt3/wHuzNjP95exdT7tGUtDP0LRiLEQFkntBUebikH
-         pGQNEz4j0FZpPq/sRaaTUfvIOS4S8jYlrfSrWxNLyeVfNnV7drlH9yVNK8fi+Smo+/xL
-         RCLJ767sbXp6jjtEfGfC2edHVpFkWCXz18cGxddLVyw5T86EeYTTZmqNCeMucUFfObIZ
-         eNFbVuR3e+/dHZmX6Kl4GNIaRbuQEvQRYwYh97UJ9ICZ3vXykluGL/8yHCPdvcDf46Ve
-         zcrQ==
-X-Gm-Message-State: APjAAAVtScWL6Hu9NpfH5fwCl4LDeS1+B1bqZ+HJQpcI9UaTuGnLWOgZ
-        mSJZAnECNzxzr8k1cxX6a+c9
-X-Google-Smtp-Source: APXvYqw4sy47eUnhMCq6S6rBb149xzsVxBxXpwL1klsrmUeuNOV3Z+gzN5hBEkI38UsF/yJrZuzh7A==
-X-Received: by 2002:a63:f441:: with SMTP id p1mr31930177pgk.362.1572417964721;
-        Tue, 29 Oct 2019 23:46:04 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:618e:77d9:c9fa:423a:3851:8df4])
-        by smtp.gmail.com with ESMTPSA id i63sm1270378pgc.31.2019.10.29.23.45.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Oct 2019 23:46:04 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 12:15:55 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, c.barrett@framos.com,
-        a.brela@framos.com, peter.griffin@linaro.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
- binding
-Message-ID: <20191030064555.GB11637@Mani-XPS-13-9360>
-References: <20191025175908.14260-1-manivannan.sadhasivam@linaro.org>
- <20191025175908.14260-2-manivannan.sadhasivam@linaro.org>
- <20191028122115.GB4928@valkosipuli.retiisi.org.uk>
- <20191029221213.GB17996@bogus>
+        id S1727469AbfJ3Gts convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 30 Oct 2019 02:49:48 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22962 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726262AbfJ3Gtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 02:49:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2019 23:49:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,246,1569308400"; 
+   d="scan'208";a="198591325"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Oct 2019 23:49:46 -0700
+Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 29 Oct 2019 23:49:46 -0700
+Received: from shsmsx108.ccr.corp.intel.com (10.239.4.97) by
+ FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 29 Oct 2019 23:49:46 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
+ SHSMSX108.ccr.corp.intel.com ([169.254.8.41]) with mapi id 14.03.0439.000;
+ Wed, 30 Oct 2019 14:49:43 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>
+Subject: RE: [PATCH v1 3/8] KVM: x86: Allocate performance counter for PEBS
+ event
+Thread-Topic: [PATCH v1 3/8] KVM: x86: Allocate performance counter for PEBS
+ event
+Thread-Index: AQHVjLd13+lWyOpx00qD/bA0eE059qdxL6sAgAEppjD//+FzAIAAhsSA
+Date:   Wed, 30 Oct 2019 06:49:42 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E173835CAA@SHSMSX104.ccr.corp.intel.com>
+References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
+ <1572217877-26484-4-git-send-email-luwei.kang@intel.com>
+ <20191029144612.GK4097@hirez.programming.kicks-ass.net>
+ <82D7661F83C1A047AF7DC287873BF1E173835B1A@SHSMSX104.ccr.corp.intel.com>
+ <87o8xyg2f1.fsf@ashishki-desk.ger.corp.intel.com>
+In-Reply-To: <87o8xyg2f1.fsf@ashishki-desk.ger.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjc4NDBlYjItZGZmYS00ODBlLWFiMTYtYWIxZThhZjYwOTY2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoia2Y3VGpQRitMU3g0MW9pXC9NQjlKRjBOWlRCaFwvcFdQWmhnT1RxSWh3OHU2eUFTTlFhcEZTRTNwSDhtbFRGMFJEIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029221213.GB17996@bogus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob, Sakari,
-
-On Tue, Oct 29, 2019 at 05:12:13PM -0500, Rob Herring wrote:
-> On Mon, Oct 28, 2019 at 02:21:15PM +0200, Sakari Ailus wrote:
-> > Hi Manivannan,
-> > 
-> > Thanks for the update.
-> > 
-> > On Fri, Oct 25, 2019 at 11:29:07PM +0530, Manivannan Sadhasivam wrote:
-> > > Add YAML devicetree binding for IMX296 CMOS image sensor.
-> > > 
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/media/i2c/imx296.yaml | 98 +++++++++++++++++++
-> > >  1 file changed, 98 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.yaml b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > new file mode 100644
-> > > index 000000000000..4e204fd7cf90
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > @@ -0,0 +1,98 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/media/i2c/imx296.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Sony IMX296 1/2.8-Inch CMOS Image Sensor
-> > > +
-> > > +maintainers:
-> > > +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > +
-> > > +description: |-
-> > > +  The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
-> > > +  sensor with square pixel array and 1.58 M effective pixels. This chip
-> > > +  features a global shutter with variable charge-integration time. It is
-> > > +  programmable through I2C and 4-wire interfaces. The sensor output is
-> > > +  available via CSI-2 serial data output (1 Lane).
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: sony,imx296
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  clock-names:
-> > > +    description:
-> > > +      Input clock for the sensor.
-> > > +    items:
-> > > +      - const: mclk
-> > > +
-> > > +  clock-frequency:
-> > > +    description:
-> > > +      Frequency of the mclk clock in Hertz.
-> > > +    default: 37125000
-> > 
-> > I think you could omit the default.
+> >> >  static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
+> >> >  				  unsigned config, bool exclude_user,
+> >> >  				  bool exclude_kernel, bool intr,
+> >> > -				  bool in_tx, bool in_tx_cp)
+> >> > +				  bool in_tx, bool in_tx_cp, bool pebs)
+> >> >  {
+> >> >  	struct perf_event *event;
+> >> >  	struct perf_event_attr attr = {
+> >> > @@ -111,9 +111,12 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
+> >> >  		.exclude_user = exclude_user,
+> >> >  		.exclude_kernel = exclude_kernel,
+> >> >  		.config = config,
+> >> > +		.precise_ip = pebs ? 1 : 0,
+> >> > +		.aux_output = pebs ? 1 : 0,
+> >>
+> >> srsly?
+> >
+> > Hi Peter,
+> >     Thanks for review. For aux_output, I think it should be set 1 when the guest wants to enabled PEBS by Intel PT.
 > 
-> Yes, there's no default if it is required.
->
-
-Okay.
-
-> > > +
-> > > +  vddo-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as interface power supply.
-> > > +    maxItems: 1
-> > > +
-> > > +  vdda-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as analog power supply.
-> > > +    maxItems: 1
-> > > +
-> > > +  vddd-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as digital power supply.
-> > > +    maxItems: 1
-> > > +
-> > > +  reset-gpios:
-> > > +    description:
-> > > +      The phandle and specifier for the GPIO that controls sensor reset.
-> > > +    maxItems: 1
-> > > +
-> > > +  # See ../video-interfaces.txt for details
+> attr.aux_output==1 means your group leader should be an intel_pt event for this to succeed. Luckily for this instance,
+> perf_event_create_kernel_counter() doesn't actually check the attr.aux_output.
 > 
-> details on what?
->
+> Also, does 'bool pebs' mean PEBS-via-PT or just a PEBS counter? Or does it mean that in kvm it's the same thing?
 
-Standard properties like endpoint, reg, etc...  I can remove it if not
-required.
-
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - clock-frequency
-> > > +  - vddo-supply
-> > > +  - vdda-supply
-> > > +  - vddd-supply
-> > 
-> > I think the port and endpoint nodes should documented here as well.
-> 
-> port yes, but endpoint no. Unless you have endpoint properties other 
-> than remote-endpoint or reg.
-> 
-
-
-Okay. Will document port.
+It is the same thing. Allocate a counter for PEBS event and use PEBS-via-PT.
 
 Thanks,
-Mani
+Luwei Kang
 
-> > 
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/gpio/gpio.h>
-> > > +
-> > > +    imx296: camera-sensor@1a {
-> > > +        compatible = "sony,imx296";
-> > > +        reg = <0x1a>;
-> > > +        reset-gpios = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-> > > +        pinctrl-names = "default";
-> > > +        pinctrl-0 = <&camera_rear_default>;
-> > > +        clocks = <&gcc 90>;
-> > > +        clock-names = "mclk";
-> > > +        clock-frequency = <37125000>;
-> > > +        vddo-supply = <&camera_vddo_1v8>;
-> > > +        vdda-supply = <&camera_vdda_3v3>;
-> > > +        vddd-supply = <&camera_vddd_1v2>;
-> > > +
-> > > +        port {
-> > > +            imx296_ep: endpoint {
-> > > +                remote-endpoint = <&csiphy0_ep>;
-> > > +            };
-> > > +        };
-> > > +    };
-> > > +
-> > > +...
-> > 
-> > -- 
-> > Regards,
-> > 
-> > Sakari Ailus
+> 
+> Regards,
+> --
+> Alex
