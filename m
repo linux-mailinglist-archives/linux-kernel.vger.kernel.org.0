@@ -2,121 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5F5E9537
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87181E9542
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 04:24:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfJ3DK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 29 Oct 2019 23:10:27 -0400
-Received: from mail-eopbgr820114.outbound.protection.outlook.com ([40.107.82.114]:61408
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726714AbfJ3DK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Oct 2019 23:10:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GdFRG1GRMpGGgxM8TgZL/6Ehaoi8RyygtC5mnD23sOACwdbEOLm/2bzsH3bF85DtZewNOuxlv05jmzUnNDZKPlEAx2XsqpYq7JREjE8YIjtaOzOUX7tXV4JUZ7939UAaOxQTVUj9DeOiEVkryDjDFtkJpRr4WSVbJK//4oykPONqTsrVk9cg68xtgoHni8pZ90xNGUAQtfZ2YyD9/WeKX0bi88TRjSgrjwW450e/d6zX15UmFxoy+YgnSJsxA0YTeh/oAQEdJgTNe/KpORKN7JO/MCD8eHV3VO5reBImRS2K7P7U835OCOTDs4wd2WWBxlOGu/fncMY5ZQYdaJzeag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4OCst72IAltq51oAqdaRvFgX7tKcJ3FVSJdMU8zr4nk=;
- b=D1WITrC5xznWFPaMxG4gOh2g2J3mVavliuMAQh2Nj9fziGjTAVTFwxoOC1CKUu9k1XmViZoA+yOlCVpI+MVKTNPF+Oeu0dhlsNg5iQPf+NUwbPuuisdPlqwcftCCgc7/rxOzst4iDeZRgC8gIjr4fck+RgQipP/hja056FrMQ43tkghvrZaBznMiElheJ+Z+rbOg8QtAk0MwRlbTJKJLMyn0f53hcSZIpiXUP3r+OqwwYHd8dqxRbCL7Y4xqxZ1FGrH3qMengz2Z4hw/T9fzC7ar4lhTVp32OFVeUhggR2iWo8Ml3PsLEP1v6fByY59AF/UNKe3RFGXL2WPf9IZzgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4OCst72IAltq51oAqdaRvFgX7tKcJ3FVSJdMU8zr4nk=;
- b=AAEl3V1L5rT5UDZOtYp3EDwEu7YeQbiS/t8Brm1iUR98nEY+hokK2E8Jugv0ojQkP4Y0DDrv3TB55IgSSVGSr9VFLyyGH/vzSDFOZTWFR2JmuZr96bIwWpAIZhjFY5IKKZJnQY5sqYWOrm8kSIU9BVSwL8XoaHXP0Wbq+HdXyD4=
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com (20.179.76.155) by
- BN8PR21MB1219.namprd21.prod.outlook.com (20.179.73.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.8; Wed, 30 Oct 2019 03:10:24 +0000
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::61ce:42d2:1a58:7239]) by BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::61ce:42d2:1a58:7239%7]) with mapi id 15.20.2408.016; Wed, 30 Oct 2019
- 03:10:24 +0000
-From:   Steve MacLean <Steve.MacLean@microsoft.com>
-To:     Jiri Olsa <jolsa@redhat.com>,
-        Steve MacLean <steve.maclean@linux.microsoft.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/4] perf inject --jit: Remove //anon mmap events
-Thread-Topic: [PATCH 3/4] perf inject --jit: Remove //anon mmap events
-Thread-Index: AQHVeWQ56mWbZMuS2UKJ/Lfd6rhxc6dIv9oAgCnrv5A=
-Date:   Wed, 30 Oct 2019 03:10:23 +0000
-Message-ID: <BN8PR21MB136298F3A0852DAC38E05DB3F7600@BN8PR21MB1362.namprd21.prod.outlook.com>
-References: <1570049901-115628-1-git-send-email-steve.maclean@linux.microsoft.com>
- <20191003105716.GB23291@krava>
-In-Reply-To: <20191003105716.GB23291@krava>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=stmaclea@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-10-30T03:10:22.2971541Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=4b46e905-6d17-4bd9-97a8-7e8e04a67f74;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Steve.MacLean@microsoft.com; 
-x-originating-ip: [24.163.126.65]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 25f7be97-89cc-4087-6135-08d75ce6b4c6
-x-ms-traffictypediagnostic: BN8PR21MB1219:|BN8PR21MB1219:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR21MB12199D823157B64DE9A2E5AEF7600@BN8PR21MB1219.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02065A9E77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39860400002)(396003)(366004)(52314003)(54094003)(199004)(189003)(66066001)(229853002)(102836004)(8990500004)(7696005)(2906002)(446003)(54906003)(256004)(110136005)(11346002)(478600001)(10290500003)(74316002)(52536014)(14454004)(33656002)(5660300002)(6506007)(4744005)(10090500001)(486006)(76176011)(476003)(66946007)(316002)(3846002)(8936002)(99286004)(81156014)(55016002)(86362001)(81166006)(9686003)(8676002)(186003)(26005)(6246003)(22452003)(1511001)(71200400001)(66556008)(305945005)(71190400001)(7736002)(4326008)(76116006)(64756008)(66446008)(6116002)(66476007)(6436002)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR21MB1219;H:BN8PR21MB1362.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: OLiEBTNeGAptcAIJIpBsGSf2iLDo9XpuUuxJGNejz/6dJnEQmPJnc0dNgvQaWLBY3k+kooEXwrG+MzZ8GP4glXro7rhYdQUbgX0XZVWSD9181ODm0ci6yW4sZvLG+jhYZObIcGDUI3bO7E0wmVAYFuURY0FaAUxqrzAeYDcMbrRFVnk2p+bofaLBqunkLX4pTQAAf/GCxn7MV0k0xqH42G/d9FPEumB2NVe8xl+kRiFJ+dNPtZo39il9yq77CX48ixv+QvxnBxcbt1se1WOCUGz538sI4h0xa8i4ffvKNhmnwZ/r6iWCO9GbPANBEOC6DmVsjWeQ3nlRZG4hnAvRd+cpGmNDB8u2x/o1z48jMnSjv9t3StylE3Xwrn68zB0j0RKQ91T3G/LDZt3OMbwxM2KWqtZGemgP/ZBgzKR0M52M1luJ3YTwL/b3RFBj5+sF
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25f7be97-89cc-4087-6135-08d75ce6b4c6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 03:10:24.0158
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sNvkKYGqhmZVULJ0tNCxQB/1W9UX+G8SzCSGyGwCQ4gvISm3FLy4y0u6ZE1r082byslDj2Pp6UymC2WAomtpJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR21MB1219
+        id S1727137AbfJ3DYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 29 Oct 2019 23:24:02 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45620 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfJ3DYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Oct 2019 23:24:02 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y24so286084plr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2019 20:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=El42Y0XtiI+o9O978XwDgCnNFlXF0pvLOTIJT8A8LpQ=;
+        b=PPnotDkw8xhuli7tHUxeUaV7VDi30OZQZ0OQXY3L9YmBxe3Z8KR+LIWeIR/kEg2iS6
+         J/BYzmyEJMB8ARXgD6iCkCz2VzEEqHM4oGEtN0awcB/b2CAt3w4J44I6Nf7TUfZzukjt
+         GTJnO/GSZosf7gyQo11LY1FU65qYdqbdcwyJERHrLYwpt63n5r66JCPIg7EPB+iKeNSH
+         fp1pkK+g9u+p/exBl0e3pJv7CR00TrPfrfLJG/kWdGnAK3+YcC6NWIC7CKcdk2RKrkSz
+         +eTg0qI9L9EG8jft/+4A8aKk7kmRaM449mynTHKQ/A5/sbf8ehnSN+aSM8MLVJeZAX4c
+         Owxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=El42Y0XtiI+o9O978XwDgCnNFlXF0pvLOTIJT8A8LpQ=;
+        b=r60ZG5yMnimO2ed/eKpTTFq7gHWLqITdHbndfb8e4XvIREkPwnrJ4mi7XzCKBx/3nY
+         nOE8NP8INTFpqu33/FljO+pwPft7Jqdc6alpcA0JGO1PQ77CN3AdGn42QSl5pPR6qR4Z
+         8EaU/1k0dCjpj275zo4OjidIqTdFxQGcaaJ+zp0xCOLyLL7meB6Mh/XOaLeYU/wA5WOa
+         wIyGIC8p0sMMlXjLoDp6+7Rlkh5D9Gqv+54mRJyW1aKqn8USro+IGMS7M1IoVcsSb7vz
+         6LCxyR+SDPsQBR+1C0pO4vzDbujLKAzTXG+EOjb9Y8/lhw+7TTiRosmQLcjcz5WrdoM0
+         Cezw==
+X-Gm-Message-State: APjAAAXdZdTCCQxMvWnYqcXlbXmN724h+pl56+5y8uykSBJGJm6XiyeM
+        roisF8VwagZFjivHOVhkpG4iDuiddes=
+X-Google-Smtp-Source: APXvYqwfAecs0cQjB3BULuTSJfaphx+9J4Y0vW2E1krxC0eROt5aGr7rzl7CU7+eJXQwzN7Y1WCmCQ==
+X-Received: by 2002:a17:902:aa82:: with SMTP id d2mr2203329plr.24.1572405841058;
+        Tue, 29 Oct 2019 20:24:01 -0700 (PDT)
+Received: from pek-lpggp6.wrs.com (unknown-103-217.windriver.com. [147.11.103.217])
+        by smtp.gmail.com with ESMTPSA id j22sm556020pff.42.2019.10.29.20.23.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Oct 2019 20:24:00 -0700 (PDT)
+From:   Kevin Hao <haokexin@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2] dump_stack: Avoid the livelock of the dump_lock
+Date:   Wed, 30 Oct 2019 11:16:37 +0800
+Message-Id: <20191030031637.6025-1-haokexin@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> anyway, I wonder if you could just use thread::priv flag for that, like:
->
->  thread =3D machine__findnew_thread(machine, pid, pid);
->  if (!thread)
->    bad
->
->  (int) thread->priv =3D 1;
->
-> and check on thread->priv when ruling the pid out, should be faster then =
-maintain rb tree
->
-> thanks,
-> jirka
+In the current code, we use the atomic_cmpxchg() to serialize the
+output of the dump_stack(), but this implementation suffers the
+thundering herd problem. We have observed such kind of livelock on a
+Marvell cn96xx board(24 cpus) when heavily using the dump_stack() in
+a kprobe handler. Actually we can let the competitors to wait for
+the releasing of the lock before jumping to atomic_cmpxchg(). This
+will definitely mitigate the thundering herd problem. Thanks Linus
+for the suggestion.
 
-I agree reusing the existing data structure is a better approach. I have dr=
-afted a change reusing the void* priv field. It seems looks like it is curr=
-ently safe to use during perf inject.
+Fixes: b58d977432c8 ("dump_stack: serialize the output from dump_stack()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kevin Hao <haokexin@gmail.com>
+---
+v2:
+ 1. Use the method suggested by Linus.
+ 2. Since this fix seems pretty simple, maybe it deserve to be
+    backported to stable kernel. So CC the stable.
 
-I will test it tomorrow then send the new patch
+ lib/dump_stack.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 5cff72f18c4a..0062dfcafd63 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -106,7 +106,11 @@ asmlinkage __visible void dump_stack(void)
+ 		was_locked = 1;
+ 	} else {
+ 		local_irq_restore(flags);
+-		cpu_relax();
++		/*
++		 * Wait the lock to release before jumping to atomic_cmpxchg()
++		 * in order to mitigate the thundering herd problem.
++		 */
++		do { cpu_relax(); } while (atomic_read(&dump_lock) != -1);
+ 		goto retry;
+ 	}
+ 
+-- 
+2.14.4
+
