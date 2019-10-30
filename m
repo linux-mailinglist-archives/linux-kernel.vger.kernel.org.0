@@ -2,82 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9CC4EA14A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45505EA154
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfJ3QA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:00:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728454AbfJ3Pyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:50 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 839C0217D9;
-        Wed, 30 Oct 2019 15:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450889;
-        bh=IlRkfmxagkpK4XTHGe5bLRKa65DPVjT3hWJACHX0Xno=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SrWB7Mk879bug3XRPDe3MAwhVgzgOcAAesPz2M8kHTWoLEToJxvpV1alV7Y2QuXdN
-         ICdfTmCW1N9UyKURUBhdK22PqAZIywFSU/GQMYZNTG/nTOOh1v2tYbnpqX5A2dqOW6
-         b02Q73I/Qd3cR0ywJqoCSkvGcEC4u1XbxHj/1Ci0=
-Date:   Wed, 30 Oct 2019 15:54:45 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        saravanak@google.com
-Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
-Message-ID: <20191030155444.GC19096@willie-the-truck>
-References: <20191030145112.19738-1-will@kernel.org>
- <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
+        id S1728990AbfJ3QBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:01:10 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39719 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbfJ3Pyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:47 -0400
+Received: by mail-qt1-f195.google.com with SMTP id t8so3876087qtc.6;
+        Wed, 30 Oct 2019 08:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XRfFDBLo3b+7Jix/rVYd4DPxmBTVVlhffQMhrh75uRM=;
+        b=NYTB+7xlC2vEB9n73s3dHhQYIdib40WEvSkkOn90vdB848MLyePNydOhv9Fa7WErAF
+         r+I5O2KbTdHrfRQCE+SFpZPHAmL0tCv9qWvZAdwTzK+uW4a93SUJDh+DIMkglnyrb/p9
+         spz4FsaO/CQB+pXaeJpeNyEE/4n6Mv/LESjZkWbTrJTEk+zDkwh4RoHPG3Q3hz6iQ+7N
+         Gm1ydygLZwebvyBlp/qpeQtlMekRpBGOM06/i3gzrrUH0jLs28wNmPlOGQ+Qm1DYlpl+
+         ehORJ1ei4Mi1hhfr9uUgAfdAyRPpkQcXkuiiGv0F3Wsd5j7jrZgU/poy/jUTvEmdK8X1
+         xtrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XRfFDBLo3b+7Jix/rVYd4DPxmBTVVlhffQMhrh75uRM=;
+        b=mV+c4RANCPS56YqxzLwSsDeHAE4tOjSmgDE3N6BBesIZUzUdS1pb5ElZEVehXGccny
+         v7aJcpAyqd+uotL9EouniMQb+HHuzaW8qfq3PnkNGcEAXzQ+IrVkOouo1mNjeixmqPYO
+         H5oXmdSW8mEQcVT7QxM+OMbun+ABQOe7c3fCjLu6aLrzFHGc2zXTYGDTTk8CDpDbLXUW
+         35sr8oUgvxkc8WDb9x4bjIGTa4D7zyO+BhXPYCrRWP8SR83QaJMNAfPdkn82UCeZAaze
+         LQ/Q8pObVdiSkL+n7k/GPxdnQHvnABb1TWozt29bUI/iQIbklK+XbWs3EZiBP4hImGtP
+         iQIw==
+X-Gm-Message-State: APjAAAUcefb0tTspr2M5dsUx/8YY27dxLc8Wfq0DpPgzFYVf9HdV0TbA
+        pJS5cl/m+2x/7oN+QJC1VLDIqC/VKpOZgLygC2U=
+X-Google-Smtp-Source: APXvYqxAeT3rxjjBtdZs6bR+Eo4Iz2uo6t7xVkDCXigNHcCdKx2PEhYZ4SyiaQ0yjIsEB6MTLNizb1jFOC/g0OV+YwY=
+X-Received: by 2002:aed:3f57:: with SMTP id q23mr829268qtf.116.1572450886323;
+ Wed, 30 Oct 2019 08:54:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ad4:54a5:0:0:0:0:0 with HTTP; Wed, 30 Oct 2019 08:54:45
+ -0700 (PDT)
+In-Reply-To: <20191030132420.GG4326@localhost.localdomain>
+References: <1572451637-14085-1-git-send-email-wallyzhao@gmail.com> <20191030132420.GG4326@localhost.localdomain>
+From:   Wei Zhao <wallyzhao@gmail.com>
+Date:   Wed, 30 Oct 2019 23:54:45 +0800
+Message-ID: <CAFRmqq42HqX5KctcNjwyZJ4jdknLSZ1EyBqHnJQQJx211mWopw@mail.gmail.com>
+Subject: Re: [PATCH] sctp: set ooo_okay properly for Transmit Packet Steering
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wally.zhao@nokia-sbell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On 10/30/19, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
+> On Wed, Oct 30, 2019 at 12:07:17PM -0400, Wally Zhao wrote:
+>> Unlike tcp_transmit_skb,
+>> sctp_packet_transmit does not set ooo_okay explicitly,
+>> causing unwanted Tx queue switching when multiqueue is in use;
+>
+> It is initialized to 0 by __alloc_skb() via:
+>         memset(skb, 0, offsetof(struct sk_buff, tail));
+> and never set to 1 by anyone for SCTP.
+>
+> The patch description seems off. I don't see how the unwanted Tx queue
+> switching can happen. IOW, it's not fixing it OOO packets, but
+> improving it by allowing switching on the first packet. Am I missing
+> something?
 
-On Wed, Oct 30, 2019 at 03:35:55PM +0000, Robin Murphy wrote:
-> On 30/10/2019 14:51, Will Deacon wrote:
-> > As part of the work to enable a "Generic Kernel Image" across multiple
-> > Android devices, there is a need to seperate shared, core kernel code
-> > from modular driver code that may not be needed by all SoCs. This means
-> > building IOMMU drivers as modules.
-> > 
-> > It turns out that most of the groundwork has already been done to enable
-> > the ARM SMMU drivers to be 'tristate' options in drivers/iommu/Kconfig;
-> > with a few symbols exported from the IOMMU/PCI core, everything builds
-> > nicely out of the box. The one exception is support for the legacy SMMU
-> > DT binding, which is not in widespread use and has never worked with
-> > modules, so we can simply remove that when building as a module rather
-> > than try to paper over it with even more hacks.
-> > 
-> > Obviously you need to be careful about using IOMMU drivers as modules,
-> > since late loading of the driver for an IOMMU serving active DMA masters
-> > is going to end badly in many cases. On Android, we're using device links
-> > to ensure that the IOMMU probes first.
-> 
-> Out of curiosity, which device links are those? Clearly not the RPM links
-> created by the IOMMU drivers themselves... Is this some special Android
-> magic, or is there actually a chance of replacing all the
-> of_iommu_configure() machinery with something more generic?
+Thanks for pointing this out. You are right. This ooo_okay is default to false.
 
-I'll admit that I haven't used them personally yet, but I'm referring to
-this series from Saravana [CC'd]:
+I was observing some Tx queue switching before when testing with
+iperf3 (modified to be able to set window size, for higher throughput
+with long RTT), so I thought ooo_okay was set to true somewhere else
+after allocation. Just now I did the test again, it turns out that
+iperf3 made a re-connect silently which caused the Tx queue change.
 
-https://lore.kernel.org/linux-acpi/20190904211126.47518-1-saravanak@google.com/
+As for the improving purpose of this patch, that is not that critical
+from my side, and the patch description is not correct for this
+purpose. So I will give up this patch attempt. Thank you again for
+your time on this.
 
-which is currently sitting in linux-next now that we're upstreaming the
-"special Android magic" ;)
-
-Will
+>
+>> Tx queue switching may cause out-of-order packets.
+>> Change sctp_packet_transmit to allow Tx queue switching only for
+>> the first in flight packet, to avoid unwanted Tx queue switching.
+>>
+>> Signed-off-by: Wally Zhao <wallyzhao@gmail.com>
+>> ---
+>>  net/sctp/output.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/net/sctp/output.c b/net/sctp/output.c
+>> index dbda7e7..5ff75cc 100644
+>> --- a/net/sctp/output.c
+>> +++ b/net/sctp/output.c
+>> @@ -626,6 +626,10 @@ int sctp_packet_transmit(struct sctp_packet *packet,
+>> gfp_t gfp)
+>>  	/* neighbour should be confirmed on successful transmission or
+>>  	 * positive error
+>>  	 */
+>> +
+>> +	/* allow switch tx queue only for the first in flight pkt */
+>> +	head->ooo_okay = asoc->outqueue.outstanding_bytes == 0;
+>
+> Considering we are talking about NIC queues here, we would have a
+> better result with tp->flight_size instead. As in, we can switch
+> queues if, for this transport, the queue is empty.
+>
+>> +
+>>  	if (tp->af_specific->sctp_xmit(head, tp) >= 0 &&
+>>  	    tp->dst_pending_confirm)
+>>  		tp->dst_pending_confirm = 0;
+>> --
+>> 1.8.3.1
+>>
+>
