@@ -2,103 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0151BE9A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:56:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB3EE9A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfJ3K4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:56:04 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:13483 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbfJ3K4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:56:03 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 47353P44N8z9vC12;
-        Wed, 30 Oct 2019 11:56:01 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=X/66W8k7; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8ksOLoirlNZc; Wed, 30 Oct 2019 11:56:01 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47353P2wNYz9vC0y;
-        Wed, 30 Oct 2019 11:56:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1572432961; bh=NOsDc85kaLL3wmTkoC+345ALS2CMn66OoExIe3uJdWQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=X/66W8k7NYYmbQqEwciiXTc9kN6YBJT5WfxXA3jwGiVxzZITAZzVw3JrOwx/ZvSab
-         Il0cjEFCH7JmM6k3AOs3hgFYQ1sibicqs2iz61u9SaECKgzqbeFgWCoEe3AZkpunN3
-         8Fg21Pg53mFiBwyqVhuQg+JvQoCLD08AMrP/ciRA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7A8218B875;
-        Wed, 30 Oct 2019 11:56:02 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id KnDVmLJswb7k; Wed, 30 Oct 2019 11:56:02 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9F85C8B7C7;
-        Wed, 30 Oct 2019 11:56:00 +0100 (CET)
-Subject: Re: [PATCH v2 20/23] serial: make SERIAL_QE depend on PPC32
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>,
-        Valentin Longchamp <valentin.longchamp@keymile.com>,
-        linux-serial@vger.kernel.org
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-1-linux@rasmusvillemoes.dk>
- <20191025124058.22580-21-linux@rasmusvillemoes.dk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <869673da-da66-8cc6-68bc-2bbdfd44b1e6@c-s.fr>
-Date:   Wed, 30 Oct 2019 11:56:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726983AbfJ3K4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:56:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59254 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726761AbfJ3K4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:56:48 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AD30DCE6CB8B683BAC3B;
+        Wed, 30 Oct 2019 18:56:45 +0800 (CST)
+Received: from huawei.com (10.175.105.18) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 30 Oct 2019
+ 18:56:39 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     <alex.williamson@redhat.com>, <cohuck@redhat.com>,
+        <eric.auger@redhat.com>, <aik@ozlabs.ru>, <mpe@ellerman.id.au>,
+        <bhelgaas@google.com>, <tglx@linutronix.de>, <hexin.op@gmail.com>
+CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] VFIO: PCI: eliminate unnecessary overhead in vfio_pci_reflck_find
+Date:   Wed, 30 Oct 2019 18:57:10 +0800
+Message-ID: <1572433030-6267-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191025124058.22580-21-linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.105.18]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Miaohe Lin <linmiaohe@huawei.com>
 
+The driver of the pci device may not equal to vfio_pci_driver,
+but we fetch vfio_device from pci_dev unconditionally in func
+vfio_pci_reflck_find. This overhead, such as the competition
+of vfio.group_lock, can be eliminated by check pci_dev_driver
+with vfio_pci_driver first.
 
-Le 25/10/2019 à 14:40, Rasmus Villemoes a écrit :
-> Currently SERIAL_QE depends on QUICC_ENGINE, which in turn depends on
-> PPC32, so this doesn't add any extra dependency. However, the QUICC
-> Engine IP block also exists on some arm boards, so this serves as
-> preparation for removing the PPC32 dependency from QUICC_ENGINE and
-> build the QE support in drivers/soc/fsl/qe, while preventing
-> allmodconfig/randconfig failures due to SERIAL_QE not being supported
-> yet.
-> 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->   drivers/tty/serial/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index 67a9eb3f94ce..78246f535809 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -1056,6 +1056,7 @@ config SERIAL_LANTIQ
->   config SERIAL_QE
->   	tristate "Freescale QUICC Engine serial port support"
->   	depends on QUICC_ENGINE
-> +	depends on PPC32
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ drivers/vfio/pci/vfio_pci.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Same, would be more obvious as
-	depends on QUICC_ENGINE && PPC32
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 379a02c36e37..1e21970543a6 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -1466,15 +1466,14 @@ static int vfio_pci_reflck_find(struct pci_dev *pdev, void *data)
+ 	struct vfio_device *device;
+ 	struct vfio_pci_device *vdev;
+ 
+-	device = vfio_device_get_from_dev(&pdev->dev);
+-	if (!device)
+-		return 0;
+-
+ 	if (pci_dev_driver(pdev) != &vfio_pci_driver) {
+-		vfio_device_put(device);
+ 		return 0;
+ 	}
+ 
++	device = vfio_device_get_from_dev(&pdev->dev);
++	if (!device)
++		return 0;
++
+ 	vdev = vfio_device_data(device);
+ 
+ 	if (vdev->reflck) {
+-- 
+2.19.1
 
-Christophe
-
->   	select SERIAL_CORE
->   	select FW_LOADER
->   	help
-> 
