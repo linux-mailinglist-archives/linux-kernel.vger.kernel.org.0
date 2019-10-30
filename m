@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4D3EA366
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1234EA371
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 19:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfJ3Sed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 14:34:33 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44316 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbfJ3Se1 (ORCPT
+        id S1728292AbfJ3Se7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 14:34:59 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:44489 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728144AbfJ3Se2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 14:34:27 -0400
-Received: by mail-yb1-f193.google.com with SMTP id g38so973987ybe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:26 -0700 (PDT)
+        Wed, 30 Oct 2019 14:34:28 -0400
+Received: by mail-yw1-f66.google.com with SMTP id i123so1176802ywe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=nT92LQsyD0gIPis+gaWKGuSZbeXS6VVIk1U2APsl8yE=;
-        b=XgUmbK6W8ZOv+acMQI7bwoNGaRk9q8P1B3I6Q+fjaN8lp/1tDokrk/qLDdH9H33njv
-         I9rp3km18awtmTtCIpcffBdEb1ndQkO/CoHX6SQBqFPr+TFXniRcF1TskimOVnpRPSot
-         iqyxdnLO38cWzpvVq+EhZZjYHL/tgxYk70WVg=
+        bh=98e7PpYrKI/1xEOfuSF5mHE9VtQjq+YVN1RFcXUJZJY=;
+        b=UhDoc/q0Xi+MHNJo2gJyJLb+lk6GPvK/4QXUNnYherZzqwpYap1C+ntVLA7lldhTky
+         K19gA/3x01yBhy7xSE2xcqqvQSubrWzmIphusSESE6gs0oQwJDRAW3ydsf09KTq4HjGV
+         hblKWMnLwGOruycNy2W/07xSNRhv1TkHWEXLU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=nT92LQsyD0gIPis+gaWKGuSZbeXS6VVIk1U2APsl8yE=;
-        b=YD9fjhCXeqQvvJ8O8jxxjJtRiV15yVA20HZSfs90pDPfavgRotuVYA2xz3Mg+mimek
-         JtuSJmtKt9telOExTLashf2tD/uczkw5SFBFNrTHXMTQ9Bqz4aO5ipN7PHYKG/dwaRQh
-         pVl5Bo2msib/Z0eawjY0eKWkzzaTIi05Nz5HCzInZ39+ArEA+wmi+MEZwP+W7DjIXxy+
-         kMAKoh5nNTbrOFeHjF7v8w/KR2dHUA5MH9b74LkxaukGR1iBixMGAifzUXkqDR/XcMU3
-         yNfDSBb+BWiEcqTMytYlKzs2IOT8wvnXKKzWDMo3m/RwG9gkNKyrR2uMSr8zodmnFpjR
-         qJ+g==
-X-Gm-Message-State: APjAAAWRo27Aic92ZLPFG0rptOqlfrzD8DvOMA8C1k4SmiHRBz9Ic8Pf
-        p09Hy2qx4SWfWf41FqJcOF8GtQ==
-X-Google-Smtp-Source: APXvYqwGFGfuFlTIwBD4Hb7PpY1Y4EKx83kHmZFKnR8bulaj9cEGupLwBgaTRqYh6cTJ2zk2EDE5Lg==
-X-Received: by 2002:a25:3508:: with SMTP id c8mr650340yba.256.1572460466237;
-        Wed, 30 Oct 2019 11:34:26 -0700 (PDT)
+        bh=98e7PpYrKI/1xEOfuSF5mHE9VtQjq+YVN1RFcXUJZJY=;
+        b=T/QwjOqa+GVfP06LHovrJTEwYFwv4kdBW1oKqvzgXbBu0Ey64SVfHPB5lNG5ob+byY
+         aWhZyGI4A+qOhhrFySrZ4Ls2wG4rdmJOXphEYL80nd9AYzbWAaCdppJ+OTqYBdbpc9QO
+         va54RZTnBTwivTpFWdLp6AF+Dc1ODI2lcjc06v/v/iq+CvMFrAbKByoUDknPtv0kRjL5
+         EQjTk0L7iQc6ZBsFdtI7c7pqEO/irfgf77YbyU8m1VigkevA6F/V1+Gp6HPds/OMWFDS
+         56EBcC38Aoo9nV8INqYdE+2ec+dPJXck/UWFVMMURCGCbv73+i0g9Wz1w6Ghi4Csurx2
+         T7NQ==
+X-Gm-Message-State: APjAAAW5mssqdTc66SJQy7jGJW67WToAxQvDJ5/DxVpkqI2CJ8mzE4ij
+        /lTmQVnEHXZVMldwInzjTlAAkw==
+X-Google-Smtp-Source: APXvYqyvcXec1FDLwGvaTDj3toyX4rzl1ZsYh9gTFDxYzNdZO0zfbtbMVQbB66nO9GMYNJM22aMLfA==
+X-Received: by 2002:a0d:f887:: with SMTP id i129mr809992ywf.343.1572460467731;
+        Wed, 30 Oct 2019 11:34:27 -0700 (PDT)
 Received: from vpillai-dev.sfo2.internal.digitalocean.com ([138.68.32.68])
-        by smtp.gmail.com with ESMTPSA id c198sm955169ywa.78.2019.10.30.11.34.25
+        by smtp.gmail.com with ESMTPSA id n65sm270432ywf.99.2019.10.30.11.34.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Oct 2019 11:34:25 -0700 (PDT)
+        Wed, 30 Oct 2019 11:34:27 -0700 (PDT)
 From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
 To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
         Julien Desfossez <jdesfossez@digitalocean.com>,
@@ -56,9 +56,9 @@ Cc:     linux-kernel@vger.kernel.org, Dario Faggioli <dfaggioli@suse.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [RFC PATCH v4 15/19] sched: Trivial forced-newidle balancer
-Date:   Wed, 30 Oct 2019 18:33:28 +0000
-Message-Id: <89da8db0c28e165bef0a24bd970186b3ca0821bd.1572437285.git.vpillai@digitalocean.com>
+Subject: [RFC PATCH v4 16/19] sched: Debug bits...
+Date:   Wed, 30 Oct 2019 18:33:29 +0000
+Message-Id: <b0d52363baebb9c8e05899e3171f1b51ea0f3b86.1572437285.git.vpillai@digitalocean.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1572437285.git.vpillai@digitalocean.com>
 References: <cover.1572437285.git.vpillai@digitalocean.com>
@@ -71,242 +71,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-When a sibling is forced-idle to match the core-cookie; search for
-matching tasks to fill the core.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Not-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/sched.h |   1 +
- kernel/sched/core.c   | 131 +++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/idle.c   |   1 +
- kernel/sched/sched.h  |   6 ++
- 4 files changed, 138 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d319219ea58f..896dd00e393f 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -693,6 +693,7 @@ struct task_struct {
- #ifdef CONFIG_SCHED_CORE
- 	struct rb_node			core_node;
- 	unsigned long			core_cookie;
-+	unsigned int			core_occupation;
- #endif
- 
- #ifdef CONFIG_CGROUP_SCHED
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 10b20de100e3..f0a63fe5f0a4 100644
+index f0a63fe5f0a4..18fbaa85ec30 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -211,6 +211,21 @@ static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
- 	return match;
+@@ -104,6 +104,10 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
+ 
+ 	int pa = __task_prio(a), pb = __task_prio(b);
+ 
++	trace_printk("(%s/%d;%d,%Lu,%Lu) ?< (%s/%d;%d,%Lu,%Lu)\n",
++		     a->comm, a->pid, pa, a->se.vruntime, a->dl.deadline,
++		     b->comm, b->pid, pb, b->se.vruntime, b->dl.deadline);
++
+ 	if (-pa < -pb)
+ 		return true;
+ 
+@@ -258,6 +262,8 @@ static void __sched_core_enable(void)
+ 
+ 	static_branch_enable(&__sched_core_enabled);
+ 	stop_machine(__sched_core_stopper, (void *)true, NULL);
++
++	printk("core sched enabled\n");
  }
  
-+static struct task_struct *sched_core_next(struct task_struct *p, unsigned long cookie)
-+{
-+	struct rb_node *node = &p->core_node;
-+
-+	node = rb_next(node);
-+	if (!node)
-+		return NULL;
-+
-+	p = container_of(node, struct task_struct, core_node);
-+	if (p->core_cookie != cookie)
-+		return NULL;
-+
-+	return p;
-+}
-+
- /*
-  * The static-key + stop-machine variable are needed such that:
-  *
-@@ -4048,7 +4063,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	struct task_struct *next, *max = NULL;
- 	const struct sched_class *class;
- 	const struct cpumask *smt_mask;
--	int i, j, cpu;
-+	int i, j, cpu, occ = 0;
- 	bool need_sync = false;
+ static void __sched_core_disable(void)
+@@ -266,6 +272,8 @@ static void __sched_core_disable(void)
  
- 	if (!sched_core_enabled(rq))
-@@ -4150,6 +4165,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 	stop_machine(__sched_core_stopper, (void *)false, NULL);
+ 	static_branch_disable(&__sched_core_enabled);
++
++	printk("core sched disabled\n");
+ }
+ 
+ void sched_core_get(void)
+@@ -4083,6 +4091,14 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 			put_prev_task(rq, prev);
+ 			set_next_task(rq, next);
+ 		}
++
++		trace_printk("pick pre selected (%u %u %u): %s/%d %lx\n",
++			     rq->core->core_task_seq,
++			     rq->core->core_pick_seq,
++			     rq->core_sched_seq,
++			     next->comm, next->pid,
++			     next->core_cookie);
++
+ 		return next;
+ 	}
+ 
+@@ -4162,6 +4178,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 			 */
+ 			if (i == cpu && !need_sync && !p->core_cookie) {
+ 				next = p;
++				trace_printk("unconstrained pick: %s/%d %lx\n",
++					     next->comm, next->pid, next->core_cookie);
++
  				goto done;
  			}
  
-+			if (!is_idle_task(p))
-+				occ++;
-+
+@@ -4170,6 +4189,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 
  			rq_i->core_pick = p;
  
- 			/*
-@@ -4175,6 +4193,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 
- 						cpu_rq(j)->core_pick = NULL;
- 					}
-+					occ = 1;
- 					goto again;
- 				} else {
- 					/*
-@@ -4214,6 +4233,8 @@ next_class:;
- 		if (is_idle_task(rq_i->core_pick) && rq_i->nr_running)
- 			rq_i->core_forceidle = true;
- 
-+		rq_i->core_pick->core_occupation = occ;
++			trace_printk("cpu(%d): selected: %s/%d %lx\n",
++				     i, p->comm, p->pid, p->core_cookie);
 +
+ 			/*
+ 			 * If this new candidate is of higher priority than the
+ 			 * previous; and they're incompatible; we need to wipe
+@@ -4186,6 +4208,8 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 				rq->core->core_cookie = p->core_cookie;
+ 				max = p;
+ 
++				trace_printk("max: %s/%d %lx\n", max->comm, max->pid, max->core_cookie);
++
+ 				if (old_max) {
+ 					for_each_cpu(j, smt_mask) {
+ 						if (j == i)
+@@ -4213,6 +4237,7 @@ next_class:;
+ 	rq->core->core_pick_seq = rq->core->core_task_seq;
+ 	next = rq->core_pick;
+ 	rq->core_sched_seq = rq->core->core_pick_seq;
++	trace_printk("picked: %s/%d %lx\n", next->comm, next->pid, next->core_cookie);
+ 
+ 	/*
+ 	 * Reschedule siblings
+@@ -4238,11 +4263,20 @@ next_class:;
  		if (i == cpu)
  			continue;
  
-@@ -4229,6 +4250,114 @@ next_class:;
- 	return next;
- }
+-		if (rq_i->curr != rq_i->core_pick)
++		if (rq_i->curr != rq_i->core_pick) {
++			trace_printk("IPI(%d)\n", i);
+ 			resched_curr(rq_i);
++		}
  
-+static bool try_steal_cookie(int this, int that)
-+{
-+	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
-+	struct task_struct *p;
-+	unsigned long cookie;
-+	bool success = false;
-+
-+	local_irq_disable();
-+	double_rq_lock(dst, src);
-+
-+	cookie = dst->core->core_cookie;
-+	if (!cookie)
-+		goto unlock;
-+
-+	if (dst->curr != dst->idle)
-+		goto unlock;
-+
-+	p = sched_core_find(src, cookie);
-+	if (p == src->idle)
-+		goto unlock;
-+
-+	do {
-+		if (p == src->core_pick || p == src->curr)
-+			goto next;
-+
-+		if (!cpumask_test_cpu(this, &p->cpus_mask))
-+			goto next;
-+
-+		if (p->core_occupation > dst->idle->core_occupation)
-+			goto next;
-+
-+		p->on_rq = TASK_ON_RQ_MIGRATING;
-+		deactivate_task(src, p, 0);
-+		set_task_cpu(p, this);
-+		activate_task(dst, p, 0);
-+		p->on_rq = TASK_ON_RQ_QUEUED;
-+
-+		resched_curr(dst);
-+
-+		success = true;
-+		break;
-+
-+next:
-+		p = sched_core_next(p, cookie);
-+	} while (p);
-+
-+unlock:
-+	double_rq_unlock(dst, src);
-+	local_irq_enable();
-+
-+	return success;
-+}
-+
-+static bool steal_cookie_task(int cpu, struct sched_domain *sd)
-+{
-+	int i;
-+
-+	for_each_cpu_wrap(i, sched_domain_span(sd), cpu) {
-+		if (i == cpu)
-+			continue;
-+
-+		if (need_resched())
-+			break;
-+
-+		if (try_steal_cookie(cpu, i))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static void sched_core_balance(struct rq *rq)
-+{
-+	struct sched_domain *sd;
-+	int cpu = cpu_of(rq);
-+
-+	rcu_read_lock();
-+	raw_spin_unlock_irq(rq_lockp(rq));
-+	for_each_domain(cpu, sd) {
-+		if (!(sd->flags & SD_LOAD_BALANCE))
-+			break;
-+
-+		if (need_resched())
-+			break;
-+
-+		if (steal_cookie_task(cpu, sd))
-+			break;
-+	}
-+	raw_spin_lock_irq(rq_lockp(rq));
-+	rcu_read_unlock();
-+}
-+
-+static DEFINE_PER_CPU(struct callback_head, core_balance_head);
-+
-+void queue_core_balance(struct rq *rq)
-+{
-+	if (!sched_core_enabled(rq))
-+		return;
-+
-+	if (!rq->core->core_cookie)
-+		return;
-+
-+	if (!rq->nr_running) /* not forced idle */
-+		return;
-+
-+	queue_balance_callback(rq, &per_cpu(core_balance_head, rq->cpu), sched_core_balance);
-+}
-+
- #else /* !CONFIG_SCHED_CORE */
+ 		/* Did we break L1TF mitigation requirements? */
+-		WARN_ON_ONCE(!cookie_match(next, rq_i->core_pick));
++		if (unlikely(!cookie_match(next, rq_i->core_pick))) {
++			trace_printk("[%d]: cookie mismatch. %s/%d/0x%lx/0x%lx\n",
++				     rq_i->cpu, rq_i->core_pick->comm,
++				     rq_i->core_pick->pid,
++				     rq_i->core_pick->core_cookie,
++				     rq_i->core->core_cookie);
++			WARN_ON_ONCE(1);
++		}
+ 	}
  
- static struct task_struct *
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 87c55e3b988d..bd21d9922a05 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -388,6 +388,7 @@ static void set_next_task_idle(struct rq *rq, struct task_struct *next)
- {
- 	update_idle_core(rq);
- 	schedstat_inc(rq->sched_goidle);
-+	queue_core_balance(rq);
- }
+ done:
+@@ -4281,6 +4315,10 @@ static bool try_steal_cookie(int this, int that)
+ 		if (p->core_occupation > dst->idle->core_occupation)
+ 			goto next;
  
- static struct task_struct *
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index fa92f6d3c73b..311ab1e2a00e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1053,6 +1053,8 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
- 	return &rq->__lock;
- }
- 
-+extern void queue_core_balance(struct rq *rq);
++		trace_printk("core fill: %s/%d (%d->%d) %d %d %lx\n",
++			     p->comm, p->pid, that, this,
++			     p->core_occupation, dst->idle->core_occupation, cookie);
 +
- #else /* !CONFIG_SCHED_CORE */
- 
- static inline bool sched_core_enabled(struct rq *rq)
-@@ -1065,6 +1067,10 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
- 	return &rq->__lock;
- }
- 
-+static inline void queue_core_balance(struct rq *rq)
-+{
-+}
+ 		p->on_rq = TASK_ON_RQ_MIGRATING;
+ 		deactivate_task(src, p, 0);
+ 		set_task_cpu(p, this);
+@@ -6921,6 +6959,8 @@ int sched_cpu_starting(unsigned int cpu)
+ 		WARN_ON_ONCE(rq->core && rq->core != core_rq);
+ 		rq->core = core_rq;
+ 	}
 +
++	printk("core: %d -> %d\n", cpu, cpu_of(core_rq));
  #endif /* CONFIG_SCHED_CORE */
  
- #ifdef CONFIG_SCHED_SMT
+ 	sched_rq_cpu_starting(cpu);
 -- 
 2.17.1
 
