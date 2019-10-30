@@ -2,114 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5431AE9D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:30:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D634DE9DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:37:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfJ3Oag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:30:36 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39410 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfJ3Oag (ORCPT
+        id S1726465AbfJ3OhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:37:05 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34403 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfJ3OhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:30:36 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UEURxE009017;
-        Wed, 30 Oct 2019 09:30:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572445827;
-        bh=sjHkzET0W6fegbqYYxLj/nvwD1jevn9Rf6o8Hy+EKt0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nsVLguS5Xvh99O0z62zWL3lSC+MN9kBVqEmmfnm/O7m0YbI3dzpEJ9/LF79owtHnr
-         usMVQ1IBXPcMRGu466VKLjcudML79XSK0hQ0OPj4xgGFlq32DI6Skv2fjFvoEEp7h9
-         Sfg1kNWjOF/itYDrveMdsYt3Qy5EDOg9xKn84xnk=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9UEURZJ063645;
-        Wed, 30 Oct 2019 09:30:27 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
- Oct 2019 09:30:26 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 30 Oct 2019 09:30:14 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9UEUNHU130877;
-        Wed, 30 Oct 2019 09:30:24 -0500
-Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
-To:     Mark Brown <broonie@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <devicetree@vger.kernel.org>
-References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
- <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
- <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
- <20191030141736.GN4568@sirena.org.uk>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <f9c181d1-5e0c-5e82-a740-f4e97822604f@ti.com>
-Date:   Wed, 30 Oct 2019 16:31:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 30 Oct 2019 10:37:04 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e4so1627372pgs.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 07:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:subject:to:cc:user-agent:date;
+        bh=OnvHWKf31kU5T7G+GRyW8KQ7oVqd5iVGELerKYGud0Q=;
+        b=Elp7O9BUncdP/kE50ELNV29c9NTF1imKvURZMH5sXZIfYxerNFW5ykpzny2RkydmGC
+         BOv+NV204Y2aYpqRFT+f/3TKiNyPH1T5LdYJJ15VZ4XW5D0XZlBfIzsy3T80zkSyl/mf
+         w4xHnpNIIYyzH55a3XtRaOmRlzzLYRj+CyW0k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:subject:to:cc
+         :user-agent:date;
+        bh=OnvHWKf31kU5T7G+GRyW8KQ7oVqd5iVGELerKYGud0Q=;
+        b=gTbvxHG2Ikk/a+nQt8Nejb+j1g7Kc6P4yuy6BErO86l0fvlv9qk8kfg08lhZSxIHTJ
+         ckw8d9iYRDG0DWyCWtjEF6pS5yw+hMzqPfgPi9xCRkB2TkTrcTx//yabC9dI13QBgPQM
+         8u65oa5g/NdGc3xdJJ1+tm3HA5DJjDvtFT9dnnFUTiucrInyPaiCGgfsVOdUdUJmic2Q
+         PL1bGzSIxLS+HPos1GmX5Vxewm6vH0i+5/+cbPBrBN69UVQzfTckz5PNslasNo4CIyUT
+         a/AY5BLQn0A+I/5YE98oQev5CTqkGMPuCjCHqBUSE62E7OTHezb8wWNC7ZDaq/+QgUFh
+         UWOw==
+X-Gm-Message-State: APjAAAVLvaaoMSPBy3ff1P6idvgM/apJbbgz4+yQZKAIbiRLdySbHD5U
+        xYNQi2p9HV6sXm/rQbjJwK4f6Q==
+X-Google-Smtp-Source: APXvYqwAOaDPJE9YX0kurT2C1478bGKudWPZUacz2albpuYXmSsOk433FmVtr64ecIfiXAWfaWF9DQ==
+X-Received: by 2002:aa7:8421:: with SMTP id q1mr34967091pfn.174.1572446222424;
+        Wed, 30 Oct 2019 07:37:02 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id e8sm128023pga.17.2019.10.30.07.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 07:37:01 -0700 (PDT)
+Message-ID: <5db9a00d.1c69fb81.c3df6.04eb@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191030141736.GN4568@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <78809ef8464c46018f3803454c1165ab@codeaurora.org>
+References: <20191023090219.15603-1-rnayak@codeaurora.org> <20191023090219.15603-8-rnayak@codeaurora.org> <5db86bb1.1c69fb81.dc254.ec0b@mx.google.com> <78809ef8464c46018f3803454c1165ab@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sc7180: Add SPMI PMIC arbiter device
+To:     kgunda@codeaurora.org
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org
+User-Agent: alot/0.8.1
+Date:   Wed, 30 Oct 2019 07:37:00 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting kgunda@codeaurora.org (2019-10-29 23:06:43)
+> On 2019-10-29 22:11, Stephen Boyd wrote:
+> > Quoting Rajendra Nayak (2019-10-23 02:02:15)
+> >> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi=20
+> >> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> >> index 04808a07d7da..6584ac6e6c7b 100644
+> >> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> >> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> >> @@ -224,6 +224,25 @@
+> >>                         };
+> >>                 };
+> >>=20
+> >> +               spmi_bus: spmi@c440000 {
+> >> +                       compatible =3D "qcom,spmi-pmic-arb";
+> >> +                       reg =3D <0 0xc440000 0 0x1100>,
+> >=20
+> > Please pad out the registers to 8 numbers. See sdm845.
+> Ok.. Will address it in the next series.
+> >=20
+> >> +                             <0 0xc600000 0 0x2000000>,
+> >> +                             <0 0xe600000 0 0x100000>,
+> >> +                             <0 0xe700000 0 0xa0000>,
+> >> +                             <0 0xc40a000 0 0x26000>;
+> >> +                       reg-names =3D "core", "chnls", "obsrvr", "intr=
+",=20
+> >> "cnfg";
+> >> +                       interrupt-names =3D "periph_irq";
+> >> +                       interrupts-extended =3D <&pdc 1=20
+> >> IRQ_TYPE_LEVEL_HIGH>;
+> >=20
+> > This is different than sdm845. I guess pdc is working?
+> >=20
+> Yes. For SDM845 pdc controller support was not yet added. That's why=20
+> still the GIC interrupt is used.
+> Where as for SC7180 the same is added with=20
+> https://lore.kernel.org/patchwork/patch/1143335/.
+>=20
+> Yes. pdc is working.
 
+Cool. The patch that adds pdc to the DT should come before this one
+then. In reality, it would be better if it was all squashed down into
+one big commit that just introduces the SoC file and one commit for
+PMICs and then one commit for the idp board. Then we don't have this
+ordering problem.
 
-On 30/10/2019 16.17, Mark Brown wrote:
-> On Wed, Oct 30, 2019 at 03:32:09PM +0200, Peter Ujfalusi wrote:
->> On 30/10/2019 15.12, Rob Herring wrote:
-> 
->>> Why can't we just add a shared flag like we have for interrupts?
->>> Effectively, we have that for resets too, it's just hardcoded in the
->>> the drivers.
-> 
->> This would be kind of the same thing what the
->> GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
->> fixed-regulators afaik.
-> 
-> The theory with that was that any usage of this would need the
-> higher level code using the GPIO to cooperate so they didn't step
-> on each other's toes so the GPIO code should just punt to it.
-
-But from the client driver point of view a GPIO is still GPIO and if the
-components are unrelated then it is hard to patch things together from
-the top.
-
->> But let's say that a board design will pick two components (C1 and C2)
->> and use the same GPIO line to enable them. We already have the drivers
->> for them and they are used in boards already.
-> 
-> This is basically an attempt to make a generic implementation of
-> that cooperation for simple cases.
-
-Without some generic implementation we would need to patch up drivers
-(sometimes unrelated) for components which uses the same GPIO line on
-some random board.
-
-We have such a thing for tlv310aic3x (for Nokia n900). I would need one
-for pcm3168a and there were an attempt for max98927 also.
-We also have boards where one GPIO is used for backlight and panel, etc.
-
-If we would have generic way then it can be tuned for more exotic
-setups, but again, I believe that board designers are not doing things
-just to be evil. What they connect most of the times are 'sane'
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
