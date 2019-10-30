@@ -2,99 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45DE6E9F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A6EE9F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfJ3Pf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:35:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:36414 "EHLO foss.arm.com"
+        id S1727002AbfJ3PmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:42:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:36558 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726404AbfJ3Pf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:35:58 -0400
+        id S1726273AbfJ3PmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:42:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EE0A1FB;
-        Wed, 30 Oct 2019 08:35:57 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F03D3F6C4;
-        Wed, 30 Oct 2019 08:35:56 -0700 (PDT)
-Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
-To:     Will Deacon <will@kernel.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20191030145112.19738-1-will@kernel.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
-Date:   Wed, 30 Oct 2019 15:35:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20191030145112.19738-1-will@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BADFF4F5;
+        Wed, 30 Oct 2019 08:42:05 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67D883F6C4;
+        Wed, 30 Oct 2019 08:42:03 -0700 (PDT)
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Steve Capper <steve.capper@arm.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/12] arm64: hibernate.c: create a new function to handle cpu_up(sleep_cpu)
+Date:   Wed, 30 Oct 2019 15:38:26 +0000
+Message-Id: <20191030153837.18107-2-qais.yousef@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191030153837.18107-1-qais.yousef@arm.com>
+References: <20191030153837.18107-1-qais.yousef@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2019 14:51, Will Deacon wrote:
-> Hi all,
-> 
-> As part of the work to enable a "Generic Kernel Image" across multiple
-> Android devices, there is a need to seperate shared, core kernel code
-> from modular driver code that may not be needed by all SoCs. This means
-> building IOMMU drivers as modules.
-> 
-> It turns out that most of the groundwork has already been done to enable
-> the ARM SMMU drivers to be 'tristate' options in drivers/iommu/Kconfig;
-> with a few symbols exported from the IOMMU/PCI core, everything builds
-> nicely out of the box. The one exception is support for the legacy SMMU
-> DT binding, which is not in widespread use and has never worked with
-> modules, so we can simply remove that when building as a module rather
-> than try to paper over it with even more hacks.
-> 
-> Obviously you need to be careful about using IOMMU drivers as modules,
-> since late loading of the driver for an IOMMU serving active DMA masters
-> is going to end badly in many cases. On Android, we're using device links
-> to ensure that the IOMMU probes first.
+In preparation to make cpu_up/down private - move the user in arm64
+hibernate.c to use a new generic function that provides what arm64
+needs.
 
-Out of curiosity, which device links are those? Clearly not the RPM 
-links created by the IOMMU drivers themselves... Is this some special 
-Android magic, or is there actually a chance of replacing all the 
-of_iommu_configure() machinery with something more generic?
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will@kernel.org>
+CC: Steve Capper <steve.capper@arm.com>
+CC: Richard Fontana <rfontana@redhat.com>
+CC: James Morse <james.morse@arm.com>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Josh Poimboeuf <jpoimboe@redhat.com>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+CC: Nicholas Piggin <npiggin@gmail.com>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>
+CC: Jiri Kosina <jkosina@suse.cz>
+CC: Pavankumar Kondeti <pkondeti@codeaurora.org>
+CC: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+---
 
-Robin.
+AFAICT we can't use device_online() directly here because suspend happens via
+cpu_down() not device_offline(). If it is actually safe to use device_online()
+then that would be simpler than creating the new function. Although the
+operation seems generic enough to me and could benefit another arch user in the
+future so the new function makes sense.
 
-> 
-> Comments welcome,
-> 
-> Will
-> 
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> 
-> --->8
-> 
-> Will Deacon (7):
->    drivers/iommu: Export core IOMMU API symbols to permit modular drivers
->    iommu/of: Request ACS from the PCI core when configuring IOMMU linkage
->    PCI: Export pci_ats_disabled() as a GPL symbol to modules
->    Revert "iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular"
->    iommu/arm-smmu-v3: Allow building as a module
->    Revert "iommu/arm-smmu: Make arm-smmu explicitly non-modular"
->    iommu/arm-smmu: Allow building as a module
-> 
->   drivers/iommu/Kconfig         | 16 ++++++-
->   drivers/iommu/arm-smmu-impl.c |  6 +++
->   drivers/iommu/arm-smmu-v3.c   | 26 +++++++----
->   drivers/iommu/arm-smmu.c      | 86 +++++++++++++++++++++--------------
->   drivers/iommu/iommu-sysfs.c   |  5 ++
->   drivers/iommu/iommu.c         |  8 ++++
->   drivers/iommu/of_iommu.c      |  1 +
->   drivers/pci/pci.c             |  1 +
->   8 files changed, 102 insertions(+), 47 deletions(-)
-> 
+
+ arch/arm64/kernel/hibernate.c | 13 +++++--------
+ include/linux/cpu.h           |  1 +
+ kernel/cpu.c                  | 14 ++++++++++++++
+ 3 files changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index e0a7fce0e01c..3b178055022f 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -166,14 +166,11 @@ int arch_hibernation_header_restore(void *addr)
+ 		sleep_cpu = -EINVAL;
+ 		return -EINVAL;
+ 	}
+-	if (!cpu_online(sleep_cpu)) {
+-		pr_info("Hibernated on a CPU that is offline! Bringing CPU up.\n");
+-		ret = cpu_up(sleep_cpu);
+-		if (ret) {
+-			pr_err("Failed to bring hibernate-CPU up!\n");
+-			sleep_cpu = -EINVAL;
+-			return ret;
+-		}
++
++	ret = hibernation_bringup_sleep_cpu(sleep_cpu);
++	if (ret) {
++		sleep_cpu = -EINVAL;
++		return ret;
+ 	}
+ 
+ 	resume_hdr = *hdr;
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 88dc0c653925..3b1fbe192989 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -87,6 +87,7 @@ int cpu_up(unsigned int cpu);
+ void notify_cpu_starting(unsigned int cpu);
+ extern void cpu_maps_update_begin(void);
+ extern void cpu_maps_update_done(void);
++extern int hibernation_bringup_sleep_cpu(unsigned int sleep_cpu);
+ 
+ #else	/* CONFIG_SMP */
+ #define cpuhp_tasks_frozen	0
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index e1967e9eddc2..219f9033f438 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1197,6 +1197,20 @@ int cpu_up(unsigned int cpu)
+ }
+ EXPORT_SYMBOL_GPL(cpu_up);
+ 
++int hibernation_bringup_sleep_cpu(unsigned int sleep_cpu)
++{
++	int ret;
++
++	if (!cpu_online(sleep_cpu)) {
++		pr_info("Hibernated on a CPU that is offline! Bringing CPU up.\n");
++		ret = cpu_up(sleep_cpu);
++		if (ret) {
++			pr_err("Failed to bring hibernate-CPU up!\n");
++			return ret;
++		}
++	}
++}
++
+ #ifdef CONFIG_PM_SLEEP_SMP
+ static cpumask_var_t frozen_cpus;
+ 
+-- 
+2.17.1
+
