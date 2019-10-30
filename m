@@ -2,78 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C509BE9F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EACA9E9F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfJ3PlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:41:06 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:35318 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726461AbfJ3PlG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:41:06 -0400
-Received: from mr4.cc.vt.edu (mr4.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9UFf5QL006874
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:41:05 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9UFf03u006364
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 11:41:05 -0400
-Received: by mail-qt1-f199.google.com with SMTP id k53so2835763qtk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:41:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:date:message-id;
-        bh=eIoWGi3U/SGYr7w5rrsbliBxDrgak+FNrEviy/8rGIk=;
-        b=Qem+ASaUqScax1MPITXVxJ1SgXRm9hCJVEihvwSGN9gKwYr17G27oMRABiqBBY1vh4
-         DY25yp8cHpZxbhESVkE8fSZOqXFDgmwM807N4FaG7Er4nDP95bRWTHyifwhIU7FlEZkh
-         DnQAOa0vgO1mjmFJXQ8Oaz1WM0pTa4Jubd74EIInriusXhvSJe3gHMnSxX7NECt1u0GF
-         ZRQ/uMB/eCuKK4QKMNs4uB0lIkwx7bypuxjXKHihdxgd7+uegml4kVaAWVA3eoQ09WTp
-         ZXuLmRiyHRXGtkrf6EvlyyGXnMggo6zU6ffbwZi9pAAqqSqkPlsMaw9lO511Py/27Eme
-         Tedw==
-X-Gm-Message-State: APjAAAURMU3QU2U4b1rdxJdjOFIAJ/s9d7WSer7oilVEbfsPTNRCdCmY
-        NCLudnQyOwcSUKG1ep8MrD2xO7UT2wxs+Ic3yHc4bE/A60abmIdIakszZh7m2/1UajupAsI+NT4
-        kwLQk/5BDyehY/v/syD9K3un3OTrXA0V61Pk=
-X-Received: by 2002:ac8:7546:: with SMTP id b6mr716402qtr.104.1572450059574;
-        Wed, 30 Oct 2019 08:40:59 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwxyrOL2KJZakZX+lSdi47kBXVJMoQi6jylMX1/YtjfV276ujKko4yFtHRvF28Z5bPPRKRdfA==
-X-Received: by 2002:ac8:7546:: with SMTP id b6mr716361qtr.104.1572450059254;
-        Wed, 30 Oct 2019 08:40:59 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id c17sm273439qkm.37.2019.10.30.08.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 08:40:58 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Davidlohr Bueso <dave@stgolabs.net>
-cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drivers/staging/exfat: Replace binary semaphores for mutexes
-In-reply-to: <20191030144916.10802-1-dave@stgolabs.net>
-References: <20191029080521.GA494993@kroah.com>
- <20191030144916.10802-1-dave@stgolabs.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Wed, 30 Oct 2019 11:40:57 -0400
-Message-ID: <74400.1572450057@turing-police>
+        id S1727110AbfJ3PnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:43:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35574 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726242AbfJ3PnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:43:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 20E55B456;
+        Wed, 30 Oct 2019 15:43:20 +0000 (UTC)
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v4 0/5] livepatch: new API to track system state changes
+Date:   Wed, 30 Oct 2019 16:43:08 +0100
+Message-Id: <20191030154313.13263-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Oct 2019 07:49:16 -0700, Davidlohr Bueso said:
-> At a slight footprint cost (24 vs 32 bytes), mutexes are more optimal
-> than semaphores; it's also a nicer interface for mutual exclusion,
-> which is why they are encouraged over binary semaphores, when possible.
->
-> For both v_sem and z_sem, their semantics imply traditional lock
-> ownership; that is, the lock owner is the same for both lock/unlock
-> operations. Therefore it is safe to convert.
->
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+Hi,
 
-Looks sane.
+this is another piece in the puzzle that helps to maintain more
+livepatches.
 
-Acked-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Especially pre/post (un)patch callbacks might change a system state.
+Any newly installed livepatch has to somehow deal with system state
+modifications done be already installed livepatches.
 
+This patchset provides a simple and generic API that
+helps to keep and pass information between the livepatches.
+It is also usable to prevent loading incompatible livepatches.
+
+Changes since v3:
+
+  + selftests compilation error [kbuild test robot]	
+  + fix copyright in selftests [Joe]
+  + used macros for the module names in selftests [Joe]
+  + allow zero state version [Josh]
+  + slightly refactor the code for checking state version [Josh]
+  + fix few typos reported by checkpatch.pl [Petr]
+  + added Acks [Joe]
+
+Changes since v2:
+
+  + Typo fixes [Miroslav]
+  + Move the documentation at the end of the list [Miroslav]
+  + Add Miroslav's acks
+
+Changes since v1:
+
+  + Use "unsigned long" instead of "int" for "state.id" [Nicolai]
+  + Use "unsigned int" instead of "int" for "state.version [Petr]
+  + Include "state.h" to avoid warning about non-static func [Miroslav]
+  + Simplify logic in klp_is_state_compatible() [Miroslav]
+  + Document how livepatches should handle the state [Nicolai]
+  + Fix some typos, formulation, module metadata [Joe, Miroslav]
+
+Petr Mladek (5):
+  livepatch: Keep replaced patches until post_patch callback is called
+  livepatch: Basic API to track system state changes
+  livepatch: Allow to distinguish different version of system state
+    changes
+  livepatch: Documentation of the new API for tracking system state
+    changes
+  livepatch: Selftests of the API for tracking system state changes
+
+ Documentation/livepatch/index.rst               |   1 +
+ Documentation/livepatch/system-state.rst        | 167 +++++++++++++++++++++
+ include/linux/livepatch.h                       |  17 +++
+ kernel/livepatch/Makefile                       |   2 +-
+ kernel/livepatch/core.c                         |  44 ++++--
+ kernel/livepatch/core.h                         |   5 +-
+ kernel/livepatch/state.c                        | 119 +++++++++++++++
+ kernel/livepatch/state.h                        |   9 ++
+ kernel/livepatch/transition.c                   |  12 +-
+ lib/livepatch/Makefile                          |   5 +-
+ lib/livepatch/test_klp_state.c                  | 162 ++++++++++++++++++++
+ lib/livepatch/test_klp_state2.c                 | 191 ++++++++++++++++++++++++
+ lib/livepatch/test_klp_state3.c                 |   5 +
+ tools/testing/selftests/livepatch/Makefile      |   3 +-
+ tools/testing/selftests/livepatch/test-state.sh | 180 ++++++++++++++++++++++
+ 15 files changed, 901 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/livepatch/system-state.rst
+ create mode 100644 kernel/livepatch/state.c
+ create mode 100644 kernel/livepatch/state.h
+ create mode 100644 lib/livepatch/test_klp_state.c
+ create mode 100644 lib/livepatch/test_klp_state2.c
+ create mode 100644 lib/livepatch/test_klp_state3.c
+ create mode 100755 tools/testing/selftests/livepatch/test-state.sh
+
+-- 
+2.16.4
 
