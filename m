@@ -2,178 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA304E9C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF6AE9C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfJ3NcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:32:18 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43354 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbfJ3NcR (ORCPT
+        id S1726532AbfJ3NbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:31:14 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:56058 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfJ3NbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:32:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1so2306648wra.10;
-        Wed, 30 Oct 2019 06:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3HZERdm7BZ8clCndeKtqfcy+2+1oIs54ICHJ06N+jdQ=;
-        b=cUR1Z62KueOCDejIz0Y81htfQsUut66l8tRt6bQJ0l0BfnFvcyTmqmYVrPgeKE71PL
-         47y+oAFlUVa+lIWviCS+snkpvEzSYQZmIF4e35cPY7JG3K4kIPokN5T0gADgZ5KLvrRo
-         nzvrar5B8NdbbcSAZYFzACC+Ikh6fXbng2N9FNHExd1nnoGWtPeR9E3uG4h25x0x3lG+
-         65XRdnnLj7StPCDn70M4uUF+tzC2nJN29xITRWjOHZ/HnKZCahgjWhCKvI1+ahsynWaA
-         6mc6+Xccnm0lwP/Xz6hCuQWv+EjrupVHZTanPBSB9mmdLtA0F5JLxF6tpTWkjFMnlSBp
-         oqWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3HZERdm7BZ8clCndeKtqfcy+2+1oIs54ICHJ06N+jdQ=;
-        b=Nt/beZNsazvG5XVE/6VO9f2V7CkCQSpKNFID/Q4Y/POh67Mf8rXauJCvfYmMXrKvo9
-         Dha6IxUWgMtohGgseJlHtEjaS5BJHmG8xeAMYYwqznUSKEPsB5R5aqPxBEKUs84J0kdl
-         fdpxlPzJRZz5RBwxRY1QMX2R+NYx+GN2DxWurtFep7HFgl5PXVUdUo/77wm1F4y91PJk
-         Jhym1LDjEWBSvzKrnTxXwlA1ciADZtlZBrfNOA/YiBr+BYGJmBnQGB3sphbDC9lLbzPE
-         QJO9Htgu37d8b3Gn1yoSxAP21DcCNxDnzMDfqiGewJPLEMCg0/2WzQ9qOI/4SbvQvHVR
-         1Ebw==
-X-Gm-Message-State: APjAAAVOxByGb66WQYniirRB8Gkl4AOGIbyHr6JV61AgGLJcnvxv+UNN
-        cSJnWv1s6S+ejTaomdkI4a+K+TK4om8=
-X-Google-Smtp-Source: APXvYqyxRqVo2c8misQDddv0sdlp6UKDBfU/iH++7ub9ySSXo1brmewqO0k08m331pNoTIfMHUt2Xw==
-X-Received: by 2002:a5d:54c7:: with SMTP id x7mr23532107wrv.99.1572442334456;
-        Wed, 30 Oct 2019 06:32:14 -0700 (PDT)
-Received: from localhost.localdomain ([213.86.25.14])
-        by smtp.googlemail.com with ESMTPSA id r3sm357348wre.29.2019.10.30.06.32.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 06:32:13 -0700 (PDT)
-From:   Alexander Gordeev <a.gordeev.box@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alexander Gordeev <a.gordeev.box@gmail.com>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH v4 0/2] dmaengine: avalon: Intel Avalon-MM DMA Interface for PCIe
-Date:   Wed, 30 Oct 2019 14:32:08 +0100
-Message-Id: <cover.1572441900.git.a.gordeev.box@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 30 Oct 2019 09:31:13 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UDV5vB101659;
+        Wed, 30 Oct 2019 08:31:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572442265;
+        bh=STjwO10Amw2PZ9XYXEda6DiaqThl/EwMnKhScqY6AdQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=TYqPsN7NUV/OLsDdttH86+fZ8BHWyOi4WuAyZ+QF4jEKxX4ZuYyo+0SD6RSz4B8U8
+         RpH805j8GTmIQS8kbR+fnlsQZNv7QZkBlK5Kbd+BL6GDgeGFDxxhDrBBOAto4WMPQ+
+         G5k3JfpVxKkQbnkwrKfzFSsCtkd4laKkTxcqGMXM=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9UDV4l4062652
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Oct 2019 08:31:05 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
+ Oct 2019 08:30:51 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 30 Oct 2019 08:30:51 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9UDV1M8022289;
+        Wed, 30 Oct 2019 08:31:02 -0500
+Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>
+References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
+ <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
+Date:   Wed, 30 Oct 2019 15:32:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is against v5.4-rc5
-
-Patch 1. Introduces "avalon-dma" driver that conforms to the standard
-"dmaengine" model;
-
-Patch 2. The existing "dmatest" is not meant for DMA_SLAVE type of
-transfers needed by "avalon-dma" driver. Instead, custom "avalon-test"
-was used to debug and stress "avalon-dma". In fact, the methology used
-for testing is pretty much generic:
-
-  - DMA to/from the remote device (memory) - oneshot or multiple times;
-  - continuously run cuncurrent threads DMAing to/from the remote device;
-  - using IOCTL to DMA data to/from user level;
-
-Such functionality could be very useful for bringing up custom embedded
-devices, i.e sensors, displays etc.
-
-With some effort "avalon-test" could even be merged into the existing
-"dmatest" or turned into a tool for testing any "dmaengine" compatible
-driver that does not need any custom hardware specifics to initiate DMA
-transfers.
-
-I am not certain that "avalon-test" in its current form is the best way
-to proceed and thus marking patch 2 as RFC. It depends on "avalon-dma",
-but the two drivers are not needed to be accepted together.
 
 
-Changes since v3 ("avalon-test" only):
-- BUG_ONs, WARN_ONs, dev_dbgs removed goto labels renamed;
-- kernel configuration options removed in favour of module parameters;
-- fail paths reworked to avoid resource leaks uninitialized data crashes;
-- invalid parameter checks reworked;
+On 30/10/2019 15.12, Rob Herring wrote:
+> On Wed, Oct 30, 2019 at 7:03 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>>
+>> Hi,
+>>
+>> The shared GPIO line for external components tends to be a common issue and
+>> there is no 'clean' way of handling it.
+>>
+>> I'm aware of the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag, which must be provided when
+>> a driver tries to request a GPIO which is already in use.
+>> However the driver must know that the component is going to be used in such a
+>> way, which can be said to any external components with GPIO line, so in theory
+>> all drivers must set this flag when requesting the GPIO...
+>>
+>> But with the GPIOD_FLAGS_BIT_NONEXCLUSIVE all clients have full control of the
+>> GPIO line. For example any device using the same GPIO as reset/enable line can
+>> reset/enable other devices, which is not something the other device might like
+>> or can handle.
+>> For example a device needs to be configured after it is enabled, but some other
+>> driver would reset it while handling the same GPIO -> the device is not
+>> operational anymmore as it lost it's configuration.
+>>
+>> With the gpio-shared gpiochip we can overcome this by giving the gpio-shared
+>> the role of making sure that the GPIO line only changes state when it will not
+>> disturb any of the clients sharing the same GPIO line.
+> 
+> Why can't we just add a shared flag like we have for interrupts?
+> Effectively, we have that for resets too, it's just hardcoded in the
+> the drivers.
 
-Changes since v2 ("avalon-dma" only):
-- avalon_dma_register() return value bug fixed;
-- device_prep_slave_sg() does not crash dmaengine_prep_slave_single();
-- kernel configuration options removed in favour of module parameters;
-- BUG_ONs, WARN_ONs, dev_dbgs removed goto labels renamed;
-- polling loop in interrupt handler commented;
-- cpu_relax() added to polling loop in interrupt handler;
+This would be kind of the same thing what the
+GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
+fixed-regulators afaik.
 
-Changes since v1:
-- "avalon-dma" converted to "dmaengine" model;
-- "avalon-drv" renamed to "avalon-test";
+But let's say that a board design will pick two components (C1 and C2)
+and use the same GPIO line to enable them. We already have the drivers
+for them and they are used in boards already.
 
-The Avalon-MM DMA Interface for PCIe is a design used in hard IPs for
-Intel Arria, Cyclone or Stratix FPGAs. It transfers data between on-chip
-memory and system memory.
+Both needs the GPIO line to be high for normal operation.
+One or both of them needs register writes after they are enabled.
 
-Testing was done using a custom FPGA build with Arria 10 FPGA streaming
-data to target device RAM:
+During boot both requests the GPIO (OUTPUT_LOW) and sets it high, then
+run the register setup.
 
-  +----------+    +----------+    +----------+        +----------+
-  | NIOS CPU |<-->|   RAM    |<-->|  Avalon  |<-PCIe->| Host CPU |
-  +----------+    +----------+    +----------+        +----------+
+C1 request GPIO (LOW)
+C1 gpio_set(1)
+C1 register writes
+C2 requests GPIO (LOW)
+ C1 placed to reset and looses the configuration
+C2 gpio_set(1)
+ C1 also enabled
+C2 register writes
 
-The data integrity was ensured by examining target device RAM contents
-(a) from host CPU (indirectly - checking data DMAed to/from the system)
-and (b) from NIOS CPU that has direct access to the device RAM.
+At this point C2 is operational, C1 is not.
 
-A companion tool using "avalon-test" IOCTL commands was used to DMA files:
-https://github.com/a-gordeev/avalon-tool.git
+In shared GPIO case the GPIO should be handled like a regulator with a
+twist that the 'sticky' state of the GPIO might be low or high depending
+on the needs of the components it is connected to.
 
+The shared GPIO line is a board design quirk and basically any device
+which have reset/enable GPIO must be able to work in a situation when
+they are sharing that line with other components and the driver should
+not know much about this small detail.
 
-CC: dmaengine@vger.kernel.org
+- Péter
 
-Alexander Gordeev (2):
-  dmaengine: avalon: Intel Avalon-MM DMA Interface for PCIe
-  dmaengine: avalon-test: Intel Avalon-MM DMA Interface for PCIe test
-
- drivers/dma/Kconfig                     |   3 +
- drivers/dma/Makefile                    |   2 +
- drivers/dma/avalon-test/Kconfig         |  12 +
- drivers/dma/avalon-test/Makefile        |  14 +
- drivers/dma/avalon-test/avalon-dev.c    | 108 +++++
- drivers/dma/avalon-test/avalon-dev.h    |  33 ++
- drivers/dma/avalon-test/avalon-ioctl.c  | 100 +++++
- drivers/dma/avalon-test/avalon-ioctl.h  |  13 +
- drivers/dma/avalon-test/avalon-mmap.c   |  75 ++++
- drivers/dma/avalon-test/avalon-mmap.h   |  13 +
- drivers/dma/avalon-test/avalon-sg-buf.c | 131 ++++++
- drivers/dma/avalon-test/avalon-sg-buf.h |  27 ++
- drivers/dma/avalon-test/avalon-xfer.c   | 559 ++++++++++++++++++++++++
- drivers/dma/avalon-test/avalon-xfer.h   |  29 ++
- drivers/dma/avalon/Kconfig              |  15 +
- drivers/dma/avalon/Makefile             |  12 +
- drivers/dma/avalon/avalon-core.c        | 477 ++++++++++++++++++++
- drivers/dma/avalon/avalon-core.h        |  93 ++++
- drivers/dma/avalon/avalon-hw.c          | 187 ++++++++
- drivers/dma/avalon/avalon-hw.h          |  86 ++++
- drivers/dma/avalon/avalon-pci.c         | 145 ++++++
- include/uapi/linux/avalon-ioctl.h       |  32 ++
- 22 files changed, 2166 insertions(+)
- create mode 100644 drivers/dma/avalon-test/Kconfig
- create mode 100644 drivers/dma/avalon-test/Makefile
- create mode 100644 drivers/dma/avalon-test/avalon-dev.c
- create mode 100644 drivers/dma/avalon-test/avalon-dev.h
- create mode 100644 drivers/dma/avalon-test/avalon-ioctl.c
- create mode 100644 drivers/dma/avalon-test/avalon-ioctl.h
- create mode 100644 drivers/dma/avalon-test/avalon-mmap.c
- create mode 100644 drivers/dma/avalon-test/avalon-mmap.h
- create mode 100644 drivers/dma/avalon-test/avalon-sg-buf.c
- create mode 100644 drivers/dma/avalon-test/avalon-sg-buf.h
- create mode 100644 drivers/dma/avalon-test/avalon-xfer.c
- create mode 100644 drivers/dma/avalon-test/avalon-xfer.h
- create mode 100644 drivers/dma/avalon/Kconfig
- create mode 100644 drivers/dma/avalon/Makefile
- create mode 100644 drivers/dma/avalon/avalon-core.c
- create mode 100644 drivers/dma/avalon/avalon-core.h
- create mode 100644 drivers/dma/avalon/avalon-hw.c
- create mode 100644 drivers/dma/avalon/avalon-hw.h
- create mode 100644 drivers/dma/avalon/avalon-pci.c
- create mode 100644 include/uapi/linux/avalon-ioctl.h
-
--- 
-2.23.0
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
