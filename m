@@ -2,190 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33CADE9886
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F4ECE988F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:58:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfJ3I4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 04:56:23 -0400
-Received: from mail-eopbgr30059.outbound.protection.outlook.com ([40.107.3.59]:16031
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S1726413AbfJ3I6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:58:04 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:51365 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726032AbfJ3I4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:56:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mVMV/GeILdlW6qt69PbT+Anem+wbNNGQl7l3/PB08MmcaQGzG1HCuKVmdsMWLt0bhxz9LgHg5xGgv0pvCIhsnLtyHbrJBTDdmxuEV1adPjvsI4QVz592WIp3m1lLdJAVuecAqyHtejK+ib9+9JqJ/8wuoTOLPlWSbiDkTeNC1WNz7LZQk2vR+TWdaoefV95iqU7W4UcWXGZ+ukU0dlHpjrKwsF7dhHJ7KSqOi18aq+3WoDHKGc5rTgda4ECeYWrWr6G7BX88bP1z34jteXI4pr8TDONkpsldOEkNTUfx9LI3j/cOhI6ss4igLVU0VQcNrHyTHcIIcVUYNZoTkFrs3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k5sgLmUzdv+odArpVE69TZfKBkYg/LWobGzinrRAVc0=;
- b=eBZGqJO2os765+QnkmyjroYp9lzshYfE43nx/f5zBDL/M9Y4qsZAHuvoeCzWMZwpH+5lZnGsctTZMJ1HiPy0+Dl9FHwMpYosKoOKyiEQ3y6ud4b3eslKnWic8iy2dUo1ERS4eg8AfAFExW2qjv9seohYeTzr3YCBR5VmxexQsG+ZIBYwUUnPznUMXs9SGkM1nRxpBEsWdwPdbSK3NktNZKxccH4dwldwApHIIOI/XGM5MIDHe22bxLWKrI8KLX9qqxMQ5BzKUv6Ll5weQpdvIcLgfse7z2OdpFCYlbmOpxx6XdjUNDPkI6bqFeKQhqc/gfbop78UfJpHJeTLZdtxlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k5sgLmUzdv+odArpVE69TZfKBkYg/LWobGzinrRAVc0=;
- b=fkgY6VB14q6seopq3Fsh43/p6qnHMBeCI2wKhsrwFXIcytNSZXc8+mwCJxzxEi/hAS7ZQDqVIP4qgXbM0924Wg7DVbBuE3ogAiCI0iBrGnGXXlE2W0I4KVzID28kqnOLVzkwZFN85dfeSo8wYzJZZG3LaaopuW/m/wsFwAE9rl8=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB5824.eurprd04.prod.outlook.com (20.178.204.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.24; Wed, 30 Oct 2019 08:56:19 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::68e3:e1a6:78fd:7133]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::68e3:e1a6:78fd:7133%3]) with mapi id 15.20.2387.023; Wed, 30 Oct 2019
- 08:56:19 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Roger Quadros <rogerq@ti.com>
-CC:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "pawell@cadence.com" <pawell@cadence.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>,
-        "kurahul@cadence.com" <kurahul@cadence.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: cdns3: gadget: Fix g_audio use case when connected
- to Super-Speed host
-Thread-Topic: [PATCH] usb: cdns3: gadget: Fix g_audio use case when connected
- to Super-Speed host
-Thread-Index: AQHVjmu0ISNy1ghJZk6ChiNFIxaNSqdyu+kAgAAjpACAAANYAA==
-Date:   Wed, 30 Oct 2019 08:56:19 +0000
-Message-ID: <20191030085608.GA11664@b29397-desktop>
-References: <20191029151514.28495-1-rogerq@ti.com>
- <20191030063636.GE26815@b29397-desktop>
- <b780ffea-dca0-310e-1d66-4ceca380b4ee@ti.com>
-In-Reply-To: <b780ffea-dca0-310e-1d66-4ceca380b4ee@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b7261180-1ef7-4821-4674-08d75d1707e6
-x-ms-traffictypediagnostic: VI1PR04MB5824:
-x-microsoft-antispam-prvs: <VI1PR04MB582433809FD3EF00BB4DDCDF8B600@VI1PR04MB5824.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 02065A9E77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(346002)(39860400002)(136003)(396003)(366004)(43544003)(189003)(199004)(44832011)(66066001)(14444005)(86362001)(256004)(6916009)(14454004)(446003)(6512007)(186003)(6486002)(8676002)(3846002)(76176011)(229853002)(476003)(7736002)(6246003)(486006)(8936002)(6116002)(81166006)(4326008)(102836004)(81156014)(6436002)(9686003)(305945005)(25786009)(64756008)(54906003)(66476007)(26005)(66556008)(99286004)(11346002)(66446008)(33716001)(71190400001)(6506007)(5660300002)(53546011)(1076003)(76116006)(71200400001)(478600001)(91956017)(2906002)(33656002)(66946007)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5824;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +7mAYdJhpCVr6YvUNMT1uhlAQneTKg8J0b5WkAtXVsCPs+GyLo49JKlJDouzHNhPYSt5lv6hY9UxyUGR8mXyhDg8fcIG0Ew6Uxs4Y2Ij+i92u3OpW53F4P2Purm0DiX5TUoZAbRedXYV+kOBEL5NZAgRNRTFaX+sb9Mc7YmCr6kRkmxj2y4q51fCR8tdmWUmnJI2Q3mytvC+e1oI3kihpc5ddhgNfIP0K4EPr0SDa4WS2dr9WShOlINwjkeEZFTvr0ejusBoFPy3e4OqEwmFp38wA6ZQTmJz5jmcE60+e1mao9AnOyEmOCuFz1gpj2A+RnojU6rcTRtsfrifYUcYZVBebU2CeH/e9g3pPdyNkeFQvZPS6FoRYTnxXrau5ef664qEMXak1p4aK/STPQ1LX5M5HRmYi29DMtfbuFwhhNcP3H7UXnjb35oSTG2qg0hq
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <49ED2D1C0BBB7B48A45C798F05788BA6@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726032AbfJ3I6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 04:58:03 -0400
+Received: from [10.17.212.211] (unknown [195.37.61.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 50FA820225AEB;
+        Wed, 30 Oct 2019 09:58:00 +0100 (CET)
+Subject: Re: load_uefi_certs: Couldn't get size: 0x800000000000000e
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+To:     Josh Boyer <jwboyer@fedoraproject.org>
+Cc:     linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <3f48aab2-7d8e-ee9b-c362-3b7f84609abe@molgen.mpg.de>
+Message-ID: <b22a8c89-c843-f688-a723-df93430b6382@molgen.mpg.de>
+Date:   Wed, 30 Oct 2019 09:57:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7261180-1ef7-4821-4674-08d75d1707e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 08:56:19.3817
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zN/iuEx2Pyzp7wXye7o0hjcdeeqyjhb1pOGXPqZ8mtIE67Z5iKvRZ+u6k0lmoaEDjExtmVD3vSbHnyz/d+6t4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5824
+In-Reply-To: <3f48aab2-7d8e-ee9b-c362-3b7f84609abe@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-10-30 10:44:10, Roger Quadros wrote:
->=20
->=20
-> On 30/10/2019 08:36, Peter Chen wrote:
-> > On 19-10-29 17:15:14, Roger Quadros wrote:
-> > > Take into account gadget driver's speed limit when programming
-> > > controller speed.
-> > >=20
-> > > Signed-off-by: Roger Quadros <rogerq@ti.com>
-> > > ---
-> > > Hi Greg,
-> > >=20
-> > > Please apply this for -rc.
-> > > Without this, g_audio is broken on cdns3 USB controller is
-> > > connected to a Super-Speed host.
-> > >=20
-> > > cheers,
-> > > -roger
-> > >=20
-> > >   drivers/usb/cdns3/gadget.c | 31 ++++++++++++++++++++++++++-----
-> > >   1 file changed, 26 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-> > > index 40dad4e8d0dc..1c724c20d468 100644
-> > > --- a/drivers/usb/cdns3/gadget.c
-> > > +++ b/drivers/usb/cdns3/gadget.c
-> > > @@ -2338,9 +2338,35 @@ static int cdns3_gadget_udc_start(struct usb_g=
-adget *gadget,
-> > >   {
-> > >   	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
-> > >   	unsigned long flags;
-> > > +	enum usb_device_speed max_speed =3D driver->max_speed;
-> > >   	spin_lock_irqsave(&priv_dev->lock, flags);
-> > >   	priv_dev->gadget_driver =3D driver;
-> > > +
-> > > +	/* limit speed if necessary */
-> > > +	max_speed =3D min(driver->max_speed, gadget->max_speed);
-> > > +
-> > > +	switch (max_speed) {
-> > > +	case USB_SPEED_FULL:
-> > > +		writel(USB_CONF_SFORCE_FS, &priv_dev->regs->usb_conf);
-> > > +		writel(USB_CONF_USB3DIS, &priv_dev->regs->usb_conf);
-> > > +		break;
-> > > +	case USB_SPEED_HIGH:
-> > > +		writel(USB_CONF_USB3DIS, &priv_dev->regs->usb_conf);
-> > > +		break;
-> > > +	case USB_SPEED_SUPER:
-> > > +		break;
-> > > +	default:
-> > > +		dev_err(priv_dev->dev,
-> > > +			"invalid maximum_speed parameter %d\n",
-> > > +			max_speed);
-> > > +		/* fall through */
-> > > +	case USB_SPEED_UNKNOWN:
-> > > +		/* default to superspeed */
-> > > +		max_speed =3D USB_SPEED_SUPER;
-> > > +		break;
-> > > +	}
-> > > +
-> > >   	cdns3_gadget_config(priv_dev);
-> > >   	spin_unlock_irqrestore(&priv_dev->lock, flags);
-> > >   	return 0;
-> > > @@ -2570,12 +2596,7 @@ static int cdns3_gadget_start(struct cdns3 *cd=
-ns)
-> > >   	/* Check the maximum_speed parameter */
-> > >   	switch (max_speed) {
-> > >   	case USB_SPEED_FULL:
-> > > -		writel(USB_CONF_SFORCE_FS, &priv_dev->regs->usb_conf);
-> > > -		writel(USB_CONF_USB3DIS, &priv_dev->regs->usb_conf);
-> > > -		break;
-> > >   	case USB_SPEED_HIGH:
-> > > -		writel(USB_CONF_USB3DIS, &priv_dev->regs->usb_conf);
-> > > -		break;
-> > >   	case USB_SPEED_SUPER:
-> > >   		break;
-> > >   	default:
-> >=20
-> > Just a small comment:
-> >=20
-> > You could delete switch-case at cdns3_gadget_start, and just use
-> > if() statement, eg:
-> >=20
-> > 	max_speed =3D usb_get_maximum_speed(cdns->dev);
-> > 	if (max_speed =3D=3D USB_SPEED_UNKNOWN)
-> > 		max_speed =3D USB_SPEED_SUPER;
->=20
-> But then it will not take care of bailing out for USB_SPEED_WIRELESS,
-> USB_SPEED_SUPER_PLUS and any future speeds.
+Dear Josh,
 
-This IP only supports FS/HS/SS. It doesn't a big issue, if you would
-like to keep the code like your patch, it is also OK.
 
---=20
+On 04.10.19 14:24, Paul Menzel wrote:
 
-Thanks,
-Peter Chen=
+> On a Dell Latitude E7250 with a self-built Linux 5.4-rc1 the error message
+> below is printed on the screen.
+> 
+>      [    0.658664] Couldn't get size: 0x800000000000000e
+> 
+> Here are the message from the ring buffer (`dmesg`).
+> 
+> ```
+> [    0.658329] calling  load_uefi_certs+0x0/0x217 @ 1
+> [    0.658472] integrity: Loading X.509 certificate: UEFI:db
+> [    0.658544] integrity: Loaded X.509 cert 'Microsoft Windows Production PCA 2011: a92902398e16c49778cd90f99e4f9ae17c55af53'
+> [    0.658545] integrity: Loading X.509 certificate: UEFI:db
+> [    0.658606] integrity: Loaded X.509 cert 'Microsoft Corporation UEFI CA 2011: 13adbf4309bd82709c8cd54f316ed522988a1bd4'
+> [    0.658664] Couldn't get size: 0x800000000000000e
+> [    0.658689] Couldn't get UEFI MokListRT
+> [    0.658768] initcall load_uefi_certs+0x0/0x217 returned 0 after 426 usecs
+> ```
+> 
+> Could this error message be improved, to give the user a hint, what is wrong,
+> what the consequences are, and what should be done?
+> 
+> Should the message below be `pr_error`, and the other error debug?
+> 
+>      pr_info("Couldn't get UEFI MokListRT\n");
+> 
+> Please find the Linux messages and (`make savedefconfig`) configuration
+> attached.
+> 
+> Do you know more about the reason, and if the Linux code can handle it more
+> gracefully?
+> 
+> Commit 15ea0e1e (efi: Import certificates from UEFI Secure Boot) was already
+> added in Linux 5.0, and I do not remember seeing it with Debian’s default
+> Linux kernel. No idea, what is configured differently, or I just missed it.
+
+I am still getting this with Linux 5.4-rc5.
+
+
+Kind regards,
+
+Paul
