@@ -2,131 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24645EA294
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 18:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86355EA299
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 18:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfJ3R3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 13:29:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40208 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726488AbfJ3R3a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 13:29:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572456569;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zA6i4fJUFRWIbj335/B8QHiHn0dUPzjeEPZBp4eEnG8=;
-        b=dVDrUgZFGoM4MPbcTAMBmeyp0nxeJS5y8C11wK1PwFuO3vr3Nij1fx57v+BGYS34FEN5rN
-        1fdptVWNSyoAkR6Zj5/j8b7ROiQ/j0wphRYf744n9chGk8V1CEASAAEAl7NEssm4/8FFIA
-        Z7xw/G2lAJ4kE/GZuqxtqsGeJyi2WvU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-174-FwEAjuNyPbe-r_yj9282kA-1; Wed, 30 Oct 2019 13:29:25 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CDEAF1005500;
-        Wed, 30 Oct 2019 17:29:23 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FA8B5D6D4;
-        Wed, 30 Oct 2019 17:29:22 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 13:29:20 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH v4 00/10] sched/fair: rework the CFS load balance
-Message-ID: <20191030172920.GH1686@pauld.bos.csb>
-References: <20191024123844.GB2708@pauld.bos.csb>
- <20191024134650.GD2708@pauld.bos.csb>
- <CAKfTPtB0VruWXq+wGgvNOMFJvvZQiZyi2AgBoJP3Uaeduu2Lqg@mail.gmail.com>
- <20191025133325.GA2421@pauld.bos.csb>
- <CAKfTPtDWV7AkzMNuJtkN-pLmDcK41LwNiX0Wr8UT+vMFHAx6Qg@mail.gmail.com>
- <20191030143937.GC1686@pauld.bos.csb>
- <564ca629-5c34-dbd1-8e64-2da6910b18a3@arm.com>
- <bf96be8a-2358-b9ab-b8eb-d0b8b94ed0d7@arm.com>
- <20191030171914.GF1686@pauld.bos.csb>
- <4c52d81f-4b3b-d7e8-c124-b90b4584a6d3@arm.com>
+        id S1727387AbfJ3Rb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 13:31:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51928 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726488AbfJ3Rb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 13:31:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7C197B3A9;
+        Wed, 30 Oct 2019 17:31:25 +0000 (UTC)
+Date:   Wed, 30 Oct 2019 18:31:23 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/sparse: Consistently do not zero memmap
+Message-ID: <20191030173123.GK31513@dhcp22.suse.cz>
+References: <20191030131122.8256-1-vincent.whitchurch@axis.com>
+ <20191030132958.GD31513@dhcp22.suse.cz>
+ <20191030140216.i26n22asgafckfxy@axis.com>
+ <20191030141259.GE31513@dhcp22.suse.cz>
+ <CA+CK2bDObV=N1Y+LhDX=tYsTX3HZ+mbB=8aXT=fPX254hKEUBQ@mail.gmail.com>
+ <20191030153150.GI31513@dhcp22.suse.cz>
+ <CA+CK2bA3gM4pMSj-wDWgAPNoPtcjwd59_6VivKA2Uf2GriASsw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4c52d81f-4b3b-d7e8-c124-b90b4584a6d3@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: FwEAjuNyPbe-r_yj9282kA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CA+CK2bA3gM4pMSj-wDWgAPNoPtcjwd59_6VivKA2Uf2GriASsw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 06:25:09PM +0100 Valentin Schneider wrote:
-> On 30/10/2019 18:19, Phil Auld wrote:
-> >> Well from the code nobody but us (asymmetric capacity systems) set
-> >> SD_BALANCE_WAKE. I was however curious if there were some folks who se=
-t it
-> >> with out of tree code for some reason.
-> >>
-> >> As Dietmar said, not having SD_BALANCE_WAKE means you'll never go thro=
-ugh
-> >> the slow path on wakeups, because there is no domain with SD_BALANCE_W=
-AKE for
-> >> the domain loop to find. Depending on your topology you most likely wi=
-ll
-> >> go through it on fork or exec though.
-> >>
-> >> IOW wake_wide() is not really widening the wakeup scan on wakeups usin=
-g
-> >> mainline topology code (disregarding asymmetric capacity systems), whi=
-ch
-> >> sounds a bit... off.
-> >=20
-> > Thanks. It's not currently set. I'll set it and re-run to see if it mak=
-es
-> > a difference.=20
-> >=20
->=20
-> Note that it might do more harm than good, it's not set in the default
-> topology because it's too aggressive, see=20
->=20
->   182a85f8a119 ("sched: Disable wakeup balancing")
->=20
+On Wed 30-10-19 12:53:41, Pavel Tatashin wrote:
+> On Wed, Oct 30, 2019 at 11:31 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Wed 30-10-19 11:20:44, Pavel Tatashin wrote:
+> > > On Wed, Oct 30, 2019 at 10:13 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > >
+> > > > [Add Pavel - the email thread starts http://lkml.kernel.org/r/20191030131122.8256-1-vincent.whitchurch@axis.com
+> > > >  but it used your old email address]
+> > > >
+> > > > On Wed 30-10-19 15:02:16, Vincent Whitchurch wrote:
+> > > > > On Wed, Oct 30, 2019 at 02:29:58PM +0100, Michal Hocko wrote:
+> > > > > > On Wed 30-10-19 14:11:22, Vincent Whitchurch wrote:
+> > > > > > > (I noticed this because on my ARM64 platform, with 1 GiB of memory the
+> > > > > > >  first [and only] section is allocated from the zeroing path while with
+> > > > > > >  2 GiB of memory the first 1 GiB section is allocated from the
+> > > > > > >  non-zeroing path.)
+> > > > > >
+> > > > > > Do I get it right that sparse_buffer_init couldn't allocate memmap for
+> > > > > > the full node for some reason and so sparse_init_nid would have to
+> > > > > > allocate one for each memory section?
+> > > > >
+> > > > > Not quite.  The sparsemap_buf is successfully allocated with the correct
+> > > > > size in sparse_buffer_init(), but sparse_buffer_alloc() fails to
+> > > > > allocate the same size from it.
+> > > > >
+> > > > > The reason it fails is that sparse_buffer_alloc() for some reason wants
+> > > > > to return a pointer which is aligned to the allocation size.  But the
+> > > > > sparsemap_buf was only allocated with PAGE_SIZE alignment so there's not
+> > > > > enough space to align it.
+> > > > >
+> > > > > I don't understand the reason for this alignment requirement since the
+> > > > > fallback path also allocates with PAGE_SIZE alignment.  I'm guessing the
+> > > > > alignment is for the VMEMAP code which also uses sparse_buffer_alloc()?
+> > > >
+> > > > I am not 100% sure TBH. Aligning makes some sense when mapping the
+> > > > memmaps to page tables but that would suggest that sparse_buffer_init
+> > > > is using a wrong alignment then. It is quite wasteful to allocate
+> > > > alarge misaligned block like that.
+> > > >
+> > > > Your patch still makes sense but this is something to look into.
+> > > >
+> > > > Pavel?
+> > >
+> > > I remember thinking about this large alignment, as it looked out of
+> > > place to me also.
+> > > It was there to keep memmap in single chunks on larger x86 machines.
+> > > Perhaps it can be revisited now.
+> >
+> > Don't we need 2MB aligned memmaps for their PMD mappings?
+> 
+> Yes, PMD_SIZE should be the alignment here. It just does not make
+> sense to align to size.
 
-Heh, yeah... even as it's running I can see that this killing it :)
+What about this? It still aligns to the size but that should be
+correctly done to the section size level.
 
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 72f010d9bff5..ab1e6175ac9a 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -456,8 +456,7 @@ struct page __init *__populate_section_memmap(unsigned long pfn,
+ 	if (map)
+ 		return map;
+ 
+-	map = memblock_alloc_try_nid(size,
+-					  PAGE_SIZE, addr,
++	map = memblock_alloc_try_nid(size, size, addr,
+ 					  MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+ 	if (!map)
+ 		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%pa\n",
+@@ -474,8 +473,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+ {
+ 	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
+ 	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
++	/*
++	 * Pre-allocated buffer is mainly used by __populate_section_memmap
++	 * and we want it to be properly aligned to the section size - this is
++	 * especially the case for VMEMMAP which maps memmap to PMDs
++	 */
+ 	sparsemap_buf =
+-		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
++		memblock_alloc_try_nid_raw(size, section_map_size(),
+ 						addr,
+ 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+ 	sparsemap_buf_end = sparsemap_buf + size;
 
-> >=20
-> > However, I'm not sure why it would be making a difference for only the =
-cgroup
-> > case. If this is causing issues I'd expect it to effect both runs.=20
-> >=20
-> > In general I think these threads want to wake up the last cpu they were=
- on.
-> > And given there are fewer cpu bound tasks that CPUs that wake cpu shoul=
-d,
-> > more often than not, be idle.=20
-> >=20
-> >=20
-> > Cheers,
-> > Phil
-> >=20
-> >=20
-> >=20
-
---=20
-
+-- 
+Michal Hocko
+SUSE Labs
