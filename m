@@ -2,119 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1980EA05D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D20EA044
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfJ3Pz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:55:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728686AbfJ3Pzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:55:53 -0400
-Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC9421734;
-        Wed, 30 Oct 2019 15:55:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450952;
-        bh=O37oz6DKm5IliPnCKePhj9zkq9haAZtxQkI2h/c4NgY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tw+xsKQDhH/1z9PYI250eI5sEFgfbtM7OzhgoMk7mrIOwHbDZnkAo4pQTyctWDqN5
-         iW4vBU6bTS9vREHYH5vqONrSgWvudogb7l3uXTrpiFr3HOP434XkzL2ND4UNh2LvGM
-         62MeFXHfq6yWzwkiNEfpwtEwv9fqY8o3YzjoJis8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mike Christie <mchristi@redhat.com>,
-        syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com,
-        "Richard W . M . Jones" <rjones@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org, nbd@other.debian.org
-Subject: [PATCH AUTOSEL 4.19 38/38] nbd: verify socket is supported during setup
-Date:   Wed, 30 Oct 2019 11:54:06 -0400
-Message-Id: <20191030155406.10109-38-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191030155406.10109-1-sashal@kernel.org>
-References: <20191030155406.10109-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1728476AbfJ3Pyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:54:55 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38598 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728443AbfJ3Pyq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:46 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 22so2740290wms.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1b/PjoEJ3+h+SBh6G5LSt0fwIln3xfl7/abE1bFQX1U=;
+        b=hzrosYqSyPDygsna85h8qSrUmUaQQxMkX5BA098fJ6vDLGNeTe4eqqS0Yy3jBSOVtU
+         yi7+0L13abxGIkDRQBOEgU7GdtxmdESHz+6KLsloe65u6oPwjmoLHEVN6T4EuRTryQfL
+         y7lk5lyyh2Rim0xK+TCKTlVwj7Asgp17IIy8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1b/PjoEJ3+h+SBh6G5LSt0fwIln3xfl7/abE1bFQX1U=;
+        b=HJcZ5LPWbj1fPnoh6Q4fM8NvYCjSCwUA7bXpBEaEQStmGnZADzAvT+dWAS7mG87BpL
+         UJ9Ek8nsefHtmPQhbFjzL4jRG86WoC5aG3/OEkVIJcteEi4nynFBicbeZo4dq0U8t4Jt
+         jAfUE6j5gIFnIGnahUN39LEOOl26cMkKX4p55qm7jqhE9SBzmQzHlg5FuRjjPucJDGUS
+         QqsBW9JHdM8gnp53wZyoRt9ne+XhgHIZZnNI8hfS1byKkQWFNl/KTrkpDVHMmLWtmvBa
+         ENGoUZohfEd0D8Tl6wWrFTl7hjcIAOTM0sQ6csodomtxl3JbrZMJ1W+R3letb8WMSO8v
+         W1vQ==
+X-Gm-Message-State: APjAAAU9Io21Qwt/OYslJqMv74YjDNL9r4c5wUYduDJ+dxwExEa0E3DU
+        28ZHRGnT0LjRblse0NS1TEFGJA==
+X-Google-Smtp-Source: APXvYqwTXl2Q1WUFHg7qhZXHybLGgpjxpJN/y8w39Em85vfeW8+DSA1Q4Ev7vK/bL1ZYJYTV+ebZhg==
+X-Received: by 2002:a1c:7719:: with SMTP id t25mr174595wmi.56.1572450884321;
+        Wed, 30 Oct 2019 08:54:44 -0700 (PDT)
+Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id g184sm499931wma.8.2019.10.30.08.54.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 30 Oct 2019 08:54:43 -0700 (PDT)
+From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vikas Gupta <vikas.gupta@broadcom.com>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
+        netdev@vger.kernel.org,
+        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+Subject: [PATCH net-next V4 2/3] bnxt_en: Add support to invoke OP-TEE API to reset firmware
+Date:   Wed, 30 Oct 2019 21:24:23 +0530
+Message-Id: <1572450864-16761-3-git-send-email-sheetal.tigadoli@broadcom.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
+References: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Christie <mchristi@redhat.com>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit cf1b2326b734896734c6e167e41766f9cee7686a ]
+In error recovery process when firmware indicates that it is
+completely down, initiate a firmware reset by calling OP-TEE API.
 
-nbd requires socket families to support the shutdown method so the nbd
-recv workqueue can be woken up from its sock_recvmsg call. If the socket
-does not support the callout we will leave recv works running or get hangs
-later when the device or module is removed.
-
-This adds a check during socket connection/reconnection to make sure the
-socket being passed in supports the needed callout.
-
-Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Tested-by: Richard W.M. Jones <rjones@redhat.com>
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
 ---
- drivers/block/nbd.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 13 +++++++++++--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h |  3 +++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index dd67a3dff93b1..cc4a642b942b2 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -932,6 +932,25 @@ static blk_status_t nbd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
- 
-+static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
-+				     int *err)
-+{
-+	struct socket *sock;
-+
-+	*err = 0;
-+	sock = sockfd_lookup(fd, err);
-+	if (!sock)
-+		return NULL;
-+
-+	if (sock->ops->shutdown == sock_no_shutdown) {
-+		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
-+		*err = -EINVAL;
-+		return NULL;
-+	}
-+
-+	return sock;
-+}
-+
- static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 			  bool netlink)
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 8cdf71f8824d..c24caaaf05ca 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -10581,14 +10581,23 @@ static void bnxt_fw_reset_writel(struct bnxt *bp, int reg_idx)
+ static void bnxt_reset_all(struct bnxt *bp)
  {
-@@ -941,7 +960,7 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 	struct nbd_sock *nsock;
- 	int err;
+ 	struct bnxt_fw_health *fw_health = bp->fw_health;
+-	int i;
++	int i, rc;
++
++	if (bp->fw_cap & BNXT_FW_CAP_ERR_RECOVER_RELOAD) {
++#ifdef CONFIG_TEE_BNXT_FW
++		rc = tee_bnxt_fw_load();
++		if (rc)
++			netdev_err(bp->dev, "Unable to reset FW rc=%d\n", rc);
++		bp->fw_reset_timestamp = jiffies;
++#endif
++		return;
++	}
  
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
+ 	if (fw_health->flags & ERROR_RECOVERY_QCFG_RESP_FLAGS_HOST) {
+ 		for (i = 0; i < fw_health->fw_reset_seq_cnt; i++)
+ 			bnxt_fw_reset_writel(bp, i);
+ 	} else if (fw_health->flags & ERROR_RECOVERY_QCFG_RESP_FLAGS_CO_CPU) {
+ 		struct hwrm_fw_reset_input req = {0};
+-		int rc;
  
-@@ -993,7 +1012,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
- 	int i;
- 	int err;
+ 		bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_FW_RESET, -1, -1);
+ 		req.resp_addr = cpu_to_le64(bp->hwrm_cmd_kong_resp_dma_addr);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index d333589811a5..09437150f818 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -25,6 +25,9 @@
+ #include <net/dst_metadata.h>
+ #include <net/xdp.h>
+ #include <linux/dim.h>
++#ifdef CONFIG_TEE_BNXT_FW
++#include <linux/firmware/broadcom/tee_bnxt_fw.h>
++#endif
  
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
+ struct page_pool;
  
 -- 
-2.20.1
+2.17.1
 
