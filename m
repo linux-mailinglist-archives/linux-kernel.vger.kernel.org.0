@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07376EA11B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BA1EA120
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbfJ3P6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:58:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59646 "EHLO mail.kernel.org"
+        id S1729240AbfJ3P6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729178AbfJ3P56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:57:58 -0400
+        id S1729185AbfJ3P6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:58:05 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 124D221835;
-        Wed, 30 Oct 2019 15:57:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 927CD217D9;
+        Wed, 30 Oct 2019 15:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572451077;
-        bh=VUwH/AuwUiUuH2m0jq4xzOerAgHsaYC1KAQxUccPK4E=;
+        s=default; t=1572451084;
+        bh=0bQe948ftx6P4hbTLJm624vlLfbcA0R1ysh4srYT92c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YveAxKuskVUxQc1qY3t5gefxsY3IpkMguSXM/d3eq3UvK6MfHudojESJHlD8rO7el
-         6KqEru/CJpRf8Mvd3Jgrv7Pbku9Z/PEjO+TJY5zu34OXO01WEoriakKBX8Lzctv7TL
-         P0Vvp+bD21aFpgNDvDFRJdRxKkxwT46QIMrFhllM=
+        b=buSbdQXH9aKpjKBrhWB6IHuxYInGLgLffxdbbQTQbOhvfkbt4O0oWTcAuY0Jkzi69
+         3zw34OfjtsRpg+fUcrdnxAoYSDFkITM33wEWWGqZSDe8Gx69/+kzrs5jk79B1+mgvZ
+         3fIgjk4MkCvDNVsvgxW9u3Synb46S4nhICBQXuuE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Jing Xiangfeng <jingxiangfeng@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 02/13] regulator: pfuze100-regulator: Variable "val" in pfuze100_regulator_probe() could be uninitialized
-Date:   Wed, 30 Oct 2019 11:57:40 -0400
-Message-Id: <20191030155751.10960-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/13] ARM: mm: fix alignment handler faults under memory pressure
+Date:   Wed, 30 Oct 2019 11:57:43 -0400
+Message-Id: <20191030155751.10960-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155751.10960-1-sashal@kernel.org>
 References: <20191030155751.10960-1-sashal@kernel.org>
@@ -42,42 +43,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yizhuo <yzhai003@ucr.edu>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 1252b283141f03c3dffd139292c862cae10e174d ]
+[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
 
-In function pfuze100_regulator_probe(), variable "val" could be
-initialized if regmap_read() fails. However, "val" is used to
-decide the control flow later in the if statement, which is
-potentially unsafe.
+When the system has high memory pressure, the page containing the
+instruction may be paged out.  Using probe_kernel_address() means that
+if the page is swapped out, the resulting page fault will not be
+handled because page faults are disabled by this function.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-Link: https://lore.kernel.org/r/20190929170957.14775-1-yzhai003@ucr.edu
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Use get_user() to read the instruction instead.
+
+Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/pfuze100-regulator.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index c68556bf6f399..ec185502dcebd 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -609,7 +609,13 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 7d5f4c736a16b..cd18eda014c24 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -767,6 +767,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
+ 	return NULL;
+ }
  
- 		/* SW2~SW4 high bit check and modify the voltage value table */
- 		if (i >= sw_check_start && i <= sw_check_end) {
--			regmap_read(pfuze_chip->regmap, desc->vsel_reg, &val);
-+			ret = regmap_read(pfuze_chip->regmap,
-+						desc->vsel_reg, &val);
-+			if (ret) {
-+				dev_err(&client->dev, "Fails to read from the register.\n");
-+				return ret;
-+			}
++static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
++{
++	u32 instr = 0;
++	int fault;
 +
- 			if (val & sw_hi) {
- 				if (pfuze_chip->chip_id == PFUZE3000) {
- 					desc->volt_table = pfuze3000_sw2hi;
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_arm(instr);
++
++	return fault;
++}
++
++static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
++{
++	u16 instr = 0;
++	int fault;
++
++	if (user_mode(regs))
++		fault = get_user(instr, ip);
++	else
++		fault = probe_kernel_address(ip, instr);
++
++	*inst = __mem_to_opcode_thumb16(instr);
++
++	return fault;
++}
++
+ static int
+ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -774,10 +804,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	unsigned long instr = 0, instrptr;
+ 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+ 	unsigned int type;
+-	unsigned int fault;
+ 	u16 tinstr = 0;
+ 	int isize = 4;
+ 	int thumb2_32b = 0;
++	int fault;
+ 
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+@@ -786,15 +816,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	if (thumb_mode(regs)) {
+ 		u16 *ptr = (u16 *)(instrptr & ~1);
+-		fault = probe_kernel_address(ptr, tinstr);
+-		tinstr = __mem_to_opcode_thumb16(tinstr);
++
++		fault = alignment_get_thumb(regs, ptr, &tinstr);
+ 		if (!fault) {
+ 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+ 			    IS_T32(tinstr)) {
+ 				/* Thumb-2 32-bit */
+-				u16 tinst2 = 0;
+-				fault = probe_kernel_address(ptr + 1, tinst2);
+-				tinst2 = __mem_to_opcode_thumb16(tinst2);
++				u16 tinst2;
++				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
+ 				instr = __opcode_thumb32_compose(tinstr, tinst2);
+ 				thumb2_32b = 1;
+ 			} else {
+@@ -803,8 +832,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 			}
+ 		}
+ 	} else {
+-		fault = probe_kernel_address((void *)instrptr, instr);
+-		instr = __mem_to_opcode_arm(instr);
++		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
+ 	}
+ 
+ 	if (fault) {
 -- 
 2.20.1
 
