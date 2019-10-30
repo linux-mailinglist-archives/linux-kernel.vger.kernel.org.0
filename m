@@ -2,35 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9701EA13C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFBBAEA101
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbfJ3QAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57970 "EHLO mail.kernel.org"
+        id S1728841AbfJ3P4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:56:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbfJ3P4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:56:21 -0400
+        id S1728153AbfJ3P43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:56:29 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C10AD2173E;
-        Wed, 30 Oct 2019 15:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCCB82087E;
+        Wed, 30 Oct 2019 15:56:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450981;
-        bh=HrRc/uzkTfFPv0L8nCGXB774/xM81RQM7rhRnnprTsk=;
+        s=default; t=1572450988;
+        bh=kQUuXibv8QS6TvbhT84UpCgvgdJC5JMLRc2/g0gyjrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/qsHVrSuSCQP3Di4/ftUgImGOOYkxLlwhh9FtE5jyDiuPw7K78ye9cvlAqL0ppPZ
-         tUkWSdfQd0C1klgLrjl1V/VCQexQU0zFs2Fe0rIA9Vx6+9Si8mmYQN8dTc0xYsTIKH
-         cWm9lNykVYYbKSmtZa3Typ4E02Cg/YWDiT+Ds8Qs=
+        b=Uf4xjcuIdorNaley35dyusxuLGtl8diKuvrgfedyYmL3ajK1N1uTf9jFvqOcftnDx
+         02ibjGYEeX2/mnLEcFGkjmvSvA4DwxxQwK01SQvt5I3tH165sKUiSoPyhkOU5w0Gn1
+         dyBwgjvF5cqK/hfkrs+JLgmSTfnmtM9WL92ewMDM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 10/24] scsi: sni_53c710: fix compilation error
-Date:   Wed, 30 Oct 2019 11:55:41 -0400
-Message-Id: <20191030155555.10494-10-sashal@kernel.org>
+Cc:     Yunfeng Ye <yeyunfeng@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Feilong Lin <linfeilong@huawei.com>,
+        Hu Shiyuan <hushiyuan@huawei.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 13/24] perf c2c: Fix memory leak in build_cl_output()
+Date:   Wed, 30 Oct 2019 11:55:44 -0400
+Message-Id: <20191030155555.10494-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155555.10494-1-sashal@kernel.org>
 References: <20191030155555.10494-1-sashal@kernel.org>
@@ -43,38 +49,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
+[ Upstream commit ae199c580da1754a2b051321eeb76d6dacd8707b ]
 
-Drop out memory dev_printk() with wrong device pointer argument.
+There is a memory leak problem in the failure paths of
+build_cl_output(), so fix it.
 
-[mkp: typo]
-
-Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Feilong Lin <linfeilong@huawei.com>
+Cc: Hu Shiyuan <hushiyuan@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/4d3c0178-5482-c313-98e1-f82090d2d456@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/sni_53c710.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ tools/perf/builtin-c2c.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
-index 1f9a087daf69f..3102a75984d3b 100644
---- a/drivers/scsi/sni_53c710.c
-+++ b/drivers/scsi/sni_53c710.c
-@@ -78,10 +78,8 @@ static int snirm710_probe(struct platform_device *dev)
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 32e64a8a6443f..bec7a2f1fb4dc 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2454,6 +2454,7 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 	bool add_sym   = false;
+ 	bool add_dso   = false;
+ 	bool add_src   = false;
++	int ret = 0;
  
- 	base = res->start;
- 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
--	if (!hostdata) {
--		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
-+	if (!hostdata)
+ 	if (!buf)
  		return -ENOMEM;
--	}
+@@ -2472,7 +2473,8 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 			add_dso = true;
+ 		} else if (strcmp(tok, "offset")) {
+ 			pr_err("unrecognized sort token: %s\n", tok);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto err;
+ 		}
+ 	}
  
- 	hostdata->dev = &dev->dev;
- 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
+@@ -2495,13 +2497,15 @@ static int build_cl_output(char *cl_sort, bool no_source)
+ 		add_sym ? "symbol," : "",
+ 		add_dso ? "dso," : "",
+ 		add_src ? "cl_srcline," : "",
+-		"node") < 0)
+-		return -ENOMEM;
++		"node") < 0) {
++		ret = -ENOMEM;
++		goto err;
++	}
+ 
+ 	c2c.show_src = add_src;
+-
++err:
+ 	free(buf);
+-	return 0;
++	return ret;
+ }
+ 
+ static int setup_coalesce(const char *coalesce, bool no_source)
 -- 
 2.20.1
 
