@@ -2,61 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 223C5EA03A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D676EA046
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfJ3Pyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:36 -0400
-Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:50861 "EHLO
-        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728347AbfJ3Py3 (ORCPT
+        id S1728507AbfJ3PzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:55:02 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37607 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfJ3Py7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:29 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id 4D25E987E2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 15:54:27 +0000 (GMT)
-Received: (qmail 12748 invoked from network); 30 Oct 2019 15:54:27 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 30 Oct 2019 15:54:27 -0000
-Date:   Wed, 30 Oct 2019 15:54:24 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, pauld@redhat.com, valentin.schneider@arm.com,
-        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com
-Subject: Re: [PATCH v4 05/11] sched/fair: use rq->nr_running when balancing
- load
-Message-ID: <20191030155424.GK3016@techsingularity.net>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1571405198-27570-6-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 30 Oct 2019 11:54:59 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e11so2912744wrv.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=FgmJFc69aJGBfN43Lu4UDpX3eu2jhzY+mRsGnXR2dN8=;
+        b=YQ8JrjFkp6XLfBlPGUCLqHhaC6ro+clm5a1vsZRrj0w1wRsTIWAq0+OP/rWqhne4JZ
+         rTzIjBLdfjYc+US6nnKjMu07xq0zXfLtC3COLWnr04KS/RUqUCWPmRdhPJ7K03Qub2LC
+         wnVdo4PZcj2il8ZcWV8GQeSE4nT0O2MSgdAbw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=FgmJFc69aJGBfN43Lu4UDpX3eu2jhzY+mRsGnXR2dN8=;
+        b=kZGyRx02Un6IWrkTBLmqNiCU9LI+tTuBRS4a0fJsvEU7n4x9HfTm28Xw8vjGYdPqc8
+         xZDw3ykzYqB8Ypjp71pJ56LNCRqaGyrJ2s1Q8vymYdB/F7sN/2aAU/gapZwEnxDjq7RD
+         2lIOvFMhUpPQ4lIQj8gOdvd5QqRH7a0ufLmG0tTL8YdAPK0JFsn+ssV6alEbvD7Mxpwu
+         SWj99nu1tOZg4PLAACWadiBWeEA6Y22gBESL6TYuq2go3q27UPxiVeSQD4E/exVEZ8Bd
+         W1PFkIyqwu06eIQkuC67+aFZTJNpBi8LVBkkAOWWQU7RHHSivAfm5gT+mjbRWTSV2KEH
+         kW/g==
+X-Gm-Message-State: APjAAAUJzuTZI6aLAEL/O+on5qfHdqv9S7BXiiOP3pZ+uR4xP0efM2y2
+        w9RKTW+4fkTr4HjB16slI9pRRg==
+X-Google-Smtp-Source: APXvYqw1WJjIbOmeus2GIdvdbFV9JrCvx3qonEXRRGFUrDLsS2mD90po6hHglU+cnBz+gj9F81bRmw==
+X-Received: by 2002:adf:ed84:: with SMTP id c4mr482461wro.333.1572450896061;
+        Wed, 30 Oct 2019 08:54:56 -0700 (PDT)
+Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id g184sm499931wma.8.2019.10.30.08.54.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 30 Oct 2019 08:54:55 -0700 (PDT)
+From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vikas Gupta <vikas.gupta@broadcom.com>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
+        netdev@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+Subject: [PATCH net-next V4 3/3] bnxt_en: Add support to collect crash dump via ethtool
+Date:   Wed, 30 Oct 2019 21:24:24 +0530
+Message-Id: <1572450864-16761-4-git-send-email-sheetal.tigadoli@broadcom.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
+References: <1572450864-16761-1-git-send-email-sheetal.tigadoli@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 03:26:32PM +0200, Vincent Guittot wrote:
-> cfs load_balance only takes care of CFS tasks whereas CPUs can be used by
-> other scheduling class. Typically, a CFS task preempted by a RT or deadline
-> task will not get a chance to be pulled on another CPU because the
-> load_balance doesn't take into account tasks from other classes.
-> Add sum of nr_running in the statistics and use it to detect such
-> situation.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-Patch is ok but it'll be easier in the future to mix up sum_nr_running
-and sum_h_nr_running in the future. Might be best to make sum_nr_running
-sum_any_running and the hierarchy one sum_cfs_running. I don't feel
-strongly either way, because it's almost certainly due to the fact I
-almost never care about non-cfs tasks when thinking about the scheduler.
+Driver supports 2 types of core dumps.
 
+1. Live dump - Firmware dump when system is up and running.
+2. Crash dump - Dump which is collected during firmware crash
+                that can be retrieved after recovery.
+Crash dump is currently supported only on specific 58800 chips
+which can be retrieved using OP-TEE API only, as firmware cannot
+access this region directly.
+
+User needs to set the dump flag using following command before
+initiating the dump collection:
+
+    $ ethtool -W|--set-dump eth0 N
+
+Where N is "0" for live dump and "1" for crash dump
+
+Command to collect the dump after setting the flag:
+
+    $ ethtool -w eth0 data Filename
+
+v3: Modify set_dump to support even when CONFIG_TEE_BNXT_FW=n.
+Also change log message to netdev_info().
+
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  3 ++
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 37 ++++++++++++++++++-
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.h |  2 +
+ 3 files changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index 09437150f818..3e7d1fb1b0b1 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -1807,6 +1807,9 @@ struct bnxt {
+ 
+ 	u8			num_leds;
+ 	struct bnxt_led_info	leds[BNXT_MAX_LED];
++	u16			dump_flag;
++#define BNXT_DUMP_LIVE		0
++#define BNXT_DUMP_CRASH		1
+ 
+ 	struct bpf_prog		*xdp_prog;
+ 
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index 51c140476717..f2220b826d61 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -3311,6 +3311,24 @@ static int bnxt_get_coredump(struct bnxt *bp, void *buf, u32 *dump_len)
+ 	return rc;
+ }
+ 
++static int bnxt_set_dump(struct net_device *dev, struct ethtool_dump *dump)
++{
++	struct bnxt *bp = netdev_priv(dev);
++
++	if (dump->flag > BNXT_DUMP_CRASH) {
++		netdev_info(dev, "Supports only Live(0) and Crash(1) dumps.\n");
++		return -EINVAL;
++	}
++
++	if (!IS_ENABLED(CONFIG_TEE_BNXT_FW) && dump->flag == BNXT_DUMP_CRASH) {
++		netdev_info(dev, "Cannot collect crash dump as TEE_BNXT_FW config option is not enabled.\n");
++		return -EOPNOTSUPP;
++	}
++
++	bp->dump_flag = dump->flag;
++	return 0;
++}
++
+ static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
+ {
+ 	struct bnxt *bp = netdev_priv(dev);
+@@ -3323,7 +3341,12 @@ static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
+ 			bp->ver_resp.hwrm_fw_bld_8b << 8 |
+ 			bp->ver_resp.hwrm_fw_rsvd_8b;
+ 
+-	return bnxt_get_coredump(bp, NULL, &dump->len);
++	dump->flag = bp->dump_flag;
++	if (bp->dump_flag == BNXT_DUMP_CRASH)
++		dump->len = BNXT_CRASH_DUMP_LEN;
++	else
++		bnxt_get_coredump(bp, NULL, &dump->len);
++	return 0;
+ }
+ 
+ static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
+@@ -3336,7 +3359,16 @@ static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
+ 
+ 	memset(buf, 0, dump->len);
+ 
+-	return bnxt_get_coredump(bp, buf, &dump->len);
++	dump->flag = bp->dump_flag;
++	if (dump->flag == BNXT_DUMP_CRASH) {
++#ifdef CONFIG_TEE_BNXT_FW
++		return tee_bnxt_copy_coredump(buf, 0, dump->len);
++#endif
++	} else {
++		return bnxt_get_coredump(bp, buf, &dump->len);
++	}
++
++	return 0;
+ }
+ 
+ void bnxt_ethtool_init(struct bnxt *bp)
+@@ -3446,6 +3478,7 @@ const struct ethtool_ops bnxt_ethtool_ops = {
+ 	.set_phys_id		= bnxt_set_phys_id,
+ 	.self_test		= bnxt_self_test,
+ 	.reset			= bnxt_reset,
++	.set_dump		= bnxt_set_dump,
+ 	.get_dump_flag		= bnxt_get_dump_flag,
+ 	.get_dump_data		= bnxt_get_dump_data,
+ };
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
+index b5b65b3f8534..01de7e79d14f 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
+@@ -59,6 +59,8 @@ struct hwrm_dbg_cmn_output {
+ 	#define HWRM_DBG_CMN_FLAGS_MORE	1
+ };
+ 
++#define BNXT_CRASH_DUMP_LEN	(8 << 20)
++
+ #define BNXT_LED_DFLT_ENA				\
+ 	(PORT_LED_CFG_REQ_ENABLES_LED0_ID |		\
+ 	 PORT_LED_CFG_REQ_ENABLES_LED0_STATE |		\
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
+
