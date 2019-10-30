@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701C3EA13B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4D4EA109
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfJ3P7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:59:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58252 "EHLO mail.kernel.org"
+        id S1727669AbfJ3P5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:57:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbfJ3P4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:56:38 -0400
+        id S1728929AbfJ3P45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:56:57 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2623920874;
-        Wed, 30 Oct 2019 15:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C7722067D;
+        Wed, 30 Oct 2019 15:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450998;
-        bh=9FLjLiH7v5XHJHv+NXNnLPQ7INHN9b6L2M7gM2XWXIM=;
+        s=default; t=1572451016;
+        bh=rc56oxVDzxSyspd9WL/F3AQ8LjXvk4rfeFvwFp/w1uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SEAZ94SCpsLtNodicIjDGv+JFiIA1aQoHoCWYC6u89T5tcO9Aq+bVgNpym8rnVA+h
-         gcF0HhHBDk6AIHDV0OgUQvhKwziBAd3B1lWESoixLkorLiYwqeRJuKYdgBBiD/TDTD
-         4Gtb2rysOtHXZo3eq9RnUhrJNCrx7cc+7y46HyWo=
+        b=1Dj3LdBGdrHKehXom1s1JUeKzutH0PMEHSxYjuAU1q+ST0nq0v8LZMWvHOk//odHq
+         JtbHPch1onzmAfLxuUJAwxwk6yV3tPqZSTNeeyi9j0WANTJMd1wZSqgo14ySFUCo7i
+         a+SB/xmQzhAYmnPXe6DjzbHIVOGoVSnQ1L8/nJMU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bodo Stroesser <bstroesser@ts.fujitsu.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 17/24] scsi: target: core: Do not overwrite CDB byte 1
-Date:   Wed, 30 Oct 2019 11:55:48 -0400
-Message-Id: <20191030155555.10494-17-sashal@kernel.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org, nbd@other.debian.org
+Subject: [PATCH AUTOSEL 4.14 23/24] nbd: handle racing with error'ed out commands
+Date:   Wed, 30 Oct 2019 11:55:54 -0400
+Message-Id: <20191030155555.10494-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155555.10494-1-sashal@kernel.org>
 References: <20191030155555.10494-1-sashal@kernel.org>
@@ -46,59 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bodo Stroesser <bstroesser@ts.fujitsu.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit 27e84243cb63601a10e366afe3e2d05bb03c1cb5 ]
+[ Upstream commit 7ce23e8e0a9cd38338fc8316ac5772666b565ca9 ]
 
-passthrough_parse_cdb() - used by TCMU and PSCSI - attepts to reset the LUN
-field of SCSI-2 CDBs (bits 5,6,7 of byte 1).  The current code is wrong as
-for newer commands not having the LUN field it overwrites relevant command
-bits (e.g. for SECURITY PROTOCOL IN / OUT). We think this code was
-unnecessary from the beginning or at least it is no longer useful. So we
-remove it entirely.
+We hit the following warning in production
 
-Link: https://lore.kernel.org/r/12498eab-76fd-eaad-1316-c2827badb76a@ts.fujitsu.com
-Signed-off-by: Bodo Stroesser <bstroesser@ts.fujitsu.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+print_req_error: I/O error, dev nbd0, sector 7213934408 flags 80700
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 25 PID: 32407 at lib/refcount.c:190 refcount_sub_and_test_checked+0x53/0x60
+Workqueue: knbd-recv recv_work [nbd]
+RIP: 0010:refcount_sub_and_test_checked+0x53/0x60
+Call Trace:
+ blk_mq_free_request+0xb7/0xf0
+ blk_mq_complete_request+0x62/0xf0
+ recv_work+0x29/0xa1 [nbd]
+ process_one_work+0x1f5/0x3f0
+ worker_thread+0x2d/0x3d0
+ ? rescuer_thread+0x340/0x340
+ kthread+0x111/0x130
+ ? kthread_create_on_node+0x60/0x60
+ ret_from_fork+0x1f/0x30
+---[ end trace b079c3c67f98bb7c ]---
+
+This was preceded by us timing out everything and shutting down the
+sockets for the device.  The problem is we had a request in the queue at
+the same time, so we completed the request twice.  This can actually
+happen in a lot of cases, we fail to get a ref on our config, we only
+have one connection and just error out the command, etc.
+
+Fix this by checking cmd->status in nbd_read_stat.  We only change this
+under the cmd->lock, so we are safe to check this here and see if we've
+already error'ed this command out, which would indicate that we've
+completed it as well.
+
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_device.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/block/nbd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
-index 84742125f7730..92b52d2314b53 100644
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -1151,27 +1151,6 @@ passthrough_parse_cdb(struct se_cmd *cmd,
- 	struct se_device *dev = cmd->se_dev;
- 	unsigned int size;
- 
--	/*
--	 * Clear a lun set in the cdb if the initiator talking to use spoke
--	 * and old standards version, as we can't assume the underlying device
--	 * won't choke up on it.
--	 */
--	switch (cdb[0]) {
--	case READ_10: /* SBC - RDProtect */
--	case READ_12: /* SBC - RDProtect */
--	case READ_16: /* SBC - RDProtect */
--	case SEND_DIAGNOSTIC: /* SPC - SELF-TEST Code */
--	case VERIFY: /* SBC - VRProtect */
--	case VERIFY_16: /* SBC - VRProtect */
--	case WRITE_VERIFY: /* SBC - VRProtect */
--	case WRITE_VERIFY_12: /* SBC - VRProtect */
--	case MAINTENANCE_IN: /* SPC - Parameter Data Format for SA RTPG */
--		break;
--	default:
--		cdb[1] &= 0x1f; /* clear logical unit number */
--		break;
--	}
--
- 	/*
- 	 * For REPORT LUNS we always need to emulate the response, for everything
- 	 * else, pass it up.
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index a234600849558..f322bb3286910 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -648,6 +648,12 @@ static struct nbd_cmd *nbd_read_stat(struct nbd_device *nbd, int index)
+ 		ret = -ENOENT;
+ 		goto out;
+ 	}
++	if (cmd->status != BLK_STS_OK) {
++		dev_err(disk_to_dev(nbd->disk), "Command already handled %p\n",
++			req);
++		ret = -ENOENT;
++		goto out;
++	}
+ 	if (test_bit(NBD_CMD_REQUEUED, &cmd->flags)) {
+ 		dev_err(disk_to_dev(nbd->disk), "Raced with timeout on req %p\n",
+ 			req);
 -- 
 2.20.1
 
