@@ -2,81 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4781EA128
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FAE5EA163
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729331AbfJ3P6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:58:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729231AbfJ3P6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:58:09 -0400
-Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BB9B217F9;
-        Wed, 30 Oct 2019 15:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572451088;
-        bh=TTTgOS79xzCkyvAQmvyDhZ4Enfn54YURfcmMu7/oJZI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=10J1dop9wji32cn8KL4bT6n5uvQDC/uToLCVss+KUKXwCoaC4L9jZFnV21Vecukr3
-         oV1kWlhu2vcRM8R9whoRrtt+MMXs1pJaH7OopGqa+fCfVkXwr5MIuTsb4r8uUdRtZD
-         +Hk+MProBwadjZukZ0jiFwuNv/VlEWJ+F+Z1HysA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 07/13] scsi: fix kconfig dependency warning related to 53C700_LE_ON_BE
-Date:   Wed, 30 Oct 2019 11:57:45 -0400
-Message-Id: <20191030155751.10960-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191030155751.10960-1-sashal@kernel.org>
-References: <20191030155751.10960-1-sashal@kernel.org>
+        id S1728304AbfJ3QCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:02:18 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40749 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfJ3QCQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 12:02:16 -0400
+Received: by mail-ot1-f65.google.com with SMTP id d8so2567696otc.7;
+        Wed, 30 Oct 2019 09:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Io+g/Mop1YTO7IEeBRV6yOSmnttfivb/SWZtZYVfkLU=;
+        b=rrZwX3M614HUB1QzRH0h8zC9UfyKHcbaXzNo9WeFt6hAxhK/EIOLuHA5VowG5k/7M1
+         9TNp2/F06fJplrOREF7SilqiobyoD5l+j1L7Frx/WnD2ET0Fes8HEI1KB2MKAYWT5P43
+         wlEEJCfHRxmUsrhCl9T5toj1xlRnmq3vDKBKmVhL8s1M3RfoIaF4fnTpCV3HDyC862Mg
+         f9/D7R/lVUIMRaPLp5Jb7gXAySTVkTrvAfVE08styByL1LJhCjqB0bSMakInQhXt68VU
+         s4Gi4AtYJFDjNiYDKzLi3hhioJ3NhjDIpB2ACEjNCghsPHaOz49ml6/tE3T5QXGeoefJ
+         GkFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Io+g/Mop1YTO7IEeBRV6yOSmnttfivb/SWZtZYVfkLU=;
+        b=C4g7cROdYodD2AHkjvx22thIOVaRvax6tAweFHRhP8LNmc5h35dn0XKVJugisus+h6
+         l6ZvKYYnz5NVZ7ItAWb8oRaRcVPrsdOTv54apnu+4c/abAraTdwFEH79SWyHBy4cLQhd
+         SXDOmUytz63s8QOl+fwbxsmdn9Kzs1UAELlCkLDZZK9NkuQLvxxY6/smNUnBS1mHDkkw
+         +PvHedzrW+VVjb7Nv4bRDAQOgo5jMIaBHKjF1DgR12YLSDq1DeOcoj1zxJF+uUi0BizQ
+         6JxWt3mUBhiKpsdWb1o77EFOcujgiFwAg/P7coM+lW3VARW5OXXdt1AmI2Thf/BIiXNf
+         C/aA==
+X-Gm-Message-State: APjAAAXRRyYSmZTOPhA2Ba31HGKHzoCmpyRmE9beKAqgxGRH/nJWLUKa
+        H5Sck4prNc3Opb97rZgj3fY=
+X-Google-Smtp-Source: APXvYqxqGe7NQskyZekS8CGgFbCef9gYqCVGPeORga0Wgh98IHDBt0IuR+og2dT9OOYAkVfpClfCzw==
+X-Received: by 2002:a9d:509:: with SMTP id 9mr536124otw.70.1572451334923;
+        Wed, 30 Oct 2019 09:02:14 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id j129sm108696oib.22.2019.10.30.09.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 09:02:14 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH net-next] mlxsw: Fix 64-bit division in mlxsw_sp_sb_prs_init
+Date:   Wed, 30 Oct 2019 09:01:52 -0700
+Message-Id: <20191030160152.11305-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+When building for 32-bit ARM, there is a link time error because of a
+64-bit division:
 
-[ Upstream commit 8cbf0c173aa096dda526d1ccd66fc751c31da346 ]
+ld.lld: error: undefined symbol: __aeabi_uldivmod
+>>> referenced by spectrum_buffers.c
+>>>               net/ethernet/mellanox/mlxsw/spectrum_buffers.o:(mlxsw_sp_buffers_init) in archive drivers/built-in.a
+>>> did you mean: __aeabi_uidivmod
+>>> defined in: arch/arm/lib/lib.a(lib1funcs.o
 
-When building a kernel with SCSI_SNI_53C710 enabled, Kconfig warns:
+Avoid this by using div_u64, which is designed to avoid this problem.
 
-WARNING: unmet direct dependencies detected for 53C700_LE_ON_BE
-  Depends on [n]: SCSI_LOWLEVEL [=y] && SCSI [=y] && SCSI_LASI700 [=n]
-  Selected by [y]:
-  - SCSI_SNI_53C710 [=y] && SCSI_LOWLEVEL [=y] && SNI_RM [=y] && SCSI [=y]
-
-Add the missing depends SCSI_SNI_53C710 to 53C700_LE_ON_BE to fix it.
-
-Link: https://lore.kernel.org/r/20191009151128.32411-1-tbogendoerfer@suse.de
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: bc9f6e94bcb5 ("mlxsw: spectrum_buffers: Calculate the size of the main pool")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/scsi/Kconfig | 2 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 433c5e3d57338..070359a7eea1d 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -1013,7 +1013,7 @@ config SCSI_SNI_53C710
- 
- config 53C700_LE_ON_BE
- 	bool
--	depends on SCSI_LASI700
-+	depends on SCSI_LASI700 || SCSI_SNI_53C710
- 	default y
- 
- config SCSI_STEX
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
+index 33a978af80d6..968f0902e4fe 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
+@@ -470,7 +470,7 @@ static int mlxsw_sp_sb_prs_init(struct mlxsw_sp *mlxsw_sp,
+ 				size_t prs_len)
+ {
+ 	/* Round down, unlike mlxsw_sp_bytes_cells(). */
+-	u32 sb_cells = mlxsw_sp->sb->sb_size / mlxsw_sp->sb->cell_size;
++	u32 sb_cells = div_u64(mlxsw_sp->sb->sb_size, mlxsw_sp->sb->cell_size);
+ 	u32 rest_cells[2] = {sb_cells, sb_cells};
+ 	int i;
+ 	int err;
 -- 
-2.20.1
+2.24.0.rc1
 
