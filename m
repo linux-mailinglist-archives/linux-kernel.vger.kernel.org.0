@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DD6EA015
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23918EA017
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbfJ3Px3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54678 "EHLO mail.kernel.org"
+        id S1728195AbfJ3Pxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:53:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbfJ3PxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:53:25 -0400
+        id S1728186AbfJ3Px3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:53:29 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A24D21D7C;
-        Wed, 30 Oct 2019 15:53:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C10D020856;
+        Wed, 30 Oct 2019 15:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450804;
-        bh=MlSn6EG/sX4eezoHVRHjn2g4KK7MWQrmhKBVyLDiuts=;
+        s=default; t=1572450809;
+        bh=gv1fTVcMYT3t+RNSRTZEKgmTRhHvkmvmvq7qtcg5k6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hYrnHZLnucQaqDg8+lfcRBGdOQ0yYmtU8ghEReKUFRc30zBPza3+zCucelY1mJDs/
-         Mg8Q5nLyIEydzU1uy/2hMZmfK4E6R2IdmA0IeOx+C+z+dP0C0GWHuMSKJkJ5l2uuKT
-         B3VXAP20xWdCRthAzKK2diRztIYQWJ3ieCRP5cD8=
+        b=pmI6csuYo5Pb641U/UFbSqBnr7EZ+Kbg+5lIeFcNLKi1mD/L9mbhTm0/vj+d1S/sc
+         lz6Jjo/KBlQxTgIhky/s5ChUhEGpXBgb/4iL3BIdrGmvzfPSXmgxDaWAjlDivh24yb
+         Y3glUtBUumHlIC8CB7vaYwhlHHdSMOE5NpCUbuSI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 54/81] ARM: davinci: dm365: Fix McBSP dma_slave_map entry
-Date:   Wed, 30 Oct 2019 11:49:00 -0400
-Message-Id: <20191030154928.9432-54-sashal@kernel.org>
+Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.3 55/81] drm/amdgpu: fix potential VM faults
+Date:   Wed, 30 Oct 2019 11:49:01 -0400
+Message-Id: <20191030154928.9432-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030154928.9432-1-sashal@kernel.org>
 References: <20191030154928.9432-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -42,35 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Christian König <christian.koenig@amd.com>
 
-[ Upstream commit 564b6bb9d42d31fc80c006658cf38940a9b99616 ]
+[ Upstream commit 3122051edc7c27cc08534be730f4c7c180919b8a ]
 
-dm365 have only single McBSP, so the device name is without .0
+When we allocate new page tables under memory
+pressure we should not evict old ones.
 
-Fixes: 0c750e1fe481d ("ARM: davinci: dm365: Add dma_slave_map to edma")
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-davinci/dm365.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 2f9ae6431bf54..cebab6af31a2d 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -462,8 +462,8 @@ static s8 dm365_queue_priority_mapping[][2] = {
- };
- 
- static const struct dma_slave_map dm365_edma_map[] = {
--	{ "davinci-mcbsp.0", "tx", EDMA_FILTER_PARAM(0, 2) },
--	{ "davinci-mcbsp.0", "rx", EDMA_FILTER_PARAM(0, 3) },
-+	{ "davinci-mcbsp", "tx", EDMA_FILTER_PARAM(0, 2) },
-+	{ "davinci-mcbsp", "rx", EDMA_FILTER_PARAM(0, 3) },
- 	{ "davinci_voicecodec", "tx", EDMA_FILTER_PARAM(0, 2) },
- 	{ "davinci_voicecodec", "rx", EDMA_FILTER_PARAM(0, 3) },
- 	{ "spi_davinci.2", "tx", EDMA_FILTER_PARAM(0, 10) },
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index bea6f298dfdc5..0ff786dec8c4a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -421,7 +421,8 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 		.interruptible = (bp->type != ttm_bo_type_kernel),
+ 		.no_wait_gpu = false,
+ 		.resv = bp->resv,
+-		.flags = TTM_OPT_FLAG_ALLOW_RES_EVICT
++		.flags = bp->type != ttm_bo_type_kernel ?
++			TTM_OPT_FLAG_ALLOW_RES_EVICT : 0
+ 	};
+ 	struct amdgpu_bo *bo;
+ 	unsigned long page_align, size = bp->size;
 -- 
 2.20.1
 
