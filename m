@@ -2,59 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4718DE9D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 495F9E9D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:17:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfJ3OOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:14:32 -0400
-Received: from out28-1.mail.aliyun.com ([115.124.28.1]:40440 "EHLO
-        out28-1.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbfJ3OOc (ORCPT
+        id S1726527AbfJ3ORn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:17:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42550 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfJ3ORn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:14:32 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.126954|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.447419-0.0048505-0.54773;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=liu.xiang@zlingsmart.com;NM=1;PH=DS;RN=2;RT=2;SR=0;TI=SMTPD_---.FsafdIU_1572444865;
-Received: from localhost(mailfrom:liu.xiang@zlingsmart.com fp:SMTPD_---.FsafdIU_1572444865)
-          by smtp.aliyun-inc.com(10.194.99.21);
-          Wed, 30 Oct 2019 22:14:25 +0800
-From:   Liu Xiang <liuxiang_1999@126.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     liuxiang_1999@126.com
-Subject: [PATCH] lib: string: reduce unnecessary loop in strncpy
-Date:   Wed, 30 Oct 2019 22:14:19 +0800
-Message-Id: <1572444859-3687-1-git-send-email-liuxiang_1999@126.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 30 Oct 2019 10:17:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5mkGcP2WEwjWYjEFxVfk1OeHzCHQXe8iz/K+tKvtbEE=; b=Wlr5WeIMFCk8/pi7ka8smGkye
+        mE4m6j9f6OBbLCh8aBdQD32ul7wZF8oGzSa2ehLosTFnwBmqp9Ik3ELdSF9VdXDMnBeFh22poJebF
+        QTyeTEZIdT0p4b2L47NrdRyRPOdsqy9KiuokalQv/X9t1Rke161XIcB+u1SnP20GVFS90=;
+Received: from [195.11.164.221] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iPon2-0005Ek-Vv; Wed, 30 Oct 2019 14:17:37 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 9C399D020A6; Wed, 30 Oct 2019 14:17:36 +0000 (GMT)
+Date:   Wed, 30 Oct 2019 14:17:36 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
+Message-ID: <20191030141736.GN4568@sirena.org.uk>
+References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
+ <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
+ <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dp9QYJgVRVEW2bsm"
+Content-Disposition: inline
+In-Reply-To: <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
+X-Cookie: Keep out of the sunlight.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now in strncpy, even src[0] is 0, loop will execute count times until
-count is 0. It is better to exit the loop immediately when *src is 0.
 
-Signed-off-by: Liu Xiang <liuxiang_1999@126.com>
----
- lib/string.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+--dp9QYJgVRVEW2bsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/lib/string.c b/lib/string.c
-index 08ec58c..1065352 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -115,12 +115,8 @@ char *strncpy(char *dest, const char *src, size_t count)
- {
- 	char *tmp = dest;
- 
--	while (count) {
--		if ((*tmp = *src) != 0)
--			src++;
--		tmp++;
--		count--;
--	}
-+	while (count-- && (*tmp++ = *src++) != '\0')
-+		; /* nothing */
- 	return dest;
- }
- EXPORT_SYMBOL(strncpy);
--- 
-1.9.1
+On Wed, Oct 30, 2019 at 03:32:09PM +0200, Peter Ujfalusi wrote:
+> On 30/10/2019 15.12, Rob Herring wrote:
 
+> > Why can't we just add a shared flag like we have for interrupts?
+> > Effectively, we have that for resets too, it's just hardcoded in the
+> > the drivers.
+
+> This would be kind of the same thing what the
+> GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
+> fixed-regulators afaik.
+
+The theory with that was that any usage of this would need the
+higher level code using the GPIO to cooperate so they didn't step
+on each other's toes so the GPIO code should just punt to it.
+
+> But let's say that a board design will pick two components (C1 and C2)
+> and use the same GPIO line to enable them. We already have the drivers
+> for them and they are used in boards already.
+
+This is basically an attempt to make a generic implementation of
+that cooperation for simple cases.
+
+--dp9QYJgVRVEW2bsm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl25m38ACgkQJNaLcl1U
+h9DOmwf+JLW+Mnv1zxmPd4I5WIvRwdka4+X5vKvVEQGfkcbkvBPGj0jBL3B4GEKz
+vjCpNmVnfgc6KlvwsGqEsyKo5Hxo5ZmXJlbVpKw0zFjCGuj4hVQsMrvu7zz8dCRn
+LZOP/iKwPUHrpQ5F5vBURBc6gjj97WqAg3w0RdqCe0gJehqYrV9ulo28wB5pv8Cz
+2IHQ21/bOkpu3caVGJO0+LevtN+s2qVY4gYo0tRTQI9XbDGcarivPJr0AVvle9qi
+5QX0Jdfj84F5cu0f8I29G9Zk0i887OqJ0iKA5k2mUojkho+57hZY87TJ0KZZTh9o
+SIS+L6vhF2qKKYb54Unpp4jMS83pvw==
+=BRXS
+-----END PGP SIGNATURE-----
+
+--dp9QYJgVRVEW2bsm--
