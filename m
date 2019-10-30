@@ -2,124 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45505EA154
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 901C1EA0F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:09:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfJ3QBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 12:01:10 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39719 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbfJ3Pyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:47 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t8so3876087qtc.6;
-        Wed, 30 Oct 2019 08:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XRfFDBLo3b+7Jix/rVYd4DPxmBTVVlhffQMhrh75uRM=;
-        b=NYTB+7xlC2vEB9n73s3dHhQYIdib40WEvSkkOn90vdB848MLyePNydOhv9Fa7WErAF
-         r+I5O2KbTdHrfRQCE+SFpZPHAmL0tCv9qWvZAdwTzK+uW4a93SUJDh+DIMkglnyrb/p9
-         spz4FsaO/CQB+pXaeJpeNyEE/4n6Mv/LESjZkWbTrJTEk+zDkwh4RoHPG3Q3hz6iQ+7N
-         Gm1ydygLZwebvyBlp/qpeQtlMekRpBGOM06/i3gzrrUH0jLs28wNmPlOGQ+Qm1DYlpl+
-         ehORJ1ei4Mi1hhfr9uUgAfdAyRPpkQcXkuiiGv0F3Wsd5j7jrZgU/poy/jUTvEmdK8X1
-         xtrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XRfFDBLo3b+7Jix/rVYd4DPxmBTVVlhffQMhrh75uRM=;
-        b=mV+c4RANCPS56YqxzLwSsDeHAE4tOjSmgDE3N6BBesIZUzUdS1pb5ElZEVehXGccny
-         v7aJcpAyqd+uotL9EouniMQb+HHuzaW8qfq3PnkNGcEAXzQ+IrVkOouo1mNjeixmqPYO
-         H5oXmdSW8mEQcVT7QxM+OMbun+ABQOe7c3fCjLu6aLrzFHGc2zXTYGDTTk8CDpDbLXUW
-         35sr8oUgvxkc8WDb9x4bjIGTa4D7zyO+BhXPYCrRWP8SR83QaJMNAfPdkn82UCeZAaze
-         LQ/Q8pObVdiSkL+n7k/GPxdnQHvnABb1TWozt29bUI/iQIbklK+XbWs3EZiBP4hImGtP
-         iQIw==
-X-Gm-Message-State: APjAAAUcefb0tTspr2M5dsUx/8YY27dxLc8Wfq0DpPgzFYVf9HdV0TbA
-        pJS5cl/m+2x/7oN+QJC1VLDIqC/VKpOZgLygC2U=
-X-Google-Smtp-Source: APXvYqxAeT3rxjjBtdZs6bR+Eo4Iz2uo6t7xVkDCXigNHcCdKx2PEhYZ4SyiaQ0yjIsEB6MTLNizb1jFOC/g0OV+YwY=
-X-Received: by 2002:aed:3f57:: with SMTP id q23mr829268qtf.116.1572450886323;
- Wed, 30 Oct 2019 08:54:46 -0700 (PDT)
+        id S1728749AbfJ3P4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:56:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727535AbfJ3P4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:56:06 -0400
+Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C985520656;
+        Wed, 30 Oct 2019 15:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572450966;
+        bh=b//UH+s3fYDvEAbXVURjX5gByWgHF0L4NdI99WLliO0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NLaMF7Cw21JcLNyJ3rAhjmxaojFxFWF8911ThNdi6ptW7UsSJl+sUSVN83QAlFvQO
+         BXJYNCiDJw1CjqiSUq4oAT164tTiicr/p5YiCCY6RZeup8oG0RsZDaYG2tyZlkW1Nt
+         l5nYNOKW2on+eMcUH2xQmXBQ8xQxPZS8WQXKC3kU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stuart Henderson <stuarth@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.14 04/24] ASoC: wm_adsp: Don't generate kcontrols without READ flags
+Date:   Wed, 30 Oct 2019 11:55:35 -0400
+Message-Id: <20191030155555.10494-4-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191030155555.10494-1-sashal@kernel.org>
+References: <20191030155555.10494-1-sashal@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:ad4:54a5:0:0:0:0:0 with HTTP; Wed, 30 Oct 2019 08:54:45
- -0700 (PDT)
-In-Reply-To: <20191030132420.GG4326@localhost.localdomain>
-References: <1572451637-14085-1-git-send-email-wallyzhao@gmail.com> <20191030132420.GG4326@localhost.localdomain>
-From:   Wei Zhao <wallyzhao@gmail.com>
-Date:   Wed, 30 Oct 2019 23:54:45 +0800
-Message-ID: <CAFRmqq42HqX5KctcNjwyZJ4jdknLSZ1EyBqHnJQQJx211mWopw@mail.gmail.com>
-Subject: Re: [PATCH] sctp: set ooo_okay properly for Transmit Packet Steering
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wally.zhao@nokia-sbell.com
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/19, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com> wrote:
-> On Wed, Oct 30, 2019 at 12:07:17PM -0400, Wally Zhao wrote:
->> Unlike tcp_transmit_skb,
->> sctp_packet_transmit does not set ooo_okay explicitly,
->> causing unwanted Tx queue switching when multiqueue is in use;
->
-> It is initialized to 0 by __alloc_skb() via:
->         memset(skb, 0, offsetof(struct sk_buff, tail));
-> and never set to 1 by anyone for SCTP.
->
-> The patch description seems off. I don't see how the unwanted Tx queue
-> switching can happen. IOW, it's not fixing it OOO packets, but
-> improving it by allowing switching on the first packet. Am I missing
-> something?
+From: Stuart Henderson <stuarth@opensource.cirrus.com>
 
-Thanks for pointing this out. You are right. This ooo_okay is default to false.
+[ Upstream commit 3ae7359c0e39f42a96284d6798fc669acff38140 ]
 
-I was observing some Tx queue switching before when testing with
-iperf3 (modified to be able to set window size, for higher throughput
-with long RTT), so I thought ooo_okay was set to true somewhere else
-after allocation. Just now I did the test again, it turns out that
-iperf3 made a re-connect silently which caused the Tx queue change.
+User space always expects to be able to read ALSA controls, so ensure
+no kcontrols are generated without an appropriate READ flag. In the case
+of a read of such a control zeros will be returned.
 
-As for the improving purpose of this patch, that is not that critical
-from my side, and the patch description is not correct for this
-purpose. So I will give up this patch attempt. Thank you again for
-your time on this.
+Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20191002084240.21589-1-ckeepax@opensource.cirrus.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/codecs/wm_adsp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
->
->> Tx queue switching may cause out-of-order packets.
->> Change sctp_packet_transmit to allow Tx queue switching only for
->> the first in flight packet, to avoid unwanted Tx queue switching.
->>
->> Signed-off-by: Wally Zhao <wallyzhao@gmail.com>
->> ---
->>  net/sctp/output.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/net/sctp/output.c b/net/sctp/output.c
->> index dbda7e7..5ff75cc 100644
->> --- a/net/sctp/output.c
->> +++ b/net/sctp/output.c
->> @@ -626,6 +626,10 @@ int sctp_packet_transmit(struct sctp_packet *packet,
->> gfp_t gfp)
->>  	/* neighbour should be confirmed on successful transmission or
->>  	 * positive error
->>  	 */
->> +
->> +	/* allow switch tx queue only for the first in flight pkt */
->> +	head->ooo_okay = asoc->outqueue.outstanding_bytes == 0;
->
-> Considering we are talking about NIC queues here, we would have a
-> better result with tp->flight_size instead. As in, we can switch
-> queues if, for this transport, the queue is empty.
->
->> +
->>  	if (tp->af_specific->sctp_xmit(head, tp) >= 0 &&
->>  	    tp->dst_pending_confirm)
->>  		tp->dst_pending_confirm = 0;
->> --
->> 1.8.3.1
->>
->
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index d632a0511d62a..158ce68bc9bf3 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -1169,8 +1169,7 @@ static unsigned int wmfw_convert_flags(unsigned int in, unsigned int len)
+ 	}
+ 
+ 	if (in) {
+-		if (in & WMFW_CTL_FLAG_READABLE)
+-			out |= rd;
++		out |= rd;
+ 		if (in & WMFW_CTL_FLAG_WRITEABLE)
+ 			out |= wr;
+ 		if (in & WMFW_CTL_FLAG_VOLATILE)
+-- 
+2.20.1
+
