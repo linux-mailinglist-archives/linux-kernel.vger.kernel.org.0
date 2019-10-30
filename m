@@ -2,156 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61BA5E9D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6DE0E9D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfJ3OVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:21:20 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33818 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfJ3OVU (ORCPT
+        id S1726509AbfJ3OXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:23:40 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37793 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfJ3OXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:21:20 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k7so1070992pll.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 07:21:18 -0700 (PDT)
+        Wed, 30 Oct 2019 10:23:40 -0400
+Received: by mail-qk1-f193.google.com with SMTP id u184so2908419qkd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 07:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=lLBDwfjg5YnQXNE+xQ4JmNR71OHaPXxKWZ+MT4DW3/A=;
-        b=qwVsaT6Cw4Ycn/P/j7rzKjSzfApSkeaGvKWAkHM/AoJ0x7w8gndNK3s7Etg8RRAxdM
-         dJrZ61KmDDSt6pgTwvga1te1T0yseF+wo8rR0CZAnXvXPZmyS0ogKROK46Oehne5rc//
-         DMWh8+9qmkJfrb4qW2K18Bcyf+/n6OHl40DOk=
+        d=linaro.org; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=Iieil+MuDaNJ5lIJEOFs9h7jIoiG48MeHaP0+PASXlo=;
+        b=bf2xTGjUYAa3MySkebfnobaQ/S7IFbvS3B8bSmpGJw21kTSBXvaEKLTGw+yavb0Dgz
+         Dw/dnD8CYZHxAuOvQrPSFUCZ/ggeRfDkgx444Sojdaa90kTduIlrOB9d69bpjAFWkAgO
+         iFKxRGN/WlM09anCsNQxhTKqBBTNObXzGqksZXZh1y5Xyh6UO+8EEv//zy84HhvzsJuH
+         iFKxK5PG0h0u0HO4h2JNTDGyeCbdkQ8QXHSdoDGDWM/zmThHe8lsMzrqI0qeHYlwKq7s
+         FFlVfJs/amMOXNIROl2Hq0GlFPvtATS00Dv6LBb+lrMpb0tttEUpSE03ufeyFMA9BRDT
+         7r1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=lLBDwfjg5YnQXNE+xQ4JmNR71OHaPXxKWZ+MT4DW3/A=;
-        b=uoU5VgBDPG4tqjScrhB3KJbOqzXJwezzMb534Ghtt8AFeKpMW3EEWtr/dokfxzl6vo
-         i/0KkaB6pOCTzge56324L9pOR68gNBCcXOgmjo/GGHl/VQj1t+uUGJ2dQle+OHNUSjlZ
-         57QDqVaJAm5ssapxkrTDYWVzL9me20Sk9jM7X1WKJ6HUeSPeCr/w3m35igvuTZs+u0lr
-         QfLKT6up9exP4JbhmViy3aAP/8SzERCbQ9U4XqGuO000TsleRhQDIsgQkSq1rseYoQ2k
-         Mxxv+7jAowM8g2f9hU7l1lR0pi+Cumds8z2LZCVqoyqaNOJZ2l6NyUYzOSMYE4YkVfvW
-         nldA==
-X-Gm-Message-State: APjAAAVfOJdBsQ+Uko+1XKIpF6ekTL56gdD40mTrsoeSzmVU68hTtouc
-        ayjzHmEhbPe0q9AcFsI2EUF/frwKn10=
-X-Google-Smtp-Source: APXvYqwMC7s8c7Hz5nvb/Nz/tGRMlobeX2sZ75mjj1c4WbVrvDU+HedG/Uqdzo2fEk41IYyK90rWig==
-X-Received: by 2002:a17:902:44d:: with SMTP id 71mr241216ple.274.1572445277919;
-        Wed, 30 Oct 2019 07:21:17 -0700 (PDT)
-Received: from localhost (2001-44b8-1113-6700-783a-2bb9-f7cb-7c3c.static.ipv6.internode.on.net. [2001:44b8:1113:6700:783a:2bb9:f7cb:7c3c])
-        by smtp.gmail.com with ESMTPSA id q6sm75232pgn.44.2019.10.30.07.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 07:21:17 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        glider@google.com, luto@kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, dvyukov@google.com, christophe.leroy@c-s.fr
-Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 4/5] x86/kasan: support KASAN_VMALLOC
-In-Reply-To: <ff1c2089-9404-21f6-dac6-661917e47181@virtuozzo.com>
-References: <20191029042059.28541-1-dja@axtens.net> <20191029042059.28541-5-dja@axtens.net> <a144eaca-d7e1-1a18-5975-bd0bfdb9450e@virtuozzo.com> <87sgnamjg2.fsf@dja-thinkpad.axtens.net> <ff1c2089-9404-21f6-dac6-661917e47181@virtuozzo.com>
-Date:   Thu, 31 Oct 2019 01:21:13 +1100
-Message-ID: <87mudimi06.fsf@dja-thinkpad.axtens.net>
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=Iieil+MuDaNJ5lIJEOFs9h7jIoiG48MeHaP0+PASXlo=;
+        b=RlwAYgfKZVIrlkQX30w6eTbbhy+3/SAuZBaN4bOvS8+iDvX7TKhrz2lqNUvEoVWRAf
+         5TlRcztdQcvzuayk7S7Dnjr5frCoNp3Zeq8BYvCb8Gheu2vxv86Hf4St4FI7lf53HHkg
+         3PVcpknyv4cYon6HMRJ3fZRyf0W5ucUvncmahkU3cMXvSoPpOPGsTaX8RxL77/rtPWN6
+         AxbqRHC6iDYf+6toPCLBkY1tDbqwWRB3Agw4BVr2fhskPAxKkZuYSzUZYlFFlG0JIeIX
+         tSJlSD/N/ofvHZADb1Vf2XChYKatkTTbv5c1YBCFrFhxOKAxfvfLTB470/sYAdTncPNu
+         F2kA==
+X-Gm-Message-State: APjAAAUC+qjrZT4g47NnR5bbQbYc6mLC2o+SfsUqUeyvY4yeg4y0Mo3g
+        A4rLoXRhGe2ttm9B4PGvTczMbVFwMzY=
+X-Google-Smtp-Source: APXvYqzmbqgk6/kz7QU3nlWaRgKvHPWEG3ZIdKB73xjHpjGorCH8t3zSH+3B/Dh6UH8mTXW9UuCW5g==
+X-Received: by 2002:ae9:e713:: with SMTP id m19mr127213qka.338.1572445418273;
+        Wed, 30 Oct 2019 07:23:38 -0700 (PDT)
+Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.gmail.com with ESMTPSA id q4sm219231qtj.41.2019.10.30.07.23.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 07:23:37 -0700 (PDT)
+Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: Add mx power domain as thermal
+ warming device.
+To:     Rob Herring <robh@kernel.org>
+References: <1571254641-13626-1-git-send-email-thara.gopinath@linaro.org>
+ <1571254641-13626-8-git-send-email-thara.gopinath@linaro.org>
+ <20191029013111.GA27045@bogus>
+Cc:     edubezval@gmail.com, rui.zhang@intel.com, ulf.hansson@linaro.org,
+        daniel.lezcano@linaro.org, bjorn.andersson@linaro.org,
+        agross@kernel.org, amit.kucheria@verdurent.com,
+        mark.rutland@arm.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <5DB99CE8.1050506@linaro.org>
+Date:   Wed, 30 Oct 2019 10:23:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191029013111.GA27045@bogus>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrey Ryabinin <aryabinin@virtuozzo.com> writes:
+On 10/28/2019 09:31 PM, Rob Herring wrote:
+> On Wed, Oct 16, 2019 at 03:37:21PM -0400, Thara Gopinath wrote:
+>> RPMh hosts mx power domain that can be used to warm up the SoC.
+>> Add sub-node to rpmhpd node for mx to be recognized
+>> as thermal warming device on sdm845.
+>>
+>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index 0222f48..0671c8a 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -3788,6 +3788,11 @@
+>>  						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
+>>  					};
+>>  				};
+>> +
+>> +				mx_cdev: mx {
+>> +					#cooling-cells = <2>;
+>> +					.name = "mx";
+> 
+> Copy this from C code?
+Hi Rob,
 
-> On 10/30/19 4:50 PM, Daniel Axtens wrote:
->> Andrey Ryabinin <aryabinin@virtuozzo.com> writes:
->> 
->>> On 10/29/19 7:20 AM, Daniel Axtens wrote:
->>>> In the case where KASAN directly allocates memory to back vmalloc
->>>> space, don't map the early shadow page over it.
->>>>
->>>> We prepopulate pgds/p4ds for the range that would otherwise be empty.
->>>> This is required to get it synced to hardware on boot, allowing the
->>>> lower levels of the page tables to be filled dynamically.
->>>>
->>>> Acked-by: Dmitry Vyukov <dvyukov@google.com>
->>>> Signed-off-by: Daniel Axtens <dja@axtens.net>
->>>>
->>>> ---
->>>
->>>> +static void __init kasan_shallow_populate_pgds(void *start, void *end)
->>>> +{
->>>> +	unsigned long addr, next;
->>>> +	pgd_t *pgd;
->>>> +	void *p;
->>>> +	int nid = early_pfn_to_nid((unsigned long)start);
->>>
->>> This doesn't make sense. start is not even a pfn. With linear mapping 
->>> we try to identify nid to have the shadow on the same node as memory. But 
->>> in this case we don't have memory or the corresponding shadow (yet),
->>> we only install pgd/p4d.
->>> I guess we could just use NUMA_NO_NODE.
->> 
->> Ah wow, that's quite the clanger on my part.
->> 
->> There are a couple of other invocations of early_pfn_to_nid in that file
->> that use an address directly, but at least they reference actual memory.
->> I'll send a separate patch to fix those up.
->
-> I see only one incorrect, in kasan_init(): early_pfn_to_nid(__pa(_stext))
-> It should be wrapped with PFN_DOWN().
-> Other usages in map_range() seems to be correct, range->start,end is pfns.
->
+What do you mean ?
 
-Oh, right, I didn't realise map_range was already using pfns.
-
->
->> 
->>> The rest looks ok, so with that fixed:
->>>
->>> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
->> 
->> Thanks heaps! I've fixed up the nit you identifed in the first patch,
->> and I agree that the last patch probably isn't needed. I'll respin the
->> series shortly.
->> 
->
-> Hold on a sec, just spotted another thing to fix.
->
->> @@ -352,9 +397,24 @@ void __init kasan_init(void)
->>  	shadow_cpu_entry_end = (void *)round_up(
->>  			(unsigned long)shadow_cpu_entry_end, PAGE_SIZE);
+> 
+>> +				};
+>>  			};
 >>  
->> +	/*
->> +	 * If we're in full vmalloc mode, don't back vmalloc space with early
->> +	 * shadow pages. Instead, prepopulate pgds/p4ds so they are synced to
->> +	 * the global table and we can populate the lower levels on demand.
->> +	 */
->> +#ifdef CONFIG_KASAN_VMALLOC
->> +	kasan_shallow_populate_pgds(
->> +		kasan_mem_to_shadow((void *)PAGE_OFFSET + MAXMEM),
->
-> This should be VMALLOC_START, there is no point to allocate pgds for the hole between linear mapping
-> and vmalloc, just waste of memory. It make sense to map early shadow for that hole, because if code
-> dereferences address in that hole we will see the page fault on that address instead of fault on the shadow.
->
-> So something like this might work:
->
-> 	kasan_populate_early_shadow(
-> 		kasan_mem_to_shadow((void *)PAGE_OFFSET + MAXMEM),
-> 		kasan_mem_to_shadow((void *)VMALLOC_START));
->
-> 	if (IS_ENABLED(CONFIG_KASAN_VMALLOC)
-> 		kasan_shallow_populate_pgds(kasan_mem_to_shadow(VMALLOC_START), kasan_mem_to_shadow((void *)VMALLOC_END))
-> 	else
-> 		kasan_populate_early_shadow(kasan_mem_to_shadow(VMALLOC_START), kasan_mem_to_shadow((void *)VMALLOC_END));
->
-> 	kasan_populate_early_shadow(
-> 		kasan_mem_to_shadow((void *)VMALLOC_END + 1),
-> 		shadow_cpu_entry_begin);
+>>  			rsc_hlos: interconnect {
+>> -- 
+>> 2.1.4
+>>
 
-Sounds good. It's getting late for me so I'll change and test that and
-send a respin tomorrow my time.
 
-Regards,
-Daniel
+-- 
+Warm Regards
+Thara
