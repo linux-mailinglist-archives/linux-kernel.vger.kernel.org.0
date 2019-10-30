@@ -2,117 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89757E9C5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE732E9C65
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbfJ3Ndd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 30 Oct 2019 09:33:33 -0400
-Received: from mail-oln040092255070.outbound.protection.outlook.com ([40.92.255.70]:6277
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726209AbfJ3Ndc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:33:32 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jnPCKU0zBsDiZUtHU/L4zM/t5fQXeMUMPcYYvibIXX1brVEP9BwPkaufsyUX2S7gWNBWApwJkgSm3mYTDSA5X1gHtM3SHHp9gaBMvO6nApKiLDkMvnZOqY5g6yI9+10WWR8yKj/keO1zparSWOwQ4uAutH78udgcw/9pLZSE1Mrmys6u4I2IuBrP1vxhp3Wa4qREjXJOUqW6ajplhPUSSmx8aaameVNXXgGLznZc+ia6zQOPevzlIK0tzbqoFvBRWnq+Lck9ewzPeqOFIo5tuFHE9ULrJ9O00SDCWOQ/TFZN2BQe3h6Nc3ejygyV+n1OgZxX8tsmkAPB8vvBalRxKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u4Gh8YwSwiR8w/fQwxcW3u9Y6sgV3lGpEgGLJiEI6js=;
- b=dH5K0ELdav8p/80L4idp1pDe6V5PDNE+UQUw7yb/AXdIyNGOVTPNGazquGkd9uN4F3kpjZ1af7/wcE7LUajuuJMR9UI9zmzEQ7X26DI/HVuWehFwoDenPFPuLfHASI9eZLfXwxIloUObLN7kzmCKT3Da6WXnduVQuITnAU696UhiJi9rFSj5peBsqKB8chc1M8j98QEEXl+EbciQjSKUG00XB/T6FFyquQJDPQG1rVh2jFh2s6tXXvLDjBoaQoVpskDoOIGLbD5mCEbBPAg0EJg3XEZo4Iu1rMoEARcNxRRFqPHy6S5uyiRtIe2m9Ub9B9m7pUCTiaMD1qK+qzs3rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from PU1APC01FT007.eop-APC01.prod.protection.outlook.com
- (10.152.252.51) by PU1APC01HT225.eop-APC01.prod.protection.outlook.com
- (10.152.253.175) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2387.20; Wed, 30 Oct
- 2019 13:33:26 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM (10.152.252.54) by
- PU1APC01FT007.mail.protection.outlook.com (10.152.252.99) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2387.20 via Frontend Transport; Wed, 30 Oct 2019 13:33:26 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::ec26:6771:625e:71d]) by SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::ec26:6771:625e:71d%8]) with mapi id 15.20.2387.028; Wed, 30 Oct 2019
- 13:33:26 +0000
-From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "logang@deltatee.com" <logang@deltatee.com>
-Subject: Re: [PATCH v10 4/4] PCI: Allow extend_bridge_window() to shrink
- resource if necessary
-Thread-Topic: [PATCH v10 4/4] PCI: Allow extend_bridge_window() to shrink
- resource if necessary
-Thread-Index: AQHVjyA5XlOSuojfyUiAJcF9cam8n6dzLKaAgAACSIA=
-Date:   Wed, 30 Oct 2019 13:33:26 +0000
-Message-ID: <SL2P216MB0187F0B0630B8C5950342CA680600@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
-References: <SL2P216MB0187C1ACBE716693FD5622BD80600@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
- <20191030132509.GE2593@lahna.fi.intel.com>
-In-Reply-To: <20191030132509.GE2593@lahna.fi.intel.com>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SYXPR01CA0094.ausprd01.prod.outlook.com
- (2603:10c6:0:2e::27) To SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- (2603:1096:100:22::19)
-x-incomingtopheadermarker: OriginalChecksum:F52AFA575D31254C7445DBE8A2806C230F005C97C594D427CA13D94194C6DC86;UpperCasedChecksum:D5CB05B2A30EBCFC2308AC774244B49240E96965B7FDDEC36B294648D8515C05;SizeAsReceived:7735;Count:48
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [Ywuz2OsRPoimN5rxLvGHpIPGg4hXeV4zpDNwdDYIDjSaHPgotsuG0zA/LFoDyvmGK28Jb62sfOU=]
-x-microsoft-original-message-id: <20191030133319.GB27719@nicholas-dell-linux>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 48
-x-eopattributedmessage: 0
-x-ms-traffictypediagnostic: PU1APC01HT225:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: s/Sg7eGj1QEFv0d4lRIBj9IUZfwG0AyO1mz62Erk0Scib3tbBa7m5iOyh03U9F84QoJYwQvHEpPsnTyo11IOUKtaAIwPlS2Q0BqyFAYUbpiL/QhhBu4mHvcHkKJtK1w7kC4dNwHCvDd6yDkuikJnGoDFPiFQvenFG5WU9v5VE4FBcLU7vwbaXjS5ZWvbW7eU
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C72593C1E972854E9E712024F8C81492@KORP216.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8BIT
+        id S1726728AbfJ3NeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:34:15 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42422 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfJ3NeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:34:15 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9UDYDge120315;
+        Wed, 30 Oct 2019 08:34:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572442453;
+        bh=riPq1EjtRAH4k2brd9erciAO5pC1LvIMZqcdS/NknfM=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=gdmK7b/f9xsSEWH04DxtPVar7CK2ysklueV9IOK1ZpYDffekDLkk5BsSyq6tcSK+g
+         z7CnfVAcJeoIXjklxapgvhodvfgCdJ7isEFFqcW/d72iEngxGF+WiGDx8dmuo1FtGD
+         KADbjuHRe3H1uwrYpM/rNPkl3g/9tKEYPl+/FvBM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9UDYD9N117904
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Oct 2019 08:34:13 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
+ Oct 2019 08:34:00 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 30 Oct 2019 08:34:00 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id x9UDYCc1028496;
+        Wed, 30 Oct 2019 08:34:12 -0500
+Date:   Wed, 30 Oct 2019 08:34:12 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Hans Verkuil <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 03/19] media: ti-vpe: cal: Add per platform data support
+Message-ID: <20191030133412.un4w25qpn3usmcnw@ti.com>
+References: <20191018153437.20614-1-bparrot@ti.com>
+ <20191018153437.20614-4-bparrot@ti.com>
+ <20191029131855.GA27597@bogus>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53110f9c-889f-4462-1bfd-08d75d3dbe0d
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2019 13:33:26.3660
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT225
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191029131855.GA27597@bogus>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 03:25:09PM +0200, mika.westerberg@linux.intel.com wrote:
-> On Wed, Oct 30, 2019 at 12:47:44PM +0000, Nicholas Johnson wrote:
-> > Remove checks for resource size in extend_bridge_window(). This is
-> > necessary to allow the pci_bus_distribute_available_resources() to
-> > function when the kernel parameter pci=hpmemsize=nn[KMG] is used to
-> > allocate resources. Because the kernel parameter sets the size of all
-> > hotplug bridges to be the same, there are problems when nested hotplug
-> > bridges are encountered. Fitting a downstream hotplug bridge with size X
-> > and normal bridges with non-zero size Y into parent hotplug bridge with
-> > size X is impossible, and hence the downstream hotplug bridge needs to
-> > shrink to fit into its parent.
+Rob Herring <robh@kernel.org> wrote on Tue [2019-Oct-29 08:18:55 -0500]:
+> On Fri, Oct 18, 2019 at 10:34:21AM -0500, Benoit Parrot wrote:
+> > First this patch adds a method to access the CTRL_CORE_CAMERRX_CONTROL
+> > register to use the syscon mechanism. For backward compatibility we also
+> > handle using the existing camerrx_control "reg" entry if a syscon node
+> > is not found.
 > > 
-> > Add check for if bridge is extended or shrunken and adjust pci_dbg to
-> > reflect this.
+> > In addition the register bit layout for the CTRL_CORE_CAMERRX_CONTROL
+> > changes depending on the device. In order to support this we need to use
+> > a register access scheme based on data configuration instead of using
+> > static macro.
 > > 
-> > Reset the resource if its new size is zero (if we have run out of a
-> > bridge window resource) to prevent the PCI resource assignment code from
-> > attempting to assign a zero-sized resource.
+> > In this case we make use of the regmap facility and create data set
+> > based on the various device and phy available.
 > > 
-> > Rename extend_bridge_window() to adjust_bridge_window() to reflect the
-> > fact that the window can now shrink.
-> > 
-> > Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  drivers/media/platform/ti-vpe/cal.c | 281 +++++++++++++++++++++-------
+> >  1 file changed, 212 insertions(+), 69 deletions(-)
 > 
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Do I need to re-post with this line in it?
+> 
+> > @@ -1816,6 +1911,18 @@ static int cal_probe(struct platform_device *pdev)
+> >  	if (!dev)
+> >  		return -ENOMEM;
+> >  
+> > +	match = of_match_device(of_match_ptr(cal_of_match), &pdev->dev);
+> 
+> Use of_device_get_match_data() instead.
 
-Cheers!
+Ok I'll change that.
+
+> 
+> > +	if (!match)
+> > +		return -ENODEV;
+> > +
+> > +	if (match->data) {
+> > +		dev->data = (struct cal_data *)match->data;
+> > +		dev->flags = dev->data->flags;
+> > +	} else {
+> > +		dev_err(&pdev->dev, "Could not get feature data based on compatible version\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> >  	/* set pseudo v4l2 device name so we can use v4l2_printk */
+> >  	strscpy(dev->v4l2_dev.name, CAL_MODULE_NAME,
+> >  		sizeof(dev->v4l2_dev.name));
+> > @@ -1823,6 +1930,43 @@ static int cal_probe(struct platform_device *pdev)
+> >  	/* save pdev pointer */
+> >  	dev->pdev = pdev;
+> >  
+> > +	if (parent && of_property_read_bool(parent, "syscon-camerrx")) {
+> > +		syscon_camerrx =
+> > +			syscon_regmap_lookup_by_phandle(parent,
+> > +							"syscon-camerrx");
+> > +		if (IS_ERR(syscon_camerrx)) {
+> > +			dev_err(&pdev->dev, "failed to get syscon-camerrx regmap\n");
+> > +			return PTR_ERR(syscon_camerrx);
+> > +		}
+> > +
+> > +		if (of_property_read_u32_index(parent, "syscon-camerrx", 1,
+> > +					       &syscon_camerrx_offset)) {
+> 
+> Kind of odd to read the property twice and using functions that don't 
+> match the type. We have functions to retrieve phandle and args.
+
+Yeah, I wanted to make a distinction between the node being present and
+any other kind of errors, so we can have a little more precise error
+message.
+
+> 
+> > +			dev_err(&pdev->dev, "failed to get syscon-camerrx offset\n");
+> > +			return -EINVAL;
+> > +		}
+> > +	} else {
+> > +		/*
+> > +		 * Backward DTS compatibility.
+> > +		 * If syscon entry is not present then check if the
+> > +		 * camerrx_control resource is present.
+> > +		 */
+> > +		syscon_camerrx = cal_get_camerarx_regmap(dev);
+> > +		if (IS_ERR(syscon_camerrx)) {
+> > +			dev_err(&pdev->dev, "failed to get camerrx_control regmap\n");
+> > +			return PTR_ERR(syscon_camerrx);
+> > +		}
+> > +		/* In this case the base already point to the direct
+> > +		 * CM register so no need for an offset
+> > +		 */
+> > +		syscon_camerrx_offset = 0;
+> > +	}
+> > +
+> > +	dev->syscon_camerrx = syscon_camerrx;
+> > +	dev->syscon_camerrx_offset = syscon_camerrx_offset;
+> > +	ret = cal_camerarx_regmap_init(dev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	dev->res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> >  						"cal_top");
+> >  	dev->base = devm_ioremap_resource(&pdev->dev, dev->res);
+> 
