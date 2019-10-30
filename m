@@ -2,167 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0B6E9F5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75DA1E9F34
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:39:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfJ3Pmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:42:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:36782 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727458AbfJ3Pml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:42:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02F474F5;
-        Wed, 30 Oct 2019 08:42:41 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 371303F6C4;
-        Wed, 30 Oct 2019 08:42:39 -0700 (PDT)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Qais Yousef <qais.yousef@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Eiichi Tsukata <devel@etsukata.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 12/12] cpu: Hide cpu_up/down
-Date:   Wed, 30 Oct 2019 15:38:37 +0000
-Message-Id: <20191030153837.18107-13-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191030153837.18107-1-qais.yousef@arm.com>
-References: <20191030153837.18107-1-qais.yousef@arm.com>
+        id S1726626AbfJ3Pi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:38:58 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:36651 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726175AbfJ3Pi5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:38:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572449936;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GKUfBqzsWbWpLwq+4AXt80BF3zMIN95jw0nzaAUS1Zs=;
+        b=VAIFwHjD4RIaev3zP5Lmmn7I6SxpmvEwFJQmLqgG3Sk+wYeqVc9FyNjtd319D9M6j1pdyz
+        GwM1SQbwhQEC4q5Gn2elgqGT63Jx94kTSaL6A+krgRQlEmjsWfy0hPU2HiIfmO86cahBhi
+        n4LYQ3h8z0hrvnKEtsDip4mtfi8f3lE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-WZwI5j86PF64TD9j1RtGEg-1; Wed, 30 Oct 2019 11:38:52 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 43BD3107ACC0;
+        Wed, 30 Oct 2019 15:38:51 +0000 (UTC)
+Received: from [10.36.116.178] (ovpn-116-178.ams2.redhat.com [10.36.116.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C78419488;
+        Wed, 30 Oct 2019 15:38:50 +0000 (UTC)
+Subject: Re: [PATCH v3] mm: gup: fix comments of __get_user_pages() and
+ get_user_pages_remote()
+To:     Liu Xiang <liuxiang_1999@126.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, jhubbard@nvidia.com
+References: <1572443533-3118-1-git-send-email-liuxiang_1999@126.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <e15d7687-d975-7f9d-f029-d952cdfc969d@redhat.com>
+Date:   Wed, 30 Oct 2019 16:38:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <1572443533-3118-1-git-send-email-liuxiang_1999@126.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: WZwI5j86PF64TD9j1RtGEg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a special exported function for the device core to bring a cpu
-up/down and hide the real cpu_up/down as they are treated as private
-functions. cpu_up/down are lower level API and users outside the cpu
-subsystem should use device_online/offline which will take care of extra
-housekeeping work like keeping sysfs in sync.
+On 30.10.19 14:52, Liu Xiang wrote:
+> Fix comments of __get_user_pages() and get_user_pages_remote(),
+> make them more clear.
+>=20
+> Suggested-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Liu Xiang <liuxiang_1999@126.com>
+>=20
+> ---
+>=20
+> Changes in v3:
+>   as suggested by John, apply the same fix to get_user_pages_remote().
+> ---
+>   mm/gup.c | 32 ++++++++++++++++++++++----------
+>   1 file changed, 22 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 8f236a3..c36c621 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -734,11 +734,17 @@ static int check_vma_flags(struct vm_area_struct *v=
+ma, unsigned long gup_flags)
+>    *=09=09Or NULL if the caller does not require them.
+>    * @nonblocking: whether waiting for disk IO or mmap_sem contention
+>    *
+> - * Returns number of pages pinned. This may be fewer than the number
+> - * requested. If nr_pages is 0 or negative, returns 0. If no pages
+> - * were pinned, returns -errno. Each page returned must be released
+> - * with a put_page() call when it is finished with. vmas will only
+> - * remain valid while mmap_sem is held.
+> + * Returns either number of pages pinned (which may be less than the
+> + * number requested), or an error. Details about the return value:
+> + *
+> + * -- If nr_pages is 0, returns 0.
+> + * -- If nr_pages is >0, but no pages were pinned, returns -errno.
+> + * -- If nr_pages is >0, and some pages were pinned, returns the number =
+of
+> + *    pages pinned. Again, this may be less than nr_pages.
+> + *
+> + * The caller is responsible for releasing returned @pages, via put_page=
+().
+> + *
+> + * @vmas are valid only as long as mmap_sem is held.
+>    *
+>    * Must be called with mmap_sem held.  It may be released.  See below.
+>    *
+> @@ -1107,11 +1113,17 @@ static __always_inline long __get_user_pages_lock=
+ed(struct task_struct *tsk,
+>    *=09=09subsequently whether VM_FAULT_RETRY functionality can be
+>    *=09=09utilised. Lock must initially be held.
+>    *
+> - * Returns number of pages pinned. This may be fewer than the number
+> - * requested. If nr_pages is 0 or negative, returns 0. If no pages
+> - * were pinned, returns -errno. Each page returned must be released
+> - * with a put_page() call when it is finished with. vmas will only
+> - * remain valid while mmap_sem is held.
+> + * Returns either number of pages pinned (which may be less than the
+> + * number requested), or an error. Details about the return value:
+> + *
+> + * -- If nr_pages is 0, returns 0.
+> + * -- If nr_pages is >0, but no pages were pinned, returns -errno.
+> + * -- If nr_pages is >0, and some pages were pinned, returns the number =
+of
+> + *    pages pinned. Again, this may be less than nr_pages.
+> + *
+> + * The caller is responsible for releasing returned @pages, via put_page=
+().
+> + *
+> + * @vmas are valid only as long as mmap_sem is held.
+>    *
+>    * Must be called with mmap_sem held for read or write.
+>    *
+>=20
 
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Josh Poimboeuf <jpoimboe@redhat.com>
-CC: Nicholas Piggin <npiggin@gmail.com>
-CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Jiri Kosina <jkosina@suse.cz>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Eiichi Tsukata <devel@etsukata.com>
-CC: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-CC: Ingo Molnar <mingo@kernel.org>
-CC: Pavankumar Kondeti <pkondeti@codeaurora.org>
-CC: linux-kernel@vger.kernel.org
----
- drivers/base/cpu.c  |  4 ++--
- include/linux/cpu.h |  4 ++--
- kernel/cpu.c        | 26 ++++++++++++++++++++++----
- 3 files changed, 26 insertions(+), 8 deletions(-)
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index cc37511de866..96c69c5fbfff 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -55,7 +55,7 @@ static int cpu_subsys_online(struct device *dev)
- 	if (from_nid == NUMA_NO_NODE)
- 		return -ENODEV;
- 
--	ret = cpu_up(cpuid);
-+	ret = cpu_subsys_up(dev);
- 	/*
- 	 * When hot adding memory to memoryless node and enabling a cpu
- 	 * on the node, node number of the cpu may internally change.
-@@ -69,7 +69,7 @@ static int cpu_subsys_online(struct device *dev)
- 
- static int cpu_subsys_offline(struct device *dev)
- {
--	return cpu_down(dev->id);
-+	return cpu_subsys_down(dev);
- }
- 
- void unregister_cpu(struct cpu *cpu)
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index b1c7b788b8e9..6822e676f420 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -83,7 +83,7 @@ extern ssize_t arch_cpu_release(const char *, size_t);
- 
- #ifdef CONFIG_SMP
- extern bool cpuhp_tasks_frozen;
--int cpu_up(unsigned int cpu);
-+int cpu_subsys_up(struct device *dev);
- void notify_cpu_starting(unsigned int cpu);
- extern void cpu_maps_update_begin(void);
- extern void cpu_maps_update_done(void);
-@@ -114,7 +114,7 @@ extern void lockdep_assert_cpus_held(void);
- extern void cpu_hotplug_disable(void);
- extern void cpu_hotplug_enable(void);
- void clear_tasks_mm_cpumask(int cpu);
--int cpu_down(unsigned int cpu);
-+int cpu_subsys_down(struct device *dev);
- 
- #else /* CONFIG_HOTPLUG_CPU */
- 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index e16695b841de..087c10dbfb99 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1045,11 +1045,20 @@ static int do_cpu_down(unsigned int cpu, enum cpuhp_state target)
- 	return err;
- }
- 
--int cpu_down(unsigned int cpu)
-+static int cpu_down(unsigned int cpu)
- {
- 	return do_cpu_down(cpu, CPUHP_OFFLINE);
- }
--EXPORT_SYMBOL(cpu_down);
-+
-+/*
-+ * This function is meant to be used by device core cpu subsystem.
-+ *
-+ * Other subsystems should use device_offline(get_cpu_device(cpu)) instead.
-+ */
-+int cpu_subsys_down(struct device *dev)
-+{
-+	return cpu_down(dev->id);
-+}
- 
- #else
- #define takedown_cpu		NULL
-@@ -1191,11 +1200,20 @@ static int do_cpu_up(unsigned int cpu, enum cpuhp_state target)
- 	return err;
- }
- 
--int cpu_up(unsigned int cpu)
-+static int cpu_up(unsigned int cpu)
- {
- 	return do_cpu_up(cpu, CPUHP_ONLINE);
- }
--EXPORT_SYMBOL_GPL(cpu_up);
-+
-+/*
-+ * This function is meant to be used by device core cpu subsystem.
-+ *
-+ * Other subsystems should use device_online(get_cpu_device(cpu)) instead.
-+ */
-+int cpu_subsys_up(struct device *dev)
-+{
-+	return cpu_up(dev->id);
-+}
- 
- int hibernation_bringup_sleep_cpu(unsigned int sleep_cpu)
- {
--- 
-2.17.1
+--=20
+
+Thanks,
+
+David / dhildenb
 
