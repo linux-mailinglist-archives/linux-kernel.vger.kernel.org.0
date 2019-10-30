@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A5DEA043
+	by mail.lfdr.de (Postfix) with ESMTP id F28C0EA045
 	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbfJ3Pyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:54:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56122 "EHLO mail.kernel.org"
+        id S1728494AbfJ3PzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:55:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728369AbfJ3Pyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:54:41 -0400
+        id S1728482AbfJ3Py6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:54:58 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E2C920874;
-        Wed, 30 Oct 2019 15:54:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02FD520656;
+        Wed, 30 Oct 2019 15:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572450879;
-        bh=EB16L9vTHdgOumIeosjbfNzBmnYiyoIdyewf7yrkr2k=;
+        s=default; t=1572450897;
+        bh=yyDxAlgn41+7DL22CfifjWjYAq8KV40/xCcwkHyz6u8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zEahE0nRZMIDIEl5l0Vmw0NbOFJqWUmbiSywePdWlq0w3p41Ba7kAhzDzi2hhClO2
-         R/VZSodN1OuEuiAzLTL0j+4iSUYVNadh+e6xgMKETHYAOdnpgoyCPAgx3LkNMcwaIS
-         2PKw80bnOyBX114DGZBEeIKtjg28d3yd4HsL7T5c=
+        b=GcdG5B2vH/zGD3Xb/VtB2Ci62RYN42WHb7xtK0NQ7xjoxTW9+OA2eudoYDxSmjIZ7
+         clUlCmQUYMWvSfePb6Gb6yCJ8euLTZ7d2pl1f9JxN/towBYHGvrANGYgcLVsrp1XhS
+         qUUMSn9/LzYZm7xxytACkiqVA2E7gUrvFnnDRjow=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Jing Xiangfeng <jingxiangfeng@huawei.com>,
+Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
+        afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 13/38] ARM: mm: fix alignment handler faults under memory pressure
-Date:   Wed, 30 Oct 2019 11:53:41 -0400
-Message-Id: <20191030155406.10109-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 18/38] ARM: 8914/1: NOMMU: Fix exc_ret for XIP
+Date:   Wed, 30 Oct 2019 11:53:46 -0400
+Message-Id: <20191030155406.10109-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155406.10109-1-sashal@kernel.org>
 References: <20191030155406.10109-1-sashal@kernel.org>
@@ -43,108 +44,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit 67e15fa5b487adb9b78a92789eeff2d6ec8f5cee ]
+[ Upstream commit 4c0742f65b4ee466546fd24b71b56516cacd4613 ]
 
-When the system has high memory pressure, the page containing the
-instruction may be paged out.  Using probe_kernel_address() means that
-if the page is swapped out, the resulting page fault will not be
-handled because page faults are disabled by this function.
+It was reported that 72cd4064fcca "NOMMU: Toggle only bits in
+EXC_RETURN we are really care of" breaks NOMMU+XIP combination.
+It happens because saved EXC_RETURN gets overwritten when data
+section is relocated.
 
-Use get_user() to read the instruction instead.
+The fix is to propagate EXC_RETURN via register and let relocation
+code to commit that value into memory.
 
-Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
-Fixes: b255188f90e2 ("ARM: fix scheduling while atomic warning in alignment handling code")
+Fixes: 72cd4064fcca ("ARM: 8830/1: NOMMU: Toggle only bits in EXC_RETURN we are really care of")
+Reported-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Tested-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/alignment.c | 44 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 36 insertions(+), 8 deletions(-)
+ arch/arm/kernel/head-common.S | 5 +++--
+ arch/arm/kernel/head-nommu.S  | 2 ++
+ arch/arm/mm/proc-v7m.S        | 5 ++---
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-index bd2c739d80839..84a6bbaf8cb20 100644
---- a/arch/arm/mm/alignment.c
-+++ b/arch/arm/mm/alignment.c
-@@ -768,6 +768,36 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
- 	return NULL;
- }
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 997b02302c314..9328f2010bc19 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -72,7 +72,7 @@ ENDPROC(__vet_atags)
+  * The following fragment of code is executed with the MMU on in MMU mode,
+  * and uses absolute addresses; this is not position independent.
+  *
+- *  r0  = cp#15 control register
++ *  r0  = cp#15 control register (exc_ret for M-class)
+  *  r1  = machine ID
+  *  r2  = atags/dtb pointer
+  *  r9  = processor ID
+@@ -141,7 +141,8 @@ __mmap_switched_data:
+ #ifdef CONFIG_CPU_CP15
+ 	.long	cr_alignment			@ r3
+ #else
+-	.long	0				@ r3
++M_CLASS(.long	exc_ret)			@ r3
++AR_CLASS(.long	0)				@ r3
+ #endif
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
  
-+static int alignment_get_arm(struct pt_regs *regs, u32 *ip, unsigned long *inst)
-+{
-+	u32 instr = 0;
-+	int fault;
-+
-+	if (user_mode(regs))
-+		fault = get_user(instr, ip);
-+	else
-+		fault = probe_kernel_address(ip, instr);
-+
-+	*inst = __mem_to_opcode_arm(instr);
-+
-+	return fault;
-+}
-+
-+static int alignment_get_thumb(struct pt_regs *regs, u16 *ip, u16 *inst)
-+{
-+	u16 instr = 0;
-+	int fault;
-+
-+	if (user_mode(regs))
-+		fault = get_user(instr, ip);
-+	else
-+		fault = probe_kernel_address(ip, instr);
-+
-+	*inst = __mem_to_opcode_thumb16(instr);
-+
-+	return fault;
-+}
-+
- static int
- do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- {
-@@ -775,10 +805,10 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	unsigned long instr = 0, instrptr;
- 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
- 	unsigned int type;
--	unsigned int fault;
- 	u16 tinstr = 0;
- 	int isize = 4;
- 	int thumb2_32b = 0;
-+	int fault;
- 
- 	if (interrupts_enabled(regs))
- 		local_irq_enable();
-@@ -787,15 +817,14 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 
- 	if (thumb_mode(regs)) {
- 		u16 *ptr = (u16 *)(instrptr & ~1);
--		fault = probe_kernel_address(ptr, tinstr);
--		tinstr = __mem_to_opcode_thumb16(tinstr);
-+
-+		fault = alignment_get_thumb(regs, ptr, &tinstr);
- 		if (!fault) {
- 			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
- 			    IS_T32(tinstr)) {
- 				/* Thumb-2 32-bit */
--				u16 tinst2 = 0;
--				fault = probe_kernel_address(ptr + 1, tinst2);
--				tinst2 = __mem_to_opcode_thumb16(tinst2);
-+				u16 tinst2;
-+				fault = alignment_get_thumb(regs, ptr + 1, &tinst2);
- 				instr = __opcode_thumb32_compose(tinstr, tinst2);
- 				thumb2_32b = 1;
- 			} else {
-@@ -804,8 +833,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 			}
- 		}
- 	} else {
--		fault = probe_kernel_address((void *)instrptr, instr);
--		instr = __mem_to_opcode_arm(instr);
-+		fault = alignment_get_arm(regs, (void *)instrptr, &instr);
- 	}
- 
- 	if (fault) {
+diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
+index cab89479d15ef..326a97aa3ea0c 100644
+--- a/arch/arm/kernel/head-nommu.S
++++ b/arch/arm/kernel/head-nommu.S
+@@ -205,6 +205,8 @@ M_CLASS(streq	r3, [r12, #PMSAv8_MAIR1])
+ 	bic	r0, r0, #V7M_SCB_CCR_IC
+ #endif
+ 	str	r0, [r12, V7M_SCB_CCR]
++	/* Pass exc_ret to __mmap_switched */
++	mov	r0, r10
+ #endif /* CONFIG_CPU_CP15 elif CONFIG_CPU_V7M */
+ 	ret	lr
+ ENDPROC(__after_proc_init)
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index 92e84181933ad..59d82864c134b 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -139,9 +139,8 @@ __v7m_setup_cont:
+ 	cpsie	i
+ 	svc	#0
+ 1:	cpsid	i
+-	ldr	r0, =exc_ret
+-	orr	lr, lr, #EXC_RET_THREADMODE_PROCESSSTACK
+-	str	lr, [r0]
++	/* Calculate exc_ret */
++	orr	r10, lr, #EXC_RET_THREADMODE_PROCESSSTACK
+ 	ldmia	sp, {r0-r3, r12}
+ 	str	r5, [r12, #11 * 4]	@ restore the original SVC vector entry
+ 	mov	lr, r6			@ restore LR
 -- 
 2.20.1
 
