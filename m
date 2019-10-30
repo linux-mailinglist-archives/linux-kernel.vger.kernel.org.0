@@ -2,93 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3C4E97FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6372BE981C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 09:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfJ3IUk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 30 Oct 2019 04:20:40 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:35385 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfJ3IUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 04:20:40 -0400
-Received: from xps13 (67.173.185.81.rev.sfr.net [81.185.173.67])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 0599F200011;
-        Wed, 30 Oct 2019 08:20:35 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 09:20:36 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Saurav Girepunje <saurav.girepunje@gmail.com>
-Cc:     joern@lazybastard.org, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at,
-        vigneshr@ti.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, saurav.girepunje@hotmail.com
-Subject: Re: [PATCH v1] mtd: devices: phram.c: Fix multiple kfree statement
- from phram_setup
-Message-ID: <20191030092036.38cf4f11@xps13>
-In-Reply-To: <20191029170849.GA6279@saurav>
-References: <20191029170849.GA6279@saurav>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726242AbfJ3I0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 04:26:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5226 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725923AbfJ3I0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 04:26:35 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 48B392B7E56858FA9135;
+        Wed, 30 Oct 2019 16:26:34 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 30 Oct 2019 16:26:28 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <akinobu.mita@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
+Subject: [PATCH] fault-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
+Date:   Wed, 30 Oct 2019 16:22:36 +0800
+Message-ID: <1572423756-59943-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Saurav,
+It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
+operation rather than DEFINE_SIMPLE_ATTRIBUTE.
 
-Saurav Girepunje <saurav.girepunje@gmail.com> wrote on Tue, 29 Oct 2019
-22:38:49 +0530:
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ lib/fault-inject.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Are you a robot?
+diff --git a/lib/fault-inject.c b/lib/fault-inject.c
+index 8186ca8..4e61326 100644
+--- a/lib/fault-inject.c
++++ b/lib/fault-inject.c
+@@ -164,7 +164,7 @@ static int debugfs_ul_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_ul, debugfs_ul_get, debugfs_ul_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(fops_ul, debugfs_ul_get, debugfs_ul_set, "%llu\n");
+ 
+ static void debugfs_create_ul(const char *name, umode_t mode,
+ 			      struct dentry *parent, unsigned long *value)
+@@ -182,7 +182,7 @@ static int debugfs_stacktrace_depth_set(void *data, u64 val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_stacktrace_depth, debugfs_ul_get,
++DEFINE_DEBUGFS_ATTRIBUTE(fops_stacktrace_depth, debugfs_ul_get,
+ 			debugfs_stacktrace_depth_set, "%llu\n");
+ 
+ static void debugfs_create_stacktrace_depth(const char *name, umode_t mode,
+-- 
+1.7.12.4
 
-> Remove multiple kfree statement from phram_setup() in phram.c
-
-This does not describe what you are doing, you don't remove them you
-factorize them. And honestly I am not convinced this change is useful
-in old code.
-
-> 
-> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
-> ---
-> 
-> Change in v1:
-
-Your first version is v1, how can you be at v1? It is almost v3 already!
-
-> 
-> - Add change suggested by Miquel Raynal <miquel.raynal@bootlin.com>
->   "The goto statement should not describe from where it is called but the
->    action it is supposed to take. 'goto free_nam;' would be better."
-
-This is a copy/paste of what I have said. What I want you to write is:
-
-"
-- Rename the goto statement to describe bla bla bla.
-- Fix the typo in the goto label.
-"
-
-> 
->  drivers/mtd/devices/phram.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
-> index c467286ca007..38f95a1517ac 100644
-> --- a/drivers/mtd/devices/phram.c
-> +++ b/drivers/mtd/devices/phram.c
-> @@ -243,22 +243,22 @@ static int phram_setup(const char *val)
->  
->  	ret = parse_num64(&start, token[1]);
->  	if (ret) {
-> -		kfree(name);
->  		parse_err("illegal start address\n");
-> +		goto free_nam;
-
-Come one...
-
-
-Thanks,
-Miquèl
