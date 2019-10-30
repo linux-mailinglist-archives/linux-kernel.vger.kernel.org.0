@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4584CEA084
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BCDEA087
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfJ3P5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:57:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
+        id S1729012AbfJ3P5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:57:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728977AbfJ3P5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:57:10 -0400
+        id S1728995AbfJ3P5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:57:14 -0400
 Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6757E2067D;
-        Wed, 30 Oct 2019 15:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68F8721882;
+        Wed, 30 Oct 2019 15:57:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572451029;
-        bh=oqcikNQaIlCTx7/PpLSFwH3TmCmGrsgNZ2IoEF/qXOU=;
+        s=default; t=1572451033;
+        bh=eh+r0jQVLaPFfkmVGlO/vREfE61KcjAS/0XfFkgqjE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T0op7C2LP26veenimR5aKmrm2dpt+YVWt563+aRq+8hcdCYtNQz+zJLfH4pMwlI1G
-         DtLHxytnBZaBw9340ZiE6NHlhRIOzzEblfgI82doVQ/Icm3OjzqABqV1Qs04y4nXMp
-         j0WN7gKIIEeBA2PwEd1fPzy6bCaGEbxGUnBDSdHI=
+        b=HOxzAMAEVROia8DrxO91W2/TSr0VXhy+RzWyQDlDIxaHUWrJu+lXEhsPOhMgIRm3p
+         vxsIHfi0H7dEadnjRSpcR+BXlZLU0IeyyiIet0uXKWDL7SNzHbZ8uDsR+Z5c+aF/U8
+         XyrHE0dFBZx8yVSJt4pU5cBE2xOv+k45wDt3Sta0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stuart Henderson <stuarth@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.9 03/18] ASoC: wm_adsp: Don't generate kcontrols without READ flags
-Date:   Wed, 30 Oct 2019 11:56:45 -0400
-Message-Id: <20191030155700.10748-3-sashal@kernel.org>
+Cc:     Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 05/18] ARM: dts: logicpd-torpedo-som: Remove twl_keypad
+Date:   Wed, 30 Oct 2019 11:56:47 -0400
+Message-Id: <20191030155700.10748-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191030155700.10748-1-sashal@kernel.org>
 References: <20191030155700.10748-1-sashal@kernel.org>
@@ -44,37 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stuart Henderson <stuarth@opensource.cirrus.com>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit 3ae7359c0e39f42a96284d6798fc669acff38140 ]
+[ Upstream commit 6b512b0ee091edcb8e46218894e4c917d919d3dc ]
 
-User space always expects to be able to read ALSA controls, so ensure
-no kcontrols are generated without an appropriate READ flag. In the case
-of a read of such a control zeros will be returned.
+The TWL4030 used on the Logit PD Torpedo SOM does not have the
+keypad pins routed.  This patch disables the twl_keypad driver
+to remove some splat during boot:
 
-Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20191002084240.21589-1-ckeepax@opensource.cirrus.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+twl4030_keypad 48070000.i2c:twl@48:keypad: missing or malformed property linux,keymap: -22
+twl4030_keypad 48070000.i2c:twl@48:keypad: Failed to build keymap
+twl4030_keypad: probe of 48070000.i2c:twl@48:keypad failed with error -22
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+[tony@atomide.com: removed error time stamps]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm_adsp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index c03c9da076c2d..28eb55bc46634 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -948,8 +948,7 @@ static unsigned int wmfw_convert_flags(unsigned int in, unsigned int len)
- 	}
- 
- 	if (in) {
--		if (in & WMFW_CTL_FLAG_READABLE)
--			out |= rd;
-+		out |= rd;
- 		if (in & WMFW_CTL_FLAG_WRITEABLE)
- 			out |= wr;
- 		if (in & WMFW_CTL_FLAG_VOLATILE)
+diff --git a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
+index ceb49d15d243c..20ee7ca8c6534 100644
+--- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
++++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
+@@ -266,3 +266,7 @@
+ &twl_gpio {
+ 	ti,use-leds;
+ };
++
++&twl_keypad {
++	status = "disabled";
++};
 -- 
 2.20.1
 
