@@ -2,90 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E8FE9EFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3C7E9F08
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:31:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfJ3P3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:29:08 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:39130 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727039AbfJ3P3F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:29:05 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 33041C0DE5;
-        Wed, 30 Oct 2019 15:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1572449345; bh=scoltA+WigVvTzqdJe03QvtfADm3p97oUkWlWeL7UFM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=C0JfV5wftejE2Zrc7hs298DB1il00674wv+0PaRxFtNkoGvpmkNNtTFYJ56xnidN1
-         ASC+0Bp+rlLpTP8I5d7QuzkcAsG8LsLqVr0WY9fooMt95yhVFfTGQKasuHDyYjAFpd
-         wwfn7bGENArpW0UOcDBE43gaHU0+tMDashY/KkBJDGcAmRF5rNJJbxCsmPPUvxX8fa
-         BJNIN7zlxrFGqowRw3UQkFZrHvZVMTqV8jGG+EGOSMYOpdzXOt63EQebBLYhhnOjpU
-         oT/PRO+FlNRz0SXTEuChQ4TlDTskk1uulbWMQ/eeu6HOAT5NzFA1YPWAUx1EC5D1l4
-         7MiGLNceonL9w==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id DD1DCA0064;
-        Wed, 30 Oct 2019 15:28:58 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 3/3] net: stmmac: tc: Remove the speed dependency
-Date:   Wed, 30 Oct 2019 16:28:50 +0100
-Message-Id: <e376abc1b9511f9196977b7b4bb2f871dcbd44fe.1572449009.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1572449009.git.Jose.Abreu@synopsys.com>
-References: <cover.1572449009.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1572449009.git.Jose.Abreu@synopsys.com>
-References: <cover.1572449009.git.Jose.Abreu@synopsys.com>
+        id S1726538AbfJ3Pbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:31:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:36312 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbfJ3Pbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:31:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC341FB;
+        Wed, 30 Oct 2019 08:31:35 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00FC63F6C4;
+        Wed, 30 Oct 2019 08:31:32 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 15:31:30 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Steven Price <steven.price@arm.com>
+Cc:     linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v14 04/22] arm64: mm: Add p?d_leaf() definitions
+Message-ID: <20191030153130.GB13309@arrakis.emea.arm.com>
+References: <20191028135910.33253-1-steven.price@arm.com>
+ <20191028135910.33253-5-steven.price@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028135910.33253-5-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-XGMAC3 supports full CBS features with speeds that can go up to 10G so
-we can now remove the maximum speed check of CBS.
+On Mon, Oct 28, 2019 at 01:58:52PM +0000, Steven Price wrote:
+> walk_page_range() is going to be allowed to walk page tables other than
+> those of user space. For this it needs to know when it has reached a
+> 'leaf' entry in the page tables. This information will be provided by the
+> p?d_leaf() functions/macros.
+> 
+> For arm64, we already have p?d_sect() macros which we can reuse for
+> p?d_leaf().
+> 
+> pud_sect() is defined as a dummy function when CONFIG_PGTABLE_LEVELS < 3
+> or CONFIG_ARM64_64K_PAGES is defined. However when the kernel is
+> configured this way then architecturally it isn't allowed to have a
+> large page at this level, and any code using these page walking macros
+> is implicitly relying on the page size/number of levels being the same as
+> the kernel. So it is safe to reuse this for p?d_leaf() as it is an
+> architectural restriction.
+> 
+> CC: Catalin Marinas <catalin.marinas@arm.com>
+> CC: Will Deacon <will@kernel.org>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+I can see akpm picked these patches already. FWIW:
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index f9a9a9d82233..7d972e0fd2b0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -321,8 +321,6 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
- 		return -EINVAL;
- 	if (!priv->dma_cap.av)
- 		return -EOPNOTSUPP;
--	if (priv->speed != SPEED_100 && priv->speed != SPEED_1000)
--		return -EOPNOTSUPP;
- 
- 	mode_to_use = priv->plat->tx_queues_cfg[queue].mode_to_use;
- 	if (mode_to_use == MTL_QUEUE_DCB && qopt->enable) {
--- 
-2.7.4
-
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
