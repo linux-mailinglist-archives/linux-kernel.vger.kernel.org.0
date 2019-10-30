@@ -2,542 +2,401 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC131E9EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEAA4E9EAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfJ3PPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:15:11 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:40087 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfJ3PPI (ORCPT
+        id S1727222AbfJ3PPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:15:33 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39900 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbfJ3PPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:15:08 -0400
-Received: by mail-wm1-f74.google.com with SMTP id i8so1026235wmd.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:15:06 -0700 (PDT)
+        Wed, 30 Oct 2019 11:15:33 -0400
+Received: by mail-il1-f193.google.com with SMTP id i12so2450991ils.6
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 08:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ppJjHZbtqqkK8HVjmpvQfAXS2NvTs7pI2yxR9wnyKLY=;
-        b=kY9JNiitwYUlzFGijhIIFs1fLVGLvpn11tZ9NZtF898vEgg5Gr5Irn+I+CUNpoXoxM
-         FgYf/NIvZu7CJBvhPVFSUeP468B5ouFrbsdH6iEv4UU/GuLG+BbINeUH8Yp3FWleiXwT
-         8aJNT8BBKb/EMy+WfXy/hl0HPAc5Dq6KaGV/HosRgc+ydDjV+GyfvjQgrI1PsD33uv1H
-         KuH8a9VnnT+JrWK5G1yu2NBZNSJJgUf2taeI4UZNymenxWE9k/SfS+XZLXSqxWJQMXEq
-         wu0/6TrrQurMGtYUGfUuZjDfVuzb3ka2S6L84bwfG5wkTKKgfBZKvzlP12CpXa8wAxvU
-         r8lA==
+        bh=tR3hnUd+yG4qoXk3Lqg2RDqKdfqL6VoTN0RsHKmQlIs=;
+        b=LUeOZga9i3mrP4nElmpbUqTWrPIizf0R2VC8M6isiG5SBj3+oVQ480HjLYb4fOIo/O
+         ffwVwlDOkN6Ufa5I8wjVUu/DBGTAo67IMvCwvqrE2Lh2Ol0Vztj4w6GyzSSVgTrRhohA
+         zjLRrCyMyygeXXbw6FZe41As0JMj41vnoLyOP1ChA1ARW4aMDNV2P4SZlHKtHFPRIIev
+         jhmfOw4ykcc5b6R4mkGMXD/nno5NuphZJDNX+RAnDxEt00jzfBcrBUwEYUmdgDGPzB28
+         LlFIwJzkKmTvG6PDiUdicXhmXPAVkNOZY//s4JmZcwt/I39oP/1k1w0sOXhiV3eNfgE6
+         UJng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ppJjHZbtqqkK8HVjmpvQfAXS2NvTs7pI2yxR9wnyKLY=;
-        b=dqQs21saxn/FpuO/oJ1NJdyM5Q+9X7k5HEma73S10bvfmHpgD/Jw8DWubENhd7qoXV
-         hODKJQGvt4gGPCItbHWFVlmtEGGgP8sg+VHQ6FGnG6RXuuNwTrRlFcAnm0bbkp0YepRT
-         s4v7CN6BFw8WltzHmQiOquODC5HZQLEEYEGp69LhEolf8JR/pUGoADBiuA2om+sJSjst
-         qhRsWoojbHojrOSgdkhS0ji/ry9ZV08Yl6Ekbf7XwNynZlZCBFT1X8eZwLO/xpnxdsrk
-         jNhgfuE4VYSxZcYm5yhd29l/ET2OUnWkwXUK6pTj89MvZTwJrLMzTSENGEz06zhxe6Wn
-         fE1A==
-X-Gm-Message-State: APjAAAUPgUJNWft8KL/AbUSIuPERZVZNciFWfKSCPEPC/rlXGvdl2cdh
-        wPZeLaSZnlDf9VWWYEULMv7eXuWTs3lY
-X-Google-Smtp-Source: APXvYqx8H5B/CegQCN8In1hr6s3GV1v9OH1YJ7RXwdMlTRDAw6jFVnJ71fushz2a3lwnmQETBJ9bixBMSTmg
-X-Received: by 2002:a5d:51c2:: with SMTP id n2mr321072wrv.149.1572448505654;
- Wed, 30 Oct 2019 08:15:05 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 15:14:51 +0000
-In-Reply-To: <20191030151451.7961-1-qperret@google.com>
-Message-Id: <20191030151451.7961-5-qperret@google.com>
-Mime-Version: 1.0
-References: <20191030151451.7961-1-qperret@google.com>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v9 4/4] thermal: cpu_cooling: Migrate to using the EM framework
-From:   Quentin Perret <qperret@google.com>
-To:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
-        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, will@kernel.org, daniel.lezcano@linaro.org
-Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
-        mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qperret@google.com
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tR3hnUd+yG4qoXk3Lqg2RDqKdfqL6VoTN0RsHKmQlIs=;
+        b=WhTjrAI7NkmW+eToLQMBYIeooXAf/WcjnFHEXT7ma8svaY7wupVicyk1ibkox0r1Q0
+         4LPI5CM3IlrYyiMapqQ92QltUxs+VLYRg82zDTiL6+Hm3yu43rLi2aOH2eKwK0Lom5cs
+         aL6svjl5uG9+n6b6zpVJ/FWVJlhxDlsakfaE+6S/GxYxcsfIGI7Tjh0BHmGBcu+4BQDA
+         6d5R4XL2U8/iV9FkKpaUQ4liQoGq9WibTvdiG6xEKcZvqR8JNIRtC7QTokjCUFUGleyu
+         8YRVWIBUYBKfmoSt4Hb1cFcpIwitlrG++/wzFN6Hxk2JxO5/uIQZPQGgSKmY3C7yaHJV
+         2Vnw==
+X-Gm-Message-State: APjAAAXxSPBGtytMbGoBM+G0cK112ms220xWPV27UXj+77gBoMLQ48a8
+        vH0y/Hd9mSg5FhHxobfOXN24r+iw9KvoxB3u9stQHKx5
+X-Google-Smtp-Source: APXvYqxg8G219FSJceHeLxrzDX2VBdTQlji2SOCFmrTE+AT9wSMWhub0QhpKTHzyLbSys6Oba7Ban5916Q7A3RjDuC4=
+X-Received: by 2002:a92:350a:: with SMTP id c10mr644570ila.140.1572448530327;
+ Wed, 30 Oct 2019 08:15:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191025235321.181897-1-yabinc@google.com>
+In-Reply-To: <20191025235321.181897-1-yabinc@google.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 30 Oct 2019 09:15:19 -0600
+Message-ID: <CANLsYkxexrP_uuNS6SUmj1DyE0q8whj4i=ZdZs+PRTazxzCgaA@mail.gmail.com>
+Subject: Re: [PATCH v5] coresight: Serialize enabling/disabling a link device.
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly introduced Energy Model framework manages power cost tables in
-a generic way. Moreover, it supports several types of models since the
-tables can come from DT or firmware (through SCMI) for example. On the
-other hand, the cpu_cooling subsystem manages its own power cost tables
-using only DT data.
+On Fri, 25 Oct 2019 at 17:53, Yabin Cui <yabinc@google.com> wrote:
+>
+> When tracing etm data of multiple threads on multiple cpus through perf
+> interface, some link devices are shared between paths of different cpus.
+> It creates race conditions when different cpus wants to enable/disable
+> the same link device at the same time.
+>
+> Example 1:
+> Two cpus want to enable different ports of a coresight funnel, thus
+> calling the funnel enable operation at the same time. But the funnel
+> enable operation isn't reentrantable.
+>
+> Example 2:
+> For an enabled coresight dynamic replicator with refcnt=1, one cpu wants
+> to disable it, while another cpu wants to enable it. Ideally we still have
+> an enabled replicator with refcnt=1 at the end. But in reality the result
+> is uncertain.
+>
+> Since coresight devices claim themselves when enabled for self-hosted
+> usage, the race conditions above usually make the link devices not usable
+> after many cycles.
+>
+> To fix the race conditions, this patch uses spinlocks to serialize
+> enabling/disabling link devices.
+>
+> Fixes: a06ae8609b3d ("coresight: add CoreSight core layer framework")
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> ---
+>
+> Sorry for the delay!
+>
+> v4 -> v5:
+> added document for spinlock fields.
+> moved dev_dbg() out of lock section, and verified printed debug msgs.
+>
+> split atomic_inc_return() into atomic_read() and atomic_inc() as
+> commented.
+> checked drvdata->reading before refcnt.
+>
+> ---
+>  .../hwtracing/coresight/coresight-funnel.c    | 36 +++++++++++----
+>  .../coresight/coresight-replicator.c          | 35 ++++++++++++---
+>  .../hwtracing/coresight/coresight-tmc-etf.c   | 26 ++++++++---
+>  drivers/hwtracing/coresight/coresight.c       | 45 ++++++-------------
+>  4 files changed, 90 insertions(+), 52 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index 05f7896c3a01..b605889b507a 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -38,12 +38,14 @@ DEFINE_CORESIGHT_DEVLIST(funnel_devs, "funnel");
+>   * @atclk:     optional clock for the core parts of the funnel.
+>   * @csdev:     component vitals needed by the framework.
+>   * @priority:  port selection order.
+> + * @spinlock:  serialize enable/disable operations.
+>   */
+>  struct funnel_drvdata {
+>         void __iomem            *base;
+>         struct clk              *atclk;
+>         struct coresight_device *csdev;
+>         unsigned long           priority;
+> +       spinlock_t              spinlock;
+>  };
+>
+>  static int dynamic_funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
+> @@ -76,11 +78,21 @@ static int funnel_enable(struct coresight_device *csdev, int inport,
+>  {
+>         int rc = 0;
+>         struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> -
+> -       if (drvdata->base)
+> -               rc = dynamic_funnel_enable_hw(drvdata, inport);
+> -
+> +       unsigned long flags;
+> +       bool first_enable = false;
+> +
+> +       spin_lock_irqsave(&drvdata->spinlock, flags);
+> +       if (atomic_read(&csdev->refcnt[inport]) == 0) {
+> +               if (drvdata->base)
+> +                       rc = dynamic_funnel_enable_hw(drvdata, inport);
+> +               if (!rc)
+> +                       first_enable = true;
+> +       }
+>         if (!rc)
+> +               atomic_inc(&csdev->refcnt[inport]);
+> +       spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> +
+> +       if (first_enable)
+>                 dev_dbg(&csdev->dev, "FUNNEL inport %d enabled\n", inport);
+>         return rc;
+>  }
+> @@ -107,11 +119,19 @@ static void funnel_disable(struct coresight_device *csdev, int inport,
+>                            int outport)
+>  {
+>         struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +       unsigned long flags;
+> +       bool last_disable = false;
+> +
+> +       spin_lock_irqsave(&drvdata->spinlock, flags);
+> +       if (atomic_dec_return(&csdev->refcnt[inport]) == 0) {
+> +               if (drvdata->base)
+> +                       dynamic_funnel_disable_hw(drvdata, inport);
+> +               last_disable = true;
+> +       }
+> +       spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+> -       if (drvdata->base)
+> -               dynamic_funnel_disable_hw(drvdata, inport);
+> -
+> -       dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
+> +       if (last_disable)
+> +               dev_dbg(&csdev->dev, "FUNNEL inport %d disabled\n", inport);
+>  }
+>
+>  static const struct coresight_ops_link funnel_link_ops = {
+> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+> index b29ba640eb25..43304196a1a6 100644
+> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+> @@ -31,11 +31,13 @@ DEFINE_CORESIGHT_DEVLIST(replicator_devs, "replicator");
+>   *             whether this one is programmable or not.
+>   * @atclk:     optional clock for the core parts of the replicator.
+>   * @csdev:     component vitals needed by the framework
+> + * @spinlock:  serialize enable/disable operations.
+>   */
+>  struct replicator_drvdata {
+>         void __iomem            *base;
+>         struct clk              *atclk;
+>         struct coresight_device *csdev;
+> +       spinlock_t              spinlock;
+>  };
+>
+>  static void dynamic_replicator_reset(struct replicator_drvdata *drvdata)
+> @@ -97,10 +99,22 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+>  {
+>         int rc = 0;
+>         struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> -
+> -       if (drvdata->base)
+> -               rc = dynamic_replicator_enable(drvdata, inport, outport);
+> +       unsigned long flags;
+> +       bool first_enable = false;
+> +
+> +       spin_lock_irqsave(&drvdata->spinlock, flags);
+> +       if (atomic_read(&csdev->refcnt[outport]) == 0) {
+> +               if (drvdata->base)
+> +                       rc = dynamic_replicator_enable(drvdata, inport,
+> +                                                      outport);
+> +               if (!rc)
+> +                       first_enable = true;
+> +       }
+>         if (!rc)
+> +               atomic_inc(&csdev->refcnt[outport]);
+> +       spin_unlock_irqrestore(&drvdata->spinlock, flags);
+> +
+> +       if (first_enable)
+>                 dev_dbg(&csdev->dev, "REPLICATOR enabled\n");
+>         return rc;
+>  }
+> @@ -137,10 +151,19 @@ static void replicator_disable(struct coresight_device *csdev, int inport,
+>                                int outport)
+>  {
+>         struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +       unsigned long flags;
+> +       bool last_disable = false;
+> +
+> +       spin_lock_irqsave(&drvdata->spinlock, flags);
+> +       if (atomic_dec_return(&csdev->refcnt[outport]) == 0) {
+> +               if (drvdata->base)
+> +                       dynamic_replicator_disable(drvdata, inport, outport);
+> +               last_disable = true;
+> +       }
+> +       spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+> -       if (drvdata->base)
+> -               dynamic_replicator_disable(drvdata, inport, outport);
+> -       dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
+> +       if (last_disable)
+> +               dev_dbg(&csdev->dev, "REPLICATOR disabled\n");
+>  }
+>
+>  static const struct coresight_ops_link replicator_link_ops = {
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index 807416b75ecc..d0cc3985b72a 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -334,9 +334,10 @@ static int tmc_disable_etf_sink(struct coresight_device *csdev)
+>  static int tmc_enable_etf_link(struct coresight_device *csdev,
+>                                int inport, int outport)
+>  {
+> -       int ret;
+> +       int ret = 0;
+>         unsigned long flags;
+>         struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +       bool first_enable = false;
+>
+>         spin_lock_irqsave(&drvdata->spinlock, flags);
+>         if (drvdata->reading) {
+> @@ -344,12 +345,18 @@ static int tmc_enable_etf_link(struct coresight_device *csdev,
+>                 return -EBUSY;
+>         }
+>
+> -       ret = tmc_etf_enable_hw(drvdata);
+> +       if (atomic_read(&csdev->refcnt[0]) == 0) {
+> +               ret = tmc_etf_enable_hw(drvdata);
+> +               if (!ret) {
+> +                       drvdata->mode = CS_MODE_SYSFS;
+> +                       first_enable = true;
+> +               }
+> +       }
+>         if (!ret)
+> -               drvdata->mode = CS_MODE_SYSFS;
+> +               atomic_inc(&csdev->refcnt[0]);
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+> -       if (!ret)
+> +       if (first_enable)
+>                 dev_dbg(&csdev->dev, "TMC-ETF enabled\n");
+>         return ret;
+>  }
+> @@ -359,6 +366,7 @@ static void tmc_disable_etf_link(struct coresight_device *csdev,
+>  {
+>         unsigned long flags;
+>         struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +       bool last_disable = false;
+>
+>         spin_lock_irqsave(&drvdata->spinlock, flags);
+>         if (drvdata->reading) {
+> @@ -366,11 +374,15 @@ static void tmc_disable_etf_link(struct coresight_device *csdev,
+>                 return;
+>         }
+>
+> -       tmc_etf_disable_hw(drvdata);
+> -       drvdata->mode = CS_MODE_DISABLED;
+> +       if (atomic_dec_return(&csdev->refcnt[0]) == 0) {
+> +               tmc_etf_disable_hw(drvdata);
+> +               drvdata->mode = CS_MODE_DISABLED;
+> +               last_disable = true;
+> +       }
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+> -       dev_dbg(&csdev->dev, "TMC-ETF disabled\n");
+> +       if (last_disable)
+> +               dev_dbg(&csdev->dev, "TMC-ETF disabled\n");
+>  }
+>
+>  static void *tmc_alloc_etf_buffer(struct coresight_device *csdev,
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index 6453c67a4d01..0bbce0d29158 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -253,9 +253,9 @@ static int coresight_enable_link(struct coresight_device *csdev,
+>                                  struct coresight_device *parent,
+>                                  struct coresight_device *child)
+>  {
+> -       int ret;
+> +       int ret = 0;
+>         int link_subtype;
+> -       int refport, inport, outport;
+> +       int inport, outport;
+>
+>         if (!parent || !child)
+>                 return -EINVAL;
+> @@ -264,29 +264,17 @@ static int coresight_enable_link(struct coresight_device *csdev,
+>         outport = coresight_find_link_outport(csdev, child);
+>         link_subtype = csdev->subtype.link_subtype;
+>
+> -       if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG)
+> -               refport = inport;
+> -       else if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT)
+> -               refport = outport;
+> -       else
+> -               refport = 0;
+> -
+> -       if (refport < 0)
+> -               return refport;
+> +       if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG && inport < 0)
+> +               return inport;
+> +       if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT && outport < 0)
+> +               return outport;
+>
+> -       if (atomic_inc_return(&csdev->refcnt[refport]) == 1) {
+> -               if (link_ops(csdev)->enable) {
+> -                       ret = link_ops(csdev)->enable(csdev, inport, outport);
+> -                       if (ret) {
+> -                               atomic_dec(&csdev->refcnt[refport]);
+> -                               return ret;
+> -                       }
+> -               }
+> -       }
+> -
+> -       csdev->enable = true;
+> +       if (link_ops(csdev)->enable)
+> +               ret = link_ops(csdev)->enable(csdev, inport, outport);
+> +       if (!ret)
+> +               csdev->enable = true;
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  static void coresight_disable_link(struct coresight_device *csdev,
+> @@ -295,7 +283,7 @@ static void coresight_disable_link(struct coresight_device *csdev,
+>  {
+>         int i, nr_conns;
+>         int link_subtype;
+> -       int refport, inport, outport;
+> +       int inport, outport;
+>
+>         if (!parent || !child)
+>                 return;
+> @@ -305,20 +293,15 @@ static void coresight_disable_link(struct coresight_device *csdev,
+>         link_subtype = csdev->subtype.link_subtype;
+>
+>         if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG) {
+> -               refport = inport;
+>                 nr_conns = csdev->pdata->nr_inport;
+>         } else if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_SPLIT) {
+> -               refport = outport;
+>                 nr_conns = csdev->pdata->nr_outport;
+>         } else {
+> -               refport = 0;
+>                 nr_conns = 1;
+>         }
+>
+> -       if (atomic_dec_return(&csdev->refcnt[refport]) == 0) {
+> -               if (link_ops(csdev)->disable)
+> -                       link_ops(csdev)->disable(csdev, inport, outport);
+> -       }
+> +       if (link_ops(csdev)->disable)
+> +               link_ops(csdev)->disable(csdev, inport, outport);
 
-In order to avoid the duplication of data in the kernel, and in order to
-enable IPA with EMs coming from more than just DT, remove the private
-tables from cpu_cooling.c and migrate it to using the centralized EM
-framework. Doing so should have no visible functional impact for
-existing users of IPA since:
+I have picked up you work - thanks,
+Mathieu
 
- - recent extenstions to the the PM_OPP infrastructure enable the
-   registration of EMs in PM_EM using the DT property used by IPA;
-
- - the existing upstream cpufreq drivers marked with the
-   'CPUFREQ_IS_COOLING_DEV' flag all use the aforementioned PM_OPP
-   infrastructure, which means they all support PM_EM. The only two
-   exceptions are qoriq-cpufreq which doesn't in fact use an EM and
-   scmi-cpufreq which doesn't use DT for power costs.
-
-For existing users of cpu_cooling, PM_EM tables will contain the exact
-same power values that IPA used to compute on its own until now. The
-only new dependency for them is to compile in CONFIG_ENERGY_MODEL.
-
-The case where the thermal subsystem is used without an Energy Model
-(cpufreq_cooling_ops) is handled by looking directly at CPUFreq's
-frequency table which is already a dependency for cpu_cooling.c anyway.
-Since the thermal framework expects the cooling states in a particular
-order, bail out whenever the CPUFreq table is unsorted, since that is
-fairly uncommon in general, and there are currently no users of
-cpu_cooling for this use-case.
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Quentin Perret <qperret@google.com>
----
- drivers/thermal/Kconfig       |   1 +
- drivers/thermal/cpu_cooling.c | 248 ++++++++++++----------------------
- 2 files changed, 89 insertions(+), 160 deletions(-)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 001a21abcc28..08ac82384b80 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -144,6 +144,7 @@ config THERMAL_GOV_USER_SPACE
- 
- config THERMAL_GOV_POWER_ALLOCATOR
- 	bool "Power allocator thermal governor"
-+	depends on ENERGY_MODEL
- 	help
- 	  Enable this to manage platform thermals by dynamically
- 	  allocating and limiting power to devices.
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index cc6b84e41404..52569b27b426 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -20,6 +20,7 @@
- #include <linux/slab.h>
- #include <linux/cpu.h>
- #include <linux/cpu_cooling.h>
-+#include <linux/energy_model.h>
- 
- #include <trace/events/thermal.h>
- 
-@@ -37,21 +38,6 @@
-  *	...
-  */
- 
--/**
-- * struct freq_table - frequency table along with power entries
-- * @frequency:	frequency in KHz
-- * @power:	power in mW
-- *
-- * This structure is built when the cooling device registers and helps
-- * in translating frequency to power and vice versa.
-- */
--struct freq_table {
--	u32 frequency;
--#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
--	u32 power;
--#endif
--};
--
- /**
-  * struct time_in_idle - Idle time stats
-  * @time: previous reading of the absolute time that this cpu was idle
-@@ -71,7 +57,7 @@ struct time_in_idle {
-  *	cooling	devices.
-  * @max_level: maximum cooling level. One less than total number of valid
-  *	cpufreq frequencies.
-- * @freq_table: Freq table in descending order of frequencies
-+ * @em: Reference on the Energy Model of the device
-  * @cdev: thermal_cooling_device pointer to keep track of the
-  *	registered cooling device.
-  * @policy: cpufreq policy.
-@@ -86,7 +72,7 @@ struct cpufreq_cooling_device {
- 	u32 last_load;
- 	unsigned int cpufreq_state;
- 	unsigned int max_level;
--	struct freq_table *freq_table;	/* In descending order */
-+	struct em_perf_domain *em;
- 	struct cpufreq_policy *policy;
- 	struct list_head node;
- 	struct time_in_idle *idle_time;
-@@ -108,114 +94,40 @@ static LIST_HEAD(cpufreq_cdev_list);
- static unsigned long get_level(struct cpufreq_cooling_device *cpufreq_cdev,
- 			       unsigned int freq)
- {
--	struct freq_table *freq_table = cpufreq_cdev->freq_table;
--	unsigned long level;
-+	int i;
- 
--	for (level = 1; level <= cpufreq_cdev->max_level; level++)
--		if (freq > freq_table[level].frequency)
-+	for (i = cpufreq_cdev->max_level - 1; i >= 0; i--) {
-+		if (freq > cpufreq_cdev->em->table[i].frequency)
- 			break;
--
--	return level - 1;
--}
--
--/**
-- * update_freq_table() - Update the freq table with power numbers
-- * @cpufreq_cdev:	the cpufreq cooling device in which to update the table
-- * @capacitance: dynamic power coefficient for these cpus
-- *
-- * Update the freq table with power numbers.  This table will be used in
-- * cpu_power_to_freq() and cpu_freq_to_power() to convert between power and
-- * frequency efficiently.  Power is stored in mW, frequency in KHz.  The
-- * resulting table is in descending order.
-- *
-- * Return: 0 on success, -EINVAL if there are no OPPs for any CPUs,
-- * or -ENOMEM if we run out of memory.
-- */
--static int update_freq_table(struct cpufreq_cooling_device *cpufreq_cdev,
--			     u32 capacitance)
--{
--	struct freq_table *freq_table = cpufreq_cdev->freq_table;
--	struct dev_pm_opp *opp;
--	struct device *dev = NULL;
--	int num_opps = 0, cpu = cpufreq_cdev->policy->cpu, i;
--
--	dev = get_cpu_device(cpu);
--	if (unlikely(!dev)) {
--		pr_warn("No cpu device for cpu %d\n", cpu);
--		return -ENODEV;
- 	}
- 
--	num_opps = dev_pm_opp_get_opp_count(dev);
--	if (num_opps < 0)
--		return num_opps;
--
--	/*
--	 * The cpufreq table is also built from the OPP table and so the count
--	 * should match.
--	 */
--	if (num_opps != cpufreq_cdev->max_level + 1) {
--		dev_warn(dev, "Number of OPPs not matching with max_levels\n");
--		return -EINVAL;
--	}
--
--	for (i = 0; i <= cpufreq_cdev->max_level; i++) {
--		unsigned long freq = freq_table[i].frequency * 1000;
--		u32 freq_mhz = freq_table[i].frequency / 1000;
--		u64 power;
--		u32 voltage_mv;
--
--		/*
--		 * Find ceil frequency as 'freq' may be slightly lower than OPP
--		 * freq due to truncation while converting to kHz.
--		 */
--		opp = dev_pm_opp_find_freq_ceil(dev, &freq);
--		if (IS_ERR(opp)) {
--			dev_err(dev, "failed to get opp for %lu frequency\n",
--				freq);
--			return -EINVAL;
--		}
--
--		voltage_mv = dev_pm_opp_get_voltage(opp) / 1000;
--		dev_pm_opp_put(opp);
--
--		/*
--		 * Do the multiplication with MHz and millivolt so as
--		 * to not overflow.
--		 */
--		power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
--		do_div(power, 1000000000);
--
--		/* power is stored in mW */
--		freq_table[i].power = power;
--	}
--
--	return 0;
-+	return cpufreq_cdev->max_level - i - 1;
- }
- 
- static u32 cpu_freq_to_power(struct cpufreq_cooling_device *cpufreq_cdev,
- 			     u32 freq)
- {
- 	int i;
--	struct freq_table *freq_table = cpufreq_cdev->freq_table;
- 
--	for (i = 1; i <= cpufreq_cdev->max_level; i++)
--		if (freq > freq_table[i].frequency)
-+	for (i = cpufreq_cdev->max_level - 1; i >= 0; i--) {
-+		if (freq > cpufreq_cdev->em->table[i].frequency)
- 			break;
-+	}
- 
--	return freq_table[i - 1].power;
-+	return cpufreq_cdev->em->table[i + 1].power;
- }
- 
- static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
- 			     u32 power)
- {
- 	int i;
--	struct freq_table *freq_table = cpufreq_cdev->freq_table;
- 
--	for (i = 1; i <= cpufreq_cdev->max_level; i++)
--		if (power > freq_table[i].power)
-+	for (i = cpufreq_cdev->max_level - 1; i >= 0; i--) {
-+		if (power > cpufreq_cdev->em->table[i].power)
- 			break;
-+	}
- 
--	return freq_table[i - 1].frequency;
-+	return cpufreq_cdev->em->table[i + 1].frequency;
- }
- 
- /**
-@@ -356,7 +268,7 @@ static int cpufreq_state2power(struct thermal_cooling_device *cdev,
- 			       struct thermal_zone_device *tz,
- 			       unsigned long state, u32 *power)
- {
--	unsigned int freq, num_cpus;
-+	unsigned int freq, num_cpus, idx;
- 	struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
- 
- 	/* Request state should be less than max_level */
-@@ -365,7 +277,8 @@ static int cpufreq_state2power(struct thermal_cooling_device *cdev,
- 
- 	num_cpus = cpumask_weight(cpufreq_cdev->policy->cpus);
- 
--	freq = cpufreq_cdev->freq_table[state].frequency;
-+	idx = cpufreq_cdev->max_level - state;
-+	freq = cpufreq_cdev->em->table[idx].frequency;
- 	*power = cpu_freq_to_power(cpufreq_cdev, freq) * num_cpus;
- 
- 	return 0;
-@@ -409,8 +322,59 @@ static int cpufreq_power2state(struct thermal_cooling_device *cdev,
- 				      power);
- 	return 0;
- }
-+
-+static inline bool em_is_sane(struct cpufreq_cooling_device *cpufreq_cdev,
-+			      struct em_perf_domain *em) {
-+	struct cpufreq_policy *policy;
-+	unsigned int nr_levels;
-+
-+	if (!em)
-+		return false;
-+
-+	policy = cpufreq_cdev->policy;
-+	if (!cpumask_equal(policy->related_cpus, to_cpumask(em->cpus))) {
-+		pr_err("The span of pd %*pbl is misaligned with cpufreq policy %*pbl\n",
-+			cpumask_pr_args(to_cpumask(em->cpus)),
-+			cpumask_pr_args(policy->related_cpus));
-+		return false;
-+	}
-+
-+	nr_levels = cpufreq_cdev->max_level + 1;
-+	if (em->nr_cap_states != nr_levels) {
-+		pr_err("The number of cap states in pd %*pbl (%u) doesn't match the number of cooling levels (%u)\n",
-+			cpumask_pr_args(to_cpumask(em->cpus)),
-+			em->nr_cap_states, nr_levels);
-+		return false;
-+	}
-+
-+	return true;
-+}
- #endif /* CONFIG_THERMAL_GOV_POWER_ALLOCATOR */
- 
-+static unsigned int get_state_freq(struct cpufreq_cooling_device *cpufreq_cdev,
-+				   unsigned long state)
-+{
-+	struct cpufreq_policy *policy;
-+	unsigned long idx;
-+
-+#ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
-+	/* Use the Energy Model table if available */
-+	if (cpufreq_cdev->em) {
-+		idx = cpufreq_cdev->max_level - state;
-+		return cpufreq_cdev->em->table[idx].frequency;
-+	}
-+#endif
-+
-+	/* Otherwise, fallback on the CPUFreq table */
-+	policy = cpufreq_cdev->policy;
-+	if (policy->freq_table_sorted == CPUFREQ_TABLE_SORTED_ASCENDING)
-+		idx = cpufreq_cdev->max_level - state;
-+	else
-+		idx = state;
-+
-+	return policy->freq_table[idx].frequency;
-+}
-+
- /* cpufreq cooling device callback functions are defined below */
- 
- /**
-@@ -478,7 +442,7 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
- 	cpufreq_cdev->cpufreq_state = state;
- 
- 	return freq_qos_update_request(&cpufreq_cdev->qos_req,
--				cpufreq_cdev->freq_table[state].frequency);
-+				get_state_freq(cpufreq_cdev, state));
- }
- 
- /* Bind cpufreq callbacks to thermal cooling device ops */
-@@ -489,26 +453,12 @@ static struct thermal_cooling_device_ops cpufreq_cooling_ops = {
- 	.set_cur_state		= cpufreq_set_cur_state,
- };
- 
--static unsigned int find_next_max(struct cpufreq_frequency_table *table,
--				  unsigned int prev_max)
--{
--	struct cpufreq_frequency_table *pos;
--	unsigned int max = 0;
--
--	cpufreq_for_each_valid_entry(pos, table) {
--		if (pos->frequency > max && pos->frequency < prev_max)
--			max = pos->frequency;
--	}
--
--	return max;
--}
--
- /**
-  * __cpufreq_cooling_register - helper function to create cpufreq cooling device
-  * @np: a valid struct device_node to the cooling device device tree node
-  * @policy: cpufreq policy
-  * Normally this should be same as cpufreq policy->related_cpus.
-- * @capacitance: dynamic power coefficient for these cpus
-+ * @em: Energy Model of the cpufreq policy
-  *
-  * This interface function registers the cpufreq cooling device with the name
-  * "thermal-cpufreq-%x". This api can support multiple instances of cpufreq
-@@ -520,12 +470,13 @@ static unsigned int find_next_max(struct cpufreq_frequency_table *table,
-  */
- static struct thermal_cooling_device *
- __cpufreq_cooling_register(struct device_node *np,
--			struct cpufreq_policy *policy, u32 capacitance)
-+			struct cpufreq_policy *policy,
-+			struct em_perf_domain *em)
- {
- 	struct thermal_cooling_device *cdev;
- 	struct cpufreq_cooling_device *cpufreq_cdev;
- 	char dev_name[THERMAL_NAME_LENGTH];
--	unsigned int freq, i, num_cpus;
-+	unsigned int i, num_cpus;
- 	struct device *dev;
- 	int ret;
- 	struct thermal_cooling_device_ops *cooling_ops;
-@@ -566,54 +517,36 @@ __cpufreq_cooling_register(struct device_node *np,
- 	/* max_level is an index, not a counter */
- 	cpufreq_cdev->max_level = i - 1;
- 
--	cpufreq_cdev->freq_table = kmalloc_array(i,
--					sizeof(*cpufreq_cdev->freq_table),
--					GFP_KERNEL);
--	if (!cpufreq_cdev->freq_table) {
--		cdev = ERR_PTR(-ENOMEM);
--		goto free_idle_time;
--	}
--
- 	ret = ida_simple_get(&cpufreq_ida, 0, 0, GFP_KERNEL);
- 	if (ret < 0) {
- 		cdev = ERR_PTR(ret);
--		goto free_table;
-+		goto free_idle_time;
- 	}
- 	cpufreq_cdev->id = ret;
- 
- 	snprintf(dev_name, sizeof(dev_name), "thermal-cpufreq-%d",
- 		 cpufreq_cdev->id);
- 
--	/* Fill freq-table in descending order of frequencies */
--	for (i = 0, freq = -1; i <= cpufreq_cdev->max_level; i++) {
--		freq = find_next_max(policy->freq_table, freq);
--		cpufreq_cdev->freq_table[i].frequency = freq;
--
--		/* Warn for duplicate entries */
--		if (!freq)
--			pr_warn("%s: table has duplicate entries\n", __func__);
--		else
--			pr_debug("%s: freq:%u KHz\n", __func__, freq);
--	}
--
- 	cooling_ops = &cpufreq_cooling_ops;
- 
- #ifdef CONFIG_THERMAL_GOV_POWER_ALLOCATOR
--	if (capacitance) {
--		ret = update_freq_table(cpufreq_cdev, capacitance);
--		if (ret) {
--			cdev = ERR_PTR(ret);
--			goto remove_ida;
--		}
-+	if (em_is_sane(cpufreq_cdev, em)) {
-+		cpufreq_cdev->em = em;
- 		cooling_ops->get_requested_power = cpufreq_get_requested_power;
- 		cooling_ops->state2power = cpufreq_state2power;
- 		cooling_ops->power2state = cpufreq_power2state;
--	}
-+	} else
- #endif
-+	if (policy->freq_table_sorted == CPUFREQ_TABLE_UNSORTED) {
-+		pr_err("%s: unsorted frequency tables are not supported\n",
-+		       __func__);
-+		cdev = ERR_PTR(-EINVAL);
-+		goto remove_ida;
-+	}
- 
- 	ret = freq_qos_add_request(&policy->constraints,
- 				   &cpufreq_cdev->qos_req, FREQ_QOS_MAX,
--				   cpufreq_cdev->freq_table[0].frequency);
-+				   get_state_freq(cpufreq_cdev, 0));
- 	if (ret < 0) {
- 		pr_err("%s: Failed to add freq constraint (%d)\n", __func__,
- 		       ret);
-@@ -636,8 +569,6 @@ __cpufreq_cooling_register(struct device_node *np,
- 	freq_qos_remove_request(&cpufreq_cdev->qos_req);
- remove_ida:
- 	ida_simple_remove(&cpufreq_ida, cpufreq_cdev->id);
--free_table:
--	kfree(cpufreq_cdev->freq_table);
- free_idle_time:
- 	kfree(cpufreq_cdev->idle_time);
- free_cdev:
-@@ -659,7 +590,7 @@ __cpufreq_cooling_register(struct device_node *np,
- struct thermal_cooling_device *
- cpufreq_cooling_register(struct cpufreq_policy *policy)
- {
--	return __cpufreq_cooling_register(NULL, policy, 0);
-+	return __cpufreq_cooling_register(NULL, policy, NULL);
- }
- EXPORT_SYMBOL_GPL(cpufreq_cooling_register);
- 
-@@ -687,7 +618,6 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
- {
- 	struct device_node *np = of_get_cpu_node(policy->cpu, NULL);
- 	struct thermal_cooling_device *cdev = NULL;
--	u32 capacitance = 0;
- 
- 	if (!np) {
- 		pr_err("cpu_cooling: OF node not available for cpu%d\n",
-@@ -696,10 +626,9 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
- 	}
- 
- 	if (of_find_property(np, "#cooling-cells", NULL)) {
--		of_property_read_u32(np, "dynamic-power-coefficient",
--				     &capacitance);
-+		struct em_perf_domain *em = em_cpu_get(policy->cpu);
- 
--		cdev = __cpufreq_cooling_register(np, policy, capacitance);
-+		cdev = __cpufreq_cooling_register(np, policy, em);
- 		if (IS_ERR(cdev)) {
- 			pr_err("cpu_cooling: cpu%d failed to register as cooling device: %ld\n",
- 			       policy->cpu, PTR_ERR(cdev));
-@@ -735,7 +664,6 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
- 	freq_qos_remove_request(&cpufreq_cdev->qos_req);
- 	ida_simple_remove(&cpufreq_ida, cpufreq_cdev->id);
- 	kfree(cpufreq_cdev->idle_time);
--	kfree(cpufreq_cdev->freq_table);
- 	kfree(cpufreq_cdev);
- }
- EXPORT_SYMBOL_GPL(cpufreq_cooling_unregister);
--- 
-2.24.0.rc0.303.g954a862665-goog
-
+>
+>         for (i = 0; i < nr_conns; i++)
+>                 if (atomic_read(&csdev->refcnt[i]) != 0)
+> --
+> 2.24.0.rc0.303.g954a862665-goog
+>
