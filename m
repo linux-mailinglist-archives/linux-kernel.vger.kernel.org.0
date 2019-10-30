@@ -2,330 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8184EA495
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 21:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEF5EA49A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 21:12:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfJ3ULj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 16:11:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbfJ3ULi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 16:11:38 -0400
-Received: from linux-8ccs (unknown [92.117.144.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5069720650;
-        Wed, 30 Oct 2019 20:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572466296;
-        bh=fYNg2uPUmC97M1FRlx78nN1TvRwX0gv7SPs17Dc9Fo8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m6se2yb5mOsj6qTGDes9L00wnk6VmdMP4fQ48m9LOir2oi/PGfWQGhpuZGGN/SIh7
-         D2MXFy3VbBMe18T178UzZ5DGQYBz6YgxmAkjcZ3s1EsUg1lbvI2ydon+BGdvsTyM5X
-         A97F0z3ruwtg8BEbz2msc3ZRxDbIzy7OhX0RBzgk=
-Date:   Wed, 30 Oct 2019 21:11:28 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthias Maennich <maennich@google.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] modpost: dump missing namespaces into a single
- modules.nsdeps file
-Message-ID: <20191030201127.GC13413@linux-8ccs>
-References: <20191029123809.29301-1-yamada.masahiro@socionext.com>
- <20191029123809.29301-3-yamada.masahiro@socionext.com>
+        id S1726769AbfJ3UMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 16:12:22 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33560 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfJ3UMV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 16:12:21 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 71so4228377qkl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 13:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/GCjoby9r+s+PmV1FeOt/O5VIxJ79kYZdBdHtT5yosc=;
+        b=hs4u13vDJKlNQDZKcbNVyPbIOUO4++rTthQnsQzTyBa9XWD0PqFcDlID67q4NaHOBr
+         IHr6T6nX966JNzI2EeAQe8lLYg4I7H/NQsjt21lvxwCAt877j6p8citQow+UzZ2zrgyq
+         oAyDlNvuSdlMkxFLCJTc07wUsNKAFK1j52tckNVnHzCvkhlpasTLzWVn++Srb25T1rcv
+         w862U9tnBYoWP+h71e1Pj7OqujSeAW4Viig8S+wYMQUlS6wkq8M+fN9V4LmNvUXdq54P
+         o+arqYUKSHdF3PCMnfWptbn2gLDX1+yJ/5QCCvsNT520P7REY8HVYZ8Wn6QqMtsqQtWH
+         Ap2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/GCjoby9r+s+PmV1FeOt/O5VIxJ79kYZdBdHtT5yosc=;
+        b=bjhDz8uEiNV3jpJhEXY5rZ4T4eMkvZdQdehkqg9zdP1CkS6CzIDAtrqGg1pDvipsI2
+         /qFtOm0FSn5Lwq9gC8dpa6ql5U4x0pWSw7mqq0MR0YfCMx3r6B0888tnW89Pak744+58
+         hZRU7mLfdHHMbQ4muGsn4UWQ5KgJu5ZtUCTC7jxp+qjns2OTIIiyusEDejjzrAYG8yl7
+         bRBEnW3jPUiMo8KSFDmNZChW0HXsd/1/sfGLeMeSQwclWetlP8AWiC7BFxZACCd63yqT
+         LLk3iHn/SODv0JiU0ZP5Db9ymTzYfK5YgqN4tA9J7cYO1PC99F4QKODKBiNh2xOod2FB
+         39BA==
+X-Gm-Message-State: APjAAAVuj39GLj0byX8BzalJxLH2MODJi6wEig6Cm8JAi2tThleu3stC
+        qwnvtuDKkSmdAjrovT0PTAUlGH+HmB4zRKWpmC4u
+X-Google-Smtp-Source: APXvYqx7bti37f9+2uWLgnwmX5xe5F/Bf0v/KqsYC9Kv/tvuxGMoYEb+NTCbuNpu7R2tix93zwP51PF2WTt7jtDuQnY=
+X-Received: by 2002:a37:bb06:: with SMTP id l6mr1807038qkf.289.1572466340480;
+ Wed, 30 Oct 2019 13:12:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191029123809.29301-3-yamada.masahiro@socionext.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191018001816.94460-1-brendanhiggins@google.com>
+ <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+ <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
+In-Reply-To: <201910301205.74EC2A226D@keescook>
+From:   Iurii Zaikin <yzaikin@google.com>
+Date:   Wed, 30 Oct 2019 13:11:44 -0700
+Message-ID: <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, David Gow <davidgow@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Mike Salvatore <mike.salvatore@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Masahiro Yamada [29/10/19 21:38 +0900]:
->The modpost, with the -d option given, generates per-module .ns_deps
->files.
+> Why can't unit tests live with the code they're testing? They're already
+> logically tied together; what's the harm there? This needn't be the case
+> for ALL tests, etc. The test driver could still live externally. The
+> test in the other .c would just have exported functions... ?
 >
->Kbuild generates per-module .mod files to carry module information.
->This is convenient because Make handles multiple jobs when the -j
->option is given.
->
->On the other hand, the modpost always runs as a single thread.
->I do not see a strong reason to produce separate .ns_deps files.
->
->This commit changes the modpost to generate just one file,
->modules.nsdeps, each line of which has the following format:
->
->  <module_name>: <list of missing namespaces>
->
->Please note it contains *missing* namespaces instead of required ones.
->So, modules.nsdeps is empty if the namespace dependency is all good.
->
->This will work more efficiently because spatch will no longer process
->already imported namespaces. I removed the '(if needed)' from the
->nsdeps log since spatch is invoked only when needed.
-
-This is a nice optimization! :-)
-
->This also solved the stale .ns_deps files problem reported by
->Jessica Yu:
->
->  https://lkml.org/lkml/2019/10/28/467
-
-Tested-by: Jessica Yu <jeyu@kernel.org>
-Acked-by: Jessica Yu <jeyu@kernel.org>
-
-Thanks for the fix!
-
->While I was here, I improved the modpost code a little more;
->I freed ns_deps_bus.p because buf_write() allocates memory.
->
->Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->---
->
-> .gitignore               |  2 +-
-> Documentation/dontdiff   |  1 +
-> Makefile                 |  4 ++--
-> scripts/Makefile.modpost |  2 +-
-> scripts/mod/modpost.c    | 44 +++++++++++++++++-----------------------
-> scripts/mod/modpost.h    |  4 ++--
-> scripts/nsdeps           | 21 +++++++++----------
-> 7 files changed, 36 insertions(+), 42 deletions(-)
->
->diff --git a/.gitignore b/.gitignore
->index 70580bdd352c..72ef86a5570d 100644
->--- a/.gitignore
->+++ b/.gitignore
->@@ -32,7 +32,6 @@
-> *.lzo
-> *.mod
-> *.mod.c
->-*.ns_deps
-> *.o
-> *.o.*
-> *.patch
->@@ -61,6 +60,7 @@ modules.order
-> /System.map
-> /Module.markers
-> /modules.builtin.modinfo
->+/modules.nsdeps
->
-> #
-> # RPM spec file (make rpm-pkg)
->diff --git a/Documentation/dontdiff b/Documentation/dontdiff
->index 9f4392876099..72fc2e9e2b63 100644
->--- a/Documentation/dontdiff
->+++ b/Documentation/dontdiff
->@@ -179,6 +179,7 @@ mkutf8data
-> modpost
-> modules.builtin
-> modules.builtin.modinfo
->+modules.nsdeps
-> modules.order
-> modversions.h*
-> nconf
->diff --git a/Makefile b/Makefile
->index 0ef897fd9cfd..1e3f307bd49b 100644
->--- a/Makefile
->+++ b/Makefile
->@@ -1356,7 +1356,7 @@ endif # CONFIG_MODULES
->
-> # Directories & files removed with 'make clean'
-> CLEAN_DIRS  += include/ksym
->-CLEAN_FILES += modules.builtin.modinfo
->+CLEAN_FILES += modules.builtin.modinfo modules.nsdeps
->
-> # Directories & files removed with 'make mrproper'
-> MRPROPER_DIRS  += include/config include/generated          \
->@@ -1660,7 +1660,7 @@ clean: $(clean-dirs)
-> 		-o -name '*.ko.*' \
-> 		-o -name '*.dtb' -o -name '*.dtb.S' -o -name '*.dt.yaml' \
-> 		-o -name '*.dwo' -o -name '*.lst' \
->-		-o -name '*.su' -o -name '*.mod' -o -name '*.ns_deps' \
->+		-o -name '*.su' -o -name '*.mod' \
-> 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
-> 		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
-> 		-o -name '*.asn1.[ch]' \
->diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
->index c9757b20b048..da37128c3f9f 100644
->--- a/scripts/Makefile.modpost
->+++ b/scripts/Makefile.modpost
->@@ -66,7 +66,7 @@ __modpost:
-> else
->
-> MODPOST += $(subst -i,-n,$(filter -i,$(MAKEFLAGS))) -s -T - \
->-	$(if $(KBUILD_NSDEPS),-d)
->+	$(if $(KBUILD_NSDEPS),-d modules.nsdeps)
->
-> ifeq ($(KBUILD_EXTMOD),)
-> MODPOST += $(wildcard vmlinux)
->diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
->index dcd90d563ce8..f7425f5d4ab0 100644
->--- a/scripts/mod/modpost.c
->+++ b/scripts/mod/modpost.c
->@@ -38,8 +38,6 @@ static int sec_mismatch_count = 0;
-> static int sec_mismatch_fatal = 0;
-> /* ignore missing files */
-> static int ignore_missing_files;
->-/* write namespace dependencies */
->-static int write_namespace_deps;
->
-> enum export {
-> 	export_plain,      export_unused,     export_gpl,
->@@ -2217,14 +2215,11 @@ static int check_exports(struct module *mod)
-> 		else
-> 			basename = mod->name;
->
->-		if (exp->namespace) {
->-			add_namespace(&mod->required_namespaces,
->-				      exp->namespace);
->-
->-			if (!module_imports_namespace(mod, exp->namespace)) {
->-				warn("module %s uses symbol %s from namespace %s, but does not import it.\n",
->-				     basename, exp->name, exp->namespace);
->-			}
->+		if (exp->namespace &&
->+		    !module_imports_namespace(mod, exp->namespace)) {
->+			warn("module %s uses symbol %s from namespace %s, but does not import it.\n",
->+			     basename, exp->name, exp->namespace);
->+			add_namespace(&mod->missing_namespaces, exp->namespace);
-> 		}
->
-> 		if (!mod->gpl_compatible)
->@@ -2525,29 +2520,27 @@ static void write_dump(const char *fname)
-> 	free(buf.p);
-> }
->
->-static void write_namespace_deps_files(void)
->+static void write_namespace_deps_files(const char *fname)
-> {
-> 	struct module *mod;
-> 	struct namespace_list *ns;
-> 	struct buffer ns_deps_buf = {};
->
-> 	for (mod = modules; mod; mod = mod->next) {
->-		char fname[PATH_MAX];
->
->-		if (mod->skip)
->+		if (mod->skip || !mod->missing_namespaces)
-> 			continue;
->
->-		ns_deps_buf.pos = 0;
->+		buf_printf(&ns_deps_buf, "%s.ko:", mod->name);
->
->-		for (ns = mod->required_namespaces; ns; ns = ns->next)
->-			buf_printf(&ns_deps_buf, "%s\n", ns->namespace);
->+		for (ns = mod->missing_namespaces; ns; ns = ns->next)
->+			buf_printf(&ns_deps_buf, " %s", ns->namespace);
->
->-		if (ns_deps_buf.pos == 0)
->-			continue;
->-
->-		sprintf(fname, "%s.ns_deps", mod->name);
->-		write_if_changed(&ns_deps_buf, fname);
->+		buf_printf(&ns_deps_buf, "\n");
-> 	}
->+
->+	write_if_changed(&ns_deps_buf, fname);
->+	free(ns_deps_buf.p);
-> }
->
-> struct ext_sym_list {
->@@ -2560,6 +2553,7 @@ int main(int argc, char **argv)
-> 	struct module *mod;
-> 	struct buffer buf = { };
-> 	char *kernel_read = NULL;
->+	char *missing_namespace_deps = NULL;
-> 	char *dump_write = NULL, *files_source = NULL;
-> 	int opt;
-> 	int err;
->@@ -2567,7 +2561,7 @@ int main(int argc, char **argv)
-> 	struct ext_sym_list *extsym_iter;
-> 	struct ext_sym_list *extsym_start = NULL;
->
->-	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awEd")) != -1) {
->+	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awEd:")) != -1) {
-> 		switch (opt) {
-> 		case 'i':
-> 			kernel_read = optarg;
->@@ -2606,7 +2600,7 @@ int main(int argc, char **argv)
-> 			sec_mismatch_fatal = 1;
-> 			break;
-> 		case 'd':
->-			write_namespace_deps = 1;
->+			missing_namespace_deps = optarg;
-> 			break;
-> 		default:
-> 			exit(1);
->@@ -2654,8 +2648,8 @@ int main(int argc, char **argv)
-> 		write_if_changed(&buf, fname);
-> 	}
->
->-	if (write_namespace_deps)
->-		write_namespace_deps_files();
->+	if (missing_namespace_deps)
->+		write_namespace_deps_files(missing_namespace_deps);
->
-> 	if (dump_write)
-> 		write_dump(dump_write);
->diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
->index ad271bc6c313..fe6652535e4b 100644
->--- a/scripts/mod/modpost.h
->+++ b/scripts/mod/modpost.h
->@@ -126,8 +126,8 @@ struct module {
-> 	struct buffer dev_table_buf;
-> 	char	     srcversion[25];
-> 	int is_dot_o;
->-	// Required namespace dependencies
->-	struct namespace_list *required_namespaces;
->+	// Missing namespace dependencies
->+	struct namespace_list *missing_namespaces;
-> 	// Actual imported namespaces
-> 	struct namespace_list *imported_namespaces;
-> };
->diff --git a/scripts/nsdeps b/scripts/nsdeps
->index dda6fbac016e..08db427a7fe5 100644
->--- a/scripts/nsdeps
->+++ b/scripts/nsdeps
->@@ -27,15 +27,14 @@ generate_deps_for_ns() {
-> }
->
-> generate_deps() {
->-	local mod_name=`basename $@ .ko`
->-	local mod_file=`echo $@ | sed -e 's/\.ko/\.mod/'`
->-	local ns_deps_file=`echo $@ | sed -e 's/\.ko/\.ns_deps/'`
->-	if [ ! -f "$ns_deps_file" ]; then return; fi
->-	local mod_source_files=`cat $mod_file | sed -n 1p                      \
->+	local mod=${1%.ko:}
->+	shift
->+	local namespaces="$*"
->+	local mod_source_files=`cat $mod.mod | sed -n 1p                      \
-> 					      | sed -e 's/\.o/\.c/g'           \
-> 					      | sed "s|[^ ]* *|${srctree}/&|g"`
->-	for ns in `cat $ns_deps_file`; do
->-		echo "Adding namespace $ns to module $mod_name (if needed)."
->+	for ns in $namespaces; do
->+		echo "Adding namespace $ns to module $mod.ko."
-> 		generate_deps_for_ns $ns $mod_source_files
-> 		# sort the imports
-> 		for source_file in $mod_source_files; do
->@@ -52,7 +51,7 @@ generate_deps() {
-> 	done
-> }
->
->-for f in `cat $objtree/modules.order`; do
->-	generate_deps $f
->-done
->-
->+while read line
->+do
->+	generate_deps $line
->+done < modules.nsdeps
->-- 
->2.17.1
->
+Curiously enough, this approach has been adopted by D 2.0 where unittests are
+members of the class under test:  https://digitalmars.com/d/2.0/unittest.html
+but such approach is not mainstream.
+I personally like the idea of testing the lowest level bits in isolation even if
+they are not a part of any interface. I think that specifying the
+interface using
+unit tests and ensuring implementation correctness are complementary but
+I haven't had much luck arguing this with our esteemed colleagues.
