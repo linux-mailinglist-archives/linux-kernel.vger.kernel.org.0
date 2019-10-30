@@ -2,103 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1674E9A0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:35:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C33DE9A1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfJ3KfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:35:11 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31688 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726046AbfJ3KfK (ORCPT
+        id S1726793AbfJ3KjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:39:00 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:55709 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726046AbfJ3KjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:35:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572431709;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vMnBP1vJh7DVtSAEiQOC37MaYouJjw4pGK3+A/kZfEE=;
-        b=cM8ljuzJEYay75gZmV+oyfNRyuEt79+iU/NIl03OwMj7CqNFqmmIXFEjeV0yalg1EkheTg
-        cMnSANZlcKEaVys+n0aH96mfcYVEp/v6WRPyy4A9/ZckonaMjJJwANrvAx3IjIBJ2VhcVQ
-        E2F1A+OzrpEH2NGGG8A7r1ORT5uJSRI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-nQpbRAfROVGuuPV7vSUXZw-1; Wed, 30 Oct 2019 06:35:06 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE4321005500;
-        Wed, 30 Oct 2019 10:35:04 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96A3910016EB;
-        Wed, 30 Oct 2019 10:34:32 +0000 (UTC)
-Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
- file at read
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
- <20191028124222.ld6u3dhhujfqcn7w@box>
- <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
- <20191028125702.xdfbs7rqhm3wer5t@box>
- <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
- <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
-Date:   Wed, 30 Oct 2019 10:34:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Wed, 30 Oct 2019 06:39:00 -0400
+Received: from [172.20.50.122] ([91.217.168.176])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id PlNMiZEaKsBskPlNPiLsG2; Wed, 30 Oct 2019 11:38:57 +0100
+Subject: Re: [PATCH] dt-bindings: media: meson-ao-cec: convert to yaml
+To:     Neil Armstrong <narmstrong@baylibre.com>, robh+dt@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20191021121131.25017-1-narmstrong@baylibre.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <d8733cd1-fca8-3aa7-8a48-8e79d0249e82@xs4all.nl>
+Date:   Wed, 30 Oct 2019 11:38:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+In-Reply-To: <20191021121131.25017-1-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: nQpbRAfROVGuuPV7vSUXZw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIQ2VdeGwB3P6PAcICDG9mQkN2WKp13Tk7/oBtUpSOf67QH/VGP9pPxvt49Oopz6Qm4vSECPrgX7ZQVLgpKlLNgISmpxyQBwJFLd9BAdOQ/cv1vaA4TN
+ YYzuB+p3f3BPchXc6x3xOmgODI6mEhcMDhNoAdVUYRc9jAHCeDEA+JzcJKFEAWzOm29SFD48uSQHaKuz6hfvRXx0SwwazEcFDflnaRUPOcdVaqV/pzoXtT3M
+ 8ypLdzK972vSyI1Zck283wFUvDjvGllc8x4oSDjx9TQQS2qWDHr0E0E9IcPaarP43bs2Pj6VfwAqBV9c5uXOAr6Zl+NY/ptrW7WMUnMHA/vAsRSHqwiIQPPV
+ L/QHyEYjc91sYgyCK18FtGJGNStxGU91lJcWyI9T57H/nKhLqe9gtpTMPtnLdfEAskMCRHXz4fQyEMv7BtaL/9nbR4hPEg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Neil,
 
-On 29/10/2019 16:52, Linus Torvalds wrote:
-> On Tue, Oct 29, 2019 at 3:25 PM Konstantin Khlebnikov
-> <khlebnikov@yandex-team.ru> wrote:
->> I think all network filesystems which synchronize metadata lazily should=
- be
->> marked. For example as "SB_VOLATILE". And vfs could handle them speciall=
-y.
-> No need. The VFS layer doesn't call generic_file_buffered_read()
-> directly anyway. It's just a helper function for filesystems to use if
-> they want to.
->
-> They could (and should) make sure the inode size is sufficiently
-> up-to-date before calling it. And if they want something more
-> synchronous, they can do it themselves.
->
-> But NFS, for example, has open/close consistency, so the metadata
-> revalidation is at open() time, not at read time.
->
->                 Linus
+Can you post a new patch that updates the MAINTAINERS file?
 
-NFS may be ok here, but it will break GFS2. There may be others too...=20
-OCFS2 is likely one. Not sure about CIFS either. Does it really matter=20
-that we might occasionally allocate a page and then free it again?
+Thanks!
 
-Ramfs is a simple test case, but at the same time it doesn't represent=20
-the complexity of a real world filesystem. I'm just back from a few days=20
-holiday so apologies if I've missed something earlier on in the discussions=
-,
+	Hans
 
-Steve.
+On 10/21/19 2:11 PM, Neil Armstrong wrote:
+> Now that we have the DT validation in place, let's convert the device tree
+> bindings for the Amlogic AO-CEC controller over to a YAML schemas.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>   .../media/amlogic,meson-gx-ao-cec.yaml        | 91 +++++++++++++++++++
+>   .../bindings/media/meson-ao-cec.txt           | 37 --------
+>   2 files changed, 91 insertions(+), 37 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/media/meson-ao-cec.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+> new file mode 100644
+> index 000000000000..41197578f19a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2019 BayLibre, SAS
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/media/amlogic,meson-gx-ao-cec.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson AO-CEC Controller
+> +
+> +maintainers:
+> +  - Neil Armstrong <narmstrong@baylibre.com>
+> +
+> +description: |
+> +  The Amlogic Meson AO-CEC module is present is Amlogic SoCs and its purpose is
+> +  to handle communication between HDMI connected devices over the CEC bus.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,meson-gx-ao-cec # GXBB, GXL, GXM, G12A and SM1 AO_CEC_A module
+> +      - amlogic,meson-g12a-ao-cec # G12A AO_CEC_B module
+> +      - amlogic,meson-sm1-ao-cec # SM1 AO_CEC_B module
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  hdmi-phandle:
+> +    description: phandle to the HDMI controller
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,meson-gx-ao-cec
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AO-CEC clock
+> +
+> +        clock-names:
+> +          maxItems: 1
+> +          items:
+> +            - const: core
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,meson-g12a-ao-cec
+> +              - amlogic,meson-sm1-ao-cec
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AO-CEC clock generator source
+> +
+> +        clock-names:
+> +          maxItems: 1
+> +          items:
+> +            - const: oscin
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - hdmi-phandle
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    cec_AO: cec@100 {
+> +        compatible = "amlogic,meson-gx-ao-cec";
+> +        reg = <0x0 0x00100 0x0 0x14>;
+> +        interrupts = <199>;
+> +        clocks = <&clkc_cec>;
+> +        clock-names = "core";
+> +        hdmi-phandle = <&hdmi_tx>;
+> +    };
+> +
+> diff --git a/Documentation/devicetree/bindings/media/meson-ao-cec.txt b/Documentation/devicetree/bindings/media/meson-ao-cec.txt
+> deleted file mode 100644
+> index ad92ee41c0dd..000000000000
+> --- a/Documentation/devicetree/bindings/media/meson-ao-cec.txt
+> +++ /dev/null
+> @@ -1,37 +0,0 @@
+> -* Amlogic Meson AO-CEC driver
+> -
+> -The Amlogic Meson AO-CEC module is present is Amlogic SoCs and its purpose is
+> -to handle communication between HDMI connected devices over the CEC bus.
+> -
+> -Required properties:
+> -  - compatible : value should be following depending on the SoC :
+> -	For GXBB, GXL, GXM, G12A and SM1 (AO_CEC_A module) :
+> -	"amlogic,meson-gx-ao-cec"
+> -	For G12A (AO_CEC_B module) :
+> -	"amlogic,meson-g12a-ao-cec"
+> -	For SM1 (AO_CEC_B module) :
+> -	"amlogic,meson-sm1-ao-cec"
+> -
+> -  - reg : Physical base address of the IP registers and length of memory
+> -	  mapped region.
+> -
+> -  - interrupts : AO-CEC interrupt number to the CPU.
+> -  - clocks : from common clock binding: handle to AO-CEC clock.
+> -  - clock-names : from common clock binding, must contain :
+> -		For GXBB, GXL, GXM, G12A and SM1 (AO_CEC_A module) :
+> -		- "core"
+> -		For G12A, SM1 (AO_CEC_B module) :
+> -		- "oscin"
+> -		corresponding to entry in the clocks property.
+> -  - hdmi-phandle: phandle to the HDMI controller
+> -
+> -Example:
+> -
+> -cec_AO: cec@100 {
+> -	compatible = "amlogic,meson-gx-ao-cec";
+> -	reg = <0x0 0x00100 0x0 0x14>;
+> -	interrupts = <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>;
+> -	clocks = <&clkc_AO CLKID_AO_CEC_32K>;
+> -	clock-names = "core";
+> -	hdmi-phandle = <&hdmi_tx>;
+> -};
+> 
 
