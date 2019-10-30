@@ -2,47 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754B0E9CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F81E9D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 15:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfJ3OBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 10:01:48 -0400
-Received: from verein.lst.de ([213.95.11.211]:45652 "EHLO verein.lst.de"
+        id S1726758AbfJ3OCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 10:02:24 -0400
+Received: from smtp2.axis.com ([195.60.68.18]:26087 "EHLO smtp2.axis.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfJ3OBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:01:47 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3882E68B05; Wed, 30 Oct 2019 15:01:44 +0100 (CET)
-Date:   Wed, 30 Oct 2019 15:01:44 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Philippe Liard <pliard@google.com>
-Cc:     phillip@squashfs.org.uk, hch@lst.de, linux-kernel@vger.kernel.org,
-        groeck@chromium.org
-Subject: Re: [PATCH] squashfs: Migrate from ll_rw_block usage to BIO
-Message-ID: <20191030140144.GA14098@lst.de>
-References: <20191029074939.GA18999@lst.de> <20191030011954.60006-1-pliard@google.com>
+        id S1726328AbfJ3OCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 10:02:23 -0400
+IronPort-SDR: A6r/sRAgNcgUX6PPp549V7VnqRa+RPsV8Fgd5Ru+gJt5wm1+/Sadm+GxmQVl2XjiGjx+G3z7YQ
+ XTVBPDQVArlEmWjORPnItJ6Lae0eZOWyNcIg1u5SF2X7bETQvczeZ/LzWt02wZ3DXAK3+tG9Ti
+ dLDTINRcTZjDYjo76olwlpc8ZIKyxMkbc6m37TnfYz/ZIO5Ai0GClfE9RElV/B6zjTCAlUkKoZ
+ 3M+ungPUzRNzzcmBJgVdCqPpATxq6sZ9436l2dLaNlfn+Fza0GiP+L8HKNtz+u7aUcy0cTcnqa
+ nNI=
+X-IronPort-AV: E=Sophos;i="5.68,247,1569276000"; 
+   d="scan'208";a="1925617"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bes.se.axis.com
+Date:   Wed, 30 Oct 2019 15:02:16 +0100
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/sparse: Consistently do not zero memmap
+Message-ID: <20191030140216.i26n22asgafckfxy@axis.com>
+References: <20191030131122.8256-1-vincent.whitchurch@axis.com>
+ <20191030132958.GD31513@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191030011954.60006-1-pliard@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20191030132958.GD31513@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 10:19:54AM +0900, Philippe Liard wrote:
-> > What access do you need to synchronize?  If you read data into the
-> > page cache the page lock provides all synchronization needed.  If
-> > you just read into decrompression buffers there probably is no need
-> > for synchronization at all as each buffer is only accessed by one
-> > thread at a time.
-> My main concern here was waiting for the BIO request to complete but
-> submit_bio_wait() that you pointed out below should address that.
+On Wed, Oct 30, 2019 at 02:29:58PM +0100, Michal Hocko wrote:
+> On Wed 30-10-19 14:11:22, Vincent Whitchurch wrote:
+> > (I noticed this because on my ARM64 platform, with 1 GiB of memory the
+> >  first [and only] section is allocated from the zeroing path while with
+> >  2 GiB of memory the first 1 GiB section is allocated from the
+> >  non-zeroing path.)
+> 
+> Do I get it right that sparse_buffer_init couldn't allocate memmap for
+> the full node for some reason and so sparse_init_nid would have to
+> allocate one for each memory section?
 
-Note that if you are doing multiple bios for a single request using
-submit_bio_wait might not be optimal.  In that case you probably want
-a refcount and only complete when all of them are done, but by looking
-at submit_bio_wait should get an idea how that works.  Alternatively look
-at others users, e.g. __blkdev_direct_IO in fs/block_dev.c that already
-support multiple bios.
+Not quite.  The sparsemap_buf is successfully allocated with the correct
+size in sparse_buffer_init(), but sparse_buffer_alloc() fails to
+allocate the same size from it.
+
+The reason it fails is that sparse_buffer_alloc() for some reason wants
+to return a pointer which is aligned to the allocation size.  But the
+sparsemap_buf was only allocated with PAGE_SIZE alignment so there's not
+enough space to align it.
+
+I don't understand the reason for this alignment requirement since the
+fallback path also allocates with PAGE_SIZE alignment.  I'm guessing the
+alignment is for the VMEMAP code which also uses sparse_buffer_alloc()?
