@@ -2,158 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1DAEE9A2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A86E9A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:38:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfJ3KkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:40:15 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:50207 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726046AbfJ3KkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:40:15 -0400
-Received: from [172.20.50.122] ([91.217.168.176])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id PlOaiZF6psBskPlOdiLsfs; Wed, 30 Oct 2019 11:40:12 +0100
-Subject: Re: [PATCH v3] dt-bindings: media: Convert stm32 cec bindings to
- json-schema
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>, mchehab@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com,
-        yannick.fertre@st.com, philippe.cornu@st.com, hugues.fruchet@st.com
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20191014092021.24020-1-benjamin.gaignard@st.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <e6655a20-5d87-7dc1-14e3-844f12096f0e@xs4all.nl>
-Date:   Wed, 30 Oct 2019 11:40:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726758AbfJ3KiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:38:08 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2501 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726046AbfJ3KiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:38:07 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 180FDFE20842B11A1B1F;
+        Wed, 30 Oct 2019 18:38:05 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 30 Oct 2019 18:38:04 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 30 Oct 2019 18:38:04 +0800
+Date:   Wed, 30 Oct 2019 18:40:49 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+CC:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ext4: bio_alloc never fails
+Message-ID: <20191030104049.GA170703@architecture4>
+References: <20191030042618.124220-1-gaoxiang25@huawei.com>
+ <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191014092021.24020-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDQzby7iJi2ukFJgU8JHUeC09xVN/QRQKmGaOzCliVJkkKMZFTdmOnJyl8HqCfm0V2sLtB6hU6a8WD57eHRd4e5QptFvRANT17/vxFEteIhxRqmWlxup
- yb6FF0YqO7vKcKT4RG1fHevWR/4xpUhkU3Nl0alXpEnwvsA39svrlvWADD+PNIf+RlT5UjSQ697/L9g0WIfEADln+HoYUtv/vGAQD6V+8+zHFnn4bghuqDFo
- iC3yKvFv2A2bmLAJx65S702UAHYb0ofwwXOCkVWvZgbBoeass0tdrPNA24ThvBhi5vPsAYKvdAClQO4+qxFjJ9Y8ih9N5vkyp95mETisdI85XEghoy6iJDPt
- rQrNQbHhZR2TFSZTf10mF+ZSgTAvZm3bsc7UWfbBgdd/uvnlRYo9aqrEjo5f5Nr25FPnKDDc4AaS7urPt+VECDT83IcrRXWBoG15fduxWlhtaM2yXVm2Lzbz
- /+XykNPENAoFFRhLmDcLoLW6tNPVJ5rLsCWMcSjaDdO+Z2E4gAk5dUz2bBVqu4jyfwb0joC4VtW49RNsOYPyVt9tgi9GsZO6TwjyMJ7355BQWo1k2pkXK4R/
- s00JGiNgf1Ej0c0VzZSaci2Hi6O9Q+xHZ/plQAWZVrQb7F6/pEquzv7qhj9hWO0uW+4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme709-chm.china.huawei.com (10.1.199.105) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/14/19 11:20 AM, Benjamin Gaignard wrote:
-> Convert the STM32 cec binding to DT schema format using json-schema
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Hi Ritech,
 
-There doesn't seem to be a MAINTAINERS entry for this driver. Can you add
-one?
+On Wed, Oct 30, 2019 at 03:43:10PM +0530, Ritesh Harjani wrote:
+> 
+> 
+> On 10/30/19 9:56 AM, Gao Xiang wrote:
+> > Similar to [1] [2], it seems a trivial cleanup since
+> > bio_alloc can handle memory allocation as mentioned in
+> > fs/direct-io.c (also see fs/block_dev.c, fs/buffer.c, ..)
+> > 
+> 
+> AFAIU, the reason is that, bio_alloc with __GFP_DIRECT_RECLAIM
+> flags guarantees bio allocation under some given restrictions,
+> as stated in fs/direct-io.c
+> So here it is ok to not check for NULL value from bio_alloc.
+> 
+> I think we can update above info too in your commit msg.
 
-	Hans
+Ok, I will update commit msg as you suggested.
 
-> ---
-> changes in v3:
-> - use (GPL-2.0-only OR BSD-2-Clause) license
 > 
-> changes in v2:
-> - use BSD-2-Clause license
-> - add additionalProperties: false
-> - remove pinctrl-names and pinctrl-[0-9]
+> > [1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
+> > [2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
+> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> > ---
+> >   fs/ext4/page-io.c  | 11 +++--------
+> >   fs/ext4/readpage.c |  2 --
+> >   2 files changed, 3 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> > index 12ceadef32c5..f1f7b6601780 100644
+> > --- a/fs/ext4/page-io.c
+> > +++ b/fs/ext4/page-io.c
+> > @@ -358,14 +358,12 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
+> >   	io->io_end = NULL;
+> >   }
+> > 
+> > -static int io_submit_init_bio(struct ext4_io_submit *io,
+> > -			      struct buffer_head *bh)
+> > +static void io_submit_init_bio(struct ext4_io_submit *io,
+> > +			       struct buffer_head *bh)
+> >   {
+> >   	struct bio *bio;
+> > 
+> >   	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
+> > -	if (!bio)
+> > -		return -ENOMEM;
+> >   	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+> >   	bio_set_dev(bio, bh->b_bdev);
+> >   	bio->bi_end_io = ext4_end_bio;
+> > @@ -373,7 +371,6 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
+> >   	io->io_bio = bio;
+> >   	io->io_next_block = bh->b_blocknr;
+> >   	wbc_init_bio(io->io_wbc, bio);
+> > -	return 0;
+> >   }
+> > 
+> >   static int io_submit_add_bh(struct ext4_io_submit *io,
+> > @@ -388,9 +385,7 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+> >   		ext4_io_submit(io);
+> >   	}
+> >   	if (io->io_bio == NULL) {
+> > -		ret = io_submit_init_bio(io, bh);
+> > -		if (ret)
+> > -			return ret;
+> > +		io_submit_init_bio(io, bh);
+> >   		io->io_bio->bi_write_hint = inode->i_write_hint;
+> >   	}
+> >   	ret = bio_add_page(io->io_bio, page, bh->b_size, bh_offset(bh));
 > 
->   .../devicetree/bindings/media/st,stm32-cec.txt     | 19 --------
->   .../devicetree/bindings/media/st,stm32-cec.yaml    | 54 ++++++++++++++++++++++
->   2 files changed, 54 insertions(+), 19 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/media/st,stm32-cec.txt
->   create mode 100644 Documentation/devicetree/bindings/media/st,stm32-cec.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/media/st,stm32-cec.txt b/Documentation/devicetree/bindings/media/st,stm32-cec.txt
-> deleted file mode 100644
-> index 6be2381c180d..000000000000
-> --- a/Documentation/devicetree/bindings/media/st,stm32-cec.txt
-> +++ /dev/null
-> @@ -1,19 +0,0 @@
-> -STMicroelectronics STM32 CEC driver
-> -
-> -Required properties:
-> - - compatible : value should be "st,stm32-cec"
-> - - reg : Physical base address of the IP registers and length of memory
-> -	 mapped region.
-> - - clocks : from common clock binding: handle to CEC clocks
-> - - clock-names : from common clock binding: must be "cec" and "hdmi-cec".
-> - - interrupts : CEC interrupt number to the CPU.
-> -
-> -Example for stm32f746:
-> -
-> -cec: cec@40006c00 {
-> -	compatible = "st,stm32-cec";
-> -	reg = <0x40006C00 0x400>;
-> -	interrupts = <94>;
-> -	clocks = <&rcc 0 STM32F7_APB1_CLOCK(CEC)>, <&rcc 1 CLK_HDMI_CEC>;
-> -	clock-names = "cec", "hdmi-cec";
-> -};
-> diff --git a/Documentation/devicetree/bindings/media/st,stm32-cec.yaml b/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
-> new file mode 100644
-> index 000000000000..d75019c093a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/st,stm32-cec.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/st,stm32-cec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STMicroelectronics STM32 CEC bindings
-> +
-> +maintainers:
-> +  - Benjamin Gaignard <benjamin.gaignard@st.com>
-> +  - Yannick Fertre <yannick.fertre@st.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32-cec
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Module Clock
-> +      - description: Bus Clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: cec
-> +      - const: hdmi-cec
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/stm32mp1-clks.h>
-> +    cec: cec@40006c00 {
-> +        compatible = "st,stm32-cec";
-> +        reg = <0x40006c00 0x400>;
-> +        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&rcc CEC_K>, <&clk_lse>;
-> +        clock-names = "cec", "hdmi-cec";
-> +    };
-> +
-> +...
-> 
+> Also we can further simplify it like below. Please check.
 
+Got it, let me update the patch later. :-)
+Thanks for your suggestion. I will wait for a while and
+see if other opinions raise up...
+
+Thanks,
+Gao Xiang
+
+> 
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index f1f7b6601780..a3a2edeb3bbf 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -373,7 +373,7 @@ static void io_submit_init_bio(struct ext4_io_submit
+> *io,
+>  	wbc_init_bio(io->io_wbc, bio);
+>  }
+> 
+> -static int io_submit_add_bh(struct ext4_io_submit *io,
+> +static void io_submit_add_bh(struct ext4_io_submit *io,
+>  			    struct inode *inode,
+>  			    struct page *page,
+>  			    struct buffer_head *bh)
+> @@ -393,7 +393,6 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+>  		goto submit_and_retry;
+>  	wbc_account_cgroup_owner(io->io_wbc, page, bh->b_size);
+>  	io->io_next_block++;
+> -	return 0;
+>  }
+> 
+>  int ext4_bio_write_page(struct ext4_io_submit *io,
+> @@ -495,30 +494,23 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+>  	do {
+>  		if (!buffer_async_write(bh))
+>  			continue;
+> -		ret = io_submit_add_bh(io, inode, bounce_page ?: page, bh);
+> -		if (ret) {
+> -			/*
+> -			 * We only get here on ENOMEM.  Not much else
+> -			 * we can do but mark the page as dirty, and
+> -			 * better luck next time.
+> -			 */
+> -			break;
+> -		}
+> +		io_submit_add_bh(io, inode, bounce_page ?: page, bh);
+>  		nr_submitted++;
+>  		clear_buffer_dirty(bh);
+>  	} while ((bh = bh->b_this_page) != head);
+> 
+> -	/* Error stopped previous loop? Clean up buffers... */
+> -	if (ret) {
+> -	out:
+> -		fscrypt_free_bounce_page(bounce_page);
+> -		printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+> -		redirty_page_for_writepage(wbc, page);
+> -		do {
+> -			clear_buffer_async_write(bh);
+> -			bh = bh->b_this_page;
+> -		} while (bh != head);
+> -	}
+> +	goto unlock;
+> +
+> +out:
+> +	fscrypt_free_bounce_page(bounce_page);
+> +	printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+> +	redirty_page_for_writepage(wbc, page);
+> +	do {
+> +		clear_buffer_async_write(bh);
+> +		bh = bh->b_this_page;
+> +	} while (bh != head);
+> +
+> +unlock:
+>  	unlock_page(page);
+>  	/* Nothing submitted - we have to end page writeback */
+>  	if (!nr_submitted)
+> 
+> 
+> -ritesh
+> 
