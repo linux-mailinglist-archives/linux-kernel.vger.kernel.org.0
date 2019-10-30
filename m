@@ -2,68 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F49EA0AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37309EA168
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 17:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfJ3P6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:58:35 -0400
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:51993 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728578AbfJ3P6c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:58:32 -0400
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id ABD2F9871D
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 15:58:30 +0000 (GMT)
-Received: (qmail 2809 invoked from network); 30 Oct 2019 15:58:30 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 30 Oct 2019 15:58:30 -0000
-Date:   Wed, 30 Oct 2019 15:58:29 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, pauld@redhat.com, valentin.schneider@arm.com,
-        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com
-Subject: Re: [PATCH v4 06/11] sched/fair: use load instead of runnable load
- in load_balance
-Message-ID: <20191030155829.GL3016@techsingularity.net>
-References: <1571405198-27570-1-git-send-email-vincent.guittot@linaro.org>
- <1571405198-27570-7-git-send-email-vincent.guittot@linaro.org>
+        id S1728669AbfJ3QCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 12:02:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726800AbfJ3PvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:51:12 -0400
+Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88CBD20856;
+        Wed, 30 Oct 2019 15:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572450671;
+        bh=RR+w7adT0I5Z7lEfES6VOEqvuA92c5DKM6Bs1k4wfsk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kK3H2v3E/MBQw82Nw9XuIJgdbrENN0Msygx02vIXjWytIu+xpbHvAEV2HwSe4PtAd
+         Be0tGCBRBOIovtwPgjYXIcS9uOTPKz99vyCdZ2QcuipuO0GRvv+AyUnS3XpaSQI808
+         zKNzH04cc2N8+o5sTtxjSW2y2SoNtMXfqqWij65Y=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 20/81] regulator: pfuze100-regulator: Variable "val" in pfuze100_regulator_probe() could be uninitialized
+Date:   Wed, 30 Oct 2019 11:48:26 -0400
+Message-Id: <20191030154928.9432-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191030154928.9432-1-sashal@kernel.org>
+References: <20191030154928.9432-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1571405198-27570-7-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 03:26:33PM +0200, Vincent Guittot wrote:
-> runnable load has been introduced to take into account the case
-> where blocked load biases the load balance decision which was selecting
-> underutilized group with huge blocked load whereas other groups were
-> overloaded.
-> 
-> The load is now only used when groups are overloaded. In this case,
-> it's worth being conservative and taking into account the sleeping
-> tasks that might wakeup on the cpu.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+From: Yizhuo <yzhai003@ucr.edu>
 
-Hmm.... ok. Superficially I get what you're doing but worry slightly
-about groups that have lots of tasks that are frequently idling on short
-periods of IO.
+[ Upstream commit 1252b283141f03c3dffd139292c862cae10e174d ]
 
-Unfortuntely when I queued this series for testing I did not queue a load
-that idles rapidly for short durations that would highlight problems in
-that area.
+In function pfuze100_regulator_probe(), variable "val" could be
+initialized if regmap_read() fails. However, "val" is used to
+decide the control flow later in the if statement, which is
+potentially unsafe.
 
-I cannot convince myself it's ok enough for an ack but I have no reason
-to complain either.
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+Link: https://lore.kernel.org/r/20190929170957.14775-1-yzhai003@ucr.edu
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/regulator/pfuze100-regulator.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index df5df1c495adb..689537927f6f7 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -788,7 +788,13 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 
+ 		/* SW2~SW4 high bit check and modify the voltage value table */
+ 		if (i >= sw_check_start && i <= sw_check_end) {
+-			regmap_read(pfuze_chip->regmap, desc->vsel_reg, &val);
++			ret = regmap_read(pfuze_chip->regmap,
++						desc->vsel_reg, &val);
++			if (ret) {
++				dev_err(&client->dev, "Fails to read from the register.\n");
++				return ret;
++			}
++
+ 			if (val & sw_hi) {
+ 				if (pfuze_chip->chip_id == PFUZE3000 ||
+ 					pfuze_chip->chip_id == PFUZE3001) {
 -- 
-Mel Gorman
-SUSE Labs
+2.20.1
+
