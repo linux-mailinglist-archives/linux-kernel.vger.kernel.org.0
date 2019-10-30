@@ -2,57 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4206DE9C46
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CBE0E9C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 14:31:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfJ3NaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 09:30:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40288 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726119AbfJ3NaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 09:30:15 -0400
-Received: from localhost (unknown [91.217.168.176])
+        id S1726562AbfJ3Nbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 09:31:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50996 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfJ3Nbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 09:31:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3dQu/Y6BQBuqx+sqo4SkSkjd36H/g8qFYAZTXsAn2dY=; b=OgLOifYK4kO/IJpwyhCg56W95
+        7OQC8zDdqiPFbXoV1I0m2pvk9HPGjXMRlrNVcBqniJco1ijlN29kcfk2HG3GtHmFnZrLG9xSqK1EH
+        AihntLS88LMv65kLnSmytxJ1iTTLgXaAjzxfiIzG6/t/W8GlCJCD1GBOXlu498ORMVed1wuFsRTjh
+        gs2hck+HN+eSMqwnk3GNn5D6CySv4qdDc8Nop5i3Ikh9CPr7T4pZA/NS7xj5HXd64fW8VweyLA1Mk
+        W6nT1tCgtrRsXcjoviikbqgoatIUvDY/3gPrbbkceQRu804MilS8gdxC1kCDCO7I/0CyIJrIJ+XgP
+        yefX6oKDw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPo4S-0004yA-Jc; Wed, 30 Oct 2019 13:31:32 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ED3620856;
-        Wed, 30 Oct 2019 13:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572442214;
-        bh=L5QKlFo0o/6trqkO7iwbbaOCu25j8+zykAXcg88WqhQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CGpGt+OThztPYV1iR7gVQX5i8lwTUN8qTXieFeQgl86VhCvsF8XjyqjZ3uAV71DzS
-         LNijEqrnUPkBpEPXBq6AuHnywXmj5achO/YLyIN2nJKI4halfp4niPcWl0tb9HCDAO
-         l6humSpIjV1711BAhbvW4XJalFZoEg7JkttQhmro=
-Date:   Wed, 30 Oct 2019 14:30:11 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     felipe.balbi@linux.intel.com, pawell@cadence.com,
-        peter.chen@nxp.com, nsekhar@ti.com, kurahul@cadence.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: cdns3: gadget: Fix g_audio use case when
- connected to Super-Speed host
-Message-ID: <20191030133011.GA703854@kroah.com>
-References: <20191029151514.28495-1-rogerq@ti.com>
- <20191030121607.21739-1-rogerq@ti.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 67647300596;
+        Wed, 30 Oct 2019 14:30:29 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 916B32B4032A2; Wed, 30 Oct 2019 14:31:30 +0100 (CET)
+Date:   Wed, 30 Oct 2019 14:31:30 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] timers/nohz: Update nohz load even if tick already
+ stopped
+Message-ID: <20191030133130.GY4097@hirez.programming.kicks-ass.net>
+References: <20191028150716.22890-1-frederic@kernel.org>
+ <20191029100506.GJ4114@hirez.programming.kicks-ass.net>
+ <52d963553deda810113accd8d69b6dffdb37144f.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191030121607.21739-1-rogerq@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <52d963553deda810113accd8d69b6dffdb37144f.camel@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 02:16:07PM +0200, Roger Quadros wrote:
-> Take into account gadget driver's speed limit when programming
-> controller speed.
+On Wed, Oct 30, 2019 at 03:48:26AM -0500, Scott Wood wrote:
+> On Tue, 2019-10-29 at 11:05 +0100, Peter Zijlstra wrote:
+
+> > @@ -3686,6 +3688,7 @@ static void sched_tick_remote(struct work_struct
+> > *work)
+> >  	curr->sched_class->task_tick(rq, curr, 0);
+> >  
+> >  out_unlock:
+> > +	calc_load_nohz_remote(cpu);
+> >  	rq_unlock_irq(rq, &rf);
 > 
-> Fixes: commit 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
+> This gets skipped when the cpu is idle, so it still misses the update.
 
-No need for "commit", doesn't the documentation say the correct format?
-I haven't looked in a while...
+Oh argh! that's a bit radical of the remote tick. The normal tick runs
+just fine on idle CPUs, so lets mirror that.
 
-I can edit it out this time...
+How's this then?
 
-greg k-h
+---
+diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
+index 1abe91ff6e4a..6d67e9a5af6b 100644
+--- a/include/linux/sched/nohz.h
++++ b/include/linux/sched/nohz.h
+@@ -15,9 +15,11 @@ static inline void nohz_balance_enter_idle(int cpu) { }
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+ void calc_load_nohz_start(void);
++void calc_load_nohz_remote(struct rq *rq);
+ void calc_load_nohz_stop(void);
+ #else
+ static inline void calc_load_nohz_start(void) { }
++static inline void calc_load_nohz_remote(struct rq *rq) { }
+ static inline void calc_load_nohz_stop(void) { }
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index eb42b71faab9..d02d1b8f40af 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3660,21 +3660,17 @@ static void sched_tick_remote(struct work_struct *work)
+ 	u64 delta;
+ 	int os;
+ 
+-	/*
+-	 * Handle the tick only if it appears the remote CPU is running in full
+-	 * dynticks mode. The check is racy by nature, but missing a tick or
+-	 * having one too much is no big deal because the scheduler tick updates
+-	 * statistics and checks timeslices in a time-independent way, regardless
+-	 * of when exactly it is running.
+-	 */
+-	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
++	if (!tick_nohz_tick_stopped_cpu(cpu))
+ 		goto out_requeue;
+ 
+ 	rq_lock_irq(rq, &rf);
+-	curr = rq->curr;
+-	if (is_idle_task(curr) || cpu_is_offline(cpu))
++	/*
++	 * We must not call calc_load_nohz_remote() when not in NOHZ mode.
++	 */
++	if (cpu_is_offline(cpu) || !tick_nohz_tick_stopped(cpu))
+ 		goto out_unlock;
+ 
++	curr = rq->curr;
+ 	update_rq_clock(rq);
+ 	delta = rq_clock_task(rq) - curr->se.exec_start;
+ 
+@@ -3685,10 +3681,11 @@ static void sched_tick_remote(struct work_struct *work)
+ 	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 
++	calc_load_nohz_remote(rq);
+ out_unlock:
+ 	rq_unlock_irq(rq, &rf);
+-
+ out_requeue:
++
+ 	/*
+ 	 * Run the remote tick once per second (1Hz). This arbitrary
+ 	 * frequency is large enough to avoid overload but short enough
+diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
+index 28a516575c18..de22da666ac7 100644
+--- a/kernel/sched/loadavg.c
++++ b/kernel/sched/loadavg.c
+@@ -231,16 +231,11 @@ static inline int calc_load_read_idx(void)
+ 	return calc_load_idx & 1;
+ }
+ 
+-void calc_load_nohz_start(void)
++static void calc_load_nohz_fold(struct rq *rq)
+ {
+-	struct rq *this_rq = this_rq();
+ 	long delta;
+ 
+-	/*
+-	 * We're going into NO_HZ mode, if there's any pending delta, fold it
+-	 * into the pending NO_HZ delta.
+-	 */
+-	delta = calc_load_fold_active(this_rq, 0);
++	delta = calc_load_fold_active(rq, 0);
+ 	if (delta) {
+ 		int idx = calc_load_write_idx();
+ 
+@@ -248,6 +243,24 @@ void calc_load_nohz_start(void)
+ 	}
+ }
+ 
++void calc_load_nohz_start(void)
++{
++	/*
++	 * We're going into NO_HZ mode, if there's any pending delta, fold it
++	 * into the pending NO_HZ delta.
++	 */
++	calc_load_nohz_fold(this_rq());
++}
++
++/*
++ * Keep track of the load for NOHZ_FULL, must be called between
++ * calc_load_nohz_{start,stop}().
++ */
++void calc_load_nohz_remote(struct rq *rq)
++{
++	calc_load_nohz_fold(rq);
++}
++
+ void calc_load_nohz_stop(void)
+ {
+ 	struct rq *this_rq = this_rq();
+@@ -268,7 +281,7 @@ void calc_load_nohz_stop(void)
+ 		this_rq->calc_load_update += LOAD_FREQ;
+ }
+ 
+-static long calc_load_nohz_fold(void)
++static long calc_load_nohz_read(void)
+ {
+ 	int idx = calc_load_read_idx();
+ 	long delta = 0;
+@@ -323,7 +336,7 @@ static void calc_global_nohz(void)
+ }
+ #else /* !CONFIG_NO_HZ_COMMON */
+ 
+-static inline long calc_load_nohz_fold(void) { return 0; }
++static inline long calc_load_nohz_read(void) { return 0; }
+ static inline void calc_global_nohz(void) { }
+ 
+ #endif /* CONFIG_NO_HZ_COMMON */
+@@ -346,7 +359,7 @@ void calc_global_load(unsigned long ticks)
+ 	/*
+ 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
+ 	 */
+-	delta = calc_load_nohz_fold();
++	delta = calc_load_nohz_read();
+ 	if (delta)
+ 		atomic_long_add(delta, &calc_load_tasks);
+ 
