@@ -2,97 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25110EA5F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B19F4EA5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 23:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfJ3WGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 18:06:23 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:43045 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfJ3WGX (ORCPT
+        id S1727406AbfJ3WAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 18:00:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35191 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbfJ3WAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:06:23 -0400
-Received: by mail-il1-f194.google.com with SMTP id j2so1433302ilc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 15:06:22 -0700 (PDT)
+        Wed, 30 Oct 2019 18:00:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l10so4065659wrb.2;
+        Wed, 30 Oct 2019 15:00:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S7mK3Uoiwaws9OYl+5bVE084OvHB6LGX6Sfc0eSAjwc=;
-        b=aKsZ4bdZUSBifwnA9EI/sfdmKnP62vGSwIqzhbMUiTCUkHM2p7iqF53Jzgdv5kXvv6
-         GBFkJoqdRYLQIybUp5uZd8C9F7L2xM/7BvH0VitcMonLl80SQX9+/8cxz1Pb55faR4eW
-         W84909D8+2Y2GxJriYNmqjYg9MaPiledZHFQg=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=puPnnpE6ZsR/xBwG7v5EJGpjm01NA7rreHLssAdLjbE=;
+        b=C28IGoYiOT/xjEWLTtfGsJ8fzMcS/+GYGcaJu5/gDMhmnMIs/4W+w10NtVPa5a6tPe
+         wjU69Z1nOcemexLP26ffyfI4TmpJ7xMIYSYjEGZXg3+wIZE9V4VhaP0jVMjTkTiP3A/4
+         rBWsQgZR0Th/XKkReWJ4/oznxtN0toddhj7tulXpIuOJoHWK1MW6C6eyYjwyQHijNgGN
+         FdYPleo1doIxTUdjQlp4R0/hIhE44rD+nW5vhUPsnWTJx6pz8yiwCnPtGKXjkpQpYayS
+         tUpXlEDlMPU32ylbHE9BoZ/gnm5QJhodhrS84v0bZhCRxDUKNvbBQ/mvnNYF7suuj8eh
+         E8Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S7mK3Uoiwaws9OYl+5bVE084OvHB6LGX6Sfc0eSAjwc=;
-        b=i4I0otBkosKqjCQFbr8aMGrXJ3QVc6Y/bmxcPzQyJCH3I3qlYTXxyeFhyArYxhFjlk
-         qyM2u8efBIdm8db6fOv2FB0nCaDNTvvGLvo55w9079Z695tEHD0VF9+POvWlPDYSsE2M
-         DO8EK6+pGovVDNTmk2HcHSVNGHwglDTuxbmQ9YLga3/CZOwGZBA3iC7m3qDEuTcyASY2
-         m6JzCW/iNC7hVRialdN3tZn5N+wCXSAIdg/PdH22443YGmDPOPzGk2z0Sv1Hw+Rwj44D
-         sT+C1oTrJ8Fx68l/XMAllQKJ6ZQqEJTl46y8AbSSFQmU8UJHlI4Cp8aI04gyw94RuEk5
-         xU8A==
-X-Gm-Message-State: APjAAAVfwE8rqYIu/CnfRsTv39uKYQU5wfvfY39cK9iZC6ifXoJybL7t
-        H74XZn5rBtLe6g86eP+PmYrF88R/DME=
-X-Google-Smtp-Source: APXvYqxXsUNRqCZbku+KXV5t170QpBTIz+VRZPyfehC+jWghKPVA7pYFUDS4TfmqzF/7+GbrV2xKfQ==
-X-Received: by 2002:a92:4555:: with SMTP id s82mr2543530ila.228.1572473181888;
-        Wed, 30 Oct 2019 15:06:21 -0700 (PDT)
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com. [209.85.166.171])
-        by smtp.gmail.com with ESMTPSA id w69sm218828ili.84.2019.10.30.15.06.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2019 15:06:21 -0700 (PDT)
-Received: by mail-il1-f171.google.com with SMTP id h5so3530971ilh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 15:06:21 -0700 (PDT)
-X-Received: by 2002:a92:ba1b:: with SMTP id o27mr2484026ili.269.1572472754921;
- Wed, 30 Oct 2019 14:59:14 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=puPnnpE6ZsR/xBwG7v5EJGpjm01NA7rreHLssAdLjbE=;
+        b=IgJLmIQhVaTjSPHt9H3+t6P6wqvoBnCfSb5hECMo8jX8/AJTm3mGM5mNNdE3dVwkKD
+         LUtCfVJ/S5l2UwQnLK2hBj3VRAPmEu+JH5fs4ytD/Lm1uHRjTWBZJ8wdwkI3ki4BVQAI
+         m7Yn/hbd9Amb/bwSBFspNHP0gP18jIpvmsmkfta3Gv5rIK8tsms+4hv/G//+IbNGj3xM
+         9DlnOP8e8aKZNO/1jQvQRlMHYCLtQRWZ3ihPyZ3i0aDifdX4R4sckUecN6/RXaEqs5UP
+         qppCN845ZeXDPg/o3XmbZnjxqn+0o6erRwKMEYMwf2EUntq4ijEUDLCNZiFnxTlhPZS7
+         73/Q==
+X-Gm-Message-State: APjAAAUvw6Ia4KPjmrDArUUqletXbBYNFPCzeHAmFhGQe+aMvs43aiae
+        9Aoa/Iut2tFtr4okNvYwhIUZqHVQ
+X-Google-Smtp-Source: APXvYqweb2MeGgmLCBl557QgXr3gFDdrHZHqneMgquwkpJe5Vuv+LE1AR6XWvfKx7ZI/yNlGFR395g==
+X-Received: by 2002:adf:b603:: with SMTP id f3mr2037288wre.306.1572472845743;
+        Wed, 30 Oct 2019 15:00:45 -0700 (PDT)
+Received: from [192.168.1.19] (bkv74.neoplus.adsl.tpnet.pl. [83.28.189.74])
+        by smtp.gmail.com with ESMTPSA id r13sm1963929wra.74.2019.10.30.15.00.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 15:00:45 -0700 (PDT)
+Subject: Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     Dan Murphy <dmurphy@ti.com>, kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org, pavel@ucw.cz, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191028183629.11779-7-dmurphy@ti.com>
+ <201910302027.2hNdR993%lkp@intel.com>
+ <bb3473ba-ddfc-2b51-4a75-c23c5bf3bc62@ti.com>
+ <075c9330-a9b5-1360-4447-71a4797553a9@gmail.com>
+ <f32e2063-3c56-607c-0e74-f75f68e62e16@ti.com>
+ <b50fa8f6-1a27-ad22-d4a7-37bc07fc6768@gmail.com>
+ <6b64d284-0854-4143-6cd8-2b07ac268e5e@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d2d42ff8-bda3-ff32-6163-a7d2122e3441@gmail.com>
+Date:   Wed, 30 Oct 2019 23:00:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191030100618.1.Ibf7a996e4a58e84f11eec910938cfc3f9159c5de@changeid>
- <20191030173758.GC693@sol.localdomain> <CAD=FV=Uzma+eSGG1S1Aq6s3QdMNh4J-c=g-5uhB=0XBtkAawcA@mail.gmail.com>
- <20191030190226.GD693@sol.localdomain> <20191030205745.GA216218@sol.localdomain>
-In-Reply-To: <20191030205745.GA216218@sol.localdomain>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 30 Oct 2019 14:59:03 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X6Q3QZaND-tfYr9mf-KYMeKFmJDca3ee-i9roWj+GHsQ@mail.gmail.com>
-Message-ID: <CAD=FV=X6Q3QZaND-tfYr9mf-KYMeKFmJDca3ee-i9roWj+GHsQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ext4 crypto: fix to check feature status before
- get policy"
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Gwendal Grignou <gwendal@chromium.org>, Chao Yu <chao@kernel.org>,
-        Ryo Hashimoto <hashimoto@chromium.org>,
-        Vadim Sukhomlinov <sukhomlinov@google.com>,
-        Guenter Roeck <groeck@chromium.org>, apronin@chromium.org,
-        linux-doc@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6b64d284-0854-4143-6cd8-2b07ac268e5e@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Dan,
 
-On Wed, Oct 30, 2019 at 1:57 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> FWIW, from reading the Chrome OS code, I think the code you linked to isn't
-> where the breakage actually is.  I think it's actually at
-> https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/master/chromeos-common-script/share/chromeos-common.sh#375
-> ... where an init script is using the error message printed by 'e4crypt
-> get_policy' to decide whether to add -O encrypt to the filesystem or not.
->
-> It really should check instead:
->
->         [ -e /sys/fs/ext4/features/encryption ]
+On 10/30/19 9:55 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 10/30/19 3:50 PM, Jacek Anaszewski wrote:
+>> Dan,
+>>
+>> On 10/30/19 9:23 PM, Dan Murphy wrote:
+>>> Jacek
+>>>
+>>>
+>>>>> Does not appear here
+>>>>>
+>>>>> Finally not sure why the MIPS compiler is complaining about this
+>>>>> but the
+>>>>> ARM and x86 is not
+>>>> Compilation breaks also for ARM.
+>>> Thanks for the information.
+>>>
+>>> I am not seeing this issue or even a warning when using the ARM 8.3
+>>> toolchain even in a clean build.
+>>>
+>>> arm-linux-gnueabihf-gcc (GNU Toolchain for the A-profile Architecture
+>>> 8.3-2019.03 (arm-rel-8.36)) 8.3.0
+>>>
+>>> So is a bug in this toolchain?
+>>  From what I've just googled C specification allows for a compiler
+>> implementation to accept also other forms of constants expressions
+>> than standard ones pointed out in the spec.
+>>
+>> So this is not necessarily a bug.
+>>
+> OK.  Well I will try to repo with the above instructions.  And wait till
+> Friday for any other comments.  If I get no other comments I will make
+> the couple of changes and then post v16.
 
-OK, I filed <https://crbug.com/1019939> and CCed all the people listed
-in the cryptohome "OWNERS" file.  Hopefully one of them can pick this
-up as a general cleanup.  Thanks!
+I confirm that with arm-unknown-linux-gnueabi-gcc just built with
+crosstool-NG 1.24.0 I don't observe the issue either.
 
--Doug
+Previously I used quite old gcc 5.2 or so.
+
+-- 
+Best regards,
+Jacek Anaszewski
