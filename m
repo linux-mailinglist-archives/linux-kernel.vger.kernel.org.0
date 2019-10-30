@@ -2,60 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61203E9F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2465E9FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfJ3Psr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:48:47 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:54389 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfJ3Psr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:48:47 -0400
-X-Originating-IP: 91.217.168.176
-Received: from localhost (unknown [91.217.168.176])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id EEBF6240007;
-        Wed, 30 Oct 2019 15:48:43 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 16:48:43 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] rtc: fsl-ftm-alarm: Fix build error without
- PM_SLEEP
-Message-ID: <20191030154843.GB10007@piout.net>
-References: <20191030133256.14612-1-yuehaibing@huawei.com>
+        id S1727972AbfJ3PwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:52:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727944AbfJ3PwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 11:52:10 -0400
+Received: from sasha-vm.mshome.net (100.50.158.77.rev.sfr.net [77.158.50.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C4C420874;
+        Wed, 30 Oct 2019 15:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572450729;
+        bh=2Vr+SXCv9AoZpqoz/EsyAnbDpKGhCVDKiropSLh3uYU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=u5klCfnWV/cyYZiU6rDB2OSRGS1uYLb/fVD1oFJ0TCp95++B6rfczF43ubvSyOtYX
+         gOfbTe4iXlKoqKqgOk2aG/k8LWBOcadsFtJ7cr4Jz66X0W0FfqxAiJqwSl9iAxwHkN
+         AdJpFzc4KpuERwrLIA+cjKksW8gKZGmaex0Yffmg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 37/81] scsi: sni_53c710: fix compilation error
+Date:   Wed, 30 Oct 2019 11:48:43 -0400
+Message-Id: <20191030154928.9432-37-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191030154928.9432-1-sashal@kernel.org>
+References: <20191030154928.9432-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030133256.14612-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2019 21:32:56+0800, YueHaibing wrote:
-> When do randbuild, Kconfig warning this:
-> 
-> WARNING: unmet direct dependencies detected for FSL_RCPM
->   Depends on [n]: PM_SLEEP [=y] && (ARM || ARM64)
->   Selected by [y]:
->   - RTC_DRV_FSL_FTM_ALARM [=y] && RTC_CLASS [=y] && (ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST [=y])
-> 
-> Add PM_SLEEP dependency to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: e1c2feb1efa2 ("rtc: fsl-ftm-alarm: allow COMPILE_TEST")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/rtc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-Applied, thanks.
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
+[ Upstream commit 0ee6211408a8e939428f662833c7301394125b80 ]
+
+Drop out memory dev_printk() with wrong device pointer argument.
+
+[mkp: typo]
+
+Link: https://lore.kernel.org/r/20191009151118.32350-1-tbogendoerfer@suse.de
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/sni_53c710.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
+index aef4881d8e215..a85d52b5dc320 100644
+--- a/drivers/scsi/sni_53c710.c
++++ b/drivers/scsi/sni_53c710.c
+@@ -66,10 +66,8 @@ static int snirm710_probe(struct platform_device *dev)
+ 
+ 	base = res->start;
+ 	hostdata = kzalloc(sizeof(*hostdata), GFP_KERNEL);
+-	if (!hostdata) {
+-		dev_printk(KERN_ERR, dev, "Failed to allocate host data\n");
++	if (!hostdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	hostdata->dev = &dev->dev;
+ 	dma_set_mask(&dev->dev, DMA_BIT_MASK(32));
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
+
