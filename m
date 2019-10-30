@@ -2,225 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C416EE9A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0E41E9A4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 11:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfJ3KlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 06:41:15 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:39422 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726046AbfJ3KlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:41:12 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id B8F41D1A2C661CFB10B6;
-        Wed, 30 Oct 2019 18:41:00 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 30 Oct 2019 18:41:00 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 30 Oct 2019 18:41:00 +0800
-Date:   Wed, 30 Oct 2019 18:43:45 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: bio_alloc should never fail
-Message-ID: <20191030104345.GB170703@architecture4>
-References: <20191030035518.65477-1-gaoxiang25@huawei.com>
- <20aa40bd-280d-d223-9f73-d9ed7dbe4f29@huawei.com>
- <20191030091542.GA24976@architecture4>
- <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
+        id S1726911AbfJ3KpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 06:45:14 -0400
+Received: from werkudoro.jatengprov.go.id ([103.9.227.34]:50488 "EHLO
+        werkudoro.jatengprov.go.id" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726150AbfJ3KpN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:45:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=jatengprov.go.id; s=default; h=Message-ID:Reply-To:To:From:Date:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Subject:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DBx1JbxsRXHmLDcEw3E35LyJjgwZ87i4rmCMZOJvhyk=; b=eDQ71SqUGF7vy8Ye0RybCSGt0
+        SOhltOm/o9+cbta1FPFkohPeGx5J+EQVC5fK6FRjRU4aDoHx8DQQBG0CiIpPBKEh620UkAW3rORNX
+        FkH1IJ6HrihGebkrktvX+SBFPP7VjsNpwImNxotr5rn9vizPt0uCFWP4vy3eefWFDUA9P84OWbcBq
+        AIdqHvd+9peZScyFlsM0LWMmGG8OGgsmPoQqdLHSePOvKPMIB5X0GoheII+siiMF77fBsaxLC1pyT
+        KJc6hhd1FwCD1wAeZPEfNU6dWrVB5K+AEjS6IaB80v24E0udkNA0c/s5/4SkyoKyioTC41ERZVOay
+        CDxfyLU9g==;
+Received: from localhost ([127.0.0.1]:57558 helo=werkudoro.jatengprov.go.id)
+        by werkudoro.jatengprov.go.id with esmtpa (Exim 4.92)
+        (envelope-from <bpsdmd@jatengprov.go.id>)
+        id 1iPlSP-0004Ap-OR; Wed, 30 Oct 2019 17:44:06 +0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme709-chm.china.huawei.com (10.1.199.105) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 30 Oct 2019 17:44:05 +0700
+From:   Administrador <bpsdmd@jatengprov.go.id>
+To:     undisclosed-recipients:;
+Reply-To: mailsss@mail2world.com
+Mail-Reply-To: mailsss@mail2world.com
+Message-ID: <860b35232dfad897305fba409c0b1ba0@jatengprov.go.id>
+X-Sender: bpsdmd@jatengprov.go.id
+User-Agent: Roundcube Webmail/1.3.8
+X-OutGoing-Spam-Status: No, score=3.3
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - werkudoro.jatengprov.go.id
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - jatengprov.go.id
+X-Get-Message-Sender-Via: werkudoro.jatengprov.go.id: authenticated_id: bpsdmd@jatengprov.go.id
+X-Authenticated-Sender: werkudoro.jatengprov.go.id: bpsdmd@jatengprov.go.id
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 05:27:54PM +0800, Chao Yu wrote:
-> Hi Xiang,
-> 
-> On 2019/10/30 17:15, Gao Xiang wrote:
-> > Hi Chao,
-> > 
-> > On Wed, Oct 30, 2019 at 04:56:17PM +0800, Chao Yu wrote:
-> >> On 2019/10/30 11:55, Gao Xiang wrote:
-> >>> remove such useless code and related fault injection.
-> >>
-> >> Hi Xiang,
-> >>
-> >> Although, there is so many 'nofail' allocation in f2fs, I think we'd better
-> >> avoid such allocation as much as possible (now for read path, we may allow to
-> >> fail to allocate bio), I suggest to keep the failure path and bio allocation
-> >> injection.
-> >>
-> >> It looks bio_alloc() will use its own mempool, which may suffer deadlock
-> >> potentially. So how about changing to use bio_alloc_bioset(, , NULL) instead of
-> >> bio_alloc()?
-> > 
-> > Yes, I noticed the original commit 740432f83560 ("f2fs: handle failed bio allocation"),
-> > yet I don't find any real call trace clue what happened before.
-> > 
-> > As my understanding, if we allocate bios without submit_bio (I mean write path) with
-> > default bs and gfp_flags GFP_NOIO or GFP_KERNEL, I think it will be slept inside
-> > mempool rather than return NULL to its caller... Please correct me if I'm wrong...
-> 
-> I'm curious too...
-> 
-> Jaegeuk may know the details.
-> 
-> > 
-> > I could send another patch with bio_alloc_bioset(, , NULL), I am curious to know the
-> > original issue and how it solved though...
-> > 
-> > For read or flush path, since it will submit_bio and bio_alloc one by one, I think
-> > mempool will get a page quicker (memory failure path could be longer). But I can
-> > send a patch just by using bio_alloc_bioset(, , NULL) instead as you suggested later.
-> 
-> You're right, in low memory scenario, allocation with bioset will be faster, as
-> you mentioned offline, maybe we can add/use a priviate bioset like btrfs did
-> rather than using global one, however, we'd better check how deadlock happen
-> with a bioset mempool first ...
 
-Okay, hope to get hints from Jaegeuk and redo this patch then...
 
-Thanks,
-Gao Xiang
+-- 
+ATENCIÓN;
 
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > Gao Xiang
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> >>> ---
-> >>>  Documentation/filesystems/f2fs.txt |  1 -
-> >>>  fs/f2fs/data.c                     |  6 ++----
-> >>>  fs/f2fs/f2fs.h                     | 21 ---------------------
-> >>>  fs/f2fs/segment.c                  |  5 +----
-> >>>  fs/f2fs/super.c                    |  1 -
-> >>>  5 files changed, 3 insertions(+), 31 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> >>> index 7e1991328473..3477c3e4c08b 100644
-> >>> --- a/Documentation/filesystems/f2fs.txt
-> >>> +++ b/Documentation/filesystems/f2fs.txt
-> >>> @@ -172,7 +172,6 @@ fault_type=%d          Support configuring fault injection type, should be
-> >>>                         FAULT_KVMALLOC		0x000000002
-> >>>                         FAULT_PAGE_ALLOC		0x000000004
-> >>>                         FAULT_PAGE_GET		0x000000008
-> >>> -                       FAULT_ALLOC_BIO		0x000000010
-> >>>                         FAULT_ALLOC_NID		0x000000020
-> >>>                         FAULT_ORPHAN		0x000000040
-> >>>                         FAULT_BLOCK		0x000000080
-> >>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>> index 5755e897a5f0..3b88dcb15de6 100644
-> >>> --- a/fs/f2fs/data.c
-> >>> +++ b/fs/f2fs/data.c
-> >>> @@ -288,7 +288,7 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
-> >>>  	struct f2fs_sb_info *sbi = fio->sbi;
-> >>>  	struct bio *bio;
-> >>>  
-> >>> -	bio = f2fs_bio_alloc(sbi, npages, true);
-> >>> +	bio = bio_alloc(GFP_NOIO, npages);
-> >>>  
-> >>>  	f2fs_target_device(sbi, fio->new_blkaddr, bio);
-> >>>  	if (is_read_io(fio->op)) {
-> >>> @@ -682,9 +682,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
-> >>>  	struct bio_post_read_ctx *ctx;
-> >>>  	unsigned int post_read_steps = 0;
-> >>>  
-> >>> -	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
-> >>> -	if (!bio)
-> >>> -		return ERR_PTR(-ENOMEM);
-> >>> +	bio = bio_alloc(GFP_KERNEL, min_t(int, nr_pages, BIO_MAX_PAGES));
-> >>>  	f2fs_target_device(sbi, blkaddr, bio);
-> >>>  	bio->bi_end_io = f2fs_read_end_io;
-> >>>  	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
-> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>> index 4024790028aa..40012f874be0 100644
-> >>> --- a/fs/f2fs/f2fs.h
-> >>> +++ b/fs/f2fs/f2fs.h
-> >>> @@ -44,7 +44,6 @@ enum {
-> >>>  	FAULT_KVMALLOC,
-> >>>  	FAULT_PAGE_ALLOC,
-> >>>  	FAULT_PAGE_GET,
-> >>> -	FAULT_ALLOC_BIO,
-> >>>  	FAULT_ALLOC_NID,
-> >>>  	FAULT_ORPHAN,
-> >>>  	FAULT_BLOCK,
-> >>> @@ -2210,26 +2209,6 @@ static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
-> >>>  	return entry;
-> >>>  }
-> >>>  
-> >>> -static inline struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi,
-> >>> -						int npages, bool no_fail)
-> >>> -{
-> >>> -	struct bio *bio;
-> >>> -
-> >>> -	if (no_fail) {
-> >>> -		/* No failure on bio allocation */
-> >>> -		bio = bio_alloc(GFP_NOIO, npages);
-> >>> -		if (!bio)
-> >>> -			bio = bio_alloc(GFP_NOIO | __GFP_NOFAIL, npages);
-> >>> -		return bio;
-> >>> -	}
-> >>> -	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
-> >>> -		f2fs_show_injection_info(FAULT_ALLOC_BIO);
-> >>> -		return NULL;
-> >>> -	}
-> >>> -
-> >>> -	return bio_alloc(GFP_KERNEL, npages);
-> >>> -}
-> >>> -
-> >>>  static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
-> >>>  {
-> >>>  	if (sbi->gc_mode == GC_URGENT)
-> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>> index 808709581481..28457c878d0d 100644
-> >>> --- a/fs/f2fs/segment.c
-> >>> +++ b/fs/f2fs/segment.c
-> >>> @@ -552,10 +552,7 @@ static int __submit_flush_wait(struct f2fs_sb_info *sbi,
-> >>>  	struct bio *bio;
-> >>>  	int ret;
-> >>>  
-> >>> -	bio = f2fs_bio_alloc(sbi, 0, false);
-> >>> -	if (!bio)
-> >>> -		return -ENOMEM;
-> >>> -
-> >>> +	bio = bio_alloc(GFP_KERNEL, 0);
-> >>>  	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
-> >>>  	bio_set_dev(bio, bdev);
-> >>>  	ret = submit_bio_wait(bio);
-> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>> index 1443cee15863..51945dd27f00 100644
-> >>> --- a/fs/f2fs/super.c
-> >>> +++ b/fs/f2fs/super.c
-> >>> @@ -44,7 +44,6 @@ const char *f2fs_fault_name[FAULT_MAX] = {
-> >>>  	[FAULT_KVMALLOC]	= "kvmalloc",
-> >>>  	[FAULT_PAGE_ALLOC]	= "page alloc",
-> >>>  	[FAULT_PAGE_GET]	= "page get",
-> >>> -	[FAULT_ALLOC_BIO]	= "alloc bio",
-> >>>  	[FAULT_ALLOC_NID]	= "alloc nid",
-> >>>  	[FAULT_ORPHAN]		= "orphan",
-> >>>  	[FAULT_BLOCK]		= "no more block",
-> >>>
-> > .
-> > 
+Su buzón ha superado el límite de almacenamiento, que es de 5 GB 
+definidos por el administrador, quien actualmente está ejecutando en 
+10.9GB, no puede ser capaz de enviar o recibir correo nuevo hasta que 
+vuelva a validar su buzón de correo electrónico. Para revalidar su buzón 
+de correo, envíe la siguiente información a continuación:
+
+nombre:
+Nombre de usuario:
+contraseña:
+Confirmar contraseña:
+E-mail:
+teléfono:
+
+Si usted no puede revalidar su buzón, el buzón se deshabilitará!
+
+Disculpa las molestias.
+Código de verificación:666690opp4r56 es: 006524
+Correo Soporte Técnico © 2019
+
+¡gracias
+Sistemas administrador
