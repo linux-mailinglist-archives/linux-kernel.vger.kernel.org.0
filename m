@@ -2,98 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C84EAB87
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 09:24:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5324EEABC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 09:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfJaIYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 04:24:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38610 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfJaIYn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 04:24:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v9so5187761wrq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 01:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hwRXo6F4Q49q2OBaCjuHQqtxPHes3aTNLtF4lURqyMo=;
-        b=i6fHLUXiRR5UkIqqSBjC6ztqMNazpDg62eCa0ff6GP9Qt5QQfz5iTquXhd4F39+mYc
-         u1w9ohGsXZTSFrmXZV6/t/aluc2s5O1YZR2OpmhbMo2jsqjpSMb2/66A2g+JifTzoWE3
-         Q0U8MkIew1zeHP2NuQrdsltJKUM2HMJP0yldaOBI7VUOC/+PmSRWABGmktjluGExCps/
-         ypYMgDU7N6/GAQko9k31Zq0KzFvsxXajclFLYpf8v/rSAVBKnuEvvNCt6BhVMghMGIaV
-         7wkFzrvIh4WaQgXVREi4TGhFHEm8Mu9kuLoSuEtO4GwXu378GyLeaJq9/gELsV//5nFn
-         1bAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hwRXo6F4Q49q2OBaCjuHQqtxPHes3aTNLtF4lURqyMo=;
-        b=LsIyBqJIzUEqieSoXrL40KIWbw/5FpEfVLTj3ElfHJQHQ+kBXkl232LVysHzfkzwib
-         pdOorbQTjZ7uSgkEGXp/8//0q0NlmRl6J0YdOzunR42fmvL4I/Uxz8sVsTWacHA87TzV
-         7q23XPs1MYDhX2RnzyrEVnAh5hFGKyTPxJSiHM5DLi9/SEg4rcUdCOm9wjGgHm2Cu/SK
-         qISquvlukDBADzNZ5AaDY71JcXAl+Ozo0Efw46PxHUellXVk6rsW5YjuXbV/yAexQaAs
-         JTz2ScUt5AHCYzrLqWHU1olwacjho+u6A8JSWTwWxNCymj1g0DBb3iEdVClA9/HQWKi+
-         AJlg==
-X-Gm-Message-State: APjAAAWM7IQEnA6a0BqeMogkjM2R8Uxhvmz5Q6k4hA9P5Ze/e5tr5NoH
-        LACObZaOZnyT4CCBZlvJW3aYOL4f6fF/PB5q4e6wWg==
-X-Google-Smtp-Source: APXvYqzcs5anAptA40KO2f/DjMvYh1MjL0Q8+V3IIgHojFe37raK8oYokFb0klEN4SUxJbbhlaj9FJFoP0hfP8H0A4Y=
-X-Received: by 2002:adf:8289:: with SMTP id 9mr4551139wrc.0.1572510280859;
- Thu, 31 Oct 2019 01:24:40 -0700 (PDT)
+        id S1727083AbfJaIuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 04:50:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:43817 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726867AbfJaIuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 04:50:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 01:50:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
+   d="scan'208";a="401811082"
+Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2019 01:50:04 -0700
+From:   Like Xu <like.xu@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     like.xu@linux.intel.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: x86/pmu: Update guest cpuid10 entry if pmu->nr_*_counters are changed
+Date:   Thu, 31 Oct 2019 00:44:18 +0800
+Message-Id: <20191030164418.2957-1-like.xu@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191029173755.27149-1-ardb@kernel.org> <20191029173755.27149-4-ardb@kernel.org>
- <CACi5LpMAagnn_yEmqRBGfxJFZcAUzohU30NACeGvdXaHFZwAMA@mail.gmail.com>
-In-Reply-To: <CACi5LpMAagnn_yEmqRBGfxJFZcAUzohU30NACeGvdXaHFZwAMA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 31 Oct 2019 09:24:29 +0100
-Message-ID: <CAKv+Gu_zMMeRSBYk_tBX4UA+v1r+Kntrxe3xurLd1Q2_+HkbWw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] efi/random: treat EFI_RNG_PROTOCOL output as
- bootloader randomness
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019 at 20:14, Bhupesh Sharma <bhsharma@redhat.com> wrote:
->
-> Hi Ard,
->
-> On Tue, Oct 29, 2019 at 11:10 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > From: Dominik Brodowski <linux@dominikbrodowski.net>
-> >
-> > Commit 428826f5358c ("fdt: add support for rng-seed") introduced
-> > add_bootloader_randomness(), permitting randomness provided by the
-> > bootloader or firmware to be credited as entropy. However, the fact
-> > that the UEFI support code was already wired into the RNG subsystem
-> > via a call to add_device_randomness() was overlooked, and so it was
-> > not converted at the same time.
-> >
-> > Note that this UEFI (v2.4 or newer) feature is currently only
-> > implemented for EFI stub booting on ARM, and further note that
-> > CONFIG_RANDOM_TRUST_BOOTLOADER must be enabled, and this should be
-> > done only if there indeed is sufficient trust in the bootloader
-> > _and_ its source of randomness.
-> >
-> > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> > [ardb: update commit log]
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->
-> Seems my Tested-by was dropped which I provide for the RFC version of
-> this patch.
-> See <https://www.mail-archive.com/linux-efi@vger.kernel.org/msg12281.html>
-> for details.
->
-> I can provide a similar Tested-by for this version as well.
->
+If the cpuid10_eax.split.num_counters* from kvm_vcpu_ioctl_set_cpuid2
+is larger than the host x86_pmu.num_counters_*, the min_t() is applied.
+We need do cpuid synchronisation locally for cpuid10 entry to avoid
+functional ambiguity and it's heavyweight to call kvm_update_cpuid for
+these simple assignments.
 
-Thanks Bhupesh
+Signed-off-by: Like Xu <like.xu@linux.intel.com>
+---
+ arch/x86/kvm/vmx/pmu_intel.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+index 3e9c059099e9..f83b7506dcff 100644
+--- a/arch/x86/kvm/vmx/pmu_intel.c
++++ b/arch/x86/kvm/vmx/pmu_intel.c
+@@ -266,6 +266,7 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+ 	struct kvm_cpuid_entry2 *entry;
+ 	union cpuid10_eax eax;
+ 	union cpuid10_edx edx;
++	bool cpuid_update_needed = false;
+ 
+ 	pmu->nr_arch_gp_counters = 0;
+ 	pmu->nr_arch_fixed_counters = 0;
+@@ -288,6 +289,8 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+ 
+ 	pmu->nr_arch_gp_counters = min_t(int, eax.split.num_counters,
+ 					 x86_pmu.num_counters_gp);
++	if (pmu->nr_arch_gp_counters != eax.split.num_counters)
++		cpuid_update_needed = true;
+ 	pmu->counter_bitmask[KVM_PMC_GP] = ((u64)1 << eax.split.bit_width) - 1;
+ 	pmu->available_event_types = ~entry->ebx &
+ 					((1ull << eax.split.mask_length) - 1);
+@@ -298,6 +301,8 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+ 		pmu->nr_arch_fixed_counters =
+ 			min_t(int, edx.split.num_counters_fixed,
+ 			      x86_pmu.num_counters_fixed);
++		if (pmu->nr_arch_fixed_counters != edx.split.num_counters_fixed)
++			cpuid_update_needed = true;
+ 		pmu->counter_bitmask[KVM_PMC_FIXED] =
+ 			((u64)1 << edx.split.bit_width_fixed) - 1;
+ 	}
+@@ -317,6 +322,13 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+ 	    (boot_cpu_has(X86_FEATURE_HLE) || boot_cpu_has(X86_FEATURE_RTM)) &&
+ 	    (entry->ebx & (X86_FEATURE_HLE|X86_FEATURE_RTM)))
+ 		pmu->reserved_bits ^= HSW_IN_TX|HSW_IN_TX_CHECKPOINTED;
++
++	if (cpuid_update_needed) {
++		((union cpuid10_eax *)&entry->eax)->split.num_counters
++			= pmu->nr_arch_gp_counters;
++		((union cpuid10_edx *)&entry->edx)->split.num_counters_fixed
++			= pmu->nr_arch_fixed_counters;
++	}
+ }
+ 
+ static void intel_pmu_init(struct kvm_vcpu *vcpu)
+-- 
+2.21.0
+
