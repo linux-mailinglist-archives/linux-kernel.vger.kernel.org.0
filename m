@@ -2,172 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A18E7E9E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9453CE9EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2019 16:15:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfJ3PNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 11:13:43 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44969 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfJ3PNn (ORCPT
+        id S1727207AbfJ3PPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 11:15:15 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52948 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727169AbfJ3PPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:13:43 -0400
-Received: by mail-qt1-f194.google.com with SMTP id b10so1885854qto.11;
-        Wed, 30 Oct 2019 08:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5OZSYFVQQCN9jPq40PFQ0tbJN0l/5n2kSdVxcNbhMyc=;
-        b=hoLtUF/FRgVISM8STLXR0q+/Sx5TqkfUrzPES8j2pD9CC6WP+zr6GtPf3Sj5JvGMnv
-         TB9B6uyuVbpoWDXnIsZZRarLuLBM0u7hVL9x1U5nrKXpfHY7wHcossl4iEWVdMP4kVoQ
-         n3QZTM+Rg7lgcluVJE956us/iF0euvAvGjGE/Cm+vR5YUwIK6cjN2ChQJanmIHYcBhj0
-         N3MGJwPcTIiwOL7et4V/nsA/D41j1nF6AvR4saKq5zNmvo84y5qQyC1sAcxm0PmI/DZB
-         cSqf0MbfIVk6YjkzP0FGL2dq5oPv7b2y/eGIyMNk6QJ8MHEdUvTqir0oUBUIi4QxhQ2T
-         Ud6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5OZSYFVQQCN9jPq40PFQ0tbJN0l/5n2kSdVxcNbhMyc=;
-        b=S+K2kIAxSRJpCSoLq5m9CROxGYwOMZzk2WWWkPCGknCPhyuqR1oyl7iLMTvwgkjbXj
-         5okowyAAh95J0XNJPtHQUWKDAFgtEQscrTUaRvx4KkIOa1q/SKKvLodKANzRRxkwN+Iq
-         zI9IenwL+JX8T9kLRtw6OIsuFIoKsH/d0yOqGGw6SvD/6UdotPi+Dk05BxdXm2qZHrYo
-         TbyjUVpanRpiMlVfA9LtAqgRpfj1VCLggAt5F6Xp96H5gGPmJXARFp3ep84YV8o7JH6J
-         l373MHxKtkkP5GnIQx7CXefdlKFYRa//9Txif97G9kn5Y0NopiHdDntRhwLmu0rbhos5
-         wOEg==
-X-Gm-Message-State: APjAAAVFDJozBjQF2booeTvl54Sfl4J7D4AC5pH97WJaO0FJTbHEw06m
-        fy67m7Cp3YqXkYE4S1WefvA=
-X-Google-Smtp-Source: APXvYqw0YNpPRjx9wexXpeihN29/pFYVjrKSeDEQLWPSiC1j1xnXsd8pptCmTl9iNnhGFZCJybh+Zw==
-X-Received: by 2002:ac8:3376:: with SMTP id u51mr561126qta.248.1572448420273;
-        Wed, 30 Oct 2019 08:13:40 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id c23sm257784qte.66.2019.10.30.08.13.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 08:13:38 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 93764410D7; Wed, 30 Oct 2019 12:13:36 -0300 (-03)
-Date:   Wed, 30 Oct 2019 12:13:36 -0300
-To:     James Clark <James.Clark@arm.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>, Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] Fixes issue when debugging debug builds of Perf.
-Message-ID: <20191030151336.GD27327@kernel.org>
-References: <20191028113340.4282-1-james.clark@arm.com>
- <20191029140052.GB4922@kernel.org>
- <20191029141852.GC4922@kernel.org>
- <20191029142647.GD4922@kernel.org>
- <578c3a3a-2972-2b95-b98c-aee78950f5bb@arm.com>
+        Wed, 30 Oct 2019 11:15:14 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9UFEjKE010180
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Oct 2019 11:14:46 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 16ABD420456; Wed, 30 Oct 2019 11:14:45 -0400 (EDT)
+Date:   Wed, 30 Oct 2019 11:14:45 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: bio_alloc should never fail
+Message-ID: <20191030151444.GC16197@mit.edu>
+References: <20191030035518.65477-1-gaoxiang25@huawei.com>
+ <20aa40bd-280d-d223-9f73-d9ed7dbe4f29@huawei.com>
+ <20191030091542.GA24976@architecture4>
+ <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
+ <20191030104345.GB170703@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <578c3a3a-2972-2b95-b98c-aee78950f5bb@arm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191030104345.GB170703@architecture4>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 30, 2019 at 11:03:43AM +0000, James Clark escreveu:
-> Hi Arnaldo,
+On Wed, Oct 30, 2019 at 06:43:45PM +0800, Gao Xiang wrote:
+> > You're right, in low memory scenario, allocation with bioset will be faster, as
+> > you mentioned offline, maybe we can add/use a priviate bioset like btrfs did
+> > rather than using global one, however, we'd better check how deadlock happen
+> > with a bioset mempool first ...
 > 
-> Thanks for that, yes separating them looks better.
-> I will try to break down commits in the future.
-> 
-> > The patch came mangled, so I'm applying by hand, and separating it into
-> > two patches, the first for the first paragraph and the other for the
-> > second, ok?
-> 
-> By mangled do you mean the quoted printables "=3D" and "=20"?
-> 
-> It seems like git send-email falls back to this behavior by default:
-> 
->          
->      --transfer-encoding=(7bit|8bit|quoted-printable|base64|auto)
-> 
->        Specify the transfer encoding to be used to send the message over SMTP.
->        7bit will fail upon encountering a non-ASCII message. quoted-printable can be
->        useful when the repository contains files that contain carriage returns, but
->        makes the raw patch email file (as saved from a MUA) much harder to inspect
->        manually. base64 is even more fool proof, but also even more opaque. auto will
->        use 8bit when possible, and quoted-printable otherwise.
-> 
-> 
-> I copied my raw patch and was able to successfully apply it with git am, even with this escaping. Although I
-> did upgrade to a newer version of git (2.23.0).
-> 
-> If I view the patch that you created, then it doesn't have quoted printable escaping. So there does
-> seem to be a difference somewhere.
-> Do you think I should use "git send-email --transfer-encoding=7bit"?
+> Okay, hope to get hints from Jaegeuk and redo this patch then...
 
-Well, I'm using mutt defaults, I'd say take a look at:
+It's not at all clear to me that using a private bioset is a good idea
+for f2fs.  That just means you're allocating a separate chunk of
+memory just for f2fs, as opposed to using the global pool.  That's an
+additional chunk of non-swapable kernel memory that's not going to be
+available, in *addition* to the global mempool.  
 
-~/git/linux/Documentation/process/email-clients.rst
+Also, who else would you be contending for space with the global
+mempool?  It's not like an mobile handset is going to have other users
+of the global bio mempool.
 
-There is a sesion for your mail agent, maybe it helps.
+On a low-end mobile handset, memory is at a premium, so wasting memory
+to no good effect isn't going to be a great idea.
 
-- Arnaldo
- 
-> 
-> Thanks
-> James
-> 
-> On 29/10/2019 14:26, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Oct 29, 2019 at 11:18:52AM -0300, Arnaldo Carvalho de Melo escreveu:
-> >> And here is the first patch out of your larger one, I changed the
-> >> subject line to reflect that this is not tools/perf specific, as
-> >> tools/objtool/ also uses libsubcmd, added Josh, objtool's maintainer so
-> >> that he is made aware.
-> > 
-> > And the second patch:
-> > 
-> > 
-> > commit d0381449fd9ab733ec2daf527263da9f73f1e94e
-> > Author: James Clark <James.Clark@arm.com>
-> > Date:   Mon Oct 28 11:34:01 2019 +0000
-> > 
-> >     libsubcmd: Use -O0 with DEBUG=1
-> >     
-> >     When a 'make DEBUG=1' build is done, the command parser is still built
-> >     with -O6 and is hard to step through, fix it making it use -O0 in that
-> >     case.
-> >     
-> >     Signed-off-by: James Clark <james.clark@arm.com>
-> >     Cc: Adrian Hunter <adrian.hunter@intel.com>
-> >     Cc: Ian Rogers <irogers@google.com>
-> >     Cc: Jiri Olsa <jolsa@kernel.org>
-> >     Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> >     Cc: Namhyung Kim <namhyung@kernel.org>
-> >     Cc: nd <nd@arm.com>
-> >     Link: http://lore.kernel.org/lkml/20191028113340.4282-1-james.clark@arm.com
-> >     [ split from a larger patch ]
-> >     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 
-> > diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-> > index 352c6062deba..1c777a72bb39 100644
-> > --- a/tools/lib/subcmd/Makefile
-> > +++ b/tools/lib/subcmd/Makefile
-> > @@ -27,7 +27,9 @@ ifeq ($(DEBUG),0)
-> >    endif
-> >  endif
-> >  
-> > -ifeq ($(CC_NO_CLANG), 0)
-> > +ifeq ($(DEBUG),1)
-> > +  CFLAGS += -O0
-> > +else ifeq ($(CC_NO_CLANG), 0)
-> >    CFLAGS += -O3
-> >  else
-> >    CFLAGS += -O6
-> > 
+Regards,
 
--- 
-
-- Arnaldo
+						- Ted
