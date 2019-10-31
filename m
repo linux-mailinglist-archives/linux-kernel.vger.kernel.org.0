@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 202CFEAAD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D329DEAAD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:04:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfJaHCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 03:02:17 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5658 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726535AbfJaHCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 03:02:17 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 269BFEE5CC8800A2EB72;
-        Thu, 31 Oct 2019 15:02:15 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Thu, 31 Oct 2019
- 15:02:08 +0800
-Subject: [PATCH v3] crypto: arm64/aes-neonbs - add return value of
- skcipher_walk_done() in __xts_crypt()
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <ard.biesheuvel@linaro.org>, <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <hushiyuan@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>
-References: <aaf0f585-3a06-8af1-e2f1-ab301e560d49@huawei.com>
-Message-ID: <32b39396-d514-524f-a85c-3bc627454ba7@huawei.com>
-Date:   Thu, 31 Oct 2019 15:01:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726957AbfJaHEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 03:04:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:51601 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbfJaHEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 03:04:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 00:04:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
+   d="scan'208";a="401784432"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2019 00:04:26 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iQ4VN-000Hkd-LK; Thu, 31 Oct 2019 15:04:25 +0800
+Date:   Thu, 31 Oct 2019 15:04:16 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Can Guo <cang@codeaurora.org>
+Cc:     kbuild-all@lists.01.org, asutoshd@codeaurora.org,
+        nguyenb@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] scsi: ufs: ufshcd_scale_clks() can be static
+Message-ID: <20191031070416.7gfgfkqyln2qcuk4@4978f4969bb8>
+References: <1572351831-30373-2-git-send-email-cang@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <aaf0f585-3a06-8af1-e2f1-ab301e560d49@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572351831-30373-2-git-send-email-cang@codeaurora.org>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A warning is found by the static code analysis tool:
-  "Identical condition 'err', second condition is always false"
 
-Fix this by adding return value of skcipher_walk_done().
-
-Fixes: 67cfa5d3b721 ("crypto: arm64/aes-neonbs - implement ciphertext stealing for XTS")
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 9136e6afe1e7 ("scsi: ufs: Fix up clock scaling")
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
-v2 -> v3:
- - add "Acked-by:"
-
-v1 -> v2:
- - update the subject and comment
- - add return value of skcipher_walk_done()
-
- arch/arm64/crypto/aes-neonbs-glue.c | 2 +-
+ ufshcd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/crypto/aes-neonbs-glue.c b/arch/arm64/crypto/aes-neonbs-glue.c
-index ea873b8904c4..e3e27349a9fe 100644
---- a/arch/arm64/crypto/aes-neonbs-glue.c
-+++ b/arch/arm64/crypto/aes-neonbs-glue.c
-@@ -384,7 +384,7 @@ static int __xts_crypt(struct skcipher_request *req, bool encrypt,
- 			goto xts_tail;
-
- 		kernel_neon_end();
--		skcipher_walk_done(&walk, nbytes);
-+		err = skcipher_walk_done(&walk, nbytes);
- 	}
-
- 	if (err || likely(!tail))
--- 
-2.7.4.3
-
-
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 3a0b99b624829..54ae6433452f2 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -974,7 +974,7 @@ static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
+  * Returns 0 if successful
+  * Returns < 0 for any other errors
+  */
+-int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ {
+ 	int ret = 0;
+ 
