@@ -2,96 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573B2EAF74
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B74F8EAFC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfJaLz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:55:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55518 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbfJaLzk (ORCPT
+        id S1726784AbfJaMAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 08:00:25 -0400
+Received: from smtprelay0142.hostedemail.com ([216.40.44.142]:41929 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726636AbfJaMAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:40 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ932-0003CM-0q; Thu, 31 Oct 2019 12:55:28 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 57BA01C06DF;
-        Thu, 31 Oct 2019 12:55:15 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:55:15 -0000
-From:   "tip-bot2 for Jerry Snitselaar" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: efi/urgent] efi/tpm: Return -EINVAL when determining tpm final
- events log size fails
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191029173755.27149-3-ardb@kernel.org>
-References: <20191029173755.27149-3-ardb@kernel.org>
+        Thu, 31 Oct 2019 08:00:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 5C90518081312;
+        Thu, 31 Oct 2019 12:00:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3167:3352:3622:3868:3871:3872:3874:4321:4605:5007:6117:7903:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12679:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:21740:30003:30054:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: cub46_2047b2e81a122
+X-Filterd-Recvd-Size: 2173
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 31 Oct 2019 12:00:21 +0000 (UTC)
+Message-ID: <be4803c67e2e1f9e91e59bfd7b23f938619f66e8.camel@perches.com>
+Subject: Re: [PATCH] mm/ioremap: Use WARN_ONCE instead of printk() +
+ WARN_ON_ONCE()
+From:   Joe Perches <joe@perches.com>
+To:     zhong jiang <zhongjiang@huawei.com>, Borislav Petkov <bp@alien8.de>
+Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 31 Oct 2019 05:00:13 -0700
+In-Reply-To: <5DBAC74E.5080001@huawei.com>
+References: <1572425838-39158-1-git-send-email-zhongjiang@huawei.com>
+         <20191031110304.GE21133@nazgul.tnic> <5DBAC74E.5080001@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Message-ID: <157252291507.29376.5876568697452910817.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the efi/urgent branch of tip:
+On Thu, 2019-10-31 at 19:36 +0800, zhong jiang wrote:
+> On 2019/10/31 19:03, Borislav Petkov wrote:
+> > On Wed, Oct 30, 2019 at 04:57:18PM +0800, zhong jiang wrote:
+> > > WARN_ONCE is more clear and simpler. Just replace it.
+[]
+> > > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+[]
+> > > @@ -172,9 +172,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+> > >  		return NULL;
+> > >  
+> > >  	if (!phys_addr_valid(phys_addr)) {
+> > > -		printk(KERN_WARNING "ioremap: invalid physical address %llx\n",
+> > > -		       (unsigned long long)phys_addr);
+> > > -		WARN_ON_ONCE(1);
+> > > +		WARN_ONCE(1, "ioremap: invalid physical address %llx\n",
+> > > +			  (unsigned long long)phys_addr);
+> > Does
+> > 	WARN_ONCE(!phys_addr_valid(phys_addr),
+> > 		  "ioremap: invalid physical address %llx\n",
+> > 		  (unsigned long long)phys_addr);
+> > 
+> > work too?
+> > 
+> Thanks, That is better. Will repost.
 
-Commit-ID:     2bb6a81633cb47dcba4c9f75605cbe49e6b73d60
-Gitweb:        https://git.kernel.org/tip/2bb6a81633cb47dcba4c9f75605cbe49e6b73d60
-Author:        Jerry Snitselaar <jsnitsel@redhat.com>
-AuthorDate:    Tue, 29 Oct 2019 18:37:51 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 31 Oct 2019 09:40:17 +01:00
+Perhaps this is not good patch concept as now each
+invalid physical address will not be emitted.
 
-efi/tpm: Return -EINVAL when determining tpm final events log size fails
+Before:
+	each invalid physical address printed
+	one stack dump
 
-Currently nothing checks the return value of efi_tpm_eventlog_init(),
-but in case that changes in the future make sure an error is
-returned when it fails to determine the tpm final events log
-size.
+After:
+	one stck dump with first invalid physical address.
 
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: e658c82be556 ("efi/tpm: Only set 'efi_tpm_final_log_size' after ...")
-Link: https://lkml.kernel.org/r/20191029173755.27149-3-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- drivers/firmware/efi/tpm.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index ebd7977..31f9f0e 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -88,6 +88,7 @@ int __init efi_tpm_eventlog_init(void)
- 
- 	if (tbl_size < 0) {
- 		pr_err(FW_BUG "Failed to parse event in TPM Final Events Log\n");
-+		ret = -EINVAL;
- 		goto out_calc;
- 	}
- 
