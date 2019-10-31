@@ -2,122 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42B30EB538
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DA6EB53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfJaQqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:46:53 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45318 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728714AbfJaQqs (ORCPT
+        id S1728942AbfJaQrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:47:07 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34331 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728913AbfJaQrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:46:48 -0400
-Received: by mail-qk1-f193.google.com with SMTP id q70so7637794qke.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=swjXqb9tq8YAKV9d/upeZfYb8oQPXdkRwweQaCfVw/k=;
-        b=kOAEojjl1hg5Shn91lGHY8WDNYGiGRXBRdFuODb3J07Yf+cGrCmZuW9mhOZZ1kA+dv
-         1DnyXndwMbyFdAqLB4ovJLvAtMHu/Jraq8owHqpSu5C+r/jE0JZeZk9B8XA6X0KfnJzt
-         y+AW6KB7hWS6J9fmdwOMSfntCcwA+dNOC//0LLf7x/iMtpbzWqMi0rOckkyIXTid2TRC
-         xgZYLedHpHx2B99IKTqXybn4ooJ1o84swQV5ECb3NrUsN6wIe/Y7v84ZrH+zK9CQmNEH
-         jYcX1H54OUbcg8gROMTPBefqMDAO7LfynJB+Il8QaQ2J3HhkKkirY0tpPor7dvWEqZBC
-         xZDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=swjXqb9tq8YAKV9d/upeZfYb8oQPXdkRwweQaCfVw/k=;
-        b=tc7JaqA+kVruR5skveSU3aolnaAWixh1S13MgEtVM+pelJUjD5rMTLYLO3aFx7ZQb2
-         n5w/svECofc/rGWH8qUR1BfiWbpvwIDbsbATKl8VYhKwMRTlaZrmpWlKpuLM1RKAHNz6
-         pR3C/3WzwdCv5fq+NJglF+K0IIivS2QtO5iYtnGcb83RW9+R5f6rKoCO/2PDmwTSJW+Z
-         /TNB0TQmhb+GVqQw7TwDoylIENTRqKGZrjY+2sI/8YA3wgnkQqiOOO9nqcuhSmraVWAh
-         d27oSvzaxR1MU7VZeITdkIM6QWRHrdG+nKVOw3/mb94AfBDGhdaOspdXr+1100p8BVS0
-         d/Sw==
-X-Gm-Message-State: APjAAAUgLevPvyXzPlFX+lUUYddfg4M5wlILEWvNk80K5dqRUfxdPcWr
-        ujAM0TZ58T6L9eoU6TWgns+QKA==
-X-Google-Smtp-Source: APXvYqzi+9eI2GBlcaPuBmfudKm6oTvKEkpfsgjcx1QX/3MJDvVeUhSBMNArYllkR1/8DGXonehHvw==
-X-Received: by 2002:a37:6643:: with SMTP id a64mr6332973qkc.144.1572540407153;
-        Thu, 31 Oct 2019 09:46:47 -0700 (PDT)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id w15sm2537086qtk.43.2019.10.31.09.46.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Oct 2019 09:46:46 -0700 (PDT)
-Subject: Re: [Patch v4 3/6] sched/fair: Enable CFS periodic tick to update
- thermal pressure
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-4-git-send-email-thara.gopinath@linaro.org>
- <a303b61e-42f6-dfd7-264b-ead91da5f5ca@arm.com>
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DBB0FF5.4040904@linaro.org>
-Date:   Thu, 31 Oct 2019 12:46:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Thu, 31 Oct 2019 12:47:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572540423;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IN5IfNgFP34DHGSztrtam2F8ra3NciZQQBpcLS3E0ho=;
+        b=WJXbXNxtVyq0YHnAbSeFTBk1MO2fqxQtNDLXNXlEY9VYqPwzwm74u8jVSOQvISZOCKOT6T
+        OvWNY+7vYW2mEgpCH8dfZcHqS65y2TM8PvRGXKkXVCvnKNSSpRQ9ItIabhaDWV6lWAWVSc
+        n7YnquOAzheA7g+T7i/J/vGJtCZE7V4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-v6RguP_-OjCguHYJtNow1g-1; Thu, 31 Oct 2019 12:46:59 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4ABB1800D55;
+        Thu, 31 Oct 2019 16:46:57 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6B1AC60852;
+        Thu, 31 Oct 2019 16:46:55 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 31 Oct 2019 17:46:56 +0100 (CET)
+Date:   Thu, 31 Oct 2019 17:46:53 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-api@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clone3: validate stack arguments
+Message-ID: <20191031164653.GA24629@redhat.com>
+References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-In-Reply-To: <a303b61e-42f6-dfd7-264b-ead91da5f5ca@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191031113608.20713-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: v6RguP_-OjCguHYJtNow1g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/2019 12:11 PM, Dietmar Eggemann wrote:
-> On 22.10.19 22:34, Thara Gopinath wrote:
->> Introduce support in CFS periodic tick to trigger the process of
->> computing average thermal pressure for a cpu.
->>
->> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
->> ---
->>  kernel/sched/fair.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 682a754..4f9c2cb 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -21,6 +21,7 @@
->>   *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
->>   */
->>  #include "sched.h"
->> +#include "thermal.h"
->>  
->>  #include <trace/events/sched.h>
->>  
->> @@ -7574,6 +7575,8 @@ static void update_blocked_averages(int cpu)
->>  		done = false;
->>  
->>  	update_blocked_load_status(rq, !done);
->> +
->> +	trigger_thermal_pressure_average(rq);
->>  	rq_unlock_irqrestore(rq, &rf);
->>  }
-> 
-> Since you update the thermal pressure signal in CFS's
-> update_blocked_averages() as well, I guess the patch title has to change.
-Will do. Thanks.
-> 
->>  
->> @@ -9933,6 +9936,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->>  
->>  	update_misfit_status(curr, rq);
->>  	update_overutilized_status(task_rq(curr));
->> +
->> +	trigger_thermal_pressure_average(rq);
->>  }
->>  
->>  /*
->>
+On 10/31, Christian Brauner wrote:
+>
+> --- a/include/uapi/linux/sched.h
+> +++ b/include/uapi/linux/sched.h
+> @@ -51,6 +51,10 @@
+>   *               sent when the child exits.
+>   * @stack:       Specify the location of the stack for the
+>   *               child process.
+> + *               Note, @stack is expected to point to the
+> + *               lowest address. The stack direction will be
+> + *               determined by the kernel and set up
+> + *               appropriately based on @stack_size.
 
+I can't review this patch, I have no idea what does stack_size mean
+if !arch/x86.
 
--- 
-Warm Regards
-Thara
+x86 doesn't use stack_size unless a kthread does kernel_thread(), so
+this change is probably fine...
+
+Hmm. Off-topic question, why did 7f192e3cd3 ("fork: add clone3") add
+"& ~CSIGNAL" in kernel_thread() ? This looks pointless and confusing
+to me...
+
+> +static inline bool clone3_stack_valid(struct kernel_clone_args *kargs)
+> +{
+> +=09if (kargs->stack =3D=3D 0) {
+> +=09=09if (kargs->stack_size > 0)
+> +=09=09=09return false;
+> +=09} else {
+> +=09=09if (kargs->stack_size =3D=3D 0)
+> +=09=09=09return false;
+
+So to implement clone3_wrapper(void *bottom_of_stack) you need to do
+
+=09clone3_wrapper(void *bottom_of_stack)
+=09{
+=09=09struct clone_args args =3D {
+=09=09=09...
+=09=09=09// make clone3_stack_valid() happy
+=09=09=09.stack =3D bottom_of_stack - 1,
+=09=09=09.stack_size =3D 1,
+=09=09};
+=09}
+
+looks a bit strange. OK, I agree, this example is very artificial.
+But why do you think clone3() should nack stack_size =3D=3D 0 ?
+
+> +=09=09if (!access_ok((void __user *)kargs->stack, kargs->stack_size))
+> +=09=09=09return false;
+
+Why?
+
+Oleg.
+
