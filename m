@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A19EA83E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 01:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FCFEA83A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 01:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfJaAcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 20:32:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51992 "EHLO
+        id S1728036AbfJaAcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 20:32:10 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50435 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbfJaAcH (ORCPT
+        with ESMTP id S1727477AbfJaAcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 20:32:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q70so4069446wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 17:32:04 -0700 (PDT)
+        Wed, 30 Oct 2019 20:32:06 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 11so4088874wmk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 17:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DYhACg+zO53SUeLC5iAmeJtmmamitSVr5JjCgBatEmk=;
-        b=Xo2jF187UE1MGGGjZ8wN0vNAH7wPPEVfI4ZvaURxYjN1pWSFx+8HdyvTcP3FzTn987
-         08YzzHq6OGkCXz6Im4EZfJbwBJNjKtnt3kBbs0JwsG41sI9SdnEErK9HVKIuV5ytBAAd
-         jnU/gdaLBryLQcmiUDOmHH8SzYQxepk523nE0=
+        bh=tDHh+OVXKEM0h+uKC7EIERstcizYBjZxP2HUDdfEVt8=;
+        b=Dn8/QAVbq0JfM6dbr7uT/LDSjMsuYs4CxFf+CS82fAkPePNSAGzb5Y0MnIf2ipZiHx
+         POfZhnEE3UHOkJ9d/P4volBMryXP1/aujGfSYCD7vqeNMrU++oR+psgTkC/v689cAwcu
+         FJP2RLuVzWiYM8UlzeEvwu9SX0Et8qvWQXB88=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DYhACg+zO53SUeLC5iAmeJtmmamitSVr5JjCgBatEmk=;
-        b=MOtuUxeNfopy6SYifbdllJhMzNkB/0KGqAd3eq9Tve5YuQCUoWqukgpXs9FTWmfLAj
-         orgnQZ4CtrdFUBTh3kJ5i7uNmtuMqR8K3ddClfQ6YaqQwJKMXv8zkP98W6zs09bycb6u
-         juoDD+1GB3j/CyZDrUf3J88Dim6sI8WwnxDvliiY/Uij1y4/h+SHiQtsXA9JilZwCKlE
-         pfwOABb7C7E1PGWguTFGNQw+1aqSmtnTNj1ECxAbm1U9yDi0moG66/K5Pve6aRrGPMHK
-         UdWFvuLTK/DLvz2urXKgAcuVIpsZXVsI3Q3DNJ3zzEjSGyZLSIrgB3MoGkWwrlMTLblD
-         WhsQ==
-X-Gm-Message-State: APjAAAVHNZvcdy8mCGLU2bHPUNSFhj2Lvj1Elb5vQEW1Agaj9/AzzaRM
-        Y0dNHvxA84zVpqP9oQtpy9jaDA==
-X-Google-Smtp-Source: APXvYqwpa/vkgm/Kk2t0MioAGkOHz3mAV7KnDHWGDzc5LpYTw6AEGiA6IRzxyLwSWzDsy21QG8gMPw==
-X-Received: by 2002:a05:600c:cd:: with SMTP id u13mr2099609wmm.133.1572481923964;
-        Wed, 30 Oct 2019 17:32:03 -0700 (PDT)
+        bh=tDHh+OVXKEM0h+uKC7EIERstcizYBjZxP2HUDdfEVt8=;
+        b=VucYJSHPl5td+kvz0RV1ShNzSD/sgt98CXJrJ5IUuYY2OJx09WUkG7C/A/V0GluBpo
+         zqQFU4TsbuSQmUGgijO4OM7LtXVlX8oky010NkcWhhemSK1GlfsFo8DW3OyQDZEGOKUk
+         H3KRDBFTMnm0jjXRW4cyTfIkkJR53D8hiVjP2+sRJl3+xT8RCEBdkDVVFTLnc9k8zb45
+         xhkdAWFVSqNveYhxLW/Jd7zsW6pcxB3w+4qarjeNgP66Voy0sOJ22LrZfXE9gIypAVXC
+         VdhYphLFvlBh0gzNGJkJnZf7jTw9OGw2jZZzSmV51JKUQOVCN1scP25KXoApEpQFViUI
+         GhMA==
+X-Gm-Message-State: APjAAAVjgJ8gQ1YDmA47bF4iA/BR14O80xmbKGajCeWVwHcIiy5gT3TQ
+        pMbXpwzA8pRQ6W9qUDvy14Tq2g==
+X-Google-Smtp-Source: APXvYqz3VwKmyFrg0snFjZE++GwOdD4oDrvjFS6yyK5iarkJGuhLRfN5MmMf7SAZIOqcSO0W8SJCNw==
+X-Received: by 2002:a7b:c01a:: with SMTP id c26mr2165585wmb.45.1572481924905;
+        Wed, 30 Oct 2019 17:32:04 -0700 (PDT)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id r13sm2357111wra.74.2019.10.30.17.32.03
+        by smtp.gmail.com with ESMTPSA id r13sm2357111wra.74.2019.10.30.17.32.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 17:32:03 -0700 (PDT)
+        Wed, 30 Oct 2019 17:32:04 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
@@ -51,9 +51,9 @@ Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Paul Mackerras <paulus@samba.org>,
         linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC PATCH 3/5] powerpc: move pci_iounmap() from iomap.c to pci-common.c
-Date:   Thu, 31 Oct 2019 01:31:52 +0100
-Message-Id: <20191031003154.21969-4-linux@rasmusvillemoes.dk>
+Subject: [RFC PATCH 4/5] powerpc: make pcibios_vaddr_is_ioport() static
+Date:   Thu, 31 Oct 2019 01:31:53 +0100
+Message-Id: <20191031003154.21969-5-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191031003154.21969-1-linux@rasmusvillemoes.dk>
 References: <20191031003154.21969-1-linux@rasmusvillemoes.dk>
@@ -64,70 +64,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As preparation for making iowrite32 and friends static inlines, move
-the definition of pci_iounmap() from iomap.c to pci-common.c. This
-definition of pci_iounmap() is compiled in when
-!CONFIG_PPC_INDIRECT_PIO && CONFIG_PCI - we're just interchanging
-which condition is in the Kbuild logic and which is in the .c file.
+The only caller of pcibios_vaddr_is_ioport() is in pci-common.c, so we
+can make it static and move it into the same #ifndef block as its
+caller.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/powerpc/kernel/iomap.c      | 13 -------------
- arch/powerpc/kernel/pci-common.c | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ arch/powerpc/include/asm/pci-bridge.h | 9 ---------
+ arch/powerpc/kernel/pci-common.c      | 4 ++--
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/kernel/iomap.c b/arch/powerpc/kernel/iomap.c
-index 5ac84efc6ede..b22fa8db5068 100644
---- a/arch/powerpc/kernel/iomap.c
-+++ b/arch/powerpc/kernel/iomap.c
-@@ -182,16 +182,3 @@ void ioport_unmap(void __iomem *addr)
- }
- EXPORT_SYMBOL(ioport_map);
- EXPORT_SYMBOL(ioport_unmap);
--
+diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
+index ea6ec65970ef..deb29a1c9708 100644
+--- a/arch/powerpc/include/asm/pci-bridge.h
++++ b/arch/powerpc/include/asm/pci-bridge.h
+@@ -283,14 +283,5 @@ extern struct pci_controller *pcibios_alloc_controller(struct device_node *dev);
+ extern void pcibios_free_controller(struct pci_controller *phb);
+ extern void pcibios_free_controller_deferred(struct pci_host_bridge *bridge);
+ 
 -#ifdef CONFIG_PCI
--void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
+-extern int pcibios_vaddr_is_ioport(void __iomem *address);
+-#else
+-static inline int pcibios_vaddr_is_ioport(void __iomem *address)
 -{
--	if (isa_vaddr_is_ioport(addr))
--		return;
--	if (pcibios_vaddr_is_ioport(addr))
--		return;
--	iounmap(addr);
+-	return 0;
 -}
+-#endif	/* CONFIG_PCI */
 -
--EXPORT_SYMBOL(pci_iounmap);
--#endif /* CONFIG_PCI */
+ #endif	/* __KERNEL__ */
+ #endif	/* _ASM_POWERPC_PCI_BRIDGE_H */
 diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index 1c448cf25506..d89a2426b405 100644
+index d89a2426b405..928d7576c6c2 100644
 --- a/arch/powerpc/kernel/pci-common.c
 +++ b/arch/powerpc/kernel/pci-common.c
-@@ -34,6 +34,7 @@
- #include <asm/io.h>
- #include <asm/prom.h>
- #include <asm/pci-bridge.h>
-+#include <asm/isa-bridge.h>
- #include <asm/byteorder.h>
- #include <asm/machdep.h>
- #include <asm/ppc-pci.h>
-@@ -295,6 +296,18 @@ int pcibios_vaddr_is_ioport(void __iomem *address)
+@@ -277,7 +277,8 @@ static resource_size_t pcibios_io_size(const struct pci_controller *hose)
+ #endif
+ }
+ 
+-int pcibios_vaddr_is_ioport(void __iomem *address)
++#ifndef CONFIG_PPC_INDIRECT_PIO
++static int pcibios_vaddr_is_ioport(void __iomem *address)
+ {
+ 	int ret = 0;
+ 	struct pci_controller *hose;
+@@ -296,7 +297,6 @@ int pcibios_vaddr_is_ioport(void __iomem *address)
  	return ret;
  }
  
-+#ifndef CONFIG_PPC_INDIRECT_PIO
-+void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
-+{
-+	if (isa_vaddr_is_ioport(addr))
-+		return;
-+	if (pcibios_vaddr_is_ioport(addr))
-+		return;
-+	iounmap(addr);
-+}
-+EXPORT_SYMBOL(pci_iounmap);
-+#endif /* CONFIG_PPC_INDIRECT_PIO */
-+
- unsigned long pci_address_to_pio(phys_addr_t address)
+-#ifndef CONFIG_PPC_INDIRECT_PIO
+ void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
  {
- 	struct pci_controller *hose;
+ 	if (isa_vaddr_is_ioport(addr))
 -- 
 2.23.0
 
