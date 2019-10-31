@@ -2,89 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89B2EADE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:53:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1CB0EADE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfJaKxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:53:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:46982 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbfJaKxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:53:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4BB71F1;
-        Thu, 31 Oct 2019 03:53:47 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (unknown [10.1.195.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A2483F719;
-        Thu, 31 Oct 2019 03:53:46 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 10:53:43 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        ionela.voinescu@arm.com, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [Patch v4 4/6] sched/fair: update cpu_capcity to reflect thermal
- pressure
-Message-ID: <20191031105342.b3sl5xhysldfla3g@e107158-lin.cambridge.arm.com>
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-5-git-send-email-thara.gopinath@linaro.org>
- <20191023122252.dz7obopab6iizy4s@e107158-lin.cambridge.arm.com>
- <20191028153010.GE4097@hirez.programming.kicks-ass.net>
+        id S1727402AbfJaKx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:53:58 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46662 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbfJaKx5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 06:53:57 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id CE01028A0E8;
+        Thu, 31 Oct 2019 10:53:54 +0000 (GMT)
+Date:   Thu, 31 Oct 2019 11:53:52 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 09/32] mtd: spi-nor: Pointer parameter for FSR in
+ spi_nor_read_fsr()
+Message-ID: <20191031115352.4f111555@collabora.com>
+In-Reply-To: <20191029111615.3706-10-tudor.ambarus@microchip.com>
+References: <20191029111615.3706-1-tudor.ambarus@microchip.com>
+        <20191029111615.3706-10-tudor.ambarus@microchip.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191028153010.GE4097@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/28/19 16:30, Peter Zijlstra wrote:
-> On Wed, Oct 23, 2019 at 01:28:40PM +0100, Qais Yousef wrote:
-> > On 10/22/19 16:34, Thara Gopinath wrote:
-> > > cpu_capacity relflects the maximum available capacity of a cpu. Thermal
-> > > pressure on a cpu means this maximum available capacity is reduced. This
-> > > patch reduces the average thermal pressure for a cpu from its maximum
-> > > available capacity so that cpu_capacity reflects the actual
-> > > available capacity.
-> > > 
-> > > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> > > ---
-> > >  kernel/sched/fair.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 4f9c2cb..be3e802 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -7727,6 +7727,7 @@ static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
-> > >  
-> > >  	used = READ_ONCE(rq->avg_rt.util_avg);
-> > >  	used += READ_ONCE(rq->avg_dl.util_avg);
-> > > +	used += READ_ONCE(rq->avg_thermal.load_avg);
-> > 
-> > Maybe a naive question - but can we add util_avg with load_avg without
-> > a conversion? I thought the 2 signals have different properties.
+On Tue, 29 Oct 2019 11:17:02 +0000
+<Tudor.Ambarus@microchip.com> wrote:
+
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
 > 
-> Changelog of patch #1 explains, it's in that dense blob of text.
+> Let the callers pass the pointer to the DMA-able buffer where
+> the value of the Flag Status Register will be written. This way we
+> avoid the casts between int and u8, which can be confusing.
 > 
-> But yes, you're quite right that that wants a comment here.
+> Caller stops compare the return value of spi_nor_read_fsr() with negative,
+> spi_nor_read_fsr() returns 0 on success and -errno otherwise.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 38 ++++++++++++++++++++------------------
+>  1 file changed, 20 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index dc44d1206f77..0d38aede4de7 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -456,12 +456,15 @@ static int spi_nor_read_sr(struct spi_nor *nor, u8 *sr)
+>  	return ret;
+>  }
+>  
+> -/*
+> - * Read the flag status register, returning its value in the location
+> - * Return the status register value.
+> - * Returns negative if error occurred.
+> +/**
+> + * spi_nor_read_fsr() - Read the Flag Status Register.
+> + * @nor:	pointer to 'struct spi_nor'
+> + * @fsr:	pointer to a DMA-able buffer where the value of the
+> + *              Flag Status Register will be written.
+> + *
+> + * Return: 0 on success, -errno otherwise.
+>   */
+> -static int spi_nor_read_fsr(struct spi_nor *nor)
+> +static int spi_nor_read_fsr(struct spi_nor *nor, u8 *fsr)
+>  {
+>  	int ret;
+>  
+> @@ -470,20 +473,18 @@ static int spi_nor_read_fsr(struct spi_nor *nor)
+>  			SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_RDFSR, 1),
+>  				   SPI_MEM_OP_NO_ADDR,
+>  				   SPI_MEM_OP_NO_DUMMY,
+> -				   SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+> +				   SPI_MEM_OP_DATA_IN(1, fsr, 1));
+>  
+>  		ret = spi_mem_exec_op(nor->spimem, &op);
+>  	} else {
+>  		ret = nor->controller_ops->read_reg(nor, SPINOR_OP_RDFSR,
+> -						    nor->bouncebuf, 1);
+> +						    fsr, 1);
+>  	}
+>  
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(nor->dev, "error %d reading FSR\n", ret);
+> -		return ret;
+> -	}
+>  
+> -	return nor->bouncebuf[0];
+> +	return ret;
+>  }
+>  
+>  /*
+> @@ -705,17 +706,18 @@ static int spi_nor_clear_fsr(struct spi_nor *nor)
+>  
+>  static int spi_nor_fsr_ready(struct spi_nor *nor)
+>  {
+> -	int fsr = spi_nor_read_fsr(nor);
+> -	if (fsr < 0)
+> -		return fsr;
+> +	int ret = spi_nor_read_fsr(nor, &nor->bouncebuf[0]);
 
-Thanks for the pointer! A comment would be nice indeed.
+Didn't comment on the previous patch, but why not simply pass
+nor->bouncebuf here?
 
-To make sure I got this correctly - it's because avg_thermal.load_avg
-represents delta_capacity which is already a 'converted' form of load. So this
-makes avg_thermal.load_avg a util_avg really. Correct?
+Anyway, that's just a detail.
 
-If I managed to get it right somehow. It'd be nice if we can do inverse
-conversion on delta_capacity so that avg_thermal.{load_avg, util_avg} meaning
-is consistent across the board. But I don't feel strongly about it if this gets
-documented properly.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-Thanks
+> +
+> +	if (ret)
+> +		return ret;
+>  
+> -	if (fsr & (FSR_E_ERR | FSR_P_ERR)) {
+> -		if (fsr & FSR_E_ERR)
+> +	if (nor->bouncebuf[0] & (FSR_E_ERR | FSR_P_ERR)) {
+> +		if (nor->bouncebuf[0] & FSR_E_ERR)
+>  			dev_err(nor->dev, "Erase operation failed.\n");
+>  		else
+>  			dev_err(nor->dev, "Program operation failed.\n");
+>  
+> -		if (fsr & FSR_PT_ERR)
+> +		if (nor->bouncebuf[0] & FSR_PT_ERR)
+>  			dev_err(nor->dev,
+>  			"Attempted to modify a protected sector.\n");
+>  
+> @@ -723,7 +725,7 @@ static int spi_nor_fsr_ready(struct spi_nor *nor)
+>  		return -EIO;
+>  	}
+>  
+> -	return fsr & FSR_READY;
+> +	return nor->bouncebuf[0] & FSR_READY;
+>  }
+>  
+>  static int spi_nor_ready(struct spi_nor *nor)
 
---
-Qais Yousef
