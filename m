@@ -2,120 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DA6EB53F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCCDFEB550
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfJaQrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:47:07 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34331 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728913AbfJaQrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:47:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572540423;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IN5IfNgFP34DHGSztrtam2F8ra3NciZQQBpcLS3E0ho=;
-        b=WJXbXNxtVyq0YHnAbSeFTBk1MO2fqxQtNDLXNXlEY9VYqPwzwm74u8jVSOQvISZOCKOT6T
-        OvWNY+7vYW2mEgpCH8dfZcHqS65y2TM8PvRGXKkXVCvnKNSSpRQ9ItIabhaDWV6lWAWVSc
-        n7YnquOAzheA7g+T7i/J/vGJtCZE7V4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-v6RguP_-OjCguHYJtNow1g-1; Thu, 31 Oct 2019 12:46:59 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4ABB1800D55;
-        Thu, 31 Oct 2019 16:46:57 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6B1AC60852;
-        Thu, 31 Oct 2019 16:46:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 31 Oct 2019 17:46:56 +0100 (CET)
-Date:   Thu, 31 Oct 2019 17:46:53 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-api@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clone3: validate stack arguments
-Message-ID: <20191031164653.GA24629@redhat.com>
-References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
+        id S1729084AbfJaQsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:48:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:51984 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728614AbfJaQsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:48:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 977111FB;
+        Thu, 31 Oct 2019 09:48:20 -0700 (PDT)
+Received: from [10.1.196.50] (unknown [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C56383F6C4;
+        Thu, 31 Oct 2019 09:48:19 -0700 (PDT)
+Subject: Re: [PATCH 4/4] docs/arm64: cpu-feature-registers: Documents missing
+ visible fields
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     will@kernel.org, catalin.marinas@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "julien@xen.org" <julien@xen.org>
+References: <20191003111211.483-1-julien.grall@arm.com>
+ <20191003111211.483-5-julien.grall@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <9a4aa626-a16f-b01a-0254-43946de9ff6e@arm.com>
+Date:   Thu, 31 Oct 2019 16:48:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191031113608.20713-1-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: v6RguP_-OjCguHYJtNow1g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <20191003111211.483-5-julien.grall@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31, Christian Brauner wrote:
->
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -51,6 +51,10 @@
->   *               sent when the child exits.
->   * @stack:       Specify the location of the stack for the
->   *               child process.
-> + *               Note, @stack is expected to point to the
-> + *               lowest address. The stack direction will be
-> + *               determined by the kernel and set up
-> + *               appropriately based on @stack_size.
+Hi,
 
-I can't review this patch, I have no idea what does stack_size mean
-if !arch/x86.
+On 03/10/2019 12:12, Julien Grall wrote:
+> A couple of fields visible to userspace are not described in the
+> documentation. So update it.
+> 
+> Signed-off-by: Julien Grall <julien.grall@arm.com>
+> ---
+>   Documentation/arm64/cpu-feature-registers.rst | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
+> index 2955287e9acc..ffcf4e2c71ef 100644
+> --- a/Documentation/arm64/cpu-feature-registers.rst
+> +++ b/Documentation/arm64/cpu-feature-registers.rst
+> @@ -193,6 +193,10 @@ infrastructure:
+>        +------------------------------+---------+---------+
+>        | Name                         |  bits   | visible |
+>        +------------------------------+---------+---------+
+> +     | SB                           | [36-39] |    y    |
+> +     +------------------------------+---------+---------+
+> +     | FRINTTS                      | [32-35] |    y    |
+> +     +------------------------------+---------+---------+
 
-x86 doesn't use stack_size unless a kthread does kernel_thread(), so
-this change is probably fine...
+Will reported the bitfields were inconsistent (see [1]). Looking in more 
+details, it seems that I messed up this patch when sending it (I honestly can't 
+remember why I wrote like that :().
 
-Hmm. Off-topic question, why did 7f192e3cd3 ("fork: add clone3") add
-"& ~CSIGNAL" in kernel_thread() ? This looks pointless and confusing
-to me...
+@Catalin, I saw you applied this patch to for-next/elf-hwcap-docs. Would you
+mind to update the content of the patch? Or do you prefer a new version?
 
-> +static inline bool clone3_stack_valid(struct kernel_clone_args *kargs)
-> +{
-> +=09if (kargs->stack =3D=3D 0) {
-> +=09=09if (kargs->stack_size > 0)
-> +=09=09=09return false;
-> +=09} else {
-> +=09=09if (kargs->stack_size =3D=3D 0)
-> +=09=09=09return false;
+>        | GPI                          | [31-28] |    y    |
+>        +------------------------------+---------+---------+
+>        | GPA                          | [27-24] |    y    |
+> 
 
-So to implement clone3_wrapper(void *bottom_of_stack) you need to do
+Cheers,
 
-=09clone3_wrapper(void *bottom_of_stack)
-=09{
-=09=09struct clone_args args =3D {
-=09=09=09...
-=09=09=09// make clone3_stack_valid() happy
-=09=09=09.stack =3D bottom_of_stack - 1,
-=09=09=09.stack_size =3D 1,
-=09=09};
-=09}
+[1] <20191029111517.GE11590@willie-the-truck>
 
-looks a bit strange. OK, I agree, this example is very artificial.
-But why do you think clone3() should nack stack_size =3D=3D 0 ?
-
-> +=09=09if (!access_ok((void __user *)kargs->stack, kargs->stack_size))
-> +=09=09=09return false;
-
-Why?
-
-Oleg.
-
+-- 
+Julien Grall
