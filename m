@@ -2,91 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D07EBA03
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:53:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B190EBA0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:54:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbfJaWxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 18:53:48 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42514 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfJaWxs (ORCPT
+        id S1728363AbfJaWyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 18:54:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35402 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728291AbfJaWym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 18:53:48 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a15so7975829wrf.9;
-        Thu, 31 Oct 2019 15:53:46 -0700 (PDT)
+        Thu, 31 Oct 2019 18:54:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l10so8004148wrb.2;
+        Thu, 31 Oct 2019 15:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sAzljLRgSt0T4SkgYsaqgvjH5/V1zSYWw1k97qxMfJk=;
-        b=DdnQ2aG41QAJSboenV4wySHF2meXgLSRA649oxBw9RAPNghNJEHSiFM5YwuLI8CfeO
-         df5hfVi+DcA4OKQihRG6s5omuAbGxCR0URTee3j4Jg12CTsH/YdWWd+nh2eUmUXZYFXL
-         CcDRMGPtcCa527wuEKWJ8tCjBX10DrMrAplEzF4N9JEKS0LniqTiIhNfm4KwTjO+FUB+
-         dTi6qDoHGsoHcK+UJY2SyU72bOIWNXelJKWzO+O3toJQGOrHGTWBXGShL1gF2MXio8Xn
-         EcPWDxo/sH4akb07nPs+3Q9KmL/TK6/eZjMMROlvPWUgs3g/cp9L4UQZSL+Co8p5yLMq
-         RcQw==
+        h=from:to:cc:subject:date:message-id;
+        bh=jvZP4IjF+cM+5v4WE1h79kJv8HUsxh1Yd8Tome4anM0=;
+        b=htzJfnde8s+BMk9pb0mpvAYix5EFKvP18en6mO87PiCDplLp+sQKVLb+yKDNuErO86
+         /7rcaYOoU5IF6Zkv03s/zEZFJEkBxGFEF5F+/a/rTtLmxjnTVq0RuasBjrNhBmJTtbhT
+         0uOw0+bhO6rusnbsD22Vrgzf61muVyleb/ppOqLhqdO4XkPNdqg8gp9vmGXhSlFBQAE2
+         jZrzOBWeyGnXMduC8Zh1fZW9TEiZSKyuleDSWWw0O9SvGpf6/A5ihPJJaqNwuryHz7sl
+         wSl9PQBAEeIuGMgsN36DFEQXpyuiOBfeiDA+OeRUdxD7czl9+I98zMA0/V5ESdjtBX1a
+         pnHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=sAzljLRgSt0T4SkgYsaqgvjH5/V1zSYWw1k97qxMfJk=;
-        b=cov24UiiLokjumC/QDmFykp3+YctReUcRoRhE+53gswRffYZBnvqScKwv29rYCUCLj
-         SSM2hReK+l0HcdqDzx4MIAwRxXlz0hagwHdeVcwuw/0+wWgw9uewtQzfvSkWbflVOdCX
-         KDOucDjJOwGaF2fDfn+s2BEJu+JPKD78qPmHIuhusZNuGjuSp3GHbs4V5va8ViZD9dQw
-         aYF/CWao0ueujQzZkm+0Yvgc6MofkGe9XlPqFEOLyQU2x2TaPZAUnATt4KurepaM6m7h
-         2o1uDLuTSXRNnSVt+KaeMdFS/fMnIeDRz0YeFh79NmFowWcYysnzQPvut9NG/OrcU+Cq
-         3kbQ==
-X-Gm-Message-State: APjAAAWcGJLz4nOg/SsQ4Kt8+ui4zVSAOkzPH0f6JkGY6t7kLBWjD3+2
-        DMjCWvf9y+sPsH3xB0qZBAuyTd2OZQo=
-X-Google-Smtp-Source: APXvYqz1p8qVO3J188bjhlrVa1hJ4uYvoW5VQM0J2M2QgJVLMiEUUEHEjKw1yL5l5r9CQzgCBegF9A==
-X-Received: by 2002:a5d:6448:: with SMTP id d8mr5306172wrw.88.1572562425910;
-        Thu, 31 Oct 2019 15:53:45 -0700 (PDT)
-Received: from donizetti.redhat.com (94.222.26.109.rev.sfr.net. [109.26.222.94])
-        by smtp.gmail.com with ESMTPSA id l4sm4673235wml.33.2019.10.31.15.53.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jvZP4IjF+cM+5v4WE1h79kJv8HUsxh1Yd8Tome4anM0=;
+        b=evANuF1GXv1IgJuupUhxxP2oZbJRmNsSznJ8Jqs6Z/elD4j1iIdo7065LxjD8R946D
+         B7F8tXRc060vlMyrLfK9W9lV4VYZUZWaidi8vBkWmtnlPgTnkrwrmt3tEiOHVjmcn8ur
+         eEZ5fhUi9zcW1GBQPeWLL22OMXjgP19WRRD5QvhpfMiW6SZtjmx6kUg5E7Q9GXhuXFOs
+         psAmQ/OG0e3WVPlGheWuQzMQVWZxHyn6quvNtrpnpxxl+9Tl7bGPwCtan/ZY9npZqswM
+         SLd8Hct/VheCgqVlMEVN4+YPNLErNWrcjF69bNhul5/9/5koQDAjXmJZmfUFljOwm6BJ
+         2lbA==
+X-Gm-Message-State: APjAAAWBD67ad61JhTpdph+yUBTqdyuq0cVuuSi/a56HZRB1y0erqC3c
+        ku6o7gtFDCDg9SO+T1J/aDL3J9q7
+X-Google-Smtp-Source: APXvYqxSJrKNjifanLUViX+WFi/sfi721m6BzBU6ZA5ERaJq0D2RC8yb+ijRRx8uyjZscWM/RNJK7A==
+X-Received: by 2002:a05:6000:351:: with SMTP id e17mr7431902wre.96.1572562481045;
+        Thu, 31 Oct 2019 15:54:41 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id o189sm6496202wmo.23.2019.10.31.15.54.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 15:53:44 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM patches for Linux 5.4-rc6
-Date:   Thu, 31 Oct 2019 23:53:47 +0100
-Message-Id: <20191031225347.26587-1-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 31 Oct 2019 15:54:40 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: dsa: bcm_sf2: Fix IMP setup for port different than 8
+Date:   Thu, 31 Oct 2019 15:54:05 -0700
+Message-Id: <20191031225406.10576-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Since it became possible for the DSA core to use a CPU port different
+than 8, our bcm_sf2_imp_setup() function was broken because it assumes
+that registers are applicable to port 8. In particular, the port's MAC
+is going to stay disabled, so make sure we clear the RX_DIS and TX_DIS
+bits if we are not configured for port 8.
 
-The following changes since commit 671ddc700fd08b94967b1e2a937020e30c838609:
+Fixes: 9f91484f6fcc ("net: dsa: make "label" property optional for dsa2")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/bcm_sf2.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-  KVM: nVMX: Don't leak L1 MMIO regions to L2 (2019-10-22 19:04:40 +0200)
+diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+index 26509fa37a50..d44651ad520c 100644
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -37,22 +37,11 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
+ 	unsigned int i;
+ 	u32 reg, offset;
+ 
+-	if (priv->type == BCM7445_DEVICE_ID)
+-		offset = CORE_STS_OVERRIDE_IMP;
+-	else
+-		offset = CORE_STS_OVERRIDE_IMP2;
+-
+ 	/* Enable the port memories */
+ 	reg = core_readl(priv, CORE_MEM_PSM_VDD_CTRL);
+ 	reg &= ~P_TXQ_PSM_VDD(port);
+ 	core_writel(priv, reg, CORE_MEM_PSM_VDD_CTRL);
+ 
+-	/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+-	reg = core_readl(priv, CORE_IMP_CTL);
+-	reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
+-	reg &= ~(RX_DIS | TX_DIS);
+-	core_writel(priv, reg, CORE_IMP_CTL);
+-
+ 	/* Enable forwarding */
+ 	core_writel(priv, SW_FWDG_EN, CORE_SWMODE);
+ 
+@@ -71,10 +60,27 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
+ 
+ 	b53_brcm_hdr_setup(ds, port);
+ 
+-	/* Force link status for IMP port */
+-	reg = core_readl(priv, offset);
+-	reg |= (MII_SW_OR | LINK_STS);
+-	core_writel(priv, reg, offset);
++	if (port == 8) {
++		if (priv->type == BCM7445_DEVICE_ID)
++			offset = CORE_STS_OVERRIDE_IMP;
++		else
++			offset = CORE_STS_OVERRIDE_IMP2;
++
++		/* Force link status for IMP port */
++		reg = core_readl(priv, offset);
++		reg |= (MII_SW_OR | LINK_STS);
++		core_writel(priv, reg, offset);
++
++		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
++		reg = core_readl(priv, CORE_IMP_CTL);
++		reg |= (RX_BCST_EN | RX_MCST_EN | RX_UCST_EN);
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_IMP_CTL);
++	} else {
++		reg = core_readl(priv, CORE_G_PCTL_PORT(port));
++		reg &= ~(RX_DIS | TX_DIS);
++		core_writel(priv, reg, CORE_G_PCTL_PORT(port));
++	}
+ }
+ 
+ static void bcm_sf2_gphy_enable_set(struct dsa_switch *ds, bool enable)
+-- 
+2.17.1
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 9167ab79936206118cc60e47dcb926c3489f3bd5:
-
-  KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active (2019-10-31 12:13:44 +0100)
-
-----------------------------------------------------------------
-Generic: fix memory leak failure to create VM.
-x86: fix MMU corner case with AMD nested paging disabled.
-
-----------------------------------------------------------------
-Jim Mattson (2):
-      kvm: Allocate memslots and buses before calling kvm_arch_init_vm
-      kvm: call kvm_arch_destroy_vm if vm creation fails
-
-Paolo Bonzini (1):
-      KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active
-
- arch/x86/kvm/svm.c     | 10 ++++++++--
- arch/x86/kvm/vmx/vmx.c | 14 +++-----------
- virt/kvm/kvm_main.c    | 48 ++++++++++++++++++++++++++----------------------
- 3 files changed, 37 insertions(+), 35 deletions(-)
