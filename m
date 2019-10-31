@@ -2,111 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2155EB7BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CB51EB7AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbfJaTFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 15:05:18 -0400
-Received: from gateway20.websitewelcome.com ([192.185.44.20]:44114 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729388AbfJaTFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 15:05:18 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 3F656400D0A8D
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 12:33:39 -0500 (CDT)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id QFOPioCr5VUVYQFOPiP8AM; Thu, 31 Oct 2019 13:41:57 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PfbvhlnkuY2KQkorE0kvU3NX0iEBIbAm1o1NOoLQQyM=; b=VMSqA8K8m8UcrvytKxMHZVUW5j
-        MNYRpP2mWTZOhmgxHfhWkfESd0GoLpznRr48ivf42UFrVMzNIe13I+Wb88VP8MVPBsKvgPCnb4FUu
-        STX8pgLHfrtENtkmbHrkoVw+C4CuH3l1hJQfSPCEajVy3UVk1ZvtxmJ0eTBoDWuNsRjkUaVu8Rcts
-        y/EPQyqrcMeoVkbBwuW4IYtdYWZC8hVFy8UWAmUWRiMWCEvh0HaylZjVXO1m6JactE25Seo/pXlXH
-        DwLrfTMJTrqqo9J4JGzRtO7bS/lB2F1drnfsE49j0dT8nwp5OD8vriFp5iFpZAp5GEDOT+M199bdd
-        CT1t7l8Q==;
-Received: from [191.31.195.127] (port=35710 helo=castello.bz.toradex.local)
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1iQFON-0035gz-Di; Thu, 31 Oct 2019 15:41:56 -0300
-From:   Matheus Castello <matheus@castello.eng.br>
-To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v4 4/4] power: supply: max17040: Send uevent in SOC and status change
-Date:   Thu, 31 Oct 2019 15:41:34 -0300
-Message-Id: <20191031184134.30621-5-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.24.0.rc2
-In-Reply-To: <20191031184134.30621-1-matheus@castello.eng.br>
-References: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
- <20191031184134.30621-1-matheus@castello.eng.br>
+        id S1729498AbfJaTAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 15:00:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729315AbfJaTAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 15:00:16 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D076C2080F;
+        Thu, 31 Oct 2019 19:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572548414;
+        bh=rAARe8AyZYyhfAVMwU+orePkeh9UdgxMZNSmetI9t5k=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=bwYijy0r7JkNx9nUY3fz3G0voXv80Wby7PQvMe1eLIw+8veL+9vMHCKJk4OaP2cHK
+         z9KuB++/MriJq2wK5nrbvATBN844BmZ1KU6IPDH7UlRwIVlnNlY0Ed4/4Y7PYo2oWj
+         +YswE0VSyVh/vpL2KdyAPZ8cha+OiIE/LMEONQkU=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id A0439352105F; Thu, 31 Oct 2019 12:00:14 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 12:00:14 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH 01/11] rcu: avoid leaking exp_deferred_qs into next GP
+Message-ID: <20191031190014.GZ20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-2-laijs@linux.alibaba.com>
+ <20191031134351.GO20975@paulmck-ThinkPad-P72>
+ <2cf71e70-4cb3-57f8-f542-69ddf04106dd@linux.alibaba.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.31.195.127
-X-Source-L: No
-X-Exim-ID: 1iQFON-0035gz-Di
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (castello.bz.toradex.local) [191.31.195.127]:35710
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 45
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+In-Reply-To: <2cf71e70-4cb3-57f8-f542-69ddf04106dd@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Notify core through power_supply_changed() in case of changes in state
-of charge and power supply status. This is useful for user-space to
-efficiently update current battery level.
+On Fri, Nov 01, 2019 at 02:19:13AM +0800, Lai Jiangshan wrote:
+> 
+> 
+> On 2019/10/31 9:43 下午, Paul E. McKenney wrote:
+> > On Thu, Oct 31, 2019 at 10:07:56AM +0000, Lai Jiangshan wrote:
+> > > If exp_deferred_qs is incorrectly set and leaked to the next
+> > > exp GP, it may cause the next GP to be incorrectly prematurely
+> > > completed.
+> > 
+> > Could you please provide the sequence of events leading to a such a
+> > failure?
+> 
+> I just felt nervous with "leaking" exp_deferred_qs.
+> I didn't careful consider the sequence of events.
+> 
+> Now it proves that I must have misunderstood the exp_deferred_qs.
+> So call "leaking" is wrong concept, preempt_disable()
+> is considered as rcu_read_lock() and exp_deferred_qs
+> needs to be set.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
- drivers/power/supply/max17040_battery.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Thank you for checking, and yes, this code is a bit subtle.  So good
+on you for digging into it!
 
-diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
-index 802575342c72..0ed3d856e4f5 100644
---- a/drivers/power/supply/max17040_battery.c
-+++ b/drivers/power/supply/max17040_battery.c
-@@ -210,10 +210,19 @@ static void max17040_check_changes(struct i2c_client *client)
- static void max17040_work(struct work_struct *work)
- {
- 	struct max17040_chip *chip;
-+	int last_soc, last_status;
+							Thanx, Paul
 
- 	chip = container_of(work, struct max17040_chip, work.work);
-+
-+	/* store SOC and status to check changes */
-+	last_soc = chip->soc;
-+	last_status = chip->status;
- 	max17040_check_changes(chip->client);
-
-+	/* check changes and send uevent */
-+	if (last_soc != chip->soc || last_status != chip->status)
-+		power_supply_changed(chip->battery);
-+
- 	queue_delayed_work(system_power_efficient_wq, &chip->work,
- 			   MAX17040_DELAY);
- }
---
-2.24.0.rc2
-
+> Thanks
+> Lai
+> 
+> ============don't need to read:
+> 
+> read_read_lock()
+> // other cpu start exp GP_A
+> preempt_schedule() // queue itself
+> read_read_unlock() //report qs, other cpu is sending ipi to me
+> preempt_disable
+>   rcu_exp_handler() interrupt for GP_A and leave a exp_deferred_qs
+>   // exp GP_A finished
+>   ---------------above is one possible way to leave a exp_deferred_qs
+> preempt_enable()
+>  interrupt before preempt_schedule()
+>   read_read_lock()
+>   read_read_unlock()
+>    NESTED interrupt when nagative rcu_read_lock_nesting
+>     read_read_lock()
+>     // other cpu start exp GP_B
+>     NESTED interrupt for rcu_flavor_sched_clock_irq()
+>      report exq qs since rcu_read_lock_nesting <0 and \
+>      exp_deferred_qs is true
+>     // exp GP_B complete
+>     read_read_unlock()
+> 
+> This plausible sequence relies on NESTED interrupt too,
+> and can be avoided by patch2 if NESTED interrupt were allowed.
+> 
+> > 
+> > Also, did you provoke such a failure in testing?  If so, an upgrade
+> > to rcutorture would be good, so please tell me what you did to make
+> > the failure happen.
+> > 
+> > I do like the reduction in state space, but I am a bit concerned about
+> > the potential increase in contention on rnp->lock.  Thoughts?
+> > 
+> > 							Thanx, Paul
+> > 
+> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> > > ---
+> > >   kernel/rcu/tree_exp.h | 23 ++++++++++++++---------
+> > >   1 file changed, 14 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > > index a0e1e51c51c2..6dec21909b30 100644
+> > > --- a/kernel/rcu/tree_exp.h
+> > > +++ b/kernel/rcu/tree_exp.h
+> > > @@ -603,6 +603,18 @@ static void rcu_exp_handler(void *unused)
+> > >   	struct rcu_node *rnp = rdp->mynode;
+> > >   	struct task_struct *t = current;
+> > > +	/*
+> > > +	 * Note that there is a large group of race conditions that
+> > > +	 * can have caused this quiescent state to already have been
+> > > +	 * reported, so we really do need to check ->expmask first.
+> > > +	 */
+> > > +	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > > +	if (!(rnp->expmask & rdp->grpmask)) {
+> > > +		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > > +		return;
+> > > +	}
+> > > +	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > > +
+> > >   	/*
+> > >   	 * First, the common case of not being in an RCU read-side
+> > >   	 * critical section.  If also enabled or idle, immediately
+> > > @@ -628,17 +640,10 @@ static void rcu_exp_handler(void *unused)
+> > >   	 * a future context switch.  Either way, if the expedited
+> > >   	 * grace period is still waiting on this CPU, set ->deferred_qs
+> > >   	 * so that the eventual quiescent state will be reported.
+> > > -	 * Note that there is a large group of race conditions that
+> > > -	 * can have caused this quiescent state to already have been
+> > > -	 * reported, so we really do need to check ->expmask.
+> > >   	 */
+> > >   	if (t->rcu_read_lock_nesting > 0) {
+> > > -		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > > -		if (rnp->expmask & rdp->grpmask) {
+> > > -			rdp->exp_deferred_qs = true;
+> > > -			t->rcu_read_unlock_special.b.exp_hint = true;
+> > > -		}
+> > > -		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > > +		rdp->exp_deferred_qs = true;
+> > > +		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > >   		return;
+> > >   	}
+> > > -- 
+> > > 2.20.1
+> > > 
