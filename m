@@ -2,61 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E118EB229
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DEBEEB215
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:05:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfJaOJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:09:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37906 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726506AbfJaOJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:09:02 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id F04048B2847776E73F45;
-        Thu, 31 Oct 2019 22:08:58 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 31 Oct 2019 22:08:54 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <agross@kernel.org>, <broonie@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] soc: qcom: smp2p: remove redundant print message.
-Date:   Thu, 31 Oct 2019 22:05:02 +0800
-Message-ID: <1572530702-27364-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        id S1727732AbfJaOFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:05:39 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42758 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfJaOFi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 10:05:38 -0400
+Received: by mail-qk1-f195.google.com with SMTP id m4so7092597qke.9
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 07:05:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8g/fCqmTpfKLTY3+g19TSl1xtmw42oOlQtbZEptQxXY=;
+        b=Ojd9BDEap9xE3g4HQnpHAdCyMWxWnAfFSiVEhn/xryjjQTXRroD9B72k6zI6oz35XG
+         nvS5bWyOWkEYu07cHE+RaZOHJVd4szHa1v/b6LaXkmuY/8NsKYXaw1kEXNFKj1nhtLvQ
+         8L7v8iwSmFNlH6DHcWDuDDOC9SF90c1r3IkwhiIf6FJKmmACUcBhikG68rM6l7xNAbcO
+         fSoDlE1vBp64Dp9vcPD6egrrMQYRWKXEenVF6lR4v8/3if8Vjkqj87Q4AqQ8tAD4CcRH
+         YnnJnZjMShZjIldORX3KpAvCbb4QetumevJo4jxpSt4cFDxybJBcaQNoVvhRRkyPizDt
+         r3eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8g/fCqmTpfKLTY3+g19TSl1xtmw42oOlQtbZEptQxXY=;
+        b=i+mZXHxcSyRPJWsWYl6ZxxH76Yi8x4ooLkRoB2pFH66oGsOErfhwjSqW1oL891vScm
+         Kx2BqBVQ4vdZN04Z+eC/ynFRXvAtDBi5tJzkj8HdMYCtWxkEOLgsnK40CbsKGAUryMKb
+         qyQzV+nl5ABde68tknlrxF6Toes3lYTyejtNfxTBJ9R2/CcfMrwGY7EpnXNX6NCK1V3I
+         Dr2cHOPVyrDkUiavfHFUzfXc4p5vKb/1RhHpBG9Us3zdf+myDfUgKYw/jNpdWPLRndtQ
+         qUvlpJNYhuJagW56+bXWZlxlLQBfTY7BO3pzPxA6bHWgmB4WBDfMvaysrDKRDCxKyIm6
+         py9w==
+X-Gm-Message-State: APjAAAVBZ2PgisjucasihYsZZqNGX0JJ01/LKltB71omuFqvIWpNyKy5
+        UPudNPd3MyLNat23K28bLFXegQ==
+X-Google-Smtp-Source: APXvYqyG/hUnDLvbvo52/8FbBpz3n8E2t1ayAlf4yaDYMPmL9atb/FR4GhdAJID08GoPMr6e2rjD1w==
+X-Received: by 2002:ae9:e714:: with SMTP id m20mr5276736qka.280.1572530736235;
+        Thu, 31 Oct 2019 07:05:36 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id y33sm3167025qta.18.2019.10.31.07.05.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Oct 2019 07:05:35 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     dan.j.williams@intel.com
+Cc:     vishal.l.verma@intel.com, dave.jiang@intel.com,
+        keith.busch@intel.com, ira.weiny@intel.com,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v3] nvdimm/btt: fix variable 'rc' set but not used
+Date:   Thu, 31 Oct 2019 10:05:19 -0400
+Message-Id: <1572530719-32161-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_irq() fails to get the irq, it will print an error.
-hence it is no need to print an error again after platform_get_irq() return.
+drivers/nvdimm/btt.c: In function 'btt_read_pg':
+drivers/nvdimm/btt.c:1264:8: warning: variable 'rc' set but not used
+[-Wunused-but-set-variable]
+    int rc;
+        ^~
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Add a ratelimited message in case a storm of errors is encountered.
+
+Fixes: d9b83c756953 ("libnvdimm, btt: rework error clearing")
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- drivers/soc/qcom/smp2p.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v3: remove the unused "rc" per Vishal.
+v2: include the block address that is returning an error per Dan.
 
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index c7300d5..07183d7 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -474,10 +474,8 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		goto report_read_failure;
+ drivers/nvdimm/btt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
+index 3e9f45aec8d1..5129543a0473 100644
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -1261,11 +1261,11 @@ static int btt_read_pg(struct btt *btt, struct bio_integrity_payload *bip,
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "unable to acquire smp2p interrupt\n");
-+	if (irq < 0)
- 		return irq;
--	}
+ 		ret = btt_data_read(arena, page, off, postmap, cur_len);
+ 		if (ret) {
+-			int rc;
+-
+ 			/* Media error - set the e_flag */
+-			rc = btt_map_write(arena, premap, postmap, 0, 1,
+-				NVDIMM_IO_ATOMIC);
++			if (btt_map_write(arena, premap, postmap, 0, 1, NVDIMM_IO_ATOMIC))
++				dev_warn_ratelimited(to_dev(arena),
++					"Error persistently tracking bad blocks at %#x\n",
++					premap);
+ 			goto out_rtt;
+ 		}
  
- 	smp2p->mbox_client.dev = &pdev->dev;
- 	smp2p->mbox_client.knows_txdone = true;
 -- 
-1.7.12.4
+1.8.3.1
 
