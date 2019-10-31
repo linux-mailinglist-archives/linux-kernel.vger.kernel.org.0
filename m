@@ -2,103 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BDEEACA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95178EACA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:39:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfJaJjd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 05:39:33 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:38821 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727153AbfJaJjd (ORCPT
+        id S1727216AbfJaJjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:39:18 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34771 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727153AbfJaJjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:39:33 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9V9d5KV030776
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 31 Oct 2019 18:39:05 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9V9d5Ds002546;
-        Thu, 31 Oct 2019 18:39:05 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9V9Y0El023154;
-        Thu, 31 Oct 2019 18:39:05 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9977829; Thu, 31 Oct 2019 18:38:42 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0439.000; Thu,
- 31 Oct 2019 18:38:41 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Roman Gushchin <guro@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize
- non-compound slab pages properly
-Thread-Topic: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize
- non-compound slab pages properly
-Thread-Index: AQHVj6H5mxzEf5Q4l0mAfuJEVZ8f/qdz59AA
-Date:   Thu, 31 Oct 2019 09:38:40 +0000
-Message-ID: <20191031093840.GA9178@hori.linux.bs1.fc.nec.co.jp>
-References: <20191031012151.2722280-1-guro@fb.com>
- <20191030211608.29f8fc92e07fd2ac2ef4d1d3@linux-foundation.org>
-In-Reply-To: <20191030211608.29f8fc92e07fd2ac2ef4d1d3@linux-foundation.org>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <4592DDEF39464440989A95B815E27759@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Thu, 31 Oct 2019 05:39:17 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x195so500734pfd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:39:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tw/W6NbXnb4qm98VeXSbJQHRtU1hT68y9JEMgvYPvkw=;
+        b=Z8ihK2yzb4t0N40oPVBY2YeLprWCSZ+dp9BgkobXgdCSwQHyktcKzY5AC10wQT0wJs
+         CM5zdQpl7ryOLOmeUjQOc6eb4PDXsEeNG+eVFluhkE3xXVcWxNQgN+QADU1N5AJBSbqP
+         fjQM2U7OJA/+JCEZ6vFK9dfz29wPwKLs59WfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tw/W6NbXnb4qm98VeXSbJQHRtU1hT68y9JEMgvYPvkw=;
+        b=J7FsAZkdXTHJcoNp21FfochP+QUF6f6LBRF+mXz4QuACdwGG1RwmH1MO0ZhByJbsno
+         mQ+Aqg9r7Gvxa2eJoM6BRs+bBzen+SpEZkCxjAbr0etc20Nd8mvaD+7LozVN/IDPqti0
+         VxRygaOLjUIr2k9Ezd4kWszhuDL9wU2SRXnWSI2gI2K71QnEUhAbW53FRI33Bvyx7YXn
+         u+rLciXig8/xGRj9V/bmsZPVoLAjCuyesA7V71Yq1cOmWxOJolxhpom4eIAqdXc6mdBI
+         Nh4dvqPvn/0CqURy7PVvyNx03Ugfv20SphgVG8SmJjXv9p1oOUPI0iNCGcXP/UxGOJpT
+         eKzQ==
+X-Gm-Message-State: APjAAAXXjnxlxz2hLs2G6GgyaOK50XxE0Ek9V9YDnlgq4y/Uzdcl0+GW
+        Sn442vQCgyd1UmImUVDme/frnw==
+X-Google-Smtp-Source: APXvYqyDn4TdsCZV2aZgVm6KyZHNNNAePgy+2Pk7lNaxWkqtto+SU2QfMIWroH4GAfNVD0kAkwkLNQ==
+X-Received: by 2002:a63:4b06:: with SMTP id y6mr5232911pga.409.1572514756048;
+        Thu, 31 Oct 2019 02:39:16 -0700 (PDT)
+Received: from localhost (2001-44b8-1113-6700-783a-2bb9-f7cb-7c3c.static.ipv6.internode.on.net. [2001:44b8:1113:6700:783a:2bb9:f7cb:7c3c])
+        by smtp.gmail.com with ESMTPSA id a18sm742715pff.95.2019.10.31.02.39.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2019 02:39:15 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
+        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        dvyukov@google.com, christophe.leroy@c-s.fr
+Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v11 0/4] kasan: support backing vmalloc space with real shadow memory
+Date:   Thu, 31 Oct 2019 20:39:05 +1100
+Message-Id: <20191031093909.9228-1-dja@axtens.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 09:16:08PM -0700, Andrew Morton wrote:
-> On Wed, 30 Oct 2019 18:21:51 -0700 Roman Gushchin <guro@fb.com> wrote:
-> 
-> > page_cgroup_ino() doesn't return a valid memcg pointer for non-compound
-> > slab pages, because it depends on PgHead AND PgSlab flags to be set
-> > to determine the memory cgroup from the kmem_cache.
-> > It's correct for compound pages, but not for generic small pages. Those
-> > don't have PgHead set, so it ends up returning zero.
-> > 
-> > Fix this by replacing the condition to PageSlab() && !PageTail().
-> > 
-> > Before this patch:
-> > [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-> > 0x0000000000000080	        38        0  _______S___________________________________	slab
-> > 
-> > After this patch:
-> > [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-> > 0x0000000000000080	       147        0  _______S___________________________________	slab
-> > 
-> > Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-> > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> > Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> 
-> Affects /proc/kpagecgroup, but page_cgroup_ino() is also used in the
-> memory-failure code - I wonder what effect this bug has there?
+Currently, vmalloc space is backed by the early shadow page. This
+means that kasan is incompatible with VMAP_STACK.
 
-hwpoison_filter_task() uses output of page_cgroup_ino() in order to
-filter error injection events based on memcg.
-So if page_cgroup_ino() fails to return memcg pointer, we just fail
-to inject memory error.  Considering that hwpoison filter is for testing,
-affected users are limited and the impact should be marginal.
+This series provides a mechanism to back vmalloc space with real,
+dynamically allocated memory. I have only wired up x86, because that's
+the only currently supported arch I can work with easily, but it's
+very easy to wire up other architectures, and it appears that there is
+some work-in-progress code to do this on arm64 and s390.
 
-> 
-> IOW, should we backport this into -stable?
+This has been discussed before in the context of VMAP_STACK:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=202009
+ - https://lkml.org/lkml/2018/7/22/198
+ - https://lkml.org/lkml/2019/7/19/822
 
-I think yes, because the patch is small enough and clearly fixes a bug.
+In terms of implementation details:
 
-Thanks,
-Naoya Horiguchi
+Most mappings in vmalloc space are small, requiring less than a full
+page of shadow space. Allocating a full shadow page per mapping would
+therefore be wasteful. Furthermore, to ensure that different mappings
+use different shadow pages, mappings would have to be aligned to
+KASAN_SHADOW_SCALE_SIZE * PAGE_SIZE.
+
+Instead, share backing space across multiple mappings. Allocate a
+backing page when a mapping in vmalloc space uses a particular page of
+the shadow region. This page can be shared by other vmalloc mappings
+later on.
+
+We hook in to the vmap infrastructure to lazily clean up unused shadow
+memory.
+
+Testing with test_vmalloc.sh on an x86 VM with 2 vCPUs shows that:
+
+ - Turning on KASAN, inline instrumentation, without vmalloc, introuduces
+   a 4.1x-4.2x slowdown in vmalloc operations.
+
+ - Turning this on introduces the following slowdowns over KASAN:
+     * ~1.76x slower single-threaded (test_vmalloc.sh performance)
+     * ~2.18x slower when both cpus are performing operations
+       simultaneously (test_vmalloc.sh sequential_test_order=1)
+
+This is unfortunate but given that this is a debug feature only, not
+the end of the world. The benchmarks are also a stress-test for the
+vmalloc subsystem: they're not indicative of an overall 2x slowdown!
+
+
+v1: https://lore.kernel.org/linux-mm/20190725055503.19507-1-dja@axtens.net/
+v2: https://lore.kernel.org/linux-mm/20190729142108.23343-1-dja@axtens.net/
+ Address review comments:
+ - Patch 1: use kasan_unpoison_shadow's built-in handling of
+            ranges that do not align to a full shadow byte
+ - Patch 3: prepopulate pgds rather than faulting things in
+v3: https://lore.kernel.org/linux-mm/20190731071550.31814-1-dja@axtens.net/
+ Address comments from Mark Rutland:
+ - kasan_populate_vmalloc is a better name
+ - handle concurrency correctly
+ - various nits and cleanups
+ - relax module alignment in KASAN_VMALLOC case
+v4: https://lore.kernel.org/linux-mm/20190815001636.12235-1-dja@axtens.net/
+ Changes to patch 1 only:
+ - Integrate Mark's rework, thanks Mark!
+ - handle the case where kasan_populate_shadow might fail
+ - poision shadow on free, allowing the alloc path to just
+     unpoision memory that it uses
+v5: https://lore.kernel.org/linux-mm/20190830003821.10737-1-dja@axtens.net/
+ Address comments from Christophe Leroy:
+ - Fix some issues with my descriptions in commit messages and docs
+ - Dynamically free unused shadow pages by hooking into the vmap book-keeping
+ - Split out the test into a separate patch
+ - Optional patch to track the number of pages allocated
+ - minor checkpatch cleanups
+v6: https://lore.kernel.org/linux-mm/20190902112028.23773-1-dja@axtens.net/
+ Properly guard freeing pages in patch 1, drop debugging code.
+v7: https://lore.kernel.org/linux-mm/20190903145536.3390-1-dja@axtens.net/
+    Add a TLB flush on freeing, thanks Mark Rutland.
+    Explain more clearly how I think freeing is concurrency-safe.
+v8: https://lore.kernel.org/linux-mm/20191001065834.8880-1-dja@axtens.net/
+    rename kasan_vmalloc/shadow_pages to kasan/vmalloc_shadow_pages
+v9: https://lore.kernel.org/linux-mm/20191017012506.28503-1-dja@axtens.net/
+    (attempt to) address a number of review comments for patch 1.
+v10: https://lore.kernel.org/linux-mm/20191029042059.28541-1-dja@axtens.net/
+     - rebase on linux-next, pulling in Vlad's new work on splitting the
+       vmalloc locks.
+     - after much discussion of barriers, document where I think they
+       are needed and why. Thanks Mark and Andrey.
+     - clean up some TLB flushing and checkpatch bits
+v11: Address review comments from Andrey and Vlad, drop patch 5, add benchmarking
+     results.
+
+Daniel Axtens (4):
+  kasan: support backing vmalloc space with real shadow memory
+  kasan: add test for vmalloc
+  fork: support VMAP_STACK with KASAN_VMALLOC
+  x86/kasan: support KASAN_VMALLOC
+
+ Documentation/dev-tools/kasan.rst |  63 ++++++++
+ arch/Kconfig                      |   9 +-
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/mm/kasan_init_64.c       |  61 ++++++++
+ include/linux/kasan.h             |  31 ++++
+ include/linux/moduleloader.h      |   2 +-
+ include/linux/vmalloc.h           |  12 ++
+ kernel/fork.c                     |   4 +
+ lib/Kconfig.kasan                 |  16 +++
+ lib/test_kasan.c                  |  26 ++++
+ mm/kasan/common.c                 | 231 ++++++++++++++++++++++++++++++
+ mm/kasan/generic_report.c         |   3 +
+ mm/kasan/kasan.h                  |   1 +
+ mm/vmalloc.c                      |  53 +++++--
+ 14 files changed, 500 insertions(+), 13 deletions(-)
+
+-- 
+2.20.1
+
