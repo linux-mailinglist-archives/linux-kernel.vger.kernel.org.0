@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BCCAEB54A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9ACEB540
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbfJaQrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:47:45 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:51022 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbfJaQrG (ORCPT
+        id S1728954AbfJaQrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:47:10 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:52752 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728913AbfJaQrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:47:06 -0400
-Received: by mail-pg1-f201.google.com with SMTP id r24so4769356pgj.17
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:47:05 -0700 (PDT)
+        Thu, 31 Oct 2019 12:47:08 -0400
+Received: by mail-pg1-f202.google.com with SMTP id e15so4767167pgh.19
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Ut7YUpLvWAiZLonPATqZ5OL9tOEZJcNF7+tDsNdHEWU=;
-        b=Ghjlrkb1pnfNur1PCuCrGu3KmSL84JUhV/VRyXQlGUkgpAsmk5kMXvp57Mk7EYOtSq
-         L/8VDDHfXZ3KUDC1xcym7naR9TXkHtFoyXvddQwvFISLnm28nEJXtrhVKjiDWc99o+wm
-         bIXKaCoHuKC2xbc2hbdVG9x55NXltyby/oVTLxiYMqg5L3AXj+Jse9QRq7ocqCtz8Woo
-         EwpS6ecvA2GO0JpKJUVbqL7jZeQw+99QXy+fwi9BAQMGs5rPs+dkXDB42GUWcoOq+vfR
-         K9Q0cwMWNIBZXS43c69SS1vt9YQQD9Wr2zCStwQNshudap8C/A8PTXXPpqKAD3KVELa9
-         kr2w==
+        bh=K9E/B478ig/3FT/HPhGFdlo0v28kyi4gF0t5BJVte+4=;
+        b=Q6nZNOFXJobNQh66SBURqXR9jjgGc7xPtfVgiH00Q94Wq/lt68cuARge++0iJSOHbl
+         oW4NMEq+9cHqz9gbyOSyiBZcNrTjy/SOh+b8CYr8g09qvaCHNujmM1eqjZChkaUIta8N
+         R1Nytm89Z4g9Csz0lbSdVY2lZ5qMNHUcg9EX/BaicjSL2hYM0k+G3ChifSzc8IJFDYk1
+         GpIbxO2R5s2CgPxCiu0JT+4D9XPEJ59tckUnFp1YBhgg19qHemtrJSnWnwdM64fHfqzH
+         V51MYQa1MpvdRri6T2bUaJeLk+9cOeQ3PhUqIY7fT381QfU0I53VsE/DJ2wREqjXj4eZ
+         2Qsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=Ut7YUpLvWAiZLonPATqZ5OL9tOEZJcNF7+tDsNdHEWU=;
-        b=r/Y7VVGfJiKakQ7bly/yUgv4ylbRccf0k+nUdg8vUoHc6QrW71P42/zsoJkHoxUgaZ
-         h/l2chKKN96pEw9GdqfdnguznNuf54nepG1QASJlMUdy9KAt+Tbvf3qXpIp0ykE6CSYA
-         wkLgQKWiBpckvd7JRJ8XDlV0m5DybaqlaEHeoAl4Jltg2VHi4+aPBin1x/hzmdq/NpgG
-         IvJfuRmfJAYX7kQQrC4RBJLfewUlScFBTzihKBOlgQsMYpiZRJktwYrTRW73KEwczgNz
-         ty53ZY/cQhThM67vocOv4pcyFwkj+st1uc+ofJtkJm+FUGAoLJdzitSOn4YmrX8/2k3F
-         T68Q==
-X-Gm-Message-State: APjAAAUKP6XUmJQtqGA5BzCWMoXCGfa5t1rFLJl0QO3XiuoqzXwdtVMz
-        d9S6qi/6a4rc6565JGEOBEvpHP+1RuZUpyKxf9A=
-X-Google-Smtp-Source: APXvYqymaacyz4eRHwtAvxRw6d3+sUW8PqKg+fCQUsJPaPuhQFDN545Kov10eZWMR0T+MDCojgj91Rt4gt/RgGRC9ik=
-X-Received: by 2002:a63:151:: with SMTP id 78mr7160557pgb.95.1572540425150;
- Thu, 31 Oct 2019 09:47:05 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 09:46:28 -0700
+        bh=K9E/B478ig/3FT/HPhGFdlo0v28kyi4gF0t5BJVte+4=;
+        b=IDnMs8drFicVNcmRRysV5A+QT9cNkOOjaaHEryN+kpAioyNk3n2qwjCOE/5d63k4gB
+         zW3cQRcPquHgNDScC9fe3m2/ebqS1zQH5scQqBxmPINAXNck3+9fxmuSw2y4C1uE8UkA
+         UqISYeBfgRpTj1VNpzjn75wC1Slcc8INK+1STxFH/gj9yH3sbkONBHZfMkQ25wgDPDDN
+         WT5qUCFgorSj0aWHEnlfVyAdqkZH3pKgjEK5kFHgpEDzvVCeJVFeMD4qXoZ4s/fUYtVo
+         qMJk5GTLbDwvTgNuAEntfral+jZxoq2raa8r0zbZCLFfhJhUFjYeOFrPxz7h6mM9v7mn
+         Ni1g==
+X-Gm-Message-State: APjAAAUlgFWrRLztyfTN2VVFpm0LumQdJqRFwDKd6uTkCAkMnocBzb75
+        0OWLNy+6focToyXCcQ1VOOPAxs/ntrWHq4BXfcM=
+X-Google-Smtp-Source: APXvYqzC1qzspsODaXGFhM8lzAz2Kkvitd6Mcb2OnCrnHZg+dDRsPF4zisB/iRaRWzHFab+ubKlzQJYNZnG9GZBONHw=
+X-Received: by 2002:a63:e145:: with SMTP id h5mr7826628pgk.447.1572540427770;
+ Thu, 31 Oct 2019 09:47:07 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 09:46:29 -0700
 In-Reply-To: <20191031164637.48901-1-samitolvanen@google.com>
-Message-Id: <20191031164637.48901-9-samitolvanen@google.com>
+Message-Id: <20191031164637.48901-10-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com> <20191031164637.48901-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v3 08/17] kprobes: fix compilation without CONFIG_KRETPROBES
+Subject: [PATCH v3 09/17] arm64: kprobes: fix kprobes without CONFIG_KRETPROBES
 From:   samitolvanen@google.com
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -72,71 +72,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kprobe_on_func_entry and arch_kprobe_on_func_entry need to be available
-even if CONFIG_KRETPROBES is not selected.
+This allows CONFIG_KRETPROBES to be disabled without disabling
+kprobes entirely.
 
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/kprobes.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ arch/arm64/kernel/probes/kprobes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 53534aa258a6..b5e20a4669b8 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1829,6 +1829,25 @@ unsigned long __weak arch_deref_entry_point(void *entry)
- 	return (unsigned long)entry;
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index c4452827419b..98230ae979ca 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -551,6 +551,7 @@ void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
+ 	return (void *)orig_ret_address;
  }
  
-+bool __weak arch_kprobe_on_func_entry(unsigned long offset)
-+{
-+	return !offset;
-+}
-+
-+bool kprobe_on_func_entry(kprobe_opcode_t *addr, const char *sym, unsigned long offset)
-+{
-+	kprobe_opcode_t *kp_addr = _kprobe_addr(addr, sym, offset);
-+
-+	if (IS_ERR(kp_addr))
-+		return false;
-+
-+	if (!kallsyms_lookup_size_offset((unsigned long)kp_addr, NULL, &offset) ||
-+						!arch_kprobe_on_func_entry(offset))
-+		return false;
-+
-+	return true;
-+}
-+
- #ifdef CONFIG_KRETPROBES
- /*
-  * This kprobe pre_handler is registered with every kretprobe. When probe
-@@ -1885,25 +1904,6 @@ static int pre_handler_kretprobe(struct kprobe *p, struct pt_regs *regs)
- }
- NOKPROBE_SYMBOL(pre_handler_kretprobe);
- 
--bool __weak arch_kprobe_on_func_entry(unsigned long offset)
--{
--	return !offset;
--}
--
--bool kprobe_on_func_entry(kprobe_opcode_t *addr, const char *sym, unsigned long offset)
--{
--	kprobe_opcode_t *kp_addr = _kprobe_addr(addr, sym, offset);
--
--	if (IS_ERR(kp_addr))
--		return false;
--
--	if (!kallsyms_lookup_size_offset((unsigned long)kp_addr, NULL, &offset) ||
--						!arch_kprobe_on_func_entry(offset))
--		return false;
--
--	return true;
--}
--
- int register_kretprobe(struct kretprobe *rp)
++#ifdef CONFIG_KRETPROBES
+ void __kprobes arch_prepare_kretprobe(struct kretprobe_instance *ri,
+ 				      struct pt_regs *regs)
  {
- 	int ret = 0;
+@@ -564,6 +565,7 @@ int __kprobes arch_trampoline_kprobe(struct kprobe *p)
+ {
+ 	return 0;
+ }
++#endif
+ 
+ int __init arch_init_kprobes(void)
+ {
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
