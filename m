@@ -2,183 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B81EA9ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:39:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58980EA9F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfJaEjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 00:39:24 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:13383 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbfJaEjX (ORCPT
+        id S1726795AbfJaEmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 00:42:53 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:35406 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfJaEmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 00:39:23 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191031043920epoutp01746b19d90306c1890fe5ca15dd23cb52~SoXjlyTxK2675726757epoutp01W
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 04:39:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191031043920epoutp01746b19d90306c1890fe5ca15dd23cb52~SoXjlyTxK2675726757epoutp01W
+        Thu, 31 Oct 2019 00:42:53 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191031044251epoutp02dc601b907e7ab581cd5a431acc2ecad6~Soanv1HH_1687316873epoutp024
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 04:42:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191031044251epoutp02dc601b907e7ab581cd5a431acc2ecad6~Soanv1HH_1687316873epoutp024
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572496760;
-        bh=7D/E2evKGNTOcwIHpd5yyFb70AgXZ30JTIlKfDQrge8=;
+        s=mail20170921; t=1572496971;
+        bh=OAecQkkTsj6QSqDHVp6XSRMWpCIUpI3s7EMteQIPnZU=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=aSuVD/U6h57H05IughONWjI9XknSleNU3LT7d+qIbNzdEmedBrY6BfIAT5SOBxJki
-         YvU0td666CiblK6GZfwOB2J0xpegeBmlysfr1RTF5rVThNcDQK9t2oH6l3B8PeTdGK
-         jXJuMoeV+9ZQ1fHK1UEuAPqeRbh840ae76WMPf0c=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        b=eIOliDS3nyPGhljMbWQrmV/tZvfJw8CIzwrrL8kFyY8lVM5rA00PoRXVzHk2z727v
+         GKwX4d+DpGx+zBpaqhXcIWVt+Hk+zM9ktNPEd8GUhsOr1Fk0cTa1IZ+Tt0YoVOK2PP
+         T3s7o4RL5IbS+uvJlTFfUwOWthraTfP7O+MLYiFE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
         epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191031043920epcas1p460f22d8962c47eea8b1ecfc9b1d40697~SoXjKeG2C2856328563epcas1p4f;
-        Thu, 31 Oct 2019 04:39:20 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 473XfF4pYSzMqYkc; Thu, 31 Oct
-        2019 04:39:17 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        57.D3.04144.5756ABD5; Thu, 31 Oct 2019 13:39:17 +0900 (KST)
+        20191031044250epcas1p4b664e0f2f421c7d9058c2069b6b350ff~SoandkBXC1654716547epcas1p4H;
+        Thu, 31 Oct 2019 04:42:50 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 473XkK01ftzMqYm2; Thu, 31 Oct
+        2019 04:42:48 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        90.E6.04135.E366ABD5; Thu, 31 Oct 2019 13:42:39 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191031043917epcas1p3775b7eae1e78c3c71ffa3b466d15d3af~SoXghQswe2202222022epcas1p3q;
-        Thu, 31 Oct 2019 04:39:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191031044238epcas1p1cdd20e6a35d35ae34739d1df500f6634~SoacM0YGd0549005490epcas1p1O;
+        Thu, 31 Oct 2019 04:42:38 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191031043917epsmtrp1f837205a237fc04b5e66a3bc8aa2bf84~SoXggehZU2301423014epsmtrp1W;
-        Thu, 31 Oct 2019 04:39:17 +0000 (GMT)
-X-AuditID: b6c32a35-2dfff70000001030-6f-5dba657540d9
+        20191031044238epsmtrp14a084bbfe7366e949b20a432143e406e~SoacMKVRu2586525865epsmtrp1L;
+        Thu, 31 Oct 2019 04:42:38 +0000 (GMT)
+X-AuditID: b6c32a36-7fbff70000001027-3d-5dba663e5cdc
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        96.B4.24756.5756ABD5; Thu, 31 Oct 2019 13:39:17 +0900 (KST)
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        80.05.25663.E366ABD5; Thu, 31 Oct 2019 13:42:38 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191031043916epsmtip14c38954253779d0b380cb603882bfeb7~SoXgJ9CQ_1042710427epsmtip1B;
-        Thu, 31 Oct 2019 04:39:16 +0000 (GMT)
-Subject: Re: [PATCH v7 06/19] PM / devfreq: tegra30: Use kHz units uniformly
- in the code
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        20191031044238epsmtip1eab391409a45e5a127625dfedc7f03f9~SoacEVzB31061910619epsmtip1f;
+        Thu, 31 Oct 2019 04:42:38 +0000 (GMT)
+Subject: Re: [PATCH] extcon: sm5502: remove redundant assignment to variable
+ cable_type
+To:     Colin King <colin.king@canonical.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <a8ce6d98-26aa-b6eb-56ea-4bf960fc533d@samsung.com>
-Date:   Thu, 31 Oct 2019 13:44:48 +0900
+Message-ID: <824f99c7-8de2-2b32-4d12-8a45e73b2349@samsung.com>
+Date:   Thu, 31 Oct 2019 13:48:10 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191029220019.26773-7-digetx@gmail.com>
+In-Reply-To: <20191025131227.24894-1-colin.king@canonical.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURjl7szOjNLatGp9SQ+b3pa5k61NodG7BSOW6kcJYsPusCvui51d
-        SeuHbWGbpRkF1WhWWmpWZGLlbtaSFhFSWVZEIRRKtRXay9Aia8cp8t/5vu+ce75z76Uw7WUi
-        gcp1eAS3g7cxRDR+tX1uSrJXCGbrfEdnc+c/9yBuj1SNc/d9H0muK1hJcF9LbyNu3zeJ4F7u
-        qie4+28yuaFgFc6VXXxMLI82tHSfQYaA1E0aSnf3EYay5gZk+No0xajOyku3CrxZcCcKDpPT
-        nOuwZDCZm3JW5ejTdGwyu4RbzCQ6eLuQwaxeb0xem2uLLMUk5vM2b6Rl5EWRSVmW7nZ6PUKi
-        1Sl6MhjBZba5lrgWiLxd9DosC0xO+1JWp1uojxC35VnPNUi460Ls9kdt/WQR6hhbgqIooBfB
-        cMkddQmKprR0C4IK3y1SKb4gqL1UhCvFdwRDvp5IQY1IHkt2Wa2lbyC4WzVf4fQj6Hz7ViUP
-        YuksqGz9PCKOo6tVcPHONUweYPRWaA+cHyERdBKE3j0nZDyWngZPB3uQjDX0Mmgta1DLGKdn
-        Qu9AKyYbx9NboGOAVyjj4N7xXlzGUXQaVIWvk8rxE+BF70mVgqfC7isVmLwD0HtJ+HaiF1MC
-        rIbTPpUSPxbe320mFZwA4YPFf/EOOHfvNqFo/QiaQ51qZZAKobOHVfI5GD0XLgVTlPY0CPw8
-        gRTfGOgbOKBWrDTgL9YqlOnQ9ar7r+1EqNm7jyhHjDQqjTQqgTQqgfTf7BTCG9B4wSXaLYLI
-        utjRb92ERr5rkr4FHXmwvg3RFGLGaMrzA9laNZ8vFtjbEFAYE6f5nh5pacx8QaHgdua4vTZB
-        bEP6yF0fwhLiTc7I53d4clj9wtTUVG4Rm6ZnWWaCZkXd2WwtbeE9Qp4guAT3P52KikooQpvr
-        TdX1j3Z+iK/45Mha9+vY1JvDSeFG9+Qnepd/0pqwRXfV2K/Zn2t9UfujkDzQFIotWBsVNzDc
-        7o8vzdxQadYGM01D8z5gVMyMYHFj1+CsUEx4MDRLXTFnfuNNf+HWldbl5LqA8cqa4o19NUfq
-        Dj3Y8Pvh9ZSa189KO175O8v1RQwuWnk2CXOL/B/bEjroxAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSnG5p6q5Yg72zWSxWf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gszj7ztvi5ax6LRd/aS2wOXB477i5h9Ng56y67
-        R2/zOzaPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyli5ahZLwRrhiouH3rM3MJ7m72Lk4JAQ
-        MJG4NCu3i5GLQ0hgN6PE1WO3WboYOYHikhLTLh5lhqgRljh8uBgkLCTwllHiwhFBEFtYIEpi
-        zp6PLCC9IgJLmCTOflnODJJgFoiU6Jm7hQ1i6FZGicNXl7CDJNgEtCT2v7jBBmLzCyhKXP3x
-        mBHE5hWwk9jTt4oVxGYRUJV48nUP2CBRgQiJ59tvQNUISpyc+QTsOE4BM4l5L3ezQyxTl/gz
-        7xLUYnGJW0/mM0HY8hLNW2czT2AUnoWkfRaSlllIWmYhaVnAyLKKUTK1oDg3PbfYsMAwL7Vc
-        rzgxt7g0L10vOT93EyM40rQ0dzBeXhJ/iFGAg1GJh3dC2c5YIdbEsuLK3EOMEhzMSiK832yA
-        QrwpiZVVqUX58UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTAa2K6xZXsa
-        p1YySeldhwBry/xWe0lDgbdKXOy3lv6622nmlL37w6l/otbT17wMiYh8cq7uJp+fWdWzkw4L
-        5FW3GHodZTshu/BHjQyH/p/a8Otql09xvZTVjDDomVMgKzRtFsMHKyF1CWYeUQnDK09+L9aP
-        jqnQkHj6feJqpg8T2wwvpOru/a/EUpyRaKjFXFScCABE8DEZsAIAAA==
-X-CMS-MailID: 20191031043917epcas1p3775b7eae1e78c3c71ffa3b466d15d3af
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdljTQNc+bVeswYvfTBa/V/eyWWy9JW1x
+        edccNovbjSvYHFg8ZjX0snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
+        mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QMiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJq
+        QUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsbeJ2eYCtZzVrw/95S9gfE6excjJ4eEgInE
+        2q4tQDYXh5DADkaJM9fms0I4nxglPi14DOV8Y5S4ceEuC0zLxhc32CASe4FaDnxjhHDeM0r8
+        +v6RCaRKWCBSYvWbVawgtohAiMTpCxPBFjILOEqsm38HbBKbgJbEfrBJnBz8AooSV388ZgSx
+        eQXsJPZf/gjUy8HBIqAqse6qFIgpKhAhcfprIkSFoMTJmU/ApnACVb+82sgMMV1c4taT+UwQ
+        trxE89bZzCCnSQicYJOY8WAn1AMuEnfuTGeDsIUlXh3fAg0LKYmX/W1QdrXEypNH2CCaOxgl
+        tuy/wAqRMJbYv3QyE8hBzAKaEut36UOEFSV2/p7LCLGYT+Ld1x6w8yUEeCU62oQgSpQlLj+4
+        ywRhS0osbu9km8CoNAvJO7OQvDALyQuzEJYtYGRZxSiWWlCcm55abFhghBzZmxjB6VDLbAfj
+        onM+hxgFOBiVeHgnlO2MFWJNLCuuzD3EKMHBrCTC+80GKMSbklhZlVqUH19UmpNafIjRFBjW
+        E5mlRJPzgak6ryTe0NTI2NjYwsTQzNTQUEmc13H50lghgfTEktTs1NSC1CKYPiYOTqkGRmcF
+        necP1bzfJRi8/6Pjr9tV4nTpUfa0yxcOH1pVxnDfzKTkw3yumxd3zb/kV5/6pOH0EZO2PT3v
+        y9clL2S0jFevsRfdKLZcX6r2kEAC6xXfd5J6jU05M11bVjUtX7D/QeHEd7oT99xY/nS5+fxY
+        rfnV0VNKrl672WOlbjOlRbm8ddoWq2gxayWW4oxEQy3mouJEABSoYAmdAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnK5d2q5Yg/Z7Wha/V/eyWWy9JW1x
+        edccNovbjSvYHFg8ZjX0snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxt4nZ5gK1nNWvD/3
+        lL2B8Tp7FyMnh4SAicTGFzfYuhi5OIQEdjNKHDi+gwkiISkx7eJR5i5GDiBbWOLw4WKImreM
+        Eic3PmcGqREWiJRY/WYVK4gtIhAiMWv6JkYQm1nAUWLd/DssEA0TGSVeTD3JBpJgE9CS2A+2
+        jZODX0BR4uqPx2ANvAJ2Evsvf2QFWcYioCqx7qoUSFhUIELi+fYbUCWCEidnPmEBsTmByl9e
+        bWSG2KUu8WfeJShbXOLWk/lMELa8RPPW2cwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3P
+        LTYsMMpLLdcrTswtLs1L10vOz93ECI4MLa0djCdOxB9iFOBgVOLhnVC2M1aINbGsuDL3EKME
+        B7OSCO83G6AQb0piZVVqUX58UWlOavEhRmkOFiVxXvn8Y5FCAumJJanZqakFqUUwWSYOTqkG
+        xpWygqZPeWWe5HekcEyy8/n1/+3BU2rmO3atWxlo07BY9eZ1X2lFo3SxbVETD25+7zbHjF23
+        fBbfJ+OQJf9ZPe9XMR6O9uxIdas8kC3DuHMR0549F1zv9vWffVy/dPJfkd7d/GacIbxXlryZ
+        9W7Gu4nCKt2M//5dWny64Nm2P52XP5w9bu1ipazEUpyRaKjFXFScCABvXeSfiAIAAA==
+X-CMS-MailID: 20191031044238epcas1p1cdd20e6a35d35ae34739d1df500f6634
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191029220734epcas1p42b635ee1c85a9480cecbaf7a1a41db25
-References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220734epcas1p42b635ee1c85a9480cecbaf7a1a41db25@epcas1p4.samsung.com>
-        <20191029220019.26773-7-digetx@gmail.com>
+X-CMS-RootMailID: 20191025131232epcas4p262cce6ea441f3f1b9251810ad9427732
+References: <CGME20191025131232epcas4p262cce6ea441f3f1b9251810ad9427732@epcas4p2.samsung.com>
+        <20191025131227.24894-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> Part of the code uses Hz units and the other kHz, let's switch to kHz
-> everywhere for consistency. A small benefit from this change (besides
-> code's cleanup) is that now powertop utility correctly displays devfreq's
-> stats, for some reason it expects them to be in kHz.
+On 19. 10. 25. 오후 10:12, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> The variable cable_type is being initialized with a value that
+> is never read and is being re-assigned a little later on. The
+> assignment is redundant and hence can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+>  drivers/extcon/extcon-sm5502.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 1d22f5239cd5..06c5376a7201 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -448,7 +448,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->  	rate = dev_pm_opp_get_freq(opp);
->  	dev_pm_opp_put(opp);
+> diff --git a/drivers/extcon/extcon-sm5502.c b/drivers/extcon/extcon-sm5502.c
+> index b3d93baf4fc5..bcf65aaca5d2 100644
+> --- a/drivers/extcon/extcon-sm5502.c
+> +++ b/drivers/extcon/extcon-sm5502.c
+> @@ -276,7 +276,7 @@ static int sm5502_muic_set_path(struct sm5502_muic_info *info,
+>  /* Return cable type of attached or detached accessories */
+>  static unsigned int sm5502_muic_get_cable_type(struct sm5502_muic_info *info)
+>  {
+> -	unsigned int cable_type = -1, adc, dev_type1;
+> +	unsigned int cable_type, adc, dev_type1;
+>  	int ret;
 >  
-> -	err = clk_set_min_rate(tegra->emc_clock, rate);
-> +	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
->  	if (err)
->  		return err;
->  
-> @@ -477,7 +477,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
->  	stat->private_data = tegra;
->  
->  	/* The below are to be used by the other governors */
-> -	stat->current_frequency = cur_freq * KHZ;
-> +	stat->current_frequency = cur_freq;
->  
->  	actmon_dev = &tegra->devices[MCALL];
->  
-> @@ -527,7 +527,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
->  		target_freq = max(target_freq, dev->target_freq);
->  	}
->  
-> -	*freq = target_freq * KHZ;
-> +	*freq = target_freq;
->  
->  	return 0;
->  }
-> @@ -663,7 +663,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  			goto remove_opps;
->  		}
->  
-> -		err = dev_pm_opp_add(&pdev->dev, rate, 0);
-> +		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
->  		if (err) {
->  			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
->  			goto remove_opps;
-> @@ -686,7 +686,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		goto unreg_notifier;
->  	}
->  
-> -	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-> +	tegra_devfreq_profile.initial_freq = tegra->cur_freq;
-> +
->  	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
->  				     "tegra_actmon", NULL);
->  	if (IS_ERR(devfreq)) {
+>  	/* Read ADC value according to external cable or button */
 > 
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Applied it. Thanks.
 
 -- 
 Best Regards,
