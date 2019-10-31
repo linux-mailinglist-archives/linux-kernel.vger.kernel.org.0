@@ -2,103 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA026EB362
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 073CAEB36C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:08:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbfJaPHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 11:07:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727511AbfJaPHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:07:21 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30E472083E;
-        Thu, 31 Oct 2019 15:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572534440;
-        bh=4U/ETnIzLhw19X4wyTeVNcJAT/xQDEsJ+bOoWVhUIU8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=xeGBtlkuHRQz83nm/iwqpVgdCBKqcyiuyA/p1N3/cqYMDB6cU8e1hFK9PJloi9F3Q
-         jgO9+sNUcxddj2oYTBA73U/VDu5cvJ2UNrEUH4FVkfO548Lef1RVM0EIzlD0KakmC6
-         DQQCW4ldi3SnAF0FfGDxDIUyaSzuEn1eRwLkUIOc=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id EF2913520744; Thu, 31 Oct 2019 08:07:19 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 08:07:19 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 04/11] rcu: cleanup rcu_preempt_deferred_qs()
-Message-ID: <20191031150719.GU20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-5-laijs@linux.alibaba.com>
- <20191031141056.GR20975@paulmck-ThinkPad-P72>
- <1b5cf860-3d4a-954c-09ac-6383b38da4cf@linux.alibaba.com>
+        id S1727766AbfJaPIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 11:08:53 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:43196 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfJaPIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 11:08:53 -0400
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 45D1420B7192;
+        Thu, 31 Oct 2019 08:08:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 45D1420B7192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1572534532;
+        bh=b552znnqsYND51xMigIZXtf6qqgljQrlCIE5HH5S2i4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=sLIJtvbXJ37ifCWsEv5uQlJL6ydCzZ9r2nzBqntNvkOn9VL478bTvghdzjppI4LuT
+         UbPE4B0JlPjWQ9wbW2NU/QsZjG0jVfrgvrb1FByefyTItfAZ2W9Ysyoz66iP0xgKDE
+         cTysNaCkTLXtdQrV8mMQrn74ShsmcxWzjk39quP0=
+Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
+ create or update
+To:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     prsriva@linux.microsoft.com
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+ <20191031011910.2574-2-nramas@linux.microsoft.com>
+ <1572523831.5028.43.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <b83bd7ef-ce7f-e750-e30b-30d5a6469a28@linux.microsoft.com>
+Date:   Thu, 31 Oct 2019 08:08:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <1572523831.5028.43.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b5cf860-3d4a-954c-09ac-6383b38da4cf@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 10:35:22PM +0800, Lai Jiangshan wrote:
-> On 2019/10/31 10:10 下午, Paul E. McKenney wrote:
-> > On Thu, Oct 31, 2019 at 10:07:59AM +0000, Lai Jiangshan wrote:
-> > > Don't need to set ->rcu_read_lock_nesting negative, irq-protected
-> > > rcu_preempt_deferred_qs_irqrestore() doesn't expect
-> > > ->rcu_read_lock_nesting to be negative to work, it even
-> > > doesn't access to ->rcu_read_lock_nesting any more.
-> > > 
-> > > It is true that NMI over rcu_preempt_deferred_qs_irqrestore()
-> > > may access to ->rcu_read_lock_nesting, but it is still safe
-> > > since rcu_read_unlock_special() can protect itself from NMI.
-> > 
-> > Hmmm...  Testing identified the need for this one.  But I will wait for
-> > your responses on the earlier patches before going any further through
-> > this series.
+On 10/31/19 5:10 AM, Mimi Zohar wrote:
+
+> On Wed, 2019-10-30 at 18:19 -0700, Lakshmi Ramasubramanian wrote:
+>> Asymmetric keys used for verifying file signatures or certificates
+>> are currently not included in the IMA measurement list.
+>>
+>> This patch defines a new IMA hook namely ima_post_key_create_or_update()
+>> to measure asymmetric keys.
 > 
-> Hmmm... I was wrong, it should be after patch7 to avoid
-> the scheduler deadlock.
+> It's not enough for the kernel to be able to compile the kernel after
+> applying all the patches in a patch set.  After applying each patch,
+> the kernel should build properly, otherwise it is not bi-sect safe.
+>   Refer to "3) Separate your changes" of
+> "Documentation/process/submitting-patches.rst.
 
-I was wondering about that.  ;-)
+I started with kernel version 5.3 for this patch set.
+I applied Nayna's process_buffer_measurement() patch and then built my 
+changes on top of that.
+This patch has no other dependency as far as I know.
 
-							Thanx, Paul
+Are you seeing a build break after applying this patch alone?
 
-> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> > > ---
-> > >   kernel/rcu/tree_plugin.h | 5 -----
-> > >   1 file changed, 5 deletions(-)
-> > > 
-> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > index 82595db04eec..9fe8138ed3c3 100644
-> > > --- a/kernel/rcu/tree_plugin.h
-> > > +++ b/kernel/rcu/tree_plugin.h
-> > > @@ -555,16 +555,11 @@ static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
-> > >   static void rcu_preempt_deferred_qs(struct task_struct *t)
-> > >   {
-> > >   	unsigned long flags;
-> > > -	bool couldrecurse = t->rcu_read_lock_nesting >= 0;
-> > >   	if (!rcu_preempt_need_deferred_qs(t))
-> > >   		return;
-> > > -	if (couldrecurse)
-> > > -		t->rcu_read_lock_nesting -= RCU_NEST_BIAS;
-> > >   	local_irq_save(flags);
-> > >   	rcu_preempt_deferred_qs_irqrestore(t, flags);
-> > > -	if (couldrecurse)
-> > > -		t->rcu_read_lock_nesting += RCU_NEST_BIAS;
-> > >   }
-> > >   /*
-> > > -- 
-> > > 2.20.1
-> > > 
+(PATCH v3 1/9) KEYS: Defined an IMA hook to measure keys on key create 
+or update
+> 
+> This patch should also define the new "func".
+> 
+
+Ok - I'll make that change.
+
+thanks,
+  -lakshmi
