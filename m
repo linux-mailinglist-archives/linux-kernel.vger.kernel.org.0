@@ -2,88 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9039EAC97
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADF5EAC9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfJaJgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:36:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59296 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfJaJgS (ORCPT
+        id S1727275AbfJaJgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:36:46 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39023 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbfJaJgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:36:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1310160A23; Thu, 31 Oct 2019 09:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572514577;
-        bh=ElpHY+Pw9KljO9ycv8UWQZ6MM4ZLSnXJZHKG7Oz0lVs=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=TG0m/7QFITD5tQmmFINnrMt39Ms/2qp3n+WRleDnZ3dhUU9Fpnn6c/OPY/IMhOlIy
-         +zSPTzlTHxKvx0EUTuRwZljCNCVPGdwsMlN8KQR4a6YmZ4ZThApbSCUJY9hMqvDzHJ
-         CDyWR9SJaaWNBzwll7dFOUxX7j/AbIklya+Vh6IY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2149B60927;
-        Thu, 31 Oct 2019 09:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572514575;
-        bh=ElpHY+Pw9KljO9ycv8UWQZ6MM4ZLSnXJZHKG7Oz0lVs=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YH39skNbBlQgpF9XkRtvBYpar+AanvXexmbH5KRKfmYX3g1YNovInYEV8g+nAm+E5
-         MpjxqYf/gcvUXgqQ0K2Uw3ZdyRT8zgnGhmTltm7pBNJwGFNg64UV/nVqIpEmdvuXwA
-         0rt45R9DlXh9tcQ0DhTPG6xmgzzPZXSjI1SVuekU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2149B60927
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ayala Beker <ayala.beker@intel.com>,
-        Tova Mussai <tova.mussai@intel.com>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
-References: <20191031111242.50ab1eca@canb.auug.org.au>
-Date:   Thu, 31 Oct 2019 11:36:11 +0200
-In-Reply-To: <20191031111242.50ab1eca@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 31 Oct 2019 11:13:03 +1100")
-Message-ID: <87pnid1cl0.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 31 Oct 2019 05:36:46 -0400
+Received: by mail-lf1-f67.google.com with SMTP id 195so4051329lfj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wgyP5K8XSgBVkPXgCWfubE2yzRzdB25VvAHZgFQv1M4=;
+        b=vK/5pEsUfR4cEvCUmJggtsiAq2V4ibpuiYmmHPnDBXW2aM0dBLV8lL0AH1WuPcFVs6
+         EZ8NSJ6adonRQCHZHtK5+MKs2uqP2JOysiiTsQBhjii98UDGZXwHmfFYSIn1ZUSOmyq0
+         wYDL9yBUzAC4+bKha+F7+268MKD6Iq5FzRQt/kKeHiv1H/ecbjH/1+NcuIv5qResqFzv
+         G4MywuzRi4k3HZuaa8c9pIay5kYng89o1hiOLtfNMDQPBZTXNpaOmgEGrcm0mjG7BleK
+         oKlycpkggpcr7mwLFfpbYrr9/nzMlSboLvz2H+MT4HxSOJJRv7IWZb/FXtWd3680qC8n
+         LsCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wgyP5K8XSgBVkPXgCWfubE2yzRzdB25VvAHZgFQv1M4=;
+        b=l1M3r01QnvMlPVwA7UKD7Tlvkv0DWHb75De4GgkWryGRjhh7CMaUiI8C8H6w4+YfEB
+         nVMH6GaqfIJXZqt+g9XDxQczQ/5SSBeon0OK1HQyHLWO0JlZ3gMe/Id1ifrrkUNA8zbY
+         0hlLTLLJQm1edVGD1kbJnnInpKWMfwzZJaeLfFkYWDXDXwu02RlWTeZxkmzimKaZY2oN
+         BZ6RrdfapGcBklTOLCpsyzK9j2jf4GFC1COOHrYhSbCdlMOr2r6Qc1s+cEq7mc1zid0T
+         QoDQRnUNryEKP0Tka+0QKy1Y+m9TZBe4D0tiW8FuKVVlJqAMTnz8uWthF31nqlFkzz+G
+         lz+A==
+X-Gm-Message-State: APjAAAXVgHVmEsWxcNs2P6L7CSuhkDCed5RyzFuVnz8yIIAtPW+78hUN
+        s/fldRlk7ZeEouFnlOiQtr5jQA==
+X-Google-Smtp-Source: APXvYqzlcES4u3+SBBCAztG7H3ClzN9Y1hcKkIaigP31xwNCtRHDIOJsYLSn85zRdFxtKrjYBKwVRA==
+X-Received: by 2002:ac2:5f0a:: with SMTP id 10mr2699731lfq.57.1572514602594;
+        Thu, 31 Oct 2019 02:36:42 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:4225:b18c:bdc4:9185:f589:ee11? ([2a00:1fa0:4225:b18c:bdc4:9185:f589:ee11])
+        by smtp.gmail.com with ESMTPSA id p193sm2680682lfa.18.2019.10.31.02.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Oct 2019 02:36:41 -0700 (PDT)
+Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com,
+        sgarzare@redhat.com, stefanha@redhat.com, ytht.net@gmail.com,
+        arnd@arndb.de, tglx@linutronix.de, decui@microsoft.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c7a0b6b0-96cd-1fd3-3d98-94a3692bda38@cogentembedded.com>
+Date:   Thu, 31 Oct 2019 12:36:30 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hello!
 
-> Today's linux-next merge of the wireless-drivers-next tree got a
-> conflict in:
->
->   drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
->
-> between commit:
->
->   3d206e6899a0 ("iwlwifi: fw api: support new API for scan config cmd")
->
-> from the wireless-drivers tree and commit:
->
->   65b9425ce9aa ("iwlwifi: rx: use new api to get band from rx mpdu")
->
-> from the wireless-drivers-next tree.
+On 31.10.2019 9:47, Christophe JAILLET wrote:
 
-Thanks, the resolution looked simple enough so I'm not taking any extra
-actions because of this (for example merging wireless-drivers to
-wireless-drivers-next etc).
+> Use '__skb_queue_purge()' instead of re-implementing it.
 
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+    In don't see that double underscore below...
+
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   net/vmw_vsock/af_vsock.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> index 2ab43b2bba31..2983dc92ca63 100644
+> --- a/net/vmw_vsock/af_vsock.c
+> +++ b/net/vmw_vsock/af_vsock.c
+[...]
+> @@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
+>   		sock_orphan(sk);
+>   		sk->sk_shutdown = SHUTDOWN_MASK;
+>   
+> -		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+> -			kfree_skb(skb);
+> +		skb_queue_purge(&sk->sk_receive_queue);
+>   
+>   		/* Clean up any sockets that never were accepted. */
+>   		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+
+MBR, Sergei
