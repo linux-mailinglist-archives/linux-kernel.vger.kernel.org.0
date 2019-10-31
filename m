@@ -2,137 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B789CEB7AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D44BEB7BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbfJaS74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 14:59:56 -0400
-Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:12941
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729252AbfJaS74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:59:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OK3zVpYD9idLJsK3ZaVezV+LWZRALT9cSwAFolZIBpwZzKThtkiGNVLKBBZiiSDhl6zs9P49Bv9jxz6D1i5Q+pLrjIDC6Ec9mPPaoB5q4uEQt16Mx/3tjiCQ533S4HE5uFtEZe7Gz/bXbmFtJF/HEufbNzyYszWzprgC1WLhLLKMOf3qYvopUzlLpcL4o8rOQ55PREi98vFD6rN+rVGmxJTqIUGJTUWgdIE6BsMbmxLXMXC4TKi+kqZsFvxVxiuRKZWvfZuXLa0tQMcrqQYtVurxzP0V1n0hfVIoexfHXsPdjf7OWFxJyPzzaFiHnBviP28awPHyKW1yzzyykAmBBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6AMLu3E8kxrU9QotbLYp1xVEQD1NbeopbsrfdAFANlA=;
- b=kqoWbJbdIkm6kZMRjCol147lBraFaemNh9YyYn6nAsLPxMk/Z35L3zyK1j7kMfboEDZUPJni81M7qksQ1su+tQ1E5ZFdfLtrm+f8d/MJ/iZj6BPxjx4fi9mCvPt0vvI4tHgr2/DWSRIGBpzQnS5cgtz7a30m5xuW2TujQ9v/S2IUXKNzXVBB/pqhd7UKXNT42a+IheEE39YLjau6jwKZ/Hfz6Bp5V0m6J5bIXWTu4gYt8Gubc+A8cg+7CkMsJQVvP2/jNSBA/dmmVZQi11Emii56MbEccpQWld740mcKSgqHV4XTM8f5cvACLgbSKG1lGwkRRyXDXmGUIvDuD4hM8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6AMLu3E8kxrU9QotbLYp1xVEQD1NbeopbsrfdAFANlA=;
- b=M3gty6y7ujEcFty170GriH6HyGEOkEcC7czWHdGJV7nzWJ1hVk29hb0avcvR5lIYdSFqz8lic/aHo5jMZQ6STCYcW+KUj1vRypDTHsfWk39d/4Fc+1pMwyk5vRAXh18bXo1VKOSmRpyC5yPxyS02RWX/K4ir9aYiE1IAcl6l+Pw=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5038.eurprd04.prod.outlook.com (20.177.51.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.25; Thu, 31 Oct 2019 18:59:51 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3%5]) with mapi id 15.20.2387.028; Thu, 31 Oct 2019
- 18:59:51 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Duan <fugang.duan@nxp.com>
-Subject: Re: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for
- fec1
-Thread-Topic: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for
- fec1
-Thread-Index: AQHVh/j+k1XoWkwF8kWzRGGsNvXoFQ==
-Date:   Thu, 31 Oct 2019 18:59:51 +0000
-Message-ID: <VI1PR04MB70239911C3C71E0503808F85EE630@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1571652977-4754-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b70f40ea-6da6-452e-1dd8-08d75e348262
-x-ms-traffictypediagnostic: VI1PR04MB5038:|VI1PR04MB5038:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB503832DA64F49051CBAB4DA2EE630@VI1PR04MB5038.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:983;
-x-forefront-prvs: 02070414A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(396003)(39860400002)(366004)(346002)(189003)(199004)(26005)(86362001)(99286004)(6116002)(305945005)(6506007)(66066001)(186003)(14454004)(256004)(2501003)(4326008)(7696005)(102836004)(2906002)(110136005)(54906003)(3846002)(53546011)(74316002)(7736002)(316002)(76176011)(8676002)(478600001)(91956017)(66946007)(6436002)(6246003)(64756008)(44832011)(81166006)(52536014)(33656002)(76116006)(486006)(446003)(71200400001)(81156014)(66476007)(9686003)(476003)(66446008)(8936002)(55016002)(66556008)(25786009)(71190400001)(229853002)(5660300002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5038;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cI1E9xjhXUhTimmnhaTzTugMCOV6CreyZENQM7UEjcQPv9bM4ia19l8QHvtCBbpeEFlktzM60g3TjNCoQogMGEvsc/pmlNMJzkeU+vc6cPttrdBsmi+0YFEGKfWABqLLc7sAF7OloKClVUg3RmmUbGutwecfDd+BYM2118tcZ3brUBPgdT3y0nZuth/HvIZcSf/sWx5jEJNj8af4TwbrmklHiWEL1qbu2VePDzy1gvpdf6CGz70e2gz0cVmwGZXUaFIPX+fkvAyRUxKXz28JmpEHNWPUhA+p3RrgL2Ia89acIIxJtd4PFMlH2TXp/vW4VHaIJk9YeP5cNaKnZEtMcSU2hT5VtrgK49K5ASrWVx5x8MdgVLTz/+dj3cePVad0R2Iw/RDO9u8jNDj8S2mGF1jGxXkqPMMUtN4uiEzTfj5GqLwdIq0cpIIHTyZBLY2+
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729584AbfJaTF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 15:05:29 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.31]:42902 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729542AbfJaTF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 15:05:28 -0400
+X-Greylist: delayed 1423 seconds by postgrey-1.27 at vger.kernel.org; Thu, 31 Oct 2019 15:05:27 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 1F45A1026D30
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 13:41:44 -0500 (CDT)
+Received: from br164.hostgator.com.br ([192.185.176.180])
+        by cmsmtp with SMTP
+        id QFOBiQ22cPUvSQFOCirqa3; Thu, 31 Oct 2019 13:41:44 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hqa03vOsorRFXxU8y2ofxcTa3+6apVLKNhZ0+d6Hk5s=; b=owWBC3YOBH6Ib58Jh1NCbdN19r
+        Tb5MJR0fTAbeE5E9aMpDf6A1PQDZk0GAdZpJqUfK2VfbnZ7+fTZfu0HqmsnP//GZ7lBlWIzZEqgUu
+        AJ8/GVjNe2x3NlwaLYM7PI/G3iI+uRaNRXzrX5Fvgs1FXtIBbDNjAktMhgPEjbebV0iRiSns4gw7p
+        IPdg3V2Ft/XOj+sHB986lF2MaOZdHYlg8P/N6R8SuDRZ702b/lLgf1dQ9n6mvKzUlfsQj4y2hoO5U
+        +rZ3FCS8edE4/PmsGwqeo4Qr9soFrCYYcJVBo2fjS6HsfRTk8uqSUCNv92Vz2xqOrWkPgN4ZRbWBL
+        4oO9OITw==;
+Received: from [191.31.195.127] (port=35710 helo=castello.bz.toradex.local)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1iQFO9-0035gz-Mi; Thu, 31 Oct 2019 15:41:42 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
+Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, lee.jones@linaro.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v4 0/4] power: supply: MAX17040: Add IRQ for low level and alert SOC changes
+Date:   Thu, 31 Oct 2019 15:41:30 -0300
+Message-Id: <20191031184134.30621-1-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.24.0.rc2
+In-Reply-To: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
+References: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b70f40ea-6da6-452e-1dd8-08d75e348262
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2019 18:59:51.4067
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Gzy1hvxwGphpPab87wVwFJKvQZIa0R8mRyR47HU12I9+2I8Gmfm2dhAj+o8Polr38mdUZNVP9jR4Yf/7D1QojQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5038
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.31.195.127
+X-Source-L: No
+X-Exim-ID: 1iQFO9-0035gz-Mi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (castello.bz.toradex.local) [191.31.195.127]:35710
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 1
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.10.2019 13:19, Peng Fan wrote:=0A=
-> From: Peng Fan <peng.fan@nxp.com>=0A=
-> =0A=
-> We should not rely on bootloader to configure the phy reset.=0A=
-> So introduce phy-reset-gpios property to let Linux handle phy reset=0A=
-> itself.=0A=
-> =0A=
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>=0A=
-=0A=
-This broke NFS boot for me in next-20191031: board now hangs on DHCP.=0A=
-=0A=
-It can be fixed by reverting this DT patch or by setting =0A=
-CONFIG_AT803X_PHY to y instead of m.=0A=
-=0A=
-Needing a phy module is not a bug but everybody will need to either =0A=
-adjust .config or build modules into an initramfs somehow.=0A=
-=0A=
-> ---=0A=
-> =0A=
-> V2:=0A=
->   U-Boot->bootloader=0A=
->   Add R-b tag=0A=
-> =0A=
->   arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 1 +=0A=
->   1 file changed, 1 insertion(+)=0A=
-> =0A=
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/bo=
-ot/dts/freescale/imx8mm-evk.dts=0A=
-> index faefb7182af1..e4d66f7db09d 100644=0A=
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts=0A=
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts=0A=
-> @@ -80,6 +80,7 @@=0A=
->   	pinctrl-0 =3D <&pinctrl_fec1>;=0A=
->   	phy-mode =3D "rgmii-id";=0A=
->   	phy-handle =3D <&ethphy0>;=0A=
-> +	phy-reset-gpios =3D <&gpio4 22 GPIO_ACTIVE_LOW>;=0A=
->   	fsl,magic-packet;=0A=
->   	status =3D "okay";=0A=
+This series add IRQ handler for low level SOC alert, define a devicetree
+binding attribute to configure the alert level threshold and check for
+changes in SOC and power supply status for send uevents.
+
+Max17043/17044 have a pin for alert host about low level state of charge and
+this alert can be configured in a threshold from 1% up to 32% of SOC.
+
+Tested on Toradex Colibri iMX7D, with a SparkFun Lipo Fuel Gauge module
+based on MAXIM MAX17043.
+
+Thanks Krzysztof for your time reviewing it. Let me know what you think about
+the fixes.
+
+Changes since v3:
+(Suggested by Krzysztof Kozlowski)
+- Validate values of the maxim,alert-low-soc-level early as possible
+- Clear the alert bit while handling IRQ
+- Remove the "chip->alert_bit"
+- Check the SOC and status at the same time on max17040_work
+- Add note about the compatible of devices with ALERT feature
+- Only set alert register and IRQ when compatible is max77836
+
+Changes since v2:
+(Suggested by Krzysztof Kozlowski)
+- Fix ebusy exception
+- Remove device_init_wakeup from probe, let wakeup-source from DT decide that
+- Fix the use of "charger" to fuel-gauge on device tree description
+- Clear ALRT bit while setting the SOC threshold
+- Check SOC and clear ALRT bit when the SOC are above alert threshold
+- Fix unnecessary uevent when SOC is an ERRNO
+- Notify user space when power supply status change
+
+(Suggested by Rob Herring)
+- Fix the use of "charger" to fuel-gauge on device tree description
+- Add the (%) units on the description of property
+- Drop interrupt-parent
+- Fix name of property to let clear that is a low level SOC alert
+
+Changes since v1:
+(Suggested by Krzysztof Kozlowski)
+- Put common code from max17040_work and max17040_thread_handler in a function
+- Code style fixes
+- Define mask and low level threshold alert default
+- Check return value from max17040_set_soc_threshold
+- Set low level state of charge threshold before IRQ
+- CC maintainers from drivers/mfd/max14577
+- Use flags from FDT client->flags instead hard coded it
+- Mention interrupts on DT Documentation
+- Fix "maxim,max77836-battery" missed from DT Documentation
+- Fix commit description
+
+Matheus Castello (4):
+  power: supply: max17040: Add IRQ handler for low SOC alert
+  dt-bindings: power: supply: Max17040: Add low level SOC alert
+    threshold
+  power: supply: max17040: Config alert SOC low level threshold from FDT
+  power: supply: max17040: Send uevent in SOC and status change
+
+ .../power/supply/max17040_battery.txt         |  33 +++++
+ drivers/power/supply/max17040_battery.c       | 134 +++++++++++++++++-
+ 2 files changed, 162 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+
+--
+2.24.0.rc2
+
