@@ -2,116 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57742EB489
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B252AEB49A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfJaQR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:17:59 -0400
-Received: from mga07.intel.com ([134.134.136.100]:63414 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbfJaQR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:17:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 09:17:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,252,1569308400"; 
-   d="scan'208";a="351689706"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga004.jf.intel.com with ESMTP; 31 Oct 2019 09:17:58 -0700
-Date:   Thu, 31 Oct 2019 09:17:58 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Boaz Harrosh <boaz@plexistor.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191031161757.GA14771@iweiny-DESK2.sc.intel.com>
-References: <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
- <20191023221332.GE2044@dread.disaster.area>
- <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
- <20191024073446.GA4614@dread.disaster.area>
- <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
- <20191024213508.GB4614@dread.disaster.area>
- <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
- <20191025003603.GE4614@dread.disaster.area>
- <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
- <20191027221039.GL4614@dread.disaster.area>
+        id S1728569AbfJaQXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:23:05 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:49669 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728559AbfJaQXE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:23:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572538983;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RZGD6Pca66p5OqKCfFHPRMb7vejTA2ViSdqHSiuuHfA=;
+        b=Eqqw86rInQOhS0zNT5Bo2ZHtyKWk4FNeHKPvgP8T4g3JSazJal/UyBleGL4CKlJzgImUN7
+        91ImxrTaN6/UwwGOanKNQIY7BvKuNYw9xgdU6YSfoVDFtoo2aa3l99UBkDl9N0qMIKWaFt
+        UOTjJUgUcA7H5r19J1wNQgVNDT5WdXs=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-96-R1UKXFEpP2irAqPcelzv1g-1; Thu, 31 Oct 2019 12:22:59 -0400
+Received: by mail-lf1-f70.google.com with SMTP id v7so1555461lfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:22:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eAv0yHRWBIPIgHHe1zlsuAAt21y47eMoEjAinE7MfyI=;
+        b=nmT+8S7g4dPFMMlWr+SZHGbcQAxZYGbMlFnHLZJH5XVAgfHKXLB/IYpzXMj66iktiw
+         Ypg7aAckQFN0yHP0gFvk8bkoasHxIYabgp++QBevQt6xFrivfjoCfriefklHIte3ogZ1
+         RLMFJkv9WtAn0ohZaMQ2UQ9qjXNWDoY4UHcgdfkKIIO7ldDoAutrtCCuB4G2JfLcNJZZ
+         U4ODv6hPbx5zskuS5a2I0M21CX8ovIluZWJV02NbcCRUppEulsje6JNLNmEcXOzvefXg
+         yJNbmujxlgX9EhzNxfWjSN9oFMSfYV/Ds4oWaZwkpxItD8YqeRA1PvzL4P6N9bXzjHb8
+         V4gg==
+X-Gm-Message-State: APjAAAWC+sYmgOGYhcqGGEodBi6yXYSb3NWnBTfJt1prIlzJ2E6qhZh/
+        hLOPEIoh6avRKrGmWdf67+G3UAE9z6losjJX+hTaXmwxyiMAuwGt/hNddRZvc8jpomXg/JJzqwh
+        6hHpfDZN4Ckwafr7fQ7rQ0MAlsfeGZqkAAZFqgQ92
+X-Received: by 2002:ac2:5195:: with SMTP id u21mr4119366lfi.97.1572538977531;
+        Thu, 31 Oct 2019 09:22:57 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxL300SMULllKwH7VWvDdiKCap6Fv+tAFO8sNUl58YhcqKjt43ZyLnKC2evCebrRPLnKKAh/6MyHQYa2nywefI=
+X-Received: by 2002:ac2:5195:: with SMTP id u21mr4119340lfi.97.1572538977273;
+ Thu, 31 Oct 2019 09:22:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191027221039.GL4614@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20191029135053.10055-1-mcroce@redhat.com> <20191029135053.10055-5-mcroce@redhat.com>
+ <5be14e4e-807f-486d-d11a-3113901e72fe@cumulusnetworks.com>
+ <576a4a96-861b-6a86-b059-6621a22d191c@gmail.com> <CAGnkfhzEgaH1-YNWw1_HzB5FOhZHjKewLD9NP+rnTP21Htxnjw@mail.gmail.com>
+ <43abab53-1425-0bff-9f79-50bd47567605@gmail.com> <CAGnkfhyaXzMx608jZqqjdywv6BZst97QSmGe++aSc=-xOQSWzg@mail.gmail.com>
+In-Reply-To: <CAGnkfhyaXzMx608jZqqjdywv6BZst97QSmGe++aSc=-xOQSWzg@mail.gmail.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Thu, 31 Oct 2019 17:22:21 +0100
+Message-ID: <CAGnkfhxvOdZgS90PittFgAtYnPzfQNVFsxsTpadzBcr1-mnD=Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 4/4] bonding: balance ICMP echoes in layer3+4 mode
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        netdev <netdev@vger.kernel.org>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Blakey <paulb@mellanox.com>,
+        LKML <linux-kernel@vger.kernel.org>
+X-MC-Unique: R1UKXFEpP2irAqPcelzv1g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 09:10:39AM +1100, Dave Chinner wrote:
-> On Fri, Oct 25, 2019 at 01:49:26PM -0700, Ira Weiny wrote:
+On Wed, Oct 30, 2019 at 12:19 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Wed, Oct 30, 2019 at 12:14 AM Eric Dumazet <eric.dumazet@gmail.com> wr=
+ote:
+> >
+> >
+> >
+> > On 10/29/19 4:03 PM, Matteo Croce wrote:
+> >
+> > > Hi Eric,
+> > >
+> > > this would work for locally generated echoes, but what about forwarde=
+d packets?
+> > > The point behind my changeset is to provide consistent results within
+> > > a session by using the same path for request and response,
+> > > but avoid all sessions flowing to the same path.
+> > > This should resemble what happens with TCP and UDP: different
+> > > connections, different port, probably a different path. And by doing
+> > > this in the flow dissector, other applications could benefit it.
+> >
+> > In principle it is fine, but I was not sure of overall impact of your c=
+hange
+> > on performance for 99.9% of packets that are not ICMP :)
+> >
+>
+> Good point. I didn't measure it (I will) but all the code additions
+> are under some if (proto =3D=3D ICMP) or similar.
+> My guess is that performance shouldn't change for non ICMP traffic,
+> but I'm curious to test it.
+>
 
-[snip]
+Indeed if there is some impact it's way below the measurement uncertainty.
+I've bonded two veth pairs and added a tc drop to the peers, then
+started mausezahn to generate UDP traffic.
+Traffic is measured on the veth peers:
 
-> 
-> > Currently this works if I remount the fs or if I use <procfs>/drop_caches like
-> > Boaz mentioned.
-> 
-> drop_caches frees all the dentries that don't have an active
-> references before it iterates over inodes, thereby dropping the
-> cached reference(s) to the inode that pins it in memory before it
-> iterates the inode LRU.
-> 
-> > Isn't there a way to get xfs to do that on it's own?
-> 
-> Not reliably. Killing all the dentries doesn't guarantee the inode
-> will be reclaimed immediately. The ioctl() itself requires an open
-> file reference to the inode, and there's no telling how many other
-> references there are to the inode that the filesystem a) can't find,
-> and b) even if it can find them, it is illegal to release them.
-> 
-> IOWs, if you are relying on being able to force eviction of inode
-> from the cache for correct operation of a user controlled flag, then
-> it's just not going to work.
+Stock 5.4-rc5:
 
-Agree, I see the difficulty of forcing the effective flag to change in this
-path.  However, the only thing I am relying on is that the ioctl will change
-the physical flag.
+rx: 261.5 Mbps 605.4 Kpps
+rx: 261.2 Mbps 604.6 Kpps
+rx: 261.6 Mbps 605.5 Kpps
 
-IOW I am proposing that the semantic be that changing the physical flag does
-_not_ immediately change the effective flag.  With that clarified up front the
-user can adjust accordingly.
+patched:
 
-After thinking about this more I think there is a strong use case to be able to
-change the physical flag on a non-zero length file.  That use case is to be
-able to restore files from backups.
+rx: 261.4 Mbps 605.1 Kpps
+rx: 261.1 Mbps 604.4 Kpps
+rx: 260.3 Mbps 602.5 Kpps
 
-Therefore, having the effective flag flip at some later time when the a_ops can
-safely be changed (for example a remount/drop_cache event) is beneficial.
+perf top shows no significatn change in bond* and skb_flow* functions
 
-I propose the user has no direct control over this event and it is mainly used
-to restore files from backups which is mainly an admin operation where a
-remount is a reasonable thing to do.
+Regards,
+--=20
+Matteo Croce
+per aspera ad upstream
 
-Users direct control of the effective flag is through inheritance.  The user
-needs to create the file in a DAX enable dir and they get effective operation
-right away.
-
-If in the future we can determine a safe way to trigger the a_ops change we can
-add that to the semantic as an alternative for users.
-
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
