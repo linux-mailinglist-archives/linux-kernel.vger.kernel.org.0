@@ -2,79 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3452EAC48
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BE19EAC4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfJaJGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:06:24 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33191 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfJaJGY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:06:24 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y39so7603796qty.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=ENU1OjgChavMNer6gBl7WPmTc1SR4L8Kl4tCpdDly/o=;
-        b=CyFGPgfzhWoxzmMWS7XnGeeO0/39vCtsXo3WutoeqfXNsjFKqsO1mxeX/Wkq14HXAK
-         PNxI0dMVOVZt2VopTeHiusoCB1erj1258+Q6I6KwNPxpTuewNUg6W7cAW+gHDx0pUkRt
-         Zp3Hivh5/KYgW1gPrOxiRJ0EjR1g4arSWMvCgfc45k8OQIvq10J9/6Qi8hA9leaFMJpd
-         A83TgV7Oct1NVRXSrgy1izbJzjImKvj4jODf4qCF9vSGdP1iLJ6ZHkYesLKp8/OVeTsS
-         mBBH/ZyIfBswOPhTSPoMOAVxpEgovKhcUiOkS1fnuqiZJwMSV7SPOdsU2VJyc10alrtQ
-         zGKg==
+        id S1727070AbfJaJHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:07:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726864AbfJaJHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 05:07:11 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 84BC25945B
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:07:11 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id k10so2889409wrl.22
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:07:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=ENU1OjgChavMNer6gBl7WPmTc1SR4L8Kl4tCpdDly/o=;
-        b=VdiFrhYyq2vB+Mnyul6uv+1JKOAu14IlVM2YLTE7iUAfcWVaIhV4zFDFLbSKeM6k+f
-         yVkRlI8lqcwLCVUXbcUpS0ac6kL0na98ask+WUbxmZqGNWkh8XuBGXeUplVlc/2Az2c0
-         GjjMGOZJstcJvsM/SJc1vGdUVNXQZN4Ik+EnwmGDSGCPf3Pg0wPF7S4OL/Yjageqh37I
-         PzIKvzdFGp9+I4/lYIXQvwsSQQL4fZ2DRRqaN/VsQffLZEN9LQFLuaMT9sjh/t0pLa8E
-         QbnliH8UMz4zEIg5AkVXq2OQj565u6cmp8pZniKFs8adGh0h1NFYC6deOcDCp7ov8VLP
-         3msg==
-X-Gm-Message-State: APjAAAWs8jdoD1Wx/mSWhbv47bAv0rdcWxOR2V+1kmTa01xpLSxTszMY
-        WLmUyiIuZUimH97Nzbp5ckXmGfySetvwOeyEI1Q=
-X-Google-Smtp-Source: APXvYqz1vEZWnQPIGpUOGP07bBiOt4J097opbitto3/I9YLTu2cLaQTszwDhhlxf+PNchnH+J/HtbhxX+wylBSEq4zA=
-X-Received: by 2002:ad4:53c1:: with SMTP id k1mr3604049qvv.223.1572512783432;
- Thu, 31 Oct 2019 02:06:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uv8J8WDWlm5KkI7ZZB1632xd20pA70gOpFtg9sDlJvM=;
+        b=bFQoyIP+3H64fcp3Q8gGN1DilcNdHg/ELt7Qh0N7fZKZ8W9eat7Wly0DlzxGLcV/jn
+         OqLZ0BJR7vqtSsz6bcYuThfyQ6NapLyEJvkHluVC8rJRgFuRyonhWKyT5HC4T1IXFscZ
+         6tDLwqWeXZJWr9YSRcwQ4KUgLwONVGYtaDSnFhSMg9rF3z3hAcO/JPO0h1Xdk3uJsRhg
+         7SJgpQJ15SGc33RggVeaC2L4pmOvFnTsZBR8rsaJJejsT8dIfwBKu7e54L3sQAYZDgWe
+         jAAEQNNcJkDjOkEIASp+BqXIVATnN9s19wutrp4HHb28STvO2zQR5ZotrgSI4kKCHsfc
+         k83A==
+X-Gm-Message-State: APjAAAUY5yvuhxXuQwrfxltfsCZQrLOY0XWCFq9j42puGxkcaAGx9zdW
+        VH4FoN6pbpp3ZMyl6RHAeC22Pq3ofB+EkW20rL3gNb52ujZ2A9FNvnvSPz1rhb7m6c234g5p0Om
+        jixmmMrP6VjoPE5zQwDUCN4NH
+X-Received: by 2002:a1c:6308:: with SMTP id x8mr4076651wmb.140.1572512830195;
+        Thu, 31 Oct 2019 02:07:10 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwfjaVx5Id/rjqKFiRz8/nIcvC1Gfp7404XpLuXKxzmGRZ2YVyve+OhEy7UlUWjEBX07Dmh7Q==
+X-Received: by 2002:a1c:6308:: with SMTP id x8mr4076626wmb.140.1572512829951;
+        Thu, 31 Oct 2019 02:07:09 -0700 (PDT)
+Received: from steredhat ([91.217.168.176])
+        by smtp.gmail.com with ESMTPSA id x205sm3535236wmb.5.2019.10.31.02.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2019 02:07:09 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 10:07:07 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com,
+        stefanha@redhat.com, ytht.net@gmail.com, arnd@arndb.de,
+        tglx@linutronix.de, decui@microsoft.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
+Message-ID: <20191031090707.ec33h3z6zhux3hbq@steredhat>
+References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Received: by 2002:ac8:431a:0:0:0:0:0 with HTTP; Thu, 31 Oct 2019 02:06:22
- -0700 (PDT)
-Reply-To: wunion@email.com
-From:   Steven Donna <geregsm1@gmail.com>
-Date:   Thu, 31 Oct 2019 09:06:22 +0000
-Message-ID: <CAJcGmi3mF5v-m411P=Z865KqfvZV9iTS9OzCbbYgU-+Dq_MLJw@mail.gmail.com>
-Subject: Attn Your Payment Funds $800.000.00!!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear!!
-Date:31/10/2019,
+On Thu, Oct 31, 2019 at 07:47:41AM +0100, Christophe JAILLET wrote:
+> Use '__skb_queue_purge()' instead of re-implementing it.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  net/vmw_vsock/af_vsock.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> index 2ab43b2bba31..2983dc92ca63 100644
+> --- a/net/vmw_vsock/af_vsock.c
+> +++ b/net/vmw_vsock/af_vsock.c
+> @@ -641,7 +641,6 @@ EXPORT_SYMBOL_GPL(__vsock_create);
+>  static void __vsock_release(struct sock *sk, int level)
+>  {
+>  	if (sk) {
+> -		struct sk_buff *skb;
+>  		struct sock *pending;
+>  		struct vsock_sock *vsk;
+>  
+> @@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
+>  		sock_orphan(sk);
+>  		sk->sk_shutdown = SHUTDOWN_MASK;
+>  
+> -		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+> -			kfree_skb(skb);
+> +		skb_queue_purge(&sk->sk_receive_queue);
+>  
+>  		/* Clean up any sockets that never were accepted. */
+>  		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
 
-This is to inform you that your Payment Compensation funds worths USD
-$800.000.00 was forward to the western union money transfer for
-immediate transfer it to you as soon as you meet up with the Director
-of the Board Remittance Authority.
+Good clean-up!
 
-Contact Foreign Operation Manger Western Union Office.
-Mrs. Janet Kabore
-Tel: +226-6486 8134
-Email:( wunion@email.com )
+This patch LGTM:
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Note that, you should furnished Mrs.Janet Kabore with your correct
-contact information to avoid wrong fund transferring.
-
-(1) Your Full Name:
-(2) Your Country & mailing Address:
-(3) Phone, Fax and Mobile Number:
-(4) A copy of your international id:
-
-Your,
-Mr.Steven Donna
+Thanks,
+Stefano
