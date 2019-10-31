@@ -2,148 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A9FEAC77
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:18:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 596F1EAC7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfJaJSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:18:02 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36472 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726864AbfJaJSC (ORCPT
+        id S1727083AbfJaJVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:21:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45220 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfJaJVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:18:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v19so3950738pfm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/4vjjXip3PEZlpbvSCBjNSofs7TybrsEceZdmzVqTWg=;
-        b=vLVfuciNf7T8Yu5E2bROWn0NM0KpFjqxr++0zpwbFio/EEJo2T5wJdD3D7Cnjum+5S
-         oReoZsaxy9BkEdsv2pV9IsrGYf6fnv3cvIgdQCN+azdIrPfljxaoL8N7PG4SH1weLRJz
-         8Pq7bPws7tFsavO1Jg3lTNzhSqpD3x1IsE4n9KcEIEh9PPRkZNyo0J04GyWnA9YDYFDP
-         ON7Li7hij9hcochr8D0HBMbwnjWPQdG6D7NJ6RAEFI6WvqiJgQhzIpnsvDcS+UAGdqth
-         NnKwbU9dNTl+Ntmn//STGsXFF7/l/PtIpEuvLmkAT2KXdJJ9CPiqDpbYcmz4P/j/9KMH
-         oLJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/4vjjXip3PEZlpbvSCBjNSofs7TybrsEceZdmzVqTWg=;
-        b=UnRzao1cUB/WZpOuuvVX8Tj2/EZFBVtITV59d2TMEPYnJAMbgUPUFGvW9l7hwVmxHD
-         9AIRizBKztFUUlMXmX387Zn3SjLJrwNVQhiKEcDLWg+8avPVLOXpymk1w+HwYL38Us0M
-         OroVjAX44tmU/9VhmRFxgenAka9jo9O2TH8ipX8w9ICzJTPMCsv4K0MMUtzHd9fC0mhm
-         H9LXi+RsNMLExnhjfkCl1N9gRkuC00fxwMrNroXOiT9GVIrxkars76vxB6dGy1tnBO8d
-         7YZHy4fHurmZRYaETKKynXtIuicByOF8zQGERuVqPVBko/VBmhHCBOEEtRR007faSIFK
-         m08w==
-X-Gm-Message-State: APjAAAVj98zHVUEUdXkXhDOlE7sQ0VqaEIH2R18Nb73n1wEuK6fCTbVI
-        8xyHkHiDsUcSB5myBgS84pKMsASV3vHOE5neHTzaHA==
-X-Google-Smtp-Source: APXvYqypwZwY39bRA8SlcqSx2t9abzPasBSJqwBHjFz7WDKZ1NhGDmS5XjfCTop3u9EnVZ+RtajjJ+BbxlfeIRaFHGc=
-X-Received: by 2002:a63:234c:: with SMTP id u12mr5113679pgm.384.1572513480667;
- Thu, 31 Oct 2019 02:18:00 -0700 (PDT)
+        Thu, 31 Oct 2019 05:21:06 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 559FC28FB05;
+        Thu, 31 Oct 2019 09:21:05 +0000 (GMT)
+Date:   Thu, 31 Oct 2019 10:21:02 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Jonas Karlman <jonas@kwiboo.se>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 06/10] media: hantro: Use capture buffer width and
+ height for H264 decoding
+Message-ID: <20191031102102.63afd4e5@collabora.com>
+In-Reply-To: <HE1PR06MB4011544CF7A6F36EF1CA47EEAC610@HE1PR06MB4011.eurprd06.prod.outlook.com>
+References: <HE1PR06MB401108289F09802C261374F8AC610@HE1PR06MB4011.eurprd06.prod.outlook.com>
+        <20191029012430.24566-1-jonas@kwiboo.se>
+        <HE1PR06MB4011544CF7A6F36EF1CA47EEAC610@HE1PR06MB4011.eurprd06.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20191018001816.94460-1-brendanhiggins@google.com>
- <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
- <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
- <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
-In-Reply-To: <201910301205.74EC2A226D@keescook>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 31 Oct 2019 02:17:49 -0700
-Message-ID: <CAFd5g45V-iYaAhHwoaUPoPYUBud-5vxbBkApp-h5O6J8trnPRA@mail.gmail.com>
-Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
- tests for policy unpack
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Matthias Maennich <maennich@google.com>,
-        shuah <shuah@kernel.org>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com, Iurii Zaikin <yzaikin@google.com>,
-        David Gow <davidgow@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Mike Salvatore <mike.salvatore@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 12:09 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Oct 24, 2019 at 10:15:29AM +0000, Luis Chamberlain wrote:
-> > On Wed, Oct 23, 2019 at 05:42:18PM -0700, Brendan Higgins wrote:
-> > > With that, I think the best solution in this case will be the
-> > > "__visible_for_testing" route. It has no overhead when testing is
-> > > turned off (in fact it is no different in anyway when testing is
-> > > turned off). The downsides I see are:
-> > >
-> > > 1) You may not be able to test non-module code not compiled for
-> > > testing later with the test modules that Alan is working on (But the
-> > > only way I think that will work is by preventing the symbol from being
-> > > inlined, right?).
-> > >
-> > > 2) I think "__visible_for_testing" will be prone to abuse. Here, I
-> > > think there are reasons why we might want to expose these symbols for
-> > > testing, but not otherwise. Nevertheless, I think most symbols that
-> > > should be tested should probably be made visible by default. Since you
-> > > usually only want to test your public interfaces. I could very well
-> > > see this getting used as a kludge that gets used far too frequently.
-> >
-> > There are two parts to your statement on 2):
-> >
-> >   a) possible abuse of say __visible_for_testing
->
-> I really don't like the idea of littering the kernel with these. It'll
+On Tue, 29 Oct 2019 01:24:50 +0000
+Jonas Karlman <jonas@kwiboo.se> wrote:
 
-Yeah, I kind of hope that it would make people think more
-intentionally about what is a public interface so that they wouldn't
-litter the kernel with those. But I agree that in the world where
-people *didn't* do that. Lots of these sprinkled around would be
-annoying.
+> Calculations for motion vector buffer offset is based on width and height
+> from the configured capture format, lets use the same values for macroblock
+> width and height hw regs.
+> 
+> Fixes: dea0a82f3d22 ("media: hantro: Add support for H264 decoding on G1")
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+> Changes in v2:
+>   - new patch split from "media: hantro: Fix H264 motion vector buffer offset"
+> ---
+>  drivers/staging/media/hantro/hantro_g1_h264_dec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/hantro/hantro_g1_h264_dec.c b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> index 71bf162eaf73..eeed11366135 100644
+> --- a/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> +++ b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+> @@ -51,8 +51,8 @@ static void set_params(struct hantro_ctx *ctx)
+>  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
+>  
+>  	/* Decoder control register 1. */
+> -	reg = G1_REG_DEC_CTRL1_PIC_MB_WIDTH(sps->pic_width_in_mbs_minus1 + 1) |
+> -	      G1_REG_DEC_CTRL1_PIC_MB_HEIGHT_P(sps->pic_height_in_map_units_minus1 + 1) |
+> +	reg = G1_REG_DEC_CTRL1_PIC_MB_WIDTH(MB_WIDTH(ctx->dst_fmt.width)) |
+> +	      G1_REG_DEC_CTRL1_PIC_MB_HEIGHT_P(MB_HEIGHT(ctx->dst_fmt.height)) |
 
-> also require chunks in header files wrapped in #ifdefs. This is really
+I'm just curious, do they differ in practice? Also not sure what's been
+decided for the "G1 post-proc", but if the dst/capture format res set
+by the user is the scaled res (PP can scale IIRC), then you probably
+shouldn't use those values here.
 
-Why would it require header files wrapped in #ifdefs?
+>  	      G1_REG_DEC_CTRL1_REF_FRAMES(sps->max_num_ref_frames);
+>  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL1);
+>  
 
-We could put all the ifdeffery logic in the __visible_for_testing
-macro so that nothing in the original code has to change except for
-adding an #include and replacing a couple of `static`s with
-`__visible_for_testing`.
-
-> ugly.
->
-> >   b) you typically only want to test your public interfaces
->
-> True, but being able to test the little helper functions is a nice
-> starting point and a good building block.
-
-Yeah, I think I have come to accept that. We can argue about how this
-should change and how people need to learn to be more intentional
-about which interfaces are public and many other high minded ideas,
-but when it comes down to it, we need to provide a starting point that
-is easy.
-
-If our nice starting point becomes a problem, we can always improve it later.
-
-> Why can't unit tests live with the code they're testing? They're already
-> logically tied together; what's the harm there? This needn't be the case
-> for ALL tests, etc. The test driver could still live externally. The
-> test in the other .c would just have exported functions... ?
-
-Well, for one, it totally tanks certain cases for building KUnit tests
-as modules. I don't care about this point *too* much personally, but I
-accept that there are others that want this, and I don't want to make
-these people's lives too difficult.
-
-The main reason I care, however, is just that I think it looks bad to
-me. The file that these tests were in was already pretty long, and the
-tests made it even longer. So that makes the tests harder to find. If
-all tests are in a *-test.c file, then it becomes really easy to find
-all of your tests. Admittedly, this is a pretty minor point. Honestly,
-the main reason it looks bad to me, is because it is different from
-what I am used to, which, I know, is not a great reason.
