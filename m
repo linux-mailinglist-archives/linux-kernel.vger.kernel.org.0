@@ -2,125 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3682EB17E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:47:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD354EB181
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfJaNrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 09:47:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbfJaNrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 09:47:33 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 041532080F;
-        Thu, 31 Oct 2019 13:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572529652;
-        bh=XtU7maLi0m0RCK6weT51ZGxTR2Gw4KqH0PD4iCIEgc0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=DHw0qRTLOoUAXD+kXCvniCWMlineL4kp+ZqUpJ+YQ3QI7SeffDzQ+m8z39UbWymF9
-         dmFUhbEjIGsO9MFgRsAjwasYxr5ptjwvqDIFT6aha1QMMlHGmD3ZwLwFcS1OtlLG6r
-         sQlYHmeCQpu7rw8o+znz6eQwjZixq10VSznTekjs=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id C83B7352041F; Thu, 31 Oct 2019 06:47:31 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 06:47:31 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 02/11] rcu: fix bug when rcu_exp_handler() in nested
- interrupt
-Message-ID: <20191031134731.GP20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-3-laijs@linux.alibaba.com>
+        id S1727756AbfJaNsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 09:48:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34855 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbfJaNsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 09:48:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l10so6337485wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 06:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QksVvRkxEC/Fbmw0ixK2EWKntOYb1CjKsU27i/CLKQ8=;
+        b=nl4MS2a1kfU8kAKWpuvJLyCivDaGmr9zyq1KInHFqBvTA1HRD4TqoMNN40KezpcHtr
+         ERoMUn54CqTNLROl+2LJoGvngj+2cbuGQ21Yi8clJubBSY4GQzbRFlu/GK/JLTazCoAQ
+         AsZfZRPgEfRlSbsLidVg04cqTRWRmDAAfYa4nxOTwGd/76+br42fNuhQcl0JbITdzHKo
+         mWip9oVWlLU8LheD6xU33kv64UeSrVHOdGvTuoJ+Hg1kqlLFx3b/bPB/DcQ7glNw3np2
+         HZYBO7/QDDqTR/KygjoruiafycjN01DG9jisud/hlZsdmQ9WuTxiXSAfsU7vrX8qwRAy
+         FQwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QksVvRkxEC/Fbmw0ixK2EWKntOYb1CjKsU27i/CLKQ8=;
+        b=IKexsHAacMANgpCaDPAEy2FieFxnnkvjiuqChG9OnGtbvMXZW7IYucpzlqnEV3g5yD
+         NzZ1bCtjPcAAWvwHI+w2z+jct1cooOfe52y6EGKX8N2HlyjikMqjnZIzwso5UodIGfrR
+         t9Pk6lSYf2sN61049phHSMX2kKBXRaW7XUXHIwXi0lE6Qwm6+zrf4RhsqyKWzWEPDKTZ
+         XP6gtO88AZtPOgoX32pjlqluZvmg6MZXemWQps6EgLa3QVfsyS4kewyh0qUeKybZ1kNZ
+         clug37xx2BLyrFosFEhzNXfR+7WF7zHULm4Hb9mQiVZ/otgjhkePjqRftTbulbl6in3g
+         huoQ==
+X-Gm-Message-State: APjAAAW8EI3x+PIn899dKxhFCeW6sci9KAui9iivkXxHX40YIyISTBmU
+        uormESBKHyPHKBCkJ6JH7v3lqsivton7oFzZyIAa7Q==
+X-Google-Smtp-Source: APXvYqw7fXK428FamCSNbDLwZ5YfXyMWJpGq2TSe1+1tdihbiys5tLPxlhHWAoeYJsedRdsuhWgMsQnEhMJb+dyFN84=
+X-Received: by 2002:adf:8289:: with SMTP id 9mr6112282wrc.0.1572529685061;
+ Thu, 31 Oct 2019 06:48:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031100806.1326-3-laijs@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191029173755.27149-1-ardb@kernel.org> <20191029173755.27149-4-ardb@kernel.org>
+ <CACi5LpMAagnn_yEmqRBGfxJFZcAUzohU30NACeGvdXaHFZwAMA@mail.gmail.com>
+ <CAKv+Gu_zMMeRSBYk_tBX4UA+v1r+Kntrxe3xurLd1Q2_+HkbWw@mail.gmail.com> <20191031084126.GB107774@gmail.com>
+In-Reply-To: <20191031084126.GB107774@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 31 Oct 2019 14:47:53 +0100
+Message-ID: <CAKv+Gu-Gf1vtrGVT2m7Y7XWkK=zE3J0Xf50obEbJT5x94TJGSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] efi/random: treat EFI_RNG_PROTOCOL output as
+ bootloader randomness
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Bhupesh Sharma <bhsharma@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 10:07:57AM +0000, Lai Jiangshan wrote:
-> These is a possible bug (although which I can't triger yet)
-> since 2015 8203d6d0ee78
-> (rcu: Use single-stage IPI algorithm for RCU expedited grace period)
-> 
->  rcu_read_unlock()
->   ->rcu_read_lock_nesting = -RCU_NEST_BIAS;
->   interrupt(); // before or after rcu_read_unlock_special()
->    rcu_read_lock()
->     fetch some rcu protected pointers
->     // exp GP starts in other cpu.
->     some works
->     NESTED interrupt for rcu_exp_handler();
->       report exp qs! BUG!
+On Thu, 31 Oct 2019 at 09:41, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> > On Tue, 29 Oct 2019 at 20:14, Bhupesh Sharma <bhsharma@redhat.com> wrote:
+> > >
+> > > Hi Ard,
+> > >
+> > > On Tue, Oct 29, 2019 at 11:10 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > >
+> > > > From: Dominik Brodowski <linux@dominikbrodowski.net>
+> > > >
+> > > > Commit 428826f5358c ("fdt: add support for rng-seed") introduced
+> > > > add_bootloader_randomness(), permitting randomness provided by the
+> > > > bootloader or firmware to be credited as entropy. However, the fact
+> > > > that the UEFI support code was already wired into the RNG subsystem
+> > > > via a call to add_device_randomness() was overlooked, and so it was
+> > > > not converted at the same time.
+> > > >
+> > > > Note that this UEFI (v2.4 or newer) feature is currently only
+> > > > implemented for EFI stub booting on ARM, and further note that
+> > > > CONFIG_RANDOM_TRUST_BOOTLOADER must be enabled, and this should be
+> > > > done only if there indeed is sufficient trust in the bootloader
+> > > > _and_ its source of randomness.
+> > > >
+> > > > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> > > > [ardb: update commit log]
+> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > >
+> > > Seems my Tested-by was dropped which I provide for the RFC version of
+> > > this patch.
+> > > See <https://www.mail-archive.com/linux-efi@vger.kernel.org/msg12281.html>
+> > > for details.
+> > >
+> > > I can provide a similar Tested-by for this version as well.
+> > >
+> >
+> > Thanks Bhupesh
+>
+> I've added Bhupesh's Tested-by to the commit - no need to resend.
+>
+> I've picked up all 6 EFI fixes, will push them out after a bit of testing
+> - sorry about the delay!
+>
 
-Why would a quiescent state for the expedited grace period be reported
-here?  This CPU is still in an RCU read-side critical section, isn't it?
-
-							Thanx, Paul
-
->     // exp GP completes and pointers are freed in other cpu
->     some works with the pointers. BUG
->    rcu_read_unlock();
->   ->rcu_read_lock_nesting = 0;
-> 
-> Although rcu_sched_clock_irq() can be in nested interrupt,
-> there is no such similar bug since special.b.need_qs
-> can only be set when ->rcu_read_lock_nesting > 0
-> 
-> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> ---
->  kernel/rcu/tree_exp.h    | 5 +++--
->  kernel/rcu/tree_plugin.h | 9 ++++++---
->  2 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index 6dec21909b30..c0d06bce35ea 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -664,8 +664,9 @@ static void rcu_exp_handler(void *unused)
->  	 * Otherwise, force a context switch after the CPU enables everything.
->  	 */
->  	rdp->exp_deferred_qs = true;
-> -	if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
-> -	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs())) {
-> +	if (rcu_preempt_need_deferred_qs(t) &&
-> +	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
-> +	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
->  		rcu_preempt_deferred_qs(t);
->  	} else {
->  		set_tsk_need_resched(t);
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index d4c482490589..59ef10da1e39 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -549,9 +549,12 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
->   */
->  static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
->  {
-> -	return (__this_cpu_read(rcu_data.exp_deferred_qs) ||
-> -		READ_ONCE(t->rcu_read_unlock_special.s)) &&
-> -	       t->rcu_read_lock_nesting <= 0;
-> +	return (__this_cpu_read(rcu_data.exp_deferred_qs) &&
-> +		(!t->rcu_read_lock_nesting ||
-> +		 t->rcu_read_lock_nesting == -RCU_NEST_BIAS))
-> +		||
-> +		(READ_ONCE(t->rcu_read_unlock_special.s) &&
-> +		 t->rcu_read_lock_nesting <= 0);
->  }
->  
->  /*
-> -- 
-> 2.20.1
-> 
+No worries, thanks for picking them up.
