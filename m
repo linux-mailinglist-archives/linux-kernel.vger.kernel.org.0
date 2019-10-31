@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CCFEB41E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4A2EB422
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfJaPlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 11:41:55 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39866 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfJaPlz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:41:55 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y3so7142795ljj.6;
-        Thu, 31 Oct 2019 08:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hs9AJBC+az+ICiDdHQdwfGOKMqZZjjUvDnX+IerCWm4=;
-        b=Y5NUgS7W7OiIJXi6jmIl7T1HH8NU4D7KBflaK5Sq3mwQbHHqxGRNb7XZjwqah9S5S0
-         MpKIHCt7H7zLw+88fN6/+vYHFIst8/xwmcLKzP4gvInLJcY+inYL8N2bYOa5iaIrNCZ0
-         SZjxKGQzoAdaXaWsipubXD5a9dy8NY0oJmGlECGPd/qDvi0DIpQrPhVrMUOQKZXT0tdp
-         C48g5+zj1G4D+/w3Pf1W3Dc0CIWPOj7D5Ypftawfbc4CIhLwh4qJQN49ujycuBFPm7gZ
-         QUlSE/fqzwY/mxde1u3HHtcjM6yGrgy3+YMvvD6w/41kb6FVjvOKowlCksfVmP91CpID
-         W++w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hs9AJBC+az+ICiDdHQdwfGOKMqZZjjUvDnX+IerCWm4=;
-        b=eb6/bCQSDDViOxFoxR2u9wlDRKswme/Xp+HHOezLjGoXgBBkeA1hihGJH9Az72jGx/
-         NDIkVoqpWHN99EVSa4YdS+L5CGl7N2GoMZ9OcQgIl7xxD+U0zRoiRP76JbLDFYfmkpk7
-         G5BF6S1FgTpW6wE3BcWjJBqwOMWJ5fdfdCNLlhnXb/IYkYaYAb8dHJ6rthviaw5uYm88
-         9SzDsF8O/+pBVkeSvhk9gs/9HAqw9ezCumPWFcjXDjmhGAUrSU2tun+uNO+ikFGbxgf6
-         qy+q7cbkrEiscOP2SQ1mruZgGwj0b4qdkvOVNGxy28CYiOI/WerCDV2WT/4p7aZfZQnB
-         8HuA==
-X-Gm-Message-State: APjAAAX+hyi44l4lfbHukqSa0+U2mRXKvdWiBkKrYXxl7odO5qbGka6G
-        vw4AaV84t3PS6zoB2pea2kHCkpjd
-X-Google-Smtp-Source: APXvYqw9ljJRtaYk1C+MaZKATjFuvS0ms3pUzEegvu2xIhkxddGbBZbqsQ+yNUguxpMqrqluvMffdA==
-X-Received: by 2002:a05:651c:390:: with SMTP id e16mr4671922ljp.196.1572536512669;
-        Thu, 31 Oct 2019 08:41:52 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id v203sm2428879lfa.25.2019.10.31.08.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2019 08:41:51 -0700 (PDT)
-Subject: Re: [PATCH -next] gpu: host1x: Fix compile test failure
-To:     Yuehaibing <yuehaibing@huawei.com>, thierry.reding@gmail.com,
-        mperttunen@nvidia.com, arnd@arndb.de, seanpaul@chromium.org
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191030135458.27960-1-yuehaibing@huawei.com>
- <283304d6-bf23-8107-29b6-9f3e7dda943c@gmail.com>
- <cb0a976a-0148-d554-15ff-5f4059eccd37@huawei.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fe9c774b-7fec-e423-9cdb-e742fefbd4eb@gmail.com>
-Date:   Thu, 31 Oct 2019 18:41:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1728445AbfJaPm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 11:42:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727579AbfJaPmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 11:42:52 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DECD82086D;
+        Thu, 31 Oct 2019 15:42:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572536572;
+        bh=GRreUt5vILq8iwJLnTWSsnpWtfLL+f+wCy2zYdNxf6o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qaAJ8XcWGfT4LUOvU811aRsvOWAxezJATr7Uk9nzN23oXUvKxtHZVcY0AqzVTOyjZ
+         Epk2/3n2IWDhuOaWcOoDQDWApaqgYgldCxMrpckQEgKjPXnL2Tv96+pJVdwc1WPwcm
+         ftKHIyiFmV9Fi/cSBRpiXvhFrSLJm+8Fm2Mkj3Fg=
+Date:   Thu, 31 Oct 2019 15:42:47 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 5/7] iommu/arm-smmu-v3: Allow building as a module
+Message-ID: <20191031154247.GB28061@willie-the-truck>
+References: <20191030145112.19738-1-will@kernel.org>
+ <20191030145112.19738-6-will@kernel.org>
+ <20191030193148.GA8432@8bytes.org>
 MIME-Version: 1.0
-In-Reply-To: <cb0a976a-0148-d554-15ff-5f4059eccd37@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030193148.GA8432@8bytes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.10.2019 16:33, Yuehaibing пишет:
-> On 2019/10/31 6:26, Dmitry Osipenko wrote:
->> 30.10.2019 16:54, YueHaibing пишет:
->>> If IOMMU_SUPPORT is not set, but IOMMU_IOVA is m and
->>> COMPILE_TEST is y, building fails:
->>>
->>> drivers/gpu/host1x/dev.o: In function `host1x_remove':
->>> dev.c:(.text+0x624): undefined reference to `put_iova_domain'
->>> dev.c:(.text+0x624): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `put_iova_domain'
->>> dev.c:(.text+0x62c): undefined reference to `iova_cache_put'
->>> dev.c:(.text+0x62c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `iova_cache_put'
->>>
->>> Select IOMMU_IOVA while COMPILE_TEST is set to fix this.
->>>
->>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>> Fixes: 52499a6ad2ae ("gpu: host1x: select IOMMU_IOVA")
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>> ---
->>>  drivers/gpu/host1x/Kconfig | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
->>> index cf987a3..354232d 100644
->>> --- a/drivers/gpu/host1x/Kconfig
->>> +++ b/drivers/gpu/host1x/Kconfig
->>> @@ -2,7 +2,7 @@
->>>  config TEGRA_HOST1X
->>>  	tristate "NVIDIA Tegra host1x driver"
->>>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
->>> -	select IOMMU_IOVA if IOMMU_SUPPORT
->>> +	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
->>>  	help
->>>  	  Driver for the NVIDIA Tegra host1x hardware.
->>>  
->>>
->>
->> It should be better to unconditionally select IOMMU_IOVA here.
->>
->> The same could be done for drivers/staging/media/tegra-vde/ and
->> drivers/gpu/host1x/, please see [1].
+Hi Joerg,
+
+On Wed, Oct 30, 2019 at 08:31:48PM +0100, Joerg Roedel wrote:
+> On Wed, Oct 30, 2019 at 02:51:10PM +0000, Will Deacon wrote:
+> > By removing the redundant call to 'pci_request_acs()' we can allow the
+> > ARM SMMUv3 driver to be built as a module.
+> > 
+> > Signed-off-by: Will Deacon <will@kernel.org>
+> > ---
+> >  drivers/iommu/Kconfig       | 2 +-
+> >  drivers/iommu/arm-smmu-v3.c | 1 -
+> >  2 files changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> > index e3842eabcfdd..7583d47fc4d5 100644
+> > --- a/drivers/iommu/Kconfig
+> > +++ b/drivers/iommu/Kconfig
+> > @@ -388,7 +388,7 @@ config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
+> >  	  config.
+> >  
+> >  config ARM_SMMU_V3
+> > -	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+> > +	tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+> >  	depends on ARM64
+> >  	select IOMMU_API
+> >  	select IOMMU_IO_PGTABLE_LPAEa
 > 
-> Yep, I will repost, thanks!
+> Sorry for the stupid question, but what prevents the iommu module from
+> being unloaded when there are active users? There are no symbol
+> dependencies to endpoint device drivers, because the interface is only
+> exposed through the iommu-api, right? Is some sort of manual module
+> reference counting needed?
 
-Oh, I missed that you made a patch for host1x and not for drm. Thus
-drivers/gpu/drm/tegra/ also needs the same change.
+Generally, I think unloading the IOMMU driver module while there are
+active users is a pretty bad idea, much like unbinding the driver via
+/sys in the same situation would also be fairly daft. However, I *think*
+the code in __device_release_driver() tries to deal with this by
+iterating over the active consumers and ->remove()ing them first.
 
->>
->> [1] https://lore.kernel.org/linux-iommu/20190829154902.GC19842@ulmo/
+I'm without hardware access at the moment, so I haven't been able to
+test this myself. We could nobble the module_exit() hook, but there's
+still the "force unload" option depending on the .config.
+
+Will
