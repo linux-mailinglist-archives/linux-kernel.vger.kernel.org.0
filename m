@@ -2,100 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE19EAC4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:07:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B12EAC52
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfJaJHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:07:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37042 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfJaJHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:07:11 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84BC25945B
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:07:11 +0000 (UTC)
-Received: by mail-wr1-f71.google.com with SMTP id k10so2889409wrl.22
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:07:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uv8J8WDWlm5KkI7ZZB1632xd20pA70gOpFtg9sDlJvM=;
-        b=bFQoyIP+3H64fcp3Q8gGN1DilcNdHg/ELt7Qh0N7fZKZ8W9eat7Wly0DlzxGLcV/jn
-         OqLZ0BJR7vqtSsz6bcYuThfyQ6NapLyEJvkHluVC8rJRgFuRyonhWKyT5HC4T1IXFscZ
-         6tDLwqWeXZJWr9YSRcwQ4KUgLwONVGYtaDSnFhSMg9rF3z3hAcO/JPO0h1Xdk3uJsRhg
-         7SJgpQJ15SGc33RggVeaC2L4pmOvFnTsZBR8rsaJJejsT8dIfwBKu7e54L3sQAYZDgWe
-         jAAEQNNcJkDjOkEIASp+BqXIVATnN9s19wutrp4HHb28STvO2zQR5ZotrgSI4kKCHsfc
-         k83A==
-X-Gm-Message-State: APjAAAUY5yvuhxXuQwrfxltfsCZQrLOY0XWCFq9j42puGxkcaAGx9zdW
-        VH4FoN6pbpp3ZMyl6RHAeC22Pq3ofB+EkW20rL3gNb52ujZ2A9FNvnvSPz1rhb7m6c234g5p0Om
-        jixmmMrP6VjoPE5zQwDUCN4NH
-X-Received: by 2002:a1c:6308:: with SMTP id x8mr4076651wmb.140.1572512830195;
-        Thu, 31 Oct 2019 02:07:10 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwfjaVx5Id/rjqKFiRz8/nIcvC1Gfp7404XpLuXKxzmGRZ2YVyve+OhEy7UlUWjEBX07Dmh7Q==
-X-Received: by 2002:a1c:6308:: with SMTP id x8mr4076626wmb.140.1572512829951;
-        Thu, 31 Oct 2019 02:07:09 -0700 (PDT)
-Received: from steredhat ([91.217.168.176])
-        by smtp.gmail.com with ESMTPSA id x205sm3535236wmb.5.2019.10.31.02.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 02:07:09 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 10:07:07 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com,
-        stefanha@redhat.com, ytht.net@gmail.com, arnd@arndb.de,
-        tglx@linutronix.de, decui@microsoft.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
-Message-ID: <20191031090707.ec33h3z6zhux3hbq@steredhat>
-References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+        id S1727143AbfJaJIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:08:17 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56710 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726827AbfJaJIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 05:08:17 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CA2A9A5AD9A00E4AB6C7;
+        Thu, 31 Oct 2019 17:08:14 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 31 Oct 2019
+ 17:08:06 +0800
+Subject: Re: [PATCH v2 06/36] irqchip/gic-v3-its: Kill its->device_ids and use
+ TYPER copy instead
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <Andrew.Murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-7-maz@kernel.org>
+ <603e60d8-b2a5-74a4-6d32-8277aa0e39c1@huawei.com>
+ <86imo5xqoh.wl-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <7439499b-1626-51a5-2f67-e79e7fdbcdf9@huawei.com>
+Date:   Thu, 31 Oct 2019 17:08:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <86imo5xqoh.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 07:47:41AM +0100, Christophe JAILLET wrote:
-> Use '__skb_queue_purge()' instead of re-implementing it.
+On 2019/10/31 16:30, Marc Zyngier wrote:
+> Hi Zenghui,
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/vmw_vsock/af_vsock.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> On Thu, 31 Oct 2019 06:33:23 +0000,
+> Zenghui Yu <yuzenghui@huawei.com> wrote:
+>>
+>> Hi Marc,
+>>
+>> On 2019/10/27 22:42, Marc Zyngier wrote:
+>>> Now that we have a copy of TYPER in the ITS structure, rely on this
+>>> to provide the same service as its->device_ids, which gets axed.
+>>> Errata workarounds are now updating the cached fields instead of
+>>> requiring a separate field in the ITS structure.
+>>>
+>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>>
+>> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 > 
-> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-> index 2ab43b2bba31..2983dc92ca63 100644
-> --- a/net/vmw_vsock/af_vsock.c
-> +++ b/net/vmw_vsock/af_vsock.c
-> @@ -641,7 +641,6 @@ EXPORT_SYMBOL_GPL(__vsock_create);
->  static void __vsock_release(struct sock *sk, int level)
->  {
->  	if (sk) {
-> -		struct sk_buff *skb;
->  		struct sock *pending;
->  		struct vsock_sock *vsk;
->  
-> @@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
->  		sock_orphan(sk);
->  		sk->sk_shutdown = SHUTDOWN_MASK;
->  
-> -		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
-> -			kfree_skb(skb);
-> +		skb_queue_purge(&sk->sk_receive_queue);
->  
->  		/* Clean up any sockets that never were accepted. */
->  		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+> Thanks for that.
+> 
+>>
+>>> ---
+>>>    drivers/irqchip/irq-gic-v3-its.c   | 24 +++++++++++++-----------
+>>>    include/linux/irqchip/arm-gic-v3.h |  2 +-
+>>>    2 files changed, 14 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>>> index 3b046181ddfc..6c91c7feadf3 100644
+>>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>> @@ -109,7 +109,6 @@ struct its_node {
+>>>    	struct list_head	its_device_list;
+>>>    	u64			flags;
+>>>    	unsigned long		list_nr;
+>>> -	u32			device_ids;
+>>>    	int			numa_node;
+>>>    	unsigned int		msi_domain_flags;
+>>>    	u32			pre_its_base; /* for Socionext Synquacer */
+>>> @@ -117,6 +116,7 @@ struct its_node {
+>>>    };
+>>>      #define is_v4(its)		(!!((its)->typer &
+>>> GITS_TYPER_VLPIS))
+>>> +#define device_ids(its)		(FIELD_GET(GITS_TYPER_DEVBITS, (its)->typer) + 1)
+>>>      #define ITS_ITT_ALIGN		SZ_256
+>>>    @@ -1938,9 +1938,9 @@ static bool its_parse_indirect_baser(struct
+>>> its_node *its,
+>>>    	if (new_order >= MAX_ORDER) {
+>>>    		new_order = MAX_ORDER - 1;
+>>>    		ids = ilog2(PAGE_ORDER_TO_SIZE(new_order) / (int)esz);
+>>> -		pr_warn("ITS@%pa: %s Table too large, reduce ids %u->%u\n",
+>>> +		pr_warn("ITS@%pa: %s Table too large, reduce ids %llu->%u\n",
+>>>    			&its->phys_base, its_base_type_string[type],
+>>> -			its->device_ids, ids);
+>>> +			device_ids(its), ids);
+>>
+>> But this pr_warn() looks a bit odd. The table type is chosen from
+>> its_base_type_string[], but ids is always Devbits (+1)?
+> 
+> This is a bit of a shortcut, I agree. But the device table practically
+> is the only one where we can run out of space if the ITS doesn't
+> support two level tables. All the other tables are very small, being
+> limited by the number of CPUs (collections) or a small ID space
+> (vPEs).
 
-Good clean-up!
+Make sense. Thanks for the clarification.
 
-This patch LGTM:
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Thanks,
-Stefano
+Zenghui
+
+> 
+> So while this is a bit ugly, I don't thing it is not too concerning.
+> 
+> Thanks,
+> 
+> 	M.
+> 
+
