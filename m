@@ -2,80 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B40F5EB0AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC9DEB0C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:01:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfJaNAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 09:00:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:48184 "EHLO foss.arm.com"
+        id S1727107AbfJaNBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 09:01:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbfJaNA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 09:00:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2D1B1FB;
-        Thu, 31 Oct 2019 06:00:28 -0700 (PDT)
-Received: from blommer (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD8B03F71E;
-        Thu, 31 Oct 2019 06:00:24 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 13:00:22 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Torsten Duwe <duwe@suse.de>
-Cc:     linux-arm-kernel@lists.infradead.org, Jessica Yu <jeyu@kernel.org>,
-        Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org, amit.kachhap@arm.com,
-        catalin.marinas@arm.com, james.morse@arm.com, jpoimboe@redhat.com,
-        jthierry@redhat.com, linux-parisc@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
-        svens@stackframe.org, takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 2/8] module/ftrace: handle patchable-function-entry
-Message-ID: <20191031130022.GB3477@blommer>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
- <20191029165832.33606-3-mark.rutland@arm.com>
- <20191030150302.GA965@suse.de>
- <20191031090231.GA3340@blommer>
- <20191031114223.GA11684@suse.de>
+        id S1726462AbfJaNBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 09:01:34 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5301A2080F;
+        Thu, 31 Oct 2019 13:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572526892;
+        bh=ZqQmIL+VZ3QRd14dH7SG/ODYbXnGFyGCVOWZyG3KxSY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=hlInG3xtoBSQHfifz9LHNoOEdY9N8dlqgVblZ/QP0IlO7bwjXFGCVa9icKRitjoso
+         PzMKiJFjxRiaVg/P8AAm72mD7oaWA38vJ/M/hParD24E3dYe3FwmvgYptU/BJ5Vt+f
+         QlAjWdEH8WPyq0t5hmqDqYZckNeFzT5h1sU9yyEc=
+Date:   Thu, 31 Oct 2019 08:01:30 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        gustavo.pimentel@synopsys.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        martin.blumenstingl@googlemail.com,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com, Linux PM <linux-pm@vger.kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v4 3/3] pci: intel: Add sysfs attributes to configure
+ pcie link
+Message-ID: <20191031130130.GA37287@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031114223.GA11684@suse.de>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <5652130.irlrSN52DS@kreacher>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 12:42:23PM +0100, Torsten Duwe wrote:
-> On Thu, Oct 31, 2019 at 09:02:32AM +0000, Mark Rutland wrote:
-> > I agree that the CC_USING_PATCHABLE_FUNCTION_ENTRY ifdeffery could be
-> > simplified, and that it would be nice to consistently use
-> > FTRACE_CALLSITE_SECTION if we can. However, the generic linker script doesn't
-> > include anything, and I don't see a good location for that to live.
+On Thu, Oct 31, 2019 at 10:13:11AM +0100, Rafael J. Wysocki wrote:
+> On Thursday, October 31, 2019 3:56:37 AM CET Bjorn Helgaas wrote:
+> > On Thu, Oct 31, 2019 at 12:31:44AM +0100, Rafael J. Wysocki wrote:
+> > > On Wed, Oct 30, 2019 at 11:14 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+
+> > > > Rafael had some concerns about the proposed ASPM interface [2], but I
+> > > > don't know what they are yet.
+> > > 
+> > > I was talking about the existing ASPM interface in sysfs.  The new one
+> > > I still have to review, but I'm kind of wondering what about people
+> > > who used the old one?  Would it be supported going forward?
 > > 
-> > What I could do is add an explicit comment:
+> > The old one interface was enabled by CONFIG_PCIEASPM_DEBUG.  Red Hat
+> > doesn't enable that.  Ubuntu does.  I *thought* we heard from a
+> > Canonical person who said they didn't have any tools that used it, but
+> > I can't find that now.  I don't know about SUSE.
 > > 
-> > /*
-> >  * The ftrace call sites are logged to a section whose name depends on the
-> >  * compiler option used. A given kernel image will only use one, AKA
-> >  * FTRACE_CALLSITE_SECTION. We capture all of them here to avoid header
-> >  * dependencies.
-> >  */
-> > #define MCOUNT_REC()						\
-> > 			. = ALIGN(8);				\
-> > 			__start_mcount_loc = .;			\
-> > 			KEEP(*(__patchable_function_entries))   \
-> > 			KEEP(*(__mcount_loc))                   \
-> > 			__stop_mcount_loc = .;			
-> > 
-> > ... which should make the dependency clear. Does that sound good to you?
+> > So the idea was to drop it on the theory that nobody is using it.
+> > Possibly that's too aggressive.
 > 
-> Beautiful. I just didn't want to miss the opportunity to have this cleaned
-> up as well, and deemed this patch "closest" because of the definition of 
-> FTRACE_CALLSITE_SECTION. Put it where you see it fit best.
+> Well, one problem is that the "old" (actually existing) I/F has made it
+> to one of my OSS EU presentation slides (I did not talk to this particular
+> slide, but it is there in the deck that's available for downloading), so who
+> knows who is going to use it. :-)
+> 
+> So I guess that there's a risk that needs to be taken into consideration.
+> 
+> What could be done, in principle, would be to make the new I/F depend on
+> CONFIG_PCIEASPM_DEBUG being unset and provide the "old" one when it is set.
 
-Sure. I've folded the above into this patch, and pushed out an updated branch:
+I would prefer to enable the new interface unconditionally to make it
+easier for userspace tools like powertop to use it.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/ftrace-with-regs
+I think the existing and new interfaces could coexist, with the
+existing interface being enabled by CONFIG_PCIEASPM_DEBUG as it is
+today.  The patch that removes the existing interface is the last in
+the series and could easily be dropped.
 
-Thanks,
-Mark.
+> In any case, the pcie_aspm.policy module parameter cannot be dropped, because
+> AFAICS there is quite a bit of user space using it (e.g. TLP).
+
+What is TLP?  Since CONFIG_PCIEASPM is a bool, aspm.o is built in
+statically if enabled, so pcie_aspm.policy is effectively a boot-time
+kernel parameter, right?  We don't have a plan to remove it.
+
+Bjorn
