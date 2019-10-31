@@ -2,201 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8237EB0A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D548EB0B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:01:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfJaM5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 08:57:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:48146 "EHLO foss.arm.com"
+        id S1727033AbfJaNBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 09:01:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726735AbfJaM5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:57:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A16541FB;
-        Thu, 31 Oct 2019 05:57:24 -0700 (PDT)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.199.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 416C13F71E;
-        Thu, 31 Oct 2019 05:57:24 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 12:57:22 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org
-Subject: Re: [Patch v4 0/6] Introduce Thermal Pressure
-Message-ID: <20191031125536.GA9817@e108754-lin>
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <c6169634-ab1d-6bda-183f-bdd06048736a@linaro.org>
- <20191031100631.GC19197@e108754-lin>
- <2009bac3-405a-c60e-a1dd-191625ff3fc5@linaro.org>
+        id S1726506AbfJaNBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 09:01:08 -0400
+Received: from localhost (lns-bzn-32-82-254-4-138.adsl.proxad.net [82.254.4.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FF182080F;
+        Thu, 31 Oct 2019 13:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572526867;
+        bh=f8eRto+8exxLgWUVCKrmmM8ykoEw4tBZ+Sa1c7y0s1k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JPgWzUplTsqtsEfcET7zNSf9SFujmQQQiVz6ScjU8KqRhl7L8N21vc1eI4dpAwt8d
+         A4w6TuYAOUBZ6qC6lBBSRdgVUCMXuY57ED265QOpQriUW3BfrSq5F8CfqEG9YWMPmD
+         6aj56dA7bidFDsGO+7aha31rwXjoNoEwTJQX8qGY=
+Date:   Thu, 31 Oct 2019 13:51:00 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/7] dt-bindings: Add ANX6345 DP/eDP transmitter
+ binding
+Message-ID: <20191031125100.qprbdaaysg3tmhif@hendrix>
+References: <20191029153815.C631668C4E@verein.lst.de>
+ <20191029153953.8EE9B68D04@verein.lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4cs2y66oqe25ixg3"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2009bac3-405a-c60e-a1dd-191625ff3fc5@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191029153953.8EE9B68D04@verein.lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 31 Oct 2019 at 12:54:03 (+0100), Daniel Lezcano wrote:
-> Hi Ionela,
-> 
-> On 31/10/2019 11:07, Ionela Voinescu wrote:
-> > Hi Daniel,
-> > 
-> > On Tuesday 29 Oct 2019 at 16:34:11 (+0100), Daniel Lezcano wrote:
-> >> Hi Thara,
-> >>
-> >> On 22/10/2019 22:34, Thara Gopinath wrote:
-> >>> Thermal governors can respond to an overheat event of a cpu by
-> >>> capping the cpu's maximum possible frequency. This in turn
-> >>> means that the maximum available compute capacity of the
-> >>> cpu is restricted. But today in the kernel, task scheduler is 
-> >>> not notified of capping of maximum frequency of a cpu.
-> >>> In other words, scheduler is unware of maximum capacity
-> >>> restrictions placed on a cpu due to thermal activity.
-> >>> This patch series attempts to address this issue.
-> >>> The benefits identified are better task placement among available
-> >>> cpus in event of overheating which in turn leads to better
-> >>> performance numbers.
-> >>>
-> >>> The reduction in the maximum possible capacity of a cpu due to a 
-> >>> thermal event can be considered as thermal pressure. Instantaneous
-> >>> thermal pressure is hard to record and can sometime be erroneous
-> >>> as there can be mismatch between the actual capping of capacity
-> >>> and scheduler recording it. Thus solution is to have a weighted
-> >>> average per cpu value for thermal pressure over time.
-> >>> The weight reflects the amount of time the cpu has spent at a
-> >>> capped maximum frequency. Since thermal pressure is recorded as
-> >>> an average, it must be decayed periodically. Exisiting algorithm
-> >>> in the kernel scheduler pelt framework is re-used to calculate
-> >>> the weighted average. This patch series also defines a sysctl
-> >>> inerface to allow for a configurable decay period.
-> >>>
-> >>> Regarding testing, basic build, boot and sanity testing have been
-> >>> performed on db845c platform with debian file system.
-> >>> Further, dhrystone and hackbench tests have been
-> >>> run with the thermal pressure algorithm. During testing, due to
-> >>> constraints of step wise governor in dealing with big little systems,
-> >>> trip point 0 temperature was made assymetric between cpus in little
-> >>> cluster and big cluster; the idea being that
-> >>> big core will heat up and cpu cooling device will throttle the
-> >>> frequency of the big cores faster, there by limiting the maximum available
-> >>> capacity and the scheduler will spread out tasks to little cores as well.
-> >>>
-> >>> Test Results
-> >>>
-> >>> Hackbench: 1 group , 30000 loops, 10 runs       
-> >>>                                                Result         SD             
-> >>>                                                (Secs)     (% of mean)     
-> >>>  No Thermal Pressure                            14.03       2.69%           
-> >>>  Thermal Pressure PELT Algo. Decay : 32 ms      13.29       0.56%         
-> >>>  Thermal Pressure PELT Algo. Decay : 64 ms      12.57       1.56%           
-> >>>  Thermal Pressure PELT Algo. Decay : 128 ms     12.71       1.04%         
-> >>>  Thermal Pressure PELT Algo. Decay : 256 ms     12.29       1.42%           
-> >>>  Thermal Pressure PELT Algo. Decay : 512 ms     12.42       1.15%  
-> >>>
-> >>> Dhrystone Run Time  : 20 threads, 3000 MLOOPS
-> >>>                                                  Result      SD             
-> >>>                                                  (Secs)    (% of mean)     
-> >>>  No Thermal Pressure                              9.452      4.49%
-> >>>  Thermal Pressure PELT Algo. Decay : 32 ms        8.793      5.30%
-> >>>  Thermal Pressure PELT Algo. Decay : 64 ms        8.981      5.29%
-> >>>  Thermal Pressure PELT Algo. Decay : 128 ms       8.647      6.62%
-> >>>  Thermal Pressure PELT Algo. Decay : 256 ms       8.774      6.45%
-> >>>  Thermal Pressure PELT Algo. Decay : 512 ms       8.603      5.41%  
-> >>
-> >> I took the opportunity to try glmark2 on the db845c platform with the
-> >> default decay and got the following glmark2 scores:
-> >>
-> >> Without thermal pressure:
-> >>
-> >> # NumSamples = 9; Min = 790.00; Max = 805.00
-> >> # Mean = 794.888889; Variance = 19.209877; SD = 4.382907; Median 794.000000
-> >> # each ∎ represents a count of 1
-> >>   790.0000 -   791.5000 [     2]: ∎∎
-> >>   791.5000 -   793.0000 [     2]: ∎∎
-> >>   793.0000 -   794.5000 [     2]: ∎∎
-> >>   794.5000 -   796.0000 [     1]: ∎
-> >>   796.0000 -   797.5000 [     0]:
-> >>   797.5000 -   799.0000 [     1]: ∎
-> >>   799.0000 -   800.5000 [     0]:
-> >>   800.5000 -   802.0000 [     0]:
-> >>   802.0000 -   803.5000 [     0]:
-> >>   803.5000 -   805.0000 [     1]: ∎
-> >>
-> >>
-> >> With thermal pressure:
-> >>
-> >> # NumSamples = 9; Min = 933.00; Max = 960.00
-> >> # Mean = 940.777778; Variance = 64.172840; SD = 8.010795; Median 937.000000
-> >> # each ∎ represents a count of 1
-> >>   933.0000 -   935.7000 [     3]: ∎∎∎
-> >>   935.7000 -   938.4000 [     2]: ∎∎
-> >>   938.4000 -   941.1000 [     2]: ∎∎
-> >>   941.1000 -   943.8000 [     0]:
-> >>   943.8000 -   946.5000 [     0]:
-> >>   946.5000 -   949.2000 [     1]: ∎
-> >>   949.2000 -   951.9000 [     0]:
-> >>   951.9000 -   954.6000 [     0]:
-> >>   954.6000 -   957.3000 [     0]:
-> >>   957.3000 -   960.0000 [     1]: ∎
-> >>
-> > 
-> > Interesting! If I'm interpreting these correctly there seems to be
-> > significant improvement when applying thermal pressure.
-> >
-> > I'm not familiar with glmark2, can you tell me more about the process
-> > and the work that the benchmark does?
-> 
-> glmark2 is a 3D benchmark. I ran it without parameters, so all tests are
-> run. At the end, it gives a score which are the values given above.
-> 
-> > I assume this is a GPU benchmark,
-> > but not knowing more about it I fail to see the correlation between
-> > applying thermal pressure to CPU capacities and the improvement of GPU
-> > performance.
-> > Do you happen to know more about the behaviour that resulted in these
-> > benchmark scores?
-> 
-> My hypothesis is glmark2 makes the GPU to contribute a lot to the
-> heating effect, thus increasing the temperature to the CPU close to it.
+
+--4cs2y66oqe25ixg3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 29, 2019 at 01:16:57PM +0100, Torsten Duwe wrote:
+> The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
+> for portable devices.
 >
+> Add a binding document for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  .../bindings/display/bridge/anx6345.yaml           | 92 ++++++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.yaml b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+> new file mode 100644
+> index 000000000000..094e8e8a5faa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/anx6345.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analogix ANX6345 eDP Transmitter Device Tree Bindings
+> +
+> +maintainers:
+> +  - Torsten Duwe <duwe@lst.de>
+> +
+> +description: |
+> +  The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
+> +  portable devices.
+> +
+> +properties:
+> +  compatible:
+> +    const: analogix,anx6345
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: base I2C address of the device
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO connected to active low reset
+> +
+> +  dvdd12-supply:
+> +    maxItems: 1
+> +    description: Regulator for 1.2V digital core power.
+> +
+> +  dvdd25-supply:
+> +    maxItems: 1
+> +    description: Regulator for 2.5V digital core power.
+> +
+> +  ports:
+> +    anyOf:
+> +      - port@0:
+> +        description: Video port for LVTTL input
+> +      - port@1:
+> +        description: Video port for eDP output (panel or connector).
+> +                     May be omitted if EDID works reliably.
+> +    required:
+> +      - port@0
 
-Hhmm.. yes, I am assuming that there is some thermal mitigation (CPU
-frequency capping) done as a result of the heat inflicted by the work
-on the GPU, but these patches do not result in better thermal
-management as for the GPU to perform better. They only inform the
-scheduler in regards to reduced capacity of CPUs so it can decide to
-better use the compute capacity that it has available.
+Have you tried to validate those two ports in a DT?
 
-There could be a second hand effect of the more efficient use of the
-CPUs which would release thermal headroom for the GPU to use, but I
-would not expect the differences to be as high as in the results above.
+I'm not quite sure what you wanted to express with that anyOf, but if
+it was something like port@0 is mandatory, and port@1 is optional, it
+should be something like this:
 
-Another possibility is that work on the CPUs impacts the scores more
-than I would expect for such a benchmark but again I would not
-expect the work on the CPUs to be significant as to result in such
-differences in the scores.
+properties:
 
-If you have the chance to look more into exactly what is the behaviour,
-with and without thermal pressure - cooling states, average frequency,
-use of CPUs, use of GPU, etc, it would be very valuable.
+  ...
 
-Thank you,
-Ionela.
+  ports:
+    type: object
 
-> 
-> 
-> 
-> -- 
->  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-> 
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
-> 
+    properties:
+      port@0:
+        type: object
+        description: |
+	  Video port for LVTTL input
+
+      port@1:
+        type: object
+        description: |
+	  Video port for eDP output (..)
+
+    required:
+      - port@0
+
+This way, you express that both port@0 and port@1 must by nodes, under
+a node called ports, and port@0 is mandatory.
+
+You should even push this a bit further by adding
+additionalProperties: false to prevent a DT from having undocumented
+properties and children for the main node and ports node.
+
+Maxime
+
+--4cs2y66oqe25ixg3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbrYtAAKCRDj7w1vZxhR
+xV1dAQC5514CdqdwGVxKBgHABRr2w2ucyLWqPk68wp3r0weRTAEA1E4SCm2To1Xt
+ZnSJZF6aVIy6kDrJXQRDNT9vWD9JOwY=
+=TzGz
+-----END PGP SIGNATURE-----
+
+--4cs2y66oqe25ixg3--
