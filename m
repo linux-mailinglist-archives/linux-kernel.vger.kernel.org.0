@@ -2,87 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC04EEAAD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B57C3EAAD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:06:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbfJaHEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 03:04:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8892 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbfJaHEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 03:04:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 00:04:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
-   d="scan'208";a="375143544"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2019 00:04:26 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iQ4VN-000Hkq-Mb; Thu, 31 Oct 2019 15:04:25 +0800
-Date:   Thu, 31 Oct 2019 15:04:16 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Can Guo <cang@codeaurora.org>
-Cc:     kbuild-all@lists.01.org, asutoshd@codeaurora.org,
-        nguyenb@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] scsi: ufs: Fix up clock scaling
-Message-ID: <201910311454.ePfJ33Sl%lkp@intel.com>
-References: <1572351831-30373-2-git-send-email-cang@codeaurora.org>
+        id S1726832AbfJaHGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 03:06:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38324 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbfJaHGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 03:06:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7D5F6AE04;
+        Thu, 31 Oct 2019 07:06:10 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572351831-30373-2-git-send-email-cang@codeaurora.org>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 31 Oct 2019 08:06:10 +0100
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+Cc:     Daniel Wagner <dwagner@suse.de>, linux-nvme@lists.infradead.org,
+        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [RFC] nvmet: Always remove processed AER elements from list
+In-Reply-To: <BYAPR04MB5749158C2EBD47FC48A79FF286600@BYAPR04MB5749.namprd04.prod.outlook.com>
+References: <20191030152418.23753-1-dwagner@suse.de>
+ <BYAPR04MB5749158C2EBD47FC48A79FF286600@BYAPR04MB5749.namprd04.prod.outlook.com>
+Message-ID: <82e496f61183ebdf7924d660d3b8c90e@suse.de>
+X-Sender: jthumshirn@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Can,
+On 2019-10-30 20:58, Chaitanya Kulkarni wrote:
+> On 10/30/2019 08:24 AM, Daniel Wagner wrote:
+>> Hi,
+>> 
+>> I've got following oops:
+>> 
+>> PID: 79413  TASK: ffff92f03a814ec0  CPU: 19  COMMAND: "kworker/19:2"
+>> #0 [ffffa5308b8c3c58] machine_kexec at ffffffff8e05dd02
+>> #1 [ffffa5308b8c3ca8] __crash_kexec at ffffffff8e12102a
+>> #2 [ffffa5308b8c3d68] crash_kexec at ffffffff8e122019
+>> #3 [ffffa5308b8c3d80] oops_end at ffffffff8e02e091
+>> #4 [ffffa5308b8c3da0] general_protection at ffffffff8e8015c5
+>>      [exception RIP: nvmet_async_event_work+94]
+>>      RIP: ffffffffc0d9a80e  RSP: ffffa5308b8c3e58  RFLAGS: 00010202
+>>      RAX: dead000000000100  RBX: ffff92dcbc7464b0  RCX: 
+>> 0000000000000002
+>>      RDX: 0000000000040002  RSI: 38ffff92dc9814cf  RDI: 
+>> ffff92f217722f20
+>>      RBP: ffff92dcbc746418   R8: 0000000000000000   R9: 
+>> 0000000000000000
+>>      R10: 000000000000035b  R11: ffff92efb8dd2091  R12: 
+>> ffff92dcbc7464a0
+>>      R13: ffff92dbe03a5f29  R14: 0000000000000000  R15: 
+>> 0ffff92f92f26864
+>>      ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+>> #5 [ffffa5308b8c3e78] process_one_work at ffffffff8e0a3b0c
+>> #6 [ffffa5308b8c3eb8] worker_thread at ffffffff8e0a41e7
+>> #7 [ffffa5308b8c3f10] kthread at ffffffff8e0a93af
+>> #8 [ffffa5308b8c3f50] ret_from_fork at ffffffff8e800235
+>> 
+>> this maps to nvmet_async_event_results. So it looks like this function
+>> access a stale aen pointer:
+>> 
+>> static u32 nvmet_async_event_result(struct nvmet_async_event *aen)
+>> {
+>>          return aen->event_type | (aen->event_info << 8) | 
+>> (aen->log_page << 16);
+>> }
+> Can you please explain the test setup ? Is that coming from the tests
+> present in the blktests ? if so you can please provide test number ?
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on scsi/for-next]
-[also build test WARNING on v5.4-rc5 next-20191030]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Can-Guo/UFS-driver-general-fixes-bundle-2/20191031-081324
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+No unfortunately this is coming from a customer bug report. We _think_ 
+we're having a race between AEN processing and nvmet_sq_destroy(), but 
+we're not 100% sure. Hence this RFC.
 
 
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/scsi/ufs/ufshcd.c:977:5: sparse: sparse: symbol 'ufshcd_scale_clks' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
