@@ -2,81 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38112EAE40
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD066EAE45
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfJaLDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:03:11 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35124 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726897AbfJaLDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:03:10 -0400
-Received: from nazgul.tnic (unknown [91.217.168.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 856641EC0CD3;
-        Thu, 31 Oct 2019 12:03:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1572519785;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=z39G9UOa5V+G2XaGK01K79kOY635cMjOB2YxE8Kx4mQ=;
-        b=qNmMGXtVmSr3U2Q5XPPA1HDPHZfskzbUAw2Nb1PiMknM3AX86LxGI+avV6f2Q6h9TF8h+3
-        IihVuHX0vp4R2u/x6Acv+yOxmIC6BxqQUKnwrkbnZowwTHPq8cG1JmPqOm2b9hXq5Eggmf
-        l+DDBIWtqVJgU899u7Uvy3qUJNFI9VQ=
-Date:   Thu, 31 Oct 2019 12:03:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/ioremap: Use WARN_ONCE instead of printk() +
- WARN_ON_ONCE()
-Message-ID: <20191031110304.GE21133@nazgul.tnic>
-References: <1572425838-39158-1-git-send-email-zhongjiang@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1572425838-39158-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727531AbfJaLED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:04:03 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:41840 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727073AbfJaLEC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 07:04:02 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 26A3F2E1486;
+        Thu, 31 Oct 2019 14:03:59 +0300 (MSK)
+Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id GiObEs4vO4-3wiSUIiv;
+        Thu, 31 Oct 2019 14:03:59 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572519839; bh=D+6O7iUMBkZ3sqVRjui7jk+wGVzrqyDNlvlVRTMTN3s=;
+        h=Message-Id:Date:Subject:To:From:Cc;
+        b=gMHioc8MePvpAfs8uJE0MK0GT5EOkh1wfN+OjtOidy08Pn3dmiPcu61v0RCim1Cnf
+         lMGUV79++VKVn/tH80J1xU4xqxhklACtfx0c7nMO872QXWhk+Gwwg4Cn+KR1LP+jBU
+         kj0IE0N6RotOC9FN99E4D8YWxwDPq7W5DodpNosY=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from 95.108.174.193-red.dhcp.yndx.net (95.108.174.193-red.dhcp.yndx.net [95.108.174.193])
+        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id q8PWovi3A9-3wV8jBkp;
+        Thu, 31 Oct 2019 14:03:58 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Dmitry Monakhov <dmonakhov@openvz.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu, lixi@ddn.com,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: [PATCH] fs/ext4: get project quota from inode for mangling statfs results
+Date:   Thu, 31 Oct 2019 11:03:48 +0000
+Message-Id: <20191031110348.6991-1-dmonakhov@openvz.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 04:57:18PM +0800, zhong jiang wrote:
-> WARN_ONCE is more clear and simpler. Just replace it.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  arch/x86/mm/ioremap.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index a39dcdb..3b74599 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -172,9 +172,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
->  		return NULL;
->  
->  	if (!phys_addr_valid(phys_addr)) {
-> -		printk(KERN_WARNING "ioremap: invalid physical address %llx\n",
-> -		       (unsigned long long)phys_addr);
-> -		WARN_ON_ONCE(1);
-> +		WARN_ONCE(1, "ioremap: invalid physical address %llx\n",
-> +			  (unsigned long long)phys_addr);
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-Does
-	WARN_ONCE(!phys_addr_valid(phys_addr),
-		  "ioremap: invalid physical address %llx\n",
-		  (unsigned long long)phys_addr);
+Right now ext4_statfs_project() does quota lookup by id every time.
+This is costly operation, especially if there is no inode who hold
+reference to this dquot. This means that each statfs performs useless
+ext4_acquire_dquot()/ext4_release_dquot() which serialized on __jbd2_log_wait_for_space()
+dqget()
+ ->ext4_acquire_dquot
+   -> ext4_journal_start
+      -> __jbd2_log_wait_for_space
+dqput()
+  -> ext4_release_dquot
+     ->ext4_journal_start
+       ->__jbd2_log_wait_for_space
 
-work too?
 
+Function ext4_statfs_project() could be moved into generic quota code,
+it is required for every filesystem which uses generic project quota.
+
+Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ fs/ext4/super.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 2318e5f..4e8f97d68 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+ }
+ 
+ #ifdef CONFIG_QUOTA
+-static int ext4_statfs_project(struct super_block *sb,
+-			       kprojid_t projid, struct kstatfs *buf)
++static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
+ {
+-	struct kqid qid;
++	struct super_block *sb = inode->i_sb;
+ 	struct dquot *dquot;
+ 	u64 limit;
+ 	u64 curblock;
++	int err;
++
++	err = dquot_initialize(inode);
++	if (err)
++		return err;
++
++	spin_lock(&inode->i_lock);
++	dquot = ext4_get_dquots(inode)[PRJQUOTA];
++	if (!dquot)
++		goto out_unlock;
+ 
+-	qid = make_kqid_projid(projid);
+-	dquot = dqget(sb, qid);
+-	if (IS_ERR(dquot))
+-		return PTR_ERR(dquot);
+ 	spin_lock(&dquot->dq_dqb_lock);
+ 
+ 	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+@@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
+ 	}
+ 
+ 	spin_unlock(&dquot->dq_dqb_lock);
+-	dqput(dquot);
++out_unlock:
++	spin_unlock(&inode->i_lock);
++
+ 	return 0;
+ }
+ #endif
+@@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
+ #ifdef CONFIG_QUOTA
+ 	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
+ 	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
+-		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
++		ext4_statfs_project(dentry->d_inode, buf);
+ #endif
+ 	return 0;
+ }
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-ECO tip #101: Trim your mails when you reply.
---
