@@ -2,295 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F09EA9EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91280EA9F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfJaEcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 00:32:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37154 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfJaEcM (ORCPT
+        id S1726619AbfJaEmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 00:42:12 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39416 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfJaEmL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 00:32:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3iBRwf8xkomOfRCFd+e7UVewWIdDDeKJVSgRku6rWU8=; b=HJ0gijY/+8Fl8EhdBBvERthat
-        V5lsipmLBw9VHyRMkK0vK8QMiudxxzhb7IO+B7J3fPNucLhcbRh6T4bR5FD1HxTFw7msnnEyJcqtQ
-        Eff0RPLIBBEkylJryoPO9bEcbgL9TCupKtqDclpQU5absl7v6PWmsGYU0wmnUst+2aQUN7fyHyBGt
-        ZA3boRY27Ek4BOFhpkHok1ODLMoC8OkhKkWzHVyEORLZyKCuYWmaDivGSyPT2LK45eLvyP8dDa70V
-        JomxlXs7f2ElRV8vT738MKPRnyTEZoVVDmvVR+tSKPHh3sLhnMobT9GVMtn5CmBwfsf+l2wNcAEgq
-        1mSFHbChw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQ283-0002zV-0u; Thu, 31 Oct 2019 04:32:11 +0000
-Subject: Re: [PATCH] scripts: prune-kernel:remove old kernels and modules dir
- from system
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     bfields@fieldses.org, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191030095445.912435-1-unixbhaskar@gmail.com>
- <b8a12c03-1e17-61de-2cd9-a09650dc22b1@infradead.org>
- <20191031033722.GA7687@Gentoo>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <41693d0e-8ff2-bf06-f1a6-e7fb52779f95@infradead.org>
-Date:   Wed, 30 Oct 2019 21:32:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 31 Oct 2019 00:42:11 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g7KI053408;
+        Wed, 30 Oct 2019 23:42:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572496927;
+        bh=a8la0CU3oeh9uq93T41XgduJWZ4ZsuWOzQAJCUlqfK4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=O6wBhB8W1t+1O1h7hYVksPbxu1luT1WtP4XhgB/aX5xwKAnMvVtMNlh28DOVZMtFO
+         Ve8mZDPBrCGunzrTcDQGLxhpxtZxcfYRVt/HgfcKmgMETPqkCsAfAYaLeYxJxVlddm
+         ectpJtnbEfPzalyDMCJjfGjYhrowfNzoOZ8VwyzI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g73W030422;
+        Wed, 30 Oct 2019 23:42:07 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
+ Oct 2019 23:41:54 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 30 Oct 2019 23:41:54 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g3bK112544;
+        Wed, 30 Oct 2019 23:42:04 -0500
+Subject: Re: [PATCH v2 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper)
+ bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
+        Anil Varughese <aniljoy@cadence.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20191023125735.4713-1-kishon@ti.com>
+ <20191023125735.4713-14-kishon@ti.com> <20191029190816.GA27884@bogus>
+ <b3e8f037-3af3-2720-037c-73d6fc2a4c2b@ti.com>
+ <CAL_JsqL4dnx0o0cRQmiHU7qVcB5x5DO707JNpVrcmBs6VgsxuQ@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <76079264-9365-df61-4ffb-3535b91e3ce5@ti.com>
+Date:   Thu, 31 Oct 2019 10:11:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191031033722.GA7687@Gentoo>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAL_JsqL4dnx0o0cRQmiHU7qVcB5x5DO707JNpVrcmBs6VgsxuQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/19 8:37 PM, Bhaskar Chowdhury wrote:
-> Thank you Randy, my response are inline. Please look at it.I am
-> wondering , what else I could do get this damn! thing going??
-> Any clue??
-> 
-> On 19:33 Wed 30 Oct 2019, Randy Dunlap wrote:
+Hi Rob,
+
+On 31/10/19 12:56 AM, Rob Herring wrote:
+> On Wed, Oct 30, 2019 at 12:46 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>
 >> Hi,
 >>
->> On 10/30/19 2:54 AM, Bhaskar Chowdhury wrote:
->>> This patch will remove old kernels and modules directorey related
->>> to that kernel from the system by interactively and silently.Here
->>> are few interactions with the scripts
+>> On 30/10/19 12:38 AM, Rob Herring wrote:
+>>> On Wed, Oct 23, 2019 at 06:27:34PM +0530, Kishon Vijay Abraham I wrote:
+>>>> Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
+>>>> PHY but a wrapper used to configure some of the input signals to the
+>>>> SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
+>>>>
+>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> [jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
+>>>>  SERDES]
+>>>> Signed-off-by: Jyri Sarha <jsarha@ti.com>
+>>>> ---
+>>>>  .../bindings/phy/ti,phy-j721e-wiz.yaml        | 159 ++++++++++++++++++
+>>>>  1 file changed, 159 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..8a1eccee6c1d
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+>>>> @@ -0,0 +1,159 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0)
 >>>
->>> 1)
+>>> (GPL-2.0-only OR BSD-2-Clause) for new bindings please.
 >>>
->>> ✔ ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>> 14:52 $ ./scripts/prune-kernel -h
->>> Usage: prune-kernel [ri]
+>>>> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: "http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#"
+>>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>>> +
+>>>> +title: TI J721E WIZ (SERDES Wrapper)
+>>>> +
+>>>> +maintainers:
+>>>> +  - Kishon Vijay Abraham I <kishon@ti.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    oneOf:
+>>>> +      - items:
+>>>> +          - enum:
+>>>> +              - ti,j721e-wiz-16g
+>>>> +              - ti,j721e-wiz-10g
 >>>
->>>  -r | --remove kernel_ver modules_dir_name
+>>> You can drop oneOf and items.
 >>>
->>>   -i | --interactive use as interactive way
->>>   ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>>     14:52 $ ./scripts/prune-kernel --help
->>>   Usage: prune-kernel [ri]
+>>>> +
+>>>> +  power-domains:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 3
+>>>> +    description: clock-specifier to represent input to the WIZ
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: fck
+>>>> +      - const: core_ref_clk
+>>>> +      - const: ext_ref_clk
+>>>> +
+>>>> +  num-lanes:
+>>>> +    maxItems: 1
+>>>> +    minimum: 1
+>>>> +    maximum: 4
+>>>
+>>> You've mixed array and scalar schema keywords. Drop maxItems.
+>>>
+>>> Update dtschema and run 'make dt_binding_check'. We should catch that
+>>> now.
 >>
->> That "[ri]" is confusing to me.
-> This are the options one has to pass with the script.Like below:
-
-I know that.  But it's missing '-', so it looks like
-$ prune-kernel r 5.2.5-foobar
-
-would work.
-
+>> Sure.
 >>>
->>>    -r | --remove kernel_ver modules_dir_na]
+>>>> +
+>>>> +  "#address-cells":
+>>>> +    const: 2
+>>>> +
+>>>> +  "#size-cells":
+>>>> +    const: 2
+>>>> +
+>>>> +  "#reset-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  ranges: true
+>>>> +
+>>>> +  assigned-clocks:
+>>>> +    maxItems: 2
+>>>> +
+>>>> +  assigned-clock-parents:
+>>>> +    maxItems: 2
+>>>> +
+>>>> +patternProperties:
+>>>> +  "^pll[0|1]_refclk$":
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      WIZ node should have subnodes for each of the PLLs present in
+>>>> +      the SERDES.
+>>>> +
+>>>> +  "^cmn_refclk1?$":
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      WIZ node should have subnodes for each of the PMA common refclock
+>>>> +      provided by the SERDES.
+>>>> +
+>>>> +  "^refclk_dig$":
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      WIZ node should have subnode for refclk_dig to select the reference
+>>>> +      clock source for the reference clock used in the PHY and PMA digital
+>>>> +      logic.
+>>>> +
+>>>> +  "^serdes@[0-9a-f]+$":
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      WIZ node should have '1' subnode for the SERDES. It could be either
+>>>> +      Sierra SERDES or Torrent SERDES. Sierra SERDES should follow the
+>>>> +      bindings specified in
+>>>> +      Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+>>>> +      Torrent SERDES should follow the bindings specified in
+>>>> +      Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - power-domains
+>>>> +  - clocks
+>>>> +  - clock-names
+>>>> +  - num-lanes
+>>>> +  - "#address-cells"
+>>>> +  - "#size-cells"
+>>>> +  - "#reset-cells"
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>>> +
+>>>> +    wiz@5000000 {
+>>>> +           compatible = "ti,j721e-wiz-16g";
+>>>> +           #address-cells = <2>;
+>>>> +           #size-cells = <2>;
 >>>
->>>     -i | --interactive use as interactive way
->>>     2)
->>>
->>>  ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>>  14:52 $ ./scripts/prune-kernel -r 5.3.3
->>>  You need to provide kernel version and modules dir name
->>>  
->>>  ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>>  14:53 $ ./scripts/prune-kernel -r
->>>  You need to provide kernel version and modules dir name
->>>  
->>>  ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>>  14:54 $ ./scripts/prune-kernel -r 5.3.3 5.3.3-foo
+>>> Really need 64-bits of address space for the child nodes?
 >>
->> This one above didn't remove any kernel files.
->> Needs more testing.
-> It does remove but silently, as you and Bruce asked for this feature.
-
-No, see the code below for -r...
-
->>> 3)
+>> hmm, the register space for the child nodes are in the 32-bit address space
+>> region. I'll fix this.
 >>>
->>> $ ./scripts/prune-kernel --remove
->>> You need to provide kernel version and modules dir name
+>>>> +           power-domains = <&k3_pds 292 TI_SCI_PD_EXCLUSIVE>;
+>>>> +           clocks = <&k3_clks 292 5>, <&k3_clks 292 11>, <&dummy_cmn_refclk>;
+>>>> +           clock-names = "fck", "core_ref_clk", "ext_ref_clk";
+>>>> +           assigned-clocks = <&k3_clks 292 11>, <&k3_clks 292 0>;
+>>>> +           assigned-clock-parents = <&k3_clks 292 15>, <&k3_clks 292 4>;
+>>>> +           num-lanes = <2>;
+>>>> +           #reset-cells = <1>;
 >>>
->>> ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>> 14:55 $ ./scripts/prune-kernel --remove 5.3.3
->>> You need to provide kernel version and modules dir name
->>>
->>> ✘-1 ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>> 14:55 $ ./scripts/prune-kernel --remove 5.3.3 5.3.3-foo
->>>
->>>
->>> 4)14:55 $ ./scripts/prune-kernel -i
->>>
->>> Enter kernel version to remove or blank/empty to exit:
->>>
->>>
->>> 5)14:57 $ ./scripts/prune-kernel --interactive
->>>
->>> Enter kernel version to remove or blank/empty to exit:
->>> ✔ ~/git-linux/linux-kbuild [master|AM 1/1 ↑·59|✔]
->>>
->>>
->>> 6)14:59 $ ./scripts/prune-kernel --interactive
->>>
->>> Enter kernel version to remove or blank/empty to exit:5.3.3
->>> Please give the full modules directory name to remove:5.3.3-foo
->>>
->>>
->>>
->>> Removed kernel version:5.3.3 and associated modules:5.3.3-foo ...Done.
->>>
->>>
->>> 7)15:00 $ ./scripts/prune-kernel -i
->>>
->>> Enter kernel version to remove or blank/empty to exit:5.3.3
->>> Please give the full modules directory name to remove:5.3.3-foo
->>>
->>>
->>>
->>> Removed kernel version:5.3.3 and associated modules:5.3.3-foo ...Done.
->>>
->>>
->>> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
->>> ---
->>>  scripts/prune-kernel | 63 ++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 63 insertions(+)
->>>
->>> diff --git a/scripts/prune-kernel b/scripts/prune-kernel
->>> index a25aa2160d47..a91010d0e2af 100755
->>> --- a/scripts/prune-kernel
->>> +++ b/scripts/prune-kernel
->>> @@ -1,3 +1,66 @@
->>>  #!/bin/bash
->>>  # SPDX-License-Identifier: GPL-2.0
->>> +#This script will delete old kernels and modules directory related to it
->>> +#-h with the script will show you the help
->>> +#-r with the script take two parameter: kernel_ver and modules_dir_name
->>> +#-i with the script allow you do the removing interactive way
->>>
->>> +flag=$1
->>> +kernel_ver=$2
->>> +modules_dir_name=$3
->>> +boot_dir=/boot
->>> +modules_dir=/lib/modules
->>> +
->>> +remove_old_kernel() {
->>> +    cd $boot_dir
->>> +    rm -If vmlinuz-$kernel_version System.map-$kernel_version config-$kernel_version
->>> +    return 0
->>> +}
->>> +
->>> +remove_old_modules_dir() {
->>> +    cd $modules_dir
->>> +    rm -rf $modules_version
->>> +    return 0
->>> +}
->>> +
->>> +usage() {
->>> +    printf "Usage: $(basename $0) [ri] \n"
->>> +    printf "\n -r | --remove kernel_ver modules_dir_name \n"
->>> +    printf "\n -i | --interactive use as interactive way \n"
->>> +}
->>> +
->>> +for arg in "$@"
+>>> Unless you have additional registers, I'm not a fan of wrapper nodes.
 >>
->> what is the purpose (use) of "arg" here?
+>> The wrapper node has TI specific registers while the child node has Cadence
+>> Sierra specific registers. It also has clock nodes which are input to the
+>> Sierra IP.
 > 
-> This variable is used in case statement below.
+> Yeah? Where's 'reg'?
 
-I can't find any use of 'arg' anywhere else in the script.
-Please show me where it is.
-
->> what is the purpose of the for loop?
->>
-> It scan through all the parameters pass .
-
-What is this script supposed (expected) to do with multiple arg parameters?
-
->> Is any 'shift' needed to consume (or discard) the first 3 positional
->> command line arguments?
-> Nope, that is not required. And I haven't use any.
->>
->>> +do
->>> +    case "$flag" in
->>> +        -i | --interactive)
->>> +            printf "\nEnter kernel version to remove or blank/empty to exit:%s"
->>> +            read kernel_version
->>> +            if [[ $kernel_version != "" ]]; then
->>> +                remove_old_kernel
->>> +                printf "Please give the full modules directory name to remove:%s"
->>> +                read modules_version
->>> +                if [[ $modules_version != "" ]]; then
->>> +                    remove_old_modules_dir
->>> +                    printf "\n\n\n Removed kernel version:$kernel_version and associated modules:$modules_version ...Done. \n"
->>
->> This message is only printed if $modules_version is non-empty.  If it is empty,
->> remove_old_kernel() has silently removed some kernel files (if they existed).
-> it will fail to remove anything if the kernel_version or modules_version
-> are empty and importantly exit.
->>
->>> +                else
->>> +                    exit 1
->>> +                fi
->>> +            fi
->>> +            ;;
->>> +        -h | --help)
->>> +            usage
->>> +            exit 1
->>> +            ;;
->>> +        -r | --remove)
->>> +            if [[ $# -ne 3 ]]; then
->>> +                printf "You need to provide kernel version and modules dir name\n"
->>> +                exit 1
->>> +            else
->>> +                cd $boot_dir
->>> +                rm -f $kernel_ver
->>
->> That 'rm' doesn't remove any files.  Compare what remove_old_kernel() does.
-> No,it is not using that function rather take the parameter from the
-> commandline and get into boot dir match with it and remove it.
-
-But it doesn't do that.  I tested it.  It should be more like what
-rmeove_old_kernel() does:
-
-		rm -If vmlinuz-$kernel_ver System.map-$kernel_ver config-$kernel_ver
-
-and if not, please explain why not.
-
-
->>> +                cd $modules_dir
->>> +                rm -rf $modules_dir_name
->>> +            fi
->>> +            ;;
->>> +    esac
->>> +done
->>> -- 
->>
->> The script, after this patch is applied, still contains the old script's for-loop
->> at the end of the "new" prune-kernel script.
+The TI specific PHY registers use some of the reserved space within the Cadence
+region. So the WIZ wrapper driver will get the address from the "serdes" child
+node.
 > 
-> Amazing! now it needs some explanation how I did...you probably want
-> that ..here are the steps....
-> 1)fetch that prune-kernel file from repos , which contains Bruce's code
-> in it.
-> 2) get inot it by editior, remove all except first two lines i.e bash
-> interpreter and PSDX .
-> 3)Save and commit it locally.
-> 4) Write my own code
-> 5) save it and commit it locally.
-> 6) go one level up use checkpatch to see anything bad creeps in
-> 7) Fixed the damn things if it reports.
-> 8) create the patch
-> 9) test it
-> 10) Send it.
+>>>
+>>>> +
+>>>> +           pll0_refclk {
+>>>> +                  clocks = <&k3_clks 293 13>, <&dummy_cmn_refclk>;
+>>>> +                  clock-output-names = "wiz1_pll0_refclk";
+>>>> +                  #clock-cells = <0>;
+>>>> +                  assigned-clocks = <&wiz1_pll0_refclk>;
+>>>> +                  assigned-clock-parents = <&k3_clks 293 13>;
+>>>> +           };
+>>>> +
+>>>> +           pll1_refclk {
+>>>> +                  clocks = <&k3_clks 293 0>, <&dummy_cmn_refclk1>;
+>>>> +                  clock-output-names = "wiz1_pll1_refclk";
+>>>> +                  #clock-cells = <0>;
+>>>> +                  assigned-clocks = <&wiz1_pll1_refclk>;
+>>>> +                  assigned-clock-parents = <&k3_clks 293 0>;
+>>>> +           };
+>>>> +
+>>>> +           cmn_refclk {
+>>>> +                  clocks = <&wiz1_refclk_dig>;
+>>>> +                  clock-output-names = "wiz1_cmn_refclk";
+>>>> +                  #clock-cells = <0>;
+>>>> +           };
+>>>> +
+>>>> +           cmn_refclk1 {
+>>>> +                  clocks = <&wiz1_pll1_refclk>;
+>>>> +                  clock-output-names = "wiz1_cmn_refclk1";
+>>>> +                  #clock-cells = <0>;
+>>>> +           };
+>>>> +
+>>>> +           refclk_dig {
+>>>> +                  clocks = <&k3_clks 292 11>, <&k3_clks 292 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
+>>>> +                  clock-output-names = "wiz0_refclk_dig";
+>>>> +                  #clock-cells = <0>;
+>>>> +                  assigned-clocks = <&wiz0_refclk_dig>;
+>>>> +                  assigned-clock-parents = <&k3_clks 292 11>;
+>>>> +           };
+>>>
+>>> How are all these clocks programmed?
+>>
+>> All these are programmed in the WIZ driver which is implemented in 14/14 of
+>> this series.
 > 
-> Now, how the heck , that for loop is getting staying there is a mystry
-> to me!! Look like that is ruin all the work.
-> irk...
+> Not what I meant... How does one access the h/w because there's
+> nothing defined here to do so.
 
-I don't know.  I just know that it's not working AFAICT.
+As mentioned above the WIZ wrapper driver gets the address from "serdes" child
+node and use it for programming all these clocks.
 
--- 
-~Randy
-
+Thanks
+Kishon
