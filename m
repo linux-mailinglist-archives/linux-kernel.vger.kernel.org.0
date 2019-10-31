@@ -2,72 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD041EAED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3CCEAECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfJaLXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:23:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5660 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726455AbfJaLXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:23:00 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E8E6A65D554794AF3443;
-        Thu, 31 Oct 2019 19:22:56 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 31 Oct 2019 19:22:48 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 2/9] net: hns3: add struct netdev_queue debug info for TX timeout
-Date:   Thu, 31 Oct 2019 19:23:17 +0800
-Message-ID: <1572521004-36126-3-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572521004-36126-1-git-send-email-tanhuazhong@huawei.com>
-References: <1572521004-36126-1-git-send-email-tanhuazhong@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+        id S1726954AbfJaLX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726709AbfJaLXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 07:23:24 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C0D32083E;
+        Thu, 31 Oct 2019 11:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572521003;
+        bh=kZbrgBnyMA8h0x5/kgHd+8yWSc9Lj4f8QhgW8XZFIfI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SZ7Jf8FWwJbE2qBGs+l4rv4L1DUngP8mFgYn8YuBl29kN9NXPefisT3ZiCVcYXUMV
+         4TxW9q8Gga7NnaicGFeGFcxwuztcK+i8IynFbb0hdoghCgP12FTSzIRb7HwRxd4jhb
+         WSHYQZWqu7KiDMKhlaJP3gszuNGyTPw5nYmG1cmE=
+Date:   Thu, 31 Oct 2019 20:23:17 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Emilio =?UTF-8?B?TMOzcGV6?= <emilio.lopez@collabora.co.uk>
+Subject: Re: [BUGFIX PATCH v3 0/5] selftests: Fixes for 32bit arch
+Message-Id: <20191031202317.d264b984c4749af7abd43a84@kernel.org>
+In-Reply-To: <157180665007.17298.907392422924029261.stgit@devnote2>
+References: <157180665007.17298.907392422924029261.stgit@devnote2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+Hi,
 
-When there is a TX timeout, we can tell if the driver or stack
-has stopped the queue by looking at state field, and when has
-the last packet transmited by looking at trans_start field.
+Would anyone is OK for this fix?
 
-So this patch prints these two field in the
-hns3_get_tx_timeo_queue_info().
+I also found a typo on arm64 build... will send soon.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks,
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 0fdd684..23bdfe8 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1792,6 +1792,9 @@ static bool hns3_get_tx_timeo_queue_info(struct net_device *ndev)
- 		    time_after(jiffies,
- 			       (trans_start + ndev->watchdog_timeo))) {
- 			timeout_queue = i;
-+			netdev_info(ndev, "queue state: 0x%lx, delta msecs: %u\n",
-+				    q->state,
-+				    jiffies_to_msecs(jiffies - trans_start));
- 			break;
- 		}
- 	}
+On Wed, 23 Oct 2019 13:57:30 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Hi,
+> 
+> Here are the 3rd version of kselftest fixes some on 32bit arch
+> (e.g. arm)
+> 
+> In this version, I updated [1/5] to make va_max 1MB unconditionally
+> according to Alexey's comment.
+> 
+> When I built the ksefltest on arm, I hit some 32bit related warnings.
+> Here are the patches to fix those issues.
+> 
+> 
+>  - [1/5] va_max was set 2^32 even on 32bit arch. This can make
+>         va_max == 0 and always fail. Make it 1GB unconditionally.
+>  - [2/5] Some VM tests requires 64bit user space, which should
+>         not run on 32bit arch.
+>  - [3/5] For counting the size of large file, we should use
+>         size_t instead of unsinged long.
+>  - [4/5] Gcc warns printf format for size_t and int64_t on
+>         32bit arch. Use %llu and cast it.
+>  - [5/5] Gcc warns __u64 and pointer type castings. It should
+>         once translated to unsigned long.
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (5):
+>       selftests: proc: Make va_max 1MB
+>       selftests: vm: Build/Run 64bit tests only on 64bit arch
+>       selftests: net: Use size_t and ssize_t for counting file size
+>       selftests: net: Fix printf format warnings on arm
+>       selftests: sync: Fix cast warnings on arm
+> 
+> 
+>  tools/testing/selftests/net/so_txtime.c            |    4 ++--
+>  tools/testing/selftests/net/tcp_mmap.c             |    8 ++++----
+>  tools/testing/selftests/net/udpgso.c               |    3 ++-
+>  tools/testing/selftests/net/udpgso_bench_tx.c      |    3 ++-
+>  .../selftests/proc/proc-self-map-files-002.c       |    6 +++++-
+>  tools/testing/selftests/sync/sync.c                |    6 +++---
+>  tools/testing/selftests/vm/Makefile                |    5 +++++
+>  tools/testing/selftests/vm/run_vmtests             |   10 ++++++++++
+>  8 files changed, 33 insertions(+), 12 deletions(-)
+> 
+> --
+> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
