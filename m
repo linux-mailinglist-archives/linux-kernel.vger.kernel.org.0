@@ -2,120 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A905CEA8C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E72BBEA8C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:27:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfJaBWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 21:22:02 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54472 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbfJaBWC (ORCPT
+        id S1726555AbfJaB1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 21:27:21 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55086 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725927AbfJaB1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:22:02 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9V1DmsM022161
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 18:22:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=CV4Ax6uE22QPaR0xNwsjh/6y9+9ZiGdXaF/PQy3OPVA=;
- b=IXQH4Gd1sSvX7kK49VJTnR3X0k1v5c6CsxBTdgqd9U2rCYByoPk6KLjusb1stbEKZIdb
- 1AVy+CuFKv0WOhrK8Ui41LnF/JN5Oi1y231UCRZHIcEh5t9RY21G7jQPj9xQxTgavi1Y
- JuKcZlsnRXMLB23K+dHuY+5z3o10lHo3rSM= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2vybrebb1t-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 18:22:01 -0700
-Received: from 2401:db00:30:600c:face:0:1f:0 (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Wed, 30 Oct 2019 18:21:52 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 6178E1960A610; Wed, 30 Oct 2019 18:21:52 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize non-compound slab pages properly
-Date:   Wed, 30 Oct 2019 18:21:51 -0700
-Message-ID: <20191031012151.2722280-1-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Wed, 30 Oct 2019 21:27:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572485238;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DrEKWKcGTyztKzabI5ITf2bBcmFzk5xS87SUwCJb26g=;
+        b=cfdRVMwz/Kq4hhSzIwQcNjLQz6LeZ6r/eauMXDGIVe+z74lWzSJnd02JYTnE0b8ekVV9Qh
+        9xJk74o4nEpaWqVmaJV0MUxCr12+euT958fjUIdavQNGDxHvTdMfPaLUvP0Jyd50di2y7Y
+        g9kJq69OxxIx7V0UBJHytYX9iVFl4h0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-QWfdGM8fOS-0jt5Bu5JrkQ-1; Wed, 30 Oct 2019 21:27:15 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B17E92B4;
+        Thu, 31 Oct 2019 01:27:13 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5C2EE60BE0;
+        Thu, 31 Oct 2019 01:27:00 +0000 (UTC)
+Subject: Re: [PATCH 0/2 v8] x86/kdump: Fix 'kmem -s' reported an invalid
+ freepointer when SME was active
+From:   lijiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
+        horms@verge.net.au, kexec@lists.infradead.org
+References: <20191030035501.23713-1-lijiang@redhat.com>
+Message-ID: <8396c1d7-8ffc-65d1-fbff-558efcf44538@redhat.com>
+Date:   Thu, 31 Oct 2019 09:26:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-30_10:2019-10-30,2019-10-30 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 mlxscore=0 impostorscore=0 malwarescore=0 adultscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910310009
-X-FB-Internal: deliver
+In-Reply-To: <20191030035501.23713-1-lijiang@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: QWfdGM8fOS-0jt5Bu5JrkQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page_cgroup_ino() doesn't return a valid memcg pointer for non-compound
-slab pages, because it depends on PgHead AND PgSlab flags to be set
-to determine the memory cgroup from the kmem_cache.
-It's correct for compound pages, but not for generic small pages. Those
-don't have PgHead set, so it ends up returning zero.
+Hi,=20
 
-Fix this by replacing the condition to PageSlab() && !PageTail().
+Please ignore this patch series because the compile warnings are reported b=
+y kduild.
 
-Before this patch:
-[root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-0x0000000000000080	        38        0  _______S___________________________________	slab
+I will resend v8 later after the warnings are fixed.
 
-After this patch:
-[root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-0x0000000000000080	       147        0  _______S___________________________________	slab
+Sorry for this.
 
-Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
----
- mm/memcontrol.c | 2 +-
- mm/slab.h       | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Thanks.
+Lianbo
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index ea085877c548..00b4188b1bed 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -476,7 +476,7 @@ ino_t page_cgroup_ino(struct page *page)
- 	unsigned long ino = 0;
- 
- 	rcu_read_lock();
--	if (PageHead(page) && PageSlab(page))
-+	if (PageSlab(page) && !PageTail(page))
- 		memcg = memcg_from_slab_page(page);
- 	else
- 		memcg = READ_ONCE(page->mem_cgroup);
-diff --git a/mm/slab.h b/mm/slab.h
-index 3eb29ae75743..8b77f973a6ab 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -323,8 +323,8 @@ static inline struct kmem_cache *memcg_root_cache(struct kmem_cache *s)
-  * Expects a pointer to a slab page. Please note, that PageSlab() check
-  * isn't sufficient, as it returns true also for tail compound slab pages,
-  * which do not have slab_cache pointer set.
-- * So this function assumes that the page can pass PageHead() and PageSlab()
-- * checks.
-+ * So this function assumes that the page can pass PageSlab() && !PageTail()
-+ * check.
-  *
-  * The kmem_cache can be reparented asynchronously. The caller must ensure
-  * the memcg lifetime, e.g. by taking rcu_read_lock() or cgroup_mutex.
--- 
-2.17.1
+=E5=9C=A8 2019=E5=B9=B410=E6=9C=8830=E6=97=A5 11:54, Lianbo Jiang =E5=86=99=
+=E9=81=93:
+> In purgatory(), the main things are as below:
+>=20
+> [1] verify sha256 hashes for various segments.
+>     Lets keep these codes, and do not touch the logic.
+>=20
+> [2] copy the first 640k content to a backup region.
+>     Lets safely remove it and clean all code related to backup region.
+>=20
+> This patch series will remove the backup region, because the current
+> handling of copying the first 640k runs into problems when SME is
+> active(https://bugzilla.kernel.org/show_bug.cgi?id=3D204793).
+>=20
+> The low 1M region will always be reserved when the crashkernel kernel
+> command line option is specified. And this way makes it unnecessary to
+> do anything with the low 1M region, because the memory allocated later
+> won't fall into the low 1M area.
+>=20
+> This series includes two patches:
+> [1] x86/kdump: always reserve the low 1M when the crashkernel option
+>     is specified
+>     The low 1M region will always be reserved when the crashkernel
+>     kernel command line option is specified, which ensures that the
+>     memory allocated later won't fall into the low 1M area.
+>=20
+> [2] x86/kdump: clean up all the code related to the backup region
+>     Remove the backup region and clean up.
+>=20
+> Changes since v1:
+> [1] Add extra checking condition: when the crashkernel option is
+>     specified, reserve the low 640k area.
+>=20
+> Changes since v2:
+> [1] Reserve the low 1M region when the crashkernel option is only
+>     specified.(Suggested by Eric)
+>=20
+> [2] Remove the unused crash_copy_backup_region()
+>=20
+> [3] Remove the backup region and clean up
+>=20
+> [4] Split them into three patches
+>=20
+> Changes since v3:
+> [1] Improve the first patch's log
+>=20
+> [2] Improve the third patch based on Eric's suggestions
+>=20
+> Changes since v4:
+> [1] Correct some typos, and also improve the first patch's log
+>=20
+> [2] Add a new function kexec_reserve_low_1MiB() in kernel/kexec_core.c
+>     and which is called by reserve_real_mode(). (Suggested by Boris)
+>=20
+> Changes since v5:
+> [1] Call the cmdline_find_option() instead of strstr() to check the
+>     crashkernel option. (Suggested by Hatayama)
+>=20
+> [2] Add a weak function kexec_reserve_low_1MiB() in kernel/kexec_core.c,
+>     and implement the kexec_reserve_low_1MiB() in arch/x86/kernel/
+>     machine_kexec_64.c so that it does not cause the compile error
+>     on non-x86 kernel, and also ensures that it can work well on x86
+>     kernel.
+>=20
+> Changes since v6:
+> [1] Move the kexec_reserve_low_1MiB() to arch/x86/kernel/crash.c and
+>     also move its declaration function to arch/x86/include/asm/crash.h
+>     (Suggested by Dave Young)
+>=20
+> [2] Adjust the corresponding header files.
+>=20
+> Changes since v7:
+> [1] Change the function name from kexec_reserve_low_1MiB() to
+>     crash_reserve_low_1M().
+>=20
+> Lianbo Jiang (2):
+>   x86/kdump: always reserve the low 1M when the crashkernel option is
+>     specified
+>   x86/kdump: clean up all the code related to the backup region
+>=20
+>  arch/x86/include/asm/crash.h       |   6 ++
+>  arch/x86/include/asm/kexec.h       |  10 ---
+>  arch/x86/include/asm/purgatory.h   |  10 ---
+>  arch/x86/kernel/crash.c            | 102 ++++++++---------------------
+>  arch/x86/kernel/machine_kexec_64.c |  47 -------------
+>  arch/x86/purgatory/purgatory.c     |  19 ------
+>  arch/x86/realmode/init.c           |   2 +
+>  7 files changed, 34 insertions(+), 162 deletions(-)
+>=20
 
