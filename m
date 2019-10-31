@@ -2,149 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F16EB221
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:07:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23997EB240
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfJaOHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:07:06 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35734 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbfJaOHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:07:06 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9VE721j018372;
-        Thu, 31 Oct 2019 09:07:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572530822;
-        bh=gXlDD/veFRApipmYmd4pB/kMLt9HDcd6FQb3Up3HhD8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Lqpd/6vevC3PHl2R41apuC5tes6oO9pb6lTXLMH/IQI8Rmxhi17UYVsXTEzv8JZuh
-         OuTph8htEQ0X1glpsRb8c5l2aYwl5xwqE8xt6r7B4klGqnQb3qFo+nzsL5S9LAVOq6
-         dMsCtCkRotsrhtWfDyOyHyzhzTi59HI1ablT/o24=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9VE71ZG034519
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Oct 2019 09:07:02 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 31
- Oct 2019 09:06:49 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 31 Oct 2019 09:06:49 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9VE6x5I089523;
-        Thu, 31 Oct 2019 09:07:00 -0500
-Subject: Re: [Patch 1/3] ARM: dts: am43xx: add support for clkout1 clock
-To:     Benoit Parrot <bparrot@ti.com>, Tony Lindgren <tony@atomide.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191016184954.14048-1-bparrot@ti.com>
- <20191016184954.14048-2-bparrot@ti.com> <20191022154816.GO5610@atomide.com>
- <20191022162134.fpawonjdjvd5kxza@ti.com>
- <586dcabb-0400-50d6-5488-16bddc059286@ti.com>
- <20191022165516.GE5610@atomide.com> <20191023155657.GL5610@atomide.com>
- <20191030195946.ouexmis632nb7lqj@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <39b79438-ad82-0840-b2a5-36856d0ac520@ti.com>
-Date:   Thu, 31 Oct 2019 16:06:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727653AbfJaONp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:13:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5672 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726540AbfJaONo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 10:13:44 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AA2AC92789834D879914;
+        Thu, 31 Oct 2019 22:13:40 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 31 Oct 2019 22:13:31 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
+CC:     <perex@perex.cz>, <tiwai@suse.com>, <mripard@kernel.org>,
+        <zhongjiang@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: sun4i: Use PTR_ERR_OR_ZERO to simplify the code
+Date:   Thu, 31 Oct 2019 22:09:39 +0800
+Message-ID: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20191030195946.ouexmis632nb7lqj@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2019 21:59, Benoit Parrot wrote:
-> Tony Lindgren <tony@atomide.com> wrote on Wed [2019-Oct-23 08:56:57 -0700]:
->> * Tony Lindgren <tony@atomide.com> [191022 16:56]:
->>> * Tero Kristo <t-kristo@ti.com> [191022 16:48]:
->>>> On 22/10/2019 19:21, Benoit Parrot wrote:
->>>>> Tony Lindgren <tony@atomide.com> wrote on Tue [2019-Oct-22 08:48:16 -0700]:
->>>>>> * Benoit Parrot <bparrot@ti.com> [191016 18:47]:
->>>>>>> --- a/arch/arm/boot/dts/am43xx-clocks.dtsi
->>>>>>> +++ b/arch/arm/boot/dts/am43xx-clocks.dtsi
->>>>>>> @@ -704,6 +704,60 @@
->>>>>>>    		ti,bit-shift = <8>;
->>>>>>>    		reg = <0x2a48>;
->>>>>>>    	};
->>>>>>> +
->>>>>>> +	clkout1_osc_div_ck: clkout1_osc_div_ck {
->>>>>>> +		#clock-cells = <0>;
->>>>>>> +		compatible = "ti,divider-clock";
->>>>>>> +		clocks = <&sys_clkin_ck>;
->>>>>>> +		ti,bit-shift = <20>;
->>>>>>> +		ti,max-div = <4>;
->>>>>>> +		reg = <0x4100>;
->>>>>>> +	};
->>>>>>
->>>>>> Here too please describe why the clock names are not generic.
->>>>>
->>>>> Tero originally had this patch in the kernel so this is somewhat of a
->>>>> revert. Since these "clock" were removed. If the name syntax is no longer
->>>>> valid for some reason, then I will need a little more informations to
->>>>> proceed.
->>>>>
->>>>> Tero, can you assist here?
->>>>
->>>> This one is just following the naming convention of the rest of the clocks
->>>> atm.
->>>>
->>>> If we need to fix all the underscore name clocks, that requires pretty much
->>>> complete revamp of both the dts data + clock data under the clock driver,
->>>> and it is not backwards compatible either. How should we tackle that one?
->>>>
->>>> We could maybe add support code in kernel to do s/-/_/g for the "new" clocks
->>>> so that their parent-child relationships would be retained, and then convert
->>>> the clocks in phases.
->>>
->>> Well some of them can be fixed by configuring things based
->>> on the compatible value and then the node name can be just
->>> clock like it should be.
->>>
->>> Here too one option would be to add custom compatibles like:
->>>
->>> compatible = "ti,clkout1-osc-div", "ti,divider-clock";
->>>
->>> And then have match data configure the rest.
->>>
->>> The other option would be to have lookup tables in the clock
->>> driver based on the SoC and reg address.
->>>
->>> This is a hidden mine though.. We've hit it already several times,
->>> and any dts clean-up effort has a chance of breaking things.
->>
->> Hmm maybe in this case just doing this is enough:
->>
->> clkout1_osc_div_ck: clock@4100 {
->> 	...
->> }
-> 
-> But then we would end up with 6 clock node with the same name "clock@4100",
-> doesn't pose a problem somewhere?
+It is better to use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
 
-Yeah, clk core would not know which one to use then.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ sound/soc/sunxi/sun4i-i2s.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> 
-> Tero?
-> 
-> Benoit
-> 
->>
->> Or do all the TI clocks we have have a dependency to the
->> node naming?
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index d0a8d58..72012a6 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -1174,10 +1174,8 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+ 	i2s->field_fmt_sr =
+ 			devm_regmap_field_alloc(dev, i2s->regmap,
+ 						i2s->variant->field_fmt_sr);
+-	if (IS_ERR(i2s->field_fmt_sr))
+-		return PTR_ERR(i2s->field_fmt_sr);
+ 
+-	return 0;
++	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
+ }
+ 
+ static int sun4i_i2s_probe(struct platform_device *pdev)
+-- 
+1.7.12.4
 
-This is a feature of clock core. Clock parents need to have distinct 
-names, otherwise it won't work.
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
