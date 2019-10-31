@@ -2,207 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A4AEB035
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F49EB055
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:31:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfJaM17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 08:27:59 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:46000 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfJaM17 (ORCPT
+        id S1727021AbfJaMbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 08:31:25 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13350 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726552AbfJaMbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:27:59 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x9VCRk1R019613
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 21:27:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x9VCRk1R019613
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572524867;
-        bh=5AXIdd7UsfrTbzkht+brzkU23R3pC3abzYYe6g7Phy8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2gRlBXP3mUuBGWdSj3R6uy4uuLJwDUUejn1OReylY6lwD0VoqDjv55+nBYJvW5uei
-         H0wabh1zSlNZwwfnGnVvS3Jgsj/N12U1QyD2DLtzMxkTye6MqlHdLm9kAAiC+Bn+1s
-         VL5u/1YD1JugZux31wNR2W6F+EcbpP6tgDLMnwTYC3xTSZXs2dcgIpzgy52BTAnrcH
-         qeaTZLkb+SowBelOrD9V6as/Sf2gIXNRZLK54+B3n3MltMscFCwn03w62/gX9jPSST
-         A0nNh4+5epIOUKEiTTgP0sdUUXM8jjzfANXfGhVgphobZI8xdJmsTLHOzQLr01v78s
-         V17xgNgdLv7+Q==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id w25so3951694vso.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 05:27:47 -0700 (PDT)
-X-Gm-Message-State: APjAAAVSruTLfq5XkzTtxQa4wl5bo0g31zTlW27gmkuIhAolmyMjbFMv
-        RBqjZ+pD14QYGZ+HgdkhHrr7HLFf7S7HpPzD/kM=
-X-Google-Smtp-Source: APXvYqyV7wuBrm0wsnqDPwu6LqfSd7yeDvlOl7R7GKBUBURL+ZR95hqppNgFVokciiWHhcelEJPL+bGYtdKHejgebrQ=
-X-Received: by 2002:a67:e290:: with SMTP id g16mr2518522vsf.54.1572524866065;
- Thu, 31 Oct 2019 05:27:46 -0700 (PDT)
+        Thu, 31 Oct 2019 08:31:17 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9VCQaIl028820;
+        Thu, 31 Oct 2019 13:30:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=L36yhhdynvYVY+TShwfA0Bhl1r4mffURb+EBrQF9gKk=;
+ b=hZwNCeV0xEvhrGeulpsouJPO18vN4wZjzkNBh2T0NPOiJrfZJSXxflA/SpZVj8QjZTrp
+ 6ll8NBUTTZtsi6cCL2RFUN4M/tMFU9hBxf8Sg76ZsvbB/cf5QJHnTZ84EJD/1reV24Au
+ kToKzeMtDgAfdV5iMrvyV/hXCmx8kTfkOA1G6trbZ75TeLNtTXTBTenqIk0oPuNC1GXb
+ SkZTjuSDvD9vCFuc0zoXr4SnxiyAi3Vvz9jIbMLOvOfJw6A+9hepDA7tTKxnkBxrLOi4
+ X0zTv7LHQk8uWTPL3x/1nRlRVI4FnGG6DIhJ+En2Ba9BD4opWcvdFQ6c0DgjIaTEgdcw wg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2vxwhusser-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Oct 2019 13:30:50 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7F52D10002A;
+        Thu, 31 Oct 2019 13:30:49 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5EFBD2B7837;
+        Thu, 31 Oct 2019 13:30:49 +0100 (CET)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 31 Oct
+ 2019 13:30:49 +0100
+Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 31 Oct 2019 13:30:48
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <lee.jones@linaro.org>,
+        <thierry.reding@gmail.com>, <u.kleine-koenig@pengutronix.de>,
+        <benjamin.gaignard@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+Subject: [PATCH 0/4] Convert STM32 Timer mdf bindings to yaml
+Date:   Thu, 31 Oct 2019 13:30:36 +0100
+Message-ID: <20191031123040.26316-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-References: <20191028151427.31612-1-jeyu@kernel.org> <20191028151427.31612-4-jeyu@kernel.org>
- <CAK7LNAQ8WDQ3PX8iwQNj5eNQADFMnKNVo3+uC8dt3rCPWK8a-w@mail.gmail.com> <20191030161726.GA13413@linux-8ccs>
-In-Reply-To: <20191030161726.GA13413@linux-8ccs>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 31 Oct 2019 21:27:10 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR5vJExV9L+vO491V=ZRfJGiwDPd5rsZJe-4T5Dz1eh1A@mail.gmail.com>
-Message-ID: <CAK7LNAR5vJExV9L+vO491V=ZRfJGiwDPd5rsZJe-4T5Dz1eh1A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] scripts/nsdeps: make sure to pass all module source
- files to spatch
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Maennich <maennich@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-31_05:2019-10-30,2019-10-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 1:17 AM Jessica Yu <jeyu@kernel.org> wrote:
->
-> +++ Masahiro Yamada [29/10/19 21:57 +0900]:
-> >On Tue, Oct 29, 2019 at 12:14 AM Jessica Yu <jeyu@kernel.org> wrote:
-> >>
-> >> The nsdeps script passes a list of the module source files to
-> >> generate_deps_for_ns() as a space delimited string named $mod_source_f=
-iles,
-> >> which then passes it to spatch. But since $mod_source_files is not enc=
-ased
-> >> in quotes, each source file in that string is treated as a separate sh=
-ell
-> >> function argument (as $2, $3, $4, etc.).  However, the spatch invocati=
-on
-> >> only refers to $2, so only the first file out of $mod_source_files is
-> >> processed by spatch.
-> >>
-> >> This causes problems (namely, the MODULE_IMPORT_NS() statement doesn't
-> >> get inserted) when a module is composed of many source files and the
-> >> "main" module file containing the MODULE_LICENSE() statement is not th=
-e
-> >> first file listed in $mod_source_files. Fix this by encasing
-> >> $mod_source_files in quotes so that the entirety of the string is
-> >> treated as a single argument and can be referred to as $2.
-> >>
-> >> Signed-off-by: Jessica Yu <jeyu@kernel.org>
-> >> ---
-> >>  scripts/nsdeps | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/scripts/nsdeps b/scripts/nsdeps
-> >> index 9ddcd5cb96b1..5055b059a81b 100644
-> >> --- a/scripts/nsdeps
-> >> +++ b/scripts/nsdeps
-> >> @@ -36,7 +36,7 @@ generate_deps() {
-> >>                                               | sed -E "s%(^|\s)([^/][=
-^ ]*)%\1$srctree/\2%g"`
-> >>         for ns in `cat $ns_deps_file`; do
-> >>                 echo "Adding namespace $ns to module $mod_name (if nee=
-ded)."
-> >> -               generate_deps_for_ns $ns $mod_source_files
-> >> +               generate_deps_for_ns $ns "$mod_source_files"
-> >>                 # sort the imports
-> >>                 for source_file in $mod_source_files; do
-> >>                         sed '/MODULE_IMPORT_NS/Q' $source_file > ${sou=
-rce_file}.tmp
-> >
-> >I think this change is correct, but
-> >did you succeed in nsdeps for composite modules
-> >with this patch only?
-> >
-> >I think the following is needed too:
-> >
-> >
-> >diff --git a/scripts/nsdeps b/scripts/nsdeps
-> >index dda6fbac016e..5a23ea616446 100644
-> >--- a/scripts/nsdeps
-> >+++ b/scripts/nsdeps
-> >@@ -31,9 +31,9 @@ generate_deps() {
-> >        local mod_file=3D`echo $@ | sed -e 's/\.ko/\.mod/'`
-> >        local ns_deps_file=3D`echo $@ | sed -e 's/\.ko/\.ns_deps/'`
-> >        if [ ! -f "$ns_deps_file" ]; then return; fi
-> >-       local mod_source_files=3D`cat $mod_file | sed -n 1p             =
-         \
-> >+       local mod_source_files=3D"`cat $mod_file | sed -n 1p
-> >         \
-> >                                              | sed -e 's/\.o/\.c/g'    =
-       \
-> >-                                             | sed "s|[^ ]* *|${srctree=
-}/&|g"`
-> >+                                             | sed "s|[^ ]* *|${srctree=
-}/&|g"`"
-> >        for ns in `cat $ns_deps_file`; do
-> >                echo "Adding namespace $ns to module $mod_name (if neede=
-d)."
-> >                generate_deps_for_ns $ns $mod_source_files
-> >
-> >
-> >Without this, a module that consists of two files
-> >will be expanded to:
-> >
-> >local mod_source_files=3Dsource1.c source2.c
->
-> Yes, I was able to have nsdeps work for composite modules with just my
-> patch. Without this patch applied, the script produces the following
-> expansion of the generate_deps_for_ns call, (I just added a test
-> namespace MODULE):
->
-> Adding namespace MODULE to module fs/nfs/nfs.ko.
-> + generate_deps_for_ns MODULE /tmp/ppyu/linux/fs/nfs/client.c /tmp/ppyu/l=
-inux/fs/nfs/dir.c /tmp/ppyu/linux/fs/nfs/file.c /tmp/ppyu/linux/fs/nfs/getr=
-oot.c /tmp/ppyu/linux/fs/nfs/inode.c /tmp/ppyu/linux/fs/nfs/super.c /tmp/pp=
-yu/linux/fs/nfs/io.c /tmp/ppyu/linux/fs/nfs/direct.c /tmp/ppyu/linux/fs/nfs=
-/pagelist.c /tmp/ppyu/linux/fs/nfs/read.c /tmp/ppyu/linux/fs/nfs/symlink.c =
-/tmp/ppyu/linux/fs/nfs/unlink.c /tmp/ppyu/linux/fs/nfs/write.c /tmp/ppyu/li=
-nux/fs/nfs/namespace.c /tmp/ppyu/linux/fs/nfs/mount_clnt.c /tmp/ppyu/linux/=
-fs/nfs/nfstrace.c /tmp/ppyu/linux/fs/nfs/export.c /tmp/ppyu/linux/fs/nfs/sy=
-sfs.c /tmp/ppyu/linux/fs/nfs/sysctl.c /tmp/ppyu/linux/fs/nfs/fscache.c /tmp=
-/ppyu/linux/fs/nfs/fscache-index.c
-> + /usr/bin/spatch --very-quiet --in-place --sp-file /tmp/ppyu/linux/scrip=
-ts/coccinelle/misc/add_namespace.cocci -D ns=3DMODULE /tmp/ppyu/linux/fs/nf=
-s/client.c
->
-> So only the first file got included in the spatch invocation. But the
-> spatch call gets fixed with all the files when quotes are added in the
-> call to generate_deps_for_ns.
->
-> But we need to include your change anyway, to make the script more
-> robust.
+This series converts STM32 Timer mfd bindings to json-schema.
+The original binding split between all the subnode remains the same
+that why subnode bindings are converted first and then included in
+the mfd binding.
 
-Hmm.
-With this patch only, I see "bad variable name" error.
+Benjamin Gaignard (4):
+  dt-bindings: counter: Convert stm32 counter bindings to json-schema
+  dt-bindings: iio: timer: Convert stm32 IIO trigger bindings to
+    json-schema
+  dt-bindings: pwm: Convert stm32 pwm bindings to json-schema
+  dt-bindings: mfd: Convert stm32 timers bindings to json-schema
 
+ .../bindings/counter/st,stm32-timer-cnt.yaml       | 38 +++++++++
+ .../bindings/counter/stm32-timer-cnt.txt           | 31 --------
+ .../bindings/iio/timer/st,stm32-timer-trigger.yaml | 44 +++++++++++
+ .../bindings/iio/timer/stm32-timer-trigger.txt     | 25 ------
+ .../devicetree/bindings/mfd/st,stm32-timers.yaml   | 91 ++++++++++++++++++++++
+ .../devicetree/bindings/mfd/stm32-timers.txt       | 73 -----------------
+ .../devicetree/bindings/pwm/pwm-stm32.txt          | 38 ---------
+ .../devicetree/bindings/pwm/st,stm32-pwm.yaml      | 51 ++++++++++++
+ 8 files changed, 224 insertions(+), 167 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/counter/st,stm32-timer-cnt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/timer/st,stm32-timer-trigger.yaml
+ delete mode 100644 Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/stm32-timers.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-stm32.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/st,stm32-pwm.yaml
 
+-- 
+2.15.0
 
-masahiro@grover:~/ref/linux$ make -j8  nsdeps
-  DESCEND  objtool
-  CALL    scripts/atomic/check-atomics.sh
-  CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  Building modules, stage 2.
-  MODPOST 20 modules
-WARNING: module nfs uses symbol foo from namespace USB_STORAGE, but
-does not import it.
-  Building modules, stage 2.
-  MODPOST 20 modules
-./scripts/nsdeps: 34: local: ./fs/nfs/dir.c: bad variable name
-make: *** [Makefile;1689: nsdeps] Error 2
-
-
-
-
-> It would probably prevent more shell script related bugs in
-> the future (Like [1]). I can respin this patch only while the other
-> ones are superceded by your patchset.
->
-> [1] https://unix.stackexchange.com/a/131767
-
-Anyway.
-
-Is this patch aiming for v5.4 (i.e. fixes) or v5.5-rc1 ?
-
-If you touch the mod_source_files line,
-we will have a conflict because
-https://patchwork.kernel.org/patch/11217839/
-is touching the same line.
-
-How should we organize the patch order?
-
---
-Best Regards
-Masahiro Yamada
