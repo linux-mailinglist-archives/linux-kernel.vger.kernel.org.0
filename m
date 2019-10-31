@@ -2,205 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB50EAD27
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B38DEAD35
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfJaKJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:09:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36987 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfJaKJJ (ORCPT
+        id S1727249AbfJaKK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:10:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49034 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbfJaKK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:09:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e11so5551161wrv.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 03:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FgmJFc69aJGBfN43Lu4UDpX3eu2jhzY+mRsGnXR2dN8=;
-        b=ZHC0k1GYUbegvQPvHD4Xf19RSbmdOsmEtTOavJGxcZ+j5rqNyIcxQBxfljefzbXnN+
-         1Xzx6DkNI7/ZL5N3l58JRsc/uvaGc16UeZxniGRD40zpEC6amGSI60kL5ZuAKuHRau0N
-         SB2akz6Cb0d4UcZSsyfiRxS+E4JgcAdWmNCVk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FgmJFc69aJGBfN43Lu4UDpX3eu2jhzY+mRsGnXR2dN8=;
-        b=ErjcrYWKPcfWjSHwY5M3QfMDxufjO3YSKxXHlGGPF4DAOg//julnrnYs5a3jUl5T7j
-         BRvuQG6Pfn+Xb2v7Ct+2hI2tEkUfoiWpi7jWRO6X+gp6P6TD+kxGOKv/d9aAuK0NWWVX
-         KB7C5oWbQUZQsgmv4oJII042u51Ym0GW8IqjajbpG55rzVll7khGD0b0KPCMS3h4s+YX
-         rIll1AHRluWOy/Ja1oBt3FGfzRA0Yboi1TZi4Mcwl9E2drDEaz/bF393XVjwZRHpHV7i
-         q6CRb8znR1RTlWEObfiLy1yahHHFK2rWQONdiE3ixKjhIMQE5jDvgR7Ka2iuAVKnWUwt
-         D7Kg==
-X-Gm-Message-State: APjAAAUCQxpx9SRdO+cZYQSLsf8/BjtGZKByKQUxxQZsCmZjiJK0InGB
-        h1dgivBKWFfQxH9MecVWZwdIJw==
-X-Google-Smtp-Source: APXvYqzn2VJmEXK7aYh4V+/yj10YOCdzf2dq2vOBaRTSRlfhZymHmmM6N7YE5R47IJV6pLoo05VoZA==
-X-Received: by 2002:a5d:6706:: with SMTP id o6mr4795882wru.54.1572516548159;
-        Thu, 31 Oct 2019 03:09:08 -0700 (PDT)
-Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id w8sm3719609wrr.44.2019.10.31.03.09.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 31 Oct 2019 03:09:07 -0700 (PDT)
-From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vikas Gupta <vikas.gupta@broadcom.com>,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Subject: [PATCH net-next V5 3/3] bnxt_en: Add support to collect crash dump via ethtool
-Date:   Thu, 31 Oct 2019 15:38:52 +0530
-Message-Id: <1572516532-5977-4-git-send-email-sheetal.tigadoli@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1572516532-5977-1-git-send-email-sheetal.tigadoli@broadcom.com>
-References: <1572516532-5977-1-git-send-email-sheetal.tigadoli@broadcom.com>
+        Thu, 31 Oct 2019 06:10:58 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VA8fTR154021;
+        Thu, 31 Oct 2019 10:10:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=BBxOI1HRozanqXDqOhpfDLGPkCP20IcBqxNnuBGwBMc=;
+ b=XlV4qjJDtsU6SmRn0X0S9RyUyuOz5mTfaC3P6Z4ek/9w4WB71z45ypVha6ph6z+Sr4F9
+ P/px3j8eJVl5KMiY3qLnMs0tYBTA6JPipuJ0FNPlRKbnGlDfFnF7p3vU6fy9P8S5rlCN
+ 7ghQFIr2DC6B+fxiGx1V0FL9xdVGg4HIHv3K4sN0ctUnl5dXjfvgHVBiV891UT6c2vfa
+ BvIhY9TGMctbRDVIKQ2JmK+UIbzXu2OtKyercK8WFl0sn7J0vCMQGFVuOzXjL+zfGLDf
+ yPEiWEAmyLIpCA9YjnRQMcNdILJhcltOoV0xAFT2en1rJQ1QHeW9OAo06p1qTYkE9u2N 0g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2vxwhft58v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:10:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VA8QTT036299;
+        Thu, 31 Oct 2019 10:10:46 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2vysbtvbn9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:10:46 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9VAAjkk019487;
+        Thu, 31 Oct 2019 10:10:45 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Oct 2019 03:10:45 -0700
+Subject: Re: [PATCH] blk-mq: Make blk_mq_run_hw_queue() return void
+To:     John Garry <john.garry@huawei.com>, axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1572368370-139412-1-git-send-email-john.garry@huawei.com>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <b488b2ee-4e0d-f7e9-6d28-6507840e6aac@oracle.com>
+Date:   Thu, 31 Oct 2019 18:10:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <1572368370-139412-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910310103
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910310103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+On 10/30/19 12:59 AM, John Garry wrote:
+> Since commit 97889f9ac24f ("blk-mq: remove synchronize_rcu() from
+> blk_mq_del_queue_tag_set()"), the return value of blk_mq_run_hw_queue()
+> is never checked, so make it return void, which very marginally simplifies
+> the code.
+> 
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> 
 
-Driver supports 2 types of core dumps.
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
 
-1. Live dump - Firmware dump when system is up and running.
-2. Crash dump - Dump which is collected during firmware crash
-                that can be retrieved after recovery.
-Crash dump is currently supported only on specific 58800 chips
-which can be retrieved using OP-TEE API only, as firmware cannot
-access this region directly.
-
-User needs to set the dump flag using following command before
-initiating the dump collection:
-
-    $ ethtool -W|--set-dump eth0 N
-
-Where N is "0" for live dump and "1" for crash dump
-
-Command to collect the dump after setting the flag:
-
-    $ ethtool -w eth0 data Filename
-
-v3: Modify set_dump to support even when CONFIG_TEE_BNXT_FW=n.
-Also change log message to netdev_info().
-
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  3 ++
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 37 ++++++++++++++++++-
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.h |  2 +
- 3 files changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 09437150f818..3e7d1fb1b0b1 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1807,6 +1807,9 @@ struct bnxt {
- 
- 	u8			num_leds;
- 	struct bnxt_led_info	leds[BNXT_MAX_LED];
-+	u16			dump_flag;
-+#define BNXT_DUMP_LIVE		0
-+#define BNXT_DUMP_CRASH		1
- 
- 	struct bpf_prog		*xdp_prog;
- 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index 51c140476717..f2220b826d61 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -3311,6 +3311,24 @@ static int bnxt_get_coredump(struct bnxt *bp, void *buf, u32 *dump_len)
- 	return rc;
- }
- 
-+static int bnxt_set_dump(struct net_device *dev, struct ethtool_dump *dump)
-+{
-+	struct bnxt *bp = netdev_priv(dev);
-+
-+	if (dump->flag > BNXT_DUMP_CRASH) {
-+		netdev_info(dev, "Supports only Live(0) and Crash(1) dumps.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!IS_ENABLED(CONFIG_TEE_BNXT_FW) && dump->flag == BNXT_DUMP_CRASH) {
-+		netdev_info(dev, "Cannot collect crash dump as TEE_BNXT_FW config option is not enabled.\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	bp->dump_flag = dump->flag;
-+	return 0;
-+}
-+
- static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
- {
- 	struct bnxt *bp = netdev_priv(dev);
-@@ -3323,7 +3341,12 @@ static int bnxt_get_dump_flag(struct net_device *dev, struct ethtool_dump *dump)
- 			bp->ver_resp.hwrm_fw_bld_8b << 8 |
- 			bp->ver_resp.hwrm_fw_rsvd_8b;
- 
--	return bnxt_get_coredump(bp, NULL, &dump->len);
-+	dump->flag = bp->dump_flag;
-+	if (bp->dump_flag == BNXT_DUMP_CRASH)
-+		dump->len = BNXT_CRASH_DUMP_LEN;
-+	else
-+		bnxt_get_coredump(bp, NULL, &dump->len);
-+	return 0;
- }
- 
- static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
-@@ -3336,7 +3359,16 @@ static int bnxt_get_dump_data(struct net_device *dev, struct ethtool_dump *dump,
- 
- 	memset(buf, 0, dump->len);
- 
--	return bnxt_get_coredump(bp, buf, &dump->len);
-+	dump->flag = bp->dump_flag;
-+	if (dump->flag == BNXT_DUMP_CRASH) {
-+#ifdef CONFIG_TEE_BNXT_FW
-+		return tee_bnxt_copy_coredump(buf, 0, dump->len);
-+#endif
-+	} else {
-+		return bnxt_get_coredump(bp, buf, &dump->len);
-+	}
-+
-+	return 0;
- }
- 
- void bnxt_ethtool_init(struct bnxt *bp)
-@@ -3446,6 +3478,7 @@ const struct ethtool_ops bnxt_ethtool_ops = {
- 	.set_phys_id		= bnxt_set_phys_id,
- 	.self_test		= bnxt_self_test,
- 	.reset			= bnxt_reset,
-+	.set_dump		= bnxt_set_dump,
- 	.get_dump_flag		= bnxt_get_dump_flag,
- 	.get_dump_data		= bnxt_get_dump_data,
- };
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-index b5b65b3f8534..01de7e79d14f 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-@@ -59,6 +59,8 @@ struct hwrm_dbg_cmn_output {
- 	#define HWRM_DBG_CMN_FLAGS_MORE	1
- };
- 
-+#define BNXT_CRASH_DUMP_LEN	(8 << 20)
-+
- #define BNXT_LED_DFLT_ENA				\
- 	(PORT_LED_CFG_REQ_ENABLES_LED0_ID |		\
- 	 PORT_LED_CFG_REQ_ENABLES_LED0_STATE |		\
--- 
-2.17.1
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index ec791156e9cc..8daa9740929a 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -1486,7 +1486,7 @@ void blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, unsigned long msecs)
+>  }
+>  EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
+>  
+> -bool blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+> +void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+>  {
+>  	int srcu_idx;
+>  	bool need_run;
+> @@ -1504,12 +1504,8 @@ bool blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+>  		blk_mq_hctx_has_pending(hctx);
+>  	hctx_unlock(hctx, srcu_idx);
+>  
+> -	if (need_run) {
+> +	if (need_run)
+>  		__blk_mq_delay_run_hw_queue(hctx, async, 0);
+> -		return true;
+> -	}
+> -
+> -	return false;
+>  }
+>  EXPORT_SYMBOL(blk_mq_run_hw_queue);
+>  
+> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+> index 0bf056de5cc3..c963038dfb92 100644
+> --- a/include/linux/blk-mq.h
+> +++ b/include/linux/blk-mq.h
+> @@ -324,7 +324,7 @@ void blk_mq_start_stopped_hw_queues(struct request_queue *q, bool async);
+>  void blk_mq_quiesce_queue(struct request_queue *q);
+>  void blk_mq_unquiesce_queue(struct request_queue *q);
+>  void blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, unsigned long msecs);
+> -bool blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async);
+> +void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async);
+>  void blk_mq_run_hw_queues(struct request_queue *q, bool async);
+>  void blk_mq_tagset_busy_iter(struct blk_mq_tag_set *tagset,
+>  		busy_tag_iter_fn *fn, void *priv);
+> 
 
