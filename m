@@ -2,286 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91280EA9F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:42:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7039EA9F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 05:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfJaEmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 00:42:12 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39416 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfJaEmL (ORCPT
+        id S1726827AbfJaEoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 00:44:08 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41279 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfJaEoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 00:42:11 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g7KI053408;
-        Wed, 30 Oct 2019 23:42:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572496927;
-        bh=a8la0CU3oeh9uq93T41XgduJWZ4ZsuWOzQAJCUlqfK4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=O6wBhB8W1t+1O1h7hYVksPbxu1luT1WtP4XhgB/aX5xwKAnMvVtMNlh28DOVZMtFO
-         Ve8mZDPBrCGunzrTcDQGLxhpxtZxcfYRVt/HgfcKmgMETPqkCsAfAYaLeYxJxVlddm
-         ectpJtnbEfPzalyDMCJjfGjYhrowfNzoOZ8VwyzI=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g73W030422;
-        Wed, 30 Oct 2019 23:42:07 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 30
- Oct 2019 23:41:54 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 30 Oct 2019 23:41:54 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9V4g3bK112544;
-        Wed, 30 Oct 2019 23:42:04 -0500
-Subject: Re: [PATCH v2 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper)
- bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
-        Anil Varughese <aniljoy@cadence.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20191023125735.4713-1-kishon@ti.com>
- <20191023125735.4713-14-kishon@ti.com> <20191029190816.GA27884@bogus>
- <b3e8f037-3af3-2720-037c-73d6fc2a4c2b@ti.com>
- <CAL_JsqL4dnx0o0cRQmiHU7qVcB5x5DO707JNpVrcmBs6VgsxuQ@mail.gmail.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <76079264-9365-df61-4ffb-3535b91e3ce5@ti.com>
-Date:   Thu, 31 Oct 2019 10:11:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 31 Oct 2019 00:44:08 -0400
+Received: by mail-vs1-f66.google.com with SMTP id i22so3228424vsl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 21:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SSmWUE5CWichZhorX+55ZMLpjQalQ+giQWwoK8E5DBs=;
+        b=uLXw2V904nlYKDyGs7+03vpTybp9imp69onWRxi5LnYo/gQ/0tRaV30wNRVWnbqzkR
+         yi2cBc2+H/thF2p6ll4zVGL4SoWukUqJblmt0/6l56k0FqNASTUyqnEgAA1yeDlegI7o
+         ep1Ph1/xVKjDP2yDo1I69libARWuTwjYkSv5iSkUfc0aEMTO/rcr4fRpLG8CUHjK8nob
+         KNFueQNCpG7agYHiUD1f0qA7GEP/wfqr1+8DHEq8zwSzHbbpWh/CTpOAoLba1HYN0F8H
+         2M9m94Qbhc6R/TzTKRgI9GkyayueiV+hwZmbpmQjFhCNZYpSgjFMhoWA+d5IilChshgK
+         rj7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SSmWUE5CWichZhorX+55ZMLpjQalQ+giQWwoK8E5DBs=;
+        b=YH1FZPmPPxUBEZMIKfdLiHNtltESDIJgqIjVNdzLVZ7dJk724vUJefFMZHOBtZ1cMb
+         syj3u7IV6XlYZeKyQ3M+49SAz6dy/YqQtHNJ6OH8nEABvcTSojYllBDQgQx7LPUXS68e
+         SvyHomhyVzmIYLJZcbjp1TOZTaF/g0thJ9Y4N03d7cwBs/7WYeEe9SqlEbspV3D4cnFf
+         7gqjdQJ89e7LRGG3QOicvklu6CaM6p3sgHCAuNFc8Af3muABnv4BwT3T7gL82jhI3DVf
+         hkwX6+MAxxFwKKX3nSZItvfVVWhAAvjOS48ElReXYAskbN5lh9lcSL4Bb+BMrPSRVixg
+         v8OQ==
+X-Gm-Message-State: APjAAAVJtqkf7jX4c0jMJsM6TQ3MN7MoW1x7N4+AL3Z24sBMw3sC8+p8
+        XJ3Kq+nh3BvH0Kq6LralBIrm4jRu2g3ZPgyq5lnBqQ==
+X-Google-Smtp-Source: APXvYqymGEbluLxhfYWqSz8igslfm5GCyFzNh+plgN1+M3mEWoUW2BmZ6Kvloy7vw2iDYKUG+MxHDSQGtVOBQzvkTpU=
+X-Received: by 2002:a67:b60c:: with SMTP id d12mr1611322vsm.159.1572497046919;
+ Wed, 30 Oct 2019 21:44:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqL4dnx0o0cRQmiHU7qVcB5x5DO707JNpVrcmBs6VgsxuQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1571656014.git.amit.kucheria@linaro.org> <4efc55ad929dbb3432e72b96cb27876efa496242.camel@intel.com>
+In-Reply-To: <4efc55ad929dbb3432e72b96cb27876efa496242.camel@intel.com>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Thu, 31 Oct 2019 10:13:55 +0530
+Message-ID: <CAHLCerPNDJCjaUakCu-0woqy+kJM0LK9vieYKqncnNbAsH83qw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Initialise thermal framework and cpufreq earlier
+ during boot
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Rui,
 
-On 31/10/19 12:56 AM, Rob Herring wrote:
-> On Wed, Oct 30, 2019 at 12:46 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>
->> Hi,
->>
->> On 30/10/19 12:38 AM, Rob Herring wrote:
->>> On Wed, Oct 23, 2019 at 06:27:34PM +0530, Kishon Vijay Abraham I wrote:
->>>> Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
->>>> PHY but a wrapper used to configure some of the input signals to the
->>>> SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> [jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
->>>>  SERDES]
->>>> Signed-off-by: Jyri Sarha <jsarha@ti.com>
->>>> ---
->>>>  .../bindings/phy/ti,phy-j721e-wiz.yaml        | 159 ++++++++++++++++++
->>>>  1 file changed, 159 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
->>>> new file mode 100644
->>>> index 000000000000..8a1eccee6c1d
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
->>>> @@ -0,0 +1,159 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0)
->>>
->>> (GPL-2.0-only OR BSD-2-Clause) for new bindings please.
->>>
->>>> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: "http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#"
->>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->>>> +
->>>> +title: TI J721E WIZ (SERDES Wrapper)
->>>> +
->>>> +maintainers:
->>>> +  - Kishon Vijay Abraham I <kishon@ti.com>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    oneOf:
->>>> +      - items:
->>>> +          - enum:
->>>> +              - ti,j721e-wiz-16g
->>>> +              - ti,j721e-wiz-10g
->>>
->>> You can drop oneOf and items.
->>>
->>>> +
->>>> +  power-domains:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 3
->>>> +    description: clock-specifier to represent input to the WIZ
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: fck
->>>> +      - const: core_ref_clk
->>>> +      - const: ext_ref_clk
->>>> +
->>>> +  num-lanes:
->>>> +    maxItems: 1
->>>> +    minimum: 1
->>>> +    maximum: 4
->>>
->>> You've mixed array and scalar schema keywords. Drop maxItems.
->>>
->>> Update dtschema and run 'make dt_binding_check'. We should catch that
->>> now.
->>
->> Sure.
->>>
->>>> +
->>>> +  "#address-cells":
->>>> +    const: 2
->>>> +
->>>> +  "#size-cells":
->>>> +    const: 2
->>>> +
->>>> +  "#reset-cells":
->>>> +    const: 1
->>>> +
->>>> +  ranges: true
->>>> +
->>>> +  assigned-clocks:
->>>> +    maxItems: 2
->>>> +
->>>> +  assigned-clock-parents:
->>>> +    maxItems: 2
->>>> +
->>>> +patternProperties:
->>>> +  "^pll[0|1]_refclk$":
->>>> +    type: object
->>>> +    description: |
->>>> +      WIZ node should have subnodes for each of the PLLs present in
->>>> +      the SERDES.
->>>> +
->>>> +  "^cmn_refclk1?$":
->>>> +    type: object
->>>> +    description: |
->>>> +      WIZ node should have subnodes for each of the PMA common refclock
->>>> +      provided by the SERDES.
->>>> +
->>>> +  "^refclk_dig$":
->>>> +    type: object
->>>> +    description: |
->>>> +      WIZ node should have subnode for refclk_dig to select the reference
->>>> +      clock source for the reference clock used in the PHY and PMA digital
->>>> +      logic.
->>>> +
->>>> +  "^serdes@[0-9a-f]+$":
->>>> +    type: object
->>>> +    description: |
->>>> +      WIZ node should have '1' subnode for the SERDES. It could be either
->>>> +      Sierra SERDES or Torrent SERDES. Sierra SERDES should follow the
->>>> +      bindings specified in
->>>> +      Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
->>>> +      Torrent SERDES should follow the bindings specified in
->>>> +      Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - power-domains
->>>> +  - clocks
->>>> +  - clock-names
->>>> +  - num-lanes
->>>> +  - "#address-cells"
->>>> +  - "#size-cells"
->>>> +  - "#reset-cells"
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
->>>> +
->>>> +    wiz@5000000 {
->>>> +           compatible = "ti,j721e-wiz-16g";
->>>> +           #address-cells = <2>;
->>>> +           #size-cells = <2>;
->>>
->>> Really need 64-bits of address space for the child nodes?
->>
->> hmm, the register space for the child nodes are in the 32-bit address space
->> region. I'll fix this.
->>>
->>>> +           power-domains = <&k3_pds 292 TI_SCI_PD_EXCLUSIVE>;
->>>> +           clocks = <&k3_clks 292 5>, <&k3_clks 292 11>, <&dummy_cmn_refclk>;
->>>> +           clock-names = "fck", "core_ref_clk", "ext_ref_clk";
->>>> +           assigned-clocks = <&k3_clks 292 11>, <&k3_clks 292 0>;
->>>> +           assigned-clock-parents = <&k3_clks 292 15>, <&k3_clks 292 4>;
->>>> +           num-lanes = <2>;
->>>> +           #reset-cells = <1>;
->>>
->>> Unless you have additional registers, I'm not a fan of wrapper nodes.
->>
->> The wrapper node has TI specific registers while the child node has Cadence
->> Sierra specific registers. It also has clock nodes which are input to the
->> Sierra IP.
-> 
-> Yeah? Where's 'reg'?
+I'm assuming that since Rafael acked it, he is ok with this going thru
+the thermal tree.
 
-The TI specific PHY registers use some of the reserved space within the Cadence
-region. So the WIZ wrapper driver will get the address from the "serdes" child
-node.
-> 
->>>
->>>> +
->>>> +           pll0_refclk {
->>>> +                  clocks = <&k3_clks 293 13>, <&dummy_cmn_refclk>;
->>>> +                  clock-output-names = "wiz1_pll0_refclk";
->>>> +                  #clock-cells = <0>;
->>>> +                  assigned-clocks = <&wiz1_pll0_refclk>;
->>>> +                  assigned-clock-parents = <&k3_clks 293 13>;
->>>> +           };
->>>> +
->>>> +           pll1_refclk {
->>>> +                  clocks = <&k3_clks 293 0>, <&dummy_cmn_refclk1>;
->>>> +                  clock-output-names = "wiz1_pll1_refclk";
->>>> +                  #clock-cells = <0>;
->>>> +                  assigned-clocks = <&wiz1_pll1_refclk>;
->>>> +                  assigned-clock-parents = <&k3_clks 293 0>;
->>>> +           };
->>>> +
->>>> +           cmn_refclk {
->>>> +                  clocks = <&wiz1_refclk_dig>;
->>>> +                  clock-output-names = "wiz1_cmn_refclk";
->>>> +                  #clock-cells = <0>;
->>>> +           };
->>>> +
->>>> +           cmn_refclk1 {
->>>> +                  clocks = <&wiz1_pll1_refclk>;
->>>> +                  clock-output-names = "wiz1_cmn_refclk1";
->>>> +                  #clock-cells = <0>;
->>>> +           };
->>>> +
->>>> +           refclk_dig {
->>>> +                  clocks = <&k3_clks 292 11>, <&k3_clks 292 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
->>>> +                  clock-output-names = "wiz0_refclk_dig";
->>>> +                  #clock-cells = <0>;
->>>> +                  assigned-clocks = <&wiz0_refclk_dig>;
->>>> +                  assigned-clock-parents = <&k3_clks 292 11>;
->>>> +           };
->>>
->>> How are all these clocks programmed?
->>
->> All these are programmed in the WIZ driver which is implemented in 14/14 of
->> this series.
-> 
-> Not what I meant... How does one access the h/w because there's
-> nothing defined here to do so.
+Regards,
+Amit
 
-As mentioned above the WIZ wrapper driver gets the address from "serdes" child
-node and use it for programming all these clocks.
-
-Thanks
-Kishon
+On Thu, Oct 31, 2019 at 8:12 AM Zhang Rui <rui.zhang@intel.com> wrote:
+>
+> Hi,
+>
+> Given that all the patches in this series have got the ACK from the
+> subsystem maintainers, I suppose we can take all the patches through
+> thermal tree, right?
+>
+> thanks,
+> rui
+>
+> On Mon, 2019-10-21 at 17:45 +0530, Amit Kucheria wrote:
+> > Changes since v4:
+> > - Collect Acks
+> > - Pick the US spelling for 'initialis^Hze' consistently.
+> >
+> > Changes since v3:
+> > - Init schedutil governor earlier too
+> > - Simplified changes to thermal_init() error path
+> > - Collects Acks
+> >
+> > Changes since v2:
+> > - Missed one patch when posting v2. Respinning.
+> >
+> > Changes since v1:
+> > - Completely get rid of netlink support in the thermal framework.
+> > - This changes the early init patch to a single line - change to
+> >   core_initcall. Changed authorship of patch since it is nothing like
+> > the
+> >   original. Lina, let me know if you feel otherwise.
+> > - I've tested to make sure that the qcom-cpufreq-hw driver continues
+> > to
+> >   work correctly as a module so this won't impact Android's GKI
+> > plans.
+> > - Collected Acks
+> >
+> > Device boot needs to be as fast as possible while keeping under the
+> > thermal
+> > envelope. Now that thermal framework is built-in to the kernel, we
+> > can
+> > initialize it earlier to enable thermal mitigation during boot.
+> >
+> > We also need the cpufreq HW drivers to be initialised earlier to act
+> > as the
+> > cooling devices. This series only converts over the qcom-hw driver to
+> > initialize earlier but can be extended to other platforms as well.
+> >
+> > Amit Kucheria (6):
+> >   thermal: Remove netlink support
+> >   thermal: Initialize thermal subsystem earlier
+> >   cpufreq: Initialize the governors in core_initcall
+> >   cpufreq: Initialize cpufreq-dt driver earlier
+> >   clk: qcom: Initialize clock drivers earlier
+> >   cpufreq: qcom-hw: Move driver initialization earlier
+> >
+> >  .../driver-api/thermal/sysfs-api.rst          |  26 +----
+> >  drivers/clk/qcom/clk-rpmh.c                   |   2 +-
+> >  drivers/clk/qcom/gcc-qcs404.c                 |   2 +-
+> >  drivers/clk/qcom/gcc-sdm845.c                 |   2 +-
+> >  drivers/cpufreq/cpufreq-dt-platdev.c          |   2 +-
+> >  drivers/cpufreq/cpufreq_conservative.c        |   2 +-
+> >  drivers/cpufreq/cpufreq_ondemand.c            |   2 +-
+> >  drivers/cpufreq/cpufreq_performance.c         |   2 +-
+> >  drivers/cpufreq/cpufreq_powersave.c           |   2 +-
+> >  drivers/cpufreq/cpufreq_userspace.c           |   2 +-
+> >  drivers/cpufreq/qcom-cpufreq-hw.c             |   2 +-
+> >  drivers/thermal/thermal_core.c                | 103 +---------------
+> > --
+> >  include/linux/thermal.h                       |  11 --
+> >  kernel/sched/cpufreq_schedutil.c              |   2 +-
+> >  14 files changed, 19 insertions(+), 143 deletions(-)
+> >
+>
