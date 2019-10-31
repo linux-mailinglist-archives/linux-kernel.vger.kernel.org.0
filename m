@@ -2,58 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0352EB322
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E4AEB32D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfJaOvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:51:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39386 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727995AbfJaOvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:51:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C154AB360;
-        Thu, 31 Oct 2019 14:51:13 +0000 (UTC)
-Date:   Thu, 31 Oct 2019 15:51:12 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        Joe Perches <joe@perches.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Add VSPRINTF
-Message-ID: <20191031145112.thphlpnjvnykbzyy@pathway.suse.cz>
-References: <20191031133337.9306-1-pmladek@suse.com>
- <975eccc7-897c-fd14-ef4f-2486729eb67c@rasmusvillemoes.dk>
+        id S1728267AbfJaOvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:51:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:51457 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728134AbfJaOva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 10:51:30 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id B76EF68C4E; Thu, 31 Oct 2019 15:51:27 +0100 (CET)
+Date:   Thu, 31 Oct 2019 15:51:27 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Daniel Wagner <dwagner@suse.de>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [RFC] nvmet: Always remove processed AER elements from list
+Message-ID: <20191031145127.GC6024@lst.de>
+References: <20191030152418.23753-1-dwagner@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <975eccc7-897c-fd14-ef4f-2486729eb67c@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191030152418.23753-1-dwagner@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-10-31 14:51:24, Rasmus Villemoes wrote:
-> On 31/10/2019 14.33, Petr Mladek wrote:
-> > printk maintainers have been reviewing patches against vsprintf code last
-> > few years. Most changes have been committed via printk.git last two years.
-> > 
-> > New group is used because printk() is not the only vsprintf() user.
-> > Also the group of interested people is not the same.
+On Wed, Oct 30, 2019 at 04:24:18PM +0100, Daniel Wagner wrote:
+> All async events are enqueued via nvmet_add_async_event() which
+> updates the ctrl->async_event_cmds[] array and additionally an struct
+> nvmet_async_event is added to the ctrl->async_events list.
 > 
-> Can you add
+> Under normal operations the nvmet_async_event_work() updates again the
+> ctrl->async_event_cmds and removes the corresponding struct
+> nvmet_async_event from the list again. Though nvmet_sq_destroy() could
+> be called which calles nvmet_async_events_free() which only updates
+> the ctrl->async_event_cmds[] array.
 > 
-> R: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Add a new function nvmet_async_events_process() which processes the
+> async events and updates both array and the list. With this we avoid
+> having two places where the array and list are modified.
 
-Sure. The more reviewers the better :-)
+I don't think this patch is correct.  We can have AEN commands pending
+that aren't used - that is the host sent the command, but the target
+did not have even event yet.  That means the command sits in
+async_event_cmds, but there is no entry in >async_events for it yet.
 
-Best Regards,
-Petr
+That being said I think what we want is to do the loop in your new
+nvmet_async_events_free first, but after that still call the loop in
+the existing nvmet_async_events_free after that.  That ensures we first
+flush out everything in ->async_events, and then also return any
+potential remaining entry.
