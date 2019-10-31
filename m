@@ -2,174 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61DDAEA882
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3EA4EA88F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:14:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfJaBID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 21:08:03 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:43236 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726317AbfJaBID (ORCPT
+        id S1726465AbfJaBOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 21:14:18 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:44963 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfJaBOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:08:03 -0400
-Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9V181GN019579
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 21:08:01 -0400
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9V17uLB030055
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 21:08:01 -0400
-Received: by mail-qk1-f200.google.com with SMTP id v143so4063346qka.21
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 18:08:01 -0700 (PDT)
+        Wed, 30 Oct 2019 21:14:18 -0400
+Received: by mail-yw1-f67.google.com with SMTP id a83so145481ywe.11;
+        Wed, 30 Oct 2019 18:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9gOTfm/fqN69jLezboMAT7AVfOH/fnngwAwVO06MzXU=;
+        b=JpQOyDa4z9dU46y8UssyEOiJob2MWs088zQveiYW4osYaAXDq8p0nhzYOjeKGl4J7h
+         fvyAW/IfL49aZ7UY8seCBUODcpZBCcsaF9D/n0KAQ8UvP5GAIrNZlysS/dBnuUAExBIS
+         G3CWgHKy8aqXCqAu4TLkCTP8HK2C2hObVRGzK0RwbHJ8+yXahN12sAG+rSy3J7RaedEX
+         rAoc2zFPaNuD3y0JeXIGoMQzPXjxTSCWfb7kmvFJB/099JBBfI+WobX3bmjGzv9ZQA1+
+         MyGBqDqKaX4zdFqDRxKu/f2Is0OJjKsroww+Fquf6YQZz5wavR9r95XtER9SAxujWpAt
+         p5RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=A6x5zvKJWNelVsaR2qz0QPsCww3yKpvWiohVOKat7vg=;
-        b=l2lBVhzY59e8mtOLoAAaiD4CWvf7Nyf7T/iCfNSRlSudDcaKl3rN9Tiyz+qifpoFDL
-         JfGfbGrvh5iZyFlBnXG5NIAxW9B5ag8C0oO0QbJam/HZWWbmTzkW9EOOI9kRRA5UmRBp
-         /XverTp2NcYOIR9Q9TVPGDq9grfd+JuKgyf29pNObORyUVdoEX84VOgmCqqtLWWzO7uh
-         dO3laPqKI1dim2qS/vj35btxSPTJ9LNSEevl1VJsezC4V35pXyA6FLlKIOGP2uCNadba
-         U/umf4Pl5wR+5BccwAcOHPsswX2aZ8h5JrP810AQv5Lx1WjxR/magfyk8fGt6Qhzo3EZ
-         53qA==
-X-Gm-Message-State: APjAAAWD8Q5swOc3G7XxwlyWSLwBhNSDeKt6dKWg8c5DGcStY7B8cqGH
-        mmzwhErito2ot0jfx565206m9B8byUE8a3G8hOOtzKd5j5qxB+mFrrwSiFcdEMm1Tlvh6UMyQ8f
-        zaGvEJLT/Q5slRzLmmx7Tq6qvQrhvibVEcNM=
-X-Received: by 2002:a05:620a:12c2:: with SMTP id e2mr2944266qkl.162.1572484075627;
-        Wed, 30 Oct 2019 18:07:55 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxlE8kPCGfGf/g8Sz78JkaUwhSUp0GYw6gPnzEQRzaLcuBtPOcj575mA0HsP7G//KxKX1X8dA==
-X-Received: by 2002:a05:620a:12c2:: with SMTP id e2mr2944240qkl.162.1572484075278;
-        Wed, 30 Oct 2019 18:07:55 -0700 (PDT)
-Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id u9sm1042529qke.50.2019.10.30.18.07.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 18:07:53 -0700 (PDT)
-From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
-X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-arch@vger.kernel.org
-Subject: [RFC] errno.h: Provide EFSCORRUPTED for everybody
-Date:   Wed, 30 Oct 2019 21:07:33 -0400
-Message-Id: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
-X-Mailer: git-send-email 2.24.0.rc1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9gOTfm/fqN69jLezboMAT7AVfOH/fnngwAwVO06MzXU=;
+        b=flPK/Vb0l4ga1NeV4yt6qcARfUtig91vqBH9Krw3oD7q5PrLEC2fDd7e7OqDv/lVQM
+         /jRQTReIBMQpf4fN+25eiEFyIl9xLxUl6deuucwcZPC/y7eZ4pA38ay57FhLV/39CvlP
+         58Fryz98yGowNqXKhvWAfsswacIkFdi2ZLMEyDg4HSj8pZgM/1ZjGZQqQyqIoXkjzar1
+         Gue0SLHxkail5tpZXAJu0tShM9qhmDtJ7hCWeavwZvI6J5FHC6WH7kevgQp7pZ10HvwV
+         E63jntIL+pdj1dT9cOcFMlVS/XbXCU8/NN6bpXpRgLQMBUL0DS4TsyOALGBgaOfIptNh
+         wCkg==
+X-Gm-Message-State: APjAAAUGcX2tlplkGDe04fN8I3AC5fMortXK7i7GN2yQseU1R7bFqY+N
+        f41mHvpzlgpsNAd29qCTsTeUGTJ0fmY=
+X-Google-Smtp-Source: APXvYqycGVowZbnUXFgGHT4+/+qcVoESG0s1Cp8pSJH9so7dltr3kCV8hXwue/Ce/o3ShmCfgmo/BA==
+X-Received: by 2002:a0d:ddcc:: with SMTP id g195mr1904839ywe.447.1572484457249;
+        Wed, 30 Oct 2019 18:14:17 -0700 (PDT)
+Received: from bonecrusher.localdomain (cpe-76-177-112-180.natcky.res.rr.com. [76.177.112.180])
+        by smtp.gmail.com with ESMTPSA id p137sm1559284ywe.20.2019.10.30.18.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 18:14:16 -0700 (PDT)
+From:   Bradley Bolen <bradleybolen@gmail.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
+        kstewart@linuxfoundation.org, tglx@linutronix.de, info@metux.net,
+        hongjiefang@asrmicro.com, avri.altman@wdc.com,
+        wsa+renesas@sang-engineering.com, yinbo.zhu@nxp.com,
+        Bradley Bolen <bradleybolen@gmail.com>
+Subject: [PATCH] mmc: core: Fix size overflow for mmc partitions
+Date:   Wed, 30 Oct 2019 21:11:32 -0400
+Message-Id: <20191031011132.5947-1-bradleybolen@gmail.com>
+X-Mailer: git-send-email 2.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
-patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
-(c) if one patch, who gets to shepherd it through?
+With large eMMC cards, it is possible to create general purpose
+partitions that are bigger than 4GB.  The size member of the mmc_part
+struct is only an unsigned int which overflows for gp partitions larger
+than 4GB.  Change this to a u64 to handle the overflow.
 
-
-There's currently 6 filesystems that have the same #define. Move it
-into errno.h so it's defined in just one place.
-
-Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+Signed-off-by: Bradley Bolen <bradleybolen@gmail.com>
 ---
- drivers/staging/exfat/exfat.h    | 2 --
- fs/erofs/internal.h              | 2 --
- fs/ext4/ext4.h                   | 1 -
- fs/f2fs/f2fs.h                   | 1 -
- fs/xfs/xfs_linux.h               | 1 -
- include/linux/jbd2.h             | 1 -
- include/uapi/asm-generic/errno.h | 1 +
- 7 files changed, 1 insertion(+), 8 deletions(-)
+ drivers/mmc/core/mmc.c   | 4 ++--
+ include/linux/mmc/card.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 84de1123e178..3cf7e54af0b7 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -30,8 +30,6 @@
- #undef DEBUG
- #endif
- 
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--
- #define DENTRY_SIZE		32	/* dir entry size */
- #define DENTRY_SIZE_BITS	5
- 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 544a453f3076..3980026a8882 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -425,7 +425,5 @@ static inline int z_erofs_init_zip_subsystem(void) { return 0; }
- static inline void z_erofs_exit_zip_subsystem(void) {}
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
--#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
--
- #endif	/* __EROFS_INTERNAL_H */
- 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 03db3e71676c..a86c2585457d 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3396,6 +3396,5 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
- #endif	/* __KERNEL__ */
- 
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- 
- #endif	/* _EXT4_H */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4024790028aa..04ebe77569a3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3752,6 +3752,5 @@ static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index c8804895595f..4e89cf6524a1 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -297,7 +297,7 @@ static void mmc_manage_enhanced_area(struct mmc_card *card, u8 *ext_csd)
+ 	}
  }
  
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- 
- #endif /* _LINUX_F2FS_H */
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index ca15105681ca..3409d02a7d21 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -123,7 +123,6 @@ typedef __u32			xfs_nlink_t;
- 
- #define ENOATTR		ENODATA		/* Attribute not found */
- #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
- 
- #define SYNCHRONIZE()	barrier()
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 564793c24d12..1ecd3859d040 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1657,6 +1657,5 @@ static inline tid_t  jbd2_get_latest_transaction(journal_t *journal)
- #endif	/* __KERNEL__ */
- 
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
- 
- #endif	/* _LINUX_JBD2_H */
-diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-index cf9c51ac49f9..1d5ffdf54cb0 100644
---- a/include/uapi/asm-generic/errno.h
-+++ b/include/uapi/asm-generic/errno.h
-@@ -98,6 +98,7 @@
- #define	EINPROGRESS	115	/* Operation now in progress */
- #define	ESTALE		116	/* Stale file handle */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
+-static void mmc_part_add(struct mmc_card *card, unsigned int size,
++static void mmc_part_add(struct mmc_card *card, u64 size,
+ 			 unsigned int part_cfg, char *name, int idx, bool ro,
+ 			 int area_type)
+ {
+@@ -345,7 +345,7 @@ static void mmc_manage_gp_partitions(struct mmc_card *card, u8 *ext_csd)
+ 				ext_csd[EXT_CSD_GP_SIZE_MULT + idx * 3];
+ 			part_size *= (size_t)(hc_erase_grp_sz *
+ 				hc_wp_grp_sz);
+-			mmc_part_add(card, part_size << 19,
++			mmc_part_add(card, (u64)part_size << 19,
+ 				EXT_CSD_PART_CONFIG_ACC_GP0 + idx,
+ 				"gp%d", idx, false,
+ 				MMC_BLK_DATA_AREA_GP);
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 9b6336ad3266..b59d35bb50ba 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -226,7 +226,7 @@ struct mmc_queue_req;
+  * MMC Physical partitions
+  */
+ struct mmc_part {
+-	unsigned int	size;	/* partition size (in bytes) */
++	u64		size;	/* partition size (in bytes) */
+ 	unsigned int	part_cfg;	/* partition type */
+ 	char	name[MAX_MMC_PART_NAME_LEN];
+ 	bool	force_ro;	/* to make boot parts RO by default */
 -- 
-2.24.0.rc1
+2.17.1
 
