@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A7BEAD2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4EAEAD2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfJaKJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:09:24 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:53860 "EHLO
+        id S1727350AbfJaKIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:08:39 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:60654 "EHLO
         out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726193AbfJaKJX (ORCPT
+        by vger.kernel.org with ESMTP id S1726864AbfJaKIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:09:23 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R971e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0Tgm6rct_1572516503;
-Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tgm6rct_1572516503)
+        Thu, 31 Oct 2019 06:08:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TgmAXpl_1572516509;
+Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0TgmAXpl_1572516509)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 31 Oct 2019 18:08:23 +0800
+          Thu, 31 Oct 2019 18:08:29 +0800
 From:   Lai Jiangshan <laijs@linux.alibaba.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         "Paul E. McKenney" <paulmck@kernel.org>,
         Josh Triplett <josh@joshtriplett.org>,
         Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH 00/11] rcu: introduce percpu rcu_preempt_depth
-Date:   Thu, 31 Oct 2019 10:07:55 +0000
-Message-Id: <20191031100806.1326-1-laijs@linux.alibaba.com>
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: [PATCH 01/11] rcu: avoid leaking exp_deferred_qs into next GP
+Date:   Thu, 31 Oct 2019 10:07:56 +0000
+Message-Id: <20191031100806.1326-2-laijs@linux.alibaba.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191031100806.1326-1-laijs@linux.alibaba.com>
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,63 +38,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My mind was occupied with percpu rcu_preempt_depth for
-several years since Peter introduced percu preempt_count.
-But it was stopped by no good way to avoid the scheduler deadlocks.
-Now we have deferred_qs to avoid the deadlocks, it is time to implement it.
+If exp_deferred_qs is incorrectly set and leaked to the next
+exp GP, it may cause the next GP to be incorrectly prematurely
+completed.
 
-During the work, I found two possible? drawbacks (fixed by patch1/2
-but patch2 is reverted by patch8 which is a better way).
+Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+---
+ kernel/rcu/tree_exp.h | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-And my not noticing the order of handling special.b.deferred_qs
-ate many debuging energy (patch7).
-
-The percpu rcu_preempt_depth patch is the last patch, patch11.
-
-x86 is the only beneficial arch. But other arch can put
-->rcu_read_lock_nesting and ->rcu_read_unlock_special to
-thread_info to avoid the function call after we have patch8/9.
-
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: x86@kernel.org
-CC: "Paul E. McKenney" <paulmck@kernel.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Lai Jiangshan <jiangshanlai@gmail.com>
-CC: Joel Fernandes <joel@joelfernandes.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: linux-kernel@vger.kernel.org
-CC: rcu@vger.kernel.org
-
-Lai Jiangshan (11):
-  rcu: avoid leaking exp_deferred_qs into next GP
-  rcu: fix bug when rcu_exp_handler() in nested interrupt
-  rcu: clean up rcu_preempt_deferred_qs_irqrestore()
-  rcu: cleanup rcu_preempt_deferred_qs()
-  rcu: clean all rcu_read_unlock_special after report qs
-  rcu: clear t->rcu_read_unlock_special in one go
-  rcu: set special.b.deferred_qs before wake_up()
-  rcu: don't use negative ->rcu_read_lock_nesting
-  rcu: wrap usages of rcu_read_lock_nesting
-  rcu: clear the special.b.need_qs in rcu_note_context_switch()
-  x86,rcu: use percpu rcu_preempt_depth
-
- arch/x86/Kconfig                         |   2 +
- arch/x86/include/asm/rcu_preempt_depth.h |  87 +++++++++++++++
- arch/x86/kernel/cpu/common.c             |   7 ++
- arch/x86/kernel/process_32.c             |   2 +
- arch/x86/kernel/process_64.c             |   2 +
- include/linux/rcupdate.h                 |  24 +++++
- init/init_task.c                         |   2 +-
- kernel/fork.c                            |   2 +-
- kernel/rcu/Kconfig                       |   3 +
- kernel/rcu/tree_exp.h                    |  58 ++++------
- kernel/rcu/tree_plugin.h                 | 130 +++++++++++++----------
- 11 files changed, 220 insertions(+), 99 deletions(-)
- create mode 100644 arch/x86/include/asm/rcu_preempt_depth.h
-
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index a0e1e51c51c2..6dec21909b30 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -603,6 +603,18 @@ static void rcu_exp_handler(void *unused)
+ 	struct rcu_node *rnp = rdp->mynode;
+ 	struct task_struct *t = current;
+ 
++	/*
++	 * Note that there is a large group of race conditions that
++	 * can have caused this quiescent state to already have been
++	 * reported, so we really do need to check ->expmask first.
++	 */
++	raw_spin_lock_irqsave_rcu_node(rnp, flags);
++	if (!(rnp->expmask & rdp->grpmask)) {
++		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++		return;
++	}
++	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++
+ 	/*
+ 	 * First, the common case of not being in an RCU read-side
+ 	 * critical section.  If also enabled or idle, immediately
+@@ -628,17 +640,10 @@ static void rcu_exp_handler(void *unused)
+ 	 * a future context switch.  Either way, if the expedited
+ 	 * grace period is still waiting on this CPU, set ->deferred_qs
+ 	 * so that the eventual quiescent state will be reported.
+-	 * Note that there is a large group of race conditions that
+-	 * can have caused this quiescent state to already have been
+-	 * reported, so we really do need to check ->expmask.
+ 	 */
+ 	if (t->rcu_read_lock_nesting > 0) {
+-		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+-		if (rnp->expmask & rdp->grpmask) {
+-			rdp->exp_deferred_qs = true;
+-			t->rcu_read_unlock_special.b.exp_hint = true;
+-		}
+-		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++		rdp->exp_deferred_qs = true;
++		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+ 		return;
+ 	}
+ 
 -- 
 2.20.1
 
