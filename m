@@ -2,149 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C7DEAD03
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D214EAD10
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfJaKCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:02:09 -0400
-Received: from mail-eopbgr150054.outbound.protection.outlook.com ([40.107.15.54]:39300
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727337AbfJaKCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:02:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XS0CP8K/y7heaeGaoOx4PBSUCTmpmcYEFBl+LH6cgf5Hjf4XKyHmetAzjXhOgAD++E90AcyhcdiZfdWSemL6NdVEZVDN2G7Zs8+DeeBc3pN3s3YFf3wc3VbF7AUUcHaBI/FPmRC/b2vm3AteROJy8h4WDb87CsyEGusmGbI9saJm8acl+xt6/RY1ofxCrjjThztseCE6qqt5LCMEtbvrmFiquRFkspsewqnirH2N9wL1lrRY3BWkY7xQExWCsMtwCYbTkj/MHsr02Jfk1xpvw1rnQP4SRQ8C9G1ZeqSs7n0C0E+19BvsrW/RWENa5CgIuh/CAXTQ//q0HoPPnMhVuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9jCLTDb36RC2va2i/w6VXlYE81gCHs04E2EgyMcrgU=;
- b=XIkWtR3PtHjoDk+O5DAnvkU1c79v9ilxgOLAXBWWrqzdssFsUPaeDFl6z9DTVuh3KSkBNTPD1Jl38n1tInXWdA+moEnvXPfViEwpEMeKnMsQlQIhmrl1pqBx2uFKg8usx9UAWFOp7mynR8ypGhlGC1zSkNZtj9TTNSTZNioHCblhTep+OiQxa6VlsxpBoGt3zqIOMUYSB1ZQ2j2MkMQOqat8Z6l0aYJ9D082XACMn1VaK7Tj4Zxfejm5tnnUc29/yWSui2ConacPfdkQiYvxYMvTHzHe/Z3O2J9bY33B74qu303mz+MVivuHqsIToVBUGZ25WMlnrKEX6ZtiQY895g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9jCLTDb36RC2va2i/w6VXlYE81gCHs04E2EgyMcrgU=;
- b=kd81AX2H31DA1uE/8B4uTVamRfoUI3hRROy1NTSzwxKdk0Tsy4gyKB4Kznli+/+09yEg5I9A1Myels3zRJ15simvrh7/ClKasG1G6I2R3DkeXjPZrYP9lodXKPqzO+Z7WvdVECDin5KyxIKUL7lVe/4YvPw/YxD2rUIalppP1zo=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6722.eurprd04.prod.outlook.com (20.179.252.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.28; Thu, 31 Oct 2019 10:02:01 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2387.028; Thu, 31 Oct 2019
- 10:02:01 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 2/2] clk: imx: imx7d: remove clk_set_parent
-Thread-Topic: [PATCH 2/2] clk: imx: imx7d: remove clk_set_parent
-Thread-Index: AQHVj9I92AhYNbamKEyejI7asTmq+g==
-Date:   Thu, 31 Oct 2019 10:02:00 +0000
-Message-ID: <1572515888-3385-3-git-send-email-peng.fan@nxp.com>
-References: <1572515888-3385-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1572515888-3385-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0118.apcprd03.prod.outlook.com
- (2603:1096:203:b0::34) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 21cb476b-2e59-47b5-4457-08d75de95f76
-x-ms-traffictypediagnostic: AM0PR04MB6722:|AM0PR04MB6722:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB672214016F5FAC8A7A10494E88630@AM0PR04MB6722.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02070414A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(136003)(396003)(376002)(189003)(199004)(446003)(2501003)(71190400001)(71200400001)(6436002)(11346002)(8936002)(2616005)(99286004)(316002)(6636002)(66946007)(476003)(478600001)(50226002)(256004)(14454004)(110136005)(54906003)(305945005)(7736002)(2906002)(2201001)(102836004)(76176011)(44832011)(66446008)(64756008)(66476007)(6486002)(66556008)(486006)(3846002)(66066001)(26005)(386003)(86362001)(52116002)(81166006)(81156014)(186003)(5660300002)(8676002)(25786009)(36756003)(6512007)(4326008)(6116002)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6722;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +jiVyIFCxwe9q6jRDi14gGyuxiVfOyGQPDr6jI7YzR+6CPgJdKRzTmYTtYZ9oVor0rmRyKdCbmxkyIjmKWXFYb+85KJjxf2iBocCrId4Mjsv9IECk/9+BuB4wF1nnGITczSwgSpxtn0Q1vim2tVvKQR5oQvbCFEy3VC12v3nPy60K4pdU9v+tDd1qF6T7SYc8cbz6d4azKHtiCIkpCqE1plx50nrKB/ewk5TLBW/z1jX0xFPgTyhc3zdmiVF4BRnatBAHIcDE587b9MKcrboMdI7siAK+SiDBOlvdORDhoFh8ZcQZ0sVeW6uP6gVkNqLg3OiOs3gvSttLIBnREe1vXxHGbnhf36kj0EflPRvXDzhEYlMk5Vy48TIAVM0oMfZZhsbSu/Z4IMej9S67xbmofZiwqZ9lWzeVamk/SyLelmTYfJAyx0hfAcpoaOJC9ti
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726971AbfJaKHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:07:24 -0400
+Received: from smtprelay0006.hostedemail.com ([216.40.44.6]:41733 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726193AbfJaKHY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 06:07:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 66010180A5AFF;
+        Thu, 31 Oct 2019 10:07:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2692:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:9012:10004:10226:10400:10848:11026:11232:11658:11914:12043:12109:12297:12438:12740:12760:12895:13069:13255:13311:13357:13439:14096:14097:14659:14721:21080:21433:21451:21627:21740:30054:30060:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: kite22_402863056ff25
+X-Filterd-Recvd-Size: 2589
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 31 Oct 2019 10:07:20 +0000 (UTC)
+Message-ID: <bd76d5c22f389f3e6ecc2575e32c906f79647765.camel@perches.com>
+Subject: Re: [PATCH linux-kselftest/test v6] lib/list-test: add a test for
+ the 'list' doubly linked list
+From:   Joe Perches <joe@perches.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     shuah <shuah@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>,
+        David Gow <davidgow@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 31 Oct 2019 03:07:12 -0700
+In-Reply-To: <20191031085129.GA217570@google.com>
+References: <20191024224631.118656-1-davidgow@google.com>
+         <0cb1d948-0da3-eb0f-c58f-ae3a785dd0dd@kernel.org>
+         <CABVgOSmCHbGjZBjeWSbPEZbJw22SaBQnoO77xxNzN_ugAwzNiQ@mail.gmail.com>
+         <20191030104217.GA18421@kadam>
+         <42a8270d-ed6f-d29f-5e71-7b76a074b63e@kernel.org>
+         <CAFd5g47OZ8x9=etJUj4Sgsw38VQb0j=omOUsubc7+pb2rJi0bQ@mail.gmail.com>
+         <fad58e4f48237894de0d511adf1d663a42a2eee7.camel@perches.com>
+         <20191031085129.GA217570@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21cb476b-2e59-47b5-4457-08d75de95f76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2019 10:02:00.8532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: p5S7N/1rqRPIB3RfyseygYpuV6MirRESLRlVqO8Gjy3AkEN9zTZ4DuaIVX1jslH+hjMwtEGrmmN9xw7E4cuBiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6722
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Thu, 2019-10-31 at 01:51 -0700, Brendan Higgins wrote:
+> On Wed, Oct 30, 2019 at 10:18:44AM -0700, Joe Perches wrote:
+> > On Wed, 2019-10-30 at 09:35 -0700, Brendan Higgins wrote:
+> > > Agreed. I can see the point of not wanting to write an exception into
+> > > checkpatch for every exception of it's general rules; however, it
+> > > would be nice if there was a way to maybe have a special comment or
+> > > something that could turn off a checkpatch error. That way, a
+> > > checkpatch error/warning always means some action should be taken, and
+> > > if a rule is being ignored, there is always documentation as to why.
+> > 
+> > That couldn't work when a comment which may exist
+> > in a file is out of scope of the patch context.
+> 
+> Sorry, I don't understand exactly what you mean. Can you elaborate?
 
-Since the set parent could be done by assigned-clock-parents in
-dts, so no need clk_set_parent in driver.
+checkpatch works on patch contexts.
+If the comment is not within the patch context,
+checkpatch cannot ignore various test.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 12 ------------
- 1 file changed, 12 deletions(-)
+> static void list_test_list_for_each_prev(struct kunit *test) /* checkpatch: disable=for-each-format */
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 0c9f7adb41ae..b73e3e148497 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -878,18 +878,6 @@ static void __init imx7d_clocks_init(struct device_nod=
-e *ccm_node)
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-=20
--	clk_set_parent(hws[IMX7D_PLL_ARM_MAIN_BYPASS]->clk, hws[IMX7D_PLL_ARM_MAI=
-N]->clk);
--	clk_set_parent(hws[IMX7D_PLL_DRAM_MAIN_BYPASS]->clk, hws[IMX7D_PLL_DRAM_M=
-AIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_SYS_MAIN_BYPASS]->clk, hws[IMX7D_PLL_SYS_MAI=
-N]->clk);
--	clk_set_parent(hws[IMX7D_PLL_ENET_MAIN_BYPASS]->clk, hws[IMX7D_PLL_ENET_M=
-AIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_AUDIO_MAIN_BYPASS]->clk, hws[IMX7D_PLL_AUDIO=
-_MAIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_VIDEO_MAIN_BYPASS]->clk, hws[IMX7D_PLL_VIDEO=
-_MAIN]->clk);
--
--	clk_set_parent(hws[IMX7D_MIPI_CSI_ROOT_SRC]->clk, hws[IMX7D_PLL_SYS_PFD3_=
-CLK]->clk);
--
--	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter fr=
-eq */
--	clk_set_parent(hws[IMX7D_GPT1_ROOT_SRC]->clk, hws[IMX7D_OSC_24M_CLK]->clk=
-);
--
- 	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
- 	hws[IMX7D_USB1_MAIN_480M_CLK] =3D imx_clk_hw_fixed_factor("pll_usb1_main_=
-clk", "osc", 20, 1);
- 	hws[IMX7D_USB_MAIN_480M_CLK] =3D imx_clk_hw_fixed_factor("pll_usb_main_cl=
-k", "osc", 20, 1);
---=20
-2.16.4
+Long line, now what?
+
 
