@@ -2,207 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C9D4EB4B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A09FEB4BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbfJaQ3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:29:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:51504 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfJaQ3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:29:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC4D546A;
-        Thu, 31 Oct 2019 09:29:49 -0700 (PDT)
-Received: from [192.168.1.20] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03BF13F71E;
-        Thu, 31 Oct 2019 09:29:47 -0700 (PDT)
-Subject: Re: [Patch v4 5/6] thermal/cpu-cooling: Update thermal pressure in
- case of a maximum frequency capping
-To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-6-git-send-email-thara.gopinath@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <2b19d7da-412c-932f-7251-110eadbef3e3@arm.com>
-Date:   Thu, 31 Oct 2019 17:29:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728584AbfJaQa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:30:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64506 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726540AbfJaQa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:30:28 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9VGT3bU075421;
+        Thu, 31 Oct 2019 12:30:19 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w027f2kpg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Oct 2019 12:30:18 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x9VGT34G075383;
+        Thu, 31 Oct 2019 12:30:18 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w027f2knx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Oct 2019 12:30:18 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x9VGQC3f010328;
+        Thu, 31 Oct 2019 16:30:17 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma05wdc.us.ibm.com with ESMTP id 2vxwh68r1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Oct 2019 16:30:17 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9VGUDPs61014424
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 16:30:13 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 110086E058;
+        Thu, 31 Oct 2019 16:30:13 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF39B6E054;
+        Thu, 31 Oct 2019 16:30:12 +0000 (GMT)
+Received: from localhost (unknown [9.85.136.151])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Oct 2019 16:30:12 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Kamalesh Babulal <kamaleshb@in.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] pseries/hotplug-cpu: Change default behaviour of cede_offline to "off"
+In-Reply-To: <1571740391-3251-2-git-send-email-ego@linux.vnet.ibm.com>
+References: <1571740391-3251-1-git-send-email-ego@linux.vnet.ibm.com> <1571740391-3251-2-git-send-email-ego@linux.vnet.ibm.com>
+Date:   Thu, 31 Oct 2019 11:30:11 -0500
+Message-ID: <87k18klvxo.fsf@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1571776465-29763-6-git-send-email-thara.gopinath@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910310164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.10.19 22:34, Thara Gopinath wrote:
-> Thermal governors can request for a cpu's maximum supported frequency
-> to be capped in case of an overheat event. This in turn means that the
-> maximum capacity available for tasks to run on the particular cpu is
-> reduced. Delta between the original maximum capacity and capped
-> maximum capacity is known as thermal pressure. Enable cpufreq cooling
-> device to update the thermal pressure in event of a capped
-> maximum frequency.
-> 
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  drivers/thermal/cpu_cooling.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index 391f397..2e6a979 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -218,6 +218,23 @@ static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
->  }
->  
->  /**
-> + * update_sched_max_capacity - update scheduler about change in cpu
-> + *					max frequency.
-> + * @policy - cpufreq policy whose max frequency is capped.
-> + */
-> +static void update_sched_max_capacity(struct cpumask *cpus,
-> +				      unsigned int cur_max_freq,
-> +				      unsigned int max_freq)
-> +{
-> +	int cpu;
-> +	unsigned long capacity = (cur_max_freq << SCHED_CAPACITY_SHIFT) /
-> +				  max_freq;
-> +
-> +	for_each_cpu(cpu, cpus)
-> +		update_thermal_pressure(cpu, capacity);
-> +}
-> +
-> +/**
->   * get_load() - get load for a cpu since last updated
->   * @cpufreq_cdev:	&struct cpufreq_cooling_device for this cpu
->   * @cpu:	cpu number
-> @@ -320,6 +337,7 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
->  				 unsigned long state)
->  {
->  	struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
-> +	int ret;
->  
->  	/* Request state should be less than max_level */
->  	if (WARN_ON(state > cpufreq_cdev->max_level))
-> @@ -331,8 +349,17 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
->  
->  	cpufreq_cdev->cpufreq_state = state;
->  
-> -	return dev_pm_qos_update_request(&cpufreq_cdev->qos_req,
-> -				cpufreq_cdev->freq_table[state].frequency);
-> +	ret = dev_pm_qos_update_request
-> +				(&cpufreq_cdev->qos_req,
-> +				 cpufreq_cdev->freq_table[state].frequency);
-> +
-> +	if (ret > 0)
-> +		update_sched_max_capacity
-> +				(cpufreq_cdev->policy->cpus,
-> +				 cpufreq_cdev->freq_table[state].frequency,
-> +				 cpufreq_cdev->policy->cpuinfo.max_freq);
-> +
-> +	return ret;
->  }
->  
->  /**
-> 
+"Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+>
+> Currently on PSeries Linux guests, the offlined CPU can be put to one
+> of the following two states:
+>    - Long term processor cede (also called extended cede)
+>    - Returned to the hypervisor via RTAS "stop-self" call.
+>
+> This is controlled by the kernel boot parameter "cede_offline=on/off".
+>
+> By default the offlined CPUs enter extended cede. The PHYP hypervisor
+> considers CPUs in extended cede to be "active" since they are still
+> under the control fo the Linux guests. Hence, when we change the SMT
+> modes by offlining the secondary CPUs, the PURR and the RWMR SPRs will
+> continue to count the values for offlined CPUs in extended cede as if
+> they are online. This breaks the accounting in tools such as lparstat.
+>
+> To fix this, ensure that by default the offlined CPUs are returned to
+> the hypervisor via RTAS "stop-self" call by changing the default value
+> of "cede_offline_enabled" to false.
+>
+> Fixes: commit 3aa565f53c39 ("powerpc/pseries: Add hooks to put the CPU
+> into an appropriate offline state")
+>
+> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
 
-Why not getting rid of update_sched_max_capacity() entirely and call
-update_thermal_pressure() in cpu_cooling.c directly? Saves one level in
-the call chain and would mean less code for this feature.
+I'm OK with changing the default as a precursor to removing the code
+that implements the cede offline mode.
 
-Just compile tested on arm64:
-
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index 3211b4d3a899..bf36995013b0 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -217,23 +217,6 @@ static u32 cpu_power_to_freq(struct
-cpufreq_cooling_device *cpufreq_cdev,
-        return freq_table[i - 1].frequency;
- }
-
--/**
-- * update_sched_max_capacity - update scheduler about change in cpu
-- *                                     max frequency.
-- * @policy - cpufreq policy whose max frequency is capped.
-- */
--static void update_sched_max_capacity(struct cpumask *cpus,
--                                     unsigned int cur_max_freq,
--                                     unsigned int max_freq)
--{
--       int cpu;
--       unsigned long capacity = (cur_max_freq << SCHED_CAPACITY_SHIFT) /
--                                 max_freq;
--
--       for_each_cpu(cpu, cpus)
--               update_thermal_pressure(cpu, capacity);
--}
--
- /**
-  * get_load() - get load for a cpu since last updated
-  * @cpufreq_cdev:      &struct cpufreq_cooling_device for this cpu
-@@ -353,7 +336,7 @@ static int cpufreq_set_cur_state(struct
-thermal_cooling_device *cdev,
-                                cpufreq_cdev->freq_table[state].frequency);
-
-        if (ret > 0)
--               update_sched_max_capacity
-+               update_thermal_pressure
-                                (cpufreq_cdev->policy->cpus,
-                                 cpufreq_cdev->freq_table[state].frequency,
-                                 cpufreq_cdev->policy->cpuinfo.max_freq);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 55dfe9634f67..5707813c7621 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1985,9 +1985,9 @@ static inline void rseq_syscall(struct pt_regs *regs)
- #endif
-
- #ifdef CONFIG_SMP
--void update_thermal_pressure(int cpu, u64 capacity);
-+void update_thermal_pressure(struct cpumask *cpus, unsigned int cur,
-unsigned int max);
- #else
--static inline void update_thermal_pressure(int cpu, u64 capacity)
-+static inline void update_thermal_pressure(struct cpumask *cpus,
-unsigned int cur, unsigned int max);
- {
- }
- #endif
-diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-index 0da31e12a5ff..691bdd79597a 100644
---- a/kernel/sched/thermal.c
-+++ b/kernel/sched/thermal.c
-@@ -43,17 +43,16 @@ static DEFINE_PER_CPU(unsigned long, delta_capacity);
-  * the arch_scale_cpu_capacity and capped capacity is stored in per cpu
-  * delta_capacity.
-  */
--void update_thermal_pressure(int cpu, u64 capped_freq_ratio)
-+void update_thermal_pressure(struct cpumask *cpus, unsigned int cur,
-unsigned int max)
- {
--       unsigned long __capacity, delta;
-+       int cpu;
-
--       /* Normalize the capped freq ratio */
--       __capacity = (capped_freq_ratio * arch_scale_cpu_capacity(cpu)) >>
--
-SCHED_CAPACITY_SHIFT;
--       delta = arch_scale_cpu_capacity(cpu) -  __capacity;
--       pr_debug("updating cpu%d thermal pressure to %lu\n", cpu, delta);
-+       for_each_cpu(cpu, cpus) {
-+               unsigned long scale_cap = arch_scale_cpu_capacity(cpu);
-+               unsigned long cur_cap = cur * scale_cap / max;
-
--       per_cpu(delta_capacity, cpu) = delta;
-+               per_cpu(delta_capacity, cpu) = scale_cap - cur_cap;
-+       }
- }
+Acked-by: Nathan Lynch <nathanl@linux.ibm.com>
