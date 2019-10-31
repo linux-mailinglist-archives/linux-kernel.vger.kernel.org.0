@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2196AEA8D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0928EA8DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfJaBd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 21:33:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:43604 "EHLO foss.arm.com"
+        id S1726532AbfJaBgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 21:36:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:43660 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726460AbfJaBd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:33:27 -0400
+        id S1726314AbfJaBgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 21:36:51 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75AE61FB;
-        Wed, 30 Oct 2019 18:33:26 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8B531FB;
+        Wed, 30 Oct 2019 18:36:50 -0700 (PDT)
 Received: from [10.188.222.161] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EE2E3F719;
-        Wed, 30 Oct 2019 18:33:23 -0700 (PDT)
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-To:     Ram Muthiah <rammuthiah@google.com>,
-        Quentin Perret <qperret@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, aaron.lwe@gmail.com,
-        mingo@kernel.org, pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-References: <20191028174603.GA246917@google.com>
- <20191029113411.GP4643@worktop.programming.kicks-ass.net>
- <20191029115000.GA11194@google.com>
- <CA+CXyWsoW8ann52pcR66ejRmjJ=4QmoaHTRVhb3=ohe0ZDnm-A@mail.gmail.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 645D03F719;
+        Wed, 30 Oct 2019 18:36:48 -0700 (PDT)
+Subject: Re: [QUESTION] Hung task warning while running syzkaller test
+To:     Zhihao Cheng <chengzhihao1@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, peterz@infradead.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        patrick.bellasi@arm.com, tglx@linutronix.de
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        "zhangyi (F)" <yi.zhang@huawei.com>
+References: <0d7aa66d-d2b9-775c-56b3-543d132fdb84@huawei.com>
+ <1693d19e-56c7-9d6f-8e80-10fe82101cff@arm.com>
+ <aa5d0f35-e707-f5e3-251e-f940c0b0232b@huawei.com>
+ <4ca01869-7997-cfce-edce-e75337d3a6fa@arm.com>
+ <abba880d-cfa6-3485-7831-9998db290396@huawei.com>
+ <d7e9f62e-d7a6-50ec-6fb5-76ad136506df@arm.com>
+ <4453942d-c4f2-bbbe-64a9-4313c0fccfbf@huawei.com>
 From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <75e99374-0bd6-a7d7-581e-9360a1f90103@arm.com>
-Date:   Thu, 31 Oct 2019 02:33:13 +0100
+Message-ID: <6d78bdbc-e4f8-7ff7-8445-c9dc07b0614a@arm.com>
+Date:   Thu, 31 Oct 2019 02:36:42 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CA+CXyWsoW8ann52pcR66ejRmjJ=4QmoaHTRVhb3=ohe0ZDnm-A@mail.gmail.com>
+In-Reply-To: <4453942d-c4f2-bbbe-64a9-4313c0fccfbf@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -46,47 +47,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2019 23:50, Ram Muthiah wrote:
-> 
-> Quentin and I were able to create a setup which reproduces the issue.
-> 
-> Given this, I tried Peter's proposed fix and was still able to reproduce the
-> issue unfortunately. Current patch is located here -
-> https://android-review.googlesource.com/c/kernel/common/+/1153487
-> 
-> Our mitigation for this issue on the android-mainline branch has been to
-> revert 67692435c411 ("sched: Rework pick_next_task() slow-path").
-> https://android-review.googlesource.com/c/kernel/common/+/1152564
-> 
-> I'll spend some time detailing repro steps next. I should be able to
-> provide an update on those details early next week.
-> 
-> We appreciate the help so far.
-> Thanks,
-> Ram
+On 29/10/2019 03:25, Zhihao Cheng wrote:
+> I don't know much about the freezer mechanism of CGroup, but I tried it. I turned off all the CGroup related config options and reproduced the hung task on a fresh busybox-made root file system. I added rootfs in attachment. So, I guess hung task has nothing to do with CGroup(freezer).
 > 
 
-The splat Quentin posted happens at secondary startup, is that always
-the case? I'm trying to think of what could make rq.cfs_rq.nr_running
-non-zero at secondary bringup time. It might not explain the NULL pointer, but
-I'm still curious as to how we can get something there this early, as it could
-point towards something. Be warned, I might bring up stuff I know nothing
-about, but this looks "fun" so I can't help myself :)
-
-
-sched domains are only setup after smp_init() in sched_init_smp(), thus after
-we've booted all secondaries. This should take load balance out of the
-picture.
-
-For wakeups, select_task_rq_fair() can only ever pick prev_cpu or this_cpu
-since there are no sched domains. I don't see many candidates that could
-wakeup on a secondary (thus have non-zero this_cpu) this early there. Perhaps
-the smpboot threads, but from a quick look they are first created *after*
-sched_init_smp(), so they couldn't exist during (boot-time) secondary bringup.
-Seems to be the same for IRQ threads (and they're setscheduler'd to FIFO
-anyway).
-
-So now I'm even more curious as to what CFS task could be enqueued on a
-secondary CPU rq before sched_init_smp(). Have you been sending stuff to space
-without any shielding lately?
+That's good to know, thanks for digging some more. I'm on the move ATM but if
+I find some time I'll try to stare some more at the C reproducer.
 
