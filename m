@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD35EBA30
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 00:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 458FCEBA26
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 00:05:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbfJaXKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 19:10:08 -0400
-Received: from mx1.cock.li ([185.10.68.5]:42793 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728397AbfJaXKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 19:10:08 -0400
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S1728455AbfJaXDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 19:03:32 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36318 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfJaXDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 19:03:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id y10so3975616qto.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 16:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=w1lv6i5WMZhr+LJHUYk12uXR0Zf+Nge4dShOz7QCLY4=;
+        b=gMivkkZ54O49XnNT6ktSMTgKwQeUd9Pjiy2DBrSJ9BCNsak1LylpmxHg8bqyZaBJBq
+         fAXl5C+HkhUS9PBr7QFiApn1HVtf1UKky3vnp1q/FfTM6nsfDLa57Ugzkt+KRmjk7BI2
+         eljn/NRnMtydKl2yk9BHWAOpVNodeDERcwWv6I5obW2farhTreah+/1gC4iAVuYa6Vuk
+         FkPNhjXYAwTUtNdwyQNUA4TDPBtJCBFTj3zJtxq9YCbBfb9+q0X1I926tSdPwuVqoYa2
+         An8hZjAhbIiIleUo/lC2P3NLHqdtKszSqc9rg82KLDoGoLgVY4ytoGx3h9dF5nSRmPcj
+         EsPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=w1lv6i5WMZhr+LJHUYk12uXR0Zf+Nge4dShOz7QCLY4=;
+        b=ja5Wf+15GajG6ek1fk0pO2V6Mtr27tpl8QTgcZCJJDRrP5wjmJKtTTEfdutZcDXNFx
+         h8/SexzRESgAWb85u/+4qHY0sczBERpbVyUFE2Rrd/EvGc7+rLUViTxEFOJz0C+lQbHe
+         nxdt7l8hCMZ63116UeRXPVoaFzl3LzJO/ro/D9TX1K60igFqyNgAwUby0kceceDeoeJn
+         xsYIX9eKM1IrWHlEYdIKDA6JNDQZ4Z6P/WtQ1lX+tb11prX/TfaHdDKQE+89vLE5vpKs
+         eGh96NCSfxk+hn7ocNmONaMYOrOzdnusMPgerVV++F/8DJTGah0fMfEOhqsKJ4/pI4xJ
+         ag3g==
+X-Gm-Message-State: APjAAAWdUwRSkcY49YtFDQ+05O+mxWVUcipSRb0FKY0MX4XT9mnIdkNM
+        7d4D0OgDAYaVtDrx1WnDs1Q=
+X-Google-Smtp-Source: APXvYqxnW2g3AzvIUkcvZbFqLXCygMYsIlDZ1TD8IYQ0y48FZF5RQ8h5I08Rno3FcRXBeNUBY7KUVg==
+X-Received: by 2002:a0c:936e:: with SMTP id e43mr7260553qve.73.1572563011216;
+        Thu, 31 Oct 2019 16:03:31 -0700 (PDT)
+Received: from localhost.localdomain ([187.106.44.83])
+        by smtp.gmail.com with ESMTPSA id s67sm2633875qkh.70.2019.10.31.16.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2019 16:03:30 -0700 (PDT)
+From:   Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+To:     outreachy-kernel@googlegroups.com, gregkh@linuxfoundation.org,
+        kim.jamie.bradley@gmail.com, nishkadg.linux@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanetbr.org
+Cc:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+Subject: [PATCH v4 3/3] staging: rts5208: Eliminate the use of Camel Case in file sd.h
+Date:   Thu, 31 Oct 2019 20:02:43 -0300
+Message-Id: <20191031230243.3462-4-gabrielabittencourt00@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191031230243.3462-1-gabrielabittencourt00@gmail.com>
+References: <20191031230243.3462-1-gabrielabittencourt00@gmail.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1572562966; bh=ZEDAU4OLNqqsQbxbWvlIESgmeMLSiwy214XPoMthBZ0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Y5t65ROVAd/DtK0n0NGJ2dKwH9tvQDJxJNt3UNDbRpCPRIitQXIvh0zZgeq5NJjg+
-         Vt3FJUVth4baoMTCtX0r/HbjnAL7bslwcpDRiu+egY4WkkKAYHuNKqTkCNrHEk3ir0
-         6UoCg/Ct4mNsRJUx87i3AwbuHJUzp0WKU7fUmcV00CsIOQr+8Np38isF9PSJbJ6fmq
-         qezkLmCzZlpObf5yQD9YhfcPwbeIAijiLrI7GanPfI7UkOvL3iujHN1CfKYYB5AnDT
-         NjHrvrOnUQmJWZApB2BMoHbXXYNiDl5UzbSsLyOQn5CXarZwXBiG913hCyoU4jYNUo
-         l6p+RWAKcXgzA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 31 Oct 2019 23:02:42 +0000
-From:   gameonlinux@redchan.it
-To:     gnu-system-discuss@gnu.org
-Cc:     bruce@perens.com, rms@gnu.org, esr@thyrsus.com,
-        torvalds@linux-foundation.org, bugs@gnu.support, ams@gnu.org,
-        linux-kernel@vger.kernel.org
-Subject: (Censored) Why will no-one sue GrSecurity for their blatant GPL
- violation (of GCC and the linux kernel)?
-Message-ID: <e3a6a2070e2182be00b9720b4a1c591f@redchan.it>
-X-Sender: gameonlinux@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I tried to send this to the list, but it was dropped as "spam", which is 
-no surprise since the some want to screen communications to RMS and thus 
-control him.
+Cleans up checks of "Avoid CamelCase" in file sd.h
+Even though the constant "DCM_LOW_FREQUENCY_MODE_SET" is defined and never used,
+it's useful to keep it because it documents the device.
 
-RMS:
-Could you share your thoughts, if any, of why no one will sue GrSecurity 
-("Open Source Security" (a Pennsylvania company)) for their blatant 
-violation of section 6 of version 2 of the GNU General Public License?
+Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
 
-Both regarding their GCC plugins and their Linux-Kernel patch which is a 
-non-separable derivative work?
+---
+Changes in v4:
+- Explain the reason of keeping a constant that is defined and not used
+---
+ drivers/staging/rts5208/sd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-They distribute such under a no-redistribution agreement to paying 
-customers (the is the only distribution they do). If the customer 
-redistributes the derivative works they are punished.
+diff --git a/drivers/staging/rts5208/sd.h b/drivers/staging/rts5208/sd.h
+index dc9e8cad7a74..f4ff62653b56 100644
+--- a/drivers/staging/rts5208/sd.h
++++ b/drivers/staging/rts5208/sd.h
+@@ -232,7 +232,7 @@
+ #define DCM_LOW_FREQUENCY_MODE   0x01
+ 
+ #define DCM_HIGH_FREQUENCY_MODE_SET  0x0C
+-#define DCM_Low_FREQUENCY_MODE_SET   0x00
++#define DCM_LOW_FREQUENCY_MODE_SET   0x00
+ 
+ #define MULTIPLY_BY_1    0x00
+ #define MULTIPLY_BY_2    0x01
+-- 
+2.20.1
 
-That is: GrSecurity (OSS) has created a contract to /Defeat/ the GPL and 
-has done so successfully so far. Very successfully. The GPL is basically 
-the BSD license now, since such as been allowed to stand.
-
-This is how businesses see the GPL. They are no longer afraid: They will 
-simply do what GrSecurity has done. Something that was supposed to stay 
-liberated: a security patch that helped users maintain their privacy by 
-not being immediately rooted when using a linux kernel on a GNU system; 
-is now non-free.
-
-With this the GPL _fails_.
-
-NO ONE has sued GrSecurity. Thus they are seen as "having it right" 
-"correct" "we can do this".
-
-Wouldn't the FSF have standing regarding the GCC plugins atleast?
-Couldn't you all rally linux-kernel copyright holders to bring a joint 
-action?
-
-References:
-perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/
-
-perens.com/static/OSS_Spenger_v_Perens/0_2018cv15189/docs1/pdf/18.pdf
-(Page 10 onward of this brief gives a good recitation of the facts and 
-issues
