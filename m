@@ -2,80 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F41DEACF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63056EAD0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfJaJ7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:59:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34214 "EHLO mx1.suse.de"
+        id S1727043AbfJaKD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:03:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35996 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727130AbfJaJ7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:59:50 -0400
+        id S1726864AbfJaKD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 06:03:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 50999B181;
-        Thu, 31 Oct 2019 09:59:48 +0000 (UTC)
-From:   Jiri Slaby <jslaby@suse.cz>
-To:     axboe@kernel.dk
-Cc:     linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        linux-ide@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 -resend 4/4] ata: sata_mv, avoid trigerrable BUG_ON
-Date:   Thu, 31 Oct 2019 10:59:46 +0100
-Message-Id: <20191031095946.7070-4-jslaby@suse.cz>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191031095946.7070-1-jslaby@suse.cz>
-References: <20191031095946.7070-1-jslaby@suse.cz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        by mx1.suse.de (Postfix) with ESMTP id 369B9B227;
+        Thu, 31 Oct 2019 10:03:56 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] MIPS: SGI-IP27: fix exception handler replication
+Date:   Thu, 31 Oct 2019 10:46:04 +0100
+Message-Id: <20191031094605.12380-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several reports that the BUG_ON on unsupported command in
-mv_qc_prep can be triggered under some circumstances:
-https://bugzilla.suse.com/show_bug.cgi?id=1110252
-https://serverfault.com/questions/888897/raid-problems-after-power-outage
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1652185
-https://bugs.centos.org/view.php?id=14998
+Commit 775b089aeffa ("MIPS: tlbex: Remove cpu_has_local_ebase") removed
+generating tlb refill handlers for every CPU, which was needed for
+generating per node exception handlers on IP27. Instead of resurrecting
+(and fixing) refill handler generation, we simply copy all exception
+vectors from the boot node to the other nodes. Also remove the config
+option since the memory tradeoff for expection handler replication
+is just 8k per node.
 
-Let sata_mv handle the failure gracefully: warn about that incl. the
-failed command number and return an AC_ERR_INVALID error. We can do that
-now thanks to the previous patch.
-
-Remove also the long-standing FIXME.
-
-[v2] use %.2x as commands are defined as hexa.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-ide@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 ---
- drivers/ata/sata_mv.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Changes in v2:
+- use __flush_cache_all() to make sure copied handlers are flushed
+  to memory
+- fixed reference commit
 
-diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
-index 5d5c8936a590..277f11909fc1 100644
---- a/drivers/ata/sata_mv.c
-+++ b/drivers/ata/sata_mv.c
-@@ -2098,12 +2098,10 @@ static enum ata_completion_errors mv_qc_prep(struct ata_queued_cmd *qc)
- 		 * non-NCQ mode are: [RW] STREAM DMA and W DMA FUA EXT, none
- 		 * of which are defined/used by Linux.  If we get here, this
- 		 * driver needs work.
--		 *
--		 * FIXME: modify libata to give qc_prep a return value and
--		 * return error here.
- 		 */
--		BUG_ON(tf->command);
--		break;
-+		ata_port_err(ap, "%s: unsupported command: %.2x\n", __func__,
-+				tf->command);
-+		return AC_ERR_INVALID;
+ arch/mips/sgi-ip27/Kconfig       |  7 -------
+ arch/mips/sgi-ip27/ip27-init.c   | 21 ++++++---------------
+ arch/mips/sgi-ip27/ip27-memory.c |  4 ----
+ 3 files changed, 6 insertions(+), 26 deletions(-)
+
+diff --git a/arch/mips/sgi-ip27/Kconfig b/arch/mips/sgi-ip27/Kconfig
+index ef3847e7aee0..e5b6cadbec85 100644
+--- a/arch/mips/sgi-ip27/Kconfig
++++ b/arch/mips/sgi-ip27/Kconfig
+@@ -38,10 +38,3 @@ config REPLICATE_KTEXT
+ 	  Say Y here to enable replicating the kernel text across multiple
+ 	  nodes in a NUMA cluster.  This trades memory for speed.
+ 
+-config REPLICATE_EXHANDLERS
+-	bool "Exception handler replication support"
+-	depends on SGI_IP27
+-	help
+-	  Say Y here to enable replicating the kernel exception handlers
+-	  across multiple nodes in a NUMA cluster. This trades memory for
+-	  speed.
+diff --git a/arch/mips/sgi-ip27/ip27-init.c b/arch/mips/sgi-ip27/ip27-init.c
+index 8fd3505e2b9c..f597e1ee2df7 100644
+--- a/arch/mips/sgi-ip27/ip27-init.c
++++ b/arch/mips/sgi-ip27/ip27-init.c
+@@ -64,23 +64,14 @@ static void per_hub_init(nasid_t nasid)
+ 
+ 	hub_rtc_init(nasid);
+ 
+-#ifdef CONFIG_REPLICATE_EXHANDLERS
+-	/*
+-	 * If this is not a headless node initialization,
+-	 * copy over the caliased exception handlers.
+-	 */
+-	if (get_nasid() == nasid) {
+-		extern char except_vec2_generic, except_vec3_generic;
+-		extern void build_tlb_refill_handler(void);
+-
+-		memcpy((void *)(CKSEG0 + 0x100), &except_vec2_generic, 0x80);
+-		memcpy((void *)(CKSEG0 + 0x180), &except_vec3_generic, 0x80);
+-		build_tlb_refill_handler();
+-		memcpy((void *)(CKSEG0 + 0x100), (void *) CKSEG0, 0x80);
+-		memcpy((void *)(CKSEG0 + 0x180), &except_vec3_generic, 0x100);
++	if (nasid) {
++		/* copy exception handlers from first node to current node */
++		memcpy((void *)NODE_OFFSET_TO_K0(nasid, 0),
++		       (void *)CKSEG0, 0x200);
+ 		__flush_cache_all();
++		/* switch to node local exception handlers */
++		REMOTE_HUB_S(nasid, PI_CALIAS_SIZE, PI_CALIAS_SIZE_8K);
  	}
- 	mv_crqb_pack_cmd(cw++, tf->nsect, ATA_REG_NSECT, 0);
- 	mv_crqb_pack_cmd(cw++, tf->hob_lbal, ATA_REG_LBAL, 0);
+-#endif
+ }
+ 
+ void per_cpu_init(void)
+diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+index f610fff592a6..563aad5e6398 100644
+--- a/arch/mips/sgi-ip27/ip27-memory.c
++++ b/arch/mips/sgi-ip27/ip27-memory.c
+@@ -311,11 +311,7 @@ static void __init mlreset(void)
+ 		 * thinks it is a node 0 address.
+ 		 */
+ 		REMOTE_HUB_S(nasid, PI_REGION_PRESENT, (region_mask | 1));
+-#ifdef CONFIG_REPLICATE_EXHANDLERS
+-		REMOTE_HUB_S(nasid, PI_CALIAS_SIZE, PI_CALIAS_SIZE_8K);
+-#else
+ 		REMOTE_HUB_S(nasid, PI_CALIAS_SIZE, PI_CALIAS_SIZE_0);
+-#endif
+ 
+ #ifdef LATER
+ 		/*
 -- 
-2.23.0
+2.16.4
 
