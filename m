@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D329DEAAD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC04EEAAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfJaHEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 03:04:31 -0400
-Received: from mga03.intel.com ([134.134.136.65]:51601 "EHLO mga03.intel.com"
+        id S1726479AbfJaHEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 03:04:30 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8892 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfJaHEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726607AbfJaHEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Oct 2019 03:04:30 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 00:04:29 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 00:04:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
-   d="scan'208";a="401784432"
+   d="scan'208";a="375143544"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2019 00:04:26 -0700
+  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2019 00:04:26 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1iQ4VN-000Hkd-LK; Thu, 31 Oct 2019 15:04:25 +0800
+        id 1iQ4VN-000Hkq-Mb; Thu, 31 Oct 2019 15:04:25 +0800
 Date:   Thu, 31 Oct 2019 15:04:16 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Can Guo <cang@codeaurora.org>
@@ -41,8 +41,8 @@ Cc:     kbuild-all@lists.01.org, asutoshd@codeaurora.org,
         Bean Huo <beanhuo@micron.com>,
         Tomas Winkler <tomas.winkler@intel.com>,
         open list <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] scsi: ufs: ufshcd_scale_clks() can be static
-Message-ID: <20191031070416.7gfgfkqyln2qcuk4@4978f4969bb8>
+Subject: Re: [PATCH v1 1/2] scsi: ufs: Fix up clock scaling
+Message-ID: <201910311454.ePfJ33Sl%lkp@intel.com>
 References: <1572351831-30373-2-git-send-email-cang@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,23 +55,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Can,
 
-Fixes: 9136e6afe1e7 ("scsi: ufs: Fix up clock scaling")
-Signed-off-by: kbuild test robot <lkp@intel.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on scsi/for-next]
+[also build test WARNING on v5.4-rc5 next-20191030]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Can-Guo/UFS-driver-general-fixes-bundle-2/20191031-081324
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/scsi/ufs/ufshcd.c:977:5: sparse: sparse: symbol 'ufshcd_scale_clks' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- ufshcd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 3a0b99b624829..54ae6433452f2 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -974,7 +974,7 @@ static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
-  * Returns 0 if successful
-  * Returns < 0 for any other errors
-  */
--int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
-+static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
- {
- 	int ret = 0;
- 
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
