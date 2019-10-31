@@ -2,66 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA13EA8FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:54:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9ACEA90A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 03:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfJaBxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 21:53:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfJaBxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:53:10 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D3602080F;
-        Thu, 31 Oct 2019 01:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572486787;
-        bh=URBSmu6OiJ+FEUgwhQ/RHgs7YGynWuZQ6yJNH/NdOYo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iGKfW31d7qGcARhBSAzQxOBLQn/dCL82lvBprLnWzX5XoAwPnoF2RrQ1HG2Bu6meu
-         +34QEr984x+fQw75FaA/ijzSXqwVHQ8Sei9CzsTHjH/tQHOb1GcR6oXscfByuZ9Ksj
-         jQ/Hm/HTZ9CLc++H+jpMq2wBLrUC3z6tg8Wr9fPw=
-Date:   Wed, 30 Oct 2019 18:53:06 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 1/3] arch: ipcbuf.h: make uapi asm/ipcbuf.h
- self-contained
-Message-Id: <20191030185306.a75acc68ed2b911970ccd4b8@linux-foundation.org>
-In-Reply-To: <CAK7LNASrZpJ0J7N_YvSza2QQ_cQQ+Z04Cf5-Or4ivKMb9UVuMQ@mail.gmail.com>
-References: <20191030063855.9989-1-yamada.masahiro@socionext.com>
-        <CAK7LNASrZpJ0J7N_YvSza2QQ_cQQ+Z04Cf5-Or4ivKMb9UVuMQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726705AbfJaCA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 22:00:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5232 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726336AbfJaCA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 22:00:26 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5BEF151A0CF6DAD5A48B;
+        Thu, 31 Oct 2019 10:00:23 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 31 Oct 2019 10:00:13 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <akinobu.mita@gmail.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
+Subject: [PATCH v3 0/2] fault-inject: Simplify and clean up 
+Date:   Thu, 31 Oct 2019 09:56:15 +0800
+Message-ID: <1572486977-14195-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2019 10:33:00 +0900 Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+v3 -> v2:
+    Add another patch to use DEFINE_DEBUGFS_ATTRIBUTE and replace
+    debugfs_create_file with debugfs_create_file_unsafe.
 
-> Hi Andrew,
-> 
-> I think this patch has already been picked up to your tree,
-> but I noticed a typo in the commit message just now.
-> Please see below.
-> 
-> ...
->
-> > Include <asm/posix_types.h> to make it self-contained, and add it to
-> 
-> Include <linux/posix_type.h> to make ...
-> 
-> Could you please fix it up locally?
+v1 -> v2:
+    According to Akinobu's suggestion, Use debugfs_create_ulong to
+    simplify the code.
 
-No probs, done.
+zhong jiang (2):
+  fault-inject: Use debugfs_create_ulong() instead of
+    debugfs_create_ul()
+  fault-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
+
+ lib/fault-inject.c | 45 +++++++++++++++------------------------------
+ 1 file changed, 15 insertions(+), 30 deletions(-)
+
+-- 
+1.7.12.4
+
