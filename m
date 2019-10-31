@@ -2,139 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F355EAAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 07:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D458EAAC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 07:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfJaGzL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 02:55:11 -0400
-Received: from mga11.intel.com ([192.55.52.93]:36926 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbfJaGzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 02:55:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2019 23:55:10 -0700
-X-ExtLoop1: 1
+        id S1726875AbfJaG5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 02:57:39 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:5943 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfJaG5i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 02:57:38 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: z1MMMfP0zXsHchObOUpt5bCl9aMNs1ERM0orhsmB4d46iH8CZm+Kteg2YUEMxnNKFbofuP2qfY
+ Vzuzt82tESom2Ceqolaw4giHu886OEo+3jd3NT7NJCyLGSjzkxXUtneNhRpP7eRet5Iac530nd
+ qDBki1d27wY8W/yVEtt0IoP0iFPAOr1KFPgNLy05YAns6bfwuRZyFn9ucoy5izk/MJHL9IvN8r
+ t0vop5mOVteiRqIEC7oCVgZCNJ2wpmQnoy2fK8D7bUS8t3i5uETwM1kPZNRy5wVWO4xFnV0oEL
+ KK4=
 X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
-   d="scan'208";a="375140915"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga005.jf.intel.com with ESMTP; 30 Oct 2019 23:55:09 -0700
-Received: from fmsmsx122.amr.corp.intel.com (10.18.125.37) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 30 Oct 2019 23:55:08 -0700
-Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
- fmsmsx122.amr.corp.intel.com (10.18.125.37) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 30 Oct 2019 23:55:08 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.127]) by
- SHSMSX153.ccr.corp.intel.com ([169.254.12.215]) with mapi id 14.03.0439.000;
- Thu, 31 Oct 2019 14:55:06 +0800
-From:   "Kang, Luwei" <luwei.kang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>
-Subject: RE: [PATCH v1 8/8] perf/x86: Add event owner check when PEBS output
- to Intel PT
-Thread-Topic: [PATCH v1 8/8] perf/x86: Add event owner check when PEBS
- output to Intel PT
-Thread-Index: AQHVjLd7YuomyMFGekW7/CerqBL266dxNysAgAFIGiD///EXAIABvUSA
-Date:   Thu, 31 Oct 2019 06:55:06 +0000
-Message-ID: <82D7661F83C1A047AF7DC287873BF1E173836317@SHSMSX104.ccr.corp.intel.com>
-References: <1572217877-26484-1-git-send-email-luwei.kang@intel.com>
- <1572217877-26484-9-git-send-email-luwei.kang@intel.com>
- <20191029151302.GO4097@hirez.programming.kicks-ass.net>
- <82D7661F83C1A047AF7DC287873BF1E173835B6A@SHSMSX104.ccr.corp.intel.com>
- <20191030095400.GU4097@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191030095400.GU4097@hirez.programming.kicks-ass.net>
+   d="scan'208";a="55099711"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Oct 2019 23:57:35 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 30 Oct 2019 23:57:35 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Wed, 30 Oct 2019 23:57:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bga/UFWTVVK7Pv/GBkH3LxoPTHUkFYIT7hp4I3RjeCDR3cmcUOTRXLLEEDmD56t0bYEk8OGZaNwZT3rh9tRwJ1rE4PT1AYBFHk+5dW7tFDVVKAB6jF+bKtYEs99/TTrHkJgnjKgcD6ZRuPdRvDYeFo0oKoAxG+rtJ7Xwd9wEB735ShWxzxXnpZQl0P/S5Temt2tAga+MTf3d2IMgTIx0LEa8ey0ULmSdS0DCGtVP5zxMx+96wWx/P3Z18HZez5v6wdFmKwfToMp9la58vKTjzcf8iLNw1WYV6KK6fJMCb52bY61+8wyNJMOLHW/1f0IOUHGpYSI/9BwliDIif3fVbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cEfq6xiMnM2BenQGQqEXViaFIhugorfmHfTxDciUfEk=;
+ b=m30mEsaD2Fot3Cpz07rOZz4zkUNScAGbbOloGxZiC7614gFBUheFW9Z4HYHALNdzoL4l7UanuunSvnEm4osyr3WzNPO457CLeytWqyfOCg+N0C6DVHl4oi6eZckceaMbog578BvqQ+u1VNOCtQ5T2R3cHO8JYPDkmA9vdFSnxzLatQYFwfSHbdQgohHL7SSpxN1w1FlsrR7atSjnd2zTILRbK6k8t3H8PSb+3z4RMPwGXuB9yO9ZkSrjmREdSWBYQl6kLKhu4mdYHI0UqCPc9RpLfGbIPFFQcpAuvG+3vVI2moCWGiq4TO4cRTO3oOc97Q5vZNhTYQWr5gbqV1RV0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cEfq6xiMnM2BenQGQqEXViaFIhugorfmHfTxDciUfEk=;
+ b=seSAw14TAY7Q5uCC3RLpNrmbM/g+of0hErDrjf6EQFbJJ45wWyNQprTcJsFi2RnB4/Y/KNXpUjW9qc2J57ZJuVL2EPs0k+YlJhDaKu6z8Wqu50baU7m0JxKLzmDCmSeDMIYFpSIWwjk8oxbipIAUAjfFBVHzaNz8FRmTQ5cZWoE=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB3758.namprd11.prod.outlook.com (20.178.253.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.24; Thu, 31 Oct 2019 06:57:29 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::c09c:36c8:3301:4457]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::c09c:36c8:3301:4457%5]) with mapi id 15.20.2408.018; Thu, 31 Oct 2019
+ 06:57:29 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <boris.brezillon@collabora.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 15/32] mtd: spi-nor: Check for errors after each
+ Register Operation
+Thread-Topic: [PATCH v3 15/32] mtd: spi-nor: Check for errors after each
+ Register Operation
+Thread-Index: AQHVjkppKS3wm6HFREK56+6iD+phXKd0VEwA
+Date:   Thu, 31 Oct 2019 06:57:29 +0000
+Message-ID: <91a9b400-df16-8b9d-6503-a67b9f23205a@microchip.com>
+References: <20191029111615.3706-1-tudor.ambarus@microchip.com>
+ <20191029111615.3706-16-tudor.ambarus@microchip.com>
+In-Reply-To: <20191029111615.3706-16-tudor.ambarus@microchip.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiN2MxY2Y0YWYtOTMwZC00MzM4LTljNjItY2UxZjJmMjVlNDk5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiME1DZnZiMmtFajIyUGxXcXVqY0JUVmVhK0swVHpGNEtXN3cxXC9IdmJVMTVIb01cL0x3YkFiZHhwOFQyZUZFb2VFIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-clientproxiedby: VI1PR07CA0256.eurprd07.prod.outlook.com
+ (2603:10a6:803:b4::23) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [86.120.239.29]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 16adad27-0090-4f4c-e446-08d75dcf983d
+x-ms-traffictypediagnostic: MN2PR11MB3758:
+x-microsoft-antispam-prvs: <MN2PR11MB375871337D47BDACC2868804F0630@MN2PR11MB3758.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
+x-forefront-prvs: 02070414A1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(346002)(366004)(39860400002)(189003)(199004)(66066001)(2906002)(386003)(31686004)(66446008)(36756003)(6486002)(71200400001)(8936002)(99286004)(6436002)(6512007)(4744005)(8676002)(305945005)(71190400001)(2201001)(7736002)(86362001)(31696002)(25786009)(81166006)(81156014)(66946007)(64756008)(14454004)(6246003)(66476007)(2501003)(256004)(478600001)(66556008)(53546011)(102836004)(76176011)(6116002)(26005)(316002)(54906003)(486006)(476003)(6506007)(5660300002)(3846002)(186003)(11346002)(446003)(2616005)(52116002)(110136005)(4326008)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3758;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KE7B8DTUMEnhnM5DxhgAT1xCfIudQfPW8b4rbm/9BGUyYr1nAoos/eJzQqrWaxhH1boliHl+b80x+KGlZ0yAiwBnFEN8WMo2nkk7R6H0C52vJTgOIELsDXfFMWeomFpFtBGp9sC6JNsnLxjCgYkZBgkfypEUyMmI8jMAvT+fgDNWnBCcnnmjSioALzQ+Bw4F0Kg7oWWqQkUjZbVWQTdIBk3454FzI9McMj4J0XDXZBUf20zprpARgHYU2rRf0RTXlt3paCPy5Gkicxx7Qx5/BV3GSK6BE/wE0OmciNCOms0eFWcXwCa+eOcyqSJaOeeQhXG/b+vAw/sqQuH0J05BlovJRKrjZKnDCCnBW/XAreET6mt5o8TFMW7SUwc89sn9wu/lJi9Ff9fOo+TLyBFXjA/YdGVgOBFolQSW4cPhYOMa/QlkH+YNpB2UNaZ8xTXN
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BFFFAB3609821B4688F975E2D0CE49DD@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16adad27-0090-4f4c-e446-08d75dcf983d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2019 06:57:29.2949
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KLya4kW+8q/GJOrX9RuvOYHXZQbFbzLbrma/orHiftaecgmgP0yE7SrtYYuRBLiEqAGiMiiPKsPl7GvY55E5Pe3z9orYrCTVXok0TFCiJvU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3758
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > For PEBS output to Intel PT, a Intel PT event should be the group
-> > > > leader of an PEBS counter event in host. For Intel PT
-> > > > virtualization enabling in KVM guest, the PT facilities will be
-> > > > passthrough to guest and do not allocate PT event from host perf
-> > > > event framework. This is different with PMU virtualization.
-> > > >
-> > > > Intel new hardware feature that can make PEBS enabled in KVM guest
-> > > > by output PEBS records to Intel PT buffer. KVM need to allocate a
-> > > > event counter for this PEBS event without Intel PT event leader.
-> > > >
-> > > > This patch add event owner check for PEBS output to PT event that
-> > > > only non-kernel event need group leader(PT).
-> > > >
-> > > > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > > > ---
-> > > >  arch/x86/events/core.c     | 3 ++-
-> > > >  include/linux/perf_event.h | 1 +
-> > > >  kernel/events/core.c       | 2 +-
-> > > >  3 files changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c index
-> > > > 7b21455..214041a 100644
-> > > > --- a/arch/x86/events/core.c
-> > > > +++ b/arch/x86/events/core.c
-> > > > @@ -1014,7 +1014,8 @@ static int collect_events(struct cpu_hw_events *cpuc, struct perf_event *leader,
-> > > >  		 * away, the group was broken down and this singleton event
-> > > >  		 * can't schedule any more.
-> > > >  		 */
-> > > > -		if (is_pebs_pt(leader) && !leader->aux_event)
-> > > > +		if (is_pebs_pt(leader) && !leader->aux_event &&
-> > > > +					!is_kernel_event(leader))
-> > >
-> > > indent fail, but also, I'm not sure I buy this.
-> > >
-> > > Surely pt-on-kvm has a perf event to claim PT for the vCPU context?
-> >
-> > Hi Peter,
-> >     PT on KVM will not allocate perf events from host (this is different from performance counter). The guest PT MSRs value will be
-> load to hardware directly before VM-entry.
-> >     A PT event is needed by PEBS event as the event group leader in native. In virtualization, we can allocate a counter for PEBS but
-> can't assign a PT event as the leader of this PEBS event.
-> 
-> Please, fix your MUA already.
-> 
-> Then how does KVM deal with the host using PT? You can't just steal PT.
-
-Intel PT in virtualization can work in system and host_guest mode.
-In system mode (default), the trace produced by host and guest will be saved in host PT buffer. Intel PT will not be exposed to guest in this mode.
- In host_guest mode, Intel PT will be exposed to guest and guest can use PT like native. The value of host PT register will be saved and guest PT register value will be restored during VM-entry. Both trace of host and guest are exported to their respective PT buffer. The host PT buffer not include guest trace in this mode.
-
-Thanks,
-Luwei Kang
-
-
-
+DQoNCk9uIDEwLzI5LzIwMTkgMDE6MTcgUE0sIFR1ZG9yIEFtYmFydXMgLSBNMTgwNjQgd3JvdGU6
+DQo+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+IEBAIC01OTUsMTEgKzU5
+NSwxNSBAQCBzdGF0aWMgaW50IHN0X21pY3Jvbl9zZXRfNGJ5dGUoc3RydWN0IHNwaV9ub3IgKm5v
+ciwgYm9vbCBlbmFibGUpDQo+ICB7DQo+ICAJaW50IHJldDsNCj4gIA0KPiAtCXNwaV9ub3Jfd3Jp
+dGVfZW5hYmxlKG5vcik7DQo+ICsJcmV0ID09IHNwaV9ub3Jfd3JpdGVfZW5hYmxlKG5vcik7DQoN
+CnRoZXJlJ3MgYSB0eXBvIGhlcmUsIGl0IHNob3VsZCBoYXZlIGJlZW4gaW5pdGlhbGl6YXRpb24u
+IFdpbGwgcmVzcGluIGlmIG90aGVyDQpjb21tZW50cyB3aWxsIGFyaXNlLg0K
