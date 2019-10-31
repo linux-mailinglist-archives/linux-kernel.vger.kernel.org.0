@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1403CEAFB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D3B4EAFB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbfJaL60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:58:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55234 "EHLO
+        id S1727986AbfJaL6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:58:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55291 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfJaLzD (ORCPT
+        with ESMTP id S1726945AbfJaLzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:03 -0400
+        Thu, 31 Oct 2019 07:55:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92a-0002vh-MF; Thu, 31 Oct 2019 12:55:00 +0100
+        id 1iQ92d-0002x9-Nu; Thu, 31 Oct 2019 12:55:03 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AFB2F1C03AD;
-        Thu, 31 Oct 2019 12:54:58 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:54:58 -0000
-From:   "tip-bot2 for Joel Fernandes (Google)" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D5DF91C0070;
+        Thu, 31 Oct 2019 12:54:59 +0100 (CET)
+Date:   Thu, 31 Oct 2019 11:54:59 -0000
+From:   "tip-bot2 for Ethan Hansen" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcu: Ensure that ->rcu_urgent_qs is set before resched IPI
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+Subject: [tip: core/rcu] rcu: Remove unused function hlist_bl_del_init_rcu()
+Cc:     Ethan Hansen <1ethanhansen@gmail.com>,
         "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252289837.29376.5576201849355844371.tip-bot2@tip-bot2>
+Message-ID: <157252289950.29376.4828245605504588132.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,39 +46,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     05ef9e9eb3dade21413680f41eb0170778e8ae2b
-Gitweb:        https://git.kernel.org/tip/05ef9e9eb3dade21413680f41eb0170778e8ae2b
-Author:        Joel Fernandes (Google) <joel@joelfernandes.org>
-AuthorDate:    Thu, 15 Aug 2019 22:59:14 -04:00
+Commit-ID:     8e6af017f4b1da9cdd2b55ce83853df8e167b4d3
+Gitweb:        https://git.kernel.org/tip/8e6af017f4b1da9cdd2b55ce83853df8e167b4d3
+Author:        Ethan Hansen <1ethanhansen@gmail.com>
+AuthorDate:    Fri, 02 Aug 2019 13:37:58 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Wed, 30 Oct 2019 08:34:35 -07:00
+CommitterDate: Wed, 30 Oct 2019 08:32:07 -07:00
 
-rcu: Ensure that ->rcu_urgent_qs is set before resched IPI
+rcu: Remove unused function hlist_bl_del_init_rcu()
 
-The RCU-specific resched_cpu() function sends a resched IPI to the
-specified CPU, which can be used to force the tick on for a given
-nohz_full CPU.  This is needed when this nohz_full CPU is looping in the
-kernel while blocking the current grace period.  However, for the tick
-to actually be forced on in all cases, that CPU's rcu_data structure's
-->rcu_urgent_qs flag must be set beforehand.  This commit therefore
-causes rcu_implicit_dynticks_qs() to set this flag prior to invoking
-resched_cpu() on a holdout nohz_full CPU.
+The function hlist_bl_del_init_rcu() is declared in rculist_bl.h,
+but never used.  This commit therefore removes it.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Ethan Hansen <1ethanhansen@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/rculist_bl.h | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 8110514..0d83b19 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1073,6 +1073,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
- 	if (tick_nohz_full_cpu(rdp->cpu) &&
- 		   time_after(jiffies,
- 			      READ_ONCE(rdp->last_fqs_resched) + jtsq * 3)) {
-+		WRITE_ONCE(*ruqp, true);
- 		resched_cpu(rdp->cpu);
- 		WRITE_ONCE(rdp->last_fqs_resched, jiffies);
- 	}
+diff --git a/include/linux/rculist_bl.h b/include/linux/rculist_bl.h
+index 66e73ec..0b952d0 100644
+--- a/include/linux/rculist_bl.h
++++ b/include/linux/rculist_bl.h
+@@ -25,34 +25,6 @@ static inline struct hlist_bl_node *hlist_bl_first_rcu(struct hlist_bl_head *h)
+ }
+ 
+ /**
+- * hlist_bl_del_init_rcu - deletes entry from hash list with re-initialization
+- * @n: the element to delete from the hash list.
+- *
+- * Note: hlist_bl_unhashed() on the node returns true after this. It is
+- * useful for RCU based read lockfree traversal if the writer side
+- * must know if the list entry is still hashed or already unhashed.
+- *
+- * In particular, it means that we can not poison the forward pointers
+- * that may still be used for walking the hash list and we can only
+- * zero the pprev pointer so list_unhashed() will return true after
+- * this.
+- *
+- * The caller must take whatever precautions are necessary (such as
+- * holding appropriate locks) to avoid racing with another
+- * list-mutation primitive, such as hlist_bl_add_head_rcu() or
+- * hlist_bl_del_rcu(), running on this same list.  However, it is
+- * perfectly legal to run concurrently with the _rcu list-traversal
+- * primitives, such as hlist_bl_for_each_entry_rcu().
+- */
+-static inline void hlist_bl_del_init_rcu(struct hlist_bl_node *n)
+-{
+-	if (!hlist_bl_unhashed(n)) {
+-		__hlist_bl_del(n);
+-		n->pprev = NULL;
+-	}
+-}
+-
+-/**
+  * hlist_bl_del_rcu - deletes entry from hash list without re-initialization
+  * @n: the element to delete from the hash list.
+  *
