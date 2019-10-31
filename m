@@ -2,319 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03170EB3F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F26D8EB401
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbfJaP3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 11:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728066AbfJaP3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:29:33 -0400
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD0192086D;
-        Thu, 31 Oct 2019 15:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572535771;
-        bh=nKNnG3SqjQ8QBVF/qGLFLWpJdVCphBEPwq//iwW9uNA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hFVFYoZM6aELsJZOLNKFHFfX4aC0kLgEzd9+2lENUGnXWePFDyl/ov8685WSrQWJ6
-         cb8kSPN6gxKDLSs1U3vwqrmV6UPpRfWTN1XIHOSKvG+AA0EsuljWEyk0FV4lFYM6cv
-         khHVOPadYB0fJCnRm4I08Ku0MeDq1LBtO27Yio10=
-Date:   Thu, 31 Oct 2019 08:29:30 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: support aligned pinned file
-Message-ID: <20191031152930.GA60005@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191022171602.93637-1-jaegeuk@kernel.org>
- <c916c749-0abe-a7b7-e748-f0c4d5599e4a@huawei.com>
- <20191025181820.GA24183@jaegeuk-macbookpro.roam.corp.google.com>
- <8cfef676-e81f-6069-3b0b-7005fbf8e0bb@huawei.com>
- <20191030160942.GA34056@jaegeuk-macbookpro.roam.corp.google.com>
- <1d747677-86c3-d1ad-b343-cf786e77da37@huawei.com>
+        id S1728387AbfJaPfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 11:35:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60454 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728342AbfJaPfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 11:35:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C6713B24D;
+        Thu, 31 Oct 2019 15:35:00 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH] dma/direct: turn ARCH_ZONE_DMA_BITS into a variable
+Date:   Thu, 31 Oct 2019 16:28:37 +0100
+Message-Id: <20191031152837.15253-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d747677-86c3-d1ad-b343-cf786e77da37@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31, Chao Yu wrote:
-> On 2019/10/31 0:09, Jaegeuk Kim wrote:
-> > On 10/26, Chao Yu wrote:
-> >> On 2019/10/26 2:18, Jaegeuk Kim wrote:
-> >>> On 10/24, Chao Yu wrote:
-> >>>> Hi Jaegeuk,
-> >>>>
-> >>>> On 2019/10/23 1:16, Jaegeuk Kim wrote:
-> >>>>> This patch supports 2MB-aligned pinned file, which can guarantee no GC at all
-> >>>>> by allocating fully valid 2MB segment.
-> >>>>>
-> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>> ---
-> >>>>>  fs/f2fs/f2fs.h     |  4 +++-
-> >>>>>  fs/f2fs/file.c     | 39 ++++++++++++++++++++++++++++++++++-----
-> >>>>>  fs/f2fs/recovery.c |  2 +-
-> >>>>>  fs/f2fs/segment.c  | 21 ++++++++++++++++++++-
-> >>>>>  fs/f2fs/segment.h  |  2 ++
-> >>>>>  fs/f2fs/super.c    |  1 +
-> >>>>>  fs/f2fs/sysfs.c    |  2 ++
-> >>>>>  7 files changed, 63 insertions(+), 8 deletions(-)
-> >>>>>
-> >>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>> index ca342f4c7db1..c681f51e351b 100644
-> >>>>> --- a/fs/f2fs/f2fs.h
-> >>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>> @@ -890,6 +890,7 @@ enum {
-> >>>>>  	CURSEG_WARM_NODE,	/* direct node blocks of normal files */
-> >>>>>  	CURSEG_COLD_NODE,	/* indirect node blocks */
-> >>>>>  	NO_CHECK_TYPE,
-> >>>>> +	CURSEG_COLD_DATA_PINNED,/* cold data for pinned file */
-> >>>>>  };
-> >>>>>  
-> >>>>>  struct flush_cmd {
-> >>>>> @@ -1301,6 +1302,7 @@ struct f2fs_sb_info {
-> >>>>>  
-> >>>>>  	/* threshold for gc trials on pinned files */
-> >>>>>  	u64 gc_pin_file_threshold;
-> >>>>> +	struct rw_semaphore pin_sem;
-> >>>>>  
-> >>>>>  	/* maximum # of trials to find a victim segment for SSR and GC */
-> >>>>>  	unsigned int max_victim_search;
-> >>>>> @@ -3116,7 +3118,7 @@ void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
-> >>>>>  int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
-> >>>>>  void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
-> >>>>>  					unsigned int start, unsigned int end);
-> >>>>> -void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
-> >>>>> +void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi, int type);
-> >>>>>  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
-> >>>>>  bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
-> >>>>>  					struct cp_control *cpc);
-> >>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>>>> index 29bc0a542759..f6c038e8a6a7 100644
-> >>>>> --- a/fs/f2fs/file.c
-> >>>>> +++ b/fs/f2fs/file.c
-> >>>>> @@ -1545,12 +1545,41 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
-> >>>>>  	if (off_end)
-> >>>>>  		map.m_len++;
-> >>>>>  
-> >>>>> -	if (f2fs_is_pinned_file(inode))
-> >>>>> -		map.m_seg_type = CURSEG_COLD_DATA;
-> >>>>> +	if (!map.m_len)
-> >>>>> +		return 0;
-> >>>>> +
-> >>>>> +	if (f2fs_is_pinned_file(inode)) {
-> >>>>> +		block_t len = (map.m_len >> sbi->log_blocks_per_seg) <<
-> >>>>> +					sbi->log_blocks_per_seg;
-> >>>>> +		block_t done = 0;
-> >>>>> +
-> >>>>> +		if (map.m_len % sbi->blocks_per_seg)
-> >>>>> +			len += sbi->blocks_per_seg;
-> >>>>>  
-> >>>>> -	err = f2fs_map_blocks(inode, &map, 1, (f2fs_is_pinned_file(inode) ?
-> >>>>> -						F2FS_GET_BLOCK_PRE_DIO :
-> >>>>> -						F2FS_GET_BLOCK_PRE_AIO));
-> >>>>> +		map.m_len = sbi->blocks_per_seg;
-> >>>>> +next_alloc:
-> >>>>> +		mutex_lock(&sbi->gc_mutex);
-> >>>>> +		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-> >>>>> +		if (err && err != -ENODATA && err != -EAGAIN)
-> >>>>> +			goto out_err;
-> >>>>
-> >>>> To grab enough free space?
-> >>>>
-> >>>> Shouldn't we call
-> >>>>
-> >>>> 	if (has_not_enough_free_secs(sbi, 0, 0)) {
-> >>>> 		mutex_lock(&sbi->gc_mutex);
-> >>>> 		f2fs_gc(sbi, false, false, NULL_SEGNO);
-> >>>> 	}
-> >>>
-> >>> The above calls gc all the time. Do we need this?
-> >>
-> >> Hmmm... my concern is why we need to run foreground GC even if there is enough
-> >> free space..
-> > 
-> > In order to get the free segment easily?
-> 
-> However, I doubt arbitrary foreground GC with greedy algorithm will ruin
-> hot/cold data separation, actually, for sufficient free segment case, it's
-> unnecessary to call FGGC.
+Some architectures, notably ARM, are interested in tweaking this
+depending on their runtime DMA addressing limitations.
 
-Two things here; 1) I do worry much about when hitting boundary on
-has_not_enough_free_secs() which calculates # of free segments based on # of
-dirty pages. In this case, we just jump to allocate another free segment so
-I think it increases the possiblity of no free segment panic. 2) Even if we
-do call FGGC a lot, I don't think it will *ruin* the hot/cold data separation
-a lot. Putting hot/warm blocks together into cold log will make another hot
-segment which was being used as cold log. IOWs, we don't need to keep hot data
-in hot log at all, but should be fine to split hot and cold data in different
-segments. So, I chose to go safer way since this is eating free segments
-directly.
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >>>
-> >>>>
-> >>>>> +
-> >>>>> +		down_write(&sbi->pin_sem);
-> >>>>> +		map.m_seg_type = CURSEG_COLD_DATA_PINNED;
-> >>>>> +		f2fs_allocate_new_segments(sbi, CURSEG_COLD_DATA);
-> >>>>> +		err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
-> >>>>> +		up_write(&sbi->pin_sem);
-> >>>>> +
-> >>>>> +		done += map.m_len;
-> >>>>> +		len -= map.m_len;
-> >>>>> +		map.m_lblk += map.m_len;
-> >>>>> +		if (!err && len)
-> >>>>> +			goto next_alloc;
-> >>>>> +
-> >>>>> +		map.m_len = done;
-> >>>>> +	} else {
-> >>>>> +		err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
-> >>>>> +	}
-> >>>>> +out_err:
-> >>>>>  	if (err) {
-> >>>>>  		pgoff_t last_off;
-> >>>>>  
-> >>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> >>>>> index 783773e4560d..76477f71d4ee 100644
-> >>>>> --- a/fs/f2fs/recovery.c
-> >>>>> +++ b/fs/f2fs/recovery.c
-> >>>>> @@ -711,7 +711,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
-> >>>>>  		f2fs_put_page(page, 1);
-> >>>>>  	}
-> >>>>>  	if (!err)
-> >>>>> -		f2fs_allocate_new_segments(sbi);
-> >>>>> +		f2fs_allocate_new_segments(sbi, NO_CHECK_TYPE);
-> >>>>>  	return err;
-> >>>>>  }
-> >>>>>  
-> >>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>> index 25c750cd0272..253d72c2663c 100644
-> >>>>> --- a/fs/f2fs/segment.c
-> >>>>> +++ b/fs/f2fs/segment.c
-> >>>>> @@ -2690,7 +2690,7 @@ void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
-> >>>>>  	up_read(&SM_I(sbi)->curseg_lock);
-> >>>>>  }
-> >>>>>  
-> >>>>> -void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
-> >>>>> +void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi, int type)
-> >>>>>  {
-> >>>>>  	struct curseg_info *curseg;
-> >>>>>  	unsigned int old_segno;
-> >>>>> @@ -2699,6 +2699,9 @@ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
-> >>>>>  	down_write(&SIT_I(sbi)->sentry_lock);
-> >>>>>  
-> >>>>>  	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
-> >>>>> +		if (type != NO_CHECK_TYPE && i != type)
-> >>>>> +			continue;
-> >>>>> +
-> >>>>>  		curseg = CURSEG_I(sbi, i);
-> >>>>>  		old_segno = curseg->segno;
-> >>>>>  		SIT_I(sbi)->s_ops->allocate_segment(sbi, i, true);
-> >>>>> @@ -3068,6 +3071,19 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-> >>>>>  {
-> >>>>>  	struct sit_info *sit_i = SIT_I(sbi);
-> >>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, type);
-> >>>>> +	bool put_pin_sem = false;
-> >>>>> +
-> >>>>> +	if (type == CURSEG_COLD_DATA) {
-> >>>>> +		/* GC during CURSEG_COLD_DATA_PINNED allocation */
-> >>>>> +		if (down_read_trylock(&sbi->pin_sem)) {
-> >>>>> +			put_pin_sem = true;
-> >>>>> +		} else {
-> >>>>> +			type = CURSEG_WARM_DATA;
-> >>>>> +			curseg = CURSEG_I(sbi, type);
-> >>>>
-> >>>> It will mix pending cold data into warm area... rather than recovering curseg to
-> >>>> write pointer of last cold segment?
-> >>>>
-> >>>> I know maybe that fallocate aligned address could be corner case, but I guess
-> >>>> there should be some better solutions can handle race case more effectively.
-> >>>>
-> >>>> One solution could be: allocating a virtual log header to select free segment as
-> >>>> 2m-aligned space target.
-> >>>
-> >>> I thought about that, but concluded to avoid too much changes.
-> >>
-> >> We have an unupstreamed feature which is based on virtual log header, I can
-> >> introduce that basic virtual log fwk, which can be used for aligned allocation
-> >> and later new features, would you like to check that?
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>> +		}
-> >>>>> +	} else if (type == CURSEG_COLD_DATA_PINNED) {
-> >>>>> +		type = CURSEG_COLD_DATA;
-> >>>>> +	}
-> >>>>>  
-> >>>>>  	down_read(&SM_I(sbi)->curseg_lock);
-> >>>>>  
-> >>>>> @@ -3133,6 +3149,9 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-> >>>>>  	mutex_unlock(&curseg->curseg_mutex);
-> >>>>>  
-> >>>>>  	up_read(&SM_I(sbi)->curseg_lock);
-> >>>>> +
-> >>>>> +	if (put_pin_sem)
-> >>>>> +		up_read(&sbi->pin_sem);
-> >>>>>  }
-> >>>>>  
-> >>>>>  static void update_device_state(struct f2fs_io_info *fio)
-> >>>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> >>>>> index 325781a1ae4d..a95467b202ea 100644
-> >>>>> --- a/fs/f2fs/segment.h
-> >>>>> +++ b/fs/f2fs/segment.h
-> >>>>> @@ -313,6 +313,8 @@ struct sit_entry_set {
-> >>>>>   */
-> >>>>>  static inline struct curseg_info *CURSEG_I(struct f2fs_sb_info *sbi, int type)
-> >>>>>  {
-> >>>>> +	if (type == CURSEG_COLD_DATA_PINNED)
-> >>>>> +		type = CURSEG_COLD_DATA;
-> >>>>>  	return (struct curseg_info *)(SM_I(sbi)->curseg_array + type);
-> >>>>>  }
-> >>>>>  
-> >>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>>> index f320fd11db48..c02a47ce551b 100644
-> >>>>> --- a/fs/f2fs/super.c
-> >>>>> +++ b/fs/f2fs/super.c
-> >>>>> @@ -2853,6 +2853,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-> >>>>>  	spin_lock_init(&sbi->dev_lock);
-> >>>>>  
-> >>>>>  	init_rwsem(&sbi->sb_lock);
-> >>>>> +	init_rwsem(&sbi->pin_sem);
-> >>>>>  }
-> >>>>>  
-> >>>>>  static int init_percpu_info(struct f2fs_sb_info *sbi)
-> >>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> >>>>> index b558b64a4c9c..f164959e4224 100644
-> >>>>> --- a/fs/f2fs/sysfs.c
-> >>>>> +++ b/fs/f2fs/sysfs.c
-> >>>>> @@ -154,6 +154,8 @@ static ssize_t features_show(struct f2fs_attr *a,
-> >>>>>  	if (f2fs_sb_has_casefold(sbi))
-> >>>>>  		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> >>>>>  				len ? ", " : "", "casefold");
-> >>>>> +	len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> >>>>> +				len ? ", " : "", "pin_file");
-> >>>>>  	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
-> >>>>>  	return len;
-> >>>>>  }
-> >>>>>
-> >>> .
-> >>>
-> > .
-> > 
+Changes since RFC:
+ - Rebased to v5.4-rc6, fixed arm64 code.
+
+NOTE: This will only apply to linux-next, where 
+ arch/arm64/mm/init.c            |  5 +++++
+ arch/powerpc/include/asm/page.h |  9 ---------
+ arch/powerpc/mm/mem.c           | 20 +++++++++++++++-----
+ arch/s390/include/asm/page.h    |  2 --
+ arch/s390/mm/init.c             |  1 +
+ include/linux/dma-direct.h      |  2 ++
+ kernel/dma/direct.c             | 13 ++++++-------
+ 7 files changed, 29 insertions(+), 23 deletions(-)
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 45c00a54909c..f716ea634804 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -20,6 +20,7 @@
+ #include <linux/sort.h>
+ #include <linux/of.h>
+ #include <linux/of_fdt.h>
++#include <linux/dma-direct.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dma-contiguous.h>
+ #include <linux/efi.h>
+@@ -41,6 +42,8 @@
+ #include <asm/tlb.h>
+ #include <asm/alternative.h>
+ 
++#define ARM64_ZONE_DMA_BITS	30
++
+ /*
+  * We need to be able to catch inadvertent references to memstart_addr
+  * that occur (potentially in generic code) before arm64_memblock_init()
+@@ -424,6 +427,8 @@ void __init arm64_memblock_init(void)
+ 	else
+ 		arm64_dma_phys_limit = PHYS_MASK + 1;
+ 
++	zone_dma_bits = ARM64_ZONE_DMA_BITS;
++
+ 	reserve_crashkernel();
+ 
+ 	reserve_elfcorehdr();
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index c8bb14ff4713..f6c562acc3f8 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -329,13 +329,4 @@ struct vm_area_struct;
+ #endif /* __ASSEMBLY__ */
+ #include <asm/slice.h>
+ 
+-/*
+- * Allow 30-bit DMA for very limited Broadcom wifi chips on many powerbooks.
+- */
+-#ifdef CONFIG_PPC32
+-#define ARCH_ZONE_DMA_BITS 30
+-#else
+-#define ARCH_ZONE_DMA_BITS 31
+-#endif
+-
+ #endif /* _ASM_POWERPC_PAGE_H */
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index be941d382c8d..c95b7fe9f298 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -31,6 +31,7 @@
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/memremap.h>
++#include <linux/dma-direct.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <asm/prom.h>
+@@ -201,10 +202,10 @@ static int __init mark_nonram_nosave(void)
+  * everything else. GFP_DMA32 page allocations automatically fall back to
+  * ZONE_DMA.
+  *
+- * By using 31-bit unconditionally, we can exploit ARCH_ZONE_DMA_BITS to
+- * inform the generic DMA mapping code.  32-bit only devices (if not handled
+- * by an IOMMU anyway) will take a first dip into ZONE_NORMAL and get
+- * otherwise served by ZONE_DMA.
++ * By using 31-bit unconditionally, we can exploit zone_dma_bits to inform the
++ * generic DMA mapping code.  32-bit only devices (if not handled by an IOMMU
++ * anyway) will take a first dip into ZONE_NORMAL and get otherwise served by
++ * ZONE_DMA.
+  */
+ static unsigned long max_zone_pfns[MAX_NR_ZONES];
+ 
+@@ -237,9 +238,18 @@ void __init paging_init(void)
+ 	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+ 	       (long int)((top_of_ram - total_ram) >> 20));
+ 
++	/*
++	 * Allow 30-bit DMA for very limited Broadcom wifi chips on many
++	 * powerbooks.
++	 */
++	if (IS_ENABLED(CONFIG_PPC32))
++		zone_dma_bits = 30;
++	else
++		zone_dma_bits = 31;
++
+ #ifdef CONFIG_ZONE_DMA
+ 	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+-				      1UL << (ARCH_ZONE_DMA_BITS - PAGE_SHIFT));
++				      1UL << (zone_dma_bits - PAGE_SHIFT));
+ #endif
+ 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+ #ifdef CONFIG_HIGHMEM
+diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
+index 823578c6b9e2..a4d38092530a 100644
+--- a/arch/s390/include/asm/page.h
++++ b/arch/s390/include/asm/page.h
+@@ -177,8 +177,6 @@ static inline int devmem_is_allowed(unsigned long pfn)
+ #define VM_DATA_DEFAULT_FLAGS	(VM_READ | VM_WRITE | \
+ 				 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ 
+-#define ARCH_ZONE_DMA_BITS	31
+-
+ #include <asm-generic/memory_model.h>
+ #include <asm-generic/getorder.h>
+ 
+diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+index a124f19f7b3c..f0ce22220565 100644
+--- a/arch/s390/mm/init.c
++++ b/arch/s390/mm/init.c
+@@ -118,6 +118,7 @@ void __init paging_init(void)
+ 
+ 	sparse_memory_present_with_active_regions(MAX_NUMNODES);
+ 	sparse_init();
++	zone_dma_bits = 31;
+ 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+ 	max_zone_pfns[ZONE_DMA] = PFN_DOWN(MAX_DMA_ADDRESS);
+ 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index adf993a3bd58..d03af3605460 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -5,6 +5,8 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/mem_encrypt.h>
+ 
++extern unsigned int zone_dma_bits;
++
+ #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
+ #include <asm/dma-direct.h>
+ #else
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 8402b29c280f..0b67c04e531b 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -16,12 +16,11 @@
+ #include <linux/swiotlb.h>
+ 
+ /*
+- * Most architectures use ZONE_DMA for the first 16 Megabytes, but
+- * some use it for entirely different regions:
++ * Most architectures use ZONE_DMA for the first 16 Megabytes, but some use it
++ * it for entirely different regions. In that case the arch code needs to
++ * override the variable below for dma-direct to work properly.
+  */
+-#ifndef ARCH_ZONE_DMA_BITS
+-#define ARCH_ZONE_DMA_BITS 24
+-#endif
++unsigned int zone_dma_bits __ro_after_init = 24;
+ 
+ static void report_addr(struct device *dev, dma_addr_t dma_addr, size_t size)
+ {
+@@ -69,7 +68,7 @@ static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
+ 	 * Note that GFP_DMA32 and GFP_DMA are no ops without the corresponding
+ 	 * zones.
+ 	 */
+-	if (*phys_mask <= DMA_BIT_MASK(ARCH_ZONE_DMA_BITS))
++	if (*phys_mask <= DMA_BIT_MASK(zone_dma_bits))
+ 		return GFP_DMA;
+ 	if (*phys_mask <= DMA_BIT_MASK(32))
+ 		return GFP_DMA32;
+@@ -395,7 +394,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
+ 	u64 min_mask;
+ 
+ 	if (IS_ENABLED(CONFIG_ZONE_DMA))
+-		min_mask = DMA_BIT_MASK(ARCH_ZONE_DMA_BITS);
++		min_mask = DMA_BIT_MASK(zone_dma_bits);
+ 	else
+ 		min_mask = DMA_BIT_MASK(32);
+ 
+-- 
+2.23.0
+
