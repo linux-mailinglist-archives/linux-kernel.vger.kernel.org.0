@@ -2,78 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFBFEB069
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA6EEB06D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfJaMil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 08:38:41 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35507 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfJaMil (ORCPT
+        id S1726973AbfJaMkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 08:40:33 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:14675 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfJaMkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:38:41 -0400
-Received: by mail-wm1-f66.google.com with SMTP id x5so5739778wmi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 05:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uhoxQTqJS7TN8UEiHDJUbummgXcJZdDKj/YEdaqojMA=;
-        b=sZixWELQR5cQZ8lnCI3d78Zr4QlSClG+ptOiYGwAf+PKvZsCDCAbPcr9vDxEfUG7tl
-         wPbQUw+8FmP7IRyrt/96p3cLR/dOCT8xcf0s7QFTnwXDrUShJBp5m1HxNaVeOqJlphBt
-         L1acY9lKZB/4OakIuAlFXE6Zr03/RIaRGYg/mxZmQv43fj7yq7cIR8oUbGlSwnIvbJgg
-         ntAMXH/dbr4hZxW5lHu7vw5mRTCJN3QIuJOdpwTQzHfxrXCbIrLKEkaz15TudlW0/ynd
-         ouNuxHgsEjl/Wa0k2OXKSIHnymMAooX7vbbyD9lreDZfA1QT0BbRz9iD/N3QXIXOiFu4
-         qYyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uhoxQTqJS7TN8UEiHDJUbummgXcJZdDKj/YEdaqojMA=;
-        b=OgT2QHTSc9Ir1cTjHam5lIIALnWTcj6dJ8J58qZ4qeFIf/6RaNcAdEKI1Vf2msJusc
-         w5feiCnqM9Cjr1uaTXUK0ZA8V1ZW+wc/36SdMEvW/G4D2d7dXkGSgL40kRrnSpgjo7g0
-         jC5EOgGvIgyi72/UwF9Ofh/A2BVpPTs71EI/+d5I69aYlhGxbRYfny1efHFGOXWcxlWQ
-         r+Fh3e/2OHe1uRnpNshGPiA0wF85HNR3HEgwkizACEuRhK8vQPPIGcVnIYgZNBPJgR3w
-         Yuv6h+HyxGSxTnqpOkY7SqleD5nQvu8+rsSrpzNKqCHSuqeaOFGJvVQOfkfFaxe7VZPR
-         F5cw==
-X-Gm-Message-State: APjAAAVDr1yCXeGOd0aUjDKaN7Ruw+tjOSDU4uB9QttDbgzN8puYqStx
-        RekEs1Gc7S8lJJURzdL0YZ8=
-X-Google-Smtp-Source: APXvYqyobm4skG4Pd0DzqgekVRXwjSGHQx3GvfNg+Ad/meMFuELyqVIlhbD/fD9yrrI26HrwDMUBug==
-X-Received: by 2002:a1c:7ec2:: with SMTP id z185mr4767560wmc.69.1572525518925;
-        Thu, 31 Oct 2019 05:38:38 -0700 (PDT)
-Received: from localhost ([92.177.95.83])
-        by smtp.gmail.com with ESMTPSA id u7sm4429632wre.59.2019.10.31.05.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 05:38:38 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 13:38:36 +0100
-From:   Roi Martin <jroi.martin@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] staging: exfat: replace kmalloc with kmalloc_array
-Message-ID: <20191031123836.GA6924@miniwopr.localdomain>
-References: <20191030010328.10203-1-jroi.martin@gmail.com>
- <20191030010328.10203-7-jroi.martin@gmail.com>
- <20191030094222.GA678631@kroah.com>
+        Thu, 31 Oct 2019 08:40:33 -0400
+Received: from [10.28.19.135] (10.28.19.135) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 31 Oct
+ 2019 20:40:44 +0800
+Subject: Re: [PATCH v3 2/4] dt-bindings: watchdog: add new binding for meson
+ secure watchdog
+To:     Rob Herring <robh@kernel.org>
+CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1571983984-11771-1-git-send-email-xingyu.chen@amlogic.com>
+ <1571983984-11771-3-git-send-email-xingyu.chen@amlogic.com>
+ <20191025203030.GA28391@bogus>
+ <1914e315-3cb7-9251-f871-0024e0e4f68b@amlogic.com>
+ <CAL_JsqLr-Cgu4yZFGTfO=qpFPLBZ1gb-1+DZ35eQX3dUsadm4g@mail.gmail.com>
+ <2808a8c9-a835-2706-f300-0deb924d3686@amlogic.com>
+ <CAL_JsqKwmF1Ygbjiteq42t5xaG75vG-=hZYq=S-8e=s0m2FiWA@mail.gmail.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <8a663e01-9d6e-cced-cb97-8e793006f0c6@amlogic.com>
+Date:   Thu, 31 Oct 2019 20:40:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191030094222.GA678631@kroah.com>
+In-Reply-To: <CAL_JsqKwmF1Ygbjiteq42t5xaG75vG-=hZYq=S-8e=s0m2FiWA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.19.135]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This patch failed to apply.  Please fix it up and resend it as a new
-> version.
+Hi, Rob
 
-I have rebased the patch against the branch "staging-testing" of the
-tree:
+On 2019/10/30 21:41, Rob Herring wrote:
+> On Wed, Oct 30, 2019 at 7:59 AM Xingyu Chen <xingyu.chen@amlogic.com> wrote:
+>>
+>> Hi,Rob
+>>
+>> On 2019/10/30 4:51, Rob Herring wrote:
+>>> On Mon, Oct 28, 2019 at 3:35 AM Xingyu Chen <xingyu.chen@amlogic.com> wrote:
+>>>>
+>>>> Hi, Rob
+>>>>
+>>>> On 2019/10/26 4:30, Rob Herring wrote:
+>>>>> On Fri, Oct 25, 2019 at 02:13:02PM +0800, Xingyu Chen wrote:
+>>>>>> The binding targets the Meson-A/C series compatible SoCs, in which the
+>>>>>> watchdog registers are in secure world.
+>>>>>>
+>>>>>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>>>>>> ---
+>>>>>>     .../bindings/watchdog/amlogic,meson-sec-wdt.yaml   | 34 ++++++++++++++++++++++
+>>>>>>     1 file changed, 34 insertions(+)
+>>>>>>     create mode 100644 Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml b/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>>>> new file mode 100644
+>>>>>> index 00000000..0bbc807
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+>>>>>> @@ -0,0 +1,34 @@
+>>>>>> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>>>> +# Copyright (c) 2019 Amlogic, Inc
+>>>>>> +%YAML 1.2
+>>>>>> +---
+>>>>>> +$id: "http://devicetree.org/schemas/power/amlogic,meson-sec-wdt.yaml#"
+>>>>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>>>>> +
+>>>>>> +title: Amlogic Meson Secure Watchdog Timer
+>>>>>> +
+>>>>>> +maintainers:
+>>>>>> +  - Xingyu Chen <xingyu.chen@amlogic.com>
+>>>>>> +
+>>>>>> +description: |+
+>>>>>> +  Secure Watchdog Timer used in Meson-A/C series Compatible SoCs
+>>>>>> +
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    enum:
+>>>>>> +      - amlogic,meson-sec-wdt
+>>>>>
+>>>>> If there are no other properties, then you don't need this. Just have
+>>>>> the secure firmware driver instantiate the watchdog.
+>>>> I'am very sorry i don't understand how to initialize the watchdog driver
+>>>> if the compatible property is removed, Could you give me more
+>>>> suggestions or examples ？ Thank you very much.
+>>>
+>>> platform_device_register_simple() from the secure firmware driver.
+>> Thanks for your help. The device node of wdt looks useless if I use this
+>> function to register device. if so, how should I get the pointer to
+>> secure-monitor in wdt driver ? or should I use directly arm_smccc to
+>> access the secfw ?
+> 
+> You can use of_find_compatible_node(). There should only be one firmware node.
+Thanks for your answer.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+I seem to miss something about registration of watchdog device. The 
+secure watchdog driver is used only to A1/C1 compatible SoCs, but is not
+support for previous SoCs (Eg: gxl axg).
 
-And sent the new version.
+I have to think about platform difference If I use the 
+platform_device_register_simple() to register the wdt device in secure
+fw driver, because fw driver is compatible with all known SoCs, but the 
+secure wdt driver is only compatible with some SoCs. In other
+words, the registered wdt device is useless for gxl or axg.
 
-Thanks,
+There is no such problem If I use the DT to describe the wdt device.
 
-	Roi Martin
+> 
+> Rob
+> 
+> .
+> 
