@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4D6EB51F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6371FEB54F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:48:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfJaQqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:46:50 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:41299 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbfJaQqs (ORCPT
+        id S1729079AbfJaQsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:48:00 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:43702 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728844AbfJaQqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:46:48 -0400
-Received: by mail-pg1-f202.google.com with SMTP id t6so871741pgf.8
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:46:46 -0700 (PDT)
+        Thu, 31 Oct 2019 12:46:49 -0400
+Received: by mail-pg1-f201.google.com with SMTP id k7so4796960pgq.10
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=m8czdyKZmnHleycOU1GN1JDqnDhqDwUuQ2BzB2+NnLE=;
-        b=kscd/Ryyvnax6ORha3g+9N2ycFdZdVKcUL7nn52FBqZCdom/ukOvZNiLYcIVHGWjJI
-         RL+cSRsSc0KMkWX7Hpm6WW5mwmzyULTl69SeLKpONSPknn5ZqEZWkbRqognGlyERPXLo
-         SV9nRf3GJ7wBfRyfYIInjM+YQGy1pLtrwhArDoKPFew1LEH2KfjE14WBRpDYQ6T6vBcN
-         bTuA6HnIE/mjRqWbsSXxpwwDhLN9CG23XGon/2Fh6QYLxfPuum6XKBQrb0xQTBoamtRg
-         GqrJFN7dDnqowhR+BaVm165Nc4KqgxxBwyK/OZ+cl3NUbIFIXQthBUWLYI6b8XUFTWxv
-         fUxQ==
+        bh=NvkEBCuGDFGmxutij1zSuSKxlsUUBaj5IQr0NLQJ5So=;
+        b=Ru92iBuuYlPhHAFVLWeOs87kE0FiX1qHnTaOtpzTb/jKviPaXonwKKd+N66yjkRYuK
+         cgnBq46YclvPXSguuBJeqzLri7jCCWWG2Dfk0n6Id4jZM2n7hZ/78QAEvq8GFPDPGfUD
+         qNtrv8foscV0AHwaybS2313mz3Cil7NrOo8pDuPY6Jd1tSs6WarJ755+eSf/RomcChV4
+         7A1jpdn6Ivzs9aO1uXSVTF6S5nlm17BU8Kojsg1aHJT+c27sDLV3569+F5xcQdMXNe/B
+         BAiGEf7hztz5GyYBj6nLqE1P0Jc3Ye8dMxEAQ36afKH6zRhZp6NxcrpWbI9k75gVvReY
+         hMpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=m8czdyKZmnHleycOU1GN1JDqnDhqDwUuQ2BzB2+NnLE=;
-        b=bsQablXPzxVdaOgN3YA+xkzhH/7ZQBNckKqImJLLHd9ukv4ficSFvuih6MhuaXuNuR
-         UacwqHRf5YFZjicOyf+dyZsRDhxJquMzMtLVWboocXbg1ZkaH0v5p0hSvVeDLgdWX5G/
-         cSDvei22174ucc5bVVoqTQ/Z66AvTCNOoWZ1oaetADUrhpYt0GBPqsKfROylrpYwTw28
-         07I2a+uAS3/G8lsNgSJmW5VIKQJrMaFLHSs/cMZG9PEC+4+ko6ZGpO8zM7m/Jn8qU/x+
-         OU20VOEnPxO2fQLzbzHGbp1xQUMDDVoHGc5tP5t2uhCqlBkhyT/x5yLawCxBJwzp6LUm
-         5jzw==
-X-Gm-Message-State: APjAAAV29O87/Ly88tBNzQWYv6loiHQREOFDr762KBSc5IPzmOlYCnjL
-        EC2DmhJyw8OnoZyeGWf4UV5dMhbdOlcOnF/Aljw=
-X-Google-Smtp-Source: APXvYqw9xt1orWeLvt0VfIxUZia5BAPhrbdVX/DF2ex1nZVelw9EIIUv1zSfOLTzEnTa2y67e76C/YQPYBoxghEHbPw=
-X-Received: by 2002:a63:4b54:: with SMTP id k20mr7973543pgl.70.1572540406049;
- Thu, 31 Oct 2019 09:46:46 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 09:46:21 -0700
+        bh=NvkEBCuGDFGmxutij1zSuSKxlsUUBaj5IQr0NLQJ5So=;
+        b=JxQiqlfG2Yf/+EcPcCSSWmRsc/9aD2gLK2+epxAmAR1AkEBdQNWfGfpsAppDrh/cWN
+         G9dO4hvd12QcFA1/g3pySI9ziH0d29sTjklGdY/1aCiDAqHt2WVCjt7GUqwrfWeNQgCo
+         4zCB4YpIj0pSkrrVzULcAXU157HbODMSznmTafEdtM86SYeMWH8rH3fPQ4euvyVmpZnk
+         C7fVc96z3Gc8JfMDPTuPz4o3Qcf1TDd/UK2Ng43zlh34uFyFHdYnFHAmr+VqFLw4C1O4
+         5Nn3I3ind/Cj3OBeA36SPtIYfxrBvoSm9wdAstk9QsAa/feDxirk8MuNxmHHXzWwOxpw
+         dblA==
+X-Gm-Message-State: APjAAAXxLfgD9NZO4kcSC59V12lqRERnDFvazAl7DwxqKlFzpweL43XP
+        pOZW3hdFZ+cpHmEMbg/i+OL8rIND11UhsYwAfow=
+X-Google-Smtp-Source: APXvYqyQVapc0HQb2zNlrO9ACUIg0p0PZIO3eKHtqDUB9iKBoqT2ZxFgyWPN3wIre99JvuCaIlvEX84YwMN3a1ZjF+Y=
+X-Received: by 2002:a63:d809:: with SMTP id b9mr7733622pgh.143.1572540408812;
+ Thu, 31 Oct 2019 09:46:48 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 09:46:22 -0700
 In-Reply-To: <20191031164637.48901-1-samitolvanen@google.com>
-Message-Id: <20191031164637.48901-2-samitolvanen@google.com>
+Message-Id: <20191031164637.48901-3-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com> <20191031164637.48901-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v3 01/17] arm64: mm: avoid x18 in idmap_kpti_install_ng_mappings
+Subject: [PATCH v3 02/17] arm64/lib: copy_page: avoid x18 register in
+ assembler code
 From:   samitolvanen@google.com
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -72,126 +73,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-idmap_kpti_install_ng_mappings uses x18 as a temporary register, which
-will result in a conflict when x18 is reserved. Use x16 and x17 instead
-where needed.
+Register x18 will no longer be used as a caller save register in the
+future, so stop using it in the copy_page() code.
 
+Link: https://patchwork.kernel.org/patch/9836869/
+Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[ changed the offset and bias to be explicit ]
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 ---
- arch/arm64/mm/proc.S | 63 ++++++++++++++++++++++----------------------
- 1 file changed, 32 insertions(+), 31 deletions(-)
+ arch/arm64/lib/copy_page.S | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index a1e0592d1fbc..fdabf40a83c8 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -250,15 +250,15 @@ ENTRY(idmap_kpti_install_ng_mappings)
- 	/* We're the boot CPU. Wait for the others to catch up */
- 	sevl
- 1:	wfe
--	ldaxr	w18, [flag_ptr]
--	eor	w18, w18, num_cpus
--	cbnz	w18, 1b
-+	ldaxr	w17, [flag_ptr]
-+	eor	w17, w17, num_cpus
-+	cbnz	w17, 1b
+diff --git a/arch/arm64/lib/copy_page.S b/arch/arm64/lib/copy_page.S
+index bbb8562396af..290dd3c5266c 100644
+--- a/arch/arm64/lib/copy_page.S
++++ b/arch/arm64/lib/copy_page.S
+@@ -34,45 +34,45 @@ alternative_else_nop_endif
+ 	ldp	x14, x15, [x1, #96]
+ 	ldp	x16, x17, [x1, #112]
  
- 	/* We need to walk swapper, so turn off the MMU. */
- 	pre_disable_mmu_workaround
--	mrs	x18, sctlr_el1
--	bic	x18, x18, #SCTLR_ELx_M
--	msr	sctlr_el1, x18
-+	mrs	x17, sctlr_el1
-+	bic	x17, x17, #SCTLR_ELx_M
-+	msr	sctlr_el1, x17
- 	isb
+-	mov	x18, #(PAGE_SIZE - 128)
++	add	x0, x0, #256
+ 	add	x1, x1, #128
+ 1:
+-	subs	x18, x18, #128
++	tst	x0, #(PAGE_SIZE - 1)
  
- 	/* Everybody is enjoying the idmap, so we can rewrite swapper. */
-@@ -281,9 +281,9 @@ skip_pgd:
- 	isb
+ alternative_if ARM64_HAS_NO_HW_PREFETCH
+ 	prfm	pldl1strm, [x1, #384]
+ alternative_else_nop_endif
  
- 	/* We're done: fire up the MMU again */
--	mrs	x18, sctlr_el1
--	orr	x18, x18, #SCTLR_ELx_M
--	msr	sctlr_el1, x18
-+	mrs	x17, sctlr_el1
-+	orr	x17, x17, #SCTLR_ELx_M
-+	msr	sctlr_el1, x17
- 	isb
+-	stnp	x2, x3, [x0]
++	stnp	x2, x3, [x0, #-256]
+ 	ldp	x2, x3, [x1]
+-	stnp	x4, x5, [x0, #16]
++	stnp	x4, x5, [x0, #16 - 256]
+ 	ldp	x4, x5, [x1, #16]
+-	stnp	x6, x7, [x0, #32]
++	stnp	x6, x7, [x0, #32 - 256]
+ 	ldp	x6, x7, [x1, #32]
+-	stnp	x8, x9, [x0, #48]
++	stnp	x8, x9, [x0, #48 - 256]
+ 	ldp	x8, x9, [x1, #48]
+-	stnp	x10, x11, [x0, #64]
++	stnp	x10, x11, [x0, #64 - 256]
+ 	ldp	x10, x11, [x1, #64]
+-	stnp	x12, x13, [x0, #80]
++	stnp	x12, x13, [x0, #80 - 256]
+ 	ldp	x12, x13, [x1, #80]
+-	stnp	x14, x15, [x0, #96]
++	stnp	x14, x15, [x0, #96 - 256]
+ 	ldp	x14, x15, [x1, #96]
+-	stnp	x16, x17, [x0, #112]
++	stnp	x16, x17, [x0, #112 - 256]
+ 	ldp	x16, x17, [x1, #112]
  
- 	/*
-@@ -353,46 +353,47 @@ skip_pte:
- 	b.ne	do_pte
- 	b	next_pmd
+ 	add	x0, x0, #128
+ 	add	x1, x1, #128
  
-+	.unreq	cpu
-+	.unreq	num_cpus
-+	.unreq	swapper_pa
-+	.unreq	cur_pgdp
-+	.unreq	end_pgdp
-+	.unreq	pgd
-+	.unreq	cur_pudp
-+	.unreq	end_pudp
-+	.unreq	pud
-+	.unreq	cur_pmdp
-+	.unreq	end_pmdp
-+	.unreq	pmd
-+	.unreq	cur_ptep
-+	.unreq	end_ptep
-+	.unreq	pte
-+
- 	/* Secondary CPUs end up here */
- __idmap_kpti_secondary:
- 	/* Uninstall swapper before surgery begins */
--	__idmap_cpu_set_reserved_ttbr1 x18, x17
-+	__idmap_cpu_set_reserved_ttbr1 x16, x17
+-	b.gt	1b
++	b.ne	1b
  
- 	/* Increment the flag to let the boot CPU we're ready */
--1:	ldxr	w18, [flag_ptr]
--	add	w18, w18, #1
--	stxr	w17, w18, [flag_ptr]
-+1:	ldxr	w16, [flag_ptr]
-+	add	w16, w16, #1
-+	stxr	w17, w16, [flag_ptr]
- 	cbnz	w17, 1b
+-	stnp	x2, x3, [x0]
+-	stnp	x4, x5, [x0, #16]
+-	stnp	x6, x7, [x0, #32]
+-	stnp	x8, x9, [x0, #48]
+-	stnp	x10, x11, [x0, #64]
+-	stnp	x12, x13, [x0, #80]
+-	stnp	x14, x15, [x0, #96]
+-	stnp	x16, x17, [x0, #112]
++	stnp	x2, x3, [x0, #-256]
++	stnp	x4, x5, [x0, #16 - 256]
++	stnp	x6, x7, [x0, #32 - 256]
++	stnp	x8, x9, [x0, #48 - 256]
++	stnp	x10, x11, [x0, #64 - 256]
++	stnp	x12, x13, [x0, #80 - 256]
++	stnp	x14, x15, [x0, #96 - 256]
++	stnp	x16, x17, [x0, #112 - 256]
  
- 	/* Wait for the boot CPU to finish messing around with swapper */
- 	sevl
- 1:	wfe
--	ldxr	w18, [flag_ptr]
--	cbnz	w18, 1b
-+	ldxr	w16, [flag_ptr]
-+	cbnz	w16, 1b
- 
- 	/* All done, act like nothing happened */
--	offset_ttbr1 swapper_ttb, x18
-+	offset_ttbr1 swapper_ttb, x16
- 	msr	ttbr1_el1, swapper_ttb
- 	isb
  	ret
- 
--	.unreq	cpu
--	.unreq	num_cpus
--	.unreq	swapper_pa
- 	.unreq	swapper_ttb
- 	.unreq	flag_ptr
--	.unreq	cur_pgdp
--	.unreq	end_pgdp
--	.unreq	pgd
--	.unreq	cur_pudp
--	.unreq	end_pudp
--	.unreq	pud
--	.unreq	cur_pmdp
--	.unreq	end_pmdp
--	.unreq	pmd
--	.unreq	cur_ptep
--	.unreq	end_ptep
--	.unreq	pte
- ENDPROC(idmap_kpti_install_ng_mappings)
- 	.popsection
- #endif
+ ENDPROC(copy_page)
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
