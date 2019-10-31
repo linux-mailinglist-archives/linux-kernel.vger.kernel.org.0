@@ -2,72 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA36EB935
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 22:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F39B4EB946
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 22:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbfJaVr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 17:47:58 -0400
-Received: from mga09.intel.com ([134.134.136.24]:50799 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728598AbfJaVr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 17:47:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 14:47:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,253,1569308400"; 
-   d="scan'208";a="204331816"
-Received: from epobrien-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.10.103])
-  by orsmga006.jf.intel.com with ESMTP; 31 Oct 2019 14:47:48 -0700
-Date:   Thu, 31 Oct 2019 23:47:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     jens.wiklander@linaro.org, dhowells@redhat.com, corbet@lwn.net,
-        jejb@linux.ibm.com, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        stuart.yoder@arm.com, janne.karhunen@gmail.com,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        tee-dev@lists.linaro.org
-Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted
- Keys
-Message-ID: <20191031214745.GG10507@linux.intel.com>
-References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
- <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729073AbfJaVuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 17:50:16 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:33230 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728561AbfJaVuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 17:50:16 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5BDDA1500397B;
+        Thu, 31 Oct 2019 14:50:15 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 14:50:14 -0700 (PDT)
+Message-Id: <20191031.145014.186986700333108637.davem@davemloft.net>
+To:     joe@perches.com
+Cc:     gregkh@linuxfoundation.org, perex@perex.cz,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Re: [PATCH] hp100: Move 100BaseVG AnyLAN driver to staging
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <4024b52c917975cebde58afc094eed1a107622c2.1572545956.git.joe@perches.com>
+References: <4024b52c917975cebde58afc094eed1a107622c2.1572545956.git.joe@perches.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 31 Oct 2019 14:50:15 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 07:28:42PM +0530, Sumit Garg wrote:
-> Provide documentation for usage of TEE based Trusted Keys via existing
-> user-space "keyctl" utility. Also, document various use-cases.
+From: Joe Perches <joe@perches.com>
+Date: Thu, 31 Oct 2019 11:23:37 -0700
+
+> 100BaseVG AnyLAN hasn't been useful since 1996 or so and even then
+> didn't sell many devices.  It's unlikely any are still in use.
 > 
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> Move the driver to staging with the intent of removing it altogether
+> one day.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-This is the most important commit in order for someone who don't deal
-that much with ARM TEE to get right. Until this commit is right, I don't
-unfortunately have much to say about other commits.
-
-Instead of making disjoint islands, you should edit trusted-encrypted.rst
-so that it describes commonalities and differences.
-
-What the document currently describes is the usage model. It could be a
-section of its own. In that you should describe first the common
-parameters and separetely the backend specific parametrs.
-
-From kernel internals (there could be a section with this name)  the
-document describe the key generation e.g. is the hardware used and how
-it is used, is there salting with krng and so forth.
-
-/Jarkko
+Applied to net-next.
