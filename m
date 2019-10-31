@@ -2,198 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B626EAB26
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:54:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99DCFEAB31
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 08:57:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbfJaHyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 03:54:18 -0400
-Received: from mail-eopbgr130098.outbound.protection.outlook.com ([40.107.13.98]:29760
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726769AbfJaHyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 03:54:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=alkPh5JW79LDt8uoAmPMXX9p+aYPt4vfQlBz2NyuWzYUPK0ZIYMMlWeTUcQsXojOt1QykDQLclBHPeSMFAhNWPdJdBZB3LiBNUO4h+oQKJXU4Er/PQ2UlL4SvmAnEyOoXRBC5SKzaAFt8SeBtdEJnjqulxlaLBlpBa6vJTweDxpGGkWBGsgHWxz9fjb799APrVmbyqAPQAKCGNZHYq88RX4f6i5mpfaiY58udwxz3vOPcLMWoHyY0JLFwg14ceyfIVSCWxCSSs6+lyFcMx3SqfMnJMQsCFI47oSG7NbPnb/JbdTCzMfP9QezQSoq9L3fdCjWIs6rB/ZD7RSInTSNeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dgDOzXBlgdk9qveVtcTKZIvPmXMQb6cb/IwSv77B9CM=;
- b=drJxeifo69b6yAqtDEyI+L1pw0WhrH7nPOrKFm2eco57rWz9BJG5SP4ymm+Kcv2TATpofZ96KtIByoMf3wSnbQDhZwBsqAUBAMV+e/d3mBWUbo39RTO+58Jy/j4YP9kZy1TfYLCeZsCO2oKx5sO0IUF9qEnGmc6hLFgmem5oi4RKWcACbTuqEQF9V9QBXRq1FWu2pEQ6xbLlGSpMIwh/n2xbNvXHcjJNg3/aIFdHu8PEdjZvr0V6As67V+TusPTK4Imykvi8VRtT+GMZSpAlt+oIvhEUMSgjm1d2ioU/LlTYkOl0b1bUbqd6lEsiKqv9mFax+jL505SRyd5j8hh4eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dgDOzXBlgdk9qveVtcTKZIvPmXMQb6cb/IwSv77B9CM=;
- b=taEknUr0LFQfQ+1hQKR9XDf1vXrwufF3tjoTWJb2Az3buUiDkKkKJYIAUMHzfyh0B2X8Ju+vmEemqIelJhExIts3Nwg0g5TybnpqpLxA71cC2OrW6lQOXzJu8XOdbkPKwYY2XpyTvlcF04yA4HTOgyXmaeLZJpJEx0nt4K36+ZU=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (10.167.127.12) by
- HE1PR0702MB3819.eurprd07.prod.outlook.com (10.167.126.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.14; Thu, 31 Oct 2019 07:54:05 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::7193:f6cc:3771:95b9]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::7193:f6cc:3771:95b9%7]) with mapi id 15.20.2387.030; Thu, 31 Oct 2019
- 07:54:05 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com" 
-        <syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com>,
-        "marcelo.leitner@gmail.com" <marcelo.leitner@gmail.com>
-Subject: Re: [PATCH 4.14 024/119] sctp: change sctp_prot .no_autobind with
- true
-Thread-Topic: [PATCH 4.14 024/119] sctp: change sctp_prot .no_autobind with
- true
-Thread-Index: AQHVjQqbiJexuTmoE0C1wK8ToRSb7Kd0ZqUA
-Date:   Thu, 31 Oct 2019 07:54:05 +0000
-Message-ID: <3e9de35dda19c0ac207d49d24c2735655b1d8d64.camel@nokia.com>
-References: <20191027203259.948006506@linuxfoundation.org>
-         <20191027203307.303661015@linuxfoundation.org>
-In-Reply-To: <20191027203307.303661015@linuxfoundation.org>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-originating-ip: [131.228.2.23]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cdf3eb81-e13f-4a71-958a-08d75dd780a4
-x-ms-traffictypediagnostic: HE1PR0702MB3819:
-x-microsoft-antispam-prvs: <HE1PR0702MB3819FBE9417279AE12D2ADCDB4630@HE1PR0702MB3819.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 02070414A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(39860400002)(376002)(396003)(189003)(199004)(229853002)(36756003)(2906002)(54906003)(6486002)(7736002)(305945005)(110136005)(6246003)(6436002)(3846002)(6116002)(6512007)(316002)(66476007)(66446008)(64756008)(66946007)(66556008)(76116006)(99286004)(76176011)(476003)(11346002)(446003)(6506007)(102836004)(186003)(26005)(478600001)(81166006)(45080400002)(14454004)(8936002)(4001150100001)(81156014)(2501003)(8676002)(25786009)(2616005)(486006)(66066001)(118296001)(4326008)(5660300002)(86362001)(256004)(71190400001)(71200400001)(142923001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3819;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QM1jWnBCCDy/mrXji8vW+J+y7ZGDaL3BbTubN3gnb6HCE3itIiwp4j1rYwp9YtgM7bvG9zCXAxtyqxLBRUFdp72CEwQA3/nKqjAXh7fyLE6XLc06iTBz6j5rl1/geyIPR5vd+wq15sjn+ySQVPPtqXQMBbO1uuTURVzENMKc3OxF0IS6z+1SvflkdkjDSg756nx2w5PFEQp2t9nRCSPPGQtoftkYCJVVmCQa/xGDQXkU48x/7mosgltighxbJKADXjjFEvicw21aUX248VaDvSno37iPrYew6ljz7eORwNeq9Uy5/OG/+fJdNy78lK9Q/u1wASVN2tE0qv/0Ss1119D0YJX1KD2b+j4XG67NkpE0Xo7Slm7oiHQR7yZW1mPglXT4AntNdfwXtH8U4V3NfQfcJS1f6QHsowu68djIQjqDH5C9pvHOgZa6sxV6Mevl
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <20059BB418EB3D41B356CB85A4701FBC@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727005AbfJaH5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 03:57:50 -0400
+Received: from mga14.intel.com ([192.55.52.115]:65394 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfJaH5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 03:57:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 00:57:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,250,1569308400"; 
+   d="scan'208";a="375157005"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2019 00:57:48 -0700
+Received: from [10.226.38.65] (rtanwar-mobl.gar.corp.intel.com [10.226.38.65])
+        by linux.intel.com (Postfix) with ESMTP id 7C956580127;
+        Thu, 31 Oct 2019 00:57:45 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] pinctrl: Add pinmux & GPIO controller driver for a
+ new SoC
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
+References: <cover.1572409172.git.rahul.tanwar@linux.intel.com>
+ <4bb885fe692d29f2635772dcd04839390f1f5671.1572409172.git.rahul.tanwar@linux.intel.com>
+ <20191030143907.GY32742@smile.fi.intel.com>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <bb9d2c3d-2b01-7239-eefa-0e813b091cc8@linux.intel.com>
+Date:   Thu, 31 Oct 2019 15:57:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdf3eb81-e13f-4a71-958a-08d75dd780a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2019 07:54:05.2406
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iJDQkQ/RA53uP4X04JsDfDCwPzt3qj21CaPKniBokiw+4A+r1ScNmzxN5qeZnPENxfA+sTjZ/VM7jTxjznqssZzhx6JkzBwmf3xHzFGoVn0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3819
+In-Reply-To: <20191030143907.GY32742@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTEwLTI3IGF0IDIyOjAwICswMTAwLCBHcmVnIEtyb2FoLUhhcnRtYW4gd3Jv
-dGU6DQo+IEZyb206IFhpbiBMb25nIDxsdWNpZW4ueGluQGdtYWlsLmNvbT4NCj4gDQo+IFsgVXBz
-dHJlYW0gY29tbWl0IDYzZGZiNzkzOGIxM2ZhMmMyZmJjYjQ1ZjM0ZDA2NTc2OWViMDk0MTQgXQ0K
-PiANCj4gc3l6Ym90IHJlcG9ydGVkIGEgbWVtb3J5IGxlYWs6DQo+IA0KPiAgIEJVRzogbWVtb3J5
-IGxlYWssIHVucmVmZXJlbmNlZCBvYmplY3QgMHhmZmZmODg4MTIwYjNkMzgwIChzaXplIDY0KToN
-Cj4gICBiYWNrdHJhY2U6DQo+IA0KPiAgICAgWy4uLl0gc2xhYl9hbGxvYyBtbS9zbGFiLmM6MzMx
-OSBbaW5saW5lXQ0KPiAgICAgWy4uLl0ga21lbV9jYWNoZV9hbGxvYysweDEzZi8weDJjMCBtbS9z
-bGFiLmM6MzQ4Mw0KPiAgICAgWy4uLl0gc2N0cF9idWNrZXRfY3JlYXRlIG5ldC9zY3RwL3NvY2tl
-dC5jOjg1MjMgW2lubGluZV0NCj4gICAgIFsuLi5dIHNjdHBfZ2V0X3BvcnRfbG9jYWwrMHgxODkv
-MHg1YTAgbmV0L3NjdHAvc29ja2V0LmM6ODI3MA0KPiAgICAgWy4uLl0gc2N0cF9kb19iaW5kKzB4
-Y2MvMHgyMDAgbmV0L3NjdHAvc29ja2V0LmM6NDAyDQo+ICAgICBbLi4uXSBzY3RwX2JpbmR4X2Fk
-ZCsweDRiLzB4ZDAgbmV0L3NjdHAvc29ja2V0LmM6NDk3DQo+ICAgICBbLi4uXSBzY3RwX3NldHNv
-Y2tvcHRfYmluZHgrMHgxNTYvMHgxYjAgbmV0L3NjdHAvc29ja2V0LmM6MTAyMg0KPiAgICAgWy4u
-Ll0gc2N0cF9zZXRzb2Nrb3B0IG5ldC9zY3RwL3NvY2tldC5jOjQ2NDEgW2lubGluZV0NCj4gICAg
-IFsuLi5dIHNjdHBfc2V0c29ja29wdCsweGFlYS8weDJkYzAgbmV0L3NjdHAvc29ja2V0LmM6NDYx
-MQ0KPiAgICAgWy4uLl0gc29ja19jb21tb25fc2V0c29ja29wdCsweDM4LzB4NTAgbmV0L2NvcmUv
-c29jay5jOjMxNDcNCj4gICAgIFsuLi5dIF9fc3lzX3NldHNvY2tvcHQrMHgxMGYvMHgyMjAgbmV0
-L3NvY2tldC5jOjIwODQNCj4gICAgIFsuLi5dIF9fZG9fc3lzX3NldHNvY2tvcHQgbmV0L3NvY2tl
-dC5jOjIxMDAgW2lubGluZV0NCj4gDQo+IEl0IHdhcyBjYXVzZWQgYnkgd2hlbiBzZW5kaW5nIG1z
-Z3Mgd2l0aG91dCBiaW5kaW5nIGEgcG9ydCwgaW4gdGhlIHBhdGg6DQo+IGluZXRfc2VuZG1zZygp
-IC0+IGluZXRfc2VuZF9wcmVwYXJlKCkgLT4gaW5ldF9hdXRvYmluZCgpIC0+DQo+IC5nZXRfcG9y
-dC9zY3RwX2dldF9wb3J0KCksIHNwLT5iaW5kX2hhc2ggd2lsbCBiZSBzZXQgd2hpbGUgYnAtPnBv
-cnQgaXMNCj4gbm90LiBMYXRlciB3aGVuIGJpbmRpbmcgYW5vdGhlciBwb3J0IGJ5IHNjdHBfc2V0
-c29ja29wdF9iaW5keCgpLCBhIG5ldw0KPiBidWNrZXQgd2lsbCBiZSBjcmVhdGVkIGFzIGJwLT5w
-b3J0IGlzIG5vdCBzZXQuDQo+IA0KPiBzY3RwJ3MgYXV0b2JpbmQgaXMgc3VwcG9zZWQgdG8gY2Fs
-bCBzY3RwX2F1dG9iaW5kKCkgd2hlcmUgaXQgZG9lcyBhbGwNCj4gdGhpbmdzIGluY2x1ZGluZyBz
-ZXR0aW5nIGJwLT5wb3J0LiBTaW5jZSBzY3RwX2F1dG9iaW5kKCkgaXMgY2FsbGVkIGluDQo+IHNj
-dHBfc2VuZG1zZygpIGlmIHRoZSBzayBpcyBub3QgeWV0IGJvdW5kLCBpdCBzaG91bGQgaGF2ZSBz
-a2lwcGVkIHRoZQ0KPiBhdXRvIGJpbmQuDQo+IA0KPiBUSGlzIHBhdGNoIGlzIHRvIGF2b2lkIGNh
-bGxpbmcgaW5ldF9hdXRvYmluZCgpIGluIGluZXRfc2VuZF9wcmVwYXJlKCkNCj4gYnkgY2hhbmdp
-bmcgc2N0cF9wcm90IC5ub19hdXRvYmluZCB3aXRoIHRydWUsIGFsc28gcmVtb3ZlIHRoZSB1bnVz
-ZWQNCj4gLmdldF9wb3J0Lg0KDQpIaSwNCg0KSSdtIHNlZWluZyBTQ1RQIG9vcHMgaW4gNC4xNC4x
-NTEsIHJlcHJvZHVjaWJsZSBlYXNpbHkgd2l0aCBpcGVyZjoNCg0KIyBpcGVyZjMgLXMgLTEgJg0K
-IyBpcGVyZjMgLWMgbG9jYWxob3N0IC0tc2N0cA0KDQpUaGlzIHBhdGNoIHdhcyBhbHNvIGluY2x1
-ZGVkIGluIDQuMTkuODEsIGJ1dCB0aGVyZSBpdCBzZWVtcyB0byBiZSB3b3JraW5nDQpmaW5lLg0K
-DQpBbnkgaWRlYXMgaWYgdGhpcyBwYXRjaCBpcyB2YWxpZCBmb3IgNC4xNCwgb3Igd2hhdCdzIG1p
-c3NpbmcgaW4gNC4xNCB0bw0KbWFrZSB0aGlzIHdvcms/DQoNCg0KWyAgIDI5LjE3OTExNl0gc2N0
-cDogSGFzaCB0YWJsZXMgY29uZmlndXJlZCAoYmluZCAyNTYvMjU2KQ0KWyAgIDI5LjE4ODg0Nl0g
-QlVHOiB1bmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UNCmF0
-ICAgICAgICAgICAobnVsbCkNClsgICAyOS4xOTAxODldIElQOiAgICAgICAgICAgKG51bGwpDQpb
-ICAgMjkuMTkwNzU4XSBQR0QgMCBQNEQgMCANClsgICAyOS4xOTEyMjRdIE9vcHM6IDAwMTAgWyMx
-XSBTTVAgUFRJDQpbICAgMjkuMTkxNzg2XSBNb2R1bGVzIGxpbmtlZCBpbjogaG1hYyBzY3RwIGxp
-YmNyYzMyYyBpc29mcyBrdm1faW50ZWwga3ZtDQppcnFieXBhc3Mgc2NoX2ZxX2NvZGVsIHBjYmMg
-YWVzbmlfaW50ZWwgYWVzX3g4Nl82NCBjcnlwdG9fc2ltZCBjcnlwdGQNCmdsdWVfaGVscGVyIGF0
-YV9waWl4IGRtX21pcnJvciBkbV9yZWdpb25faGFzaCBkbV9sb2cgZG1fbW9kIGRheCBhdXRvZnM0
-DQpbICAgMjkuMTk0NTg1XSBDUFU6IDUgUElEOiA3MzMgQ29tbTogaXBlcmYzIE5vdCB0YWludGVk
-IDQuMTQuMTUxLTEueDg2XzY0DQojMQ0KWyAgIDI5LjE5NTY4OV0gSGFyZHdhcmUgbmFtZTogUUVN
-VSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MNCjEuMTIuMC0yLmZjMzAg
-MDQvMDEvMjAxNA0KWyAgIDI5LjE5NzAwOV0gdGFzazogZmZmZjkzZWRiMGU2NWJjMCB0YXNrLnN0
-YWNrOiBmZmZmOWZjZGMxMWI4MDAwDQpbICAgMjkuMTk3OTE2XSBSSVA6IDAwMTA6ICAgICAgICAg
-IChudWxsKQ0KWyAgIDI5LjE5ODUzMl0gUlNQOiAwMDE4OmZmZmY5ZmNkYzExYmJlNTAgRUZMQUdT
-OiAwMDAxMDI0Ng0KWyAgIDI5LjE5OTM0OV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZm
-ZjkzZWRiMDJkMDY4MCBSQ1g6DQowMDAwMDAwMDAwMDAwMDAyDQpbICAgMjkuMjAwNDI2XSBSRFg6
-IDAwMDAwMDAwMDAwMDAwMDEgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESToNCmZmZmY5M2VkYjAy
-ZDA2ODANClsgICAyOS4yMDE0OTddIFJCUDogMDAwMDAwMDAwMDAwMDAxYyBSMDg6IDAxMDAwMDAw
-MDAwMDAwMDAgUjA5Og0KMDAwMDU2NDI3N2FiYjRlOA0KWyAgIDI5LjIwMjU3N10gUjEwOiAwMDAw
-MDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6DQpmZmZmOWZjZGMxMWJiZTkw
-DQpbICAgMjkuMjAzNjU2XSBSMTM6IDAwMDA1NjQyNzdhYmI0ZTAgUjE0OiAwMDAwMDAwMDAwMDAw
-MDAwIFIxNToNCjAwMDAwMDAwMDAwMDAwMDANClsgICAyOS4yMDQ3MzddIEZTOiAgMDAwMDdmMGY2
-MjQyY2I4MCgwMDAwKSBHUzpmZmZmOTNlZGJmZDQwMDAwKDAwMDApDQprbmxHUzowMDAwMDAwMDAw
-MDAwMDAwDQpbICAgMjkuMjA1OTY3XSBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAw
-MDAwMDAwMDgwMDUwMDMzDQpbICAgMjkuMjA2ODYzXSBDUjI6IDAwMDAwMDAwMDAwMDAwMDAgQ1Iz
-OiAwMDAwMDAwMjMwMzdjMDAyIENSNDoNCjAwMDAwMDAwMDAzNjA2ZTANClsgICAyOS4yMDc5NThd
-IERSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOg0KMDAwMDAw
-MDAwMDAwMDAwMA0KWyAgIDI5LjIwOTA3OV0gRFIzOiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAw
-MDAwMDBmZmZlMGZmMCBEUjc6DQowMDAwMDAwMDAwMDAwNDAwDQpbICAgMjkuMjEwMTYyXSBDYWxs
-IFRyYWNlOg0KWyAgIDI5LjIxMDU3N10gIGluZXRfYXV0b2JpbmQrMHgyYy8weDYwDQpbICAgMjku
-MjExMTcyXSAgaW5ldF9kZ3JhbV9jb25uZWN0KzB4NDUvMHg4MA0KWyAgIDI5LjIxMTgwOF0gIFNZ
-U0NfY29ubmVjdCsweDg5LzB4YjANClsgICAyOS4yMTIzODRdICA/IHNvY2tfbWFwX2ZkKzB4M2Qv
-MHg2MA0KWyAgIDI5LjIxMjk2MF0gIGRvX3N5c2NhbGxfNjQrMHg3NC8weDE5MA0KWyAgIDI5LjIx
-MzUxN10gIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDNkLzB4YTINClsgICAyOS4y
-MTQyMTJdIFJJUDogMDAzMzoweDdmMGY2MjZiNTc1OA0KWyAgIDI5LjIxNDcxMF0gUlNQOiAwMDJi
-OjAwMDA3ZmZjN2NhNjI0ZjggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDoNCjAwMDAwMDAwMDAw
-MDAwMmENClsgICAyOS4yMTU3MjddIFJBWDogZmZmZmZmZmZmZmZmZmZkYSBSQlg6IDAwMDA1NjQy
-NzdhYmEyNjAgUkNYOg0KMDAwMDdmMGY2MjZiNTc1OA0KWyAgIDI5LjIxNjY2MF0gUkRYOiAwMDAw
-MDAwMDAwMDAwMDFjIFJTSTogMDAwMDU2NDI3N2FiYjRlMCBSREk6DQowMDAwMDAwMDAwMDAwMDA1
-DQpbICAgMjkuMjE3NjEzXSBSQlA6IDAwMDAwMDAwMDAwMDAwMDUgUjA4OiAwMDAwNTY0Mjc3YWJj
-OWQwIFIwOToNCjAwMDA1NjQyNzdhYmI0ZTgNClsgICAyOS4yMTg2MDRdIFIxMDogMDAwMDAwMDAw
-MDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOg0KMDAwMDdmMGY2MjdhNzE3MA0KWyAg
-IDI5LjIxOTYwNl0gUjEzOiAwMDAwN2ZmYzdjYTYyNTIwIFIxNDogMDAwMDU2NDI3N2FiYTI2MCBS
-MTU6DQowMDAwMDAwMDAwMDAwMDAxDQpbICAgMjkuMjIwNTk2XSBDb2RlOiAgQmFkIFJJUCB2YWx1
-ZS4NClsgICAyOS4yMjEwNzVdIFJJUDogICAgICAgICAgIChudWxsKSBSU1A6IGZmZmY5ZmNkYzEx
-YmJlNTANClsgICAyOS4yMjE3NzJdIENSMjogMDAwMDAwMDAwMDAwMDAwMA0KWyAgIDI5LjIyMjI2
-MF0gLS0tWyBlbmQgdHJhY2UgODMxYzRjMWYxMTEwOWNhMCBdLS0tDQoNCg0KPiBSZXBvcnRlZC1i
-eTogc3l6Ym90K2Q0NGY3YmJlYmRlYTQ5ZGJjODRhQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20N
-Cj4gU2lnbmVkLW9mZi1ieTogWGluIExvbmcgPGx1Y2llbi54aW5AZ21haWwuY29tPg0KPiBBY2tl
-ZC1ieTogTWFyY2VsbyBSaWNhcmRvIExlaXRuZXIgPG1hcmNlbG8ubGVpdG5lckBnbWFpbC5jb20+
-DQo+IFNpZ25lZC1vZmYtYnk6IERhdmlkIFMuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD4N
-Cj4gU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0
-aW9uLm9yZz4NCj4gLS0tDQo+ICBuZXQvc2N0cC9zb2NrZXQuYyB8ICAgIDQgKystLQ0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IC0tLSBh
-L25ldC9zY3RwL3NvY2tldC5jDQo+ICsrKyBiL25ldC9zY3RwL3NvY2tldC5jDQo+IEBAIC04MzEz
-LDcgKzgzMTMsNyBAQCBzdHJ1Y3QgcHJvdG8gc2N0cF9wcm90ID0gew0KPiAgCS5iYWNrbG9nX3Jj
-diA9CXNjdHBfYmFja2xvZ19yY3YsDQo+ICAJLmhhc2ggICAgICAgID0Jc2N0cF9oYXNoLA0KPiAg
-CS51bmhhc2ggICAgICA9CXNjdHBfdW5oYXNoLA0KPiAtCS5nZXRfcG9ydCAgICA9CXNjdHBfZ2V0
-X3BvcnQsDQo+ICsJLm5vX2F1dG9iaW5kID0JdHJ1ZSwNCj4gIAkub2JqX3NpemUgICAgPSAgc2l6
-ZW9mKHN0cnVjdCBzY3RwX3NvY2spLA0KPiAgCS5zeXNjdGxfbWVtICA9ICBzeXNjdGxfc2N0cF9t
-ZW0sDQo+ICAJLnN5c2N0bF9ybWVtID0gIHN5c2N0bF9zY3RwX3JtZW0sDQo+IEBAIC04MzUyLDcg
-KzgzNTIsNyBAQCBzdHJ1Y3QgcHJvdG8gc2N0cHY2X3Byb3QgPSB7DQo+ICAJLmJhY2tsb2dfcmN2
-CT0gc2N0cF9iYWNrbG9nX3JjdiwNCj4gIAkuaGFzaAkJPSBzY3RwX2hhc2gsDQo+ICAJLnVuaGFz
-aAkJPSBzY3RwX3VuaGFzaCwNCj4gLQkuZ2V0X3BvcnQJPSBzY3RwX2dldF9wb3J0LA0KPiArCS5u
-b19hdXRvYmluZAk9IHRydWUsDQo+ICAJLm9ial9zaXplCT0gc2l6ZW9mKHN0cnVjdCBzY3RwNl9z
-b2NrKSwNCj4gIAkuc3lzY3RsX21lbQk9IHN5c2N0bF9zY3RwX21lbSwNCj4gIAkuc3lzY3RsX3Jt
-ZW0JPSBzeXNjdGxfc2N0cF9ybWVtLA0KPiANCj4gDQoNCg==
+
+Hi Andy,
+
+On 30/10/2019 10:39 PM, Andy Shevchenko wrote:
+> On Wed, Oct 30, 2019 at 12:23:59PM +0800, Rahul Tanwar wrote:
+>> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
+>> controls pin multiplexing & configuration including GPIO functions selection &
+>> GPIO attributes configuration.
+>>
+>> This IP is not based on & does not have anything in common with Chassis
+>> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
+>> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
+>> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
+>>
+>> Add a new GPIO & pin control framework based driver for this IP.
+>>
+>> +static inline void eqbr_set_val(void __iomem *addr, u32 offset,
+>> +				u32 mask, u32 set, raw_spinlock_t *lock)
+>
+> Why is it marked with inline?
+
+Hard to justify. I can remove inline if you recommend so..
+
+>> +{
+>> +	u32 val;
+>> +	unsigned long flags;
+>> +
+>> +	raw_spin_lock_irqsave(lock, flags);
+>> +	val = readl(addr);
+>> +	val = (val & ~(mask << offset)) | ((set & mask) << offset);
+> This is unusual, why offset can't be applied once to the mask?
+
+Do you mean like below ? (set still needs to be left shifted by offset)
+
+mask = mask << offset;
+val = (val & ~mask) | ((set << offset) & mask);
+
+>> +	writel(val, addr);
+>> +	raw_spin_unlock_irqrestore(lock, flags);
+> Hmm... Don't you have more complicated workflow that requires few
+> reads/writes/updates to be called atomically?
+
+I don't really see any complicated register programming in this driver.
+Just forpin configuration, mux setting & GPIO IRQ configuration..
+
+>> +}
+>> +static void eqbr_gpio_disable_irq(struct irq_data *d)
+>> +{
+>> +	unsigned int offset = irqd_to_hwirq(d);
+>> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +	struct eqbr_gpio_desc *desc = gpiochip_get_data(gc);
+>> +	writel(BIT(offset), desc->membase + GPIO_IRNENCLR);
+> Is it okay to be without spin lock?
+> Same Q to the rest similar places.
+
+Yes, you are right. GPIO IRQ ops also needs locking. I was incorrectly
+assuming that gpiolib will provide locking when it calls these ops. I
+will fix it in v3. Thanks.
+
+>> +}
+>> +static inline void eqbr_cfg_bit(void __iomem *addr,
+>> +				unsigned int offset, unsigned int set)
+>> +{
+>> +	if (!set)
+> Why not to use positive condition?
+
+Well noted.
+
+>> +		writel(readl(addr) & ~BIT(offset), addr);
+>> +	else
+>> +		writel(readl(addr) | BIT(offset), addr);
+>> +}
+>> +	struct gpio_irq_type it;
+> Not sure if this is used properly. Linus may clarify this.
+>
+>> +static void eqbr_irq_handler(struct irq_desc *desc)
+>> +{
+>> +	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+>> +	struct eqbr_gpio_desc *gpio_desc = gpiochip_get_data(gc);
+>> +	struct irq_chip *ic = irq_desc_get_chip(desc);
+>> +	u32 pins, offset;
+>> +
+>> +	chained_irq_enter(ic, desc);
+>> +	pins = readl(gpio_desc->membase + GPIO_IRNCR);
+>> +
+>> +	for_each_set_bit(offset, (unsigned long *)&pins, gc->ngpio)
+> This casting is no go.
+
+Well noted. Copy paste mistake. Will fix it. Thanks.
+
+>> +		generic_handle_irq(irq_find_mapping(gc->irq.domain, offset));
+>> +
+>> +	chained_irq_exit(ic, desc);
+>> +}
+>> +static int gpiochip_setup(struct device *dev, struct eqbr_gpio_desc *desc)
+>> +{
+>> +	struct gpio_irq_chip *girq;
+>> +	struct gpio_chip *gc;
+>> +
+>> +	gc = &desc->chip;
+>> +	gc->owner = THIS_MODULE;
+> Do we still need this in the drivers?
+
+Agree it is redundant. Will remove it. Thanks.
+
+>> +	gc->label = desc->name;
+>> +	gc->of_node = desc->node;
+>> +
+>> +	if (!of_property_read_bool(desc->node, "interrupt-controller")) {
+> Why is it fatal?
+
+It is not fatal, that's why it returns 0 instead of error i.e. if this
+gpio chip is notintended to be used as interrupt controller then do
+not setup gpio_irq_chipand proceed to register gpio chip without
+interrupt support.
+
+>> +		dev_info(dev, "gc %s: doesn't act as interrupt controller!\n",
+>> +			 desc->name);
+>> +		return 0;
+>> +	}
+>> +	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
+>> +				     GFP_KERNEL);
+> I believe it's fine to have it on one line.
+
+Well noted.
+
+>> +	if (!girq->parents)
+>> +		return -ENOMEM;
+>> +
+>> +	girq->default_type = IRQ_TYPE_NONE;
+>> +	girq->handler = handle_level_irq;
+> Not bad IRQ handler?
+
+Yes, it should be handle_bad_irq(). Will fix, thanks.
+
+>> +	girq->parents[0] = desc->virq;
+>> +
+>> +	return 0;
+>> +}
+>> +static int gpiolib_reg(struct eqbr_pinctrl_drv_data *drvdata)
+>> +{
+>> +	struct device_node *np;
+>> +	struct eqbr_gpio_desc *desc;
+>> +	struct device *dev;
+>> +	int i, ret;
+>> +	struct resource res;
+>> +
+>> +	dev = drvdata->dev;
+>> +	for (i = 0; i < drvdata->nr_gpio_descs; i++) {
+>> +		desc = drvdata->gpio_desc + i;
+>> +		np = desc->node;
+>> +
+>> +		desc->name = devm_kasprintf(dev, GFP_KERNEL, "gpiochip%d", i);
+>> +		if (!desc->name)
+>> +			return -ENOMEM;
+>> +
+>> +		if (of_address_to_resource(np, 0, &res)) {
+>> +			dev_err(dev, "Failed to get GPIO register address\n");
+>> +			return -ENXIO;
+>> +		}
+>> +
+>> +		desc->membase = devm_ioremap_resource(dev, &res);
+>> +		if (IS_ERR(desc->membase)) {
+>> +			dev_err(dev, "ioremap fail\n");
+> Redundant.
+
+Well noted.
+
+>> +			return PTR_ERR(desc->membase);
+>> +	}
+> Is it per descriptor?!
+
+Yes, it is per descriptor i.e. per gpio_chip. Each gpio_chip has different
+membase.
+
+>> +
+>> +		desc->virq = irq_of_parse_and_map(np, 0);
+>> +		if (!desc->virq) {
+>> +			dev_err(dev, "%s: failed to parse and map irq\n",
+>> +				desc->name);
+>> +			return -ENXIO;
+>> +		}
+>> +		raw_spin_lock_init(&desc->lock);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +static const struct pinmux_ops eqbr_pinmux_ops = {
+>> +	.get_functions_count	= pinmux_generic_get_function_count,
+>> +	.get_function_name 	= pinmux_generic_get_function_name,
+>> +	.get_function_groups 	= pinmux_generic_get_function_groups,
+>> +	.set_mux		= eqbr_pinmux_set_mux,
+>> +	.gpio_request_enable	= eqbr_pinmux_gpio_request,
+>> +	.strict			= true,
+>> +};
+> TABs/spaces mix.
+
+Well noted. Thanks.
+
+Regards,
+Rahul
