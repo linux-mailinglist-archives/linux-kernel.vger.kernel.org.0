@@ -2,126 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B54EABEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 09:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3AFCEABF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 09:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfJaIys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 04:54:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbfJaIyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 04:54:47 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B60C368E4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 08:54:47 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id m17so2873103wrb.20
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 01:54:47 -0700 (PDT)
+        id S1727268AbfJaI4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 04:56:06 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:41602 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfJaI4G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 04:56:06 -0400
+Received: by mail-il1-f193.google.com with SMTP id z10so4667780ilo.8
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 01:56:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kFfdHfuhP+nEEQfQbC0Ba4Z+OQ9QN7a/luiGoxHZNKI=;
+        b=tvdh0va1KgpZTtjmMZNglpPZI03tvtnGrO5YO4cTV4BiVYA+11jNi3bTMfInJ1Up0a
+         aoVUaXwQWYabwxtf4Ll8mfoLG2JyLcMYt0mam5/o6dAfujWHFAcY/46v7Oq6GsABGJ0M
+         +Sds7J3eBBKmtI3m8OcMFpGgLP7p1VD1LZOFdfuKKY9IhTqlufbq0ZTaKFZ1OFbDTMeP
+         wt5HuQunjysLqwvbwBOoStV1dcahtv0duyWC0YgjtTkXgEto0XoPkk72ntb5A93L/tE8
+         itwFWMXuQOEeNIjk7rzz9dcNdf6oJotXCzlx94WWlSxwuvaLnbjM1f6Xg4BI8Xx9Mhky
+         Kh6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wIxff/xeNXe1wb8LPDwW/yTYgkSfAil2vq+uYePEE2c=;
-        b=H9GqK6htRv6lEgHCurhRYSXxr268Vm4f5wD0olsC+vLiNj1LDz+6htsLslMxhRxhds
-         eCQ1CKLJklXGNRL+Qi2Dnm95Hx1Q5nknFyPIjFmA2dr+XgkED/g/k53QvnaibZyfCvEW
-         6XSgWU5roB40QxYFJ0rPk89ymfUdOGBsO+JgfrdExfEgvDutTlahTeRhrRJiOTFPqWC8
-         RD0Q9XSx4WfjdDHGy/fz0PxgK4i0HB94Obz6MqkqwMQBY5XmPngYrcD7KhOGlOEeddzW
-         Xa0VrWGCFf1L92iurJGKU59RhI5GjudbpnIUNAwO+fl+PpnmUiydOxd/ST1tzTE4aGKW
-         OdZQ==
-X-Gm-Message-State: APjAAAWhCY1oG37SGccas1bSfT+AOyNnQrPbhbNYxp86Fo9jhhiotoJU
-        sngS2wsx26meWWdOnPNCSJJ/iLKGnbJS1S6gh3L0tmgm8Zw6ckUaRf8+gK2fEqbdUURfeFCHBY9
-        Sht2n+uqjpYO+fwq5fEgNqXtr
-X-Received: by 2002:a05:600c:2248:: with SMTP id a8mr3992703wmm.176.1572512085606;
-        Thu, 31 Oct 2019 01:54:45 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwljnfXIFUbhpOVjeOyn7RSMG1RK8ExAwGTNSA6Ok15JomaTkrWe27dOdJI/ge/KJL7MFrKYQ==
-X-Received: by 2002:a05:600c:2248:: with SMTP id a8mr3992677wmm.176.1572512085348;
-        Thu, 31 Oct 2019 01:54:45 -0700 (PDT)
-Received: from steredhat ([91.217.168.176])
-        by smtp.gmail.com with ESMTPSA id l8sm3361933wru.22.2019.10.31.01.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 01:54:44 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 09:54:42 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jorgen Hansen <jhansen@vmware.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Arnd Bergmann <arnd@arndb.de>, kvm <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next 11/14] vsock: add multi-transports support
-Message-ID: <20191031085442.vkb5tnchfsa6n4dh@steredhat>
-References: <20191023095554.11340-1-sgarzare@redhat.com>
- <20191023095554.11340-12-sgarzare@redhat.com>
- <CAGxU2F7n48kBy_y2GB=mcvraK=mw_2Jn8=2hvQnEOWqWuT9OjA@mail.gmail.com>
- <MWHPR05MB3376E623764F54D39D8135A9DA600@MWHPR05MB3376.namprd05.prod.outlook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kFfdHfuhP+nEEQfQbC0Ba4Z+OQ9QN7a/luiGoxHZNKI=;
+        b=jvQ4JE/tU0PHzinWnCJa5gwwBsBSDGVfM4HbYoS0OVbUMfOWFbhfBbzg1xUBsDqaNh
+         SJpcXX9605IjvQD9hBncywP1TlQhqG2+VnPWrOCeLEKJOonTkzAWj8gGNGcBYZjMSscM
+         9RYtD2Z5KHax93cTHgfaWyhIghuzfX4cWjNwosacM8yVG44QBI//BBTR6rEIpSZIirY9
+         uA5ApyslU304weVXvngfctm2TifoX2q3t6hdagzngZpDrzQkMrFS89bFBMrnIKnF2/9k
+         LEbUdz7vS9T1oUTf21meaNwVxx5VFxnk0Y5ow9QGlVxL65nahFUQmsGQzah69bGkJYaf
+         37PA==
+X-Gm-Message-State: APjAAAVdzEHk1X+BRxRTjcW0Jq8ipOU1pu1fF2k6aSdLl4x9FiQwEp/j
+        0YQ97i3fgYxGOsdU3uag6rKeYaOlTOQbzLCR/wZsAg==
+X-Google-Smtp-Source: APXvYqwfX3ZfmayVc1DkCMbcevGUQ3Zmtj89LujmSEYYk2OKKpmSKfIAH39CJHL+4amH5NwNeo9lS0jhOjQEwNOQDnM=
+X-Received: by 2002:a92:af19:: with SMTP id n25mr5445478ili.138.1572512164205;
+ Thu, 31 Oct 2019 01:56:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MWHPR05MB3376E623764F54D39D8135A9DA600@MWHPR05MB3376.namprd05.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+References: <20191030091038.678-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20191030091038.678-1-daniel.lezcano@linaro.org>
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+Date:   Thu, 31 Oct 2019 14:25:52 +0530
+Message-ID: <CAKohpomW1CHrHZmXTmOAw9Oj2YauLPQmrL0Tw-j92qZ2YqK_Bw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] thermal: cpu_cooling: Remove pointless dependency on CONFIG_OF
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        "open list:THERMAL/CPU_COOLING" <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 03:40:05PM +0000, Jorgen Hansen wrote:
-> > From: Stefano Garzarella [mailto:sgarzare@redhat.com]
-> > > +/* Assign a transport to a socket and call the .init transport callback.
-> > > + *
-> > > + * Note: for stream socket this must be called when vsk->remote_addr
-> > > +is set
-> > > + * (e.g. during the connect() or when a connection request on a
-> > > +listener
-> > > + * socket is received).
-> > > + * The vsk->remote_addr is used to decide which transport to use:
-> > > + *  - remote CID > VMADDR_CID_HOST will use host->guest transport
-> > > + *  - remote CID <= VMADDR_CID_HOST will use guest->host transport
-> > > +*/ int vsock_assign_transport(struct vsock_sock *vsk, struct
-> > > +vsock_sock *psk) {
-> > > +       const struct vsock_transport *new_transport;
-> > > +       struct sock *sk = sk_vsock(vsk);
-> > > +
-> > > +       switch (sk->sk_type) {
-> > > +       case SOCK_DGRAM:
-> > > +               new_transport = transport_dgram;
-> > > +               break;
-> > > +       case SOCK_STREAM:
-> > > +               if (vsk->remote_addr.svm_cid > VMADDR_CID_HOST)
-> > > +                       new_transport = transport_h2g;
-> > > +               else
-> > > +                       new_transport = transport_g2h;
-> > 
-> > I just noticed that this break the loopback in the guest.
-> > As a fix, we should use 'transport_g2h' when remote_cid <=
-> > VMADDR_CID_HOST or remote_cid is the id of 'transport_g2h'.
-> > 
-> > To do that we also need to avoid that L2 guests can have the same CID of L1.
-> > For vhost_vsock I can call vsock_find_cid() in vhost_vsock_set_cid()
-> > 
-> > @Jorgen: for vmci we need to do the same? or it is guaranteed, since it's
-> > already support nested VMs, that a L2 guests cannot have the same CID as
-> > the L1.
-> 
-> As far as I can tell, we have the same issue with the current support for nested VMs in
-> VMCI. If we have an L2 guest with the same CID as the L1 guest, we will always send to
-> the L2 guest, and we may assign an L2 guest the same CID as L1. It should be straight
-> forward to avoid this, though.
-> 
+On Wed, 30 Oct 2019 at 14:41, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> The option CONFIG_CPU_THERMAL depends on CONFIG_OF in the Kconfig.
+>
+> It it pointless to check if CONFIG_OF is set in the header file as
+> this is always true if CONFIG_CPU_THERMAL is true. Remove it.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  include/linux/cpu_cooling.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, I think so.
-
-For the v2 I'm exposing the vsock_find_cid() to the transports, in this
-way I can reject requests to set the same L1 CID for L2 guests.
-
-Thanks,
-Stefano
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
