@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05ACDEAD1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:08:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD64EAD22
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfJaKIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:08:40 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:44635 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727317AbfJaKIi (ORCPT
+        id S1727459AbfJaKIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:08:55 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:21040 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727250AbfJaKIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:08:38 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Tgm6rfl_1572516514;
-Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tgm6rfl_1572516514)
+        Thu, 31 Oct 2019 06:08:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TgmBgSZ_1572516515;
+Received: from localhost(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0TgmBgSZ_1572516515)
           by smtp.aliyun-inc.com(127.0.0.1);
           Thu, 31 Oct 2019 18:08:35 +0800
 From:   Lai Jiangshan <laijs@linux.alibaba.com>
@@ -25,9 +25,9 @@ Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: [PATCH 08/11] rcu: don't use negative ->rcu_read_lock_nesting
-Date:   Thu, 31 Oct 2019 10:08:03 +0000
-Message-Id: <20191031100806.1326-9-laijs@linux.alibaba.com>
+Subject: [PATCH 09/11] rcu: wrap usages of rcu_read_lock_nesting
+Date:   Thu, 31 Oct 2019 10:08:04 +0000
+Message-Id: <20191031100806.1326-10-laijs@linux.alibaba.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191031100806.1326-1-laijs@linux.alibaba.com>
 References: <20191031100806.1326-1-laijs@linux.alibaba.com>
@@ -38,124 +38,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Negative ->rcu_read_lock_nesting was introduced to prevent
-scheduler deadlock which was just prevented by deferred qs.
-So negative ->rcu_read_lock_nesting is useless now and
-rcu_read_unlock() can be simplified.
-
-And negative ->rcu_read_lock_nesting is bug-prone,
-it is good to kill it.
+Prepare for using percpu rcu_preempt_depth on x86
 
 Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
 ---
- kernel/rcu/tree_exp.h    | 30 ++----------------------------
- kernel/rcu/tree_plugin.h | 21 +++++----------------
- 2 files changed, 7 insertions(+), 44 deletions(-)
+ kernel/rcu/tree_exp.h    |  4 ++--
+ kernel/rcu/tree_plugin.h | 43 ++++++++++++++++++++++++++--------------
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
 diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index c0d06bce35ea..9dcbd2734620 100644
+index 9dcbd2734620..dc1af2073e25 100644
 --- a/kernel/rcu/tree_exp.h
 +++ b/kernel/rcu/tree_exp.h
-@@ -621,11 +621,11 @@ static void rcu_exp_handler(void *unused)
+@@ -620,7 +620,7 @@ static void rcu_exp_handler(void *unused)
+ 	 * critical section.  If also enabled or idle, immediately
  	 * report the quiescent state, otherwise defer.
  	 */
- 	if (!t->rcu_read_lock_nesting) {
-+		rdp->exp_deferred_qs = true;
+-	if (!t->rcu_read_lock_nesting) {
++	if (!rcu_preempt_depth()) {
+ 		rdp->exp_deferred_qs = true;
  		if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
  		    rcu_dynticks_curr_cpu_in_eqs()) {
--			rcu_report_exp_rdp(rdp);
-+			rcu_preempt_deferred_qs(t);
- 		} else {
--			rdp->exp_deferred_qs = true;
- 			set_tsk_need_resched(t);
- 			set_preempt_need_resched();
- 		}
-@@ -646,32 +646,6 @@ static void rcu_exp_handler(void *unused)
+@@ -641,7 +641,7 @@ static void rcu_exp_handler(void *unused)
+ 	 * grace period is still waiting on this CPU, set ->deferred_qs
+ 	 * so that the eventual quiescent state will be reported.
+ 	 */
+-	if (t->rcu_read_lock_nesting > 0) {
++	if (rcu_preempt_depth() > 0) {
+ 		rdp->exp_deferred_qs = true;
  		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
  		return;
- 	}
--
--	/*
--	 * The final and least likely case is where the interrupted
--	 * code was just about to or just finished exiting the RCU-preempt
--	 * read-side critical section, and no, we can't tell which.
--	 * So either way, set ->deferred_qs to flag later code that
--	 * a quiescent state is required.
--	 *
--	 * If the CPU is fully enabled (or if some buggy RCU-preempt
--	 * read-side critical section is being used from idle), just
--	 * invoke rcu_preempt_deferred_qs() to immediately report the
--	 * quiescent state.  We cannot use rcu_read_unlock_special()
--	 * because we are in an interrupt handler, which will cause that
--	 * function to take an early exit without doing anything.
--	 *
--	 * Otherwise, force a context switch after the CPU enables everything.
--	 */
--	rdp->exp_deferred_qs = true;
--	if (rcu_preempt_need_deferred_qs(t) &&
--	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
--	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
--		rcu_preempt_deferred_qs(t);
--	} else {
--		set_tsk_need_resched(t);
--		set_preempt_need_resched();
--	}
- }
- 
- /* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index dbded2b8c792..c62631c79463 100644
+index c62631c79463..81cacf637865 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -344,8 +344,6 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
- }
+@@ -290,8 +290,8 @@ void rcu_note_context_switch(bool preempt)
  
+ 	trace_rcu_utilization(TPS("Start context switch"));
+ 	lockdep_assert_irqs_disabled();
+-	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0);
+-	if (t->rcu_read_lock_nesting > 0 &&
++	WARN_ON_ONCE(!preempt && rcu_preempt_depth() > 0);
++	if (rcu_preempt_depth() > 0 &&
+ 	    !t->rcu_read_unlock_special.b.blocked) {
+ 
+ 		/* Possibly blocking in an RCU read-side critical section. */
+@@ -346,6 +346,21 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
  /* Bias and limit values for ->rcu_read_lock_nesting. */
--#define RCU_NEST_BIAS INT_MAX
--#define RCU_NEST_NMAX (-INT_MAX / 2)
  #define RCU_NEST_PMAX (INT_MAX / 2)
  
++static inline void rcu_preempt_depth_inc(void)
++{
++	current->rcu_read_lock_nesting++;
++}
++
++static inline bool rcu_preempt_depth_dec_and_test(void)
++{
++	return --current->rcu_read_lock_nesting == 0;
++}
++
++static inline void rcu_preempt_depth_set(int val)
++{
++	current->rcu_read_lock_nesting = val;
++}
++
  /*
-@@ -373,21 +371,15 @@ void __rcu_read_unlock(void)
+  * Preemptible RCU implementation for rcu_read_lock().
+  * Just increment ->rcu_read_lock_nesting, shared state will be updated
+@@ -353,9 +368,9 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
+  */
+ void __rcu_read_lock(void)
+ {
+-	current->rcu_read_lock_nesting++;
++	rcu_preempt_depth_inc();
+ 	if (IS_ENABLED(CONFIG_PROVE_LOCKING))
+-		WARN_ON_ONCE(current->rcu_read_lock_nesting > RCU_NEST_PMAX);
++		WARN_ON_ONCE(rcu_preempt_depth() > RCU_NEST_PMAX);
+ 	barrier();  /* critical section after entry code. */
+ }
+ EXPORT_SYMBOL_GPL(__rcu_read_lock);
+@@ -371,15 +386,13 @@ void __rcu_read_unlock(void)
  {
  	struct task_struct *t = current;
  
--	if (t->rcu_read_lock_nesting != 1) {
--		--t->rcu_read_lock_nesting;
--	} else {
-+	if (--t->rcu_read_lock_nesting == 0) {
+-	if (--t->rcu_read_lock_nesting == 0) {
++	if (rcu_preempt_depth_dec_and_test()) {
  		barrier();  /* critical section before exit code. */
--		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
--		barrier();  /* assign before ->rcu_read_unlock_special load */
  		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
  			rcu_read_unlock_special(t);
--		barrier();  /* ->rcu_read_unlock_special load before assign */
--		t->rcu_read_lock_nesting = 0;
  	}
  	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
- 		int rrln = t->rcu_read_lock_nesting;
- 
--		WARN_ON_ONCE(rrln < 0 && rrln > RCU_NEST_NMAX);
-+		WARN_ON_ONCE(rrln < 0);
+-		int rrln = t->rcu_read_lock_nesting;
+-
+-		WARN_ON_ONCE(rrln < 0);
++		WARN_ON_ONCE(rcu_preempt_depth() < 0);
  	}
  }
  EXPORT_SYMBOL_GPL(__rcu_read_unlock);
-@@ -535,12 +527,9 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
-  */
- static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
+@@ -529,7 +542,7 @@ static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
  {
--	return (__this_cpu_read(rcu_data.exp_deferred_qs) &&
--		(!t->rcu_read_lock_nesting ||
--		 t->rcu_read_lock_nesting == -RCU_NEST_BIAS))
--		||
--		(READ_ONCE(t->rcu_read_unlock_special.s) &&
--		 t->rcu_read_lock_nesting <= 0);
-+	return (__this_cpu_read(rcu_data.exp_deferred_qs) ||
-+		READ_ONCE(t->rcu_read_unlock_special.s)) &&
-+	       !t->rcu_read_lock_nesting;
+ 	return (__this_cpu_read(rcu_data.exp_deferred_qs) ||
+ 		READ_ONCE(t->rcu_read_unlock_special.s)) &&
+-	       !t->rcu_read_lock_nesting;
++	       !rcu_preempt_depth();
  }
  
  /*
+@@ -667,7 +680,7 @@ static void rcu_flavor_sched_clock_irq(int user)
+ 	if (user || rcu_is_cpu_rrupt_from_idle()) {
+ 		rcu_note_voluntary_context_switch(current);
+ 	}
+-	if (t->rcu_read_lock_nesting > 0 ||
++	if (rcu_preempt_depth() > 0 ||
+ 	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+ 		/* No QS, force context switch if deferred. */
+ 		if (rcu_preempt_need_deferred_qs(t)) {
+@@ -677,13 +690,13 @@ static void rcu_flavor_sched_clock_irq(int user)
+ 	} else if (rcu_preempt_need_deferred_qs(t)) {
+ 		rcu_preempt_deferred_qs(t); /* Report deferred QS. */
+ 		return;
+-	} else if (!t->rcu_read_lock_nesting) {
++	} else if (!rcu_preempt_depth()) {
+ 		rcu_qs(); /* Report immediate QS. */
+ 		return;
+ 	}
+ 
+ 	/* If GP is oldish, ask for help from rcu_read_unlock_special(). */
+-	if (t->rcu_read_lock_nesting > 0 &&
++	if (rcu_preempt_depth() > 0 &&
+ 	    __this_cpu_read(rcu_data.core_needs_qs) &&
+ 	    __this_cpu_read(rcu_data.cpu_no_qs.b.norm) &&
+ 	    !t->rcu_read_unlock_special.b.need_qs &&
+@@ -704,11 +717,11 @@ void exit_rcu(void)
+ 	struct task_struct *t = current;
+ 
+ 	if (unlikely(!list_empty(&current->rcu_node_entry))) {
+-		t->rcu_read_lock_nesting = 1;
++		rcu_preempt_depth_set(1);
+ 		barrier();
+ 		WRITE_ONCE(t->rcu_read_unlock_special.b.blocked, true);
+-	} else if (unlikely(t->rcu_read_lock_nesting)) {
+-		t->rcu_read_lock_nesting = 1;
++	} else if (unlikely(rcu_preempt_depth())) {
++		rcu_preempt_depth_set(1);
+ 	} else {
+ 		return;
+ 	}
 -- 
 2.20.1
 
