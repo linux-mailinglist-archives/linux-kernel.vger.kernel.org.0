@@ -2,94 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71669EB6B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 19:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D210EB6BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 19:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfJaSQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 14:16:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39442 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729027AbfJaSQK (ORCPT
+        id S1729257AbfJaSQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 14:16:53 -0400
+Received: from smtprelay0231.hostedemail.com ([216.40.44.231]:40826 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726602AbfJaSQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:16:10 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t12so3041958plo.6
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 11:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=K2iXeP4n/LwziPu4ZI0OnTyPorZqTcS6twEPx1hqLdc=;
-        b=ZZoSEWiuBiik9RngUZeM0aAoWI9AFCUNVgIOH02T+Zipkev3DGDSdgR04ugiyl+Xjh
-         /w/R1/t8Uf/OyFOuZzdsZ2o0wguO61GJAUdq9KcvaQXB30WaHfBQBqNJtj3frvwjpZGW
-         DNrZviL6OPWqo7YTYYINjXLQVdc1qRWQJyxExYmhi2EXcQtdi13mFBlEgJdEX/C+bVUu
-         EEgHZexKJwTbTO/99HqM5GuZEcJKn8HmquvFjGXsrBjlRhISx5oBspIuE50ZE8KWy6EF
-         oxMnUfuJaJlW6Lu2eCY3ofQ6ytmmH4E9Z/6EjUl3CigFKtL88U21b8Fdeb1wvNxAZTh3
-         2FBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=K2iXeP4n/LwziPu4ZI0OnTyPorZqTcS6twEPx1hqLdc=;
-        b=Y4zB6suYSI/oaed4ENRnCAyf4jYW+RFOcGcyBaTEbIN49HTdo8DUBIs2LedI+6GfOz
-         ealcXGS64cjulpK38Uk8YSrSPn5abuD6O7TRSk4S16xMf6Kv/JPB4bLQl4CEmCLBKf8e
-         Or9UNWKDa7Le/iewSRjgLB0n4wnYxHtij/P7ohnzzZ0ziDJifxbZMhHE5rVMeB7b35Xg
-         E28vHv0FnUkU+Fo5D9IIQjHBoYRW9SheR6MexzOJZ9VOW5fi9K3zVHqExgvBbMx5Bl7i
-         sMIJp3O5Abs/3eduya5FK6yqRDwlrmsVKh6iyRirrZxGoT+EM/hC7J6fbEdnqW3CjHMS
-         CXAg==
-X-Gm-Message-State: APjAAAUlALeSVQsVCI9jWpieROl3NR9Hba7vZ+j0LraADsPxT9vroKfL
-        dWGeAJlvkK6EnlS2UKmSviW8SQ==
-X-Google-Smtp-Source: APXvYqyubcz1aeS43b5/oVJTOA+Lgv6A7pzeQRkjnlzDj+Vyrx5Aef3FMZd2GCIXWcCCPV3DgS/bEQ==
-X-Received: by 2002:a17:902:4a:: with SMTP id 68mr7864287pla.8.1572545769038;
-        Thu, 31 Oct 2019 11:16:09 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 74sm3620489pgb.62.2019.10.31.11.16.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 11:16:08 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 11:16:07 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Roman Gushchin <guro@fb.com>
-cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize
- non-compound slab pages properly
-In-Reply-To: <20191031012151.2722280-1-guro@fb.com>
-Message-ID: <alpine.DEB.2.21.1910311115540.226869@chino.kir.corp.google.com>
-References: <20191031012151.2722280-1-guro@fb.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 31 Oct 2019 14:16:52 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 354811822563C;
+        Thu, 31 Oct 2019 18:16:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3871:4321:5007:6742:7903:9108:10004:10400:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21060:21080:21627:30054:30075:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:162,LUA_SUMMARY:none
+X-HE-Tag: sea16_75aca35dfcc57
+X-Filterd-Recvd-Size: 1678
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 31 Oct 2019 18:16:48 +0000 (UTC)
+Message-ID: <734ef2833e4e4e7bded92e9d964bc2415aadf3c4.camel@perches.com>
+Subject: Re: [PATCH] fbdev: potential information leak in do_fb_ioctl()
+From:   Joe Perches <joe@perches.com>
+To:     Andrea Righi <andrea.righi@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Peter Rosin <peda@axentia.se>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        security@kernel.org, Kees Cook <keescook@chromium.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>
+Date:   Thu, 31 Oct 2019 11:16:39 -0700
+In-Reply-To: <20191030201201.GA3209@xps-13>
+References: <20191029182320.GA17569@mwanda>
+         <87zhhjjryk.fsf@x220.int.ebiederm.org> <20191030074321.GD2656@xps-13>
+         <87r22ujaqq.fsf@x220.int.ebiederm.org> <20191030201201.GA3209@xps-13>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Oct 2019, Roman Gushchin wrote:
+On Wed, 2019-10-30 at 21:12 +0100, Andrea Righi wrote:
+> Then memset() + memcpy() is probably the best option,
+> since copying all those fields one by one looks quite ugly to me...
 
-> page_cgroup_ino() doesn't return a valid memcg pointer for non-compound
-> slab pages, because it depends on PgHead AND PgSlab flags to be set
-> to determine the memory cgroup from the kmem_cache.
-> It's correct for compound pages, but not for generic small pages. Those
-> don't have PgHead set, so it ends up returning zero.
-> 
-> Fix this by replacing the condition to PageSlab() && !PageTail().
-> 
-> Before this patch:
-> [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-> 0x0000000000000080	        38        0  _______S___________________________________	slab
-> 
-> After this patch:
-> [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
-> 0x0000000000000080	       147        0  _______S___________________________________	slab
-> 
-> Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+A memset of an automatic before a memcpy to the same
+automatic is unnecessary.
 
-Acked-by: David Rientjes <rientjes@google.com>
+
