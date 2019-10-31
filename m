@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C76EAF3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:55:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27AFBEAF34
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfJaLzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:55:10 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55261 "EHLO
+        id S1726917AbfJaLzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:55:03 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55225 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfJaLzF (ORCPT
+        with ESMTP id S1726524AbfJaLzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:05 -0400
+        Thu, 31 Oct 2019 07:55:02 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92c-0002w7-98; Thu, 31 Oct 2019 12:55:02 +0100
+        id 1iQ92a-0002v6-2s; Thu, 31 Oct 2019 12:55:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 16F671C04DF;
-        Thu, 31 Oct 2019 12:54:59 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 470941C04DD;
+        Thu, 31 Oct 2019 12:54:58 +0100 (CET)
 Date:   Thu, 31 Oct 2019 11:54:58 -0000
-From:   "tip-bot2 for Joel Fernandes (Google)" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] workqueue: Convert for_each_wq to use built-in list check
-Cc:     Tejun Heo <tj@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
+Subject: [tip: core/rcu] rcu: Remove obsolete descriptions for rcu_barrier tracepoint
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252289879.29376.6076686101367300616.tip-bot2@tip-bot2>
+Message-ID: <157252289802.29376.14218028423214726992.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,54 +45,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     5a6446626d7e062b47a5cc1cf27d5060e60bb0d9
-Gitweb:        https://git.kernel.org/tip/5a6446626d7e062b47a5cc1cf27d5060e60bb0d9
-Author:        Joel Fernandes (Google) <joel@joelfernandes.org>
-AuthorDate:    Thu, 15 Aug 2019 10:18:42 -04:00
+Commit-ID:     7eb54685c63cc9185a48d0d9c1ad25a34d4e1da0
+Gitweb:        https://git.kernel.org/tip/7eb54685c63cc9185a48d0d9c1ad25a34d4e1da0
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Tue, 20 Aug 2019 16:55:21 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Wed, 30 Oct 2019 08:34:10 -07:00
+CommitterDate: Wed, 30 Oct 2019 08:34:51 -07:00
 
-workqueue: Convert for_each_wq to use built-in list check
+rcu: Remove obsolete descriptions for rcu_barrier tracepoint
 
-Because list_for_each_entry_rcu() can now check for holding a
-lock as well as for being in an RCU read-side critical section,
-this commit replaces the workqueue_sysfs_unregister() function's
-use of assert_rcu_or_wq_mutex() and list_for_each_entry_rcu() with
-list_for_each_entry_rcu() augmented with a lockdep_is_held() optional
-argument.
-
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/workqueue.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ include/trace/events/rcu.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index bc2e09a..e501c79 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -364,11 +364,6 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
- 			 !lockdep_is_held(&wq_pool_mutex),		\
- 			 "RCU or wq_pool_mutex should be held")
- 
--#define assert_rcu_or_wq_mutex(wq)					\
--	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
--			 !lockdep_is_held(&wq->mutex),			\
--			 "RCU or wq->mutex should be held")
--
- #define assert_rcu_or_wq_mutex_or_pool_mutex(wq)			\
- 	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
- 			 !lockdep_is_held(&wq->mutex) &&		\
-@@ -425,9 +420,8 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
-  * ignored.
-  */
- #define for_each_pwq(pwq, wq)						\
--	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node)		\
--		if (({ assert_rcu_or_wq_mutex(wq); false; })) { }	\
--		else
-+	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node,		\
-+				 lockdep_is_held(&(wq->mutex)))
- 
- #ifdef CONFIG_DEBUG_OBJECTS_WORK
- 
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 694bd04..afa8985 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -713,8 +713,6 @@ TRACE_EVENT_RCU(rcu_torture_read,
+  *	"Begin": rcu_barrier() started.
+  *	"EarlyExit": rcu_barrier() piggybacked, thus early exit.
+  *	"Inc1": rcu_barrier() piggyback check counter incremented.
+- *	"OfflineNoCB": rcu_barrier() found callback on never-online CPU
+- *	"OnlineNoCB": rcu_barrier() found online no-CBs CPU.
+  *	"OnlineQ": rcu_barrier() found online CPU with callbacks.
+  *	"OnlineNQ": rcu_barrier() found online CPU, no callbacks.
+  *	"IRQ": An rcu_barrier_callback() callback posted on remote CPU.
