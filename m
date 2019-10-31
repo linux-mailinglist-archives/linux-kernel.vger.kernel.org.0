@@ -2,78 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5130CEB17B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD31EB175
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfJaNrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 09:47:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:51615 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbfJaNrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 09:47:04 -0400
-Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MY5XR-1iTfHn251x-00YO30; Thu, 31 Oct 2019 14:47:02 +0100
-Received: by mail-qk1-f179.google.com with SMTP id m4so7025100qke.9;
-        Thu, 31 Oct 2019 06:47:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAU6PeP9agN7/anhlm5j4iLIWr18mL9ZZSSTiwGWKlT5gotlXw0G
-        bjeIJp1VUpPLLjGREFwaECh/eSQSoJForsGx0UQ=
-X-Google-Smtp-Source: APXvYqwYoQTEthtnSTVFwt/kx2esJ5/VAbLAMZ9ee49FdSHuytOsmyxwwNYKV3cufux6mKtj2roQiWuAZmQk9D9c/Io=
-X-Received: by 2002:a37:4f0a:: with SMTP id d10mr586266qkb.286.1572529621308;
- Thu, 31 Oct 2019 06:47:01 -0700 (PDT)
+        id S1727675AbfJaNqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 09:46:45 -0400
+Received: from verein.lst.de ([213.95.11.211]:51093 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727502AbfJaNqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 09:46:45 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id DC96E68C65; Thu, 31 Oct 2019 14:46:42 +0100 (CET)
+Date:   Thu, 31 Oct 2019 14:46:42 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH v2] nvme: Add hardware monitoring support
+Message-ID: <20191031134642.GC4763@lst.de>
+References: <20191029223214.18889-1-linux@roeck-us.net> <CAC5umyhc=6yULiLwXu65VDvDk2cBiF0R9O39B-T5ftapJfj0rQ@mail.gmail.com> <20191030140511.GA14252@lst.de> <2931487e-2720-fd42-fda0-e47cf89c90c9@roeck-us.net>
 MIME-Version: 1.0
-References: <20191031003154.21969-1-linux@rasmusvillemoes.dk> <04799503-b423-6bc8-71cd-bee54e45883e@rasmusvillemoes.dk>
-In-Reply-To: <04799503-b423-6bc8-71cd-bee54e45883e@rasmusvillemoes.dk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 31 Oct 2019 14:46:41 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a17NbSuWzvjKSJiUkxPLhKbqnAEzJLBKuHkPGGjDA6QtQ@mail.gmail.com>
-Message-ID: <CAK8P3a17NbSuWzvjKSJiUkxPLhKbqnAEzJLBKuHkPGGjDA6QtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] powerpc: make iowrite32be etc. inline
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:mHUdX1ZTCd4q6WBqCcgL4S6XxArpQsw6z1YowM0PkBXHFEHy/QX
- joV9mwTKo/tZbs6eQ0YeXj0GXEH8RynAzN1SMN1WMVzVeA8FMbiJotNEwvh73AD9LcP53wh
- eIWA5JBDUQWBF9Bdon9zFjoyY71b3jLVFsacwlHJR345EptVAuS50Sz/7Bx8jRynEMZRHzx
- qrJU/xKsoied4iZXomdUA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:cz6l7kZIsvA=:eKgx9G8HquZtQ8jWbhW2e5
- cwifKxrl5vQBpPy3WeZCUnV9h0dVY+9eC+w4t4JKcNkPtyFjwTN1sw1o7r+Bub2A+BvjkzBNb
- D6+4xVDgOHmbLMDErodIfF8CJZi5Pzqnm7c2drK+EOEh63/TdkqSwNbhC34lDt6DmZL7RTG1F
- OTq/Jxxv382tkcDkhR8yl7ZumqIJQQOqsZFPkrF22iI8opr6Dcv1h9UbXHWdNa0bpOKa7JMW9
- 8XOl+Baj6rP3wKbtpJoNkFzIBrM9QmK27WBCw6aAJo2mGcbdXhXo3/9iUBfeMrpes5+at5nkH
- j3BjlgJRZn6jLERQxhT6tlm90PeXDvizIZNqHq61rUHWxD2fW+BZwVbzdctY9rhnumLYZ1wEq
- 9Mr6dIXicefuANMXxQpgqpnTmMbvqyLr/6CTOiTz6GlKZQL/4i+bMJMg18WICyJCtF2gbVvIb
- gXv3OHbjsNI+gOOXOeYDppOTwPf7HreOYwZ70rb+ocXCpQIhb/jA5yvkeSkzxY2X/bP0N+HO/
- LLCcpc2Xqc+34Un6aOvGtwX10u0RyYUfAn8PXfx9ZFYIB/CXTU6pq1OVEyfJ3LPHndx7uV9vo
- YxULOYqlHm0YpAB1q3mTbJd/SQCCv1LI3ZtciYm2zM+oBKrrFR9I5cSua3aSI4qDUzEu/jGva
- NQe5/Ib2PLl5ZYogKhh+c7j1sQwZFhdezKirLyEnak1DZXPJA3+3pEoXDAs3A1vz9f2WTATNn
- neGr8+vjnufMBg9LD3Hc4YT2zYsM/oXdPILVnnKq7Q/PjF8igIecNboG4NJ8dzbGgSHQGCdjR
- bu4BeutPTFOmirac8KuHNN4VDOIFerbsHPqcfu5EU3duEIJMLXg5VkBwtgj5oAeUFfjAQoaGd
- X0KSpH9EceFpi07bj+lg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2931487e-2720-fd42-fda0-e47cf89c90c9@roeck-us.net>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 8:39 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> On 31/10/2019 01.31, Rasmus Villemoes wrote:
->
-> So sorry for the noise. Maybe I'll just have to bite the bullet and
-> introduce private qe_iowrite32be etc. and define them based on $ARCH.
-> Any better ideas would be much appreciated.
+On Wed, Oct 30, 2019 at 07:54:47PM -0700, Guenter Roeck wrote:
+> On 10/30/19 7:05 AM, Christoph Hellwig wrote:
+>> On Wed, Oct 30, 2019 at 08:16:48PM +0900, Akinobu Mita wrote:
+>>> The nvme_init_identify() can be called multiple time in nvme ctrl's
+>>> lifetime (e.g 'nvme reset /dev/nvme*' or suspend/resume paths), so
+>>> should we need to prevent nvme_hwmon_init() from registering hwmon
+>>> device more than twice?
+>>>
+>>> In the nvme thermal zone patchset[1], thernal zone is registered in
+>>> nvme_init_identify and unregistered in nvme_stop_ctrl().
+>>
+>> So Guenter said above the thermal subsystem could use the information
+>> from hwmon as well.  Does this mean this patch would solve your needs
+>> as well?
+>>
+> Depends on the requirements. Unlike hwmon/iio, we don't have clear
+> guidelines describing when thermal vs. hwmon would be a better choice.
+> There is some interconnect between thermal and hwmon, but quite often
+> it is a one-way street (hwmon devices can easily register thermal
+> zones, for thermal zone devices it is a bit more difficult to register
+> associated hwmon devices).
 
-We use that approach in a number of drivers already, I think it's ok to add it
-to another driver. Just make the powerpc case use out_be32 and everything
-else use iowrite32_be. You may also be able to enable the driver for
-CONFIG_COMPILE_TEST after that.
-
-     Arnd
+I'd like to hear from Akinobu-san if this also solves the thermal zone
+use case.  If so I'd be much happier as we at least solve two use cases
+with one patch.
