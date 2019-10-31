@@ -2,116 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36DDEA8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 468B2EA8BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 02:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfJaBTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 21:19:46 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:34490 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfJaBTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:19:18 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 07E9520B4909;
-        Wed, 30 Oct 2019 18:19:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 07E9520B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1572484758;
-        bh=OmpAzjnJ/nj/UbF+W79M2ah1WZCUvBkzqdH43tv+ZxQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cOBkoTcyx9A1UVXfYeuGsU1IDnsUhOMbwjGSQ650wPYPEMm0Unq2X5uZY0/KvhLcK
-         cnNZhWYNaZIAUzXLHcvmxJF5YBs2E3o8phnGAvXJBYdYzvrtABb2AM/IWwWF8dU6MJ
-         WKzzEi4dSMaMmHCUfF7IDS+crZg2idoKBaL/KELI=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     prsriva@linux.microsoft.com
-Subject: [PATCH v3 9/9] KEYS: Call the IMA hook to measure key when a new key is created or an existing key is updated
-Date:   Wed, 30 Oct 2019 18:19:10 -0700
-Message-Id: <20191031011910.2574-10-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191031011910.2574-1-nramas@linux.microsoft.com>
-References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+        id S1726709AbfJaBVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 21:21:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbfJaBVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Oct 2019 21:21:06 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B6020862;
+        Thu, 31 Oct 2019 01:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572484865;
+        bh=TpbLYvw5k9v7RgUc6u2ZsQ/ZK12i/LjMSg0yFJ5O2CA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BgtZm25B7y8dU6T/ihxtOtLEKskMyq0k5fHpbne7eSiuAAa995qcxNrNtfO9PDeTm
+         9FR7BmMCq9pCQ688EEEOxDa2/cE3O3Y0aGd3uRinPxLlgM2Z++s1hEopMdWxi/87+q
+         HYTOml3aT0YmScG2JId68rB7zVw9GWFaEJ+Pf5VM=
+Date:   Wed, 30 Oct 2019 18:21:04 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] MAINTAINERS: update information for "MEMORY MANAGEMENT"
+Message-Id: <20191030182104.13847e8563105be6cd0a9dfe@linux-foundation.org>
+In-Reply-To: <20191030202217.3498133-1-songliubraving@fb.com>
+References: <20191030202217.3498133-1-songliubraving@fb.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-key_create_or_update function needs to call the IMA hook to measure
-the key when a new key is created or an existing key is updated.
+On Wed, 30 Oct 2019 13:22:17 -0700 Song Liu <songliubraving@fb.com> wrote:
 
-This patch adds the call to the IMA hook from key_create_or_update
-function.
+> I was trying to find the mm tree in MAINTAINERS by searching "Morton".
+> Unfortunately, I didn't find one. And I didn't even locate the MEMORY
+> MANAGEMENT section quickly, because Andrew's name was not listed there.
+> 
+> Thanks to Johannes who helped me find the mm tree.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- include/linux/ima.h | 7 +++++++
- security/keys/key.c | 9 +++++++++
- 2 files changed, 16 insertions(+)
+Oh all right ;)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index a20ad398d260..f085f1c6ef34 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -24,6 +24,9 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_kexec_cmdline(const void *buf, int size);
-+extern void ima_post_key_create_or_update(struct key *keyring,
-+					  struct key *key,
-+					  unsigned long flags, bool create);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -91,6 +94,10 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- }
- 
- static inline void ima_kexec_cmdline(const void *buf, int size) {}
-+static inline void ima_post_key_create_or_update(struct key *keyring,
-+						 struct key *key,
-+						 unsigned long flags,
-+						 bool create) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 764f4c57913e..7c39054d8da6 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -13,6 +13,7 @@
- #include <linux/security.h>
- #include <linux/workqueue.h>
- #include <linux/random.h>
-+#include <linux/ima.h>
- #include <linux/err.h>
- #include "internal.h"
- 
-@@ -936,6 +937,9 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 		goto error_link_end;
- 	}
- 
-+	/* let the ima module know about the created key. */
-+	ima_post_key_create_or_update(keyring, key, flags, true);
-+
- 	key_ref = make_key_ref(key, is_key_possessed(keyring_ref));
- 
- error_link_end:
-@@ -965,6 +969,11 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 	}
- 
- 	key_ref = __key_update(key_ref, &prep);
-+	if (!IS_ERR(key_ref)) {
-+		/* let the ima module know about the updated key. */
-+		ima_post_key_create_or_update(keyring, key, flags, false);
-+	}
-+
- 	goto error_free_prep;
- }
- EXPORT_SYMBOL(key_create_or_update);
--- 
-2.17.1
+If I listed everything I "maintain" in MAINTAINERS, I'd double the size
+of the dang thing.
+
+q:/usr/src/25> grep "^#NEXT_PATCHES_START" series | wc -l
+364
+
+(Those are the identifiable "trees" which I do (or did) "maintain").
+
+But mm/ is special.
+
+> Let save other's time searching around by adding:
+> 
+> M:	Andrew Morton <akpm@linux-foundation.org>
+> T:	git git://github.com/hnaz/linux-mm.git
+
+Also:
+
+--- a/MAINTAINERS~maintainers-update-information-for-memory-management-fix
++++ a/MAINTAINERS
+@@ -10523,6 +10523,8 @@ M:	Andrew Morton <akpm@linux-foundation.
+ L:	linux-mm@kvack.org
+ W:	http://www.linux-mm.org
+ T:	git git://github.com/hnaz/linux-mm.git
++T:	quilt https://ozlabs.org/~akpm/mmotm/
++T:	quilt https://ozlabs.org/~akpm/mmots/
+ S:	Maintained
+ F:	include/linux/mm.h
+ F:	include/linux/gfp.h
+_
 
