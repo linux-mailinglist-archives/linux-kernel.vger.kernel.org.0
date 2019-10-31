@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC913EAF89
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F26EAF83
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbfJaL4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:56:50 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55433 "EHLO
+        id S1727780AbfJaL4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:56:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55442 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727372AbfJaLzY (ORCPT
+        with ESMTP id S1727410AbfJaLz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:24 -0400
+        Thu, 31 Oct 2019 07:55:26 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92v-00039I-SP; Thu, 31 Oct 2019 12:55:21 +0100
+        id 1iQ92x-00039W-29; Thu, 31 Oct 2019 12:55:23 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 47A1B1C06D6;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B054A1C0070;
         Thu, 31 Oct 2019 12:55:11 +0100 (CET)
 Date:   Thu, 31 Oct 2019 11:55:11 -0000
 From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] stop_machine: Provide RCU quiescent state in multi_cpu_stop()
+Subject: [tip: core/rcu] rcutorture: Force on tick for readers and callback flooders
 Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252291102.29376.11840837332483723665.tip-bot2@tip-bot2>
+Message-ID: <157252291137.29376.6492575120270689137.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,62 +45,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     366237e7b0833faa2d8da7a8d7d7da8c3ca802e5
-Gitweb:        https://git.kernel.org/tip/366237e7b0833faa2d8da7a8d7d7da8c3ca802e5
+Commit-ID:     d38e6dc6ed0dfef8d323354031a1ee1a7cfdedc1
+Gitweb:        https://git.kernel.org/tip/d38e6dc6ed0dfef8d323354031a1ee1a7cfdedc1
 Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Wed, 10 Jul 2019 08:01:01 -07:00
+AuthorDate:    Sun, 28 Jul 2019 12:00:48 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Sat, 05 Oct 2019 10:46:05 -07:00
+CommitterDate: Sat, 05 Oct 2019 10:46:04 -07:00
 
-stop_machine: Provide RCU quiescent state in multi_cpu_stop()
+rcutorture: Force on tick for readers and callback flooders
 
-When multi_cpu_stop() loops waiting for other tasks, it can trigger an RCU
-CPU stall warning.  This can be misleading because what is instead needed
-is information on whatever task is blocking multi_cpu_stop().  This commit
-therefore inserts an RCU quiescent state into the multi_cpu_stop()
-function's waitloop.
+Readers and callback flooders in the rcutorture stress-test suite run for
+extended time periods by design.  They do take pains to relinquish the
+CPU from time to time, but in some cases this relies on the scheduler
+being active, which in turn relies on the scheduler-clock interrupt
+firing from time to time.
 
+This commit therefore forces scheduling-clock interrupts within
+these loops.  While in the area, this commit also prevents
+rcu_torture_reader()'s occasional timed sleeps from delaying shutdown.
+
+[ paulmck: Apply Joel Fernandes TICK_DEP_MASK_RCU->TICK_DEP_BIT_RCU fix. ]
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- include/linux/rcutree.h | 1 +
- kernel/rcu/tree.c       | 2 +-
- kernel/stop_machine.c   | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ kernel/rcu/rcutorture.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index 18b1ed9..c5147de 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -37,6 +37,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 3c9feca..ab61f5c 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -44,6 +44,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/sysctl.h>
+ #include <linux/oom.h>
++#include <linux/tick.h>
  
- void rcu_barrier(void);
- bool rcu_eqs_special_set(int cpu);
-+void rcu_momentary_dyntick_idle(void);
- unsigned long get_state_synchronize_rcu(void);
- void cond_synchronize_rcu(unsigned long oldstate);
+ #include "rcu.h"
  
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 238f93b..a5c296d 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -364,7 +364,7 @@ bool rcu_eqs_special_set(int cpu)
-  *
-  * The caller must have disabled interrupts and must not be idle.
-  */
--static void __maybe_unused rcu_momentary_dyntick_idle(void)
-+void rcu_momentary_dyntick_idle(void)
- {
- 	int special;
- 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index c7031a2..34c4f11 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -233,6 +233,7 @@ static int multi_cpu_stop(void *data)
- 			 */
- 			touch_nmi_watchdog();
+@@ -1363,15 +1364,15 @@ rcu_torture_reader(void *arg)
+ 	set_user_nice(current, MAX_NICE);
+ 	if (irqreader && cur_ops->irq_capable)
+ 		timer_setup_on_stack(&t, rcu_torture_timer, 0);
+-
++	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
+ 	do {
+ 		if (irqreader && cur_ops->irq_capable) {
+ 			if (!timer_pending(&t))
+ 				mod_timer(&t, jiffies + 1);
  		}
-+		rcu_momentary_dyntick_idle();
- 	} while (curstate != MULTI_STOP_EXIT);
+-		if (!rcu_torture_one_read(&rand))
++		if (!rcu_torture_one_read(&rand) && !torture_must_stop())
+ 			schedule_timeout_interruptible(HZ);
+-		if (time_after(jiffies, lastsleep)) {
++		if (time_after(jiffies, lastsleep) && !torture_must_stop()) {
+ 			schedule_timeout_interruptible(1);
+ 			lastsleep = jiffies + 10;
+ 		}
+@@ -1383,6 +1384,7 @@ rcu_torture_reader(void *arg)
+ 		del_timer_sync(&t);
+ 		destroy_timer_on_stack(&t);
+ 	}
++	tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
+ 	torture_kthread_stopping("rcu_torture_reader");
+ 	return 0;
+ }
+@@ -1729,10 +1731,10 @@ static void rcu_torture_fwd_prog_cond_resched(unsigned long iter)
+ 		// Real call_rcu() floods hit userspace, so emulate that.
+ 		if (need_resched() || (iter & 0xfff))
+ 			schedule();
+-	} else {
+-		// No userspace emulation: CB invocation throttles call_rcu()
+-		cond_resched();
++		return;
+ 	}
++	// No userspace emulation: CB invocation throttles call_rcu()
++	cond_resched();
+ }
  
- 	local_irq_restore(flags);
+ /*
+@@ -1865,6 +1867,7 @@ static void rcu_torture_fwd_prog_cr(void)
+ 	cver = READ_ONCE(rcu_torture_current_version);
+ 	gps = cur_ops->get_gp_seq();
+ 	rcu_launder_gp_seq_start = gps;
++	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
+ 	while (time_before(jiffies, stopat) &&
+ 	       !shutdown_time_arrived() &&
+ 	       !READ_ONCE(rcu_fwd_emergency_stop) && !torture_must_stop()) {
+@@ -1911,6 +1914,7 @@ static void rcu_torture_fwd_prog_cr(void)
+ 		rcu_torture_fwd_cb_hist();
+ 	}
+ 	schedule_timeout_uninterruptible(HZ); /* Let CBs drain. */
++	tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
+ 	WRITE_ONCE(rcu_fwd_cb_nodelay, false);
+ }
+ 
