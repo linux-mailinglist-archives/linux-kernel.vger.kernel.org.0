@@ -2,97 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DCF8EAC81
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB83AEAC7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:20:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfJaJXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:23:06 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:37639 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbfJaJXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:23:05 -0400
-Received: by mail-il1-f195.google.com with SMTP id t9so2471393ils.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tcqb+IhaSDNJqj7Em32KI5EwoshodE6lIm8MXsmML5E=;
-        b=weLvOuQe1qp7SmhCa5wqkA+qSy/HEWoAjkcTVlSLmbLlzcNRUYU35rD6ep79Car13u
-         zKYBIaW1HL+b+Ge52YcNvy+uigJvgEvkl2WJ5/xcQHSfo9uz/tLpaufL77nD/StOag98
-         5g0E/oajUNfHB3BaXhwyd+V6VC0DOOCkEdTVe6hgSLb+zF/DQRZrhi8Ja6YM6EH63NbX
-         INzL+8Y+jxQq1t32aM9SzxjjwZgkcoJxE2WGtHVb8mRN9BOIuXfCMQrYFOtkHs0AiBgO
-         GZAfXiwJTEGGz8yJ8QLfyZ+vTPRonyzYtQnbfO6X8991QDuI76GzMx0tXFymBenoUEsH
-         rruw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tcqb+IhaSDNJqj7Em32KI5EwoshodE6lIm8MXsmML5E=;
-        b=SFy4lVFoMoE8pez8wnYNBClSqwMGtf/EdYqs/fCvkEgyxdpkcQFYDpatZF+1HXGiJk
-         vqOYZ08Z6+/Q5gnsw0BLkGd9ocBqO2YzjOVmxobHcAU0ujgMjt/QdxOA3L5Vd9WnJIim
-         WBEY9rwrZR7u/3PCX+yr4nXMwmRsyvbNia8fSvXSNDAIzP7rX13ubz9l9gOVmmcGMqnv
-         Vv2oJcxKL5dwBZoJFqw9zyCsVkO3u9LgblAjXOxW3u/Xb6arJhsawt8VHV8GOU+2+uZn
-         L+VaIY1JkUpEV1znjXdkIswS9W4byhpCJn5+wmzguAqV+Ritksl0FbXq+YdAimSDc62c
-         BhsA==
-X-Gm-Message-State: APjAAAXcKWgqnCvnSelZtDJUFluLH7N+PgKH31XGRxPFZF3af323ekSZ
-        mQ3kub87jXpIWFb0lqzmsHmC/hoW+R0YHoEp3tOsKQ==
-X-Google-Smtp-Source: APXvYqwTEs0TXLg+Y9KN1LSZ7g7ly19CRMffOhO7e8e4HHml/6cDYR6bH9s2YdOlfMGLddxa8lx0sqJHYZVTLpNjaAw=
-X-Received: by 2002:a92:af99:: with SMTP id v25mr5291400ill.167.1572513784923;
- Thu, 31 Oct 2019 02:23:04 -0700 (PDT)
+        id S1726971AbfJaJUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:20:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5236 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726864AbfJaJUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 05:20:45 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1AFA291DC1FC5E986338;
+        Thu, 31 Oct 2019 17:20:42 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 31 Oct
+ 2019 17:20:31 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+CC:     <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] ext4: bio_alloc with __GFP_DIRECT_RECLAIM never fails
+Date:   Thu, 31 Oct 2019 17:23:15 +0800
+Message-ID: <20191031092315.139267-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191030161244.GB3953@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20191030161244.GB3953@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-References: <20191031052159.4125031-1-jhubbard@nvidia.com>
-In-Reply-To: <20191031052159.4125031-1-jhubbard@nvidia.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Thu, 31 Oct 2019 14:52:53 +0530
-Message-ID: <CAKohpomBZPYyX_u2xSzE4UenR0s3eFo5SOmDZ=4NLVcD_pA5iQ@mail.gmail.com>
-Subject: Re: [PATCH v3] cpufreq: powernv: fix stack bloat and hard limit on
- num cpus
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Preeti U Murthy <preeti@linux.vnet.ibm.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2019 at 10:52, John Hubbard <jhubbard@nvidia.com> wrote:
->
-> The following build warning occurred on powerpc 64-bit builds:
->
-> drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
-> drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of
-> 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->
-> This is with a cross-compiler based on gcc 8.1.0, which I got from:
->   https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/
->
-> The warning is due to putting 1024 bytes on the stack:
->
->     unsigned int chip[256];
->
-> ...and it's also undesirable to have a hard limit on the number of
-> CPUs here.
->
-> Fix both problems by dynamically allocating based on num_possible_cpus,
-> as recommended by Michael Ellerman.
->
-> Fixes: 053819e0bf840 ("cpufreq: powernv: Handle throttling due to Pmax capping at chip level")
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-> Cc: Preeti U Murthy <preeti@linux.vnet.ibm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
+Similar to [1] [2], bio_alloc with __GFP_DIRECT_RECLAIM flags
+guarantees bio allocation under some given restrictions, as
+stated in block/bio.c and fs/direct-io.c So here it's ok to
+not check for NULL value from bio_alloc().
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
+[2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Ritesh Harjani <riteshh@linux.ibm.com>
+Cc: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+
+changes since v1:
+ - fix commit message and simplify logic as suggested by Ritesh;
+ - add short messages ahead of bio_alloc suggested by Ted.
+
+ fs/ext4/page-io.c  | 57 ++++++++++++++++++----------------------------
+ fs/ext4/readpage.c |  6 +++--
+ 2 files changed, 26 insertions(+), 37 deletions(-)
+
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index 12ceadef32c5..c92504c1b1ca 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -358,14 +358,16 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
+ 	io->io_end = NULL;
+ }
+ 
+-static int io_submit_init_bio(struct ext4_io_submit *io,
+-			      struct buffer_head *bh)
++static void io_submit_init_bio(struct ext4_io_submit *io,
++			       struct buffer_head *bh)
+ {
+ 	struct bio *bio;
+ 
++	/*
++	 * bio_alloc will _always_ be able to allocate a bio if
++	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
++	 */
+ 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
+-	if (!bio)
+-		return -ENOMEM;
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_end_io = ext4_end_bio;
+@@ -373,13 +375,12 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
+ 	io->io_bio = bio;
+ 	io->io_next_block = bh->b_blocknr;
+ 	wbc_init_bio(io->io_wbc, bio);
+-	return 0;
+ }
+ 
+-static int io_submit_add_bh(struct ext4_io_submit *io,
+-			    struct inode *inode,
+-			    struct page *page,
+-			    struct buffer_head *bh)
++static void io_submit_add_bh(struct ext4_io_submit *io,
++			     struct inode *inode,
++			     struct page *page,
++			     struct buffer_head *bh)
+ {
+ 	int ret;
+ 
+@@ -388,9 +389,7 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+ 		ext4_io_submit(io);
+ 	}
+ 	if (io->io_bio == NULL) {
+-		ret = io_submit_init_bio(io, bh);
+-		if (ret)
+-			return ret;
++		io_submit_init_bio(io, bh);
+ 		io->io_bio->bi_write_hint = inode->i_write_hint;
+ 	}
+ 	ret = bio_add_page(io->io_bio, page, bh->b_size, bh_offset(bh));
+@@ -398,7 +397,6 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+ 		goto submit_and_retry;
+ 	wbc_account_cgroup_owner(io->io_wbc, page, bh->b_size);
+ 	io->io_next_block++;
+-	return 0;
+ }
+ 
+ int ext4_bio_write_page(struct ext4_io_submit *io,
+@@ -491,8 +489,14 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 				gfp_flags |= __GFP_NOFAIL;
+ 				goto retry_encrypt;
+ 			}
+-			bounce_page = NULL;
+-			goto out;
++
++			printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
++			redirty_page_for_writepage(wbc, page);
++			do {
++				clear_buffer_async_write(bh);
++				bh = bh->b_this_page;
++			} while (bh != head);
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -500,30 +504,13 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 	do {
+ 		if (!buffer_async_write(bh))
+ 			continue;
+-		ret = io_submit_add_bh(io, inode, bounce_page ?: page, bh);
+-		if (ret) {
+-			/*
+-			 * We only get here on ENOMEM.  Not much else
+-			 * we can do but mark the page as dirty, and
+-			 * better luck next time.
+-			 */
+-			break;
+-		}
++		io_submit_add_bh(io, inode,
++				 bounce_page ? bounce_page : page, bh);
+ 		nr_submitted++;
+ 		clear_buffer_dirty(bh);
+ 	} while ((bh = bh->b_this_page) != head);
+ 
+-	/* Error stopped previous loop? Clean up buffers... */
+-	if (ret) {
+-	out:
+-		fscrypt_free_bounce_page(bounce_page);
+-		printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+-		redirty_page_for_writepage(wbc, page);
+-		do {
+-			clear_buffer_async_write(bh);
+-			bh = bh->b_this_page;
+-		} while (bh != head);
+-	}
++unlock:
+ 	unlock_page(page);
+ 	/* Nothing submitted - we have to end page writeback */
+ 	if (!nr_submitted)
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index a30b203fa461..fef7755300c3 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -360,10 +360,12 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 		if (bio == NULL) {
+ 			struct bio_post_read_ctx *ctx;
+ 
++			/*
++			 * bio_alloc will _always_ be able to allocate a bio if
++			 * __GFP_DIRECT_RECLAIM is set, see bio_alloc_bioset().
++			 */
+ 			bio = bio_alloc(GFP_KERNEL,
+ 				min_t(int, nr_pages, BIO_MAX_PAGES));
+-			if (!bio)
+-				goto set_error_page;
+ 			ctx = get_bio_post_read_ctx(inode, bio, page->index);
+ 			if (IS_ERR(ctx)) {
+ 				bio_put(bio);
+-- 
+2.17.1
+
