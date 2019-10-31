@@ -2,142 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FAADEB799
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 19:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E58EB79C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 19:57:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfJaSz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 14:55:58 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37862 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729252AbfJaSz5 (ORCPT
+        id S1729499AbfJaS5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 14:57:24 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43307 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729449AbfJaS5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:55:57 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q130so6980529wme.2;
-        Thu, 31 Oct 2019 11:55:55 -0700 (PDT)
+        Thu, 31 Oct 2019 14:57:22 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l24so4625645pgh.10;
+        Thu, 31 Oct 2019 11:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KEZ2MGdwSvgyihy3BgAVtU7EXgoX4IyUpv+yaDE4EcM=;
-        b=ZYtnp5VtI2P7IqkhTg1B8qmX/LGKFnyoyP1OI02dcs9Y9z49dyvvKdcCH9EFsu7iyJ
-         t3/OP80zD06K5ZwZsq3mCVndr+GGQO6XZ+W2cyUIPfufhkG7kSrg8Mp7cfm2aDfxLUgV
-         eu11mNVUZvgFNT+OXFwpttyldXIHuSXsgwyUzXzLiEAZj5GUUmmBi7xHjroJUTFmlxXp
-         7qra1V80Vh6JiZ2mfcX/uIaSdLZJ7w/AN54R2pbz3oBnrULe1IxtgUwIpFIIrkVsqFw5
-         cbpacAfI5X7UrSZxxYKVBLQNgtp6ojnq1PgdlRoTMg4cI/bS+xYJaB0eEiO5W/GRwdOf
-         /sdA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Hwivt2QaT2reDFA/i4CNRv6b//VFZ+Pr2+rJ26/VMuo=;
+        b=UHZMltmuREk7VrkYOBkMqMXOM6cIfVpk/UfNwK6IdUHWJ17SeOSEl0jXpY27VztQ9u
+         hRsSXK1zA9+s7fvcIa3gR7Nn6DQB/k8KKeuqSms3szB0bksnq4TbHqJc93SHIvg0jO9i
+         fh1PoTE2bOnGK1n/Ci5qzhathMpyLiQTeGp8evC6WElzYWD5TL9A6CSRLUOgNRHo/8az
+         LNh47zI2LvDiArO7MzdWfiq2dn2PfJKB1w0ugHUPHcl3rPKbt7Eae6j4x/2hoOxbkIFe
+         BjOtpnDLvVNy5dN3VzRVdIlcRpsQ19husDGyqo86UIoiiUXOJkePLNK3SUidbJ4CEMU0
+         JWZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KEZ2MGdwSvgyihy3BgAVtU7EXgoX4IyUpv+yaDE4EcM=;
-        b=tGfSqBmJEv5vaelaaPmluVSZ6oC0d3HEMpVPh45bQ5eZTAzo7Wwfw7k2o3kwksG0jf
-         yTlgcfXQxoJNHdGo4okbtsilU4nDglUDGj8CtkO9QV+me08iWYOE1iofQ9mfdhfBoVtq
-         9DyjiJoKbvbF3zaBZ5dboXSs3CQYBH2xFHU994HIG5w5mngjbiCci2P1xXM7hrzeoEl+
-         K1SavmSqXUpLzIucBkgJEGiICbjaDmPblc5MDRyv1myiVu+MQuDa2DOLmUHdMH+cSc0t
-         cBjClePFDnM6CH7C8wmtz87VYBI5RTt2RtJ/aoGIYfexjRqj8iw09B6K9JzdlmqVLAU4
-         Ns0g==
-X-Gm-Message-State: APjAAAXlKbnNx3B7QYk3PC5+w7qT9U6HFzkeSAzMlU0uwtwIIH2zq3Xc
-        CUUe7q6xHK+GOTLOwZC0itsv3dZ3Ga90w9Ht+/M=
-X-Google-Smtp-Source: APXvYqzQvRT21L0PVgbV5c5C9W19QRhbCaQ8fQ/tMOUZwJgzzYQuw10WGZvoatXernuYn4EhUroIbjQ5XFwa10cGKYc=
-X-Received: by 2002:a1c:480a:: with SMTP id v10mr6775812wma.138.1572548154853;
- Thu, 31 Oct 2019 11:55:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191031181359.282617-1-megous@megous.com>
-In-Reply-To: <20191031181359.282617-1-megous@megous.com>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 31 Oct 2019 19:55:43 +0100
-Message-ID: <CAJiuCcdZqpoXKuupk_w3F1npZgCHDgb=+Fdd1ukKA22K2PJ6Ww@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH] cpufreq: sun50i: Fix CPU speed bin detection
-To:     megous@megous.com
-Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:ALLWINNER CPUFREQ DRIVER" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Hwivt2QaT2reDFA/i4CNRv6b//VFZ+Pr2+rJ26/VMuo=;
+        b=Iwm2DqF1FShT9KlQZFlfYmgmDs4Qxwf/jSOIQVOWUtZVZqK9PLO6hoUNzfsRhbIrXs
+         wFf4cyVRoxNub/lq+N9nGbzEmes8Kr5j/znhAxz4iv5MAjuEJWw8w1qExrFDSypj3Tsx
+         lXYiQzn+DQk6AjfRq3CrUjmflnGARrYM+f0BE3Z/HYlY+c2OUCwWUgjKoRGAq0CaSfjQ
+         EoA0FYfntIsT/jtmp9AzSQU478J92Kp3IwvLuvoi4PeuBWklnrGou7Ud8Pd54GaDd4si
+         hTkbm9Nwckmt25UU/lHSIpaqn9Ebnex9HApUEdEUFIBQvk7u0T8eYrqV05tGY9umwMMD
+         LUcw==
+X-Gm-Message-State: APjAAAUZr4CCcJkLEbDZnmO3ZQmXNKmngJ7PGfj5lYg6WojNvXwTN9oY
+        4W/90t9G3fwfki/0RvMqC3o=
+X-Google-Smtp-Source: APXvYqzIsKzJmoGTaVa035vrBCC4+AFGQUELVMXeGxMZLF1+Tq0c23uxzv1aoAs21UxDHkK7JFT5wA==
+X-Received: by 2002:a63:1b59:: with SMTP id b25mr8435157pgm.267.1572548241313;
+        Thu, 31 Oct 2019 11:57:21 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id j186sm3130951pfg.161.2019.10.31.11.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2019 11:57:20 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     agross@kernel.org, marc.w.gonzalez@free.fr,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v5 1/3] clk: qcom: Allow constant ratio freq tables for rcg
+Date:   Thu, 31 Oct 2019 11:57:15 -0700
+Message-Id: <20191031185715.15504-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
+References: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ondrej,
+Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
+some constant ratio from the input across the entire frequency range.  It
+would be great if we could specify the frequency table as a single entry
+constant ratio instead of a long list, ie:
 
-On Thu, 31 Oct 2019 at 19:14, Ondrej Jirman <megous@megous.com> wrote:
->
-> I have failures to boot on Orange Pi 3, because this driver determined
-> that my SoC is from the normal bin, but my SoC only works reliably with
-> the OPP values for the slowest bin.
->
-> Looking at BSP code, I found that efuse values have following meanings
-> on H6:
->
-> - 0b000 invalid (interpreted in vendor's BSP as normal bin)
-> - 0b001 slowest bin
-> - 0b011 normal bin
-> - 0b111 fastest bin
+	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
+        { }
 
-Maybe have some defines will be more readable no ?
-https://megous.com/git/linux/tree/drivers/soc/sunxi/sunxi-sid.c?h=3Dh6-4.9-=
-bsp#n213
+So, lets support that.
 
-#define SUN50I_NVEM_INVALID_CPU_OPP (0b000)
-#define SUN50I_NVEM_LOW_CPU_OPP (0b001)
-#define SUN50I_NVEM_NORMAL_CPU_OPP (0b011)
-#define SUN50I_NVEM_HIGH_CPU_OPP (0b111)
+We need to fix a corner case in qcom_find_freq() where if the freq table
+is non-null, but has no frequencies, we end up returning an "entry" before
+the table array, which is bad.  Then, we need ignore the freq from the
+table, and instead base everything on the requested freq.
 
-Regards,
-Cl=C3=A9ment
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+---
+ drivers/clk/qcom/clk-rcg2.c | 2 ++
+ drivers/clk/qcom/common.c   | 3 +++
+ 2 files changed, 5 insertions(+)
 
->
-> Let's play it safe and interpret 0 as the slowest bin, but fix detection
-> of other bins to match vendor code.
->
-> Fixes: f328584f7bff ("cpufreq: Add sun50i nvmem based CPU scaling driver"=
-)
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> ---
->
-> See https://megous.com/git/linux/tree/drivers/soc/sunxi/sunxi-sid.c?h=3Dh=
-6-4.9-bsp#n484
-> and https://megous.com/git/linux/tree/drivers/cpufreq/sunxi-cpufreq.c?h=
-=3Dh6-4.9-bsp#n428
-> (1 is substracted from soc_bin number here!)
->
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun=
-50i-cpufreq-nvmem.c
-> index df35ef3ef567..41dad03e245c 100644
-> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> @@ -71,9 +71,12 @@ static int sun50i_cpufreq_get_efuse(u32 *versions)
->         efuse_value =3D (*speedbin >> NVMEM_SHIFT) & NVMEM_MASK;
->         switch (efuse_value) {
->         case 0b0001:
-> -               *versions =3D 1;
-> +               *versions =3D 0;
->                 break;
->         case 0b0011:
-> +               *versions =3D 1;
-> +               break;
-> +       case 0b0111:
->                 *versions =3D 2;
->                 break;
->         default:
-> --
-> 2.23.0
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msg=
-id/linux-sunxi/20191031181359.282617-1-megous%40megous.com.
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index b98b81ef43a1..5a89ed88cc27 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -220,6 +220,8 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		rate = f->freq;
+ 		if (f->pre_div) {
++			if (!rate)
++				rate = req->rate;
+ 			rate /= 2;
+ 			rate *= f->pre_div + 1;
+ 		}
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 28ddc747d703..f1a32c5fcb8d 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -29,6 +29,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+ 	if (!f)
+ 		return NULL;
+ 
++	if(!f->freq)
++		return f;
++
+ 	for (; f->freq; f++)
+ 		if (rate <= f->freq)
+ 			return f;
+-- 
+2.17.1
+
