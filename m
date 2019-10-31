@@ -2,68 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19CB1EADEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45FBAEADF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:57:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfJaKyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:54:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:47008 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726897AbfJaKyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:54:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B7B11F1;
-        Thu, 31 Oct 2019 03:54:24 -0700 (PDT)
-Received: from [172.20.53.248] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7465B3F719;
-        Thu, 31 Oct 2019 03:54:20 -0700 (PDT)
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Ram Muthiah <rammuthiah@google.com>,
-        Quentin Perret <qperret@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, aaron.lwe@gmail.com,
-        mingo@kernel.org, pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-References: <20191028174603.GA246917@google.com>
- <20191029113411.GP4643@worktop.programming.kicks-ass.net>
- <20191029115000.GA11194@google.com>
- <CA+CXyWsoW8ann52pcR66ejRmjJ=4QmoaHTRVhb3=ohe0ZDnm-A@mail.gmail.com>
- <75e99374-0bd6-a7d7-581e-9360a1f90103@arm.com>
-Message-ID: <8d8fe4e9-1905-cde1-9ced-0a860e5a961b@arm.com>
-Date:   Thu, 31 Oct 2019 11:54:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727347AbfJaK5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:57:17 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41464 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbfJaK5Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 06:57:16 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAsVqx176368;
+        Thu, 31 Oct 2019 10:57:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=1sG/Yfs8vobHE1MHtWKvt3EvUARJQXQLqUpb9M6oFB4=;
+ b=NyaOBEV93IoD8pDIk/KcV4JZPe9bCa1quM606v5LfIfUChHkL7SVKTdaMLZhaCoa9qbK
+ QpeZREAsGO3DROkyxkOJ1rPAB7S+Q0SFEjJc77gIr5LGjvSaYXdRnKZnBfDvMIDyzAOO
+ p+ast89RAeb4i/8Nng2h0IgmK+mLiDWSeNGhmaVtiQOYqPGsuIRJjtz/D5LWx2Jd+L27
+ rREJRpHfiWI1TutepPR2ChexFeXBbQqAhlMvAjVIpr66NhfdX0axQjJR/uT8Pl5jvvkE
+ RribWGe9q7Td26PhuNPCR4/9jX/hmh2UvynfDDrCDD9BiGFCAk3kk3Qf6esgV7qilOOh 6w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vxwhfjedb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:57:10 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VArk7E160618;
+        Thu, 31 Oct 2019 10:55:10 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vyv9fx6ev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:55:09 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9VAt866005535;
+        Thu, 31 Oct 2019 10:55:08 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Oct 2019 03:55:08 -0700
+Date:   Thu, 31 Oct 2019 13:55:01 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] btrfs: clean up locking name in scrub_enumerate_chunks()
+Message-ID: <20191031105501.GB26612@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <75e99374-0bd6-a7d7-581e-9360a1f90103@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910310111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910310111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/10/2019 02:33, Valentin Schneider wrote:
-> For wakeups, select_task_rq_fair() can only ever pick prev_cpu or this_cpu
-> since there are no sched domains. I don't see many candidates that could
-> wakeup on a secondary (thus have non-zero this_cpu) this early there. Perhaps
-> the smpboot threads, but from a quick look they are first created *after*
-> sched_init_smp(), so they couldn't exist during (boot-time) secondary bringup.
+The "&fs_info->dev_replace.rwsem" and "&dev_replace->rwsem" refer to
+the same lock but Smatch is not clever enough to figure that out so it
+leads to static checker warnings.  It's better to use it consistently
+anyway.
 
-Scratch that, I can't read. The registration is done in early initcalls (and
-we have the unpark in the secondary bringup anyway), so when we spool up the
-secondaries we'll get wakeups for the smpboot threads. AFAIR only softirqd
-and cpuhp are CFS, but while this satisfied some of my curiosity this doesn't
-seem super helpful on its own.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/btrfs/scrub.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Seems to be the same for IRQ threads (and they're setscheduler'd to FIFO
-> anyway).
-> 
-> So now I'm even more curious as to what CFS task could be enqueued on a
-> secondary CPU rq before sched_init_smp(). Have you been sending stuff to space
-> without any shielding lately?
-> 
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 4a5a4e4ef707..06494304ab80 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -3620,7 +3620,7 @@ int scrub_enumerate_chunks(struct scrub_ctx *sctx,
+ 			break;
+ 		}
+ 
+-		down_write(&fs_info->dev_replace.rwsem);
++		down_write(&dev_replace->rwsem);
+ 		dev_replace->cursor_right = found_key.offset + length;
+ 		dev_replace->cursor_left = found_key.offset;
+ 		dev_replace->item_needs_writeback = 1;
+@@ -3661,10 +3661,10 @@ int scrub_enumerate_chunks(struct scrub_ctx *sctx,
+ 
+ 		scrub_pause_off(fs_info);
+ 
+-		down_write(&fs_info->dev_replace.rwsem);
++		down_write(&dev_replace->rwsem);
+ 		dev_replace->cursor_left = dev_replace->cursor_right;
+ 		dev_replace->item_needs_writeback = 1;
+-		up_write(&fs_info->dev_replace.rwsem);
++		up_write(&dev_replace->rwsem);
+ 
+ 		if (ro_set)
+ 			btrfs_dec_block_group_ro(cache);
+-- 
+2.20.1
+
