@@ -2,134 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B320EB59D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:59:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AAAEB5AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfJaQ7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:59:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36280 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728597AbfJaQ7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:59:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3B4AB355;
-        Thu, 31 Oct 2019 16:59:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CC7811E482D; Thu, 31 Oct 2019 17:59:05 +0100 (CET)
-Date:   Thu, 31 Oct 2019 17:59:05 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dmitry Monakhov <dmonakhov@openvz.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        lixi@ddn.com, Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling
- statfs results
-Message-ID: <20191031165905.GE13321@quack2.suse.cz>
-References: <20191031110348.6991-1-dmonakhov@openvz.org>
+        id S1728886AbfJaQ7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:59:45 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44244 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728856AbfJaQ7o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:59:44 -0400
+Received: by mail-vs1-f66.google.com with SMTP id j85so4529356vsd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rBXjy64QhAJngU1bLCgW8NmRIabhTqAJ4rYpSUJH/vA=;
+        b=MFPuR6yrPRTAmL9shB7f7ccQmfeaxlzOoX57mPiTDTNTInAdnhDq1qiWaZtEhzbSLI
+         aLEv7aV9AfTmYN2RGLov44yiuhk/5h8r4Z03gT3ZXWcaMGCrA2GoczDlv5IVrmoOhv4t
+         WcfOOehtYLlEpYEn0voLWT83cdteFabhYfsqZC54x6OQXZwgDcqZkFmA5SMMHwjWTNSG
+         sYg9VpHJwIznNow79XZhVdyqPv493SMXP9sXVX7fApFQoibaYXQZ08TdkHafK52H7w9Y
+         fikkLMrmkfpckOrp6DlZiXfmWE8rD0t0Bw6Jbyw+t93JF2MRH6PaH9+QYnvO5UucNtMy
+         ON5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rBXjy64QhAJngU1bLCgW8NmRIabhTqAJ4rYpSUJH/vA=;
+        b=f7eeW6PngifW+WNsF+83EuI10DDY7OEXyyvuxmeSSPX/f5WKZ3n7GR4gOYuB8MMp+5
+         JHrSbYkbkqGawyVwv4tlmMGJCDbJYW5AooryEIVZ+F2OoyGRYReNyMp5ckxarBVaD2RU
+         NHKbnA4ZFAzF5lGpnImxkFqtsMz1R8qRN26RKdBXIdOQ9QfYvrlDcqGzdHUoNSmJPd0k
+         DSq3G+HIlnVSa2HhFi2mpiB/x/jUrOclV3Ptb9fcUNxmx4CXB2ZRYHZxvx49LkXFDTYB
+         fbIIadhL95Lar5fb21aJCIkEzUoin45mzf3xvU+rTwseG3xUOza8c1qGthIs9xn8EFOR
+         WK8g==
+X-Gm-Message-State: APjAAAWVLX6No/ibkIiBFRPdPoyMqGWjkLCcNT1ewXEm12dHwvr8wR9U
+        Ygbj5KGRZdzMX1eK5qE5H9W5diFBCy7TETr2Q/ti7Q==
+X-Google-Smtp-Source: APXvYqxUDYzIwZUL5FbFN+ofBpA8OFEwiksm7t/nLo1J8VkpA/QJoge6ynXgiOcDbF0m20N6ahz2Rokt9mlDmh48qB4=
+X-Received: by 2002:a67:fb5a:: with SMTP id e26mr3354691vsr.200.1572541182099;
+ Thu, 31 Oct 2019 09:59:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031110348.6991-1-dmonakhov@openvz.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1571510481.git.hns@goldelico.com> <bec9d76e6da03d734649b9bdf76e9d575c57631a.1571510481.git.hns@goldelico.com>
+ <CAPDyKFrMQ3fBaeeAYVJfUdL8m=PDRU9Xt_9oGw6D1XOY68qDuQ@mail.gmail.com> <D9A82904-35BE-41F2-A308-9A49606428B1@goldelico.com>
+In-Reply-To: <D9A82904-35BE-41F2-A308-9A49606428B1@goldelico.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 31 Oct 2019 17:59:05 +0100
+Message-ID: <CAPDyKFrbOH=ROv_JefSQsEnmGqN6oFVfbhpqscOK=KUqJgzarw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] DTS: ARM: pandora-common: define wl1251 as child
+ node of mmc3
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        David Sterba <dsterba@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        "# 4.0+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-10-19 11:03:48, Dmitry Monakhov wrote:
-> From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-> 
-> Right now ext4_statfs_project() does quota lookup by id every time.
-> This is costly operation, especially if there is no inode who hold
-> reference to this dquot. This means that each statfs performs useless
-> ext4_acquire_dquot()/ext4_release_dquot() which serialized on __jbd2_log_wait_for_space()
-> dqget()
->  ->ext4_acquire_dquot
->    -> ext4_journal_start
->       -> __jbd2_log_wait_for_space
-> dqput()
->   -> ext4_release_dquot
->      ->ext4_journal_start
->        ->__jbd2_log_wait_for_space
-> 
-> 
-> Function ext4_statfs_project() could be moved into generic quota code,
-> it is required for every filesystem which uses generic project quota.
-> 
-> Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+On Wed, 30 Oct 2019 at 18:25, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>
+>
+> > Am 30.10.2019 um 17:44 schrieb Ulf Hansson <ulf.hansson@linaro.org>:
+> >
+> > On Sat, 19 Oct 2019 at 20:42, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> >>
+> >> Since v4.7 the dma initialization requires that there is a
+> >> device tree property for "rx" and "tx" channels which is
+> >> not provided by the pdata-quirks initialization.
+> >>
+> >> By conversion of the mmc3 setup to device tree this will
+> >> finally allows to remove the OpenPandora wlan specific omap3
+> >> data-quirks.
+> >>
+> >> Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+> >>
+> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> >> Cc: <stable@vger.kernel.org> # 4.7.0
+> >> ---
+> >> arch/arm/boot/dts/omap3-pandora-common.dtsi | 37 +++++++++++++++++++--
+> >> 1 file changed, 35 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/omap3-pandora-common.dtsi b/arch/arm/boot/dts/omap3-pandora-common.dtsi
+> >> index ec5891718ae6..c595b3eb314d 100644
+> >> --- a/arch/arm/boot/dts/omap3-pandora-common.dtsi
+> >> +++ b/arch/arm/boot/dts/omap3-pandora-common.dtsi
+> >> @@ -226,6 +226,18 @@
+> >>                gpio = <&gpio6 4 GPIO_ACTIVE_HIGH>;     /* GPIO_164 */
+> >>        };
+> >>
+> >> +       /* wl1251 wifi+bt module */
+> >> +       wlan_en: fixed-regulator-wg7210_en {
+> >> +               compatible = "regulator-fixed";
+> >> +               regulator-name = "vwlan";
+> >> +               regulator-min-microvolt = <1800000>;
+> >> +               regulator-max-microvolt = <1800000>;
+> >
+> > I doubt these are correct.
+> >
+> > I guess this should be in the range of 2.7V-3.6V.
+>
+> Well, it is a gpio which enables some LDO inside the
+> wifi chip. We do not really know the voltage it produces
+> and it does not matter. The gpio voltage is 1.8V.
+>
+> Basically we use a fixed-regulator to "translate" a
+> regulator into a control gpio because the mmc interface
+> wants to see a vmmc-supply.
 
-Thanks! The patch looks good to me. You can add:
+The vmmc supply represent the core power to the SDIO card (or
+SD/(e)MMC). Depending on what voltage range the vmmc supply supports,
+the so called OCR mask is created by the mmc core. The mask is then
+used to let the core negotiate the voltage level with the SDIO card,
+during the card initialization. This is not to confuse with the I/O
+voltage level, which is a different regulator.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Anyway, according to the TI WiLink series specifications, it looks
+like vmmc should be a regulator supporting 3-3.3V (in many schematics
+it's called VBAT).
 
-								Honza
+Furthermore I decided to dig into various DTS files that specifies the
+vmmc regulator, of course for mmc nodes having a subnode specifying an
+SDIO card for a TI WiLink. In most cases a 1.8V fixed GPIO regulator
+is used. This looks wrong to me. The fixed GPIO regulator isn't really
+the one that should model vmmc.
 
+The proper solution, would rather be to use separate regulator for
+vmmc and instead use a so called mmc-pwrseq node to manage the GPIO.
 
-> ---
->  fs/ext4/super.c | 25 ++++++++++++++++---------
->  1 file changed, 16 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 2318e5f..4e8f97d68 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
->  }
->  
->  #ifdef CONFIG_QUOTA
-> -static int ext4_statfs_project(struct super_block *sb,
-> -			       kprojid_t projid, struct kstatfs *buf)
-> +static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
->  {
-> -	struct kqid qid;
-> +	struct super_block *sb = inode->i_sb;
->  	struct dquot *dquot;
->  	u64 limit;
->  	u64 curblock;
-> +	int err;
-> +
-> +	err = dquot_initialize(inode);
-> +	if (err)
-> +		return err;
-> +
-> +	spin_lock(&inode->i_lock);
-> +	dquot = ext4_get_dquots(inode)[PRJQUOTA];
-> +	if (!dquot)
-> +		goto out_unlock;
->  
-> -	qid = make_kqid_projid(projid);
-> -	dquot = dqget(sb, qid);
-> -	if (IS_ERR(dquot))
-> -		return PTR_ERR(dquot);
->  	spin_lock(&dquot->dq_dqb_lock);
->  
->  	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
-> @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
->  	}
->  
->  	spin_unlock(&dquot->dq_dqb_lock);
-> -	dqput(dquot);
-> +out_unlock:
-> +	spin_unlock(&inode->i_lock);
-> +
->  	return 0;
->  }
->  #endif
-> @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
->  #ifdef CONFIG_QUOTA
->  	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
->  	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
-> -		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
-> +		ext4_statfs_project(dentry->d_inode, buf);
->  #endif
->  	return 0;
->  }
-> -- 
-> 2.7.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+To conclude from my side, as we have lots of DTS that are wrong, I
+don't really care if we add another one in the way you suggest above.
+But feel free to look into the mmc-pwrseq option.
+
+>
+> >
+> >> +               startup-delay-us = <50000>;
+> >> +               regulator-always-on;
+> >
+> > Always on?
+>
+> Oops. Yes, that is something to check!
+
+As it's a GPIO regulator, for sure it's not always on.
+
+>
+> >
+> >> +               enable-active-high;
+> >> +               gpio = <&gpio1 23 GPIO_ACTIVE_HIGH>;
+> >> +       };
+> >> +
+> >>        /* wg7210 (wifi+bt module) 32k clock buffer */
+> >>        wg7210_32k: fixed-regulator-wg7210_32k {
+> >>                compatible = "regulator-fixed";
+> >> @@ -522,9 +534,30 @@
+> >>        /*wp-gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>;*/    /* GPIO_127 */
+> >> };
+> >>
+> >> -/* mmc3 is probed using pdata-quirks to pass wl1251 card data */
+> >> &mmc3 {
+> >> -       status = "disabled";
+> >> +       vmmc-supply = <&wlan_en>;
+> >> +
+> >> +       bus-width = <4>;
+> >> +       non-removable;
+> >> +       ti,non-removable;
+> >> +       cap-power-off-card;
+> >> +
+> >> +       pinctrl-names = "default";
+> >> +       pinctrl-0 = <&mmc3_pins>;
+> >> +
+> >> +       #address-cells = <1>;
+> >> +       #size-cells = <0>;
+> >> +
+> >> +       wlan: wl1251@1 {
+> >> +               compatible = "ti,wl1251";
+> >> +
+> >> +               reg = <1>;
+> >> +
+> >> +               interrupt-parent = <&gpio1>;
+> >> +               interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;  /* GPIO_21 */
+> >> +
+> >> +               ti,wl1251-has-eeprom;
+> >> +       };
+> >> };
+> >>
+> >> /* bluetooth*/
+> >> --
+> >> 2.19.1
+> >>
+>
+> BR and thanks,
+> Nikolaus
+>
+
+Kind regards
+Uffe
