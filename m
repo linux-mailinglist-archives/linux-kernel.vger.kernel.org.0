@@ -2,99 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DEBEEB215
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17511EB219
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbfJaOFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:05:39 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42758 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbfJaOFi (ORCPT
+        id S1727810AbfJaOGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:06:05 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43022 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfJaOGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:05:38 -0400
-Received: by mail-qk1-f195.google.com with SMTP id m4so7092597qke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 07:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=8g/fCqmTpfKLTY3+g19TSl1xtmw42oOlQtbZEptQxXY=;
-        b=Ojd9BDEap9xE3g4HQnpHAdCyMWxWnAfFSiVEhn/xryjjQTXRroD9B72k6zI6oz35XG
-         nvS5bWyOWkEYu07cHE+RaZOHJVd4szHa1v/b6LaXkmuY/8NsKYXaw1kEXNFKj1nhtLvQ
-         8L7v8iwSmFNlH6DHcWDuDDOC9SF90c1r3IkwhiIf6FJKmmACUcBhikG68rM6l7xNAbcO
-         fSoDlE1vBp64Dp9vcPD6egrrMQYRWKXEenVF6lR4v8/3if8Vjkqj87Q4AqQ8tAD4CcRH
-         YnnJnZjMShZjIldORX3KpAvCbb4QetumevJo4jxpSt4cFDxybJBcaQNoVvhRRkyPizDt
-         r3eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8g/fCqmTpfKLTY3+g19TSl1xtmw42oOlQtbZEptQxXY=;
-        b=i+mZXHxcSyRPJWsWYl6ZxxH76Yi8x4ooLkRoB2pFH66oGsOErfhwjSqW1oL891vScm
-         Kx2BqBVQ4vdZN04Z+eC/ynFRXvAtDBi5tJzkj8HdMYCtWxkEOLgsnK40CbsKGAUryMKb
-         qyQzV+nl5ABde68tknlrxF6Toes3lYTyejtNfxTBJ9R2/CcfMrwGY7EpnXNX6NCK1V3I
-         Dr2cHOPVyrDkUiavfHFUzfXc4p5vKb/1RhHpBG9Us3zdf+myDfUgKYw/jNpdWPLRndtQ
-         qUvlpJNYhuJagW56+bXWZlxlLQBfTY7BO3pzPxA6bHWgmB4WBDfMvaysrDKRDCxKyIm6
-         py9w==
-X-Gm-Message-State: APjAAAVBZ2PgisjucasihYsZZqNGX0JJ01/LKltB71omuFqvIWpNyKy5
-        UPudNPd3MyLNat23K28bLFXegQ==
-X-Google-Smtp-Source: APXvYqyG/hUnDLvbvo52/8FbBpz3n8E2t1ayAlf4yaDYMPmL9atb/FR4GhdAJID08GoPMr6e2rjD1w==
-X-Received: by 2002:ae9:e714:: with SMTP id m20mr5276736qka.280.1572530736235;
-        Thu, 31 Oct 2019 07:05:36 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id y33sm3167025qta.18.2019.10.31.07.05.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Oct 2019 07:05:35 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     dan.j.williams@intel.com
-Cc:     vishal.l.verma@intel.com, dave.jiang@intel.com,
-        keith.busch@intel.com, ira.weiny@intel.com,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH v3] nvdimm/btt: fix variable 'rc' set but not used
-Date:   Thu, 31 Oct 2019 10:05:19 -0400
-Message-Id: <1572530719-32161-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 31 Oct 2019 10:06:05 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQB5M-0004Vk-2W; Thu, 31 Oct 2019 14:06:00 +0000
+Date:   Thu, 31 Oct 2019 14:06:00 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Yi Li <yili@winhong.com>
+Cc:     linux-fsdevel@vger.kernel.org, Yi Li <yilikernel@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] seq_file: fix condition while loop
+Message-ID: <20191031140600.GL26530@ZenIV.linux.org.uk>
+References: <1572521901-5070-1-git-send-email-yili@winhong.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572521901-5070-1-git-send-email-yili@winhong.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/nvdimm/btt.c: In function 'btt_read_pg':
-drivers/nvdimm/btt.c:1264:8: warning: variable 'rc' set but not used
-[-Wunused-but-set-variable]
-    int rc;
-        ^~
+On Thu, Oct 31, 2019 at 07:38:21PM +0800, Yi Li wrote:
+> From: Yi Li <yilikernel@gmail.com>
+> 
+> Use the break condition of loop body.
+> PTR_ERR has some meanings when p is illegal,and return 0 when p is null.
+> set the err = 0 on the next iteration if err > 0.
 
-Add a ratelimited message in case a storm of errors is encountered.
-
-Fixes: d9b83c756953 ("libnvdimm, btt: rework error clearing")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-v3: remove the unused "rc" per Vishal.
-v2: include the block address that is returning an error per Dan.
-
- drivers/nvdimm/btt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 3e9f45aec8d1..5129543a0473 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1261,11 +1261,11 @@ static int btt_read_pg(struct btt *btt, struct bio_integrity_payload *bip,
- 
- 		ret = btt_data_read(arena, page, off, postmap, cur_len);
- 		if (ret) {
--			int rc;
--
- 			/* Media error - set the e_flag */
--			rc = btt_map_write(arena, premap, postmap, 0, 1,
--				NVDIMM_IO_ATOMIC);
-+			if (btt_map_write(arena, premap, postmap, 0, 1, NVDIMM_IO_ATOMIC))
-+				dev_warn_ratelimited(to_dev(arena),
-+					"Error persistently tracking bad blocks at %#x\n",
-+					premap);
- 			goto out_rtt;
- 		}
- 
--- 
-1.8.3.1
-
+IDGI.  PTR_ERR() is not going to cause any kind of undefined behaviour for
+any valid pointer and it's trivial to evaluate.  What's the point?
