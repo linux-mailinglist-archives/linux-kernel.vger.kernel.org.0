@@ -2,120 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 244A0EB3DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9592CEB3E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:27:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfJaPZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 11:25:19 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:56427 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726642AbfJaPZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:25:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tgn887B_1572535511;
-Received: from 192.168.2.229(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Tgn887B_1572535511)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 31 Oct 2019 23:25:12 +0800
-Subject: Re: [PATCH 03/11] rcu: clean up rcu_preempt_deferred_qs_irqrestore()
-To:     paulmck@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-4-laijs@linux.alibaba.com>
- <20191031135234.GQ20975@paulmck-ThinkPad-P72>
-From:   Lai Jiangshan <laijs@linux.alibaba.com>
-Message-ID: <49c778ff-2187-26fb-1477-bdef6eaf298b@linux.alibaba.com>
-Date:   Thu, 31 Oct 2019 23:25:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1728346AbfJaP1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 11:27:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726664AbfJaP1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 11:27:34 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DC7620873;
+        Thu, 31 Oct 2019 15:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572535653;
+        bh=+yVZ1MjIGAdWwgwwfL8MAh8Z053rKZd9qegV46RGdoM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fAHP+83SfGYxiTmv7PduCRvKVUCHWGYmqh5FQAzyAv4HTcZASqjRHoGCFIU23INqG
+         uZi0J4/VSFeOL63l83GmPejEx2UVwEfaEmISV3bKXx6FKwLp9CbBtlX1OAa2CFTIs2
+         llGGloPfo1CWC2oBqX/PRTrBbJtN/zXSVI+T7Ivo=
+Date:   Thu, 31 Oct 2019 11:27:30 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        matthewgarrett@google.com, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        prsriva@linux.microsoft.com
+Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
+ create or update
+Message-ID: <20191031152730.GQ1554@sasha-vm>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+ <20191031011910.2574-2-nramas@linux.microsoft.com>
+ <1572523831.5028.43.camel@linux.ibm.com>
+ <b83bd7ef-ce7f-e750-e30b-30d5a6469a28@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <20191031135234.GQ20975@paulmck-ThinkPad-P72>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b83bd7ef-ce7f-e750-e30b-30d5a6469a28@linux.microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019/10/31 9:52 ä¸‹åˆ, Paul E. McKenney wrote:
-> On Thu, Oct 31, 2019 at 10:07:58AM +0000, Lai Jiangshan wrote:
->> Remove several unneeded return.
+On Thu, Oct 31, 2019 at 08:08:48AM -0700, Lakshmi Ramasubramanian wrote:
+>On 10/31/19 5:10 AM, Mimi Zohar wrote:
+>
+>>On Wed, 2019-10-30 at 18:19 -0700, Lakshmi Ramasubramanian wrote:
+>>>Asymmetric keys used for verifying file signatures or certificates
+>>>are currently not included in the IMA measurement list.
+>>>
+>>>This patch defines a new IMA hook namely ima_post_key_create_or_update()
+>>>to measure asymmetric keys.
 >>
->> It doesn't need to return earlier after every code block.
->> The code protects itself and be safe to fall through because
->> every code block has its own condition tests.
->>
->> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
->> ---
->>   kernel/rcu/tree_plugin.h | 14 +-------------
->>   1 file changed, 1 insertion(+), 13 deletions(-)
->>
->> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
->> index 59ef10da1e39..82595db04eec 100644
->> --- a/kernel/rcu/tree_plugin.h
->> +++ b/kernel/rcu/tree_plugin.h
->> @@ -439,19 +439,10 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
->>   	 * t->rcu_read_unlock_special cannot change.
->>   	 */
->>   	special = t->rcu_read_unlock_special;
->> -	rdp = this_cpu_ptr(&rcu_data);
->> -	if (!special.s && !rdp->exp_deferred_qs) {
->> -		local_irq_restore(flags);
->> -		return;
->> -	}
-> 
-> The point of this check is the common case of this function being invoked
-> when both fields are zero, avoiding the below redundant store and all the
-> extra checks of subfields of special.
-> 
-> Or are you saying that current compilers figure all this out?
+>>It's not enough for the kernel to be able to compile the kernel after
+>>applying all the patches in a patch set.  After applying each patch,
+>>the kernel should build properly, otherwise it is not bi-sect safe.
+>>  Refer to "3) Separate your changes" of
+>>"Documentation/process/submitting-patches.rst.
+>
+>I started with kernel version 5.3 for this patch set.
+>I applied Nayna's process_buffer_measurement() patch and then built my 
+>changes on top of that.
+>This patch has no other dependency as far as I know.
+>
+>Are you seeing a build break after applying this patch alone?
+>
+>(PATCH v3 1/9) KEYS: Defined an IMA hook to measure keys on key create 
+>or update
 
-No.
+I couldn't even apply this patch: Nayna's series (v10) doesn't apply on
+top of 5.3 to begin with, and while it does apply on mainline, this
+first patch wouldn't apply on top.
 
-So, I have to keep the first/above return branch.
-
-Any reasons to keep the following 2 return branches?
-There is no redundant store and the load for the checks
-are hot in the cache if the condition for return is met.
-
-Thanks.
-Lai
-
-> 
-> 							Thanx, Paul
-> 
->>   	t->rcu_read_unlock_special.b.deferred_qs = false;
->>   	if (special.b.need_qs) {
->>   		rcu_qs();
->>   		t->rcu_read_unlock_special.b.need_qs = false;
->> -		if (!t->rcu_read_unlock_special.s && !rdp->exp_deferred_qs) {
->> -			local_irq_restore(flags);
->> -			return;
->> -		}
->>   	}
->>   
->>   	/*
->> @@ -460,12 +451,9 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
->>   	 * tasks are handled when removing the task from the
->>   	 * blocked-tasks list below.
->>   	 */
->> +	rdp = this_cpu_ptr(&rcu_data);
->>   	if (rdp->exp_deferred_qs) {
->>   		rcu_report_exp_rdp(rdp);
->> -		if (!t->rcu_read_unlock_special.s) {
->> -			local_irq_restore(flags);
->> -			return;
->> -		}
->>   	}
->>   
->>   	/* Clean up if blocked during RCU read-side critical section. */
->> -- 
->> 2.20.1
->>
+-- 
+Thanks,
+Sasha
