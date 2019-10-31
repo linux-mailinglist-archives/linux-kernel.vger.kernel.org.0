@@ -2,101 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF666EBA27
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 00:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EAEEBA2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 00:08:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbfJaXFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 19:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfJaXFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 19:05:35 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 469D62080F;
-        Thu, 31 Oct 2019 23:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572563134;
-        bh=4z2WuELNukNwKuKrFR1f3kQfDOncbIyk/+Kn5OAHdec=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=L3xc+mry460+mKLDYMYkBOhGK+f+eRRMzhLD3aBVcDSwHy5hy+uJ44c7lwaBi7qoB
-         5h4rUMRCnK4Mv96EKpJWUkIToZgZiAhhwC67d28eUGe20yFziukgpXzAiE0veeh28K
-         42ADyhYQRSM6yuofTjj2JfBrWqYYQCAv8XwBwXOQ=
-Date:   Thu, 31 Oct 2019 18:05:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kar Hin Ong <kar.hin.ong@ni.com>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-x86_64@vger.kernel.org, linux-pci@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: "oneshot" interrupt causes another interrupt to be fired
- erroneously in Haswell system
-Message-ID: <20191031230532.GA170712@google.com>
+        id S1728532AbfJaXIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 19:08:43 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32774 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfJaXIn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 19:08:43 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y127so5958489lfc.0;
+        Thu, 31 Oct 2019 16:08:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LfMOpqmh3hu4Z0wFflv+lBYdascyk2HUnFcBRiRArs4=;
+        b=FxiEt0AS2hRxphbCFALjC5ZMg7ZgfrX+51lx7kWvtynPV9O+EVDTn6Xx0yNwMV+vzC
+         giwNAosbCwUnjbCq25rzROkZ371EOw4za9kBbNAZuO9TE827sW2C5XMkk9mFHzxZBrEf
+         03MpFOYMhWjS1gzCBUBqBvE0rcUFxu59U0jXyBrCMFlHIA/MlaEOQyGp8PDy8YrmsRQU
+         FkSGFNpFj+BNOKm73Y1Nam1eu6C61i3lfupzcc68sHtNWpAh3VXgXnFdp8IDo3eP49/U
+         CMSCQSE1dSsgK0tDDNITLPgwpUW3WfaKrzkxAAFGKLAmK+qOzF/zvoLdxt+6PVE5FjhY
+         IMLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LfMOpqmh3hu4Z0wFflv+lBYdascyk2HUnFcBRiRArs4=;
+        b=cOoWZBCeV/Q2DYum81KvwU323J057yCLfrF+7ZXgch0GwBX6Mr93CBhrPU41w9/Qx3
+         IzvbnP+bjmoPomQGk3wd2hbut60w6hegkk5SlKvb3p5q5BVf4UVFc6ODmYcrRlB7/HKA
+         HcGcETyiShePIaiEMvlyQJzs62MCPx0yiRb8Rj/a09xC736vR89qBWKKv0C3FvuAlEfH
+         qwxswEtqqvK9+7m1B+Wn+Iv9Ma87+p2LmL/b+rEiwfPoNHc4Hg4op7sM9Rm0PSJt8Vm8
+         zf6g1JERlNvCFYGE3eZR6sUZSJ/x6fdiyVviZztmrodChOO/JFkG60t0SMkhy/4Kq8VO
+         8PqA==
+X-Gm-Message-State: APjAAAWUeUJDigckv6At0go4yWoOZ1ydx8Dun08b8HAdTtimAL9guMPb
+        00bpsjVM3BWM/GtMiDmpH+5ABh1b
+X-Google-Smtp-Source: APXvYqzr4lcKOeeVIXl/TUk97eKlvMi5f7vvojFIvFqqpJBsMZ3XNcFMBuKn8gDJS40l/nML/Qikhg==
+X-Received: by 2002:ac2:41d2:: with SMTP id d18mr5098329lfi.92.1572563320400;
+        Thu, 31 Oct 2019 16:08:40 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id b2sm1832519ljk.64.2019.10.31.16.08.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2019 16:08:39 -0700 (PDT)
+Subject: Re: [PATCH v7 06/19] PM / devfreq: tegra30: Use kHz units uniformly
+ in the code
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191029220019.26773-1-digetx@gmail.com>
+ <CGME20191029220734epcas1p42b635ee1c85a9480cecbaf7a1a41db25@epcas1p4.samsung.com>
+ <20191029220019.26773-7-digetx@gmail.com>
+ <a8ce6d98-26aa-b6eb-56ea-4bf960fc533d@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f0f64310-e2b0-9b02-fc6e-ccc23054d3de@gmail.com>
+Date:   Fri, 1 Nov 2019 02:08:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR04MB625541BF4ADC84690B5C45E9C3630@MN2PR04MB6255.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a8ce6d98-26aa-b6eb-56ea-4bf960fc533d@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Thomas, IRQ maintainer]
+31.10.2019 07:44, Chanwoo Choi пишет:
+> On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
+>> Part of the code uses Hz units and the other kHz, let's switch to kHz
+>> everywhere for consistency. A small benefit from this change (besides
+>> code's cleanup) is that now powertop utility correctly displays devfreq's
+>> stats, for some reason it expects them to be in kHz.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 11 ++++++-----
+>>  1 file changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index 1d22f5239cd5..06c5376a7201 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -448,7 +448,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  	rate = dev_pm_opp_get_freq(opp);
+>>  	dev_pm_opp_put(opp);
+>>  
+>> -	err = clk_set_min_rate(tegra->emc_clock, rate);
+>> +	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
+>>  	if (err)
+>>  		return err;
+>>  
+>> @@ -477,7 +477,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  	stat->private_data = tegra;
+>>  
+>>  	/* The below are to be used by the other governors */
+>> -	stat->current_frequency = cur_freq * KHZ;
+>> +	stat->current_frequency = cur_freq;
+>>  
+>>  	actmon_dev = &tegra->devices[MCALL];
+>>  
+>> @@ -527,7 +527,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>>  		target_freq = max(target_freq, dev->target_freq);
+>>  	}
+>>  
+>> -	*freq = target_freq * KHZ;
+>> +	*freq = target_freq;
+>>  
+>>  	return 0;
+>>  }
+>> @@ -663,7 +663,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  			goto remove_opps;
+>>  		}
+>>  
+>> -		err = dev_pm_opp_add(&pdev->dev, rate, 0);
+>> +		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
+>>  		if (err) {
+>>  			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
+>>  			goto remove_opps;
+>> @@ -686,7 +686,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  		goto unreg_notifier;
+>>  	}
+>>  
+>> -	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+>> +	tegra_devfreq_profile.initial_freq = tegra->cur_freq;
+>> +
+>>  	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+>>  				     "tegra_actmon", NULL);
+>>  	if (IS_ERR(devfreq)) {
+>>
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
 
-On Thu, Oct 31, 2019 at 03:53:50AM +0000, Kar Hin Ong wrote:
-> Hi,
-> 
-> I've an Intel Haswell system running Linux kernel v4.14 with
-> preempt_rt patch. The system contain 2 IOAPICs: IOAPIC 1 is on the
-> PCH where IOAPIC 2 is on the CPU.
-> 
-> I observed that whenever a PCI device is firing interrupt (INTx) to
-> Pin 20 of IOAPIC 2 (GSI 44); the kernel will receives 2 interrupts: 
->    1. Interrupt from Pin 20 of IOAPIC 2  -> Expected
->    2. Interrupt from Pin 19 of IOAPIC 1  -> UNEXPECTED, erroneously
->       triggered
-> 
-> The unexpected interrupt is unhandled eventually. When this scenario
-> happen more than 99,000 times, kernel disables the interrupt line
-> (Pin 19 of IOAPIC 1) and causing device that has requested it become
-> malfunction.
-> 
-> I managed to also reproduced this issue on RHEL 8 and Ubuntu 19-04
-> (without preempt_rt patch) after added "threadirqs" to the kernel
-> command line.
-> 
-> After digging further, I noticed that the said issue is happened
-> whenever an interrupt pin on IOAPIC 2 is masked:
->  - Masking Pin 20 of IOAPIC 2 triggers Pin 19 of IOAPIC 1  
->  - Masking Pin 22 of IOAPIC 2 triggers Pin 18 of IOAPIC 1  
-> 
-> I also noticed that kernel will explicitly mask a specific interrupt
-> pin before execute its handler, if the interrupt is configured as
-> "oneshot" (i.e. threaded). See
-> https://elixir.bootlin.com/linux/v4.14/source/kernel/irq/chip.c#L695
-> This explained why it only happened on RTOS and Desktop Linux with
-> "threadirqs" flag, because these configurations force the interrupt
-> handler to be threaded.
-> 
-> From Intel Xeon Processor E5/E7 v3 Product Family External Design
-> Specification (EDS), Volume One: Architecture, section 13.1 (Legacy
-> PCI Interrupt Handling), it mention: "If the I/OxAPIC entry is
-> masked (via the 'mask' bit in the corresponding Redirection Table
-> Entry), then the corresponding PCI Express interrupt(s) is forwarded
-> to the legacy PCH"
-> 
-> My interpretation is: when kernel receive a "oneshot" interrupt, it
-> mask the line before start handling it (or sending the eoi signal).
-> At this moment, if the interrupt line is still asserting, then the
-> interrupt signal will be routed to the IOAPIC in PCH, and hence
-> causing another interrupt to be fired erroneously.  
-> 
-> I would like to understand if my interpretation is make sense. If
-> yes, should the "oneshot" algorithm need to be updated to support
-> Haswell system?
-
-Just to make sure this hasn't already been fixed, can you reproduce
-the problem on a current kernel, e.g., v5.3 or v5.4-rc5?
-
-Bjorn
+Thank you, looking forward to the comments to the rest of the patches.
+Will be nice if this series could get ready for 5.5.
