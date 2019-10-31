@@ -2,160 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147F9EAC50
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFCCEAC61
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfJaJHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:07:53 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2075 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726864AbfJaJHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:07:52 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id EECDE1A731B038F76B1D;
-        Thu, 31 Oct 2019 17:07:49 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 31 Oct 2019 17:07:49 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Thu, 31 Oct 2019 17:07:49 +0800
-Date:   Thu, 31 Oct 2019 17:10:33 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ext4: bio_alloc never fails
-Message-ID: <20191031091033.GA89030@architecture4>
-References: <20191030042618.124220-1-gaoxiang25@huawei.com>
- <2716559d-95ac-399b-8105-38834f5ed660@huawei.com>
+        id S1727043AbfJaJKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 05:10:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726864AbfJaJKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 05:10:45 -0400
+Received: from localhost (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4530420862;
+        Thu, 31 Oct 2019 09:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572513045;
+        bh=A1TNL/R7BlC3QU3qiKk6Ab/C0PvvpHBMrLered6Ickc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jmdWOYTM7xT69SQn+rWSz2X9ceFDyZDsyaCYampZIqIR3tyR+htLAR3ReXIPjp81z
+         Pbq/aqYEc9MY/DOx59hli0lCCO1iwb09PM+8gGWO+3BFTXC5nYw03k8BVs7NeYy6VG
+         M49Jc48cbs0NarJiDJILn5ieFV4BRZO4iQ558npI=
+Date:   Thu, 31 Oct 2019 05:10:41 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        prsriva@linux.microsoft.com
+Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
+ create or update
+Message-ID: <20191031091041.GO1554@sasha-vm>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+ <20191031011910.2574-2-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <2716559d-95ac-399b-8105-38834f5ed660@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme717-chm.china.huawei.com (10.1.199.113) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191031011910.2574-2-nramas@linux.microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On Wed, Oct 30, 2019 at 06:19:02PM -0700, Lakshmi Ramasubramanian wrote:
+>Asymmetric keys used for verifying file signatures or certificates
+>are currently not included in the IMA measurement list.
+>
+>This patch defines a new IMA hook namely ima_post_key_create_or_update()
+>to measure asymmetric keys.
+>
+>Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 
-On Thu, Oct 31, 2019 at 10:01:20AM +0800, Chao Yu wrote:
-> On 2019/10/30 12:26, Gao Xiang wrote:
-> > Similar to [1] [2], it seems a trivial cleanup since
-> > bio_alloc can handle memory allocation as mentioned in
-> > fs/direct-io.c (also see fs/block_dev.c, fs/buffer.c, ..)
-> > 
-> > [1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
-> > [2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
-> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> 
-> I notice that there is still similar code in mpage.c
-> 
-> static struct bio *
-> mpage_alloc(struct block_device *bdev,
-> 		sector_t first_sector, int nr_vecs,
-> 		gfp_t gfp_flags)
-> {
-> 	struct bio *bio;
-> 
-> 	/* Restrict the given (page cache) mask for slab allocations */
-> 	gfp_flags &= GFP_KERNEL;
-> 	bio = bio_alloc(gfp_flags, nr_vecs);
-> 
-> 	if (bio == NULL && (current->flags & PF_MEMALLOC)) {
-> 		while (!bio && (nr_vecs /= 2))
-> 			bio = bio_alloc(gfp_flags, nr_vecs);
-> 	}
-> 
-> 	if (bio) {
-> 		bio_set_dev(bio, bdev);
-> 		bio->bi_iter.bi_sector = first_sector;
-> 	}
-> 	return bio;
-> }
-> 
-> Should we clean up them as well? however, I doubt we should get rid of loop in
-> mempool allocation to relief the memory pressure on those uncritical path, for
-> critical path like we should never fail, it would be fine looping in bio_alloc().
+What are the prerequisites for this patch?
 
-Thanks for your suggestion.
-
-For mpage.c, it seems another story since those gfp_flags are
-actually derived from specific inodes (via mapping_gfp_constraint
-or readahead_gfp_mask), so I think leaving such paths for mpage.c
-could be necessary. Just my personal thought.
-
+-- 
 Thanks,
-Gao Xiang
-
-
-> 
-> Thanks,
-> 
-> > ---
-> >  fs/ext4/page-io.c  | 11 +++--------
-> >  fs/ext4/readpage.c |  2 --
-> >  2 files changed, 3 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-> > index 12ceadef32c5..f1f7b6601780 100644
-> > --- a/fs/ext4/page-io.c
-> > +++ b/fs/ext4/page-io.c
-> > @@ -358,14 +358,12 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
-> >  	io->io_end = NULL;
-> >  }
-> >  
-> > -static int io_submit_init_bio(struct ext4_io_submit *io,
-> > -			      struct buffer_head *bh)
-> > +static void io_submit_init_bio(struct ext4_io_submit *io,
-> > +			       struct buffer_head *bh)
-> >  {
-> >  	struct bio *bio;
-> >  
-> >  	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-> > -	if (!bio)
-> > -		return -ENOMEM;
-> >  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-> >  	bio_set_dev(bio, bh->b_bdev);
-> >  	bio->bi_end_io = ext4_end_bio;
-> > @@ -373,7 +371,6 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
-> >  	io->io_bio = bio;
-> >  	io->io_next_block = bh->b_blocknr;
-> >  	wbc_init_bio(io->io_wbc, bio);
-> > -	return 0;
-> >  }
-> >  
-> >  static int io_submit_add_bh(struct ext4_io_submit *io,
-> > @@ -388,9 +385,7 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
-> >  		ext4_io_submit(io);
-> >  	}
-> >  	if (io->io_bio == NULL) {
-> > -		ret = io_submit_init_bio(io, bh);
-> > -		if (ret)
-> > -			return ret;
-> > +		io_submit_init_bio(io, bh);
-> >  		io->io_bio->bi_write_hint = inode->i_write_hint;
-> >  	}
-> >  	ret = bio_add_page(io->io_bio, page, bh->b_size, bh_offset(bh));
-> > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> > index a30b203fa461..bfeb77b93f48 100644
-> > --- a/fs/ext4/readpage.c
-> > +++ b/fs/ext4/readpage.c
-> > @@ -362,8 +362,6 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  
-> >  			bio = bio_alloc(GFP_KERNEL,
-> >  				min_t(int, nr_pages, BIO_MAX_PAGES));
-> > -			if (!bio)
-> > -				goto set_error_page;
-> >  			ctx = get_bio_post_read_ctx(inode, bio, page->index);
-> >  			if (IS_ERR(ctx)) {
-> >  				bio_put(bio);
-> > 
+Sasha
