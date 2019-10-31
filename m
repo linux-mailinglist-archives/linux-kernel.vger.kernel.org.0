@@ -2,72 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52467EAD47
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16182EAD53
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 11:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfJaKTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 06:19:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46124 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726864AbfJaKTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:19:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9028B12E;
-        Thu, 31 Oct 2019 10:19:08 +0000 (UTC)
-Date:   Thu, 31 Oct 2019 10:19:04 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
+        id S1727308AbfJaKWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 06:22:34 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:60534 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfJaKWe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 06:22:34 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAMPx8165363;
+        Thu, 31 Oct 2019 10:22:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=AIPRTbz1vKYMEJ2syx60gILwl+AYqYSi+XaONiaS/s8=;
+ b=Ycggx2U85q5A81uE3ok4s9kutMZ3oZVrWzG6uHq3Uze8EjiUrKMTrc35pZjPvADumEfr
+ qL8Fd4EckoPseP1QI21Ow88avnq4v/R/lj8Z4vcuU72YwlEHos1K63IjeJbWJ8UxI0IL
+ dIMRFqhg5w6R6s1SEf1UDt99W6rxM07dWoY0C0AZoLSsFLTAdJrAmhezlWGfHQB6nJjb
+ OU1BNooxcW4G4/SkNlJEajIRwEaljEMCSVPO3qdxuU57ABDXYw5Hph8kU+KutbpJz3Px
+ JFE5uBJtaXlPweLc4USCYk+aj3vTxwNqFdYjhxz2nlksbIn2I5Vy+BV9oKy3KpnxJC3N 7Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2vxwhft77x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:22:25 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAJRUU151087;
+        Thu, 31 Oct 2019 10:20:23 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2vyqpdtyht-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:20:23 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9VAKLJw022953;
+        Thu, 31 Oct 2019 10:20:21 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Oct 2019 03:20:21 -0700
+Date:   Thu, 31 Oct 2019 13:20:10 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Joe Perches <joe@perches.com>, shuah <shuah@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched/fair: Make sched-idle cpu selection consistent
- throughout
-Message-ID: <20191031101904.GI28938@suse.de>
-References: <5eba2fb4af9ebc7396101bb9bd6c8aa9c8af0710.1571899508.git.viresh.kumar@linaro.org>
- <20191030164714.GH28938@suse.de>
- <CAKohpo=hssu_uvb1J=0Od=KziAQVSMmbBt9zxa4mYttKhFJwFw@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v6] lib/list-test: add a test for
+ the 'list' doubly linked list
+Message-ID: <20191031102010.GF18421@kadam>
+References: <20191024224631.118656-1-davidgow@google.com>
+ <0cb1d948-0da3-eb0f-c58f-ae3a785dd0dd@kernel.org>
+ <CABVgOSmCHbGjZBjeWSbPEZbJw22SaBQnoO77xxNzN_ugAwzNiQ@mail.gmail.com>
+ <20191030104217.GA18421@kadam>
+ <42a8270d-ed6f-d29f-5e71-7b76a074b63e@kernel.org>
+ <CAFd5g47OZ8x9=etJUj4Sgsw38VQb0j=omOUsubc7+pb2rJi0bQ@mail.gmail.com>
+ <fad58e4f48237894de0d511adf1d663a42a2eee7.camel@perches.com>
+ <20191031085129.GA217570@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKohpo=hssu_uvb1J=0Od=KziAQVSMmbBt9zxa4mYttKhFJwFw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191031085129.GA217570@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=882
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910310105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=964 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910310105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 02:42:03PM +0530, Viresh Kumar wrote:
-> On Wed, 30 Oct 2019 at 22:17, Mel Gorman <mgorman@suse.de> wrote:
-> 
-> > As the patch stands, I think a fork-intensive workload where each
-> > process is doing small amounts of work will suffer from overloading
-> > domains and have variable performance depending on how quickly the load
-> > balancer reacts.
-> 
-> Just wanted to clarify this slightly in case it is confusing. Once a
-> newly forked
-> (non SCHED_IDLE) task gets placed on a sched-idle CPU, it won't remain
-> sched-idle anymore and we will again start looking for a fully idle CPU. So,
-> we won't put everything on a small set of CPUs, but just one SCHED_NORMAL
-> task on a CPU unless we are out of idle CPUs.
-> 
-> Do you have some specific test in mind which I can run to test this ?
-> 
+On Thu, Oct 31, 2019 at 01:51:29AM -0700, Brendan Higgins wrote:
+> static void list_test_list_for_each_prev(struct kunit *test) /* checkpatch: disable=for-each-format */
 
-Nothing in particular. git test suite for the basic fork-intensive case
-(mmtests config workload-shellscripts), something fork-intensive but
-relatively short-lived like a kernel build scaling the number of build
-jobs (mmtests config config-workload-kerndevel), something fairly basic
-that scales number of running jobs and relatively long-lived like tbench
-(mmtests config config-network-tbench). The ideal of course is that you
-wrote the patch based on an observed problem that you decided to fix.
+These comments defeat the purpose of checkpatch which is to make the
+code cleaner.
 
--- 
-Mel Gorman
-SUSE Labs
+regards,
+dan carpenter
+
