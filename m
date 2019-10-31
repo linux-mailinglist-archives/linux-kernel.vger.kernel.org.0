@@ -2,116 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6FFEB496
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8736BEB49D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfJaQXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:23:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49834 "EHLO mx1.suse.de"
+        id S1728582AbfJaQXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:23:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50060 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727580AbfJaQXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:23:03 -0400
+        id S1728428AbfJaQXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:23:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60797B833;
-        Thu, 31 Oct 2019 16:23:01 +0000 (UTC)
-Message-ID: <6726a651c12d91ca22b9d8984745d90db5d507ec.camel@suse.de>
-Subject: Re: [PATCH] dma/direct: turn ARCH_ZONE_DMA_BITS into a variable
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Date:   Thu, 31 Oct 2019 17:22:59 +0100
-In-Reply-To: <20191031155750.GA7394@lst.de>
-References: <20191031152837.15253-1-nsaenzjulienne@suse.de>
-         <20191031154759.GA7162@lst.de>
-         <40d06d463c05d36968e8b64924d78f7794f8de50.camel@suse.de>
-         <20191031155750.GA7394@lst.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-geumnkbETQYdG1ZUMwUA"
-User-Agent: Evolution 3.34.1 
+        by mx1.suse.de (Postfix) with ESMTP id 94264B833;
+        Thu, 31 Oct 2019 16:23:38 +0000 (UTC)
+Date:   Thu, 31 Oct 2019 17:23:34 +0100
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        lizefan@huawei.com, tj@kernel.org, hannes@cmpxchg.org,
+        mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        Dietmar.Eggemann@arm.com, morten.rasmussen@arm.com,
+        qperret@google.com, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] sched/topology: Don't try to build empty sched
+ domains
+Message-ID: <20191031162334.GA18570@blackbody.suse.cz>
+References: <20191023153745.19515-1-valentin.schneider@arm.com>
+ <20191023153745.19515-2-valentin.schneider@arm.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <20191023153745.19515-2-valentin.schneider@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-geumnkbETQYdG1ZUMwUA
-Content-Type: text/plain; charset="UTF-8"
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2019-10-31 at 16:57 +0100, Christoph Hellwig wrote:
-> On Thu, Oct 31, 2019 at 04:53:13PM +0100, Nicolas Saenz Julienne wrote:
-> > > > +#define ARM64_ZONE_DMA_BITS	30
-> > > > +
-> > > >  /*
-> > > >   * We need to be able to catch inadvertent references to memstart_=
-addr
-> > > >   * that occur (potentially in generic code) before
-> > > > arm64_memblock_init()
-> > > > @@ -424,6 +427,8 @@ void __init arm64_memblock_init(void)
-> > > >  	else
-> > > >  		arm64_dma_phys_limit =3D PHYS_MASK + 1;
-> > > > =20
-> > > > +	zone_dma_bits =3D ARM64_ZONE_DMA_BITS;
-> > > > +
-> > > >  	reserve_crashkernel();
-> > >=20
-> > > This actually adds a new limit, as there wasn't one before for arm64.
-> >=20
-> > Well, as zone_dma_bits is only relevant in dma/direct when ZONE_DMA is
-> > defined
-> > I figured it doesn't matter if the variable is set conditionally to ZON=
-E_DMA
-> > or
-> > not.
->=20
-> I'd much prefer that to do separately.
+On Wed, Oct 23, 2019 at 04:37:44PM +0100, Valentin Schneider <valentin.schn=
+eider@arm.com> wrote:
+> Prevent generate_sched_domains() from returning empty cpumasks, and add
+> some assertion in build_sched_domains() to scream bloody murder if it
+> happens again.
+Good catch. It makes sense to prune the empty domains in
+generate_sched_domains already.
 
-OK, I see what you mean now. It's wrong indeed.
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index c52bc91f882b..c87ee6412b36 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -798,7 +798,8 @@ static int generate_sched_domains(cpumask_var_t **dom=
+ains,
+>  		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
+>  			continue;
+> =20
+> -		if (is_sched_load_balance(cp))
+> +		if (is_sched_load_balance(cp) &&
+> +		    !cpumask_empty(cp->effective_cpus))
+>  			csa[csn++] =3D cp;
+If I didn't overlook anything, cp->effective_cpus can contain CPUs
+exluded by housekeeping_cpumask(HK_FLAG_DOMAIN) later, i.e. possibly
+still returning domains with empty cpusets.
 
-The trouble is the ZONE_DMA series[1] in arm64, also due for v5.5, will be
-affected by this patch. I don't know the right way to approach this problem
-since depending on the merge order, this patch should be updated or the arm=
-64
-ZONE_DMA series fixed.
+I'd suggest moving the emptiness check down into the loop where domain
+cpumasks are ultimately constructed.
 
-Maybe it's easier to just wait for v5.6.
+Michal
 
-Regards,
-Nicolas
-
-[1] https://lkml.org/lkml/2019/9/11/734
-
-
---=-geumnkbETQYdG1ZUMwUA
+--9jxsPFA5p3P2qPhR
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl27CmMACgkQlfZmHno8
-x/4b+AgAoH8wv9sfGomdszgwev9YRlMzey4HKe8HTYaOtmPwv+9I5u2Q1L0Hll8U
-oOvfmsMi3/GCphnYxgVI15TV3gT23I4f+e1sVmHtdJwOja145qdVYeN0eVrJBGlW
-gllgXNWdKSeomR5jQYRo6/r/e4b2DFreMuJMYO5Ac0Jmp4lqqbZ9tXDqMvKt0VcB
-4olZERu99fJIT8AxzUVXOG9cft6l18Fio1WtXJLzXgVrjxEKnxGLAq1GxY5o8VF7
-mf5621L1pvp/rNs/CBhehPADNaJqYwdS+nm7md9u/My8zRvp2OqT8O9a4e7RxcQi
-QPdhGBoQVaeZdUmbRgLmr2hq8cGTqw==
-=2ip7
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl27Cn4ACgkQia1+riC5
+qSjwiw//aWG1NlJLTWdANaPNkP7nuGfeAYzGU/S0B9laDxFk9ADU3V43MjwxmExI
+WIHDWQqzNlmbsbsQgIh4jQd2RnkKoV84bQVbEM3HPCsQcpGtpq5djPKIOXgAkEI4
+yS4gIMiYhbTD0wcjEtiRA8+WNMWKgNUa96Tdg3s6q9JfdrrROJm07taXI3L3YXFM
+w/N4Sj/XIMxgFEZunwU46ZoEihxPq7QwoChCE8qCXB9dPEbaftj3g0GlDSYQhXhu
+POS2IrraxRC5msvr/Ehu51zom7uvS/B+29dXOfF/jq2zk8cdspSzgFTsSGrUQ+eI
+cXI990mwxlT3XYi2fzmQZ6f3oTQhrQIS8Cjm0aGDY1vPbvH7Aacygcvu262jY0RF
+aQW/jQeqH7daCsFZn99bbHFnTUPF/eCw02yI0JHkO+sQXnsH2w5bJ14l69QpHkXs
+N7xqNgWVSwmfSecUKnpAq9VfQW473rs/nNGU3XsZrcErF4QhmCPwfMaw63YdYi5T
+bOxvfg1luMnDMbkjKeBawTxJuUjvB0LGm6c2t/wvsHoMo+CVMxWTzfZmrcoh/0Es
+rwLdn2pA+LVEmSdYsPndQo5xWBLns1muoa1vCvafthmHSGkEN1eLT03ZhXHwf1MK
+feIc5qyw4KHNJtYYa8qQYCwQAJ8EB6mglSqbt4/qRWGBbr3a5wg=
+=5/6w
 -----END PGP SIGNATURE-----
 
---=-geumnkbETQYdG1ZUMwUA--
-
+--9jxsPFA5p3P2qPhR--
