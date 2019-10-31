@@ -2,75 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CEAFEB08E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF59CEB06A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfJaMpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 08:45:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfJaMpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:45:02 -0400
-Received: from localhost (lns-bzn-32-82-254-4-138.adsl.proxad.net [82.254.4.138])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAAF02067D;
-        Thu, 31 Oct 2019 12:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572525901;
-        bh=0DNBeenyH7rB/8g2YXDHf6rJYEKF+j4UGX0CUbblXaA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mZ2EFnFaQxMFoSOwRwqwyd2Y9KZ+YtRrSiC6EbdzRR+rfKo31dkjxb3WqL6WD2PLV
-         CXi8nj0pOAqaL5Jz40Ey/pB2Q/l9RqFR3ZJ7RxF6l/Ildoo5XduUSMQXz18Y2y0tzL
-         GzoBlIYLheWU7SCpbNIdcCe9B1hw0oYK3jgmmIdY=
-Date:   Thu, 31 Oct 2019 13:35:43 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/2] Allwinner H6 Mali GPU support
-Message-ID: <20191031123543.lllmoat4zv5f47pd@hendrix>
-References: <20191030150742.3573-1-peron.clem@gmail.com>
+        id S1726952AbfJaMio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 08:38:44 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5238 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726506AbfJaMim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 08:38:42 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C50CC42C892F09C4CA5E;
+        Thu, 31 Oct 2019 20:38:40 +0800 (CST)
+Received: from [127.0.0.1] (10.67.102.197) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 31 Oct 2019
+ 20:38:38 +0800
+Subject: Re: [PATCH] tty:n_gsm.c: destroy port by tty_port_destroy()
+To:     Jiri Slaby <jslaby@suse.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <1569317156-45850-1-git-send-email-nixiaoming@huawei.com>
+ <1fd7d2eb-7497-254b-b40f-84bc4114f8a3@suse.com>
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+Message-ID: <9d515be6-5430-7ca2-24e8-a8c3798beec9@huawei.com>
+Date:   Thu, 31 Oct 2019 20:38:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nd6i5yai3phkhdlv"
-Content-Disposition: inline
-In-Reply-To: <20191030150742.3573-1-peron.clem@gmail.com>
+In-Reply-To: <1fd7d2eb-7497-254b-b40f-84bc4114f8a3@suse.com>
+Content-Type: text/plain; charset="iso-8859-2"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.102.197]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/10/31 18:11, Jiri Slaby wrote:
+> On 24. 09. 19, 11:25, Xiaoming Ni wrote:
+>> According to the comment of tty_port_destroy():
+>>      When a port was initialized using tty_port_init, one has to destroy
+>>      the port by tty_port_destroy();
+> 
+> It continues with a part saying:
+>     Either indirectly by using tty_port refcounting
+>     (tty_port_put) or directly if refcounting is not used.
+> 
+>> tty_port_init() is called in gsm_dlci_alloc()
+>> so tty_port_destroy() needs to be called in gsm_dlci_free()
+>>
+>> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+>> ---
+>>   drivers/tty/n_gsm.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+>> index 36a3eb4..3f5bcc9 100644
+>> --- a/drivers/tty/n_gsm.c
+>> +++ b/drivers/tty/n_gsm.c
+>> @@ -1681,6 +1681,7 @@ static void gsm_dlci_free(struct tty_port *port)
+>>   
+>>   	del_timer_sync(&dlci->t1);
+>>   	dlci->gsm->dlci[dlci->addr] = NULL;
+>> +	tty_port_destroy(&dlci->port);
+> 
+> This is wrong. gsm_dlci_free is tty_port_operations->destruct, i.e.
+> n_gsm uses tty_port refcounting and tty_port_destroy was called on this
+> port in tty_port_destructor already.
+> 
+> Greg, please revert.
+> 
+> thanks,
+> 
 
---nd6i5yai3phkhdlv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Function call flow
+tty_port_put
+     ===>  tty_port_destructor
+          ===> tty_port_destroy
+               Port->ops->destruct(port);
+                ===> .destruct = gsm_dlci_free
 
-On Wed, Oct 30, 2019 at 04:07:40PM +0100, Cl=E9ment P=E9ron wrote:
-> Hi,
->
-> Proper iommu patches has been merged[0].
->
-> There is still work to do to make it works with panfrost
-> but all modules can be probed and removed smoothly.
->
-> These bindings could be used also for out-of-tree modules.
+Thank you for your correction, I am wrong.
 
-Applied both, thanks
+thanks
 
-Maxime
-
---nd6i5yai3phkhdlv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbrVHwAKCRDj7w1vZxhR
-xWqMAQClAAyrxFvMUcdFqsOw4AphcLAVcXIVqpAF1731LJ7ZBgEAn8EdQHaxfj6V
-RLMcF7zHur0tsbHuhAtC/gJY0sHFFQM=
-=pJeb
------END PGP SIGNATURE-----
-
---nd6i5yai3phkhdlv--
