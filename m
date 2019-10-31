@@ -2,80 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81657EB128
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD42EB13C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 14:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfJaN1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 09:27:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38344 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726735AbfJaN13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 09:27:29 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B4770349A03103BE5870;
-        Thu, 31 Oct 2019 21:27:27 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 31 Oct 2019
- 21:27:19 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <oleg@redhat.com>, <rostedt@goodmis.org>, <jack@suse.cz>
-CC:     <linux-kernel@vger.kernel.org>, <zhengbin13@huawei.com>,
-        <yi.zhang@huawei.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>
-Subject: [PATCH] debugfs: fix potential infinite loop in debugfs_remove_recursive
-Date:   Thu, 31 Oct 2019 21:34:44 +0800
-Message-ID: <1572528884-67565-1-git-send-email-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727520AbfJaNac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 09:30:32 -0400
+Received: from verein.lst.de ([213.95.11.211]:51011 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbfJaNac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 09:30:32 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 88B4668C4E; Thu, 31 Oct 2019 14:30:28 +0100 (CET)
+Date:   Thu, 31 Oct 2019 14:30:28 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] Revert "nvme: Add quirk for Kingston NVME SSD
+ running FW E8FK11.T"
+Message-ID: <20191031133028.GA4617@lst.de>
+References: <20191031093408.9322-1-jian-hong@endlessm.com> <20191031132853.GA46011@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031132853.GA46011@google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-debugfs_remove_recursive uses list_empty to judge weather a dentry has
-any subdentry or not. This can lead to infinite loop when any subdir is in
-use.
+On Thu, Oct 31, 2019 at 08:28:53AM -0500, Bjorn Helgaas wrote:
+> On Thu, Oct 31, 2019 at 05:34:09PM +0800, Jian-Hong Pan wrote:
+> > Since commit 253eaf4faaaa ("PCI/MSI: Fix incorrect MSI-X masking on
+> > resume") is merged, we can revert the previous quirk now.
+> 
+> 253eaf4faaaa is pending on my pci/msi branch, planned to be merged
+> during the v5.5 merge window.
+> 
+> This revert patch must not be merged before 253eaf4faaaa.  The easiest
+> way to do that would be for me to merge this one as well; otherwise
+> we have to try to make things happen in the right order during the
+> merge window.
+> 
+> If the NVMe folks ack this idea and the patch, I'd be happy to merge
+> it.
 
-The problem was discoverd by the following steps in the console.
-1. use debugfs_create_dir to create a dir and multiple subdirs(insmod);
-2. cd to the subdir with depth not less than 2;
-3. call debugfs_remove_recursive(rmmod).
+Fine with me.
 
-After removing the subdir, the infinite loop is triggered bucause
-debugfs_remove_recursive uses list_empty to judge if the current dir
-doesn't have any subdentry, if so, remove the current dir and which
-will never happen.
-
-Fix the problem by using simple_empty instead of list_empty.
-
-Fixes: 776164c1faac ('debugfs: debugfs_remove_recursive() must not rely on list_empty(d_subdirs)')
-Reported-by: chenxiang66@hisilicon.com
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- fs/debugfs/inode.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index 7b975db..42b28acc 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -773,8 +773,10 @@ void debugfs_remove_recursive(struct dentry *dentry)
- 		if (!simple_positive(child))
- 			continue;
- 
--		/* perhaps simple_empty(child) makes more sense */
--		if (!list_empty(&child->d_subdirs)) {
-+		/* use simple_empty to prevent infinite loop when any
-+		 * subdentry of child is in use
-+		 */
-+		if (!simple_empty(child)) {
- 			spin_unlock(&parent->d_lock);
- 			inode_unlock(d_inode(parent));
- 			parent = child;
--- 
-2.7.4
-
+Acked-by: Christoph Hellwig <hch@lst.de>
