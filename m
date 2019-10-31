@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2829CEAF90
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AE4EAF6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfJaL5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:57:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55395 "EHLO
+        id S1727558AbfJaLzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:55:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55409 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbfJaLzT (ORCPT
+        with ESMTP id S1727310AbfJaLzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:19 -0400
+        Thu, 31 Oct 2019 07:55:23 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92p-00035m-Vi; Thu, 31 Oct 2019 12:55:16 +0100
+        id 1iQ92s-000373-96; Thu, 31 Oct 2019 12:55:18 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 880D51C04F4;
-        Thu, 31 Oct 2019 12:55:07 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:55:07 -0000
-From:   "tip-bot2 for Wolfgang M. Reimer" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2A00C1C06D2;
+        Thu, 31 Oct 2019 12:55:09 +0100 (CET)
+Date:   Thu, 31 Oct 2019 11:55:08 -0000
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] locking: locktorture: Do not include rwlock.h directly
-Cc:     "Wolfgang M. Reimer" <linuxball@gmail.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
+Subject: [tip: core/rcu] rcutorture: Remove CONFIG_HOTPLUG_CPU=n from scenarios
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252290720.29376.16264381220235980397.tip-bot2@tip-bot2>
+Message-ID: <157252290888.29376.7569458712945584864.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,39 +45,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     67d64918a163fd62cf3b668d69133b723c48ed96
-Gitweb:        https://git.kernel.org/tip/67d64918a163fd62cf3b668d69133b723c48ed96
-Author:        Wolfgang M. Reimer <linuxball@gmail.com>
-AuthorDate:    Mon, 16 Sep 2019 16:54:04 +02:00
+Commit-ID:     9f8ba55d49cef46da63f7863ec544e2b2b7eda66
+Gitweb:        https://git.kernel.org/tip/9f8ba55d49cef46da63f7863ec544e2b2b7eda66
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Fri, 02 Aug 2019 20:18:25 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Sat, 05 Oct 2019 11:50:24 -07:00
+CommitterDate: Sat, 05 Oct 2019 11:49:13 -07:00
 
-locking: locktorture: Do not include rwlock.h directly
+rcutorture: Remove CONFIG_HOTPLUG_CPU=n from scenarios
 
-Including rwlock.h directly will cause kernel builds to fail
-if CONFIG_PREEMPT_RT is defined. The correct header file
-(rwlock_rt.h OR rwlock.h) will be included by spinlock.h which
-is included by locktorture.c anyway.
+A number of mainstream CPU families are no longer capable of building
+kernels having CONFIG_SMP=y and CONFIG_HOTPLUG_CPU=n, so this commit
+removes this combination from the rcutorture scenarios having it.
+People wishing to try out this combination may still do so using the
+"--kconfig CONFIG_HOTPLUG_CPU=n CONFIG_SUSPEND=n CONFIG_HIBERNATION=n"
+argument to the tools/testing/selftests/rcutorture/bin/kvm.sh script
+that is used to run rcutorture.
 
-Remove the include of linux/rwlock.h.
-
-Signed-off-by: Wolfgang M. Reimer <linuxball@gmail.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/locking/locktorture.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/testing/selftests/rcutorture/configs/rcu/TASKS03      | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TREE02       | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TREE04       | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TREE06       | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TREE08       | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TREE09       | 3 ---
+ tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL      | 3 ---
+ tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt | 1 -
+ 8 files changed, 22 deletions(-)
 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 8dd9002..99475a6 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -16,7 +16,6 @@
- #include <linux/kthread.h>
- #include <linux/sched/rt.h>
- #include <linux/spinlock.h>
--#include <linux/rwlock.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
- #include <linux/smp.h>
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TASKS03 b/tools/testing/selftests/rcutorture/configs/rcu/TASKS03
+index 28568b7..ea43990 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TASKS03
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TASKS03
+@@ -1,8 +1,5 @@
+ CONFIG_SMP=y
+ CONFIG_NR_CPUS=2
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_PREEMPT_NONE=n
+ CONFIG_PREEMPT_VOLUNTARY=n
+ CONFIG_PREEMPT=y
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE02 b/tools/testing/selftests/rcutorture/configs/rcu/TREE02
+index 35e639e..65daee4 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE02
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE02
+@@ -9,9 +9,6 @@ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NO_HZ_FULL=n
+ CONFIG_RCU_FAST_NO_HZ=n
+ CONFIG_RCU_TRACE=n
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_RCU_FANOUT=3
+ CONFIG_RCU_FANOUT_LEAF=3
+ CONFIG_RCU_NOCB_CPU=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE04 b/tools/testing/selftests/rcutorture/configs/rcu/TREE04
+index 24c9f60..f6d6a40 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE04
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE04
+@@ -9,9 +9,6 @@ CONFIG_NO_HZ_IDLE=n
+ CONFIG_NO_HZ_FULL=y
+ CONFIG_RCU_FAST_NO_HZ=y
+ CONFIG_RCU_TRACE=y
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_RCU_FANOUT=4
+ CONFIG_RCU_FANOUT_LEAF=3
+ CONFIG_DEBUG_LOCK_ALLOC=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE06 b/tools/testing/selftests/rcutorture/configs/rcu/TREE06
+index 05a4eec..bf4980d 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE06
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE06
+@@ -9,9 +9,6 @@ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NO_HZ_FULL=n
+ CONFIG_RCU_FAST_NO_HZ=n
+ CONFIG_RCU_TRACE=n
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_RCU_FANOUT=6
+ CONFIG_RCU_FANOUT_LEAF=6
+ CONFIG_RCU_NOCB_CPU=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE08 b/tools/testing/selftests/rcutorture/configs/rcu/TREE08
+index fb1c763..c810c52 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE08
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE08
+@@ -9,9 +9,6 @@ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NO_HZ_FULL=n
+ CONFIG_RCU_FAST_NO_HZ=n
+ CONFIG_RCU_TRACE=n
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_RCU_FANOUT=3
+ CONFIG_RCU_FANOUT_LEAF=2
+ CONFIG_RCU_NOCB_CPU=y
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE09 b/tools/testing/selftests/rcutorture/configs/rcu/TREE09
+index 6710e74..8523a75 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE09
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE09
+@@ -8,9 +8,6 @@ CONFIG_HZ_PERIODIC=n
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NO_HZ_FULL=n
+ CONFIG_RCU_TRACE=n
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_RCU_NOCB_CPU=n
+ CONFIG_DEBUG_LOCK_ALLOC=n
+ CONFIG_RCU_BOOST=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL b/tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL
+index 4d8eb5b..5d546ef 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TRIVIAL
+@@ -6,9 +6,6 @@ CONFIG_PREEMPT=n
+ CONFIG_HZ_PERIODIC=n
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NO_HZ_FULL=n
+-CONFIG_HOTPLUG_CPU=n
+-CONFIG_SUSPEND=n
+-CONFIG_HIBERNATION=n
+ CONFIG_DEBUG_LOCK_ALLOC=n
+ CONFIG_DEBUG_OBJECTS_RCU_HEAD=n
+ CONFIG_RCU_EXPERT=y
+diff --git a/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt b/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
+index af6fca0..1b96d68 100644
+--- a/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
++++ b/tools/testing/selftests/rcutorture/doc/TREE_RCU-kconfig.txt
+@@ -6,7 +6,6 @@ Kconfig Parameters:
+ 
+ CONFIG_DEBUG_LOCK_ALLOC -- Do three, covering CONFIG_PROVE_LOCKING & not.
+ CONFIG_DEBUG_OBJECTS_RCU_HEAD -- Do one.
+-CONFIG_HOTPLUG_CPU -- Do half.  (Every second.)
+ CONFIG_HZ_PERIODIC -- Do one.
+ CONFIG_NO_HZ_IDLE -- Do those not otherwise specified. (Groups of two.)
+ CONFIG_NO_HZ_FULL -- Do two, one with partial CPU enablement.
