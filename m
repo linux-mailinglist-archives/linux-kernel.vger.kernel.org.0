@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D44EAF45
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 110FFEAF9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfJaLzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:55:31 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55352 "EHLO
+        id S1727935AbfJaL5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:57:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55347 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfJaLzO (ORCPT
+        with ESMTP id S1726944AbfJaLzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:14 -0400
+        Thu, 31 Oct 2019 07:55:12 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92i-00030z-Vk; Thu, 31 Oct 2019 12:55:09 +0100
+        id 1iQ92j-00031J-M0; Thu, 31 Oct 2019 12:55:09 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7E6591C04DF;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DCE651C04D7;
         Thu, 31 Oct 2019 12:55:03 +0100 (CET)
 Date:   Thu, 31 Oct 2019 11:55:03 -0000
-From:   "tip-bot2 for Joel Fernandes (Google)" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] Revert docs from "rcu: Restore barrier() to
- rcu_read_lock() and rcu_read_unlock()"
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
+Subject: [tip: core/rcu] rcu: Make kernel-mode nohz_full CPUs invoke the RCU
+ core processing
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252290322.29376.3242675913911109273.tip-bot2@tip-bot2>
+Message-ID: <157252290360.29376.4793978038734953610.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,111 +46,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     97df75cde57f0a24075200e22d9e2cfb1f2e195b
-Gitweb:        https://git.kernel.org/tip/97df75cde57f0a24075200e22d9e2cfb1f2e195b
-Author:        Joel Fernandes (Google) <joel@joelfernandes.org>
-AuthorDate:    Thu, 01 Aug 2019 17:39:16 -04:00
+Commit-ID:     dd7dafd1ad50aa9ed7958235431f243ea131ee7d
+Gitweb:        https://git.kernel.org/tip/dd7dafd1ad50aa9ed7958235431f243ea131ee7d
+Author:        Paul E. McKenney <paulmck@kernel.org>
+AuthorDate:    Sat, 14 Sep 2019 03:39:22 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Tue, 29 Oct 2019 02:43:50 -07:00
+CommitterDate: Mon, 28 Oct 2019 07:02:21 -07:00
 
-Revert docs from "rcu: Restore barrier() to rcu_read_lock() and rcu_read_unlock()"
+rcu: Make kernel-mode nohz_full CPUs invoke the RCU core processing
 
-This reverts docs from commit d6b9cd7dc8e041ee83cb1362fce59a3cdb1f2709.
+If a nohz_full CPU is idle or executing in userspace, it makes good sense
+to keep it out of RCU core processing.  After all, the RCU grace-period
+kthread can see its quiescent states and all of its callbacks are
+offloaded, so there is nothing for RCU core processing to do.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-[ paulmck: Added Joel's SoB per Stephen Rothwell feedback. ]
-[ paulmck: Joel approved via private email. ]
+However, if a nohz_full CPU is executing in kernel space, the RCU
+grace-period kthread cannot do anything for it, so such a CPU must report
+its own quiescent states.  This commit therefore makes nohz_full CPUs
+skip RCU core processing only if the scheduler-clock interrupt caught
+them in idle or in userspace.
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/Design/Requirements/Requirements.html | 71 +--------
- 1 file changed, 71 deletions(-)
+ kernel/rcu/tree.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
-index 467251f..bdbc84f 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.html
-+++ b/Documentation/RCU/Design/Requirements/Requirements.html
-@@ -2129,8 +2129,6 @@ Some of the relevant points of interest are as follows:
- <li>	<a href="#Hotplug CPU">Hotplug CPU</a>.
- <li>	<a href="#Scheduler and RCU">Scheduler and RCU</a>.
- <li>	<a href="#Tracing and RCU">Tracing and RCU</a>.
--<li>	<a href="#Accesses to User Memory and RCU">
--Accesses to User Memory and RCU</a>.
- <li>	<a href="#Energy Efficiency">Energy Efficiency</a>.
- <li>	<a href="#Scheduling-Clock Interrupts and RCU">
- 	Scheduling-Clock Interrupts and RCU</a>.
-@@ -2523,75 +2521,6 @@ cannot be used.
- The tracing folks both located the requirement and provided the
- needed fix, so this surprise requirement was relatively painless.
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0c8046b..4e6ae26 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -497,7 +497,7 @@ module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next
+ module_param(rcu_kick_kthreads, bool, 0644);
  
--<h3><a name="Accesses to User Memory and RCU">
--Accesses to User Memory and RCU</a></h3>
--
--<p>
--The kernel needs to access user-space memory, for example, to access
--data referenced by system-call parameters.
--The <tt>get_user()</tt> macro does this job.
--
--<p>
--However, user-space memory might well be paged out, which means
--that <tt>get_user()</tt> might well page-fault and thus block while
--waiting for the resulting I/O to complete.
--It would be a very bad thing for the compiler to reorder
--a <tt>get_user()</tt> invocation into an RCU read-side critical
--section.
--For example, suppose that the source code looked like this:
--
--<blockquote>
--<pre>
-- 1 rcu_read_lock();
-- 2 p = rcu_dereference(gp);
-- 3 v = p-&gt;value;
-- 4 rcu_read_unlock();
-- 5 get_user(user_v, user_p);
-- 6 do_something_with(v, user_v);
--</pre>
--</blockquote>
--
--<p>
--The compiler must not be permitted to transform this source code into
--the following:
--
--<blockquote>
--<pre>
-- 1 rcu_read_lock();
-- 2 p = rcu_dereference(gp);
-- 3 get_user(user_v, user_p); // BUG: POSSIBLE PAGE FAULT!!!
-- 4 v = p-&gt;value;
-- 5 rcu_read_unlock();
-- 6 do_something_with(v, user_v);
--</pre>
--</blockquote>
--
--<p>
--If the compiler did make this transformation in a
--<tt>CONFIG_PREEMPT=n</tt> kernel build, and if <tt>get_user()</tt> did
--page fault, the result would be a quiescent state in the middle
--of an RCU read-side critical section.
--This misplaced quiescent state could result in line&nbsp;4 being
--a use-after-free access, which could be bad for your kernel's
--actuarial statistics.
--Similar examples can be constructed with the call to <tt>get_user()</tt>
--preceding the <tt>rcu_read_lock()</tt>.
--
--<p>
--Unfortunately, <tt>get_user()</tt> doesn't have any particular
--ordering properties, and in some architectures the underlying <tt>asm</tt>
--isn't even marked <tt>volatile</tt>.
--And even if it was marked <tt>volatile</tt>, the above access to
--<tt>p-&gt;value</tt> is not volatile, so the compiler would not have any
--reason to keep those two accesses in order.
--
--<p>
--Therefore, the Linux-kernel definitions of <tt>rcu_read_lock()</tt>
--and <tt>rcu_read_unlock()</tt> must act as compiler barriers,
--at least for outermost instances of <tt>rcu_read_lock()</tt> and
--<tt>rcu_read_unlock()</tt> within a nested set of RCU read-side critical
--sections.
--
- <h3><a name="Energy Efficiency">Energy Efficiency</a></h3>
+ static void force_qs_rnp(int (*f)(struct rcu_data *rdp));
+-static int rcu_pending(void);
++static int rcu_pending(int user);
  
- <p>
+ /*
+  * Return the number of RCU GPs completed thus far for debug & stats.
+@@ -2267,7 +2267,7 @@ void rcu_sched_clock_irq(int user)
+ 		__this_cpu_write(rcu_data.rcu_urgent_qs, false);
+ 	}
+ 	rcu_flavor_sched_clock_irq(user);
+-	if (rcu_pending())
++	if (rcu_pending(user))
+ 		invoke_rcu_core();
+ 
+ 	trace_rcu_utilization(TPS("End scheduler-tick"));
+@@ -2816,7 +2816,7 @@ EXPORT_SYMBOL_GPL(cond_synchronize_rcu);
+  * CPU-local state are performed first.  However, we must check for CPU
+  * stalls first, else we might not get a chance.
+  */
+-static int rcu_pending(void)
++static int rcu_pending(int user)
+ {
+ 	bool gp_in_progress;
+ 	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+@@ -2829,8 +2829,8 @@ static int rcu_pending(void)
+ 	if (rcu_nocb_need_deferred_wakeup(rdp))
+ 		return 1;
+ 
+-	/* Is this CPU a NO_HZ_FULL CPU that should ignore RCU? */
+-	if (rcu_nohz_full_cpu())
++	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
++	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+ 		return 0;
+ 
+ 	/* Is the RCU core waiting for a quiescent state from this CPU? */
