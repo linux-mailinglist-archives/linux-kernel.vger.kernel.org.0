@@ -2,80 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E2AEAF14
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74954EAF17
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfJaLlL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 07:41:11 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:51684 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726713AbfJaLlL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:41:11 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-109-GB0xbnyiMwuYT7SsYZLvhA-2; Thu, 31 Oct 2019 11:41:06 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 31 Oct 2019 11:41:06 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 31 Oct 2019 11:41:06 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christian Brauner' <christian.brauner@ubuntu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        GNU C Library <libc-alpha@sourceware.org>
-CC:     Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-        "Jann Horn" <jannh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] clone3: validate stack arguments
-Thread-Topic: [PATCH] clone3: validate stack arguments
-Thread-Index: AQHVj99vS5K32QXnq0iIRbo0zlqhOad0n6Aw
-Date:   Thu, 31 Oct 2019 11:41:06 +0000
-Message-ID: <c600032527d24cf2a7dfd8a81467fd6f@AcuMS.aculab.com>
-References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
-In-Reply-To: <20191031113608.20713-1-christian.brauner@ubuntu.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726860AbfJaLl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:41:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51324 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726462AbfJaLlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 07:41:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E029BAF7A;
+        Thu, 31 Oct 2019 11:41:53 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id C5436DA783; Thu, 31 Oct 2019 12:42:02 +0100 (CET)
+Date:   Thu, 31 Oct 2019 12:42:02 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] btrfs: clean up locking name in scrub_enumerate_chunks()
+Message-ID: <20191031114202.GF3001@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dan Carpenter <dan.carpenter@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20191031105501.GB26612@mwanda>
 MIME-Version: 1.0
-X-MC-Unique: GB0xbnyiMwuYT7SsYZLvhA-2
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031105501.GB26612@mwanda>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Brauner
-> Sent: 31 October 2019 11:36
-...
-> /* Intentional user visible API change */
-> clone3() was released with 5.3. Currently, it is not documented and very
-> unclear to userspace how the stack and stack_size argument have to be
-> passed. After talking to glibc folks we concluded that trying to change
-> clone3() to setup the stack instead of requiring userspace to do this is
-> the right course of action.
+On Thu, Oct 31, 2019 at 01:55:01PM +0300, Dan Carpenter wrote:
+> The "&fs_info->dev_replace.rwsem" and "&dev_replace->rwsem" refer to
+> the same lock but Smatch is not clever enough to figure that out so it
+> leads to static checker warnings.  It's better to use it consistently
+> anyway.
 
-What happens if someone 'accidentally' runs a program compiled for
-the new API on a system running the existing 5.3 kernel?
+Both reasons, smatch and code consitency are fine, thanks.
 
-While it won't work, it needs to die reasonably gracefully.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Reviewed-by: David Sterba <dsterba@suse.com>
