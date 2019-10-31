@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0398EBA01
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D07EBA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:53:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfJaWxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 18:53:36 -0400
-Received: from smtprelay0099.hostedemail.com ([216.40.44.99]:43479 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726540AbfJaWxf (ORCPT
+        id S1728260AbfJaWxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 18:53:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42514 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbfJaWxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 18:53:35 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id F01BB837F24D;
-        Thu, 31 Oct 2019 22:53:33 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2110:2393:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3873:3874:4321:4425:5007:6119:6120:7901:7903:10004:10400:10848:11232:11473:11658:11914:12048:12296:12297:12555:12740:12760:12895:13069:13160:13229:13255:13311:13357:13439:14096:14097:14180:14659:14721:21080:21212:21451:21627:30054:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: pipe73_3c057c4d0b128
-X-Filterd-Recvd-Size: 2331
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 31 Oct 2019 22:53:32 +0000 (UTC)
-Message-ID: <3078d0a186cca2dfae741908ffff41f1bdb30eae.camel@perches.com>
-Subject: Re: [PATCH 3.16 47/47] KVM: x86/vPMU: refine kvm_pmu err msg when
- event creation failed
-From:   Joe Perches <joe@perches.com>
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
-Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        Like Xu <like.xu@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Date:   Thu, 31 Oct 2019 15:53:23 -0700
-In-Reply-To: <05be6a70382f1990a2ba6aba9ac75dac0c55f7fb.camel@decadent.org.uk>
-References: <lsq.1572026582.631294584@decadent.org.uk>
-         <220d8f2c1b299d2e71fdcf50b98286aae5b0c6f2.camel@perches.com>
-         <05be6a70382f1990a2ba6aba9ac75dac0c55f7fb.camel@decadent.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 31 Oct 2019 18:53:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a15so7975829wrf.9;
+        Thu, 31 Oct 2019 15:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sAzljLRgSt0T4SkgYsaqgvjH5/V1zSYWw1k97qxMfJk=;
+        b=DdnQ2aG41QAJSboenV4wySHF2meXgLSRA649oxBw9RAPNghNJEHSiFM5YwuLI8CfeO
+         df5hfVi+DcA4OKQihRG6s5omuAbGxCR0URTee3j4Jg12CTsH/YdWWd+nh2eUmUXZYFXL
+         CcDRMGPtcCa527wuEKWJ8tCjBX10DrMrAplEzF4N9JEKS0LniqTiIhNfm4KwTjO+FUB+
+         dTi6qDoHGsoHcK+UJY2SyU72bOIWNXelJKWzO+O3toJQGOrHGTWBXGShL1gF2MXio8Xn
+         EcPWDxo/sH4akb07nPs+3Q9KmL/TK6/eZjMMROlvPWUgs3g/cp9L4UQZSL+Co8p5yLMq
+         RcQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=sAzljLRgSt0T4SkgYsaqgvjH5/V1zSYWw1k97qxMfJk=;
+        b=cov24UiiLokjumC/QDmFykp3+YctReUcRoRhE+53gswRffYZBnvqScKwv29rYCUCLj
+         SSM2hReK+l0HcdqDzx4MIAwRxXlz0hagwHdeVcwuw/0+wWgw9uewtQzfvSkWbflVOdCX
+         KDOucDjJOwGaF2fDfn+s2BEJu+JPKD78qPmHIuhusZNuGjuSp3GHbs4V5va8ViZD9dQw
+         aYF/CWao0ueujQzZkm+0Yvgc6MofkGe9XlPqFEOLyQU2x2TaPZAUnATt4KurepaM6m7h
+         2o1uDLuTSXRNnSVt+KaeMdFS/fMnIeDRz0YeFh79NmFowWcYysnzQPvut9NG/OrcU+Cq
+         3kbQ==
+X-Gm-Message-State: APjAAAWcGJLz4nOg/SsQ4Kt8+ui4zVSAOkzPH0f6JkGY6t7kLBWjD3+2
+        DMjCWvf9y+sPsH3xB0qZBAuyTd2OZQo=
+X-Google-Smtp-Source: APXvYqz1p8qVO3J188bjhlrVa1hJ4uYvoW5VQM0J2M2QgJVLMiEUUEHEjKw1yL5l5r9CQzgCBegF9A==
+X-Received: by 2002:a5d:6448:: with SMTP id d8mr5306172wrw.88.1572562425910;
+        Thu, 31 Oct 2019 15:53:45 -0700 (PDT)
+Received: from donizetti.redhat.com (94.222.26.109.rev.sfr.net. [109.26.222.94])
+        by smtp.gmail.com with ESMTPSA id l4sm4673235wml.33.2019.10.31.15.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2019 15:53:44 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@kernel.org,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM patches for Linux 5.4-rc6
+Date:   Thu, 31 Oct 2019 23:53:47 +0100
+Message-Id: <20191031225347.26587-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-31 at 22:14 +0000, Ben Hutchings wrote:
-> On Fri, 2019-10-25 at 12:05 -0700, Joe Perches wrote:
-> > On Fri, 2019-10-25 at 19:03 +0100, Ben Hutchings wrote:
-> > > 3.16.76-rc1 review patch.  If anyone has any objections, please let me know.
-> > 
-> > This seems more like an enhancement than a bug fix.
-> > 
-> > Is this really the type of patch that is appropriate
-> > for stable?
-> 
-> Apparently so:
-> 
-> v4.14.135: eba797dbf352 KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
-> v4.19.61: ba27a25df6df KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
-> v4.4.187: 505c011f9f53 KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
-> v4.9.187: 3984eae04473 KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
-> v5.1.20: edadec197fbf KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
-> v5.2.3: 9f062aef7356 KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
+Linus,
 
-I think not, but hey, maybe you and Greg do.
+The following changes since commit 671ddc700fd08b94967b1e2a937020e30c838609:
 
-Porting enhancements, even trivial ones, imo is
-not a great thing for stable branches.
+  KVM: nVMX: Don't leak L1 MMIO regions to L2 (2019-10-22 19:04:40 +0200)
 
-My perspective is that only bug fixes should be
-applied to stable branches.
+are available in the Git repository at:
 
-cheers, Joe
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
+for you to fetch changes up to 9167ab79936206118cc60e47dcb926c3489f3bd5:
+
+  KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active (2019-10-31 12:13:44 +0100)
+
+----------------------------------------------------------------
+Generic: fix memory leak failure to create VM.
+x86: fix MMU corner case with AMD nested paging disabled.
+
+----------------------------------------------------------------
+Jim Mattson (2):
+      kvm: Allocate memslots and buses before calling kvm_arch_init_vm
+      kvm: call kvm_arch_destroy_vm if vm creation fails
+
+Paolo Bonzini (1):
+      KVM: vmx, svm: always run with EFER.NXE=1 when shadow paging is active
+
+ arch/x86/kvm/svm.c     | 10 ++++++++--
+ arch/x86/kvm/vmx/vmx.c | 14 +++-----------
+ virt/kvm/kvm_main.c    | 48 ++++++++++++++++++++++++++----------------------
+ 3 files changed, 37 insertions(+), 35 deletions(-)
