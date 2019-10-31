@@ -2,149 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC062EB808
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA03EB811
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfJaTiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 15:38:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45482 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbfJaTiH (ORCPT
+        id S1729612AbfJaTl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 15:41:58 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46557 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfJaTl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 15:38:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q13so7541981wrs.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 12:38:05 -0700 (PDT)
+        Thu, 31 Oct 2019 15:41:57 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f19so4702752pgn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 12:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=+EvzfZrqdYqHDev8dLW1TnhbqBUOU1ldaZUU4csOsJ4=;
-        b=FN/roHOZr7P/8j0nbuAASAdcsD7iynefrlMRP6pm/m13O+mALXV8PhRuAFdkTP9kiB
-         cjkwD9tcEVU1VXnfPZuYdCorAyprYQ6tyxlFzkulCfbjNaFA0Srip70Kw20kFaKY9KAI
-         L/IuoMpmSe9PWAxv4uicN3KYT75HXvOFjPc1a/bQ86LpcV//HLP/5tkHyK3OUj0KfY1f
-         +mY+H8LoEp6POf3TcLcNePGk9QHJGuBVWhJIBu7b7KHzUvg+BCR2DHQIlhHRRtX/4ROt
-         FkB5OVzaHe4tgJiUg5Y2MKIw5EQMhLjJAGdIXplKrqANy45h3Kb23vaPaOnoRolMXdyv
-         VErw==
+        bh=AhjfIod7SQCQHZV7lhiJk5rEvnUEd1LmAIrAKGF1ifE=;
+        b=pvebIAAjYa8iAiEqMGvnxsLMzzKlHrpnTijyHM1zSWRukHFcMWhu9kJKOf7iO7IpjO
+         JsP1kiL28p94Xdd+8mAO9XFhZppUptWaO5yzT+CBfUUZfVSBZTBjM9CkPGu1NtSirEVO
+         rTqo9TbFRBm4EAEMLIdIMYi5ztPjt8y4Tpg8hxjZi5TUcoGne0v5dR6ThE4AqEUvn86k
+         V92bCCXeiV/EIcdvvjeoBAto0pNnZfqWcwgTeXAgJrofROuY3ynjYOPLoA7ioxSeyHYW
+         hV54DTHeyLkfyGQJpTeDHLBtWTY+XdwCQr8ujU4oRHFzqyAs0Jc7TxKdzuCEvmsG3gLE
+         LJNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+EvzfZrqdYqHDev8dLW1TnhbqBUOU1ldaZUU4csOsJ4=;
-        b=E894XYHmTN+f13Em8POmL0wH921ginAdnKwRu8Gn+pn4omsLHLshEn7F2FZyuwSxTJ
-         OtZe3AMju83FVvle1J6xayvVNu4Rkuwcc6zsyQ+Aqk18OcuLOT5zkE4P6tsT3ldTqZME
-         58X4fILmphxIAes9MMadaN/BgLi78uoF5Sc/WoZOnLNy1yf9aBdhabu79mFA/Gl0dnKX
-         1u94ZDW/wHuKdUVQKVVUPpANNUFg0I9HzBurK3qm/s8hwApCPt80+QO3Fr0KetDgRGAN
-         K04enfeP07ORgg2Z5Jsj9JW8an5C5RSf8LBEFCLU/CqI6GkTfXk4/Oep6TLuxzS+usKe
-         jmSw==
-X-Gm-Message-State: APjAAAWnK0gUiTAbNYb7SwcpYO8b9bZJBqzVfzfNuXCkZgf/z7l8Asi5
-        0xcUNA9WzSPyLgmrxNELLGPjRQ==
-X-Google-Smtp-Source: APXvYqwbdJQoh/2euMx+QaviAzBt8nIxs5u/19OhK61v5Oqa7PEpzAzRd3wQJX9IgD8VQ1P7F7ONkQ==
-X-Received: by 2002:a5d:624f:: with SMTP id m15mr6622742wrv.59.1572550683439;
-        Thu, 31 Oct 2019 12:38:03 -0700 (PDT)
-Received: from lophozonia (laubervilliers-657-1-66-95.w90-63.abo.wanadoo.fr. [90.63.227.95])
-        by smtp.gmail.com with ESMTPSA id b186sm4299983wmb.21.2019.10.31.12.38.01
+        bh=AhjfIod7SQCQHZV7lhiJk5rEvnUEd1LmAIrAKGF1ifE=;
+        b=NnZ8Mpq+lE0vdBRBKIOuPyB7CfcywfHRKEFT358i4HT14NxS9Uty6izAgoVCP7ZMQ8
+         HDu19ld4gQL5C5OwGfR64VEKmU2YM/CLjd9yfL9kX6NA36gwpvVgU+d/tlCNgphC3KGl
+         EEQ2PE2FNfNZDHStijaYKrv9r+cxuZCLqAOyXVNjafXgP+HTudcw7tipAcJhePYWUKj6
+         ZbZTvwb/4a1gi6qRAc1Mn3EIHRnIp5kjJ7tnsyPMeEh+hqgPoxtb6kLFd7q9VC3zREl/
+         oo0XWWNiNkv2Msnm68rZPXwbehsxaja1E7fzfCYr09wF/aXNu9d9TSmCpExElFmyoELO
+         i7hQ==
+X-Gm-Message-State: APjAAAXuOXt1aBxho7siCyz2eks5pnL7EAuZfrPd55Wd6IMezwkRjh/+
+        n/kCjIOXUxt5bnum99ujGmIW4g==
+X-Google-Smtp-Source: APXvYqzwSncZfbsCu8/7tq36MfxWW3WNUjm6V4/NRyM4kpZCJyiBSQ0YTBUq8dOGWtkNqtMIporK2w==
+X-Received: by 2002:a63:4501:: with SMTP id s1mr8655227pga.5.1572550916256;
+        Thu, 31 Oct 2019 12:41:56 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t9sm7460172pjq.21.2019.10.31.12.41.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 12:38:02 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 20:37:58 +0100
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Will Deacon <will@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
-Message-ID: <20191031193758.GA2607492@lophozonia>
-References: <20191030145112.19738-1-will@kernel.org>
- <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
- <20191030155444.GC19096@willie-the-truck>
- <CAGETcx9ogWQC1ZtnS_4xC3ShqBpuRSKudWEEWC22UZUEhdEU4A@mail.gmail.com>
+        Thu, 31 Oct 2019 12:41:55 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 12:41:53 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH 2/2] remoteproc: qcom_q6v5_mss: Validate each segment
+ during loading
+Message-ID: <20191031194153.GN1929@tuxbook-pro>
+References: <20191031184632.2938295-1-bjorn.andersson@linaro.org>
+ <20191031184632.2938295-3-bjorn.andersson@linaro.org>
+ <CAOCk7Nr+nsfvaLbPK9q_Uyhy5s=Nx9A8w-HPtVmBPpfVNMhTJQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGETcx9ogWQC1ZtnS_4xC3ShqBpuRSKudWEEWC22UZUEhdEU4A@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <CAOCk7Nr+nsfvaLbPK9q_Uyhy5s=Nx9A8w-HPtVmBPpfVNMhTJQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Saravana, Will,
+On Thu 31 Oct 12:13 PDT 2019, Jeffrey Hugo wrote:
 
-On Wed, Oct 30, 2019 at 05:57:44PM -0700, Saravana Kannan via iommu wrote:
-> > > > Obviously you need to be careful about using IOMMU drivers as modules,
-> > > > since late loading of the driver for an IOMMU serving active DMA masters
-> > > > is going to end badly in many cases. On Android, we're using device links
-> > > > to ensure that the IOMMU probes first.
-> > >
-> > > Out of curiosity, which device links are those? Clearly not the RPM links
-> > > created by the IOMMU drivers themselves... Is this some special Android
-> > > magic, or is there actually a chance of replacing all the
-> > > of_iommu_configure() machinery with something more generic?
+> On Thu, Oct 31, 2019 at 12:48 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
 > >
-> > I'll admit that I haven't used them personally yet, but I'm referring to
-> > this series from Saravana [CC'd]:
+> > The code used to sync with the MBA after each segment loaded and this is
+> > still what's done downstream. So reduce the delta towards downstream by
+> > switching to a model where the content is iteratively validated.
 > >
-> > https://lore.kernel.org/linux-acpi/20190904211126.47518-1-saravanak@google.com/
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  drivers/remoteproc/qcom_q6v5_mss.c | 74 ++++++++++++++++++++----------
+> >  1 file changed, 50 insertions(+), 24 deletions(-)
 > >
-> > which is currently sitting in linux-next now that we're upstreaming the
-> > "special Android magic" ;)
-
-Neat, I'm trying to do the same for virtio-iommu. It needs to be modular
-because it depends on the virtio transport, which distributions usually
-build as a module. So far I've been managing the device links in
-virtio-iommu's add_device() and remove_device() callbacks [1]. Since it
-relies on the existing probe deferral, I had to make a special case for
-virtio-iommu to avoid giving up after initcalls_done [2].
-
-Currently buggy, it explodes on the second modprobe.
-
-[1] http://jpbrucker.net/git/linux/commit/?h=virtio-iommu/module-2019-10-31&id=f72978be18cb52eaa2d46dc762711bacbfab5039
-[2] http://jpbrucker.net/git/linux/commit/?h=virtio-iommu/module-2019-10-31&id=f5fe188bb7fde33422ef08b9aad956dc3c77ec39
-
-[...]
-> Wrt IOMMUs, the only missing piece in upstream is a trivial change
-> that does something like this in drivers/of/property.c
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> > index f4a02105d539..bdf1dd00b89b 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -358,23 +358,29 @@ static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
+> >  }
+> >
+> >  static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
+> > -                                  bool remote_owner, phys_addr_t addr,
+> > +                                  bool local, bool remote, phys_addr_t addr,
+> >                                    size_t size)
+> >  {
+> > -       struct qcom_scm_vmperm next;
+> > +       struct qcom_scm_vmperm next[2];
+> > +       int perms = 0;
+> >
+> >         if (!qproc->need_mem_protection)
+> >                 return 0;
+> > -       if (remote_owner && *current_perm == BIT(QCOM_SCM_VMID_MSS_MSA))
+> > -               return 0;
+> > -       if (!remote_owner && *current_perm == BIT(QCOM_SCM_VMID_HLOS))
+> > -               return 0;
+> >
+> > -       next.vmid = remote_owner ? QCOM_SCM_VMID_MSS_MSA : QCOM_SCM_VMID_HLOS;
+> > -       next.perm = remote_owner ? QCOM_SCM_PERM_RW : QCOM_SCM_PERM_RWX;
+> > +       if (local) {
+> > +               next[perms].vmid = QCOM_SCM_VMID_HLOS;
+> > +               next[perms].perm = QCOM_SCM_PERM_RWX;
 > 
-> +static struct device_node *parse_iommus(struct device_node *np,
-> +                                        const char *prop_name, int index)
-> +{
-> +        return parse_prop_cells(np, prop_name, index, "iommus",
-> +                                "#iommu-cells");
-> +}
-
-The 'iommus' property only applies to platform devices, do you have any
-plan for PCI?  PCI devices generally don't have a DT node. Only their root
-bridge has a node, with an 'iommu-map' property instead of 'iommus', so
-I don't think add_links() would get called for them.
-
-I'm also unsure about distro vendors agreeing to a mandatory kernel
-parameter (of_devlink). Do you plan to eventually enable it by default?
-
-> static const struct supplier_bindings of_supplier_bindings[] = {
->         { .parse_prop = parse_clocks, },
->         { .parse_prop = parse_interconnects, },
->         { .parse_prop = parse_regulators, },
-> +        { .parse_prop = parse_iommus, },
->         {},
-> };
+> So, does this need to be tristate?  Downstream makes the HLOS perms
+> RWX only when HLOS is the sole owner.  HLOS has RW perms when it
+> shares ownership with the remote (modem).
 > 
-> I plan to upstream this pretty soon, but I have other patches in
-> flight that touch the same file and I'm waiting for those to get
-> accepted. I also want to clean up the code a bit to reduce some
-> repetition before I add support for more bindings.
 
-I'm also wondering about ACPI support. IOMMU already has a sort of
-canonical code path that links endpoints to their IOMMU
-(iommu_probe_device()), after the firmware descriptions have been parsed.
-So if we created the device links in the iommu core, for example
-iommu_bus_notifier(), we would support all firmware interface flavors.
-Otherwise we'll have to create those device links in the IORT driver as
-well (plus DMAR and IVRS if they want it).
+I've not seen any issues with retaining the X in my testing so far, and
+it does make the code cleaner.
 
-Robin pointed out that the SMMU drivers already have device links for
-power management, can those be reused for module support as well?  I think
-the device_link_add() flags might need to differ but I haven't looked
-closely at the implementation yet.
+> > +               perms++;
+> > +       }
+> > +
+> > +       if (remote) {
+> > +               next[perms].vmid = QCOM_SCM_VMID_MSS_MSA;
+> > +               next[perms].perm = QCOM_SCM_PERM_RW;
+> > +               perms++;
+> > +       }
+> >
+> >         return qcom_scm_assign_mem(addr, ALIGN(size, SZ_4K),
+> > -                                  current_perm, &next, 1);
+> > +                                  current_perm, next, perms);
+> >  }
+> >
+> >  static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+> > @@ -681,7 +687,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+> >
+> >         /* Hypervisor mapping to access metadata by modem */
+> >         mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
+> > -       ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, true, phys, size);
+> > +       ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, false, true, phys, size);
+> >         if (ret) {
+> >                 dev_err(qproc->dev,
+> >                         "assigning Q6 access to metadata failed: %d\n", ret);
+> > @@ -699,7 +705,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+> >                 dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+> >
+> >         /* Metadata authentication done, remove modem access */
+> > -       xferop_ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, false, phys, size);
+> > +       xferop_ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, true, false, phys, size);
+> >         if (xferop_ret)
+> >                 dev_warn(qproc->dev,
+> >                          "mdt buffer not reclaimed system may become unstable\n");
+> > @@ -786,7 +792,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+> >         }
+> >
+> >         /* Assign MBA image access in DDR to q6 */
+> > -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
+> > +       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false, true,
+> >                                       qproc->mba_phys, qproc->mba_size);
+> >         if (ret) {
+> >                 dev_err(qproc->dev,
+> > @@ -820,8 +826,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+> >         q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+> >
+> >  reclaim_mba:
+> > -       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
+> > -                                               qproc->mba_phys,
+> > +       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
+> > +                                               false, qproc->mba_phys,
+> >                                                 qproc->mba_size);
+> >         if (xfermemop_ret) {
+> >                 dev_err(qproc->dev,
+> > @@ -888,7 +894,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+> >         /* In case of failure or coredump scenario where reclaiming MBA memory
+> >          * could not happen reclaim it here.
+> >          */
+> > -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
+> > +       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true, false,
+> >                                       qproc->mba_phys,
+> >                                       qproc->mba_size);
+> >         WARN_ON(ret);
+> > @@ -915,6 +921,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >         phys_addr_t boot_addr;
+> >         phys_addr_t min_addr = PHYS_ADDR_MAX;
+> >         phys_addr_t max_addr = 0;
+> > +       u32 code_length;
+> >         bool relocate = false;
+> >         char *fw_name;
+> >         size_t fw_name_len;
+> > @@ -965,9 +972,19 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >         }
+> >
+> >         /* Try to reset ownership back to Linux */
+> > -       q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
+> > +       q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true, false,
+> >                                 qproc->mpss_phys, qproc->mpss_size);
+> >
+> > +       /* Share ownership between Linux and MSS, during segment loading */
+> > +       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true, true,
+> > +                                     qproc->mpss_phys, qproc->mpss_size);
+> > +       if (ret) {
+> > +               dev_err(qproc->dev,
+> > +                       "assigning Q6 access to mpss memory failed: %d\n", ret);
+> > +               ret = -EAGAIN;
+> > +               goto release_firmware;
+> > +       }
+> > +
+> >         mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+> >         qproc->mpss_reloc = mpss_reloc;
+> >         /* Load firmware segments */
+> > @@ -1016,10 +1033,24 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >                                phdr->p_memsz - phdr->p_filesz);
+> >                 }
+> >                 size += phdr->p_memsz;
+> > +
+> > +               code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+> > +               if (!code_length) {
+> > +                       boot_addr = relocate ? qproc->mpss_phys : min_addr;
+> > +                       writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+> > +                       writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+> > +               }
+> > +               writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+> 
+> Should there be an explicit wmb() here since presumably this write
+> needs to be flushed out before we do the following readl?
+> 
 
-Thanks,
-Jean
+Doesn't the readl of an adjacent register wait for the write to hit the
+hardware before returning its value?
+
+> > +               ret = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+> 
+> Is this status reg immediately updated when RMB_PMI_CODE_LENGTH_REG is
+> updated?  I would expect that the MBA may need some time to update
+> this reg, thus there is an implicit race here.
+> 
+
+I don't see any waiting going on downstream and afaict there wouldn't be
+any harm in not waiting for the status register to go negative, as
+issues will either be caught on the next iteration or when we're
+checking the final status.
+
+Presumably though there could be an issue if this somehow depended on us
+not loading the next chunk until this has "stabilized".
+
+But afaict, this is how downstream does it...
+
+Regards,
+Bjorn
+
+> > +               if (ret < 0) {
+> > +                       dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
+> > +                       goto release_firmware;
+> > +               }
+> >         }
+> >
+> >         /* Transfer ownership of modem ddr region to q6 */
+> > -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true,
+> > +       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false, true,
+> >                                       qproc->mpss_phys, qproc->mpss_size);
+> >         if (ret) {
+> >                 dev_err(qproc->dev,
+> > @@ -1028,11 +1059,6 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >                 goto release_firmware;
+> >         }
+> >
+> > -       boot_addr = relocate ? qproc->mpss_phys : min_addr;
+> > -       writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+> > -       writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+> > -       writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+> > -
+> >         ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+> >         if (ret == -ETIMEDOUT)
+> >                 dev_err(qproc->dev, "MPSS authentication timed out\n");
+> > @@ -1096,8 +1122,8 @@ static int q6v5_start(struct rproc *rproc)
+> >                 goto reclaim_mpss;
+> >         }
+> >
+> > -       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
+> > -                                               qproc->mba_phys,
+> > +       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
+> > +                                               false, qproc->mba_phys,
+> >                                                 qproc->mba_size);
+> >         if (xfermemop_ret)
+> >                 dev_err(qproc->dev,
+> > --
+> > 2.23.0
+> >
