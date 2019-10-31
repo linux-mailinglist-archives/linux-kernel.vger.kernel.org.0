@@ -2,139 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D87EB7B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45870EB7B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbfJaTC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 15:02:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729252AbfJaTC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 15:02:29 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE08C2080F;
-        Thu, 31 Oct 2019 19:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572548547;
-        bh=IsaBp1487CudnoiPzOS74Waaqm065VxGYKhhdyzN9eQ=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=kdmlmpz2LucwE35nnk3NLDpBKAeakw5USvuei/WaleDo1LxaOUngBY8OVsZywJ6T0
-         MbqvsyjzYPUeccRCRZ/czxA2mR+p4V2mXbP7FEOkvDe3Euqu4sF8TXne75Q/eMyI54
-         +658v/IEJXYx/Gw3mKJPK4wF8RYhUP3qD/3zJyY4=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 9EDA9352105F; Thu, 31 Oct 2019 12:02:27 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 12:02:27 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Lai Jiangshan <laijs@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH 03/11] rcu: clean up rcu_preempt_deferred_qs_irqrestore()
-Message-ID: <20191031190227.GA20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191031100806.1326-1-laijs@linux.alibaba.com>
- <20191031100806.1326-4-laijs@linux.alibaba.com>
- <20191031135234.GQ20975@paulmck-ThinkPad-P72>
- <49c778ff-2187-26fb-1477-bdef6eaf298b@linux.alibaba.com>
- <20191031185718.GY20975@paulmck-ThinkPad-P72>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191031185718.GY20975@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1729554AbfJaTDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 15:03:47 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:59406 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729456AbfJaTDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 15:03:47 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9ECF714FC910D;
+        Thu, 31 Oct 2019 12:03:46 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 12:03:46 -0700 (PDT)
+Message-Id: <20191031.120346.88447202738132385.davem@davemloft.net>
+To:     tanhuazhong@huawei.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        linuxarm@huawei.com, jakub.kicinski@netronome.com
+Subject: Re: [PATCH net-next 0/9] net: hns3: add some optimizations ane
+ cleanups
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1572521004-36126-1-git-send-email-tanhuazhong@huawei.com>
+References: <1572521004-36126-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 31 Oct 2019 12:03:46 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 11:57:18AM -0700, Paul E. McKenney wrote:
-> On Thu, Oct 31, 2019 at 11:25:11PM +0800, Lai Jiangshan wrote:
-> > 
-> > 
-> > On 2019/10/31 9:52 下午, Paul E. McKenney wrote:
-> > > On Thu, Oct 31, 2019 at 10:07:58AM +0000, Lai Jiangshan wrote:
-> > > > Remove several unneeded return.
-> > > > 
-> > > > It doesn't need to return earlier after every code block.
-> > > > The code protects itself and be safe to fall through because
-> > > > every code block has its own condition tests.
-> > > > 
-> > > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> > > > ---
-> > > >   kernel/rcu/tree_plugin.h | 14 +-------------
-> > > >   1 file changed, 1 insertion(+), 13 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > > index 59ef10da1e39..82595db04eec 100644
-> > > > --- a/kernel/rcu/tree_plugin.h
-> > > > +++ b/kernel/rcu/tree_plugin.h
-> > > > @@ -439,19 +439,10 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
-> > > >   	 * t->rcu_read_unlock_special cannot change.
-> > > >   	 */
-> > > >   	special = t->rcu_read_unlock_special;
-> > > > -	rdp = this_cpu_ptr(&rcu_data);
-> > > > -	if (!special.s && !rdp->exp_deferred_qs) {
-> > > > -		local_irq_restore(flags);
-> > > > -		return;
-> > > > -	}
-> > > 
-> > > The point of this check is the common case of this function being invoked
-> > > when both fields are zero, avoiding the below redundant store and all the
-> > > extra checks of subfields of special.
-> > > 
-> > > Or are you saying that current compilers figure all this out?
-> > 
-> > No.
-> > 
-> > So, I have to keep the first/above return branch.
-> > 
-> > Any reasons to keep the following 2 return branches?
-> > There is no redundant store and the load for the checks
-> > are hot in the cache if the condition for return is met.
-> 
-> And the code further down is not in a fastpath.  So, good point, it
-> should be find to remove the two early exits below.
+From: Huazhong Tan <tanhuazhong@huawei.com>
+Date: Thu, 31 Oct 2019 19:23:15 +0800
 
-That is, assuming that interrupts cannot occur within interrupts-disabled
-regions of code.  ;-)
+> This series adds some code optimizations and cleanups for
+> the HNS3 ethernet driver.
 
-							Thanx, Paul
-
-> > Thanks.
-> > Lai
-> > 
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > >   	t->rcu_read_unlock_special.b.deferred_qs = false;
-> > > >   	if (special.b.need_qs) {
-> > > >   		rcu_qs();
-> > > >   		t->rcu_read_unlock_special.b.need_qs = false;
-> > > > -		if (!t->rcu_read_unlock_special.s && !rdp->exp_deferred_qs) {
-> > > > -			local_irq_restore(flags);
-> > > > -			return;
-> > > > -		}
-> > > >   	}
-> > > >   	/*
-> > > > @@ -460,12 +451,9 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
-> > > >   	 * tasks are handled when removing the task from the
-> > > >   	 * blocked-tasks list below.
-> > > >   	 */
-> > > > +	rdp = this_cpu_ptr(&rcu_data);
-> > > >   	if (rdp->exp_deferred_qs) {
-> > > >   		rcu_report_exp_rdp(rdp);
-> > > > -		if (!t->rcu_read_unlock_special.s) {
-> > > > -			local_irq_restore(flags);
-> > > > -			return;
-> > > > -		}
-> > > >   	}
-> > > >   	/* Clean up if blocked during RCU read-side critical section. */
-> > > > -- 
-> > > > 2.20.1
-> > > > 
+Series applied, thanks.
