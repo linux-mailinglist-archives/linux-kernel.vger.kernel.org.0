@@ -2,61 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23997EB240
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B688FEB22F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfJaONp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:13:45 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5672 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726540AbfJaONo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:13:44 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AA2AC92789834D879914;
-        Thu, 31 Oct 2019 22:13:40 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 31 Oct 2019 22:13:31 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC:     <perex@perex.cz>, <tiwai@suse.com>, <mripard@kernel.org>,
-        <zhongjiang@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: sun4i: Use PTR_ERR_OR_ZERO to simplify the code
-Date:   Thu, 31 Oct 2019 22:09:39 +0800
-Message-ID: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1727719AbfJaOK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:10:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbfJaOK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 10:10:57 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 114352080F;
+        Thu, 31 Oct 2019 14:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572531057;
+        bh=fVcJ1YoHP/ebgQ+YPr6vqVO+Ngjo3zOd7mH3hAZcT+M=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=lP06XwrLn3KR3FJCfDPcInfOUe/R4MEnV5PxQyqOCo9oKtgUb4HGqpX0wx9YJf5Sy
+         q39pJht5ZhQOMaSqnpUEHoCJxlb/C7ABB8vfO4sy5CH2GaEaigj8vGOSll+xRzLgKm
+         TTAXtLEufUpJBcegc+8WdQwkaXe+w9sKJ8Spe9ec=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C437A3520744; Thu, 31 Oct 2019 07:10:56 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 07:10:56 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH 04/11] rcu: cleanup rcu_preempt_deferred_qs()
+Message-ID: <20191031141056.GR20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-5-laijs@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031100806.1326-5-laijs@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is better to use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
+On Thu, Oct 31, 2019 at 10:07:59AM +0000, Lai Jiangshan wrote:
+> Don't need to set ->rcu_read_lock_nesting negative, irq-protected
+> rcu_preempt_deferred_qs_irqrestore() doesn't expect
+> ->rcu_read_lock_nesting to be negative to work, it even
+> doesn't access to ->rcu_read_lock_nesting any more.
+> 
+> It is true that NMI over rcu_preempt_deferred_qs_irqrestore()
+> may access to ->rcu_read_lock_nesting, but it is still safe
+> since rcu_read_unlock_special() can protect itself from NMI.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Hmmm...  Testing identified the need for this one.  But I will wait for
+your responses on the earlier patches before going any further through
+this series.
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index d0a8d58..72012a6 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -1174,10 +1174,8 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
- 	i2s->field_fmt_sr =
- 			devm_regmap_field_alloc(dev, i2s->regmap,
- 						i2s->variant->field_fmt_sr);
--	if (IS_ERR(i2s->field_fmt_sr))
--		return PTR_ERR(i2s->field_fmt_sr);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
- }
- 
- static int sun4i_i2s_probe(struct platform_device *pdev)
--- 
-1.7.12.4
+							Thanx, Paul
 
+> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> ---
+>  kernel/rcu/tree_plugin.h | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 82595db04eec..9fe8138ed3c3 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -555,16 +555,11 @@ static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
+>  static void rcu_preempt_deferred_qs(struct task_struct *t)
+>  {
+>  	unsigned long flags;
+> -	bool couldrecurse = t->rcu_read_lock_nesting >= 0;
+>  
+>  	if (!rcu_preempt_need_deferred_qs(t))
+>  		return;
+> -	if (couldrecurse)
+> -		t->rcu_read_lock_nesting -= RCU_NEST_BIAS;
+>  	local_irq_save(flags);
+>  	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> -	if (couldrecurse)
+> -		t->rcu_read_lock_nesting += RCU_NEST_BIAS;
+>  }
+>  
+>  /*
+> -- 
+> 2.20.1
+> 
