@@ -2,71 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2578AEB420
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C60EB425
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 16:44:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728433AbfJaPmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 11:42:53 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55280 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfJaPmw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:42:52 -0400
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B3DC020B7192;
-        Thu, 31 Oct 2019 08:42:51 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B3DC020B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1572536571;
-        bh=VEMRMLTSgqwtGYH1CLoFnXVfEwXi5+fo0FYWAu1w7Go=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=G2hhH/AW1SH0XWVF66twEG0I+7/S1MLgrbzWgHOt8e1t1b3nCBUej8k9gqk9zS3Vg
-         E1yjfNTAspzVJF3iDIaQPJGM0OeZPp7jqrO8/3Z5p/x6/1z2cJtGOetUuYXADAYhCV
-         b3KLUodKNyJfdMrxz7NHebkEWUhWZHyE0BCtRQeo=
-Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
- create or update
-To:     Mimi Zohar <zohar@linux.ibm.com>, Sasha Levin <sashal@kernel.org>
-Cc:     dhowells@redhat.com, matthewgarrett@google.com,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        prsriva@linux.microsoft.com
-References: <20191031011910.2574-1-nramas@linux.microsoft.com>
- <20191031011910.2574-2-nramas@linux.microsoft.com>
- <1572523831.5028.43.camel@linux.ibm.com>
- <b83bd7ef-ce7f-e750-e30b-30d5a6469a28@linux.microsoft.com>
- <20191031152730.GQ1554@sasha-vm> <1572536253.5028.50.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <a629707a-40d2-e3dd-fdf4-af2f84f47796@linux.microsoft.com>
-Date:   Thu, 31 Oct 2019 08:42:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728449AbfJaPoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 11:44:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35680 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727739AbfJaPoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 11:44:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4D325AEFB;
+        Thu, 31 Oct 2019 15:44:36 +0000 (UTC)
+Date:   Thu, 31 Oct 2019 15:44:35 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: don't allow copy_file_range when stripe_count != 1
+Message-ID: <20191031154435.GA30313@hermes.olymp>
+References: <20191031114939.24462-1-lhenriques@suse.com>
+ <59ac4d5bebe67f66f072bf6d3e9fa7f0d0b38d0c.camel@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1572536253.5028.50.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <59ac4d5bebe67f66f072bf6d3e9fa7f0d0b38d0c.camel@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/19 8:37 AM, Mimi Zohar wrote:
-
->> I couldn't even apply this patch: Nayna's series (v10) doesn't apply  >> top of 5.3 to begin with, and while it does apply on mainline, 
-this>> first patch wouldn't apply on top.
-> Lakshmi, development is always on top of mainline.  In this case,
->   please use 5.4.0-rc3 and apply Nayna's v10 patch set.
+On Thu, Oct 31, 2019 at 11:28:55AM -0400, Jeff Layton wrote:
+> On Thu, 2019-10-31 at 11:49 +0000, Luis Henriques wrote:
+> > copy_file_range tries to use the OSD 'copy-from' operation, which simply
+> > performs a full object copy.  Unfortunately, the implementation of this
+> > system call assumes that stripe_count is always set to 1 and doesn't take
+> > into account that the data may be striped across an object set.  If the
+> > file layout has stripe_count different from 1, then the destination file
+> > data will be corrupted.
+> > 
+> > For example:
+> > 
+> > Consider a 8 MiB file with 4 MiB object size, stripe_count of 2 and
+> > stripe_size of 2 MiB; the first half of the file will be filled with 'A's
+> > and the second half will be filled with 'B's:
+> > 
+> >                0      4M     8M       Obj1     Obj2
+> >                +------+------+       +----+   +----+
+> >         file:  | AAAA | BBBB |       | AA |   | AA |
+> >                +------+------+       |----|   |----|
+> >                                      | BB |   | BB |
+> >                                      +----+   +----+
+> > 
+> > If we copy_file_range this file into a new file (which needs to have the
+> > same file layout!), then it will start by copying the object starting at
+> > file offset 0 (Obj1).  And then it will copy the object starting at file
+> > offset 4M -- which is Obj1 again.
+> > 
+> > Unfortunately, the solution for this is to not allow remote object copies
+> > to be performed when the file layout stripe_count is not 1 and simply
+> > fallback to the default (VFS) copy_file_range implementation.
+> > 
+> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > ---
+> > Hi Jeff,
+> > 
+> > I hope my understanding of the whole file striping in CephFS is correct;
+> > I had to go re-read the whole thing to refresh my memory.
+> > 
+> > Anyway, I guess that this is not really the only solution to this
+> > problem, but it's definitely the simplest one.  copy_file_range is
+> > already way more complex that I had ever anticipated.  I would rather
+> > keep this simple solution instead of adding more complexity and cover
+> > more corner cases.  But yeah, we may want to revisit this in the
+> > future...
+> > 
+> > [OOT: files layout is probably one of the biggest headaches to sort out
+> >  the day we want to implement something like FIEMAP on CephFS ;-) ]
+> > 
+> > Cheers,
+> > --
+> > Luis
+> > 
+> >  fs/ceph/file.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index d277f71abe0b..3b0e6f9eb6a6 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1957,9 +1957,12 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> >  		return -EOPNOTSUPP;
+> >  
+> >  	if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
+> > -	    (src_ci->i_layout.stripe_count != dst_ci->i_layout.stripe_count) ||
+> > -	    (src_ci->i_layout.object_size != dst_ci->i_layout.object_size))
+> > +	    (src_ci->i_layout.stripe_count != 1) ||
+> > +	    (dst_ci->i_layout.stripe_count != 1) ||
+> > +	    (src_ci->i_layout.object_size != dst_ci->i_layout.object_size)) {
+> > +		dout("Invalid src/dst files layout\n");
+> >  		return -EOPNOTSUPP;
+> > +	}
+> >  
+> >  	if (len < src_ci->i_layout.object_size)
+> >  		return -EOPNOTSUPP; /* no remote copy will be done */
 > 
-> Mimi
+> I'm fine with restricting CFR to very simple cases, at least initially.
+> We can always expand it later once the need becomes clear.
+> 
+> That said, we should probably add a comment explaining why we're
+> excluding cases where the stripe count != 1 here. It doesn't need to
+> contain the whole commit log message you wrote, but anyone that does
+> want to improve this later might appreciate some breadcrumbs.
+> 
+> Maybe something like:
+> 
+> /*
+>  * Striped file layouts require that we copy partial objects,
+>  * but the OSD copy-from operation only supports full-object copies.
+>  * Limit this to non-striped file layouts for now.
+>  */
+> 
+> If that sounds ok, I'll add that in and merge this later today.
 
+Thanks, that looks good to me, feel free to add that comment.
 
-Thanks for the info Mimi.
-
-I initially started with v5.4, but the kernel I built wouldn't boot on 
-my machine :(
-
-I'll update to the latest v5.4 changes and try again.
-
-thanks,
-  -lakshmi
+Cheers,
+--
+Lu�s
