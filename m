@@ -2,160 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43C8EB4E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D472EB51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfJaQn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:43:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59658 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728521AbfJaQn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:43:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 71E17B243;
-        Thu, 31 Oct 2019 16:43:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5597C1E482D; Thu, 31 Oct 2019 17:43:22 +0100 (CET)
-Date:   Thu, 31 Oct 2019 17:43:22 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-arch@vger.kernel.org
-Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
-Message-ID: <20191031164322.GC13321@quack2.suse.cz>
-References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
+        id S1728823AbfJaQqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:46:44 -0400
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:35234 "EHLO
+        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728714AbfJaQql (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:46:41 -0400
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9VGj5XS031706
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 17:45:05 +0100
+Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x9VGj1Wx028284;
+        Thu, 31 Oct 2019 17:45:01 +0100
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        KP Singh <kpsingh@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH bpf-next v12 0/7] Landlock LSM
+Date:   Thu, 31 Oct 2019 17:44:38 +0100
+Message-Id: <20191031164445.29426-1-mic@digikod.net>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 30-10-19 21:07:33, Valdis Kletnieks wrote:
-> Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
-> patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
-> (c) if one patch, who gets to shepherd it through?
-> 
-> 
-> There's currently 6 filesystems that have the same #define. Move it
-> into errno.h so it's defined in just one place.
-> 
-> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+Hi,
 
-Looks good to me. You can add:
+Following the previous series [1], this twelfth series mainly rework the
+domain management in response to Serge E. Hallyn's review.  Some minor
+fixes are also included.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This is the first step of the roadmap discussed at LPC [2].  While the
+intended final goal is to allow unprivileged (or non-root) users to use
+Landlock, this series allows only a process with global CAP_SYS_ADMIN to
+load and enforce a rule.  This may help to get feedback and avoid
+unexpected behaviors.
 
-								Honza
+This series can be applied on top of bpf-next, commit e93d99180abd
+("selftests/bpf: Restore $(OUTPUT)/test_stub.o rule").  This can be
+tested with CONFIG_BPF_SYSCALL, CONFIG_SECCOMP_FILTER and
+CONFIG_SECURITY_LANDLOCK.  This patch series can be found in a Git
+repository here:
+https://github.com/landlock-lsm/linux/commits/landlock-v11
+I would really appreciate constructive comments on the design and the
+code.
 
-> ---
->  drivers/staging/exfat/exfat.h    | 2 --
->  fs/erofs/internal.h              | 2 --
->  fs/ext4/ext4.h                   | 1 -
->  fs/f2fs/f2fs.h                   | 1 -
->  fs/xfs/xfs_linux.h               | 1 -
->  include/linux/jbd2.h             | 1 -
->  include/uapi/asm-generic/errno.h | 1 +
->  7 files changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-> index 84de1123e178..3cf7e54af0b7 100644
-> --- a/drivers/staging/exfat/exfat.h
-> +++ b/drivers/staging/exfat/exfat.h
-> @@ -30,8 +30,6 @@
->  #undef DEBUG
->  #endif
->  
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #define DENTRY_SIZE		32	/* dir entry size */
->  #define DENTRY_SIZE_BITS	5
->  
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 544a453f3076..3980026a8882 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -425,7 +425,5 @@ static inline int z_erofs_init_zip_subsystem(void) { return 0; }
->  static inline void z_erofs_exit_zip_subsystem(void) {}
->  #endif	/* !CONFIG_EROFS_FS_ZIP */
->  
-> -#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
-> -
->  #endif	/* __EROFS_INTERNAL_H */
->  
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 03db3e71676c..a86c2585457d 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3396,6 +3396,5 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->  #endif	/* __KERNEL__ */
->  
->  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
->  
->  #endif	/* _EXT4_H */
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4024790028aa..04ebe77569a3 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3752,6 +3752,5 @@ static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
->  }
->  
->  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
->  
->  #endif /* _LINUX_F2FS_H */
-> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> index ca15105681ca..3409d02a7d21 100644
-> --- a/fs/xfs/xfs_linux.h
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -123,7 +123,6 @@ typedef __u32			xfs_nlink_t;
->  
->  #define ENOATTR		ENODATA		/* Attribute not found */
->  #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
->  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
->  
->  #define SYNCHRONIZE()	barrier()
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 564793c24d12..1ecd3859d040 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1657,6 +1657,5 @@ static inline tid_t  jbd2_get_latest_transaction(journal_t *journal)
->  #endif	/* __KERNEL__ */
->  
->  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
->  
->  #endif	/* _LINUX_JBD2_H */
-> diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-> index cf9c51ac49f9..1d5ffdf54cb0 100644
-> --- a/include/uapi/asm-generic/errno.h
-> +++ b/include/uapi/asm-generic/errno.h
-> @@ -98,6 +98,7 @@
->  #define	EINPROGRESS	115	/* Operation now in progress */
->  #define	ESTALE		116	/* Stale file handle */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> -- 
-> 2.24.0.rc1
-> 
+
+# Landlock LSM
+
+Landlock is a stackable LSM [3] intended to be used as a low-level
+framework to build custom access-control/audit systems or safe endpoint
+security agents.  There is currently one Landlock hook dedicated to
+check ptrace(2).  This hook accepts a dedicated eBPF program, called a
+Landlock program, which can currently compare its position in the
+hierarchy of similar programs tied to other processes.  This enables to
+enforce programmatic scoped ptrace restrictions.
+
+The final goal of this new Linux Security Module (LSM) called Landlock
+is to allow any process, including unprivileged ones, to create powerful
+security sandboxes comparable to XNU Sandbox, FreeBSD Capsicum or
+OpenBSD Pledge (which could be implemented with Landlock).  This kind of
+sandbox is expected to help mitigate the security impact of bugs or
+unexpected/malicious behaviors in user-space applications.
+
+The use of seccomp and Landlock is more suitable with the help of a
+user-space library (e.g.  libseccomp) that could help to specify a
+high-level language to express a security policy instead of raw eBPF
+programs.  Moreover, thanks to the LLVM front-end, it is quite easy to
+write an eBPF program with a subset of the C language.
+
+The documentation patch contains some kernel documentation, explanations
+on how to use Landlock and a FAQ.  The compiled documentation and some
+talks can be found here: https://landlock.io
+
+
+# Frequently asked questions
+
+## Why is seccomp-bpf not enough?
+
+A seccomp filter can access only raw syscall arguments (i.e. the
+register values) which means that it is not possible to filter according
+to the value pointed to by an argument, such as a file pathname. As an
+embryonic Landlock version demonstrated (i.e. seccomp-object), filtering
+at the syscall level is complicated (e.g. need to take care of race
+conditions). This is mainly because the access control checkpoints of
+the kernel are not at this high-level but more underneath, at the
+LSM-hook level. The LSM hooks are designed to handle this kind of
+checks.  Landlock abstracts this approach to leverage the ability of
+unprivileged users to limit themselves.
+
+Cf. section "What it isn't?" in
+Documentation/userspace-api/seccomp_filter.rst
+
+
+## Why use the seccomp(2) syscall?
+
+Landlock use the same semantic as seccomp to apply access rule
+restrictions. It add a new layer of security for the current process
+which is inherited by its children. It makes sense to use an unique
+access-restricting syscall (that should be allowed by seccomp filters)
+which can only drop privileges. Moreover, a Landlock rule could come
+from outside a process (e.g.  passed through a UNIX socket). It is then
+useful to differentiate the creation/load of Landlock eBPF programs via
+bpf(2), from rule enforcement via seccomp(2).
+
+
+## Why a new LSM? Are SELinux, AppArmor, Smack and Tomoyo not good
+   enough?
+
+The current access control LSMs are fine for their purpose which is to
+give the *root* the ability to enforce a security policy for the
+*system*. What is missing is a way to enforce a security policy for any
+application by its developer and *unprivileged user* as seccomp can do
+for raw syscall filtering.
+
+Differences from other (access control) LSMs:
+* not only dedicated to administrators (i.e. no_new_priv);
+* limited kernel attack surface (e.g. policy parsing);
+* constrained policy rules (no DoS: deterministic execution time);
+* do not leak more information than the loader process can legitimately
+  have access to (minimize metadata inference).
+
+
+# Changes since v11
+
+* rework domain management
+* minor fixes
+
+
+# Changes since v10
+
+* remove all the file system related features: program types, inode
+  map and expected_attach_triggers
+* replace the static ptrace security policy with a new and simpler
+  ptrace program (attached) type and a task_landlock_ptrace_ancestor()
+  eBPF helper
+* do not rely on seccomp internal structure but use stacked credentials
+  insdead
+* extend ptrace tests
+* add more documentation
+* split and rename files/patches
+* miscellaneous fixes
+
+
+Previous changes can be found in a previous cover-letter [4].
+
+
+[1] https://lore.kernel.org/lkml/20191029171505.6650-1-mic@digikod.net/
+[2] https://lore.kernel.org/lkml/5828776A.1010104@digikod.net/
+[3] https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
+[4] https://lore.kernel.org/lkml/20190721213116.23476-1-mic@digikod.net/
+
+Regards,
+
+Mickaël Salaün (7):
+  bpf,landlock: Define an eBPF program type for Landlock hooks
+  landlock: Add the management of domains
+  landlock,seccomp: Load Landlock programs per process hierarchy
+  landlock: Add ptrace LSM hooks
+  bpf,landlock: Add task_landlock_ptrace_ancestor() helper
+  bpf,landlock: Add tests for the Landlock ptrace program type
+  landlock: Add user and kernel documentation for Landlock
+
+ Documentation/security/index.rst              |   1 +
+ Documentation/security/landlock/index.rst     |  22 ++
+ Documentation/security/landlock/kernel.rst    | 139 ++++++++++++
+ Documentation/security/landlock/user.rst      | 142 ++++++++++++
+ MAINTAINERS                                   |   9 +
+ include/linux/bpf.h                           |   3 +
+ include/linux/bpf_types.h                     |   3 +
+ include/linux/landlock.h                      |  25 ++
+ include/linux/lsm_hooks.h                     |   1 +
+ include/uapi/linux/bpf.h                      |  23 +-
+ include/uapi/linux/landlock.h                 |  39 ++++
+ include/uapi/linux/seccomp.h                  |   1 +
+ kernel/bpf/syscall.c                          |   9 +
+ kernel/bpf/verifier.c                         |  11 +
+ kernel/seccomp.c                              |   4 +
+ scripts/bpf_helpers_doc.py                    |   1 +
+ security/Kconfig                              |   1 +
+ security/Makefile                             |   2 +
+ security/landlock/Kconfig                     |  19 ++
+ security/landlock/Makefile                    |   6 +
+ security/landlock/bpf_ptrace.c                |  98 ++++++++
+ security/landlock/bpf_ptrace.h                |  17 ++
+ security/landlock/bpf_run.c                   |  62 +++++
+ security/landlock/bpf_run.h                   |  25 ++
+ security/landlock/bpf_verify.c                |  87 +++++++
+ security/landlock/common.h                    |  84 +++++++
+ security/landlock/domain_manage.c             | 173 ++++++++++++++
+ security/landlock/domain_manage.h             |  23 ++
+ security/landlock/domain_syscall.c            |  87 +++++++
+ security/landlock/hooks_cred.c                |  47 ++++
+ security/landlock/hooks_cred.h                |  14 ++
+ security/landlock/hooks_ptrace.c              | 114 ++++++++++
+ security/landlock/hooks_ptrace.h              |  19 ++
+ security/landlock/init.c                      |  32 +++
+ security/security.c                           |  15 ++
+ tools/include/uapi/linux/bpf.h                |  23 +-
+ tools/include/uapi/linux/landlock.h           |  22 ++
+ tools/lib/bpf/libbpf_probes.c                 |   3 +
+ tools/testing/selftests/bpf/config            |   3 +
+ tools/testing/selftests/bpf/test_verifier.c   |   1 +
+ .../testing/selftests/bpf/verifier/landlock.c |  56 +++++
+ tools/testing/selftests/landlock/.gitignore   |   5 +
+ tools/testing/selftests/landlock/Makefile     |  27 +++
+ tools/testing/selftests/landlock/config       |   5 +
+ tools/testing/selftests/landlock/test.h       |  48 ++++
+ tools/testing/selftests/landlock/test_base.c  |  24 ++
+ .../testing/selftests/landlock/test_ptrace.c  | 214 ++++++++++++++++++
+ 47 files changed, 1787 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/security/landlock/index.rst
+ create mode 100644 Documentation/security/landlock/kernel.rst
+ create mode 100644 Documentation/security/landlock/user.rst
+ create mode 100644 include/linux/landlock.h
+ create mode 100644 include/uapi/linux/landlock.h
+ create mode 100644 security/landlock/Kconfig
+ create mode 100644 security/landlock/Makefile
+ create mode 100644 security/landlock/bpf_ptrace.c
+ create mode 100644 security/landlock/bpf_ptrace.h
+ create mode 100644 security/landlock/bpf_run.c
+ create mode 100644 security/landlock/bpf_run.h
+ create mode 100644 security/landlock/bpf_verify.c
+ create mode 100644 security/landlock/common.h
+ create mode 100644 security/landlock/domain_manage.c
+ create mode 100644 security/landlock/domain_manage.h
+ create mode 100644 security/landlock/domain_syscall.c
+ create mode 100644 security/landlock/hooks_cred.c
+ create mode 100644 security/landlock/hooks_cred.h
+ create mode 100644 security/landlock/hooks_ptrace.c
+ create mode 100644 security/landlock/hooks_ptrace.h
+ create mode 100644 security/landlock/init.c
+ create mode 100644 tools/include/uapi/linux/landlock.h
+ create mode 100644 tools/testing/selftests/bpf/verifier/landlock.c
+ create mode 100644 tools/testing/selftests/landlock/.gitignore
+ create mode 100644 tools/testing/selftests/landlock/Makefile
+ create mode 100644 tools/testing/selftests/landlock/config
+ create mode 100644 tools/testing/selftests/landlock/test.h
+ create mode 100644 tools/testing/selftests/landlock/test_base.c
+ create mode 100644 tools/testing/selftests/landlock/test_ptrace.c
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.23.0
+
