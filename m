@@ -2,98 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4C3BEB98E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16BA1EB993
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:14:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729392AbfJaWMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 18:12:16 -0400
-Received: from sauhun.de ([88.99.104.3]:37458 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfJaWMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 18:12:16 -0400
-Received: from localhost (unknown [77.130.135.221])
-        by pokefinder.org (Postfix) with ESMTPSA id 6726A2C009F;
-        Thu, 31 Oct 2019 23:12:13 +0100 (CET)
-Date:   Thu, 31 Oct 2019 23:12:11 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mmc: renesas_sdhi: add checks for pinctrl_lookup_state
-Message-ID: <20191031221211.GA3853@kunai>
-References: <20191018131338.11713-1-hslester96@gmail.com>
- <CAPDyKFoBYchP96hv=7XfTo8CrCSD+KC0h_oFRAsOYT-Lc1SFZQ@mail.gmail.com>
- <20191023153313.GB5153@kunai>
- <CAPDyKFo9wYwhdy-1BDcRMJKTjADappsT-gBaKZE7hTLE4obxiA@mail.gmail.com>
+        id S1728897AbfJaWOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 18:14:40 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:59024 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728640AbfJaWOj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 18:14:39 -0400
+Received: from 188.29.164.72.threembb.co.uk ([188.29.164.72] helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iQIi6-0001MD-If; Thu, 31 Oct 2019 22:14:37 +0000
+Received: from ben by deadeye with local (Exim 4.92.2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iQIhw-0000pL-Vi; Thu, 31 Oct 2019 22:14:20 +0000
+Message-ID: <05be6a70382f1990a2ba6aba9ac75dac0c55f7fb.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 47/47] KVM: x86/vPMU: refine kvm_pmu err msg when
+ event creation failed
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        Like Xu <like.xu@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Date:   Thu, 31 Oct 2019 22:14:15 +0000
+In-Reply-To: <220d8f2c1b299d2e71fdcf50b98286aae5b0c6f2.camel@perches.com>
+References: <lsq.1572026582.631294584@decadent.org.uk>
+         <220d8f2c1b299d2e71fdcf50b98286aae5b0c6f2.camel@perches.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-hKUhIv2BLLOi+f5RLV/D"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFo9wYwhdy-1BDcRMJKTjADappsT-gBaKZE7hTLE4obxiA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 188.29.164.72
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-hKUhIv2BLLOi+f5RLV/D
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-HI Ulf,
-
-> > Well, I don't like to bail out because this error is not fatal for basic
-> > operations. How about releasing priv->pinctrl again with an additional
-> > warning that pinctrl settings are broken and will prevent 1.8v modes?
-> >
-> > Opinions?
+On Fri, 2019-10-25 at 12:05 -0700, Joe Perches wrote:
+> On Fri, 2019-10-25 at 19:03 +0100, Ben Hutchings wrote:
+> > 3.16.76-rc1 review patch.  If anyone has any objections, please let me =
+know.
 >=20
-> Hmm, from a mmc driver probe point of view, I don't quite share this appr=
-oach.
+> This seems more like an enhancement than a bug fix.
 >=20
-> I would rather fail as it forces the DTB to be corrected immediately,
-> rather than trusting some developer to look at a warning in a log. The
-> point is, in such a case it may never get fixed, if the product is
-> shipped with the wrong DTB.
+> Is this really the type of patch that is appropriate
+> for stable?
 
-I could agree to this arguement, iff the only way pinctrl_select fails
-is a DT misconfiguration. I am not sure if this is true right now, and
-we can't be sure about the future. Or?
+Apparently so:
 
-> My concern at this point is rather to break existing DTBs, but it
-> seems that should not be an issue, right?
+v4.14.135: eba797dbf352 KVM: x86/vPMU: refine kvm_pmu err msg when event cr=
+eation failed
+v4.19.61: ba27a25df6df KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
+ation failed
+v4.4.187: 505c011f9f53 KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
+ation failed
+v4.9.187: 3984eae04473 KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
+ation failed
+v5.1.20: edadec197fbf KVM: x86/vPMU: refine kvm_pmu err msg when event crea=
+tion failed
+v5.2.3: 9f062aef7356 KVM: x86/vPMU: refine kvm_pmu err msg when event creat=
+ion failed
 
-AFAIK not for the upstream ones, I don't know the customer ones.
+Ben.
 
-I still prefer to not bail out.
+> > ------------------
+> >=20
+> > From: Like Xu <like.xu@linux.intel.com>
+> >=20
+> > commit 6fc3977ccc5d3c22e851f2dce2d3ce2a0a843842 upstream.
+> >=20
+> > If a perf_event creation fails due to any reason of the host perf
+> > subsystem, it has no chance to log the corresponding event for guest
+> > which may cause abnormal sampling data in guest result. In debug mode,
+> > this message helps to understand the state of vPMC and we may not
+> > limit the number of occurrences but not in a spamming style.
+> >=20
+> > Suggested-by: Joe Perches <joe@perches.com>
+> > Signed-off-by: Like Xu <like.xu@linux.intel.com>
+> > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> > [bwh: Backported to 3.16: adjust context]
+> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> > ---
+> >  arch/x86/kvm/pmu.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > --- a/arch/x86/kvm/pmu.c
+> > +++ b/arch/x86/kvm/pmu.c
+> > @@ -187,8 +187,8 @@ static void reprogram_counter(struct kvm
+> >  						 intr ? kvm_perf_overflow_intr :
+> >  						 kvm_perf_overflow, pmc);
+> >  	if (IS_ERR(event)) {
+> > -		printk_once("kvm: pmu event creation failed %ld\n",
+> > -				PTR_ERR(event));
+> > +		pr_debug_ratelimited("kvm_pmu: event creation failed %ld for pmc->id=
+x =3D %d\n",
+> > +			    PTR_ERR(event), pmc->idx);
+> >  		return;
+> >  	}
+> > =20
+> >=20
+--=20
+Ben Hutchings
+Klipstein's 4th Law of Prototyping and Production:
+                               A fail-safe circuit will destroy others.
 
-Kind regards,
-
-   Wolfram
 
 
---C7zPtVaVf+AK4Oqc
+--=-hKUhIv2BLLOi+f5RLV/D
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl27XDcACgkQFA3kzBSg
-KbYYBRAAiikrBSwiMJ26xkXJxt4soVNJykMZrHS9niXYlb+cM9mznO9ah9yPKjFL
-Op6LtWP5EKJPU7Yz1FM+wjKKyLgC/nvLKw3gvbXXDI1GhZAa4yl0e9diIBzECp8g
-5EMTYmB5i9u5Z1MBkNQB8/UuQ7JlVNtGuWI3YcbcG0reM6i20BaynpDthwVKa9vv
-2h+5OWf8Ep76B5CEOmqF/TePJeTwR/Dzzzf9PxJOqu/v3MW8Pwc9WF7UwWSmxLel
-yBHr4bHOxYg4WEta99YirlXYadlxdv9cZ3+lcx+6kwaWd0kgv+xF5sxsxJFz2G/Y
-d8c1zYso/Js37VFI/E0lxCDnVBbZaiDDpSkkS2E+ZmBFZeHigFhRvRenkPKnjxCu
-S38I9e3M4pE//z7UirjR/uHv6VDopd1nEOmx4Md6eo0Yj5QhrlPOromAIVenpECO
-S2/L5NWy+sNZ4APAUeesKqRy0yQVqEEg3U01AC6PQpqfIHrjKXXHObsTwtt24ct3
-Vy51uTTB0BWZGY3cO+YuHJiJTCS5aC1k63FA7XCINArVhZh3ZTqGQZH3MoGy9dvj
-L168HXbOVK5HkDh/xZx9b1S0dkdPvciYYHiJ3GU2b63ICOczGPsF0vIwJdbgzN7i
-66m5ckYQdR1zDZVQAdWSoAMGAUYScPDMm3sU6/MTTu7I9D2H4ks=
-=XBqM
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl27XLgACgkQ57/I7JWG
+EQkqSQ//RR8xY73bxtHVjVHg0wo49KzosxapaAi+qo+HxB2zL7OfW9CJVOMTpOk+
+QT+iqkYNNcMAbRClkb86WoATNzC5Crau5quovdJdLbPNq/ANd1HP91jTwAhHc/cK
+8rSZTzUz1c13mBSFHGbTn+HQaiDsw+iElA06hcqARpe0lxm7m4Usvp6kiKOwlShK
+NKGzUz7GjntXzj+0r02jwKc7OEx73bQRc4Zng2QrAFwC4smeghiSm7zrrG12SC2Y
+Jipc6cGdeQ1/RVcnuEO93ZCEl6PHTZ4ngKlpdB5u9nFPgYvIQ60U6w/USNcdIu6C
+yNmnnOMt3XNOpYdeqYm1dYQ2jPy0S2POBawDd3+B68fLBgNt54lhIIgJt0imybj4
+/u9mznUCt+KWNAgwR5tYapxgWlrsAyH775S/7+0Svxir162A6YzCckGG7g0y7Ln0
+Q8Wp3jIQyq35ofh7gl69H/68A7FFKUnsvPKpxT/8QS67MCzDzSXxuTReHQaSLeVA
+638YTj0JAfEXipA1bP0JTcsBJaNEeqxwJHYwwz3exTL+Kr/a/C8WrvPSLGpmG1O3
+KugLzLeoJ0s66qnZdD79B/LKulAm6bP5GS1ujvvnuBYOOLlLwvCHw7nMmEq/YWEd
+lxWi06TTgsZ2+PhXBQvQspX966YWifIPjTBmtVyhVq7i1puVbBM=
+=r0nb
 -----END PGP SIGNATURE-----
 
---C7zPtVaVf+AK4Oqc--
+--=-hKUhIv2BLLOi+f5RLV/D--
