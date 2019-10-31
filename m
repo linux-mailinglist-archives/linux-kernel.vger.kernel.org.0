@@ -2,138 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5835EB1DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C53E6EB238
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbfJaOAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 10:00:04 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45139 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727902AbfJaOAD (ORCPT
+        id S1727913AbfJaOLJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 10:11:09 -0400
+Received: from maillog.nuvoton.com ([202.39.227.15]:44198 "EHLO
+        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbfJaOLB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:00:03 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q64so6697323ljb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 07:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DuatfVoIRwFhp1fiwVqEQDhLv5NKcD5+eL4mURteBJw=;
-        b=T0WGQpXFDtrHJfxqFmxbHxIc4bAH6IQvZs0OTPR85eE1GuPEBycmk9QZ+dEad3gcBZ
-         111Tl8gHMDWobnSVm/oAzghXtZ67XKZeU7Iv1i1wit1eJeMjOr73oWKibGez8sYJXCg5
-         +cQOCUohhdbNghmuNdLDmn228db2gz+xBmkAIvJqZTSY4dHUXeEEkpIrb7ncIQmqboAt
-         Z/ov5p25AUY1THMKi1DviI/uX3DGy8zd/T97zX+udzdtsfjL4srz+5gXsM7b01LCQpzv
-         BX6g51anf+KwtwI58WA9i6Uh/aOtyToAeS5ZFqybf4ztcFcPzqIgUxpnTGSLbS4pEaEu
-         btAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DuatfVoIRwFhp1fiwVqEQDhLv5NKcD5+eL4mURteBJw=;
-        b=Da0tqY9K6hyRMpzDd2E5JwtGs2KpeEYs55guKX8SkM4SG92mgQc180puFR4mz9JMnL
-         ySbR6zKuAhtoC/pbGuPSFJjHW4dZE68U0BPI0dTE01IN7QHUq+O4DlDKF2HB+OlLZ9h/
-         AzpfeUeM8zZsiBDQTUe9lRgZXEPu1/I897/nLj8KEToTaiyV+siOu4PjZyUlmcJ6fRb5
-         gxbsDbMk0jZ8OhcsP+AYFagQe2eEgb+TgvLIEeHYJdkYQXEG8zYh02xokzBttcQITEIx
-         mnhoaJBq1a94Ru+aPDzWA6I21ZZgir+E0OXawgu0wS35tpu4pV8EuNALn2L/ABKFlOe3
-         SV8w==
-X-Gm-Message-State: APjAAAUeCIPUG5hg+ZADKBaDUo9Om8Yn8QW61LFnmVyR7ZpbF2vH7FQw
-        fO+MsqELiAEYyi7gQvZvbPFEpucocJltOBJLmb04
-X-Google-Smtp-Source: APXvYqwq2wNVb076m3Quvyq9PXqhSEvG470R+68J3/Y3Ahcr5xKs7JewCzfRlqwmRAqfj89jdi6yOS5N64nrB3PIo6A=
-X-Received: by 2002:a05:651c:1056:: with SMTP id x22mr1097948ljm.225.1572530400425;
- Thu, 31 Oct 2019 07:00:00 -0700 (PDT)
+        Thu, 31 Oct 2019 10:11:01 -0400
+Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 37EFC1C80DC9;
+        Thu, 31 Oct 2019 21:56:22 +0800 (CST)
+Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Thu, 31 Oct 2019
+ 21:56:21 +0800
+Received: from NTILML02.nuvoton.com (10.190.1.46) by NTILML02.nuvoton.com
+ (10.190.1.46) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Thu, 31 Oct
+ 2019 15:56:18 +0200
+Received: from taln70.nuvoton.co.il (10.191.1.70) by NTILML02.nuvoton.com
+ (10.190.1.47) with Microsoft SMTP Server id 15.0.1130.7 via Frontend
+ Transport; Thu, 31 Oct 2019 15:56:18 +0200
+Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
+        by taln70.nuvoton.co.il (Postfix) with ESMTP id CD7FF1A4;
+        Thu, 31 Oct 2019 15:56:18 +0200 (IST)
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id AAFE160275; Thu, 31 Oct 2019 15:56:18 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <yuenn@google.com>, <venture@google.com>,
+        <benjaminfair@google.com>, <avifishman70@gmail.com>,
+        <joel@jms.id.au>
+CC:     <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v3 0/3] reset: npcm: add NPCM reset driver support
+Date:   Thu, 31 Oct 2019 15:56:14 +0200
+Message-ID: <20191031135617.249303-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
- <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca> <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
- <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca> <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
- <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca> <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
- <20191024210010.owwgc3bqbvtdsqws@madcap2.tricolour.ca> <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
- <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
-In-Reply-To: <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 31 Oct 2019 09:59:48 -0400
-Message-ID: <CAHC9VhTKaBwFxEnY9vLRgtZ5ptQzF-WvwiAyVgtTNn6tt4bZqw@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 6:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-10-30 16:27, Paul Moore wrote:
-> > On Thu, Oct 24, 2019 at 5:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Here's the note I had from that meeting:
-> > >
-> > > - Eric raised the issue that using /proc is likely to get more and more
-> > >   hoary due to mount namespaces and suggested that we use a netlink
-> > > audit message (or a new syscall) to set the audit container identifier
-> > > and since the loginuid is a similar type of operation, that it should be
-> > > migrated over to a similar mechanism to get it away from /proc.  Get
-> > > could be done with a netlink audit message that triggers an audit log
-> > > message to deliver the information.  I'm reluctant to further pollute
-> > > the syscall space if we can find another method.  The netlink audit
-> > > message makes sense since any audit-enabled service is likely to already
-> > > have an audit socket open.
-> >
-> > Thanks for the background info on the off-list meeting.  I would
-> > encourage you to have discussions like this on-list in the future; if
-> > that isn't possible, hosting a public call would okay-ish, but a
-> > distant second.
->
-> I'm still trying to get Eric's attention to get him to weigh in here and
-> provide a more eloquent representation of his ideas and concerns.  Some
-> of it was related to CRIU(sp?) issues which we've already of which we've
-> already seen similar concerns in namespace identifiers including the
-> device identity to qualify it.
+This patch set adds reset controller support
+for the Nuvoton NPCM Baseboard Management Controller (BMC).
 
-Okay, let's leave this open until we hear from Eric to see if he has
-any additional information, but it's going to need to be pretty
-compelling.
+Apart of controlling all NPCM BMC reset module lines the NPCM reset driver
+support NPCM BMC software reset to restarting the NPCM BMC.
 
-> > At this point in time I'm not overly concerned about /proc completely
-> > going away in namespaces/containers that are full featured enough to
-> > host a container orchestrator.  If/when reliance on procfs becomes an
-> > issue, we can look at alternate APIs, but given the importance of
-> > /proc to userspace (including to audit) I suspect we are going to see
-> > it persist for some time.  I would prefer to see you to drop the audit
-> > container ID netlink API portions of this patchset and focus on the
-> > procfs API.
->
-> I've already refactored the code to put the netlink bits at the end as
-> completely optional pieces for completeness so they won't get in the way
-> of the real substance of this patchset.  The nesting depth and total
-> number of containers checks have also been punted to the end of the
-> patchset to get them out of the way of discussion.
+Supporting NPCM USB-PHY reset as follow:
 
-That's fine, but if we do decide to drop the netlink API after hearing
-from Eric, please drop those from the patchset.  Keeping the patchset
-small and focused should be a goal, and including rejected/dead
-patches (even at the end) doesn't help move towards that goal.
+NPCM BMC USB-PHY connected to two modules USB device (UDC) and USB host.
 
-> > Also, for the record, removing the audit loginuid from procfs is not
-> > something to take lightly, if at all; like it or not, it's part of the
-> > kernel API.
->
-> Oh, I'm quite aware of how important this change is and it was discussed
-> with Steve Grubb who saw the concern and value of considering such a
-> disruptive change.  Removing proc support for auid/ses would be a
-> long-term deprecation if accepted.
+If we will restart the USB-PHY at the UDC probe and later the
+USB host probe will restart USB-PHY again it will disable the UDC
+and vice versa.
 
-As I mentioned, that comment was more "for the record" than you in
-particular; I know we've talked a lot over the years about kernel API
-stability and I'm confident you are aware of the pitfalls there. :)
+The solution is to reset the USB-PHY at the reset probe stage before
+the UDC and the USB host are initializing.
 
--- 
-paul moore
-www.paul-moore.com
+NPCM reset driver tested on NPCM750 evaluation board.
+
+Addressed comments from:.
+ - Philipp Zabel : https://lkml.org/lkml/2019/10/29/712
+                                   https://lkml.org/lkml/2019/10/29/713
+                                   https://lkml.org/lkml/2019/10/29/731
+ - kbuild test robot : https://lkml.org/lkml/2019/10/30/29
+
+Changes since version 2:
+ - Remove unnecessary details in the dt-binding documentation.
+ - Modify device tree binding constants.
+ - initialize gcr_regmap parameter to NULL.
+ - Add of_xlate support.
+ - Enable NPCM reset driver by default.
+ - Remove unused header include.
+ - Using devm_platform_ioremap_resource instead of_address_to_resource
+        and devm_ioremap_resource.
+ - Modify number of resets.
+ - Using devm_reset_controller_register instead reset_controller_register.
+ - Remove unnecessary probe print.
+
+Changes since version 1:
+ - Check if gcr_regmap parameter initialized before using it.
+
+Tomer Maimon (3):
+  dt-binding: reset: add NPCM reset controller documentation
+  dt-bindings: reset: Add binding constants for NPCM7xx reset controller
+  reset: npcm: add NPCM reset controller driver
+
+ .../bindings/reset/nuvoton,npcm-reset.txt     |  32 ++
+ drivers/reset/Kconfig                         |   7 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-npcm.c                    | 281 ++++++++++++++++++
+ .../dt-bindings/reset/nuvoton,npcm7xx-reset.h |  91 ++++++
+ 5 files changed, 412 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+ create mode 100644 drivers/reset/reset-npcm.c
+ create mode 100644 include/dt-bindings/reset/nuvoton,npcm7xx-reset.h
+
+--
+2.22.0
+
+
+
+===========================================================================================
+The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
