@@ -2,251 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB4DEB4FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D13EB51E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 17:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbfJaQqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 12:46:17 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42280 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbfJaQqQ (ORCPT
+        id S1728835AbfJaQqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 12:46:47 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:50720 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728714AbfJaQqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:46:16 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z17so9394213qts.9
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:46:14 -0700 (PDT)
+        Thu, 31 Oct 2019 12:46:46 -0400
+Received: by mail-pf1-f202.google.com with SMTP id x15so2199045pfi.17
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 09:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=8BDA+jxLbxMZRyBhT+Sh/HKotUNzXD/MuC8g+IfML58=;
-        b=k3JOMLxlQv49waYHbMD9TzpPf4vveDi3Ra3C+Te93aiGVb9/FtlhZrCKC8mX34zYMk
-         eFYxHC5idpfdQ7yO8hE/2dZAw9MIZHkOFc6rbwFjeG+wCbSfTbX3vGxpF6vdvrADqGVu
-         +YI9Al6BtD42TOaVSGo30lI4iAunxzwHZQR6neRmPUJIznd/1J8MKidvdqVb4Nrzu6M6
-         RNfwtG4l8F+KHd8vgU0rjUpUAVI04i0JqlU08t1I/AD5Xq6cIwhLA3nFTx+jlJvF3N0q
-         WiX3NtvJD6FVqEAfQCZKc6QoY+xmnAHYPkfrH1bP84/sJq2iGVSzjjQNgodDDi+eCmbr
-         NZYg==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=VJW4EixJ7eoVvGoW8WXB816KDrFUl4nwPba/L9J0fDM=;
+        b=X72pCBmeu6KNeTcEZs/HbzCF3sDrWvAyivdNVRvS3VrtS/eW+94zqgHgR+xACKsx2l
+         IC7BZebQB1kM8OaIdthHJvaTnXpdESiVK51g2vca/ejvSau2zKoF6zHNEj6ayclvX8Q1
+         0E8O8U2gqyQKM+wO+LwOK1nrC8kXR39u0eY6bPjpl46S90zRR0EYGAxExeEZqELG0bTT
+         2JMXQ0B5DcxiiehhQNhDYgQxy+Az2OiSw/2+1zKsmA+lkXmRmb5uSYLgrJnsxGNK0vuV
+         MRtztHQTOSEh9H4fwBMfwZyJMgn8dUDLwcVKd45EdzK3pl/rwxqb7rGV7DeDmqeSm7Em
+         OVMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=8BDA+jxLbxMZRyBhT+Sh/HKotUNzXD/MuC8g+IfML58=;
-        b=LR6AGomT90kfQCVQ4eqf30mseE64i5aXZVCYbt/gIp6G3azSsxXiTbiK9263BX+C1Q
-         of/ykk29RVx9YYVsmex6cSGkcnWFPqL2Ri+f9V+bhIvvwyAQucMHSnTflxvJ2M3GErCF
-         qHTAhaCTCzQubwz4p2c+eXkf4Fk4jjPv6eqbeTd0CH9f8JlhZSyT/H37281LM/YtQPnI
-         IGOY8xWiF7N3CQeiXnc3AARPHDVeyc7JzmR+U3bjy0yM4ZCpINplwPwZZehUS72p99Mz
-         aN2mqCN+lD+dSL6QzmX35O6fbYcrykI/R5zIWZzLA8KpsquaRtaoOpA4HPQaIpxPH1DU
-         GKjw==
-X-Gm-Message-State: APjAAAWHpvC7LK5PZQa7c3LPQXPmSzcmQNONf+hqlPl6oIUhWbhpiz+s
-        IPuU4UHm/61X5PeVLHsndrvONA==
-X-Google-Smtp-Source: APXvYqxvRyD6STzUiJHaqvckuJ+Bj7OXy4bur6BbnH1h/Ujq9cD7R4bwjaNpVgTVqxRQufjvyvBMuQ==
-X-Received: by 2002:ac8:35c4:: with SMTP id l4mr201801qtb.151.1572540373845;
-        Thu, 31 Oct 2019 09:46:13 -0700 (PDT)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id 11sm2431439qkv.131.2019.10.31.09.46.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Oct 2019 09:46:13 -0700 (PDT)
-Subject: Re: [Patch v4 5/6] thermal/cpu-cooling: Update thermal pressure in
- case of a maximum frequency capping
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-6-git-send-email-thara.gopinath@linaro.org>
- <2b19d7da-412c-932f-7251-110eadbef3e3@arm.com>
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DBB0FD4.8000509@linaro.org>
-Date:   Thu, 31 Oct 2019 12:46:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <2b19d7da-412c-932f-7251-110eadbef3e3@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=VJW4EixJ7eoVvGoW8WXB816KDrFUl4nwPba/L9J0fDM=;
+        b=Qdpk05bV7hw/z1w0D8EhEiCsc/9OOQjh666wrOTP/gLvPbXJJ4riSWZK0n/RGO3M1l
+         bo78+yDkwpWCTlUuCDhw0X8EeArTrd9vOStaw/qJzCDYF63LcCYZJWm8Jftcm3xdhd17
+         4hQcqsOTjcpbOhpekNKGKKL9Dzi1H26dzC7uAssC3daEq7MNvz1nv1gx+j5hgVSurcir
+         Z+I6TOtoFhilFjEThmYqC4VXt5qAehxOtslcYnH6dstBgS552/flP4/fKDHMfgeIdWU1
+         7a37UU00qn9cVEaVNpXfel5JWeq1UfV77tOjS5fsdIyqLRpBzl5yaxTzHS7bu4WWfU19
+         3hhQ==
+X-Gm-Message-State: APjAAAXRJ0TuVTG+x/0yJZ1qpHqgmGX3ER1uZvfQZpy8ARuiuJBCpXNI
+        Tuq6zFD5ib8y85Pe6EUZi6dT8trx44NkG7CLEyI=
+X-Google-Smtp-Source: APXvYqwNtkBpFip8q81bGhg0CvAnPTQnrqxcNvMaBe34ClJ/Yd2hlu2ZC+yn6qs00bEmTkl5AXHyjpx+Oa61GiD4Q6Q=
+X-Received: by 2002:a63:b95e:: with SMTP id v30mr7752425pgo.206.1572540403625;
+ Thu, 31 Oct 2019 09:46:43 -0700 (PDT)
+Date:   Thu, 31 Oct 2019 09:46:20 -0700
+In-Reply-To: <20191018161033.261971-1-samitolvanen@google.com>
+Message-Id: <20191031164637.48901-1-samitolvanen@google.com>
+Mime-Version: 1.0
+References: <20191018161033.261971-1-samitolvanen@google.com>
+X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
+Subject: [PATCH v3 00/17] add support for Clang's Shadow Call Stack
+From:   samitolvanen@google.com
+To:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/2019 12:29 PM, Dietmar Eggemann wrote:
-> On 22.10.19 22:34, Thara Gopinath wrote:
->> Thermal governors can request for a cpu's maximum supported frequency
->> to be capped in case of an overheat event. This in turn means that the
->> maximum capacity available for tasks to run on the particular cpu is
->> reduced. Delta between the original maximum capacity and capped
->> maximum capacity is known as thermal pressure. Enable cpufreq cooling
->> device to update the thermal pressure in event of a capped
->> maximum frequency.
->>
->> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
->> ---
->>  drivers/thermal/cpu_cooling.c | 31 +++++++++++++++++++++++++++++--
->>  1 file changed, 29 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
->> index 391f397..2e6a979 100644
->> --- a/drivers/thermal/cpu_cooling.c
->> +++ b/drivers/thermal/cpu_cooling.c
->> @@ -218,6 +218,23 @@ static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
->>  }
->>  
->>  /**
->> + * update_sched_max_capacity - update scheduler about change in cpu
->> + *					max frequency.
->> + * @policy - cpufreq policy whose max frequency is capped.
->> + */
->> +static void update_sched_max_capacity(struct cpumask *cpus,
->> +				      unsigned int cur_max_freq,
->> +				      unsigned int max_freq)
->> +{
->> +	int cpu;
->> +	unsigned long capacity = (cur_max_freq << SCHED_CAPACITY_SHIFT) /
->> +				  max_freq;
->> +
->> +	for_each_cpu(cpu, cpus)
->> +		update_thermal_pressure(cpu, capacity);
->> +}
->> +
->> +/**
->>   * get_load() - get load for a cpu since last updated
->>   * @cpufreq_cdev:	&struct cpufreq_cooling_device for this cpu
->>   * @cpu:	cpu number
->> @@ -320,6 +337,7 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
->>  				 unsigned long state)
->>  {
->>  	struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
->> +	int ret;
->>  
->>  	/* Request state should be less than max_level */
->>  	if (WARN_ON(state > cpufreq_cdev->max_level))
->> @@ -331,8 +349,17 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
->>  
->>  	cpufreq_cdev->cpufreq_state = state;
->>  
->> -	return dev_pm_qos_update_request(&cpufreq_cdev->qos_req,
->> -				cpufreq_cdev->freq_table[state].frequency);
->> +	ret = dev_pm_qos_update_request
->> +				(&cpufreq_cdev->qos_req,
->> +				 cpufreq_cdev->freq_table[state].frequency);
->> +
->> +	if (ret > 0)
->> +		update_sched_max_capacity
->> +				(cpufreq_cdev->policy->cpus,
->> +				 cpufreq_cdev->freq_table[state].frequency,
->> +				 cpufreq_cdev->policy->cpuinfo.max_freq);
->> +
->> +	return ret;
->>  }
->>  
->>  /**
->>
-> 
-> Why not getting rid of update_sched_max_capacity() entirely and call
-> update_thermal_pressure() in cpu_cooling.c directly? Saves one level in
-> the call chain and would mean less code for this feature.
+This patch series adds support for Clang's Shadow Call Stack
+(SCS) mitigation, which uses a separately allocated shadow stack
+to protect against return address overwrites. More information
+can be found here:
 
-Hi Dietmar,
-Thanks for the review.
+  https://clang.llvm.org/docs/ShadowCallStack.html
 
-I did not want the scheduler piece of code to loop through the cpus.
-Do you feel strongly about this one ?
+SCS provides better protection against traditional buffer
+overflows than CONFIG_STACKPROTECTOR_*, but it should be noted
+that SCS security guarantees in the kernel differ from the ones
+documented for user space. The kernel must store addresses of
+shadow stacks used by other tasks and interrupt handlers in
+memory, which means an attacker capable reading and writing
+arbitrary memory may be able to locate them and hijack control
+flow by modifying shadow stacks that are not currently in use.
 
-Warm Regards
-Thara
-> 
-> Just compile tested on arm64:
-> 
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index 3211b4d3a899..bf36995013b0 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -217,23 +217,6 @@ static u32 cpu_power_to_freq(struct
-> cpufreq_cooling_device *cpufreq_cdev,
->         return freq_table[i - 1].frequency;
->  }
-> 
-> -/**
-> - * update_sched_max_capacity - update scheduler about change in cpu
-> - *                                     max frequency.
-> - * @policy - cpufreq policy whose max frequency is capped.
-> - */
-> -static void update_sched_max_capacity(struct cpumask *cpus,
-> -                                     unsigned int cur_max_freq,
-> -                                     unsigned int max_freq)
-> -{
-> -       int cpu;
-> -       unsigned long capacity = (cur_max_freq << SCHED_CAPACITY_SHIFT) /
-> -                                 max_freq;
-> -
-> -       for_each_cpu(cpu, cpus)
-> -               update_thermal_pressure(cpu, capacity);
-> -}
-> -
->  /**
->   * get_load() - get load for a cpu since last updated
->   * @cpufreq_cdev:      &struct cpufreq_cooling_device for this cpu
-> @@ -353,7 +336,7 @@ static int cpufreq_set_cur_state(struct
-> thermal_cooling_device *cdev,
->                                 cpufreq_cdev->freq_table[state].frequency);
-> 
->         if (ret > 0)
-> -               update_sched_max_capacity
-> +               update_thermal_pressure
->                                 (cpufreq_cdev->policy->cpus,
->                                  cpufreq_cdev->freq_table[state].frequency,
->                                  cpufreq_cdev->policy->cpuinfo.max_freq);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 55dfe9634f67..5707813c7621 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1985,9 +1985,9 @@ static inline void rseq_syscall(struct pt_regs *regs)
->  #endif
-> 
->  #ifdef CONFIG_SMP
-> -void update_thermal_pressure(int cpu, u64 capacity);
-> +void update_thermal_pressure(struct cpumask *cpus, unsigned int cur,
-> unsigned int max);
->  #else
-> -static inline void update_thermal_pressure(int cpu, u64 capacity)
-> +static inline void update_thermal_pressure(struct cpumask *cpus,
-> unsigned int cur, unsigned int max);
->  {
->  }
->  #endif
-> diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-> index 0da31e12a5ff..691bdd79597a 100644
-> --- a/kernel/sched/thermal.c
-> +++ b/kernel/sched/thermal.c
-> @@ -43,17 +43,16 @@ static DEFINE_PER_CPU(unsigned long, delta_capacity);
->   * the arch_scale_cpu_capacity and capped capacity is stored in per cpu
->   * delta_capacity.
->   */
-> -void update_thermal_pressure(int cpu, u64 capped_freq_ratio)
-> +void update_thermal_pressure(struct cpumask *cpus, unsigned int cur,
-> unsigned int max)
->  {
-> -       unsigned long __capacity, delta;
-> +       int cpu;
-> 
-> -       /* Normalize the capped freq ratio */
-> -       __capacity = (capped_freq_ratio * arch_scale_cpu_capacity(cpu)) >>
-> -
-> SCHED_CAPACITY_SHIFT;
-> -       delta = arch_scale_cpu_capacity(cpu) -  __capacity;
-> -       pr_debug("updating cpu%d thermal pressure to %lu\n", cpu, delta);
-> +       for_each_cpu(cpu, cpus) {
-> +               unsigned long scale_cap = arch_scale_cpu_capacity(cpu);
-> +               unsigned long cur_cap = cur * scale_cap / max;
-> 
-> -       per_cpu(delta_capacity, cpu) = delta;
-> +               per_cpu(delta_capacity, cpu) = scale_cap - cur_cap;
-> +       }
->  }
-> 
+SCS is currently supported only on arm64, where the compiler
+requires the x18 register to be reserved for holding the current
+task's shadow stack pointer. Because of this, the series includes
+patches from Ard to remove x18 usage from assembly code.
 
+With -fsanitize=shadow-call-stack, the compiler injects
+instructions to all non-leaf C functions to store the return
+address to the shadow stack, and unconditionally load it again
+before returning. As a result, SCS is currently incompatible
+with features that rely on modifying function return addresses
+to alter control flow, such as function graph tracing and
+kretprobes, although it may be possible to later change these
+features to modify the shadow stack instead. A copy of the return
+address is still kept in the kernel stack for compatibility with
+stack unwinding, for example.
+
+SCS has a minimal performance overhead, but allocating
+shadow stacks increases kernel memory usage. The feature is
+therefore mostly useful on hardware that lacks support for PAC
+instructions.
+
+Changes in v3:
+ - Switched to filter-out for removing SCS flags in Makefiles
+ - Changed the __noscs attribute to use __no_sanitize__("...")
+   instead of no_sanitize("...")
+ - Cleaned up inline function definitions and moved task_scs()
+   into a macro
+ - Cleaned up scs_free() and scs_magic()
+ - Moved SCS initialization into dup_task_struct() and removed
+   the now unused scs_task_init()
+ - Added comments to __scs_base() and scs_task_reset() to better
+   document design choices
+ - Changed copy_page to make the offset and bias explicit
+
+Changes in v2:
+ - Changed Ard's KVM patch to use x29 instead of x18 for the
+   guest context, which makes restore_callee_saved_regs cleaner
+ - Updated help text (and commit messages) to point out
+   differences in security properties compared to user space SCS
+ - Cleaned up config options: removed the ROP protection choice,
+   replaced the CC_IS_CLANG dependency with an arch-specific
+   cc-option test, and moved disabling of incompatible config
+   options to an arch-specific Kconfig
+ - Added CC_FLAGS_SCS, which are filtered out where needed
+   instead of using DISABLE_SCS
+ - Added a __has_feature guard around __noscs for older clang
+   versions
+
+Ard Biesheuvel (1):
+  arm64: kernel: avoid x18 __cpu_soft_restart
+
+Sami Tolvanen (16):
+  arm64: mm: avoid x18 in idmap_kpti_install_ng_mappings
+  arm64/lib: copy_page: avoid x18 register in assembler code
+  arm64: kvm: stop treating register x18 as caller save
+  add support for Clang's Shadow Call Stack (SCS)
+  scs: add accounting
+  scs: add support for stack usage debugging
+  kprobes: fix compilation without CONFIG_KRETPROBES
+  arm64: kprobes: fix kprobes without CONFIG_KRETPROBES
+  arm64: disable kretprobes with SCS
+  arm64: disable function graph tracing with SCS
+  arm64: reserve x18 from general allocation with SCS
+  arm64: preserve x18 when CPU is suspended
+  arm64: efi: restore x18 if it was corrupted
+  arm64: vdso: disable Shadow Call Stack
+  arm64: disable SCS for hypervisor code
+  arm64: implement Shadow Call Stack
+
+ Makefile                             |   6 +
+ arch/Kconfig                         |  33 ++++
+ arch/arm64/Kconfig                   |   9 +-
+ arch/arm64/Makefile                  |   4 +
+ arch/arm64/include/asm/scs.h         |  37 +++++
+ arch/arm64/include/asm/stacktrace.h  |   4 +
+ arch/arm64/include/asm/suspend.h     |   2 +-
+ arch/arm64/include/asm/thread_info.h |   3 +
+ arch/arm64/kernel/Makefile           |   1 +
+ arch/arm64/kernel/asm-offsets.c      |   3 +
+ arch/arm64/kernel/cpu-reset.S        |   4 +-
+ arch/arm64/kernel/efi-rt-wrapper.S   |   7 +-
+ arch/arm64/kernel/entry.S            |  28 ++++
+ arch/arm64/kernel/head.S             |   9 ++
+ arch/arm64/kernel/irq.c              |   2 +
+ arch/arm64/kernel/probes/kprobes.c   |   2 +
+ arch/arm64/kernel/process.c          |   2 +
+ arch/arm64/kernel/scs.c              |  39 +++++
+ arch/arm64/kernel/smp.c              |   4 +
+ arch/arm64/kernel/vdso/Makefile      |   2 +-
+ arch/arm64/kvm/hyp/Makefile          |   3 +
+ arch/arm64/kvm/hyp/entry.S           |  41 +++--
+ arch/arm64/lib/copy_page.S           |  38 ++---
+ arch/arm64/mm/proc.S                 |  72 +++++----
+ drivers/base/node.c                  |   6 +
+ fs/proc/meminfo.c                    |   4 +
+ include/linux/compiler-clang.h       |   6 +
+ include/linux/compiler_types.h       |   4 +
+ include/linux/mmzone.h               |   3 +
+ include/linux/scs.h                  |  54 +++++++
+ init/init_task.c                     |   8 +
+ kernel/Makefile                      |   1 +
+ kernel/fork.c                        |   9 ++
+ kernel/kprobes.c                     |  38 ++---
+ kernel/sched/core.c                  |   2 +
+ kernel/sched/sched.h                 |   1 +
+ kernel/scs.c                         | 227 +++++++++++++++++++++++++++
+ mm/page_alloc.c                      |   6 +
+ mm/vmstat.c                          |   3 +
+ 39 files changed, 630 insertions(+), 97 deletions(-)
+ create mode 100644 arch/arm64/include/asm/scs.h
+ create mode 100644 arch/arm64/kernel/scs.c
+ create mode 100644 include/linux/scs.h
+ create mode 100644 kernel/scs.c
 
 -- 
-Warm Regards
-Thara
+2.24.0.rc0.303.g954a862665-goog
+
