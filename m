@@ -2,119 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28591EAFD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7ADEAFE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 13:11:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfJaMKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 08:10:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbfJaMKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:10:02 -0400
-Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0018D2086D;
-        Thu, 31 Oct 2019 12:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572523801;
-        bh=Xg5muOo5oRTRDo6O568Mu+IEqVbP4rhVmImXxDI9kGE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YLQTkCzSF8c36EjORPL7CN7vsv0XYXUP3f3gIjyDRUlmkYaYNK6zo8sQ9SwdjY2UG
-         JlJRUCsX2Hlt7OoEtwD8DT9xPQ1nRqRjhRzCPLN3R+7NPMLryVC5yPqpKztmfF8K03
-         XxGg7zc+Sr6QFmGw4UaqQmwkwhvELsxLqvCWVCtk=
-Date:   Thu, 31 Oct 2019 08:09:58 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com" 
-        <syzbot+d44f7bbebdea49dbc84a@syzkaller.appspotmail.com>,
-        "marcelo.leitner@gmail.com" <marcelo.leitner@gmail.com>
-Subject: Re: [PATCH 4.14 024/119] sctp: change sctp_prot .no_autobind with
- true
-Message-ID: <20191031120958.GP1554@sasha-vm>
-References: <20191027203259.948006506@linuxfoundation.org>
- <20191027203307.303661015@linuxfoundation.org>
- <3e9de35dda19c0ac207d49d24c2735655b1d8d64.camel@nokia.com>
- <CADvbK_dx=dT6j-XMA=p9QgJJp5YgA2zRCLuY08u4pz0v=vXorw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CADvbK_dx=dT6j-XMA=p9QgJJp5YgA2zRCLuY08u4pz0v=vXorw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726991AbfJaMLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 08:11:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56302 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726713AbfJaMLe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 08:11:34 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9VCBArx034543
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 08:11:32 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vyvwqnp78-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 08:11:19 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 31 Oct 2019 12:10:38 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Oct 2019 12:10:34 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9VC9xXx34668934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 12:09:59 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0EEE11C05E;
+        Thu, 31 Oct 2019 12:10:33 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0302E11C04C;
+        Thu, 31 Oct 2019 12:10:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.194.174])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Oct 2019 12:10:31 +0000 (GMT)
+Subject: Re: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key
+ create or update
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     prsriva@linux.microsoft.com
+Date:   Thu, 31 Oct 2019 08:10:31 -0400
+In-Reply-To: <20191031011910.2574-2-nramas@linux.microsoft.com>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+         <20191031011910.2574-2-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19103112-0016-0000-0000-000002BF7A23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19103112-0017-0000-0000-00003320DD7B
+Message-Id: <1572523831.5028.43.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910310125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 05:14:15PM +0800, Xin Long wrote:
->On Thu, Oct 31, 2019 at 3:54 PM Rantala, Tommi T. (Nokia - FI/Espoo)
-><tommi.t.rantala@nokia.com> wrote:
->>
->> On Sun, 2019-10-27 at 22:00 +0100, Greg Kroah-Hartman wrote:
->> > From: Xin Long <lucien.xin@gmail.com>
->> >
->> > [ Upstream commit 63dfb7938b13fa2c2fbcb45f34d065769eb09414 ]
->> >
->> > syzbot reported a memory leak:
->> >
->> >   BUG: memory leak, unreferenced object 0xffff888120b3d380 (size 64):
->> >   backtrace:
->> >
->> >     [...] slab_alloc mm/slab.c:3319 [inline]
->> >     [...] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
->> >     [...] sctp_bucket_create net/sctp/socket.c:8523 [inline]
->> >     [...] sctp_get_port_local+0x189/0x5a0 net/sctp/socket.c:8270
->> >     [...] sctp_do_bind+0xcc/0x200 net/sctp/socket.c:402
->> >     [...] sctp_bindx_add+0x4b/0xd0 net/sctp/socket.c:497
->> >     [...] sctp_setsockopt_bindx+0x156/0x1b0 net/sctp/socket.c:1022
->> >     [...] sctp_setsockopt net/sctp/socket.c:4641 [inline]
->> >     [...] sctp_setsockopt+0xaea/0x2dc0 net/sctp/socket.c:4611
->> >     [...] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3147
->> >     [...] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
->> >     [...] __do_sys_setsockopt net/socket.c:2100 [inline]
->> >
->> > It was caused by when sending msgs without binding a port, in the path:
->> > inet_sendmsg() -> inet_send_prepare() -> inet_autobind() ->
->> > .get_port/sctp_get_port(), sp->bind_hash will be set while bp->port is
->> > not. Later when binding another port by sctp_setsockopt_bindx(), a new
->> > bucket will be created as bp->port is not set.
->> >
->> > sctp's autobind is supposed to call sctp_autobind() where it does all
->> > things including setting bp->port. Since sctp_autobind() is called in
->> > sctp_sendmsg() if the sk is not yet bound, it should have skipped the
->> > auto bind.
->> >
->> > THis patch is to avoid calling inet_autobind() in inet_send_prepare()
->> > by changing sctp_prot .no_autobind with true, also remove the unused
->> > .get_port.
->>
->> Hi,
->>
->> I'm seeing SCTP oops in 4.14.151, reproducible easily with iperf:
->>
->> # iperf3 -s -1 &
->> # iperf3 -c localhost --sctp
->>
->> This patch was also included in 4.19.81, but there it seems to be working
->> fine.
->>
->> Any ideas if this patch is valid for 4.14, or what's missing in 4.14 to
->> make this work?
->pls get this commit into 4.14, which has been in 4.19:
->
->commit 644fbdeacf1d3edd366e44b8ba214de9d1dd66a9
->Author: Xin Long <lucien.xin@gmail.com>
->Date:   Sun May 20 16:39:10 2018 +0800
->
->    sctp: fix the issue that flags are ignored when using kernel_connect
+On Wed, 2019-10-30 at 18:19 -0700, Lakshmi Ramasubramanian wrote:
+> Asymmetric keys used for verifying file signatures or certificates
+> are currently not included in the IMA measurement list.
+> 
+> This patch defines a new IMA hook namely ima_post_key_create_or_update()
+> to measure asymmetric keys.
 
-Care to send a backport?
+It's not enough for the kernel to be able to compile the kernel after
+applying all the patches in a patch set.  After applying each patch,
+the kernel should build properly, otherwise it is not bi-sect safe.
+ Refer to "3) Separate your changes" of
+"Documentation/process/submitting-patches.rst.
+ 
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima.h      |  2 ++
+>  security/integrity/ima/ima_main.c | 26 ++++++++++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 997a57137351..22d0628faf56 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -21,6 +21,8 @@
+>  #include <linux/tpm.h>
+>  #include <linux/audit.h>
+>  #include <crypto/hash_info.h>
+> +#include <crypto/public_key.h>
+> +#include <keys/asymmetric-type.h>
+>  
+>  #include "../integrity.h"
+>  
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 492b8f241d39..18e1bc105be7 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -635,6 +635,9 @@ void process_buffer_measurement(const void *buf, int size,
+>  	int action = 0;
+>  	u32 secid;
+>  
+> +	if (!ima_policy_flag)
+> +		return;
+> +
+>  	if (func) {
+>  		security_task_getsecid(current, &secid);
+>  		action = ima_get_action(NULL, current_cred(), secid, 0, func,
+> @@ -695,6 +698,29 @@ void ima_kexec_cmdline(const void *buf, int size)
+>  	}
+>  }
+>  
+> +/**
+> + * ima_post_key_create_or_update - measure asymmetric keys
+> + * @keyring: keyring to which the key is linked to
+> + * @key: created or updated key
+> + * @flags: key flags
+> + * @create: flag indicating whether the key was created or updated
+> + *
+> + * Keys can only be measured, not appraised.
+> + */
+> +void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+> +				   unsigned long flags, bool create)
+> +{
+> +	const struct public_key *pk;
+> +
+> +	if (key->type != &key_type_asymmetric)
+> +		return;
+> +
+> +	pk = key->payload.data[asym_crypto];
+> +	process_buffer_measurement(pk->key, pk->keylen,
+> +				   keyring->description,
+> +				   NONE, 0);
 
--- 
-Thanks,
-Sasha
+This patch should also define the new "func".
+
+Mimi
+
+> +}
+> +
+>  static int __init init_ima(void)
+>  {
+>  	int error;
+
