@@ -2,181 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0FB2EAC9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:37:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16BDEEACA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 10:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfJaJgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 05:36:53 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38875 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfJaJgx (ORCPT
+        id S1727341AbfJaJjd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 05:39:33 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:38821 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727153AbfJaJjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:36:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id j30so201337pgn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 02:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=W3IvectI3U8q0HFF/2f4e8iwJrLi+nuiRQbnbTxHTY4=;
-        b=UQBU8pga/J7ePOwPMzsTWyVEdxrfo7cdGzhDjxv8yuKxBCWLeUX7wN0ysAomBzf0rv
-         6HkWJH85yBZWYjLtk16ZSrZR9tst8mYaRvC5ni/cd5jRuKZc3d+k4Qcs6U8qzK8b6Gwy
-         hshflkHLKqRQnXnqJ5o9u8/e4HMs5ZY+fQkss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=W3IvectI3U8q0HFF/2f4e8iwJrLi+nuiRQbnbTxHTY4=;
-        b=nRk1oOAFOOn+//MP1MR0qmhBLYQdlk8GQ5hfRqK8wZyoSmaAhZ0L5fb/8ewERYyMKP
-         yt9Y1V/qhGT5A4xbP401Oi9Oz2DF3+cwx7zjvB2vdtKVDYbUtcRp4V/k2NzQf//ds4TI
-         3LIPWC/sfSFZyg1uZlTyxDvcC7vvgDVapdFkoNfHIRMT5fMTVo55YFpLKse0UJn1u8oK
-         waGDf4E+jK7qmRvF6cosQ7jdwm+4f2lZHy3UChIZr/IBp6imd+rP1njrL1DwOZdKQYcP
-         kddeS4BgOJ09bto1SmkZSg5apFFgFSbHr6XO+tuSFEWLxIR7ipkLtHOGUVPad5aH5HZq
-         27hQ==
-X-Gm-Message-State: APjAAAWicBqpQCZ4b/on6/6UJt7rVeAAQUCzQkZX4G6cY41Z55c3UyzO
-        THeotZMh5CK47ExAClgSE/bmOhwz+qo=
-X-Google-Smtp-Source: APXvYqzhpdRbvtvxfJX9ZT+cYCOInadyvR9a7dOApHJ2j74C/PDMrWRAe01F5X/e2EPBEt+jSYBJog==
-X-Received: by 2002:a17:90a:c505:: with SMTP id k5mr5768175pjt.84.1572514612591;
-        Thu, 31 Oct 2019 02:36:52 -0700 (PDT)
-Received: from localhost (2001-44b8-1113-6700-783a-2bb9-f7cb-7c3c.static.ipv6.internode.on.net. [2001:44b8:1113:6700:783a:2bb9:f7cb:7c3c])
-        by smtp.gmail.com with ESMTPSA id i16sm2708223pfa.184.2019.10.31.02.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 02:36:51 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        dvyukov@google.com, christophe.leroy@c-s.fr,
-        linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
-Subject: Re: [PATCH v10 1/5] kasan: support backing vmalloc space with real shadow memory
-In-Reply-To: <20191030142951.GA24958@pc636>
-References: <20191029042059.28541-1-dja@axtens.net> <20191029042059.28541-2-dja@axtens.net> <20191030142951.GA24958@pc636>
-Date:   Thu, 31 Oct 2019 20:36:48 +1100
-Message-ID: <87k18lmf2n.fsf@dja-thinkpad.axtens.net>
+        Thu, 31 Oct 2019 05:39:33 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x9V9d5KV030776
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 31 Oct 2019 18:39:05 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9V9d5Ds002546;
+        Thu, 31 Oct 2019 18:39:05 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x9V9Y0El023154;
+        Thu, 31 Oct 2019 18:39:05 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-9977829; Thu, 31 Oct 2019 18:38:42 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0439.000; Thu,
+ 31 Oct 2019 18:38:41 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Roman Gushchin <guro@fb.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-team@fb.com" <kernel-team@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize
+ non-compound slab pages properly
+Thread-Topic: [PATCH v2] mm: slab: make page_cgroup_ino() to recognize
+ non-compound slab pages properly
+Thread-Index: AQHVj6H5mxzEf5Q4l0mAfuJEVZ8f/qdz59AA
+Date:   Thu, 31 Oct 2019 09:38:40 +0000
+Message-ID: <20191031093840.GA9178@hori.linux.bs1.fc.nec.co.jp>
+References: <20191031012151.2722280-1-guro@fb.com>
+ <20191030211608.29f8fc92e07fd2ac2ef4d1d3@linux-foundation.org>
+In-Reply-To: <20191030211608.29f8fc92e07fd2ac2ef4d1d3@linux-foundation.org>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <4592DDEF39464440989A95B815E27759@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uladzislau Rezki <urezki@gmail.com> writes:
+On Wed, Oct 30, 2019 at 09:16:08PM -0700, Andrew Morton wrote:
+> On Wed, 30 Oct 2019 18:21:51 -0700 Roman Gushchin <guro@fb.com> wrote:
+> 
+> > page_cgroup_ino() doesn't return a valid memcg pointer for non-compound
+> > slab pages, because it depends on PgHead AND PgSlab flags to be set
+> > to determine the memory cgroup from the kmem_cache.
+> > It's correct for compound pages, but not for generic small pages. Those
+> > don't have PgHead set, so it ends up returning zero.
+> > 
+> > Fix this by replacing the condition to PageSlab() && !PageTail().
+> > 
+> > Before this patch:
+> > [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
+> > 0x0000000000000080	        38        0  _______S___________________________________	slab
+> > 
+> > After this patch:
+> > [root@localhost ~]# ./page-types -c /sys/fs/cgroup/user.slice/user-0.slice/user@0.service/ | grep slab
+> > 0x0000000000000080	       147        0  _______S___________________________________	slab
+> > 
+> > Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> > Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+> 
+> Affects /proc/kpagecgroup, but page_cgroup_ino() is also used in the
+> memory-failure code - I wonder what effect this bug has there?
 
-> Hello, Daniel
->
->>  
->> @@ -1294,14 +1299,19 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
->>  	spin_lock(&free_vmap_area_lock);
->>  	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
->>  		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
->> +		unsigned long orig_start = va->va_start;
->> +		unsigned long orig_end = va->va_end;
->>  
->>  		/*
->>  		 * Finally insert or merge lazily-freed area. It is
->>  		 * detached and there is no need to "unlink" it from
->>  		 * anything.
->>  		 */
->> -		merge_or_add_vmap_area(va,
->> -			&free_vmap_area_root, &free_vmap_area_list);
->> +		va = merge_or_add_vmap_area(va, &free_vmap_area_root,
->> +					    &free_vmap_area_list);
->> +
->> +		kasan_release_vmalloc(orig_start, orig_end,
->> +				      va->va_start, va->va_end);
->>  
-> I have some questions here. I have not analyzed kasan_releace_vmalloc()
-> logic in detail, sorry for that if i miss something. __purge_vmap_area_lazy()
-> deals with big address space, so not only vmalloc addresses it frees here,
-> basically it can be any, starting from 1 until ULONG_MAX, whereas vmalloc
-> space spans from VMALLOC_START - VMALLOC_END:
->
-> 1) Should it be checked that vmalloc only address is freed or you handle
-> it somewhere else?
->
-> if (is_vmalloc_addr(va->va_start))
->     kasan_release_vmalloc(...)
+hwpoison_filter_task() uses output of page_cgroup_ino() in order to
+filter error injection events based on memcg.
+So if page_cgroup_ino() fails to return memcg pointer, we just fail
+to inject memory error.  Considering that hwpoison filter is for testing,
+affected users are limited and the impact should be marginal.
 
-So in kasan_release_vmalloc we only free the region covered by the
-shadow of orig_start to orig_end, and possibly 1 page to either side. So
-it will never attempt to free an enormous area. And it will also do
-nothing if called for a region where there is no shadow backin
-installed.
+> 
+> IOW, should we backport this into -stable?
 
-Having said that, there should be a test on orig_start, and I've added
-that in v11 - good catch.
+I think yes, because the patch is small enough and clearly fixes a bug.
 
-> 2) Have you run any bencmarking just to see how much overhead it adds?
-> I am asking, because probably it make sense to add those figures to the
-> backlog(commit message). For example you can run:
->
-> <snip>
-> sudo ./test_vmalloc.sh performance
-> and
-> sudo ./test_vmalloc.sh sequential_test_order=1
-> <snip>
-
-I have now done that:
-
-Testing with test_vmalloc.sh on an x86 VM with 2 vCPUs shows that:
-
- - Turning on KASAN, inline instrumentation, without this feature, introuduces
-   a 4.1x-4.2x slowdown in vmalloc operations.
-
- - Turning this on introduces the following slowdowns over KASAN:
-     * ~1.76x slower single-threaded (test_vmalloc.sh performance)
-     * ~2.18x slower when both cpus are performing operations
-       simultaneously (test_vmalloc.sh sequential_test_order=1)
-
-This is unfortunate but given that this is a debug feature only, not
-the end of the world.
-
-The full figures are:
-
-
-Performance
-
-                              No KASAN      KASAN original x baseline  KASAN vmalloc x baseline    x KASAN
-
-fix_size_alloc_test            1697913            14229459       8.38       22981983      13.54       1.62
-full_fit_alloc_test            1841601            15152633       8.23       17902922       9.72       1.18
-long_busy_list_alloc_test     17874082            58856758       3.29      103925371       5.81       1.77
-random_size_alloc_test         9356047            29544085       3.16       57871338       6.19       1.96
-fix_align_alloc_test           3188968            19821620       6.22       37979436      11.91       1.92
-random_size_align_alloc_te     3033507            17584339       5.80       32588942      10.74       1.85
-align_shift_alloc_test             325                1154       3.55           7263      22.35       6.29
-pcpu_alloc_test                 231952              278181       1.20         318977       1.38       1.15
-Total Cycles              235852824254        985040965542       4.18  1733258779416       7.35       1.76
-
-Sequential, 2 cpus
-
-                              No KASAN      KASAN original x baseline  KASAN vmalloc x baseline    x KASAN
-
-fix_size_alloc_test            2505806            17989253       7.18       39651038      15.82       2.20
-full_fit_alloc_test            3579676            18829862       5.26       21142645       5.91       1.12
-long_busy_list_alloc_test     21594983            74766736       3.46      140701363       6.52       1.88
-random_size_alloc_test        10884695            34282077       3.15       91945108       8.45       2.68
-fix_align_alloc_test           4133226            26304745       6.36       76163270      18.43       2.90
-random_size_align_alloc_te     4261175            22927883       5.38       55236058      12.96       2.41
-align_shift_alloc_test             948                4827       5.09           4144       4.37       0.86
-pcpu_alloc_test                 371789              307654       0.83         374412       1.01       1.22
-Total Cycles               99965417402        412710461642       4.13   897968646378       8.98       2.18
-fix_size_alloc_test            2502718            17921542       7.16       39893515      15.94       2.23
-full_fit_alloc_test            3547996            18675007       5.26       21330495       6.01       1.14
-long_busy_list_alloc_test     21522579            74610739       3.47      139822907       6.50       1.87
-random_size_alloc_test        10881507            34317349       3.15       91110531       8.37       2.65
-fix_align_alloc_test           4119755            26180887       6.35       75818927      18.40       2.90
-random_size_align_alloc_te     4297708            23058344       5.37       55969004      13.02       2.43
-align_shift_alloc_test             956                5574       5.83           4591       4.80       0.82
-pcpu_alloc_test                 306340              347014       1.13         571289       1.86       1.65
-Total Cycles               99642832084        412084074628       4.14   896497227762       9.00       2.18
-
-
-Regards,
-Daniel
-
-> Thanks!
->
-> --
-> Vlad Rezki
+Thanks,
+Naoya Horiguchi
