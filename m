@@ -2,386 +2,1027 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAFEDEB236
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA55EB1E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 15:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbfJaOLF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 31 Oct 2019 10:11:05 -0400
-Received: from maillog.nuvoton.com ([202.39.227.15]:44196 "EHLO
-        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbfJaOLB (ORCPT
+        id S1727944AbfJaOAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 10:00:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46837 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727930AbfJaOAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:11:01 -0400
-X-Greylist: delayed 875 seconds by postgrey-1.27 at vger.kernel.org; Thu, 31 Oct 2019 10:10:59 EDT
-Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id C296C1C80E38;
-        Thu, 31 Oct 2019 21:56:26 +0800 (CST)
-Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Thu, 31 Oct 2019
- 21:56:25 +0800
-Received: from NTILML02.nuvoton.com (10.190.1.46) by NTILML02.nuvoton.com
- (10.190.1.46) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Thu, 31 Oct
- 2019 15:56:19 +0200
-Received: from taln70.nuvoton.co.il (10.191.1.70) by NTILML02.nuvoton.com
- (10.190.1.47) with Microsoft SMTP Server id 15.0.1130.7 via Frontend
- Transport; Thu, 31 Oct 2019 15:56:19 +0200
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-        by taln70.nuvoton.co.il (Postfix) with ESMTP id B0E551A4;
-        Thu, 31 Oct 2019 15:56:19 +0200 (IST)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id B163660275; Thu, 31 Oct 2019 15:56:19 +0200 (IST)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <yuenn@google.com>, <venture@google.com>,
-        <benjaminfair@google.com>, <avifishman70@gmail.com>,
-        <joel@jms.id.au>
-CC:     <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v3 3/3] reset: npcm: add NPCM reset controller driver
-Date:   Thu, 31 Oct 2019 15:56:17 +0200
-Message-ID: <20191031135617.249303-4-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191031135617.249303-1-tmaimon77@gmail.com>
-References: <20191031135617.249303-1-tmaimon77@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain
+        Thu, 31 Oct 2019 10:00:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f19so4093100pgn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 07:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=RIgp3tLevj8LIkiVtdb0AroQFT7z1Het+ETlIMWwdVw=;
+        b=p6288aVSD/z2mjjuft75WNJ7EO1CyYp6QwqzV3d7fw6NCSP/+lDh2L9+zmYFQPcT63
+         vmxEvrd7QCAWodeDUuv+5Pow1ZH+l8tPhX3v15/hGwXD7OTXiFgP/qJaTudN4hm3MkNl
+         kZt1kCvprfOrxquJkjCBFKmW9ag/e+rX46o6pSZruak0ZR+3gHNuD8MSRLAllB1wVtLU
+         Ba6gDV0w1IRkT4O7YRwXBfLXqfCKsHQlVM2oIsolItMPmiKO+E4e8jNCRxT2R2Y8Yqp+
+         xk/mN00NWf4GLzRyYmCDzyc70ljWhAD2Xl0NtVYo3ds0jxiQ+ZmFU1fZknOkKUx9mIYo
+         T7gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=RIgp3tLevj8LIkiVtdb0AroQFT7z1Het+ETlIMWwdVw=;
+        b=oUnqmOkyky2m7hOj8R3X0fh3R4mFXmqJQVdXAlnVST69cgKTMjhvZSy2aCV9yedtyy
+         EsaVKwjb2i1mTufCprnTSbDhRWRiiJbwAxdD1k3lrKjxo6XY2nLm508DvY+mKaMqQfQ7
+         bgQ3O9JWjwZuyry0dJC8AdCnB19y9Mh2l2xI6JsDgUzczknzGzPHAT/MaX253fkTlAMC
+         Agx1itU44FvhiRgmPKTPNmqbn1ZkPk5By6HGKj5eX2Y2dyz9y0ExPxOBtaeQ1d6qfnHT
+         j+kVb4iR7tJkevUij3GTI3Pw3vbG4zy1ROBfHD+nujPHHnltdlmeUQ6MTNMWnmsc00Mc
+         tTkw==
+X-Gm-Message-State: APjAAAVfgWbcFIT+qBINdME+pV7mFNGuXNYYcJUK0l1ko4v5PM6kkBUi
+        t0ojKALcnD1cDyH8TCa049aorg==
+X-Google-Smtp-Source: APXvYqwCXwDHTNm8deZoOUE+1yC1QD3CtEcxFFBMHC6fH6w2GuxzHcjuUzBvYbDEGLIHr3m8zEe0eg==
+X-Received: by 2002:a17:90a:bb8e:: with SMTP id v14mr7638455pjr.143.1572530406567;
+        Thu, 31 Oct 2019 07:00:06 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.69.143])
+        by smtp.gmail.com with ESMTPSA id i16sm3522441pfa.184.2019.10.31.06.59.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 31 Oct 2019 07:00:05 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org, jarkko.sakkinen@linux.intel.com,
+        dhowells@redhat.com
+Cc:     corbet@lwn.net, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        stuart.yoder@arm.com, janne.karhunen@gmail.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
+Subject: [Patch v3 4/7] KEYS: trusted: Add generic trusted keys framework
+Date:   Thu, 31 Oct 2019 19:28:40 +0530
+Message-Id: <1572530323-14802-5-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Nuvoton NPCM BMC reset controller driver.
+Current trusted keys framework is tightly coupled to use TPM device as
+an underlying implementation which makes it difficult for implementations
+like Trusted Execution Environment (TEE) etc. to provide trusked keys
+support in case platform doesn't posses a TPM device.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+So this patch tries to add generic trusted keys framework where underlying
+implemtations like TPM, TEE etc. could be easily plugged-in.
+
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 ---
- drivers/reset/Kconfig      |   7 +
- drivers/reset/Makefile     |   1 +
- drivers/reset/reset-npcm.c | 281 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 289 insertions(+)
- create mode 100644 drivers/reset/reset-npcm.c
+ include/keys/trusted-type.h                 |  45 ++++
+ include/keys/trusted_tpm.h                  |  15 --
+ security/keys/trusted-keys/Makefile         |   1 +
+ security/keys/trusted-keys/trusted_common.c | 343 +++++++++++++++++++++++++++
+ security/keys/trusted-keys/trusted_tpm1.c   | 345 +++++-----------------------
+ 5 files changed, 447 insertions(+), 302 deletions(-)
+ create mode 100644 security/keys/trusted-keys/trusted_common.c
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 7b07281aa0ae..9e3eac30e7db 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -89,6 +89,13 @@ config RESET_MESON_AUDIO_ARB
-          This enables the reset driver for Audio Memory Arbiter of
-          Amlogic's A113 based SoCs
-
-+config RESET_NPCM
-+       bool "NPCM BMC Reset Driver" if COMPILE_TEST
-+       default ARCH_NPCM
-+       help
-+         This enables the reset controller driver for Nuvoton NPCM
-+         BMC SoCs.
+diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+index a94c03a..5559010 100644
+--- a/include/keys/trusted-type.h
++++ b/include/keys/trusted-type.h
+@@ -40,6 +40,51 @@ struct trusted_key_options {
+ 	uint32_t policyhandle;
+ };
+ 
++struct trusted_key_ops {
++	/*
++	 * flag to indicate if trusted key implementation supports migration
++	 * or not.
++	 */
++	unsigned char migratable;
 +
- config RESET_OXNAS
-        bool
-
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index cf60ce526064..00767c03f5f2 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
- obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
- obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-+obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
-diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
-new file mode 100644
-index 000000000000..ad09d466d7f9
---- /dev/null
-+++ b/drivers/reset/reset-npcm.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2019 Nuvoton Technology corporation.
++	/* trusted key init */
++	int (*init)(void);
 +
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/reset-controller.h>
-+#include <linux/spinlock.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/of_address.h>
++	/* seal a trusted key */
++	int (*seal)(struct trusted_key_payload *p, char *datablob);
 +
-+/* NPCM7xx GCR registers */
-+#define NPCM_MDLR_OFFSET       0x7C
-+#define NPCM_MDLR_USBD0                BIT(9)
-+#define NPCM_MDLR_USBD1                BIT(8)
-+#define NPCM_MDLR_USBD2_4      BIT(21)
-+#define NPCM_MDLR_USBD5_9      BIT(22)
++	/* unseal a trusted key */
++	int (*unseal)(struct trusted_key_payload *p, char *datablob);
 +
-+#define NPCM_USB1PHYCTL_OFFSET 0x140
-+#define NPCM_USB2PHYCTL_OFFSET 0x144
-+#define NPCM_USBXPHYCTL_RS     BIT(28)
++	/* get random trusted key */
++	int (*get_random)(unsigned char *key, size_t key_len);
 +
-+/* NPCM7xx Reset registers */
-+#define NPCM_SWRSTR            0x14
-+#define NPCM_SWRST             BIT(2)
-+
-+#define NPCM_IPSRST1           0x20
-+#define NPCM_IPSRST1_USBD1     BIT(5)
-+#define NPCM_IPSRST1_USBD2     BIT(8)
-+#define NPCM_IPSRST1_USBD3     BIT(25)
-+#define NPCM_IPSRST1_USBD4     BIT(22)
-+#define NPCM_IPSRST1_USBD5     BIT(23)
-+#define NPCM_IPSRST1_USBD6     BIT(24)
-+
-+#define NPCM_IPSRST2           0x24
-+#define NPCM_IPSRST2_USB_HOST  BIT(26)
-+
-+#define NPCM_IPSRST3           0x34
-+#define NPCM_IPSRST3_USBD0     BIT(4)
-+#define NPCM_IPSRST3_USBD7     BIT(5)
-+#define NPCM_IPSRST3_USBD8     BIT(6)
-+#define NPCM_IPSRST3_USBD9     BIT(7)
-+#define NPCM_IPSRST3_USBPHY1   BIT(24)
-+#define NPCM_IPSRST3_USBPHY2   BIT(25)
-+
-+#define NPCM_RC_RESETS_PER_REG 32
-+#define NPCM_MASK_RESETS       GENMASK(4, 0)
-+
-+struct npcm_rc_data {
-+       struct reset_controller_dev rcdev;
-+       struct notifier_block restart_nb;
-+       u32 sw_reset_number;
-+       void __iomem *base;
-+       spinlock_t lock;
++	/* trusted key cleanup */
++	void (*cleanup)(void);
 +};
 +
-+#define to_rc_data(p) container_of(p, struct npcm_rc_data, rcdev)
+ extern struct key_type key_type_trusted;
++#if defined(CONFIG_TCG_TPM)
++extern struct trusted_key_ops tpm_trusted_key_ops;
++#endif
 +
-+static int npcm_rc_restart(struct notifier_block *nb, unsigned long mode,
-+                          void *cmd)
++#define TRUSTED_DEBUG 0
++
++#if TRUSTED_DEBUG
++static inline void dump_payload(struct trusted_key_payload *p)
 +{
-+       struct npcm_rc_data *rc = container_of(nb, struct npcm_rc_data,
-+                                              restart_nb);
++	pr_info("trusted_key: key_len %d\n", p->key_len);
++	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
++		       16, 1, p->key, p->key_len, 0);
++	pr_info("trusted_key: bloblen %d\n", p->blob_len);
++	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
++		       16, 1, p->blob, p->blob_len, 0);
++	pr_info("trusted_key: migratable %d\n", p->migratable);
++}
++#else
++static inline void dump_payload(struct trusted_key_payload *p)
++{
++}
++#endif
+ 
+ #endif /* _KEYS_TRUSTED_TYPE_H */
+diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
+index a56d8e1..5753231 100644
+--- a/include/keys/trusted_tpm.h
++++ b/include/keys/trusted_tpm.h
+@@ -60,17 +60,6 @@ static inline void dump_options(struct trusted_key_options *o)
+ 		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
+ }
+ 
+-static inline void dump_payload(struct trusted_key_payload *p)
+-{
+-	pr_info("trusted_key: key_len %d\n", p->key_len);
+-	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
+-		       16, 1, p->key, p->key_len, 0);
+-	pr_info("trusted_key: bloblen %d\n", p->blob_len);
+-	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
+-		       16, 1, p->blob, p->blob_len, 0);
+-	pr_info("trusted_key: migratable %d\n", p->migratable);
+-}
+-
+ static inline void dump_sess(struct osapsess *s)
+ {
+ 	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
+@@ -96,10 +85,6 @@ static inline void dump_options(struct trusted_key_options *o)
+ {
+ }
+ 
+-static inline void dump_payload(struct trusted_key_payload *p)
+-{
+-}
+-
+ static inline void dump_sess(struct osapsess *s)
+ {
+ }
+diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+index 7b73ceb..2b1085b 100644
+--- a/security/keys/trusted-keys/Makefile
++++ b/security/keys/trusted-keys/Makefile
+@@ -4,5 +4,6 @@
+ #
+ 
+ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
++trusted-y += trusted_common.o
+ trusted-y += trusted_tpm1.o
+ trusted-y += trusted_tpm2.o
+diff --git a/security/keys/trusted-keys/trusted_common.c b/security/keys/trusted-keys/trusted_common.c
+new file mode 100644
+index 0000000..8f00fde
+--- /dev/null
++++ b/security/keys/trusted-keys/trusted_common.c
+@@ -0,0 +1,343 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2010 IBM Corporation
++ * Copyright (c) 2019, Linaro Limited
++ *
++ * Author:
++ * David Safford <safford@us.ibm.com>
++ * Added generic trusted key framework: Sumit Garg <sumit.garg@linaro.org>
++ *
++ * See Documentation/security/keys/trusted-encrypted.rst
++ */
 +
-+       writel(NPCM_SWRST << rc->sw_reset_number, rc->base + NPCM_SWRSTR);
-+       mdelay(1000);
++#include <keys/user-type.h>
++#include <keys/trusted-type.h>
++#include <linux/capability.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/key-type.h>
++#include <linux/module.h>
++#include <linux/parser.h>
++#include <linux/rcupdate.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++#include <linux/uaccess.h>
 +
-+       pr_emerg("%s: unable to restart system\n", __func__);
++static struct trusted_key_ops *available_tk_ops[] = {
++#if defined(CONFIG_TCG_TPM)
++	&tpm_trusted_key_ops,
++#endif
++};
++static struct trusted_key_ops *tk_ops;
 +
-+       return NOTIFY_DONE;
++enum {
++	Opt_err,
++	Opt_new, Opt_load, Opt_update,
++};
++
++static const match_table_t key_tokens = {
++	{Opt_new, "new"},
++	{Opt_load, "load"},
++	{Opt_update, "update"},
++	{Opt_err, NULL}
++};
++
++/*
++ * datablob_parse - parse the keyctl data and fill in the
++ *                  payload structure
++ *
++ * On success returns 0, otherwise -EINVAL.
++ */
++static int datablob_parse(char *datablob, struct trusted_key_payload *p)
++{
++	substring_t args[MAX_OPT_ARGS];
++	long keylen;
++	int ret = -EINVAL;
++	int key_cmd;
++	char *c;
++
++	/* main command */
++	c = strsep(&datablob, " \t");
++	if (!c)
++		return -EINVAL;
++	key_cmd = match_token(c, key_tokens, args);
++	switch (key_cmd) {
++	case Opt_new:
++		/* first argument is key size */
++		c = strsep(&datablob, " \t");
++		if (!c)
++			return -EINVAL;
++		ret = kstrtol(c, 10, &keylen);
++		if (ret < 0 || keylen < MIN_KEY_SIZE || keylen > MAX_KEY_SIZE)
++			return -EINVAL;
++		p->key_len = keylen;
++		ret = Opt_new;
++		break;
++	case Opt_load:
++		/* first argument is sealed blob */
++		c = strsep(&datablob, " \t");
++		if (!c)
++			return -EINVAL;
++		p->blob_len = strlen(c) / 2;
++		if (p->blob_len > MAX_BLOB_SIZE)
++			return -EINVAL;
++		ret = hex2bin(p->blob, c, p->blob_len);
++		if (ret < 0)
++			return -EINVAL;
++		ret = Opt_load;
++		break;
++	case Opt_update:
++		ret = Opt_update;
++		break;
++	case Opt_err:
++		return -EINVAL;
++	}
++	return ret;
 +}
 +
-+static int npcm_rc_setclear_reset(struct reset_controller_dev *rcdev,
-+                                 unsigned long id, bool set)
++static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
 +{
-+       struct npcm_rc_data *rc = to_rc_data(rcdev);
-+       unsigned int rst_bit = BIT(id & NPCM_MASK_RESETS);
-+       unsigned int ctrl_offset = id >> 8;
-+       unsigned long flags;
-+       u32 stat;
++	struct trusted_key_payload *p = NULL;
++	int ret;
 +
-+       spin_lock_irqsave(&rc->lock, flags);
-+       stat = readl(rc->base + ctrl_offset);
-+       if (set)
-+               writel(stat | rst_bit, rc->base + ctrl_offset);
-+       else
-+               writel(stat & ~rst_bit, rc->base + ctrl_offset);
-+       spin_unlock_irqrestore(&rc->lock, flags);
++	ret = key_payload_reserve(key, sizeof(*p));
++	if (ret < 0)
++		return p;
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
 +
-+       return 0;
-+}
++	p->migratable = tk_ops->migratable;
 +
-+static int npcm_rc_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+       return npcm_rc_setclear_reset(rcdev, id, true);
-+}
-+
-+static int npcm_rc_deassert(struct reset_controller_dev *rcdev,
-+                           unsigned long id)
-+{
-+       return npcm_rc_setclear_reset(rcdev, id, false);
-+}
-+
-+static int npcm_rc_status(struct reset_controller_dev *rcdev,
-+                         unsigned long id)
-+{
-+       struct npcm_rc_data *rc = to_rc_data(rcdev);
-+       unsigned int rst_bit = BIT(id & NPCM_MASK_RESETS);
-+       unsigned int ctrl_offset = id >> 8;
-+
-+       return (readl(rc->base + ctrl_offset) & rst_bit);
++	return p;
 +}
 +
 +/*
-+ *  The following procedure should be observed in USB PHY, USB device and
-+ *  USB host initialization at BMC boot
++ * trusted_instantiate - create a new trusted key
++ *
++ * Unseal an existing trusted blob or, for a new key, get a
++ * random key, then seal and create a trusted key-type key,
++ * adding it to the specified keyring.
++ *
++ * On success, return 0. Otherwise return errno.
 + */
-+static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
++static int trusted_instantiate(struct key *key,
++			       struct key_preparsed_payload *prep)
 +{
-+       struct device_node *np = pdev->dev.of_node;
-+       u32 mdlr, iprst1, iprst2, iprst3;
-+       struct regmap *gcr_regmap = NULL;
-+       u32 ipsrst1_bits = 0;
-+       u32 ipsrst2_bits = NPCM_IPSRST2_USB_HOST;
-+       u32 ipsrst3_bits = 0;
++	struct trusted_key_payload *payload = NULL;
++	size_t datalen = prep->datalen;
++	char *datablob;
++	int ret = 0;
++	int key_cmd;
++	size_t key_len;
 +
-+       if (of_device_is_compatible(np, "nuvoton,npcm750-reset")) {
-+               gcr_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-gcr");
-+               if (IS_ERR(gcr_regmap)) {
-+                       dev_err(&pdev->dev, "Failed to find nuvoton,npcm750-gcr\n");
-+                       return PTR_ERR(gcr_regmap);
-+               }
-+       }
-+       if (!gcr_regmap)
-+               return -ENXIO;
++	if (datalen <= 0 || datalen > 32767 || !prep->data)
++		return -EINVAL;
 +
-+       /* checking which USB device is enabled */
-+       regmap_read(gcr_regmap, NPCM_MDLR_OFFSET, &mdlr);
-+       if (!(mdlr & NPCM_MDLR_USBD0))
-+               ipsrst3_bits |= NPCM_IPSRST3_USBD0;
-+       if (!(mdlr & NPCM_MDLR_USBD1))
-+               ipsrst1_bits |= NPCM_IPSRST1_USBD1;
-+       if (!(mdlr & NPCM_MDLR_USBD2_4))
-+               ipsrst1_bits |= (NPCM_IPSRST1_USBD2 |
-+                                NPCM_IPSRST1_USBD3 |
-+                                NPCM_IPSRST1_USBD4);
-+       if (!(mdlr & NPCM_MDLR_USBD0)) {
-+               ipsrst1_bits |= (NPCM_IPSRST1_USBD5 |
-+                                NPCM_IPSRST1_USBD6);
-+               ipsrst3_bits |= (NPCM_IPSRST3_USBD7 |
-+                                NPCM_IPSRST3_USBD8 |
-+                                NPCM_IPSRST3_USBD9);
-+       }
++	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	if (!datablob)
++		return -ENOMEM;
++	memcpy(datablob, prep->data, datalen);
++	datablob[datalen] = '\0';
 +
-+       /* assert reset USB PHY and USB devices */
-+       iprst1 = readl(rc->base + NPCM_IPSRST1);
-+       iprst2 = readl(rc->base + NPCM_IPSRST2);
-+       iprst3 = readl(rc->base + NPCM_IPSRST3);
++	payload = trusted_payload_alloc(key);
++	if (!payload) {
++		ret = -ENOMEM;
++		goto out;
++	}
 +
-+       iprst1 |= ipsrst1_bits;
-+       iprst2 |= ipsrst2_bits;
-+       iprst3 |= (ipsrst3_bits | NPCM_IPSRST3_USBPHY1 |
-+                  NPCM_IPSRST3_USBPHY2);
++	key_cmd = datablob_parse(datablob, payload);
++	if (key_cmd < 0) {
++		ret = key_cmd;
++		goto out;
++	}
 +
-+       writel(iprst1, rc->base + NPCM_IPSRST1);
-+       writel(iprst2, rc->base + NPCM_IPSRST2);
-+       writel(iprst3, rc->base + NPCM_IPSRST3);
++	dump_payload(payload);
 +
-+       /* clear USB PHY RS bit */
-+       regmap_update_bits(gcr_regmap, NPCM_USB1PHYCTL_OFFSET,
-+                          NPCM_USBXPHYCTL_RS, 0);
-+       regmap_update_bits(gcr_regmap, NPCM_USB2PHYCTL_OFFSET,
-+                          NPCM_USBXPHYCTL_RS, 0);
++	switch (key_cmd) {
++	case Opt_load:
++		ret = tk_ops->unseal(payload, datablob);
++		dump_payload(payload);
++		if (ret < 0)
++			pr_info("trusted_key: key_unseal failed (%d)\n", ret);
++		break;
++	case Opt_new:
++		key_len = payload->key_len;
++		ret = tk_ops->get_random(payload->key, key_len);
++		if (ret != key_len) {
++			pr_info("trusted_key: key_create failed (%d)\n", ret);
++			goto out;
++		}
 +
-+       /* deassert reset USB PHY */
-+       iprst3 &= ~(NPCM_IPSRST3_USBPHY1 | NPCM_IPSRST3_USBPHY2);
-+       writel(iprst3, rc->base + NPCM_IPSRST3);
-+
-+       udelay(50);
-+
-+       /* set USB PHY RS bit */
-+       regmap_update_bits(gcr_regmap, NPCM_USB1PHYCTL_OFFSET,
-+                          NPCM_USBXPHYCTL_RS, NPCM_USBXPHYCTL_RS);
-+       regmap_update_bits(gcr_regmap, NPCM_USB2PHYCTL_OFFSET,
-+                          NPCM_USBXPHYCTL_RS, NPCM_USBXPHYCTL_RS);
-+
-+       /* deassert reset USB devices*/
-+       iprst1 &= ~ipsrst1_bits;
-+       iprst2 &= ~ipsrst2_bits;
-+       iprst3 &= ~ipsrst3_bits;
-+
-+       writel(iprst1, rc->base + NPCM_IPSRST1);
-+       writel(iprst2, rc->base + NPCM_IPSRST2);
-+       writel(iprst3, rc->base + NPCM_IPSRST3);
-+
-+       return 0;
++		ret = tk_ops->seal(payload, datablob);
++		if (ret < 0)
++			pr_info("trusted_key: key_seal failed (%d)\n", ret);
++		break;
++	default:
++		ret = -EINVAL;
++	}
++out:
++	kzfree(datablob);
++	if (!ret)
++		rcu_assign_keypointer(key, payload);
++	else
++		kzfree(payload);
++	return ret;
 +}
 +
-+static int npcm_reset_xlate(struct reset_controller_dev *rcdev,
-+                           const struct of_phandle_args *reset_spec)
++static void trusted_rcu_free(struct rcu_head *rcu)
 +{
-+       unsigned int offset, bit;
++	struct trusted_key_payload *p;
 +
-+       offset = reset_spec->args[0];
-+       bit = reset_spec->args[1];
-+
-+       return (offset << 8) | bit;
++	p = container_of(rcu, struct trusted_key_payload, rcu);
++	kzfree(p);
 +}
 +
-+static const struct reset_control_ops npcm_rc_ops = {
-+       .assert         = npcm_rc_assert,
-+       .deassert       = npcm_rc_deassert,
-+       .status         = npcm_rc_status,
-+};
-+
-+static int npcm_rc_probe(struct platform_device *pdev)
++/*
++ * trusted_update - reseal an existing key with new PCR values
++ */
++static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
 +{
-+       struct npcm_rc_data *rc;
-+       int ret;
++	struct trusted_key_payload *p;
++	struct trusted_key_payload *new_p;
++	size_t datalen = prep->datalen;
++	char *datablob;
++	int ret = 0;
 +
-+       rc = devm_kzalloc(&pdev->dev, sizeof(*rc), GFP_KERNEL);
-+       if (!rc)
-+               return -ENOMEM;
++	if (key_is_negative(key))
++		return -ENOKEY;
++	p = key->payload.data[0];
++	if (!p->migratable)
++		return -EPERM;
++	if (datalen <= 0 || datalen > 32767 || !prep->data)
++		return -EINVAL;
 +
-+       rc->base = devm_platform_ioremap_resource(pdev, 0);
-+       if (IS_ERR(rc->base))
-+               return PTR_ERR(rc->base);
++	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	if (!datablob)
++		return -ENOMEM;
 +
-+       spin_lock_init(&rc->lock);
++	new_p = trusted_payload_alloc(key);
++	if (!new_p) {
++		ret = -ENOMEM;
++		goto out;
++	}
 +
-+       rc->rcdev.owner = THIS_MODULE;
-+       rc->rcdev.nr_resets = NPCM_RC_RESETS_PER_REG;
-+       rc->rcdev.ops = &npcm_rc_ops;
-+       rc->rcdev.of_node = pdev->dev.of_node;
-+       rc->rcdev.of_reset_n_cells = 2;
-+       rc->rcdev.of_xlate = npcm_reset_xlate;
++	memcpy(datablob, prep->data, datalen);
++	datablob[datalen] = '\0';
++	ret = datablob_parse(datablob, new_p);
++	if (ret != Opt_update) {
++		ret = -EINVAL;
++		kzfree(new_p);
++		goto out;
++	}
 +
-+       platform_set_drvdata(pdev, rc);
++	/* copy old key values, and reseal with new pcrs */
++	new_p->migratable = p->migratable;
++	new_p->key_len = p->key_len;
++	memcpy(new_p->key, p->key, p->key_len);
++	dump_payload(p);
++	dump_payload(new_p);
 +
-+       ret = devm_reset_controller_register(&pdev->dev, &rc->rcdev);
-+       if (ret) {
-+               dev_err(&pdev->dev, "unable to register device\n");
-+               return ret;
-+       }
++	ret = tk_ops->seal(new_p, datablob);
++	if (ret < 0) {
++		pr_info("trusted_key: key_seal failed (%d)\n", ret);
++		kzfree(new_p);
++		goto out;
++	}
 +
-+       if (npcm_usb_reset(pdev, rc))
-+               dev_warn(&pdev->dev, "NPCM USB reset failed, can cause issues with UDC and USB host\n");
-+
-+       if (!of_property_read_u32(pdev->dev.of_node, "nuvoton,sw-reset-number",
-+                                 &rc->sw_reset_number)) {
-+               if (rc->sw_reset_number && rc->sw_reset_number < 5) {
-+                       rc->restart_nb.priority = 192,
-+                       rc->restart_nb.notifier_call = npcm_rc_restart,
-+                       ret = register_restart_handler(&rc->restart_nb);
-+                       if (ret)
-+                               dev_warn(&pdev->dev, "failed to register restart handler\n");
-+               }
-+       }
-+
-+       return ret;
++	rcu_assign_keypointer(key, new_p);
++	call_rcu(&p->rcu, trusted_rcu_free);
++out:
++	kzfree(datablob);
++	return ret;
 +}
 +
-+static const struct of_device_id npcm_rc_match[] = {
-+       { .compatible = "nuvoton,npcm750-reset" },
-+       { }
-+};
++/*
++ * trusted_read - copy the sealed blob data to userspace in hex.
++ * On success, return to userspace the trusted key datablob size.
++ */
++static long trusted_read(const struct key *key, char __user *buffer,
++			 size_t buflen)
++{
++	const struct trusted_key_payload *p;
++	char *ascii_buf;
++	char *bufp;
++	int i;
 +
-+static struct platform_driver npcm_rc_driver = {
-+       .probe  = npcm_rc_probe,
-+       .driver = {
-+               .name                   = "npcm-reset",
-+               .of_match_table         = npcm_rc_match,
-+               .suppress_bind_attrs    = true,
-+       },
++	p = dereference_key_locked(key);
++	if (!p)
++		return -EINVAL;
++
++	if (buffer && buflen >= 2 * p->blob_len) {
++		ascii_buf = kmalloc_array(2, p->blob_len, GFP_KERNEL);
++		if (!ascii_buf)
++			return -ENOMEM;
++
++		bufp = ascii_buf;
++		for (i = 0; i < p->blob_len; i++)
++			bufp = hex_byte_pack(bufp, p->blob[i]);
++		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
++			kzfree(ascii_buf);
++			return -EFAULT;
++		}
++		kzfree(ascii_buf);
++	}
++	return 2 * p->blob_len;
++}
++
++/*
++ * trusted_destroy - clear and free the key's payload
++ */
++static void trusted_destroy(struct key *key)
++{
++	kzfree(key->payload.data[0]);
++}
++
++struct key_type key_type_trusted = {
++	.name = "trusted",
++	.instantiate = trusted_instantiate,
++	.update = trusted_update,
++	.destroy = trusted_destroy,
++	.describe = user_describe,
++	.read = trusted_read,
 +};
-+builtin_platform_driver(npcm_rc_driver);
---
-2.22.0
++EXPORT_SYMBOL_GPL(key_type_trusted);
++
++static int __init init_trusted(void)
++{
++	int i, ret = 0;
++
++	for (i = 0; i < sizeof(available_tk_ops); i++) {
++		tk_ops = available_tk_ops[i];
++
++		if (!(tk_ops && tk_ops->init && tk_ops->seal &&
++		      tk_ops->unseal && tk_ops->get_random))
++			continue;
++
++		ret = tk_ops->init();
++		if (ret) {
++			if (tk_ops->cleanup)
++				tk_ops->cleanup();
++		} else {
++			break;
++		}
++	}
++
++	/*
++	 * encrypted_keys.ko depends on successful load of this module even if
++	 * trusted key implementation is not found.
++	 */
++	if (ret == -ENODEV)
++		return 0;
++
++	return ret;
++}
++
++static void __exit cleanup_trusted(void)
++{
++	if (tk_ops->cleanup)
++		tk_ops->cleanup();
++}
++
++late_initcall(init_trusted);
++module_exit(cleanup_trusted);
++
++MODULE_LICENSE("GPL");
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index d2c5ec1..32fd1ea 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -1,29 +1,26 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * Copyright (C) 2010 IBM Corporation
++ * Copyright (c) 2019, Linaro Limited
+  *
+  * Author:
+  * David Safford <safford@us.ibm.com>
++ * Switch to generic trusted key framework: Sumit Garg <sumit.garg@linaro.org>
+  *
+  * See Documentation/security/keys/trusted-encrypted.rst
+  */
+ 
+ #include <crypto/hash_info.h>
+-#include <linux/uaccess.h>
+-#include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/parser.h>
+ #include <linux/string.h>
+ #include <linux/err.h>
+-#include <keys/user-type.h>
+ #include <keys/trusted-type.h>
+ #include <linux/key-type.h>
+-#include <linux/rcupdate.h>
+ #include <linux/crypto.h>
+ #include <crypto/hash.h>
+ #include <crypto/sha.h>
+-#include <linux/capability.h>
+ #include <linux/tpm.h>
+ #include <linux/tpm_command.h>
+ 
+@@ -703,7 +700,6 @@ static int key_unseal(struct trusted_key_payload *p,
+ 
+ enum {
+ 	Opt_err,
+-	Opt_new, Opt_load, Opt_update,
+ 	Opt_keyhandle, Opt_keyauth, Opt_blobauth,
+ 	Opt_pcrinfo, Opt_pcrlock, Opt_migratable,
+ 	Opt_hash,
+@@ -712,9 +708,6 @@ enum {
+ };
+ 
+ static const match_table_t key_tokens = {
+-	{Opt_new, "new"},
+-	{Opt_load, "load"},
+-	{Opt_update, "update"},
+ 	{Opt_keyhandle, "keyhandle=%s"},
+ 	{Opt_keyauth, "keyauth=%s"},
+ 	{Opt_blobauth, "blobauth=%s"},
+@@ -841,71 +834,6 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 	return 0;
+ }
+ 
+-/*
+- * datablob_parse - parse the keyctl data and fill in the
+- * 		    payload and options structures
+- *
+- * On success returns 0, otherwise -EINVAL.
+- */
+-static int datablob_parse(char *datablob, struct trusted_key_payload *p,
+-			  struct trusted_key_options *o)
+-{
+-	substring_t args[MAX_OPT_ARGS];
+-	long keylen;
+-	int ret = -EINVAL;
+-	int key_cmd;
+-	char *c;
+-
+-	/* main command */
+-	c = strsep(&datablob, " \t");
+-	if (!c)
+-		return -EINVAL;
+-	key_cmd = match_token(c, key_tokens, args);
+-	switch (key_cmd) {
+-	case Opt_new:
+-		/* first argument is key size */
+-		c = strsep(&datablob, " \t");
+-		if (!c)
+-			return -EINVAL;
+-		ret = kstrtol(c, 10, &keylen);
+-		if (ret < 0 || keylen < MIN_KEY_SIZE || keylen > MAX_KEY_SIZE)
+-			return -EINVAL;
+-		p->key_len = keylen;
+-		ret = getoptions(datablob, p, o);
+-		if (ret < 0)
+-			return ret;
+-		ret = Opt_new;
+-		break;
+-	case Opt_load:
+-		/* first argument is sealed blob */
+-		c = strsep(&datablob, " \t");
+-		if (!c)
+-			return -EINVAL;
+-		p->blob_len = strlen(c) / 2;
+-		if (p->blob_len > MAX_BLOB_SIZE)
+-			return -EINVAL;
+-		ret = hex2bin(p->blob, c, p->blob_len);
+-		if (ret < 0)
+-			return -EINVAL;
+-		ret = getoptions(datablob, p, o);
+-		if (ret < 0)
+-			return ret;
+-		ret = Opt_load;
+-		break;
+-	case Opt_update:
+-		/* all arguments are options */
+-		ret = getoptions(datablob, p, o);
+-		if (ret < 0)
+-			return ret;
+-		ret = Opt_update;
+-		break;
+-	case Opt_err:
+-		return -EINVAL;
+-		break;
+-	}
+-	return ret;
+-}
+-
+ static struct trusted_key_options *trusted_options_alloc(void)
+ {
+ 	struct trusted_key_options *options;
+@@ -926,258 +854,99 @@ static struct trusted_key_options *trusted_options_alloc(void)
+ 	return options;
+ }
+ 
+-static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
++static int tpm_tk_seal(struct trusted_key_payload *p, char *datablob)
+ {
+-	struct trusted_key_payload *p = NULL;
+-	int ret;
+-
+-	ret = key_payload_reserve(key, sizeof *p);
+-	if (ret < 0)
+-		return p;
+-	p = kzalloc(sizeof *p, GFP_KERNEL);
+-	if (p)
+-		p->migratable = 1; /* migratable by default */
+-	return p;
+-}
+-
+-/*
+- * trusted_instantiate - create a new trusted key
+- *
+- * Unseal an existing trusted blob or, for a new key, get a
+- * random key, then seal and create a trusted key-type key,
+- * adding it to the specified keyring.
+- *
+- * On success, return 0. Otherwise return errno.
+- */
+-static int trusted_instantiate(struct key *key,
+-			       struct key_preparsed_payload *prep)
+-{
+-	struct trusted_key_payload *payload = NULL;
+ 	struct trusted_key_options *options = NULL;
+-	size_t datalen = prep->datalen;
+-	char *datablob;
+ 	int ret = 0;
+-	int key_cmd;
+-	size_t key_len;
+ 	int tpm2;
+ 
+ 	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
+-		return -EINVAL;
+-
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
+-	if (!datablob)
+-		return -ENOMEM;
+-	memcpy(datablob, prep->data, datalen);
+-	datablob[datalen] = '\0';
+-
+ 	options = trusted_options_alloc();
+-	if (!options) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-	payload = trusted_payload_alloc(key);
+-	if (!payload) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!options)
++		return -ENOMEM;
+ 
+-	key_cmd = datablob_parse(datablob, payload, options);
+-	if (key_cmd < 0) {
+-		ret = key_cmd;
++	ret = getoptions(datablob, p, options);
++	if (ret < 0)
+ 		goto out;
+-	}
++	dump_options(options);
+ 
+ 	if (!options->keyhandle) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+-	dump_payload(payload);
+-	dump_options(options);
++	if (tpm2)
++		ret = tpm2_seal_trusted(chip, p, options);
++	else
++		ret = key_seal(p, options);
++	if (ret < 0) {
++		pr_info("tpm_trusted_key: key_seal failed (%d)\n", ret);
++		goto out;
++	}
+ 
+-	switch (key_cmd) {
+-	case Opt_load:
+-		if (tpm2)
+-			ret = tpm2_unseal_trusted(chip, payload, options);
+-		else
+-			ret = key_unseal(payload, options);
+-		dump_payload(payload);
+-		dump_options(options);
+-		if (ret < 0)
+-			pr_info("trusted_key: key_unseal failed (%d)\n", ret);
+-		break;
+-	case Opt_new:
+-		key_len = payload->key_len;
+-		ret = tpm_get_random(chip, payload->key, key_len);
+-		if (ret != key_len) {
+-			pr_info("trusted_key: key_create failed (%d)\n", ret);
++	if (options->pcrlock) {
++		ret = pcrlock(options->pcrlock);
++		if (ret < 0) {
++			pr_info("tpm_trusted_key: pcrlock failed (%d)\n", ret);
+ 			goto out;
+ 		}
+-		if (tpm2)
+-			ret = tpm2_seal_trusted(chip, payload, options);
+-		else
+-			ret = key_seal(payload, options);
+-		if (ret < 0)
+-			pr_info("trusted_key: key_seal failed (%d)\n", ret);
+-		break;
+-	default:
+-		ret = -EINVAL;
+-		goto out;
+ 	}
+-	if (!ret && options->pcrlock)
+-		ret = pcrlock(options->pcrlock);
+ out:
+-	kzfree(datablob);
+ 	kzfree(options);
+-	if (!ret)
+-		rcu_assign_keypointer(key, payload);
+-	else
+-		kzfree(payload);
+ 	return ret;
+ }
+ 
+-static void trusted_rcu_free(struct rcu_head *rcu)
+-{
+-	struct trusted_key_payload *p;
+-
+-	p = container_of(rcu, struct trusted_key_payload, rcu);
+-	kzfree(p);
+-}
+-
+-/*
+- * trusted_update - reseal an existing key with new PCR values
+- */
+-static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
++static int tpm_tk_unseal(struct trusted_key_payload *p, char *datablob)
+ {
+-	struct trusted_key_payload *p;
+-	struct trusted_key_payload *new_p;
+-	struct trusted_key_options *new_o;
+-	size_t datalen = prep->datalen;
+-	char *datablob;
++	struct trusted_key_options *options = NULL;
+ 	int ret = 0;
++	int tpm2;
+ 
+-	if (key_is_negative(key))
+-		return -ENOKEY;
+-	p = key->payload.data[0];
+-	if (!p->migratable)
+-		return -EPERM;
+-	if (datalen <= 0 || datalen > 32767 || !prep->data)
+-		return -EINVAL;
++	tpm2 = tpm_is_tpm2(chip);
++	if (tpm2 < 0)
++		return tpm2;
+ 
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
+-	if (!datablob)
++	options = trusted_options_alloc();
++	if (!options)
+ 		return -ENOMEM;
+-	new_o = trusted_options_alloc();
+-	if (!new_o) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-	new_p = trusted_payload_alloc(key);
+-	if (!new_p) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+ 
+-	memcpy(datablob, prep->data, datalen);
+-	datablob[datalen] = '\0';
+-	ret = datablob_parse(datablob, new_p, new_o);
+-	if (ret != Opt_update) {
+-		ret = -EINVAL;
+-		kzfree(new_p);
++	ret = getoptions(datablob, p, options);
++	if (ret < 0)
+ 		goto out;
+-	}
++	dump_options(options);
+ 
+-	if (!new_o->keyhandle) {
++	if (!options->keyhandle) {
+ 		ret = -EINVAL;
+-		kzfree(new_p);
+ 		goto out;
+ 	}
+ 
+-	/* copy old key values, and reseal with new pcrs */
+-	new_p->migratable = p->migratable;
+-	new_p->key_len = p->key_len;
+-	memcpy(new_p->key, p->key, p->key_len);
+-	dump_payload(p);
+-	dump_payload(new_p);
++	if (tpm2)
++		ret = tpm2_unseal_trusted(chip, p, options);
++	else
++		ret = key_unseal(p, options);
++	if (ret < 0)
++		pr_info("tpm_trusted_key: key_unseal failed (%d)\n", ret);
+ 
+-	ret = key_seal(new_p, new_o);
+-	if (ret < 0) {
+-		pr_info("trusted_key: key_seal failed (%d)\n", ret);
+-		kzfree(new_p);
+-		goto out;
+-	}
+-	if (new_o->pcrlock) {
+-		ret = pcrlock(new_o->pcrlock);
++	if (options->pcrlock) {
++		ret = pcrlock(options->pcrlock);
+ 		if (ret < 0) {
+-			pr_info("trusted_key: pcrlock failed (%d)\n", ret);
+-			kzfree(new_p);
++			pr_info("tpm_trusted_key: pcrlock failed (%d)\n", ret);
+ 			goto out;
+ 		}
+ 	}
+-	rcu_assign_keypointer(key, new_p);
+-	call_rcu(&p->rcu, trusted_rcu_free);
+ out:
+-	kzfree(datablob);
+-	kzfree(new_o);
++	kzfree(options);
+ 	return ret;
+ }
+ 
+-/*
+- * trusted_read - copy the sealed blob data to userspace in hex.
+- * On success, return to userspace the trusted key datablob size.
+- */
+-static long trusted_read(const struct key *key, char __user *buffer,
+-			 size_t buflen)
+-{
+-	const struct trusted_key_payload *p;
+-	char *ascii_buf;
+-	char *bufp;
+-	int i;
+-
+-	p = dereference_key_locked(key);
+-	if (!p)
+-		return -EINVAL;
+-
+-	if (buffer && buflen >= 2 * p->blob_len) {
+-		ascii_buf = kmalloc_array(2, p->blob_len, GFP_KERNEL);
+-		if (!ascii_buf)
+-			return -ENOMEM;
+-
+-		bufp = ascii_buf;
+-		for (i = 0; i < p->blob_len; i++)
+-			bufp = hex_byte_pack(bufp, p->blob[i]);
+-		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
+-			kzfree(ascii_buf);
+-			return -EFAULT;
+-		}
+-		kzfree(ascii_buf);
+-	}
+-	return 2 * p->blob_len;
+-}
+-
+-/*
+- * trusted_destroy - clear and free the key's payload
+- */
+-static void trusted_destroy(struct key *key)
++int tpm_tk_get_random(unsigned char *key, size_t key_len)
+ {
+-	kzfree(key->payload.data[0]);
++	return tpm_get_random(chip, key, key_len);
+ }
+ 
+-struct key_type key_type_trusted = {
+-	.name = "trusted",
+-	.instantiate = trusted_instantiate,
+-	.update = trusted_update,
+-	.destroy = trusted_destroy,
+-	.describe = user_describe,
+-	.read = trusted_read,
+-};
+-
+-EXPORT_SYMBOL_GPL(key_type_trusted);
+-
+ static void trusted_shash_release(void)
+ {
+ 	if (hashalg)
+@@ -1192,14 +961,14 @@ static int __init trusted_shash_alloc(void)
+ 
+ 	hmacalg = crypto_alloc_shash(hmac_alg, 0, 0);
+ 	if (IS_ERR(hmacalg)) {
+-		pr_info("trusted_key: could not allocate crypto %s\n",
++		pr_info("tpm_trusted_key: could not allocate crypto %s\n",
+ 			hmac_alg);
+ 		return PTR_ERR(hmacalg);
+ 	}
+ 
+ 	hashalg = crypto_alloc_shash(hash_alg, 0, 0);
+ 	if (IS_ERR(hashalg)) {
+-		pr_info("trusted_key: could not allocate crypto %s\n",
++		pr_info("tpm_trusted_key: could not allocate crypto %s\n",
+ 			hash_alg);
+ 		ret = PTR_ERR(hashalg);
+ 		goto hashalg_fail;
+@@ -1227,16 +996,13 @@ static int __init init_digests(void)
+ 	return 0;
+ }
+ 
+-static int __init init_trusted(void)
++static int __init init_tpm_trusted(void)
+ {
+ 	int ret;
+ 
+-	/* encrypted_keys.ko depends on successful load of this module even if
+-	 * TPM is not used.
+-	 */
+ 	chip = tpm_default_chip();
+ 	if (!chip)
+-		return 0;
++		return -ENODEV;
+ 
+ 	ret = init_digests();
+ 	if (ret < 0)
+@@ -1257,7 +1023,7 @@ static int __init init_trusted(void)
+ 	return ret;
+ }
+ 
+-static void __exit cleanup_trusted(void)
++static void __exit cleanup_tpm_trusted(void)
+ {
+ 	if (chip) {
+ 		put_device(&chip->dev);
+@@ -1267,7 +1033,12 @@ static void __exit cleanup_trusted(void)
+ 	}
+ }
+ 
+-late_initcall(init_trusted);
+-module_exit(cleanup_trusted);
+-
+-MODULE_LICENSE("GPL");
++struct trusted_key_ops tpm_trusted_key_ops = {
++	.migratable = 1, /* migratable by default */
++	.init = init_tpm_trusted,
++	.seal = tpm_tk_seal,
++	.unseal = tpm_tk_unseal,
++	.get_random = tpm_tk_get_random,
++	.cleanup = cleanup_tpm_trusted,
++};
++EXPORT_SYMBOL_GPL(tpm_trusted_key_ops);
+-- 
+2.7.4
 
-
-
-===========================================================================================
-The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
