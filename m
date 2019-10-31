@@ -2,115 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D561EA999
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 04:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14611EA9AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 04:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfJaDcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 23:32:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726991AbfJaDcF (ORCPT
+        id S1726619AbfJaDfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 23:35:47 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57206 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725909AbfJaDfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Oct 2019 23:32:05 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9V3Riko052006
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 23:32:04 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vykqm6qa1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2019 23:32:04 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 31 Oct 2019 03:32:01 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Oct 2019 03:31:58 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9V3VuFF45089074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 03:31:56 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CA91A4060;
-        Thu, 31 Oct 2019 03:31:56 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC72FA405C;
-        Thu, 31 Oct 2019 03:31:54 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.85.201.217])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Oct 2019 03:31:54 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>, Jessica Yu <jeyu@kernel.org>
-Subject: [RFC PATCH v10 9/9] powerpc/ima: indicate kernel modules appended signatures are enforced
-Date:   Wed, 30 Oct 2019 23:31:34 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1572492694-6520-1-git-send-email-zohar@linux.ibm.com>
-References: <1572492694-6520-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19103103-0028-0000-0000-000003B14F01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19103103-0029-0000-0000-0000247396AB
-Message-Id: <1572492694-6520-10-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910310031
+        Wed, 30 Oct 2019 23:35:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572492945;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=jK74Oxlnm2iBnkdV68ehFY5CMziAHJqAXXBp9ZtwyWI=;
+        b=i+/YH+DyrS7KMxVhqJXd+2RTXO+Ic7odwd8/lqthBOnAThxVqA23kyMQSxCc5mbOqwwrsT
+        WvBe8HWaiMugX72budOpXKr1OFmzCYKZxdCTdKUmvBGvZyH8CmtUDCMHsmbQy8nIPgRcxU
+        42QZ3cHV2wbIEjRgV+AOvpXvJxQbeiU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-211-7oi4EHyqMRGesRh9v2vZdw-1; Wed, 30 Oct 2019 23:35:41 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1FB71005500;
+        Thu, 31 Oct 2019 03:35:39 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CAF745C1BB;
+        Thu, 31 Oct 2019 03:35:26 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, d.hatayama@fujitsu.com,
+        horms@verge.net.au, kexec@lists.infradead.org
+Subject: [PATCH 0/2 RESEND v8] x86/kdump: Fix 'kmem -s' reported an invalid freepointer when SME was active
+Date:   Thu, 31 Oct 2019 11:35:15 +0800
+Message-Id: <20191031033517.11282-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: 7oi4EHyqMRGesRh9v2vZdw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The arch specific kernel module policy rule requires kernel modules to
-be signed, either as an IMA signature, stored as an xattr, or as an
-appended signature.  As a result, kernel modules appended signatures
-could be enforced without "sig_enforce" being set or reflected in
-/sys/module/module/parameters/sig_enforce.  This patch sets
-"sig_enforce".
+In purgatory(), the main things are as below:
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jessica Yu <jeyu@kernel.org>
----
- arch/powerpc/kernel/ima_arch.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+[1] verify sha256 hashes for various segments.
+    Lets keep these codes, and do not touch the logic.
 
-diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-index b9de0fb45bb9..e34116255ced 100644
---- a/arch/powerpc/kernel/ima_arch.c
-+++ b/arch/powerpc/kernel/ima_arch.c
-@@ -62,13 +62,17 @@ static const char *const secure_and_trusted_rules[] = {
-  */
- const char *const *arch_get_ima_policy(void)
- {
--	if (is_ppc_secureboot_enabled())
-+	if (is_ppc_secureboot_enabled()) {
-+		if (IS_ENABLED(CONFIG_MODULE_SIG))
-+			set_module_sig_enforced();
-+
- 		if (is_ppc_trustedboot_enabled())
- 			return secure_and_trusted_rules;
- 		else
- 			return secure_rules;
--	else if (is_ppc_trustedboot_enabled())
-+	} else if (is_ppc_trustedboot_enabled()) {
- 		return trusted_rules;
-+	}
- 
- 	return NULL;
- }
--- 
-2.7.5
+[2] copy the first 640k content to a backup region.
+    Lets safely remove it and clean all code related to backup region.
+
+This patch series will remove the backup region, because the current
+handling of copying the first 640k runs into problems when SME is
+active(https://bugzilla.kernel.org/show_bug.cgi?id=3D204793).
+
+The low 1M region will always be reserved when the crashkernel kernel
+command line option is specified. And this way makes it unnecessary to
+do anything with the low 1M region, because the memory allocated later
+won't fall into the low 1M area.
+
+This series includes two patches:
+[1] x86/kdump: always reserve the low 1M when the crashkernel option
+    is specified
+    The low 1M region will always be reserved when the crashkernel
+    kernel command line option is specified, which ensures that the
+    memory allocated later won't fall into the low 1M area.
+
+[2] x86/kdump: clean up all the code related to the backup region
+    Remove the backup region and clean up.
+
+Changes since v1:
+[1] Add extra checking condition: when the crashkernel option is
+    specified, reserve the low 640k area.
+
+Changes since v2:
+[1] Reserve the low 1M region when the crashkernel option is only
+    specified.(Suggested by Eric)
+
+[2] Remove the unused crash_copy_backup_region()
+
+[3] Remove the backup region and clean up
+
+[4] Split them into three patches
+
+Changes since v3:
+[1] Improve the first patch's log
+
+[2] Improve the third patch based on Eric's suggestions
+
+Changes since v4:
+[1] Correct some typos, and also improve the first patch's log
+
+[2] Add a new function kexec_reserve_low_1MiB() in kernel/kexec_core.c
+    and which is called by reserve_real_mode(). (Suggested by Boris)
+
+Changes since v5:
+[1] Call the cmdline_find_option() instead of strstr() to check the
+    crashkernel option. (Suggested by Hatayama)
+
+[2] Add a weak function kexec_reserve_low_1MiB() in kernel/kexec_core.c,
+    and implement the kexec_reserve_low_1MiB() in arch/x86/kernel/
+    machine_kexec_64.c so that it does not cause the compile error
+    on non-x86 kernel, and also ensures that it can work well on x86
+    kernel.
+
+Changes since v6:
+[1] Move the kexec_reserve_low_1MiB() to arch/x86/kernel/crash.c and
+    also move its declaration function to arch/x86/include/asm/crash.h
+    (Suggested by Dave Young)
+
+[2] Adjust the corresponding header files.
+
+Changes since v7:
+[1] Change the function name from kexec_reserve_low_1MiB() to
+    crash_reserve_low_1M().
+
+[2] Fix some warnings reported by kduild.
+
+Lianbo Jiang (2):
+  x86/kdump: always reserve the low 1M when the crashkernel option is
+    specified
+  x86/kdump: clean up all the code related to the backup region
+
+ arch/x86/include/asm/crash.h       |   8 +++
+ arch/x86/include/asm/kexec.h       |  10 ---
+ arch/x86/include/asm/purgatory.h   |  10 ---
+ arch/x86/kernel/crash.c            | 102 ++++++++---------------------
+ arch/x86/kernel/machine_kexec_64.c |  47 -------------
+ arch/x86/purgatory/purgatory.c     |  19 ------
+ arch/x86/realmode/init.c           |   2 +
+ 7 files changed, 36 insertions(+), 162 deletions(-)
+
+--=20
+2.17.1
 
