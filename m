@@ -2,143 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BA1EB993
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6E6EB995
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 23:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbfJaWOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 18:14:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:59024 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728640AbfJaWOj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 18:14:39 -0400
-Received: from 188.29.164.72.threembb.co.uk ([188.29.164.72] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iQIi6-0001MD-If; Thu, 31 Oct 2019 22:14:37 +0000
-Received: from ben by deadeye with local (Exim 4.92.2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iQIhw-0000pL-Vi; Thu, 31 Oct 2019 22:14:20 +0000
-Message-ID: <05be6a70382f1990a2ba6aba9ac75dac0c55f7fb.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 47/47] KVM: x86/vPMU: refine kvm_pmu err msg when
- event creation failed
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        Like Xu <like.xu@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Date:   Thu, 31 Oct 2019 22:14:15 +0000
-In-Reply-To: <220d8f2c1b299d2e71fdcf50b98286aae5b0c6f2.camel@perches.com>
-References: <lsq.1572026582.631294584@decadent.org.uk>
-         <220d8f2c1b299d2e71fdcf50b98286aae5b0c6f2.camel@perches.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-hKUhIv2BLLOi+f5RLV/D"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1729302AbfJaWQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 18:16:09 -0400
+Received: from foss.arm.com ([217.140.110.172]:56858 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726602AbfJaWQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 18:16:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C6201F1;
+        Thu, 31 Oct 2019 15:16:08 -0700 (PDT)
+Received: from [10.188.222.161] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 441703F6C4;
+        Thu, 31 Oct 2019 15:16:06 -0700 (PDT)
+Subject: Re: NULL pointer dereference in pick_next_task_fair
+To:     Ram Muthiah <rammuthiah@google.com>,
+        Quentin Perret <qperret@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, aaron.lwe@gmail.com,
+        mingo@kernel.org, pauld@redhat.com, jdesfossez@digitalocean.com,
+        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        kernel-team@android.com, john.stultz@linaro.org
+References: <20191028174603.GA246917@google.com>
+ <20191029113411.GP4643@worktop.programming.kicks-ass.net>
+ <20191029115000.GA11194@google.com>
+ <CA+CXyWsoW8ann52pcR66ejRmjJ=4QmoaHTRVhb3=ohe0ZDnm-A@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <c3f65c65-9ed3-5c36-ed5a-e84a38d5aa1b@arm.com>
+Date:   Thu, 31 Oct 2019 23:15:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 188.29.164.72
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <CA+CXyWsoW8ann52pcR66ejRmjJ=4QmoaHTRVhb3=ohe0ZDnm-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30/10/2019 23:50, Ram Muthiah wrote:
+> Quentin and I were able to create a setup which reproduces the issue.
+> 
+> Given this, I tried Peter's proposed fix and was still able to reproduce the
+> issue unfortunately. Current patch is located here -
+> https://android-review.googlesource.com/c/kernel/common/+/1153487
+> 
+> Our mitigation for this issue on the android-mainline branch has been to
+> revert 67692435c411 ("sched: Rework pick_next_task() slow-path").
+> https://android-review.googlesource.com/c/kernel/common/+/1152564
+> 
 
---=-hKUhIv2BLLOi+f5RLV/D
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Still no cigar, but one thing to note is that we got a similar splat on a
+Juno just yesterday, here it is fed through decode_stacktrace.sh:
 
-On Fri, 2019-10-25 at 12:05 -0700, Joe Perches wrote:
-> On Fri, 2019-10-25 at 19:03 +0100, Ben Hutchings wrote:
-> > 3.16.76-rc1 review patch.  If anyone has any objections, please let me =
-know.
->=20
-> This seems more like an enhancement than a bug fix.
->=20
-> Is this really the type of patch that is appropriate
-> for stable?
+[   22.930829] Mem abort info:
+[   22.935904]   ESR = 0x96000006
+[   22.938924]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   22.944178]   SET = 0, FnV = 0
+[   22.947197]   EA = 0, S1PTW = 0
+[   22.950300] Data abort info:
+[   22.953145]   ISV = 0, ISS = 0x00000006
+[   22.956937]   CM = 0, WnR = 0
+[   22.959870] user pgtable: 4k pages, 48-bit VAs, pgdp=00000009f3905000
+[   22.966243] [0000000000000040] pgd=00000009efa6e003, pud=00000009f41c3003, pmd=0000000000000000
+[   22.974858] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[   22.980369] Modules linked in: tda998x drm_kms_helper drm crct10dif_ce ip_tables x_tables ipv6 nf_defrag_ipv6
+[   22.990200] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.4.0-rc2-00001-gaa57157be69f #1
+[   22.998036] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Oct 19 2018
+[   23.008710] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[   23.013457] pc : set_next_entity (kernel/sched/fair.c:4156)
+[   23.017511] lr : pick_next_task_fair (kernel/sched/fair.c:6829 (discriminator 1))
+[   23.021991] sp : ffff800011a13e10
+[   23.025267] x29: ffff800011a13e10 x28: 0000000000000000
+[   23.030525] x27: ffff800011a13f10 x26: ffff800010c205ec
+[   23.035782] x25: ffff000975cea108 x24: ffff800011789000
+[   23.041038] x23: ffff8000113cf000 x22: ffff000975ce9b80
+[   23.046294] x21: ffff00097ef78d40 x20: ffff000974e21a00
+[   23.051550] x19: 0000000000000000 x18: 0000000000000000
+[   23.056806] x17: 0000000000000000 x16: 0000000000000000
+[   23.062062] x15: 0000000000000000 x14: 00000000000001ad
+[   23.067317] x13: 0000000000000001 x12: 071c71c71c71c71c
+[   23.072573] x11: 0000000000000500 x10: ffff00097ef77dc8
+[   23.077829] x9 : 0000000000000087 x8 : ffff00097ef77de8
+[   23.083085] x7 : 0000000000000003 x6 : 0000000000000000
+[   23.088340] x5 : 0000000000000000 x4 : 0000000000000000
+[   23.093596] x3 : 000000054f6e7800 x2 : 0000000000000000
+[   23.098851] x1 : 0000000000000000 x0 : ffff000974e21a00
+[   23.104107] Call trace:
+[   23.106527] set_next_entity (kernel/sched/fair.c:4156)
+[   23.110236] pick_next_task_fair (kernel/sched/fair.c:6829 (discriminator 1))
+[   23.114377] __schedule (kernel/sched/core.c:3920 kernel/sched/core.c:4039)
+[   23.117828] schedule_idle (kernel/sched/core.c:4165 (discriminator 1))
+[   23.121365] do_idle (./arch/arm64/include/asm/current.h:19 ./arch/arm64/include/asm/preempt.h:31 kernel/sched/idle.c:275)
+[   23.124557] cpu_startup_entry (kernel/sched/idle.c:355 (discriminator 1))
+[   23.128439] secondary_start_kernel (arch/arm64/kernel/smp.c:262)
 
-Apparently so:
-
-v4.14.135: eba797dbf352 KVM: x86/vPMU: refine kvm_pmu err msg when event cr=
-eation failed
-v4.19.61: ba27a25df6df KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
-ation failed
-v4.4.187: 505c011f9f53 KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
-ation failed
-v4.9.187: 3984eae04473 KVM: x86/vPMU: refine kvm_pmu err msg when event cre=
-ation failed
-v5.1.20: edadec197fbf KVM: x86/vPMU: refine kvm_pmu err msg when event crea=
-tion failed
-v5.2.3: 9f062aef7356 KVM: x86/vPMU: refine kvm_pmu err msg when event creat=
-ion failed
-
-Ben.
-
-> > ------------------
-> >=20
-> > From: Like Xu <like.xu@linux.intel.com>
-> >=20
-> > commit 6fc3977ccc5d3c22e851f2dce2d3ce2a0a843842 upstream.
-> >=20
-> > If a perf_event creation fails due to any reason of the host perf
-> > subsystem, it has no chance to log the corresponding event for guest
-> > which may cause abnormal sampling data in guest result. In debug mode,
-> > this message helps to understand the state of vPMC and we may not
-> > limit the number of occurrences but not in a spamming style.
-> >=20
-> > Suggested-by: Joe Perches <joe@perches.com>
-> > Signed-off-by: Like Xu <like.xu@linux.intel.com>
-> > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> > [bwh: Backported to 3.16: adjust context]
-> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> > ---
-> >  arch/x86/kvm/pmu.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > --- a/arch/x86/kvm/pmu.c
-> > +++ b/arch/x86/kvm/pmu.c
-> > @@ -187,8 +187,8 @@ static void reprogram_counter(struct kvm
-> >  						 intr ? kvm_perf_overflow_intr :
-> >  						 kvm_perf_overflow, pmc);
-> >  	if (IS_ERR(event)) {
-> > -		printk_once("kvm: pmu event creation failed %ld\n",
-> > -				PTR_ERR(event));
-> > +		pr_debug_ratelimited("kvm_pmu: event creation failed %ld for pmc->id=
-x =3D %d\n",
-> > +			    PTR_ERR(event), pmc->idx);
-> >  		return;
-> >  	}
-> > =20
-> >=20
---=20
-Ben Hutchings
-Klipstein's 4th Law of Prototyping and Production:
-                               A fail-safe circuit will destroy others.
-
-
-
---=-hKUhIv2BLLOi+f5RLV/D
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl27XLgACgkQ57/I7JWG
-EQkqSQ//RR8xY73bxtHVjVHg0wo49KzosxapaAi+qo+HxB2zL7OfW9CJVOMTpOk+
-QT+iqkYNNcMAbRClkb86WoATNzC5Crau5quovdJdLbPNq/ANd1HP91jTwAhHc/cK
-8rSZTzUz1c13mBSFHGbTn+HQaiDsw+iElA06hcqARpe0lxm7m4Usvp6kiKOwlShK
-NKGzUz7GjntXzj+0r02jwKc7OEx73bQRc4Zng2QrAFwC4smeghiSm7zrrG12SC2Y
-Jipc6cGdeQ1/RVcnuEO93ZCEl6PHTZ4ngKlpdB5u9nFPgYvIQ60U6w/USNcdIu6C
-yNmnnOMt3XNOpYdeqYm1dYQ2jPy0S2POBawDd3+B68fLBgNt54lhIIgJt0imybj4
-/u9mznUCt+KWNAgwR5tYapxgWlrsAyH775S/7+0Svxir162A6YzCckGG7g0y7Ln0
-Q8Wp3jIQyq35ofh7gl69H/68A7FFKUnsvPKpxT/8QS67MCzDzSXxuTReHQaSLeVA
-638YTj0JAfEXipA1bP0JTcsBJaNEeqxwJHYwwz3exTL+Kr/a/C8WrvPSLGpmG1O3
-KugLzLeoJ0s66qnZdD79B/LKulAm6bP5GS1ujvvnuBYOOLlLwvCHw7nMmEq/YWEd
-lxWi06TTgsZ2+PhXBQvQspX966YWifIPjTBmtVyhVq7i1puVbBM=
-=r0nb
------END PGP SIGNATURE-----
-
---=-hKUhIv2BLLOi+f5RLV/D--
+The faulty line is the very first se dereference in set_next_entity().
+As Peter pointed out on IRC, this happens in the 'simple' path (prev is the
+idle task).
