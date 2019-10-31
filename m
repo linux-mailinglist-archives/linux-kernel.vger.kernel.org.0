@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F26EAF83
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E71EAF86
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfJaL4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:56:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55442 "EHLO
+        id S1727800AbfJaL4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:56:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55447 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbfJaLz0 (ORCPT
+        with ESMTP id S1727423AbfJaLz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Oct 2019 07:55:26 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92x-00039W-29; Thu, 31 Oct 2019 12:55:23 +0100
+        id 1iQ92x-0003AD-Or; Thu, 31 Oct 2019 12:55:23 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B054A1C0070;
-        Thu, 31 Oct 2019 12:55:11 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:55:11 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DB59C1C06D8;
+        Thu, 31 Oct 2019 12:55:12 +0100 (CET)
+Date:   Thu, 31 Oct 2019 11:55:12 -0000
+From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcutorture: Force on tick for readers and callback flooders
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+Subject: [tip: core/rcu] nohz: Add TICK_DEP_BIT_RCU
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252291137.29376.6492575120270689137.tip-bot2@tip-bot2>
+Message-ID: <157252291252.29376.12062616091234228344.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,97 +46,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     d38e6dc6ed0dfef8d323354031a1ee1a7cfdedc1
-Gitweb:        https://git.kernel.org/tip/d38e6dc6ed0dfef8d323354031a1ee1a7cfdedc1
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Sun, 28 Jul 2019 12:00:48 -07:00
+Commit-ID:     01b4c39901e087ceebae2733857248de81476bd8
+Gitweb:        https://git.kernel.org/tip/01b4c39901e087ceebae2733857248de81476bd8
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Wed, 24 Jul 2019 15:22:59 +02:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Sat, 05 Oct 2019 10:46:04 -07:00
+CommitterDate: Sat, 05 Oct 2019 10:45:16 -07:00
 
-rcutorture: Force on tick for readers and callback flooders
+nohz: Add TICK_DEP_BIT_RCU
 
-Readers and callback flooders in the rcutorture stress-test suite run for
-extended time periods by design.  They do take pains to relinquish the
-CPU from time to time, but in some cases this relies on the scheduler
-being active, which in turn relies on the scheduler-clock interrupt
-firing from time to time.
+If a nohz_full CPU is looping in the kernel, the scheduling-clock tick
+might nevertheless remain disabled.  In !PREEMPT kernels, this can
+prevent RCU's attempts to enlist the aid of that CPU's executions of
+cond_resched(), which can in turn result in an arbitrarily delayed grace
+period and thus an OOM.  RCU therefore needs a way to enable a holdout
+nohz_full CPU's scheduler-clock interrupt.
 
-This commit therefore forces scheduling-clock interrupts within
-these loops.  While in the area, this commit also prevents
-rcu_torture_reader()'s occasional timed sleeps from delaying shutdown.
+This commit therefore provides a new TICK_DEP_BIT_RCU value which RCU can
+pass to tick_dep_set_cpu() and friends to force on the scheduler-clock
+interrupt for a specified CPU or task.  In some cases, rcutorture needs
+to turn on the scheduler-clock tick, so this commit also exports the
+relevant symbols to GPL-licensed modules.
 
-[ paulmck: Apply Joel Fernandes TICK_DEP_MASK_RCU->TICK_DEP_BIT_RCU fix. ]
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ include/linux/tick.h         | 7 ++++++-
+ include/trace/events/timer.h | 3 ++-
+ kernel/time/tick-sched.c     | 7 +++++++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 3c9feca..ab61f5c 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -44,6 +44,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/sysctl.h>
- #include <linux/oom.h>
-+#include <linux/tick.h>
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index f92a10b..39eb445 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -108,7 +108,8 @@ enum tick_dep_bits {
+ 	TICK_DEP_BIT_POSIX_TIMER	= 0,
+ 	TICK_DEP_BIT_PERF_EVENTS	= 1,
+ 	TICK_DEP_BIT_SCHED		= 2,
+-	TICK_DEP_BIT_CLOCK_UNSTABLE	= 3
++	TICK_DEP_BIT_CLOCK_UNSTABLE	= 3,
++	TICK_DEP_BIT_RCU		= 4
+ };
  
- #include "rcu.h"
+ #define TICK_DEP_MASK_NONE		0
+@@ -116,6 +117,7 @@ enum tick_dep_bits {
+ #define TICK_DEP_MASK_PERF_EVENTS	(1 << TICK_DEP_BIT_PERF_EVENTS)
+ #define TICK_DEP_MASK_SCHED		(1 << TICK_DEP_BIT_SCHED)
+ #define TICK_DEP_MASK_CLOCK_UNSTABLE	(1 << TICK_DEP_BIT_CLOCK_UNSTABLE)
++#define TICK_DEP_MASK_RCU		(1 << TICK_DEP_BIT_RCU)
  
-@@ -1363,15 +1364,15 @@ rcu_torture_reader(void *arg)
- 	set_user_nice(current, MAX_NICE);
- 	if (irqreader && cur_ops->irq_capable)
- 		timer_setup_on_stack(&t, rcu_torture_timer, 0);
--
-+	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
- 	do {
- 		if (irqreader && cur_ops->irq_capable) {
- 			if (!timer_pending(&t))
- 				mod_timer(&t, jiffies + 1);
- 		}
--		if (!rcu_torture_one_read(&rand))
-+		if (!rcu_torture_one_read(&rand) && !torture_must_stop())
- 			schedule_timeout_interruptible(HZ);
--		if (time_after(jiffies, lastsleep)) {
-+		if (time_after(jiffies, lastsleep) && !torture_must_stop()) {
- 			schedule_timeout_interruptible(1);
- 			lastsleep = jiffies + 10;
- 		}
-@@ -1383,6 +1384,7 @@ rcu_torture_reader(void *arg)
- 		del_timer_sync(&t);
- 		destroy_timer_on_stack(&t);
+ #ifdef CONFIG_NO_HZ_COMMON
+ extern bool tick_nohz_enabled;
+@@ -268,6 +270,9 @@ static inline bool tick_nohz_full_enabled(void) { return false; }
+ static inline bool tick_nohz_full_cpu(int cpu) { return false; }
+ static inline void tick_nohz_full_add_cpus_to(struct cpumask *mask) { }
+ 
++static inline void tick_nohz_dep_set_cpu(int cpu, enum tick_dep_bits bit) { }
++static inline void tick_nohz_dep_clear_cpu(int cpu, enum tick_dep_bits bit) { }
++
+ static inline void tick_dep_set(enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear(enum tick_dep_bits bit) { }
+ static inline void tick_dep_set_cpu(int cpu, enum tick_dep_bits bit) { }
+diff --git a/include/trace/events/timer.h b/include/trace/events/timer.h
+index b7a9048..295517f 100644
+--- a/include/trace/events/timer.h
++++ b/include/trace/events/timer.h
+@@ -367,7 +367,8 @@ TRACE_EVENT(itimer_expire,
+ 		tick_dep_name(POSIX_TIMER)		\
+ 		tick_dep_name(PERF_EVENTS)		\
+ 		tick_dep_name(SCHED)			\
+-		tick_dep_name_end(CLOCK_UNSTABLE)
++		tick_dep_name(CLOCK_UNSTABLE)		\
++		tick_dep_name_end(RCU)
+ 
+ #undef tick_dep_name
+ #undef tick_dep_mask_name
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 9558517..d1b0a84 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -198,6 +198,11 @@ static bool check_tick_dependency(atomic_t *dep)
+ 		return true;
  	}
-+	tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
- 	torture_kthread_stopping("rcu_torture_reader");
- 	return 0;
+ 
++	if (val & TICK_DEP_MASK_RCU) {
++		trace_tick_stop(0, TICK_DEP_MASK_RCU);
++		return true;
++	}
++
+ 	return false;
  }
-@@ -1729,10 +1731,10 @@ static void rcu_torture_fwd_prog_cond_resched(unsigned long iter)
- 		// Real call_rcu() floods hit userspace, so emulate that.
- 		if (need_resched() || (iter & 0xfff))
- 			schedule();
--	} else {
--		// No userspace emulation: CB invocation throttles call_rcu()
--		cond_resched();
-+		return;
+ 
+@@ -324,6 +329,7 @@ void tick_nohz_dep_set_cpu(int cpu, enum tick_dep_bits bit)
+ 		preempt_enable();
  	}
-+	// No userspace emulation: CB invocation throttles call_rcu()
-+	cond_resched();
  }
++EXPORT_SYMBOL_GPL(tick_nohz_dep_set_cpu);
+ 
+ void tick_nohz_dep_clear_cpu(int cpu, enum tick_dep_bits bit)
+ {
+@@ -331,6 +337,7 @@ void tick_nohz_dep_clear_cpu(int cpu, enum tick_dep_bits bit)
+ 
+ 	atomic_andnot(BIT(bit), &ts->tick_dep_mask);
+ }
++EXPORT_SYMBOL_GPL(tick_nohz_dep_clear_cpu);
  
  /*
-@@ -1865,6 +1867,7 @@ static void rcu_torture_fwd_prog_cr(void)
- 	cver = READ_ONCE(rcu_torture_current_version);
- 	gps = cur_ops->get_gp_seq();
- 	rcu_launder_gp_seq_start = gps;
-+	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
- 	while (time_before(jiffies, stopat) &&
- 	       !shutdown_time_arrived() &&
- 	       !READ_ONCE(rcu_fwd_emergency_stop) && !torture_must_stop()) {
-@@ -1911,6 +1914,7 @@ static void rcu_torture_fwd_prog_cr(void)
- 		rcu_torture_fwd_cb_hist();
- 	}
- 	schedule_timeout_uninterruptible(HZ); /* Let CBs drain. */
-+	tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
- 	WRITE_ONCE(rcu_fwd_cb_nodelay, false);
- }
- 
+  * Set a per-task tick dependency. Posix CPU timers need this in order to elapse
