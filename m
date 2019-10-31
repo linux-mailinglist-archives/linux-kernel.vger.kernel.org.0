@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9ACEA90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 03:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BC1EA90C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 03:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfJaCA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 30 Oct 2019 22:00:26 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5232 "EHLO huawei.com"
+        id S1726810AbfJaCA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 30 Oct 2019 22:00:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5231 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726336AbfJaCA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726317AbfJaCA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Oct 2019 22:00:26 -0400
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5BEF151A0CF6DAD5A48B;
+        by Forcepoint Email with ESMTP id 5FBB91B66F9351DEA189;
         Thu, 31 Oct 2019 10:00:23 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 31 Oct 2019 10:00:13 +0800
+ 14.3.439.0; Thu, 31 Oct 2019 10:00:14 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
 To:     <akinobu.mita@gmail.com>, <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
-Subject: [PATCH v3 0/2] fault-inject: Simplify and clean up 
-Date:   Thu, 31 Oct 2019 09:56:15 +0800
-Message-ID: <1572486977-14195-1-git-send-email-zhongjiang@huawei.com>
+Subject: [PATCH v3 1/2] fault-inject: Use debugfs_create_ulong() instead of debugfs_create_ul()
+Date:   Thu, 31 Oct 2019 09:56:16 +0800
+Message-ID: <1572486977-14195-2-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1572486977-14195-1-git-send-email-zhongjiang@huawei.com>
+References: <1572486977-14195-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.175.102.37]
@@ -33,22 +35,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3 -> v2:
-    Add another patch to use DEFINE_DEBUGFS_ATTRIBUTE and replace
-    debugfs_create_file with debugfs_create_file_unsafe.
+debugfs_create_ulong() has implemented the function of debugfs_create_ul()
+in lib/fault-inject.c. hence we can replace it.
 
-v1 -> v2:
-    According to Akinobu's suggestion, Use debugfs_create_ulong to
-    simplify the code.
+Suggested-by: Akinobu Mita <akinobu.mita@gmail.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ lib/fault-inject.c | 39 ++++++++++++---------------------------
+ 1 file changed, 12 insertions(+), 27 deletions(-)
 
-zhong jiang (2):
-  fault-inject: Use debugfs_create_ulong() instead of
-    debugfs_create_ul()
-  fault-inject: use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs fops
-
- lib/fault-inject.c | 45 +++++++++++++++------------------------------
- 1 file changed, 15 insertions(+), 30 deletions(-)
-
+diff --git a/lib/fault-inject.c b/lib/fault-inject.c
+index 8186ca8..430b3ac 100644
+--- a/lib/fault-inject.c
++++ b/lib/fault-inject.c
+@@ -151,10 +151,13 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
+ EXPORT_SYMBOL_GPL(should_fail);
+ 
+ #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
++#ifdef CONFIG_FAULT_INJECTION_STACKTRACE_FILTER
+ 
+-static int debugfs_ul_set(void *data, u64 val)
++static int debugfs_stacktrace_depth_set(void *data, u64 val)
+ {
+-	*(unsigned long *)data = val;
++	*(unsigned long *)data =
++		min_t(unsigned long, val, MAX_STACK_TRACE_DEPTH);
++
+ 	return 0;
+ }
+ 
+@@ -164,24 +167,6 @@ static int debugfs_ul_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_ul, debugfs_ul_get, debugfs_ul_set, "%llu\n");
+-
+-static void debugfs_create_ul(const char *name, umode_t mode,
+-			      struct dentry *parent, unsigned long *value)
+-{
+-	debugfs_create_file(name, mode, parent, value, &fops_ul);
+-}
+-
+-#ifdef CONFIG_FAULT_INJECTION_STACKTRACE_FILTER
+-
+-static int debugfs_stacktrace_depth_set(void *data, u64 val)
+-{
+-	*(unsigned long *)data =
+-		min_t(unsigned long, val, MAX_STACK_TRACE_DEPTH);
+-
+-	return 0;
+-}
+-
+ DEFINE_SIMPLE_ATTRIBUTE(fops_stacktrace_depth, debugfs_ul_get,
+ 			debugfs_stacktrace_depth_set, "%llu\n");
+ 
+@@ -204,11 +189,11 @@ struct dentry *fault_create_debugfs_attr(const char *name,
+ 	if (IS_ERR(dir))
+ 		return dir;
+ 
+-	debugfs_create_ul("probability", mode, dir, &attr->probability);
+-	debugfs_create_ul("interval", mode, dir, &attr->interval);
++	debugfs_create_ulong("probability", mode, dir, &attr->probability);
++	debugfs_create_ulong("interval", mode, dir, &attr->interval);
+ 	debugfs_create_atomic_t("times", mode, dir, &attr->times);
+ 	debugfs_create_atomic_t("space", mode, dir, &attr->space);
+-	debugfs_create_ul("verbose", mode, dir, &attr->verbose);
++	debugfs_create_ulong("verbose", mode, dir, &attr->verbose);
+ 	debugfs_create_u32("verbose_ratelimit_interval_ms", mode, dir,
+ 			   &attr->ratelimit_state.interval);
+ 	debugfs_create_u32("verbose_ratelimit_burst", mode, dir,
+@@ -218,10 +203,10 @@ struct dentry *fault_create_debugfs_attr(const char *name,
+ #ifdef CONFIG_FAULT_INJECTION_STACKTRACE_FILTER
+ 	debugfs_create_stacktrace_depth("stacktrace-depth", mode, dir,
+ 					&attr->stacktrace_depth);
+-	debugfs_create_ul("require-start", mode, dir, &attr->require_start);
+-	debugfs_create_ul("require-end", mode, dir, &attr->require_end);
+-	debugfs_create_ul("reject-start", mode, dir, &attr->reject_start);
+-	debugfs_create_ul("reject-end", mode, dir, &attr->reject_end);
++	debugfs_create_ulong("require-start", mode, dir, &attr->require_start);
++	debugfs_create_ulong("require-end", mode, dir, &attr->require_end);
++	debugfs_create_ulong("reject-start", mode, dir, &attr->reject_start);
++	debugfs_create_ulong("reject-end", mode, dir, &attr->reject_end);
+ #endif /* CONFIG_FAULT_INJECTION_STACKTRACE_FILTER */
+ 
+ 	attr->dname = dget(dir);
 -- 
 1.7.12.4
 
