@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9897EEAF6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 582C5EAF7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 12:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfJaLzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 07:55:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55432 "EHLO
+        id S1727749AbfJaL41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 07:56:27 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55467 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbfJaLzY (ORCPT
+        with ESMTP id S1727468AbfJaLza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 07:55:24 -0400
+        Thu, 31 Oct 2019 07:55:30 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iQ92v-00036N-DE; Thu, 31 Oct 2019 12:55:21 +0100
+        id 1iQ92z-00037v-JF; Thu, 31 Oct 2019 12:55:25 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5EB951C04E4;
-        Thu, 31 Oct 2019 12:55:08 +0100 (CET)
-Date:   Thu, 31 Oct 2019 11:55:08 -0000
-From:   "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0B1291C04DF;
+        Thu, 31 Oct 2019 12:55:10 +0100 (CET)
+Date:   Thu, 31 Oct 2019 11:55:09 -0000
+From:   "tip-bot2 for Ethan Hansen" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rcu] rcutorture: Separate warnings for each failure type
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+Subject: [tip: core/rcu] rcu: Remove unused function rcutorture_record_progress()
+Cc:     Ethan Hansen <1ethanhansen@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <157252290804.29376.9334441931843722578.tip-bot2@tip-bot2>
+Message-ID: <157252290965.29376.6655434346207795815.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,54 +46,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/rcu branch of tip:
 
-Commit-ID:     8b5ddf8b99dc42241d1d413c6685bce18275c40e
-Gitweb:        https://git.kernel.org/tip/8b5ddf8b99dc42241d1d413c6685bce18275c40e
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Wed, 14 Aug 2019 12:02:40 -07:00
+Commit-ID:     ac5f636130c2014eb535f30951460b75db6cbe04
+Gitweb:        https://git.kernel.org/tip/ac5f636130c2014eb535f30951460b75db6cbe04
+Author:        Ethan Hansen <1ethanhansen@gmail.com>
+AuthorDate:    Thu, 01 Aug 2019 14:00:40 -07:00
 Committer:     Paul E. McKenney <paulmck@kernel.org>
-CommitterDate: Sat, 05 Oct 2019 11:50:03 -07:00
+CommitterDate: Sat, 05 Oct 2019 11:48:13 -07:00
 
-rcutorture: Separate warnings for each failure type
+rcu: Remove unused function rcutorture_record_progress()
 
-Currently, each of six different types of failure triggers a
-single WARN_ON_ONCE(), and it is then necessary to stare at the
-rcu_torture_stats(), Reader Pipe, and Reader Batch lines looking for
-inappropriately non-zero values.  This can be annoying and error-prone,
-so this commit provides a separate WARN_ON_ONCE() for each of the
-six error conditions and adds short comments to each to ease error
-identification.
+The function rcutorture_record_progress() is declared in rcu.h, but is
+never used.  This commit therefore removes rcutorture_record_progress()
+to clean code.
 
+Signed-off-by: Ethan Hansen <1ethanhansen@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ kernel/rcu/rcu.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 3c9feca..5ac4672 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1442,15 +1442,18 @@ rcu_torture_stats_print(void)
- 		n_rcu_torture_barrier_error);
- 
- 	pr_alert("%s%s ", torture_type, TORTURE_FLAG);
--	if (atomic_read(&n_rcu_torture_mberror) != 0 ||
--	    n_rcu_torture_barrier_error != 0 ||
--	    n_rcu_torture_boost_ktrerror != 0 ||
--	    n_rcu_torture_boost_rterror != 0 ||
--	    n_rcu_torture_boost_failure != 0 ||
-+	if (atomic_read(&n_rcu_torture_mberror) ||
-+	    n_rcu_torture_barrier_error || n_rcu_torture_boost_ktrerror ||
-+	    n_rcu_torture_boost_rterror || n_rcu_torture_boost_failure ||
- 	    i > 1) {
- 		pr_cont("%s", "!!! ");
- 		atomic_inc(&n_rcu_torture_error);
--		WARN_ON_ONCE(1);
-+		WARN_ON_ONCE(atomic_read(&n_rcu_torture_mberror));
-+		WARN_ON_ONCE(n_rcu_torture_barrier_error);  // rcu_barrier()
-+		WARN_ON_ONCE(n_rcu_torture_boost_ktrerror); // no boost kthread
-+		WARN_ON_ONCE(n_rcu_torture_boost_rterror); // can't set RT prio
-+		WARN_ON_ONCE(n_rcu_torture_boost_failure); // RCU boost failed
-+		WARN_ON_ONCE(i > 1); // Too-short grace period
- 	}
- 	pr_cont("Reader Pipe: ");
- 	for (i = 0; i < RCU_TORTURE_PIPE_LEN + 1; i++)
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 8fd4f82..aeec70f 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -455,7 +455,6 @@ enum rcutorture_type {
+ #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,
+ 			    unsigned long *gp_seq);
+-void rcutorture_record_progress(unsigned long vernum);
+ void do_trace_rcu_torture_read(const char *rcutorturename,
+ 			       struct rcu_head *rhp,
+ 			       unsigned long secs,
+@@ -468,7 +467,6 @@ static inline void rcutorture_get_gp_data(enum rcutorture_type test_type,
+ 	*flags = 0;
+ 	*gp_seq = 0;
+ }
+-static inline void rcutorture_record_progress(unsigned long vernum) { }
+ #ifdef CONFIG_RCU_TRACE
+ void do_trace_rcu_torture_read(const char *rcutorturename,
+ 			       struct rcu_head *rhp,
