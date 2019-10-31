@@ -2,159 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49311EB80C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 889F9EB801
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2019 20:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfJaTkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 15:40:19 -0400
-Received: from mail1.perex.cz ([77.48.224.245]:59586 "EHLO mail1.perex.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbfJaTkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 15:40:19 -0400
-X-Greylist: delayed 506 seconds by postgrey-1.27 at vger.kernel.org; Thu, 31 Oct 2019 15:40:17 EDT
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 6FAA0A003F;
-        Thu, 31 Oct 2019 20:31:49 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 6FAA0A003F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-        t=1572550309; bh=e7FOMXFcnMMpy8m/IR2ThaAKpnMK1j6Jiw3vhVsS7l4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VlE80nabt963GZrSP5Qtjes5VtzKFkDZ+sKse3vg1zq5VPrK5pv+84+ZiFHBO0zSl
-         aTXyOs5kzWOdJ7eBA1cMW2UkOyF/8Nm2npY5p1CfWdwtUg+3IEaWLgcVEwgv0mB8hN
-         HbpJ+NtAo2obtEc12CRq7rTQvtlbhF4xJs5/+gJk=
-Received: from p50.perex-int.cz (unknown [192.168.100.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: perex)
-        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-        Thu, 31 Oct 2019 20:31:43 +0100 (CET)
-Subject: Re: [PATCH] hp100: Move 100BaseVG AnyLAN driver to staging
-To:     Joe Perches <joe@perches.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org
-References: <4024b52c917975cebde58afc094eed1a107622c2.1572545956.git.joe@perches.com>
-From:   Jaroslav Kysela <perex@perex.cz>
-Message-ID: <8b3f9530-a94c-8d6d-9a3d-4d5d3d1f97ae@perex.cz>
-Date:   Thu, 31 Oct 2019 20:31:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <4024b52c917975cebde58afc094eed1a107622c2.1572545956.git.joe@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727503AbfJaTfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 15:35:38 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:41041 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfJaTfi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 15:35:38 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7FC5E886BF;
+        Fri,  1 Nov 2019 08:35:33 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1572550533;
+        bh=E93uVfw+8Sv9aFniBPMkATe9ycroU/eB0+p7RpM6SlA=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=F7Q+3WazE4DEFImOB2xZ4pivLcl6lyZDOa051lMUsnuJjiDOnLZqYdJB2InfY74Kw
+         d+WMefMFl20rEyIL5JZCP4Yh0RAYAxQhOpIJbMWV2edqp7fkjiw3txEIuO+u4Ei7qm
+         spAmx5eRqXnoC/3/rjAW14AWozrfUOrc7pvnKKsFrtQqsMJYpeIo3B0XtUufTB82gD
+         4SLwNZHjmU761wfyV+eg1CabIjsNy/Bd5Kc2hWe7gINE5L79DE67K6zQSdR5tfroEs
+         hf8tJOMxgOkhtWsI+qTFbkvqbZTAzqxtja04Wvn5cFtblGoMNJPNiNDL5MnA1+o8Rs
+         6nFEovFHVG7Jw==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5dbb37840000>; Fri, 01 Nov 2019 08:35:32 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Fri, 1 Nov 2019 08:35:31 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Fri, 1 Nov 2019 08:35:31 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "tomeu.vizoso@collabora.com" <tomeu.vizoso@collabora.com>,
+        "mgalka@collabora.com" <mgalka@collabora.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "matthew.hart@linaro.org" <matthew.hart@linaro.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "bot@kernelci.org" <bot@kernelci.org>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "guillaume.tucker@collabora.com" <guillaume.tucker@collabora.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "rjui@broadcom.com" <rjui@broadcom.com>
+Subject: Re: linusw/devel boot bisection: v5.4-rc1-31-g6a41b6c5fc20 on
+ rk3399-puma-haikou
+Thread-Topic: linusw/devel boot bisection: v5.4-rc1-31-g6a41b6c5fc20 on
+ rk3399-puma-haikou
+Thread-Index: AQHVkBrPgYhki3sbH0mOvdKD5EMjb6d0SpEA
+Date:   Thu, 31 Oct 2019 19:35:30 +0000
+Message-ID: <9d1a6cba9687f94b2d36a82f42f5d4be2b16e7a6.camel@alliedtelesis.co.nz>
+References: <5dbb2acf.1c69fb81.54ce2.2f48@mx.google.com>
+In-Reply-To: <5dbb2acf.1c69fb81.54ce2.2f48@mx.google.com>
+Accept-Language: en-NZ, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:f9a5:3a1:c94b:a6f5]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <007B585A5A5044459D519245F35A99C3@atlnz.lc>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne 31. 10. 19 v 19:23 Joe Perches napsal(a):
-> 100BaseVG AnyLAN hasn't been useful since 1996 or so and even then
-> didn't sell many devices.  It's unlikely any are still in use.
-> 
-> Move the driver to staging with the intent of removing it altogether
-> one day.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-
-Acked-by: Jaroslav Kysela <perex@perex.cz>
-
-
-> ---
->   MAINTAINERS                                   | 4 ++--
->   drivers/net/ethernet/Kconfig                  | 1 -
->   drivers/net/ethernet/Makefile                 | 1 -
->   drivers/staging/Kconfig                       | 2 ++
->   drivers/staging/Makefile                      | 1 +
->   drivers/{net/ethernet => staging}/hp/Kconfig  | 0
->   drivers/{net/ethernet => staging}/hp/Makefile | 0
->   drivers/{net/ethernet => staging}/hp/hp100.c  | 0
->   drivers/{net/ethernet => staging}/hp/hp100.h  | 0
->   9 files changed, 5 insertions(+), 4 deletions(-)
->   rename drivers/{net/ethernet => staging}/hp/Kconfig (100%)
->   rename drivers/{net/ethernet => staging}/hp/Makefile (100%)
->   rename drivers/{net/ethernet => staging}/hp/hp100.c (100%)
->   rename drivers/{net/ethernet => staging}/hp/hp100.h (100%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c6c34d..bea725 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7444,8 +7444,8 @@ F:	drivers/platform/x86/tc1100-wmi.c
->   
->   HP100:	Driver for HP 10/100 Mbit/s Voice Grade Network Adapter Series
->   M:	Jaroslav Kysela <perex@perex.cz>
-> -S:	Maintained
-> -F:	drivers/net/ethernet/hp/hp100.*
-> +S:	Obsolete
-> +F:	drivers/staging/hp/hp100.*
->   
->   HPET:	High Precision Event Timers driver
->   M:	Clemens Ladisch <clemens@ladisch.de>
-> diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-> index e8e9c16..4ded81 100644
-> --- a/drivers/net/ethernet/Kconfig
-> +++ b/drivers/net/ethernet/Kconfig
-> @@ -78,7 +78,6 @@ source "drivers/net/ethernet/freescale/Kconfig"
->   source "drivers/net/ethernet/fujitsu/Kconfig"
->   source "drivers/net/ethernet/google/Kconfig"
->   source "drivers/net/ethernet/hisilicon/Kconfig"
-> -source "drivers/net/ethernet/hp/Kconfig"
->   source "drivers/net/ethernet/huawei/Kconfig"
->   source "drivers/net/ethernet/i825xx/Kconfig"
->   source "drivers/net/ethernet/ibm/Kconfig"
-> diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
-> index 05abeb..f8f38d 100644
-> --- a/drivers/net/ethernet/Makefile
-> +++ b/drivers/net/ethernet/Makefile
-> @@ -41,7 +41,6 @@ obj-$(CONFIG_NET_VENDOR_FREESCALE) += freescale/
->   obj-$(CONFIG_NET_VENDOR_FUJITSU) += fujitsu/
->   obj-$(CONFIG_NET_VENDOR_GOOGLE) += google/
->   obj-$(CONFIG_NET_VENDOR_HISILICON) += hisilicon/
-> -obj-$(CONFIG_NET_VENDOR_HP) += hp/
->   obj-$(CONFIG_NET_VENDOR_HUAWEI) += huawei/
->   obj-$(CONFIG_NET_VENDOR_IBM) += ibm/
->   obj-$(CONFIG_NET_VENDOR_INTEL) += intel/
-> diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-> index 6f1fa4..333308 100644
-> --- a/drivers/staging/Kconfig
-> +++ b/drivers/staging/Kconfig
-> @@ -125,4 +125,6 @@ source "drivers/staging/exfat/Kconfig"
->   
->   source "drivers/staging/qlge/Kconfig"
->   
-> +source "drivers/staging/hp/Kconfig"
-> +
->   endif # STAGING
-> diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-> index a90f9b3..e4943c 100644
-> --- a/drivers/staging/Makefile
-> +++ b/drivers/staging/Makefile
-> @@ -53,3 +53,4 @@ obj-$(CONFIG_UWB)		+= uwb/
->   obj-$(CONFIG_USB_WUSB)		+= wusbcore/
->   obj-$(CONFIG_EXFAT_FS)		+= exfat/
->   obj-$(CONFIG_QLGE)		+= qlge/
-> +obj-$(CONFIG_NET_VENDOR_HP)	+= hp/
-> diff --git a/drivers/net/ethernet/hp/Kconfig b/drivers/staging/hp/Kconfig
-> similarity index 100%
-> rename from drivers/net/ethernet/hp/Kconfig
-> rename to drivers/staging/hp/Kconfig
-> diff --git a/drivers/net/ethernet/hp/Makefile b/drivers/staging/hp/Makefile
-> similarity index 100%
-> rename from drivers/net/ethernet/hp/Makefile
-> rename to drivers/staging/hp/Makefile
-> diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/staging/hp/hp100.c
-> similarity index 100%
-> rename from drivers/net/ethernet/hp/hp100.c
-> rename to drivers/staging/hp/hp100.c
-> diff --git a/drivers/net/ethernet/hp/hp100.h b/drivers/staging/hp/hp100.h
-> similarity index 100%
-> rename from drivers/net/ethernet/hp/hp100.h
-> rename to drivers/staging/hp/hp100.h
-> 
-
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+T24gVGh1LCAyMDE5LTEwLTMxIGF0IDExOjQxIC0wNzAwLCBrZXJuZWxjaS5vcmcgYm90IHdyb3Rl
+Og0KPiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICog
+KiAqICogKiAqICogKg0KPiAqIFRoaXMgYXV0b21hdGVkIGJpc2VjdGlvbiByZXBvcnQgd2FzIHNl
+bnQgdG8geW91IG9uIHRoZSBiYXNpcyAgKg0KPiAqIHRoYXQgeW91IG1heSBiZSBpbnZvbHZlZCB3
+aXRoIHRoZSBicmVha2luZyBjb21taXQgaXQgaGFzICAgICAgKg0KPiAqIGZvdW5kLiAgTm8gbWFu
+dWFsIGludmVzdGlnYXRpb24gaGFzIGJlZW4gZG9uZSB0byB2ZXJpZnkgaXQsICAgKg0KPiAqIGFu
+ZCB0aGUgcm9vdCBjYXVzZSBvZiB0aGUgcHJvYmxlbSBtYXkgYmUgc29tZXdoZXJlIGVsc2UuICAg
+ICAgKg0KPiAqICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgKg0KPiAqIElmIHlvdSBkbyBzZW5kIGEgZml4LCBwbGVhc2UgaW5jbHVk
+ZSB0aGlzIHRyYWlsZXI6ICAgICAgICAgICAgKg0KPiAqICAgUmVwb3J0ZWQtYnk6ICJrZXJuZWxj
+aS5vcmcgYm90IiA8Ym90QGtlcm5lbGNpLm9yZz4gICAgICAgICAgKg0KPiAqICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKg0KPiAq
+IEhvcGUgdGhpcyBoZWxwcyEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgKg0KPiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICogKiAqICog
+KiAqICogKiAqICogKiAqICogKg0KPiANCj4gbGludXN3L2RldmVsIGJvb3QgYmlzZWN0aW9uOiB2
+NS40LXJjMS0zMS1nNmE0MWI2YzVmYzIwIG9uIHJrMzM5OS1wdW1hLWhhaWtvdQ0KPiANCj4gU3Vt
+bWFyeToNCj4gICBTdGFydDogICAgICA2YTQxYjZjNWZjMjAgZ3BpbzogQWRkIHhncy1pcHJvYyBk
+cml2ZXINCj4gICBEZXRhaWxzOiAgICBodHRwczovL2tlcm5lbGNpLm9yZy9ib290L2lkLzVkYmIx
+MmJmNTliNTE0NDA0ZjYwZWU3OQ0KPiAgIFBsYWluIGxvZzogIGh0dHBzOi8vc3RvcmFnZS5rZXJu
+ZWxjaS5vcmcvL2xpbnVzdy9kZXZlbC92NS40LXJjMS0zMS1nNmE0MWI2YzVmYzIwL2FybTY0L2Rl
+ZmNvbmZpZy9nY2MtOC9sYWItdGhlb2Jyb21hLXN5c3RlbXMvYm9vdC1yazMzOTktcHVtYS1oYWlr
+b3UudHh0DQo+ICAgSFRNTCBsb2c6ICAgaHR0cHM6Ly9zdG9yYWdlLmtlcm5lbGNpLm9yZy8vbGlu
+dXN3L2RldmVsL3Y1LjQtcmMxLTMxLWc2YTQxYjZjNWZjMjAvYXJtNjQvZGVmY29uZmlnL2djYy04
+L2xhYi10aGVvYnJvbWEtc3lzdGVtcy9ib290LXJrMzM5OS1wdW1hLWhhaWtvdS5odG1sDQo+ICAg
+UmVzdWx0OiAgICAgNmE0MWI2YzVmYzIwIGdwaW86IEFkZCB4Z3MtaXByb2MgZHJpdmVyDQo+IA0K
+PiBDaGVja3M6DQo+ICAgcmV2ZXJ0OiAgICAgUEFTUw0KPiAgIHZlcmlmeTogICAgIFBBU1MNCj4g
+DQo+IFBhcmFtZXRlcnM6DQo+ICAgVHJlZTogICAgICAgbGludXN3DQo+ICAgVVJMOiAgICAgICAg
+aHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvbGludXN3L2xp
+bnV4LWdwaW8uZ2l0Lw0KPiAgIEJyYW5jaDogICAgIGRldmVsDQo+ICAgVGFyZ2V0OiAgICAgcmsz
+Mzk5LXB1bWEtaGFpa291DQo+ICAgQ1BVIGFyY2g6ICAgYXJtNjQNCj4gICBMYWI6ICAgICAgICBs
+YWItdGhlb2Jyb21hLXN5c3RlbXMNCj4gICBDb21waWxlcjogICBnY2MtOA0KPiAgIENvbmZpZzog
+ICAgIGRlZmNvbmZpZw0KPiAgIFRlc3Qgc3VpdGU6IGJvb3QNCj4gDQo+IEJyZWFraW5nIGNvbW1p
+dCBmb3VuZDoNCj4gDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gY29tbWl0IDZhNDFiNmM1
+ZmMyMGFiY2VkODhmYTBlZWQ0MmFlNWU1Y2I3MGIyODANCj4gQXV0aG9yOiBDaHJpcyBQYWNraGFt
+IDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+IERhdGU6ICAgRnJpIE9jdCAy
+NSAwOToyNzowMyAyMDE5ICsxMzAwDQo+IA0KPiAgICAgZ3BpbzogQWRkIHhncy1pcHJvYyBkcml2
+ZXINCj4gICAgIA0KPiAgICAgVGhpcyBkcml2ZXIgc3VwcG9ydHMgdGhlIENoaXAgQ29tbW9uIEEg
+R1BJTyBjb250cm9sbGVyIHByZXNlbnQgb24gYQ0KPiAgICAgbnVtYmVyIG9mIEJyb2FkY29tIHN3
+aXRjaCBBU0lDcyB3aXRoIGludGVncmF0ZWQgU29Dcy4gVGhlIGNvbnRyb2xsZXIgaXMNCj4gICAg
+IHNpbWlsYXIgdG8gdGhlIHBpbmN0cmwtbnNwLWdwaW8gYW5kIHBpbmN0cmwtaXByb2MtZ3BpbyBi
+bG9ja3MgYnV0DQo+ICAgICBkaWZmZXJlbnQgZW5vdWdoIHRoYXQgYSBzZXBhcmF0ZSBkcml2ZXIg
+aXMgcmVxdWlyZWQuDQo+ICAgICANCj4gICAgIFRoaXMgaGFzIGJlZW4gcG9ydGVkIGZyb20gQnJv
+YWRjb20ncyBYTERLIDUuMC4zIHJldGFpbmluZyBvbmx5IHRoZSBDQ0ENCj4gICAgIHN1cHBvcnQg
+KHBpbmN0cmwtaXByb2MtZ3BpbyBjb3ZlcnMgQ0NCKS4NCj4gICAgIA0KPiAgICAgU2lnbmVkLW9m
+Zi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0K
+PiAgICAgTGluazogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDE5MTAyNDIwMjcwMy44MDE3
+LTMtY2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56DQo+ICAgICBBY2tlZC1ieTogU2Nv
+dHQgQnJhbmRlbiA8c2NvdHQuYnJhbmRlbkBicm9hZGNvbS5jb20+DQo+ICAgICBTaWduZWQtb2Zm
+LWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQoNCkhtbSwNCg0K
+SSBkb24ndCBzZWUgaG93IHRoaXMgY29tbWl0IHdvdWxkIGhhdmUgY2F1c2VkIHRoZSBvb3BzLiBU
+aGUgbmV3IGRyaXZlcg0Kc2hvdWxkbid0IChhbmQgZG9lc24ndCBhcHBlYXIgdG8gYmUpIHJ1biBv
+biBhbnkgcGxhdGZvcm0gYXMgbm90aGluZw0KZGVjbGFyZXMgLmNvbXBhdGlibGUgPSAiYnJjbSxp
+cHJvYy1ncGlvLWNjYSIgKHlldCkuDQoNCg==
