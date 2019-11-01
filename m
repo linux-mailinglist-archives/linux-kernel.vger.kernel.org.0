@@ -2,88 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB19EC2EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB19EC2E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730864AbfKAMnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:43:06 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33615 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730835AbfKAMnA (ORCPT
+        id S1730719AbfKAMmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:42:39 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35967 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730672AbfKAMmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:43:00 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y127so7144635lfc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:43:00 -0700 (PDT)
+        Fri, 1 Nov 2019 08:42:32 -0400
+Received: by mail-lj1-f193.google.com with SMTP id x9so5303186lji.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
-        b=H/DAgeFpcXJo0tjQoKHDP9cxo5/LdWTfUYmStbr2surKVlSluXRlwhQhQqZBDV3k8Q
-         V8XC7DhjRHkNy4MfzEF3RCs5zjs3EyE2i5o/5CqiOOUhAXU+FENj52DK5J/CDQ4y4ykB
-         JZklD1t78EAgDyVROxcq9bHmO3TgMHqlhpfuc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ORSG/8+Jf2L5RMvQ4AjOGFaJ9bOqkKCEFFwwyd0kGjE=;
+        b=nSAe87InRfmCTxLXQ00TpN4EtpSTbEO59EV/aV9m9dIlP7IoFHOsoulVE3HMxD9yye
+         Yu1QaPiNS0hzbjPATA6WBbUjnoSKDQjjgCQQudPwo90TzKbxps3fUMhLaqYEEb69Tabm
+         cr7uNE8YkLchliafWdcJd3aFHPWkmXsRh7Hr65ifq2JepQu929ognh/5y1qWHC2uFgUu
+         JGCMVigtL32UHNBKAP+xCHw+Gr8dvPFcC9iMCOcBdX+D2Zk2AZzn2hCl7Szz+nJno3H5
+         Fyh0mIvjvaEaqPWHve4BQAtuU6qFGjmekWi4SSsff+/y7X/eKDp850BR5WUHDAMLj63f
+         +UJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OvUZNskoObmKKJYsbx/wH8iXu8sDYM+jDByiAdju3Rg=;
-        b=GI5jWWsvcJRMamoZfwGghaS3b3nL+ioUyl4I/TjckkNYLIV2XMwOkefKkiVB690ofM
-         eIrJStAubAu+tTuBoHU6RWitVA4pd6PAXyhloLHAtWASdCIRRlSBYWZTYvR1U4Advm58
-         OZW7EY+g8JRrwPEp3ZWhfkwnrthW8UhyXKxLh3YY/BO3jBiI6cMX8O5I5TQCXFmSUt6n
-         tCwl319fTW8oAZDFqusUPk/NipWju+eQ0XUAuwchge7YBBQu3hneDknBueSEOxnyrORN
-         BMoUNzw39xBRH8FWZpuDEBdbU0QBQ9NK/P6w3enQgjq5a9Lj839KfuqYwEBpRMcSYO1V
-         KEuw==
-X-Gm-Message-State: APjAAAVoc8946jvzAg1+jpYkj0sxPVSskNPyzfzm4nuJo1zR7VChL7mQ
-        hqqW1pSRUGmoVFylRwt74r05mw==
-X-Google-Smtp-Source: APXvYqwI3iIuteE6/4JNe1O8E/8fB4CE3gTkq92/iVMjvlls7ufSCpNe/zR7/3vjwyl2n4K9sKAH+A==
-X-Received: by 2002:a05:6512:146:: with SMTP id m6mr6989528lfo.98.1572612178764;
-        Fri, 01 Nov 2019 05:42:58 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.57
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ORSG/8+Jf2L5RMvQ4AjOGFaJ9bOqkKCEFFwwyd0kGjE=;
+        b=p+DSZvoqGOSsH+q/cHS2qKF4rcp52kuZkbp2Rk5yAD/BNBtYk8oEDQOL8OJzQ94Xys
+         5MPg+zFK48ZonQa+0aAldV/LDOKbTHyTR97TuOUxtqPcotLQxsZM1NcJeu//DgnYs6fQ
+         4csmnSa0dK5lB1PmgUB84Xu0KdI1qMAcXXheF3rIvWEiKZgUz/RXM/RY291vYlyNP1Hv
+         awEDaNudXGf7QFCwmfI7xDvtanAaeAYkD6AChRk+iw9O1pQYWCrBPCUVDf+6Fr5OuxIJ
+         4iYVDMeKPFrR8yAPcAtaWjZmPMbn/npAA791iwA/dCCE3mHKoTV1GPcpJG91j+e4k39/
+         wfgg==
+X-Gm-Message-State: APjAAAV/VnpcOxJtLvRhoeSYrOp6jC87AGt4JwyEmKOfccIjhyvP5fKF
+        ZtjJpcU3wAg5FE5M5EoMY6oWoDeH
+X-Google-Smtp-Source: APXvYqwHjXTvJ7GIHhklGQ/Kh98y0lw4h30skEYzsW4y8IFB/OZfGqRQVsbdbVjoofQ6DoHfJvD1gA==
+X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr1980951ljj.232.1572612150184;
+        Fri, 01 Nov 2019 05:42:30 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.199.94])
+        by smtp.gmail.com with ESMTPSA id x1sm5052545lff.90.2019.11.01.05.42.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:58 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 36/36] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
-Date:   Fri,  1 Nov 2019 13:42:10 +0100
-Message-Id: <20191101124210.14510-37-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191101124210.14510-1-linux@rasmusvillemoes.dk>
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191101124210.14510-1-linux@rasmusvillemoes.dk>
+        Fri, 01 Nov 2019 05:42:29 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 7760146123B; Fri,  1 Nov 2019 15:42:28 +0300 (MSK)
+Date:   Fri, 1 Nov 2019 15:42:28 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>, X86-ML <x86@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH -tip] x86/fpu: Shrink space allocated for xstate_comp_offsets
+Message-ID: <20191101124228.GF1615@uranus.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The core QE code now also builds for ARM, so replace the FSL_SOC &&
-PPC32 dependencies by the more lax requirements OF && HAS_IOMEM.
+In the commit 8ff925e10f2c72680918b95173ef4f8bb982d59e up to 64 entries
+are allocated for xstate_comp_offsets while we only handle XFEATURE_MAX
+entries. For this reason xstate_offsets and xstate_sizes already defined
+with the explicit limit. Lets do the same for compressed format for
+consistency sake.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Actually I guess the main idea was to cover all possible bits in
+xfeatures_mask but this doesn't explain why other members such as
+standart offsets and sizes were not using the same. So I think better
+to use known XFEATURE_MAX limit everywhere and extend it on demand
+when new features get implemented on hardware level.
+
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: H. Peter Anvin <hpa@zytor.com>
 ---
- drivers/soc/fsl/qe/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/fpu/xstate.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-index cfa4b2939992..0c5b8b8e46b6 100644
---- a/drivers/soc/fsl/qe/Kconfig
-+++ b/drivers/soc/fsl/qe/Kconfig
-@@ -5,7 +5,7 @@
+Index: linux-tip.git/arch/x86/kernel/fpu/xstate.c
+===================================================================
+--- linux-tip.git.orig/arch/x86/kernel/fpu/xstate.c
++++ linux-tip.git/arch/x86/kernel/fpu/xstate.c
+@@ -60,7 +60,7 @@ u64 xfeatures_mask __read_mostly;
  
- config QUICC_ENGINE
- 	bool "QUICC Engine (QE) framework support"
--	depends on FSL_SOC && PPC32
-+	depends on OF && HAS_IOMEM
- 	select GENERIC_ALLOCATOR
- 	select CRC32
- 	help
--- 
-2.23.0
-
+ static unsigned int xstate_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
+ static unsigned int xstate_sizes[XFEATURE_MAX]   = { [ 0 ... XFEATURE_MAX - 1] = -1};
+-static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask)*8];
++static unsigned int xstate_comp_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
+ 
+ /*
+  * The XSAVE area of kernel can be in standard or compacted format;
+@@ -342,7 +342,7 @@ static int xfeature_is_aligned(int xfeat
+  */
+ static void __init setup_xstate_comp(void)
+ {
+-	unsigned int xstate_comp_sizes[sizeof(xfeatures_mask)*8];
++	unsigned int xstate_comp_sizes[XFEATURE_MAX];
+ 	int i;
+ 
+ 	/*
