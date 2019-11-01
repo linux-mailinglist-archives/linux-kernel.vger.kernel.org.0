@@ -2,80 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1ADEC9F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5752EC9ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfKAUxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:53:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55124 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726742AbfKAUxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:53:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 08C77B396;
-        Fri,  1 Nov 2019 20:53:34 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     linuxdrivers@attotech.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] drivers/scsi/esas2r: Replace binary semaphore with mutex
-Date:   Fri,  1 Nov 2019 13:51:59 -0700
-Message-Id: <20191101205159.1377-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        id S1727736AbfKAUwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:52:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:40669 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbfKAUwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:52:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 13:52:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,257,1569308400"; 
+   d="scan'208";a="199916667"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Nov 2019 13:52:54 -0700
+Received: from fmsmsx126.amr.corp.intel.com (10.18.125.43) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 1 Nov 2019 13:52:54 -0700
+Received: from fmsmsx114.amr.corp.intel.com ([169.254.6.30]) by
+ FMSMSX126.amr.corp.intel.com ([169.254.1.167]) with mapi id 14.03.0439.000;
+ Fri, 1 Nov 2019 13:52:53 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+Subject: Re: [PATCH] libnvdimm/pmem: Delete include of nd-core.h
+Thread-Topic: [PATCH] libnvdimm/pmem: Delete include of nd-core.h
+Thread-Index: AQHVkE2z3NSFKZ0vREyUBbLgylDZYad3QWQA
+Date:   Fri, 1 Nov 2019 20:52:52 +0000
+Message-ID: <86ea4fc17a94446df545af450e9de704e674b68c.camel@intel.com>
+References: <157256829077.1212326.8726596129631121970.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <157256829077.1212326.8726596129631121970.stgit@dwillia2-desk3.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+x-originating-ip: [10.232.112.164]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9FAEA65EFF47F44A81AEC60455BFA102@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At a slight footprint cost (24 vs 32 bytes), mutexes are more optimal
-than semaphores; it's also a nicer interface for mutual exclusion,
-which is why they are encouraged over binary semaphores, when possible.
-
-Replace the buffered_ioctl_sem, its semantics implies traditional lock
-ownership; that is, the lock owner is the same for both lock/unlock
-operations. Therefore it is safe to convert.
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
-This is in an effort to reduce semaphore users in the kernel.
-Compile-tested only.
-
- drivers/scsi/esas2r/esas2r_ioctl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/esas2r/esas2r_ioctl.c b/drivers/scsi/esas2r/esas2r_ioctl.c
-index 442c5e70a7b4..aad352fe27cf 100644
---- a/drivers/scsi/esas2r/esas2r_ioctl.c
-+++ b/drivers/scsi/esas2r/esas2r_ioctl.c
-@@ -56,7 +56,7 @@ dma_addr_t esas2r_buffered_ioctl_addr;
- u32 esas2r_buffered_ioctl_size;
- struct pci_dev *esas2r_buffered_ioctl_pcid;
- 
--static DEFINE_SEMAPHORE(buffered_ioctl_semaphore);
-+static DEFINE_MUTEX(buffered_ioctl_mutex);
- typedef int (*BUFFERED_IOCTL_CALLBACK)(struct esas2r_adapter *,
- 				       struct esas2r_request *,
- 				       struct esas2r_sg_context *,
-@@ -209,7 +209,7 @@ static u8 handle_buffered_ioctl(struct esas2r_buffered_ioctl *bi)
- 	struct esas2r_sg_context sgc;
- 	u8 result = IOCTL_SUCCESS;
- 
--	if (down_interruptible(&buffered_ioctl_semaphore))
-+	if (mutex_lock_interruptible(&buffered_ioctl_mutex))
- 		return IOCTL_OUT_OF_RESOURCES;
- 
- 	/* allocate a buffer or use the existing buffer. */
-@@ -285,7 +285,7 @@ static u8 handle_buffered_ioctl(struct esas2r_buffered_ioctl *bi)
- 	if (result == IOCTL_SUCCESS)
- 		memcpy(bi->ioctl, esas2r_buffered_ioctl, bi->length);
- 
--	up(&buffered_ioctl_semaphore);
-+	mutex_unlock(&buffered_ioctl_mutex);
- 	return result;
- }
- 
--- 
-2.16.4
-
+T24gVGh1LCAyMDE5LTEwLTMxIGF0IDE3OjMxIC0wNzAwLCBEYW4gV2lsbGlhbXMgd3JvdGU6DQo+
+IFRoZSBlbnRpcmUgcG9pbnQgb2YgbmQtY29yZS5oIGlzIHRvIGhpZGUgZnVuY3Rpb25hbGl0eSB0
+aGF0IG5vIGxlYWYNCj4gZHJpdmVyIHNob3VsZCB0b3VjaC4gSW4gZmFjdCwgdGhlIGNvbW1pdCB0
+aGF0IGFkZGVkIGl0IGhhZCBubyBuZWVkIHRvDQo+IGluY2x1ZGUgaXQuDQo+IA0KPiBGaXhlczog
+MDZlOGNjZGFiMTVmICgiYWNwaTogbmZpdDogQWRkIHN1cHBvcnQgZm9yIGRldGVjdCBwbGF0Zm9y
+bS4uLiIpDQo+IENjOiBJcmEgV2VpbnkgPGlyYS53ZWlueUBpbnRlbC5jb20+DQo+IENjOiBEYXZl
+IEppYW5nIDxkYXZlLmppYW5nQGludGVsLmNvbT4NCj4gQ2M6IFZpc2hhbCBWZXJtYSA8dmlzaGFs
+LmwudmVybWFAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gV2lsbGlhbXMgPGRhbi5q
+LndpbGxpYW1zQGludGVsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL252ZGltbS9wbWVtLmMgfCAg
+ICAxIC0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pDQoNCkxvb2tzIGdvb2QsDQpS
+ZXZpZXdlZC1ieTogVmlzaGFsIFZlcm1hIDx2aXNoYWwubC52ZXJtYUBpbnRlbC5jb20+DQoNCj4g
+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL252ZGltbS9wbWVtLmMgYi9kcml2ZXJzL252ZGltbS9w
+bWVtLmMNCj4gaW5kZXggN2E2ZjQ1MDFkY2RhLi5hZDhlNGRmMTI4MmIgMTAwNjQ0DQo+IC0tLSBh
+L2RyaXZlcnMvbnZkaW1tL3BtZW0uYw0KPiArKysgYi9kcml2ZXJzL252ZGltbS9wbWVtLmMNCj4g
+QEAgLTI4LDcgKzI4LDYgQEANCj4gICNpbmNsdWRlICJwbWVtLmgiDQo+ICAjaW5jbHVkZSAicGZu
+LmgiDQo+ICAjaW5jbHVkZSAibmQuaCINCj4gLSNpbmNsdWRlICJuZC1jb3JlLmgiDQo+ICANCj4g
+IHN0YXRpYyBzdHJ1Y3QgZGV2aWNlICp0b19kZXYoc3RydWN0IHBtZW1fZGV2aWNlICpwbWVtKQ0K
+PiAgew0KPiANCg0K
