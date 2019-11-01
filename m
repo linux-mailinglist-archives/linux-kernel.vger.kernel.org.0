@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF66EC4FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F29EC511
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:51:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfKAOtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:49:45 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:32774 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfKAOto (ORCPT
+        id S1727737AbfKAOvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:51:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39672 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbfKAOve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:49:44 -0400
-Received: by mail-il1-f196.google.com with SMTP id s6so8933886iln.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 07:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OvG/qWeSbh1TxLgtmArlVNDYsoALFmkQsSm7UaGBE/U=;
-        b=I8fTjuu/6Ne32KB3TzlkLHNc34FVVQHy/sTVoKvVYeIrGIs/zEWpPkdT4X2FTYZjfJ
-         UM4GFAou96icNjK1AVI5vEOtitRVjbXgZfqaanuntVF/vhTirkZT/9E+CWJUq7E2TQj0
-         StXEuMWcR5zlKYK8R7EGKhYIJ+Gb4ciY1IEMBuLWPRJg6NDyeWhuiAg3JUaKBbPDkQbL
-         sElozNdk4t7DFMJr/2GTc4DXhCqAVsopLQpS5jb3DWebvxakkqFHF/FpNq1kpaMflaeM
-         i/d5Nr3Kf7lOCXzSXk2CZXk0I+pfGJSDm0die6SS7xUqTydNbrFVI18tKwuFsQOAi/MB
-         kf9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OvG/qWeSbh1TxLgtmArlVNDYsoALFmkQsSm7UaGBE/U=;
-        b=GVZRjyeRt47DF2Qs8MNJhb40mR7ngX+XQHc2HZCz7C2y3isOPlIzRpZqo1aBxOHwL+
-         w2stLhTKr6OsBFZnS7AomVWgu8JjDq/onTEv5NGJohKgn4+J35nA5T07upyl0571aaKv
-         J8c+ZD1hyRX2fshvICE57Y5g+LZdic3saR5ATU0XbnL4mgECQu6l+5soxxxEJWTgPivD
-         d1KdUCR8d1EdhetDk1iEYsFyeXzTX+7e7P47POEXlTHsjjis3XxAvpDvaAumDYNDXPNe
-         8ZPxnNWSTcUuwsRcfwcADb5Scap/lqkKGoT8PBPNEpOy/VE2lgM/armJgfrmVczLXFhZ
-         1QLw==
-X-Gm-Message-State: APjAAAUPHUdpJkOvUMyt66NsH7LqpbbRk2PM6UgjwqHStlgbQwDndhOB
-        u/qty7BiQ+qvQRN3oCx58HsBKYqAaaq7sOk9
-X-Google-Smtp-Source: APXvYqxr+bs1ScRWYKeCxmeXCSlj6Q4Lr6KXKYyS2zYjKblHkVBUMc7IPKJ+YzvkERiHaP9xr0/5Lg==
-X-Received: by 2002:a92:5d8f:: with SMTP id e15mr13331860ilg.173.1572619783709;
-        Fri, 01 Nov 2019 07:49:43 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f73sm1107827ild.59.2019.11.01.07.49.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Nov 2019 07:49:42 -0700 (PDT)
-Subject: Re: [PATCH 10/19] fs/io_uring: set FOLL_PIN via pin_user_pages()
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Fri, 1 Nov 2019 10:51:34 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1Emgab177701;
+        Fri, 1 Nov 2019 14:51:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=nGNBEJDch3Fb1hcyWxzKpmeeNUrixQaYxfvmOjhwZ7Q=;
+ b=B12Obcd5aCXe1B6pres9tgUw8b9PDsx8kbAtwAnM64iuhhEm2gzIqPgoMIm1VBOEJfY5
+ 6DftQp9m3KHqNuTJFY+Mjj1VYzfnF2SLI7hZ2nVmH7cO7yede6/5JwyWfeR4gpJyi09w
+ 0LHoDquzr0Lc4o6q/NhNQlsSMpZwxrIHkQwSVniSCXIc4ZRvWDNsgBPevbIeYg9cYP8g
+ BDLgIJNsKfmFgIjQ4q0bfEMFRmNPI33cApn0XpXTmfu684BhnBmRL4FMISQBIVezooCH
+ lq+8dpHkDUJpXqxYrPvJNb61tVCGQ/AyX24wUNXEHV9/fTXV+fthONzJlHiZNITgc7Fm hA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2vxwhg29wg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 14:51:27 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1EmMrD084671;
+        Fri, 1 Nov 2019 14:51:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2vykw3fqaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 14:51:26 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA1EpP9D012233;
+        Fri, 1 Nov 2019 14:51:25 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Nov 2019 07:51:24 -0700
+Date:   Fri, 1 Nov 2019 17:51:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
- <20191030224930.3990755-11-jhubbard@nvidia.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <979ba2a3-ee04-fb12-204d-1b68c7b6e141@kernel.dk>
-Date:   Fri, 1 Nov 2019 08:49:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8192u: fix potential infinite loop because
+ loop counter being too small
+Message-ID: <20191101145117.GB10409@kadam>
+References: <20191101142604.17610-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20191030224930.3990755-11-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101142604.17610-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911010148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911010149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/19 4:49 PM, John Hubbard wrote:
-> Convert fs/io_uring to use the new pin_user_pages() call, which sets
-> FOLL_PIN. Setting FOLL_PIN is now required for code that requires
-> tracking of pinned pages, and therefore for any code that calls
-> put_user_page().
+On Fri, Nov 01, 2019 at 02:26:04PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the for-loop counter i is a u8 however it is being checked
+> against a maximum value priv->ieee80211->LinkDetectInfo.SlotNum which is a
+> u16. Hence there is a potential wrap-around of counter i back to zero if
+> priv->ieee80211->LinkDetectInfo.SlotNum is greater than 255.  Fix this by
+> making i a u16.
+> 
+> Addresses-Coverity: ("Infinite loop")
+> Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/rtl8192u/r8192U_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+> index 48f1591ed5b4..fd91b7c5ca81 100644
+> --- a/drivers/staging/rtl8192u/r8192U_core.c
+> +++ b/drivers/staging/rtl8192u/r8192U_core.c
+> @@ -3210,7 +3210,7 @@ static void rtl819x_update_rxcounts(struct r8192_priv *priv, u32 *TotalRxBcnNum,
+>  			     u32 *TotalRxDataNum)
+>  {
+>  	u16			SlotIndex;
+> -	u8			i;
+> +	u16			i;
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+The iterator "i" should just be an int unless we know that it needs to
+be an unsigned long long.
 
--- 
-Jens Axboe
+regards,
+dan carpenter
 
