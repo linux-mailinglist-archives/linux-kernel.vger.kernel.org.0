@@ -2,106 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C9AEC049
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 983D2EC084
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfKAJLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 05:11:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33430 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbfKAJLN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:11:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s1so9022275wro.0;
-        Fri, 01 Nov 2019 02:11:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vhjdwd9OjDgZKFYAiqq3M747PlQxCBQAkRBjkbyP7ZE=;
-        b=ghjSVKpLhAM8ISXDDeFz9y/C6z6EwrwhVPWoJcoRy3cWjxomwNmYtyo2mo2va4jcmA
-         ckgLhb1TMEgBPs6z+5cGziauek9PwpjPtF9bNS9UVjN2MWI0TP8XxzM0rIWMYzpe68kt
-         cYoCQTDKl0gEYC6UpIDUrjXTC3m2l3cLykNr6n4zH6dhxG0XiiQ5aG5sniB0hCjHSd0b
-         XMZQjt+/Vn6NY/B2wd6eewneXLbkji3K/hGNMJSzzs9ysAkpI6byIBnsh/jqluU1PhqP
-         R6A4YyDNezfGsHiu66yGzf2lRv9g/RKoBR+MA8dhlif+AaKhzpLwS9VQgtQPRrLKhPCe
-         mB/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vhjdwd9OjDgZKFYAiqq3M747PlQxCBQAkRBjkbyP7ZE=;
-        b=qfJxv4+D6KBKEdtLvFbVZvfg+CV2tntu2kkZl3BP0CzzV47MabhUtBk414B6NGm7bb
-         T9EzMCPJJPTqf18P26rxNOkE3Sn/74WpEh24EzIHEDN78Gj29DZB8Hjr69zrkFt3nnmM
-         Jue6/Ua0yBK2zY0bZ4AywFrlHTf8NI4mv5JNnUop7thK7nT0yAYFRRe4ABbv5tYZvj2E
-         xotgJPCBV5JUbNUkUyDKRD67EkXzSUw0UQxF7WVTnN6T/xBTql0mZ9ZL4xwb0sKfjj61
-         Z1A3GfNuDYxdFQcUEoVZLx2AP1n1gFSBnui7DrnLfSGr6i8E7M6qITxPJglkLgDofN4O
-         iH9g==
-X-Gm-Message-State: APjAAAWvui0g5Ooj8tr6Juzm8uDg1f8OlWieU7b9b1OETWQCtgLxCg20
-        0B/Co8Gmbr5smM1nCDKsS2hPaAIhp3s=
-X-Google-Smtp-Source: APXvYqwucsVTviL1wqTqOub9YHhpaHgCtVJWjyxDGuPZN3ErAUCBvnC3v/Sq43iK8ecfBp/JazKKkw==
-X-Received: by 2002:adf:b1c6:: with SMTP id r6mr10165019wra.48.1572599469966;
-        Fri, 01 Nov 2019 02:11:09 -0700 (PDT)
-Received: from localhost.localdomain ([62.178.82.229])
-        by smtp.gmail.com with ESMTPSA id y2sm6655648wmy.2.2019.11.01.02.11.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 02:11:08 -0700 (PDT)
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/etnaviv: correct ETNA_MAX_PIPE define
-Date:   Fri,  1 Nov 2019 11:10:48 +0100
-Message-Id: <20191101101110.10105-1-christian.gmeiner@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        id S1728741AbfKAJeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 05:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727302AbfKAJeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:34:09 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF46321734;
+        Fri,  1 Nov 2019 09:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572600848;
+        bh=0jCij/Fv8ugOCVAh4PqFfAXdu/PxgN5AcduaY+7TskQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r20eSui4efPABmYo7hpS0vYVKlcPj8rC24asoji9XM5GANsx40FkR/8T+L4QEfS+c
+         ySou75re54nj88ZPjkzC5BKc0ECclHEmHcEdLWXOPQDeTNeNHdWNgC86bZmua5pwxJ
+         tCGk8Y9PWOTFmXYWYqjI017VLS81unr9CPgr6FHs=
+Date:   Fri, 1 Nov 2019 09:58:57 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>, davem@davemloft.net,
+        mark.rutland@arm.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
+        wens@csie.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 0/4] crypto: add sun8i-ss driver for Allwinner
+ Security System
+Message-ID: <20191101085857.bukatiog3zxugjng@hendrix>
+References: <20191025185128.24068-1-clabbe.montjoie@gmail.com>
+ <20191101061154.abwwbcqzm6lg7uvi@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="phjdavwqd433by7q"
+Content-Disposition: inline
+In-Reply-To: <20191101061154.abwwbcqzm6lg7uvi@gondor.apana.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-etnaviv supports the following pipe types:
 
-ETNA_PIPE_3D      0x00
-ETNA_PIPE_2D      0x01
-ETNA_PIPE_VG      0x02
+--phjdavwqd433by7q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The current used value of 4 for ETNA_MAX_PIPES is wrong and
-caueses some troubles in the combination with perf counters.
+On Fri, Nov 01, 2019 at 02:11:54PM +0800, Herbert Xu wrote:
+> On Fri, Oct 25, 2019 at 08:51:24PM +0200, Corentin Labbe wrote:
+> > Hello
+> >
+> > This patch serie adds support for the second version of Allwinner Security System.
+> > The first generation of the Security System is already handled by the sun4i-ss driver.
+> > Due to major change, the first driver cannot handle the second one.
+> > This new Security System is present on A80 and A83T SoCs.
+> >
+> > For the moment, the driver support only DES3/AES in ECB/CBC mode.
+> > Patchs for CTR/CTS, RSA and RNGs will came later.
+> >
+> > This serie is tested with CRYPTO_MANAGER_EXTRA_TESTS
+> > and tested on:
+> > sun8i-a83t-bananapi-m3
+> > sun9i-a80-cubieboard4
+> >
+> > This serie is based on top of the "crypto: add sun8i-ce driver for
+> > Allwinner crypto engine" serie.
+> >
+> > Regards
+> >
+> > Changes since v2:
+> > - Made the reset mandatory
+> > - Removed reset-names
+> >
+> > Changes since v1:
+> > - fixed uninitialized err in sun8i_ss_allocate_chanlist
+> > - Added missing commit description on DT Documentation patch
+> >
+> > Corentin Labbe (4):
+> >   crypto: Add Allwinner sun8i-ss cryptographic offloader
+> >   dt-bindings: crypto: Add DT bindings documentation for sun8i-ss
+> >     Security System
+> >   ARM: dts: sun8i: a83t: Add Security System node
+> >   ARM: dts: sun9i: a80: Add Security System node
+> >
+> >  .../bindings/crypto/allwinner,sun8i-ss.yaml   |  61 ++
+> >  arch/arm/boot/dts/sun8i-a83t.dtsi             |   9 +
+> >  arch/arm/boot/dts/sun9i-a80.dtsi              |   9 +
+> >  drivers/crypto/allwinner/Kconfig              |  28 +
+> >  drivers/crypto/allwinner/Makefile             |   1 +
+> >  drivers/crypto/allwinner/sun8i-ss/Makefile    |   2 +
+> >  .../allwinner/sun8i-ss/sun8i-ss-cipher.c      | 438 ++++++++++++
+> >  .../crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 642 ++++++++++++++++++
+> >  drivers/crypto/allwinner/sun8i-ss/sun8i-ss.h  | 218 ++++++
+> >  9 files changed, 1408 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/crypto/allwinner,sun8i-ss.yaml
+> >  create mode 100644 drivers/crypto/allwinner/sun8i-ss/Makefile
+> >  create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+> >  create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> >  create mode 100644 drivers/crypto/allwinner/sun8i-ss/sun8i-ss.h
+>
+> Patches 1,2 applied.  Thanks.
 
-Lets have a look at the function etnaviv_pm_query_dom(..):
-If domain->pipe is 3 then we are one element beyond the end
-of the array.
+Applied 3 and 4, thanks!
+Maxime
 
-The easiest way to fix this issue is to provide a correct value
-for ETNA_MAX_PIPES.
+--phjdavwqd433by7q
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: a8c21a5451d8 ("drm/etnaviv: add initial etnaviv DRM driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
----
- include/uapi/drm/etnaviv_drm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/include/uapi/drm/etnaviv_drm.h b/include/uapi/drm/etnaviv_drm.h
-index 09d0df8b71c5..5a62228298d1 100644
---- a/include/uapi/drm/etnaviv_drm.h
-+++ b/include/uapi/drm/etnaviv_drm.h
-@@ -75,7 +75,7 @@ struct drm_etnaviv_timespec {
- #define ETNAVIV_PARAM_GPU_NUM_VARYINGS              0x1a
- #define ETNAVIV_PARAM_SOFTPIN_START_ADDR            0x1b
- 
--#define ETNA_MAX_PIPES 4
-+#define ETNA_MAX_PIPES 3
- 
- struct drm_etnaviv_param {
- 	__u32 pipe;           /* in */
--- 
-2.23.0
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbvz0QAKCRDj7w1vZxhR
+xVjTAQCdeiXvBM+rscw9plENTZiXAjVbmkADgjas85s2VUzpVQEA04vUS0idMiY/
+RxN28qg8bHvQsTZGYtLIbTxPsSpgCQI=
+=vYi/
+-----END PGP SIGNATURE-----
 
+--phjdavwqd433by7q--
