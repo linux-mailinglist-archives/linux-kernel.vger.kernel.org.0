@@ -2,180 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0E1EC293
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CEAEC2A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbfKAMRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:17:36 -0400
-Received: from foss.arm.com ([217.140.110.172]:34498 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730572AbfKAMRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:17:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC3B91F1;
-        Fri,  1 Nov 2019 05:17:30 -0700 (PDT)
-Received: from [192.168.1.20] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB9A83F6C4;
-        Fri,  1 Nov 2019 05:17:28 -0700 (PDT)
-Subject: Re: [Patch v4 2/6] sched: Add infrastructure to store and update
- instantaneous thermal pressure
-To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-3-git-send-email-thara.gopinath@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <379d23e5-79a5-9d90-0fb6-125d9be85e99@arm.com>
-Date:   Fri, 1 Nov 2019 13:17:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730647AbfKAMSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:18:12 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55557 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730637AbfKAMSM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 08:18:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g24so9151142wmh.5;
+        Fri, 01 Nov 2019 05:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZOoIzpG2z8fi2GZrvyp00RYzBAVVduBNjTY7LDpDnDA=;
+        b=WMGeLp/AVcDchEPwD5VJFbDRfoXly9LNsd0siehQ54HLKyIZ8qz9gi8KhSFn/ECKpG
+         4taW6nS3xhiwjHUhlKwrUKHiRbPhs2tXHJbH1qNcz50q5vHK3RsSKuYORB7lqzRv+kKs
+         hlzTPidpqQOgpmDIDqPQWVRFFc279Bdiwn3Fo+zG7ZmOK3rWuWObm1y60wX26Y0lLe2R
+         rxYZZwUwn6q4AWS6avO/Ttxqrm9T9MPIkI6l8saqG21Hm3uzAKNsJTZk8gGvFL4ZXobX
+         QQ84THyc3nfF1poe9cx5U0FWZlISf+jXrv+zA2bXISGSyXsVB4eUT5G0vYx3eZZY9NgO
+         xZAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZOoIzpG2z8fi2GZrvyp00RYzBAVVduBNjTY7LDpDnDA=;
+        b=X+szGtX8jeFdstKdfMaH1J95SPYF8sBc5Ghi0kjVSxaHv6QSZwljCCZvGibrY+iFB+
+         ijH4TxZM93MCBxdhwx0vZAw24WldRr7QytgKjW6ffZ+TjpSY01cTjCyJPju5kjoYoQ1i
+         kNUILBH5zDW8YjWTRy0hxCICO6vSA5B/NmPIwgPJKamY1q4piHDP3K7SOwuJkGKkq43k
+         omjvq87/LccgyX96GpBkPSOz/tzlUWbD45n0EvVJd2yLu74ShVuE7g+1TDNBXYz4GMLQ
+         QcM1HI1QYX4HqhQsjtnYl8J9NYXlOagOPfcWi/dyhW9gzlv3mzPGpZawKJPrFfaCcVWF
+         rXcg==
+X-Gm-Message-State: APjAAAUjWUuy50qOWuqb2B4I3XJ/54hzGGENieIdgIW8Wmlusmeh5+wM
+        W+lInhw/scll9ArGzVEorhQ=
+X-Google-Smtp-Source: APXvYqyYGMPZVOcwrT99SjO70XvqnXNb10RZu4lXx7hjfGuoisqKxZ/u5JHTJkzyPdKNoiU5Az3ORw==
+X-Received: by 2002:a1c:1d53:: with SMTP id d80mr6277323wmd.88.1572610690236;
+        Fri, 01 Nov 2019 05:18:10 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id p15sm7759400wrs.94.2019.11.01.05.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 05:18:09 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-spi@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] spi: sifive: disable clk when probe fails and remove
+Date:   Fri,  1 Nov 2019 20:17:45 +0800
+Message-Id: <20191101121745.13413-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <1571776465-29763-3-git-send-email-thara.gopinath@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.10.19 22:34, Thara Gopinath wrote:
+The driver forgets to disable and unprepare clk when probe fails and
+remove.
+Add the calls to fix the problem.
 
-[...]
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/spi/spi-sifive.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-> +/**
-> + * trigger_thermal_pressure_average: Trigger the thermal pressure accumulate
-> + *				     and average algorithm
-> + */
-> +void trigger_thermal_pressure_average(struct rq *rq)
-> +{
-> +	update_thermal_load_avg(rq_clock_task(rq), rq,
-> +				per_cpu(delta_capacity, cpu_of(rq)));
-> +}
-
-Why not call update_thermal_load_avg() directly in fair.c? We do this for all
-the other update_foo_load_avg() functions (foo eq. irq, rt_rq, dl_rq ...)
-
-You don't have to pass 'u64 now', so you can hide it plus the 
-sched_thermal_decay_coeff add-on within update_thermal_load_avg().
-(Similar to update_irq_load_avg()).
-
-You could even hide 'u64 capacity' in it.
-
-So we save one function layer (trigger_thermal_pressure_average()), thermal becomes
-more aligned with the other PELT users when it comes to call-sites and we have less
-code for this feature.
-
-Something like this (only for 'u64 now' and only compile tested on arm64:
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index be3e802a2dc5..ac3ec3a04469 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7576,7 +7576,7 @@ static void update_blocked_averages(int cpu)
+diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
+index 35254bdc42c4..f7c1e20432e0 100644
+--- a/drivers/spi/spi-sifive.c
++++ b/drivers/spi/spi-sifive.c
+@@ -357,14 +357,14 @@ static int sifive_spi_probe(struct platform_device *pdev)
+ 	if (!cs_bits) {
+ 		dev_err(&pdev->dev, "Could not auto probe CS lines\n");
+ 		ret = -EINVAL;
+-		goto put_master;
++		goto disable_clk;
+ 	}
  
-        update_blocked_load_status(rq, !done);
+ 	num_cs = ilog2(cs_bits) + 1;
+ 	if (num_cs > SIFIVE_SPI_MAX_CS) {
+ 		dev_err(&pdev->dev, "Invalid number of spi slaves\n");
+ 		ret = -EINVAL;
+-		goto put_master;
++		goto disable_clk;
+ 	}
  
--       trigger_thermal_pressure_average(rq);
-+       update_thermal_load_avg(rq, per_cpu(delta_capacity, cpu_of(rq)));
-        rq_unlock_irqrestore(rq, &rf);
+ 	/* Define our master */
+@@ -393,7 +393,7 @@ static int sifive_spi_probe(struct platform_device *pdev)
+ 			       dev_name(&pdev->dev), spi);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Unable to bind to interrupt\n");
+-		goto put_master;
++		goto disable_clk;
+ 	}
+ 
+ 	dev_info(&pdev->dev, "mapped; irq=%d, cs=%d\n",
+@@ -402,11 +402,13 @@ static int sifive_spi_probe(struct platform_device *pdev)
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "spi_register_master failed\n");
+-		goto put_master;
++		goto disable_clk;
+ 	}
+ 
+ 	return 0;
+ 
++disable_clk:
++	clk_disable_unprepare(spi->clk);
+ put_master:
+ 	spi_master_put(master);
+ 
+@@ -420,6 +422,7 @@ static int sifive_spi_remove(struct platform_device *pdev)
+ 
+ 	/* Disable all the interrupts just in case */
+ 	sifive_spi_write(spi, SIFIVE_SPI_REG_IE, 0);
++	clk_disable_unprepare(spi->clk);
+ 
+ 	return 0;
  }
- 
-@@ -9938,7 +9938,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
-        update_misfit_status(curr, rq);
-        update_overutilized_status(task_rq(curr));
- 
--       trigger_thermal_pressure_average(rq);
-+       update_thermal_load_avg(rq, per_cpu(delta_capacity, cpu_of(rq)));
- }
- 
- /*
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index 38210691c615..7dd0d7e43854 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -353,8 +353,12 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
-        return 0;
- }
- 
--int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
-+extern int sched_thermal_decay_coeff;
-+
-+int update_thermal_load_avg(struct rq *rq, u64 capacity)
- {
-+       u64 now = rq_clock_task(rq) >> sched_thermal_decay_coeff;
-+
-        if (___update_load_sum(now, &rq->avg_thermal,
-                               capacity,
-                               capacity,
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index c74226de716e..91483c957b6c 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -6,7 +6,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
- int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
--int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity);
-+int update_thermal_load_avg(struct rq *rq, u64 capacity);
- 
- #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- int update_irq_load_avg(struct rq *rq, u64 running);
-diff --git a/kernel/sched/thermal.c b/kernel/sched/thermal.c
-index 0da31e12a5ff..7b8c4e35c28d 100644
---- a/kernel/sched/thermal.c
-+++ b/kernel/sched/thermal.c
-@@ -21,7 +21,7 @@
-  *     3                       256
-  *     4                       512
-  */
--static int sched_thermal_decay_coeff;
-+int sched_thermal_decay_coeff;
- 
- static int __init setup_sched_thermal_decay_coeff(char *str)
- {
-@@ -32,7 +32,7 @@ static int __init setup_sched_thermal_decay_coeff(char *str)
- }
- __setup("sched_thermal_decay_coeff=", setup_sched_thermal_decay_coeff);
- 
--static DEFINE_PER_CPU(unsigned long, delta_capacity);
-+DEFINE_PER_CPU(unsigned long, delta_capacity);
- 
- /**
-  * update_thermal_pressure: Update thermal pressure
-@@ -55,14 +55,3 @@ void update_thermal_pressure(int cpu, u64 capped_freq_ratio)
- 
-        per_cpu(delta_capacity, cpu) = delta;
- }
--
--/**
-- * trigger_thermal_pressure_average: Trigger the thermal pressure accumulate
-- *                                  and average algorithm
-- */
--void trigger_thermal_pressure_average(struct rq *rq)
--{
--       update_thermal_load_avg(rq_clock_task(rq) >>
--                               sched_thermal_decay_coeff, rq,
--                               per_cpu(delta_capacity, cpu_of(rq)));
--}
-diff --git a/kernel/sched/thermal.h b/kernel/sched/thermal.h
-index 26e5b07e9c29..a6ee973db41b 100644
---- a/kernel/sched/thermal.h
-+++ b/kernel/sched/thermal.h
-@@ -2,12 +2,4 @@
- /*
-  * Scheduler thermal interaction internal methods.
-  */
--
--#ifdef CONFIG_SMP
--void trigger_thermal_pressure_average(struct rq *rq);
--
--#else
--static inline void trigger_thermal_pressure_average(struct rq *rq)
--{
--}
--#endif
-+DECLARE_PER_CPU(unsigned long , delta_capacity);
+-- 
+2.23.0
+
