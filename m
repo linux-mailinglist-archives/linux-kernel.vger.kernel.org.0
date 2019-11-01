@@ -2,182 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8EDEEC2BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5F4EC2B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:33:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfKAMef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:34:35 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49890 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726229AbfKAMef (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:34:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572611673;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Blgz1QDlbrX4CFcoZXAgNrnij3Ts9PT2qjsZuUJOKd4=;
-        b=MRvHRHn8eBtStDNvADnO8LyqVs1hHvYfshdBusObc4qkB6WwppDdZSkAZJtSkKGrBldq7u
-        muIdljDhcO/5sixyWSK+E+G2KP4QKnVEWWlM1quNYt1zKfkSPn50k3ptP8Iqn00RDC1LS/
-        qCgdG37LO3M/97jY6dA2KkqMe3H1+9k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-QADGKEzYOKOPHVxH7fQt-A-1; Fri, 01 Nov 2019 08:33:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729141AbfKAMdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:33:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726229AbfKAMdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 08:33:24 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86BE9800683;
-        Fri,  1 Nov 2019 12:33:02 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 113F75D9CD;
-        Fri,  1 Nov 2019 12:32:59 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  1 Nov 2019 13:33:00 +0100 (CET)
-Date:   Fri, 1 Nov 2019 13:32:57 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-api@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clone3: validate stack arguments
-Message-ID: <20191101123257.GA508@redhat.com>
-References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
- <20191031164653.GA24629@redhat.com>
- <20191101110639.icbfihw3fk2nzz4o@wittgenstein>
+        by mail.kernel.org (Postfix) with ESMTPSA id A67462067D;
+        Fri,  1 Nov 2019 12:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572611603;
+        bh=655oP4EcLo1bTQpP1velcNHS7UmLoENn3nPbnIRZ0WE=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=sP38mqAoM8SXz9neSyycjsVBSuXKFmNVooL2T/T3dR12CLTAnzRiNply+FsxwSTrQ
+         uWa5alKKp40v8CyC97lCKRqKpBotwWM6gWEDjSadbi3gKYZXGhbeF+NhdBYIIP0CMd
+         zoBba/XCkFkUKaCX6tqDJq0zivuK5V6EB7NMgwTc=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 77B413522AF9; Fri,  1 Nov 2019 05:33:23 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 05:33:23 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Lai Jiangshan <laijs@linux.alibaba.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH 08/11] rcu: don't use negative ->rcu_read_lock_nesting
+Message-ID: <20191101123323.GC17910@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-9-laijs@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20191101110639.icbfihw3fk2nzz4o@wittgenstein>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: QADGKEzYOKOPHVxH7fQt-A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20191031100806.1326-9-laijs@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01, Christian Brauner wrote:
->
-> On Thu, Oct 31, 2019 at 05:46:53PM +0100, Oleg Nesterov wrote:
-> > On 10/31, Christian Brauner wrote:
-> > >
-> > > --- a/include/uapi/linux/sched.h
-> > > +++ b/include/uapi/linux/sched.h
-> > > @@ -51,6 +51,10 @@
-> > >   *               sent when the child exits.
-> > >   * @stack:       Specify the location of the stack for the
-> > >   *               child process.
-> > > + *               Note, @stack is expected to point to the
-> > > + *               lowest address. The stack direction will be
-> > > + *               determined by the kernel and set up
-> > > + *               appropriately based on @stack_size.
-> >
-> > I can't review this patch, I have no idea what does stack_size mean
-> > if !arch/x86.
->
-> In short: nothing at all if it weren't for ia64 (and maybe parisc).
-> But let me provide some (hopefully useful) context.
+On Thu, Oct 31, 2019 at 10:08:03AM +0000, Lai Jiangshan wrote:
+> Negative ->rcu_read_lock_nesting was introduced to prevent
+> scheduler deadlock which was just prevented by deferred qs.
+> So negative ->rcu_read_lock_nesting is useless now and
+> rcu_read_unlock() can be simplified.
+> 
+> And negative ->rcu_read_lock_nesting is bug-prone,
+> it is good to kill it.
+> 
+> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+> ---
+>  kernel/rcu/tree_exp.h    | 30 ++----------------------------
+>  kernel/rcu/tree_plugin.h | 21 +++++----------------
+>  2 files changed, 7 insertions(+), 44 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index c0d06bce35ea..9dcbd2734620 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -621,11 +621,11 @@ static void rcu_exp_handler(void *unused)
+>  	 * report the quiescent state, otherwise defer.
+>  	 */
+>  	if (!t->rcu_read_lock_nesting) {
+> +		rdp->exp_deferred_qs = true;
+>  		if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
+>  		    rcu_dynticks_curr_cpu_in_eqs()) {
+> -			rcu_report_exp_rdp(rdp);
+> +			rcu_preempt_deferred_qs(t);
+>  		} else {
+> -			rdp->exp_deferred_qs = true;
+>  			set_tsk_need_resched(t);
+>  			set_preempt_need_resched();
+>  		}
+> @@ -646,32 +646,6 @@ static void rcu_exp_handler(void *unused)
+>  		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+>  		return;
+>  	}
+> -
+> -	/*
+> -	 * The final and least likely case is where the interrupted
+> -	 * code was just about to or just finished exiting the RCU-preempt
+> -	 * read-side critical section, and no, we can't tell which.
+> -	 * So either way, set ->deferred_qs to flag later code that
+> -	 * a quiescent state is required.
+> -	 *
+> -	 * If the CPU is fully enabled (or if some buggy RCU-preempt
+> -	 * read-side critical section is being used from idle), just
+> -	 * invoke rcu_preempt_deferred_qs() to immediately report the
+> -	 * quiescent state.  We cannot use rcu_read_unlock_special()
+> -	 * because we are in an interrupt handler, which will cause that
+> -	 * function to take an early exit without doing anything.
+> -	 *
+> -	 * Otherwise, force a context switch after the CPU enables everything.
+> -	 */
+> -	rdp->exp_deferred_qs = true;
+> -	if (rcu_preempt_need_deferred_qs(t) &&
+> -	    (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
+> -	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))) {
+> -		rcu_preempt_deferred_qs(t);
+> -	} else {
+> -		set_tsk_need_resched(t);
+> -		set_preempt_need_resched();
+> -	}
+>  }
+>  
+>  /* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index dbded2b8c792..c62631c79463 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -344,8 +344,6 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
+>  }
+>  
+>  /* Bias and limit values for ->rcu_read_lock_nesting. */
+> -#define RCU_NEST_BIAS INT_MAX
+> -#define RCU_NEST_NMAX (-INT_MAX / 2)
+>  #define RCU_NEST_PMAX (INT_MAX / 2)
+>  
+>  /*
+> @@ -373,21 +371,15 @@ void __rcu_read_unlock(void)
+>  {
+>  	struct task_struct *t = current;
+>  
+> -	if (t->rcu_read_lock_nesting != 1) {
+> -		--t->rcu_read_lock_nesting;
+> -	} else {
+> +	if (--t->rcu_read_lock_nesting == 0) {
+>  		barrier();  /* critical section before exit code. */
+> -		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
+> -		barrier();  /* assign before ->rcu_read_unlock_special load */
 
-Thanks...
+But if we take an interrupt here, and the interrupt handler contains
+an RCU read-side critical section, don't we end up in the same hole
+that resulted in this article when the corresponding rcu_read_unlock()
+executes?  https://lwn.net/Articles/453002/
 
-> (Probably most of
-> that is well-know,
+							Thanx, Paul
 
-Certainly not to me ;) Thanks.
-
-> > > +static inline bool clone3_stack_valid(struct kernel_clone_args *karg=
-s)
-> > > +{
-> > > +=09if (kargs->stack =3D=3D 0) {
-> > > +=09=09if (kargs->stack_size > 0)
-> > > +=09=09=09return false;
-> > > +=09} else {
-> > > +=09=09if (kargs->stack_size =3D=3D 0)
-> > > +=09=09=09return false;
-> >
-> > So to implement clone3_wrapper(void *bottom_of_stack) you need to do
-> >
-> > =09clone3_wrapper(void *bottom_of_stack)
-> > =09{
-> > =09=09struct clone_args args =3D {
-> > =09=09=09...
-> > =09=09=09// make clone3_stack_valid() happy
-> > =09=09=09.stack =3D bottom_of_stack - 1,
-> > =09=09=09.stack_size =3D 1,
-> > =09=09};
-> > =09}
-> >
-> > looks a bit strange. OK, I agree, this example is very artificial.
-> > But why do you think clone3() should nack stack_size =3D=3D 0 ?
->
-> In short, consistency.
-
-And in my opinion this stack_size =3D=3D 0 check destroys the consistency,
-see below.
-
-But just in case, let me say that overall I personally like this change.
-
-> The best thing imho, is to clearly communicate to userspace that stack
-> needs to point to the lowest address and stack_size to the initial range
-> of the stack pointer
-
-Agreed.
-
-But the kernel can't verify that "stack" actually points to the lowest
-address and stack_size is actually the stack size. Consider another
-artificial
-
-    =09clone3_wrapper(void *bottom_of_stack, unsigned long offs)
-    =09{
-    =09=09struct clone_args args =3D {
-    =09=09=09...
-    =09=09=09// make clone3_stack_valid() happy
-    =09=09=09.stack =3D bottom_of_stack - offs,
-    =09=09=09.stack_size =3D offs,
-    =09=09};
-    =09=09sys_clone3(args);
-    =09}
-=09
-Now,
-
-=09clone3_wrapper(bottom_of_stack, offs);
-
-is same thing for _any_ offs except offs =3D=3D 0 will fail. Why? To me thi=
-s
-is not consistent, I think the "stack_size =3D=3D 0" check buys nothing and
-only adds some confusion.
-
-Say, stack_size =3D=3D 1 is "obviously wrong" too, this certainly means tha=
-t
-"stack" doesn't point to the lowest address (or the child will corrupt the
-memory), but it works.
-
-OK, I won't insist. Perhaps it can help to detect the case when a user
-forgets to pass the correct stack size.
-
-> > > +=09=09if (!access_ok((void __user *)kargs->stack, kargs->stack_size)=
-)
-> > > +=09=09=09return false;
-> >
-> > Why?
->
-> It's nice of us to tell userspace _before_ we have created a thread that
-> it messed up its parameters instead of starting a thread that then
-> immediately crashes.
-
-Heh. Then why this code doesn't verify that at least stack + stack_size is
-properly mmaped with PROT_READ|WRITE?
-
-Oleg.
-
+>  		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+>  			rcu_read_unlock_special(t);
+> -		barrier();  /* ->rcu_read_unlock_special load before assign */
+> -		t->rcu_read_lock_nesting = 0;
+>  	}
+>  	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
+>  		int rrln = t->rcu_read_lock_nesting;
+>  
+> -		WARN_ON_ONCE(rrln < 0 && rrln > RCU_NEST_NMAX);
+> +		WARN_ON_ONCE(rrln < 0);
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(__rcu_read_unlock);
+> @@ -535,12 +527,9 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
+>   */
+>  static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
+>  {
+> -	return (__this_cpu_read(rcu_data.exp_deferred_qs) &&
+> -		(!t->rcu_read_lock_nesting ||
+> -		 t->rcu_read_lock_nesting == -RCU_NEST_BIAS))
+> -		||
+> -		(READ_ONCE(t->rcu_read_unlock_special.s) &&
+> -		 t->rcu_read_lock_nesting <= 0);
+> +	return (__this_cpu_read(rcu_data.exp_deferred_qs) ||
+> +		READ_ONCE(t->rcu_read_unlock_special.s)) &&
+> +	       !t->rcu_read_lock_nesting;
+>  }
+>  
+>  /*
+> -- 
+> 2.20.1
+> 
