@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03A02EC863
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D96EFEC86A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:24:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfKASVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 14:21:21 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33675 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbfKASVV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:21:21 -0400
-Received: by mail-qk1-f193.google.com with SMTP id 71so11590942qkl.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xfChniPxmFbZU2S4qrE7c3GqiFqrYlUdrzoxXGWQIRg=;
-        b=I3SMuVHnefRGev7pKBa/p/vIdpNEst8AexAfUrQVntypTFJVSOseXJZcgDIgmsGXAu
-         cmQ89JtTQy3tV7nJmJSSSCu2kN5AbiWclNGyInwZ+03vGsEw1Fht3wC53e4eokh/j8Zb
-         JrI0B+PU7qmLMAlxCXiYY3BNoX9XEZZkHyvUEErAI8XoNu4k12MUMDK81fyYkVKRsDf/
-         v3GW+n4KTacJVvKZKAnnUsAmfx8KxoCBiCZBCxf0XGxn/EWOVRDtHsGFN7hwzQXWjAht
-         TJiML7FmEkeePOp6uv6E7gPfPfdrLtkU23vwXgdnNWyy9n5D9Q8/CG/+76SzYZV8eLCL
-         F23Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xfChniPxmFbZU2S4qrE7c3GqiFqrYlUdrzoxXGWQIRg=;
-        b=XReIYmQB3r7ozsHwHxLihXfVgSKD79zISTIUPp/IUs5xvj4KK2NK93zRN/z+po3Kzh
-         if4Q6p7qnBAkY67wEQHaqzhbBJ5XUHMc0wzbEsMT05Rsne3blYwd0qe5FEC6KBkiFvF0
-         d/5+RtwsagH0POJjkE3SS3j7xdySgNfZfQbdHq3WyZSMuTdpmS77C89zII6XNvAdJQwj
-         nIhOt4pg/l166Mt1ozwXt4l+yggyAWgH+84UbSgVXoMJbHzaPF87ijnfpKlmqyWQeHWk
-         8oILywVS2XwIaauyEZofm+LdvdnPX8ypAzq/vnSXVA1pAxGGVB5enAeTt2vbx34kwoIK
-         mMRg==
-X-Gm-Message-State: APjAAAULW496fFiea+cmdzPbGVXTc8sRQ/qLfUwrwwvOWG9WTTHp0P4l
-        hYpyMX443uEynTsoRfG7LvO/ra3m2Es=
-X-Google-Smtp-Source: APXvYqxZY/z0KLt1SybUGNSm28l8yCtxJuvO7dV3LGq7qbkBb//5NCQ5JlrS/35+dRQm18m56FMylg==
-X-Received: by 2002:a37:b046:: with SMTP id z67mr1749300qke.343.1572632480189;
-        Fri, 01 Nov 2019 11:21:20 -0700 (PDT)
-Received: from GBdebian.ic.unicamp.br (wifi-177-220-84-14.wifi.ic.unicamp.br. [177.220.84.14])
-        by smtp.gmail.com with ESMTPSA id x38sm5106688qtc.64.2019.11.01.11.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 11:21:19 -0700 (PDT)
-From:   Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-To:     outreachy-kernel@googlegroups.com, manasi.d.navare@intel.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        daniel@ffwll.ch, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
-        trivial@kernel.org
-Cc:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-Subject: [PATCH] drm/vkms: Fix typo in function documentation
-Date:   Fri,  1 Nov 2019 15:21:02 -0300
-Message-Id: <20191101182102.30358-1-gabrielabittencourt00@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727410AbfKASYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 14:24:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726892AbfKASYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 14:24:20 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7D8421D7D
+        for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2019 18:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572632660;
+        bh=SzUM5NeWAG+E0eqSpj3zuD6ltC8wZE1F+AwKRX2zRSg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lduYS8WKNuwzfVJBAy2651MpqHBfuuZuVEV3pkKPx+Z3COSomJDwQoMx9IpRfWLpL
+         g7J/hLZM0Il1y8JklXz4kSO9tu6x0ut8M0Ls0MB7NODYprJFREQ/pZzoFBwah/g5qL
+         E2A7OkyIKz8YL4u2Zr/4AuM7hNmPuzKDUNdTzbik=
+Received: by mail-wr1-f44.google.com with SMTP id v9so10499869wrq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:24:19 -0700 (PDT)
+X-Gm-Message-State: APjAAAVQip09itpghLRrG0lKbfZWpYzeUXDhN+2te+OjvJMIC59IQiwW
+        +Sf5DsW7YGnZFDz+yrZsesqNpSzlnKGopWiEwTQz6w==
+X-Google-Smtp-Source: APXvYqw0rnlRfwdriPZ576aBq0O+9yfzKHeFxM6ELtsX3pHZailT8JBumH5jVuvvbajKbkN8+GHbNieTjD6qZT7bzCU=
+X-Received: by 2002:adf:e4c5:: with SMTP id v5mr12220218wrm.106.1572632658034;
+ Fri, 01 Nov 2019 11:24:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157262960837.2838.17520432516398899751.stgit@naples-babu.amd.com> <157262962352.2838.15656190309312238595.stgit@naples-babu.amd.com>
+In-Reply-To: <157262962352.2838.15656190309312238595.stgit@naples-babu.amd.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 1 Nov 2019 11:24:05 -0700
+X-Gmail-Original-Message-ID: <CALCETrUSjbjt=U6OpTFXEZsEJQ6zjcqCeqi6nSFOi=rN91zWmg@mail.gmail.com>
+Message-ID: <CALCETrUSjbjt=U6OpTFXEZsEJQ6zjcqCeqi6nSFOi=rN91zWmg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] kvm: svm: Enable UMIP feature on AMD
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typo in word 'blend' in function 'compute_crc' documentation.
+On Fri, Nov 1, 2019 at 10:33 AM Moger, Babu <Babu.Moger@amd.com> wrote:
+>
+> AMD 2nd generation EPYC processors support UMIP (User-Mode Instruction
+> Prevention) feature. The UMIP feature prevents the execution of certain
+> instructions if the Current Privilege Level (CPL) is greater than 0.
+> If any of these instructions are executed with CPL > 0 and UMIP
+> is enabled, then kernel reports a #GP exception.
+>
+> The idea is taken from articles:
+> https://lwn.net/Articles/738209/
+> https://lwn.net/Articles/694385/
+>
+> Enable the feature if supported on bare metal and emulate instructions
+> to return dummy values for certain cases.
 
-Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
----
- drivers/gpu/drm/vkms/vkms_composer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-index d5585695c64d..15efccdcce1b 100644
---- a/drivers/gpu/drm/vkms/vkms_composer.c
-+++ b/drivers/gpu/drm/vkms/vkms_composer.c
-@@ -43,7 +43,7 @@ static uint32_t compute_crc(void *vaddr_out, struct vkms_composer *composer)
- }
- 
- /**
-- * blend - belnd value at vaddr_src with value at vaddr_dst
-+ * blend - blend value at vaddr_src with value at vaddr_dst
-  * @vaddr_dst: destination address
-  * @vaddr_src: source address
-  * @dest_composer: destination framebuffer's metadata
--- 
-2.20.1
-
+What are these cases?
