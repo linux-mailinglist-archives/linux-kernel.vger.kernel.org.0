@@ -2,87 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D3EEC6D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFF1EC6F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:41:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbfKAQdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 12:33:07 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:38479 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbfKAQdG (ORCPT
+        id S1728722AbfKAQla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 12:41:30 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39410 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbfKAQla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 12:33:06 -0400
-Received: by mail-vs1-f68.google.com with SMTP id b184so3189140vsc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 09:33:06 -0700 (PDT)
+        Fri, 1 Nov 2019 12:41:30 -0400
+Received: by mail-qt1-f193.google.com with SMTP id t8so13663810qtc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 09:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=j5WHWvyJ9Hz5kosmku4ReDEqbYSNCjtYvPAtQ8gov0w=;
-        b=mVdZ7udliBm1Ah/0SRYlDf6bwEJ6TL7x3JmnofXlcyZOXqi5Q9VBuiMbpvt9qFtviY
-         O1dg12Mx/ZqNCdmPnMehixCUQwwDXQwkP8easpaC7ETmB8M+bGzkf5mtTCIfXJepYgXQ
-         UpEXv0+Y/8IRh6Bt9tXSt5I5dm6Naa/8+P0Gfr7zVhf9zJ0enNNpTxkLjpUS3Y3FM1TQ
-         K14mAw/P1HzmMF2Q3lOwbI6KFmRqbDNTH4h5du1QpSKj0tUoB4V/KntCBftt2t3ivGyo
-         CvnopvuGe8ctEsWcfBzhSVdFtD8ECLxaPGft365BahwUkKRXVOufpCDz3m9fqW+WiVMo
-         c2IA==
+        bh=jj2ZpJ3W6qaiv42ekK7hG2yJnsYRtdgNJLz0ayczD4M=;
+        b=NIWsRoTxNQah7NnWYAIT6IUPn5VQxxF+402RE36qdY0bMta3u0r92MnO60h6Elh3jD
+         /Kxx/Z8CfpknUauRIHUymmLu3DzUZctWqzB4nqjoBfW/zmhH6UiLngKPqY9xzOL+WuNz
+         11VMGlR6L2RcXOw+BDW6jhNVeY3/DoUSECITk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=j5WHWvyJ9Hz5kosmku4ReDEqbYSNCjtYvPAtQ8gov0w=;
-        b=DfbvkqYAJ0XOhC44NSKL7Bh/O14HLFF+Hx6OA1GWllkrS/9HurfboFEpzv63MYnqD3
-         eTWamZOcWVfwCvCQ9hx0G3JPkHMcA/Yn1ZNocCYv8SDmh338Ejafs6NEGxuxlz1WBzFi
-         i2x6m5d3kzKb5k5U36NkPcX3vCzBLI41k7YqBlyAHc8qt4Arg1sYj2eDkdH47OKUSl7w
-         guZxpw5nn85NboHImXCj3Xat4xaUwxv5z9SNeGg6QjWYFKdtV8dRXyG43Rw8AmiAXvsJ
-         tO+gXZcOvv05tzTV4QIZBeyO3DAA7OJYy2Qu4ROBbUh7wB14Pt2p5JvaXWz5WfkL/0jQ
-         EyLw==
-X-Gm-Message-State: APjAAAUaVtOalGdgRgeE8TFytEv80jB9lM+E+T0zoVjy6QPq4CiqBcz4
-        6Bwo6W/Oqb5VDd3Lmk1ExtTjNpZ3M0FYjAmkO8uqVg==
-X-Google-Smtp-Source: APXvYqyUC2VNoK3kn3nz3vybeugE+sMvvcm2WU0gwrr3Eljqv0y0V3sHBklXl+ihwCVizGZj+lsXZashNS/ogzG8fqQ=
-X-Received: by 2002:a05:6102:36a:: with SMTP id f10mr1696654vsa.44.1572625985166;
- Fri, 01 Nov 2019 09:33:05 -0700 (PDT)
+        bh=jj2ZpJ3W6qaiv42ekK7hG2yJnsYRtdgNJLz0ayczD4M=;
+        b=BA0N0khOna4zIa6c3+4qh+8btI78mPfCBORo/QY5fuSw0twKK8G5pDy8bzdl/uKnXB
+         u1GEE49ySKOxA34qMqx5VpIuX/sgDtDqPOQRSPf4Hg6VPO4ZdrbkTyv+iziRW7/7NEK1
+         FLNiicSgVmxFoEItiouPgy6sNOvA+8keIHYiUCHgearpGhRnlrOmHv6aOazzYqvpOC9R
+         tCiTQP/3QKIQX0RkdYj7manAIPALl0lyL2vN/sb8WqpYAA9knRlHM/JFTfKPh4U9kDZg
+         ZSrZATI8O/NyTpYAaj7U0mId+406aFynY6WkxoX3gZKkdQt1izJqevftQN02H8ef23o+
+         swvA==
+X-Gm-Message-State: APjAAAV3K9QOxrTcSty0i3MmXXTRVdbAxQAUTJL5VjBOk7ceZs9eO5Zn
+        50qqrotMc3c35bEsImMkMMNSO2u1NNqyHQ==
+X-Google-Smtp-Source: APXvYqxP6khL6N4dYMQ0SdrWS0UAWARcs6EamDhVbB+9y68+oqC4SBC5HgJjoxDBzA0U3gAj98FSjw==
+X-Received: by 2002:ac8:394f:: with SMTP id t15mr179134qtb.179.1572626488836;
+        Fri, 01 Nov 2019 09:41:28 -0700 (PDT)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com. [209.85.222.170])
+        by smtp.gmail.com with ESMTPSA id r36sm5858340qta.27.2019.11.01.09.41.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2019 09:41:28 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id 15so11259144qkh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 09:41:28 -0700 (PDT)
+X-Received: by 2002:a37:4ac8:: with SMTP id x191mr6693149qka.85.1572626151290;
+ Fri, 01 Nov 2019 09:35:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191031164637.48901-1-samitolvanen@google.com> <20191031164637.48901-8-samitolvanen@google.com>
- <201910312054.3064999E@keescook>
-In-Reply-To: <201910312054.3064999E@keescook>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Fri, 1 Nov 2019 09:32:54 -0700
-Message-ID: <CABCJKueAf3f-rHw8AXJKKi=kfnh+nBMpJP2Vb2DVqLUWZVmFqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 07/17] scs: add support for stack usage debugging
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <cover.1572437285.git.vpillai@digitalocean.com>
+ <20191031184236.GE5738@pauld.bos.csb> <CANaguZCqHnR8b_68SSA_rfdkinVg8vLH66jQ_GhMsdOjuUHe3g@mail.gmail.com>
+In-Reply-To: <CANaguZCqHnR8b_68SSA_rfdkinVg8vLH66jQ_GhMsdOjuUHe3g@mail.gmail.com>
+From:   Greg Kerr <kerrnel@chromium.org>
+Date:   Fri, 1 Nov 2019 09:35:38 -0700
+X-Gmail-Original-Message-ID: <CAJGSLMtnxSqKvu3C7WQhMUUbzRXmfU1MVyLz8GcAQcAscdaZdw@mail.gmail.com>
+Message-ID: <CAJGSLMtnxSqKvu3C7WQhMUUbzRXmfU1MVyLz8GcAQcAscdaZdw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Cc:     Phil Auld <pauld@redhat.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 8:55 PM Kees Cook <keescook@chromium.org> wrote:
+On Fri, Nov 1, 2019 at 7:03 AM Vineeth Remanan Pillai
+<vpillai@digitalocean.com> wrote:
 >
-> On Thu, Oct 31, 2019 at 09:46:27AM -0700, samitolvanen@google.com wrote:
-> > Implements CONFIG_DEBUG_STACK_USAGE for shadow stacks.
+> Hi Phil,
 >
-> Did I miss it, or is there no Kconfig section for this? I just realized
-> I can't find it. I was going to say "this commit log should explain
-> why/when this option is used", but then figured it might be explained in
-> the Kconfig ... but I couldn't find it. ;)
+> > Unless I'm mistaken 7 of the first 8 of these went into sched/core
+> > and are now in linux (from v5.4-rc1). It may make sense to rebase on
+> > that and simplify the series.
+> >
+> Thanks a lot for pointing this out. We shall test on a rebased 5.4 RC
+> and post the changes soon, if the tests goes well. For v3, while rebasing
+> to an RC kernel, we saw perf regressions and hence did not check the
+> RC kernel this time. You are absolutely right that we can simplify the
+> patch series with 5.4 RC.
 
-It's in lib/Kconfig.debug. But yes, I will add a commit message in v4.
+Has anyone considering shipping a V1 implementation which just allows
+threads from the same process to share a core together? And then
+iterating on that? Would that be simpler to implement or do the same
+fundamental problems exist as tagging arbitrary processes with
+cookies?
 
-Sami
+Regards,
+
+Greg Kerr
+
+>
+>
+> Thanks
+> Vineeth
