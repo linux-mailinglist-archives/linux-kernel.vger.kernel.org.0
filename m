@@ -2,61 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A30DBEC2B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8EDEEC2BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfKAMas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:30:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59564 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726805AbfKAMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:30:47 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B0B16D7898535B71EE5E;
-        Fri,  1 Nov 2019 20:30:43 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
- 20:30:35 +0800
-Subject: Re: [PATCH v2 21/36] irqchip/gic-v4.1: Allow direct invalidation of
- VLPIs
-To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-kernel@vger.kernel.org>
-CC:     Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Andrew Murray" <Andrew.Murray@arm.com>,
-        Jayachandran C <jnair@marvell.com>,
-        "Robert Richter" <rrichter@marvell.com>
-References: <20191027144234.8395-1-maz@kernel.org>
- <20191027144234.8395-22-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <cf2b6dc3-a33c-164d-25bb-6cdb24c9f424@huawei.com>
-Date:   Fri, 1 Nov 2019 20:30:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1729937AbfKAMef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:34:35 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49890 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726229AbfKAMef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 08:34:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572611673;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Blgz1QDlbrX4CFcoZXAgNrnij3Ts9PT2qjsZuUJOKd4=;
+        b=MRvHRHn8eBtStDNvADnO8LyqVs1hHvYfshdBusObc4qkB6WwppDdZSkAZJtSkKGrBldq7u
+        muIdljDhcO/5sixyWSK+E+G2KP4QKnVEWWlM1quNYt1zKfkSPn50k3ptP8Iqn00RDC1LS/
+        qCgdG37LO3M/97jY6dA2KkqMe3H1+9k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-155-QADGKEzYOKOPHVxH7fQt-A-1; Fri, 01 Nov 2019 08:33:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86BE9800683;
+        Fri,  1 Nov 2019 12:33:02 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 113F75D9CD;
+        Fri,  1 Nov 2019 12:32:59 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  1 Nov 2019 13:33:00 +0100 (CET)
+Date:   Fri, 1 Nov 2019 13:32:57 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-api@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clone3: validate stack arguments
+Message-ID: <20191101123257.GA508@redhat.com>
+References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
+ <20191031164653.GA24629@redhat.com>
+ <20191101110639.icbfihw3fk2nzz4o@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20191027144234.8395-22-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191101110639.icbfihw3fk2nzz4o@wittgenstein>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: QADGKEzYOKOPHVxH7fQt-A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On 11/01, Christian Brauner wrote:
+>
+> On Thu, Oct 31, 2019 at 05:46:53PM +0100, Oleg Nesterov wrote:
+> > On 10/31, Christian Brauner wrote:
+> > >
+> > > --- a/include/uapi/linux/sched.h
+> > > +++ b/include/uapi/linux/sched.h
+> > > @@ -51,6 +51,10 @@
+> > >   *               sent when the child exits.
+> > >   * @stack:       Specify the location of the stack for the
+> > >   *               child process.
+> > > + *               Note, @stack is expected to point to the
+> > > + *               lowest address. The stack direction will be
+> > > + *               determined by the kernel and set up
+> > > + *               appropriately based on @stack_size.
+> >
+> > I can't review this patch, I have no idea what does stack_size mean
+> > if !arch/x86.
+>
+> In short: nothing at all if it weren't for ia64 (and maybe parisc).
+> But let me provide some (hopefully useful) context.
 
-On 2019/10/27 22:42, Marc Zyngier wrote:
-> Just like for INVALL, GICv4.1 has grown a VPE-aware INVLPI register.
-> Let's plumb it in and make use of the DirectLPI code in that case.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Thanks...
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+> (Probably most of
+> that is well-know,
+
+Certainly not to me ;) Thanks.
+
+> > > +static inline bool clone3_stack_valid(struct kernel_clone_args *karg=
+s)
+> > > +{
+> > > +=09if (kargs->stack =3D=3D 0) {
+> > > +=09=09if (kargs->stack_size > 0)
+> > > +=09=09=09return false;
+> > > +=09} else {
+> > > +=09=09if (kargs->stack_size =3D=3D 0)
+> > > +=09=09=09return false;
+> >
+> > So to implement clone3_wrapper(void *bottom_of_stack) you need to do
+> >
+> > =09clone3_wrapper(void *bottom_of_stack)
+> > =09{
+> > =09=09struct clone_args args =3D {
+> > =09=09=09...
+> > =09=09=09// make clone3_stack_valid() happy
+> > =09=09=09.stack =3D bottom_of_stack - 1,
+> > =09=09=09.stack_size =3D 1,
+> > =09=09};
+> > =09}
+> >
+> > looks a bit strange. OK, I agree, this example is very artificial.
+> > But why do you think clone3() should nack stack_size =3D=3D 0 ?
+>
+> In short, consistency.
+
+And in my opinion this stack_size =3D=3D 0 check destroys the consistency,
+see below.
+
+But just in case, let me say that overall I personally like this change.
+
+> The best thing imho, is to clearly communicate to userspace that stack
+> needs to point to the lowest address and stack_size to the initial range
+> of the stack pointer
+
+Agreed.
+
+But the kernel can't verify that "stack" actually points to the lowest
+address and stack_size is actually the stack size. Consider another
+artificial
+
+    =09clone3_wrapper(void *bottom_of_stack, unsigned long offs)
+    =09{
+    =09=09struct clone_args args =3D {
+    =09=09=09...
+    =09=09=09// make clone3_stack_valid() happy
+    =09=09=09.stack =3D bottom_of_stack - offs,
+    =09=09=09.stack_size =3D offs,
+    =09=09};
+    =09=09sys_clone3(args);
+    =09}
+=09
+Now,
+
+=09clone3_wrapper(bottom_of_stack, offs);
+
+is same thing for _any_ offs except offs =3D=3D 0 will fail. Why? To me thi=
+s
+is not consistent, I think the "stack_size =3D=3D 0" check buys nothing and
+only adds some confusion.
+
+Say, stack_size =3D=3D 1 is "obviously wrong" too, this certainly means tha=
+t
+"stack" doesn't point to the lowest address (or the child will corrupt the
+memory), but it works.
+
+OK, I won't insist. Perhaps it can help to detect the case when a user
+forgets to pass the correct stack size.
+
+> > > +=09=09if (!access_ok((void __user *)kargs->stack, kargs->stack_size)=
+)
+> > > +=09=09=09return false;
+> >
+> > Why?
+>
+> It's nice of us to tell userspace _before_ we have created a thread that
+> it messed up its parameters instead of starting a thread that then
+> immediately crashes.
+
+Heh. Then why this code doesn't verify that at least stack + stack_size is
+properly mmaped with PROT_READ|WRITE?
+
+Oleg.
 
