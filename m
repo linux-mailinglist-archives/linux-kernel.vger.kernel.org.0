@@ -2,118 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B30F0ECA3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A38ECA3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:26:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKAV0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 17:26:44 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42969 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfKAV0n (ORCPT
+        id S1727238AbfKAV0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:26:49 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55844 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727123AbfKAV0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:26:43 -0400
-Received: by mail-oi1-f193.google.com with SMTP id i185so9343700oif.9
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 14:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=akkZD3w083zl13woGTjsh480XINKZCL3wR8VL14OTmQ=;
-        b=s0Vz8wh0GQ9oVFLmjY4JYB4Ahm42iKCgainya75ejaw+VdRDfft88VS6BcoRAIOLF6
-         hRc37n2vtK2pgiVbgYHLJHJoJKNqX3i+FgLVWUseXizVnLdELNDtCT2R9oKWfqhFEru1
-         Yw7TuoxlW1zCwHrf1/9rBmkVLwejj8GIMWpu3Cl06CuxcimZuGtOgNnvM37W2MzSNcUZ
-         Fb0Ue/qO564LvEi6EdftMqD3bVfz1zmlbLi6jMaUn2HplbDzmArPbjdtMKmScfEaexJV
-         1M/ImLD4nnaxXfT6meC5xHAnY6ViRXAanGiHl3yo7uwsvD/Q7hw3yGdBU5aRGAn1EM5b
-         1DEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=akkZD3w083zl13woGTjsh480XINKZCL3wR8VL14OTmQ=;
-        b=AaxoxlS7SqV5g1tQrbYa880SW96R5hib0oq3h8eZgF0rgA7dQnRx6hlO0Khk/ruQGg
-         Y4wYhjZSH9Ktg5Wv7tHoI+XoW3CgAoLcGu4fLo04tMVdhG5SqJupdeapyUy3x4croRRS
-         4UiLYw24IOrJGZe873wHNbCrotH6cU4T0MZVy4veYi0mrqR61f/MTq9rS2Vi6ZeJ6qiv
-         CgOBdgUyWmGm3ncnB1h70Er0ayaARL/Ip5DN1uJxTaZ/KzvqgTJpchiGZCjqEgR7+aHZ
-         Nw6FhhGqfRXAbqUyqblFDlF9Y8uTzy1JLqaIsJf1onoBdACUaxgiJJfYNhJLATCs2EGp
-         5oaA==
-X-Gm-Message-State: APjAAAXb0Hhv8X1pof4EfkHvHFOa8b5uCJmmZ5K8h4ifdS2r1B3HLP+x
-        3IF78yenO3FOoAyOyn5Jw45KF4YQJ7LTw/A0mlNSTESm
-X-Google-Smtp-Source: APXvYqw7SAiHX+nkrUKhSIYt2GxZg2umVPUbXjZgJSciGR9hzGh6xvHktK2T6WuzUWM47Qoeq91MlB0qRkEzP7LLxC4=
-X-Received: by 2002:aca:f408:: with SMTP id s8mr1061686oih.69.1572643602372;
- Fri, 01 Nov 2019 14:26:42 -0700 (PDT)
+        Fri, 1 Nov 2019 17:26:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572643605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vc9DkpMujQuhpCve3Y34f4TSvB+W8OlWdKhsXSlhGW0=;
+        b=FvLY0L0KY2T/xKkM+Yve/+o1qoy7Q1Ur8GaPc1f+skUf88KhfTPA6Rwu2fB2zhf74TGdnP
+        ZlgH3hxvsvfMLDtOLCq3+zfYQ1A4EM4dolud8hFsikVNAgvI8K4xWmBK1glh8EpkY+o7bT
+        7FgMxVrsyLn3g7h2a6HvedqcL8fRvQg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-273-GsvX0Ji3MkOSgzBUAc1JGg-1; Fri, 01 Nov 2019 17:26:42 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 021E2800D49;
+        Fri,  1 Nov 2019 21:26:40 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCE7F5D9E2;
+        Fri,  1 Nov 2019 21:26:37 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 9FBD910517E;
+        Fri,  1 Nov 2019 19:26:19 -0200 (BRST)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id xA1LQFgl020794;
+        Fri, 1 Nov 2019 19:26:15 -0200
+Date:   Fri, 1 Nov 2019 19:26:15 -0200
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        joao.m.martins@oracle.com, rafael.j.wysocki@intel.com,
+        rkrcmar@redhat.com, pbonzini@redhat.com
+Subject: Re: [PATCH 5/5] cpuidle-haltpoll: fix up the branch check
+Message-ID: <20191101212613.GB20672@amt.cnet>
+References: <1572060239-17401-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1572060239-17401-6-git-send-email-zhenzhong.duan@oracle.com>
 MIME-Version: 1.0
-References: <20191030145112.19738-1-will@kernel.org> <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
- <20191030155444.GC19096@willie-the-truck> <CAGETcx9ogWQC1ZtnS_4xC3ShqBpuRSKudWEEWC22UZUEhdEU4A@mail.gmail.com>
- <20191031193758.GA2607492@lophozonia> <CAGETcx-MuMVvj0O-MFdfmLADEq=cQY_=x+irvhgwHhG4VeeSdg@mail.gmail.com>
- <20191101114148.GA2694906@lophozonia> <20191101122825.GA318@e121166-lin.cambridge.arm.com>
-In-Reply-To: <20191101122825.GA318@e121166-lin.cambridge.arm.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 1 Nov 2019 14:26:05 -0700
-Message-ID: <CAGETcx_U1huHHT=_xo6ArTWpmKMkr=rAy4ceoVUQv6XZGEDA_w@mail.gmail.com>
-Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1572060239-17401-6-git-send-email-zhenzhong.duan@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: GsvX0Ji3MkOSgzBUAc1JGg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 5:28 AM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
->
-> On Fri, Nov 01, 2019 at 12:41:48PM +0100, Jean-Philippe Brucker wrote:
->
-> [...]
->
-> > > > I'm also wondering about ACPI support.
-> > >
-> > > I'd love to add ACPI support too, but I have zero knowledge of ACPI.
-> > > I'd be happy to help anyone who wants to add ACPI support that allows
-> > > ACPI to add device links.
-> >
-> > It's not as generic as device-tree, each vendor has their own table to
-> > describe the IOMMU topology. I don't see a nice way to transpose the
-> > add_links() callback there. Links need to be created either in a common
-> > path (iommu_probe_device()) or in the APCI IORT driver.
->
-> We can create a generic stub that calls into respective firmware
-> handling paths (eg iort_dma_setup() in acpi_dma_configure()).
->
-> There are three arches booting with ACPI so stubbing it out in
-> specific firmware handlers is not such a big deal, less generic
-> sure, but not catastrophically bad.
+On Sat, Oct 26, 2019 at 11:23:59AM +0800, Zhenzhong Duan wrote:
+> Ensure pool time is longer than block_ns, so there is a margin to
+> avoid vCPU get into block state unnecessorily.
+>=20
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  drivers/cpuidle/governors/haltpoll.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/gover=
+nors/haltpoll.c
+> index 4b00d7a..59eadaf 100644
+> --- a/drivers/cpuidle/governors/haltpoll.c
+> +++ b/drivers/cpuidle/governors/haltpoll.c
+> @@ -81,9 +81,9 @@ static void adjust_poll_limit(struct cpuidle_device *de=
+v, unsigned int block_us)
+>  =09u64 block_ns =3D block_us*NSEC_PER_USEC;
+> =20
+>  =09/* Grow cpu_halt_poll_us if
+> -=09 * cpu_halt_poll_us < block_ns < guest_halt_poll_us
+> +=09 * cpu_halt_poll_us <=3D block_ns < guest_halt_poll_us
+>  =09 */
+> -=09if (block_ns > dev->poll_limit_ns && block_ns <=3D guest_halt_poll_ns=
+) {
+> +=09if (block_ns >=3D dev->poll_limit_ns && block_ns < guest_halt_poll_ns=
+) {
+=09=09=09=09=09      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ok, good to know.
+If block_ns =3D=3D guest_halt_poll_ns, you won't allow dev->poll_limit_ns t=
+o
+grow. Why is that?
 
-> Obviously this works for IOMMU masters links
+> @@ -101,7 +101,7 @@ static void adjust_poll_limit(struct cpuidle_device *=
+dev, unsigned int block_us)
+>  =09=09=09val =3D guest_halt_poll_ns;
+> =20
+>  =09=09dev->poll_limit_ns =3D val;
+> -=09} else if (block_ns > guest_halt_poll_ns &&
+> +=09} else if (block_ns >=3D guest_halt_poll_ns &&
+>  =09=09   guest_halt_poll_allow_shrink) {
+>  =09=09unsigned int shrink =3D guest_halt_poll_shrink;
 
-It's unclear to me what you are referring to here and it's throwing me
-off on the rest of the email.
+And here you shrink if block_ns =3D=3D guest_halt_poll_ns. Not sure
+why that makes sense either.
 
-Did you mean to say "IOMMU master's links"? As in the bus masters
-whose accesses go through IOMMUs? And "links" as in device links?
-
-OR
-
-Do you mean device links from bus master devices to IOMMUs here?
-
-> - for resources
-> dependencies (eg power domains) it deserves some thought, keeping in
-> mind that IOMMUs are static table entries in ACPI and not device objects
-> so they are not even capable of expressing eg power resources and
-> suchlike.
-
-If you can reword this sentence for me with more context or split it
-into separate sentences, I'd appreciate that very much. I'd help me
-understand this better and allow me to try to help out.
-
-> Long story short: adding IOMMU masters links in ACPI should be
-> reasonably simple, everything else requires further thought.
-
--Saravana
