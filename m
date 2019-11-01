@@ -2,107 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB19EC2E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DC12EC318
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbfKAMmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:42:39 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35967 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730672AbfKAMmc (ORCPT
+        id S1728984AbfKAMqH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 1 Nov 2019 08:46:07 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44710 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbfKAMqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:42:32 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x9so5303186lji.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ORSG/8+Jf2L5RMvQ4AjOGFaJ9bOqkKCEFFwwyd0kGjE=;
-        b=nSAe87InRfmCTxLXQ00TpN4EtpSTbEO59EV/aV9m9dIlP7IoFHOsoulVE3HMxD9yye
-         Yu1QaPiNS0hzbjPATA6WBbUjnoSKDQjjgCQQudPwo90TzKbxps3fUMhLaqYEEb69Tabm
-         cr7uNE8YkLchliafWdcJd3aFHPWkmXsRh7Hr65ifq2JepQu929ognh/5y1qWHC2uFgUu
-         JGCMVigtL32UHNBKAP+xCHw+Gr8dvPFcC9iMCOcBdX+D2Zk2AZzn2hCl7Szz+nJno3H5
-         Fyh0mIvjvaEaqPWHve4BQAtuU6qFGjmekWi4SSsff+/y7X/eKDp850BR5WUHDAMLj63f
-         +UJA==
+        Fri, 1 Nov 2019 08:46:06 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s71so8014985oih.11;
+        Fri, 01 Nov 2019 05:46:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ORSG/8+Jf2L5RMvQ4AjOGFaJ9bOqkKCEFFwwyd0kGjE=;
-        b=p+DSZvoqGOSsH+q/cHS2qKF4rcp52kuZkbp2Rk5yAD/BNBtYk8oEDQOL8OJzQ94Xys
-         5MPg+zFK48ZonQa+0aAldV/LDOKbTHyTR97TuOUxtqPcotLQxsZM1NcJeu//DgnYs6fQ
-         4csmnSa0dK5lB1PmgUB84Xu0KdI1qMAcXXheF3rIvWEiKZgUz/RXM/RY291vYlyNP1Hv
-         awEDaNudXGf7QFCwmfI7xDvtanAaeAYkD6AChRk+iw9O1pQYWCrBPCUVDf+6Fr5OuxIJ
-         4iYVDMeKPFrR8yAPcAtaWjZmPMbn/npAA791iwA/dCCE3mHKoTV1GPcpJG91j+e4k39/
-         wfgg==
-X-Gm-Message-State: APjAAAV/VnpcOxJtLvRhoeSYrOp6jC87AGt4JwyEmKOfccIjhyvP5fKF
-        ZtjJpcU3wAg5FE5M5EoMY6oWoDeH
-X-Google-Smtp-Source: APXvYqwHjXTvJ7GIHhklGQ/Kh98y0lw4h30skEYzsW4y8IFB/OZfGqRQVsbdbVjoofQ6DoHfJvD1gA==
-X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr1980951ljj.232.1572612150184;
-        Fri, 01 Nov 2019 05:42:30 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.199.94])
-        by smtp.gmail.com with ESMTPSA id x1sm5052545lff.90.2019.11.01.05.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:29 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 7760146123B; Fri,  1 Nov 2019 15:42:28 +0300 (MSK)
-Date:   Fri, 1 Nov 2019 15:42:28 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>, X86-ML <x86@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH -tip] x86/fpu: Shrink space allocated for xstate_comp_offsets
-Message-ID: <20191101124228.GF1615@uranus.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5ePSdIm6pah0cj12lWYKf0TPdMueWECgaXObaXLnaO0=;
+        b=g5/smSvVe7wGbwQqdRahN0khEVpnicA/L4ySYqrF/dAyVPMoszJywBFK7Nhkqj8nLt
+         vYKbsXCCka35+2xQ4XSw0Kz7RiTK4jSIW0HPuVXUTxHchzOtH7QWO+rGtq47/Zh4zItx
+         PnZxLbppSUAl0kBwEEyj4NbgL7R8PEGDLfhfuGE3n0ZkAUqGpUgJFgj59nSjZcj1MktQ
+         x/l/AiuKohBxpD1rJt6g8/aMFnfr45wJht62ujdYl4NDGQgqHKWDri2RaJTyuLl1URge
+         keZPOpdn73ObJdA91b+DjdX8U64ooExF9BvtVo6z6VcvkKwhTDZrwjumIBuZM06g/iYl
+         6RKg==
+X-Gm-Message-State: APjAAAVVcRqRcmf+A+HG6L3oQAqTu+3iNMvmydwwjXA7fu+O3Q6P6zq8
+        jYTkn+rFigQpouATxAqoXyK7J0WtfCA2J2xgThk=
+X-Google-Smtp-Source: APXvYqwlddboe7ivMWjOKf93FGaNASg7HlPVjO+wJM7HX6dWoWcJ8Gr6urg+mAaFKSAdWCZGC0DaqjEIy8+88o4+A7U=
+X-Received: by 2002:a05:6808:60a:: with SMTP id y10mr1877464oih.102.1572612365503;
+ Fri, 01 Nov 2019 05:46:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191016142601.28255-1-geert+renesas@glider.be>
+ <CACRpkdathjE3CLWsJYapL-0ri9_mC-uCKrh058zBk_nN5wHkDg@mail.gmail.com> <CAMuHMdVQaCtWR9ZO7N-HKOZS1ivBNWssjqzV1B0XwSBkMFp8Ow@mail.gmail.com>
+In-Reply-To: <CAMuHMdVQaCtWR9ZO7N-HKOZS1ivBNWssjqzV1B0XwSBkMFp8Ow@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 1 Nov 2019 13:45:53 +0100
+Message-ID: <CAMuHMdVxCEAdxj4xfnU2DEr0UkL5-xNzVdUFkvFgpzr28a7Vfw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: Do not use platform_get_irq() to
+ count interrupts
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the commit 8ff925e10f2c72680918b95173ef4f8bb982d59e up to 64 entries
-are allocated for xstate_comp_offsets while we only handle XFEATURE_MAX
-entries. For this reason xstate_offsets and xstate_sizes already defined
-with the explicit limit. Lets do the same for compressed format for
-consistency sake.
+Hi Linus,
 
-Actually I guess the main idea was to cover all possible bits in
-xfeatures_mask but this doesn't explain why other members such as
-standart offsets and sizes were not using the same. So I think better
-to use known XFEATURE_MAX limit everywhere and extend it on demand
-when new features get implemented on hardware level.
+On Thu, Oct 24, 2019 at 2:35 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Thu, Oct 24, 2019 at 2:07 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Wed, Oct 16, 2019 at 4:26 PM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > As platform_get_irq() now prints an error when the interrupt does not
+> > > exist, counting interrupts by looping until failure causes the printing
+> > > of scary messages like:
+> > >
+> > >     sh-pfc e6060000.pin-controller: IRQ index 0 not found
+> > >
+> > > Fix this by using the platform_irq_count() helper instead.
+> > >
+> > > Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > ---
+> > > v2:
+> > >   - Add Reviewed-by, Tested-by.
+> > >
+> > > Linus: Can you please take this one, as it is a fix for v5.4? Thx!
+> >
+> > I'm not sure the little error message counts as
+> > a regression, certainly users can live with it.
+>
+> Several similar fixes have already made it upstream.
+> But the decision is up to you.
+>
+> > Can't you just put it in your queue for the next kernel?
+>
+> Sure, will do (after ELC-E), if you prefer.
 
-Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
-CC: Ingo Molnar <mingo@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: H. Peter Anvin <hpa@zytor.com>
----
- arch/x86/kernel/fpu/xstate.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Queuing in sh-pfc-for-v5.5.
 
-Index: linux-tip.git/arch/x86/kernel/fpu/xstate.c
-===================================================================
---- linux-tip.git.orig/arch/x86/kernel/fpu/xstate.c
-+++ linux-tip.git/arch/x86/kernel/fpu/xstate.c
-@@ -60,7 +60,7 @@ u64 xfeatures_mask __read_mostly;
- 
- static unsigned int xstate_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
- static unsigned int xstate_sizes[XFEATURE_MAX]   = { [ 0 ... XFEATURE_MAX - 1] = -1};
--static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask)*8];
-+static unsigned int xstate_comp_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
- 
- /*
-  * The XSAVE area of kernel can be in standard or compacted format;
-@@ -342,7 +342,7 @@ static int xfeature_is_aligned(int xfeat
-  */
- static void __init setup_xstate_comp(void)
- {
--	unsigned int xstate_comp_sizes[sizeof(xfeatures_mask)*8];
-+	unsigned int xstate_comp_sizes[XFEATURE_MAX];
- 	int i;
- 
- 	/*
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
