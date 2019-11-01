@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A75C5EC2E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A62EC303
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfKAMmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:42:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40218 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730716AbfKAMmo (ORCPT
+        id S1730939AbfKAMnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:43:49 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38997 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730748AbfKAMmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:42:44 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q2so3561819ljg.7
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:43 -0700 (PDT)
+        Fri, 1 Nov 2019 08:42:45 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y3so10123553ljj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DamhDMgU5LUEj6+/3a9o1XbDY44tIM+8wHrJxcRu+uM=;
-        b=RVI8Jc7QJXtUyehVy/2ZLH5KOcNtBY4ej4JTLrLF37ovYlpHfFGePEvhr0cru5jX5R
-         DDSEMoiHcuFOPLrcqX/6yDYoWxYIK8sIyHPteoFu3x6hDugimd/A0m2Ca+fO2CBA9yPb
-         r9nwKykJSVb5eDXL5KejAxr2j65tQDEYh8TcE=
+        bh=1C8bi+Glp22eU2mPHcIIhRfHNSQMvhbk1zxbdzRB++Q=;
+        b=TKeI5WJ5HApJ0bpDzJiCOE0G53vmWWtXk5nF9C/9USrhBPI9ZALZhnUbAm1tvtRMKW
+         OFi9vIGQA9UR1/zZExnDHu6ZCx+LKx8j+FBnKATUCkOxnSdz0vv6wvCHXrsNus7CNMsy
+         gBIDN/LX7KNsH7MZ+LmrHTnn4wCNf+69eCkN8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DamhDMgU5LUEj6+/3a9o1XbDY44tIM+8wHrJxcRu+uM=;
-        b=nxC8vE5qC8sJJo8k/YQsDJuHEVEGV7KDlGWuD7YJwglX/04I4qfsmzQsAu/+KK3LaI
-         k0gVJqO3VZSubkUJFokvPvxU/BYlW5N/kzQBc17dv8ypuqGcmyNb5ladIF53kEs+9rVW
-         v4Ny1fPp8tMBQ2Rf4/QvHGbGMHFdROq1AUss7VgsIyU18eNjsn2sRLjV4vj1ldstnA9D
-         eIdnd7M2eEiwnqEKBEH6eaXdxLO+kUjN58Y6e57qTqnfOg9geAw+2/30+lgBGTCwWc/o
-         BqpjvsR+5fGz1Y2Um81wquZH2R0L5+y3yePO9UkRxiTvVtWLmT2ICCbP/05zdTHazojz
-         565g==
-X-Gm-Message-State: APjAAAXFvWIHGm8oE/yRhFLIdYyptO+haB+ilds0eU0A1k9wR1gDqB2q
-        21fa/CNmoPqtKsQ90hWYzMaDsA==
-X-Google-Smtp-Source: APXvYqw/XER1Nto0CvwxA4E4I56dw+GeuntyRBlwL42+o6MVyOodP98DAt6WTc3CaR2+XC/LYdM7yw==
-X-Received: by 2002:a2e:8204:: with SMTP id w4mr8267295ljg.212.1572612162716;
-        Fri, 01 Nov 2019 05:42:42 -0700 (PDT)
+        bh=1C8bi+Glp22eU2mPHcIIhRfHNSQMvhbk1zxbdzRB++Q=;
+        b=HSofSZa6KOl73Xi+CAHnlQbA/LxLFX2CvjY69ksC0NrCEaTSDi0X1X2hrgxofX6Q1x
+         YOjkRJrWWoSCxfrYO6uRerEbxblIRv6pJEAnbJ9Ae6R06DabucjWi+C41Nmt2VUYagW1
+         vYINC2m6SjBkK4Bv8bEI5brAmY9NFVR/TBXiAcDv8KfkaWuaxMZ/tSkM7sLdEEVG0le7
+         Vn4ay8OEBaO/QwOm+FtNcUolTZHppzimM7n/yiP2NEQvG/Ma0m+UWlG40X55RwXVAN3K
+         tBwrRiOer1+T6J265W88EX7BoenyuAl9n+ZutRgP6/i/b+C5+v6AXClt6dAtiH2ySQX1
+         Aqew==
+X-Gm-Message-State: APjAAAUy2JrKPac9KfHr9JjE8JuO0PuixeiJfMO6rs57LGDvGkIVzUcg
+        Gdr8DNKWwvg699vDpPXhkVHeDA==
+X-Google-Smtp-Source: APXvYqwaR+A8MH7lH/sC0yoJ4mSYgmPfqD0xbkFeC/pa2axliSAcW4VUXOMG3J3WRdSDgDQTi8u32w==
+X-Received: by 2002:a2e:898d:: with SMTP id c13mr4497954lji.54.1572612163835;
+        Fri, 01 Nov 2019 05:42:43 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.41
+        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:42 -0700 (PDT)
+        Fri, 01 Nov 2019 05:42:43 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 22/36] soc: fsl: qe: qe.c: use of_property_read_* helpers
-Date:   Fri,  1 Nov 2019 13:41:56 +0100
-Message-Id: <20191101124210.14510-23-linux@rasmusvillemoes.dk>
+Subject: [PATCH v3 23/36] soc: fsl: qe: qe_io.c: don't open-code of_parse_phandle()
+Date:   Fri,  1 Nov 2019 13:41:57 +0100
+Message-Id: <20191101124210.14510-24-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191101124210.14510-1-linux@rasmusvillemoes.dk>
 References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
@@ -63,100 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of manually doing of_get_property/of_find_property and reading
-the value by assigning to a u32* or u64* and dereferencing, use the
-of_property_read_* functions.
-
-This make the code more readable, and more importantly, is required
-for this to work correctly on little-endian platforms.
-
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c | 33 ++++++++-------------------------
- 1 file changed, 8 insertions(+), 25 deletions(-)
+ drivers/soc/fsl/qe/qe_io.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index a4763282ea68..ec511840db3c 100644
---- a/drivers/soc/fsl/qe/qe.c
-+++ b/drivers/soc/fsl/qe/qe.c
-@@ -159,8 +159,7 @@ static unsigned int brg_clk = 0;
- unsigned int qe_get_brg_clk(void)
+diff --git a/drivers/soc/fsl/qe/qe_io.c b/drivers/soc/fsl/qe/qe_io.c
+index f6b10f38b2f4..99aeb01586bd 100644
+--- a/drivers/soc/fsl/qe/qe_io.c
++++ b/drivers/soc/fsl/qe/qe_io.c
+@@ -141,7 +141,6 @@ EXPORT_SYMBOL(par_io_data_set);
+ int par_io_of_config(struct device_node *np)
  {
- 	struct device_node *qe;
--	int size;
--	const u32 *prop;
-+	u32 brg;
- 	unsigned int mod;
+ 	struct device_node *pio;
+-	const phandle *ph;
+ 	int pio_map_len;
+ 	const unsigned int *pio_map;
  
- 	if (brg_clk)
-@@ -170,9 +169,8 @@ unsigned int qe_get_brg_clk(void)
- 	if (!qe)
- 		return brg_clk;
+@@ -150,14 +149,12 @@ int par_io_of_config(struct device_node *np)
+ 		return -1;
+ 	}
  
--	prop = of_get_property(qe, "brg-frequency", &size);
--	if (prop && size == sizeof(*prop))
--		brg_clk = *prop;
-+	if (!of_property_read_u32(qe, "brg-frequency", &brg))
-+		brg_clk = brg;
+-	ph = of_get_property(np, "pio-handle", NULL);
+-	if (ph == NULL) {
++	pio = of_parse_phandle(np, "pio-handle", 0);
++	if (pio == NULL) {
+ 		printk(KERN_ERR "pio-handle not available\n");
+ 		return -1;
+ 	}
  
- 	of_node_put(qe);
- 
-@@ -571,11 +569,9 @@ EXPORT_SYMBOL(qe_upload_firmware);
- struct qe_firmware_info *qe_get_firmware_info(void)
- {
- 	static int initialized;
--	struct property *prop;
- 	struct device_node *qe;
- 	struct device_node *fw = NULL;
- 	const char *sprop;
--	unsigned int i;
- 
- 	/*
- 	 * If we haven't checked yet, and a driver hasn't uploaded a firmware
-@@ -609,20 +605,11 @@ struct qe_firmware_info *qe_get_firmware_info(void)
- 		strlcpy(qe_firmware_info.id, sprop,
- 			sizeof(qe_firmware_info.id));
- 
--	prop = of_find_property(fw, "extended-modes", NULL);
--	if (prop && (prop->length == sizeof(u64))) {
--		const u64 *iprop = prop->value;
+-	pio = of_find_node_by_phandle(*ph);
 -
--		qe_firmware_info.extended_modes = *iprop;
--	}
-+	of_property_read_u64(fw, "extended-modes",
-+			     &qe_firmware_info.extended_modes);
- 
--	prop = of_find_property(fw, "virtual-traps", NULL);
--	if (prop && (prop->length == 32)) {
--		const u32 *iprop = prop->value;
--
--		for (i = 0; i < ARRAY_SIZE(qe_firmware_info.vtraps); i++)
--			qe_firmware_info.vtraps[i] = iprop[i];
--	}
-+	of_property_read_u32_array(fw, "virtual-traps", qe_firmware_info.vtraps,
-+				   ARRAY_SIZE(qe_firmware_info.vtraps));
- 
- 	of_node_put(fw);
- 
-@@ -633,17 +620,13 @@ EXPORT_SYMBOL(qe_get_firmware_info);
- unsigned int qe_get_num_of_risc(void)
- {
- 	struct device_node *qe;
--	int size;
- 	unsigned int num_of_risc = 0;
--	const u32 *prop;
- 
- 	qe = qe_get_device_node();
- 	if (!qe)
- 		return num_of_risc;
- 
--	prop = of_get_property(qe, "fsl,qe-num-riscs", &size);
--	if (prop && size == sizeof(*prop))
--		num_of_risc = *prop;
-+	of_property_read_u32(qe, "fsl,qe-num-riscs", &num_of_risc);
- 
- 	of_node_put(qe);
- 
+ 	pio_map = of_get_property(pio, "pio-map", &pio_map_len);
+ 	if (pio_map == NULL) {
+ 		printk(KERN_ERR "pio-map is not set!\n");
 -- 
 2.23.0
 
