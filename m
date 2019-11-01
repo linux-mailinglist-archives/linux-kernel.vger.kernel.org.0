@@ -2,72 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94BB8EC9FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C860ECA01
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfKAU45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:56:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48997 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfKAU45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:56:57 -0400
-Received: from hanvin-mobl2.amr.corp.intel.com ([192.55.55.45])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id xA1Ku1Hi3597880
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Fri, 1 Nov 2019 13:56:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com xA1Ku1Hi3597880
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019091901; t=1572641763;
-        bh=3An007NMR3t5lhDsOPVJ9K0dkZrEaxbrM0ul5cfaPa4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=kC/rRorYzspNXKHbAH3qWGpvmB1CgN+djkae1LWKmc8pl5Ljhbbx+OZuXSlpKJreR
-         EtmIjUtI1/wXaD16smKcAatpd3ZUb8CuJ/ILid1PZ2Djqz0Qx0r6nOFq8dQOwkznxf
-         meW8aP0YNx/p8Q2yGS61OPbIZg9oM3EASsRzsoYDoHaVVnQRdA+c+cCtFu5850FuJR
-         D526P2FtSBEK7HnfjwYPQsBOcJrcpTFR7lxr9RQkbnCcQTcPgVXF6iTqho0EyR/+Sw
-         IHfFNPB1eD3Mt7/NSMPdZojleTYu7yXr2Ti9Qo4IPDL30WRUfLF98uXYQNLpUGPHjs
-         ePcOqSIqHfEDg==
-Subject: Re: [PATCH v4 2/3] x86/boot: Introduce the kernel_info.setup_type_max
-To:     Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
-        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
-        tglx@linutronix.de
-References: <20191024114814.6488-1-daniel.kiper@oracle.com>
- <20191024114814.6488-3-daniel.kiper@oracle.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <e094a1cf-6bf2-1e8a-94c7-47767d66138e@zytor.com>
-Date:   Fri, 1 Nov 2019 13:55:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727815AbfKAU5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:57:41 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46004 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726396AbfKAU5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:57:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=n5rRT0a1iTfLvFxrf02dbZh2qtFNVDbMMIEOedlKQOY=; b=1qxvtNWXGZsqvIRCmMwL+v+dJ2
+        LKqEzTc7yUs5IBgejnC0WfxUbKEDRdFgp3zBCivnKiNoXbzATeRwkDtGPEoJunrrOh6NoE9md7IGH
+        ikFVWEhVGs/IZrpQ4qTuBm+kuZX9vh2nLcNP2JqYtg3mXGofbiiEonc4sPT9HbF+4Kq8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iQdz7-0000M4-Od; Fri, 01 Nov 2019 21:57:29 +0100
+Date:   Fri, 1 Nov 2019 21:57:29 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 net-next 06/12] net: ethernet: ti: introduce cpsw
+ switchdev based driver part 1 - dual-emac
+Message-ID: <20191101205729.GE31534@lunn.ch>
+References: <20191024100914.16840-1-grygorii.strashko@ti.com>
+ <20191024100914.16840-7-grygorii.strashko@ti.com>
+ <20191029123230.GM15259@lunn.ch>
+ <24b1623d-48df-328a-eda7-4195e9df2b22@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20191024114814.6488-3-daniel.kiper@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24b1623d-48df-328a-eda7-4195e9df2b22@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-24 04:48, Daniel Kiper wrote:
-> This field contains maximal allowed type for setup_data.
+On Fri, Nov 01, 2019 at 10:34:57PM +0200, Grygorii Strashko wrote:
 > 
-> Now bump the setup_header version in arch/x86/boot/header.S.
+> 
+> On 29/10/2019 14:32, Andrew Lunn wrote:
+> > > +static int cpsw_probe(struct platform_device *pdev)
+> > > +{
+> > > +	const struct soc_device_attribute *soc;
+> > > +	struct device *dev = &pdev->dev;
+> > > +	struct resource *ss_res;
+> > > +	struct cpsw_common *cpsw;
+> > > +	struct gpio_descs *mode;
+> > > +	void __iomem *ss_regs;
+> > > +	int ret = 0, ch;
+> > > +	struct clk *clk;
+> > > +	int irq;
+> > > +
+> > 
+> > ...
+> > 
+> > > +
+> > > +	/* setup netdevs */
+> > > +	ret = cpsw_create_ports(cpsw);
+> > > +	if (ret)
+> > > +		goto clean_unregister_netdev;
+> > 
+> > At this point, the slave ports go live. If the kernel is configured
+> > with NFS root etc, it will start using the interfaces.
+> > 
+> > +
+> > > +	/* Grab RX and TX IRQs. Note that we also have RX_THRESHOLD and
+> > > +	 * MISC IRQs which are always kept disabled with this driver so
+> > > +	 * we will not request them.
+> > > +	 *
+> > > +	 * If anyone wants to implement support for those, make sure to
+> > > +	 * first request and append them to irqs_table array.
+> > > +	 */
+> > > +
+> > > +	ret = devm_request_irq(dev, cpsw->irqs_table[0], cpsw_rx_interrupt,
+> > > +			       0, dev_name(dev), cpsw);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "error attaching irq (%d)\n", ret);
+> > > +		goto clean_unregister_netdev;
+> > > +	}
+> > > +
+> > > +	ret = devm_request_irq(dev, cpsw->irqs_table[1], cpsw_tx_interrupt,
+> > > +			       0, dev_name(dev), cpsw);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "error attaching irq (%d)\n", ret);
+> > > +		goto clean_unregister_netdev;
+> > > +	}
+> > 
+> > Are there any race conditions if the network starts using the devices
+> > before interrupts are requested? To be safe, maybe this should be done
+> > before the slaves are created?
+> 
+> Usually during boot - there is no parallel probing (as opposite to modules loading by
+> udev, for example). Also, there is barrier init call deferred_probe_initcall() to ensure all
+> drivers probed before going to mount rootfs.
+> 
+> So, i do not think this could cause any issue - max few packets will be delayed
+> until kernel will switch back here, but the chances that ndo_open will be finished before probe ->0.
 
-Please don't bump the protocol revision here, otherwise we would create
-a very odd pseudo-revision of the protocol: 2.15 without SETUP_INDIRECT
-support, should patch 3/3 end up getting reverted.
+I helped track down a crash recently, along these lines. ndo_open()
+was getting called before the probe function finished, when kernel ip
+address auto config was in action. This is not to do with parallel
+probing, i think there is something in register_netdev() which is
+triggered each time an interface is added to do the ip
+configuration. And the first thing that does is open the interface.
 
-(It is possible to detect, of course, but I feel pretty sure in saying
-that bootloaders won't get it right.)
-
-Other than that:
-
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-
-	-hpa
+	  Andrew
