@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFAE9EBBA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CBEDEBB9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:18:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbfKABTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 21:19:55 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:43968 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfKABTy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 21:19:54 -0400
-Received: by mail-pf1-f174.google.com with SMTP id 3so5806602pfb.10;
-        Thu, 31 Oct 2019 18:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gQaBGQ6PomMMk6fICSsyptPitn6QlkrChUjI1902+xo=;
-        b=u8NXEsaGgUEedGaGvrG/+WqP+c+dZnr/iumQ15t1Oq2TL1IEWa/pHJCDzYT118O4jM
-         9ZEfhkcub8E6GGSjZqswlJfi8V4sRDkWoXyRWgCIK3S2cKm8gA6mIFSsgtfcQuQTG9Kp
-         2u5obrg1aV+6LbZ4eAcrCWWEmWQg3PfRTpV/izqxgnFxvxfd8k7/+08hvLngqeULqCHv
-         oo4cQg6AaVVYyjhS59KLK6Jq5lGPzZPCNoiin1CGQfUYYnrBhDmfdJO/lIZLYRCt//7a
-         pyV2axp9fOsAh6PF6IqkQIAjsBM5+2ZypTLs8fqrVIMOht5ZKNP1kByHdKaRvHCdoP6E
-         KwVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gQaBGQ6PomMMk6fICSsyptPitn6QlkrChUjI1902+xo=;
-        b=MqgpBH+ilR48hUbrXgA+yhpY35S4RcK4USYvoasNbLAqbi3M0YoCXgzxY5JXUSMsLV
-         jM0iIb3S9ATfpoCk+fsEm/KPvOGpWaY1LuQtnqIl76FBncl6kDLFfDl0/Yi/Rli3pgX6
-         As2jWWkdV3SjozrnJ0cepzYbLiY7Uk2DrttiBQOWfwZyeLqAY30DLSUhzZCmVxBthLSe
-         KSwh84x957r/f1tfkKsC7zP//AvUAaYtzrzn7e8piAbRGbCb3glSlb8ArLv9d0fyCITa
-         WsCFQgJ8MzWPsw3j3BJVnEj5lo/+S8L+Xffwgt+l5F0XsBNRnGTKFGkQQaJ3VsgPgM/J
-         P8vw==
-X-Gm-Message-State: APjAAAUUZelbPRoZAS5MRsQH+RDMwkD4TF9zvVnvCWxhLvMHlr6idp5r
-        AwrqoA2DvOq9Z2UtPXEc1Ak=
-X-Google-Smtp-Source: APXvYqwYz4F5vpSLUpbLeO/wZSv5XQJUO7I8nuhMNYna4xdDshdiMOGFW+JpQQeyI85Q6YWGH7zp+g==
-X-Received: by 2002:a65:4907:: with SMTP id p7mr10286770pgs.429.1572571193557;
-        Thu, 31 Oct 2019 18:19:53 -0700 (PDT)
-Received: from [192.168.1.149] ([42.116.121.151])
-        by smtp.gmail.com with ESMTPSA id d14sm4292916pgm.59.2019.10.31.18.19.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2019 18:19:52 -0700 (PDT)
-Cc:     tranmanphong@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, corbet@lwn.net, rcu@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skhan@linuxfoundation.org
-Subject: Re: [PATCH] Doc: convert whatisRCU.txt to rst
-To:     paulmck@kernel.org, madhuparnabhowmik04@gmail.com
-References: <20191030233128.14997-1-tranmanphong@gmail.com>
- <20191031225439.GD20975@paulmck-ThinkPad-P72>
-From:   Phong Tran <tranmanphong@gmail.com>
-Message-ID: <35bb2f18-791a-caf3-957d-01e43a4b3afc@gmail.com>
-Date:   Fri, 1 Nov 2019 08:17:36 +0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729020AbfKABRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 21:17:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5675 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726772AbfKABRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 21:17:52 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 72B76F7F7557A3374BC9;
+        Fri,  1 Nov 2019 09:17:49 +0800 (CST)
+Received: from [127.0.0.1] (10.74.149.191) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
+ 09:17:40 +0800
+Subject: Re: [PATCH net-next 8/9] net: hns3: cleanup some print format warning
+To:     Joe Perches <joe@perches.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
+        Guojia Liao <liaoguojia@huawei.com>
+References: <1572521004-36126-1-git-send-email-tanhuazhong@huawei.com>
+ <1572521004-36126-9-git-send-email-tanhuazhong@huawei.com>
+ <4541e77d257685c649f5f994e673a409a3634f50.camel@perches.com>
+From:   tanhuazhong <tanhuazhong@huawei.com>
+Message-ID: <ce0c5f5f-08b7-7e38-b156-954a8398abfa@huawei.com>
+Date:   Fri, 1 Nov 2019 09:17:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20191031225439.GD20975@paulmck-ThinkPad-P72>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <4541e77d257685c649f5f994e673a409a3634f50.camel@perches.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.149.191]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-On 11/1/19 5:54 AM, Paul E. McKenney wrote:
-> Could you and Madhuparna please review and test each other's
-> .rst-conversion patches?
+
+
+On 2019/10/31 19:53, Joe Perches wrote:
+> On Thu, 2019-10-31 at 19:23 +0800, Huazhong Tan wrote:
+>> From: Guojia Liao <liaoguojia@huawei.com>
+>>
+>> Using '%d' for printing type unsigned int or '%u' for
+>> type int would cause static tools to give false warnings,
+>> so this patch cleanups this warning by using the suitable
+>> format specifier of the type of variable.
+>>
+>> BTW, modifies the type of some variables and macro to
+>> synchronize with their usage.
+> 
+> What tool is this?
+
+Sorry, it is my mistake, as confirmed, this patch is
+advised by internal code review.
+
+> 
+> I think this static warning is excessive as macro
+> defines with a small positive number are common
 > 
 
-It's fine.
-pull and "make SPHINXDIRS="RCU" htmldocs pdfdocs" rcu dev branch
-without error or warning.
+yes, it seems ok.
+The reason we do this modification is that
+printing resp_data_len with '%u' and printing
+HCLGE_MBX_MAX_RESP_DATA_SIZE with '%d' seems a little odd.
 
-thanks,
-Phong.
+  	if (resp_data_len > HCLGE_MBX_MAX_RESP_DATA_SIZE) {
+  		dev_err(&hdev->pdev->dev,
+-			"PF fail to gen resp to VF len %d exceeds max len %d\n",
++			"PF fail to gen resp to VF len %u exceeds max len %u\n",
+  			resp_data_len,
+  			HCLGE_MBX_MAX_RESP_DATA_SIZE);
+
+Thanks for your suggestion.
+
+>> diff --git a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
+> []
+>> @@ -72,7 +72,7 @@ enum hclge_mbx_vlan_cfg_subcode {
+>>   };
+>>   
+>>   #define HCLGE_MBX_MAX_MSG_SIZE	16
+>> -#define HCLGE_MBX_MAX_RESP_DATA_SIZE	8
+>> +#define HCLGE_MBX_MAX_RESP_DATA_SIZE	8U
+>>   #define HCLGE_MBX_RING_MAP_BASIC_MSG_NUM	3
+>>   #define HCLGE_MBX_RING_NODE_VARIABLE_NUM	3
+> 
+> like this one
+> 
+>> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+> []
+>> @@ -57,68 +57,68 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h,
+>>   					   HNS3_RING_RX_RING_BASEADDR_H_REG);
+>>   		base_add_l = readl_relaxed(ring->tqp->io_base +
+>>   					   HNS3_RING_RX_RING_BASEADDR_L_REG);
+>> -		dev_info(&h->pdev->dev, "RX(%d) BASE ADD: 0x%08x%08x\n", i,
+>> +		dev_info(&h->pdev->dev, "RX(%u) BASE ADD: 0x%08x%08x\n", i,
+> 
+> so using %d is correct enough.
+> 
+> 
+> 
+> .
+> 
+
