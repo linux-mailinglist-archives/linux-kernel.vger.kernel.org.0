@@ -2,156 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D89B0EBE86
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E02E8EBEB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbfKAHkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 03:40:19 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:35694 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbfKAHkS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 03:40:18 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191101074012epoutp033fd9f3e6525d906b308713e8eb199058~S_ewoykKc1594515945epoutp03C
-        for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2019 07:40:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191101074012epoutp033fd9f3e6525d906b308713e8eb199058~S_ewoykKc1594515945epoutp03C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572594012;
-        bh=FfrdmjGOwmokPiYT/n5Vgvnle4bdpTM1mCEMhI9JHKI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Qx/I6aL0YuJ/nTGvZg3eVGsbOxLzb/QJSuPKRX4iXT2/GTtl2+1l0FKTEql3suvhh
-         pTMltrz70TXeSrJ6pyCwPINycFFqkhkALuUGVAUk/D9bdxeu5F4k4P6Mv3VSxD/KKN
-         OXtMLGGsnnzSFIU+YQpIhW7FizXRHEIGUGBUXRTw=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191101074011epcas1p17256087238c0314607abe70eb64a71e7~S_ev4LJ042542625426epcas1p1_;
-        Fri,  1 Nov 2019 07:40:11 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.155]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 474DcV59SNzMqYkh; Fri,  1 Nov
-        2019 07:40:10 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.64.04135.A51EBBD5; Fri,  1 Nov 2019 16:40:10 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191101074009epcas1p3c721e4a90fca071f8722f4586fc8b48c~S_ethhmEB0908309083epcas1p3q;
-        Fri,  1 Nov 2019 07:40:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191101074009epsmtrp2643ef028aef5af36bb6b2e9cfcbbe24a~S_etgqmNj2501525015epsmtrp2G;
-        Fri,  1 Nov 2019 07:40:09 +0000 (GMT)
-X-AuditID: b6c32a36-c51679c000001027-dd-5dbbe15a8438
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.9C.24756.951EBBD5; Fri,  1 Nov 2019 16:40:09 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191101074009epsmtip1bc1fca3bdbfd369bcccbd23006c86cdd~S_etT5_JF1431514315epsmtip1T;
-        Fri,  1 Nov 2019 07:40:09 +0000 (GMT)
-Subject: Re: [PATCH v7 18/19] PM / devfreq: tegra30: Tune up MCCPU
- boost-down coefficient
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <99a90972-2170-ebcb-7bff-cd9ba8b0b0d1@samsung.com>
-Date:   Fri, 1 Nov 2019 16:45:40 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        id S1730057AbfKAHxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 03:53:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbfKAHxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 03:53:10 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88CDC2080F;
+        Fri,  1 Nov 2019 07:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572594789;
+        bh=VXpWqY01SDpgB8O1tjrELEhTWmvnU/VWql3TetZxFMY=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=qHz7eIoZKQmC0/Rha3kHXDK1mg18t4hyHvyH7bfHnIxuQnZfum3oj5nhs6tULtSQN
+         OL/ixtmbI0iRXe3plF5EbKVdWBF9vf/Iec5Qc4WFcv993SqV8rQKfyP60Cre4PqoYY
+         hXUBxvgoQcB/CacmFA2PZAxw+BixqbAOVKIgIvpw=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 55A1635207E6; Fri,  1 Nov 2019 00:53:09 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 00:53:09 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     madhuparnabhowmik04@gmail.com, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org, corbet@lwn.net,
+        rcu@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org
+Subject: Re: [PATCH] Doc: convert whatisRCU.txt to rst
+Message-ID: <20191101075309.GH20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191030233128.14997-1-tranmanphong@gmail.com>
+ <20191031225439.GD20975@paulmck-ThinkPad-P72>
+ <35bb2f18-791a-caf3-957d-01e43a4b3afc@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191029220019.26773-19-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmvm7Uw92xBlsuaFms/viY0aJl1iIW
-        i7NNb9gtLu+aw2bxufcIo0Xnl1lsFrcbV7BZnH3mbfFz1zwWi761l9gcuDx23F3C6LFz1l12
-        j97md2wefVtWMXp83iQXwBqVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCX
-        mJtqq+TiE6DrlpkDdJSSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CyQK84Mbe4
-        NC9dLzk/18rQwMDIFKgwITtj652vTAVLeCr+tLaxNjD+5exi5OSQEDCRWL28ia2LkYtDSGAH
-        o8Tj+U+YIZxPQM7vC6wQzjdGiR0bZjPCtNyfNJ8dIrGXUeLlrq+MEM57RokN/xpYQaqEBaIl
-        Xh+7BjZYRGARk8Tao9uZQRLMApESh3euZgKx2QS0JPa/uMEGYvMLKEpc/fEYaBIHB6+AncST
-        E/4gYRYBFYlfc9ewgYRFBSIkTn9NBAnzCghKnJz5hAXE5hQwl3ix9BArxHRxiVtP5jNB2PIS
-        zVtng70jIdDOLnH9RBMLyBwJAReJSR8KIJ4Rlnh1fAs7hC0l8fndXjYIu1pi5ckjbBC9HYwS
-        W/ZfYIVIGEvsXzqZCWQOs4CmxPpd+hBhRYmdv+cyQuzlk3j3tYcVYhWvREebEESJssTlB3eZ
-        IGxJicXtnWwTGJVmIflmFpIPZiH5YBbCsgWMLKsYxVILinPTU4sNC4yQI3sTIzi9apntYFx0
-        zucQowAHoxIP74yu3bFCrIllxZW5hxglOJiVRHi3rwMK8aYkVlalFuXHF5XmpBYfYjQFhvVE
-        ZinR5Hxg6s8riTc0NTI2NrYwMTQzNTRUEud1XL40VkggPbEkNTs1tSC1CKaPiYNTqoFxjWfu
-        6+DC2+qXo/6ezLjyvfX83ncW9TfuXln4fnts9uGaKfUCS7aefv2k6rTYmw296kpvKrR+7p1V
-        7r2L/5IVh/zErdrhZ0UdFspyKWSt+HPcMvNWuFrBqynSS/uzK+9Xf187n7n5/OOGqQGved7r
-        x8l0vLBhUEkXD59V7aEfen37q5vC/PrrlFiKMxINtZiLihMBnxNzrsUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSnG7kw92xBlf6OS1Wf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gszj7ztvi5ax6LRd/aS2wOXB477i5h9Ng56y67
-        R2/zOzaPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyth65ytTwRKeij+tbawNjH85uxg5OSQE
-        TCTuT5rP3sXIxSEksJtR4sjKB2wQCUmJaRePMncxcgDZwhKHDxdD1LxllLiybRorSI2wQLTE
-        xidtYM0iAkuYJM5+Wc4MkmAWiJTombuFDaJjG6NEw46JTCAJNgEtif0vboBt4BdQlLj64zEj
-        yAZeATuJJyf8QcIsAioSv+auASsRFYiQeL79BiOIzSsgKHFy5hMWEJtTwFzixdJDrBC71CX+
-        zLsEtVdc4taT+UwQtrxE89bZzBMYhWchaZ+FpGUWkpZZSFoWMLKsYpRMLSjOTc8tNiwwzEst
-        1ytOzC0uzUvXS87P3cQIjjUtzR2Ml5fEH2IU4GBU4uGd0bU7Vog1say4MvcQowQHs5II7/Z1
-        QCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoY/b8IWb/r
-        t/7mPs151p/KzwqFBuKOGjscGy/wLdxcMLHuwOm702q39X2V+3oxYtdlm/92jK5Opm+rhC7v
-        WcazPSTg7vSCRUL+e849npnXbFOg0+FvlLj1vvn11ufOx7JWawUs5ZmVo8ptHLv1ZgdD44qp
-        Ngcnv5b6mb2GU6kk1XHyRKYioZB0JZbijERDLeai4kQA0V0hbbECAAA=
-X-CMS-MailID: 20191101074009epcas1p3c721e4a90fca071f8722f4586fc8b48c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191029220656epcas2p4b19cb854054ebce6132c7111f52cada4
-References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220656epcas2p4b19cb854054ebce6132c7111f52cada4@epcas2p4.samsung.com>
-        <20191029220019.26773-19-digetx@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35bb2f18-791a-caf3-957d-01e43a4b3afc@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> MCCPU boosts up very aggressively by 800% and boosts down very mildly by
-> 10%. This doesn't work well when system is idling because the very slow
-> de-boosting results in lots of consecutive-down interrupts, in result
-> memory stays clocked high and CPU doesn't enter deepest idling state
-> instead of keeping memory at lowest freq and having CPU cluster turned
-> off. A more faster de-boosting fixes the case of idling system and doesn't
-> affect the case of an active system.
+On Fri, Nov 01, 2019 at 08:17:36AM +0700, Phong Tran wrote:
+> Hi Paul,
+> On 11/1/19 5:54 AM, Paul E. McKenney wrote:
+> > Could you and Madhuparna please review and test each other's
+> > .rst-conversion patches?
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index d0dd42856e5b..9a21a29198ee 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -123,7 +123,7 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
->  		.offset = 0x200,
->  		.irq_mask = 1 << 25,
->  		.boost_up_coeff = 800,
-> -		.boost_down_coeff = 90,
-> +		.boost_down_coeff = 40,
->  		.boost_up_threshold = 27,
->  		.boost_down_threshold = 10,
->  		.avg_dependency_threshold = 50000,
-> 
+> It's fine.
+> pull and "make SPHINXDIRS="RCU" htmldocs pdfdocs" rcu dev branch
+> without error or warning.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Very good, thank you!
 
-IMO, I think that it is not good to change the threshold value
-on device driver directly when some requirement happen.
-Instead, better to get the threshold value from device-tree file.
+Once you have done that (or if you have already done that) and have
+verified that the resulting .html and .pdf files for the changed portions
+look good, you can respond with a Tested-by tag, which has "Tested-by:",
+your name, and your email within "<" and ">".  For example, commit
+127068abe85b ("i2c: qcom-geni: Disable DMA processing on the Lenovo Yoga
+C630") has this:
 
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
- 
+After you review the code, for example, by checking either the patch or the
+resulting .rst file, you can respond with a very similar Reviewed-by tag.
+Which allows you to get a start on participating in the code-review
+process.
+
+							Thanx, Paul
