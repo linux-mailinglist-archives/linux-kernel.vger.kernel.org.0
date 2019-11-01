@@ -2,29 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CD8EC3FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 14:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44080EC407
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 14:49:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbfKANqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 09:46:30 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5690 "EHLO huawei.com"
+        id S1727556AbfKANt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 09:49:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5691 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727296AbfKANqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 09:46:30 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AE60F80C6B319E22CD0B;
-        Fri,  1 Nov 2019 21:46:26 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
- 21:46:18 +0800
+        id S1726622AbfKANt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 09:49:26 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A904FF0927A7025CDCA6;
+        Fri,  1 Nov 2019 21:49:10 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
+ 21:49:04 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linux-graphics-maintainer@vmware.com>, <thellstrom@vmware.com>,
-        <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/vmwgfx: remove set but not used variable 'srf'
-Date:   Fri, 1 Nov 2019 21:46:11 +0800
-Message-ID: <20191101134611.32456-1-yuehaibing@huawei.com>
+To:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <denis.ciocca@st.com>,
+        <yuehaibing@huawei.com>, <rfontana@redhat.com>,
+        <tglx@linutronix.de>, <heiko.stuebner@bq.com>,
+        <rjones@gateworks.com>, <drake@endlessm.com>,
+        <colin.king@canonical.com>
+CC:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] iio: st_accel: Fix unused variable warning
+Date:   Fri, 1 Nov 2019 21:47:41 +0800
+Message-ID: <20191101134741.25108-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -35,36 +38,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/gpu/drm/vmwgfx/vmwgfx_surface.c:339:22:
- warning: variable srf set but not used [-Wunused-but-set-variable]
+drivers/iio/accel/st_accel_core.c:1005:44: warning:
+ mount_matrix_ext_info defined but not used [-Wunused-const-variable=]
 
-'srf' is never used, so can be removed.
+Move it to ifdef to mute this warning.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_surface.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/iio/accel/st_accel_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
-index 29d8794..de0530b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_surface.c
-@@ -336,7 +336,6 @@ static void vmw_hw_surface_destroy(struct vmw_resource *res)
- {
+diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
+index 2e37f8a..bba0717 100644
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -1002,10 +1002,12 @@ get_mount_matrix(const struct iio_dev *indio_dev,
+ 	return adata->mount_matrix;
+ }
  
- 	struct vmw_private *dev_priv = res->dev_priv;
--	struct vmw_surface *srf;
- 	void *cmd;
++#ifdef CONFIG_ACPI
+ static const struct iio_chan_spec_ext_info mount_matrix_ext_info[] = {
+ 	IIO_MOUNT_MATRIX(IIO_SHARED_BY_ALL, get_mount_matrix),
+ 	{ },
+ };
++#endif
  
- 	if (res->func->destroy == vmw_gb_surface_destroy) {
-@@ -360,7 +359,6 @@ static void vmw_hw_surface_destroy(struct vmw_resource *res)
- 		 */
- 
- 		mutex_lock(&dev_priv->cmdbuf_mutex);
--		srf = vmw_res_to_srf(res);
- 		dev_priv->used_memory_size -= res->backup_size;
- 		mutex_unlock(&dev_priv->cmdbuf_mutex);
- 	}
+ /* Read ST-specific _ONT orientation data from ACPI and generate an
+  * appropriate mount matrix.
 -- 
 2.7.4
 
