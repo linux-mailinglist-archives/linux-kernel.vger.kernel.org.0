@@ -2,72 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06DDDEC18F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 12:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CEE9EC190
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 12:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbfKALJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 07:09:57 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53147 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfKALJ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 07:09:57 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c17so1597030wmk.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 04:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=efLeBUV2eVsQE5cLBBJiWMyP67QfoKzAnlUnCU8QlEM=;
-        b=SVs6nDPVuDStZNT/dKWBmaT2wt6W/bytIThN5wjiM4TlLJ86P1qYvQG8t/GvSaOs+L
-         ZfCoYDcZrWtwa9uaIRuTYDjLfMt/X5edllwC5kGl1rYeYQfVOBUoU3L6QRf0VFZ/2vaW
-         yE0H7nyStl6dKxv8bvsx+WLMqu1fRGmbA94UM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=efLeBUV2eVsQE5cLBBJiWMyP67QfoKzAnlUnCU8QlEM=;
-        b=fU6W1TcM5BE5tb8RaAtL19l46WSk/W3ZVLptIMGBXqs+1TVGC9/Ra9zwLrW86GJ/tK
-         8++Q2JEIChEPNxbVRNlRRbIjblfkU6KcRs8qa6EnpAPN9nT5NZhurC8F1OFQMhRisZ/E
-         IP8iQna6UrCRd2sW1x1CZkcWx7n3pz/T9v7AQdmuxai+9xf4MpJ2M13MpTsqfAKagFyI
-         5zKuP3BiwSBxVLax6OkCm/xk4NT6J3ULMpstrvxBjUvws1M/Xv+byWIyFr5RjtQT3C78
-         8My0QWJ/w1Nr+NBW9tI/baW/qBVSu5FpPIbFtG7YNpxtDSkSnOEzcaDT2n4sPCRVt9vw
-         tl7Q==
-X-Gm-Message-State: APjAAAUDBOxoaRP0w+W5eREs3LEGm/PCYCeh1XXT74Le/9hN9oPn9Fzx
-        Fc1XrjPABpW6LwM1S7lHbHTuTCBzbHqhxC/X
-X-Google-Smtp-Source: APXvYqwtz8e2KFotDSkIrc/A9cZrgeg+ndmfC6AnLPShic8k8G6/7xEfIsR7O8flQ/TxCeQ7m6ISqw==
-X-Received: by 2002:a1c:2e0f:: with SMTP id u15mr9756846wmu.47.1572606594770;
-        Fri, 01 Nov 2019 04:09:54 -0700 (PDT)
-Received: from localhost ([2620:10d:c092:180::1:f970])
-        by smtp.gmail.com with ESMTPSA id a23sm6359703wmj.2.2019.11.01.04.09.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 04:09:54 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 11:09:53 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] kernel: sysctl: make drop_caches write-only
-Message-ID: <20191101110953.GC690103@chrisdown.name>
-References: <20191031221602.9375-1-hannes@cmpxchg.org>
- <20191031162825.a545a5d4d8567368501769bd@linux-foundation.org>
- <20191101110901.GB690103@chrisdown.name>
+        id S1728049AbfKALKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 07:10:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45018 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726720AbfKALKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 07:10:54 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B7F6864B63363F51DE27;
+        Fri,  1 Nov 2019 19:10:52 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
+ 19:10:46 +0800
+Subject: Re: [PATCH v2 14/36] irqchip/gic-v4.1: Implement the v4.1 flavour of
+ VMOVP
+To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-kernel@vger.kernel.org>
+CC:     Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Andrew Murray" <Andrew.Murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        "Robert Richter" <rrichter@marvell.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-15-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <287222d4-5506-d252-c76a-88ecbcf84c87@huawei.com>
+Date:   Fri, 1 Nov 2019 19:10:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191101110901.GB690103@chrisdown.name>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191027144234.8395-15-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chris Down writes:
->There is evidence that this has already caused confusion[0] for many, 
->judging by the number of views and votes. I think the reward is higher 
->than stated here, since it makes the intent and lack of persistent API 
->in the API clearer, and less likely to cause confusion in future.
->
->0: https://unix.stackexchange.com/q/17936/10762
+Hi Marc,
 
-s/persistent API/persistent state/
+On 2019/10/27 22:42, Marc Zyngier wrote:
+> With GICv4.1, VMOVP is extended to allow a default doorbell to be
+> specified, as well as a validity bit for this doorbell. As an added
+> bonus, VMOPVP isn't required anymore of moving a VPE between
+         ^^^^^^
+VMOVP
+
+> redistributors that share the same affinity.
+> 
+> Let's add this support to the VMOVP builder, and make sure we don't
+> issuer the command if we don't really need to.
+
+issue
+
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+
