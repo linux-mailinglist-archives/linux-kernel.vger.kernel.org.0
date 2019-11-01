@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B09F3EC444
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9850BEC446
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfKAOKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:10:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:36030 "EHLO foss.arm.com"
+        id S1728320AbfKAOKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:10:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:36076 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbfKAOKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:10:14 -0400
+        id S1728289AbfKAOKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 10:10:18 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89BFF337;
-        Fri,  1 Nov 2019 07:10:14 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C49D24F2;
+        Fri,  1 Nov 2019 07:10:17 -0700 (PDT)
 Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51CDF3F718;
-        Fri,  1 Nov 2019 07:10:11 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C09BC3F718;
+        Fri,  1 Nov 2019 07:10:14 -0700 (PDT)
 From:   Steven Price <steven.price@arm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -35,14 +35,13 @@ Cc:     Steven Price <steven.price@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org, Alexandre Ghiti <alex@ghiti.fr>,
-        Zong Li <zong.li@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: [PATCH v15 07/23] riscv: mm: Add p?d_leaf() definitions
-Date:   Fri,  1 Nov 2019 14:09:26 +0000
-Message-Id: <20191101140942.51554-8-steven.price@arm.com>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: [PATCH v15 08/23] s390: mm: Add p?d_leaf() definitions
+Date:   Fri,  1 Nov 2019 14:09:27 +0000
+Message-Id: <20191101140942.51554-9-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191101140942.51554-1-steven.price@arm.com>
 References: <20191101140942.51554-1-steven.price@arm.com>
@@ -58,57 +57,39 @@ those of user space. For this it needs to know when it has reached a
 'leaf' entry in the page tables. This information is provided by the
 p?d_leaf() functions/macros.
 
-For riscv a page is a leaf page when it has a read, write or execute bit
-set on it.
+For s390, pud_large() and pmd_large() are already implemented as static
+inline functions. Add a macro to provide the p?d_leaf names for the
+generic code to use.
 
-CC: Palmer Dabbelt <palmer@sifive.com>
-CC: Albert Ou <aou@eecs.berkeley.edu>
-CC: linux-riscv@lists.infradead.org
-Reviewed-by: Alexandre Ghiti <alex@ghiti.fr>
-Reviewed-by: Zong Li <zong.li@sifive.com>
-Acked-by: Paul Walmsley <paul.walmsley@sifive.com> # for arch/riscv
+CC: Heiko Carstens <heiko.carstens@de.ibm.com>
+CC: Vasily Gorbik <gor@linux.ibm.com>
+CC: Christian Borntraeger <borntraeger@de.ibm.com>
+CC: linux-s390@vger.kernel.org
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/riscv/include/asm/pgtable-64.h | 7 +++++++
- arch/riscv/include/asm/pgtable.h    | 7 +++++++
- 2 files changed, 14 insertions(+)
+ arch/s390/include/asm/pgtable.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-index 74630989006d..4c4d2c65ba6c 100644
---- a/arch/riscv/include/asm/pgtable-64.h
-+++ b/arch/riscv/include/asm/pgtable-64.h
-@@ -43,6 +43,13 @@ static inline int pud_bad(pud_t pud)
- 	return !pud_present(pud);
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 36c578c0ff96..acab5a455490 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -675,6 +675,7 @@ static inline int pud_none(pud_t pud)
+ 	return pud_val(pud) == _REGION3_ENTRY_EMPTY;
  }
  
-+#define pud_leaf	pud_leaf
-+static inline int pud_leaf(pud_t pud)
-+{
-+	return pud_present(pud) &&
-+	       (pud_val(pud) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC));
-+}
-+
- static inline void set_pud(pud_t *pudp, pud_t pud)
++#define pud_leaf	pud_large
+ static inline int pud_large(pud_t pud)
  {
- 	*pudp = pud;
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 7255f2d8395b..3aa972dda75a 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -130,6 +130,13 @@ static inline int pmd_bad(pmd_t pmd)
- 	return !pmd_present(pmd);
+ 	if ((pud_val(pud) & _REGION_ENTRY_TYPE_MASK) != _REGION_ENTRY_TYPE_R3)
+@@ -692,6 +693,7 @@ static inline unsigned long pud_pfn(pud_t pud)
+ 	return (pud_val(pud) & origin_mask) >> PAGE_SHIFT;
  }
  
-+#define pmd_leaf	pmd_leaf
-+static inline int pmd_leaf(pmd_t pmd)
-+{
-+	return pmd_present(pmd) &&
-+	       (pmd_val(pmd) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC));
-+}
-+
- static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
++#define pmd_leaf	pmd_large
+ static inline int pmd_large(pmd_t pmd)
  {
- 	*pmdp = pmd;
+ 	return (pmd_val(pmd) & _SEGMENT_ENTRY_LARGE) != 0;
 -- 
 2.20.1
 
