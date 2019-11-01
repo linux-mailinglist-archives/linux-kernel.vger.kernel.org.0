@@ -2,108 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E2DEC4F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D488EC509
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:50:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfKAOq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:46:58 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16464 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbfKAOq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:46:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 07:46:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,255,1569308400"; 
-   d="scan'208";a="351970577"
-Received: from cepartan-mobl3.ger.corp.intel.com (HELO [10.249.40.248]) ([10.249.40.248])
-  by orsmga004.jf.intel.com with ESMTP; 01 Nov 2019 07:46:55 -0700
-Subject: Re: [PATCH] drm/atomic: swap_state should stall on cleanup_done
-To:     Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20191031223641.19208-1-robdclark@gmail.com>
-From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <7b97af56-be9b-ed2e-f692-36433a889d6e@linux.intel.com>
-Date:   Fri, 1 Nov 2019 15:46:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727629AbfKAOuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:50:01 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51954 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbfKAOuB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 10:50:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1Emkb9163690;
+        Fri, 1 Nov 2019 14:49:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=b/zsX7xacin0Z3COe7oVyGWvFG2k0RA9kiXi2XBFznQ=;
+ b=WgUzmNLs7VBxNg9uI6rVQprNhCqjhZCJwOL5YfYMxfICPNuE5PLZC2ZmxYP4fGyYNtru
+ /CSbxn73QhZUi5Lc4pgqXcJ/rPP3MWAS+3IduTdPh4zy8+wuw6bhkboWaau6+Rr6DpsF
+ UMBMWu4bvt4A/tiPrl0s9Vp17sXsJytLSWX1eVG9MWsA6OqA2E2nyCMIY3VACiCOc24w
+ +yse3irkV/0mvVH63Jqg5gsDn8J4z48/REj3RihTJZYC6H4CnyrEAsWM/7X6d8oda94P
+ NpfWy/3uamQktdIXAgheP9SR7Hibpxq8CPWSvidfgsLu9y7U7g7TX7t3+YkVoC2L68iU cg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vxwhftcax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 14:49:32 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1Em4F5020552;
+        Fri, 1 Nov 2019 14:49:31 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2vyqpgbmky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 14:49:31 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA1EnTiP011122;
+        Fri, 1 Nov 2019 14:49:29 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Nov 2019 07:49:28 -0700
+Date:   Fri, 1 Nov 2019 17:49:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Mao Wenan <maowenan@huawei.com>, Bruce Fields <bfields@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Dros Adamson <dros@primarydata.com>,
+        jeff.layton@primarydata.com, richard.sharpe@primarydata.com,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] nfsd: Drop LIST_HEAD where the variable it
+ declares is never used.
+Message-ID: <20191101144921.GA10409@kadam>
+References: <20191101114054.50225-1-maowenan@huawei.com>
+ <7E1B5E17-FF35-472B-8316-D4C01085BAE4@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20191031223641.19208-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7E1B5E17-FF35-472B-8316-D4C01085BAE4@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=945
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911010148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911010149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 31-10-2019 om 23:36 schreef Rob Clark:
-> From: Rob Clark <robdclark@chromium.org>
->
-> Stalling on cleanup_done ensures that any atomic state related to a
-> nonblock commit no longer has dangling references to per-object state
-> that can be freed.
->
-> Otherwise, if a !nonblock commit completes after a nonblock commit has
-> swapped state (ie. the synchronous part of the nonblock commit comes
-> before the !nonblock commit), but before the asynchronous part of the
-> nonblock commit completes, what was the new per-object state in the
-> nonblock commit can be freed.
->
-> This shows up with the new self-refresh helper, as _update_avg_times()
-> dereferences the original old and new crtc_state.
->
-> Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
-> Other possibilities:
-> 1) maybe block later before freeing atomic state?
-> 2) refcount individual per-object state
->
->  drivers/gpu/drm/drm_atomic_helper.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 3ef2ac52ce94..a5d95429f91b 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -2711,7 +2711,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  			if (!commit)
->  				continue;
->  
-> -			ret = wait_for_completion_interruptible(&commit->hw_done);
-> +			ret = wait_for_completion_interruptible(&commit->cleanup_done);
->  			if (ret)
->  				return ret;
->  		}
-> @@ -2722,7 +2722,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  			if (!commit)
->  				continue;
->  
-> -			ret = wait_for_completion_interruptible(&commit->hw_done);
-> +			ret = wait_for_completion_interruptible(&commit->cleanup_done);
->  			if (ret)
->  				return ret;
->  		}
-> @@ -2733,7 +2733,7 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
->  			if (!commit)
->  				continue;
->  
-> -			ret = wait_for_completion_interruptible(&commit->hw_done);
-> +			ret = wait_for_completion_interruptible(&commit->cleanup_done);
->  			if (ret)
->  				return ret;
->  		}
+On Fri, Nov 01, 2019 at 09:36:27AM -0400, Chuck Lever wrote:
+> Hi Mao-
+> 
+> > On Nov 1, 2019, at 7:40 AM, Mao Wenan <maowenan@huawei.com> wrote:
+> > 
+> > The declarations were introduced with the file, but the declared
+> > variables were not used.
+> > 
+> > Fixes: 65294c1f2c5e ("nfsd: add a new struct file caching facility to nfsd")
+> 
+> I'm not sure a Fixes: tag is necessary here? 65294c1f2c5e
+> works fine without this change, and it's not something we
+> would need to backport into stable kernels.
+> 
+> This is more of a clean up patch.
+> 
 
-Nack, hw_done means all new_crtc_state (from the old commit pov) dereferences are done.
+Fixes is not really related to backports or stable.  I would agree that
+this isn't a bug but just a cleanup, but the problem is that other
+people want Fixes tags for everything...
 
-Self refresh helpers should be fixed. :)
+Yesterday I sent a cleanup patch and I almost put the Fixes tag under
+the --- cut off but in the end I just deleted it...  It's hard to know
+what the right thing is.
+
+regards,
+dan carpenter
 
