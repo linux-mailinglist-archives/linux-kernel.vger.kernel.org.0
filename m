@@ -2,193 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3078AEBB6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 01:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C72E4EBB77
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 01:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbfKAAhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 20:37:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbfKAAhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 20:37:24 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6071D208C0;
-        Fri,  1 Nov 2019 00:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572568642;
-        bh=X7PGfTZb6vy46ECBGjr+dLdCmt0mmJht7OBTur5NxLw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H7LOwc8YqlEprmLqx4LtgPoao/fSrLzNGte5mtGtHY4inUWE685khui45Q5AbHpgF
-         WEj07ulmzOyQV1lyWJcw2KIMyn2XBv+VZjZZCaUPIOWI2YKeuCPomVb30Fwsq9f8cJ
-         qhpRVtJntsBM9R7HI9SwsqA+z37PWX7dZp6RQzZc=
-Date:   Thu, 31 Oct 2019 17:37:21 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     <linux-kernel@vger.kernel.org>, yuqi jin <jinyuqi@huawei.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH] lib: optimize cpumask_local_spread()
-Message-Id: <20191031173721.e2a40b037799a149433a4867@linux-foundation.org>
-In-Reply-To: <1572501813-2125-1-git-send-email-zhangshaokun@hisilicon.com>
-References: <1572501813-2125-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728648AbfKAAsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 20:48:03 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54910 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbfKAAsC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 20:48:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c12so3269493wml.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 17:48:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZDcOoW8/vlglme1diIrYvcv1YvXU5Io8xV2HIpph938=;
+        b=cgIvAdZuUV1fPd0PaBE3MA1gBAOGhnKyw6aaaTr5bFYRq8LMHOYTIL2YyMcndnnbRw
+         Fo1+QfleJcoQNdA1L6P9bRRH+Mm+yuCIQUK+CV2SQPowXOWy0EVHGkFkRfyEmGWEcwXW
+         0vuSHGxkcQkb47q7kK094hWvfjG2DjEoPeNkjHt+ROKkNDgTI+Zg+gkJTPWlXPnOiEJB
+         2NYQWwQohC8NGvxkbbHs9LBT6+mF/N/rZH3CyyZ3JuokxEq9qlZUDD+8jg7acMkI+Za8
+         5TTNmAxnWYrAS1KjoPBlqZnHyfPA9K/X4Bym3LsIGHnQ/al+S2VCEQ9IGtwlOK5dlxCz
+         FoIw==
+X-Gm-Message-State: APjAAAVsGJbHDsoQgODTo6GhQjkppURjyHAEND+Ccw3Nw+36yc2lOXhj
+        vw7EXXctIlZ08ESQ5k5AoAMzF2yP9161H2Zofg4=
+X-Google-Smtp-Source: APXvYqyFXMW4YTYm8Ru+2ngdCwqEnFaOn00xb8Kyb/FbCpc0gaoQJO6iMZ6LOAuAk2FLrTM5pmxnGdJVLInk6Mi+8x0=
+X-Received: by 2002:a1c:7ec2:: with SMTP id z185mr7713347wmc.79.1572569280606;
+ Thu, 31 Oct 2019 17:48:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191016125019.157144-1-namhyung@kernel.org> <20191016125019.157144-2-namhyung@kernel.org>
+ <20191024174433.GA3622521@devbig004.ftw2.facebook.com> <CAM9d7chWpj105TYR0qP3T8FJ=-2wjp+sh6Rk8zkvJb_ugtL3Dw@mail.gmail.com>
+ <20191025110623.GH3622521@devbig004.ftw2.facebook.com> <20191025184714.GJ3622521@devbig004.ftw2.facebook.com>
+ <CAM9d7cguuEC1bpYgqX58KqX-H9C2B=XQE+grkxdsG2MQ8WyJnA@mail.gmail.com>
+In-Reply-To: <CAM9d7cguuEC1bpYgqX58KqX-H9C2B=XQE+grkxdsG2MQ8WyJnA@mail.gmail.com>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Fri, 1 Nov 2019 09:47:49 +0900
+Message-ID: <CAM9d7ci3vXGGYD-Kgpc6-EmggSpc31ZETyB5dwfmAf26kSM6rg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cgroup: Add generation number with cgroup id
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Song Liu <liu.song.a23@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2019 14:03:33 +0800 Shaokun Zhang <zhangshaokun@hisilicon.com> wrote:
+Hi Tejun,
 
-> From: yuqi jin <jinyuqi@huawei.com>
-> 
-> In the multi-processor and NUMA system, A device may have many numa
-> nodes belonging to multiple cpus. When we get a local numa, it is better
-> to find the node closest to the local numa node to return instead of
-> going to the online cpu immediately.
-> 
-> For example, In Huawei Kunpeng 920 system, there are 4 NUMA node(0 -3)
-> in the 2-socket system(0 - 1). If the I/O device is in socket1
-> and the local NUMA node is 2, we shall choose the non-local node3 in
-> the same socket when cpu core in NUMA node2 is less that I/O requirements.
-> If we directly pick one cpu core from all online ones, it may be in
-> the another socket and it is not friendly for performance.
-> 
-> ...
+On Sat, Oct 26, 2019 at 8:42 PM Namhyung Kim <namhyung@kernel.org> wrote:
 >
-> Changes from RFC:
->      Address Michal Hocko's comment: Use GFP_ATOMIC instead of GFP_KERNEL
+> On Sat, Oct 26, 2019 at 3:47 AM Tejun Heo <tj@kernel.org> wrote:
+> > So, something like the following.  Just to show the direction.  Only
+> > compile tested and full of holes.  I'll see if I can get it working
+> > over the weekend.
 
-Are you sure this is necessary?  cpumask_local_spread() is typically
-called when a device driver is initializing irq affinities, and
-sleeping allocations are usually OK at driver initialization time.  If
-there is some driver which is calling cpumask_local_spread() from
-atomic context, I bet it's pretty easy to fix.
+Any update on this?  In the meantime, I played with it and
+managed to run the cgroup selftest.  I uploaded it to my tree at
 
-> --- a/lib/cpumask.c
-> +++ b/lib/cpumask.c
-> @@ -192,6 +192,33 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
->  }
->  #endif
->  
-> +static void calc_node_distance(int *node_dist, int node)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < nr_node_ids; i++)
-> +		node_dist[i] = node_distance(node, i);
-> +}
-> +
-> +static int find_nearest_node(int *node_dist, bool *used_flag)
+  git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
 
-The name "used_flag" is rather redundant for a thing of type bool - we
-know it's a flag!  "used" would suffice.
+on the "cgroup/id-rework" branch.  I can send it to the list
+if you want.
 
-> +{
-> +	int i, min_dist = node_dist[0], node_id = -1;
-> +
-> +	for (i = 0; i < nr_node_ids; i++)
-> +		if (used_flag[i] == 0) {
-> +			min_dist = node_dist[i];
-> +			node_id = i;
-> +			break;
-> +		}
-> +	for (i = 0; i < nr_node_ids; i++)
-> +		if (node_dist[i] < min_dist && used_flag[i] == 0) {
-> +			min_dist = node_dist[i];
-> +			node_id = i;
-> +		}
-> +
-> +	return node_id;
-> +}
-> +
->  /**
->   * cpumask_local_spread - select the i'th cpu with local numa cpu's first
->   * @i: index number
-> @@ -205,7 +232,8 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
->   */
->  unsigned int cpumask_local_spread(unsigned int i, int node)
-
-Yes, this has become quite an expensive function.  That seems harmless
-given the typical callsites.
-
->  {
-> -	int cpu;
-> +	int cpu, j, id, *node_dist;
-> +	bool *used_flag;
->  
->  	/* Wrap: we always want a cpu. */
->  	i %= num_online_cpus();
-> @@ -215,19 +243,45 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
->  			if (i-- == 0)
->  				return cpu;
->  	} else {
-> -		/* NUMA first. */
-> -		for_each_cpu_and(cpu, cpumask_of_node(node), cpu_online_mask)
-> -			if (i-- == 0)
-> -				return cpu;
-> +		node_dist = kmalloc_array(nr_node_ids, sizeof(int), GFP_ATOMIC);
-> +		if (!node_dist)
-> +			for_each_cpu(cpu, cpu_online_mask)
-> +				if (i-- == 0)
-> +					return cpu;
->  
-> -		for_each_cpu(cpu, cpu_online_mask) {
-> -			/* Skip NUMA nodes, done above. */
-> -			if (cpumask_test_cpu(cpu, cpumask_of_node(node)))
-> -				continue;
-> +		used_flag = kmalloc_array(nr_node_ids, sizeof(bool), GFP_ATOMIC);
-
-This could actually be an array of bits (include/linux/bitmap.h), but
-it hardly seems important.
-
-In fact with CONFIG_NODES_SHIFT <= 10, such a bitmap would have max
-size of 128 bytes and could be a local.  But again, this is unimportant
-as long as the other kmalloc is in there.
-
-
-> +		if (!used_flag)
-> +			for_each_cpu(cpu, cpu_online_mask)
-> +				if (i-- == 0) {
-> +					kfree(node_dist);
-> +					return cpu;
-> +				}
-> +		memset(used_flag, 0, nr_node_ids * sizeof(bool));
->  
-> -			if (i-- == 0)
-> -				return cpu;
-> +		calc_node_distance(node_dist, node);
-> +		for (j = 0; j < nr_node_ids; j++) {
-> +			id = find_nearest_node(node_dist, used_flag);
-> +			if (id < 0)
-> +				break;
-> +			for_each_cpu_and(cpu,
-> +				cpumask_of_node(id), cpu_online_mask)
-> +				if (i-- == 0) {
-> +					kfree(node_dist);
-> +					kfree(used_flag);
-> +					return cpu;
-> +				}
-> +			used_flag[id] = 1;
->  		}
-> +
-> +		for_each_cpu(cpu, cpu_online_mask)
-> +			if (i-- == 0) {
-> +				kfree(node_dist);
-> +				kfree(used_flag);
-> +				return cpu;
-> +			}
-> +
-> +		kfree(node_dist);
-> +		kfree(used_flag);
->  	}
->  	BUG();
->  }
-
+Thanks,
+Namhyung
