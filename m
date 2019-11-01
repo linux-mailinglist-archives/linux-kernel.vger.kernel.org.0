@@ -2,123 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F1F0EC9CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4515DEC9E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfKAUqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:46:19 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49190 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfKAUqS (ORCPT
+        id S1728113AbfKAUsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:48:08 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36754 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbfKAUsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:46:18 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA1KkAFO125498;
-        Fri, 1 Nov 2019 15:46:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572641170;
-        bh=zybgR7hDF/o4db+iKiuX3H8IVivapUrRQjOn5yGa7K8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=otXhBIFK/UWifwkl7A3yKL1MaKFpvk1+SsSgCvQpHNfBhk8PnSMnhQEnZNzwgOFyF
-         xLYwYNBDB1UhUieFQKE+yzeXoGf3ni5chqRp2+k6XsXPq59N6FQUMQoMF5E2tEFnAD
-         WQ1xdXTH59r03zrOb+IUWXr1nwV4Puyqp3+QY3do=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1KkAJG041314;
-        Fri, 1 Nov 2019 15:46:10 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 1 Nov
- 2019 15:45:56 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 1 Nov 2019 15:45:56 -0500
-Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1Kk6n3017157;
-        Fri, 1 Nov 2019 15:46:07 -0500
-Subject: Re: [PATCH v5 net-next 06/12] net: ethernet: ti: introduce cpsw
- switchdev based driver part 1 - dual-emac
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <netdev@vger.kernel.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-References: <20191024100914.16840-1-grygorii.strashko@ti.com>
- <20191024100914.16840-7-grygorii.strashko@ti.com>
- <20191029122422.GL15259@lunn.ch>
- <d87c72e1-cb91-04a2-c881-0d8eec4671e2@ti.com>
- <20191101203913.GD31534@lunn.ch>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <8f3eb934-7dcd-b43a-de96-6a864ef67c92@ti.com>
-Date:   Fri, 1 Nov 2019 22:46:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191101203913.GD31534@lunn.ch>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 1 Nov 2019 16:48:07 -0400
+Received: by mail-qt1-f194.google.com with SMTP id y10so7903772qto.3;
+        Fri, 01 Nov 2019 13:48:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=WbkXhr26XYd0AF1obLB0bhvMsDV/wAE5Um2xcjbSmZc=;
+        b=dMMrN5NwUAfFqcKZvrysRquTSCfuaSsDXyTxAWMZOy1ARvC44afagLZJAKMyUj9dnE
+         tK932SpxQ50JIlOTYp1kyVc3OEUnsJwnmesCypbWKzRx5WxJfN1ME0quDebrSSCqBxhu
+         wYtTDkTdbCpDIdRBj5jFpN+rC76uLDklNPICXZ6301MTj+k+4VJYW0IhFDfHqZR15Gep
+         q1SzSrwkZ/4b7HqwnfKXzfQWTADGlsBgt9nCsHHwCuiiMhQLBoVrfVKzzY1O3sSA4qyg
+         cl6teHpl2ZqolYhDt6myjMFHk/bAtERcPeh7738ZLUQlFkrihXpuTCR3hvXdL4vnZ1Zj
+         LDIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=WbkXhr26XYd0AF1obLB0bhvMsDV/wAE5Um2xcjbSmZc=;
+        b=KX6yGZ3M+iT9jH8glzxeFSD9xMbQ+fno1CWMAFUpGe/rETlXoXffzATJ5TF3jpQ1/J
+         HimIhtx+KfJM3mDKVVtkupXGD888uCzEbze19M6JSAyCj4k3IXBM0LNny9FpJO0v16PO
+         g5Rc/yHmShlhRD+LoegGqxNhvgt7L7lzgIoLs0jDguXVkxSJhMbuXZuDOfKCtyVkBCke
+         3NYlHNo5lzcOu3Af0O+glwMffsxD5AG8IDbqdaIeRicTK3beSbSUns4HP7eRU5BjDL36
+         5lckgPY4lhfuqizA1g8xffxPpag7/a4r83kdrVGhLnn5obzO4dFNamaPD9HUbfC23Z96
+         Tk6Q==
+X-Gm-Message-State: APjAAAVGd7QWB52Zw1i8UOZXp0X6LPuRfdlQhPkx+/bJ64wv0fS87pwR
+        81jpCxiY6PqGLVKCuTSO9jo=
+X-Google-Smtp-Source: APXvYqyBDrpn/qo4CHUifK6KNQhm/sqT8FvN6KY9uvEIL5he7EJl0ACsDZ6k6LH32r1dU0cnXyBGAA==
+X-Received: by 2002:ad4:4489:: with SMTP id m9mr12256740qvt.126.1572641286301;
+        Fri, 01 Nov 2019 13:48:06 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id e3sm3818162qkg.136.2019.11.01.13.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 13:48:05 -0700 (PDT)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Marek Vasut <marex@denx.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Adam Ford <aford173@gmail.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
+Date:   Fri,  1 Nov 2019 16:48:01 -0400
+Message-Id: <20191101204801.16328-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190302141704.32547-1-marex@denx.de>
+References: <20190302141704.32547-1-marex@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dmitry / Marek,
 
+There have been two attempts to add ILI2117 touch controller support.
+I was about to add a third, but luckily I checked the mailing list
+before writing any code :)
 
-On 01/11/2019 22:39, Andrew Lunn wrote:
->>>> +static const struct devlink_ops cpsw_devlink_ops;
->>>
->>> It would be nice to avoid this forward declaration.
->>
->> It's not declaration, it's definition of devlink_ops without any standard callbacks implemented.
-> 
-> Ho Grygorii
-> 
-> Ah, yes.
-> 
-> How about
-> 
-> = {
->    };
-> 
-> to make it clearer?
+Adding this support would clearly be beneficial for the common good.
+What can we do to get this in motion again?
 
-NP
+Last time I checked, Marek posted a patch which added the 2117, but Dmitry
+objected, because the code became too unwieldy. Dmitry then posted a cleanup
+patch, which did not work for Marek. So everything came to a halt.
+See:
+https://patchwork.kernel.org/patch/10836651/
+https://www.spinics.net/lists/linux-input/msg62670.html
 
-> 
->>>> +static const struct devlink_param cpsw_devlink_params[] = {
->>>> +	DEVLINK_PARAM_DRIVER(CPSW_DL_PARAM_ALE_BYPASS,
->>>> +			     "ale_bypass", DEVLINK_PARAM_TYPE_BOOL,
->>>> +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
->>>> +			     cpsw_dl_ale_ctrl_get, cpsw_dl_ale_ctrl_set, NULL),
->>>> +};
->>>
->>> Is this documented?
->>
->> In patch 9. But I'll update it and add standard devlink parameter definition, like:
->>
->> ale_bypass	[DEVICE, DRIVER-SPECIFIC]
->> 		Allows to enable ALE_CONTROL(4).BYPASS mode for debug purposes
->> 		Type: bool
->> 		Configuration mode: runtime
-> 
-> And please you the standard file naming and location,
-> Documentation/networking/devlink-params-foo.txt
-Ok. I will.
-But I'd like to clarify:
-- drivers documentation placed in ./Documentation/networking/device_drivers/ti/
-so could you confirm pls, that you want me to add devlink-params documentation in separate file
-and palace it in ./Documentation/networking/ folder directly?
-   
+Dmitry, would you perhaps be willing to accept Marek's patch, and perform the
+cleanup later?
 
--- 
-Best regards,
-grygorii
+Marek, would you perhaps be willing to invest some time to debug Dmitry's
+cleanup patch?
+
+On my end, I've reviewed Dmitry's patch and it looks mostly ok. I saw one
+difference with ILI210X which could explain Marek's results, but I can't be
+sure - because I could not locate the 210X's register layout on the web.
+
+In Dmitry's patch, we see:
+
+	touch = ili210x_report_events(priv, touchdata);
+	if (touch || chip->continue_polling(touchdata))
+		schedule_delayed_work(&priv->dwork,
+				      msecs_to_jiffies(priv->poll_period));
+
+but this is not exactly equivalent to the original. Because in the original,
+the 210X's decision to kick off delayed work is completely independent of
+the value of touch.
+
+Suggested replacement:
+
+	touch = ili210x_report_events(priv, touchdata);
+	if (chip->continue_polling)
+		touch = chip->continue_polling(touchdata);
+
+Sven
