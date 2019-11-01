@@ -2,176 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E48EBE30
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 07:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70DBFEBE52
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730089AbfKAGzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 02:55:41 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:55131 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729234AbfKAGzj (ORCPT
+        id S1729680AbfKAHLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 03:11:37 -0400
+Received: from mout-u-107.mailbox.org ([91.198.250.252]:34466 "EHLO
+        mout-u-107.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbfKAHLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 02:55:39 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191101065537epoutp01cda44e9c254ea17c755e9ae9b149819b~S931cuKfx0431304313epoutp01F
-        for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2019 06:55:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191101065537epoutp01cda44e9c254ea17c755e9ae9b149819b~S931cuKfx0431304313epoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572591337;
-        bh=6y5zp92aW7WyXIDBavkDiN5CumCyAgaC0bAZLoSm1yw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CJ2q7aZ1IB0XeQ7zBJ5isJU65mkxJEVnXiLqlNtFF8pK7yAFfyg2d/43f16WAOUtU
-         FeGCEDHpmlxvIQf+FvJlakXdimDlREtbx9eUep0qIlOluThP+5+9Kpn7W3n3186WGt
-         V5J7JxdFQBvzJSpC2ouFUAjVsg26N37t82ObFKZ4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191101065537epcas1p20269cbb96d68c66c22a6b7333ec9eb2a~S931BNrMI1271412714epcas1p2U;
-        Fri,  1 Nov 2019 06:55:37 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 474Cd26YCnzMqYlv; Fri,  1 Nov
-        2019 06:55:34 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3F.A8.04068.6E6DBBD5; Fri,  1 Nov 2019 15:55:34 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191101065534epcas1p487ab18951c725c79495f546b8ff13bff~S93yl6a4I2361823618epcas1p4H;
-        Fri,  1 Nov 2019 06:55:34 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191101065534epsmtrp2df45c04e6aaa789ae1b25bf2be816d9e~S93ylHU4h0075400754epsmtrp2M;
-        Fri,  1 Nov 2019 06:55:34 +0000 (GMT)
-X-AuditID: b6c32a39-f47ff70000000fe4-a4-5dbbd6e69c6f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B4.59.24756.6E6DBBD5; Fri,  1 Nov 2019 15:55:34 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191101065534epsmtip232091287ef28c718a1de871fa0077dad~S93yV-Gt70302403024epsmtip22;
-        Fri,  1 Nov 2019 06:55:34 +0000 (GMT)
-Subject: Re: [PATCH v7 15/19] PM / devfreq: tegra30: Disable consecutive
- interrupts when appropriate
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <1e363539-c9fb-0b1c-8cf7-b1cf320a2d28@samsung.com>
-Date:   Fri, 1 Nov 2019 16:01:05 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Fri, 1 Nov 2019 03:11:37 -0400
+X-Greylist: delayed 450 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 03:11:36 EDT
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-u-107.mailbox.org (Postfix) with ESMTPS id 474Cps2xbrzKnpg;
+        Fri,  1 Nov 2019 08:04:05 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=loebl.cz; s=MBO0001;
+        t=1572591843;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wYB7gWeMkic0uqXrLTJzZICWUYeAmNA/YASt+6ZikrE=;
+        b=Tz4BfjhKysPUJVfZ/CZWodiCVW84sKynXsVw7Hjl/ICijY4EXgI0ItfbXyH/jRrUfJD+Ok
+        Cexz7QCEGjW+GqC2Xk0iQARIIQvIQatpbmsX+Wdap2SDqFjyMIlAGETAdWaPr4vBwyjMyF
+        HHMkXS18WaTMyfTACaDrI3eVwvhIiQdnTLmtFVuZwGEuJQRdUw3+vP4frz212POUsW9x0+
+        GxpOKv89W8ps/KjeGorgJHCCb6Qz+DYIUbAjw9hwo+Wt0GBBWKwzhE92bpXKS/AWrC++Sa
+        rEUJnl1ZmOwf19pLmWRVODJctPaUhkm6Yz69VQogOUaovinX8t4gEK6Y2/aAmA==
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 2Kt61vzO82YB; Fri,  1 Nov 2019 08:04:02 +0100 (CET)
+From:   =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
+To:     linux-kernel@vger.kernel.org
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
+Subject: [PATCH] usb: serial: mos7840: Add USB ID to support Moxa UPort 2210
+Date:   Fri,  1 Nov 2019 08:01:50 +0100
+Message-Id: <20191101070150.4216-1-pavel@loebl.cz>
 MIME-Version: 1.0
-In-Reply-To: <20191029220019.26773-16-digetx@gmail.com>
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa1BMYRieb8/p7KmxfFbxyiCHGXTd07Y5IXIZdlxG4zY0kjPtsTXtbc7Z
-        EH/cV5EhY6YWyW0o45JW2tTE5hbCCOOWCTEYckkuI8OeTkb/nu95nu993vf7XprQnqZC6Uyb
-        UxBtvIWhgsjK+tExUa8fnE/VlTTFc8c/v0TcRvdBkmtc/17NNVXvpbj2/EuIy/3qprgn645R
-        XOPrmdzP6mKS237iLpUUZKxqPoyMXnez2pi/oY0ybveUIWP7mSHJASlZ4zME3iSIYYIt3W7K
-        tJkTmZnz0qakGeJ1bBSbwI1hwmy8VUhkps5KjpqWafE3xYSt4C3ZfiqZlyQmZsJ40Z7tFMIy
-        7JIzkREcJosjwREt8VYp22aOTrdbx7I6XazBb1yWlXH9Vy3heKNd9fT5b7QWneyThwJpwHHQ
-        4qkh8lAQrcVVCC48KkLK4QuC2w+3divfEDSW/ib+Xanc9IRUhFoEVwvWdbs+Ivje3tjl6oeX
-        w4UPRylZCMYHVXDi8rkugcCLod57XCVjCodD3ZuHlIz74GFw/8dLfzhNa/AEKHclyTSJR8CN
-        zg5CpkPwIrjRwcu0BveFhqJWUqYD8Rj448lRig+Ax637VQoeChvO7unu2aWGsvdxsh3wVOgs
-        sSp0P3h31aNWcCi0t9VSCl4DpQ2XupoHvAWBp+5OgCLooe7ILpVch8Cj4VR1jEIPA++vfUiJ
-        7Q1tHdsClCgNbNmsVSzDoamlWaXggXDIlUvtQIy7xyzuHgO4ewzg/h9Wgsgy1F9wSFazILEO
-        Q8+vPoO6tjU8oQpduTXLhzCNmF6awrzzqdoAfoWUY/UhoAkmWHPupJ/SmPic1YJoTxOzLYLk
-        Qwb/S+8kQkPS7f7dtznTWEOsXq/n4th4A8syAzSTjh5J1WIz7xSyBMEhiP/uqejA0LUo2FV0
-        7+3c6SGqzfS2ZxPv5nzbr/N1+FCnON9VeGtcftKniIVi3oJRs+ckV9avLM01H9AENwyeXTCS
-        rIgsLK9+1OKJ/Ci9q5kxNvLz5PW7L84oD7r/ovVO7CD7iKUH7N/Da2uKK1KuCaeO3Yx4vGQe
-        fqH3biqepO9rim4exKobXqV45zKklMGz4YQo8X8BnnTgQsMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSvO6za7tjDW5vkLdY/fExo0XLrEUs
-        Fmeb3rBbXN41h83ic+8RRovOL7PYLG43rmCzOPvM2+LnrnksFn1rL7E5cHnsuLuE0WPnrLvs
-        Hr3N79g8+rasYvT4vEkugDWKyyYlNSezLLVI3y6BK+PU773MBS+EKu48/MvYwLiOv4uRk0NC
-        wERiW+ttli5GLg4hgd2MEufX/2SDSEhKTLt4lLmLkQPIFpY4fLgYouYto8TsdbdZQWqEBdIk
-        DrxdzgaSEBFYwiRx9styZpAEs0CkRM/cLWwQHdsYJS71LQKbyiagJbH/xQ0wm19AUeLqj8eM
-        IBt4BewkNrY7gIRZBFQkTv/5CjZHVCBC4vn2G4wgNq+AoMTJmU9YQMo5Bcwl/m+phFilLvFn
-        3iWoteISt57MZ4Kw5SWat85mnsAoPAtJ9ywkLbOQtMxC0rKAkWUVo2RqQXFuem6xYYFhXmq5
-        XnFibnFpXrpecn7uJkZwpGlp7mC8vCT+EKMAB6MSD++Mrt2xQqyJZcWVuYcYJTiYlUR4t68D
-        CvGmJFZWpRblxxeV5qQWH2KU5mBREud9mncsUkggPbEkNTs1tSC1CCbLxMEp1cBYJuIjcdH/
-        Wc6e1vSGbXVvzcqjdiexr/m0ZpaRmHjAWdY2y53s61RKZqblBKpJrInJvzx7WZh61qudNeYz
-        Jq6SutHJulBrjn/grSNbd8vqOlyZkPk4VfnSJd+VWQExnreXzDy3pmzTkX9qC5SjP65zXTFJ
-        vuve/lynZ1MLP95xfFiv9eOGzd3XSizFGYmGWsxFxYkApulOP7ACAAA=
-X-CMS-MailID: 20191101065534epcas1p487ab18951c725c79495f546b8ff13bff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191029220657epcas3p42c1eccf4499f36a57cdbd89a750fb60b
-References: <20191029220019.26773-1-digetx@gmail.com>
-        <CGME20191029220657epcas3p42c1eccf4499f36a57cdbd89a750fb60b@epcas3p4.samsung.com>
-        <20191029220019.26773-16-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 10. 30. 오전 7:00, Dmitry Osipenko wrote:
-> Consecutive interrupts should be disabled when boosting is completed.
-> 
-> Currently the disabling of "lower" interrupt happens only for MCCPU
-> monitor that uses dependency threshold, but even in a case of MCCPU the
-> interrupt isn't getting disabled if CPU's activity is above the threshold.
-> This results in a lot of dummy interrupt requests. The boosting feature is
-> used by both MCCPU and MCALL, boosting should be stopped once it reaches 0
-> for both of the monitors and regardless of the activity level.
-> 
-> The boosting stops to grow once the maximum limit is hit and thus the
-> "upper" interrupt needs to be disabled when the limit is reached.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index a9336cf4b37a..b745a973c35a 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -259,8 +259,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->  
->  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
->  
-> -		if (dev->boost_freq >= tegra->max_freq)
-> +		if (dev->boost_freq >= tegra->max_freq) {
-> +			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->  			dev->boost_freq = tegra->max_freq;
-> +		}
->  	} else if (intr_status & ACTMON_DEV_INTR_CONSECUTIVE_LOWER) {
->  		/*
->  		 * new_boost = old_boost * down_coef
-> @@ -271,15 +273,10 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
->  
->  		dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
->  
-> -		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1))
-> -			dev->boost_freq = 0;
-> -	}
-> -
-> -	if (dev->config->avg_dependency_threshold) {
-> -		if (dev->avg_count >= dev->config->avg_dependency_threshold)
-> -			dev_ctrl |= ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> -		else if (dev->boost_freq == 0)
-> +		if (dev->boost_freq < (ACTMON_BOOST_FREQ_STEP >> 1)) {
->  			dev_ctrl &= ~ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN;
-> +			dev->boost_freq = 0;
-> +		}
->  	}
->  
->  	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
-> 
+Adds usb ID for MOXA UPort 2210. This device contains mos7820 but
+it passes GPIO0 check implemented by driver and it's detected as
+mos7840. Hence product id check is added to force mos7820 mode.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Pavel Löbl <pavel@loebl.cz>
+---
+ drivers/usb/serial/mos7840.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index a698d46ba773..13aff04ad027 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -119,10 +119,13 @@
+ /* This driver also supports
+  * ATEN UC2324 device using Moschip MCS7840
+  * ATEN UC2322 device using Moschip MCS7820
++ * MOXA UPort 2210 device using Moschip MCS7820
+  */
+ #define USB_VENDOR_ID_ATENINTL		0x0557
+ #define ATENINTL_DEVICE_ID_UC2324	0x2011
+ #define ATENINTL_DEVICE_ID_UC2322	0x7820
++#define USB_VENDOR_ID_MXU2      0x110a
++#define MXU2_DEVICE_ID_2210     0x2210
+ 
+ /* Interrupt Routine Defines    */
+ 
+@@ -195,6 +198,7 @@ static const struct usb_device_id id_table[] = {
+ 	{USB_DEVICE(USB_VENDOR_ID_BANDB, BANDB_DEVICE_ID_USOPTL2_4)},
+ 	{USB_DEVICE(USB_VENDOR_ID_ATENINTL, ATENINTL_DEVICE_ID_UC2324)},
+ 	{USB_DEVICE(USB_VENDOR_ID_ATENINTL, ATENINTL_DEVICE_ID_UC2322)},
++	{USB_DEVICE(USB_VENDOR_ID_MXU2, MXU2_DEVICE_ID_2210)},
+ 	{}			/* terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, id_table);
+@@ -2030,6 +2034,11 @@ static int mos7840_probe(struct usb_serial *serial,
+ 		goto out;
+ 	}
+ 
++	if (product == MXU2_DEVICE_ID_2210) {
++		device_type = MOSCHIP_DEVICE_ID_7820;
++		goto out;
++	}
++
+ 	buf = kzalloc(VENDOR_READ_LENGTH, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.24.0.rc1
+
