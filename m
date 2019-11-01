@@ -2,128 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1D0EBB9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:13:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFAE9EBBA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfKABN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 21:13:56 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:38495 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfKABNz (ORCPT
+        id S1729138AbfKABTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 21:19:55 -0400
+Received: from mail-pf1-f174.google.com ([209.85.210.174]:43968 "EHLO
+        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbfKABTy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 21:13:55 -0400
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id xA11DmlE031721;
-        Fri, 1 Nov 2019 10:13:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com xA11DmlE031721
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572570829;
-        bh=gq2ntcwWwPmJbX6KujZPFJEqb9x4csC/Cehv9Nngo0w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Bzq9d8FJodYz9vCF76NW7o+SZ/rPK0s7Th0OZWmA6N+1dAxUQJNuK52yFbN90VdQI
-         uwVbIzRLJbdSy8oE9Hggm7lFTAxl8PEX7a+E1OGUjan7Sy7ROOzI1vDX3KVe3jSGMT
-         f+wAPPDA4utqcaXdKya1zM8aYI9OGyNgzU5V0WCRYHY8aAqZJhQ3PEPsHpjC47vWvz
-         niGHFm3AdBGfgvV0a3DmfQZa6Frnz7RzwLCf15jU9f8TipjC7jHmlEaTEt/rQbdmPb
-         jQDH8jWeRym1XSfBcEunMaj+4d0Maot3Ryespos1dGFoFgGaktyocly3JDDun6yaox
-         ymNSbd+pGr8Zg==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id q16so2492376uao.1;
-        Thu, 31 Oct 2019 18:13:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAVd55hJpo4yYl0wJyUS2xtNMJcD6WPFuvOzUBn7IqmTWw2ro95A
-        +8l2IYjI3uauoIpVXjdSxViXMmBUDeKOkXR3ySI=
-X-Google-Smtp-Source: APXvYqw/PajTAhDXPdOfLwuMzSOHJNtlGhOENV4a2oNhQQR/ci6cU5z+to6L/NH38vwTMbUIwFxp8YSFIT2xqMloz1E=
-X-Received: by 2002:ab0:279a:: with SMTP id t26mr779257uap.40.1572570827659;
- Thu, 31 Oct 2019 18:13:47 -0700 (PDT)
+        Thu, 31 Oct 2019 21:19:54 -0400
+Received: by mail-pf1-f174.google.com with SMTP id 3so5806602pfb.10;
+        Thu, 31 Oct 2019 18:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gQaBGQ6PomMMk6fICSsyptPitn6QlkrChUjI1902+xo=;
+        b=u8NXEsaGgUEedGaGvrG/+WqP+c+dZnr/iumQ15t1Oq2TL1IEWa/pHJCDzYT118O4jM
+         9ZEfhkcub8E6GGSjZqswlJfi8V4sRDkWoXyRWgCIK3S2cKm8gA6mIFSsgtfcQuQTG9Kp
+         2u5obrg1aV+6LbZ4eAcrCWWEmWQg3PfRTpV/izqxgnFxvxfd8k7/+08hvLngqeULqCHv
+         oo4cQg6AaVVYyjhS59KLK6Jq5lGPzZPCNoiin1CGQfUYYnrBhDmfdJO/lIZLYRCt//7a
+         pyV2axp9fOsAh6PF6IqkQIAjsBM5+2ZypTLs8fqrVIMOht5ZKNP1kByHdKaRvHCdoP6E
+         KwVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gQaBGQ6PomMMk6fICSsyptPitn6QlkrChUjI1902+xo=;
+        b=MqgpBH+ilR48hUbrXgA+yhpY35S4RcK4USYvoasNbLAqbi3M0YoCXgzxY5JXUSMsLV
+         jM0iIb3S9ATfpoCk+fsEm/KPvOGpWaY1LuQtnqIl76FBncl6kDLFfDl0/Yi/Rli3pgX6
+         As2jWWkdV3SjozrnJ0cepzYbLiY7Uk2DrttiBQOWfwZyeLqAY30DLSUhzZCmVxBthLSe
+         KSwh84x957r/f1tfkKsC7zP//AvUAaYtzrzn7e8piAbRGbCb3glSlb8ArLv9d0fyCITa
+         WsCFQgJ8MzWPsw3j3BJVnEj5lo/+S8L+Xffwgt+l5F0XsBNRnGTKFGkQQaJ3VsgPgM/J
+         P8vw==
+X-Gm-Message-State: APjAAAUUZelbPRoZAS5MRsQH+RDMwkD4TF9zvVnvCWxhLvMHlr6idp5r
+        AwrqoA2DvOq9Z2UtPXEc1Ak=
+X-Google-Smtp-Source: APXvYqwYz4F5vpSLUpbLeO/wZSv5XQJUO7I8nuhMNYna4xdDshdiMOGFW+JpQQeyI85Q6YWGH7zp+g==
+X-Received: by 2002:a65:4907:: with SMTP id p7mr10286770pgs.429.1572571193557;
+        Thu, 31 Oct 2019 18:19:53 -0700 (PDT)
+Received: from [192.168.1.149] ([42.116.121.151])
+        by smtp.gmail.com with ESMTPSA id d14sm4292916pgm.59.2019.10.31.18.19.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2019 18:19:52 -0700 (PDT)
+Cc:     tranmanphong@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org, corbet@lwn.net, rcu@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org
+Subject: Re: [PATCH] Doc: convert whatisRCU.txt to rst
+To:     paulmck@kernel.org, madhuparnabhowmik04@gmail.com
+References: <20191030233128.14997-1-tranmanphong@gmail.com>
+ <20191031225439.GD20975@paulmck-ThinkPad-P72>
+From:   Phong Tran <tranmanphong@gmail.com>
+Message-ID: <35bb2f18-791a-caf3-957d-01e43a4b3afc@gmail.com>
+Date:   Fri, 1 Nov 2019 08:17:36 +0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191003102915.28301-1-yamada.masahiro@socionext.com>
- <20191003102915.28301-4-yamada.masahiro@socionext.com> <x497e4kluxq.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x497e4kluxq.fsf@segfault.boston.devel.redhat.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 1 Nov 2019 10:13:10 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASmpO6Dn2M1DtoCDs=RM+jwW7_tRhq7nqDU1YZWdRafuw@mail.gmail.com>
-Message-ID: <CAK7LNASmpO6Dn2M1DtoCDs=RM+jwW7_tRhq7nqDU1YZWdRafuw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] modpost: do not set ->preloaded for symbols from Module.symvers
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191031225439.GD20975@paulmck-ThinkPad-P72>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 1:51 AM Jeff Moyer <jmoyer@redhat.com> wrote:
->
-> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
->
-> > Now that there is no overwrap between symbols from ELF files and
-> > ones from Module.symvers.
-> >
-> > So, the 'exported twice' warning should be reported irrespective
-> > of where the symbol in question came from. Only the exceptional case
-> > is when __crc_<sym> symbol appears before __ksymtab_<sym>. This
-> > typically occurs for EXPORT_SYMBOL in .S files.
->
-> Hi, Masahiro,
->
-> After apply this patch, I get the following modpost warnings when doing:
->
-> $ make M=tools/tesing/nvdimm
-> ...
->   Building modules, stage 2.
->   MODPOST 12 modules
-> WARNING: tools/testing/nvdimm/libnvdimm: 'nvdimm_bus_lock' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'nvdimm_bus_unlock' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'is_nvdimm_bus_locked' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'devm_nvdimm_memremap' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'nd_fletcher64' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'to_nd_desc' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> WARNING: tools/testing/nvdimm/libnvdimm: 'to_nvdimm_bus_dev' exported twice. Previous export was in drivers/nvdimm/libnvdimm.ko
-> ...
->
-> There are a lot of these warnings.  :)
+Hi Paul,
+On 11/1/19 5:54 AM, Paul E. McKenney wrote:
+> Could you and Madhuparna please review and test each other's
+> .rst-conversion patches?
+> 
 
-These warnings are correct since
-drivers/nvdimm/Makefile and
-tools/testing/nvdimm/Kbuild
-compile the same files.
+It's fine.
+pull and "make SPHINXDIRS="RCU" htmldocs pdfdocs" rcu dev branch
+without error or warning.
 
-
-
-
->  If I revert this patch, no
-> complaints.
->
-> Cheers,
-> Jeff
->
->
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  scripts/mod/modpost.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > index 5234555cf550..6ca38d10efc5 100644
-> > --- a/scripts/mod/modpost.c
-> > +++ b/scripts/mod/modpost.c
-> > @@ -2457,7 +2457,6 @@ static void read_dump(const char *fname, unsigned int kernel)
-> >               s = sym_add_exported(symname, namespace, mod,
-> >                                    export_no(export));
-> >               s->kernel    = kernel;
-> > -             s->preloaded = 1;
-> >               s->is_static = 0;
-> >               sym_update_crc(symname, mod, crc, export_no(export));
-> >       }
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+thanks,
+Phong.
