@@ -2,161 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 862B0EC784
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7E4EC788
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:29:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfKAR27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 13:28:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727207AbfKAR27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:28:59 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 539D62085B;
-        Fri,  1 Nov 2019 17:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572629337;
-        bh=m02R3EnPw9HBK/yXEyfNbqhE61yOKQTOoNAaAEoR/Gk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2qDebQSS7mENXOUn9hv2TqOTWqQRgqiHFhwkM+1ALr14M42QYl5GXSdhetj/+RkYb
-         T/wGe+xO/pj4RHWtB+LmtZBZ8Spnkggoa83J0JCy1qsgzdw6jJsdnaZKOZuisqMLFH
-         MdvA/QV78Sp0FTsyeMo3TE2ejfHYxgR7m8uAMzzk=
-Date:   Fri, 1 Nov 2019 17:28:51 +0000
-From:   Will Deacon <will@kernel.org>
-To:     "qi.fuli@fujitsu.com" <qi.fuli@fujitsu.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Itaru Kitayama <itaru.kitayama@gmail.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Jon Masters <jcm@jonmasters.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "indou.takao@fujitsu.com" <indou.takao@fujitsu.com>,
-        "maeda.naoaki@fujitsu.com" <maeda.naoaki@fujitsu.com>,
-        "misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
-        "tokamoto@jp.fujitsu.com" <tokamoto@jp.fujitsu.com>
-Subject: Re: [PATCH 0/2] arm64: Introduce boot parameter to disable TLB flush
- instruction within the same inner shareable domain
-Message-ID: <20191101172851.GC3983@willie-the-truck>
-References: <20190617143255.10462-1-indou.takao@jp.fujitsu.com>
- <93009dbd-b31c-7364-86d2-21f0fac36676@jp.fujitsu.com>
+        id S1729144AbfKAR3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 13:29:37 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39064 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbfKAR3g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 13:29:36 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA1HTROJ100272;
+        Fri, 1 Nov 2019 12:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572629367;
+        bh=P2wSfPHYsgTnR6hxVYkmXWydswdHT0FNUtJtvtjwMEI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=vFc9+b10D8of8QGjeW6z4Mwgo9Zim7qfUWRuSkfMCfY6d3pQ1rFTpVMDge5rd+O+s
+         mNy4xcbDdHBBen87MdZPNA/H9VKq0ifRO/DNGI+mRgi3BdL5aq9XVsoDw+a4g5t+4h
+         vb8MyrXb2pSq2yyyHlkzuOrFqdgDww4t/cSMPngM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA1HTRer019560
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Nov 2019 12:29:27 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 1 Nov
+ 2019 12:29:13 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 1 Nov 2019 12:29:13 -0500
+Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1HTN5m046902;
+        Fri, 1 Nov 2019 12:29:24 -0500
+Subject: Re: [PATCH v5 net-next 05/12] dt-bindings: net: ti: add new cpsw
+ switch driver bindings
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <netdev@vger.kernel.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
+References: <20191024100914.16840-1-grygorii.strashko@ti.com>
+ <20191024100914.16840-6-grygorii.strashko@ti.com>
+ <20191029022305.GK15259@lunn.ch>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <0f79794b-ca33-fc00-645a-9cd37aa6fdd4@ti.com>
+Date:   Fri, 1 Nov 2019 19:29:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93009dbd-b31c-7364-86d2-21f0fac36676@jp.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191029022305.GK15259@lunn.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+hi Andrew,
 
-[please note that my email address has changed and the old one doesn't work
- any more]
-
-On Fri, Nov 01, 2019 at 09:56:05AM +0000, qi.fuli@fujitsu.com wrote:
-> First of all thanks for the comments for the patch.
+On 29/10/2019 04:23, Andrew Lunn wrote:
+>> +TI SoC Ethernet Switch Controller Device Tree Bindings (new)
+>> +------------------------------------------------------
+>> +
+>> +The 3-port switch gigabit ethernet subsystem provides ethernet packet
+>> +communication and can be configured as an ethernet switch.
 > 
-> I'm still struggling with this problem to find out the solution.
-> As a result of an investigation on this problem, after all, I think it 
-> is necessary to improve TLB flush mechanism of the kernel to fix this 
-> problem completely.
+> Hi Grygorii
 > 
-> So, I'd like to restart a discussion. At first, I summarize this problem 
-> to recall what was the problem and then I want to discuss how to fix it.
+> Maybe referring it to a 3-port switch will cause confusion, since in
+> this use case, it only has 2 ports, and you only list two ports in the
+> device tree.
+
+Yeah. This is how it's defined in TRM - Port 0 (CPU port) is the same as external Port from
+CPSW switch core point of view.
+
 > 
-> Summary of the problem:
-> A few months ago I proposed patches to solve a performance problem due 
-> to TLB flush.[1]
+>> It provides the
+>> +gigabit media independent interface (GMII),reduced gigabit media
+>> +independent interface (RGMII), reduced media independent interface (RMII),
+
+[...]
+
+>> +
+>> +&mac_sw {
+>> +	pinctrl-names = "default", "sleep";
+>> +	status = "okay";
+>> +};
+>> +
+>> +&cpsw_port1 {
+>> +	phy-handle = <&ethphy0_sw>;
+>> +	phy-mode = "rgmii";
+>> +	ti,dual_emac_pvid = <1>;
+>> +};
+>> +
+>> +&cpsw_port2 {
+>> +	phy-handle = <&ethphy1_sw>;
+>> +	phy-mode = "rgmii";
+>> +	ti,dual_emac_pvid = <2>;
+>> +};
+>> +
+>> +&davinci_mdio_sw {
+>> +	ethphy0_sw: ethernet-phy@0 {
+>> +		reg = <0>;
+>> +	};
+>> +
+>> +	ethphy1_sw: ethernet-phy@1 {
+>> +		reg = <1>;
+>> +	};
+>> +};
 > 
-> A problem is that TLB flush on a core affects all other cores even if 
-> all other cores do not need actual flush, and it causes performance 
-> degradation.
-> 
-> In this thread, I explained that:
-> * I found a performance problem which is caused by TLBI-is instruction.
-> * The problem occurs like this:
->   1) On a core, OS tries to flush TLB using TLBI-is instruction
->   2) TLBI-is instruction causes a broadcast to all other cores, and
->   each core received hard-wired signal
->   3) Each core check if there are TLB entries which have the specified 
-> ASID/VA
+> In an example, it is unusual to split things up like this. I
+> understand that parts of this will be in the dtsi file, and parts in
+> the .dts file, but examples generally keep it all as one. And when you
+> re-write this in YAML so it can be used to validated real DTs, you
+> will have to combine it.
 
-For those following along at home, my understanding is that this "check"
-effectively stalls the pipeline as though it is being performed in software.
+Thank you. I'll update.
 
-Some questions:
-
-Does this mean a malicious virtual machine can effectively DoS the system?
-What about a malicious application calling mprotect()?
-
-Do all broadcast TLBI instructions cause this expensive check, or are
-some significantly slower than others?
-
->   4) This check causes performance degradation
-> * We ran FWQ[2] and detected OS jitter due to this problem, this noise
->   is serious for HPC usage.
-> 
-> The noise means here a difference between maximum time and minimum time 
-> which the same work takes.
-> 
-> How to fix:
-> I think the cause is TLB flush by TLBI-is because the instruction 
-> affects cores that are not related to its flush.
-
-Does broadcast I-cache maintenance cause the same problem?
-
-> So the previous patch I posted is
-> * Use mm_cpumask in mm_struct to find appropriate CPUs for TLB flush
-> * Exec TLBI instead of TLBI-is only to CPUs specified by mm_cpumask
->   (This is the same behavior as arm32 and x86)
-> 
-> And after the discussion about this patch, I got the following comments.
-> 1) This patch switches the behavior (original flush by TLBI-is and new 
-> flush by TLBI) by boot parameter, this implementation is not acceptable 
-> due to bad maintainability.
-> 2) Even if this patch fixes this problem, it may cause another 
-> performance problem.
-> 
-> I'd like to start over the implementation by considering these points.
-> For the second comment above, I will run a benchmark test to analyze the 
-> impact on performance.
-> Please let me know if there are other points I should take into 
-> consideration.
-
-I think it's worth bearing in mind that I have little sympathy for the
-problem that you are seeing. As far as I can tell, you've done the
-following:
-
-  1. You designed a CPU micro-architecture that stalls whenever it receives
-     a TLB invalidation request.
-
-  2. You integrated said CPU design into a system where broadcast TLB
-     invalidation is not filtered and therefore stalls every CPU every
-     time that /any/ TLB invalidation is broadcast.
-
-  3. You deployed a mixture of Linux and jitter-sensitive software on
-     this system, and now you're failing to meet your performance
-     requirements.
-
-Have I got that right?
-
-If so, given that your CPU design isn't widely available, nobody else
-appears to have made this mistake and jitter hasn't been reported as an
-issue for any other systems, it's very unlikely that we're going to make
-invasive upstream kernel changes to support you. I'm sorry, but all I can
-suggest is that you check that your micro-architecture and performance
-requirements are aligned with the design of Linux *before* building another
-machine like this in future.
-
-I hate to be blunt, but I also don't want to waste your time.
-
-Thanks,
-
-Will
+-- 
+Best regards,
+grygorii
