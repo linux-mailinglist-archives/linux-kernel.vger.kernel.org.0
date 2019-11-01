@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 102EAEC846
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:09:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F91CEC84F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfKASJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 14:09:33 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36684 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfKASJd (ORCPT
+        id S1727358AbfKASLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 14:11:43 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34245 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfKASLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:09:33 -0400
-Received: by mail-pg1-f194.google.com with SMTP id j22so6964180pgh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:09:31 -0700 (PDT)
+        Fri, 1 Nov 2019 14:11:43 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e4so6975753pgs.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YeTpB1Wx1lpy3awpQLYzDRRtlZuKfiLn87LhRSvje50=;
-        b=MEejXdvJ/xWDM7BvqOG6PxfoSYB1nWSgMQfn97OEzsbkg/GVwzIsbSUvmV1wsqV0Qs
-         WIvpo+Z97RKj57DiBqRQ9AjJKfgkiH4umbmx1ElHdLveGg2pwZdKIuDU9PLSdWrvuvw4
-         uyxc+lD9UbDSxHAjICjQ3u49KgPDQQo91XCvY1kEv0uJ/6EYQKUzPEhiDG3iZ3NFM/e2
-         RL5Lo8JL0VlxAi+HXAiTTYkQVfY5L4ahPLsGyHsPtgF6UZl26yTQ/9RBeQ0XcCFfnWKc
-         LI+sgSsbOjbhVKVez+ayoElCg9uvUjX2lOj4Cu0gDBVl5HuxyEe9HLh+1iDpOFrfB8Q1
-         PUsw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=D6pp+waK1B6eoQZsfgu20T9S0S5gE50J59ZyY893XeU=;
+        b=ctnx2Mq7v0ZwoxZpgw8YqdbWutmx0MLZKmxmioikkvICWrTw1w/6AKRvR8X0KBJo1Q
+         H0q5nPYMGRreXVKlEPeoh4VtEN1K97KsqpD13ts5v4lWQFJg4H2P5+JzG7oAlzLrVo1p
+         oI5Os+HHsLwy+OUClFC8ZVGFwLA6KHN6/4DoMryIAOT7NsStmpHqwZFUtokc9oZL/kT+
+         cGvXVaiQTIs40ctu7V2vStfRIJlOGEpU2g9cmAKmuhy+UxHp9xJWz1vqEaJ+QNmFvjN+
+         y8MDer/CsYviNag0SnshQ6oPqAx3IpnuaI3HL54iKUW3BxQAZRGqCosbW1KAi6YtEudk
+         jw3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YeTpB1Wx1lpy3awpQLYzDRRtlZuKfiLn87LhRSvje50=;
-        b=YbD+ovKSPrFNa14uCx8CRotR5EoTL82x/zIcPAvYHjznM/6FV/fzHPZPpik0n4QLbF
-         b6G+ok7Yspb9u1hqLYxCqcrurTyvx/JvsgwceYruFjBYO2FltoovVehYRDCcq0em5aRX
-         O713z95RbWK2Ipx2YaHe0DTmxO/hCsbv7szQxAtWYGtk8xzvHCfLPGHi6fJoLwkW+Igr
-         Rrt9iJUFcCd29ROTRVlD3ToKEVqsKv4fWkX5XktWD/E06l2GFT3vpd29MlaF68eKRBy1
-         UjhwB5Ikz2cWznPOQlhiZ7CnP/XJ3FN1J2/OXLQ7XDHPK6MeJ0ppWLVPlMvqgdVq/dVV
-         1xbA==
-X-Gm-Message-State: APjAAAXu0EI79ajrZViDiv1bOqIrmr7ptEqbEvJ6OGjDinTAPWgroGcD
-        3tIcWpEmB8MY1hEyWv7hIKI=
-X-Google-Smtp-Source: APXvYqyGp7XRZmRiIlwGHykCJbawjeXomnH4aaKmoylErPEGGbORyqTyQ0wtAogksfMUB+aXofXNwQ==
-X-Received: by 2002:a63:f919:: with SMTP id h25mr6789478pgi.85.1572631771170;
-        Fri, 01 Nov 2019 11:09:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=D6pp+waK1B6eoQZsfgu20T9S0S5gE50J59ZyY893XeU=;
+        b=pK0vGwt+s512Z6aTBFuE6rDJ5mYzl7Jn5wf4J5nrHm8ETDzyUM8HGX0CS5ql+VqfA+
+         96usvDdOL+AKbVnFbr0MnLH72HaZEcoCJslPmicIFcwm6bCZwzBkYqOwPdaae6SUKlzz
+         ZHMF4k1fj54ZoOJZeRDF5Hy981FDSvX75pL1U0gInmr1XtsgtIuqU2QnI1P0c7/Bjz5t
+         rqqHa6YzBWKbMXfsCfq2lPwJiq/Vw2FWMZ8YA2SbAAZpjV7b0LQXdqOVhwI+D0yIV7rM
+         /irevEG8tzwPgEQJ94YKj6tB03P0ovJI6lG8qqeZq0YqrbJqe6fyEL0POsWpbkLlC0xg
+         ylIg==
+X-Gm-Message-State: APjAAAUZXSpl4KvxSCYMehHNlTIYiFI+LA55UFOOVXNkvLaiFx3dn+V6
+        O+33MJR3Y/dBgxHTQrRLLQo=
+X-Google-Smtp-Source: APXvYqyntvvTNEB7b5YRQX6acrnW6EDOe32CdQyaoFyh8/yeQSOf08HCyibGS7j+0s+Mu2D+PSSeIg==
+X-Received: by 2002:a17:90a:8816:: with SMTP id s22mr12344442pjn.31.1572631902246;
+        Fri, 01 Nov 2019 11:11:42 -0700 (PDT)
 Received: from localhost ([100.118.89.209])
-        by smtp.gmail.com with ESMTPSA id 16sm9364172pgd.0.2019.11.01.11.09.30
+        by smtp.gmail.com with ESMTPSA id h5sm11525487pjc.9.2019.11.01.11.11.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 11:09:30 -0700 (PDT)
+        Fri, 01 Nov 2019 11:11:41 -0700 (PDT)
 From:   Rob Clark <robdclark@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Sean Paul <seanpaul@chromium.org>,
@@ -54,10 +54,12 @@ Cc:     Sean Paul <seanpaul@chromium.org>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] drm/atomic: fix self-refresh helpers crtc state dereference
-Date:   Fri,  1 Nov 2019 11:07:12 -0700
-Message-Id: <20191101180713.5470-1-robdclark@gmail.com>
+Subject: [PATCH 2/2] drm/atomic: clear new_state pointers at hw_done
+Date:   Fri,  1 Nov 2019 11:07:13 -0700
+Message-Id: <20191101180713.5470-2-robdclark@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191101180713.5470-1-robdclark@gmail.com>
+References: <20191101180713.5470-1-robdclark@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,90 +69,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rob Clark <robdclark@chromium.org>
 
-drm_self_refresh_helper_update_avg_times() was incorrectly accessing the
-new incoming state after drm_atomic_helper_commit_hw_done().  But this
-state might have already been superceeded by an !nonblock atomic update
-resulting in dereferencing an already free'd crtc_state.
+The new state should not be accessed after this point.  Clear the
+pointers to make that explicit.
 
-Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
-Cc: Sean Paul <seanpaul@chromium.org>
+This makes the error corrected in the previous patch more obvious.
+
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
-TODO I *think* this will more or less do the right thing.. althought I'm
-not 100% sure if, for example, we enter psr in a nonblock commit, and
-then leave psr in a !nonblock commit that overtakes the completion of
-the nonblock commit.  Not sure if this sort of scenario can happen in
-practice.  But not crashing is better than crashing, so I guess we
-should either take this patch or rever the self-refresh helpers until
-Sean can figure out a better solution.
-
- drivers/gpu/drm/drm_atomic_helper.c       |  2 ++
- drivers/gpu/drm/drm_self_refresh_helper.c | 11 ++++++-----
- include/drm/drm_atomic.h                  |  8 ++++++++
- 3 files changed, 16 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 3ef2ac52ce94..732bd0ce9241 100644
+index 732bd0ce9241..176831df8163 100644
 --- a/drivers/gpu/drm/drm_atomic_helper.c
 +++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2240,6 +2240,8 @@ void drm_atomic_helper_commit_hw_done(struct drm_atomic_state *old_state)
+@@ -2234,13 +2234,42 @@ EXPORT_SYMBOL(drm_atomic_helper_fake_vblank);
+  */
+ void drm_atomic_helper_commit_hw_done(struct drm_atomic_state *old_state)
+ {
++	struct drm_connector *connector;
++	struct drm_connector_state *old_conn_state, *new_conn_state;
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
++	struct drm_plane *plane;
++	struct drm_plane_state *old_plane_state, *new_plane_state;
+ 	struct drm_crtc_commit *commit;
++	struct drm_private_obj *obj;
++	struct drm_private_state *old_obj_state, *new_obj_state;
  	int i;
  
- 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
-+		old_state->crtcs[i].new_self_refresh_active = new_crtc_state->self_refresh_active;
++	/*
++	 * After this point, drivers should not access the permanent modeset
++	 * state, so we also clear the new_state pointers to make this
++	 * restriction explicit.
++	 *
++	 * For the CRTC state, we do this in the same loop where we signal
++	 * hw_done, since we still need to new_crtc_state to fish out the
++	 * commit.
++	 */
 +
++	for_each_oldnew_connector_in_state(old_state, connector, old_conn_state, new_conn_state, i) {
++		old_state->connectors[i].new_state = NULL;
++	}
++
++	for_each_oldnew_plane_in_state(old_state, plane, old_plane_state, new_plane_state, i) {
++		old_state->planes[i].new_state = NULL;
++	}
++
++	for_each_oldnew_private_obj_in_state(old_state, obj, old_obj_state, new_obj_state, i) {
++		old_state->private_objs[i].new_state = NULL;
++	}
++
+ 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+ 		old_state->crtcs[i].new_self_refresh_active = new_crtc_state->self_refresh_active;
++		old_state->crtcs[i].new_state = NULL;
+ 
  		commit = new_crtc_state->commit;
  		if (!commit)
- 			continue;
-diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
-index 68f4765a5896..77b9079fa578 100644
---- a/drivers/gpu/drm/drm_self_refresh_helper.c
-+++ b/drivers/gpu/drm/drm_self_refresh_helper.c
-@@ -143,19 +143,20 @@ void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
- 					      unsigned int commit_time_ms)
- {
- 	struct drm_crtc *crtc;
--	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-+	struct drm_crtc_state *old_crtc_state;
- 	int i;
- 
--	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
--				      new_crtc_state, i) {
-+	for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
-+		bool new_self_refresh_active =
-+				state->crtcs[i].new_self_refresh_active;
- 		struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
- 		struct ewma_psr_time *time;
- 
- 		if (old_crtc_state->self_refresh_active ==
--		    new_crtc_state->self_refresh_active)
-+		    new_self_refresh_active)
- 			continue;
- 
--		if (new_crtc_state->self_refresh_active)
-+		if (new_self_refresh_active)
- 			time = &sr_data->entry_avg_ms;
- 		else
- 			time = &sr_data->exit_avg_ms;
-diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-index 927e1205d7aa..86baf2b38bb3 100644
---- a/include/drm/drm_atomic.h
-+++ b/include/drm/drm_atomic.h
-@@ -155,6 +155,14 @@ struct __drm_crtcs_state {
- 	struct drm_crtc *ptr;
- 	struct drm_crtc_state *state, *old_state, *new_state;
- 
-+	/**
-+	 * @new_self_refresh_active:
-+	 *
-+	 * drm_atomic_helper_commit_hw_done() stashes new_crtc_state->self_refresh_active
-+	 * so that it can be accessed late in drm_self_refresh_helper_update_avg_times().
-+	 */
-+	bool new_self_refresh_active;
-+
- 	/**
- 	 * @commit:
- 	 *
 -- 
 2.21.0
 
