@@ -2,87 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEAEEC588
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D337DEC58F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:21:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbfKAPU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:20:29 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38276 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfKAPU3 (ORCPT
+        id S1728686AbfKAPVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:21:41 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35080 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728449AbfKAPVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:20:29 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z19so5212021wmk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 08:20:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YMEz8D3S6e/piMAQ+pM8XO5S9kvzfBwBTg3kkWGraWM=;
-        b=CuqZy7TfU3S2sL4ZXlJsqkBIcEq6PZP7NTpl4vuKQyB1tH9l6sIo+35iF93Qshghwn
-         3nGUaFqBdwE/XOE81pA12DTPMjYq2n9jZ9Mz1AVL/ayzZ8Lfa9rPFGP8ZZ7Et/5huyik
-         Q13354zKEKG23xMhmhUJiehLDuclwqq6iHb3AxzlRqXHYZ0IUxmsg7vVAFhYOTSCs8Y5
-         BG1zZ2g3/tqF1T89Fi2BdB8hf5PWc41Sw9wmm/TujyohdWP1VNNZeObYt4ac5A2/O4oF
-         OruhPYpOjjfapzvVxJ/BXeD6q565Vh6Us2oTGtkp1sSXpd2AqwnifmhnJABzUXlIgXXA
-         QxGg==
-X-Gm-Message-State: APjAAAVZ67NVAQit9XwiYPUXdNwmRkR2VA73IZ9ujSyS4TWMUFYbGpIP
-        m2H0L5aJojRACyw42wd2t0IqPrZ5HsU=
-X-Google-Smtp-Source: APXvYqyPYnwLX0ztKWCWcp147LlXxzyXXV46TIFC3kuUqPVizYEW02nQ+IlnuIyUYuZm6hhZO6qE9Q==
-X-Received: by 2002:a05:600c:2909:: with SMTP id i9mr1866481wmd.39.1572621626378;
-        Fri, 01 Nov 2019 08:20:26 -0700 (PDT)
-Received: from localhost.localdomain ([2a03:b0c0:1:e0::503:c001])
-        by smtp.gmail.com with ESMTPSA id c137sm4872163wme.37.2019.11.01.08.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 08:20:25 -0700 (PDT)
-From:   Julien Grall <julien@xen.org>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com,
-        Julien Grall <julien.grall@arm.com>
-Subject: [PATCH] docs/arm64: cpu-feature-registers: Rewrite bitfields that don't follow [e, s]
-Date:   Fri,  1 Nov 2019 15:20:22 +0000
-Message-Id: <20191101152022.8853-1-julien@xen.org>
-X-Mailer: git-send-email 2.20.1
+        Fri, 1 Nov 2019 11:21:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572621699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WDYGxxA/KgrYN0QEUL49MfltlmEWA16vt4MxjEs1+6E=;
+        b=ZvFQruI8L0LIc8Abg9nge7/YYc2CgXmrxcQ0E2Arp63U/CUqj+BsVzHQAr6GB4JTyCldVV
+        j4MKTv9MX0U/UDN0bU8JLz8ghEDVYN+Ur2jmwn+B/N3pHiKsNYeOESlaCrzAp+Tcfbv0ra
+        e8gHd21V2VgXboUFC5QAXvJTsP042Cw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-253-i5RvBvQWOlyITqFctoslYg-1; Fri, 01 Nov 2019 11:21:33 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E4EE31005500;
+        Fri,  1 Nov 2019 15:21:31 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82BD619C58;
+        Fri,  1 Nov 2019 15:21:21 +0000 (UTC)
+Date:   Fri, 1 Nov 2019 11:21:18 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191101152118.mi2svoringtrdskv@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <3677995.NTHC7m0fHc@x2>
+ <20191101150927.c5sf3n5ezfg2eano@madcap2.tricolour.ca>
+ <1592218.lpl3eoh2c6@x2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1592218.lpl3eoh2c6@x2>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: i5RvBvQWOlyITqFctoslYg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julien Grall <julien.grall@arm.com>
+On 2019-11-01 11:13, Steve Grubb wrote:
+> On Friday, November 1, 2019 11:09:27 AM EDT Richard Guy Briggs wrote:
+> > On 2019-10-31 10:50, Steve Grubb wrote:
+> > > Hello,
+> > >=20
+> > > TLDR;  I see a lot of benefit to switching away from procfs for setti=
+ng
+> > > auid & sessionid.
+> > >=20
+> > > On Wednesday, October 30, 2019 6:03:20 PM EDT Richard Guy Briggs wrot=
+e:
+> > > > > Also, for the record, removing the audit loginuid from procfs is =
+not
+> > > > > something to take lightly, if at all; like it or not, it's part o=
+f
+> > > > > the
+> > > > > kernel API.
+> > >=20
+> > > It can also be used by tools to iterate processes related to one user=
+ or
+> > > session. I use this in my Intrusion Prevention System which will land=
+ in
+> > > audit user space at some point in the future.
+> > >=20
+> > > > Oh, I'm quite aware of how important this change is and it was
+> > > > discussed
+> > > > with Steve Grubb who saw the concern and value of considering such =
+a
+> > > > disruptive change.
+> > >=20
+> > > Actually, I advocated for syscall. I think the gist of Eric's idea wa=
+s
+> > > that / proc is the intersection of many nasty problems. By relying on
+> > > it, you can't simplify the API to reduce the complexity. Almost no
+> > > program actually needs access to /proc. ps does. But almost everythin=
+g
+> > > else is happy without it. For example, when you setup chroot jails, y=
+ou
+> > > may have to add /dev/random or / dev/null, but almost never /proc. Wh=
+at
+> > > does force you to add /proc is any entry point daemon like sshd becau=
+se
+> > > it needs to set the loginuid. If we switch away from /proc, then sshd=
+ or
+> > > crond will no longer /require/ procfs to be available which again
+> > > simplifies the system design.
+> > >=20
+> > > > Removing proc support for auid/ses would be a
+> > > > long-term deprecation if accepted.
+> > >=20
+> > > It might need to just be turned into readonly for a while. But then
+> > > again,
+> > > perhaps auid and session should be part of /proc/<pid>/status? Maybe =
+this
+> > > can be done independently and ahead of the container work so there is=
+ a
+> > > migration path for things that read auid or session. TBH, maybe this
+> > > should have been done from the beginning.
+> >=20
+> > How about making loginuid/contid/capcontid writable only via netlink bu=
+t
+> > still provide the /proc interface for reading?  Deprecation of proc can
+> > be left as a decision for later.  This way sshd/crond/getty don't need
+> > /proc, but the info is still there for tools that want to read it.
+>=20
+> This also sounds good to me. But I still think loginuid and audit session=
+id=20
+> should get written in /proc/<pid>/status so that all process information =
+is=20
+> consolidated in one place.
 
-Commit "docs/arm64: cpu-feature-registers: Documents missing visible
-fields" added bitfiels following the convention [s, e]. However, the
-documentation is following [s, e] and so does the Arm ARM.
+I don't have a problem adding auid/sessionid to /proc/<pid>/status with
+other related information, but it is disruptive to deprecate the
+existing interface which could be a seperate step.
 
-Rewrite the bitfields to match the format [e, s].
+> -Steve
 
-Signed-off-by: Julien Grall <julien.grall@arm.com>
+- RGB
 
----
-
-This is based on the branch for-next/elf-hwcap-docs from the tree
-arm64/linux.git.
----
- Documentation/arm64/cpu-feature-registers.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
-index ffcf4e2c71ef..7c40e4581bae 100644
---- a/Documentation/arm64/cpu-feature-registers.rst
-+++ b/Documentation/arm64/cpu-feature-registers.rst
-@@ -193,9 +193,9 @@ infrastructure:
-      +------------------------------+---------+---------+
-      | Name                         |  bits   | visible |
-      +------------------------------+---------+---------+
--     | SB                           | [36-39] |    y    |
-+     | SB                           | [39-36] |    y    |
-      +------------------------------+---------+---------+
--     | FRINTTS                      | [32-35] |    y    |
-+     | FRINTTS                      | [35-32] |    y    |
-      +------------------------------+---------+---------+
-      | GPI                          | [31-28] |    y    |
-      +------------------------------+---------+---------+
--- 
-2.17.1
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
