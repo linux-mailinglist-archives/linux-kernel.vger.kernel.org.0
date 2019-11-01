@@ -2,214 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C9FEBED5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E3DDEBF1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbfKAICE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 04:02:04 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36822 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbfKAICE (ORCPT
+        id S1730323AbfKAIPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 04:15:23 -0400
+Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:39755 "EHLO
+        ironport.ite.com.tw" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729942AbfKAIPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 04:02:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id c22so8285109wmd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 01:02:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WwG4RNOHvFkOsKEQAuSUlL4bFdysEsHDNGpaWR/Pat0=;
-        b=S/symlXrnyXbV1Hv4N/GknnDwdxNxfdAmVeZAKQWJn34mc1nhmrnlQs85nwSBGvkwL
-         YNMZGZ7N5SDuQkQb/7Y6V+470SFCP6zuBobyPpjFUYuHhi6PueWQaPseVM/0KJRYl4Ds
-         OSRSiJZxTu0xp0XE3ITDXvUYdhd/G2eMC6OjgyLR5BgPenPusZfTZw9q7p1z6tjTiT17
-         2HTp89XVF1SlvEY0u+iMvSXmyFNTyjwRYxCs/Fw4r5pDG3aWT/nsxWIvsq3EhIap8PmK
-         IjfT0GEo9rkv8elPYVLbO22e46RHYghbr0Frz7Zdlbxxh9YXvwIm5Zkd/QPQ/KWbo2u0
-         a18Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WwG4RNOHvFkOsKEQAuSUlL4bFdysEsHDNGpaWR/Pat0=;
-        b=ARQ8Ldh9NRmUUBG2l1Y1YfhFyAfEsZIsFhlVZoTy/g/4G4uCNu8StKZvpS+43JCAkF
-         70mA7wmsQmUa/0J1GouAzlqbb67nMAoA4tKwQe/xw84nOmwm2RpHSE1XsZwQijG/AK06
-         yZHhbT/yFg+MJLlLK804KDukAGXrfuuGHkwsdxfbqryYSsnoUjtxztnmqIagq62ki+5S
-         ZvkMQ4bOsJ0vrpk/+us6ju1CdNcbQo1Ums4hSp/2AAfxSwf4kUTPMfrrHVNeAgWTSOYs
-         t7xzi0/ZH3lZ0VVJIg1nKn21/eye+vMykYYAnzCR9b8tCwcjFvQXEuJhunV858y6k9mP
-         bQKg==
-X-Gm-Message-State: APjAAAU7x4iQydiBxQJ9HVd01jkEuBwSMIiu+LaL5q9MTF5kkEv8c4jb
-        HC4iEa2Fqx5ES7NNYNFLAKXuUg==
-X-Google-Smtp-Source: APXvYqzAu9rjXRQJt17v4CuXCsldu15N/gdJvnPJsgnG1YrRx55OmuZHRv1YBOicGoG7XtVA35wNIQ==
-X-Received: by 2002:a05:600c:22cf:: with SMTP id 15mr8235809wmg.148.1572595319436;
-        Fri, 01 Nov 2019 01:01:59 -0700 (PDT)
-Received: from pine ([185.204.209.109])
-        by smtp.gmail.com with ESMTPSA id u1sm4977950wrp.56.2019.11.01.01.01.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Nov 2019 01:01:58 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 09:01:53 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linus.walleij@linaro.org, baohua@kernel.org, stephan@gerhold.net
-Subject: Re: [PATCH v4 03/10] mfd: cs5535-mfd: Request shared IO regions
- centrally
-Message-ID: <20191101080153.bvws43z2n6gsjnym@pine>
-References: <20191101074518.26228-1-lee.jones@linaro.org>
- <20191101074518.26228-4-lee.jones@linaro.org>
+        Fri, 1 Nov 2019 04:15:22 -0400
+X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 04:15:22 EDT
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 01 Nov 2019 16:05:28 +0800
+Received: from csbcas.internal.ite.com.tw (csbcas1.internal.ite.com.tw [192.168.65.46])
+        by mse.ite.com.tw with ESMTP id xA185M3K074232;
+        Fri, 1 Nov 2019 16:05:22 +0800 (GMT-8)
+        (envelope-from allen.chen@ite.com.tw)
+Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
+ csbcas1.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
+ id 14.3.352.0; Fri, 1 Nov 2019 16:05:22 +0800
+From:   allen <allen.chen@ite.com.tw>
+CC:     Allen Chen <allen.chen@ite.com.tw>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking timings logic
+Date:   Fri, 1 Nov 2019 16:04:22 +0800
+Message-ID: <1572595463-30970-1-git-send-email-allen.chen@ite.com.tw>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101074518.26228-4-lee.jones@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [192.168.70.14]
+X-MAIL: mse.ite.com.tw xA185M3K074232
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 07:45:11AM +0000, Lee Jones wrote:
-> Prior to this patch, IO regions were requested via an MFD subsytem-level
-> .enable() call-back and similarly released by a .disable() call-back.
-> Double requests/releases were avoided by a centrally handled usage count
-> mechanism.
-> 
-> This complexity can all be avoided by handling IO regions only once during
-> .probe() and .remove() of the parent device.  Since this is the only
-> legitimate user of the aforementioned usage count mechanism, this patch
-> will allow it to be removed from MFD core in subsequent steps.
-> 
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
+(Defines EDID Structure Version 1, Revision 4) page: 39
+How to determine whether the monitor support RB timing or not?
+EDID 1.4
+First:  read detailed timing descriptor and make sure byte0 = 0,
+	byte1 = 0, byte2 = 0 and byte3 = 0xFD
+Second: read detailed timing descriptor byte10 = 0x04 and
+	EDID byte18h bit0 = 1
+Third:  if EDID byte18h bit0 == 1 && byte10 == 0x04,
+	then we can check byte15, if byte15 bit4 =1 is support RB
+        if EDID byte18h bit0 != 1 || byte10 != 0x04,
+	then byte15 can not be used
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+The linux code is_rb function not follow the VESA's rule
 
-> ---
->  drivers/mfd/cs5535-mfd.c | 74 ++++++++++++++++++----------------------
->  1 file changed, 33 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-> index b35f1efa01f6..3b569b231510 100644
-> --- a/drivers/mfd/cs5535-mfd.c
-> +++ b/drivers/mfd/cs5535-mfd.c
-> @@ -27,38 +27,6 @@ enum cs5535_mfd_bars {
->  	NR_BARS,
->  };
->  
-> -static int cs5535_mfd_res_enable(struct platform_device *pdev)
-> -{
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "can't fetch device resource info\n");
-> -		return -EIO;
-> -	}
-> -
-> -	if (!request_region(res->start, resource_size(res), DRV_NAME)) {
-> -		dev_err(&pdev->dev, "can't request region\n");
-> -		return -EIO;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int cs5535_mfd_res_disable(struct platform_device *pdev)
-> -{
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "can't fetch device resource info\n");
-> -		return -EIO;
-> -	}
-> -
-> -	release_region(res->start, resource_size(res));
-> -	return 0;
-> -}
-> -
->  static struct resource cs5535_mfd_resources[NR_BARS];
->  
->  static struct mfd_cell cs5535_mfd_cells[] = {
-> @@ -81,17 +49,11 @@ static struct mfd_cell cs5535_mfd_cells[] = {
->  		.name = "cs5535-pms",
->  		.num_resources = 1,
->  		.resources = &cs5535_mfd_resources[PMS_BAR],
-> -
-> -		.enable = cs5535_mfd_res_enable,
-> -		.disable = cs5535_mfd_res_disable,
->  	},
->  	{
->  		.name = "cs5535-acpi",
->  		.num_resources = 1,
->  		.resources = &cs5535_mfd_resources[ACPI_BAR],
-> -
-> -		.enable = cs5535_mfd_res_enable,
-> -		.disable = cs5535_mfd_res_disable,
->  	},
->  };
->  
-> @@ -117,22 +79,47 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
->  		r->end = pci_resource_end(pdev, bar);
->  	}
->  
-> +	err = pci_request_region(pdev, PMS_BAR, DRV_NAME);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to request PMS_BAR's IO region\n");
-> +		goto err_disable;
-> +	}
-> +
->  	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, cs5535_mfd_cells,
->  			      ARRAY_SIZE(cs5535_mfd_cells), NULL, 0, NULL);
->  	if (err) {
->  		dev_err(&pdev->dev,
->  			"Failed to add CS5535 sub-devices: %d\n", err);
-> -		goto err_disable;
-> +		goto err_release_pms;
->  	}
->  
-> -	if (machine_is_olpc())
-> -		mfd_clone_cell("cs5535-acpi", olpc_acpi_clones, ARRAY_SIZE(olpc_acpi_clones));
-> +	if (machine_is_olpc()) {
-> +		err = pci_request_region(pdev, ACPI_BAR, DRV_NAME);
-> +		if (err) {
-> +			dev_err(&pdev->dev,
-> +				"Failed to request ACPI_BAR's IO region\n");
-> +			goto err_remove_devices;
-> +		}
-> +
-> +		err = mfd_clone_cell("cs5535-acpi", olpc_acpi_clones,
-> +				     ARRAY_SIZE(olpc_acpi_clones));
-> +		if (err) {
-> +			dev_err(&pdev->dev, "Failed to clone MFD cell\n");
-> +			goto err_release_acpi;
-> +		}
-> +	}
->  
->  	dev_info(&pdev->dev, "%zu devices registered.\n",
->  			ARRAY_SIZE(cs5535_mfd_cells));
->  
->  	return 0;
->  
-> +err_release_acpi:
-> +	pci_release_region(pdev, ACPI_BAR);
-> +err_remove_devices:
-> +	mfd_remove_devices(&pdev->dev);
-> +err_release_pms:
-> +	pci_release_region(pdev, PMS_BAR);
->  err_disable:
->  	pci_disable_device(pdev);
->  	return err;
-> @@ -141,6 +128,11 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
->  static void cs5535_mfd_remove(struct pci_dev *pdev)
->  {
->  	mfd_remove_devices(&pdev->dev);
-> +
-> +	if (machine_is_olpc())
-> +		pci_release_region(pdev, ACPI_BAR);
-> +
-> +	pci_release_region(pdev, PMS_BAR);
->  	pci_disable_device(pdev);
->  }
->  
-> -- 
-> 2.17.1
-> 
+EDID 1.3
+LCD flat panels do not require long blanking intervals as a retrace
+period so default support reduced-blanking timings.
+
+Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+---
+ drivers/gpu/drm/drm_edid.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index e5e7e65..08e914d 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -93,6 +93,11 @@ struct detailed_mode_closure {
+ 	int modes;
+ };
+ 
++struct edid_support_rb_closure {
++	struct edid *edid;
++	u8 support_rb;
++};
++
+ #define LEVEL_DMT	0
+ #define LEVEL_GTF	1
+ #define LEVEL_GTF2	2
+@@ -2018,22 +2023,31 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
+ is_rb(struct detailed_timing *t, void *data)
+ {
+ 	u8 *r = (u8 *)t;
+-	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
+-		if (r[15] & 0x10)
+-			*(bool *)data = true;
++	struct edid_support_rb_closure *closure = data;
++	struct edid *edid = closure->edid;
++
++	if (!r[0] && !r[1] && !r[2] && r[3] == EDID_DETAIL_MONITOR_RANGE) {
++		if (edid->features & BIT(0) && r[10] == BIT(2))
++			closure->support_rb = (r[15] & 0x10) ? 1 : 0;
++	}
+ }
+ 
+ /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
+ static bool
+ drm_monitor_supports_rb(struct edid *edid)
+ {
++	struct edid_support_rb_closure closure = {
++		.edid = edid,
++		.support_rb = -1,
++	};
++
+ 	if (edid->revision >= 4) {
+-		bool ret = false;
+-		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
+-		return ret;
++		drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
++		if (closure.support_rb >= 0)
++			return closure.support_rb;
+ 	}
+ 
+-	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
++	return true;
+ }
+ 
+ static void
+-- 
+1.9.1
+
