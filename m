@@ -2,118 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E00DEC764
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82EB7EC768
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:21:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfKARU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 13:20:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37364 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfKARU6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:20:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0EDD260FBA; Fri,  1 Nov 2019 17:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572628742;
-        bh=vay1cC4Y6XG5HFwL0eefjYJon6gcGVMawCFumaTPMQY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=l+1zCDXLKatvwd7SjcQumNDpR8dXybAZbTOKm+Fav1cRRFOkW0acNq7S96+JTFpxd
-         agWBXjrtaXKHQ6ikms4IvJ3zo1AFzrIPdQdPl66ZYi1etAG0ORPUBompNc2Iy+AMfw
-         jvglT9ADF8ECBunuI6aFO6SD7Tbj6m+HqKoqhLcM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id F1FB461065;
-        Fri,  1 Nov 2019 17:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572628741;
-        bh=vay1cC4Y6XG5HFwL0eefjYJon6gcGVMawCFumaTPMQY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cLhqmYFGxliSdKkO1EA+sR8KIzjuO5h+4hlvqhyoOHWMF7QaXo27oqt8dx2Pw5luL
-         3/njb1LOjlLuEAP4G7jmyQbt0g7/Qb28j/tmjEGVmaPHaPnc+UzU85mP1oD+q6ioMS
-         oYLlgRmgLQQteUEEz1idHNTBT3TUFL4bxSqzzEdA=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 01 Nov 2019 22:49:00 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     agross@kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
+        id S1727949AbfKARVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 13:21:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbfKARVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 13:21:51 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96FF42085B;
+        Fri,  1 Nov 2019 17:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572628910;
+        bh=BROMF+gRXeSy51qya14vXyEQaseWUTq9hj4mzpZv8S4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HNqm3WkxmX5SqCf18g8DLpkh8TebVc3yct+TNG0t6EV+1/50HAVBmlehyJzXWbjpc
+         C+TiG2YeqmiC5sfgM1ZQ/FAc6kgCe9PZ/x7cEsV6W4/fRqfXRluDCpezRyChzcw50w
+         ObhzgEwmmLnyF3X9Pob06HER/VmLrhXZwRtMr6j0=
+Date:   Fri, 1 Nov 2019 17:21:46 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         iommu@lists.linux-foundation.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCHv7 0/3] QCOM smmu-500 wait-for-safe handling for sdm845
-In-Reply-To: <20191101163136.GC3603@willie-the-truck>
-References: <cover.1568966170.git.saiprakash.ranjan@codeaurora.org>
- <20191101163136.GC3603@willie-the-truck>
-Message-ID: <af7e9a14ae7512665f0cae32e08c8b06@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
+Message-ID: <20191101172145.GA3983@willie-the-truck>
+References: <20191030145112.19738-1-will@kernel.org>
+ <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
+ <20191030155444.GC19096@willie-the-truck>
+ <CAGETcx9ogWQC1ZtnS_4xC3ShqBpuRSKudWEEWC22UZUEhdEU4A@mail.gmail.com>
+ <20191031193758.GA2607492@lophozonia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031193758.GA2607492@lophozonia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-01 22:01, Will Deacon wrote:
-> On Fri, Sep 20, 2019 at 01:34:26PM +0530, Sai Prakash Ranjan wrote:
->> Previous version of the patches are at [1]:
->> 
->> QCOM's implementation of smmu-500 on sdm845 adds a hardware logic 
->> called
->> wait-for-safe. This logic helps in meeting the invalidation 
->> requirements
->> from 'real-time clients', such as display and camera. This 
->> wait-for-safe
->> logic ensures that the invalidations happen after getting an ack from 
->> these
->> devices.
->> In this patch-series we are disabling this wait-for-safe logic from 
->> the
->> arm-smmu driver's probe as with this enabled the hardware tries to
->> throttle invalidations from 'non-real-time clients', such as USB and 
->> UFS.
->> 
->> For detailed information please refer to patch [3/4] in this series.
->> I have included the device tree patch too in this series for someone 
->> who
->> would like to test out this. Here's a branch [2] that gets display on 
->> MTP
->> SDM845 device.
->> 
->> This patch series is inspired from downstream work to handle 
->> under-performance
->> issues on real-time clients on sdm845. In downstream we add separate 
->> page table
->> ops to handle TLB maintenance and toggle wait-for-safe in tlb_sync 
->> call so that
->> achieve required performance for display and camera [3, 4].
-> 
-> What's the plan for getting this merged? I'm not happy taking the 
-> firmware
-> bits without Andy's ack, but I also think the SMMU changes should go 
-> via
-> the IOMMU tree to avoid conflicts.
-> 
-> Andy?
-> 
+Hi Jean-Philippe,
 
-Bjorn maintains QCOM stuff now if I am not wrong and he has already 
-reviewed the firmware bits. So I'm hoping you could take all these 
-through IOMMU tree.
+Quick question while you figure out the devlink stuff with Saravana...
 
--Sai
+On Thu, Oct 31, 2019 at 08:37:58PM +0100, Jean-Philippe Brucker wrote:
+> On Wed, Oct 30, 2019 at 05:57:44PM -0700, Saravana Kannan via iommu wrote:
+> > > > > Obviously you need to be careful about using IOMMU drivers as modules,
+> > > > > since late loading of the driver for an IOMMU serving active DMA masters
+> > > > > is going to end badly in many cases. On Android, we're using device links
+> > > > > to ensure that the IOMMU probes first.
+> > > >
+> > > > Out of curiosity, which device links are those? Clearly not the RPM links
+> > > > created by the IOMMU drivers themselves... Is this some special Android
+> > > > magic, or is there actually a chance of replacing all the
+> > > > of_iommu_configure() machinery with something more generic?
+> > >
+> > > I'll admit that I haven't used them personally yet, but I'm referring to
+> > > this series from Saravana [CC'd]:
+> > >
+> > > https://lore.kernel.org/linux-acpi/20190904211126.47518-1-saravanak@google.com/
+> > >
+> > > which is currently sitting in linux-next now that we're upstreaming the
+> > > "special Android magic" ;)
+> 
+> Neat, I'm trying to do the same for virtio-iommu. It needs to be modular
+> because it depends on the virtio transport, which distributions usually
+> build as a module. So far I've been managing the device links in
+> virtio-iommu's add_device() and remove_device() callbacks [1]. Since it
+> relies on the existing probe deferral, I had to make a special case for
+> virtio-iommu to avoid giving up after initcalls_done [2].
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+As far as symbols exported from the IOMMU and PCI layers, did you find you
+needed anything on top of the stuff I'm exporting in patches 1 and 3?
+
+Cheers,
+
+Will
