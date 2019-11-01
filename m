@@ -2,75 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B60EC605
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE415EC635
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbfKAPz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:55:56 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37420 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729174AbfKAPzu (ORCPT
+        id S1729327AbfKAP4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:56:34 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41578 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfKAP4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:55:50 -0400
-Received: by mail-il1-f193.google.com with SMTP id t9so6804862ils.4
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 08:55:50 -0700 (PDT)
+        Fri, 1 Nov 2019 11:56:34 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j14so7572598lfb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 08:56:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=KqYLJklOErTzrVm5Bzbb6HQh9gI4PrbbORQE30GcC5Y=;
-        b=pUJIzGj/MPv1EKc2k3aNehKVojTiwbi36zg1sckIL11PdqXfau1yGsXj1t9CSJeyKL
-         3i/jp/TX/JDBG+iju9GRvxcye9SA9yiSTdccj7/EyUgYmTSSLRFNkcsvQASN37kQDgQc
-         jnResb6aJSg07Bq5suGRVdOqTkrlyY1YMgTmHgQc7tz+apzSU8zlfJ8cqPEt/z1Bd3OE
-         3WNB6qm/Pkg8xI5aHgZ1XzvGw6eZK1PwDo4winMpdBi8I/fqM1G/oYqHCv2wNxwHhj5m
-         N0Nph5NSOfE5c8csPVkAAUkUAiHHdFA9X2wHOboX58ouCDBOqdL9C38hXp5o3eU3+tNB
-         N8dw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fFCvFToGeaHVIGU5sFBVgfSRoD2BKpJyYjD9mLtHujQ=;
+        b=F9Ndl5PhHtMPfUuMcm8khWvn73/BEOIl++HBIcr20Ca4EaRLGm0X6RFvsiVYxyTX1g
+         ScVc4k5lnnHBMJ/H/gnJWwg7s7cajawJ2YKfsHiEtNaOhBIrW6P82v9lWIsp4xPGOmsA
+         9q8ZHL/h7W1JGbUDLXrlJb3earEteWQrnKzeYI4pTOy0d8MaY+lfEZgmfgMGyFxVDWOZ
+         lusyDw5qW5fg9ImIFhykFIXEit3Pty0/IEovLGP9ElvcQ0+kyi6ngXU+wqtlfiMAIXmA
+         3oC4MDlTxQoJKR2Ml8zNsEQhHYR4x9mVMEqIxS+PkIWxgT1z+NItPSoSl+FuRRrny1sQ
+         xumw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=KqYLJklOErTzrVm5Bzbb6HQh9gI4PrbbORQE30GcC5Y=;
-        b=aH1pXn1mIqJmg6AuYJ6cXW9T/Z5ZXmxO9MjF4m0cD8Tqr8QZp5laDmgpG5fC37oni8
-         WJZc2q2cHt/VgYKtLuwtzO2ZtW5HqTauSgudN8H7KWtasMcCVV2oYYZHdnEmF/qxrF7A
-         0a54+Hc4VHyk/Z04bVogegEAx2XNxlOSCZeQChBEKQkv7TomojqnLrT1bNbRzODwzO75
-         XTq53Ht7cMZZUquxCgZJ6ryctoEQ2C62eBanGbgNqmU3HTnuF1nC5DOVL9tdbFQ7MfjA
-         Hmjx09GluQNHcMC4ElR40MuHbE1ji/czzkVD8/aPn8qLDSIU2HAtTz8emP4mPJPJt35F
-         Sonw==
-X-Gm-Message-State: APjAAAVhOUguoJj4625HdeUHu9eMpJ9HlU+yq5dSBCzMFR4vT3JqePDb
-        tpcXhLP0MrEnR3vyuO+DOKl+7bNEs03ELORQxg==
-X-Google-Smtp-Source: APXvYqwNtyKjT0pXbrd92BXP7Yur4/d12tLIQphfDkWOJF9bZR6SLYcfNyjCPNgVxkpA0mTQo/BiL8Zaftdd9XRgWqY=
-X-Received: by 2002:a92:1d8d:: with SMTP id g13mr8826976ile.35.1572623748630;
- Fri, 01 Nov 2019 08:55:48 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fFCvFToGeaHVIGU5sFBVgfSRoD2BKpJyYjD9mLtHujQ=;
+        b=eF2DwrbhxluusrKYj8K2Gu9H4nmvANQZ5vsihq6tIoqG2wWNF/dRQ5YTYtG9cBb1Yk
+         aeuHb7YvF2MNtJg+wKFYWiFzclZQi5ArmS3esfSlbFYBIQRGhCbr8K9x9i6o5x1FFImq
+         rKYoXWZAsSdVChQym4TQ3jiETt41P8676N9TIti+SQmaBg4RyAVbYv69v62IJ4j54Upj
+         CuJpgr1FHBoaV0lkfFc6BtEL8fvkRMr/anxTAM4Dijrn9BfAamt02DJ7ykfayCYmsPTA
+         Y6dN5MDxm4VeYuR8KgY+6AFm7xKDr5VVE5J8zPsZOvAGMORw0lqVeBP4ZY9ypGxI3ROp
+         l7jw==
+X-Gm-Message-State: APjAAAXEe05UrhHi+AKQoDEX2VXvRe5ARyxKTVHEFUBTqm059uREasmL
+        aKzPipuMoQrmb7+0wChyFFXnFm9u0hbJUk7gegKR5Q+3L0U9Qw==
+X-Google-Smtp-Source: APXvYqxLkZQZkIBPHIuRg8wW008rxg1ziHdr9p3sXGGFnFmuX+RTcYVkFo7wPFbzWchz3TjPyV901OIH/V9MrUR/M5o=
+X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr7717304lfp.5.1572623791617;
+ Fri, 01 Nov 2019 08:56:31 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 1 Nov 2019 08:55:48 -0700 (PDT)
-Reply-To: moneygram.1820@outlook.fr
-From:   "Mary Coster, I.M.F director-Benin" 
-        <info.zennitbankplcnigerian@gmail.com>
-Date:   Fri, 1 Nov 2019 16:55:48 +0100
-Message-ID: <CABHzvrmPdjgy_vBxQMfJ2YwGwj1RyCvQt1Oy5GJczarHTQb=pg@mail.gmail.com>
-Subject: Contact Money Gram international service-Benin to receive your
- payment funds US$2.500,000 Million
-To:     undisclosed-recipients:;
+References: <20191030114530.872-1-peter.ujfalusi@ti.com>
+In-Reply-To: <20191030114530.872-1-peter.ujfalusi@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 1 Nov 2019 16:56:19 +0100
+Message-ID: <CACRpkdbw9MVrQMSgVMenSqAOiti1pAy4d2LvWY-ssx9dhzWEcw@mail.gmail.com>
+Subject: Re: [RFC 0/2] gpio: Support for shared GPIO lines on boards
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Grant Likely <glikely@secretlab.ca>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn Dear,Funds Beneficiary.
-Contact Money Gram international service-Benin to receive your payment
-funds US$2.500,000 Million approved this morning through the UN
-payment settlement organization.
-Contact Person, Mr. John Dave.
-Official Director.Money Gram-Benin
-Email: moneygram.1820@outlook.fr
-Telephone +229 62619517
-Once you get intouch with Mr. John Dave, Money Gram Director, send to
-him your address including your phone numbers. He will be sending the
-transfer to you  $5000.00 USD daily until you received your complete
-payment $2.5m from the office.
-Note,I have paid the whole service fees for you but only small money
-you been required to send to this office is $23.00 only via Money Gram
-transfer.
-God bless
-Mary Coster, I.M.F director-Benin
-m.coster@aol.com
+Hi folks,
+
+cutting all the discussions in this thread we need to see the bigger
+pattern:
+
+On GPIO rails
+
+People want "something like rails" for GPIO. In power supplies
+and thus the regulator subsystem, rails are connected to many
+logical endpoints.
+
+- The suggested inverter bindings would be effectively an
+  inverter on a GPIO rail.
+
+- This suggestion would be equal to many power consumers
+  on a rail, such as the usecase of shared gpio-enable lines in
+  the regulator subsystem already provides.
+
+The former seems to have been identified as solveable for the
+userspace that needed it and absorbed into the drafts for a
+virtualized GPIO controller. (Aggregating and creating a new
+virtual GPIO chip for some select physical GPIO lines.)
+
+I haven't seen an exact rationale from the DT community as
+to why these things should not be modeled, but as can be
+clearly seen in
+Documentation/devicetree/bindings/regulator/regulator.yaml
+the "rail abstraction" from the regulator subsystem which
+is in effect struct regulation_constraints and it sibling
+struct regulator_init_data is not in the DT bindings, instead
+this is encoded as properties in the regulator itself, so this
+is pretty consistent: the phandle from regulator to consumer
+*is* the rail.
+
+This goes back to Rajendras initial DT regulator support code
+see:
+git log -p 69511a452e6d
+
+So it would be logical then to just have:
+
+- More than one phandle taking the same GPIO line
+- Figure this situation out in the gpiolib OF core
+- Resolve the manageability of the situation (same
+  consumer flags etc)
+- Instantiate a kernel component as suggested,
+  mediating requests.
+- Handle it from there.
+
+So:
+
+gpio: gpio-controller@0 {
+        compatible = "foo,gpio";
+        gpio-controller;
+        #gpio-cells = <2>;
+};
+
+consumer-a {
+       compatible = "foo,consumer-a";
+       rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+};
+
+consumer-b {
+       compatible = "foo,consumer-b";
+       rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+};
+
+Hi kernel: figure it out.
+
+From this point the kernel driver(s) have to figure it out.
+
+I don't think this requires any changes to the DT bindings
+other than perhaps spelling out that if you link more than one
+phandle to a GPIO line, magic will happen. (We should probably
+make very verbose dmesg prints about this magic.)
+
+This is enough to start with. After that we can discuss adding
+flags and constraint properties to a certain GPIO line if
+need be. (That will be a big discussion as well, as we haven't
+even figured out how to assign default values to individual
+GPIO lines yet.)
+
+Yours,
+Linus Walleij
