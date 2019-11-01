@@ -2,80 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A104EC50F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4CDEC51C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfKAOvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:51:31 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42079 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbfKAOvb (ORCPT
+        id S1727777AbfKAOxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:53:34 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23252 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727592AbfKAOxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:51:31 -0400
-Received: by mail-io1-f65.google.com with SMTP id k1so11162374iom.9
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 07:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YoC4inVicscoZ9/JjyDbV0BdRtw0qEy4/WkPCgA3aYQ=;
-        b=V5pb6Vo4FuDYZcp5h04IOOyI+arougnhmiP9otzeMaGyTEkxXi/30nYxxHnMq8DsNM
-         NxtpUCmtUwbvbGNarNyJTGb5JuRiO2y2Vu/czsnylakAs9+I0A27IKm50oHpHbEU52L7
-         VSEjceZ0GmabBu2n7m1WH0fHLoEWCuejc5njp5/GMLuWw0igWnYDBonf8oWjqTiH+UQI
-         JKm0cyAEaMvCfNNtECkyR1o5v+DSnu9ZrMYw0A6IU1sP8k+HG5j0NJ2b9OsfsBoCKumw
-         GcEjt+TW5JGvm3tQyuW4zqYkp5387ECSekwY8cLThqf479ZXpnvQrfjRldtet6BtD1qN
-         Eqww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YoC4inVicscoZ9/JjyDbV0BdRtw0qEy4/WkPCgA3aYQ=;
-        b=mACfKeS7P1+T8slYvzIZUaQRzl2c0BMHmciULXQj3Sq+VennXDlI492o98PTrcXcuP
-         Y3yg04mHPZjb+o9UHIUoq2oWPihFeX/8Be5PnA9/8pnvQpRkoPwdGYbBm4gIkrN9Pmdq
-         F7rcQALHalTc1ShlvrLzTUQmzb5ajembavor7RkJFG97lrpZDSunHljZliXWAv4rnMOe
-         h45b5B2tcqXN7VaZEqUHrXiLpruEU9jF7sb735CB5gIHKK8O5c+nO7XtgrBzmDS5QmU6
-         fqIrUt/o9Uf65aCvivUdpmq0DM9PqSmxqQMwXHEX096E8G+UCSHkvd8B3Cpd0oLowbR1
-         X71w==
-X-Gm-Message-State: APjAAAU+rwPfDBgZz4rr5fyNJiiJE6HZk9dJ3cgd5Q2kZBM64diWaRj0
-        x4AtFQLCydO6eYNLRpCPOEQ4Z0VU0w0gTw==
-X-Google-Smtp-Source: APXvYqwMJzmozzaTEaAeXq8YBSMZEaHQQWlUxa/Cm7BOa+9bXqGtCkl+3Z2ci+WjCIKj9BkWHp7koA==
-X-Received: by 2002:a5d:8f9a:: with SMTP id l26mr10794049iol.196.1572619889703;
-        Fri, 01 Nov 2019 07:51:29 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d27sm1026777ill.64.2019.11.01.07.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Nov 2019 07:51:28 -0700 (PDT)
-Subject: Re: [PATCH v2 -resend 1/4] ata: Documentation, fix function names
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
-References: <20191031095946.7070-1-jslaby@suse.cz>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <53384e14-c294-3036-9549-2c08ac502e47@kernel.dk>
-Date:   Fri, 1 Nov 2019 08:51:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 1 Nov 2019 10:53:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572620012;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4MrbBDQoC+y5mHa+x24tjKMzrIZqDb3nq3UowOz4YuY=;
+        b=f1rigfPGvTB/H5OhVEpDcYnjXRTVvHpmdODmqZmpitWDVFrlTfMmbN/5TjtGlIR6AjZ2hA
+        skc5QuBqRyut7uUj0laj1LxPrGsM7Se4L/dOcL7zroerH5slpEVz434+jA5/wyEKtF0HuY
+        ns0fYH9VIbeKtnAMX0lwLDUcByGLYF0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-343-hHyjRC-_MMioG67u4CEa_w-1; Fri, 01 Nov 2019 10:53:28 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BED01800D67;
+        Fri,  1 Nov 2019 14:53:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6466F26DEA;
+        Fri,  1 Nov 2019 14:53:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com>
+References: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com> <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk> <16620.1572534687@warthog.procyon.org.uk>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
 MIME-Version: 1.0
-In-Reply-To: <20191031095946.7070-1-jslaby@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-ID: <23657.1572620001.1@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 14:53:21 +0000
+Message-ID: <23658.1572620001@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: hHyjRC-_MMioG67u4CEa_w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/19 3:59 AM, Jiri Slaby wrote:
-> ata_qc_prep no longer exists, there are ata_bmdma_qc_prep and
-> ata_bmdma_dumb_qc_prep instead. And most drivers do not use them, so
-> reword the paragraph.
-> 
-> ata_qc_issue_prot was renamed to ata_sff_qc_issue. ->tf_load is now
-> ->sff_tf_load. Fix them.
+Ilya Dryomov <idryomov@gmail.com> wrote:
 
-Applied 1-4 for 5.4 (please use a cover letter for more than one patch
-series...).
+> >  * This means there isn't a dead spot in the buffer, but the ring
+> >  * size has to be a power of two and <=3D 2^31.
 
--- 
-Jens Axboe
+I'll go with that, thanks.
+
+David
 
