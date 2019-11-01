@@ -2,144 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A76EECA17
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9583DECA40
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfKAVB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 17:01:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41436 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfKAVB1 (ORCPT
+        id S1727279AbfKAV0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:26:54 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:57780 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727188AbfKAV0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:01:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p4so10825462wrm.8
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 14:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qbClGcXdoxY6qMtiBZX2IGjtdGfcrdwxoiUlPe9rg4w=;
-        b=gjPxP1VVcXfK0XuoGCgbkNlZxkHVwnM1G66yMkWVE6YPTOnVDLeM7WUVpBaEY0Veem
-         vi4R52eJRBCbMN7R8yUKToQ859i7CZWmTaqtX3Ej8wpBbFEHt0oMl39VM3zcJ+II8Ajx
-         VbB2xeNG8VI5QfD9NsQiWPb0UX+zr51qdlk/W8ii1L2zdZ9fRLcVxwy2asJTbFn74z71
-         FppfvIzv2JManSsP3ALgrjAPtep+4RZTubqxB5CIcCcFQdx/DgxZk5AxWeIhPksgTqiA
-         MihULf7nbkRScc9nk3B4PnWTqOrNjcpWdPp29yJAfc1i6EcGswD0vDsilYCSxt0pyuce
-         vIDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qbClGcXdoxY6qMtiBZX2IGjtdGfcrdwxoiUlPe9rg4w=;
-        b=eK48EkbOYG4eBYLuhpjiL0vB8kvXjyWhs+tneQxKgdDKgIzB0bfTK/0xqDHMcVVu86
-         OqfAxp6d59hNCbdcX1k/6r8pyGO8pskVXbHCY1G/H5homF2tGl+Egx/flopYGzFc/5ib
-         fGSqwni1hodKqxuqKHGOIox9w47sjZO7oObE+BsAtb4NsS9UJ0qQbQilvjKBDbMvfCBh
-         cJOF55wZ13BZNi1eYwdOc9Zs8LLY7pfA84LPTVJEX75ZN55yXH2dQ5CBcwGccmH7BcCX
-         22Y3LBUXMjgt/c/eQ4G0j+j2ovO2lgLoyrhnjDo+1rdeeawpPGPa9v2TTkNbUKnxe/oA
-         ipsw==
-X-Gm-Message-State: APjAAAXK4TX6hAaQ3QQQQ27hDV0oXjjTo7T9LMkMryCPV3iACGViXWfG
-        G2PxCYiqUmZOS24S9I5A6Y8=
-X-Google-Smtp-Source: APXvYqyCuGfUKaSNW0G7eE2y4z5IeHo6z7ggbNPql4jJaV8hMG+AnnmVpNBI/1AGp9NF0zCFetRGPQ==
-X-Received: by 2002:a5d:4589:: with SMTP id p9mr11711861wrq.397.1572642085220;
-        Fri, 01 Nov 2019 14:01:25 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id l18sm9825295wrn.48.2019.11.01.14.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 14:01:24 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 22:01:17 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] perf fixes
-Message-ID: <20191101210117.GA52887@gmail.com>
-References: <20191101174840.GA81963@gmail.com>
- <CAHk-=wi_VHc=Q2JsPbVmCgpKekNJwnbBiYrmvnSSW8aiAkg7nQ@mail.gmail.com>
- <20191101203048.GA6622@gmail.com>
+        Fri, 1 Nov 2019 17:26:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572643607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VmbUG2xp7oJxAAQUnh6rfZI/GV69GyKIZVQEsGh/h4s=;
+        b=ifI8SQ9d54m1sCVXHXHzJ1FKsou0GYaL+bk4Y6oGwVYSAMTvVGHi0sXudpcLEZ5GGqrchh
+        R8MbbtXb3Q4Fds4iiC9INOnW2+KD4TI2aF2Bapl3Svfq1CVgnbUvDyxlyMo5+hxqeIowxx
+        3zPdQ634eJjz659jxSIH5xt/j9v1ZIA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-390-0s3lOTovP82_VPzjX0IMQw-1; Fri, 01 Nov 2019 17:26:41 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B926A1005500;
+        Fri,  1 Nov 2019 21:26:40 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD4785D6B7;
+        Fri,  1 Nov 2019 21:26:37 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 61B62105157;
+        Fri,  1 Nov 2019 19:03:36 -0200 (BRST)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id xA1L3W81020345;
+        Fri, 1 Nov 2019 19:03:32 -0200
+Date:   Fri, 1 Nov 2019 19:03:32 -0200
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        joao.m.martins@oracle.com, rafael.j.wysocki@intel.com,
+        rkrcmar@redhat.com, pbonzini@redhat.com
+Subject: Re: [PATCH 1/5] KVM: simplify branch check in host poll code
+Message-ID: <20191101210331.GA20061@amt.cnet>
+References: <1572060239-17401-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1572060239-17401-2-git-send-email-zhenzhong.duan@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1572060239-17401-2-git-send-email-zhenzhong.duan@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 0s3lOTovP82_VPzjX0IMQw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191101203048.GA6622@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Oct 26, 2019 at 11:23:55AM +0800, Zhenzhong Duan wrote:
+> Remove redundant check.
+>=20
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  virt/kvm/kvm_main.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 67ef3f2..2ca2979 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2366,13 +2366,12 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
+>  =09=09} else if (halt_poll_ns) {
+>  =09=09=09if (block_ns <=3D vcpu->halt_poll_ns)
+>  =09=09=09=09;
+> -=09=09=09/* we had a long block, shrink polling */
+> -=09=09=09else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
+> -=09=09=09=09shrink_halt_poll_ns(vcpu);
+>  =09=09=09/* we had a short halt and our poll time is too small */
+> -=09=09=09else if (vcpu->halt_poll_ns < halt_poll_ns &&
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+This is not a redundant check: it avoids from calling
+into grow_halt_poll_ns, which will do:
 
-> This actually works fine in practice. I just tried out a brand new kernel 
-> with really old perf tooling in the v3.19 kernel, from 4.5 years ago:
-> 
->   $ git checkout v3.19
->   $ cd tools/perf/
->   $ make install WERROR=0
-> 
->   $ perf version
->   perf version 3.19.gbfa76d49
-> 
->   $ perf top
-> 
-> This ancient version of 'perf top', 'perf record', 'perf report' works 
-> just fine on the new kernel, despite passing in a smaller 'attr':
-> 
->   [  558.408907] perf kABI size: 112
->   [  558.412855] perf uABI size: 104
-> 
-> when running new tooling on a new kernel the two sizes match:
-> 
-> [  331.598089] perf kABI size: 112
-> [  331.602050] perf uABI size: 112
-> 
-> and everything works as usual.
+=091) Multiplication
+=092) Cap that back to halt_poll_ns
+=093) Invoke the trace_kvm_halt_poll_ns_grow tracepoint
+=09   (when in fact vcpu->halt_poll_ns did not grow).
 
-Out of morbid curiosity I also tried out the v3.2 version of perf 
-tooling, which is now more than 7.5 years old, and 'perf record' + 'perf 
-report' is working fine on the latest kernel too:
-
-
-  $ perf version
-  perf version 3.2.dirty
-
-  $ perf record ~/hackbench 20
-  Time: 0.082
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.828 MB perf.data (~36166 samples) ]
-
-  $ perf report --stdio
-  ...
-  # Overhead    Command      Shared Object                                      Symbol
-  # ........  .........  .................  ..........................................
-  #
-     6.99%  hackbench  [kernel.kallsyms]  [k] queued_spin_lock_slowpath
-     6.22%  hackbench  [kernel.kallsyms]  [k] entry_SYSENTER_compat
-     4.06%  hackbench  [kernel.kallsyms]  [k] sysret32_from_system_call
-     3.56%  hackbench  [kernel.kallsyms]  [k] do_fast_syscall_32
-     3.40%  hackbench  [kernel.kallsyms]  [k] unix_stream_read_generic
-     3.32%  hackbench  [kernel.kallsyms]  [k] _raw_spin_lock
-     3.13%  hackbench  [kernel.kallsyms]  [k] __slab_free
-
-
-It works despite 'perf record' using an ancient, 72 bytes long 'struct perf_attr' 
-ABI:
-
-  [ 3013.531125] perf kABI size: 112
-  [ 3013.535097] perf uABI size: 72
-
-If I'm reading the logs right then the perf ABI went through around ~15 
-iterations in the v3.2..v5.4 timeframe that extended struct 
-perf_event_attr - but binary compatibility was maintained with ancient 
-tooling.
-
-This is also useful for tooling bisectability: tooling should work on new 
-and old kernels as well, even if a bisection point moves across ABI 
-extension boundaries.
-
-Thanks,
-
-	Ingo
