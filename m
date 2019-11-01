@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C029DEC311
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE85EC2DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbfKAMo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:44:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38963 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730580AbfKAMm0 (ORCPT
+        id S1730661AbfKAMm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:42:29 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:39742 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730617AbfKAMm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:42:26 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y3so10122555ljj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:24 -0700 (PDT)
+        Fri, 1 Nov 2019 08:42:27 -0400
+Received: by mail-lf1-f54.google.com with SMTP id 195so7122912lfj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KU/n1Q/VNXJbWwIQys/qt9rGcT4PXz5RLqrj6x2UwvM=;
-        b=U/f2h7JuYhwgX+OxayXYbuI3nx0fL2I+VDpk0pE1JfCFpTOAsakC6TS3OYY61jFEGH
-         Es7TiE/xRGdQOT/qPHZ/2VmMSA9H1E30CayCMWjQG4u5WbohQrKEwC61GH+dWiK6VIVk
-         eLCUnrHW+TjhzZPa8JfiyQxWMYcrT3/fzJKb0=
+        bh=kyeKnOkwmKeZFZzRl62UDL9FeDrPQAcAwjRLFXYmB4s=;
+        b=hdFnDRJdcgxhAccXp9uTboOxUbnJlSp0zSK/9NqGvvlqPrlSUt3SotDrKCgDfJ0z2g
+         WZTvLP0QqJd7fWxqqZ488553cVAWmEXlpLcD8q/rA8qfW1cUKsdN1uJRZkHMMx/WqkIZ
+         R4gwq+nWPpPxEACNFxX3JjQO2ml1dZnp0M0Ro=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KU/n1Q/VNXJbWwIQys/qt9rGcT4PXz5RLqrj6x2UwvM=;
-        b=Y+ebb121kbbMq90lekwpuyyYAw+OAS4c06dD8exJMja44GQ63BKQ7RlJxVRihSgaNz
-         n1+fbcavL+lM648WG9mUoCRwp4ldF9lYWj34DcrdKeu82TH9avU9oINlZ9V12OwSQuzr
-         TcUSiPvCXr0hr9P2zCWDkpU+CZUAa4I/HZa0kcG6oVPxLUotSKuPO4NDn44BVeWqbpmH
-         /tmHOGv8u7tdsRY0DAYOSecIla37qEDC8+l96tG/M1l2aaqxaPwEJyl8YxCTfT4QqBQm
-         K+rqPEEjr3RjLr6mG2DmluPYyCUc3PWcyTRHJETtc7XBcUDXVTWaA3cwKDQwDjXrcMBO
-         +7GQ==
-X-Gm-Message-State: APjAAAXmIfyofMp7Ctx4Cv2YsReP/K7deeCENNtS2fImnaf8nyAX77Q2
-        eGtq+JqaJ8W+jQL+nTqEokr/UA==
-X-Google-Smtp-Source: APXvYqwpYar3cadRMDA9V3X/W/gSCAb+1mtgi5R0km/i5QsofsD6KmUR//aDEr/XEPgCrUcqdgAl9w==
-X-Received: by 2002:a2e:89d3:: with SMTP id c19mr8219074ljk.201.1572612143860;
-        Fri, 01 Nov 2019 05:42:23 -0700 (PDT)
+        bh=kyeKnOkwmKeZFZzRl62UDL9FeDrPQAcAwjRLFXYmB4s=;
+        b=A3mXYGNwunU9Uoz1uon4sjKdFrQOeKgEJJRm5TJ8Db0O7+yCG95ebjFiQGMybeXKYv
+         X3tnlwug1cbnp4HLYBi2YVmzjy7ijb9fSey3qAHYjPGagMJFNeWngLhrseieo/kiJGj1
+         kjzX17z2na2BMoq2+UbkSL2u+CBYE9blbRJ/5yYn4MB7KYx8vd4VFCc6ehBE0aHiPMv1
+         ytT2ww345g7NXDT/1hJB/ZoiFjZVO16hn7D2zLgI/X/Q8rThy5K5+KqpYg+yN1PNjpEL
+         94IngLzDdD4V55bF545RUXgtI4HhuAXkWUZWWxRMUF2GvR7cOrQns9r/wzZhGyzrlncF
+         cQvw==
+X-Gm-Message-State: APjAAAXZub7d9Twoi2/cQz3VV9kqIj/oK4gs6NeTkQtGCsn4UQU9VM5P
+        8mbzxSLPYFMFjnW+XnxBVZE4RA==
+X-Google-Smtp-Source: APXvYqz+D19y23LVE0Y+cV1TdLje+zl11XW4b/kvCYTngov3WvPxQrsppRZFBETw4cxKCzrx/qrcdg==
+X-Received: by 2002:ac2:5bc2:: with SMTP id u2mr7138805lfn.173.1572612145317;
+        Fri, 01 Nov 2019 05:42:25 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.22
+        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:23 -0700 (PDT)
+        Fri, 01 Nov 2019 05:42:24 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 07/36] soc: fsl: qe: qe.c: guard use of pvr_version_is() with CONFIG_PPC32
-Date:   Fri,  1 Nov 2019 13:41:41 +0100
-Message-Id: <20191101124210.14510-8-linux@rasmusvillemoes.dk>
+Subject: [PATCH v3 08/36] soc: fsl: qe: drop unneeded #includes
+Date:   Fri,  1 Nov 2019 13:41:42 +0100
+Message-Id: <20191101124210.14510-9-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191101124210.14510-1-linux@rasmusvillemoes.dk>
 References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
@@ -63,52 +63,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e5c5c8d23fef (soc/fsl/qe: only apply QE_General4 workaround on
-affected SoCs) introduced use of pvr_version_is(), saying
-
-    The QE_General4 workaround is only valid for the MPC832x and MPC836x
-    SoCs. The other SoCs that embed a QUICC engine are not affected by this
-    hardware bug and thus can use the computed divisors (this was
-    successfully tested on the T1040).
-
-I'm reading the above as saying that the errata does not apply to the
-ARM-based SOCs with QUICC engine. In any case, use of pvr_version_is()
-must be guarded by CONFIG_PPC32 before we can remove the PPC32
-dependency from CONFIG_QUICC_ENGINE, so introduce qe_general4_errata()
-to keep the necessary #ifdeffery localized to a trivial helper.
+These includes are not actually needed, and asm/rheap.h and
+sysdev/fsl_soc.h are PPC-specific, hence prevent compiling QE for
+other architectures.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/soc/fsl/qe/qe.c    | 5 -----
+ drivers/soc/fsl/qe/qe_io.c | 2 --
+ 2 files changed, 7 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index 85737e6f5b62..1d8aa62c7ddf 100644
+index 1d8aa62c7ddf..a4763282ea68 100644
 --- a/drivers/soc/fsl/qe/qe.c
 +++ b/drivers/soc/fsl/qe/qe.c
-@@ -197,6 +197,14 @@ EXPORT_SYMBOL(qe_get_brg_clk);
- #define PVR_VER_836x	0x8083
- #define PVR_VER_832x	0x8084
+@@ -26,13 +26,8 @@
+ #include <linux/crc32.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/of_platform.h>
+-#include <asm/irq.h>
+-#include <asm/page.h>
+-#include <asm/pgtable.h>
+ #include <soc/fsl/qe/immap_qe.h>
+ #include <soc/fsl/qe/qe.h>
+-#include <asm/prom.h>
+-#include <asm/rheap.h>
  
-+static bool qe_general4_errata(void)
-+{
-+#ifdef CONFIG_PPC32
-+	return pvr_version_is(PVR_VER_836x) || pvr_version_is(PVR_VER_832x);
-+#endif
-+	return false;
-+}
-+
- /* Program the BRG to the given sampling rate and multiplier
-  *
-  * @brg: the BRG, QE_BRG1 - QE_BRG16
-@@ -223,7 +231,7 @@ int qe_setbrg(enum qe_clock brg, unsigned int rate, unsigned int multiplier)
- 	/* Errata QE_General4, which affects some MPC832x and MPC836x SOCs, says
- 	   that the BRG divisor must be even if you're not using divide-by-16
- 	   mode. */
--	if (pvr_version_is(PVR_VER_836x) || pvr_version_is(PVR_VER_832x))
-+	if (qe_general4_errata())
- 		if (!div16 && (divisor & 1) && (divisor > 3))
- 			divisor++;
+ static void qe_snums_init(void);
+ static int qe_sdma_init(void);
+diff --git a/drivers/soc/fsl/qe/qe_io.c b/drivers/soc/fsl/qe/qe_io.c
+index 5e3471ac09dd..f6b10f38b2f4 100644
+--- a/drivers/soc/fsl/qe/qe_io.c
++++ b/drivers/soc/fsl/qe/qe_io.c
+@@ -18,8 +18,6 @@
+ 
+ #include <asm/io.h>
+ #include <soc/fsl/qe/qe.h>
+-#include <asm/prom.h>
+-#include <sysdev/fsl_soc.h>
+ 
+ #undef DEBUG
  
 -- 
 2.23.0
