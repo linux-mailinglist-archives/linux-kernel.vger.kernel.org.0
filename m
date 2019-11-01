@@ -2,106 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 967FAEC8E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 20:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B55EC8E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 20:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfKATJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 15:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36802 "EHLO mail.kernel.org"
+        id S1727698AbfKATKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 15:10:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbfKATJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 15:09:22 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFA84218DE
-        for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2019 19:09:21 +0000 (UTC)
+        id S1727664AbfKATKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 15:10:05 -0400
+Subject: Re: [GIT PULL] EFI fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572635362;
-        bh=oqQ6mc8vMOO6iFg5xkYVj8cqy2/wKHrB+ZBK7dSIJbA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dmi0sKqQdD/CtjGV934ctcBkBqjEG0DD84sdkg6g56WAc44/iodUHl2tYGNestOFC
-         vZcSOUvDWCQbeR5qqWw/K67by48GtFmAqzr4y7V660wH9Jq6BXatQy0Oq3PaiGvKtK
-         /nhKLYwgNrMWt/f1mOsId2LBZ+VHWPB3y+kp56T4=
-Received: by mail-wr1-f43.google.com with SMTP id p4so10574960wrm.8
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 12:09:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAW2GY7fs7/Np3hOI/G5u6bBEJF2F5MzQMjjSn/0mAXql3rusxPT
-        NqwmMn4amF+QKfSchwUYKVyVZfczCPGJx3y9CSBhcw==
-X-Google-Smtp-Source: APXvYqyZ9Wly2LV68S8MZlxCRLu2pe2tQOypXuB/IZXMIr+8oftULkBEVxSwZk3JFBwMfvp1qSXU2voo9srBQswlajk=
-X-Received: by 2002:a5d:51c2:: with SMTP id n2mr11735442wrv.149.1572635360221;
- Fri, 01 Nov 2019 12:09:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <157262960837.2838.17520432516398899751.stgit@naples-babu.amd.com>
- <157262962352.2838.15656190309312238595.stgit@naples-babu.amd.com>
- <CALCETrUSjbjt=U6OpTFXEZsEJQ6zjcqCeqi6nSFOi=rN91zWmg@mail.gmail.com> <288d481f-43c7-ffbb-8aed-c3c4bc19846b@amd.com>
-In-Reply-To: <288d481f-43c7-ffbb-8aed-c3c4bc19846b@amd.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 1 Nov 2019 12:09:06 -0700
-X-Gmail-Original-Message-ID: <CALCETrX9ztjRvCMFTWrf0WgAv4C9Y9DWcxQ4bBr3ajcAWNF9ZA@mail.gmail.com>
-Message-ID: <CALCETrX9ztjRvCMFTWrf0WgAv4C9Y9DWcxQ4bBr3ajcAWNF9ZA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] kvm: svm: Enable UMIP feature on AMD
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        s=default; t=1572635404;
+        bh=LZMtYNx+7eyqin0/yeV/hoXlKA1+gz2jHT4i56tlWfs=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=JA8thxWu/SDpKoMS2OPD9M0E4YOAiTPFzdwXp3pLoZ8fGNMqghuXkcp1AD9MpmLLV
+         IRh31HOraMaI1LCHrT5RklClbIgunNBHv+2UB9yH949+C1ac4vM4xbIFjNTIN1Wnsw
+         2x+3MegqPByGLYDL3jX4q3IcvEGHuU/N6UR/p0jE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191101174300.GA33878@gmail.com>
+References: <20191101174300.GA33878@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191101174300.GA33878@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ efi-urgent-for-linus
+X-PR-Tracked-Commit-Id: 359efcc2c910117d2faf704ce154e91fc976d37f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b2a18c25c73f30316eb356e915f4c9cc58ec42fc
+Message-Id: <157263540467.17460.14925099456453241443.pr-tracker-bot@kernel.org>
+Date:   Fri, 01 Nov 2019 19:10:04 +0000
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, linux-efi@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 11:38 AM Moger, Babu <Babu.Moger@amd.com> wrote:
->
->
->
-> On 11/1/19 1:24 PM, Andy Lutomirski wrote:
-> > On Fri, Nov 1, 2019 at 10:33 AM Moger, Babu <Babu.Moger@amd.com> wrote:
-> >>
-> >> AMD 2nd generation EPYC processors support UMIP (User-Mode Instruction
-> >> Prevention) feature. The UMIP feature prevents the execution of certain
-> >> instructions if the Current Privilege Level (CPL) is greater than 0.
-> >> If any of these instructions are executed with CPL > 0 and UMIP
-> >> is enabled, then kernel reports a #GP exception.
-> >>
-> >> The idea is taken from articles:
-> >> https://lwn.net/Articles/738209/
-> >> https://lwn.net/Articles/694385/
-> >>
-> >> Enable the feature if supported on bare metal and emulate instructions
-> >> to return dummy values for certain cases.
-> >
-> > What are these cases?
->
-> It is mentioned in the article https://lwn.net/Articles/738209/
->
-> === How does it impact applications?
->
-> When enabled, however, UMIP will change the behavior that certain
-> applications expect from the operating system. For instance, programs
-> running on WineHQ and DOSEMU2 rely on some of these instructions to
-> function. Stas Sergeev found that Microsoft Windows 3.1 and dos4gw use the
-> instruction SMSW when running in virtual-8086 mode [4]. SGDT and SIDT can
-> also be used on virtual-8086 mode.
->
+The pull request you sent on Fri, 1 Nov 2019 18:43:00 +0100:
 
-What does that have to do with your series?  Your series is about
-enabling UMIP (or emulating UMIP -- your descriptions are quite
-unclear) on AMD hardware, and the hypervisor should *not* be emulating
-instructions to return dummy values.  The *guest kernel* already knows
-how to emulate userspace instructions as needed.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
 
---Andy
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b2a18c25c73f30316eb356e915f4c9cc58ec42fc
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
