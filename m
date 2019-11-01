@@ -2,77 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32BFDEC0BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF18EC0CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbfKAJrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 05:47:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45902 "EHLO mail.kernel.org"
+        id S1728512AbfKAJuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 05:50:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbfKAJrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:47:31 -0400
+        id S1726957AbfKAJuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:50:51 -0400
 Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B93F20862;
-        Fri,  1 Nov 2019 09:47:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1614D21734;
+        Fri,  1 Nov 2019 09:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572601651;
-        bh=CY/hMjHfyMMX+U7BKi2bH3TFPPXU/+N6UkBkX9i+Ewo=;
+        s=default; t=1572601850;
+        bh=HdDiE3u28/EH/XJwBUZXniN/4FBeDOyfUzlaLLrQt8U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S7FtnlFSbXmfDYtmTaGXcBHmbU02YgBn2F7tB35KASJT29vyBtOADArIDO5z72SWe
-         9a2sFMYbs7XcdTRJk8mda2qMXP+3yIy0zDpuMKwbEMO7sw2ztTaAm3nxAU4xR/vyrR
-         1krMgQdGgzp0Hos06JZzNzU5F3VGrpGyBf5zuMNk=
-Date:   Fri, 1 Nov 2019 10:10:50 +0100
+        b=aOoWh+fa9xUVINtmIFGgLJb5/BUb3CxH2sXYOSzSHO36L6ljk6t0EpPajLqaU8xE7
+         mKbvygogrFwXFvu1nBL0sAtUyDMpcbcDONIDYacL9I2TcteuiT9K/dB1teL0eOSRxN
+         Kp9WtFItaERwdzHT/tzTckSRZ+H6kyl8hML6xc+I=
+Date:   Fri, 1 Nov 2019 10:13:55 +0100
 From:   Maxime Ripard <mripard@kernel.org>
-To:     Karl Palsson <karlp@tweak.net.au>
-Cc:     wens@csie.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: sun8i: add FriendlyARM NanoPi Duo2-IoT Box
-Message-ID: <20191101091050.iw3n4qiqyueoymif@hendrix>
-References: <20191031231216.30903-2-karlp@tweak.net.au>
- <20191031231216.30903-3-karlp@tweak.net.au>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: sun4i: Use PTR_ERR_OR_ZERO to simplify the code
+Message-ID: <20191101091355.ibbet6a2zb23bpjn@hendrix>
+References: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hyk2mpjmgefias6x"
+        protocol="application/pgp-signature"; boundary="6vhl2j34wvp3caxz"
 Content-Disposition: inline
-In-Reply-To: <20191031231216.30903-3-karlp@tweak.net.au>
+In-Reply-To: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---hyk2mpjmgefias6x
+--6vhl2j34wvp3caxz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Oct 31, 2019 at 11:12:16PM +0000, Karl Palsson wrote:
-> The IoT-Box is a dock for the NanoPi Duo2, adding two USB host ports, a
-> 10/100 ethernet port, a variety of pin headers for i2c and uarts, and a
-> quad band 2G GSM module, a SIM800C.
+On Thu, Oct 31, 2019 at 10:09:39PM +0800, zhong jiang wrote:
+> It is better to use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
 >
-> Full documentation and schematics available from vendor:
-> http://wiki.friendlyarm.com/wiki/index.php/NanoPi_Duo2_IoT-Box
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  sound/soc/sunxi/sun4i-i2s.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> Signed-off-by: Karl Palsson <karlp@tweak.net.au>
+> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+> index d0a8d58..72012a6 100644
+> --- a/sound/soc/sunxi/sun4i-i2s.c
+> +++ b/sound/soc/sunxi/sun4i-i2s.c
+> @@ -1174,10 +1174,8 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+>  	i2s->field_fmt_sr =
+>  			devm_regmap_field_alloc(dev, i2s->regmap,
+>  						i2s->variant->field_fmt_sr);
+> -	if (IS_ERR(i2s->field_fmt_sr))
+> -		return PTR_ERR(i2s->field_fmt_sr);
+>
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
 
-It seems like it's something that can be connected / disconnected at
-will?
-
-If so, then it should be an overlay, not a full blown DTS.
+I don't find it "better". This couples the error handling and the
+success case, and it makes it harder to extend in the future.
 
 Maxime
 
---hyk2mpjmgefias6x
+--6vhl2j34wvp3caxz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbv2mgAKCRDj7w1vZxhR
-xTIaAP4pb+9RwvqXKqIc2E6Dpb3WFADpapl+AWFeMQpFWV27RgEAzsIeguDEm+wg
-FPaKYna7zMELFqKZbFp9C2uGOBo5hwk=
-=ia8F
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbv3UwAKCRDj7w1vZxhR
+xSByAQCjg2HWuIqPYN2yl52RWX3gUhD8/UFFCrxTI4MANT8XIAD/YFUGXPMc30Zx
+R7UevyMTvzJVznWeORM6F+mRArQGYQM=
+=Pr2a
 -----END PGP SIGNATURE-----
 
---hyk2mpjmgefias6x--
+--6vhl2j34wvp3caxz--
