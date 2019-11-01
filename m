@@ -2,144 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A9DEC9DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:47:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1F0EC9CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfKAUrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:47:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56082 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727517AbfKAUrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:47:15 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92699217D9;
-        Fri,  1 Nov 2019 20:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572641234;
-        bh=SSkz3soRV0jdoMV7GQDwd9LGZExhDp/y3PEYxGNxQLY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jVoqK4iZZstPIyuKWWbEFzDm5toz63GhaArRo3fr0RbJXH38Yu90S9QnQSeUZp6GA
-         MgdvB+9y8GOV1FAak3eTcsrCsba1SSCPxlKZi7t+7jD/9iLHwppKo5bZr51OX1xpy6
-         Fu+YQ3KiBQrIL4hnYEg/sHXAI7x9oRodQwIWxgyY=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 6/6] PCI/PM: Remove unused pci_driver.suspend_late() hook
-Date:   Fri,  1 Nov 2019 15:45:58 -0500
-Message-Id: <20191101204558.210235-7-helgaas@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-In-Reply-To: <20191101204558.210235-1-helgaas@kernel.org>
-References: <20191101204558.210235-1-helgaas@kernel.org>
+        id S1727932AbfKAUqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:46:19 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49190 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfKAUqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:46:18 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA1KkAFO125498;
+        Fri, 1 Nov 2019 15:46:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572641170;
+        bh=zybgR7hDF/o4db+iKiuX3H8IVivapUrRQjOn5yGa7K8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=otXhBIFK/UWifwkl7A3yKL1MaKFpvk1+SsSgCvQpHNfBhk8PnSMnhQEnZNzwgOFyF
+         xLYwYNBDB1UhUieFQKE+yzeXoGf3ni5chqRp2+k6XsXPq59N6FQUMQoMF5E2tEFnAD
+         WQ1xdXTH59r03zrOb+IUWXr1nwV4Puyqp3+QY3do=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1KkAJG041314;
+        Fri, 1 Nov 2019 15:46:10 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 1 Nov
+ 2019 15:45:56 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 1 Nov 2019 15:45:56 -0500
+Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1Kk6n3017157;
+        Fri, 1 Nov 2019 15:46:07 -0500
+Subject: Re: [PATCH v5 net-next 06/12] net: ethernet: ti: introduce cpsw
+ switchdev based driver part 1 - dual-emac
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <netdev@vger.kernel.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
+References: <20191024100914.16840-1-grygorii.strashko@ti.com>
+ <20191024100914.16840-7-grygorii.strashko@ti.com>
+ <20191029122422.GL15259@lunn.ch>
+ <d87c72e1-cb91-04a2-c881-0d8eec4671e2@ti.com>
+ <20191101203913.GD31534@lunn.ch>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <8f3eb934-7dcd-b43a-de96-6a864ef67c92@ti.com>
+Date:   Fri, 1 Nov 2019 22:46:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191101203913.GD31534@lunn.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
 
-The struct pci_driver.suspend_late() hook is one of the legacy PCI power
-management callbacks, and there are no remaining users of it.  Remove it.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- Documentation/power/pci.rst | 10 +++++-----
- drivers/pci/pci-driver.c    | 22 +---------------------
- include/linux/pci.h         |  2 --
- 3 files changed, 6 insertions(+), 28 deletions(-)
+On 01/11/2019 22:39, Andrew Lunn wrote:
+>>>> +static const struct devlink_ops cpsw_devlink_ops;
+>>>
+>>> It would be nice to avoid this forward declaration.
+>>
+>> It's not declaration, it's definition of devlink_ops without any standard callbacks implemented.
+> 
+> Ho Grygorii
+> 
+> Ah, yes.
+> 
+> How about
+> 
+> = {
+>    };
+> 
+> to make it clearer?
 
-diff --git a/Documentation/power/pci.rst b/Documentation/power/pci.rst
-index ff7029b94068..0924d29636ad 100644
---- a/Documentation/power/pci.rst
-+++ b/Documentation/power/pci.rst
-@@ -692,11 +692,11 @@ controlling the runtime power management of their devices.
- At the time of this writing there are two ways to define power management
- callbacks for a PCI device driver, the recommended one, based on using a
- dev_pm_ops structure described in Documentation/driver-api/pm/devices.rst, and
--the "legacy" one, in which the .suspend(), .suspend_late(), and
--.resume() callbacks from struct pci_driver are used.  The legacy approach,
--however, doesn't allow one to define runtime power management callbacks and is
--not really suitable for any new drivers.  Therefore it is not covered by this
--document (refer to the source code to learn more about it).
-+the "legacy" one, in which the .suspend() and .resume() callbacks from struct
-+pci_driver are used.  The legacy approach, however, doesn't allow one to define
-+runtime power management callbacks and is not really suitable for any new
-+drivers.  Therefore it is not covered by this document (refer to the source code
-+to learn more about it).
- 
- It is recommended that all PCI device drivers define a struct dev_pm_ops object
- containing pointers to power management (PM) callbacks that will be executed by
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index fc372c2d529a..e89fd90eaa93 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -599,32 +599,12 @@ static int pci_legacy_suspend(struct device *dev, pm_message_t state)
- static int pci_legacy_suspend_late(struct device *dev, pm_message_t state)
- {
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
--	struct pci_driver *drv = pci_dev->driver;
--
--	if (drv && drv->suspend_late) {
--		pci_power_t prev = pci_dev->current_state;
--		int error;
--
--		error = drv->suspend_late(pci_dev, state);
--		suspend_report_result(drv->suspend_late, error);
--		if (error)
--			return error;
--
--		if (!pci_dev->state_saved && pci_dev->current_state != PCI_D0
--		    && pci_dev->current_state != PCI_UNKNOWN) {
--			pci_WARN_ONCE(pci_dev, pci_dev->current_state != prev,
--				      "PCI PM: Device state not saved by %pS\n",
--				      drv->suspend_late);
--			goto Fixup;
--		}
--	}
- 
- 	if (!pci_dev->state_saved)
- 		pci_save_state(pci_dev);
- 
- 	pci_pm_set_unknown_state(pci_dev);
- 
--Fixup:
- 	pci_fixup_device(pci_fixup_suspend_late, pci_dev);
- 
- 	return 0;
-@@ -653,7 +633,7 @@ static void pci_pm_default_suspend(struct pci_dev *pci_dev)
- static bool pci_has_legacy_pm_support(struct pci_dev *pci_dev)
- {
- 	struct pci_driver *drv = pci_dev->driver;
--	bool ret = drv && (drv->suspend || drv->suspend_late || drv->resume);
-+	bool ret = drv && (drv->suspend || drv->resume);
- 
- 	/*
- 	 * Legacy PM support is used by default, so warn if the new framework is
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index dd4596fc1208..9b0e35e09874 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -805,7 +805,6 @@ struct module;
-  *		The remove function always gets called from process
-  *		context, so it can sleep.
-  * @suspend:	Put device into low power state.
-- * @suspend_late: Put device into low power state.
-  * @resume:	Wake device from low power state.
-  *		(Please see Documentation/power/pci.rst for descriptions
-  *		of PCI Power Management and the related functions.)
-@@ -828,7 +827,6 @@ struct pci_driver {
- 	int  (*probe)(struct pci_dev *dev, const struct pci_device_id *id);	/* New device inserted */
- 	void (*remove)(struct pci_dev *dev);	/* Device removed (NULL if not a hot-plug capable driver) */
- 	int  (*suspend)(struct pci_dev *dev, pm_message_t state);	/* Device suspended */
--	int  (*suspend_late)(struct pci_dev *dev, pm_message_t state);
- 	int  (*resume)(struct pci_dev *dev);	/* Device woken up */
- 	void (*shutdown)(struct pci_dev *dev);
- 	int  (*sriov_configure)(struct pci_dev *dev, int num_vfs); /* On PF */
+NP
+
+> 
+>>>> +static const struct devlink_param cpsw_devlink_params[] = {
+>>>> +	DEVLINK_PARAM_DRIVER(CPSW_DL_PARAM_ALE_BYPASS,
+>>>> +			     "ale_bypass", DEVLINK_PARAM_TYPE_BOOL,
+>>>> +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
+>>>> +			     cpsw_dl_ale_ctrl_get, cpsw_dl_ale_ctrl_set, NULL),
+>>>> +};
+>>>
+>>> Is this documented?
+>>
+>> In patch 9. But I'll update it and add standard devlink parameter definition, like:
+>>
+>> ale_bypass	[DEVICE, DRIVER-SPECIFIC]
+>> 		Allows to enable ALE_CONTROL(4).BYPASS mode for debug purposes
+>> 		Type: bool
+>> 		Configuration mode: runtime
+> 
+> And please you the standard file naming and location,
+> Documentation/networking/devlink-params-foo.txt
+Ok. I will.
+But I'd like to clarify:
+- drivers documentation placed in ./Documentation/networking/device_drivers/ti/
+so could you confirm pls, that you want me to add devlink-params documentation in separate file
+and palace it in ./Documentation/networking/ folder directly?
+   
+
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+Best regards,
+grygorii
