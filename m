@@ -2,94 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5B8EC987
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 600C4EC97F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfKAUU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:20:59 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.217]:36540 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfKAUU6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:20:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1572639656;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=XtCq+R5tcMt8CotAtaiQUQwbLgPqym0ayXNPvI8RUz4=;
-        b=M8hV507crXnOYYFu/b4zx2tstn3fg7H1zRIuPFJ/fJM+lZJjSKQzHREBCpvdH+s9q6
-        GRRpR/moawFvam2GRd19rbs4noXdmhRSG4+QGD39g1P69BaXcet9Q3pQK1TlBqSfvahT
-        aJ4BlritT4Jlir3l1272pxCR/PFHxBOJtpPG2FsTqAsPHkb0gddqMGCJzrdbkz0GWPu4
-        AkIXa9snsnAYTnkFHDTMXfAfqeF64nX51JsPsr7xtVNzIlt5WFFOsNT0bCGym6TEqzjC
-        Y2pLQ9t2yRZd0/OXehqBpXbwXLEW1fxe7h23R8u0sNOT7GFFpCEehXOFn2S0fJYkjclM
-        0e3w==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4AUztn93FPS2dyuYM9nFg=="
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.29.0 SBL|AUTH)
-        with ESMTPSA id 20735bvA1KHqHLo
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 1 Nov 2019 21:17:52 +0100 (CET)
-Date:   Fri, 1 Nov 2019 21:17:45 +0100
-From:   Olaf Hering <olaf@aepfle.de>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "open list:Hyper-V CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] tools/hv: async name resolution in kvp_daemon
-Message-ID: <20191101211745.37dc5044.olaf@aepfle.de>
-In-Reply-To: <20191028184955.24dbb7d4.olaf@aepfle.de>
-References: <20191024144943.26199-1-olaf@aepfle.de>
-        <20191028161754.GF1554@sasha-vm>
-        <20191028184955.24dbb7d4.olaf@aepfle.de>
-X-Mailer: Claws Mail 2019.05.18 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1727801AbfKAUUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:20:07 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55656 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbfKAUUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:20:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 13:20:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,256,1569308400"; 
+   d="scan'208";a="226138430"
+Received: from bklaps-mobl.ger.corp.intel.com (HELO localhost) ([10.252.27.20])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 13:19:58 -0700
+Date:   Fri, 1 Nov 2019 22:19:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Stuart Yoder <stuart.yoder@arm.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted
+ Keys
+Message-ID: <20191101201957.GA8369@linux.intel.com>
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+ <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
+ <20191031214745.GG10507@linux.intel.com>
+ <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HtdrpGxa9p+iibwC0FBZ88M"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/HtdrpGxa9p+iibwC0FBZ88M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
+ 
+> Isn't this statement contradicting with your earlier statement
+> regarding the right order would be to complete TEE patches review
+> first and then come up with documentation here [2]?
+> 
+> [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
+> [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
 
-Am Mon, 28 Oct 2019 18:49:55 +0100
-schrieb Olaf Hering <olaf@aepfle.de>:
+With the intersecting issues, namely key generation and conflicting
+keyctl parameters, that was not a well considered statement.
 
-> Am Mon, 28 Oct 2019 12:17:54 -0400
-> schrieb Sasha Levin <sashal@kernel.org>:
-> > undefined reference to `pthread_create' =20
-> Does "make V=3D1 -C tools/hv" work for you?
-
-Did you have a chance to check why the patch fails for you?
-
-
-Olaf
-
---Sig_/HtdrpGxa9p+iibwC0FBZ88M
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAl28kuoACgkQ86SN7mm1
-DoBEAQ//W23SXKcJCdXPXpGBL3K6CrmsWiiVHoarCoQaK00IPvxwkMnUizXZPZLT
-JFAad9nqT/ZxbYVxh6BfcIyKqSTP3ospBQISvIFCPODS36pBRN5UkmDQVvtUJDu5
-MJPlUUi82uLQMjgvlBvDadrBhZ/m0HBhaiD5rpcQLrntljNtAs7T6+yioG0tJ8N2
-xSR5iaD1Wo3tGZwbHhcpi//XRds6Wx6K+2UXCVKOrehlZCRhp4CowYmceyH3RtLH
-p3gNXbC5plm5mgBeRTXYnsxvkqzfAxOu0sFwLZKhzsgA1AVRR/7+9oEmt1kMFe7w
-EjvsLKahCE5tzgULZOuVVwhjCfQPXq6XRjMpud/WR5oS34znIZgmfVLeq2Ut0TeU
-PzujNRSshx/rlnGtgmEHxEJdcQU9/CzPwCSqYAgDZVvYI6PhHmzZ87dwihsiupYn
-6DZBfMilNdc1KN2QsLBCbv3D3mZd653tWKRcp+arNR5F8Vwx0iuUtxl7BDQCQcb/
-+atsEY8kNYO7oYoyo9Ex/mMyLV7Ze9rEDCV3CfoJA/M+o6cC0BULJGt2r6QDx0s5
-iiDxf9jbBK8X7gfmjn/fyL5I+PC6eYseW5D2/Q+1boELMfSjJAJxpMMgkQppE6Hr
-sj4gm0+gZsNgbimDI9U+YRjM0ZFdyWKOUNpMX/dFfss2qTdAAck=
-=lTlB
------END PGP SIGNATURE-----
-
---Sig_/HtdrpGxa9p+iibwC0FBZ88M--
+/Jarkko
