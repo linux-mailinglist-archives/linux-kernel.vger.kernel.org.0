@@ -2,150 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE415EC635
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B99C6EC65B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:07:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfKAP4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:56:34 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41578 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfKAP4e (ORCPT
+        id S1727426AbfKAQHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 12:07:22 -0400
+Received: from shroom.duncanthrax.net ([178.63.180.169]:51995 "EHLO
+        smtp.duncanthrax.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfKAQHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:56:34 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j14so7572598lfb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 08:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fFCvFToGeaHVIGU5sFBVgfSRoD2BKpJyYjD9mLtHujQ=;
-        b=F9Ndl5PhHtMPfUuMcm8khWvn73/BEOIl++HBIcr20Ca4EaRLGm0X6RFvsiVYxyTX1g
-         ScVc4k5lnnHBMJ/H/gnJWwg7s7cajawJ2YKfsHiEtNaOhBIrW6P82v9lWIsp4xPGOmsA
-         9q8ZHL/h7W1JGbUDLXrlJb3earEteWQrnKzeYI4pTOy0d8MaY+lfEZgmfgMGyFxVDWOZ
-         lusyDw5qW5fg9ImIFhykFIXEit3Pty0/IEovLGP9ElvcQ0+kyi6ngXU+wqtlfiMAIXmA
-         3oC4MDlTxQoJKR2Ml8zNsEQhHYR4x9mVMEqIxS+PkIWxgT1z+NItPSoSl+FuRRrny1sQ
-         xumw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fFCvFToGeaHVIGU5sFBVgfSRoD2BKpJyYjD9mLtHujQ=;
-        b=eF2DwrbhxluusrKYj8K2Gu9H4nmvANQZ5vsihq6tIoqG2wWNF/dRQ5YTYtG9cBb1Yk
-         aeuHb7YvF2MNtJg+wKFYWiFzclZQi5ArmS3esfSlbFYBIQRGhCbr8K9x9i6o5x1FFImq
-         rKYoXWZAsSdVChQym4TQ3jiETt41P8676N9TIti+SQmaBg4RyAVbYv69v62IJ4j54Upj
-         CuJpgr1FHBoaV0lkfFc6BtEL8fvkRMr/anxTAM4Dijrn9BfAamt02DJ7ykfayCYmsPTA
-         Y6dN5MDxm4VeYuR8KgY+6AFm7xKDr5VVE5J8zPsZOvAGMORw0lqVeBP4ZY9ypGxI3ROp
-         l7jw==
-X-Gm-Message-State: APjAAAXEe05UrhHi+AKQoDEX2VXvRe5ARyxKTVHEFUBTqm059uREasmL
-        aKzPipuMoQrmb7+0wChyFFXnFm9u0hbJUk7gegKR5Q+3L0U9Qw==
-X-Google-Smtp-Source: APXvYqxLkZQZkIBPHIuRg8wW008rxg1ziHdr9p3sXGGFnFmuX+RTcYVkFo7wPFbzWchz3TjPyV901OIH/V9MrUR/M5o=
-X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr7717304lfp.5.1572623791617;
- Fri, 01 Nov 2019 08:56:31 -0700 (PDT)
+        Fri, 1 Nov 2019 12:07:22 -0400
+X-Greylist: delayed 1667 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 12:07:21 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=duncanthrax.net; s=dkim; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=iqYA5fETDX6oAawBOnjaoR4rJRUghsV/4yW9eGheshQ=; b=D2eNoW4p9bKXgIjVB+MrDQs49v
+        HcO9QyX0Pi147mZPEvurVKnXCIkEcvidueyMePcq2Vh9DEacMwF0M7CNrdUJEWiqFzj5GFVxyUPYr
+        qRHgjxVwF7JOc7J0TcYhN0b1EYTbuY8WNb4wE5/dz8Gf7d4jNBbBhMIhSLPCjrdq4d5U=;
+Received: from hsi-kbw-046-005-233-221.hsi8.kabel-badenwuerttemberg.de ([46.5.233.221] helo=t470p.stackframe.org)
+        by smtp.duncanthrax.net with esmtpa (Exim 4.90_1)
+        (envelope-from <svens@stackframe.org>)
+        id 1iQZ1P-00080S-20; Fri, 01 Nov 2019 16:39:31 +0100
+Date:   Fri, 1 Nov 2019 16:39:30 +0100
+From:   Sven Schnelle <svens@stackframe.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        amit.kachhap@arm.com, catalin.marinas@arm.com, deller@gmx.de,
+        duwe@suse.de, James.Bottomley@HansenPartnership.com,
+        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
+        jthierry@redhat.com, linux-parisc@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+        takahiro.akashi@linaro.org, will@kernel.org
+Subject: Re: [PATCHv2 0/8] arm64: ftrace cleanup + FTRACE_WITH_REGS
+Message-ID: <20191101153929.GA9053@t470p.stackframe.org>
+References: <20191029165832.33606-1-mark.rutland@arm.com>
 MIME-Version: 1.0
-References: <20191030114530.872-1-peter.ujfalusi@ti.com>
-In-Reply-To: <20191030114530.872-1-peter.ujfalusi@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 1 Nov 2019 16:56:19 +0100
-Message-ID: <CACRpkdbw9MVrQMSgVMenSqAOiti1pAy4d2LvWY-ssx9dhzWEcw@mail.gmail.com>
-Subject: Re: [RFC 0/2] gpio: Support for shared GPIO lines on boards
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Grant Likely <glikely@secretlab.ca>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191029165832.33606-1-mark.rutland@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
+Hi Mark,
 
-cutting all the discussions in this thread we need to see the bigger
-pattern:
+On Tue, Oct 29, 2019 at 04:58:24PM +0000, Mark Rutland wrote:
+> Hi,
+> 
+> This series is a reworked version of Torsten's FTRACE_WITH_REGS series
+> [1]. I've tried to rework the existing code in preparatory patches so
+> that the patchable-function-entry bits slot in with fewer surprises.
+> This version is based on v5.4-rc3, and can be found in my
+> arm64/ftrace-with-regs branch [2].
+> 
+> Patch 1 adds an (optional) ftrace_init_nop(), which the core code uses
+> to initialize callsites. This allows us to avoid a synthetic MCOUNT_ADDR
+> symbol, and more cleanly separates the one-time initialization of the
+> callsite from dynamic NOP<->CALL modification. Architectures which don't
+> implement this get the existing ftrace_make_nop() with MCOUNT_ADDR.
+> 
+> Recently parisc gained ftrace support using patchable-function-entry.
+> Patch 2 makes the handling of module callsite locations common in
+> kernel/module.c with a new FTRACE_CALLSITE_SECTION definition, and
+> removed the newly redundant bits from arch/parisc.
+> 
+> Patches 3 and 4 move the module PLT initialization to module load time,
+> which simplifies runtime callsite modification. This also means that we
+> don't transitently mark the module text RW, and will allow for the
+> removal of module_disable_ro().
+> 
+> Patches 5 and 6 add some trivial infrastructure, with patch 7 finally
+> adding FTRACE_WITH_REGS support. Additional work will be required for
+> livepatching (e.g. implementing reliable stack trace), which is
+> commented as part of patch 7.
+> 
+> Patch 8 is a trivial cleanup atop of the rest of the series, making the
+> code easier to read and less susceptible to config-specific breakage.
+> 
+> Since v1 [3]:
+> * Add a couple of people to Cc
+> * Fold in Ard's Reviewed-by tag
+> * Rename ftrace_code_init_disabled() to ftrace_nop_initialize()
+> * Move ftrace_init_nop() to <linux/ftrace.h>, with kerneldoc
+> * Update kerneldoc for rec parameters
+[..]
 
-On GPIO rails
+I tested this series on parisc both with ftracing kernel internal functions and
+module functions. Both are working fine, so feel free to add my
 
-People want "something like rails" for GPIO. In power supplies
-and thus the regulator subsystem, rails are connected to many
-logical endpoints.
+Tested-by: Sven Schnelle <svens@stackframe.org>
 
-- The suggested inverter bindings would be effectively an
-  inverter on a GPIO rail.
-
-- This suggestion would be equal to many power consumers
-  on a rail, such as the usecase of shared gpio-enable lines in
-  the regulator subsystem already provides.
-
-The former seems to have been identified as solveable for the
-userspace that needed it and absorbed into the drafts for a
-virtualized GPIO controller. (Aggregating and creating a new
-virtual GPIO chip for some select physical GPIO lines.)
-
-I haven't seen an exact rationale from the DT community as
-to why these things should not be modeled, but as can be
-clearly seen in
-Documentation/devicetree/bindings/regulator/regulator.yaml
-the "rail abstraction" from the regulator subsystem which
-is in effect struct regulation_constraints and it sibling
-struct regulator_init_data is not in the DT bindings, instead
-this is encoded as properties in the regulator itself, so this
-is pretty consistent: the phandle from regulator to consumer
-*is* the rail.
-
-This goes back to Rajendras initial DT regulator support code
-see:
-git log -p 69511a452e6d
-
-So it would be logical then to just have:
-
-- More than one phandle taking the same GPIO line
-- Figure this situation out in the gpiolib OF core
-- Resolve the manageability of the situation (same
-  consumer flags etc)
-- Instantiate a kernel component as suggested,
-  mediating requests.
-- Handle it from there.
-
-So:
-
-gpio: gpio-controller@0 {
-        compatible = "foo,gpio";
-        gpio-controller;
-        #gpio-cells = <2>;
-};
-
-consumer-a {
-       compatible = "foo,consumer-a";
-       rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-};
-
-consumer-b {
-       compatible = "foo,consumer-b";
-       rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-};
-
-Hi kernel: figure it out.
-
-From this point the kernel driver(s) have to figure it out.
-
-I don't think this requires any changes to the DT bindings
-other than perhaps spelling out that if you link more than one
-phandle to a GPIO line, magic will happen. (We should probably
-make very verbose dmesg prints about this magic.)
-
-This is enough to start with. After that we can discuss adding
-flags and constraint properties to a certain GPIO line if
-need be. (That will be a big discussion as well, as we haven't
-even figured out how to assign default values to individual
-GPIO lines yet.)
-
-Yours,
-Linus Walleij
+Regards
+Sven
