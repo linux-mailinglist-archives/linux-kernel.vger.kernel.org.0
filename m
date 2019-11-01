@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 571B5EC2DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A959EC30D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730576AbfKAMmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:42:22 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34448 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729493AbfKAMmT (ORCPT
+        id S1730369AbfKAMmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:42:21 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38582 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfKAMmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Nov 2019 08:42:19 -0400
-Received: by mail-lf1-f66.google.com with SMTP id f5so7149615lfp.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:16 -0700 (PDT)
+Received: by mail-lf1-f68.google.com with SMTP id q28so7152307lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7uK8xEnPEigQ7dFIza6M7Wg35/gDKz/RHXvPNwcggqY=;
-        b=FJGEyUjDMyY3qQwDxrXdaq6kbDtEuWaQ9DdM3JQbmkDv5/TqT279el/27e2uU9No1a
-         f+iz8Vxf6Hy5Yia656Z3D2IFrlqCrNAHpa+4MZwbyXZwnzKLGOuyKeoeouKUynNENL+w
-         9N/0jeI/nf5AWsvbX8qp/uDqSP/sxEhYzWMsk=
+        bh=IwcdyWxRDO/TUjQjvqfZVlSTaDYPWlQZLs741mWfW6c=;
+        b=EBWLnh2gewMrrOR7Ur4LtjqcL3qopz+JE1MaR/3SxQxLBmY2+j/GbFh12o1lOdzalc
+         ZRBnxmxYZCyK/rBsgZu94RdJDHriGBjSx7Za5We9/D7NfeWht012JDaNZ7n9PZuuewps
+         BAJRmnhCZcl0RMHcCXhFwHJnb4m8Sqwg157Iw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7uK8xEnPEigQ7dFIza6M7Wg35/gDKz/RHXvPNwcggqY=;
-        b=A7bzGxqRS7+ZkEJaJG8E44yppyGLhS6dNeMb8DlDmPZ7qSH1EGy45WDHmys/uB6hn1
-         h170SlVtCFtZoMGqMNt7brUVRMx1tpjrXFV+iRSor2/UPGeMYou142mognGUaOrg6TH5
-         tTsJTfdAZRwbntlz3FE7+3imowQpnTL0v+E7fClk2OLH68/r7tttBALg5IKxXNN01Aij
-         eG+59TppWghpq5sWFGtyYCvTcsf/MJ9/eYlKMeV461tHd/0Bspmp8MxDpF5gNBtJqfVx
-         NkAU4G7+AZa0M5Qsn8rRjclhlQMqxvpr5DmbeAr4VVPFGkPUrongzKlTrolFDTg/xGGK
-         pZdA==
-X-Gm-Message-State: APjAAAVADongaoICOZSh1GjoSjQ3sT5LxWWhqD9wLw6EYQJcCR3a1YGX
-        LyHLXoHcImwBEaGbHdPm7Fau5g==
-X-Google-Smtp-Source: APXvYqx10tC45xnMYXxbHsIhOZZte50RDX5EOtgZaSoKO0iY2QuiQYHpnCYFw+LsHLxAu07eF6ZXqA==
-X-Received: by 2002:ac2:424c:: with SMTP id m12mr7265781lfl.140.1572612136042;
-        Fri, 01 Nov 2019 05:42:16 -0700 (PDT)
+        bh=IwcdyWxRDO/TUjQjvqfZVlSTaDYPWlQZLs741mWfW6c=;
+        b=HNUc5+nJjbvMNPbXwgbMrMxtcHkR62T1ZAscoxaCMsrccMNfs0OTiQ5v8XKTPE+cK4
+         IzgPy54/UXNMTqnu03zdolh8xuXk2xqx4cJLJgz0cNjOQ/9UuypAfGVHXpUM5pb02Bpu
+         ipP2QkPW5Wvj4Gt725hfrldvmOS+fhoLcm85xnZaQZnNSu1L3Qh38TYTvXTT7QqdSnNK
+         jMI3Y5UVCUr/YPSdIKNVCb+Y1BLvz1UCoo3PN9sBuIgE7HSRh7H85xvy1g4rcy8tSYSU
+         /LOBp+A8/RMt1gPqP+Z5kKlsDpqldnfqL67UkLipajvW+TBEjLrPcskGemFxiVdFWLzQ
+         /ebg==
+X-Gm-Message-State: APjAAAXajaw13zJaVtTujGb9r9EPp4Gu7VQiu6OdruHlUdA1qaXGlXh6
+        jiuOZwLcLiav1e0BU89th+ejWQ==
+X-Google-Smtp-Source: APXvYqxzoeTf3Ohah/Hpr41qNMeO2Vmhemx5HLuusE1IMFHrUr2Wo8tZj5QwdBFSwyhHAjtrni+Ssw==
+X-Received: by 2002:ac2:5295:: with SMTP id q21mr7028523lfm.93.1572612137175;
+        Fri, 01 Nov 2019 05:42:17 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.14
+        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:15 -0700 (PDT)
+        Fri, 01 Nov 2019 05:42:16 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 01/36] soc: fsl: qe: remove space-before-tab
-Date:   Fri,  1 Nov 2019 13:41:35 +0100
-Message-Id: <20191101124210.14510-2-linux@rasmusvillemoes.dk>
+Subject: [PATCH v3 02/36] soc: fsl: qe: drop volatile qualifier of struct qe_ic::regs
+Date:   Fri,  1 Nov 2019 13:41:36 +0100
+Message-Id: <20191101124210.14510-3-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191101124210.14510-1-linux@rasmusvillemoes.dk>
 References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
@@ -63,26 +63,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The actual io accessors (e.g. in_be32) implicitly add a volatile
+qualifier to their address argument. Remove volatile from the struct
+definition and the qe_ic_(read/write) helpers, in preparation for
+switching from the ppc-specific io accessors to generic ones.
+
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/fsl/qe/qe_ic.c | 4 ++--
+ drivers/soc/fsl/qe/qe_ic.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index 417df7e19281..2a0e6e642776 100644
---- a/drivers/soc/fsl/qe/qe.c
-+++ b/drivers/soc/fsl/qe/qe.c
-@@ -378,8 +378,8 @@ static int qe_sdma_init(void)
- 	}
+diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+index 9bac546998d3..791adcd121d1 100644
+--- a/drivers/soc/fsl/qe/qe_ic.c
++++ b/drivers/soc/fsl/qe/qe_ic.c
+@@ -171,12 +171,12 @@ static struct qe_ic_info qe_ic_info[] = {
+ 		},
+ };
  
- 	out_be32(&sdma->sdebcr, (u32) sdma_buf_offset & QE_SDEBCR_BA_MASK);
-- 	out_be32(&sdma->sdmr, (QE_SDMR_GLB_1_MSK |
-- 					(0x1 << QE_SDMR_CEN_SHIFT)));
-+	out_be32(&sdma->sdmr, (QE_SDMR_GLB_1_MSK |
-+		 (0x1 << QE_SDMR_CEN_SHIFT)));
- 
- 	return 0;
+-static inline u32 qe_ic_read(volatile __be32  __iomem * base, unsigned int reg)
++static inline u32 qe_ic_read(__be32  __iomem *base, unsigned int reg)
+ {
+ 	return in_be32(base + (reg >> 2));
  }
+ 
+-static inline void qe_ic_write(volatile __be32  __iomem * base, unsigned int reg,
++static inline void qe_ic_write(__be32  __iomem *base, unsigned int reg,
+ 			       u32 value)
+ {
+ 	out_be32(base + (reg >> 2), value);
+diff --git a/drivers/soc/fsl/qe/qe_ic.h b/drivers/soc/fsl/qe/qe_ic.h
+index 08c695672a03..9420378d9b6b 100644
+--- a/drivers/soc/fsl/qe/qe_ic.h
++++ b/drivers/soc/fsl/qe/qe_ic.h
+@@ -72,7 +72,7 @@
+ 
+ struct qe_ic {
+ 	/* Control registers offset */
+-	volatile u32 __iomem *regs;
++	u32 __iomem *regs;
+ 
+ 	/* The remapper for this QEIC */
+ 	struct irq_domain *irqhost;
 -- 
 2.23.0
 
