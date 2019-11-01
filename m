@@ -2,86 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF18EC0CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DA1EC080
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:32:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfKAJuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 05:50:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfKAJuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:50:51 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        id S1728686AbfKAJcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 05:32:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41656 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728639AbfKAJcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:32:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ejT2S2mIfvsplY7uEp7jOjxDsXfhP33JrtumCpA22pQ=; b=vdUoTWpkvBtAJ2UJHIGcKsrRh
+        fynCJXsDYXQu4cNL2C/Qeepqc9JrMRc39j7TNApmNN4UFUlr6nfBdHkXoC79KQ3ohvp0jPnFd+I7r
+        eEJBK97VC2dVmft2JU8iLP2NodljJ0d0OzyqJxtvg0QZhJtgSCyIUdmCx+WUwoQ50dIwCSidSHIwX
+        rJQeRBUKgxT++OIYMWK4TD8SIK0P8Je5qHBWt8Imz9VGaMIoYF2LGM/6ospXVUxeZ7mGFNOOWypZs
+        k1qhxDdmVyeU2cgguCeZIPnqD7Z7evBtYlMxK1qHEXm6pKmGIR58zjtcmylAXegOcTqx/Z8vJ03Bx
+        ehUze0JSw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQTHX-0004zL-QU; Fri, 01 Nov 2019 09:31:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1614D21734;
-        Fri,  1 Nov 2019 09:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572601850;
-        bh=HdDiE3u28/EH/XJwBUZXniN/4FBeDOyfUzlaLLrQt8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aOoWh+fa9xUVINtmIFGgLJb5/BUb3CxH2sXYOSzSHO36L6ljk6t0EpPajLqaU8xE7
-         mKbvygogrFwXFvu1nBL0sAtUyDMpcbcDONIDYacL9I2TcteuiT9K/dB1teL0eOSRxN
-         Kp9WtFItaERwdzHT/tzTckSRZ+H6kyl8hML6xc+I=
-Date:   Fri, 1 Nov 2019 10:13:55 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: sun4i: Use PTR_ERR_OR_ZERO to simplify the code
-Message-ID: <20191101091355.ibbet6a2zb23bpjn@hendrix>
-References: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8A5F8300334;
+        Fri,  1 Nov 2019 10:30:43 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3010726540345; Fri,  1 Nov 2019 10:31:45 +0100 (CET)
+Date:   Fri, 1 Nov 2019 10:31:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
+        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: [RFC 10/10] autonuma, memory tiering: Adjust hot threshold
+ automatically
+Message-ID: <20191101093145.GT4131@hirez.programming.kicks-ass.net>
+References: <20191101075727.26683-1-ying.huang@intel.com>
+ <20191101075727.26683-11-ying.huang@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6vhl2j34wvp3caxz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <20191101075727.26683-11-ying.huang@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 01, 2019 at 03:57:27PM +0800, Huang, Ying wrote:
 
---6vhl2j34wvp3caxz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 0a83e9cf6685..22bdbb7afac2 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1486,6 +1486,41 @@ static bool numa_migration_check_rate_limit(struct pglist_data *pgdat,
+>  	return true;
+>  }
+>  
+> +#define NUMA_MIGRATION_ADJUST_STEPS	16
+> +
+> +static void numa_migration_adjust_threshold(struct pglist_data *pgdat,
+> +					    unsigned long rate_limit,
+> +					    unsigned long ref_threshold)
+> +{
+> +	unsigned long now = jiffies, last_threshold_jiffies;
+> +	unsigned long unit_threshold, threshold;
+> +	unsigned long try_migrate, ref_try_migrate, mdiff;
+> +
+> +	last_threshold_jiffies = pgdat->autonuma_threshold_jiffies;
+> +	if (now > last_threshold_jiffies +
+> +	    msecs_to_jiffies(sysctl_numa_balancing_scan_period_max) &&
+> +	    cmpxchg(&pgdat->autonuma_threshold_jiffies,
+> +		    last_threshold_jiffies, now) == last_threshold_jiffies) {
 
-On Thu, Oct 31, 2019 at 10:09:39PM +0800, zhong jiang wrote:
-> It is better to use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  sound/soc/sunxi/sun4i-i2s.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> index d0a8d58..72012a6 100644
-> --- a/sound/soc/sunxi/sun4i-i2s.c
-> +++ b/sound/soc/sunxi/sun4i-i2s.c
-> @@ -1174,10 +1174,8 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
->  	i2s->field_fmt_sr =
->  			devm_regmap_field_alloc(dev, i2s->regmap,
->  						i2s->variant->field_fmt_sr);
-> -	if (IS_ERR(i2s->field_fmt_sr))
-> -		return PTR_ERR(i2s->field_fmt_sr);
->
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
+That is seriously unreadable gunk.
 
-I don't find it "better". This couples the error handling and the
-success case, and it makes it harder to extend in the future.
+> +
+> +		ref_try_migrate = rate_limit *
+> +			sysctl_numa_balancing_scan_period_max / 1000;
+> +		try_migrate = node_page_state(pgdat, NUMA_TRY_MIGRATE);
+> +		mdiff = try_migrate - pgdat->autonuma_threshold_try_migrate;
+> +		unit_threshold = ref_threshold / NUMA_MIGRATION_ADJUST_STEPS;
+> +		threshold = pgdat->autonuma_threshold;
+> +		if (!threshold)
+> +			threshold = ref_threshold;
+> +		if (mdiff > ref_try_migrate * 11 / 10)
+> +			threshold = max(threshold - unit_threshold,
+> +					unit_threshold);
+> +		else if (mdiff < ref_try_migrate * 9 / 10)
+> +			threshold = min(threshold + unit_threshold,
+> +					ref_threshold);
 
-Maxime
+And that is violating codingstyle.
 
---6vhl2j34wvp3caxz
-Content-Type: application/pgp-signature; name="signature.asc"
+> +		pgdat->autonuma_threshold_try_migrate = try_migrate;
+> +		pgdat->autonuma_threshold = threshold;
+> +	}
+> +}
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbv3UwAKCRDj7w1vZxhR
-xSByAQCjg2HWuIqPYN2yl52RWX3gUhD8/UFFCrxTI4MANT8XIAD/YFUGXPMc30Zx
-R7UevyMTvzJVznWeORM6F+mRArQGYQM=
-=Pr2a
------END PGP SIGNATURE-----
-
---6vhl2j34wvp3caxz--
+Maybe if you use variable names that are slightly shorter than half your
+line length?
