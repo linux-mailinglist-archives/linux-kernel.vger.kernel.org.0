@@ -2,109 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C39EC843
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2870EC84C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:11:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfKASIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 14:08:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726932AbfKASIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:08:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 624D2B4C8;
-        Fri,  1 Nov 2019 18:08:04 +0000 (UTC)
-Message-ID: <b0bc6ad6c485117731f715a00992c0e414ba8b85.camel@suse.com>
-Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
-From:   Dario Faggioli <dfaggioli@suse.com>
-To:     Greg Kerr <kerrnel@chromium.org>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc:     Phil Auld <pauld@redhat.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?ISO-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Date:   Fri, 01 Nov 2019 19:07:59 +0100
-In-Reply-To: <CAJGSLMtnxSqKvu3C7WQhMUUbzRXmfU1MVyLz8GcAQcAscdaZdw@mail.gmail.com>
-References: <cover.1572437285.git.vpillai@digitalocean.com>
-         <20191031184236.GE5738@pauld.bos.csb>
-         <CANaguZCqHnR8b_68SSA_rfdkinVg8vLH66jQ_GhMsdOjuUHe3g@mail.gmail.com>
-         <CAJGSLMtnxSqKvu3C7WQhMUUbzRXmfU1MVyLz8GcAQcAscdaZdw@mail.gmail.com>
-Organization: SUSE
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-kiEQsxrUjoC0Xq2LCIPe"
-User-Agent: Evolution 3.34.1 
+        id S1727317AbfKASLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 14:11:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30424 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726866AbfKASLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 14:11:36 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA1HqF51171860;
+        Fri, 1 Nov 2019 14:11:33 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w0ce1ft56-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 01 Nov 2019 14:11:32 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id xA1HqF22171855;
+        Fri, 1 Nov 2019 14:11:32 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2w0ce1ft4r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 01 Nov 2019 14:11:31 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xA1I9TNR018896;
+        Fri, 1 Nov 2019 18:11:31 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma05wdc.us.ibm.com with ESMTP id 2vxwh6jdxh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 01 Nov 2019 18:11:31 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA1IBUU951708184
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 1 Nov 2019 18:11:30 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C052124054;
+        Fri,  1 Nov 2019 18:11:30 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C4B64124052;
+        Fri,  1 Nov 2019 18:11:29 +0000 (GMT)
+Received: from rascal.austin.ibm.com (unknown [9.41.179.32])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Nov 2019 18:11:29 +0000 (GMT)
+From:   Scott Cheloha <cheloha@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Hildenbrand <david@redhat.com>
+Cc:     nathanl@linux.ibm.com, ricklind@linux.vnet.ibm.com,
+        Scott Cheloha <cheloha@linux.vnet.ibm.com>
+Subject: [PATCH] drivers/base/memory.c: memory subsys init: skip search for missing blocks
+Date:   Fri,  1 Nov 2019 13:10:54 -0500
+Message-Id: <20191101181054.11521-1-cheloha@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1911010163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add a flag to init_memory_block() to  enable/disable searching for a
+matching block before creating a device for the block and adding it to
+the memory subsystem's bus.
 
---=-kiEQsxrUjoC0Xq2LCIPe
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+When the memory subsystem is being initialized there is no need to check
+if a given block has already been added to its bus.  The bus is new, so the
+block in question cannot yet have a corresponding device.
 
-On Fri, 2019-11-01 at 09:35 -0700, Greg Kerr wrote:
-> Has anyone considering shipping a V1 implementation which just allows
-> threads from the same process to share a core together? And then
-> iterating on that? Would that be simpler to implement or do the same
-> fundamental problems exist as tagging arbitrary processes with
-> cookies?
->=20
-IMO, the latter, i.e., the same fundamental problem exist.
+The search for a missing block is O(n) so this saves substantial time at
+boot if there are many such blocks to add.
 
-It's _tasks_ having to be scheduled in a certain way.
+Signed-off-by: Scott Cheloha <cheloha@linux.vnet.ibm.com>
+---
+ drivers/base/memory.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-It does not matter much, as far as the necessary modifications to the
-scheduler are concerned, whether those tasks are independent processes,
-or threads or the same process, or vcpus of a VMs, etc...
-
-Regards
---=20
-Dario Faggioli, Ph.D
-http://about.me/dario.faggioli
-Virtualization Software Engineer
-SUSE Labs, SUSE https://www.suse.com/
--------------------------------------------------------------------
-<<This happens because _I_ choose it to happen!>> (Raistlin Majere)
-
-
---=-kiEQsxrUjoC0Xq2LCIPe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEES5ssOj3Vhr0WPnOLFkJ4iaW4c+4FAl28dIAACgkQFkJ4iaW4
-c+6urxAA65yruhBKWSetTLrTdsl0zGlUKdeLYpinBuvhQ1Hp4Ml8LtDwQzTSPitX
-b4JkJ9OHmknXRNfE/B9rYoUUAD/ZyJHTXn16AwWbiV+/EB+bQR9gEh8/q6HmT8Ic
-SWhx65UQ5nn0jcl6YBw2QHxI3poxLCMhOPvOQDbHGJ1JLMoBHxskl8GpCc1M8rkn
-ZpbscnqeEgLo/aGQindvCph2IJ43qPhixGDE/RpqYTjrfMz4aNcn/qCVhgLkMKKp
-Zf+k/sSdwsYYZDJ9UbilFTSkHZvxJVovt8t9cUw8hJTPFbEtaW/mmfctmfZ5Eg56
-DTzqgxMXPG0Ys719n1tltCnNMBo4MzEoE0YXv3n8AkbA4F1wb3dOTXuR54HaB2Dh
-QKsHZku+kCfw3eLaGTFBteen0xSwV0B6rkyRpbblms0J88a1oO1haM97EKRaSdtJ
-7hhq/Np+dz/hr67QhVQQozh6+XCljBnSdytchx1MMcKM6wfFBAu0T4U+jFEXe4b+
-ncAFZIwRey42B5Z8OnIHNBZaSDAl/EIeiPNL6YGgdlByRRR2eChRknDtlmnSTdAl
-lPbSNlX3OwO5DCxQlGjSj9cgaATYriwAR4bXwVYdnsuS1rLU4CxhNef04qhz04p/
-DmpFLu3C5/+/HORiNVXw0Nf5N3e5HbRg3TLyN+kDZNnFt5MICX8=
-=aaLJ
------END PGP SIGNATURE-----
-
---=-kiEQsxrUjoC0Xq2LCIPe--
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 55907c27075b..1160df4a8feb 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -643,17 +643,21 @@ int register_memory(struct memory_block *memory)
+ }
+ 
+ static int init_memory_block(struct memory_block **memory,
+-			     unsigned long block_id, unsigned long state)
++			     unsigned long block_id, unsigned long state,
++			     bool may_exist)
+ {
+ 	struct memory_block *mem;
+ 	unsigned long start_pfn;
+ 	int ret = 0;
+ 
+-	mem = find_memory_block_by_id(block_id);
+-	if (mem) {
+-		put_device(&mem->dev);
+-		return -EEXIST;
++	if (may_exist) {
++		mem = find_memory_block_by_id(block_id);
++		if (mem) {
++			put_device(&mem->dev);
++			return -EEXIST;
++		}
+ 	}
++
+ 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+ 	if (!mem)
+ 		return -ENOMEM;
+@@ -684,7 +688,7 @@ static int add_memory_block(unsigned long base_section_nr)
+ 	if (section_count == 0)
+ 		return 0;
+ 	ret = init_memory_block(&mem, base_memory_block_id(base_section_nr),
+-				MEM_ONLINE);
++				MEM_ONLINE, false);
+ 	if (ret)
+ 		return ret;
+ 	mem->section_count = section_count;
+@@ -720,7 +724,7 @@ int create_memory_block_devices(unsigned long start, unsigned long size)
+ 
+ 	mutex_lock(&mem_sysfs_mutex);
+ 	for (block_id = start_block_id; block_id != end_block_id; block_id++) {
+-		ret = init_memory_block(&mem, block_id, MEM_OFFLINE);
++		ret = init_memory_block(&mem, block_id, MEM_OFFLINE, true);
+ 		if (ret)
+ 			break;
+ 		mem->section_count = sections_per_block;
+-- 
+2.24.0.rc1
 
