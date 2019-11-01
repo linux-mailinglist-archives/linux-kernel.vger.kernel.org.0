@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B97F5EBEBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5719EEBEC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:58:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfKAH5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 03:57:20 -0400
-Received: from plaes.org ([188.166.43.21]:36468 "EHLO plaes.org"
+        id S1730106AbfKAH6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 03:58:23 -0400
+Received: from mga17.intel.com ([192.55.52.151]:16169 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbfKAH5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 03:57:20 -0400
-Received: from localhost (unknown [IPv6:2001:bb8:4008:20:21a:64ff:fe97:f60])
-        by plaes.org (Postfix) with ESMTPSA id 980E74025B;
-        Fri,  1 Nov 2019 07:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1572595038; bh=i+ZqLGUS44ULpCRaPbBqLE0eAwbLrZ4yMyEiWtjqn6U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Fs5VzKQ7WptAn+lRGlvPRXhyyFRwSVYe2MsQuPTOdt7fCcMqQsNclIDAMQJdLBmCk
-         Flc85f5M2TF7zJfPsFR6xAhPPdJ9JY3W08QPay6lDLpxQGWkTB/d5bs1aNxFkZsHkm
-         j4QRL3eQF7g8XHxQZMMGME93qZ74+DItlRlSfKqXQaCcnkTTeC0ZKX6xtCDl4U7xm2
-         luV/VdEhLlp/Ehz11o8/rq+Ll0uZoNChaE/lowuyfn/hHhN0XJhDnaH1T/MBzYFwc6
-         AZVYINkUTaB/G7I5dLY40mXhXWYgoeoECLywNEQOsCI9fQtiBIZjL6wDohZvdB3uGD
-         FuK2wLF8M8Z/Q==
-From:   Priit Laes <plaes@plaes.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Priit Laes <plaes@plaes.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     igor.pecovnik@gmail.com, priit.laes@paf.com, usunov@olimex.com
-Subject: [PATCH] ARM: sunxi_defconfig: Enable MICREL_PHY
-Date:   Fri,  1 Nov 2019 09:57:09 +0200
-Message-Id: <20191101075712.3058-1-plaes@plaes.org>
-X-Mailer: git-send-email 2.20.1
+        id S1727059AbfKAH6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 03:58:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 00:58:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,254,1569308400"; 
+   d="scan'208";a="225962454"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.29])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 00:58:20 -0700
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
+        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Subject: [RFC 00/10] autonuma: Optimize memory placement in memory tiering system
+Date:   Fri,  1 Nov 2019 15:57:17 +0800
+Message-Id: <20191101075727.26683-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,33 +41,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include support for Micrel KSZ9031 PHY driver in sunxi_defconfig,
-which fixes issues of link not coming up at boot time with
-certain link partners.
+From: Huang Ying <ying.huang@intel.com>
 
-Micrel KSZ9031 PHY chip is used on Olimex A20-OLinuXino-LIME2
-boards.
+With the advent of various new memory types, there may be multiple
+memory types in one machine, e.g. DRAM and PMEM (persistent memory).
+Because the performance and cost of the different types of memory may
+be different, the memory subsystem of the machine could be called
+memory tiering system.
 
-The errata fix itself has been implemented in commit
-"3aed3e2a143c96: net: phy: micrel: add Asym Pause workaround"
+After commit c221c0b0308f ("device-dax: "Hotplug" persistent memory
+for use like normal RAM"), the PMEM could be used as cost-effective
+volatile memory in separate NUMA nodes.  In a typical memory tiering
+system, there are CPUs, DRAM and PMEM in each physical NUMA node.  The
+CPUs and the DRAM will be put in one logical node, while the PMEM will
+be put in another (faked) logical node.
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- arch/arm/configs/sunxi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+To optimize the system overall performance, the hot pages should be
+placed in DRAM node.  To do that, we need to identify the hot pages in
+the PMEM node and migrate them to DRAM node via NUMA migration.
 
-diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
-index df433abfcb02..eb7efa2639d1 100644
---- a/arch/arm/configs/sunxi_defconfig
-+++ b/arch/arm/configs/sunxi_defconfig
-@@ -56,6 +56,7 @@ CONFIG_SUN4I_EMAC=y
- CONFIG_STMMAC_ETH=y
- # CONFIG_NET_VENDOR_VIA is not set
- # CONFIG_NET_VENDOR_WIZNET is not set
-+CONFIG_MICREL_PHY=y
- # CONFIG_WLAN is not set
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_SUN4I_LRADC=y
--- 
-2.20.1
+While in autonuma, there are a set of existing mechanisms to identify
+the pages recently accessed by the CPUs in a node and migrate the
+pages to the node.  So we can reuse these mechanisms to build
+mechanisms to optimize page placement in the memory tiering system.
+This has been implemented in this patchset.
 
+At the other hand, the cold pages should be placed in PMEM node.  So,
+we also need to identify the cold pages in the DRAM node and migrate
+them to PMEM node.
+
+In the following patchset,
+
+[PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+https://lore.kernel.org/linux-mm/20191016221148.F9CCD155@viggo.jf.intel.com/
+
+A mechanism to demote the cold DRAM pages to PMEM node under memory
+pressure is implemented.  Based on that, the cold DRAM pages can be
+demoted to PMEM node proactively to free some memory space on DRAM
+node, so that the hot PMEM pages can be migrated to the DRAM node.
+This has been implemented in this patchset too.
+
+The patchset is based on the following not-yet-merged patchset:
+
+[PATCH 0/4] [RFC] Migrate Pages in lieu of discard
+https://lore.kernel.org/linux-mm/20191016221148.F9CCD155@viggo.jf.intel.com/
+
+This is part of a larger patch set.  If you want to apply these or
+play with them, I'd suggest using the tree from here.
+
+    http://lkml.kernel.org/r/c3d6de4d-f7c3-b505-2e64-8ee5f70b2118@intel.com
+
+
+With all above optimization, the score of pmbench memory accessing
+benchmark with 80:20 read/write ratio and normal access address
+distribution improves 116% on a 2 socket Intel server with Optane DC
+Persistent Memory.
+
+Best Regards,
+Huang, Ying
