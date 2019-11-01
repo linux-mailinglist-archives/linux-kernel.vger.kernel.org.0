@@ -2,116 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7517EECA45
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:29:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2602ECA36
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfKAV3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 17:29:04 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38381 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfKAV3E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:29:04 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q28so8211864lfa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 14:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gOa+Uip2nJTA7dHzW0JEHqi6pQE4lW9YppBlYQo9lY0=;
-        b=agiWMe9H7ws/oZIbQJzuATqUbWsI/FrW0NoFCLlyZ7JhajRANceyiXk+yi6DMXRO9l
-         svAacToMmz9ECWkhEnja60cV8RNBfQ7MuVpxkRc+Oc9rtltHmTFC+oLHmmcVIq9/VKYB
-         v+v3Ca0ObP9JmKENgvZM6K7PMOtppa6DG3xPIeYpjS86roxoM+e7+QAbUxFpppK6BnFb
-         RIQBLzy7N2I0MdMaz0+m30aVPepk7vQLX/xP+IDZELDOjbS40s67hYzRb6kGZHt6h2EN
-         htptF8foUanmnghXJDydVnk0ykTwudtIbjp4jnS9peRUXc2kpnofoWf4r4zzdjATnXrr
-         uRdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gOa+Uip2nJTA7dHzW0JEHqi6pQE4lW9YppBlYQo9lY0=;
-        b=tBK6JgNgLEoto2AME+9h9l9UxJT3/LYuHKksZ5sqUnzozbNwZ3rWhfwZnBP3B5BfyX
-         ZoPacOpBtppnd8+9menrzgyueWBjQxSISRNRJ3MGTp7jYpD4omGi2bO77T7lOeUuxsTS
-         ShK6BoGzYTXWRqC8lZjWCr7LCATyWSV+d1g6e8nENpEqTPBsik0UqZbQYF/+ghNvQYl1
-         jEL5zNTuFCys+84ISOkfTx4/4zK1oZSeMh+sZiuUBIweDE16tS+xyzU4t33y+G05+5/M
-         +yBUzvNrdOfakHKjuGxD0A7DPmhroLlel0+bd9acyCIhjJcszT8lxsno479gA4yMtCpB
-         0pPg==
-X-Gm-Message-State: APjAAAW7fkHsOmgPh6GQJAEnsCucBQHDL5y6gQd91xyt1JP3k/VH8VDC
-        VpoAMBjC/kUDT4fGP/ReS2M=
-X-Google-Smtp-Source: APXvYqyy37gQ0OD7tx+P0WNh0GLibR9sZlvl9O904ODh2Sz6a2+ybYI9vquCe4W9fd6nsIlSMfYoSw==
-X-Received: by 2002:ac2:4d17:: with SMTP id r23mr8974141lfi.56.1572643742907;
-        Fri, 01 Nov 2019 14:29:02 -0700 (PDT)
-Received: from rikard (h-98-128-228-153.NA.cust.bahnhof.se. [98.128.228.153])
-        by smtp.gmail.com with ESMTPSA id q24sm2741803ljj.6.2019.11.01.14.29.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 14:29:01 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-X-Google-Original-From: Rikard Falkeborn <rikard.falkeborn>
-Date:   Fri, 1 Nov 2019 22:28:57 +0100
-To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, bp@alien8.de,
-        joe@perches.com, johannes@sipsolutions.net, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        yamada.masahiro@socionext.com,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Haren Myneni <haren@us.ibm.com>
-Subject: Re: [Patch v4 2/2] linux/bits.h: Add compile time sanity check of
- GENMASK inputs
-Message-ID: <20191101212857.GA889092@rikard>
-References: <20190811184938.1796-1-rikard.falkeborn@gmail.com>
- <20191009214502.637875-1-rikard.falkeborn@gmail.com>
- <20191009214502.637875-3-rikard.falkeborn@gmail.com>
- <20191011192737.c0e69db9ca49cd7622efdae5@linux-foundation.org>
- <20191022195306.GA479880@rikard>
+        id S1727051AbfKAVYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:24:34 -0400
+Received: from mga11.intel.com ([192.55.52.93]:59829 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725536AbfKAVYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 17:24:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 14:24:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,257,1569308400"; 
+   d="scan'208";a="284304360"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 01 Nov 2019 14:24:33 -0700
+Date:   Fri, 1 Nov 2019 14:28:59 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v7 10/11] iommu/vt-d: Support flushing more translation
+ cache types
+Message-ID: <20191101142859.708a584d@jacob-builder>
+In-Reply-To: <40776827-c053-2a30-5606-d4ccdbd35fc8@linux.intel.com>
+References: <1571946904-86776-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1571946904-86776-11-git-send-email-jacob.jun.pan@linux.intel.com>
+        <40776827-c053-2a30-5606-d4ccdbd35fc8@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191022195306.GA479880@rikard>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 09:53:06PM +0200, Rikard Falkeborn wrote:
-> On Fri, Oct 11, 2019 at 07:27:37PM -0700, Andrew Morton wrote:
-> > On Wed,  9 Oct 2019 23:45:02 +0200 Rikard Falkeborn <rikard.falkeborn@gmail.com> wrote:
+On Sat, 26 Oct 2019 10:22:43 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
+
+> Hi,
+> 
+> On 10/25/19 3:55 AM, Jacob Pan wrote:
+> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
+> > scalable IOTLB invalidation may be passed down from outside IOMMU
+> > subsystems. This patch adds invalidation functions that can be used
+> > for additional translation cache types.
 > > 
-> > > GENMASK() and GENMASK_ULL() are supposed to be called with the high bit
-> > > as the first argument and the low bit as the second argument. Mixing
-> > > them will return a mask with zero bits set.
-> > > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >   drivers/iommu/dmar.c        | 46
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> > drivers/iommu/intel-pasid.c |  3 ++- include/linux/intel-iommu.h |
+> > 21 +++++++++++++++++---- 3 files changed, 65 insertions(+), 5
+> > deletions(-)
 > > 
-> > I'm seeing some breakage in code which is newly added in linux-next:
-> > 
+> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> > index 49bb7d76e646..0ce2d32ff99e 100644
+> > --- a/drivers/iommu/dmar.c
+> > +++ b/drivers/iommu/dmar.c
+> > @@ -1346,6 +1346,20 @@ void qi_flush_iotlb(struct intel_iommu
+> > *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
+> >   }
+> >   
+> > +/* PASID-based IOTLB Invalidate */
+> > +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+> > u32 pasid,
+> > +		unsigned int size_order, u64 granu, int ih)
+> > +{
+> > +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
+> > +
+> > +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
+> > +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
+> > +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(ih) |
+> > +		QI_EIOTLB_AM(size_order);
+> > +
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> > +
+> >   void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16
+> > pfsid, u16 qdep, u64 addr, unsigned mask)
+> >   {
+> > @@ -1369,6 +1383,38 @@ void qi_flush_dev_iotlb(struct intel_iommu
+> > *iommu, u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
+> >   }
+> >   
+> > +/* PASID-based device IOTLB Invalidate */
+> > +void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16
+> > pfsid,
+> > +		u32 pasid,  u16 qdep, u64 addr, unsigned
+> > size_order, u64 granu) +{
+> > +	struct qi_desc desc;  
 > 
-> As of next-20191021, those breakages are fixed ([0], [1]). next-20191021
-> now builds (at least for x86-64) with the GENMASK compile checks added.
+> Do you need to set qw2 and qw3 to 0?
 > 
-> I also stumbled upon [2], which is a fix for an unused macro in a header
-> in mips/include/asm. next-201008 contained both v3 of this patch and the
-> mips header with the bad GENMASK in without build regressions, so it
-> *should* be ok to include v4 (but given the track record of this patch,
-> I totally understand if you want to wait until [2] lands in mips-next and
-> linux-next).
+right, forgot to add
+	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
+
+> > +
+> > +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
+> > QI_DEV_EIOTLB_SID(sid) |
+> > +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
+> > +		QI_DEV_IOTLB_PFSID(pfsid);
+> > +	desc.qw1 = QI_DEV_EIOTLB_GLOB(granu);
+> > +
+> > +	/* If S bit is 0, we only flush a single page. If S bit is
+> > set,
+> > +	 * The least significant zero bit indicates the
+> > invalidation address
+> > +	 * range. VT-d spec 6.5.2.6.
+> > +	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates
+> > 16KB.
+> > +	 */
+> > +	if (!size_order) {
+> > +		desc.qw0 |= QI_DEV_EIOTLB_ADDR(addr) &
+> > ~QI_DEV_EIOTLB_SIZE;
+> > +	} else {
+> > +		unsigned long mask = 1UL << (VTD_PAGE_SHIFT +
+> > size_order);
+> > +		desc.qw1 |= QI_DEV_EIOTLB_ADDR(addr & ~mask) |
+> > QI_DEV_EIOTLB_SIZE;
+> > +	}
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> > +
+> > +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
+> > granu, int pasid) +{
+> > +	struct qi_desc desc = {.qw1 = 0, .qw2 = 0, .qw3 = 0};
+> > +
+> > +	desc.qw0 = QI_PC_PASID(pasid) | QI_PC_DID(did) |
+> > QI_PC_GRAN(granu) | QI_PC_TYPE;
+> > +	qi_submit_sync(&desc, iommu);
+> > +}
+> >   /*
+> >    * Disable Queued Invalidation interface.
+> >    */
+> > diff --git a/drivers/iommu/intel-pasid.c
+> > b/drivers/iommu/intel-pasid.c index f846a907cfcf..6d7a701ef4d3
+> > 100644 --- a/drivers/iommu/intel-pasid.c
+> > +++ b/drivers/iommu/intel-pasid.c
+> > @@ -491,7 +491,8 @@ pasid_cache_invalidation_with_pasid(struct
+> > intel_iommu *iommu, {
+> >   	struct qi_desc desc;
+> >   
+> > -	desc.qw0 = QI_PC_DID(did) | QI_PC_PASID_SEL |
+> > QI_PC_PASID(pasid);
+> > +	desc.qw0 = QI_PC_DID(did) | QI_PC_GRAN(QI_PC_PASID_SEL) |
+> > +		QI_PC_PASID(pasid) | QI_PC_TYPE;
+> >   	desc.qw1 = 0;
+> >   	desc.qw2 = 0;
+> >   	desc.qw3 = 0;
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 6c74c71b1ebf..a25fb3a0ea5b
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -332,7 +332,7 @@ enum {
+> >   #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
+> > (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
+> > (((u64)addr) & VTD_PAGE_MASK) #define
+> > QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
+> > QI_IOTLB_AM(am)		(((u8)am)) +#define
+> > QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
+> >   #define QI_CC_FM(fm)		(((u64)fm) << 48)
+> >   #define QI_CC_SID(sid)		(((u64)sid) << 32)
+> > @@ -350,16 +350,21 @@ enum {
+> >   #define QI_PC_DID(did)		(((u64)did) << 16)
+> >   #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
+> >   
+> > -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
+> > -#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
+> > +/* PASID cache invalidation granu */
+> > +#define QI_PC_ALL_PASIDS	0
+> > +#define QI_PC_PASID_SEL		1
+> >   
+> >   #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
+> >   #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
+> > -#define QI_EIOTLB_AM(am)	(((u64)am))
+> > +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
+> >   #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
+> >   #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
+> >   #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
+> >   
+> > +/* QI Dev-IOTLB inv granu */
+> > +#define QI_DEV_IOTLB_GRAN_ALL		1
+> > +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0
+> > +
+> >   #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
+> >   #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
+> >   #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
+> > @@ -655,8 +660,16 @@ extern void qi_flush_context(struct
+> > intel_iommu *iommu, u16 did, u16 sid, u8 fm, u64 type);
+> >   extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did,
+> > u64 addr, unsigned int size_order, u64 type);
+> > +extern void qi_flush_piotlb(struct intel_iommu *iommu, u16 did,
+> > u64 addr,
+> > +			u32 pasid, unsigned int size_order, u64
+> > type, int ih); extern void qi_flush_dev_iotlb(struct intel_iommu
+> > *iommu, u16 sid, u16 pfsid, u16 qdep, u64 addr, unsigned mask);
+> > +
+> > +extern void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16
+> > sid, u16 pfsid,
+> > +			u32 pasid, u16 qdep, u64 addr, unsigned
+> > size_order, u64 granu); +
+> > +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
+> > did, u64 granu, int pasid); +
+> >   extern int qi_submit_sync(struct qi_desc *desc, struct
+> > intel_iommu *iommu); 
+> >   extern int dmar_ir_support(void);
+> >   
 > 
-> Rikard
-> 
-> [0]: https://lore.kernel.org/patchwork/patch/1139777/
-> [1]: https://lore.kernel.org/patchwork/patch/1139778/
-> [2]: https://lore.kernel.org/linux-mips/20191022192547.480095-1-rikard.falkeborn@gmail.com/T/#u
+> Best regards,
+> baolu
 
-And as of next-20191031, the mentioned mips-header is fixed [0]. Also, a
-recently introduced arm-bug has also been fixed. I just built x86-64 and
-arm64 allmodconfigs without issue.
-
-Trying to get this patch merged feels a bit like playing whack a-mole.
-Perhaps it would have been better to make it a warning at first, and
-then promote the warning to an error in a later release? Then everyone
-would have the warning in their tree when they do development and the
-number if issues in next would be (almost) zero.
-
-Rikard
-
-[0]: https://lore.kernel.org/linux-mips/20191009013721.qda2bo5teppr7nom@pburton-laptop/T/#m6e7cd9c89ef06240fe3cd36a60bd73eff1a1ea5d
-[1]: https://www.spinics.net/lists/arm-kernel/msg764473.html
+[Jacob Pan]
