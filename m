@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1490FEC748
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A59AEC744
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbfKARKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 13:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59262 "EHLO mail.kernel.org"
+        id S1729426AbfKARKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 13:10:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbfKARKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728972AbfKARKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Nov 2019 13:10:06 -0400
-Subject: Re: [GIT PULL] KVM patches for Linux 5.4-rc6
+Subject: Re: [GIT PULL] Power management fix for v5.4-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1572628205;
-        bh=X+Cew2hq/ZN5wUIiN3m/lsnmILD3307MY6hSlGmW6m4=;
+        bh=l1Kko6zIKsqjrtUyfFoFoSSLPvcqDcVUr8D7mPoyI/o=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=1AQCgVCSWk98TCs0nqC23MJxz2fb8IDuti2K8UDsyj9bPvMgQKaOdEpE3Eaxnyys9
-         zNXavKPVjhT8OyJnIS95eOOlmKW5+kx7sz+EQmOzNzr83+C6qOegowuQ2/qqjLOKio
-         JNqeb+jaW5T4iIYXmK5yadi5BcldiQIgiBqSHeX4=
+        b=oixOAemGXJkUMgcDz0DP0dherIA5VGu+vMPonMF/Vq3t7hzxeHfmC0eKVWgaXGTfs
+         v5PvYL2LD3XOHZbkJ0FG0SmzpqTDKYahpVBGWfliUUSf03b8gpXMkGVRwXWZCEez+z
+         sMEbu9w2VfPyVXNqA8XQKnrB16JqynmTJZoE7HyE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191031225347.26587-1-pbonzini@redhat.com>
-References: <20191031225347.26587-1-pbonzini@redhat.com>
+In-Reply-To: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
+References: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191031225347.26587-1-pbonzini@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: 9167ab79936206118cc60e47dcb926c3489f3bd5
+X-PR-Tracked-Message-Id: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc6
+X-PR-Tracked-Commit-Id: e82b7457909afd2e973ebd251ad79945d04ca376
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b88866b60d98f2fe1f66f2a4e1a181d9f2b36b5d
-Message-Id: <157262820591.11375.16865235101517885078.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 65a5bf1c790039dc194507563478137b4314a59d
+Message-Id: <157262820561.11375.9184455321473410481.pr-tracker-bot@kernel.org>
 Date:   Fri, 01 Nov 2019 17:10:05 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@kernel.org, kvm@vger.kernel.org
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 31 Oct 2019 23:53:47 +0100:
+The pull request you sent on Thu, 31 Oct 2019 22:08:58 +0100:
 
-> git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b88866b60d98f2fe1f66f2a4e1a181d9f2b36b5d
+https://git.kernel.org/torvalds/c/65a5bf1c790039dc194507563478137b4314a59d
 
 Thank you!
 
