@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5C0EBDBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 07:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C479EBDB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 07:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbfKAGQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 02:16:41 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:46719 "EHLO
+        id S1728559AbfKAGPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 02:15:47 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:45244 "EHLO
         conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbfKAGQk (ORCPT
+        with ESMTP id S1725280AbfKAGPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 02:16:40 -0400
+        Fri, 1 Nov 2019 02:15:47 -0400
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id xA16ELBc016348;
-        Fri, 1 Nov 2019 15:14:22 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xA16ELBc016348
+        by conuserg-09.nifty.com with ESMTP id xA16ELBd016348;
+        Fri, 1 Nov 2019 15:14:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xA16ELBd016348
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572588862;
-        bh=pGYwt8aksICDvlfvWj0tCkyuHYQwW0lnnIiz1OylTcI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2LEyL1aAf04dKzfo3G9K86up2BmcPt/JstqCUtoJLk02MXaqrTW2WCd7ZztvVKMci
-         6ppe5upzfBLZZiHGY1Dqe0D/K+HksAM7zA/EpQouymBiw10cn2BioTABxASWR60hqj
-         HHMOi9eEjk5rFEvUxS2H6fFJ+nSD5tw/6A73Ct+7tpkrTXEw6P+l/qLzNsCXW9+a6W
-         SN06S6NH39f52zTMVPcCrqrMNTijLq14u+I6NZ+cinTJeciVQV8nzBtxISTvaTKpU4
-         A/3DTOPAyvWAC5IXMGxN88SERT9Fj1HDyF9cNHz+MUUnLGgHhpIqCkwmXDiYAVRhif
-         FyeF756FCdaeg==
+        s=dec2015msa; t=1572588863;
+        bh=i3mAUJKjHAwllmd7KANZFUaKrxZfgZZBSwsGJnV7Xbc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KPc3vgN83gq/1DFpYm2jc42MVPmVXAyW/Lg2mxWgvu1ZAu0bN1KYxqRvmNONYWFk3
+         gaUQbkdfqWaDEZ2BcXD9Si4l6mpnff26BF+UBdrTZLRrMCTujMwF3QcBsWjbcgkcOF
+         2XbnAVCrdwv3ty0YJtZg3c+4DVaAZKk3gkjpX0FwnK4VsdT89nJli9OWVsMEH9B2G4
+         hss+ENiiJCQFP5NOVFqIIOBCByvo34NugeyFLi+nkDC66Xc3GjYRkp6KQ2rDBUrSMD
+         JlBahWfNsllQ39/AajGZsAZRYAix+l2RjQ37GhjRbqpYTT/40NjdAoGwDVMHt+Y2WS
+         XMwjT6UgHMK7w==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
@@ -34,71 +34,91 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         David Gibson <david@gibson.dropbear.id.au>,
         linuxppc-dev@lists.ozlabs.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] libfdt: prepare for (U)INT32_MAX addition
-Date:   Fri,  1 Nov 2019 15:14:08 +0900
-Message-Id: <20191101061411.16988-1-yamada.masahiro@socionext.com>
+Subject: [PATCH 1/3] libfdt: add SPDX-License-Identifier to libfdt wrappers
+Date:   Fri,  1 Nov 2019 15:14:09 +0900
+Message-Id: <20191101061411.16988-2-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191101061411.16988-1-yamada.masahiro@socionext.com>
+References: <20191101061411.16988-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+These are kernel source code even though they are just two-line wrappers.
 
-As you may know, libfdt in the upstream DTC project
-added referenced to (U)INT32_MAX.
+Files without explicit license information fall back to GPL-2.0-only,
+which is the project default.
 
-The kernel code has three files to adjust:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-include/linux/libfdt_env.h
-arch/powerpc/boot/libfdt_env.h
-arch/arm/boot/compressed/libfdt_env.h
+ lib/fdt.c            | 1 +
+ lib/fdt_empty_tree.c | 1 +
+ lib/fdt_ro.c         | 1 +
+ lib/fdt_rw.c         | 1 +
+ lib/fdt_strerror.c   | 1 +
+ lib/fdt_sw.c         | 1 +
+ lib/fdt_wip.c        | 1 +
+ 7 files changed, 7 insertions(+)
 
-Instead of fixing arch/arm/boot/compressed/libfdt_env.h,
-it is pretty easy to refactor the ARM decompressor
-to reuse <linux/lbifdt_env.h>
-So, 2/3 simplifies the Makefile and deletes its own
-libfdt_env.h
-
-On the other hand, the PPC boot-wrapper is a can of worms.
-I give up refactoring it.
-Let's keep it closed, and just update arch/powerpc/boot/libfdt_env.h
-
-
-
-Masahiro Yamada (3):
-  libfdt: add SPDX-License-Identifier to libfdt wrappers
-  ARM: decompressor: simplify libfdt builds
-  libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
-
- arch/arm/boot/compressed/.gitignore     |  9 -------
- arch/arm/boot/compressed/Makefile       | 33 +++++++------------------
- arch/arm/boot/compressed/atags_to_fdt.c |  1 +
- arch/arm/boot/compressed/fdt.c          |  2 ++
- arch/arm/boot/compressed/fdt_ro.c       |  2 ++
- arch/arm/boot/compressed/fdt_rw.c       |  2 ++
- arch/arm/boot/compressed/fdt_wip.c      |  2 ++
- arch/arm/boot/compressed/libfdt_env.h   | 22 -----------------
- arch/powerpc/boot/libfdt_env.h          |  2 ++
- include/linux/libfdt_env.h              |  3 +++
- lib/fdt.c                               |  1 +
- lib/fdt_empty_tree.c                    |  1 +
- lib/fdt_ro.c                            |  1 +
- lib/fdt_rw.c                            |  1 +
- lib/fdt_strerror.c                      |  1 +
- lib/fdt_sw.c                            |  1 +
- lib/fdt_wip.c                           |  1 +
- 17 files changed, 30 insertions(+), 55 deletions(-)
- create mode 100644 arch/arm/boot/compressed/fdt.c
- create mode 100644 arch/arm/boot/compressed/fdt_ro.c
- create mode 100644 arch/arm/boot/compressed/fdt_rw.c
- create mode 100644 arch/arm/boot/compressed/fdt_wip.c
- delete mode 100644 arch/arm/boot/compressed/libfdt_env.h
-
+diff --git a/lib/fdt.c b/lib/fdt.c
+index 97f20069fc37..041f8922a23c 100644
+--- a/lib/fdt.c
++++ b/lib/fdt.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt.c"
+diff --git a/lib/fdt_empty_tree.c b/lib/fdt_empty_tree.c
+index 5d30c58150ad..452221227bf3 100644
+--- a/lib/fdt_empty_tree.c
++++ b/lib/fdt_empty_tree.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_empty_tree.c"
+diff --git a/lib/fdt_ro.c b/lib/fdt_ro.c
+index f73c04ea7be4..9f696d19f060 100644
+--- a/lib/fdt_ro.c
++++ b/lib/fdt_ro.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_ro.c"
+diff --git a/lib/fdt_rw.c b/lib/fdt_rw.c
+index 0c1f0f4a4b13..2a61e9c6dd44 100644
+--- a/lib/fdt_rw.c
++++ b/lib/fdt_rw.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_rw.c"
+diff --git a/lib/fdt_strerror.c b/lib/fdt_strerror.c
+index 8713e3ff4707..4554e5fdac12 100644
+--- a/lib/fdt_strerror.c
++++ b/lib/fdt_strerror.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_strerror.c"
+diff --git a/lib/fdt_sw.c b/lib/fdt_sw.c
+index 9ac7e50c76ce..d3345ca399cf 100644
+--- a/lib/fdt_sw.c
++++ b/lib/fdt_sw.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_sw.c"
+diff --git a/lib/fdt_wip.c b/lib/fdt_wip.c
+index 45b3fc3d3ba1..9674d4c3b115 100644
+--- a/lib/fdt_wip.c
++++ b/lib/fdt_wip.c
+@@ -1,2 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/libfdt_env.h>
+ #include "../scripts/dtc/libfdt/fdt_wip.c"
 -- 
 2.17.1
 
