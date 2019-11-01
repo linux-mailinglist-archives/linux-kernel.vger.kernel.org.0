@@ -2,228 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B794BEC58C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1982BEC597
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfKAPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:20:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38830 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfKAPU6 (ORCPT
+        id S1727600AbfKAP2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:28:02 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41631 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbfKAP2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:20:58 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA1FKlYb015196;
-        Fri, 1 Nov 2019 10:20:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572621647;
-        bh=eeA3umD584w/bAmDdnoCxBa6AsPCzlgHuHEtXWEal/s=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=shkONEcfODmBLwI/jnS5yqQNMP1gCfKDwc8qE4YXsaaZgJobWZNtWIk7LNcDVtFt/
-         GVsnaaqsh4XwAjyOg/KvuB4s2OG8lbfRnAP94OXLJ/KnClkFjXtuAu+81+eZdHUbjj
-         rEHDvcz4nUv1RcQ97hU1JSnMhCfN7dqgm96qT2Y8=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA1FKlxT052853
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 1 Nov 2019 10:20:47 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 1 Nov
- 2019 10:20:33 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 1 Nov 2019 10:20:33 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA1FKiSv064409;
-        Fri, 1 Nov 2019 10:20:44 -0500
-Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <devicetree@vger.kernel.org>
-References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
- <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
- <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
- <20191030141736.GN4568@sirena.org.uk>
- <f9c181d1-5e0c-5e82-a740-f4e97822604f@ti.com>
- <CAL_JsqJ4WdaRvmZcjQG-jVyOOeKZX9fn1WcQZGWfUPqwunQCFw@mail.gmail.com>
- <1258a5bf-a829-d47a-902f-bf2c3db07513@ti.com>
- <CAL_Jsq+V0oAdVCaW+S12CUa4grCJhZD8OGDeu=0ohcGgxOkPVg@mail.gmail.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <5669a4c1-2bc1-423b-1407-073317f7df7e@ti.com>
-Date:   Fri, 1 Nov 2019 17:21:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 1 Nov 2019 11:28:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a21so7820328edj.8;
+        Fri, 01 Nov 2019 08:28:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/NDrXUcKJ7/8F/Y/hMevpGshYdNpAqX9Q9Po/a2HHFU=;
+        b=sUOzVhtQocv5pfp9i1AnDEhFCeZazsN4amRqIg4MZp/mCyXVRM3InGwd3tOy6eY1rl
+         4/uln9q0KOZ+FVV9XQwx5mU4dE8rglkFOxlE3f1fpFnNXnBozb80SYC0fP3GgCFjUkTX
+         H7Vm+jR4aUd/YPUMRwbSsg5q1pTBmMqc51VOzDFFSUFwqdQbh/YMsMPFdSmC6RARIcTc
+         3iqWWy7qZCjYc+/578iGwnHG0eHEmRhsHjmTdY+BfcFX7IEGGBKV/wbEX5Bgmlfg37j0
+         y4vCnW5zqUNhIT/V0ouPqRcA89H+L6nmPLXxCFxH6MLuOdKFsIc2jkKg/51yscQalTAs
+         sx0g==
+X-Gm-Message-State: APjAAAXb7xQyqtPV7fO5klAENMADll0DLyorkRP+Hea1lSj2I9RVaETT
+        TCyqKavgwzQjPqh/rL8OId89WzqR
+X-Google-Smtp-Source: APXvYqxv92IajGpVuJNmou4pi/RvjIctHN/Z9uqKoJY2ORRfop0PfmLD8aDVPmlhQFctKWT7tl5IzQ==
+X-Received: by 2002:a17:906:218a:: with SMTP id 10mr10267550eju.38.1572622079111;
+        Fri, 01 Nov 2019 08:27:59 -0700 (PDT)
+Received: from pi3 ([194.230.155.180])
+        by smtp.googlemail.com with ESMTPSA id nq2sm39225ejb.43.2019.11.01.08.27.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 08:27:57 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 16:27:55 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Matheus Castello <matheus@castello.eng.br>
+Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
+        lee.jones@linaro.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] power: supply: max17040: Config alert SOC low
+ level threshold from FDT
+Message-ID: <20191101152755.GC28931@pi3>
+References: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
+ <20191031184134.30621-1-matheus@castello.eng.br>
+ <20191031184134.30621-4-matheus@castello.eng.br>
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+V0oAdVCaW+S12CUa4grCJhZD8OGDeu=0ohcGgxOkPVg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191031184134.30621-4-matheus@castello.eng.br>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/11/2019 15.46, Rob Herring wrote:
-> On Thu, Oct 31, 2019 at 3:00 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->>
->>
->>
->> On 30/10/2019 20.49, Rob Herring wrote:
->>> On Wed, Oct 30, 2019 at 9:30 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->>>>
->>>>
->>>>
->>>> On 30/10/2019 16.17, Mark Brown wrote:
->>>>> On Wed, Oct 30, 2019 at 03:32:09PM +0200, Peter Ujfalusi wrote:
->>>>>> On 30/10/2019 15.12, Rob Herring wrote:
->>>>>
->>>>>>> Why can't we just add a shared flag like we have for interrupts?
->>>>>>> Effectively, we have that for resets too, it's just hardcoded in the
->>>>>>> the drivers.
->>>>>
->>>>>> This would be kind of the same thing what the
->>>>>> GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
->>>>>> fixed-regulators afaik.
->>>>>
->>>>> The theory with that was that any usage of this would need the
->>>>> higher level code using the GPIO to cooperate so they didn't step
->>>>> on each other's toes so the GPIO code should just punt to it.
->>>>
->>>> But from the client driver point of view a GPIO is still GPIO and if the
->>>> components are unrelated then it is hard to patch things together from
->>>> the top.
->>>
->>> You can't escape a driver being aware. If a driver depends on that
->>> GPIO to actually be set to states the driver says, then it can't be
->>> guaranteed to work. For example, maybe the driver assumes the device
->>> is in reset state after toggling reset and doesn't work if not in
->>> reset state. The driver has to be aware no matter what you do in DT.
->>
->> That's true for some device, but it is also true that some can not
->> tolerate being reset without them knowing it.
+On Thu, Oct 31, 2019 at 03:41:33PM -0300, Matheus Castello wrote:
+> For configuration of fuel gauge alert for a low level state of charge
+> interrupt we add a function to config level threshold and a device tree
+> binding property to set it in flatned device tree node.
 > 
-> You mean a reset when the driver is not loaded would not work? How
-> could that ever work?
-
-No, what I mean is that one device is reset because the driver for the
-other device toggles the GPIO line.
-
-If one driver toggles the GPIO line directly then the GPIO line is going
-to be toggled for all the devices the GPIO line is connected to.
-
-> I don't think you can have any reset control in
-> the drivers in that case.
-
-The device needs the RST line to be high, otherwise it is not
-accessible. If it does not have reset control how can we make sure that
-the GPIO line is in correct state?
-
-gpio-hog does not work all the time because we can not trust probe order
-and w/o gpio binding on the user deferred probing is not possible.
-If for some reason the gpio controller is probed after the drivers
-depending on the reset/enable GPIO then there's not much we can do.
-
->> If all users of the shared GPIO have full control over it then they can
->> just toggle it whatever way they want. How would a regulator, codec,
->> amplifier would negotiate on what to do with the shared GPIO?
->>
->> Another not uncommon setup is when the two components needs different level:
->> C1: ENABLE is high active
->> C2: RESET is high active
->>
->> To enable C1, the GPIO should be high. To enable C2 the GPIO must be low.
->> In the board one of the branch of the shared GPIO needs (and have) a
->> logic inverter.
->>
->> If they both control the same GPIO then they must have requested it with
->> different GPIO_ACTIVE_ since the drivers are written according to chip
->> spec, so C1 sets the GPIO to 1, C2 sets it to 0, the inversion for one
->> of them must happen in gpio core, right?
+> Now we can use "maxim,alert-low-soc-level" property with the values from
+> 1% up to 32% to configure alert interrupt threshold.
 > 
-> No, drivers are written to set the state to active/inactive.
-
-I think the drivers are written in a way to follow what their datasheets
-are tells. If it say that the GPIO line must be high to enable the
-device then they gpiod_set_value(1), if the line must be low to enable
-them then they will gpiod_set_value(0).
-
-> The DT GPIO_ACTIVE_ flags can depend on an inverter being present (BTW, there
-> was a recent attempt to do an inverter binding).
-
-Yes.
-If the line is inverted on the board, than the DT GPIO_ACTIVE_LOW will
-invert it to the correct level.
-
-We have two off the shelf components, C1 and C2. They have a driver
-written based on the datasheets.
-C1 needs HIGH (LOW reset/disable)
- uses gpiod_set_value(1) to enable the device
-
-C2 needs LOW (HIGH reset/disable)
- uses gpiod_set_value(0) to enable the device
-
-When they are connected to a dedicated GPIO the DT binding has
-GPIO_ACTIVE_HIGH since when the GPIO is set to 1 it goes HIGH, right?
-
-If two device is connected to one GPIO one of them needs an inverter on
-the GPIO line after it is split into two, let say C2 got inverted line:
-C1 tells in DT that the line is not inverted: GPIO_ACTIVE_HOGH
-C2 tells in DT that the line is inverted: GPIO_ACTIVE_LOW
-
-GPIO HIGH -> D1 is enabled
-	  -> !HIGH -> LOW -> D2 is enabled
-
-If both would request the same physical GPIO then how would this work? A
-single GPIO can not be handled in inverted and non inverted way at the
-same time.
-
-But this is just a side effect that this would be easy to handle with
-this DT binding and driver.
-After all, it will describe the GPIO line split.
-
->> It should be possible to add pass-through mode for gpio-shared so that
->> all requests would propagate to the root GPIO if that's what needed for
->> some setups.
->>
->> That way the gpio-shared would nicely handle the GPIO inversions, would
->> be able to handle cases to avoid unwanted reset/enable of components or
->> allow components to be ninja-reset.
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> ---
+>  drivers/power/supply/max17040_battery.c | 88 +++++++++++++++++++++----
+>  1 file changed, 74 insertions(+), 14 deletions(-)
 > 
-> What does ninja-reset mean?
+> diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+> index 75459f76d02c..802575342c72 100644
+> --- a/drivers/power/supply/max17040_battery.c
+> +++ b/drivers/power/supply/max17040_battery.c
+> @@ -29,6 +29,9 @@
+>  #define MAX17040_DELAY		1000
+>  #define MAX17040_BATTERY_FULL	95
+> 
+> +#define MAX17040_ATHD_MASK		0xFFC0
+> +#define MAX17040_ATHD_DEFAULT_POWER_UP	4
+> +
+>  struct max17040_chip {
+>  	struct i2c_client		*client;
+>  	struct delayed_work		work;
+> @@ -43,6 +46,8 @@ struct max17040_chip {
+>  	int soc;
+>  	/* State Of Charge */
+>  	int status;
+> +	/* Low alert threshold from 32% to 1% of the State of Charge */
+> +	u32 low_soc_alert_threshold;
+>  };
+> 
+>  static int max17040_get_property(struct power_supply *psy,
+> @@ -99,6 +104,22 @@ static void max17040_reset(struct i2c_client *client)
+>  	max17040_write_reg(client, MAX17040_CMD, 0x0054);
+>  }
+> 
+> +static int max17040_set_low_soc_threshold_alert(struct i2c_client *client,
+> +	u32 level)
+> +{
+> +	int ret;
+> +	u16 data;
+> +
+> +	level = 32 - level;
+> +	data = max17040_read_reg(client, MAX17040_RCOMP);
+> +	/* clear the alrt bit and set LSb 5 bits */
+> +	data &= MAX17040_ATHD_MASK;
+> +	data |= level;
+> +	ret = max17040_write_reg(client, MAX17040_RCOMP, data);
+> +
+> +	return ret;
+> +}
+> +
+>  static void max17040_get_vcell(struct i2c_client *client)
+>  {
+>  	struct max17040_chip *chip = i2c_get_clientdata(client);
+> @@ -115,7 +136,6 @@ static void max17040_get_soc(struct i2c_client *client)
+>  	u16 soc;
+> 
+>  	soc = max17040_read_reg(client, MAX17040_SOC);
+> -
+>  	chip->soc = (soc >> 8);
+>  }
+> 
+> @@ -161,6 +181,24 @@ static void max17040_get_status(struct i2c_client *client)
+>  		chip->status = POWER_SUPPLY_STATUS_FULL;
+>  }
+> 
+> +static int max17040_get_of_data(struct max17040_chip *chip)
+> +{
+> +	struct device *dev = &chip->client->dev;
+> +	struct device_node *np = dev->of_node;
+> +	int ret = 0;
+> +
+> +	if (of_property_read_u32(np, "maxim,alert-low-soc-level",
+> +			&chip->low_soc_alert_threshold)) {
 
-Ninjas attack from ambush ;)
-The device is reset w/o it's driver being aware that it ever happened as
-other driver toggled the shared GPIO line.
+Please align the line break with line above. checkpatch --strict might
+give you hints about this.
 
->> I think it would be possible to add gpiod_is_shared(struct gpio_desc
->> *desc) so users can check if the GPIO is shared - it would only return
->> true if the gpio-shared is not in pass-through mode so they can know
->> that the state they see on their gpio desc is not necessary matching
->> with reality.
->> Probably another gpiod_shared_get_root_value() to fetch the root's state?
->>
->> I intentionally not returning that in the driver as clients might skip a
->> gpio_set_value() seeing that the GPIO line is already in a state they
->> would want it, but that would not register their needs for the level.
->>
->> - Péter
->>
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +		chip->low_soc_alert_threshold = MAX17040_ATHD_DEFAULT_POWER_UP;
+> +	/* check if low_soc_alert_threshold is between 1% and 32% */
 
-- Péter
+The comment looks misleading here, like it belongs to previous block.
+Maybe put it inside else if {} block?
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +	} else if (chip->low_soc_alert_threshold <= 0 ||
+> +			chip->low_soc_alert_threshold >= 33){
+
+Missing space before {.
+
+> +		ret = -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static void max17040_check_changes(struct i2c_client *client)
+>  {
+>  	max17040_get_vcell(client);
+> @@ -192,6 +230,10 @@ static irqreturn_t max17040_thread_handler(int id, void *dev)
+>  	/* send uevent */
+>  	power_supply_changed(chip->battery);
+> 
+> +	/* reset alert bit */
+> +	max17040_set_low_soc_threshold_alert(client,
+> +		chip->low_soc_alert_threshold);
+
+Unless the continuation exceeds 80 character limit, please align it with
+previous line.
+
+> +
+>  	return IRQ_HANDLED;
+>  }
+> 
+> @@ -216,6 +258,7 @@ static int max17040_probe(struct i2c_client *client,
+>  	struct i2c_adapter *adapter = client->adapter;
+>  	struct power_supply_config psy_cfg = {};
+>  	struct max17040_chip *chip;
+> +	int ret;
+> 
+>  	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE))
+>  		return -EIO;
+> @@ -226,6 +269,12 @@ static int max17040_probe(struct i2c_client *client,
+> 
+>  	chip->client = client;
+>  	chip->pdata = client->dev.platform_data;
+> +	ret = max17040_get_of_data(chip);
+> +	if (ret) {
+> +		dev_err(&client->dev,
+> +			"failed: low SOC alert OF data out of bounds\n");
+> +		return ret;
+> +	}
+> 
+>  	i2c_set_clientdata(client, chip);
+>  	psy_cfg.drv_data = chip;
+> @@ -242,20 +291,31 @@ static int max17040_probe(struct i2c_client *client,
+> 
+>  	/* check interrupt */
+>  	if (client->irq) {
+> -		int ret;
+> -		unsigned int flags;
+> -
+> -		dev_info(&client->dev, "IRQ: enabled\n");
+> -		flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
+> -		ret = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+> -						max17040_thread_handler, flags,
+> -						chip->battery->desc->name,
+> -						chip);
+> -
+> -		if (ret) {
+> -			client->irq = 0;
+> +		if (of_device_is_compatible(client->dev.of_node,
+> +			"maxim,max77836-battery")) {
+
+Alignment.
+
+> +			ret = max17040_set_low_soc_threshold_alert(client,
+> +				chip->low_soc_alert_threshold);
+
+Ditto.
+
+> +			if (ret) {
+> +				dev_err(&client->dev,
+> +					"Failed to set low SOC alert: err %d\n",
+> +					ret);
+> +				return ret;
+> +			}
+> +
+> +			dev_info(&client->dev, "IRQ: enabled\n");
+> +			ret = devm_request_threaded_irq(&client->dev,
+> +				client->irq, NULL, max17040_thread_handler,
+> +				(client->flags | IRQF_ONESHOT),
+
+This looks unrelated. Befor ethis were IRQF_TRIGGER_FALLING |
+IRQF_ONESHOT, now you use client->flags. There is no reason why this
+commit should change it.
+
+> +				chip->battery->desc->name, chip);
+
+This breaks alignment which was here before.
+
+Best regards,
+Krzysztof
+
+
+> +
+> +			if (ret) {
+> +				client->irq = 0;
+> +				dev_warn(&client->dev,
+> +					"Failed to get IRQ err %d\n", ret);
+> +			}
+> +		} else {
+>  			dev_warn(&client->dev,
+> -				"Failed to get IRQ err %d\n", ret);
+> +				"Device not compatible for IRQ");
+>  		}
+>  	}
+> 
+> --
+> 2.24.0.rc2
+> 
