@@ -2,92 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C6AEC122
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 11:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB55EC12A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 11:14:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbfKAKMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 06:12:24 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38507 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbfKAKMX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 06:12:23 -0400
-Received: by mail-qk1-f193.google.com with SMTP id e2so10137941qkn.5;
-        Fri, 01 Nov 2019 03:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ND8y/KAJEHxe8vYu6nFNiGmvLZloLNx/Qhcmj2riyfs=;
-        b=DrBwmdA2hyuypUMdqsxgKAPOBwvzb/c3z7uksP87rq82GzxeMEHhvZFCbdACHdfw8N
-         vjkd6BctJNzkmDNGqy5YoXmnCNryXR+Cq3mWpEqQz0/vV6JZZg/cExsisJWSnJ5c3vig
-         rwnuKfQ2s4VZLHbJovbnP2amAl6xDURhPW/7o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ND8y/KAJEHxe8vYu6nFNiGmvLZloLNx/Qhcmj2riyfs=;
-        b=d9/Ue5/w6UE+nmAtHjisD2Xj9eu2FJafoC4sPZc3psCbQllS8NP8y9ESTF9bKYsOK5
-         TipoMGwaAysYtqIzZOmZsGmwonlFcmgBxlm6BM8YwxR2dUnVJMXmqxlORTFd41rmJl+v
-         f45Nje1FZvb2e5GLXc1pvDd7Skew/SnGwWC85dSP1mAaF3rBqIu8cOqnjmVfJoRMFEuw
-         TO7nNOkLTbMCGBBSEE4POB4Fp8Echusz/rH9YKNe7NYbMcPP890y/NKUcpdj61pAt5d6
-         wQYD17rNEyduBA+dYBG0pwSFQ7FoXS2iTAajd79wVpvqO8HbalPrzTd7nCmtN0uX0N2i
-         BMGQ==
-X-Gm-Message-State: APjAAAWEJQyPS2lCbcI0Wadqx7oyQyIsPU4hYsgc/GW/VPiiwOH3Ce4p
-        VbimnM+dxh0+OauoRaMLB57uVQJgxsrs5zUL0pU=
-X-Google-Smtp-Source: APXvYqwoU1k7FEmT61Ivo0VZaveC+nWADRFHlsA0BlwLNyI+e6RuAdTXAbMLTDbS33RCVwVgM/jm6sohxZSvu01ohA8=
-X-Received: by 2002:a37:5fc1:: with SMTP id t184mr2349520qkb.171.1572603142333;
- Fri, 01 Nov 2019 03:12:22 -0700 (PDT)
+        id S1729627AbfKAKOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 06:14:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728048AbfKAKOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 06:14:34 -0400
+Received: from [172.20.33.98] (unknown [91.217.168.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7998A2086D;
+        Fri,  1 Nov 2019 10:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572603273;
+        bh=yZctnhE8ydugwCZWCgTxz8UucAyxJoh5W9y/O7iyOQI=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=slfnJUOu2R2Lq4bGn6qHIg4mJZZaAFU2VJUMCjoUXPPOJfiDzb//RzSVYyEL2uHjj
+         ep3oLIUO4xnaRN/mSzvsENH6nNaEDBZefMsHcOqj4xfzKSd10py5bZROhZBLLGfuaC
+         JHM+4ZGhc7H/dGVowx+QbrvRxbthnHAE+gl6UkqI=
+Date:   Fri, 01 Nov 2019 11:14:28 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1435962204.69872.1572600009245.JavaMail.zimbra@nod.at>
+References: <1572597584-6390-1-git-send-email-rppt@kernel.org> <1572597584-6390-13-git-send-email-rppt@kernel.org> <1435962204.69872.1572600009245.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-References: <20191021194820.293556-1-taoren@fb.com> <20191021194820.293556-2-taoren@fb.com>
-In-Reply-To: <20191021194820.293556-2-taoren@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 1 Nov 2019 10:12:10 +0000
-Message-ID: <CACPK8XfebA9PcpyWkofCJ5fAZ9ddUjQ4ZeCf73KXb51+k_+N1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: aspeed: add dtsi for Facebook AST2500
- Network BMCs
-To:     Tao Ren <taoren@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 12/13] um: add support for folded p4d page tables
+To:     Richard Weinberger <richard@nod.at>
+CC:     linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        anton ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>, davem <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        linux-alpha <linux-alpha@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@vger.kernel.org
+Message-Id: <20191101101432.7998A2086D@mail.kernel.org>
+From:   rppt@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2019 at 19:49, Tao Ren <taoren@fb.com> wrote:
+<linux-c6x-dev@linux-c6x.org>,linux-kernel <linux-kernel@vger.kernel.org>,linux-m68k <linux-m68k@lists.linux-m68k.org>,linux-parisc <linux-parisc@vger.kernel.org>,linux-um <linux-um@lists.infradead.org>,sparclinux <sparclinux@vger.kernel.org>,Mike Rapoport <rppt@linux.ibm.com>
+From: Mike Rapoport <rppt@kernel.org>
+Message-ID: <E5D8BD4D-5286-427C-A347-D73AC26EC256@kernel.org>
+
+On November 1, 2019 10:20:09 AM GMT+01:00, Richard Weinberger <richard@nod=
+=2Eat> wrote:
+>----- Urspr=C3=BCngliche Mail -----
+>> Von: "Mike Rapoport" <rppt@kernel=2Eorg>
 >
-> Introduce "facebook-netbmc-ast2500-common.dtsi" which is included by all
-> Facebook AST2500 Network BMC platforms. The major purpose is to minimize
-> duplicated device entries cross Facebook Network BMC dts files.
+>[=2E=2E=2E]
 >
+>> #define pte_page(x) pfn_to_page(pte_pfn(x))
+>> diff --git a/arch/um/kernel/mem=2Ec b/arch/um/kernel/mem=2Ec
+>> index 417ff64=2E=2E6fd17bc 100644
+>> --- a/arch/um/kernel/mem=2Ec
+>> +++ b/arch/um/kernel/mem=2Ec
+>> @@ -92,10 +92,26 @@ static void __init one_md_table_init(pud_t *pud)
+>> #endif
+>> }
+>>=20
+>> +static void __init one_pud_table_init(p4d_t *p4d)
+>> +{
+>> +#if CONFIG_PGTABLE_LEVELS > 3
+>
+>Isn't this dead code?
+>
+>For uml we have:
+>config PGTABLE_LEVELS
+>        int
+>        default 3 if 3_LEVEL_PGTABLES
+>        default 2
 
-> +
-> +&mac1 {
-> +       status = "okay";
-> +       no-hw-checksum;
+It's kinda a provision for 4 levels support in UML :)
+I can drop this in the next respin, no problem=2E
 
-Was this included to work around the IPv6 issue that Benh recently fixed?
+>Thanks,
+>//richard
 
-If you can test your platform with
-88824e3bf29a2fcacfd9ebbfe03063649f0f3254 applied and the
-no-hw-checksum property removed, please send a follow up to remove
-this property.
 
-It's not doing any harm, but by cleaning it up there's less chance
-others blindly copy the same thing.
-
-Thanks,
-
-Joel
-
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
-> +};
+--=20
+Sincerely yours,
+Mike
