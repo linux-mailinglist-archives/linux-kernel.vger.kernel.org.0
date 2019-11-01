@@ -2,125 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C2BEEC79A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9F3EC7A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:34:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfKARd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 13:33:59 -0400
-Received: from mail-eopbgr820045.outbound.protection.outlook.com ([40.107.82.45]:11776
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729204AbfKARd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:33:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YrEaf62mR5StyskqYrt+nNkP6FEd2l4AWVTgEWyP91wzKY8DE/pcyuSUDRfso8jzhgaHe7lQU81q6uMjJhUPlZHfbPJtCeXwWfHza4Pbs+YGbkR+eFgjyosF7XhYF5qWgg3/wKLLRxX/VTj/XulVcfPoLRM/wAyMJNVxIFPRWxdfuBWxEWIeSfN2f/+NqQS9nGbmWuXLOVn9c5z/m6rFIyh/VtGjD3pJyNOa99Bngm1J59ac01t4E3e5fKpUlc3mVtIApWkpqqZzyK2VJ4A2dvcVnEQKtVbCfwwjukT+NlTOhoWrVOQC5KzMytOHNJ1QwB1GR2zrn9dYjYW0REqLJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ba0TFN6zCMbtcFRbOKP9AF9v3wJMmz4dqOHcotfWzAQ=;
- b=oS0W4b33Wb9LpB33WSk8/h5N4DSE4U67Ss2Sr3frNJj44GiOlpF4faBSklg49EVnPTeY5Q/XNUlTzUh4DjplE/s/17hILJjqqQOjejpR/ZBYrCukkp57y5RmOrXFcID3TIr+OEn1V7Ysh6sfcy1adxThc1ZFmjBwM5W3UTcZy0Z11XQO/Dz58kqaDKPKkcYIRx6ejTIca+r2iSdOtPYy8bBwavJvCcfYHChe8hB/+TJZohBew2FcmMA5ljH0p5e46SM4vCErjiREzAGMa5YE0DLjBsIs1rM4xaSFGkXtuW2lgneGGDerAnk0GTP+8zk3zPuex1Mqux92naW32cOExw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ba0TFN6zCMbtcFRbOKP9AF9v3wJMmz4dqOHcotfWzAQ=;
- b=ReFiIMMIASHerUto1L1KKGUG77snl59OQRq0JYCzKN60C6E7/MMBNjq1dz25YG7JHFLe/3YGzI7He+j9YeXfsQNZKwKG6dqRIczkzNjJH4t+4rvqpSA3n6RKSf+CeU8mDLe3j1yQ5TyokXGCgVUVBf5qjFvDMPp2YPpn3TEP6+0=
-Received: from BL0PR12MB2468.namprd12.prod.outlook.com (52.132.30.157) by
- BL0PR12MB2451.namprd12.prod.outlook.com (52.132.11.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.24; Fri, 1 Nov 2019 17:33:53 +0000
-Received: from BL0PR12MB2468.namprd12.prod.outlook.com
- ([fe80::748c:1f32:1a4d:acca]) by BL0PR12MB2468.namprd12.prod.outlook.com
- ([fe80::748c:1f32:1a4d:acca%7]) with mapi id 15.20.2387.028; Fri, 1 Nov 2019
- 17:33:53 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Moger, Babu" <Babu.Moger@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: [PATCH 3/4] kvm: svm: Emulate UMIP instructions on non SEV guest
-Thread-Topic: [PATCH 3/4] kvm: svm: Emulate UMIP instructions on non SEV guest
-Thread-Index: AQHVkNqHNWOug2PnfE283OzKzR6Cjw==
-Date:   Fri, 1 Nov 2019 17:33:53 +0000
-Message-ID: <157262963095.2838.4880629527800792709.stgit@naples-babu.amd.com>
-References: <157262960837.2838.17520432516398899751.stgit@naples-babu.amd.com>
-In-Reply-To: <157262960837.2838.17520432516398899751.stgit@naples-babu.amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR0102CA0016.prod.exchangelabs.com (2603:10b6:805:1::29)
- To BL0PR12MB2468.namprd12.prod.outlook.com (2603:10b6:207:44::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4358d073-f27a-49a6-fe85-08d75ef1aa1d
-x-ms-traffictypediagnostic: BL0PR12MB2451:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BL0PR12MB24513448A329055F513D88EF95620@BL0PR12MB2451.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2000;
-x-forefront-prvs: 020877E0CB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(346002)(39860400002)(396003)(136003)(189003)(199004)(8936002)(4326008)(54906003)(186003)(478600001)(64756008)(11346002)(66066001)(14454004)(7416002)(476003)(86362001)(316002)(486006)(71190400001)(99286004)(256004)(2906002)(76176011)(81156014)(71200400001)(110136005)(8676002)(66556008)(66446008)(52116002)(102836004)(3846002)(386003)(2501003)(81166006)(5660300002)(6506007)(66476007)(66946007)(6436002)(6512007)(6486002)(6116002)(26005)(446003)(103116003)(2201001)(305945005)(25786009)(7736002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR12MB2451;H:BL0PR12MB2468.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qEmk+OmcPc+W4wJdQ3JSpdxzogMcNY9R4S5kZRusoaZUCkHRJrY1T4UfVVmZtZJjrGJq6e2fNjdLTPzWLlj9BmrqojCdQ4wLOUjuOIsPGLJ4g2bSiamjGW0MNDSUFT1MNPn/yjawxJsGgsatynopjwZgqGphSgyXnQcerw39vU903ZLPJEEAUE7alz+lqZ4ErF0vHmvLg5KyMS5x3rxW+EVxw1Tu1pQ6tns+w9nQL6qWBxsQl6o44Xbmdxz+NtefQA65GZZvfjmFKAFY2i5yBOC0am/BQO60ZZbzylEGPV6kx8ZDbD/hdI2XOhM/z4IUWuZg3Mocl1J7EfeA3Z7/041TuWf/tEuPVvfRK1trBTKn4PUbMgGQc+RptrhkjzanSyFsulpPm+wgyNHKVD1bn08mgUJM/ltLDanGyiT1XzGapKrBGJ2OAEiqKaKWzvNP
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C70B5612BC19FC468CF70BC490E57E59@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727600AbfKAReO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 13:34:14 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59254 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729443AbfKAReN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 13:34:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572629651;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BnSm/pyC1zFaEEQQT2Q7WTcKwm88OoHgQ5K89nMoPpE=;
+        b=ixJofA81OWIRjy2UNQaNI64lSQF7AhO2sdNk8XSx/HaGc9HfwxDjSf8ijz0dlwkHdeOyIX
+        dZLiCoDpjRDpmOWYDBcHOILPkCRDuVMvlptRlCEj0c9XcC/fk0L2Jk15Q1EJdT2W6R++vF
+        Ad04/v3TCCEUFa8DTSjmmBwX4t1ZhS4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-198-TbZ0HN8tPs2XGeG71slkgg-1; Fri, 01 Nov 2019 13:34:05 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE672800EB4;
+        Fri,  1 Nov 2019 17:34:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D8DC6600D1;
+        Fri,  1 Nov 2019 17:34:00 +0000 (UTC)
+Subject: [RFC PATCH 00/11] pipe: Notification queue preparation [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 01 Nov 2019 17:34:00 +0000
+Message-ID: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4358d073-f27a-49a6-fe85-08d75ef1aa1d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2019 17:33:53.2175
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 26m8VAe5+ZRNbDZKx90TBkw1rSTKxmwCPFMJiDApm0GQYFmt01g+EenJYFzNIIRT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2451
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: TbZ0HN8tPs2XGeG71slkgg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RW11bGF0aW9uIG9mIFVNSVAgaW5zdHJ1Y3Rpb25zIChzZ2R0LCBzaWR0LCBzbGR0LCBzbXN3IGFu
-ZCBzdHIpIHJlcXVpcmVzDQp0aGUgaHlwZXJ2aXNvciB0byByZWFkIGFuZCB3cml0ZSB0aGUgZ3Vl
-c3QgbWVtb3J5LiBHdWVzdCBtZW1vcnkgaXMNCmVuY3J5cHRlZCBvbiBTRVYgZ3Vlc3QuIEh5cGVy
-dmlzb3IgY2Fubm90IHN1Y2Nlc3NmdWxseSByZWFkIG9yIHdyaXRlIHRoZQ0KZ3Vlc3QgbWVtb3J5
-LiBTbyBkaXNhYmxlIGVtdWxhdGlvbiBvbiBTRVYgZ3Vlc3QuIEVuYWJsZSB0aGUgZW11bGF0aW9u
-IG9ubHkNCm9uIG5vbiBTRVYgZ3Vlc3QuDQoNClNpZ25lZC1vZmYtYnk6IEJhYnUgTW9nZXIgPGJh
-YnUubW9nZXJAYW1kLmNvbT4NCi0tLQ0KIGFyY2gveDg2L2t2bS9zdm0uYyB8ICAgIDkgKysrKysr
-KysrDQogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvYXJj
-aC94ODYva3ZtL3N2bS5jIGIvYXJjaC94ODYva3ZtL3N2bS5jDQppbmRleCA3OWFiYmRlY2ExNDgu
-LjI2N2RhZTk0ZTVjYSAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2t2bS9zdm0uYw0KKysrIGIvYXJj
-aC94ODYva3ZtL3N2bS5jDQpAQCAtMTUzNSw2ICsxNTM1LDE1IEBAIHN0YXRpYyB2b2lkIGluaXRf
-dm1jYihzdHJ1Y3QgdmNwdV9zdm0gKnN2bSkNCiAJc2V0X2ludGVyY2VwdChzdm0sIElOVEVSQ0VQ
-VF9OTUkpOw0KIAlzZXRfaW50ZXJjZXB0KHN2bSwgSU5URVJDRVBUX1NNSSk7DQogCXNldF9pbnRl
-cmNlcHQoc3ZtLCBJTlRFUkNFUFRfU0VMRUNUSVZFX0NSMCk7DQorDQorCS8qIEVuYWJsZSBpbnRl
-cmNlcHRpb24gb25seSBvbiBub24tc2V2IGd1ZXN0ICovDQorCWlmICghc2V2X2d1ZXN0KHN2bS0+
-dmNwdS5rdm0pKSB7DQorCQlzZXRfaW50ZXJjZXB0KHN2bSwgSU5URVJDRVBUX1NUT1JFX0lEVFIp
-Ow0KKwkJc2V0X2ludGVyY2VwdChzdm0sIElOVEVSQ0VQVF9TVE9SRV9HRFRSKTsNCisJCXNldF9p
-bnRlcmNlcHQoc3ZtLCBJTlRFUkNFUFRfU1RPUkVfTERUUik7DQorCQlzZXRfaW50ZXJjZXB0KHN2
-bSwgSU5URVJDRVBUX1NUT1JFX1RSKTsNCisJfQ0KKw0KIAlzZXRfaW50ZXJjZXB0KHN2bSwgSU5U
-RVJDRVBUX1JEUE1DKTsNCiAJc2V0X2ludGVyY2VwdChzdm0sIElOVEVSQ0VQVF9DUFVJRCk7DQog
-CXNldF9pbnRlcmNlcHQoc3ZtLCBJTlRFUkNFUFRfSU5WRCk7DQoNCg==
+
+Here's a set of preparatory patches for building a general notification
+queue on top of pipes.  It makes a number of significant changes:
+
+ (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
+     is always 1.  This prepares for step 2.
+
+ (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
+     woken up from a function that's holding the poll waitqueue spinlock.
+
+ (3) Change the pipe buffer ring to be managed in terms of unbounded head
+     and tail indices rather than bounded index and length.  This means
+     that reading the pipe only needs to modify one index, not two.
+
+ (4) A selection of helper functions are provided to query the state of the
+     pipe buffer, plus a couple to apply updates to the pipe indices.
+
+ (5) The pipe ring is allowed to have kernel-reserved slots.  This allows
+     many notification messages to be spliced in by the kernel without
+     allowing userspace to pin too many pages if it writes to the same
+     pipe.
+
+ (6) Advance the head and tail indices inside the pipe waitqueue lock and
+     use step 2 to poke poll without having to take the lock twice.
+
+ (7) Rearrange pipe_write() to preallocate the buffer it is going to write
+     into and then drop the spinlock.  This allows kernel notifications to
+     then be added the ring whilst it is filling the buffer it allocated.
+     The read side is stalled because the pipe mutex is still held.
+
+ (8) Don't wake up readers on a pipe if there was already data in it when
+     we added more.
+
+ (9) Don't wake up writers on a pipe if the ring wasn't full before we
+     removed a buffer.
+
+The patches can be found here also:
+
+=09http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=
+=3Dnotifications-pipe-prep
+
+PATCHES=09BENCHMARK=09BEST=09=09TOTAL BYTES=09AVG BYTES=09STDDEV
+=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-=09pipe=09=09      307457969=09    36348556755=09      302904639=09       =
+10622403
+-=09splice=09=09      287117614=09    26933658717=09      224447155=09     =
+ 160777958
+-=09vmsplice=09      435180375=09    51302964090=09      427524700=09      =
+ 19083037
+
+rm-nrx=09pipe=09=09      311091179=09    37093181356=09      309109844=09  =
+      7221622
+rm-nrx=09splice=09=09      285628049=09    27916298942=09      232635824=09=
+      158296431
+rm-nrx=09vmsplice=09      417703153=09    47570362546=09      396419687=09 =
+      33960822
+
+wakesl=09pipe=09=09      310698731=09    36772541631=09      306437846=09  =
+      8249347
+wakesl=09splice=09=09      286193726=09    28600435451=09      238336962=09=
+      141169318
+wakesl=09vmsplice=09      436175803=09    50723895824=09      422699131=09 =
+      40724240
+
+ht=09pipe=09=09      305534565=09    36426079543=09      303550662=09      =
+  5673885
+ht=09splice=09=09      243632025=09    23319439010=09      194328658=09    =
+  150479853
+ht=09vmsplice=09      432825176=09    49101781001=09      409181508=09     =
+  44102509
+
+k-rsv=09pipe=09=09      308691523=09    36652267561=09      305435563=09   =
+    12972559
+k-rsv=09splice=09=09      244793528=09    23625172865=09      196876440=09 =
+     125319143
+k-rsv=09vmsplice=09      436119082=09    49460808579=09      412173404=09  =
+     55547525
+
+r-adv-t=09pipe=09=09      310094218=09    36860182219=09      307168185=09 =
+       8081101
+r-adv-t=09splice=09=09      285527382=09    27085052687=09      225708772=
+=09      206918887
+r-adv-t=09vmsplice=09      336885948=09    40128756927=09      334406307=09=
+        5895935
+
+r-cond=09pipe=09=09      308727804=09    36635828180=09      305298568=09  =
+      9976806
+r-cond=09splice=09=09      284467568=09    28445793054=09      237048275=09=
+      200284329
+r-cond=09vmsplice=09      449679489=09    51134833848=09      426123615=09 =
+      66790875
+
+w-preal=09pipe=09=09      307416578=09    36662086426=09      305517386=09 =
+       6216663
+w-preal=09splice=09=09      282655051=09    28455249109=09      237127075=
+=09      194154549
+w-preal=09vmsplice=09      437002601=09    47832160621=09      398601338=09=
+       96513019
+
+w-redun=09pipe=09=09      307279630=09    36329750422=09      302747920=09 =
+       8913567
+w-redun=09splice=09=09      284324488=09    27327152734=09      227726272=
+=09      219735663
+w-redun=09vmsplice=09      451141971=09    51485257719=09      429043814=09=
+       51388217
+
+w-ckful=09pipe=09=09      305055247=09    36374947350=09      303124561=09 =
+       5400728
+w-ckful=09splice=09=09      281575308=09    26841554544=09      223679621=
+=09      215942886
+w-ckful=09vmsplice=09      436653588=09    47564907110=09      396374225=09=
+       82255342
+
+The patches column indicates the point in the patchset at which the benchma=
+rks
+were taken:
+
+=090=09No patches
+=09rm-nrx=09"Remove the nr_exclusive argument from __wake_up_sync_key()"
+=09wakesl=09"Add wake_up_interruptible_sync_poll_locked()"
+=09ht=09"pipe: Use head and tail pointers for the ring, not cursor and leng=
+th"
+=09k-rsv=09"pipe: Allow pipes to have kernel-reserved slots"
+=09r-adv-t=09"pipe: Advance tail pointer inside of wait spinlock in pipe_re=
+ad()"
+=09r-cond=09"pipe: Conditionalise wakeup in pipe_read()"
+=09w-preal=09"pipe: Rearrange sequence in pipe_write() to preallocate slot"
+=09w-redun=09"pipe: Remove redundant wakeup from pipe_write()"
+=09w-ckful=09"pipe: Check for ring full inside of the spinlock in pipe_writ=
+e()"
+
+Changes:
+
+ ver #3:
+
+ (*) Get rid of pipe_commit_{read,write}.
+
+ (*) Port the virtio_console driver.
+
+ (*) Fix pipe_zero().
+
+ (*) Amend some comments.
+
+ (*) Added an additional patch that changes the threshold at which readers
+     wake writers for Konstantin Khlebnikov.
+
+ ver #2:
+
+ (*) Split the notification patches out into a separate branch.
+
+ (*) Removed the nr_exclusive parameter from __wake_up_sync_key().
+
+ (*) Renamed the locked wakeup function.
+
+ (*) Add helpers for empty, full, occupancy.
+
+ (*) Split the addition of ->max_usage out into its own patch.
+
+ (*) Fixed some bits pointed out by Rasmus Villemoes.
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (11):
+      pipe: Reduce #inclusion of pipe_fs_i.h
+      Remove the nr_exclusive argument from __wake_up_sync_key()
+      Add wake_up_interruptible_sync_poll_locked()
+      pipe: Use head and tail pointers for the ring, not cursor and length
+      pipe: Allow pipes to have kernel-reserved slots
+      pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+      pipe: Conditionalise wakeup in pipe_read()
+      pipe: Rearrange sequence in pipe_write() to preallocate slot
+      pipe: Remove redundant wakeup from pipe_write()
+      pipe: Check for ring full inside of the spinlock in pipe_write()
+      pipe: Increase the writer-wakeup threshold to reduce context-switch c=
+ount
+
+
+ drivers/char/virtio_console.c |   16 +-
+ fs/exec.c                     |    1=20
+ fs/fuse/dev.c                 |   31 +++--
+ fs/ocfs2/aops.c               |    1=20
+ fs/pipe.c                     |  228 +++++++++++++++++++++--------------
+ fs/splice.c                   |  190 ++++++++++++++++++-----------
+ include/linux/pipe_fs_i.h     |   64 +++++++++-
+ include/linux/uio.h           |    4 -
+ include/linux/wait.h          |   11 +-
+ kernel/exit.c                 |    2=20
+ kernel/sched/wait.c           |   37 ++++--
+ lib/iov_iter.c                |  269 +++++++++++++++++++++++--------------=
+----
+ security/smack/smack_lsm.c    |    1=20
+ 13 files changed, 527 insertions(+), 328 deletions(-)
+
