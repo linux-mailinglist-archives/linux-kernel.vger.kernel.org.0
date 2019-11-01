@@ -2,101 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858A4EBBF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 03:20:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36842EBBF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 03:29:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfKACUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 22:20:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37426 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfKACUe (ORCPT
+        id S1729288AbfKAC32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 22:29:28 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:33165 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729203AbfKAC32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 22:20:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z24so900007pgu.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2019 19:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=0++fdwXA964df6WT0EpmnfbVrkeavF5iL05D8ZDEb3Y=;
-        b=cthiwFBTpa5nGQwVXdgxJZ6QEZZVp3bOmwgoC1+VyDtLbfMKg9jFI6ldO5fuux5o4M
-         Tix+g9SKdKO5uoABiZJIG2nEEWrXVG5j487Hcq6VsL4iU3qHH1qI3U189YpFKEAV2iVg
-         BZx5AkGD7B5QHS2h6WTbwY0zD8faN/6hC888YR1yjv5ujy0BXvH1oDKErPvtV6eHqeWv
-         qbUrUWRSlFR5++r9lyFD2bXFaB3oX7qCC20opvVM9l3zXIrZNsKQJlthEgwewGtIBq76
-         76G2qY6DIxMQvJ4DfgxhHbKVXBX72oN1GiHb0KbypHEbNK7xYuQU0ba4SLnHu87yXshz
-         Yzjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0++fdwXA964df6WT0EpmnfbVrkeavF5iL05D8ZDEb3Y=;
-        b=RRUNMnqwXhR7zLEJOQH6ua76GFMuGHhbCjWgkJpOldX0eySUMjGKnXLZfRuhYyELKt
-         JDuKnsrATgA++UU15wn6nkBDQMmROC5hQWTkd+TcyfKa0eFhIJod/0gpkPjUBy7lXj3G
-         eoUNQYqE45a0r+Z85kO4aY2LKKQ78SCdC4/eJ2hblEVQU8ZcZ7MK7LIiq8+WoHZygYxF
-         WAeFcfVNiZbxzfHQ9ad81yECpS2MDNpH14//jvD8k3iBL47VEQpwBgPeeN7/qwwTVjh7
-         50uSjL2Yl2zDho0FmsHAU7+gpKvr7jHdzaBZJm9MT2m2M69wJqZ4T/vkcxbNVT9jh03I
-         Y2Kg==
-X-Gm-Message-State: APjAAAXPWgDAjNegF/K1EqQKZ3RGbdYLxJ9H34CnhiLRCSitZHXsjiT6
-        GqutjMjTApq2TnJtszjgAImKlHvW4vJfTw==
-X-Google-Smtp-Source: APXvYqw+t2rWbo+T8aG8q7S3AMYOKcWAgax2Z847XqeEbcW4ejHds4rgIOs5TYC1DFOPCiYZ/UJjIg==
-X-Received: by 2002:a62:e70e:: with SMTP id s14mr10821293pfh.182.1572574833889;
-        Thu, 31 Oct 2019 19:20:33 -0700 (PDT)
-Received: from gamma07.internal.sifive.com ([64.62.193.194])
-        by smtp.gmail.com with ESMTPSA id l3sm3966392pgo.74.2019.10.31.19.20.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 31 Oct 2019 19:20:33 -0700 (PDT)
-From:   Zong Li <zong.li@sifive.com>
-To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        paul.walmsley@sifive.com, palmer@sifive.com, Anup.Patel@wdc.com
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH] riscv: Use PMD_SIZE to repalce PTE_PARENT_SIZE
-Date:   Thu, 31 Oct 2019 19:20:30 -0700
-Message-Id: <1572574830-11181-1-git-send-email-zong.li@sifive.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 31 Oct 2019 22:29:28 -0400
+X-UUID: e494aaf292df4777a5aac93b5ff36739-20191101
+X-UUID: e494aaf292df4777a5aac93b5ff36739-20191101
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1397155461; Fri, 01 Nov 2019 10:29:15 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 1 Nov 2019 10:29:10 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Nov 2019 10:29:10 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: [RFC PATCH] usb: common: change usb_debug_root as static variable
+Date:   Fri, 1 Nov 2019 10:29:09 +0800
+Message-ID: <1572575349-5596-1-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 0BC6BF59A4B94D77E8F22C50E62B63F4624266A34528C7C889666C16795174A52000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PMD_SIZE is equal to PGDIR_SIZE when __PAGETABLE_PMD_FOLDED is
-defined.
+Try to avoid using extern global variable, and provide two
+functions for the usage cases
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
- arch/riscv/mm/init.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+NOTE:
+    Prepared but not send out patches for drivers using usb_debug_root,
+because I'm not sure whether this patch is needed, and many drivers
+will be modified.
+---
+ drivers/usb/common/common.c | 16 ++++++++++++++--
+ include/linux/usb.h         |  5 ++++-
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 573463d..9a9b01a 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -273,7 +273,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
- #define get_pgd_next_virt(__pa)	get_pmd_virt(__pa)
- #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
- 	create_pmd_mapping(__nextp, __va, __pa, __sz, __prot)
--#define PTE_PARENT_SIZE		PMD_SIZE
- #define fixmap_pgd_next		fixmap_pmd
- #else
- #define pgd_next_t		pte_t
-@@ -281,7 +280,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
- #define get_pgd_next_virt(__pa)	get_pte_virt(__pa)
- #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
- 	create_pte_mapping(__nextp, __va, __pa, __sz, __prot)
--#define PTE_PARENT_SIZE		PGDIR_SIZE
- #define fixmap_pgd_next		fixmap_pte
+diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+index 1433260d99b4..639ee6d243a2 100644
+--- a/drivers/usb/common/common.c
++++ b/drivers/usb/common/common.c
+@@ -293,8 +293,20 @@ struct device *usb_of_get_companion_dev(struct device *dev)
+ EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
  #endif
  
-@@ -317,9 +315,9 @@ static uintptr_t __init best_map_size(phys_addr_t base, phys_addr_t size)
- 	uintptr_t map_size = PAGE_SIZE;
+-struct dentry *usb_debug_root;
+-EXPORT_SYMBOL_GPL(usb_debug_root);
++static struct dentry *usb_debug_root;
++
++struct dentry *usb_debugfs_create_dir(const char *name)
++{
++	return debugfs_create_dir(name, usb_debug_root);
++}
++EXPORT_SYMBOL_GPL(usb_debugfs_create_dir);
++
++struct dentry *usb_debugfs_create_file(const char *name, umode_t mode,
++			void *data, const struct file_operations *fops)
++{
++	return debugfs_create_file(name, mode, usb_debug_root, data, fops);
++}
++EXPORT_SYMBOL_GPL(usb_debugfs_create_file);
  
- 	/* Upgrade to PMD/PGDIR mappings whenever possible */
--	if (!(base & (PTE_PARENT_SIZE - 1)) &&
--	    !(size & (PTE_PARENT_SIZE - 1)))
--		map_size = PTE_PARENT_SIZE;
-+	if (!(base & (PMD_SIZE - 1)) &&
-+	    !(size & (PMD_SIZE - 1)))
-+		map_size = PMD_SIZE;
+ static int __init usb_common_init(void)
+ {
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index e656e7b4b1e4..ad96e0aa0127 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -2001,7 +2001,10 @@ extern void usb_register_notify(struct notifier_block *nb);
+ extern void usb_unregister_notify(struct notifier_block *nb);
  
- 	return map_size;
- }
+ /* debugfs stuff */
+-extern struct dentry *usb_debug_root;
++extern struct dentry *usb_debugfs_create_dir(const char *name);
++extern struct dentry *
++usb_debugfs_create_file(const char *name, umode_t mode, void *data,
++			const struct file_operations *fops);
+ 
+ /* LED triggers */
+ enum usb_led_event {
 -- 
-2.7.4
+2.23.0
 
