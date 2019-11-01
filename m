@@ -2,199 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F77BEC38F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 14:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5F6EC39F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 14:25:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfKANQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 09:16:31 -0400
-Received: from mx1.riseup.net ([198.252.153.129]:57026 "EHLO mx1.riseup.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfKANQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 09:16:31 -0400
-Received: from capuchin.riseup.net (capuchin-pn.riseup.net [10.0.1.176])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "*.riseup.net", Issuer "Sectigo RSA Domain Validation Secure Server CA" (not verified))
-        by mx1.riseup.net (Postfix) with ESMTPS id 474N4T6P5nzFcJ6;
-        Fri,  1 Nov 2019 06:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-        t=1572614189; bh=FgBE6xxqMnDh8R5p+eGsaBsU02MatiZtn1CIEGmCCdk=;
-        h=To:References:From:Subject:Date:In-Reply-To:From;
-        b=MQLCFnGxI+2Kcv9mQ8qKQCKYjkOtbQUe/E3W53TrWo/sa/YGOQXdlcBWTTMNCQlFW
-         cf6kZdnPGUZ7WGY6Tyvsmt41tcUqVMFiZyTnJUGwvWd+wTUMRVnBJxgxJaGCs6+Srs
-         PSTzTl/hhCzchvUks27Pi5q8ETFAPHErOx/T4XFE=
-X-Riseup-User-ID: A77413114152033575A26406B4726DBADAD7B718E316A6CE1F36915C1855729C
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-         by capuchin.riseup.net (Postfix) with ESMTPSA id 474N445NyFz8tVk;
-        Fri,  1 Nov 2019 06:16:04 -0700 (PDT)
-To:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
-        outreachy-kernel@googlegroups.com, manasi.d.navare@intel.com,
-        rodrigosiqueiramelo@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, corbet@lwn.net, dri-devel@lists.freedesktop.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lkcamp@lists.libreplanetbr.org
-References: <20191101042706.2602-1-gabrielabittencourt00@gmail.com>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeida@riseup.net>
-Autocrypt: addr=andrealmeida@riseup.net; keydata=
- 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 mNGb
-Subject: Re: [Lkcamp] [PATCH] drm/doc: Adding VKMS module description and use
- to "Testing and Validation"
-Message-ID: <fa6b780f-a866-d092-4ff8-268ad602c524@riseup.net>
-Date:   Fri, 1 Nov 2019 10:14:39 -0300
+        id S1727071AbfKANZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 09:25:34 -0400
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:2418 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbfKANZd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 09:25:33 -0400
+X-Greylist: delayed 550 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 09:25:32 EDT
+X-EEMSG-check-017: 27466880|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.68,255,1569283200"; 
+   d="scan'208";a="27466880"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 01 Nov 2019 13:16:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1572614180; x=1604150180;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=2j6u2sV7UephGxnJ3ambNAx+dFg+wboZYjnoVew9C5g=;
+  b=SPgy5l5gLUDsNxhMhJfelIIEqBRMvtdaczIWfcH0pAlvkdAnrSbVOIH+
+   1vf9y13HtUr4w5ZxD7x5e2S64tq8vZJ76UAUB4VP/F9yMror4Lb3Lfiti
+   XQz5dyL93I9pP8kwawjLDqw83UoqBTrvHPk7t1frDAHJFviZ2Y/bhN272
+   sboBDtaN35yyJBAxNrO7nCNxyjgSzDI7SvORQ5i4X5FfWS9NXyLMuvxsM
+   c66oI9NfPBrNhIBhYc8UZ8XipRXupqVd6xjr7rfx2L4wg4I/y52yK6kcq
+   9Lw/DZ4MptVFYAyMPzd0d39BRtxddQpLKVGTO8Ymvc0QL/+kz4s/X1Zy5
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.68,255,1569283200"; 
+   d="scan'208";a="34987254"
+IronPort-PHdr: =?us-ascii?q?9a23=3AXObYjxXUZt6PKgEa0Fy7+258eqPV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZhaBu6dThVPEFb/W9+hDw7KP9fy5AipZucnK7C1KWacPfi?=
+ =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
+ =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYd+KKs9xR?=
+ =?us-ascii?q?TEr3tVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00xLoGuZ?=
+ =?us-ascii?q?uhcygLzpQq3x3fZOKdc4iO/B3jUPydITBihHJqfr+0mhW88VC4x+HhWcS530?=
+ =?us-ascii?q?xGoypYntXWqHwA2ALf5tKaRvZ740yvwyyA1xrJ5eFBOU00kK3bJIM/zbMojZ?=
+ =?us-ascii?q?oTtFjDHjfxmEXrkK+abkUk9fas6+TgerjmuoWTN5V1igHjKaQigNC/AOQkPQ?=
+ =?us-ascii?q?gOWGiX4+K826H4/ULlWrlKi/w2kq3BvJDbI8QUuLK5DhdI3oss5BuzFTer3M?=
+ =?us-ascii?q?kCkXUZI19JZgiLg5XxN1HLOv/4DPO/g1q2kDdswvDLJqbhDYjWLnXYjLfgfa?=
+ =?us-ascii?q?py605byAYpy9Bf/IhbBqsOIPL0RE/9rMbYAQMhMwyo3+bnD81w1oEEVmKVAa?=
+ =?us-ascii?q?+ZM6TSvUWT5u01IOmMZ44VuDDjJPgj/PPuiX45mVkAfaimx5cXaXa4Huh4LE?=
+ =?us-ascii?q?Wde3bjntABEWIStAokUOPqkEGCUSJUZ3uqW6I85zc7CJ+pDIvaRYCinqaB3C?=
+ =?us-ascii?q?GlEZ1SfW1GFF+MHmnyd4meWPcDdjiSIsl/nTwAT7ShTJUh1R62vg/g17VnNv?=
+ =?us-ascii?q?bU+jEftZ/729l45OzemAox9TNqFcSd1X+CT2VukmMPXT8207h1oVZhxVebza?=
+ =?us-ascii?q?h4n/tYGMRX5/NIVAc6KJHdw/VhC9D9VQPMZcmJSFm4TdW8Gz0xTcw+w8UIY0?=
+ =?us-ascii?q?ljH9WulBfD3zClA7UNjbyEGIQ08r7A33j2P8ty0XXG1LEkj1Q9RstPNGumhr?=
+ =?us-ascii?q?Nw9gTKCY7JlFiZl6C3eqsGwC7N9WCDzWyUsEFfSg5wXr3PXWoDaUvOsdT5+k?=
+ =?us-ascii?q?TCQqezBrs9LAtO19SOKqtQZd3vllVJWvHjNc/fY2K3h2e/GxKIyqmQY4rtfm?=
+ =?us-ascii?q?UXxD/dB1QckwAP4XaGMhAzBjy/rG3ECjxiD1Dvb1nw/ul+snO7T1Q0zx2Nb0?=
+ =?us-ascii?q?1517q65AQVheebS/MVxb8EuSEhqylqE1a5xd7ZF92Apw95dqVGfdw9+EtH1X?=
+ =?us-ascii?q?7etwFlOJygL6dihkQbcwttuUPjzA93BZtdnsgqtnwq0BB+Jr6f0FNEbzmYx4?=
+ =?us-ascii?q?z/OqXLKmnu+xCic6jW2knb0NmK5qgA8vA4q1H+vAGsDUci6Wto3MRV03SG+p?=
+ =?us-ascii?q?XGFhYdUZX0Ukwv7Rh1u6naYjUh54PTzXBsKre7siXN2903Hucq0Bahf9BCMK?=
+ =?us-ascii?q?OCDwLyEssaB9SwJ+wugVSmchUEPOVK/q4uI8ymb+eG2LKsPOt4hzKmjX5I4Y?=
+ =?us-ascii?q?Bn3kKP7SV8Vu/J048Ewv6C2wuHVi38gUygssDxhYBLezUSEnCjxijjAY5bfr?=
+ =?us-ascii?q?dycpoTCWeyP823wc1zh573VH5Z6F6sHVQG1NWpeRqPdVP92wJQ2F8WoXyhhS?=
+ =?us-ascii?q?u30Th0nys1oaqY2SzE2/7iewYfOm5XWGliik/hLpKyj98HRkiobggomAG+5U?=
+ =?us-ascii?q?b62adburhwL2nNTkdOfCj2KHpvUq+xtrqEfs5O54kksSRRUOSgf1+aTqTxrA?=
+ =?us-ascii?q?cd0yPmB2Fe3iw0dym2upXlmBx3kH6dLHl3rHvWYsxwwRbf5NrBRf5NxDoGQy?=
+ =?us-ascii?q?94iTjYB1SmItam482el43fveCmS2KhSppTfDHozYyatSu3/3ZqAQOlkPCznN?=
+ =?us-ascii?q?3qCgk60Snn19Z0USXEtgrzYo7u166iK+JoYlFoBEPg68p9AoxxiZMwiYoK1n?=
+ =?us-ascii?q?geh5Wa43wHnGTpPdpGx630dGANSiITw97J/Ajl31VuLnCOx4LiVnWQ2clhZ9?=
+ =?us-ascii?q?6hYmMWxiI99cFKCL+Q7LNagSt1vkC0rQXLYfhyhj0d0+ch6GYGg+EVvwog1i?=
+ =?us-ascii?q?GdAq0OHUlfJiHslAqH78q4rKpJYGaja7+w1FBxndq5FrGNvhlcWGrlepclBS?=
+ =?us-ascii?q?Jw7d9wMFPW3H3z94HrYt/Qbd0Iux2VlRfAk/ZaKJYrmvUWgipnPHr3vWc5xO?=
+ =?us-ascii?q?4jkRxuwZa6sZCdK2Vs4q25BAJYNj/raMMI4TztgqFensGZ34CrAJptACkEXJ?=
+ =?us-ascii?q?ztTfiwCjIdqeznNxqSED07snqUBaTQEhKF6Edns33DCZ+qN3CRJHkW1thiRR?=
+ =?us-ascii?q?+dJFBBjwAQRjk1gpk5FgWyzsz7bEh5/iwR5kL/qhZU0uJoKhj/UnvBqweyZD?=
+ =?us-ascii?q?Y0SZqfLBlN4wFY+UjaLMye4fhvHy1C4pKhqwmNIHSBZwtUFWEJRlCEB1f7M7?=
+ =?us-ascii?q?mq5NnA9fWYB+WnI/vVf7qBtfFeV+2JxZKz0opq5jOMNsKSMXl/C/00xFFOXW?=
+ =?us-ascii?q?52G8vHgTUDUS8XmDzXb86duhi8/jd7rsel8PTkQAjv/5eAC6NOMdVz/BC7mb?=
+ =?us-ascii?q?yDN/OKhClnMjZY1okAymTSxLgE3V4dljxhdzm3HrkbtC7NSr7QlbFTDxIBdy?=
+ =?us-ascii?q?xzM85IvOoA2VxvMNTYidS97bd7jf8zBlENAV7ogMKqYooRKmK+NVXKAm6PNb?=
+ =?us-ascii?q?KbNXvKxd36ZeW3TrgG38tOsBjlgiqWC0/uOHy4kjDtUx2+ebVXgDqzIA1VuI?=
+ =?us-ascii?q?b7dA1kT2fkUoS1OVWALNZrgGhukvUPjXTQODtZaGMtfg=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CjAABmL7xd/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
+ =?us-ascii?q?QICAQEBAYF9gW8FLGxUATIqhCiPC1QGgTaJY5FCCQEBAQEBAQEBAS0HAQIBA?=
+ =?us-ascii?q?YFMgnQCg3skOBMCDgEBAQQBAQEBAQUDAQFshTcMgjspAYJtAQUjFUEQCxgCA?=
+ =?us-ascii?q?iYCAlcGDQYCAQGCXz8BglIlD7IOgTKFToM+gUIGgQ4ojBEYeIEHgREngms+g?=
+ =?us-ascii?q?mIEgTkGAQGDLoJeBJY6lziCLoIzhF6OHgYbmWWWbpM3IoFYKwgCGAghD4MoT?=
+ =?us-ascii?q?xEUjA2FWyUDMQGBAwEBiycOF4IZAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 01 Nov 2019 13:16:19 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xA1DGGL2019003;
+        Fri, 1 Nov 2019 09:16:17 -0400
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <173a196e-fa6b-23b8-c818-dfca6cdadcc6@tycho.nsa.gov>
+ <20191031211721.GD10507@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <f91d788c-b372-8e2f-7ffb-995f501b5d6b@tycho.nsa.gov>
+Date:   Fri, 1 Nov 2019 09:16:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191101042706.2602-1-gabrielabittencourt00@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191031211721.GD10507@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gabriela!
+On 10/31/19 5:17 PM, Jarkko Sakkinen wrote:
+> On Wed, Oct 30, 2019 at 09:45:05AM -0400, Stephen Smalley wrote:
+>> On 10/28/19 5:03 PM, Jarkko Sakkinen wrote:
+>>> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+>>> can be used by applications to set aside private regions of code and
+>>> data. The code outside the SGX hosted software entity is disallowed to
+>>> access the memory inside the enclave enforced by the CPU. We call these
+>>> entities as enclaves.
+>>>
+>>> This commit implements a driver that provides an ioctl API to construct
+>>> and run enclaves. Enclaves are constructed from pages residing in
+>>> reserved physical memory areas. The contents of these pages can only be
+>>> accessed when they are mapped as part of an enclave, by a hardware
+>>> thread running inside the enclave.
+>>>
+>>> The starting state of an enclave consists of a fixed measured set of
+>>> pages that are copied to the EPC during the construction process by
+>>> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+>>> that defines the enclave properties.
+>>>
+>>> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+>>> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+>>> the EPC and EINIT check a given signed measurement and moves the enclave
+>>> into a state ready for execution.
+>>>
+>>> An initialized enclave can only be accessed through special Thread Control
+>>> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+>>> function converts a thread into enclave mode and continues the execution in
+>>> the offset defined by the TCS provided to EENTER. An enclave is exited
+>>> through syscall, exception, interrupts or by explicitly calling another
+>>> ENCLU leaf EEXIT.
+>>>
+>>> The permissions, which enclave page is added will set the limit for maximum
+>>> permissions that can be set for mmap() and mprotect(). This will
+>>> effectively allow to build different security schemes between producers and
+>>> consumers of enclaves. Later on we can increase granularity with LSM hooks
+>>> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+>>> consumers)
+>>
+>> Where do things stand wrt to ensuring that SGX cannot be used to introduce
+>> executable mappings that were never authorized by the LSM (or never measured
+>> by IMA)?
+> 
+> This was the latest discussion about that subject:
+> 
+> https://lore.kernel.org/linux-sgx/CALCETrWDLX68Vi4=9Dicq9ATmJ5mv36bzrc02heNYaHaBeWumQ@mail.gmail.com/
 
-On 11/1/19 1:27 AM, Gabriela Bittencourt wrote:
-> Add a description on VKMS module and the cases in which it should be us=
-ed.
-> There's a brief explanation on how to set it and use it in a VM, along =
-with
-> an example of running an igt-test.
->
-> Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
->
-> ---
->
-> Hi DRM-community,
-> this is my first (of many, I hope)  patch in this subsystem. I hope to =
-have
-> a lot of learning (and fun :)) working with you guys.
-> I'm starting by documenting the VKMS driver in "Userland interfaces", i=
-f I
-> have been inaccurate in my description or if I misunderstood some conce=
-pt,
-> please let me know.
-Cool! It would be nice also to know if you have tested this patch and
-checked the output .html file.
-> ---
->  Documentation/gpu/drm-uapi.rst | 38 ++++++++++++++++++++++++++++++++++=
-
->  1 file changed, 38 insertions(+)
->
-> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uap=
-i.rst
-> index 94f90521f58c..7d6c86b7af76 100644
-> --- a/Documentation/gpu/drm-uapi.rst
-> +++ b/Documentation/gpu/drm-uapi.rst
-> @@ -285,6 +285,44 @@ run-tests.sh is a wrapper around piglit that will =
-execute the tests matching
->  the -t options. A report in HTML format will be available in
->  ./results/html/index.html. Results can be compared with piglit.
-> =20
-> +Using VKMS to test DRM API
-> +--------------------------
-> +
-> +VKMS is a software-only model of a KMS driver that is useful for testi=
-ng
-> +and for running compositors. VKMS aims to enable a virtual display wit=
-hout
-> +the need for a hardware display capability. These characteristics made=
- VKMS
-> +a perfect tool for validating the DRM core behavior and also support t=
-he
-> +compositor developer. VKMS helps us to test DRM core function in a vir=
-tual
-> +machine, which makes it easy to test some of the core changes.
-"test DRM core function" ... "test some of the core changes", maybe this
-can be reworded to avoid repetition.
-> +
-> +To Validate changes in DRM API with VKMS, start setting the kernel. Th=
-e
-> +VKMS module is not enabled by defaut, so enable it in the menuconfig::=
-
-> +
-> +	$ make menuconfig
-> +
-Not sure if we need to teach people how to enable a module.
-> +Compile the kernel with the VKMS enabled and install it in the target
-> +machine. VKMS can be run in a Virtual Machine (QEMU, virtme or similar=
-).
-> +It's recommended the use of KVM with the minimum of 1GB of RAM and fou=
-r
-> +cores.
-> +
-> +It's possible to run the IGT-tests in a VM in two ways:
-> +1. Use IGT inside a VM
-> +2. Use IGT from the host machine and write the results in a shared dir=
-ectory.
-> +
-> +As follow, there is an example of using a VM with a shared directory w=
-ith
-> +the host machine to run igt-tests. As example it's used virtme::
-> +
-> +	$ virtme-run --rwdir /path/for/shared_dir --kdir=3Dpath/for/kernel/di=
-rectory --mods=3Dauto
-> +
-> +Run the igt-tests, as example it's ran the 'kms_flip' tests::
-> +
-> +	$ /path/for/igt-gpu-tools/scripts/run-tests.sh -p -s -t "kms_flip.*" =
--v
-Should we run this command at the host or guest?
-> +
-> +In this example instead of build the igt_runner it's used Piglit
-
-I'm feeling that there should be more commas in this sentence. How about
-"In this example, instead of building igt_runner, Piglit is used"
-
-> +(-p option); it's created html summary of the tests results and it's s=
-aved
-> +in the folder "igt-gpu-tools/results"; it's executed only the igt-test=
-s
-> +matching the -t option.
-> +
->  Display CRC Support
->  -------------------
-> =20
-Thanks,
-=C2=A0=C2=A0=C2=A0 Andr=C3=A9
-
+So, IIUC, that means that merging the driver will create a regression 
+with respect to LSM control over executable mappings that will only be 
+rectified at some future point in time if/when someone submits LSM hooks 
+or calls to existing hooks to restore such control.  That doesn't seem 
+like a good idea.  Why can't you include at least that basic level of 
+control now?  It is one thing to defer finer grained control or 
+SGX-specific access controls to the future - that I can understand.  But 
+introducing a regression in the existing controls is not really ok.
