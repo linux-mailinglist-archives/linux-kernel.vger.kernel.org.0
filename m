@@ -2,188 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA891EC66E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64098EC678
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfKAQOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 12:14:44 -0400
-Received: from vps.xff.cz ([195.181.215.36]:60182 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbfKAQOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 12:14:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1572624881; bh=noUi9OnbqolHYHTqgqISfP9VwS9BNpQPj8lQIwQIYME=;
-        h=Date:From:To:Subject:References:X-My-GPG-KeyId:From;
-        b=Eg5slOaZYerE0bnaLTYev4YmlhwpzXOYBjByCmXvxBYGxKnGUsQml6M0LdtLkE3J5
-         RlIG1a8ooLQYaFXgxkIgUIKq0w2H5AVu7/3Yp2eOKSvjXGmqNuZDYom36qE3BYWMkB
-         914zoVTeFe5pHK8DH0lAwr8jO8WD9wN4NinAiFIc=
-Date:   Fri, 1 Nov 2019 17:14:40 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:ALLWINNER CPUFREQ DRIVER" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-sunxi] [PATCH] cpufreq: sun50i: Fix CPU speed bin
- detection
-Message-ID: <20191101161440.6sz4rap7wmyhar26@core.my.home>
-Mail-Followup-To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        "open list:ALLWINNER CPUFREQ DRIVER" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20191031181359.282617-1-megous@megous.com>
- <CAJiuCcdZqpoXKuupk_w3F1npZgCHDgb=+Fdd1ukKA22K2PJ6Ww@mail.gmail.com>
- <20191031191257.j7bpxx5xyot2ay2i@core.my.home>
+        id S1727852AbfKAQPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 12:15:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38324 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726949AbfKAQPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 12:15:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0E53BB533;
+        Fri,  1 Nov 2019 16:15:51 +0000 (UTC)
+Date:   Fri, 1 Nov 2019 17:15:06 +0100
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     hannes@cmpxchg.org, clm@fb.com, dennisz@fb.com,
+        Josef Bacik <jbacik@fb.com>, kernel-team@fb.com,
+        newella@fb.com, lizefan@huawei.com, axboe@kernel.dk,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Rik van Riel <riel@surriel.com>, josef@toxicpanda.com,
+        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/10] blkcg: implement blk-iocost
+Message-ID: <20191101161506.GA28212@blackbody.suse.cz>
+References: <20190828220600.2527417-1-tj@kernel.org>
+ <20190828220600.2527417-9-tj@kernel.org>
+ <20190910125513.GA6399@blackbody.suse.cz>
+ <20190910160855.GS2263813@devbig004.ftw2.facebook.com>
+ <20191003145106.GC6678@blackbody.suse.cz>
+ <20191003164552.GA3247445@devbig004.ftw2.facebook.com>
+ <20191009153629.GA5400@blackbody.suse.cz>
+ <20191014153643.GD18794@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191031191257.j7bpxx5xyot2ay2i@core.my.home>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+In-Reply-To: <20191014153643.GD18794@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thu, Oct 31, 2019 at 08:12:57PM +0100, megous hlavni wrote:
-> Hi,
-> 
-> On Thu, Oct 31, 2019 at 07:55:43PM +0100, Clément Péron wrote:
-> > Hi Ondrej,
-> > 
-> > On Thu, 31 Oct 2019 at 19:14, Ondrej Jirman <megous@megous.com> wrote:
-> > >
-> > > I have failures to boot on Orange Pi 3, because this driver determined
-> > > that my SoC is from the normal bin, but my SoC only works reliably with
-> > > the OPP values for the slowest bin.
-> > >
-> > > Looking at BSP code, I found that efuse values have following meanings
-> > > on H6:
-> > >
-> > > - 0b000 invalid (interpreted in vendor's BSP as normal bin)
-> > > - 0b001 slowest bin
-> > > - 0b011 normal bin
-> > > - 0b111 fastest bin
-> > 
-> > Maybe have some defines will be more readable no ?
-> > https://megous.com/git/linux/tree/drivers/soc/sunxi/sunxi-sid.c?h=h6-4.9-bsp#n213
-> 
-> Hmm, Alwwinner is really funny. Unused macros that just confuse things.
-> 
-> #if defined(CONFIG_ARCH_SUN50IW6)
-> #define TYPE_SB (0b001)
-> #define TYPE_NB (0b010)
-> #define TYPE_FB (0b011)
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So this table is likely used on H6, from my research I was able to find
-no owners of H6 with efuse value of 0b111 and one owner with efuse value
-of 0b010, and one with 0b011.
+Hello
 
-So the bins map directly to decimal numbers efuse=1 (slow bin),
-efuse=2 (normal bin), efuse=3 (fast bin).
+(I realize it's likely late for the remark but I'd like to bring it up
+anyway.)
 
-So it looks like vendor code is wrong and works accidentally, due to
-fast bin being interpretted as normal bin, and normal bin being interpretted
-as having a wrong efuse value, which is then interpretted alter as normal bin.
+On Mon, Oct 14, 2019 at 08:36:43AM -0700, Tejun Heo <tj@kernel.org> wrote:
+> We likely can talk on the subject
+> for a really long time probalby because there's no clearly technically
+> better choice here, so...
+I agree with you that functionally the two options are equal and also
+=66rom configuration POV they seem both sensible.
 
-https://forum.armbian.com/topic/9368-orangepi-3-h6-allwiner-chip/page/24/#comments
-https://forum.armbian.com/topic/9368-orangepi-3-h6-allwiner-chip/page/25/#comments
+I checked where BFQ stores its per-device parameters and its under the
+sysfs directory of given device's iosched directory. So from the user
+perspective it'd be more consistent if all similar tunables resided
+under that location.
 
-This will still need to be verified, by respective owners using the optimized
-OPP tables for their supposed SoC bins successfully, but meanwhile I think
-we should base the efuse->speed grade mapping based on values observed in the
-wild. That seems most prudent at the moment.
+(OTOH, I admit I'm not that familiar with block layer internals to
+identify the overlap between IO scheduler and IO controller.)
 
-I'll send v2 with speed grade selection matching these observations, so
-please don't merge this yet.
+> Yeah, it's kinda unfortunate that it requires this many parameters but
+> at least my opinion is that that's reflecting the inherent
+> complexities of the underlying devices and how workloads interact with
+> them.
+After I learnt about the existence of BFQ tunables, I'm no longer
+concerned by the complexity of the parameter space.
 
-regards,
-	o.
+Thanks for the explanations of QoS purpose.
 
-> #else
-> #define TYPE_SB (0b001)
-> #define TYPE_NB (0b011)
-> #define TYPE_FB (0b111)
-> #endif
-> 
-> So for H6 they define special bin values and actually use different ones
-> in code. Fun.
-> 
-> I've sent out some testing program to Armbian forums, so hopefully, we'll
-> collect some real efuse_values from real SoCs, to see what's really being
-> used in the wild. If we see value 0b010, the BSP code is probably just
-> wrong.
-> 
-> Interestingly, TYPE_NB 0b010 would be interpreted as normal bin even with
-> the current BSP code, and TYPE_FB would be misdetected as TYPE_NB.
-> 
-> > #define SUN50I_NVEM_INVALID_CPU_OPP (0b000)
-> > #define SUN50I_NVEM_LOW_CPU_OPP (0b001)
-> > #define SUN50I_NVEM_NORMAL_CPU_OPP (0b011)
-> > #define SUN50I_NVEM_HIGH_CPU_OPP (0b111)
-> 
-> I'd rather not describe meanings just yet, until we get some real-world
-> data from H6 owners.
-> 
-> https://forum.armbian.com/topic/9368-orangepi-3-h6-allwiner-chip/?do=findComment&comment=88439
-> 
-> regards,
-> 	o.
-> 
-> > Regards,
-> > Clément
-> > 
-> > >
-> > > Let's play it safe and interpret 0 as the slowest bin, but fix detection
-> > > of other bins to match vendor code.
-> > >
-> > > Fixes: f328584f7bff ("cpufreq: Add sun50i nvmem based CPU scaling driver")
-> > > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > > ---
-> > >
-> > > See https://megous.com/git/linux/tree/drivers/soc/sunxi/sunxi-sid.c?h=h6-4.9-bsp#n484
-> > > and https://megous.com/git/linux/tree/drivers/cpufreq/sunxi-cpufreq.c?h=h6-4.9-bsp#n428
-> > > (1 is substracted from soc_bin number here!)
-> > >
-> > >  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> > > index df35ef3ef567..41dad03e245c 100644
-> > > --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> > > +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> > > @@ -71,9 +71,12 @@ static int sun50i_cpufreq_get_efuse(u32 *versions)
-> > >         efuse_value = (*speedbin >> NVMEM_SHIFT) & NVMEM_MASK;
-> > >         switch (efuse_value) {
-> > >         case 0b0001:
-> > > -               *versions = 1;
-> > > +               *versions = 0;
-> > >                 break;
-> > >         case 0b0011:
-> > > +               *versions = 1;
-> > > +               break;
-> > > +       case 0b0111:
-> > >                 *versions = 2;
-> > >                 break;
-> > >         default:
-> > > --
-> > > 2.23.0
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20191031181359.282617-1-megous%40megous.com.
+> For QoS parameters, Andy is currently working on a method to determine
+> the set of parametesr which are at the edge of total work cliff -
+> ie. the point where tighetning QoS params further starts reducing the
+> total amount of work the device can do significantly.
+The QoS description in the Documentation/ describes the interpretation
+of the individual parameters, however, this purpose and how it works was
+not clear to be from that. I think the QoS policy would deserve similar
+description in the Documentation/.
+
+> Nothing can issue IOs indefinitely without some of them completing and
+> the total amount of work a workload can do is conjoined with the
+> completion latencies. [...]
+I may reply to this point later. However, if that provably works, I'm
+likely missing something in my understanding, so that'd be irrelevant.
+
+Cheers,
+Michal
+
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl28WgQACgkQia1+riC5
+qShQKA/7BT64RM/e1xU73WG0TsdQ1By8FWwkm/pwmasQzFiWE2gbCKdVx7FOdoR7
+m1cyKkl1tWef4uJGy788zwruYfliudpgN4juB0qDBMXfX+FIMOcIkbfbsXYf7qSy
+S3iIUP5p0sidWswOeK/fEwXKDEDzmZGqxqHiRiLYyoXE1gGsf6wH2HCy+S5fOC8K
+EEiCk3c4EzG2cX6gQa1nuhXIYhGASZXpVGwfyFi9O6cYZmzuEyj26k2YjnZsmWp9
+i8uqcOrTOCYV36nP5YJyfKKhfx0UlpGKFk90z9LGagKEhbD2Ht3xgYugJJCrem4C
+OS7tJWWWaycZ/uli5InGk5X/lGMp514FY1ARNyA0/HavLI5eqTDkvf2b2EP+yoRH
+bwnPh/YeYyPjMQJ+ONfdV1iC5pGIYsGC20jOQz4QY9QRkjbKwMLLacYHoCSDIRxg
+BLgwf35pxzXJfxQc8iEdoSz1Ii6yKOZGDN+5C4yUV/1qDSG4j4DvAfY+71oc34is
+HvZBattBqurPSH8f4DMg9zB6KaU/JAWrg0m/sUxDXSbu3pit7R/L/PVP+Kljhsf5
+vmQf6n3e4wcU93S7hCCLPA0CWMQLgn/PIgDBKUIJP6eP6CAV4NKkK7xY/ZjViduI
+DlKBVs30QYjqG4xx5oZCyzmiA7Q96q3vMtzR6tevrTD6tSyf08g=
+=0UBH
+-----END PGP SIGNATURE-----
+
+--bg08WKrSYDhXBjb5--
