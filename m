@@ -2,127 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D43EC836
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:03:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 102EAEC846
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:09:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfKASDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 14:03:24 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44380 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbfKASDX (ORCPT
+        id S1727272AbfKASJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 14:09:33 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36684 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727205AbfKASJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:03:23 -0400
-Received: by mail-qt1-f196.google.com with SMTP id o11so8929994qtr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:03:23 -0700 (PDT)
+        Fri, 1 Nov 2019 14:09:33 -0400
+Received: by mail-pg1-f194.google.com with SMTP id j22so6964180pgh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k8D0kxdveIpuC6UigtyTU7urwvjnhy2BPAZbxffIYkA=;
-        b=f+FQf0a/ifANPLSwBV+ZkSgxM5Jp/onawYBupphq/LsTjIej2U+EoZiplzDJaj+w9f
-         f+HNklqSQZF2LnhTGh7KLY0AgjSJJzx2aI4Hn67VjCULaV+wlrwW2pf4YAr/1vY0DU+H
-         O69QaL/E2EfY4PDEOhF0PmKMeT/GqXZeYkLWyjeGmh84W4mLY39849znwYXB3Fd4ApvX
-         kV0JygyDXSgMrkVC+vPJcBomOufJZwPeHCOl80eSjh8PAx1zeAmiwhTd6SV2DOpohy6a
-         V1sA4A5q91zDXDOsrN+gypNTEucv0fgbKEUPi6AZLEvMGgH6SuL6ap6GoYm9uHPF2Tcv
-         ZSBQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YeTpB1Wx1lpy3awpQLYzDRRtlZuKfiLn87LhRSvje50=;
+        b=MEejXdvJ/xWDM7BvqOG6PxfoSYB1nWSgMQfn97OEzsbkg/GVwzIsbSUvmV1wsqV0Qs
+         WIvpo+Z97RKj57DiBqRQ9AjJKfgkiH4umbmx1ElHdLveGg2pwZdKIuDU9PLSdWrvuvw4
+         uyxc+lD9UbDSxHAjICjQ3u49KgPDQQo91XCvY1kEv0uJ/6EYQKUzPEhiDG3iZ3NFM/e2
+         RL5Lo8JL0VlxAi+HXAiTTYkQVfY5L4ahPLsGyHsPtgF6UZl26yTQ/9RBeQ0XcCFfnWKc
+         LI+sgSsbOjbhVKVez+ayoElCg9uvUjX2lOj4Cu0gDBVl5HuxyEe9HLh+1iDpOFrfB8Q1
+         PUsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k8D0kxdveIpuC6UigtyTU7urwvjnhy2BPAZbxffIYkA=;
-        b=nUbhQtGKui/KmhuSmQkAH0u9Hk6I803vai8zVJiRiu8BIUFL12iWwhBmFkz9cmdMbc
-         cXN5NYxIvd+g/VGP62r1urqaFNp31c8tNvlAqHORnKOQOzb60VO848HWzHCeUDkCyaR8
-         nURoGbIn1box11qIXKpEkQehCQNufoAe64cWK8t6sPuLPebQQJKiifzQVrIVSlkeyVpR
-         Ossh8lLbNYwAJR+mkYkgHc0YvWWntY0/6NPjs4aVUWcTTFOZ65gQOsaCA+hdIjhw2Lu8
-         mB+dAzQO9x+31laHeNOK8bL8Rboi42kqOEpwxwpESXRIVHhzj28Vz0Ge+Ke9QLp+sDq+
-         y7Kw==
-X-Gm-Message-State: APjAAAX3gvhq/wElC3Hym+Ih51/oCmFvely9/0ZWNXlFmqPZeHLjNIHx
-        1GplzX8Xp3JQ68VB6xdfNWnTyEnEjWwcTQE0npCA9A==
-X-Google-Smtp-Source: APXvYqzRbyd6XaGiNNRA/t8TJsdO3rNYFVp/yOubJZnZL7YPB7EhMjaMtD1BiKpR716ZDhtNj0+0ij3ku29znK/XFIg=
-X-Received: by 2002:ac8:1103:: with SMTP id c3mr676808qtj.50.1572631402359;
- Fri, 01 Nov 2019 11:03:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YeTpB1Wx1lpy3awpQLYzDRRtlZuKfiLn87LhRSvje50=;
+        b=YbD+ovKSPrFNa14uCx8CRotR5EoTL82x/zIcPAvYHjznM/6FV/fzHPZPpik0n4QLbF
+         b6G+ok7Yspb9u1hqLYxCqcrurTyvx/JvsgwceYruFjBYO2FltoovVehYRDCcq0em5aRX
+         O713z95RbWK2Ipx2YaHe0DTmxO/hCsbv7szQxAtWYGtk8xzvHCfLPGHi6fJoLwkW+Igr
+         Rrt9iJUFcCd29ROTRVlD3ToKEVqsKv4fWkX5XktWD/E06l2GFT3vpd29MlaF68eKRBy1
+         UjhwB5Ikz2cWznPOQlhiZ7CnP/XJ3FN1J2/OXLQ7XDHPK6MeJ0ppWLVPlMvqgdVq/dVV
+         1xbA==
+X-Gm-Message-State: APjAAAXu0EI79ajrZViDiv1bOqIrmr7ptEqbEvJ6OGjDinTAPWgroGcD
+        3tIcWpEmB8MY1hEyWv7hIKI=
+X-Google-Smtp-Source: APXvYqyGp7XRZmRiIlwGHykCJbawjeXomnH4aaKmoylErPEGGbORyqTyQ0wtAogksfMUB+aXofXNwQ==
+X-Received: by 2002:a63:f919:: with SMTP id h25mr6789478pgi.85.1572631771170;
+        Fri, 01 Nov 2019 11:09:31 -0700 (PDT)
+Received: from localhost ([100.118.89.209])
+        by smtp.gmail.com with ESMTPSA id 16sm9364172pgd.0.2019.11.01.11.09.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 11:09:30 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] drm/atomic: fix self-refresh helpers crtc state dereference
+Date:   Fri,  1 Nov 2019 11:07:12 -0700
+Message-Id: <20191101180713.5470-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <00000000000069801e05961be5fb@google.com> <0e2bc2bf-2a7a-73c5-03e2-9d08f89f0ffa@kernel.dk>
- <CACT4Y+asiAtMVmA2QiNzTJC8OsX2NDXB7Dmj+v-Uy0tG5jpeFw@mail.gmail.com> <7fe298b7-4bc9-58e7-4173-63e3cbcbef25@kernel.dk>
-In-Reply-To: <7fe298b7-4bc9-58e7-4173-63e3cbcbef25@kernel.dk>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 1 Nov 2019 19:03:10 +0100
-Message-ID: <CACT4Y+au222UbfG_rbV+Zx6O75C1BHfCCw4R_Mp4ki4xw=_oDA@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel paging request in io_wq_cancel_all
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     syzbot <syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, mchehab+samsung@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, patrick.bellasi@arm.com,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 6:56 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 11/1/19 11:50 AM, Dmitry Vyukov wrote:
-> > On Wed, Oct 30, 2019 at 3:41 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 10/30/19 1:44 AM, syzbot wrote:
-> >>> syzbot has bisected this bug to:
-> >>>
-> >>> commit ef0524d3654628ead811f328af0a4a2953a8310f
-> >>> Author: Jens Axboe <axboe@kernel.dk>
-> >>> Date:   Thu Oct 24 13:25:42 2019 +0000
-> >>>
-> >>>        io_uring: replace workqueue usage with io-wq
-> >>>
-> >>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16acf5d0e00000
-> >>> start commit:   c57cf383 Add linux-next specific files for 20191029
-> >>> git tree:       linux-next
-> >>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15acf5d0e00000
-> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=11acf5d0e00000
-> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=cb86688f30db053d
-> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=221cc24572a2fed23b6b
-> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168671d4e00000
-> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140f4898e00000
-> >>>
-> >>> Reported-by: syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com
-> >>> Fixes: ef0524d36546 ("io_uring: replace workqueue usage with io-wq")
-> >>
-> >> Good catch, it's a case of NULL vs ERR_PTR() confusion. I'll fold in
-> >> the below fix.
-> >
-> > Hi Jens,
-> >
-> > Please either add the syzbot tag to commit, or close manually with
-> > "#syz fix" (though requires waiting until the fixed commit is in
-> > linux-next).
-> > See https://goo.gl/tpsmEJ#rebuilt-treesamended-patches for details.
-> > Otherwise, the bug will be considered open and will waste time of
-> > humans looking at open bugs and prevent syzbot from reporting new bugs
-> > in io_uring.
->
-> It's queued up since two days ago:
->
-> http://git.kernel.dk/cgit/linux-block/commit/?h=for-5.5/io_uring&id=975c99a570967dd48e917dd7853867fee3febabd
->
-> and should have the right attributions, so hopefully it'll catch up
-> eventually.
->
-> --
-> Jens Axboe
->
+From: Rob Clark <robdclark@chromium.org>
 
-Cool! Thanks!
-I've seen "fold in" and historically lots of developers did not add
-the tag during amending, so wanted to double check.
+drm_self_refresh_helper_update_avg_times() was incorrectly accessing the
+new incoming state after drm_atomic_helper_commit_hw_done().  But this
+state might have already been superceeded by an !nonblock atomic update
+resulting in dereferencing an already free'd crtc_state.
+
+Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
+Cc: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+TODO I *think* this will more or less do the right thing.. althought I'm
+not 100% sure if, for example, we enter psr in a nonblock commit, and
+then leave psr in a !nonblock commit that overtakes the completion of
+the nonblock commit.  Not sure if this sort of scenario can happen in
+practice.  But not crashing is better than crashing, so I guess we
+should either take this patch or rever the self-refresh helpers until
+Sean can figure out a better solution.
+
+ drivers/gpu/drm/drm_atomic_helper.c       |  2 ++
+ drivers/gpu/drm/drm_self_refresh_helper.c | 11 ++++++-----
+ include/drm/drm_atomic.h                  |  8 ++++++++
+ 3 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 3ef2ac52ce94..732bd0ce9241 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -2240,6 +2240,8 @@ void drm_atomic_helper_commit_hw_done(struct drm_atomic_state *old_state)
+ 	int i;
+ 
+ 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
++		old_state->crtcs[i].new_self_refresh_active = new_crtc_state->self_refresh_active;
++
+ 		commit = new_crtc_state->commit;
+ 		if (!commit)
+ 			continue;
+diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
+index 68f4765a5896..77b9079fa578 100644
+--- a/drivers/gpu/drm/drm_self_refresh_helper.c
++++ b/drivers/gpu/drm/drm_self_refresh_helper.c
+@@ -143,19 +143,20 @@ void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
+ 					      unsigned int commit_time_ms)
+ {
+ 	struct drm_crtc *crtc;
+-	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
++	struct drm_crtc_state *old_crtc_state;
+ 	int i;
+ 
+-	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
+-				      new_crtc_state, i) {
++	for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
++		bool new_self_refresh_active =
++				state->crtcs[i].new_self_refresh_active;
+ 		struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
+ 		struct ewma_psr_time *time;
+ 
+ 		if (old_crtc_state->self_refresh_active ==
+-		    new_crtc_state->self_refresh_active)
++		    new_self_refresh_active)
+ 			continue;
+ 
+-		if (new_crtc_state->self_refresh_active)
++		if (new_self_refresh_active)
+ 			time = &sr_data->entry_avg_ms;
+ 		else
+ 			time = &sr_data->exit_avg_ms;
+diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+index 927e1205d7aa..86baf2b38bb3 100644
+--- a/include/drm/drm_atomic.h
++++ b/include/drm/drm_atomic.h
+@@ -155,6 +155,14 @@ struct __drm_crtcs_state {
+ 	struct drm_crtc *ptr;
+ 	struct drm_crtc_state *state, *old_state, *new_state;
+ 
++	/**
++	 * @new_self_refresh_active:
++	 *
++	 * drm_atomic_helper_commit_hw_done() stashes new_crtc_state->self_refresh_active
++	 * so that it can be accessed late in drm_self_refresh_helper_update_avg_times().
++	 */
++	bool new_self_refresh_active;
++
+ 	/**
+ 	 * @commit:
+ 	 *
+-- 
+2.21.0
+
