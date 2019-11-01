@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A59AEC744
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:10:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A055EC74B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 18:10:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbfKARKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 13:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59242 "EHLO mail.kernel.org"
+        id S1729020AbfKARKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 13:10:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbfKARKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:10:06 -0400
-Subject: Re: [GIT PULL] Power management fix for v5.4-rc6
+        id S1728819AbfKARKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 13:10:05 -0400
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1572628205;
-        bh=l1Kko6zIKsqjrtUyfFoFoSSLPvcqDcVUr8D7mPoyI/o=;
+        bh=8f7LfhXkMDaTTMyarlXctK8KsP+xTC361zjJ1nFyGqc=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=oixOAemGXJkUMgcDz0DP0dherIA5VGu+vMPonMF/Vq3t7hzxeHfmC0eKVWgaXGTfs
-         v5PvYL2LD3XOHZbkJ0FG0SmzpqTDKYahpVBGWfliUUSf03b8gpXMkGVRwXWZCEez+z
-         sMEbu9w2VfPyVXNqA8XQKnrB16JqynmTJZoE7HyE=
+        b=hOAXyAdb6wZZqeDkmfXKvHiLZcq+yWRfSklzhSb6PQQBwghzOj77L7cDPCrIaB4qg
+         WWkqqcmkGIGqN8MXKuLYhXKuYOq92yHO7ULu9oR/tvogG7feWr0sFlqFTv7WL7k2Gf
+         c01eB0ZGL4X34ee4pc79LeukvNCrrWqMNsan2ZEg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
-References: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
+In-Reply-To: <20191031182211.GA27176@ziepe.ca>
+References: <20191031182211.GA27176@ziepe.ca>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0gSz1Pk=7u0s-cgjc9_0ibCyA6RNCcVHw7+GLWWoCj22g@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc6
-X-PR-Tracked-Commit-Id: e82b7457909afd2e973ebd251ad79945d04ca376
+X-PR-Tracked-Message-Id: <20191031182211.GA27176@ziepe.ca>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+X-PR-Tracked-Commit-Id: b681a0529968d2261aa15d7a1e78801b2c06bb07
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 65a5bf1c790039dc194507563478137b4314a59d
-Message-Id: <157262820561.11375.9184455321473410481.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 4252a1a9b01f3757481f08b4775d27f90d422b23
+Message-Id: <157262820532.11375.11625277088875240180.pr-tracker-bot@kernel.org>
 Date:   Fri, 01 Nov 2019 17:10:05 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+To:     Jason Gunthorpe <jgg@mellanox.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Doug Ledford <dledford@redhat.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 31 Oct 2019 22:08:58 +0100:
+The pull request you sent on Thu, 31 Oct 2019 18:22:15 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.4-rc6
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/65a5bf1c790039dc194507563478137b4314a59d
+https://git.kernel.org/torvalds/c/4252a1a9b01f3757481f08b4775d27f90d422b23
 
 Thank you!
 
