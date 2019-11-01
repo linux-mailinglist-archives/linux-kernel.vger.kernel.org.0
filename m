@@ -2,193 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B56EC4B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C820AEC4BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfKAO1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:27:44 -0400
-Received: from mga03.intel.com ([134.134.136.65]:24103 "EHLO mga03.intel.com"
+        id S1727026AbfKAOaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:30:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbfKAO1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:27:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 07:27:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,255,1569308400"; 
-   d="scan'208";a="203865040"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga003.jf.intel.com with ESMTP; 01 Nov 2019 07:27:42 -0700
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, dinguyen@kernel.org,
-        richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv2] firmware: Fix incompatible function behavior for RSU driver
-Date:   Fri,  1 Nov 2019 09:41:43 -0500
-Message-Id: <1572619303-30554-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726658AbfKAOai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 10:30:38 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FD972085B;
+        Fri,  1 Nov 2019 14:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572618637;
+        bh=6swmzGZ6W4m7+r/4MFAVFqhIbyFdbUu5MV3GQEOZcQg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=ABxyxbJr58QFu6NSOBGZ9ISXt4rUUHYfG5jdOIsxXo97oQ6q7TXGeog/1fVNH0Xkj
+         vBInleml28yISY+5IVsFWaG0fHTubnH5ssF6A3Y6pTHa4Jp4Ok01tpniJjVRtVigij
+         5Yg0Ra8PrkZCsh3/sDsgdg3bf6jel/QkuzZxeZQA=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id E73DA3522AF9; Fri,  1 Nov 2019 07:30:36 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 07:30:36 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Lai Jiangshan <laijs@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>,
+        Rik van Riel <riel@surriel.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
+        Jann Horn <jannh@google.com>,
+        David Windsor <dwindsor@gmail.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Yuyang Du <duyuyang@gmail.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH 11/11] x86,rcu: use percpu rcu_preempt_depth
+Message-ID: <20191101143036.GM20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-12-laijs@linux.alibaba.com>
+ <20191101125816.GD17910@paulmck-ThinkPad-P72>
+ <20191101131315.GY4131@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101131315.GY4131@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+On Fri, Nov 01, 2019 at 02:13:15PM +0100, Peter Zijlstra wrote:
+> On Fri, Nov 01, 2019 at 05:58:16AM -0700, Paul E. McKenney wrote:
+> > On Thu, Oct 31, 2019 at 10:08:06AM +0000, Lai Jiangshan wrote:
+> > > +/* We mask the RCU_NEED_SPECIAL bit so that it return real depth */
+> > > +static __always_inline int rcu_preempt_depth(void)
+> > > +{
+> > > +	return raw_cpu_read_4(__rcu_preempt_depth) & ~RCU_NEED_SPECIAL;
+> > 
+> > Why not raw_cpu_generic_read()?
+> > 
+> > OK, OK, I get that raw_cpu_read_4() translates directly into an "mov"
+> > instruction on x86, but given that x86 percpu_from_op() is able to
+> > adjust based on operand size, why doesn't something like raw_cpu_read()
+> > also have an x86-specific definition that adjusts based on operand size?
+> 
+> The reason for preempt.h was header recursion hell.
 
-The older versions of remote system update (RSU) firmware don't support
-retry and notify features then the kernel module dies when it queries
-the RSU retry counter or performs notify operation.
+Fair enough, being as that is also the reason for _rcu_read_lock()
+not being inlined.  :-/
 
-Update the Intel service layer and RSU drivers to be compatible with
-all versions of RSU firmware.
+> > > +}
+> > > +
+> > > +static __always_inline void rcu_preempt_depth_set(int pc)
+> > > +{
+> > > +	int old, new;
+> > > +
+> > > +	do {
+> > > +		old = raw_cpu_read_4(__rcu_preempt_depth);
+> > > +		new = (old & RCU_NEED_SPECIAL) |
+> > > +			(pc & ~RCU_NEED_SPECIAL);
+> > > +	} while (raw_cpu_cmpxchg_4(__rcu_preempt_depth, old, new) != old);
+> > 
+> > Ummm...
+> > 
+> > OK, as you know, I have long wanted _rcu_read_lock() to be inlineable.
+> > But are you -sure- that an x86 cmpxchg is faster than a function call
+> > and return?  I have strong doubts on that score.
+> 
+> This is a regular CMPXCHG instruction, not a LOCK prefixed one, and that
+> should make all the difference
 
-Reported-by: Radu Barcau <radu.bacrau@intel.com>
-Signed-off-by: Richard Gong <richard.gong@intel.com>
----
-v2: update commit messages
----
- drivers/firmware/stratix10-rsu.c                   | 40 +++++++++-------------
- drivers/firmware/stratix10-svc.c                   | 18 +++++++++-
- .../linux/firmware/intel/stratix10-svc-client.h    |  8 +++++
- 3 files changed, 42 insertions(+), 24 deletions(-)
+Yes, understood, but this is also adding some arithmetic, a comparison,
+and a conditional branch.  Are you -sure- that this is cheaper than
+an unconditional call and return?
 
-diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
-index bb008c0..f9e1851 100644
---- a/drivers/firmware/stratix10-rsu.c
-+++ b/drivers/firmware/stratix10-rsu.c
-@@ -20,7 +20,6 @@
- #define RSU_VERSION_MASK		GENMASK_ULL(63, 32)
- #define RSU_ERROR_LOCATION_MASK		GENMASK_ULL(31, 0)
- #define RSU_ERROR_DETAIL_MASK		GENMASK_ULL(63, 32)
--#define RSU_FW_VERSION_MASK		GENMASK_ULL(15, 0)
- 
- #define RSU_TIMEOUT	(msecs_to_jiffies(SVC_RSU_REQUEST_TIMEOUT_MS))
- 
-@@ -109,9 +108,12 @@ static void rsu_command_callback(struct stratix10_svc_client *client,
- {
- 	struct stratix10_rsu_priv *priv = client->priv;
- 
--	if (data->status != BIT(SVC_STATUS_RSU_OK))
--		dev_err(client->dev, "RSU returned status is %i\n",
--			data->status);
-+	if (data->status == BIT(SVC_STATUS_RSU_NO_SUPPORT))
-+		dev_warn(client->dev, "Secure FW doesn't support notify\n");
-+	else if (data->status == BIT(SVC_STATUS_RSU_ERROR))
-+		dev_err(client->dev, "Failure, returned status is %i\n",
-+			BIT(data->status));
-+
- 	complete(&priv->completion);
- }
- 
-@@ -133,9 +135,11 @@ static void rsu_retry_callback(struct stratix10_svc_client *client,
- 
- 	if (data->status == BIT(SVC_STATUS_RSU_OK))
- 		priv->retry_counter = *counter;
-+	else if (data->status == BIT(SVC_STATUS_RSU_NO_SUPPORT))
-+		dev_warn(client->dev, "Secure FW doesn't support retry\n");
- 	else
- 		dev_err(client->dev, "Failed to get retry counter %i\n",
--			data->status);
-+			BIT(data->status));
- 
- 	complete(&priv->completion);
- }
-@@ -333,15 +337,10 @@ static ssize_t notify_store(struct device *dev,
- 		return ret;
- 	}
- 
--	/* only 19.3 or late version FW supports retry counter feature */
--	if (FIELD_GET(RSU_FW_VERSION_MASK, priv->status.version)) {
--		ret = rsu_send_msg(priv, COMMAND_RSU_RETRY,
--				   0, rsu_retry_callback);
--		if (ret) {
--			dev_err(dev,
--				"Error, getting RSU retry %i\n", ret);
--			return ret;
--		}
-+	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
-+	if (ret) {
-+		dev_err(dev, "Error, getting RSU retry %i\n", ret);
-+		return ret;
- 	}
- 
- 	return count;
-@@ -413,15 +412,10 @@ static int stratix10_rsu_probe(struct platform_device *pdev)
- 		stratix10_svc_free_channel(priv->chan);
- 	}
- 
--	/* only 19.3 or late version FW supports retry counter feature */
--	if (FIELD_GET(RSU_FW_VERSION_MASK, priv->status.version)) {
--		ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0,
--				   rsu_retry_callback);
--		if (ret) {
--			dev_err(dev,
--				"Error, getting RSU retry %i\n", ret);
--			stratix10_svc_free_channel(priv->chan);
--		}
-+	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
-+	if (ret) {
-+		dev_err(dev, "Error, getting RSU retry %i\n", ret);
-+		stratix10_svc_free_channel(priv->chan);
- 	}
- 
- 	return ret;
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index b4853211..c6c3140 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -493,8 +493,24 @@ static int svc_normal_to_secure_thread(void *data)
- 			pdata->chan->scl->receive_cb(pdata->chan->scl, cbdata);
- 			break;
- 		default:
--			pr_warn("it shouldn't happen\n");
-+			pr_warn("Secure firmware doesn't support...\n");
-+
-+			/*
-+			 * be compatible with older version firmware which
-+			 * doesn't support RSU notify or retry
-+			 */
-+			if ((pdata->command == COMMAND_RSU_RETRY) ||
-+				(pdata->command == COMMAND_RSU_NOTIFY)) {
-+				cbdata->status =
-+					BIT(SVC_STATUS_RSU_NO_SUPPORT);
-+				cbdata->kaddr1 = NULL;
-+				cbdata->kaddr2 = NULL;
-+				cbdata->kaddr3 = NULL;
-+				pdata->chan->scl->receive_cb(
-+					pdata->chan->scl, cbdata);
-+			}
- 			break;
-+
- 		}
- 	};
- 
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index b6c4302..59bc6e2 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -41,6 +41,12 @@
-  *
-  * SVC_STATUS_RSU_OK:
-  * Secure firmware accepts the request of remote status update (RSU).
-+ *
-+ * SVC_STATUS_RSU_ERROR:
-+ * Error encountered during remote system update.
-+ *
-+ * SVC_STATUS_RSU_NO_SUPPORT:
-+ * Secure firmware doesn't support RSU retry or notify feature.
-  */
- #define SVC_STATUS_RECONFIG_REQUEST_OK		0
- #define SVC_STATUS_RECONFIG_BUFFER_SUBMITTED	1
-@@ -50,6 +56,8 @@
- #define SVC_STATUS_RECONFIG_ERROR		5
- #define SVC_STATUS_RSU_OK			6
- #define SVC_STATUS_RSU_ERROR			7
-+#define SVC_STATUS_RSU_NO_SUPPORT		8
-+
- /**
-  * Flag bit for COMMAND_RECONFIG
-  *
--- 
-2.7.4
+> > Plus multiplying the x86-specific code by 26 doesn't look good.
+> > 
+> > And the RCU read-side nesting depth really is a per-task thing.  Copying
+> > it to and from the task at context-switch time might make sense if we
+> > had a serious optimization, but it does not appear that we do.
+> > 
+> > You original patch some years back, ill-received though it was at the
+> > time, is looking rather good by comparison.  Plus it did not require
+> > architecture-specific code!
+> 
+> Right, so the per-cpu preempt_count code relies on the preempt_count
+> being invariant over context switches. That means we never have to
+> save/restore the thing.
+> 
+> For (preemptible) rcu, this is 'obviously' not the case.
+> 
+> That said, I've not looked over this patch series, I only got 1 actual
+> patch, not the whole series, and I've not had time to go dig out the
+> rest..
 
+I have taken a couple of the earlier patches in the series.
+
+Perhaps inlining these things is instead a job for the long anticipated
+GCC LTO?  ;-)
+
+							Thanx, Paul
