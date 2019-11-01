@@ -2,64 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CD6ECB3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 23:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98775ECABB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 23:05:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfKAWPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 18:15:47 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:57090 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbfKAWPr (ORCPT
+        id S1727089AbfKAWFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 18:05:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29790 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726663AbfKAWFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 18:15:47 -0400
-X-Greylist: delayed 1151 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 18:15:46 EDT
-Received: from [88.147.30.77] (port=48590 helo=[192.168.77.50])
-        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1iQeuH-008E5q-0w; Fri, 01 Nov 2019 22:56:33 +0100
-Subject: Re: [PATCH resend] i2c: core: Use DEVICE_ATTR_RW() helper macros
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191025091950.23563-1-geert+renesas@glider.be>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <9ac7a889-ca10-649e-9404-1f785645f8b8@lucaceresoli.net>
-Date:   Fri, 1 Nov 2019 22:56:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 1 Nov 2019 18:05:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572645935;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=E8+rrZXvUsqeBEaW/X2CqD+QnPOx373OWvmJOxsDZMI=;
+        b=CxRV7R5w1tFCKwkn2VITDPE7KNHlgmKWuJ+JSo/antl9wFd7qtfaTorApkuE4BvjGY04AK
+        1Au6fQEBqqkE12C6PbksYWE6cT9VYqxfbGjUJNy76jULFBjsRI6RY3qO5RtM6rz1b4YDDV
+        lQ7bf1rX3pPXUweE5tFk/E5c2/cjVcA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-395-UyQR-pJ3NNi_-Rohn9Habw-1; Fri, 01 Nov 2019 18:05:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B3CA1005500;
+        Fri,  1 Nov 2019 22:05:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 220DF60878;
+        Fri,  1 Nov 2019 22:05:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com>
+References: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com> <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/11] pipe: Notification queue preparation [ver #3]
 MIME-Version: 1.0
-In-Reply-To: <20191025091950.23563-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-ID: <13963.1572645926.1@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 22:05:26 +0000
+Message-ID: <13964.1572645926@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: UyQR-pJ3NNi_-Rohn9Habw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On 25/10/19 11:19, Geert Uytterhoeven wrote:
-> Convert the i2c core sysfs attributes from DEVICE_ATTR() to
-> DEVICE_ATTR_RW(), to reduce boilerplate.
-> This requires renaming some functions.
+> Side note: we have a couple of cases where I don't think we should use
+> the "sync" version at all.
+>=20
+> Both pipe_read() and pipe_write() have that
+>=20
+>         if (do_wakeup) {
+>                 wake_up_interruptible_sync_poll(&pipe->wait, ...
+>=20
+> code at the end, outside the loop. But those two wake-ups aren't
+> actually synchronous.
 
-Nitpicking: it's DEVICE_ATTR_RO and _WO, not _RW (both here and in the
-subject). I'd replace with 'DEVICE_ATTR_*()'.
+Changing those to non-sync:
 
-With this fixed:
- Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+BENCHMARK       BEST            TOTAL BYTES     AVG BYTES       STDDEV
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+pipe                  305816126     36255936983       302132808         888=
+0788
+splice                282402106     27102249370       225852078       21003=
+3443
+vmsplice              440022611     48896995196       407474959        5990=
+6438
 
--- 
-Luca
+Changing the others in pipe_read() and pipe_write() too:
+
+pipe                  305609682     36285967942       302383066         741=
+5744
+splice                282475690     27891475073       232428958       20168=
+7522
+vmsplice              451458280     51949421503       432911845        3492=
+5242
+
+The cumulative patch is attached below.  I'm not sure how well this should
+make a difference with my benchmark programs since each thread can run on i=
+ts
+own CPU.
+
+David
+---
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 9cd5cbef9552..c5e3765465f0 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -332,7 +332,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ =09=09=09=09do_wakeup =3D 1;
+ =09=09=09=09wake =3D head - (tail - 1) =3D=3D pipe->max_usage / 2;
+ =09=09=09=09if (wake)
+-=09=09=09=09=09wake_up_interruptible_sync_poll_locked(
++=09=09=09=09=09wake_up_locked_poll(
+ =09=09=09=09=09=09&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09=09=09spin_unlock_irq(&pipe->wait.lock);
+ =09=09=09=09if (wake)
+@@ -371,7 +371,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+=20
+ =09/* Signal writers asynchronously that there is more room. */
+ =09if (do_wakeup) {
+-=09=09wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM)=
+;
++=09=09wake_up_interruptible_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ =09}
+ =09if (ret > 0)
+@@ -477,7 +477,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ =09=09=09 * syscall merging.
+ =09=09=09 * FIXME! Is this really true?
+ =09=09=09 */
+-=09=09=09wake_up_interruptible_sync_poll_locked(
++=09=09=09wake_up_locked_poll(
+ =09=09=09=09&pipe->wait, EPOLLIN | EPOLLRDNORM);
+=20
+ =09=09=09spin_unlock_irq(&pipe->wait.lock);
+@@ -531,7 +531,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ out:
+ =09__pipe_unlock(pipe);
+ =09if (do_wakeup) {
+-=09=09wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
++=09=09wake_up_interruptible_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
+ =09=09kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ =09}
+ =09if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
+
