@@ -2,109 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0D2EBF12
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8F4EBF0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfKAINx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 04:13:53 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:32221 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730157AbfKAINx (ORCPT
+        id S1730255AbfKAINM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 04:13:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29822 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729942AbfKAINL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 04:13:53 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id xA18BsBQ023869;
-        Fri, 1 Nov 2019 17:11:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com xA18BsBQ023869
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1572595923;
-        bh=dMOvEpUrv3gUpGiwcs/+Eb8AZVQbVFB1v4ogmdr2bko=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=24wqhJT7RJMf50vgPNVtuOw7sfdCTIBCGMN1/+85H2fjdBWjCBMgKq4Gi/Zo8KO2Y
-         VlgD461HyHetk8JzsJ7Ekalb9WtIQBjoIaG78+XXVkIjX89OQ/6jth0bvnMY7mY/Zy
-         kZ1FsZLs884Twsxjffd5wE/JArN05kQGyzXNHNkQnzTcfwsuqyMuM02JwDm5mdrvDY
-         5imCL2rnn/7JQ+QTDtFB+kbwLTgcoxcrAjnIIPElUvBT0solhQTWvr+EhskjVm4OS1
-         vqipju34mMQPwLWkDveV8HSaTxr8C3ugI1gbtT2+b+racWCIlXeZnHt+T/q7S8T8kL
-         VV3/6jEArBPKQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        linuxppc-dev@lists.ozlabs.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] libfdt: define INT32_MAX and UINT32_MAX in libfdt_env.h
-Date:   Fri,  1 Nov 2019 17:11:48 +0900
-Message-Id: <20191101081148.23274-4-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191101081148.23274-1-yamada.masahiro@socionext.com>
-References: <20191101081148.23274-1-yamada.masahiro@socionext.com>
+        Fri, 1 Nov 2019 04:13:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572595990;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9xs42rpsdkzt7bmetZPLlor3pgrYAufRSm92IKtSpJQ=;
+        b=YfQBdPemN+dTJabPXbBaJiwSkU7JDmHPyNaKGQzgviM9FutEKrVWtud8tDADU48qDJFiLK
+        P1DzZ2jINjqbfY/U4LHfJWC56p+gcR039ix754po01N0i5hTpYO8U8eUjBH6MuFJP2rSFT
+        81mo7Ml60H2b4lTExykGg+kv0wAeEb0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-275-DkDlpLGBNjmA7Uq27Li0mQ-1; Fri, 01 Nov 2019 04:13:07 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4450800D49;
+        Fri,  1 Nov 2019 08:13:05 +0000 (UTC)
+Received: from krava (ovpn-204-176.brq.redhat.com [10.40.204.176])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C6F9D60870;
+        Fri,  1 Nov 2019 08:13:01 +0000 (UTC)
+Date:   Fri, 1 Nov 2019 09:13:00 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     jsun4 <jiwei.sun@windriver.com>
+Cc:     acme@redhat.com, arnaldo.melo@gmail.com,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        mpetlan@redhat.com, namhyung@kernel.org, a.p.zijlstra@chello.nl,
+        adrian.hunter@intel.com, Richard.Danter@windriver.com,
+        jiwei.sun.bj@qq.com
+Subject: Re: [PATCH v5] perf record: Add support for limit perf output file
+ size
+Message-ID: <20191101081300.GA2172@krava>
+References: <20191022080901.3841-1-jiwei.sun@windriver.com>
+MIME-Version: 1.0
+In-Reply-To: <20191022080901.3841-1-jiwei.sun@windriver.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: DkDlpLGBNjmA7Uq27Li0mQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The libfdt in the upstream DTC project added references to (U)INT32_MAX
-by the following commits:
+On Tue, Oct 22, 2019 at 04:09:01PM +0800, jsun4 wrote:
+> The patch adds a new option to limit the output file size, then based
+> on it, we can create a wrapper of the perf command that uses the option
+> to avoid exhausting the disk space by the unconscious user.
+>=20
+> In order to make the perf.data parsable, we just limit the sample data
+> size, since the perf.data consists of many headers and sample data and
+> other data, the actual size of the recorded file will bigger than the
+> setting value.
+>=20
+> Testing it:
+>=20
+>  # ./perf record -a -g --max-size=3D10M
+>  Couldn't synthesize bpf events.
+>  [ perf record: perf size limit reached (10249 KB), stopping session ]
+>  [ perf record: Woken up 32 times to write data ]
+>  [ perf record: Captured and wrote 10.133 MB perf.data (71964 samples) ]
+>=20
+>  # ls -lh perf.data
+>  -rw------- 1 root root 11M Oct 22 14:32 perf.data
+>=20
+>  # ./perf record -a -g --max-size=3D10K
+>  [ perf record: perf size limit reached (10 KB), stopping session ]
+>  Couldn't synthesize bpf events.
+>  [ perf record: Woken up 0 times to write data ]
+>  [ perf record: Captured and wrote 1.546 MB perf.data (69 samples) ]
+>=20
+>  # ls -l perf.data
+>  -rw------- 1 root root 1626952 Oct 22 14:36 perf.data
+>=20
+> Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
+> ---
+> v5 changes:
+>   - Change the output format like [ perf record: perf size limit XX ]
+>   - change the killing perf way from "raise(SIGTERM)" to set "done =3D=3D=
+ 1"
 
-  Commit 812b1956a076 ("libfdt: Tweak data handling to satisfy Coverity")
-  Commit 7fcf8208b8a9 ("libfdt: add fdt_append_addrrange()")
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-The kernel needs to adjust libfdt_env.h before pulling in the changes.
-
-As for the user-space programs, <stdint.h> defines (U)INT32_MAX along
-with (u)int32_t.
-
-In the kernel, on the other hand, we usually use s32 / u32 instead of
-(u)int32_t for the fixed-width types.
-
-Accordingly, we already have S32_MAX / U32_MAX for their max values.
-So, we won't add (U)INT32_MAX to <linux/limits.h> any more.
-
-Instead, add them to the in-kernel libfdt_env.h to compile fdt.c and
-fdt_addresses.c
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
- - Fix ppc libfdt_env.h
-
- arch/powerpc/boot/libfdt_env.h | 2 ++
- include/linux/libfdt_env.h     | 3 +++
- 2 files changed, 5 insertions(+)
-
-diff --git a/arch/powerpc/boot/libfdt_env.h b/arch/powerpc/boot/libfdt_env.h
-index 2abc8e83b95e..9757d4f6331e 100644
---- a/arch/powerpc/boot/libfdt_env.h
-+++ b/arch/powerpc/boot/libfdt_env.h
-@@ -6,6 +6,8 @@
- #include <string.h>
- 
- #define INT_MAX			((int)(~0U>>1))
-+#define UINT32_MAX		((u32)~0U)
-+#define INT32_MAX		((s32)(UINT32_MAX >> 1))
- 
- #include "of.h"
- 
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index edb0f0c30904..0bd83bdb2482 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -11,6 +11,9 @@ typedef __be16 fdt16_t;
- typedef __be32 fdt32_t;
- typedef __be64 fdt64_t;
- 
-+#define INT32_MAX	S32_MAX
-+#define UINT32_MAX	U32_MAX
-+
- #define fdt32_to_cpu(x) be32_to_cpu(x)
- #define cpu_to_fdt32(x) cpu_to_be32(x)
- #define fdt64_to_cpu(x) be64_to_cpu(x)
--- 
-2.17.1
+thanks,
+jirka
 
