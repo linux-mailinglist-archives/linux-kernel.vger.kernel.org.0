@@ -2,96 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0D0EC5AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED78BEC5DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbfKAPe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34584 "EHLO mail.kernel.org"
+        id S1729026AbfKAPtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:49:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727100AbfKAPe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:34:56 -0400
+        id S1726720AbfKAPtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 11:49:40 -0400
 Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E32CB20650;
-        Fri,  1 Nov 2019 15:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C625721734;
+        Fri,  1 Nov 2019 15:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572622495;
-        bh=IvThiZwVHnMzgD+APW+Z07boNS0/SJNrneDiPxdkxFs=;
+        s=default; t=1572623379;
+        bh=wdIW0/QLcRnGZarqavMjg3f1Q6gO9y6P1i5x8XnrKC4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LjLtnm99UNkajjroI/nKDAD5Lkxp7VQb3KbdYvNYhorGqUfSZEbvg6t4AjDFw9u5y
-         pJnlFvZ1qXSTxmI4v7a+Pb5d4EItxhqFUlLOEkUZWKQYAmO304hngxZQUPaNGyAxB/
-         RLcKLY5HmdelxbP7BDdWLCfknHS3oD0Wk+KKtOhw=
-Date:   Fri, 1 Nov 2019 15:53:43 +0100
+        b=chJsFqRrFQAkIuvN3HeWEC/ZgBqGFyB54Lohux3DUr9V3T7pnBow3Tn11j/JLpRD/
+         Wndm4HzwQJtvJF9DPGrJnTaDkiSwbsEdo3IgooYz2kh/PXILxPniKykE3XC/kUKQux
+         AcI32uRZ3U1IV1D52C0TtrTxa+gQaGz6FvqY87HA=
+Date:   Fri, 1 Nov 2019 16:07:01 +0100
 From:   Maxime Ripard <mripard@kernel.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: sun4i: Use PTR_ERR_OR_ZERO to simplify the code
-Message-ID: <20191101145343.4nazxxztj5sfcuxm@hendrix>
-References: <1572530979-27595-1-git-send-email-zhongjiang@huawei.com>
- <20191101091355.ibbet6a2zb23bpjn@hendrix>
- <5DBC1D3E.8080705@huawei.com>
+To:     Ondrej Jirman <megous@megous.com>
+Cc:     linux-sunxi@googlegroups.com, Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:ALLWINNER CPUFREQ DRIVER" <linux-pm@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: sun50i: Fix CPU speed bin detection
+Message-ID: <20191101150701.fgke7hoad5zn3vn2@hendrix>
+References: <20191031181359.282617-1-megous@megous.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fghmn2akruuf7rkm"
+        protocol="application/pgp-signature"; boundary="cxmms35ejqeprbv6"
 Content-Disposition: inline
-In-Reply-To: <5DBC1D3E.8080705@huawei.com>
+In-Reply-To: <20191031181359.282617-1-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---fghmn2akruuf7rkm
+--cxmms35ejqeprbv6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Nov 01, 2019 at 07:55:42PM +0800, zhong jiang wrote:
-> On 2019/11/1 17:13, Maxime Ripard wrote:
-> > On Thu, Oct 31, 2019 at 10:09:39PM +0800, zhong jiang wrote:
-> >> It is better to use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
-> >>
-> >> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> >> ---
-> >>  sound/soc/sunxi/sun4i-i2s.c | 4 +---
-> >>  1 file changed, 1 insertion(+), 3 deletions(-)
-> >>
-> >> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> >> index d0a8d58..72012a6 100644
-> >> --- a/sound/soc/sunxi/sun4i-i2s.c
-> >> +++ b/sound/soc/sunxi/sun4i-i2s.c
-> >> @@ -1174,10 +1174,8 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
-> >>  	i2s->field_fmt_sr =
-> >>  			devm_regmap_field_alloc(dev, i2s->regmap,
-> >>  						i2s->variant->field_fmt_sr);
-> >> -	if (IS_ERR(i2s->field_fmt_sr))
-> >> -		return PTR_ERR(i2s->field_fmt_sr);
-> >>
-> >> -	return 0;
-> >> +	return PTR_ERR_OR_ZERO(i2s->field_fmt_sr);
-> > I don't find it "better". This couples the error handling and the
-> > success case, and it makes it harder to extend in the future.
+On Thu, Oct 31, 2019 at 07:13:58PM +0100, Ondrej Jirman wrote:
+> I have failures to boot on Orange Pi 3, because this driver determined
+> that my SoC is from the normal bin, but my SoC only works reliably with
+> the OPP values for the slowest bin.
 >
-> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR. It is
-> feasible to replace it and more readable at least now.
+> Looking at BSP code, I found that efuse values have following meanings
+> on H6:
 >
-> As you said,  PTR_ERR_OR_ZERO should be removed ? :-(
+> - 0b000 invalid (interpreted in vendor's BSP as normal bin)
+> - 0b001 slowest bin
+> - 0b011 normal bin
+> - 0b111 fastest bin
+>
+> Let's play it safe and interpret 0 as the slowest bin, but fix detection
+> of other bins to match vendor code.
+>
+> Fixes: f328584f7bff ("cpufreq: Add sun50i nvmem based CPU scaling driver")
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
 
-No, I'm saying that in this context, this change isn't necessary.
+Acked-by: Maxime Ripard <mripard@kernel.org>
+
+Out of curiosity, which OPP table is being used? I guess it's one of
+the dozens of patches sitting there...
 
 Maxime
 
---fghmn2akruuf7rkm
+--cxmms35ejqeprbv6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbxG9wAKCRDj7w1vZxhR
-xZ42AQDQlwiNlRaoXcmwlcL4rb+Xeg2H3yhdzRa5fc61mvBkgwD9HIeK126LjhXW
-5Zhap6t6j9ek4YsuLZExdBqcUv9jfg0=
-=d28i
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXbxKFQAKCRDj7w1vZxhR
+xfcRAQDCSZvITYVU4ONlpersX7CkPXMk47yfFv5qPasvorZbCAD8DOHH9GG8dEHE
+Q0G94TyC+NiQEhK6W0kM+D5jpHiE0gg=
+=Z6U9
 -----END PGP SIGNATURE-----
 
---fghmn2akruuf7rkm--
+--cxmms35ejqeprbv6--
