@@ -2,144 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B5CEBBA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E6A1EBBA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 02:20:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfKABSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 31 Oct 2019 21:18:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33092 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfKABSJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Oct 2019 21:18:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B62CB60B10; Fri,  1 Nov 2019 01:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572571087;
-        bh=y9zMopn20pWyqd0dZAi6MdBEcZVwhsf/FKrrzC2v+nc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gLSX1PZfWinw39KqYpe7dn5LELvTP3vyfXmd0MSUFFiLT8hftYycjs5QEXIeYP50g
-         jI5r6azQ+z12+2WdunRNOpUDxdBNxAM4j+U6CCr6StU1BZxsooGv13ZGgPHRffL12E
-         NX6HTWFzSdTPpC3LnqdIPuFv7xeU9nXY3lPAvsTI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3C1F760913;
-        Fri,  1 Nov 2019 01:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572571086;
-        bh=y9zMopn20pWyqd0dZAi6MdBEcZVwhsf/FKrrzC2v+nc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pB6wHCTMNwQeSdopYeN0dThzcYnAz2cCO2YnbCR9/j4HD06nQ5ZqAm0IusbOBIcOB
-         xh9U69ZoofNSa8G39UYEBpYLp2OVrXC5CTCLbbyCWdmN+xhA6m5nM+z4uu+kNd+8cJ
-         EkHRQxnY7nASLD6oiKXoI2GgogTXZ/LtWa8L6y68=
+        id S1729161AbfKABU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 31 Oct 2019 21:20:27 -0400
+Received: from mail-eopbgr00048.outbound.protection.outlook.com ([40.107.0.48]:39879
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726540AbfKABU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Oct 2019 21:20:27 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZR8ZgvhD3TKJi81/CiDKUAzso2pSbe0DQIDsyeCsKH8IYVYU/+me97Jb+X878wpl2WgS20SS8LKRr7Q7kNIwPd43mIhzZ3guqvgUubLNCp+KNji1KlVzZgih7mMv/XeFFn0r7ZpUzHR9emLPiqiEXfB6s3E20SPy7HmULNxt2uXH4bJ8t6vmKGIipIPYyx4gyvEYLlxYKKhdHMb6lWFjlM5M8Cu9Wfsf3ZmYFM3GTjKZQBKI+iLNn8vU5vCqV8qoKYfUxILBNUm0GAw5kLumwKC75X2+/YJtpl12uGfLsnm+CU23PINbSgEEj/oF/VwIh9Mp5N6HQJ7TVMt/TqPbLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3/QMYuCC/1N4dp1tGM+9XYnDee+YSkSoOub9mjAUhUM=;
+ b=oEKB5Jj4QIrPuC0v3OordrLXZNl8vDfb7937p8juZA1O5UH0BiN1RNJbTPsDwRzIlK4jxadL6ew2qHppqob90jZRwNeoSTHjwinulUKsHCOPQtEsz7h60JioGUxzdyVmvRFti8LXAh5yYX5jPkVEDTf/yW8ZDD6dtRttke1+On1Qq9VtEHFJxjKhcd1NWFn1aoFny4Ia2MiKTOQFuQmBFf/luycKXFNNU0nQ3Q+WrNxcDajMqg4IHU2Yz06LGwqi/hVN/XOAPiFq1mAUFAQ52Vq9mXodnZpBDC9rDi9iUnSZRPKMMwa11EVWPUj7FGN5cHBXD4lHQqH1kl+FglU/VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3/QMYuCC/1N4dp1tGM+9XYnDee+YSkSoOub9mjAUhUM=;
+ b=lJmFCSoOPF88nA2zYZjWrYnjc1IEzftecymf9iNgYzu8xnhh7z9dAumHSrd4udASArNobO71d/j+v9vLkeENFlFXOmCmzPOYMTUdsQDkpKqW1ojgYYyoHQ6cUbS6nxBwQ2NF/qViORK+PONHRtDwj9az3xvwKwN12FyIe7mJICE=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6148.eurprd04.prod.outlook.com (20.179.33.208) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.24; Fri, 1 Nov 2019 01:20:22 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2387.028; Fri, 1 Nov 2019
+ 01:20:22 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Duan <fugang.duan@nxp.com>
+Subject: RE: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for
+ fec1
+Thread-Topic: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for
+ fec1
+Thread-Index: AQHVh/j+k1XoWkwF8kWzRGGsNvXoFad1lK+Q
+Date:   Fri, 1 Nov 2019 01:20:22 +0000
+Message-ID: <AM0PR04MB448130E87B85C5F5AB31496288620@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1571652977-4754-1-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB70239911C3C71E0503808F85EE630@VI1PR04MB7023.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB70239911C3C71E0503808F85EE630@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 63dc22d6-544f-4045-3fc8-08d75e69aaa3
+x-ms-traffictypediagnostic: AM0PR04MB6148:|AM0PR04MB6148:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB6148468A298E35FD86EB82BE88620@AM0PR04MB6148.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 020877E0CB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(346002)(396003)(39860400002)(199004)(189003)(3846002)(14454004)(8936002)(81166006)(229853002)(8676002)(476003)(81156014)(7696005)(478600001)(102836004)(86362001)(55016002)(66066001)(6116002)(26005)(6246003)(99286004)(186003)(52536014)(2501003)(66946007)(66476007)(76176011)(5660300002)(76116006)(305945005)(33656002)(316002)(66446008)(66556008)(74316002)(6436002)(256004)(7736002)(64756008)(53546011)(2906002)(486006)(44832011)(71190400001)(11346002)(446003)(9686003)(110136005)(6506007)(54906003)(25786009)(4326008)(71200400001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6148;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BkPUoFV1NEeZUQrIjNYUec2MjYkksfa4gAWni+q9fh6PybWVfWyT782qO6b5yXTfZ5rauLJF4WM95Kz4eKw+0TOg9czYUlsTntiwIpQarIUWFmjKrKy4fjY+Bgr2hC5tP3TBaH+5hjHWAOaq0IvE2PWUxDlT6cHRwy5Yy3h27mSOIZZ0QAGuMgWS6oNxUiqkkoYnAbDayinT2Eb454rVjbvItACoXTha8kIEAyrO/5ZwGtc51iPVZypO7jIGKm0qZI36Ms6n7GFMJTsaTe0XbwbCSQeotRtyOG97tyZT4o42wynevQRJ9NsVKVmDuIG7VqTxf6Fh1ym/R1tcPFLczPFtEP/3JuoW16TDg5I+34qaDIG7Ly08K4sL7bKkTxsCPPFjWxSJUEiMTC5mPlYEHROxqVzSRRfTZYXmaH/1B6KyTXCNDBhLpDt11ux02Nd2
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 01 Nov 2019 09:18:06 +0800
-From:   cang@codeaurora.org
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] scsi: ufs: Introduce a vops for resetting host
- controller
-In-Reply-To: <61b83149-e89b-bb4c-d747-a4c596c8eede@android.com>
-References: <1571804009-29787-1-git-send-email-cang@codeaurora.org>
- <1571804009-29787-2-git-send-email-cang@codeaurora.org>
- <61b83149-e89b-bb4c-d747-a4c596c8eede@android.com>
-Message-ID: <8b7e86d09cde1ea45c1ad979d88dc022@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63dc22d6-544f-4045-3fc8-08d75e69aaa3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2019 01:20:22.2087
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zbYErQWXZQpIjuK/pboxE6EFavLN5Nf9BlnXetQb7fg3TahKlKpdjtEUydal7dy8jmx2CB+zgctnrGRAvnLgXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-31 22:44, Mark Salyzyn wrote:
-> On 10/22/19 9:13 PM, Can Guo wrote:
->> Some UFS host controllers need their specific implementations of 
->> resetting
->> to get them into a good state. Provide a new vops to allow the 
->> platform
->> driver to implement this own reset operation.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->>   drivers/scsi/ufs/ufshcd.c | 16 ++++++++++++++++
->>   drivers/scsi/ufs/ufshcd.h | 10 ++++++++++
->>   2 files changed, 26 insertions(+)
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index c28c144..161e3c4 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -3859,6 +3859,14 @@ static int ufshcd_link_recovery(struct ufs_hba 
->> *hba)
->>   	ufshcd_set_eh_in_progress(hba);
->>   	spin_unlock_irqrestore(hba->host->host_lock, flags);
->>   +	ret = ufshcd_vops_full_reset(hba);
->> +	if (ret)
->> +		dev_warn(hba->dev, "%s: full reset returned %d\n",
->> +				  __func__, ret);
->> +
->> +	/* Reset the attached device */
->> +	ufshcd_vops_device_reset(hba);
->> +
->>   	ret = ufshcd_host_reset_and_restore(hba);
->>     	spin_lock_irqsave(hba->host->host_lock, flags);
-> 
-> In all your cases, especially after this adjustment,
-> ufshcd_vops_full_reset is called blindly (+error checking message)
-> before ufshcd_vops_device_reset. What about dropping the .full_reset
-> (should really have been called .hw_reset or .host_reset) addition to
-> the vops, just adding ufshcd_vops_device_reset call here before
-> ufshcd_host_reset_and_restore, and in the driver folding the
-> ufshcd_vops_full_reset code into the .device_reset handler?
-> 
-> Would that be workable? It would be simpler if so.
-> 
-> I can see a desire for the heads up
-> (ufshcd_vops_full_reset+)ufshcd_vops_device_reset calls before
-> ufshcd_host_reset_and_restore because that function will spin 10
-> seconds waiting for a response from a standardized register, that
-> itself could be hardware locked up requiring product specific reset
-> procedures. But if that is the case, then what about all the other
-> calls to ufshcd_host_reset_and_restore in this file that are not
-> provided the heads up? My guess is that the host device only
-> demonstrated issues in the ufshcd_link_recovery handling path? Are you
-> sure this is the only path that tickles the controller into a hardware
-> lockup state?
-> 
-> Sincerely -- Mark Salyzyn
+> Subject: Re: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios f=
+or
+> fec1
+>=20
+> On 21.10.2019 13:19, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > We should not rely on bootloader to configure the phy reset.
+> > So introduce phy-reset-gpios property to let Linux handle phy reset
+> > itself.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+>=20
+> This broke NFS boot for me in next-20191031: board now hangs on DHCP.
+>=20
 
-Hi Mark Salyzyn,
+Sorry for this. I not use sdcard when I did the test.
 
-Folding the "full_reset" vops inito "device_reset" vops is one choice 
-for now. Shall do that.
-Your guess is correct. the head up is needed in ufshcd_link_recovery() 
-path because
-link is already in bad state when we are here, expeically after hibern8 
-exit fails.
-So we need a full reset to PHY and host controller here before 
-host_reset_and_restore.
-But other calls to host_reset_and_restore are under good conditions.
+> It can be fixed by reverting this DT patch or by setting CONFIG_AT803X_PH=
+Y
+> to y instead of m.
 
-Regards,
-Can Guo.
+I prefer setting CONFIG_AT803X_PHY.
+
+Thanks,
+Peng.
+
+>=20
+> Needing a phy module is not a bug but everybody will need to either
+> adjust .config or build modules into an initramfs somehow.
+>=20
+> > ---
+> >
+> > V2:
+> >   U-Boot->bootloader
+> >   Add R-b tag
+> >
+> >   arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> > b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> > index faefb7182af1..e4d66f7db09d 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> > @@ -80,6 +80,7 @@
+> >   	pinctrl-0 =3D <&pinctrl_fec1>;
+> >   	phy-mode =3D "rgmii-id";
+> >   	phy-handle =3D <&ethphy0>;
+> > +	phy-reset-gpios =3D <&gpio4 22 GPIO_ACTIVE_LOW>;
+> >   	fsl,magic-packet;
+> >   	status =3D "okay";
