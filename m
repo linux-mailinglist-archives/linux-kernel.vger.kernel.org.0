@@ -2,113 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2548EC9F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54ED1EC9FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfKAUxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:53:35 -0400
-Received: from mail-eopbgr800041.outbound.protection.outlook.com ([40.107.80.41]:22246
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726742AbfKAUxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:53:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y+IB7/NFBl4v2joMg+KSUNvv3TChNeabbYFPp/KVT8Zc+kk7SWpignC9ZL6nkno8GwS/rDb1DsDfN+ZZlGfrcmCQntkuexeqqxBVWmxNtRix1kcnCK4y7XHqRgoZwNxZf6KoTVUNbTYVd+9lvBvhaRi4lg5eiJG0+YdM/6dDiyTO/KXA2K5f8EVPZvblR+0gRIQQuuIXrl7WO12ULcMtlp9IMt1cMcEu+n8iSkBMsJlNk8WMYo3pXyumAoXStLW85IlMd3LyIKCbqUttQlwQPUwvUcyW8DGpbmtQFer6ZB/c1/uyuYhdlrI9ej2LC0+GuM7iZN2fUM6o8mb8Y9+EOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lz9DyTtu0JGheGZ2Z7mxwFrifhEDD6TACgvl9U6vBtQ=;
- b=TbpfoGW/fTzX11iGGqictGi1n2efncBMT6rBDuP3D9gK2tVYYSkZIHq9nGjxxHljdr0HVTpBFGfsEX9EsQIZZRwcOQdNAMzgTU96NW/+fiXg4J0b3hbBk3JbrLLW/WFuq2jNojf8R5hQL7TDLc7gHTRdHl/uyz3Sz0r8X/kh5udfjPmHVjsNKjTE03pV8Qn5zfLtVadFdsnZgLiy5f1RQZQGdc2O7l1ka2jJCrowTqlAbB/KKp/Ox0iEXYWso34ChQUPaq1RUpJRCuSputm9ItV9Qln61+2052UfHlL3fNgXIypIy2HGRFukJBUGyhVPJlJYbfuZYcV9YnxXoLSlmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=netapp.com; dmarc=pass action=none header.from=netapp.com;
- dkim=pass header.d=netapp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=netapp.onmicrosoft.com; s=selector2-netapp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lz9DyTtu0JGheGZ2Z7mxwFrifhEDD6TACgvl9U6vBtQ=;
- b=kPh67EDZj65kP1XxRu8Te3fIH+1Fe+E2HoagzLe030MjhAeVtYXeXPP4qubhX0En9/RyKx9uGwsb0DD1UKR8Q0d3FlkX62pBLArij5Oq6Y59sIfzpBLjxKK8mWw/Guw11ypwym/m0JQYwEPW4ZakKAXmvewhGO31GS4zKFTkEHo=
-Received: from BYAPR06MB6054.namprd06.prod.outlook.com (20.178.51.220) by
- BYAPR06MB5349.namprd06.prod.outlook.com (20.178.52.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.24; Fri, 1 Nov 2019 20:53:30 +0000
-Received: from BYAPR06MB6054.namprd06.prod.outlook.com
- ([fe80::918d:490e:90f0:61f8]) by BYAPR06MB6054.namprd06.prod.outlook.com
- ([fe80::918d:490e:90f0:61f8%5]) with mapi id 15.20.2387.025; Fri, 1 Nov 2019
- 20:53:30 +0000
-From:   "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Please pull NFS Client Bugfixes for Linux 5.4-rc6
-Thread-Topic: [GIT PULL] Please pull NFS Client Bugfixes for Linux 5.4-rc6
-Thread-Index: AQHVkPZq1XQm9kO4Hka+IW6lkVoalg==
-Date:   Fri, 1 Nov 2019 20:53:30 +0000
-Message-ID: <2c39701ab77496cb78b4955aad532a2f18427465.camel@netapp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.34.1 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anna.Schumaker@netapp.com; 
-x-originating-ip: [68.42.68.242]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2cf8578b-2637-46d6-d9ef-08d75f0d8d25
-x-ms-traffictypediagnostic: BYAPR06MB5349:
-x-microsoft-antispam-prvs: <BYAPR06MB5349708B60AC40F0A053B8F2F8620@BYAPR06MB5349.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:252;
-x-forefront-prvs: 020877E0CB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(199004)(189003)(71190400001)(102836004)(54906003)(2351001)(86362001)(26005)(2501003)(476003)(6512007)(71200400001)(81156014)(8936002)(4001150100001)(81166006)(1730700003)(486006)(8676002)(5640700003)(6486002)(14454004)(6436002)(305945005)(6506007)(7736002)(66476007)(4326008)(58126008)(99286004)(66946007)(316002)(66446008)(64756008)(66556008)(25786009)(66066001)(6916009)(2616005)(5660300002)(36756003)(76116006)(186003)(14444005)(6116002)(118296001)(91956017)(3846002)(478600001)(256004)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR06MB5349;H:BYAPR06MB6054.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: netapp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9XeDLBcA6v5c9hk1V/VzuZ9UtzEIejJZ5hmyWsIr1L82ShTzz8MkOtiVpQVFqt48DOadVegnUNJt+oCrXkTRqhH/qG0amcLnWKZo9ADUnNpG9S8TMxpSHuuNKSiI6FREVNwoIKN1AmyB1qdgdhl3cj9pfJzx2kQPV44iwYNdTnef6nWigplkyDVBq4datxhiwpPZKPgVejZVSqvHPMmNwXJiqIBCB0P2chW/aWmZxHN85ZctjOxrguI4uN2HT2mvHJA2TYUtT0TIrPZMeIZ74R2+YLSzKcwFAQeFv0H2Db9z8tjtRGJQ3h3ohrPuWaBX1vZvEVniiAWRi1jJmj0uvv/5qvlD9En4S+bTo9mzkrKo61vjllKk5s+G0bN1ogqg5pLG3nbZsfjSwwppIYdtyLI4dUJNEREOopVXxuRttS0x33p07k+huT1L5mfbdSNJ
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1F5D71A4A23DB24FA11CB08FE0D99CD3@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727002AbfKAU4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:56:53 -0400
+Received: from palmtree.beeroclock.net ([178.79.160.154]:44662 "EHLO
+        palmtree.beeroclock.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfKAU4x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:56:53 -0400
+Received: from beros.lan (89-160-129-47.du.xdsl.is [89.160.129.47])
+        by palmtree.beeroclock.net (Postfix) with ESMTPSA id 6521D1F76B;
+        Fri,  1 Nov 2019 20:56:50 +0000 (UTC)
+From:   Karl Palsson <karlp@tweak.net.au>
+To:     mripard@kernel.org, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Karl Palsson <karlp@tweak.net.au>
+Subject: [PATCHv2 1/2] ARM: dts: sun8i: add FriendlyARM NanoPi Duo2
+Date:   Fri,  1 Nov 2019 20:55:35 +0000
+Message-Id: <20191101205535.7896-1-karlp@tweak.net.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: netapp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cf8578b-2637-46d6-d9ef-08d75f0d8d25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2019 20:53:30.1837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ygNA+C+4HVWllXfSbnYtG5b26J8vdP74gD1C5JQfIQ+MR+IQo6nGrfOI0ZOQh1UkYJWT8ul/0JFgPoJl0y3faQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR06MB5349
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOWU1ZWVmYmEz
-ZDA5OGQ2NmRlZmExY2U1OWEzNGE0MWE5NmY0OTc3MToNCg0KICBNZXJnZSB0YWcgJ2Zvcl9saW51
-cycgb2YgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L21zdC92
-aG9zdCAoMjAxOS0xMC0yOA0KMTI6NDc6MjIgKzAxMDApDQoNCmFyZSBhdmFpbGFibGUgaW4gdGhl
-IEdpdCByZXBvc2l0b3J5IGF0Og0KDQogIGdpdDovL2dpdC5saW51eC1uZnMub3JnL3Byb2plY3Rz
-L2FubmEvbGludXgtbmZzLmdpdCB0YWdzL25mcy1mb3ItNS40LTMNCg0KZm9yIHlvdSB0byBmZXRj
-aCBjaGFuZ2VzIHVwIHRvIDc5Y2M1NTQyMmNlOTliZTU5NjRiZGUyMDhiYTg1NTcxNzQ3MjA4OTM6
-DQoNCiAgTkZTOiBGaXggYW4gUkNVIGxvY2sgbGVhayBpbiBuZnM0X3JlZnJlc2hfZGVsZWdhdGlv
-bl9zdGF0ZWlkKCkgKDIwMTktMTEtMDEgMTE6MDM6NTYgLTA0MDApDQoNCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NClRoaXMg
-cGF0Y2ggc2V0IGNvbnRhaW5zIHR3byBkZWxlZ2F0aW9uIGZpeGVzICh3aXRoIHRoZSBSQ1UgbG9j
-ayBsZWFrIGZpeCBtYXJrZWQNCmZvciBzdGFibGUpLCBhbmQgdGhyZWUgcGF0Y2hlcyB0byBmaXgg
-ZGVzdHJveWluZyB0aGUgdGhlIHN1bnJwYyBiYWNrIGNoYW5uZWwuDQoNClRoYW5rcywNCkFubmEN
-Cg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQ0KDQpUcm9uZCBNeWtsZWJ1c3QgKDUpOg0KICAgICAgU1VOUlBDOiBUaGUgVENQ
-IGJhY2sgY2hhbm5lbCBtdXN0bid0IGRpc2FwcGVhciB3aGlsZSByZXF1ZXN0cyBhcmUgb3V0c3Rh
-bmRpbmcNCiAgICAgIFNVTlJQQzogVGhlIFJETUEgYmFjayBjaGFubmVsIG11c3RuJ3QgZGlzYXBw
-ZWFyIHdoaWxlIHJlcXVlc3RzIGFyZSBvdXRzdGFuZGluZw0KICAgICAgU1VOUlBDOiBEZXN0cm95
-IHRoZSBiYWNrIGNoYW5uZWwgd2hlbiB3ZSBkZXN0cm95IHRoZSBob3N0IHRyYW5zcG9ydA0KICAg
-ICAgTkZTdjQ6IERvbid0IGFsbG93IGEgY2FjaGVkIG9wZW4gd2l0aCBhIHJldm9rZWQgZGVsZWdh
-dGlvbg0KICAgICAgTkZTOiBGaXggYW4gUkNVIGxvY2sgbGVhayBpbiBuZnM0X3JlZnJlc2hfZGVs
-ZWdhdGlvbl9zdGF0ZWlkKCkNCg0KIGZzL25mcy9kZWxlZ2F0aW9uLmMgICAgICAgICAgICAgICB8
-IDEyICsrKysrKysrKysrLQ0KIGZzL25mcy9kZWxlZ2F0aW9uLmggICAgICAgICAgICAgICB8ICAx
-ICsNCiBmcy9uZnMvbmZzNHByb2MuYyAgICAgICAgICAgICAgICAgfCAgNyArKy0tLS0tDQogaW5j
-bHVkZS9saW51eC9zdW5ycGMvYmNfeHBydC5oICAgIHwgIDUgKysrKysNCiBuZXQvc3VucnBjL2Jh
-Y2tjaGFubmVsX3Jxc3QuYyAgICAgfCAgNyArKysrLS0tDQogbmV0L3N1bnJwYy94cHJ0LmMgICAg
-ICAgICAgICAgICAgIHwgIDUgKysrKysNCiBuZXQvc3VucnBjL3hwcnRyZG1hL2JhY2tjaGFubmVs
-LmMgfCAgMiArKw0KIDcgZmlsZXMgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlv
-bnMoLSkNCg==
+This is an Allwinner H3 based board, with 512MB ram, a USB OTG port,
+microsd slot, an onboard AP6212A wifi/bluetooth module, and a CSI
+connector.
+
+Full details and schematic available from vendor:
+http://wiki.friendlyarm.com/wiki/index.php/NanoPi_Duo2
+
+Signed-off-by: Karl Palsson <karlp@tweak.net.au>
+---
+Change since v1:
+* dropped accidental commentary
+* sorted nodes
+* added enable gpio for vdd-cpu
+* added vdd-dram and vcc-sys
+* dropped default led trigger
+
+ arch/arm/boot/dts/Makefile                 |   1 +
+ arch/arm/boot/dts/sun8i-h3-nanopi-duo2.dts | 174 +++++++++++++++++++++
+ 2 files changed, 175 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-h3-nanopi-duo2.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 9159fa2cea90..d8bf02abcda1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1096,6 +1096,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-h3-beelink-x2.dtb \
+ 	sun8i-h3-libretech-all-h3-cc.dtb \
+ 	sun8i-h3-mapleboard-mp130.dtb \
++	sun8i-h3-nanopi-duo2.dtb \
+ 	sun8i-h3-nanopi-m1.dtb	\
+ 	sun8i-h3-nanopi-m1-plus.dtb \
+ 	sun8i-h3-nanopi-neo.dtb \
+diff --git a/arch/arm/boot/dts/sun8i-h3-nanopi-duo2.dts b/arch/arm/boot/dts/sun8i-h3-nanopi-duo2.dts
+new file mode 100644
+index 000000000000..c73f59900975
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-h3-nanopi-duo2.dts
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2019 Karl Palsson <karlp@tweak.net.au>
++ */
++
++/dts-v1/;
++#include "sun8i-h3.dtsi"
++#include "sunxi-common-regulators.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "FriendlyARM NanoPi Duo2";
++	compatible = "friendlyarm,nanopi-duo2", "allwinner,sun8i-h3";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		pwr {
++			label = "nanopi:red:pwr";
++			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
++			default-state = "on";
++		};
++
++		status {
++			label = "nanopi:green:status";
++			gpios = <&pio 0 10 GPIO_ACTIVE_HIGH>; /* PA10 */
++		};
++	};
++
++	r_gpio_keys {
++		compatible = "gpio-keys";
++
++		k1 {
++			label = "k1";
++			linux,code = <BTN_0>;
++			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>; /* PL3 */
++		};
++	};
++
++	reg_vdd_cpux: vdd-cpux-regulator {
++		compatible = "regulator-gpio";
++		regulator-name = "vdd-cpux";
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-ramp-delay = <50>; /* 4ms */
++
++		enable-active-high;
++		enable-gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
++	};
++
++	reg_vcc_dram: vcc-dram {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-dram";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++		regulator-boot-on;
++		enable-active-high;
++		gpio = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
++		vin-supply = <&reg_vcc5v0>;
++        };
++
++	reg_vdd_sys: vdd-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd-sys";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-always-on;
++		regulator-boot-on;
++		enable-active-high;
++		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++		vin-supply = <&reg_vcc5v0>;
++        };
++
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>; /* PL7 */
++		clocks = <&rtc 1>;
++		clock-names = "ext_clock";
++	};
++
++};
++
++&cpu0 {
++	cpu-supply = <&reg_vdd_cpux>;
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&mmc0 {
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
++	status = "okay";
++	vmmc-supply = <&reg_vcc3v3>;
++};
++
++&mmc1 {
++	vmmc-supply = <&reg_vcc3v3>;
++	vqmmc-supply = <&reg_vcc3v3>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	sdio_wifi: sdio_wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&pio>;
++		interrupts = <6 10 IRQ_TYPE_LEVEL_LOW>; /* PG10 / EINT10 */
++		interrupt-names = "host-wake";
++	};
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&reg_usb0_vbus {
++	gpio = <&r_pio 0 2 GPIO_ACTIVE_HIGH>; /* PL2 */
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pa_pins>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>, <&uart2_rts_cts_pins>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rtc 1>;
++		clock-names = "lpo";
++		vbat-supply = <&reg_vcc3v3>;
++		vddio-supply = <&reg_vcc3v3>;
++		device-wakeup-gpios = <&pio 0 8 GPIO_ACTIVE_HIGH>; /* PA8 */
++		host-wakeup-gpios = <&pio 0 7 GPIO_ACTIVE_HIGH>; /* PA7 */
++		shutdown-gpios = <&pio 6 13 GPIO_ACTIVE_HIGH>; /* PG13 */
++	};
++};
++
++&usb_otg {
++	status = "okay";
++	dr_mode = "otg";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&pio 6 12 GPIO_ACTIVE_HIGH>; /* PG12 */
++	usb0_vbus-supply = <&reg_usb0_vbus>;
++	status = "okay";
++};
+-- 
+2.20.1
+
