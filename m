@@ -2,253 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E304EC458
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5EFEC466
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:12:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbfKAOLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 10:11:06 -0400
-Received: from foss.arm.com ([217.140.110.172]:36526 "EHLO foss.arm.com"
+        id S1726907AbfKAOMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:12:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:36628 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728688AbfKAOLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:11:01 -0400
+        id S1726710AbfKAOMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 10:12:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75ACF95E;
-        Fri,  1 Nov 2019 07:11:00 -0700 (PDT)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF4B83F718;
-        Fri,  1 Nov 2019 07:10:57 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: [PATCH v15 23/23] mm: ptdump: Reduce level numbers by 1 in note_page()
-Date:   Fri,  1 Nov 2019 14:09:42 +0000
-Message-Id: <20191101140942.51554-24-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191101140942.51554-1-steven.price@arm.com>
-References: <20191101140942.51554-1-steven.price@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 764B8337;
+        Fri,  1 Nov 2019 07:12:33 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1CC93F718;
+        Fri,  1 Nov 2019 07:12:32 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 14:12:30 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Tom Joseph <tjoseph@cadence.com>
+Cc:     linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] PCI: cadence: Create new folder 'cadence' and
+ move all cadence files to it
+Message-ID: <20191101141230.GH9723@e119886-lin.cambridge.arm.com>
+References: <1572349512-7776-1-git-send-email-tjoseph@cadence.com>
+ <1572349512-7776-3-git-send-email-tjoseph@cadence.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572349512-7776-3-git-send-email-tjoseph@cadence.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than having to increment the 'depth' number by 1 in
-ptdump_hole(), let's change the meaning of 'level' in note_page() since
-that makes the code simplier.
+On Tue, Oct 29, 2019 at 11:45:12AM +0000, Tom Joseph wrote:
+> Cadence core library files may be used by various platform drivers.
+> Add a new directory "cadence" to group all the Cadence core library files
+> and the platforms using Cadence core library.
+> 
+> Signed-off-by: Tom Joseph <tjoseph@cadence.com>
 
-Note that for x86, the level numbers were previously increased by 1 in
-commit 45dcd2091363 ("x86/mm/dump_pagetables: Fix printout of p4d level")
-and the comment "Bit 7 has a different meaning" was not updated, so this
-change also makes the code match the comment again.
+I'm not very keen on the commit title, perhaps something like this
+is better:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/mm/dump.c          |  6 +++---
- arch/x86/mm/dump_pagetables.c | 19 ++++++++++---------
- include/linux/ptdump.h        |  1 +
- mm/ptdump.c                   | 16 ++++++++--------
- 4 files changed, 22 insertions(+), 20 deletions(-)
+PCI: cadence: Move all files to per-device cadence directory
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 3203dd8e6d0a..4997ce244172 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -175,8 +175,7 @@ struct pg_level {
- };
- 
- static struct pg_level pg_level[] = {
--	{
--	}, { /* pgd */
-+	{ /* pgd */
- 		.name	= "PGD",
- 		.bits	= pte_bits,
- 		.num	= ARRAY_SIZE(pte_bits),
-@@ -256,7 +255,7 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 	if (level >= 0)
- 		prot = val & pg_level[level].mask;
- 
--	if (!st->level) {
-+	if (st->level == -1) {
- 		st->level = level;
- 		st->current_prot = prot;
- 		st->start_address = addr;
-@@ -350,6 +349,7 @@ void ptdump_check_wx(void)
- 			{ 0, NULL},
- 			{ -1, NULL},
- 		},
-+		.level = -1,
- 		.check_wx = true,
- 		.ptdump = {
- 			.note_page = note_page,
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 77a1332c6cd4..d3c28b3765fc 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -176,7 +176,7 @@ static struct addr_marker address_markers[] = {
- static void printk_prot(struct seq_file *m, pgprotval_t pr, int level, bool dmsg)
- {
- 	static const char * const level_name[] =
--		{ "cr3", "pgd", "p4d", "pud", "pmd", "pte" };
-+		{ "pgd", "p4d", "pud", "pmd", "pte" };
- 
- 	if (!(pr & _PAGE_PRESENT)) {
- 		/* Not present */
-@@ -200,12 +200,12 @@ static void printk_prot(struct seq_file *m, pgprotval_t pr, int level, bool dmsg
- 			pt_dump_cont_printf(m, dmsg, "    ");
- 
- 		/* Bit 7 has a different meaning on level 3 vs 4 */
--		if (level <= 4 && pr & _PAGE_PSE)
-+		if (level <= 3 && pr & _PAGE_PSE)
- 			pt_dump_cont_printf(m, dmsg, "PSE ");
- 		else
- 			pt_dump_cont_printf(m, dmsg, "    ");
--		if ((level == 5 && pr & _PAGE_PAT) ||
--		    ((level == 4 || level == 3) && pr & _PAGE_PAT_LARGE))
-+		if ((level == 4 && pr & _PAGE_PAT) ||
-+		    ((level == 3 || level == 2) && pr & _PAGE_PAT_LARGE))
- 			pt_dump_cont_printf(m, dmsg, "PAT ");
- 		else
- 			pt_dump_cont_printf(m, dmsg, "    ");
-@@ -267,15 +267,15 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 
- 	new_prot = val & PTE_FLAGS_MASK;
- 
--	if (level > 1) {
--		new_eff = effective_prot(st->prot_levels[level - 2],
-+	if (level > 0) {
-+		new_eff = effective_prot(st->prot_levels[level - 1],
- 					 new_prot);
- 	} else {
- 		new_eff = new_prot;
- 	}
- 
--	if (level > 0)
--		st->prot_levels[level - 1] = new_eff;
-+	if (level >= 0)
-+		st->prot_levels[level] = new_eff;
- 
- 	/*
- 	 * If we have a "break" in the series, we need to flush the state that
-@@ -285,7 +285,7 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 	cur = st->current_prot;
- 	eff = st->effective_prot;
- 
--	if (!st->level) {
-+	if (st->level == -1) {
- 		/* First entry */
- 		st->current_prot = new_prot;
- 		st->effective_prot = new_eff;
-@@ -376,6 +376,7 @@ static void ptdump_walk_pgd_level_core(struct seq_file *m, struct mm_struct *mm,
- 			.note_page	= note_page,
- 			.range		= ptdump_ranges
- 		},
-+		.level = -1,
- 		.to_dmesg	= dmesg,
- 		.check_wx	= checkwx,
- 		.seq		= m
-diff --git a/include/linux/ptdump.h b/include/linux/ptdump.h
-index a0fb8dd2be97..b28f3f2acf90 100644
---- a/include/linux/ptdump.h
-+++ b/include/linux/ptdump.h
-@@ -11,6 +11,7 @@ struct ptdump_range {
- };
- 
- struct ptdump_state {
-+	/* level is 0:PGD to 4:PTE, or -1 if unknown */
- 	void (*note_page)(struct ptdump_state *st, unsigned long addr,
- 			  int level, unsigned long val);
- 	const struct ptdump_range *range;
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index 79e63454f1f7..9987baede3f2 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -11,7 +11,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 	pgd_t val = READ_ONCE(*pgd);
- 
- 	if (pgd_leaf(val))
--		st->note_page(st, addr, 1, pgd_val(val));
-+		st->note_page(st, addr, 0, pgd_val(val));
- 
- 	return 0;
- }
-@@ -23,7 +23,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 	p4d_t val = READ_ONCE(*p4d);
- 
- 	if (p4d_leaf(val))
--		st->note_page(st, addr, 2, p4d_val(val));
-+		st->note_page(st, addr, 1, p4d_val(val));
- 
- 	return 0;
- }
-@@ -35,7 +35,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
- 	pud_t val = READ_ONCE(*pud);
- 
- 	if (pud_leaf(val))
--		st->note_page(st, addr, 3, pud_val(val));
-+		st->note_page(st, addr, 2, pud_val(val));
- 
- 	return 0;
- }
-@@ -47,7 +47,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	pmd_t val = READ_ONCE(*pmd);
- 
- 	if (pmd_leaf(val))
--		st->note_page(st, addr, 4, pmd_val(val));
-+		st->note_page(st, addr, 3, pmd_val(val));
- 
- 	return 0;
- }
-@@ -57,7 +57,7 @@ static int ptdump_pte_entry(pte_t *pte, unsigned long addr,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, 5, pte_val(READ_ONCE(*pte)));
-+	st->note_page(st, addr, 4, pte_val(READ_ONCE(*pte)));
- 
- 	return 0;
- }
-@@ -75,7 +75,7 @@ static inline int note_kasan_page_table(struct mm_walk *walk,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, 5, pte_val(kasan_early_shadow_pte[0]));
-+	st->note_page(st, addr, 4, pte_val(kasan_early_shadow_pte[0]));
- 	return 1;
- }
- 
-@@ -115,7 +115,7 @@ static int ptdump_hole(unsigned long addr, unsigned long next,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, depth + 1, 0);
-+	st->note_page(st, addr, depth, 0);
- 
- 	return 0;
- }
-@@ -147,5 +147,5 @@ void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
- 	up_read(&mm->mmap_sem);
- 
- 	/* Flush out the last page */
--	st->note_page(st, 0, 0, 0);
-+	st->note_page(st, 0, -1, 0);
- }
--- 
-2.20.1
+With that (or similar) you can add:
 
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+
+(I think my dislike is the length of it, and the word 'folder' instead
+of directory).
+
+> ---
+>  drivers/pci/controller/Kconfig                     | 44 +--------------------
+>  drivers/pci/controller/Makefile                    |  5 +--
+>  drivers/pci/controller/cadence/Kconfig             | 45 ++++++++++++++++++++++
+>  drivers/pci/controller/cadence/Makefile            |  5 +++
+>  .../pci/controller/{ => cadence}/pcie-cadence-ep.c |  0
+>  .../controller/{ => cadence}/pcie-cadence-host.c   |  0
+>  .../controller/{ => cadence}/pcie-cadence-plat.c   |  0
+>  .../pci/controller/{ => cadence}/pcie-cadence.c    |  0
+>  .../pci/controller/{ => cadence}/pcie-cadence.h    |  0
+>  9 files changed, 52 insertions(+), 47 deletions(-)
+>  create mode 100644 drivers/pci/controller/cadence/Kconfig
+>  create mode 100644 drivers/pci/controller/cadence/Makefile
+>  rename drivers/pci/controller/{ => cadence}/pcie-cadence-ep.c (100%)
+>  rename drivers/pci/controller/{ => cadence}/pcie-cadence-host.c (100%)
+>  rename drivers/pci/controller/{ => cadence}/pcie-cadence-plat.c (100%)
+>  rename drivers/pci/controller/{ => cadence}/pcie-cadence.c (100%)
+>  rename drivers/pci/controller/{ => cadence}/pcie-cadence.h (100%)
+> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index 57d52f6..2aab586 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -22,49 +22,6 @@ config PCI_AARDVARK
+>  	 controller is part of the South Bridge of the Marvel Armada
+>  	 3700 SoC.
+>  
+> -menu "Cadence PCIe controllers support"
+> -
+> -config PCIE_CADENCE
+> -	bool
+> -
+> -config PCIE_CADENCE_HOST
+> -	bool
+> -	depends on OF
+> -	select IRQ_DOMAIN
+> -	select PCIE_CADENCE
+> -
+> -config PCIE_CADENCE_EP
+> -	bool
+> -	depends on OF
+> -	depends on PCI_ENDPOINT
+> -	select PCIE_CADENCE
+> -
+> -config PCIE_CADENCE_PLAT
+> -	bool
+> -
+> -config PCIE_CADENCE_PLAT_HOST
+> -	bool "Cadence PCIe platform host controller"
+> -	depends on OF
+> -	select PCIE_CADENCE_HOST
+> -	select PCIE_CADENCE_PLAT
+> -	help
+> -	  Say Y here if you want to support the Cadence PCIe platform controller in
+> -	  host mode. This PCIe controller may be embedded into many different
+> -	  vendors SoCs.
+> -
+> -config PCIE_CADENCE_PLAT_EP
+> -	bool "Cadence PCIe platform endpoint controller"
+> -	depends on OF
+> -	depends on PCI_ENDPOINT
+> -	select PCIE_CADENCE_EP
+> -	select PCIE_CADENCE_PLAT
+> -	help
+> -	  Say Y here if you want to support the Cadence PCIe  platform controller in
+> -	  endpoint mode. This PCIe controller may be embedded into many
+> -	  different vendors SoCs.
+> -
+> -endmenu
+> -
+>  config PCIE_XILINX_NWL
+>  	bool "NWL PCIe Core"
+>  	depends on ARCH_ZYNQMP || COMPILE_TEST
+> @@ -297,4 +254,5 @@ config VMD
+>  	  module will be called vmd.
+>  
+>  source "drivers/pci/controller/dwc/Kconfig"
+> +source "drivers/pci/controller/cadence/Kconfig"
+>  endmenu
+> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
+> index 676a41e..8a59829 100644
+> --- a/drivers/pci/controller/Makefile
+> +++ b/drivers/pci/controller/Makefile
+> @@ -1,8 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence.o
+> -obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+> -obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
+> -obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+> +obj-$(CONFIG_PCIE_CADENCE) += cadence/
+>  obj-$(CONFIG_PCI_FTPCI100) += pci-ftpci100.o
+>  obj-$(CONFIG_PCI_HYPERV) += pci-hyperv.o
+>  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
+> new file mode 100644
+> index 0000000..b76b3cf
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/Kconfig
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +menu "Cadence PCIe controllers support"
+> +	depends on PCI
+> +
+> +config PCIE_CADENCE
+> +	bool
+> +
+> +config PCIE_CADENCE_HOST
+> +	bool
+> +	depends on OF
+> +	select IRQ_DOMAIN
+> +	select PCIE_CADENCE
+> +
+> +config PCIE_CADENCE_EP
+> +	bool
+> +	depends on OF
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_CADENCE
+> +
+> +config PCIE_CADENCE_PLAT
+> +	bool
+> +
+> +config PCIE_CADENCE_PLAT_HOST
+> +	bool "Cadence PCIe platform host controller"
+> +	depends on OF
+> +	select PCIE_CADENCE_HOST
+> +	select PCIE_CADENCE_PLAT
+> +	help
+> +	  Say Y here if you want to support the Cadence PCIe platform controller in
+> +	  host mode. This PCIe controller may be embedded into many different
+> +	  vendors SoCs.
+> +
+> +config PCIE_CADENCE_PLAT_EP
+> +	bool "Cadence PCIe platform endpoint controller"
+> +	depends on OF
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_CADENCE_EP
+> +	select PCIE_CADENCE_PLAT
+> +	help
+> +	  Say Y here if you want to support the Cadence PCIe  platform controller in
+> +	  endpoint mode. This PCIe controller may be embedded into many
+> +	  different vendors SoCs.
+> +
+> +endmenu
+> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> new file mode 100644
+> index 0000000..232a3f2
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence.o
+> +obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+> +obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
+> +obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+> diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> similarity index 100%
+> rename from drivers/pci/controller/pcie-cadence-ep.c
+> rename to drivers/pci/controller/cadence/pcie-cadence-ep.c
+> diff --git a/drivers/pci/controller/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> similarity index 100%
+> rename from drivers/pci/controller/pcie-cadence-host.c
+> rename to drivers/pci/controller/cadence/pcie-cadence-host.c
+> diff --git a/drivers/pci/controller/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> similarity index 100%
+> rename from drivers/pci/controller/pcie-cadence-plat.c
+> rename to drivers/pci/controller/cadence/pcie-cadence-plat.c
+> diff --git a/drivers/pci/controller/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> similarity index 100%
+> rename from drivers/pci/controller/pcie-cadence.c
+> rename to drivers/pci/controller/cadence/pcie-cadence.c
+> diff --git a/drivers/pci/controller/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> similarity index 100%
+> rename from drivers/pci/controller/pcie-cadence.h
+> rename to drivers/pci/controller/cadence/pcie-cadence.h
+> -- 
+> 2.2.2
+> 
