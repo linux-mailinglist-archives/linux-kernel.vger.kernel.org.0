@@ -2,74 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A2AECA94
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEE0ECA9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfKAV6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 17:58:20 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:44587 "EHLO rere.qmqm.pl"
+        id S1727610AbfKAV7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:59:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfKAV6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:58:20 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 474bc51Vfpz45;
-        Fri,  1 Nov 2019 22:56:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1572645365; bh=E3NPr1GUIURuD9u8S6KPgRqpcDcat2o8UxiTeGXZ2EA=;
+        id S1726229AbfKAV7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 17:59:24 -0400
+Received: from rapoport-lnx (190.228.71.37.rev.sfr.net [37.71.228.190])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6ED020679;
+        Fri,  1 Nov 2019 21:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572645563;
+        bh=QiZm9ub4TObxGGKcca2WTm6kN/XMUXB/j0wvSJ5M3eA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N65pH6hTJ6wTubXk8CBMLdBL/dpc/5UZ29k5P09zjNnYDVMd1lya88h1jgGN4+N2P
-         Ug0LFqKkA/d+LRC9M8Fcj0BOrAQQX3VxGPD8i8yfYC7YNWUeZAtrxiBqXoVmQhUgcF
-         ODJ42um/dPrfujG0Daj85iq2IT2s4KbWyhOilQQeOzh/V6yCSEabFietlN/iquqERY
-         ccY9IP30gXH/TMZhEVFe04B5CsRDe61U9rfXgUTP4nZYwovY8FtrA53THAQh0sJy5S
-         +FVWxFiJKFedDovDxgWqRTKJV/e5b1OTjXBhwuBbcY7u8XLZDuISWJs6OnUiywi9qx
-         Fzr53UBP5DQTw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Fri, 1 Nov 2019 22:58:16 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Peter Geis <pgwipeout@gmail.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 17/19] PM / devfreq: tegra30: Support variable polling
- interval
-Message-ID: <20191101215816.GB8724@qmqm.qmqm.pl>
-References: <20191029220019.26773-1-digetx@gmail.com>
- <20191029220019.26773-18-digetx@gmail.com>
+        b=IHcZXPG5aOVX7THF5w1BhXuPpEAFbXmlm1YNYoLN1/wia+WcGzRCfkdX1Ruwcf8B0
+         7VsDchfB2H1tc1VfaQdn38Nf40YHULbzg3WrgWUI8RNC8o7I6dxUJNNV8Ww/2Gbls9
+         tJJ3TSp8O0lGrXdZetQvfatdTrJJjGLz2VuJU/Ck=
+Date:   Fri, 1 Nov 2019 22:59:11 +0100
+From:   Mike Rapoport <rppt@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
+        Richard Weinberger <richard@nod.at>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-parisc@vger.kernel.org, linux-um@lists.infradead.org,
+        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 01/13] alpha: use pgtable-nop4d instead of 4level-fixup
+Message-ID: <20191101215905.GB20065@rapoport-lnx>
+References: <1572597584-6390-1-git-send-email-rppt@kernel.org>
+ <1572597584-6390-2-git-send-email-rppt@kernel.org>
+ <20191101091157.q4cesn6vsiy5qj2j@box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191029220019.26773-18-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191101091157.q4cesn6vsiy5qj2j@box>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 01:00:17AM +0300, Dmitry Osipenko wrote:
-> The ACTMON governor is interrupt-driven and currently hardware's polling
-> interval is fixed to 16ms in the driver. Devfreq supports variable polling
-> interval by the generic governors, let's re-use the generic interface for
-> changing of the polling interval. Now the polling interval can be changed
-> dynamically via /sys/class/devfreq/devfreq0/polling_interval.
-[...]
-> @@ -308,7 +308,7 @@ static unsigned long actmon_device_target_freq(struct tegra_devfreq *tegra,
->  	unsigned int avg_sustain_coef;
->  	unsigned long target_freq;
->  
-> -	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD;
-> +	target_freq = dev->avg_count / tegra->devfreq->profile->polling_ms;
->  	avg_sustain_coef = 100 * 100 / dev->config->boost_up_threshold;
->  	target_freq = do_percent(target_freq, avg_sustain_coef);
->  	target_freq += dev->boost_freq;
+On Fri, Nov 01, 2019 at 12:11:57PM +0300, Kirill A. Shutemov wrote:
+> On Fri, Nov 01, 2019 at 10:39:32AM +0200, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > It is not likely alpha will have 5-level page tables.
+> > 
+> > Replace usage of include/asm-generic/4level-fixup.h and implied
+> > __ARCH_HAS_4LEVEL_HACK with include/asm-generic/pgtable-nop4d.h and adjust
+> > page table manipulation macros and functions accordingly.
+> 
+> Not pgtable-nop4d.h, but pgtable-nopud.h. Also in subject.
 
-Noting a comment in patch 13, if this is hot path you could try reciprocal_divide().
+Ouch, of course.
+ 
+> -- 
+>  Kirill A. Shutemov
 
-Best Regards,
-Micha³ Miros³aw
+-- 
+Sincerely yours,
+Mike.
