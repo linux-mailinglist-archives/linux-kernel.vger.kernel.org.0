@@ -2,134 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2482DEC6AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFBF9EC6B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfKAQ15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 12:27:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:62379 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbfKAQ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 12:27:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 474SKJ5Xpvz9v2ym;
-        Fri,  1 Nov 2019 17:27:48 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=I/bqdNa5; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id PZ9U7nhZ3E8A; Fri,  1 Nov 2019 17:27:48 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 474SKJ4Hsnz9v2yl;
-        Fri,  1 Nov 2019 17:27:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1572625668; bh=MTbVnQzwmKfyCUtbhnjX0ZBzAO1vxqklEBZN4jVzQug=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I/bqdNa5IgpC1lJpLNjBWXiVPfYnORnOj+VKFKalooWvtzStcCsMQLEJfZSoI/tMs
-         HPqq7+5xka9Xu6P9/Hxeu3LAFjSA7pTUex55mQCSnS5U37HLjLh/kbM029j+btyoBK
-         migQZImU40zDGmpUVa+L/zu3hU/EMw1t2YbjdFlo=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 31C5F8B8F6;
-        Fri,  1 Nov 2019 17:27:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id WeeN6NS3i5l2; Fri,  1 Nov 2019 17:27:50 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 91D008B7C2;
-        Fri,  1 Nov 2019 17:27:49 +0100 (CET)
-Subject: Re: [PATCH v3 31/36] serial: ucc_uart: stub out soft_uart_init for
- !CONFIG_PPC32
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Wood <oss@buserror.net>, linux-serial@vger.kernel.org
-References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
- <20191101124210.14510-1-linux@rasmusvillemoes.dk>
- <20191101124210.14510-32-linux@rasmusvillemoes.dk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <53c1c463-53fc-2005-3b62-a6f430815b45@c-s.fr>
-Date:   Fri, 1 Nov 2019 17:27:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728759AbfKAQ2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 12:28:36 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33810 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbfKAQ2f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 12:28:35 -0400
+Received: by mail-ua1-f65.google.com with SMTP id q16so3093806uao.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 09:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cugJW9F3kTAr1l84/vLpT5yr86XijpMcBnCXxXWK4UA=;
+        b=ai3N6Ic4RRGuSAsXlls5IzMaslA5Wbr/HVntf4UgHRgBb1znSgpSqTQDhgWkXAk5oM
+         H0TMkU5NqeJqmaviuucs+F/wv2mYGbxw4p/TlWjmTA7nxtnYoIewy1UZepA7s1zvqFi+
+         J0gxVuzM5VGToU0Rd8Mze3tyCLh7RZ7qRdkeI4u+x2bACiJuZjdPOS6PF5wclT402Cyl
+         E4V47Z+G3JNyTOeTMcNM9nltwL7iNcdGY46YKNmZkjxzRh51T0x1vup1917ckL2zPFgG
+         WhafP3q/o/Aolmq4VvLO1/E0Za4fVCa/z+d1jFfQQJXZNS7+zE2mjM1J0A4RaF2Z5bp3
+         En0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cugJW9F3kTAr1l84/vLpT5yr86XijpMcBnCXxXWK4UA=;
+        b=R0SPez6SqALJIX5Kho1egOJ8evo2hDwV5ApaPn9jm+g2o//vgPCl6/8WKul4M0xW+R
+         6SpdBxh6vy25XKIfuCibjsXhSX2O+/ZDYiW1cyn4cYwzH9sCMpMpZrTYsPi41/abr+FN
+         vRICmcqGuFAEN5m/oOcdZOnzdSZNG/mvMuxnjiV5TtmUI4R/4M/fMAlPatP6mkpJyo6l
+         Lz5GB62ISlL4msudC8O7MOsEjMzDVDihy7adoRVlxtiVv8KMp6OY7IwQSIvuvqoW8txP
+         /JDEgQp1bnTXHGy0sMDXvQo2gusQspAPJBCne8PopoB5+VuQzwcu01KUgOoHjtTEiH+Z
+         2AMQ==
+X-Gm-Message-State: APjAAAVDIluvrwKLsZN/nCpdrsaspvfgT+PWUa7rwg2kyv+Tbu4eVQzy
+        DPPMNf8GlYth7ukX7iH9CO7eXp4eUORnopIATPtfFg==
+X-Google-Smtp-Source: APXvYqz0PMfInUZYTnVA7QuGr/acGPXLqC8RP/nrNkyeFglf9nt3ZmPDMS4W5mUNYn60Yk/KFVXZFpuxRp6NFZg7Kqc=
+X-Received: by 2002:ab0:2381:: with SMTP id b1mr5975220uan.106.1572625713398;
+ Fri, 01 Nov 2019 09:28:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191101124210.14510-32-linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191031164637.48901-1-samitolvanen@google.com> <20191031164637.48901-6-samitolvanen@google.com>
+ <201910312050.C538F8F3@keescook>
+In-Reply-To: <201910312050.C538F8F3@keescook>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Fri, 1 Nov 2019 09:28:21 -0700
+Message-ID: <CABCJKueLtOJsq+k-ywyUCOU+QCqxjKN2bO76Te4U43g0Xp9g-A@mail.gmail.com>
+Subject: Re: [PATCH v3 05/17] add support for Clang's Shadow Call Stack (SCS)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 31, 2019 at 8:51 PM Kees Cook <keescook@chromium.org> wrote:
+> > +/* A random number to mark the end of the shadow stack. */
+> > +#define SCS_END_MAGIC        0xaf0194819b1635f6UL
+>
+> Is 0xaf.... non-canonical for arm64? While "random", it should also
+> likely be an "impossible" value to find on the call stack.
 
+Agreed, and yes, this is non-canonical for arm64 and AFAIK all 64-bit
+architectures the kernel supports. I'll add a note about it.
 
-Le 01/11/2019 à 13:42, Rasmus Villemoes a écrit :
-> The Soft UART hack is only needed for some PPC-based SOCs. To allow
-> building this driver for non-PPC, guard soft_uart_init() and its
-> helpers by CONFIG_PPC32, and use a no-op soft_uart_init() otherwise.
-
-I don't like too much ifdefs in C files, especially arch specific ifdefs 
-in generic drivers.
-
-How do we get the QE version on ARM ?
-
-Wouldn't it be cleaner to create a helper for getting the QE version, 
-which would be defined in an arch specific header file, calling 
-mfspr(SPRN_SVR) on powerpc and whatever needed on arm ?
-
-Christophe
-
-> 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->   drivers/tty/serial/ucc_uart.c | 17 ++++++++++++++++-
->   1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-> index f286e91714cb..313697842e24 100644
-> --- a/drivers/tty/serial/ucc_uart.c
-> +++ b/drivers/tty/serial/ucc_uart.c
-> @@ -33,7 +33,10 @@
->   
->   #include <linux/firmware.h>
->   #include <soc/fsl/cpm.h>
-> -#include <asm/reg.h>
-> +
-> +#ifdef CONFIG_PPC32
-> +#include <asm/reg.h> /* mfspr, SPRN_SVR */
-> +#endif
->   
->   /*
->    * The GUMR flag for Soft UART.  This would normally be defined in qe.h,
-> @@ -1096,6 +1099,8 @@ static const struct uart_ops qe_uart_pops = {
->   	.verify_port    = qe_uart_verify_port,
->   };
->   
-> +
-> +#ifdef CONFIG_PPC32
->   /*
->    * Obtain the SOC model number and revision level
->    *
-> @@ -1238,6 +1243,16 @@ static int soft_uart_init(struct platform_device *ofdev)
->   	return 0;
->   }
->   
-> +#else /* !CONFIG_PPC32 */
-> +
-> +static int soft_uart_init(struct platform_device *ofdev)
-> +{
-> +	return 0;
-> +}
-> +
-> +#endif
-> +
-> +
->   static int ucc_uart_probe(struct platform_device *ofdev)
->   {
->   	struct device_node *np = ofdev->dev.of_node;
-> 
+Sami
