@@ -2,503 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B2AECA20
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E11EECA25
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 22:08:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfKAVFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 17:05:23 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:41918 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfKAVFX (ORCPT
+        id S1726817AbfKAVIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 17:08:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39236 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfKAVIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:05:23 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 13B4C5C2BE5;
-        Fri,  1 Nov 2019 22:05:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1572642318;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tZ0h3EbFObpMXriwNz6TxLUzEv415VpeQRqv5BkyAzM=;
-        b=aZ+jdaP2fbJVvi7Ct9ffPndXM1r43BGv6pQuKmuFKcBj4RM4OsE/vLAZTe0ZAYd6+psrvq
-        LN9fVToPoJkjs5IeFN4swvLqyoebECM0HMf1K9tzVMM0MEKlHCkr2kelkUZPY6LQXyGeAl
-        PIk9EPsaaqK6Eo9s3coSxBh6OTWq2vU=
+        Fri, 1 Nov 2019 17:08:09 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1iQe9O-0008LU-TT
+        for linux-kernel@vger.kernel.org; Fri, 01 Nov 2019 21:08:07 +0000
+Received: by mail-io1-f72.google.com with SMTP id v5so1605596iot.8
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 14:08:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=99Grxk3NP/rj106dyBNQOJBBT+7NzmkfjxIr2ycA+xY=;
+        b=cXOXFfRhldVFPddQCYx3GAy3YhKuvtmD//RsbdjZdPWP5Dy0SwcxbR9CaZHCQw3HcQ
+         aqnSXLckg0JXzWHYBJ1qX945sIKcDcWX+DvmY3jgJUd3fl8L/hAneT9JBPbLFOA8pWqO
+         ieUBEdTdxMWY0y7HjnczMptsLyQNPBVbBNY/cZlZ9f+9GEjHDaYgQMAUGO9VMKMxBury
+         LzauRYJpRuSSCqgr2z1MAUfvzZrLE5gZZGwSLG3S+IYScwdMAe47Z/VAbKZirYYZYqKt
+         aoYYhRa105yLKkorhdw2mEYxr6579XN4361FeZXCEVRJdM2LZHBhDrp2P4C3QX7Caq6H
+         lOGQ==
+X-Gm-Message-State: APjAAAV6ihhviy4Kzk+031aKORvcGdV4h2cK+sCi/NO6zEBAWETb6R+g
+        /aF+huR0AbrbD7wFaEp7FjA1lair0ueFQwxsJIvbf9BxHL66CwbBKn0RhiZm0mF39MEb4Swc2VC
+        MZYF8cgj4WqX6ihzl+EF0FGB/bhNy7U8ycDjuSHGFZA==
+X-Received: by 2002:a92:3dd8:: with SMTP id k85mr1030084ilf.176.1572642485709;
+        Fri, 01 Nov 2019 14:08:05 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxViiJ/H/ziNdfZ++M2P5LolU+tfBrHJuWfbH2VzvXMEWOTUG2WwEc09JNUg8f928m6IUIo4w==
+X-Received: by 2002:a92:3dd8:: with SMTP id k85mr1030038ilf.176.1572642485253;
+        Fri, 01 Nov 2019 14:08:05 -0700 (PDT)
+Received: from xps13.canonical.com (c-71-56-235-36.hsd1.co.comcast.net. [71.56.235.36])
+        by smtp.gmail.com with ESMTPSA id t16sm812926iol.12.2019.11.01.14.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 14:08:04 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 15:08:03 -0600
+From:   dann frazier <dann.frazier@canonical.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris <jmorris@namei.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: tracefs splats in lockdown=confidentiality mode
+Message-ID: <20191101210803.GA9841@xps13.dannf>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 01 Nov 2019 22:05:17 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     linux@armlinux.org.uk, Fangrui Song <maskray@google.com>,
-        Jian Cai <jiancai@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Roy Franz <rfranz@marvell.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        Doug Anderson <armlinux@m.disordat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        afzal mohammed <afzal.mohd.ma@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] arm: replace Sun/Solaris style flag on section directive
-In-Reply-To: <20191030174429.248697-1-ndesaulniers@google.com>
-References: <20191030174429.248697-1-ndesaulniers@google.com>
-Message-ID: <fa4e28a9a16c54319916be005159e250@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+hey,
+  fyi, I'm seeing a bunch of errors from tracefs when booting 5.4-rc5 in
+lockdown=confidentiality mode:
 
-On 2019-10-30 18:44, Nick Desaulniers wrote:
-> It looks like a section directive was using "Solaris style" to declare
-> the section flags. Replace this with the GNU style so that Clang's
-> integrated assembler can assemble this directive.
-> 
-> The modified instances were identified via:
-> $ ag \\.section | grep \#
+[    1.763630] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    1.772332] Could not create tracefs 'available_events' entry
+[    1.778633] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    1.787095] Could not create tracefs 'set_event' entry
+[    1.792412] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+(...)
+[    2.899481] Could not create tracefs 'set_graph_notrace' entry
+[    2.905671] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    2.913934] ------------[ cut here ]------------
+[    2.918435] Could not register function stat for cpu 0
+[    2.923717] WARNING: CPU: 1 PID: 1 at kernel/trace/ftrace.c:987 ftrace_init_tracefs_toplevel+0x168/0x1bc
+[    2.933939] Modules linked in:
+[    2.937290] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.4.0-050400rc5-generic #201910271430
+[    2.946528] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[    2.954088] pstate: 60400005 (nZCv daif +PAN -UAO)
+[    2.959359] pc : ftrace_init_tracefs_toplevel+0x168/0x1bc
+[    2.965262] lr : ftrace_init_tracefs_toplevel+0x168/0x1bc
+[    2.971192] sp : ffff80001002bd40
+[    2.974852] x29: ffff80001002bd40 x28: 0000000000000000 
+[    2.980680] x27: 0000000000000000 x26: ffff8000119f9358 
+[    2.986552] x25: ffff8000119f9580 x24: ffff00007fb77200 
+[    2.992359] x23: ffff00007c873e80 x22: ffff80001153d200 
+[    2.998201] x21: ffff800010d8ad08 x20: 0000000000000000 
+[    3.004007] x19: 0000000000000000 x18: 0000000000000010 
+[    3.009851] x17: 0000000000000007 x16: 000000000000000e 
+[    3.015674] x15: ffff00007d1213e8 x14: ffffffffffffffff 
+[    3.021526] x13: ffff80009002ba47 x12: ffff80001002ba4f 
+[    3.027338] x11: ffff800011a1e000 x10: 0000000000000000 
+[    3.033148] x9 : ffff800011c13000 x8 : 000000000000015d 
+[    3.038984] x7 : 0000000000000017 x6 : ffff800011c129c9 
+[    3.044783] x5 : 0000000000000007 x4 : 0000000000000000 
+[    3.050617] x3 : 0000000000000000 x2 : 00000000ffffffff 
+[    3.056430] x1 : bcf0a68bd924d700 x0 : 0000000000000000 
+[    3.062258] Call trace:
+[    3.064951]  ftrace_init_tracefs_toplevel+0x168/0x1bc
+[    3.070571]  tracer_init_tracefs+0xc0/0x1fc
+[    3.075165]  do_one_initcall+0x50/0x220
+[    3.079384]  kernel_init_freeable+0x1ec/0x2b0
+[    3.084186]  kernel_init+0x18/0x108
+[    3.088032]  ret_from_fork+0x10/0x18
+[    3.091983] ---[ end trace 32f7e54339335d2a ]---
+[    3.097149] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.105311] Could not create tracefs 'tracing_thresh' entry
+[    3.110762] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.119199] Could not create tracefs 'README' entry
+[    3.124212] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.132920] Could not create tracefs 'saved_cmdlines' entry
+[    3.139075] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.147592] Could not create tracefs 'saved_cmdlines_size' entry
+[    3.153950] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.162288] Could not create tracefs 'saved_tgids' entry
+[    3.206061] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.214629] Could not create tracefs 'dyn_ftrace_total_info' entry
+[    3.221063] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.229245] Could not create tracefs 'funcgraph-overrun' entry
+[    3.234990] ------------[ cut here ]------------
+[    3.239724] Failed to create trace option: funcgraph-overrun
+[    3.239774] WARNING: CPU: 1 PID: 1 at kernel/trace/trace.c:8106 create_trace_option_files+0x200/0x230
+[    3.255931] Modules linked in:
+[    3.259332] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W         5.4.0-050400rc5-generic #201910271430
+[    3.270051] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[    3.277621] pstate: 60400005 (nZCv daif +PAN -UAO)
+[    3.282902] pc : create_trace_option_files+0x200/0x230
+[    3.288564] lr : create_trace_option_files+0x200/0x230
+[    3.294247] sp : ffff80001002bd10
+[    3.297914] x29: ffff80001002bd10 x28: ffff800011a34508 
+[    3.303769] x27: ffff00007cb12e00 x26: ffff800011bb243d 
+[    3.309638] x25: ffff800010d8b750 x24: ffff00007cb12e00 
+[    3.315485] x23: 0000000000000000 x22: ffff800011a34508 
+[    3.321327] x21: ffff800011a344d0 x20: 0000000000000000 
+[    3.327284] x19: ffff800011a320b8 x18: 0000000000000010 
+[    3.333121] x17: 0000000000000007 x16: 000000000000000e 
+[    3.338980] x15: ffff00007d1213e8 x14: ffffffffffffffff 
+[    3.344827] x13: ffff80009002b9a7 x12: ffff80001002b9af 
+[    3.350690] x11: ffff800011a1e000 x10: 0000000000000000 
+[    3.356524] x9 : 00000000fffffffe x8 : 6870617267636e75 
+[    3.362394] x7 : 66203a6e6f697470 x6 : ffff800011c12498 
+[    3.368229] x5 : 0000000000000030 x4 : 0000000000000000 
+[    3.374082] x3 : 0000000000000000 x2 : 00000000ffffffff 
+[    3.379915] x1 : bcf0a68bd924d700 x0 : 0000000000000000 
+[    3.385768] Call trace:
+[    3.388478]  create_trace_option_files+0x200/0x230
+[    3.393849]  __update_tracer_options+0x34/0x48
+[    3.398748]  tracer_init_tracefs+0x1e0/0x1fc
+[    3.403454]  do_one_initcall+0x50/0x220
+[    3.407692]  kernel_init_freeable+0x1ec/0x2b0
+[    3.412494]  kernel_init+0x18/0x108
+[    3.416351]  ret_from_fork+0x10/0x18
+[    3.420287] ---[ end trace 32f7e54339335d2b ]---
+[    3.425479] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.433724] Could not create tracefs 'funcgraph-cpu' entry
+(...)
+[    3.692698] Could not create tracefs 'uprobe_events' entry
+[    3.698724] Lockdown: swapper/0: use of tracefs is restricted; see man kernel_lockdown.7
+[    3.707217] Could not create tracefs 'uprobe_profile' entry
 
-I actually have the *very same* patch on my tree, just did not cleanup
-the commit message and submit :-(
 
-Anyways, this looks good to me:
-
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
---
-Stefan
-
-
-> 
-> Link:
-> https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_7.html#SEC119
-> Link: https://github.com/ClangBuiltLinux/linux/issues/744
-> Link: https://bugs.llvm.org/show_bug.cgi?id=43759
-> Link: https://reviews.llvm.org/D69296
-> Suggested-by: Fangrui Song <maskray@google.com>
-> Suggested-by: Jian Cai <jiancai@google.com>
-> Suggested-by: Peter Smith <peter.smith@linaro.org>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> ---
->  arch/arm/boot/bootp/init.S            | 2 +-
->  arch/arm/boot/compressed/big-endian.S | 2 +-
->  arch/arm/boot/compressed/head.S       | 2 +-
->  arch/arm/boot/compressed/piggy.S      | 2 +-
->  arch/arm/mm/proc-arm1020.S            | 2 +-
->  arch/arm/mm/proc-arm1020e.S           | 2 +-
->  arch/arm/mm/proc-arm1022.S            | 2 +-
->  arch/arm/mm/proc-arm1026.S            | 2 +-
->  arch/arm/mm/proc-arm720.S             | 2 +-
->  arch/arm/mm/proc-arm740.S             | 2 +-
->  arch/arm/mm/proc-arm7tdmi.S           | 2 +-
->  arch/arm/mm/proc-arm920.S             | 2 +-
->  arch/arm/mm/proc-arm922.S             | 2 +-
->  arch/arm/mm/proc-arm925.S             | 2 +-
->  arch/arm/mm/proc-arm926.S             | 2 +-
->  arch/arm/mm/proc-arm940.S             | 2 +-
->  arch/arm/mm/proc-arm946.S             | 2 +-
->  arch/arm/mm/proc-arm9tdmi.S           | 2 +-
->  arch/arm/mm/proc-fa526.S              | 2 +-
->  arch/arm/mm/proc-feroceon.S           | 2 +-
->  arch/arm/mm/proc-mohawk.S             | 2 +-
->  arch/arm/mm/proc-sa110.S              | 2 +-
->  arch/arm/mm/proc-sa1100.S             | 2 +-
->  arch/arm/mm/proc-v6.S                 | 2 +-
->  arch/arm/mm/proc-v7.S                 | 2 +-
->  arch/arm/mm/proc-v7m.S                | 4 ++--
->  arch/arm/mm/proc-xsc3.S               | 2 +-
->  arch/arm/mm/proc-xscale.S             | 2 +-
->  28 files changed, 29 insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/arm/boot/bootp/init.S b/arch/arm/boot/bootp/init.S
-> index 5c476bd2b4ce..b562da2f7040 100644
-> --- a/arch/arm/boot/bootp/init.S
-> +++ b/arch/arm/boot/bootp/init.S
-> @@ -13,7 +13,7 @@
->   *  size immediately following the kernel, we could build this into
->   *  a binary blob, and concatenate the zImage using the cat command.
->   */
-> -		.section .start,#alloc,#execinstr
-> +		.section .start, "ax"
->  		.type	_start, #function
->  		.globl	_start
->  
-> diff --git a/arch/arm/boot/compressed/big-endian.S
-> b/arch/arm/boot/compressed/big-endian.S
-> index 88e2a88d324b..0e092c36da2f 100644
-> --- a/arch/arm/boot/compressed/big-endian.S
-> +++ b/arch/arm/boot/compressed/big-endian.S
-> @@ -6,7 +6,7 @@
->   *  Author: Nicolas Pitre
->   */
->  
-> -	.section ".start", #alloc, #execinstr
-> +	.section ".start", "ax"
->  
->  	mrc	p15, 0, r0, c1, c0, 0	@ read control reg
->  	orr	r0, r0, #(1 << 7)	@ enable big endian mode
-> diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-> index 93dffed0ac6e..15ecad944847 100644
-> --- a/arch/arm/boot/compressed/head.S
-> +++ b/arch/arm/boot/compressed/head.S
-> @@ -140,7 +140,7 @@
->  #endif
->  		.endm
->  
-> -		.section ".start", #alloc, #execinstr
-> +		.section ".start", "ax"
->  /*
->   * sort out different calling conventions
->   */
-> diff --git a/arch/arm/boot/compressed/piggy.S b/arch/arm/boot/compressed/piggy.S
-> index 0284f84dcf38..27577644ee72 100644
-> --- a/arch/arm/boot/compressed/piggy.S
-> +++ b/arch/arm/boot/compressed/piggy.S
-> @@ -1,5 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> -	.section .piggydata,#alloc
-> +	.section .piggydata, "a"
->  	.globl	input_data
->  input_data:
->  	.incbin	"arch/arm/boot/compressed/piggy_data"
-> diff --git a/arch/arm/mm/proc-arm1020.S b/arch/arm/mm/proc-arm1020.S
-> index 4fa5371bc662..2785da387c91 100644
-> --- a/arch/arm/mm/proc-arm1020.S
-> +++ b/arch/arm/mm/proc-arm1020.S
-> @@ -491,7 +491,7 @@ cpu_arm1020_name:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm1020_proc_info,#object
->  __arm1020_proc_info:
-> diff --git a/arch/arm/mm/proc-arm1020e.S b/arch/arm/mm/proc-arm1020e.S
-> index 5d8a8339e09a..e9ea237ed785 100644
-> --- a/arch/arm/mm/proc-arm1020e.S
-> +++ b/arch/arm/mm/proc-arm1020e.S
-> @@ -449,7 +449,7 @@ arm1020e_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm1020e_proc_info,#object
->  __arm1020e_proc_info:
-> diff --git a/arch/arm/mm/proc-arm1022.S b/arch/arm/mm/proc-arm1022.S
-> index b3dd95c345e4..920c279e7879 100644
-> --- a/arch/arm/mm/proc-arm1022.S
-> +++ b/arch/arm/mm/proc-arm1022.S
-> @@ -443,7 +443,7 @@ arm1022_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm1022_proc_info,#object
->  __arm1022_proc_info:
-> diff --git a/arch/arm/mm/proc-arm1026.S b/arch/arm/mm/proc-arm1026.S
-> index ac5afde12f35..10e21012380b 100644
-> --- a/arch/arm/mm/proc-arm1026.S
-> +++ b/arch/arm/mm/proc-arm1026.S
-> @@ -437,7 +437,7 @@ arm1026_crval:
->  	string	cpu_arm1026_name, "ARM1026EJ-S"
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm1026_proc_info,#object
->  __arm1026_proc_info:
-> diff --git a/arch/arm/mm/proc-arm720.S b/arch/arm/mm/proc-arm720.S
-> index c99d24363f32..39361e196d61 100644
-> --- a/arch/arm/mm/proc-arm720.S
-> +++ b/arch/arm/mm/proc-arm720.S
-> @@ -172,7 +172,7 @@ arm720_crval:
->   * See <asm/procinfo.h> for a definition of this structure.
->   */
->  
-> -		.section ".proc.info.init", #alloc
-> +		.section ".proc.info.init", "a"
->  
->  .macro arm720_proc_info name:req, cpu_val:req, cpu_mask:req,
-> cpu_name:req, cpu_flush:req
->  		.type	__\name\()_proc_info,#object
-> diff --git a/arch/arm/mm/proc-arm740.S b/arch/arm/mm/proc-arm740.S
-> index 1b4a3838393f..1a94bbf6e53f 100644
-> --- a/arch/arm/mm/proc-arm740.S
-> +++ b/arch/arm/mm/proc-arm740.S
-> @@ -128,7 +128,7 @@ __arm740_setup:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  	.type	__arm740_proc_info,#object
->  __arm740_proc_info:
->  	.long	0x41807400
-> diff --git a/arch/arm/mm/proc-arm7tdmi.S b/arch/arm/mm/proc-arm7tdmi.S
-> index 17a4687065c7..52b66cf0259e 100644
-> --- a/arch/arm/mm/proc-arm7tdmi.S
-> +++ b/arch/arm/mm/proc-arm7tdmi.S
-> @@ -72,7 +72,7 @@ __arm7tdmi_setup:
->  
->  		.align
->  
-> -		.section ".proc.info.init", #alloc
-> +		.section ".proc.info.init", "a"
->  
->  .macro arm7tdmi_proc_info name:req, cpu_val:req, cpu_mask:req, cpu_name:req, \
->  	extra_hwcaps=0
-> diff --git a/arch/arm/mm/proc-arm920.S b/arch/arm/mm/proc-arm920.S
-> index 298c76b47749..31ac8acc34dc 100644
-> --- a/arch/arm/mm/proc-arm920.S
-> +++ b/arch/arm/mm/proc-arm920.S
-> @@ -434,7 +434,7 @@ arm920_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm920_proc_info,#object
->  __arm920_proc_info:
-> diff --git a/arch/arm/mm/proc-arm922.S b/arch/arm/mm/proc-arm922.S
-> index 824be3a0bc23..ca2c7ca8af21 100644
-> --- a/arch/arm/mm/proc-arm922.S
-> +++ b/arch/arm/mm/proc-arm922.S
-> @@ -412,7 +412,7 @@ arm922_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm922_proc_info,#object
->  __arm922_proc_info:
-> diff --git a/arch/arm/mm/proc-arm925.S b/arch/arm/mm/proc-arm925.S
-> index d40cff8f102c..a381a0c9f109 100644
-> --- a/arch/arm/mm/proc-arm925.S
-> +++ b/arch/arm/mm/proc-arm925.S
-> @@ -477,7 +477,7 @@ arm925_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro arm925_proc_info name:req, cpu_val:req, cpu_mask:req,
-> cpu_name:req, cache
->  	.type	__\name\()_proc_info,#object
-> diff --git a/arch/arm/mm/proc-arm926.S b/arch/arm/mm/proc-arm926.S
-> index f3cd08f353f0..3188ab2bac61 100644
-> --- a/arch/arm/mm/proc-arm926.S
-> +++ b/arch/arm/mm/proc-arm926.S
-> @@ -460,7 +460,7 @@ arm926_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm926_proc_info,#object
->  __arm926_proc_info:
-> diff --git a/arch/arm/mm/proc-arm940.S b/arch/arm/mm/proc-arm940.S
-> index 1c26d991386d..4b8a00220cc9 100644
-> --- a/arch/arm/mm/proc-arm940.S
-> +++ b/arch/arm/mm/proc-arm940.S
-> @@ -340,7 +340,7 @@ __arm940_setup:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__arm940_proc_info,#object
->  __arm940_proc_info:
-> diff --git a/arch/arm/mm/proc-arm946.S b/arch/arm/mm/proc-arm946.S
-> index 2dc1c75a4fd4..555becf9c758 100644
-> --- a/arch/arm/mm/proc-arm946.S
-> +++ b/arch/arm/mm/proc-arm946.S
-> @@ -395,7 +395,7 @@ __arm946_setup:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  	.type	__arm946_proc_info,#object
->  __arm946_proc_info:
->  	.long	0x41009460
-> diff --git a/arch/arm/mm/proc-arm9tdmi.S b/arch/arm/mm/proc-arm9tdmi.S
-> index 913c06e590af..ef517530130b 100644
-> --- a/arch/arm/mm/proc-arm9tdmi.S
-> +++ b/arch/arm/mm/proc-arm9tdmi.S
-> @@ -66,7 +66,7 @@ __arm9tdmi_setup:
->  
->  		.align
->  
-> -		.section ".proc.info.init", #alloc
-> +		.section ".proc.info.init", "a"
->  
->  .macro arm9tdmi_proc_info name:req, cpu_val:req, cpu_mask:req, cpu_name:req
->  		.type	__\name\()_proc_info, #object
-> diff --git a/arch/arm/mm/proc-fa526.S b/arch/arm/mm/proc-fa526.S
-> index 8120b6f4dbb8..dddf833fe000 100644
-> --- a/arch/arm/mm/proc-fa526.S
-> +++ b/arch/arm/mm/proc-fa526.S
-> @@ -185,7 +185,7 @@ fa526_cr1_set:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__fa526_proc_info,#object
->  __fa526_proc_info:
-> diff --git a/arch/arm/mm/proc-feroceon.S b/arch/arm/mm/proc-feroceon.S
-> index bb6dc34d42a3..b12b76bc8d30 100644
-> --- a/arch/arm/mm/proc-feroceon.S
-> +++ b/arch/arm/mm/proc-feroceon.S
-> @@ -571,7 +571,7 @@ feroceon_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro feroceon_proc_info name:req, cpu_val:req, cpu_mask:req,
-> cpu_name:req, cache:req
->  	.type	__\name\()_proc_info,#object
-> diff --git a/arch/arm/mm/proc-mohawk.S b/arch/arm/mm/proc-mohawk.S
-> index f08308578885..d47d6c5cee63 100644
-> --- a/arch/arm/mm/proc-mohawk.S
-> +++ b/arch/arm/mm/proc-mohawk.S
-> @@ -416,7 +416,7 @@ mohawk_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__88sv331x_proc_info,#object
->  __88sv331x_proc_info:
-> diff --git a/arch/arm/mm/proc-sa110.S b/arch/arm/mm/proc-sa110.S
-> index d5bc5d702563..baba503ba816 100644
-> --- a/arch/arm/mm/proc-sa110.S
-> +++ b/arch/arm/mm/proc-sa110.S
-> @@ -196,7 +196,7 @@ sa110_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	.type	__sa110_proc_info,#object
->  __sa110_proc_info:
-> diff --git a/arch/arm/mm/proc-sa1100.S b/arch/arm/mm/proc-sa1100.S
-> index be7b611c76c7..75ebacc8e4e5 100644
-> --- a/arch/arm/mm/proc-sa1100.S
-> +++ b/arch/arm/mm/proc-sa1100.S
-> @@ -239,7 +239,7 @@ sa1100_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro sa1100_proc_info name:req, cpu_val:req, cpu_mask:req, cpu_name:req
->  	.type	__\name\()_proc_info,#object
-> diff --git a/arch/arm/mm/proc-v6.S b/arch/arm/mm/proc-v6.S
-> index c1c85eb3484f..1dd0d5ca27da 100644
-> --- a/arch/arm/mm/proc-v6.S
-> +++ b/arch/arm/mm/proc-v6.S
-> @@ -261,7 +261,7 @@ v6_crval:
->  	string	cpu_elf_name, "v6"
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	/*
->  	 * Match any ARMv6 processor core.
-> diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
-> index c4e8006a1a8c..48e0ef6f0dcc 100644
-> --- a/arch/arm/mm/proc-v7.S
-> +++ b/arch/arm/mm/proc-v7.S
-> @@ -644,7 +644,7 @@ __v7_setup_stack:
->  	string	cpu_elf_name, "v7"
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  	/*
->  	 * Standard v7 proc info content
-> diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
-> index 1a49d503eafc..84459c1d31b8 100644
-> --- a/arch/arm/mm/proc-v7m.S
-> +++ b/arch/arm/mm/proc-v7m.S
-> @@ -93,7 +93,7 @@ ENTRY(cpu_cm7_proc_fin)
->  	ret	lr
->  ENDPROC(cpu_cm7_proc_fin)
->  
-> -	.section ".init.text", #alloc, #execinstr
-> +	.section ".init.text", "ax"
->  
->  __v7m_cm7_setup:
->  	mov	r8, #(V7M_SCB_CCR_DC | V7M_SCB_CCR_IC| V7M_SCB_CCR_BP)
-> @@ -177,7 +177,7 @@ ENDPROC(__v7m_setup)
->  	string cpu_elf_name "v7m"
->  	string cpu_v7m_name "ARMv7-M"
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro __v7m_proc name, initfunc, cache_fns = nop_cache_fns, hwcaps =
-> 0,  proc_fns = v7m_processor_functions
->  	.long	0			/* proc_info_list.__cpu_mm_mmu_flags */
-> diff --git a/arch/arm/mm/proc-xsc3.S b/arch/arm/mm/proc-xsc3.S
-> index 1ac0fbbe9f12..42eaecc43cfe 100644
-> --- a/arch/arm/mm/proc-xsc3.S
-> +++ b/arch/arm/mm/proc-xsc3.S
-> @@ -496,7 +496,7 @@ xsc3_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro xsc3_proc_info name:req, cpu_val:req, cpu_mask:req
->  	.type	__\name\()_proc_info,#object
-> diff --git a/arch/arm/mm/proc-xscale.S b/arch/arm/mm/proc-xscale.S
-> index bdb2b7749b03..18ac5a1f8922 100644
-> --- a/arch/arm/mm/proc-xscale.S
-> +++ b/arch/arm/mm/proc-xscale.S
-> @@ -610,7 +610,7 @@ xscale_crval:
->  
->  	.align
->  
-> -	.section ".proc.info.init", #alloc
-> +	.section ".proc.info.init", "a"
->  
->  .macro xscale_proc_info name:req, cpu_val:req, cpu_mask:req,
-> cpu_name:req, cache
->  	.type	__\name\()_proc_info,#object
+ -dann
