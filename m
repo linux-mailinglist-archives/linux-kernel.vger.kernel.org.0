@@ -2,60 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE5DEC9C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5FFEC9C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 21:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfKAUmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 16:42:51 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40945 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfKAUmv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:42:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id q2so4942787ljg.7;
-        Fri, 01 Nov 2019 13:42:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZGSw0Pf1yR7L0D2XUywPAXmKwfJWwLsrgldLsCFIOFg=;
-        b=ikqziVfgGr73GAy1cRnOZrkrHml/aNL1IkBEoAFKaKqFBgzoosvRYbOKj/h2wPjDZ4
-         /Uh62d2CtaE+6aLHFYv9eJ3fgMwIDzViNazwXGHJ0IfNQ3+tcn5csPR1u8hU0JGjV3f2
-         R5lus91udvDRirSnmLkNl6B9H2GVfshZuPWFEYspsSiI7JWCuLSRbHIQfork2RYavLtA
-         ArNQFvTmBYmOeBDQH9ylAsmE1z5A6Wcu2TyfXtW8Gee1xCyx2pjLC4fttuIxyATyiPNK
-         yHj1+ObGAXtYhJj1RN9fNoy7ISvmB5vrRVXl/pHHv62yY0n8K9xcaiPb71RAqbNcwfFe
-         3ZhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZGSw0Pf1yR7L0D2XUywPAXmKwfJWwLsrgldLsCFIOFg=;
-        b=CHgZ1dJz/O+a5f/BeVz02JzTUA6mmUk51xvLcHSED9Lgx3MPBblk6DWporOPtCCiM1
-         /8wbVDmbEPZjYl4jgWtPHrBflYIwgPWGnGM+r/wEbBLebsIepICigKq3teggKtclm3hi
-         eG4U94mxfBFpWeEW6BajelZ7yRo9MWF1DnVXOCDYK5QWGsqE9F4vIcmtWl5FDUA9YqJO
-         9r+TVTEIbWFNitcbLM1syUpJGYhKq2YelOiHjyDs6ZAeMA0xpE1BQshz9NYvIaCfUFED
-         3QM4dzwNwWejMO7dv2s5ghnPthKkQiGkVe0J2qrvRzyZvCswIaInprkaRIGj7m/AXfVD
-         v8yg==
-X-Gm-Message-State: APjAAAXG0sPYV5nfKzoXJR6ipkZLu79hCBV3Klab2d9VpWKR7jbs1v7Y
-        Nybn/6LOHkV32ryD/pXGv1U=
-X-Google-Smtp-Source: APXvYqxYE3IyIX8b2BVVt44CkmPEeeQhwtVdacK9SIq4c59o5QNNJVjRK0M+MlQmVg8WgBbtlV6xTQ==
-X-Received: by 2002:a05:651c:313:: with SMTP id a19mr9543563ljp.199.1572640969006;
-        Fri, 01 Nov 2019 13:42:49 -0700 (PDT)
-Received: from debian-tom.home (2-111-15-75-dynamic.dk.customer.tdc.net. [2.111.15.75])
-        by smtp.gmail.com with ESMTPSA id 190sm3766098ljj.72.2019.11.01.13.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 13:42:48 -0700 (PDT)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com
-Subject: [PATCH] Fix invalid-free in bcsp_close()
-Date:   Fri,  1 Nov 2019 21:42:44 +0100
-Message-Id: <20191101204244.14509-1-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <000000000000109f9605964acf6c@google.com>
-References: <000000000000109f9605964acf6c@google.com>
+        id S1727669AbfKAUqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 16:46:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbfKAUqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 16:46:14 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC0A2217D9;
+        Fri,  1 Nov 2019 20:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572641174;
+        bh=F0N4am3tvuIABgzPZ9GWSjWx45Dug7D8vk5AaQAP3Ns=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IKiwWi3aVxH1kpP0lBFOKoRM7EVYDoG/yasPcl7BQEF59deTol6utTgyESIG4dAGE
+         fnoRmQxUdcNo0NQ4icSiFNYZQBJKThpB9Nrp9wRZZoeoBraDfX8hQww5Pb7tiW4QbJ
+         +L8xFng+PxAAADAaKkhNJ1573F2V8Aj8i0Wqz8pQ=
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 0/6] PCI/PM: Minor fix and cleanups
+Date:   Fri,  1 Nov 2019 15:45:52 -0500
+Message-Id: <20191101204558.210235-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,45 +39,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Syzbot reported an invalid-free that I introduced fixing a memleak.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-bcsp_recv() also frees bcsp->rx_skb but never nullifies its value.
-Nullify bcsp->rx_skb every time it is freed.
+First, fix our D2 delay (which I think was just a bug -- we delayed in
+microseconds instead of milliseconds, but I'm not sure we really even use
+D2).
 
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com
----
- drivers/bluetooth/hci_bcsp.c | 3 +++
- 1 file changed, 3 insertions(+)
+The rest are just cleanups that should not change any behavior.  These are
+based on my current pci/pm branch (0d1685046e61) and I pushed them to
+pci/pm-2 for now.
 
-diff --git a/drivers/bluetooth/hci_bcsp.c b/drivers/bluetooth/hci_bcsp.c
-index fe2e307009f4..cf4a56095817 100644
---- a/drivers/bluetooth/hci_bcsp.c
-+++ b/drivers/bluetooth/hci_bcsp.c
-@@ -591,6 +591,7 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
- 			if (*ptr == 0xc0) {
- 				BT_ERR("Short BCSP packet");
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_START;
- 				bcsp->rx_count = 0;
- 			} else
-@@ -606,6 +607,7 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
- 			    bcsp->rx_skb->data[2])) != bcsp->rx_skb->data[3]) {
- 				BT_ERR("Error in BCSP hdr checksum");
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
- 				bcsp->rx_count = 0;
- 				continue;
-@@ -630,6 +632,7 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
- 				       bscp_get_crc(bcsp));
- 
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
- 				bcsp->rx_count = 0;
- 				continue;
+Bjorn Helgaas (6):
+  PCI/PM: Apply D2 delay as milliseconds, not microseconds
+  PCI/PM: Expand PM reset messages to mention D3hot (not just D3)
+  PCI/PM: Simplify pci_set_power_state()
+  xen-platform: Convert to generic power management
+  PCI/PM: Remove unused pci_driver.resume_early() hook
+  PCI/PM: Remove unused pci_driver.suspend_late() hook
+
+ Documentation/power/pci.rst | 10 ++++-----
+ drivers/pci/pci-driver.c    | 43 ++++++-------------------------------
+ drivers/pci/pci.c           |  8 +++----
+ drivers/xen/platform-pci.c  | 10 ++++++---
+ include/linux/pci.h         |  4 ----
+ 5 files changed, 22 insertions(+), 53 deletions(-)
+
 -- 
-2.20.1
+2.24.0.rc1.363.gb1bccd3e3d-goog
 
