@@ -2,177 +2,702 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D59CEC417
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 14:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E32E5EC421
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 15:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfKANzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 09:55:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:1155 "EHLO mga12.intel.com"
+        id S1727650AbfKAOAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 10:00:12 -0400
+Received: from foss.arm.com ([217.140.110.172]:35728 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfKANzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 09:55:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 06:55:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,255,1569308400"; 
-   d="scan'208";a="190964201"
-Received: from dpdk-virtio-tbie-2.sh.intel.com (HELO ___) ([10.67.104.74])
-  by orsmga007.jf.intel.com with ESMTP; 01 Nov 2019 06:55:40 -0700
-Date:   Fri, 1 Nov 2019 21:56:28 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, alex.williamson@redhat.com,
-        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        lingshan.zhu@intel.com
-Subject: Re: [PATCH v4] vhost: introduce mdev based hardware backend
-Message-ID: <20191101135628.GA18045@___>
-References: <20191031140114.25615-1-tiwei.bie@intel.com>
- <f9036643-7aaf-7107-8bf0-85975ab95d4b@redhat.com>
+        id S1727241AbfKAOAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 10:00:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B9E731F;
+        Fri,  1 Nov 2019 07:00:10 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67D293F718;
+        Fri,  1 Nov 2019 07:00:09 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 14:00:07 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Tom Joseph <tjoseph@cadence.com>
+Cc:     linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] PCI: cadence: Refactor driver to use as a core
+ library
+Message-ID: <20191101140006.GG9723@e119886-lin.cambridge.arm.com>
+References: <1572349512-7776-1-git-send-email-tjoseph@cadence.com>
+ <1572349512-7776-2-git-send-email-tjoseph@cadence.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f9036643-7aaf-7107-8bf0-85975ab95d4b@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1572349512-7776-2-git-send-email-tjoseph@cadence.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 03:17:39PM +0800, Jason Wang wrote:
-> On 2019/10/31 下午10:01, Tiwei Bie wrote:
-> > This patch introduces a mdev based hardware vhost backend.
-> > This backend is built on top of the same abstraction used
-> > in virtio-mdev and provides a generic vhost interface for
-> > userspace to accelerate the virtio devices in guest.
-> > 
-> > This backend is implemented as a mdev device driver on top
-> > of the same mdev device ops used in virtio-mdev but using
-> > a different mdev class id, and it will register the device
-> > as a VFIO device for userspace to use. Userspace can setup
-> > the IOMMU with the existing VFIO container/group APIs and
-> > then get the device fd with the device name. After getting
-> > the device fd of this device, userspace can use vhost ioctls
-> > to setup the backend.
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> > This patch depends on below series:
-> > https://lkml.org/lkml/2019/10/30/62
-> > 
-> > v3 -> v4:
-> > - Rebase on top of virtio-mdev series v6;
-> > - Some minor tweaks and improvements;
-> > 
-> > v2 -> v3:
-> > - Fix the return value (Jason);
-> > - Don't cache unnecessary information in vhost-mdev (Jason);
-> > - Get rid of the memset in open (Jason);
-> > - Add comments for VHOST_SET_MEM_TABLE, ... (Jason);
-> > - Filter out unsupported features in vhost-mdev (Jason);
-> > - Add _GET_DEVICE_ID ioctl (Jason);
-> > - Add _GET_CONFIG/_SET_CONFIG ioctls (Jason);
-> > - Drop _GET_QUEUE_NUM ioctl (Jason);
-> > - Fix the copy-paste errors in _IOW/_IOR usage;
-> > - Some minor fixes and improvements;
-> > 
-> > v1 -> v2:
-> > - Replace _SET_STATE with _SET_STATUS (MST);
-> > - Check status bits at each step (MST);
-> > - Report the max ring size and max number of queues (MST);
-> > - Add missing MODULE_DEVICE_TABLE (Jason);
-> > - Only support the network backend w/o multiqueue for now;
-> > - Some minor fixes and improvements;
-> > - Rebase on top of virtio-mdev series v4;
-> > 
-> > RFC v4 -> v1:
-> > - Implement vhost-mdev as a mdev device driver directly and
-> >    connect it to VFIO container/group. (Jason);
-> > - Pass ring addresses as GPAs/IOVAs in vhost-mdev to avoid
-> >    meaningless HVA->GPA translations (Jason);
-> > 
-> > RFC v3 -> RFC v4:
-> > - Build vhost-mdev on top of the same abstraction used by
-> >    virtio-mdev (Jason);
-> > - Introduce vhost fd and pass VFIO fd via SET_BACKEND ioctl (MST);
-> > 
-> > RFC v2 -> RFC v3:
-> > - Reuse vhost's ioctls instead of inventing a VFIO regions/irqs
-> >    based vhost protocol on top of vfio-mdev (Jason);
-> > 
-> > RFC v1 -> RFC v2:
-> > - Introduce a new VFIO device type to build a vhost protocol
-> >    on top of vfio-mdev;
-> > 
-> >   drivers/vfio/mdev/mdev_core.c    |  20 ++
-> >   drivers/vfio/mdev/mdev_private.h |   1 +
-> >   drivers/vhost/Kconfig            |  12 +
-> >   drivers/vhost/Makefile           |   3 +
-> >   drivers/vhost/mdev.c             | 556 +++++++++++++++++++++++++++++++
-> >   include/linux/mdev.h             |   5 +
-> >   include/uapi/linux/vhost.h       |  18 +
-> >   include/uapi/linux/vhost_types.h |   8 +
-> >   8 files changed, 623 insertions(+)
-> >   create mode 100644 drivers/vhost/mdev.c
-> > 
-> > diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-> > index 22ca589750d8..109dbac01a8f 100644
-> > --- a/drivers/vfio/mdev/mdev_core.c
-> > +++ b/drivers/vfio/mdev/mdev_core.c
-> > @@ -96,6 +96,26 @@ mdev_get_virtio_ops(struct mdev_device *mdev)
-> >   }
-> >   EXPORT_SYMBOL(mdev_get_virtio_ops);
-> > +/* Specify the vhost device ops for the mdev device, this
-> > + * must be called during create() callback for vhost mdev device.
-> > + */
-> > +void mdev_set_vhost_ops(struct mdev_device *mdev,
-> > +			const struct virtio_mdev_device_ops *vhost_ops)
-> > +{
-> > +	mdev_set_class(mdev, MDEV_CLASS_ID_VHOST);
-> > +	mdev->vhost_ops = vhost_ops;
-> > +}
-> > +EXPORT_SYMBOL(mdev_set_vhost_ops);
-> > +
-> > +/* Get the vhost device ops for the mdev device. */
-> > +const struct virtio_mdev_device_ops *
-> > +mdev_get_vhost_ops(struct mdev_device *mdev)
-> > +{
-> > +	WARN_ON(mdev->class_id != MDEV_CLASS_ID_VHOST);
-> > +	return mdev->vhost_ops;
-> > +}
-> > +EXPORT_SYMBOL(mdev_get_vhost_ops);
-> > +
-> >   struct device *mdev_dev(struct mdev_device *mdev)
-> >   {
-> >   	return &mdev->dev;
-> > diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
-> > index 7b47890c34e7..5597c846e52f 100644
-> > --- a/drivers/vfio/mdev/mdev_private.h
-> > +++ b/drivers/vfio/mdev/mdev_private.h
-> > @@ -40,6 +40,7 @@ struct mdev_device {
-> >   	union {
-> >   		const struct vfio_mdev_device_ops *vfio_ops;
-> >   		const struct virtio_mdev_device_ops *virtio_ops;
-> > +		const struct virtio_mdev_device_ops *vhost_ops;
+On Tue, Oct 29, 2019 at 11:45:11AM +0000, Tom Joseph wrote:
+> Cadence PCIe host and endpoint IP may be embedded into a variety of
+> SoCs/platforms. Let's extract the platform related APIs/Structures in the
+> current driver to a separate file (pcie-cadence-plat.c), such that the
+> common functionality can be used by future platforms.
 > 
-> 
-> Any reason why virtio_ops is not used for vhost here?
+> Signed-off-by: Tom Joseph <tjoseph@cadence.com>
 
-I don't have a strong opinion on this.
-Will use virtio_ops directly.
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
+> ---
+>  drivers/pci/controller/Kconfig             |  31 +++--
+>  drivers/pci/controller/Makefile            |   1 +
+>  drivers/pci/controller/pcie-cadence-ep.c   |  96 +---------------
+>  drivers/pci/controller/pcie-cadence-host.c |  95 ++--------------
+>  drivers/pci/controller/pcie-cadence-plat.c | 174 +++++++++++++++++++++++++++++
+>  drivers/pci/controller/pcie-cadence.h      |  77 +++++++++++++
+>  6 files changed, 287 insertions(+), 187 deletions(-)
+>  create mode 100644 drivers/pci/controller/pcie-cadence-plat.c
 > 
-> Other looks good.
-
-Thanks!
-
-> 
-> Thanks
-> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index fe9f9f1..57d52f6 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -28,23 +28,38 @@ config PCIE_CADENCE
+>  	bool
+>  
+>  config PCIE_CADENCE_HOST
+> -	bool "Cadence PCIe host controller"
+> +	bool
+>  	depends on OF
+> -	depends on PCI
+>  	select IRQ_DOMAIN
+>  	select PCIE_CADENCE
+> -	help
+> -	  Say Y here if you want to support the Cadence PCIe controller in host
+> -	  mode. This PCIe controller may be embedded into many different vendors
+> -	  SoCs.
+>  
+>  config PCIE_CADENCE_EP
+> -	bool "Cadence PCIe endpoint controller"
+> +	bool
+>  	depends on OF
+>  	depends on PCI_ENDPOINT
+>  	select PCIE_CADENCE
+> +
+> +config PCIE_CADENCE_PLAT
+> +	bool
+> +
+> +config PCIE_CADENCE_PLAT_HOST
+> +	bool "Cadence PCIe platform host controller"
+> +	depends on OF
+> +	select PCIE_CADENCE_HOST
+> +	select PCIE_CADENCE_PLAT
+> +	help
+> +	  Say Y here if you want to support the Cadence PCIe platform controller in
+> +	  host mode. This PCIe controller may be embedded into many different
+> +	  vendors SoCs.
+> +
+> +config PCIE_CADENCE_PLAT_EP
+> +	bool "Cadence PCIe platform endpoint controller"
+> +	depends on OF
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_CADENCE_EP
+> +	select PCIE_CADENCE_PLAT
+>  	help
+> -	  Say Y here if you want to support the Cadence PCIe  controller in
+> +	  Say Y here if you want to support the Cadence PCIe  platform controller in
+>  	  endpoint mode. This PCIe controller may be embedded into many
+>  	  different vendors SoCs.
+>  
+> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
+> index d56a507..676a41e 100644
+> --- a/drivers/pci/controller/Makefile
+> +++ b/drivers/pci/controller/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence.o
+>  obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+>  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
+> +obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_FTPCI100) += pci-ftpci100.o
+>  obj-$(CONFIG_PCI_HYPERV) += pci-hyperv.o
+>  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+> diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
+> index def7820..1c173da 100644
+> --- a/drivers/pci/controller/pcie-cadence-ep.c
+> +++ b/drivers/pci/controller/pcie-cadence-ep.c
+> @@ -17,35 +17,6 @@
+>  #define CDNS_PCIE_EP_IRQ_PCI_ADDR_NONE		0x1
+>  #define CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY	0x3
+>  
+> -/**
+> - * struct cdns_pcie_ep - private data for this PCIe endpoint controller driver
+> - * @pcie: Cadence PCIe controller
+> - * @max_regions: maximum number of regions supported by hardware
+> - * @ob_region_map: bitmask of mapped outbound regions
+> - * @ob_addr: base addresses in the AXI bus where the outbound regions start
+> - * @irq_phys_addr: base address on the AXI bus where the MSI/legacy IRQ
+> - *		   dedicated outbound regions is mapped.
+> - * @irq_cpu_addr: base address in the CPU space where a write access triggers
+> - *		  the sending of a memory write (MSI) / normal message (legacy
+> - *		  IRQ) TLP through the PCIe bus.
+> - * @irq_pci_addr: used to save the current mapping of the MSI/legacy IRQ
+> - *		  dedicated outbound region.
+> - * @irq_pci_fn: the latest PCI function that has updated the mapping of
+> - *		the MSI/legacy IRQ dedicated outbound region.
+> - * @irq_pending: bitmask of asserted legacy IRQs.
+> - */
+> -struct cdns_pcie_ep {
+> -	struct cdns_pcie		pcie;
+> -	u32				max_regions;
+> -	unsigned long			ob_region_map;
+> -	phys_addr_t			*ob_addr;
+> -	phys_addr_t			irq_phys_addr;
+> -	void __iomem			*irq_cpu_addr;
+> -	u64				irq_pci_addr;
+> -	u8				irq_pci_fn;
+> -	u8				irq_pending;
+> -};
+> -
+>  static int cdns_pcie_ep_write_header(struct pci_epc *epc, u8 fn,
+>  				     struct pci_epf_header *hdr)
+>  {
+> @@ -424,28 +395,17 @@ static const struct pci_epc_ops cdns_pcie_epc_ops = {
+>  	.get_features	= cdns_pcie_ep_get_features,
+>  };
+>  
+> -static const struct of_device_id cdns_pcie_ep_of_match[] = {
+> -	{ .compatible = "cdns,cdns-pcie-ep" },
+> -
+> -	{ },
+> -};
+>  
+> -static int cdns_pcie_ep_probe(struct platform_device *pdev)
+> +int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+>  {
+> -	struct device *dev = &pdev->dev;
+> +	struct device *dev = ep->pcie.dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+>  	struct device_node *np = dev->of_node;
+> -	struct cdns_pcie_ep *ep;
+> -	struct cdns_pcie *pcie;
+> -	struct pci_epc *epc;
+> +	struct cdns_pcie *pcie = &ep->pcie;
+>  	struct resource *res;
+> +	struct pci_epc *epc;
+>  	int ret;
+> -	int phy_count;
+> -
+> -	ep = devm_kzalloc(dev, sizeof(*ep), GFP_KERNEL);
+> -	if (!ep)
+> -		return -ENOMEM;
+>  
+> -	pcie = &ep->pcie;
+>  	pcie->is_rc = false;
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "reg");
+> @@ -474,19 +434,6 @@ static int cdns_pcie_ep_probe(struct platform_device *pdev)
+>  	if (!ep->ob_addr)
+>  		return -ENOMEM;
+>  
+> -	ret = cdns_pcie_init_phy(dev, pcie);
+> -	if (ret) {
+> -		dev_err(dev, "failed to init phy\n");
+> -		return ret;
+> -	}
+> -	platform_set_drvdata(pdev, pcie);
+> -	pm_runtime_enable(dev);
+> -	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "pm_runtime_get_sync() failed\n");
+> -		goto err_get_sync;
+> -	}
+> -
+>  	/* Disable all but function 0 (anyway BIT(0) is hardwired to 1). */
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_LM_EP_FUNC_CFG, BIT(0));
+>  
+> @@ -528,38 +475,5 @@ static int cdns_pcie_ep_probe(struct platform_device *pdev)
+>   err_init:
+>  	pm_runtime_put_sync(dev);
+>  
+> - err_get_sync:
+> -	pm_runtime_disable(dev);
+> -	cdns_pcie_disable_phy(pcie);
+> -	phy_count = pcie->phy_count;
+> -	while (phy_count--)
+> -		device_link_del(pcie->link[phy_count]);
+> -
+>  	return ret;
+>  }
+> -
+> -static void cdns_pcie_ep_shutdown(struct platform_device *pdev)
+> -{
+> -	struct device *dev = &pdev->dev;
+> -	struct cdns_pcie *pcie = dev_get_drvdata(dev);
+> -	int ret;
+> -
+> -	ret = pm_runtime_put_sync(dev);
+> -	if (ret < 0)
+> -		dev_dbg(dev, "pm_runtime_put_sync failed\n");
+> -
+> -	pm_runtime_disable(dev);
+> -
+> -	cdns_pcie_disable_phy(pcie);
+> -}
+> -
+> -static struct platform_driver cdns_pcie_ep_driver = {
+> -	.driver = {
+> -		.name = "cdns-pcie-ep",
+> -		.of_match_table = cdns_pcie_ep_of_match,
+> -		.pm	= &cdns_pcie_pm_ops,
+> -	},
+> -	.probe = cdns_pcie_ep_probe,
+> -	.shutdown = cdns_pcie_ep_shutdown,
+> -};
+> -builtin_platform_driver(cdns_pcie_ep_driver);
+> diff --git a/drivers/pci/controller/pcie-cadence-host.c b/drivers/pci/controller/pcie-cadence-host.c
+> index 97e2510..8a42afd 100644
+> --- a/drivers/pci/controller/pcie-cadence-host.c
+> +++ b/drivers/pci/controller/pcie-cadence-host.c
+> @@ -11,33 +11,6 @@
+>  
+>  #include "pcie-cadence.h"
+>  
+> -/**
+> - * struct cdns_pcie_rc - private data for this PCIe Root Complex driver
+> - * @pcie: Cadence PCIe controller
+> - * @dev: pointer to PCIe device
+> - * @cfg_res: start/end offsets in the physical system memory to map PCI
+> - *           configuration space accesses
+> - * @bus_range: first/last buses behind the PCIe host controller
+> - * @cfg_base: IO mapped window to access the PCI configuration space of a
+> - *            single function at a time
+> - * @max_regions: maximum number of regions supported by the hardware
+> - * @no_bar_nbits: Number of bits to keep for inbound (PCIe -> CPU) address
+> - *                translation (nbits sets into the "no BAR match" register)
+> - * @vendor_id: PCI vendor ID
+> - * @device_id: PCI device ID
+> - */
+> -struct cdns_pcie_rc {
+> -	struct cdns_pcie	pcie;
+> -	struct device		*dev;
+> -	struct resource		*cfg_res;
+> -	struct resource		*bus_range;
+> -	void __iomem		*cfg_base;
+> -	u32			max_regions;
+> -	u32			no_bar_nbits;
+> -	u16			vendor_id;
+> -	u16			device_id;
+> -};
+> -
+>  static void __iomem *cdns_pci_map_bus(struct pci_bus *bus, unsigned int devfn,
+>  				      int where)
+>  {
+> @@ -92,11 +65,6 @@ static struct pci_ops cdns_pcie_host_ops = {
+>  	.write		= pci_generic_config_write,
+>  };
+>  
+> -static const struct of_device_id cdns_pcie_host_of_match[] = {
+> -	{ .compatible = "cdns,cdns-pcie-host" },
+> -
+> -	{ },
+> -};
+>  
+>  static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
+>  {
+> @@ -136,10 +104,10 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
+>  static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>  {
+>  	struct cdns_pcie *pcie = &rc->pcie;
+> -	struct resource *cfg_res = rc->cfg_res;
+>  	struct resource *mem_res = pcie->mem_res;
+>  	struct resource *bus_range = rc->bus_range;
+> -	struct device *dev = rc->dev;
+> +	struct resource *cfg_res = rc->cfg_res;
+> +	struct device *dev = pcie->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct of_pci_range_parser parser;
+>  	struct of_pci_range range;
+> @@ -233,25 +201,21 @@ static int cdns_pcie_host_init(struct device *dev,
+>  	return err;
+>  }
+>  
+> -static int cdns_pcie_host_probe(struct platform_device *pdev)
+> +int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
+>  {
+> -	struct device *dev = &pdev->dev;
+> +	struct device *dev = rc->pcie.dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+>  	struct device_node *np = dev->of_node;
+>  	struct pci_host_bridge *bridge;
+>  	struct list_head resources;
+> -	struct cdns_pcie_rc *rc;
+>  	struct cdns_pcie *pcie;
+>  	struct resource *res;
+>  	int ret;
+> -	int phy_count;
+>  
+> -	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
+> +	bridge = pci_host_bridge_from_priv(rc);
+>  	if (!bridge)
+>  		return -ENOMEM;
+>  
+> -	rc = pci_host_bridge_priv(bridge);
+> -	rc->dev = dev;
+> -
+>  	pcie = &rc->pcie;
+>  	pcie->is_rc = true;
+>  
+> @@ -287,21 +251,8 @@ static int cdns_pcie_host_probe(struct platform_device *pdev)
+>  		dev_err(dev, "missing \"mem\"\n");
+>  		return -EINVAL;
+>  	}
+> -	pcie->mem_res = res;
+>  
+> -	ret = cdns_pcie_init_phy(dev, pcie);
+> -	if (ret) {
+> -		dev_err(dev, "failed to init phy\n");
+> -		return ret;
+> -	}
+> -	platform_set_drvdata(pdev, pcie);
+> -
+> -	pm_runtime_enable(dev);
+> -	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "pm_runtime_get_sync() failed\n");
+> -		goto err_get_sync;
+> -	}
+> +	pcie->mem_res = res;
+>  
+>  	ret = cdns_pcie_host_init(dev, &resources, rc);
+>  	if (ret)
+> @@ -326,37 +277,5 @@ static int cdns_pcie_host_probe(struct platform_device *pdev)
+>   err_init:
+>  	pm_runtime_put_sync(dev);
+>  
+> - err_get_sync:
+> -	pm_runtime_disable(dev);
+> -	cdns_pcie_disable_phy(pcie);
+> -	phy_count = pcie->phy_count;
+> -	while (phy_count--)
+> -		device_link_del(pcie->link[phy_count]);
+> -
+>  	return ret;
+>  }
+> -
+> -static void cdns_pcie_shutdown(struct platform_device *pdev)
+> -{
+> -	struct device *dev = &pdev->dev;
+> -	struct cdns_pcie *pcie = dev_get_drvdata(dev);
+> -	int ret;
+> -
+> -	ret = pm_runtime_put_sync(dev);
+> -	if (ret < 0)
+> -		dev_dbg(dev, "pm_runtime_put_sync failed\n");
+> -
+> -	pm_runtime_disable(dev);
+> -	cdns_pcie_disable_phy(pcie);
+> -}
+> -
+> -static struct platform_driver cdns_pcie_host_driver = {
+> -	.driver = {
+> -		.name = "cdns-pcie-host",
+> -		.of_match_table = cdns_pcie_host_of_match,
+> -		.pm	= &cdns_pcie_pm_ops,
+> -	},
+> -	.probe = cdns_pcie_host_probe,
+> -	.shutdown = cdns_pcie_shutdown,
+> -};
+> -builtin_platform_driver(cdns_pcie_host_driver);
+> diff --git a/drivers/pci/controller/pcie-cadence-plat.c b/drivers/pci/controller/pcie-cadence-plat.c
+> new file mode 100644
+> index 0000000..f5c6bf6
+> --- /dev/null
+> +++ b/drivers/pci/controller/pcie-cadence-plat.c
+> @@ -0,0 +1,174 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cadence PCIe platform  driver.
+> + *
+> + * Copyright (c) 2019, Cadence Design Systems
+> + * Author: Tom Joseph <tjoseph@cadence.com>
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_pci.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/of_device.h>
+> +#include "pcie-cadence.h"
+> +
+> +/**
+> + * struct cdns_plat_pcie - private data for this PCIe platform driver
+> + * @pcie: Cadence PCIe controller
+> + * @is_rc: Set to 1 indicates the PCIe controller mode is Root Complex,
+> + *         if 0 it is in Endpoint mode.
+> + */
+> +struct cdns_plat_pcie {
+> +	struct cdns_pcie        *pcie;
+> +	bool is_rc;
+> +};
+> +
+> +struct cdns_plat_pcie_of_data {
+> +	bool is_rc;
+> +};
+> +
+> +static const struct of_device_id cdns_plat_pcie_of_match[];
+> +
+> +static int cdns_plat_pcie_probe(struct platform_device *pdev)
+> +{
+> +	const struct cdns_plat_pcie_of_data *data;
+> +	struct cdns_plat_pcie *cdns_plat_pcie;
+> +	const struct of_device_id *match;
+> +	struct device *dev = &pdev->dev;
+> +	struct pci_host_bridge *bridge;
+> +	struct cdns_pcie_ep *ep;
+> +	struct cdns_pcie_rc *rc;
+> +	int phy_count;
+> +	bool is_rc;
+> +	int ret;
+> +
+> +	match = of_match_device(cdns_plat_pcie_of_match, dev);
+> +	if (!match)
+> +		return -EINVAL;
+> +
+> +	data = (struct cdns_plat_pcie_of_data *)match->data;
+> +	is_rc = data->is_rc;
+> +
+> +	pr_debug(" Started %s with is_rc: %d\n", __func__, is_rc);
+> +	cdns_plat_pcie = devm_kzalloc(dev, sizeof(*cdns_plat_pcie), GFP_KERNEL);
+> +	if (!cdns_plat_pcie)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, cdns_plat_pcie);
+> +	if (is_rc) {
+> +		if (!IS_ENABLED(CONFIG_PCIE_CADENCE_PLAT_HOST))
+> +			return -ENODEV;
+> +
+> +		bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
+> +		if (!bridge)
+> +			return -ENOMEM;
+> +
+> +		rc = pci_host_bridge_priv(bridge);
+> +		rc->pcie.dev = dev;
+> +		cdns_plat_pcie->pcie = &rc->pcie;
+> +		cdns_plat_pcie->is_rc = is_rc;
+> +
+> +		ret = cdns_pcie_init_phy(dev, cdns_plat_pcie->pcie);
+> +		if (ret) {
+> +			dev_err(dev, "failed to init phy\n");
+> +			return ret;
+> +		}
+> +		pm_runtime_enable(dev);
+> +		ret = pm_runtime_get_sync(dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "pm_runtime_get_sync() failed\n");
+> +			goto err_get_sync;
+> +		}
+> +
+> +		ret = cdns_pcie_host_setup(rc);
+> +		if (ret)
+> +			goto err_init;
+> +	} else {
+> +		if (!IS_ENABLED(CONFIG_PCIE_CADENCE_PLAT_EP))
+> +			return -ENODEV;
+> +
+> +		ep = devm_kzalloc(dev, sizeof(*ep), GFP_KERNEL);
+> +		if (!ep)
+> +			return -ENOMEM;
+> +
+> +		ep->pcie.dev = dev;
+> +		cdns_plat_pcie->pcie = &ep->pcie;
+> +		cdns_plat_pcie->is_rc = is_rc;
+> +
+> +		ret = cdns_pcie_init_phy(dev, cdns_plat_pcie->pcie);
+> +		if (ret) {
+> +			dev_err(dev, "failed to init phy\n");
+> +			return ret;
+> +		}
+> +
+> +		pm_runtime_enable(dev);
+> +		ret = pm_runtime_get_sync(dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "pm_runtime_get_sync() failed\n");
+> +			goto err_get_sync;
+> +		}
+> +
+> +		ret = cdns_pcie_ep_setup(ep);
+> +		if (ret)
+> +			goto err_init;
+> +	}
+> +
+> + err_init:
+> +	pm_runtime_put_sync(dev);
+> +
+> + err_get_sync:
+> +	pm_runtime_disable(dev);
+> +	cdns_pcie_disable_phy(cdns_plat_pcie->pcie);
+> +	phy_count = cdns_plat_pcie->pcie->phy_count;
+> +	while (phy_count--)
+> +		device_link_del(cdns_plat_pcie->pcie->link[phy_count]);
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_plat_pcie_shutdown(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct cdns_pcie *pcie = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pm_runtime_put_sync(dev);
+> +	if (ret < 0)
+> +		dev_dbg(dev, "pm_runtime_put_sync failed\n");
+> +
+> +	pm_runtime_disable(dev);
+> +
+> +	cdns_pcie_disable_phy(pcie);
+> +}
+> +
+> +static const struct cdns_plat_pcie_of_data cdns_plat_pcie_host_of_data = {
+> +	.is_rc = true,
+> +};
+> +
+> +static const struct cdns_plat_pcie_of_data cdns_plat_pcie_ep_of_data = {
+> +	.is_rc = false,
+> +};
+> +
+> +static const struct of_device_id cdns_plat_pcie_of_match[] = {
+> +	{
+> +		.compatible = "cdns,cdns-pcie-host",
+> +		.data = &cdns_plat_pcie_host_of_data,
+> +	},
+> +	{
+> +		.compatible = "cdns,cdns-pcie-ep",
+> +		.data = &cdns_plat_pcie_ep_of_data,
+> +	},
+> +	{},
+> +};
+> +
+> +static struct platform_driver cdns_plat_pcie_driver = {
+> +	.driver = {
+> +		.name = "cdns-pcie",
+> +		.of_match_table = cdns_plat_pcie_of_match,
+> +		.pm	= &cdns_pcie_pm_ops,
+> +	},
+> +	.probe = cdns_plat_pcie_probe,
+> +	.shutdown = cdns_plat_pcie_shutdown,
+> +};
+> +builtin_platform_driver(cdns_plat_pcie_driver);
+> diff --git a/drivers/pci/controller/pcie-cadence.h b/drivers/pci/controller/pcie-cadence.h
+> index ae6bf2a..c98e858 100644
+> --- a/drivers/pci/controller/pcie-cadence.h
+> +++ b/drivers/pci/controller/pcie-cadence.h
+> @@ -190,6 +190,8 @@ enum cdns_pcie_rp_bar {
+>  	(((code) << 8) & CDNS_PCIE_NORMAL_MSG_CODE_MASK)
+>  #define CDNS_PCIE_MSG_NO_DATA			BIT(16)
+>  
+> +struct cdns_pcie;
+> +
+>  enum cdns_pcie_msg_code {
+>  	MSG_CODE_ASSERT_INTA	= 0x20,
+>  	MSG_CODE_ASSERT_INTB	= 0x21,
+> @@ -231,13 +233,71 @@ enum cdns_pcie_msg_routing {
+>  struct cdns_pcie {
+>  	void __iomem		*reg_base;
+>  	struct resource		*mem_res;
+> +	struct device		*dev;
+>  	bool			is_rc;
+>  	u8			bus;
+>  	int			phy_count;
+>  	struct phy		**phy;
+>  	struct device_link	**link;
+> +	const struct cdns_pcie_common_ops *ops;
+> +};
+> +
+> +/**
+> + * struct cdns_pcie_rc - private data for this PCIe Root Complex driver
+> + * @pcie: Cadence PCIe controller
+> + * @dev: pointer to PCIe device
+> + * @cfg_res: start/end offsets in the physical system memory to map PCI
+> + *           configuration space accesses
+> + * @bus_range: first/last buses behind the PCIe host controller
+> + * @cfg_base: IO mapped window to access the PCI configuration space of a
+> + *            single function at a time
+> + * @max_regions: maximum number of regions supported by the hardware
+> + * @no_bar_nbits: Number of bits to keep for inbound (PCIe -> CPU) address
+> + *                translation (nbits sets into the "no BAR match" register)
+> + * @vendor_id: PCI vendor ID
+> + * @device_id: PCI device ID
+> + */
+> +struct cdns_pcie_rc {
+> +	struct cdns_pcie	pcie;
+> +	struct resource		*cfg_res;
+> +	struct resource		*bus_range;
+> +	void __iomem		*cfg_base;
+> +	u32			max_regions;
+> +	u32			no_bar_nbits;
+> +	u16			vendor_id;
+> +	u16			device_id;
+>  };
+>  
+> +/**
+> + * struct cdns_pcie_ep - private data for this PCIe endpoint controller driver
+> + * @pcie: Cadence PCIe controller
+> + * @max_regions: maximum number of regions supported by hardware
+> + * @ob_region_map: bitmask of mapped outbound regions
+> + * @ob_addr: base addresses in the AXI bus where the outbound regions start
+> + * @irq_phys_addr: base address on the AXI bus where the MSI/legacy IRQ
+> + *		   dedicated outbound regions is mapped.
+> + * @irq_cpu_addr: base address in the CPU space where a write access triggers
+> + *		  the sending of a memory write (MSI) / normal message (legacy
+> + *		  IRQ) TLP through the PCIe bus.
+> + * @irq_pci_addr: used to save the current mapping of the MSI/legacy IRQ
+> + *		  dedicated outbound region.
+> + * @irq_pci_fn: the latest PCI function that has updated the mapping of
+> + *		the MSI/legacy IRQ dedicated outbound region.
+> + * @irq_pending: bitmask of asserted legacy IRQs.
+> + */
+> +struct cdns_pcie_ep {
+> +	struct cdns_pcie	pcie;
+> +	u32			max_regions;
+> +	unsigned long		ob_region_map;
+> +	phys_addr_t		*ob_addr;
+> +	phys_addr_t		irq_phys_addr;
+> +	void __iomem		*irq_cpu_addr;
+> +	u64			irq_pci_addr;
+> +	u8			irq_pci_fn;
+> +	u8			irq_pending;
+> +};
+> +
+> +
+>  /* Register access */
+>  static inline void cdns_pcie_writeb(struct cdns_pcie *pcie, u32 reg, u8 value)
+>  {
+> @@ -306,6 +366,23 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
+>  	return readl(pcie->reg_base + CDNS_PCIE_EP_FUNC_BASE(fn) + reg);
+>  }
+>  
+> +#ifdef CONFIG_PCIE_CADENCE_HOST
+> +int cdns_pcie_host_setup(struct cdns_pcie_rc *rc);
+> +#else
+> +static inline int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+> +#ifdef CONFIG_PCIE_CADENCE_EP
+> +int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep);
+> +#else
+> +static inline int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+> +{
+> +	return 0;
+> +}
+> +#endif
+>  void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 fn,
+>  				   u32 r, bool is_io,
+>  				   u64 cpu_addr, u64 pci_addr, size_t size);
+> -- 
+> 2.2.2
 > 
