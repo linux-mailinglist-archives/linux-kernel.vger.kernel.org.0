@@ -2,120 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8C9EC6EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE629EC6F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 17:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbfKAQjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 12:39:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32461 "EHLO mga02.intel.com"
+        id S1729095AbfKAQmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 12:42:04 -0400
+Received: from vps.xff.cz ([195.181.215.36]:60608 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727426AbfKAQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 12:39:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 09:39:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,256,1569308400"; 
-   d="scan'208";a="199860587"
-Received: from ggarreto-mobl1.amr.corp.intel.com (HELO [10.255.92.243]) ([10.255.92.243])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Nov 2019 09:39:38 -0700
-Subject: Re: [alsa-devel] [PATCH v4 2/2] soundwire: qcom: add support for
- SoundWire controller
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        robh@kernel.org, vkoul@kernel.org
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org
-References: <20191030153150.18303-1-srinivas.kandagatla@linaro.org>
- <20191030153150.18303-3-srinivas.kandagatla@linaro.org>
- <af29ec6e-d89e-7fa4-a8cd-29ab944ecd5c@linux.intel.com>
- <926bd15f-e230-8f5e-378d-355bfeeecf27@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <3d17a2a2-3033-e740-a466-e6cf7919adb2@linux.intel.com>
-Date:   Fri, 1 Nov 2019 11:39:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727426AbfKAQmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 12:42:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1572626522; bh=Gmx9bz5c58Bmxt6o/l+l4TxxiIaJ3KV5uLxeuq7aJF4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=q1GNBpiQn9Hc6z2CYpSi/KhF7+Zu43LFYFVzBX3EmFZCU0KFXbokbxCCPg1g7n+FU
+         Ztbh4zB5zrTH1o5e8YV6cvZkk+eeb0mP2ta6GWqUrAWICBj5DIOyo14eLesIO0F8UZ
+         YRUOINktiejT4Q2xpVswf4M6RJynZKasnXXDtpGU=
+From:   Ondrej Jirman <megous@megous.com>
+To:     linux-sunxi@googlegroups.com
+Cc:     Ondrej Jirman <megous@megous.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-pm@vger.kernel.org (open list:ALLWINNER CPUFREQ DRIVER),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] cpufreq: sun50i: Fix CPU speed bin detection
+Date:   Fri,  1 Nov 2019 17:41:51 +0100
+Message-Id: <20191101164152.445067-1-megous@megous.com>
 MIME-Version: 1.0
-In-Reply-To: <926bd15f-e230-8f5e-378d-355bfeeecf27@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I have observed failures to boot on Orange Pi 3, because this driver
+determined that my SoC is from the normal bin, but my SoC only works
+reliably with the OPP values for the slowest bin.
 
->>> +static int qcom_swrm_prepare(struct snd_pcm_substream *substream,
->>> +                 struct snd_soc_dai *dai)
->>> +{
->>> +    struct qcom_swrm_ctrl *ctrl = dev_get_drvdata(dai->dev);
->>> +
->>> +    if (!ctrl->sruntime[dai->id])
->>> +        return -EINVAL;
->>> +
->>> +    return sdw_enable_stream(ctrl->sruntime[dai->id]);
->>
->> So in hw_params you call sdw_prepare_stream() and in _prepare you call 
->> sdw_enable_stream()?
->>
->> Shouldn't this be handled in a .trigger operation as per the 
->> documentation "From ASoC DPCM framework, this stream state is linked to
->> .trigger() start operation."
-> 
-> If I move sdw_enable/disable_stream() to trigger I get a big click noise 
-> on my speakers at start and end of every playback. Tried different 
-> things but nothing helped so far!. Enabling Speaker DACs only after 
-> SoundWire ports are enabled is working for me!
-> There is nothing complicated on WSA881x codec side all the DACs are 
-> enabled/disabled as part of DAPM.
+By querying H6 owners, it was found that e-fuse values found in the wild
+are in the range of 1-3, value of 7 was not reported, yet. From this and
+from unused defines in BSP code, it can be assumed that meaning of efuse
+values on H6 actually is:
 
-that looks like a work-around to me? If you do a bank switch without 
-anything triggered, you are most likely sending a bunch of zeroes to 
-your amplifier and enabling click/pop removals somehow.
+- 1 = slowest bin
+- 2 = normal bin
+- 3 = fastest bin
 
-It'd be worth looking into this, maybe there's a missing digital 
-mute/unmute that's not done in the right order?
+Vendor code actually treats 0 and 2 as invalid efuse values, but later
+treats all invalid values as a normal bin. This looks like a mistake in
+bin detection code, that was plastered over by a hack in cpufreq code,
+so let's not repeat it here. It probably only works because there are no
+SoCs in the wild with efuse value of 0, and fast bin SoCs are made to
+use normal bin OPP tables, which is also safe.
 
-> 
->>
->> It's also my understanding that .prepare will be called multiples times, 
-> 
-> I agree, need to add some extra checks in the prepare to deal with this!
-> 
->> including for underflows and resume if you don't support INFO_RESUME.
-> 
->>
->> the sdw_disable_stream() is in .hw_free, which is not necessarily 
->> called by the core, so you may have a risk of not being able to recover?
-> 
-> Hmm, I thought hw_free is always called to release resources allocated 
-> in hw_params.
-> 
-> In what cases does the core not call this?
+Let's play it safe and interpret 0 as the slowest bin, but fix detection
+of other bins to match this research. More research will be done before
+actual OPP tables are merged.
 
-yes, but prepare can be called without hw_free called first. that's why 
-we updated the state machine to allow for DISABLED|DEPREPARED -> 
-PREPARED transitions.
+Fixes: f328584f7bff ("cpufreq: Add sun50i nvmem based CPU scaling driver")
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+---
 
->>> +static const struct dev_pm_ops qcom_swrm_dev_pm_ops = {
->>> +    SET_RUNTIME_PM_OPS(qcom_swrm_runtime_suspend,
->>> +               qcom_swrm_runtime_resume,
->>> +               NULL
->>> +    )
->>> +};
->>
->> Maybe define pm_runtime at a later time then? We've had a lot of race 
->> conditions to deal with, and it's odd that you don't support plain 
->> vanilla suspend first?
->>
-> Trying to keep things simple for the first patchset! added this dummies 
-> to keep the soundwire core happy!
+ See also https://lkml.org/lkml/2019/11/1/496
 
-If you are referring to the errors when pm_runtime is not enabled, we 
-fixed this is the series that's been out for review for 10 days now...
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-see '[PATCH 03/18] soundwire: bus: add PM/no-PM versions of read/write 
-functions', that should remove the need for dummy functions.
+diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+index eca32e443716..9907a165135b 100644
+--- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
++++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+@@ -25,7 +25,7 @@
+ static struct platform_device *cpufreq_dt_pdev, *sun50i_cpufreq_pdev;
+ 
+ /**
+- * sun50i_cpufreq_get_efuse() - Parse and return efuse value present on SoC
++ * sun50i_cpufreq_get_efuse() - Determine speed grade from efuse value
+  * @versions: Set to the value parsed from efuse
+  *
+  * Returns 0 if success.
+@@ -69,21 +69,16 @@ static int sun50i_cpufreq_get_efuse(u32 *versions)
+ 		return PTR_ERR(speedbin);
+ 
+ 	efuse_value = (*speedbin >> NVMEM_SHIFT) & NVMEM_MASK;
+-	switch (efuse_value) {
+-	case 0b0001:
+-		*versions = 1;
+-		break;
+-	case 0b0011:
+-		*versions = 2;
+-		break;
+-	default:
+-		/*
+-		 * For other situations, we treat it as bin0.
+-		 * This vf table can be run for any good cpu.
+-		 */
++
++	/*
++	 * We treat unexpected efuse values as if the SoC was from
++	 * the slowest bin. Expected efuse values are 1-3, slowest
++	 * to fastest.
++	 */
++	if (efuse_value >= 1 && efuse_value <= 3)
++		*versions = efuse_value - 1;
++	else
+ 		*versions = 0;
+-		break;
+-	}
+ 
+ 	kfree(speedbin);
+ 	return 0;
+-- 
+2.23.0
 
