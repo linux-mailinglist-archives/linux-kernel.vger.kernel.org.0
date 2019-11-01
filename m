@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CB93EBE91
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C8DEBE94
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 08:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbfKAHpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 03:45:30 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55660 "EHLO
+        id S1730138AbfKAHpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 03:45:35 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39639 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730095AbfKAHp1 (ORCPT
+        with ESMTP id S1730121AbfKAHpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 03:45:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g24so8446741wmh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 00:45:26 -0700 (PDT)
+        Fri, 1 Nov 2019 03:45:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id t26so4168759wmi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 00:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=o/WXNJ1LA673vdJ8sFOa/ninCgRnpi26dheEONfyqB0=;
-        b=NLpmXnv7R42LKiqA47VpSnkRY8XSxT2H2FVSayMw/zkOdsQZzOkqdbPIQ/zqzCB0db
-         y1kbqWP6t1ZUqf2oG8daRFBPtTfdlI0EhlkJjDINFp0R+3vik28XAfGFzUi/YcMLwbZ4
-         q5YudIUt0fOEXyeHJzEPJKZHIEheIL/Vl2oW2w92Bksv+d5sT+DP9vkVugFdl/uXBG0Z
-         DTkzSlSAWby6oCttAgyuuRZpASHljJq6nuGd0k9KJ8HyDyz4Gad2Ni90RK5h/+fk+tfK
-         Xxp5P3XYMA0CjrWLUpV8mIegqZNVrZgpJRxOU5z/h2T25UfZimy0TX/BlswzJX++KXp4
-         KvyQ==
+        bh=GReEFG2GWwJjsYxj+qnWr2ZeJ1W345Xh+fZqhg0GuOc=;
+        b=aPAUMhk6ayoWZyrvs0fsQnUU17xXjJv6voGdabNYsT7kPSp8UW342XBwFG/EeCKz0M
+         9HsX/Ldh/pDdk8lDjcmMli0SNg0TYdag8vMTj25aA78BvXaLqt9Cip7XMGccXX3djbMt
+         f5T+xevpesx2ybGhZaHvyv/4lfHjcQ8WKL17xX0pbqQCYyF5U7q2oaX4MLyl5liN0hHz
+         CQpfRklQ5z2fEf9l34Dg4zNLAGIIvGG8s0970wnbzNziW5bYYqeUboSChFg21DExUJgn
+         MmSriuu9eSFRucviBK0WmT8DoZUToeM4JmB7oRR+ek1UV/IoV6ueW0DXiGuiCb9GxbAb
+         /5uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=o/WXNJ1LA673vdJ8sFOa/ninCgRnpi26dheEONfyqB0=;
-        b=eVGzx4P+POqAKGQKsZIVuDpl+0V+8aLjhoTH157vEJmiTu4II17RKATrYvNsG6XVGW
-         237CDOJAuc5P/AnEdokjz7/P2MvJx8EpoKkLTvcAKC8yGoFB9DoXAxq9urcazWs8KnRX
-         S0ReY9357K3A5nVs0EJ2thbmWW3UkYVldpHwBzUtZtD6vWffmgP6YW9ruCqkmW8skU+Q
-         D1PoCwwLwLkezgWKqGzrtmQO3KvKMMcZYHFPaVXz0qv8y+JNEMyJ1VAXjwz17worc+t6
-         u1m//ASGZkGVBf9n1Z52sQi2d7zgbs7npft9spuneV/0LVq/5vstqnR1Iah0c05aVTyC
-         sMKQ==
-X-Gm-Message-State: APjAAAU/kqYO7nFU/nnW58jdr+QXSOC6BYse3/2LONyc3gyJfeIvbesq
-        ygu5ETW2pX5HSm9XiGj/cJfjVQ==
-X-Google-Smtp-Source: APXvYqxrp51r0BToycxLzs+62ME/8nCKs9NXgANVP3qglKRs+XlWI6yZaUm8W6tBL1BpnBLsbC2Slg==
-X-Received: by 2002:a1c:5f04:: with SMTP id t4mr8374156wmb.23.1572594326248;
-        Fri, 01 Nov 2019 00:45:26 -0700 (PDT)
+        bh=GReEFG2GWwJjsYxj+qnWr2ZeJ1W345Xh+fZqhg0GuOc=;
+        b=Yh63qrvRItgZ2YnhCxzKxdz3j2YEId6maq+eC4hwGY3JPw+ZhI9wzJEDcroPii1pwh
+         FAxki0T9J2Tcq9poeKm/ZT6Q3GjcvwFOsWTD+fwo52sVwysr1clg172d/SxNwZCLe+XH
+         AkDkKDxp6icJecGBXgTQVkxwgv+MMH0xwEUmgP2rigEjsInPYSVsc9qej+KKz10Q389P
+         s5ZLpfSZQoEMsmVuDkZLUbrco8sP8mul4itBH6eat8nkUQzw/Q8PnXJ12Am2GYLdWHvC
+         dLBezwxaAzYhBv4bK+4BqVJlArkG+vQePCx1ALQTof7VsX7ftsngMObpvDoJAshW82z6
+         YYmw==
+X-Gm-Message-State: APjAAAWmZvAAYo+jGoSYsSuiw3WWFQq1/yj7iynw/iGpFCAJ20R9Htvp
+        gb9Q8KoNnXe5kQFW+cbRzCzRPg==
+X-Google-Smtp-Source: APXvYqxqiXxfND79tU2euKm70y8ndsR62OXKUOIdUDdm+VT6d6erzdd+NNvtgc9PKa8pxvqTSzxBnQ==
+X-Received: by 2002:a1c:808d:: with SMTP id b135mr8624500wmd.175.1572594327746;
+        Fri, 01 Nov 2019 00:45:27 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.64])
-        by smtp.gmail.com with ESMTPSA id b1sm576215wrw.77.2019.11.01.00.45.25
+        by smtp.gmail.com with ESMTPSA id b1sm576215wrw.77.2019.11.01.00.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 00:45:25 -0700 (PDT)
+        Fri, 01 Nov 2019 00:45:27 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     daniel.thompson@linaro.org, broonie@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         arnd@arndb.de, linus.walleij@linaro.org, baohua@kernel.org,
         stephan@gerhold.net, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v4 04/10] mfd: cs5535-mfd: Register clients using their own dedicated MFD cell entries
-Date:   Fri,  1 Nov 2019 07:45:12 +0000
-Message-Id: <20191101074518.26228-5-lee.jones@linaro.org>
+Subject: [PATCH v4 05/10] mfd: mfd-core: Protect against NULL call-back function pointer
+Date:   Fri,  1 Nov 2019 07:45:13 +0000
+Message-Id: <20191101074518.26228-6-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191101074518.26228-1-lee.jones@linaro.org>
 References: <20191101074518.26228-1-lee.jones@linaro.org>
@@ -60,64 +60,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CS5535 is the only user of mfd_clone_cell().  It makes more sense to
-register child devices in the traditional way and remove the quite
-bespoke mfd_clone_cell() call from the MFD API.
+If a child device calls mfd_cell_{en,dis}able() without an appropriate
+call-back being set, we are likely to encounter a panic.  Avoid this
+by adding suitable checking.
 
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/mfd/cs5535-mfd.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/mfd/mfd-core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-index 3b569b231510..d0fb2e52ee76 100644
---- a/drivers/mfd/cs5535-mfd.c
-+++ b/drivers/mfd/cs5535-mfd.c
-@@ -50,16 +50,19 @@ static struct mfd_cell cs5535_mfd_cells[] = {
- 		.num_resources = 1,
- 		.resources = &cs5535_mfd_resources[PMS_BAR],
- 	},
-+};
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 23276a80e3b4..96d02b6f06fd 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -28,6 +28,11 @@ int mfd_cell_enable(struct platform_device *pdev)
+ 	const struct mfd_cell *cell = mfd_get_cell(pdev);
+ 	int err = 0;
+ 
++	if (!cell->enable) {
++		dev_dbg(&pdev->dev, "No .enable() call-back registered\n");
++		return 0;
++	}
 +
-+static struct mfd_cell cs5535_olpc_mfd_cells[] = {
- 	{
--		.name = "cs5535-acpi",
-+		.name = "olpc-xo1-pm-acpi",
-+		.num_resources = 1,
-+		.resources = &cs5535_mfd_resources[ACPI_BAR],
-+	},
-+	{
-+		.name = "olpc-xo1-sci-acpi",
- 		.num_resources = 1,
- 		.resources = &cs5535_mfd_resources[ACPI_BAR],
- 	},
--};
--
--static const char *olpc_acpi_clones[] = {
--	"olpc-xo1-pm-acpi",
--	"olpc-xo1-sci-acpi"
- };
+ 	/* only call enable hook if the cell wasn't previously enabled */
+ 	if (atomic_inc_return(cell->usage_count) == 1)
+ 		err = cell->enable(pdev);
+@@ -45,6 +50,11 @@ int mfd_cell_disable(struct platform_device *pdev)
+ 	const struct mfd_cell *cell = mfd_get_cell(pdev);
+ 	int err = 0;
  
- static int cs5535_mfd_probe(struct pci_dev *pdev,
-@@ -101,10 +104,14 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
- 			goto err_remove_devices;
- 		}
- 
--		err = mfd_clone_cell("cs5535-acpi", olpc_acpi_clones,
--				     ARRAY_SIZE(olpc_acpi_clones));
-+		err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
-+				      cs5535_olpc_mfd_cells,
-+				      ARRAY_SIZE(cs5535_olpc_mfd_cells),
-+				      NULL, 0, NULL);
- 		if (err) {
--			dev_err(&pdev->dev, "Failed to clone MFD cell\n");
-+			dev_err(&pdev->dev,
-+				"Failed to add CS5535 OLPC sub-devices: %d\n",
-+				err);
- 			goto err_release_acpi;
- 		}
- 	}
++	if (!cell->disable) {
++		dev_dbg(&pdev->dev, "No .disable() call-back registered\n");
++		return 0;
++	}
++
+ 	/* only disable if no other clients are using it */
+ 	if (atomic_dec_return(cell->usage_count) == 0)
+ 		err = cell->disable(pdev);
 -- 
 2.17.1
 
