@@ -2,72 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A11EC5A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3326EC5A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:32:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbfKAPa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:30:57 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33434 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbfKAPa5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:30:57 -0400
-Received: by mail-ed1-f66.google.com with SMTP id c4so7860482edl.0;
-        Fri, 01 Nov 2019 08:30:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dTmT4eDAKSsUmLuYHZ3sJmr/cB9F+1oZoiLUZ0VRUI4=;
-        b=NEkJGd9HpxQDYw8gPk9tvRRCSu5ACCRDHBWDTcWbGh8gavY3e+AN8X4TDIaMFudD/d
-         u9GLWzhxYcUNapW70Z23zFm+b8NxdYj3FWua2d+punTJvNw9YFseyeRIXQOeB4ZYLsMN
-         EzSGUoLISK11ZrZCjQehLt2K2eudcnYfVaUQSLuLIoQdAWDlRSMlpdTRl/FN5FJcxL3f
-         YWue2Pcr2wZQRp9UnEt+mKIZcrhuJnpJfMoMnrtalaHWtKUztZUv45qCXFuZ2yZxqwSM
-         y0PXhHo7RxkJPp6tkhfCSYXyIDQBHV1wwA7htIqgl6Hw7hvsuR54vIgjGvKCZtte3cl9
-         rqKg==
-X-Gm-Message-State: APjAAAXTToynOX3wb9GHl158Nz+UFm7UhMfNCrWh9ePTd1H4SsJotTRD
-        M47Ypxd7uGjUeP7vdSvQOsc=
-X-Google-Smtp-Source: APXvYqwHLXBlTk3KX1PlXWsYFgm5sRXnYCAsqetUcbhAcnIu+qpuYwzU6se4PgHigqhu0YAtjb6GtA==
-X-Received: by 2002:a50:9f65:: with SMTP id b92mr13305037edf.63.1572622255102;
-        Fri, 01 Nov 2019 08:30:55 -0700 (PDT)
-Received: from pi3 ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id d15sm189625edx.78.2019.11.01.08.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 08:30:53 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 16:30:50 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Matheus Castello <matheus@castello.eng.br>
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
-        lee.jones@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] power: supply: max17040: Send uevent in SOC and
- status change
-Message-ID: <20191101153050.GD28931@pi3>
-References: <CAJKOXPdCtbsPaAgYp5iVBhkAsjXzOYWwttQBptgiUgzhbKi09w@mail.gmail.com>
- <20191031184134.30621-1-matheus@castello.eng.br>
- <20191031184134.30621-5-matheus@castello.eng.br>
+        id S1728635AbfKAPcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:32:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37496 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727100AbfKAPcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 11:32:17 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2BC87B0D3691E2CB7247;
+        Fri,  1 Nov 2019 23:32:13 +0800 (CST)
+Received: from [127.0.0.1] (10.133.219.218) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
+ 23:32:12 +0800
+Message-ID: <5DBC4FFB.5030200@huawei.com>
+Date:   Fri, 1 Nov 2019 23:32:11 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191031184134.30621-5-matheus@castello.eng.br>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <peterz@infradead.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <dave.hansen@linux.intel.com>, <hpa@zytor.com>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/ioremap: Use WARN_ONCE instead of printk() + WARN_ON_ONCE()
+References: <1572425838-39158-1-git-send-email-zhongjiang@huawei.com> <20191031110304.GE21133@nazgul.tnic> <5DBACB61.90809@huawei.com> <20191031154916.GA24152@nazgul.tnic> <5DBB03B0.5060003@huawei.com> <20191101084524.GA29724@nazgul.tnic>
+In-Reply-To: <20191101084524.GA29724@nazgul.tnic>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.219.218]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 03:41:34PM -0300, Matheus Castello wrote:
-> Notify core through power_supply_changed() in case of changes in state
-> of charge and power supply status. This is useful for user-space to
-> efficiently update current battery level.
-> 
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> ---
->  drivers/power/supply/max17040_battery.c | 9 +++++++++
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+On 2019/11/1 16:45, Borislav Petkov wrote:
+> On Thu, Oct 31, 2019 at 11:54:24PM +0800, zhong jiang wrote:
+>> Yep,  WARN_ONCE alway return true in that case.
+> Are you sure it does that always?
+>
+WARN_ONCE will alway return true if its condition is true.:-)
 
