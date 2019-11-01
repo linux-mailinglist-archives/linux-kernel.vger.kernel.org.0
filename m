@@ -2,91 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3884EBEDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA839EBEE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730206AbfKAIIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 04:08:44 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:50656 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729852AbfKAIIo (ORCPT
+        id S1730240AbfKAIJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 04:09:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:64131 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729975AbfKAIJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 04:08:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572595723;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nMCDLKHK9p0Avwq2KQRi+OzRMAXn28q4vC8O9lcUbxU=;
-        b=DkhRARDVKYCZY9ph/+HXiMZALXendSSUdIqBdWErKiLQ9aFcIU7XYWdgX6tGASig+3NEo8
-        /eM8orthen8T3nBQ4mWkRrynY6cnM6YLTh+xQHIgJoOMW+jAfIY2L40AF4hL3/7oNZgI1X
-        wU/KZM/WYNOhChtekD2UsmWHPhCIW/I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-417-H9JeXlaaNb2a06NT9mVs0A-1; Fri, 01 Nov 2019 04:08:40 -0400
-X-MC-Unique: H9JeXlaaNb2a06NT9mVs0A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81CF4800D49;
-        Fri,  1 Nov 2019 08:08:38 +0000 (UTC)
-Received: from localhost (ovpn-116-219.ams2.redhat.com [10.36.116.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DAE3260BEC;
-        Fri,  1 Nov 2019 08:08:37 +0000 (UTC)
-Date:   Fri, 1 Nov 2019 09:08:36 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, sunilmut@microsoft.com, willemb@google.com,
-        sgarzare@redhat.com, ytht.net@gmail.com, arnd@arndb.de,
-        tglx@linutronix.de, decui@microsoft.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
-Message-ID: <20191101080836.GA4888@stefanha-x1.localdomain>
-References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
+        Fri, 1 Nov 2019 04:09:12 -0400
+X-UUID: 9d1bb3c0240a495ca1d94641288e2b60-20191101
+X-UUID: 9d1bb3c0240a495ca1d94641288e2b60-20191101
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <roger.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 598440622; Fri, 01 Nov 2019 16:09:00 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 1 Nov 2019 16:08:54 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Nov 2019 16:08:54 +0800
+Message-ID: <1572595738.6939.7.camel@mtksdaap41>
+Subject: Re: [v4, 6/8] PM / OPP: Support adjusting OPP voltages at runtime
+From:   Roger Lu <roger.lu@mediatek.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     Andrew-sh Cheng =?UTF-8?Q?=28=E9=84=AD=E5=BC=8F=E5=8B=B3=29?= 
+        <andrew-sh.cheng@mediatek.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Fan Chen =?UTF-8?Q?=28=E9=99=B3=E5=87=A1=29?= 
+        <fan.chen@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
+Date:   Fri, 1 Nov 2019 16:08:58 +0800
+In-Reply-To: <20190819111836.5cu245xre6ky6xav@vireshk-i7>
+References: <1565703113-31479-1-git-send-email-andrew-sh.cheng@mediatek.com>
+         <1565703113-31479-7-git-send-email-andrew-sh.cheng@mediatek.com>
+         <20190819111836.5cu245xre6ky6xav@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Mimecast-Spam-Score: 0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: DA0E43A199AF13C7A7A488606389C63F2A52057B18D158DDCD6B0E5FDE7197552000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dear Viresh,
 
-On Thu, Oct 31, 2019 at 07:47:41AM +0100, Christophe JAILLET wrote:
-> Use '__skb_queue_purge()' instead of re-implementing it.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/vmw_vsock/af_vsock.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Sorry for the late reply.
 
-Modulo the comment about double-underscore:
+On Mon, 2019-08-19 at 19:18 +0800, Viresh Kumar wrote:
+> On 13-08-19, 21:31, Andrew-sh.Cheng wrote:
+> > From: Stephen Boyd <sboyd@codeaurora.org>
+> > 
+> > On some SoCs the Adaptive Voltage Scaling (AVS) technique is
+> > employed to optimize the operating voltage of a device. At a
+> > given frequency, the hardware monitors dynamic factors and either
+> > makes a suggestion for how much to adjust a voltage for the
+> > current frequency, or it automatically adjusts the voltage
+> > without software intervention. Add an API to the OPP library for
+> > the former case, so that AVS type devices can update the voltages
+> > for an OPP when the hardware determines the voltage should
+> > change. The assumption is that drivers like CPUfreq or devfreq
+> > will register for the OPP notifiers and adjust the voltage
+> > according to suggestions that AVS makes.
+> > 
+> > This patch is devired from [1] submitted by Stephen.
+> > [1] https://lore.kernel.org/patchwork/patch/599279/
+> > 
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Roger Lu <roger.lu@mediatek.com>
+> > ---
+> >  drivers/opp/core.c     | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/pm_opp.h | 11 +++++++++
+> >  2 files changed, 74 insertions(+)
+> > 
+> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > index c094d5d20fd7..407a07f29b12 100644
+> > --- a/drivers/opp/core.c
+> > +++ b/drivers/opp/core.c
+> > @@ -2054,6 +2054,69 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
+> >  }
+> >  
+> >  /**
+> > + * dev_pm_opp_adjust_voltage() - helper to change the voltage of an OPP
+> > + * @dev:		device for which we do this operation
+> > + * @freq:		OPP frequency to adjust voltage of
+> > + * @u_volt:		new OPP voltage
+> > + *
+> > + * Return: -EINVAL for bad pointers, -ENOMEM if no memory available for the
+> > + * copy operation, returns 0 if no modifcation was done OR modification was
+> > + * successful.
+> > + */
+> > +int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
+> > +			      unsigned long u_volt)
+> 
+> Can you please update this to take a triplet instead ? That is what we are
+> storing in OPP core now a days.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl276AIACgkQnKSrs4Gr
-c8hfmgf+INURpFV1u1GE48Cf2ihsC6QhHVe3MTzVVV3eQztp78fDvWBPuRqFZP7U
-HjbZNkqJ92U4xAhO9Z+biLTYUKeLb1IIueXXUgZsrELr3zfdAL9fybIGln7c42Nx
-yJvwDFHAbgT1fFlnoaYE22ZUeALajF/AiBdIjwoqWmRYN2iYDHjzZzncuoaEVjuN
-RueUQUVdjdCLcIbAaLf460N2ksM511vXRJ8BjTSkQL6154steJgibuT2PwluMNhp
-FKEIavD0NT/tjZRuS7IkmXl+ZTENDEPuUeRaRsxk9KXhG1/MlcyHGVhgdDvk5irL
-BG3X708iLUI2gdg+CkotgwzgFMiT4A==
-=C+k4
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+I've studied opp/core.c and still don't know meaning of triplet here.
+Could you give me more hints (reference API?) about how to take a
+triplet instead? Thanks in advance.
 
