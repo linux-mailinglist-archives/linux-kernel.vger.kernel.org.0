@@ -2,70 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5A3EC045
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 549D6EC04F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:12:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfKAJIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 05:08:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:33044 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726979AbfKAJIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:08:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8AD81F1;
-        Fri,  1 Nov 2019 02:08:08 -0700 (PDT)
-Received: from blommer (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9788D3F719;
-        Fri,  1 Nov 2019 02:08:04 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 09:08:01 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Torsten Duwe <duwe@suse.de>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@arm.com, catalin.marinas@arm.com, deller@gmx.de,
-        James.Bottomley@hansenpartnership.com, james.morse@arm.com,
-        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
-        linux-parisc@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 0/8] arm64: ftrace cleanup + FTRACE_WITH_REGS
-Message-ID: <20191101090801.GB3508@blommer>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
- <20191031171641.GB11684@suse.de>
+        id S1727867AbfKAJMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 05:12:02 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37595 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727550AbfKAJMC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:12:02 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b20so6752076lfp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 02:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XlvIQVFH0OsvvtfZAtH/Qzezeu3c9I63M8S4KPzBTmI=;
+        b=UuJXdNFjFQHl67JtwQY9epQ7JZlX/qPb15ER8c6Lqil7fRSMcWNmfwOoeV2vHvtVIf
+         MQprOmpD0hwsPPFv2gxzxn4Ufk5Qeavun2lFUk2TgV9/BJmHdQ9LjJJ4cLQHvBjOt2iq
+         7InLsmyICkBrD2SFovxTIo55dNntzl9yo0IcQEGHox/sHEWXjP92g9WoW1Z/R7RjoyCR
+         dw+A/DYMa1eBrvJi7jIO94xX+0zK2qTl0s4ygNxkGhD9Tvg/jlXPIsDkskH/BRFS0OFW
+         rBmZ4ZqdBwG72D4QcTsAOtQDJM+k21sLl7cD2V9ljZhidt0HoZbQbczQibBO+ANCIENx
+         R3Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XlvIQVFH0OsvvtfZAtH/Qzezeu3c9I63M8S4KPzBTmI=;
+        b=cLvh5jKFKprT8j/yHLwDVYBdya8auSPbaNMSayX6/sCbpfQn35XnbUrs+KF2MLg0J8
+         LYnSOPQPrtSFJ+vwxZ3VXBlExTzsW3gF0TLV1R7VIqK9/Ve/9U8gTxBXPJC+7XeHSCzs
+         SMLUSEUgSSdlaP+2+5amwyzELAXK9PKQy9OCdIXOPqjYFqsI/4huVg22p33VW7eKaNxS
+         MDCPC2xqOF6fEhmEm4OxBpmt2To8bi6YQyCNDegFXpmf5KebUm05dPrDnLL7jvC/JHkK
+         KLr5ufun5N1Ou+pKJkq0YmH9eoIeyPmH1SLPFfRey+EroZKL8Z9rL6d7ZU2d+nYxb8+E
+         7U3A==
+X-Gm-Message-State: APjAAAWYfG04x16mfaieIshe6ou1g0h+loBQpIbtzj5mNksX3KcTOAMh
+        jwAcFs6GhCL1hUTSbOgsvz2KWA==
+X-Google-Smtp-Source: APXvYqz/HnRIkMMRi6lyXHmUXuPZQAZA0KSr/y66JRxF1fApobZgQwfrztMJrO8lOUblE8ZNClOn4A==
+X-Received: by 2002:a19:6b04:: with SMTP id d4mr6761779lfa.10.1572599518710;
+        Fri, 01 Nov 2019 02:11:58 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id r1sm2237427ljk.83.2019.11.01.02.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 02:11:57 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 3778110134C; Fri,  1 Nov 2019 12:11:57 +0300 (+03)
+Date:   Fri, 1 Nov 2019 12:11:57 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
+        Richard Weinberger <richard@nod.at>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-parisc@vger.kernel.org, linux-um@lists.infradead.org,
+        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 01/13] alpha: use pgtable-nop4d instead of 4level-fixup
+Message-ID: <20191101091157.q4cesn6vsiy5qj2j@box>
+References: <1572597584-6390-1-git-send-email-rppt@kernel.org>
+ <1572597584-6390-2-git-send-email-rppt@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031171641.GB11684@suse.de>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <1572597584-6390-2-git-send-email-rppt@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 06:16:41PM +0100, Torsten Duwe wrote:
-> After yesterday's testing, now
+On Fri, Nov 01, 2019 at 10:39:32AM +0200, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
 > 
-> Reviewed-by: Torsten Duwe <duwe@suse.de>
+> It is not likely alpha will have 5-level page tables.
 > 
-> for the series. 
+> Replace usage of include/asm-generic/4level-fixup.h and implied
+> __ARCH_HAS_4LEVEL_HACK with include/asm-generic/pgtable-nop4d.h and adjust
+> page table manipulation macros and functions accordingly.
 
-Thanks! I've folded that in and pushed out the updated branch.
+Not pgtable-nop4d.h, but pgtable-nopud.h. Also in subject.
 
-Since the only change this time around was only a trivial change in the linker
-script, I'll hold off sending a v3. I'm hoping I can get acks for the ftrace,
-module, and parisc bits soon...
-
-> Executive summary: where I used x28 as scratch register in ftrace_regs_caller
-> which I had to save for that reason, you switched to x10, which is so obvious
-> that I failed to see it. Then the PLT initialisation on module load, and
-> finally the ftrace_init_nop() hook that got you started initially. The rest
-> I'd call more or less cosmetic deviations from my v8. IOW: fine with me.
-
-Yup, that sounds about right. The other thing I did was expand the comments on
-the ABI details, as that can be quite subtle, but I guess that's arguably
-cosmetic, too.
-
-Thanks for working on this, and for bearing with me on this rework -- I hadn't
-intended that to drag on for so long.
-
-Thanks,
-Mark.
+-- 
+ Kirill A. Shutemov
