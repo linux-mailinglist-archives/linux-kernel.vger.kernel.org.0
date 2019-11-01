@@ -2,129 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3DDEBF1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C93EBED9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 09:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfKAIPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 04:15:23 -0400
-Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:39755 "EHLO
-        ironport.ite.com.tw" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729942AbfKAIPW (ORCPT
+        id S1730140AbfKAIGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 04:06:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33919 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729881AbfKAIGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 04:15:22 -0400
-X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 04:15:22 EDT
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 01 Nov 2019 16:05:28 +0800
-Received: from csbcas.internal.ite.com.tw (csbcas1.internal.ite.com.tw [192.168.65.46])
-        by mse.ite.com.tw with ESMTP id xA185M3K074232;
-        Fri, 1 Nov 2019 16:05:22 +0800 (GMT-8)
-        (envelope-from allen.chen@ite.com.tw)
-Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
- csbcas1.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
- id 14.3.352.0; Fri, 1 Nov 2019 16:05:22 +0800
-From:   allen <allen.chen@ite.com.tw>
-CC:     Allen Chen <allen.chen@ite.com.tw>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking timings logic
-Date:   Fri, 1 Nov 2019 16:04:22 +0800
-Message-ID: <1572595463-30970-1-git-send-email-allen.chen@ite.com.tw>
-X-Mailer: git-send-email 1.9.1
+        Fri, 1 Nov 2019 04:06:16 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x195so3042572pfd.1;
+        Fri, 01 Nov 2019 01:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jhu34IXJDs+hULNrQ3H3A+yhrlFb8rs8xpIaYVWNx0o=;
+        b=j7pyo/6BJOkohcd+bGnK5/T+KsrfHjr3Y3oaVzCgpq8SU7gnF+F51IBRzeZW/4dwr5
+         23jmqtyosAX0aUUH5nXPrrDNaP9cRz/7O7nAmf36KaqYEF/HaGzemyFMk4Fv29oCalBi
+         n0OAQS8uwfjs12rk8CZUUELUKUEY3f8vj6mmMHumbitbPdvfnhLRpikijQux3stEXD2d
+         sbZiTcMiTOIwj0bzC/jNuZX+kGStyuL/MNuEnXOOu+ulagC3b7N/cAx2vlVA+jUf/Bdo
+         fhaF0VtpK7/h/vH5mEeUhAATaNiKac/9vysT8bqXj9D/iM0sJ+QndlMF5dSYdwwQxc4D
+         NEOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jhu34IXJDs+hULNrQ3H3A+yhrlFb8rs8xpIaYVWNx0o=;
+        b=syHwWUc5QuZCqrcCeCBdxWSpd6qvB1vHJdlj4Y4OIxbXAuQGRIJKvVWBSJDiU66+fM
+         mBnbTA7F95fQ1cS8COGBbiAeWIVQ5aAHlLXaHET/nZp2h6SdKLWOqpT8McIDKz/nuYg6
+         cZXyittljEUtiNe3FAXKzxF3tDKBDndu9MM8pBcpmrrZ5vuM0Vbyej92qgQ6EEdn5+L8
+         xBDVKznN2UFcBaF5exoalUNeWhO4XBzyWQ2iDOXQgANM8cj8sMRA5geyo8ir/13+/hfJ
+         DlQwCF7rNUgW0vxyBwHxxoPfv31mbH1AUSQh5yNUJvIdaWGxtt/dpPrsPqocl2xXrWL8
+         ZdVA==
+X-Gm-Message-State: APjAAAW9OOedMNUXOleVNcmHIQtb9ECa30lVDHKP/cXvzizLGkBPfW43
+        fAQiOGmq78EZtiP/NudQW/4=
+X-Google-Smtp-Source: APXvYqxDO3k8caAHkgU75ZJwN/RonVvFIpKPbhqkBLM+qCtwp9qT/PXKHRzQ9M4HkobUT5/wK3X3Fg==
+X-Received: by 2002:a63:3d2:: with SMTP id 201mr11835306pgd.372.1572595575543;
+        Fri, 01 Nov 2019 01:06:15 -0700 (PDT)
+Received: from Gentoo.localdomain ([103.231.91.35])
+        by smtp.gmail.com with ESMTPSA id y1sm5917088pfq.138.2019.11.01.01.06.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Nov 2019 01:06:14 -0700 (PDT)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     rdunlap@infradead.org
+Cc:     bfields@fieldses.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] scripts:prune-kernel:Removed old kernels and modules dir from system
+Date:   Fri,  1 Nov 2019 13:35:10 +0530
+Message-Id: <20191101080510.26247-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [192.168.70.14]
-X-MAIL: mse.ite.com.tw xA185M3K074232
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
-(Defines EDID Structure Version 1, Revision 4) page: 39
-How to determine whether the monitor support RB timing or not?
-EDID 1.4
-First:  read detailed timing descriptor and make sure byte0 = 0,
-	byte1 = 0, byte2 = 0 and byte3 = 0xFD
-Second: read detailed timing descriptor byte10 = 0x04 and
-	EDID byte18h bit0 = 1
-Third:  if EDID byte18h bit0 == 1 && byte10 == 0x04,
-	then we can check byte15, if byte15 bit4 =1 is support RB
-        if EDID byte18h bit0 != 1 || byte10 != 0x04,
-	then byte15 can not be used
+This patch allow you to remove old kernels and associated modules
+directory from the system.You can do it at once with the -r flag
+and interactively with the -i flag.
 
-The linux code is_rb function not follow the VESA's rule
-
-EDID 1.3
-LCD flat panels do not require long blanking intervals as a retrace
-period so default support reduced-blanking timings.
-
-Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 ---
- drivers/gpu/drm/drm_edid.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ scripts/prune-kernel | 63 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index e5e7e65..08e914d 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -93,6 +93,11 @@ struct detailed_mode_closure {
- 	int modes;
- };
- 
-+struct edid_support_rb_closure {
-+	struct edid *edid;
-+	u8 support_rb;
-+};
+diff --git a/scripts/prune-kernel b/scripts/prune-kernel
+index a25aa2160d47..373a845792e6 100755
+--- a/scripts/prune-kernel
++++ b/scripts/prune-kernel
+@@ -1,3 +1,66 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
++#This script will remove old kernels and modules directory related to it.
++# "-h" or "--help" show how to use this script or show without parameter.
++#"-r" or "--remove" show how to silently remove old kernel and modules dir.
++#"-i" or "--interactive" show how to remove interactively.
+
++flag=$1
++kernel_version=$2
++modules_version=$3
++boot_dir=/boot
++modules_dir=/lib/modules
 +
- #define LEVEL_DMT	0
- #define LEVEL_GTF	1
- #define LEVEL_GTF2	2
-@@ -2018,22 +2023,31 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
- is_rb(struct detailed_timing *t, void *data)
- {
- 	u8 *r = (u8 *)t;
--	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
--		if (r[15] & 0x10)
--			*(bool *)data = true;
-+	struct edid_support_rb_closure *closure = data;
-+	struct edid *edid = closure->edid;
++remove_old_kernel() {
++	cd $boot_dir
++	rm -If vmlinuz-$kernel_version System.map-$kernel_version config-$kernel_version
++	return 0
++}
 +
-+	if (!r[0] && !r[1] && !r[2] && r[3] == EDID_DETAIL_MONITOR_RANGE) {
-+		if (edid->features & BIT(0) && r[10] == BIT(2))
-+			closure->support_rb = (r[15] & 0x10) ? 1 : 0;
-+	}
- }
- 
- /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
- static bool
- drm_monitor_supports_rb(struct edid *edid)
- {
-+	struct edid_support_rb_closure closure = {
-+		.edid = edid,
-+		.support_rb = -1,
-+	};
++remove_old_modules_dir() {
++	cd $modules_dir
++	rm -rf $modules_version
++	return 0
++}
 +
- 	if (edid->revision >= 4) {
--		bool ret = false;
--		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
--		return ret;
-+		drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
-+		if (closure.support_rb >= 0)
-+			return closure.support_rb;
- 	}
- 
--	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
-+	return true;
- }
- 
- static void
--- 
-1.9.1
++usage() {
++	printf "Usage: $(basename $0) [-ri] \n"
++	printf "\n -r or --remove  kernel_version modules_version \n"
++	printf "\n -i or --interactive do as interactive way \n"
++	return 0
++}
++
++	case "$flag" in
++		-i | --interactive)
++			printf "\nEnter kernel version to remove or blank/empty to exit:%s"
++			read kernel_version
++			if [[ $kernel_version != "" ]]; then
++				remove_old_kernel
++				printf "Please give the full modules directory name to remove:%s"
++				read modules_version
++				if [[ $modules_version != "" ]]; then
++					remove_old_modules_dir
++					printf "\n\nRemoved kernel version:$kernel_version and associated modules directory:$modules_version ...Done \n"
++				else
++					exit 1
++				fi
++			fi
++			;;
++		-h | --help)
++			usage
++			exit 1
++			;;
++		-r | --remove)
++			if [[ $# -ne 3 ]]; then
++				printf "You need to provide kernel version and modules directory name \n"
++				exit 1
++			else
++				remove_old_kernel
++				remove_old_modules_dir
++			fi
++			;;
++		*)
++			usage
++			exit 1
++			;;
++	esac
+--
+2.23.0
 
