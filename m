@@ -2,153 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85BF2EC85C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC56DEC865
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 19:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfKASSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 14:18:01 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:35310 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbfKASSA (ORCPT
+        id S1727350AbfKASVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 14:21:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38342 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbfKASVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:18:00 -0400
-Received: by mail-yb1-f194.google.com with SMTP id s8so189886ybc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 11:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K1dOhbDvlz+VXkT92swPjrnBtSngUC8vWTfrXwwNhyY=;
-        b=CLO5Qm/PlPPjpWrndTxBcyLtDMn89fyBXHpnWCS+nH1k4WHVUnqU8ZK4hXdXEUA+fe
-         yzFHMHp8geEjZm/iQfH5Vx4Vyavb1HFA8BIQDZkPCodULlTm1UR7qPd2F3P02uahDFGM
-         lRC1/Fg0B2tWwvqbhgJdzUJ6CqGyqBjPKZG0WUq31dRZ+Cf2GRNn9d5StDnhkVkHXORk
-         Im3rlB1ClPvVVALs0auqckzKgNds0CIZZC49294cGrDtsrMm8DVIVcJu59EeUCCC1TDK
-         POBWVCuhJp13dxhIGFRSJdyJE8u7aErOjlx3iXWcff0MMRyph0H3cnDyP0DzVyshrIty
-         JJJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K1dOhbDvlz+VXkT92swPjrnBtSngUC8vWTfrXwwNhyY=;
-        b=dE4ku/O8T0eUJDiErcysTcQTc6IOF/fCwfUEGFAPM9nHoWbKtLD/dMsG4imZ0mIE/w
-         rikbRV98rxQIkF2EYvQ6m4gbx/7r1OX1F78GnKaMuI0VmkvVlPyMoLLXXtf5H2N5feo5
-         RsrcMoRarqKv3tEgXO9nOCOkIAvF0pwS943xPZwozX69Zs8ocHEonIVysk5/UXrb9YuX
-         wYm8YQ8wxwje9+8KBDrgYlTG45ZaonWQFGP9fFDJuYYyciuZ6IzblkmlhTfQh2tIYwew
-         aVK+DMZ7F+wxbkp0iPYFjFDhNXCLXsc1guYtRJjdo+ZwqIfpdryeEF37dmGz6VEFxveM
-         jHig==
-X-Gm-Message-State: APjAAAVoEtSHtdsgUBEP0hYqHuGlXk7GXLwXG7UEMaX11deS1RfRIGJY
-        f5Ij6cMsz8HXrDWwRV0ozPKrjXnWzSSHhQF1wbUxSA==
-X-Google-Smtp-Source: APXvYqxo0mSU502NSpYWvdOeGh//uDeakjnxwpfotuR+Ml3IAbrPchH2s+feB5U1ZnKWNyEMuck/yacSnujP2IInM5w=
-X-Received: by 2002:a25:cf8c:: with SMTP id f134mr10567617ybg.45.1572632278924;
- Fri, 01 Nov 2019 11:17:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191030100618.1.Ibf7a996e4a58e84f11eec910938cfc3f9159c5de@changeid>
- <20191030173758.GC693@sol.localdomain> <CAD=FV=Uzma+eSGG1S1Aq6s3QdMNh4J-c=g-5uhB=0XBtkAawcA@mail.gmail.com>
- <20191030190226.GD693@sol.localdomain> <20191030205745.GA216218@sol.localdomain>
- <CAD=FV=X6Q3QZaND-tfYr9mf-KYMeKFmJDca3ee-i9roWj+GHsQ@mail.gmail.com>
- <CAD=FV=URZX4t-TB2Ne8y5ZfeBGoyhsPZhcncQ0yPe3cRXi=1gw@mail.gmail.com> <20191101043620.GA703@sol.localdomain>
-In-Reply-To: <20191101043620.GA703@sol.localdomain>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Fri, 1 Nov 2019 11:17:47 -0700
-Message-ID: <CABXOdTddU2Kn8hJyofAC9eofZHAA4ddBhjNXc8GwC5dm3beMZA@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ext4 crypto: fix to check feature status before
- get policy"
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Chao Yu <chao@kernel.org>,
-        Ryo Hashimoto <hashimoto@chromium.org>,
-        Vadim Sukhomlinov <sukhomlinov@google.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-doc@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 1 Nov 2019 14:21:46 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1I9BXQ120184;
+        Fri, 1 Nov 2019 18:21:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=KkJBV1OKZEQpd6p0Z4UlW9v/6UWLZWUIedN3euPfzqM=;
+ b=qVlDmf1e1y4rtEhitO4YdT5duiNCu4M70o7FEu5JUb8kVCkrPpQHyRVkPGIiE+DXx4c5
+ mE9ItAZypqkiY6yyK77fmBaWBgjn2G5HTcGsWSv6v/ariR2MUsfmTFYZyW2UTWx7/9O2
+ XKx2BeGdASQbbdYqEoBnjxVMyzYnMtJ+i2hmPSYN90+e4+J9jiZ/HfRT+VqycyrolwBm
+ AGWLD5CIh33m0ft5etI8hn6IsxpZz2GTM9TeaxCk+9YliinrmFvPeHN2aChFhJ2+uujx
+ o1jGt+QLdWJMwGS1LeuMxQVEgqqKHzVX3vqfDSxzV+Mpu6Y9CweJx9Oj5l5NPtNItrpf nw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2vxwhg3b8p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 18:21:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA1I9Q8s013876;
+        Fri, 1 Nov 2019 18:21:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2w0qdwrtf5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Nov 2019 18:21:19 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA1ILFrK004326;
+        Fri, 1 Nov 2019 18:21:16 GMT
+Received: from pp-ThinkCentre-M82.us.oracle.com (/10.132.95.199)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Nov 2019 11:21:15 -0700
+From:   Prakash Sangappa <prakash.sangappa@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, tglx@linutronix.de, peterz@infradead.org,
+        serge@hallyn.com, prakash.sangappa@oracle.com
+Subject: [RFC PATCH 0/1] CAP_SYS_NICE inside user namespace
+Date:   Fri,  1 Nov 2019 11:18:27 -0700
+Message-Id: <1572632308-7071-1-git-send-email-prakash.sangappa@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9428 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911010168
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9428 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911010168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 9:36 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Thu, Oct 31, 2019 at 10:52:19AM -0700, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Wed, Oct 30, 2019 at 2:59 PM Doug Anderson <dianders@chromium.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Wed, Oct 30, 2019 at 1:57 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >
-> > > > FWIW, from reading the Chrome OS code, I think the code you linked to isn't
-> > > > where the breakage actually is.  I think it's actually at
-> > > > https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/master/chromeos-common-script/share/chromeos-common.sh#375
-> > > > ... where an init script is using the error message printed by 'e4crypt
-> > > > get_policy' to decide whether to add -O encrypt to the filesystem or not.
-> > > >
-> > > > It really should check instead:
-> > > >
-> > > >         [ -e /sys/fs/ext4/features/encryption ]
-> > >
-> > > OK, I filed <https://crbug.com/1019939> and CCed all the people listed
-> > > in the cryptohome "OWNERS" file.  Hopefully one of them can pick this
-> > > up as a general cleanup.  Thanks!
-> >
-> > Just to follow-up: I did a quick test here to see if I could fix
-> > "chromeos-common.sh" as you suggested.  Then I got rid of the Revert
-> > and tried to login.  No joy.
-> >
-> > Digging a little deeper, the ext4_dir_encryption_supported() function
-> > is called in two places:
-> > * chromeos-install
-> > * chromeos_startup
-> >
-> > In my test case I had a machine that I'd already logged into (on a
-> > previous kernel version) and I was trying to log into it a second
-> > time.  Thus there's no way that chromeos-install could be involved.
-> > Looking at chromeos_startup:
-> >
-> > https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/master/init/chromeos_startup
-> >
-> > ...the function is only used for setting up the "encrypted stateful"
-> > partition.  That wasn't where my failure was.  My failure was with
-> > logging in AKA with cryptohome.  Thus I think it's plausible that my
-> > original commit message pointing at cryptohome may have been correct.
-> > It's possible that there were _also_ problems with encrypted stateful
-> > that I wasn't noticing, but if so they were not the only problems.
-> >
-> > It still may be wise to make Chrome OS use different tests, but it
-> > might not be quite as simple as hoped...
-> >
->
-> Ah, I think I found it:
->
-> https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/2cbdedd5eca0a57d9596671a99da5fab8e60722b/sys-apps/upstart/files/upstart-1.2-dircrypto.patch
->
-> The init process does EXT4_IOC_GET_ENCRYPTION_POLICY on /, and if the error is
-> EOPNOTSUPP, it skips creating the "dircrypto" keyring.  So then cryptohome can't
-> add keys later.  (Note the error message you got, "Error adding dircrypto key".)
->
-> So it looks like the kernel patch broke both that and
-> ext4_dir_encryption_supported().
->
+Some of the capabilities(7) which affect system wide resources, are ineffective
+inside user namespaces. This restriction applies even to root user( uid 0)
+from init namespace mapped into the user namespace. One such capability
+is CAP_SYS_NICE which is required to change process priority. As a result of
+which the root user cannot perform operations like increase a process priority
+using -ve nice value or set RT priority on processes inside the user namespace.
+A workaround to deal with this restriction is to use the help of a process /
+daemon running outside the user namespace to change process priority, which is
+a an inconvenience.
 
-ext4_dir_encryption_supported() was already changed to use the sysfs
-file, and changing the upstart code to check the sysfs file does
-indeed fix the problem for good. I'll do some more tests and push the
-necessary changes into our code base if I don't hit some other issue.
+We could allow these restricted capabilities to take effect only for the root
+user from init namespace mapped inside a user namespace and limit the effect
+with use of cgroups. It would seem reasonable to deal with each of these
+restricted capabilities on a case by case basis and address them. This patch
+is concerning CAP_SYS_NICE capability. The proposal here is to selectively
+allow CAP_SYS_NICE to take effect inside user namespace only for a root user
+mapped from init name space. 
 
-> I don't see how it could have broken cryptohome by itself, since AFAICS
-> cryptohome only uses EXT4_IOC_GET_ENCRYPTION_POLICY on the partition which is
-> supposed to have the 'encrypt' feature set.
->
-Yes, indeed it seems as if that is unrelated.
+Which user id gets to map the root user(uid 0) from init namespace inside its
+user namespaces is authorized thru /etc/subuid & /etc/subgid entries. Only
+system admin / root user on the system can add these entries.
+Therefore any ordinary user cannot simply map the root user(uid 0) into
+user namespaces created. Necessary cgroup bandwidth control can be used
+to limit cpu usage for such user namespaces.
 
-Guenter
+The capabilities(7) manpage lists all the operations / system calls that are
+subject to CAP_SYS_NICE capability check. This patch currently allows
+CAP_SYS_NICE to take effect inside a user namespace only for system calls
+affecting process priority. For completeness sake should memory
+operations(migrate_pages(2), move_pages(2), mbind(2)) mentioned in the
+manpage, also be permitted? There are no cgroup controls to limit the effect
+of these memory operations.
+
+Looking for feedback on this approach.
+
+Prakash Sangappa (1):
+  Selectively allow CAP_SYS_NICE capability inside user namespaces
+
+ kernel/sched/core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
