@@ -2,82 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D3BEC5CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:44:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92F6CEC5D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 16:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfKAPou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 11:44:50 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40319 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbfKAPou (ORCPT
+        id S1729020AbfKAPr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 11:47:27 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:53778 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726720AbfKAPr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:44:50 -0400
-Received: by mail-vs1-f67.google.com with SMTP id v10so6619878vsc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 08:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EryZRTfyuksqxAOsiXgBnBsO6Q4g8OGONpcbT/2UUtU=;
-        b=g4gJ23AXi6bRyNKKbF6kjh2Pk/SIgEmk0fMp7yU2OpLF1/ZSxEbdKQ2jcL1t/s7J/0
-         r0bV9COqOeg4Cq5X18jTt+9/QOwnZtzmoXU43GWevEdIG1WGMtRc2pCbbksNon998ATC
-         RYHfnk/oc6w0lpn4KlG1RD+XtSSxaBWmYd1V9RlWndHbQ5tvHLVM2OtZ6ek4cI2xWRNt
-         R3iakDWD0UnL0SsREP4Ka3pRfim+0rka4bOI/E6Y1rBKqdoZulqYrnLmldF6BQw22qOB
-         hqW6VUonfcohOf+Nawcc27KX/td24YYGGrBLxrNdceLzOMTOw2m0wiX1Fd48dG5wZunR
-         2c0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EryZRTfyuksqxAOsiXgBnBsO6Q4g8OGONpcbT/2UUtU=;
-        b=sCLG7ywbulqNhkDcTlJ9BUPjtq5SrI5dcdNvfzzK2s28PApo8CCd9XI0gIfxV+Rmwg
-         STrEqPj8U9W7lU78fSWODgs4/bsDtGbFEH5srsZ9663BPfyCWZGJJ0u24h0rUhLX5PPX
-         t64EzdeMN3KPTmJqZCIHkLykOqEF5Uz8wKxbQdKsN66XwZAkc9TvHLFuL+W96lv4dloM
-         Y3cd2aeKVUdWj8UE9wN0gAHn2zYNGfrni53uMGjc9UdcCMb9vVds4ig3W4uMOyKvfMVn
-         0oz9inHeF7pj0Rlred7x5D6SncW0jWaUe53KAKlBcCJrGFkq0R6AHLfFu5qu2948oeTc
-         z7mQ==
-X-Gm-Message-State: APjAAAVDM/OX0m7a69CIyS9taOzSHZXrK5atx8Tdqi1g4G3tz7DWpR73
-        SLB44Xk+fxJvd/Oalq5Elg83FpPWG1DWIbudtZe05Q==
-X-Google-Smtp-Source: APXvYqyH1Rx5ASstI+WbI3lXJTQCoOfcyvqAY38q2Tn/ntuwQF2PZaPqzpHPsoiSZYGDDuhXsCRPVJfLzeJkdoFRyBg=
-X-Received: by 2002:a67:e951:: with SMTP id p17mr3253133vso.112.1572623088869;
- Fri, 01 Nov 2019 08:44:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191031164637.48901-1-samitolvanen@google.com> <20191031164637.48901-18-samitolvanen@google.com>
- <201910312042.5AF689AAC@keescook>
-In-Reply-To: <201910312042.5AF689AAC@keescook>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Fri, 1 Nov 2019 08:44:37 -0700
-Message-ID: <CABCJKudW0tFrWryKj3-xW_eLWPSpCkaT9a14c9PH4a6-TT_=iw@mail.gmail.com>
-Subject: Re: [PATCH v3 17/17] arm64: implement Shadow Call Stack
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Fri, 1 Nov 2019 11:47:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0TgwtlFB_1572623238;
+Received: from 192.168.2.229(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0TgwtlFB_1572623238)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 01 Nov 2019 23:47:20 +0800
+Subject: Re: [PATCH 11/11] x86,rcu: use percpu rcu_preempt_depth
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>,
+        Rik van Riel <riel@surriel.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
         Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        David Windsor <dwindsor@gmail.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Yuyang Du <duyuyang@gmail.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>, rcu@vger.kernel.org
+References: <20191031100806.1326-1-laijs@linux.alibaba.com>
+ <20191031100806.1326-12-laijs@linux.alibaba.com>
+ <20191101125816.GD17910@paulmck-ThinkPad-P72>
+ <20191101131315.GY4131@hirez.programming.kicks-ass.net>
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+Message-ID: <75f29fff-d8f1-d7be-88b5-fdfcc09c48c7@linux.alibaba.com>
+Date:   Fri, 1 Nov 2019 23:47:18 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191101131315.GY4131@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 8:45 PM Kees Cook <keescook@chromium.org> wrote:
-> The only suggestion would be calling attention the clearing step (both in
-> comments below and in the commit log), just to record the earlier
-> discussion about it.
 
-Sure, makes sense. I'll add comments about this in v4.
 
-Sami
+On 2019/11/1 9:13 下午, Peter Zijlstra wrote:
+> On Fri, Nov 01, 2019 at 05:58:16AM -0700, Paul E. McKenney wrote:
+>> On Thu, Oct 31, 2019 at 10:08:06AM +0000, Lai Jiangshan wrote:
+>>> +/* We mask the RCU_NEED_SPECIAL bit so that it return real depth */
+>>> +static __always_inline int rcu_preempt_depth(void)
+>>> +{
+>>> +	return raw_cpu_read_4(__rcu_preempt_depth) & ~RCU_NEED_SPECIAL;
+>>
+>> Why not raw_cpu_generic_read()?
+>>
+>> OK, OK, I get that raw_cpu_read_4() translates directly into an "mov"
+>> instruction on x86, but given that x86 percpu_from_op() is able to
+>> adjust based on operand size, why doesn't something like raw_cpu_read()
+>> also have an x86-specific definition that adjusts based on operand size?
+> 
+> The reason for preempt.h was header recursion hell.
+
+Oh, I didn't notice. May we can use raw_cpu_generic_read
+for rcu here, I will have a try.
+
+Thanks
+Lai.
+
+> 
+>>> +}
+>>> +
+>>> +static __always_inline void rcu_preempt_depth_set(int pc)
+>>> +{
+>>> +	int old, new;
+>>> +
+>>> +	do {
+>>> +		old = raw_cpu_read_4(__rcu_preempt_depth);
+>>> +		new = (old & RCU_NEED_SPECIAL) |
+>>> +			(pc & ~RCU_NEED_SPECIAL);
+>>> +	} while (raw_cpu_cmpxchg_4(__rcu_preempt_depth, old, new) != old);
+>>
+>> Ummm...
+>>
+>> OK, as you know, I have long wanted _rcu_read_lock() to be inlineable.
+>> But are you -sure- that an x86 cmpxchg is faster than a function call
+>> and return?  I have strong doubts on that score.
+> 
+> This is a regular CMPXCHG instruction, not a LOCK prefixed one, and that
+> should make all the difference
+> 
+>> Plus multiplying the x86-specific code by 26 doesn't look good.
+>>
+>> And the RCU read-side nesting depth really is a per-task thing.  Copying
+>> it to and from the task at context-switch time might make sense if we
+>> had a serious optimization, but it does not appear that we do.
+>>
+>> You original patch some years back, ill-received though it was at the
+>> time, is looking rather good by comparison.  Plus it did not require
+>> architecture-specific code!
+> 
+> Right, so the per-cpu preempt_count code relies on the preempt_count
+> being invariant over context switches. That means we never have to
+> save/restore the thing.
+> 
+> For (preemptible) rcu, this is 'obviously' not the case.
+> 
+> That said, I've not looked over this patch series, I only got 1 actual
+> patch, not the whole series, and I've not had time to go dig out the
+> rest..
+> 
