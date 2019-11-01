@@ -2,70 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F4BEC27F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85212EC28D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfKAMOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:14:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53542 "EHLO mx1.suse.de"
+        id S1730562AbfKAMR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:17:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5684 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727279AbfKAMOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:14:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DB7F2AC8B;
-        Fri,  1 Nov 2019 12:14:41 +0000 (UTC)
-Date:   Fri, 1 Nov 2019 13:14:40 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] livepatch: new API to track system state changes
-Message-ID: <20191101121440.kpvtont5mrmet2mq@pathway.suse.cz>
-References: <20191030154313.13263-1-pmladek@suse.com>
- <20191031180650.g4tss4wfksg2bs6a@treble>
+        id S1730552AbfKAMR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 08:17:26 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B574CA5A24D5CE4484E6;
+        Fri,  1 Nov 2019 20:17:23 +0800 (CST)
+Received: from [127.0.0.1] (10.173.222.27) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 1 Nov 2019
+ 20:17:13 +0800
+Subject: Re: [PATCH v2 20/36] irqchip/gic-v4.1: Suppress per-VLPI doorbell
+To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-kernel@vger.kernel.org>
+CC:     Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Andrew Murray" <Andrew.Murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        "Robert Richter" <rrichter@marvell.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-21-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <256391fa-56f1-7588-3bff-ae8aa36d6615@huawei.com>
+Date:   Fri, 1 Nov 2019 20:17:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031180650.g4tss4wfksg2bs6a@treble>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191027144234.8395-21-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.222.27]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-10-31 13:06:50, Josh Poimboeuf wrote:
-> On Wed, Oct 30, 2019 at 04:43:08PM +0100, Petr Mladek wrote:
-> > Hi,
-> > 
-> > this is another piece in the puzzle that helps to maintain more
-> > livepatches.
-> > 
-> > Especially pre/post (un)patch callbacks might change a system state.
-> > Any newly installed livepatch has to somehow deal with system state
-> > modifications done be already installed livepatches.
-> > 
-> > This patchset provides a simple and generic API that
-> > helps to keep and pass information between the livepatches.
-> > It is also usable to prevent loading incompatible livepatches.
-> > 
-> > Changes since v3:
-> > 
-> >   + selftests compilation error [kbuild test robot]	
-> >   + fix copyright in selftests [Joe]
-> >   + used macros for the module names in selftests [Joe]
-> >   + allow zero state version [Josh]
-> >   + slightly refactor the code for checking state version [Josh]
-> >   + fix few typos reported by checkpatch.pl [Petr]
-> >   + added Acks [Joe]
+Hi Marc,
+
+On 2019/10/27 22:42, Marc Zyngier wrote:
+> Since GICv4.1 gives us a per-VPE doorbell, avoid programming anything
+> else on VMOVI/VMAPI/VMAPTI and on any other action that would have
+> otherwise resulted in a per-VLPI doorbell to be programmed.
 > 
-> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
-The patchset has been commited into livepatch.git, branch
-for-5.5/system-state.
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 
-Best Regards,
-Petr
