@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F074DEC2F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6ECCEC2F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 13:43:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfKAMnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 08:43:17 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43788 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730782AbfKAMm5 (ORCPT
+        id S1730877AbfKAMnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 08:43:12 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38625 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730822AbfKAMm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 08:42:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s4so10091724ljj.10
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:56 -0700 (PDT)
+        Fri, 1 Nov 2019 08:42:58 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q28so7153506lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 05:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Rl5uwkPm7ODgb0mKXC73DMWhjRD0JTB3vFmrVrN5ZB0=;
-        b=f/fMT4qnGn36cfXIZU+9WqU7PKzlWuxSvy4OA9GfJ3DZQNR+X8lpgyBQpBtHZWrDet
-         MFY1GEto+tIwTd5AX3zlfaDcUnphDQQLWWrldQasSQxYPGiUvZHz4B4wbzR8n8Thxbg8
-         kRKqubck2mt87Sb8mjWd21kRiGkeHA8bc+egg=
+        bh=BB15j+OZLSCqmbjpw6Rixs0w7wUAu62j+M3Q47LEWSI=;
+        b=Q7l5B4ZzSFqdTZCb4tJtnGHQpMhdr2CvGmwTVybZhIGX2c4ktEn1SU46jLKTynP5c6
+         xws5ATktOjO0yGARdh9e3ppAPSG4uIhGXWJLJb9bFFD7aZJ2kIdOQ/z6ktB1D335VRc0
+         X76ZLrmMFUG8IjfB808JNyn/6kr5P9fM6Yovc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Rl5uwkPm7ODgb0mKXC73DMWhjRD0JTB3vFmrVrN5ZB0=;
-        b=W5ZT0x43CPv2lzRK2f0wBhYv5cZXzpiFj9zCsf7P299rp6ZDLC88V2kwR/3rQhOQS6
-         C4/J7aE6vPnxy0eTTm+ioAix/xPFCI95b3NIsX7bnFFfKXadOOdoSoS4Tgqq2T8ks3EQ
-         DeRq1qWILSmYCjBNktx9X+vg0TDUROxUHnb8pt7ZCGHkQLdWjQ6c2t2spyxIz3p1WJoC
-         MzAq9gZhP9al8FkkAeqtIiJu/iXH1Alt1TW/JRvEyVIWf8aMcCDkVIpC0AbdoSNOHiFO
-         KI9ogYPRbHVygNwZGC6b+DzMpbkf8cSwrv9gE2ueDPqquuVrp+c4uIwkiDROU2Z7IvpC
-         2Mkg==
-X-Gm-Message-State: APjAAAVkwmRcGYhN+5khA1UvDV6JVvpVTy+q38J4mWrthQkxlpOy6vLr
-        TOkOL/egAfyAnw/KgwXuMm04eKZOM1HfmiMI
-X-Google-Smtp-Source: APXvYqwmyi32FUjiCLfaeVSLCItzNSl5u5Xct5wycLzlAxgtX29tMH2hvUooRJdJTIIrmknHbE9nxg==
-X-Received: by 2002:a2e:b604:: with SMTP id r4mr1067016ljn.134.1572612175328;
-        Fri, 01 Nov 2019 05:42:55 -0700 (PDT)
+        bh=BB15j+OZLSCqmbjpw6Rixs0w7wUAu62j+M3Q47LEWSI=;
+        b=h9DL8wkmmkvZCAS2Vjwi9vGk8u7PjiKisqbvk32wHS9+NLDi2Lf/A2ptgVnAVGnghL
+         Gs8xWpnZLfHXs2OC0pGOZDeZArt9D4KgxxGRnFxe+rFngoLPbAwL85B/Q1fQgcAg42Ky
+         eriA0/y7tu4C4iSmgQq6E5k+4E1z+BfH5wsbHE3O/jskUGRLIjsvZiO+SLodSdboA4b9
+         yPkhA6s0yXzsoMxIbe6W4au6ftXjISx5cN6jdPkTVO0AN6OdKytwPCJIzq45+cDSzHGX
+         +dgzNeghLYDFN9FTuEINEFZejM20KMbhzOg2UIgcb3vfHiU/YFnMfv6hCMH+iDPqSgOV
+         JtHQ==
+X-Gm-Message-State: APjAAAUXkjI9vDl7tCxTn99BVAsDqRk0cbxJ8aCoFP6kP2mdk6h17/oG
+        56v/yF6+O5odRrDfeNpn91fL5w==
+X-Google-Smtp-Source: APXvYqxCElUjbfpW6EePME6G+/EpoG3cuPhRw39POP0u7K0TVGS1unxGXbHxq4fCys0zyQmGeY2RWg==
+X-Received: by 2002:a19:10:: with SMTP id 16mr7317366lfa.100.1572612176600;
+        Fri, 01 Nov 2019 05:42:56 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.54
+        by smtp.gmail.com with ESMTPSA id o26sm2458540lfi.57.2019.11.01.05.42.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 05:42:54 -0700 (PDT)
+        Fri, 01 Nov 2019 05:42:56 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,10 +49,10 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v3 33/36] serial: ucc_uart: access __be32 field using be32_to_cpu
-Date:   Fri,  1 Nov 2019 13:42:07 +0100
-Message-Id: <20191101124210.14510-34-linux@rasmusvillemoes.dk>
+        netdev@vger.kernel.org
+Subject: [PATCH v3 34/36] net: ethernet: freescale: make UCC_GETH explicitly depend on PPC32
+Date:   Fri,  1 Nov 2019 13:42:08 +0100
+Message-Id: <20191101124210.14510-35-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191101124210.14510-1-linux@rasmusvillemoes.dk>
 References: <20191018125234.21825-1-linux@rasmusvillemoes.dk>
@@ -64,45 +64,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The buf member of struct qe_bd is a __be32, so to make this work on
-little-endian hosts, use be32_to_cpu when reading it.
+Currently, QUICC_ENGINE depends on PPC32, so this in itself does not
+change anything. In order to allow removing the PPC32 dependency from
+QUICC_ENGINE and avoid allmodconfig build failures, add this explicit
+dependency.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/tty/serial/ucc_uart.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-index f5ea84928a3b..a5330582b610 100644
---- a/drivers/tty/serial/ucc_uart.c
-+++ b/drivers/tty/serial/ucc_uart.c
-@@ -343,7 +343,7 @@ static int qe_uart_tx_pump(struct uart_qe_port *qe_port)
- 		/* Pick next descriptor and fill from buffer */
- 		bdp = qe_port->tx_cur;
+diff --git a/drivers/net/ethernet/freescale/Kconfig b/drivers/net/ethernet/freescale/Kconfig
+index 6a7e8993119f..2bd7ace0a953 100644
+--- a/drivers/net/ethernet/freescale/Kconfig
++++ b/drivers/net/ethernet/freescale/Kconfig
+@@ -74,7 +74,7 @@ config FSL_XGMAC_MDIO
  
--		p = qe2cpu_addr(bdp->buf, qe_port);
-+		p = qe2cpu_addr(be32_to_cpu(bdp->buf), qe_port);
- 
- 		*p++ = port->x_char;
- 		qe_iowrite16be(1, &bdp->length);
-@@ -371,7 +371,7 @@ static int qe_uart_tx_pump(struct uart_qe_port *qe_port)
- 	while (!(qe_ioread16be(&bdp->status) & BD_SC_READY) &&
- 	       (xmit->tail != xmit->head)) {
- 		count = 0;
--		p = qe2cpu_addr(bdp->buf, qe_port);
-+		p = qe2cpu_addr(be32_to_cpu(bdp->buf), qe_port);
- 		while (count < qe_port->tx_fifosize) {
- 			*p++ = xmit->buf[xmit->tail];
- 			xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
-@@ -491,7 +491,7 @@ static void qe_uart_int_rx(struct uart_qe_port *qe_port)
- 		}
- 
- 		/* get pointer */
--		cp = qe2cpu_addr(bdp->buf, qe_port);
-+		cp = qe2cpu_addr(be32_to_cpu(bdp->buf), qe_port);
- 
- 		/* loop through the buffer */
- 		while (i-- > 0) {
+ config UCC_GETH
+ 	tristate "Freescale QE Gigabit Ethernet"
+-	depends on QUICC_ENGINE
++	depends on QUICC_ENGINE && PPC32
+ 	select FSL_PQ_MDIO
+ 	select PHYLIB
+ 	---help---
 -- 
 2.23.0
 
