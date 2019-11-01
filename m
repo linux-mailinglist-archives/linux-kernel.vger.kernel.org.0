@@ -2,104 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE5DDEC057
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CA1EC05D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2019 10:14:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfKAJNF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 1 Nov 2019 05:13:05 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:59878 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbfKAJNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 05:13:04 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8EBD962EBCBC;
-        Fri,  1 Nov 2019 10:13:00 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id PQahXYOT46px; Fri,  1 Nov 2019 10:12:56 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 2AE38608313B;
-        Fri,  1 Nov 2019 10:12:56 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id c14mF2Z6Kv1A; Fri,  1 Nov 2019 10:12:55 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id C825D6083139;
-        Fri,  1 Nov 2019 10:12:55 +0100 (CET)
-Date:   Fri, 1 Nov 2019 10:12:55 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>, davem <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        torvalds <torvalds@linux-foundation.org>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
-        Rolf Eike Beer <eike-kernel@sf-tec.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Sam Creasey <sammy@sammy.net>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-c6x-dev@linux-c6x.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-um <linux-um@lists.infradead.org>,
-        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Message-ID: <1156525130.69849.1572599575743.JavaMail.zimbra@nod.at>
-In-Reply-To: <1572597584-6390-12-git-send-email-rppt@kernel.org>
-References: <1572597584-6390-1-git-send-email-rppt@kernel.org> <1572597584-6390-12-git-send-email-rppt@kernel.org>
-Subject: Re: [PATCH v2 11/13] um: remove unused pxx_offset_proc() and
- addr_pte() functions
+        id S1728181AbfKAJN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 05:13:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60602 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727919AbfKAJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:13:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A8A74AB91;
+        Fri,  1 Nov 2019 09:13:54 +0000 (UTC)
+Date:   Fri, 1 Nov 2019 09:13:48 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     ?????? <yun.wang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/numa: advanced per-cgroup numa statistic
+Message-ID: <20191101091348.GM28938@suse.de>
+References: <46b0fd25-7b73-aa80-372a-9fcd025154cb@linux.alibaba.com>
+ <20191030095505.GF28938@suse.de>
+ <6f5e43db-24f1-5283-0881-f264b0d5f835@linux.alibaba.com>
+ <20191031131731.GJ28938@suse.de>
+ <5d69ff1b-a477-31b5-8600-9233a38445c7@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Topic: remove unused pxx_offset_proc() and addr_pte() functions
-Thread-Index: uAt1m92PQC0j1btKcTDhR35rev+lrQ==
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <5d69ff1b-a477-31b5-8600-9233a38445c7@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Mike Rapoport" <rppt@kernel.org>
-> An: linux-mm@kvack.org
-> CC: "Andrew Morton" <akpm@linux-foundation.org>, "anton ivanov" <anton.ivanov@cambridgegreys.com>, "Arnd Bergmann"
-> <arnd@arndb.de>, "davem" <davem@davemloft.net>, "Geert Uytterhoeven" <geert@linux-m68k.org>, "Greentime Hu"
-> <green.hu@gmail.com>, "Greg Ungerer" <gerg@linux-m68k.org>, "Helge Deller" <deller@gmx.de>, "James E.J. Bottomley"
-> <James.Bottomley@HansenPartnership.com>, "Jeff Dike" <jdike@addtoit.com>, "Kirill A. Shutemov" <kirill@shutemov.name>,
-> "torvalds" <torvalds@linux-foundation.org>, "Mark Salter" <msalter@redhat.com>, "Matt Turner" <mattst88@gmail.com>,
-> "Michal Simek" <monstr@monstr.eu>, "Peter Rosin" <peda@axentia.se>, "richard" <richard@nod.at>, "Rolf Eike Beer"
-> <eike-kernel@sf-tec.de>, "Russell King" <linux@armlinux.org.uk>, "Sam Creasey" <sammy@sammy.net>, "Vincent Chen"
-> <deanbo422@gmail.com>, "Vineet Gupta" <Vineet.Gupta1@synopsys.com>, "Mike Rapoport" <rppt@kernel.org>,
-> linux-alpha@vger.kernel.org, "linux-arch" <linux-arch@vger.kernel.org>, "linux-arm-kernel"
-> <linux-arm-kernel@lists.infradead.org>, linux-c6x-dev@linux-c6x.org, "linux-kernel" <linux-kernel@vger.kernel.org>,
-> linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org, "linux-um" <linux-um@lists.infradead.org>,
-> sparclinux@vger.kernel.org, "Mike Rapoport" <rppt@linux.ibm.com>
-> Gesendet: Freitag, 1. November 2019 09:39:42
-> Betreff: [PATCH v2 11/13] um: remove unused pxx_offset_proc() and addr_pte() functions
-
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On Fri, Nov 01, 2019 at 09:49:20AM +0800, ?????? wrote:
 > 
-> The pxx_offset_proc() and addr_pte() functions are never used.
-> Remove them.
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> On 2019/10/31 ??????9:17, Mel Gorman wrote:
+> > On Thu, Oct 31, 2019 at 11:31:24AM +0800, ?????? wrote:
+> [snip]
+> >> For example, tasks bind to the cpus of node_0 could have their memory on
+> >> node_1 when node_0 almost run out of memory, numa balancing may not be
+> >> able to help in this case, while by reading locality we could know how
+> >> critical the problem is, and may take action to rebind cpus to node_1 or
+> >> reclaim the memory of node_0.
+> >>
+> > 
+> > You can already do this by walking each cgroup, identifying what tasks are
+> > in it and look at /proc/PID/numa_maps and /proc/PID/status to see what
+> > CPU bindings if any exist. This would use the actual memory placements
+> > and not those sampled by NUMA balancing, would not require NUMA balancing
+> > and would work on older kernels. It would be costly to access so I would
+> > not suggest doing it at high frequency but it makes sense for the tool
+> > that cares to pay the cost instead of spreading tidy bits of cost to
+> > every task whether there is an interested tool or not.
+> 
+> I see the biggest concern now is the necessity to let kernel providing these
+> data, IMHO there are actually good reasons here:
+>   * there are too many tasks to gathering data from, reading proc cost a lot
+>   * tasks living and dying, data lost between each sample window
+> 
+> For example in our cases, we could have hundreds of cgroups, each contain
+> hundreds of tasks, these worker thread could live and die at any moment,
+> for gathering we need to cat the list of tasks and then go reading these proc
+> files one by one, which fall into kernel rapidly and may even need to holding
+> some locks, this introduced big latency impact, and give no accurate output
+> since some task may already died before reading it's data.
+> 
+> Then before next sample window, info of tasks died during the window can't be
+> acquired anymore.
+> 
+> We need kernel's help on reserving data since tool can't catch them in time
+> before they are lost, also we have to avoid rapidly proc reading, which really
+> cost a lot and further more, introduce big latency on each sample window.
+> 
 
-Acked-by: Richard Weinberger <richard@nod.at>
+There is somewhat of a disconnect here. You say that the information must
+be accurate and historical yet are relying on NUMA hinting faults to build
+the picture which may not be accurate at all given that faults are not
+guaranteed to happen. For short-lived tasks, it is also potentially skewed
+information if short-lived tasks dominated remote accesses for whatever
+reason even though it does not matter -- the tasks were short-lived and
+their performance is probably irrelevant. Short-lived tasks may not even
+show up if they do not run longer than sysctl_numa_balancing_scan_delay
+so the data gathered already has holes in it.
 
-Thanks,
-//richard
+While it's a bit more of a stretch, even this could still be done from
+userspace if numa_hint_fault was probed and the event handled (eBPF,
+systemtap etc) to build the picture or add a tracepoint. That would give
+a much higher degree of flexibility on what information is tracked and
+allow flexibility on 
+
+So, overall I think this can be done outside the kernel but recognise
+that it may not be suitable in all cases. If you feel it must be done
+inside the kernel, split out the patch that adds information on failed
+page migrations as it stands apart. Put it behind its own kconfig entry
+that is disabled by default -- do not tie it directly to NUMA balancing
+because of the data structure changes. When enabled, it should still be
+disabled by default at runtime and only activated via kernel command line
+parameter so that the only people who pay the cost are those that take
+deliberate action to enable it.
+
+-- 
+Mel Gorman
+SUSE Labs
