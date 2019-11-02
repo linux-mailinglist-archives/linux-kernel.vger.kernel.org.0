@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA1EECC89
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 01:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD78ECC6D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 01:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfKBA5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 20:57:47 -0400
-Received: from posta.amasya.edu.tr ([193.255.105.20]:32324 "EHLO
-        posta.amasya.edu.tr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfKBA5r (ORCPT
+        id S1727634AbfKBAby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 20:31:54 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34734 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727752AbfKBAby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 20:57:47 -0400
-X-Greylist: delayed 1145 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Nov 2019 20:57:45 EDT
-Received: by posta.amasya.edu.tr (Postfix, from userid 110)
-        id 649FB3C2799; Sat,  2 Nov 2019 03:22:36 +0300 (+03)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=amasya.edu.tr;
-        s=rsakey; t=1572654545;
-        bh=m3Fusfpbex5TBT1LaKl3nmhbuuyDj3lk04EFeFmiR6s=;
-        h=Date:From:Reply-To:Subject;
-        b=DXZ0LsHTcpZSbMRA05mHzik2J8pUb7gEKGk17JmNUVuyYeYrdXY/MYo0k1ddzVrL4
-         MfyTsTKleAIfJ765B/IWzT+fFacMTSIToZa/MM0T9L6TVE8Oa8QL+ShvkHT/b9xUeN
-         sH71woSGSQD5ydJN+gY2vIjCWV/IMIDQPZ9mNhjo=
-X-Virus-Scanned: by SpamTitan at amasya.edu.tr
-Authentication-Results: posta.amasya.edu.tr; none
-Date:   Sat, 2 Nov 2019 03:22:22 +0300 (EET)
-From:   Bellucci Capital Partners <ibrahim.topuz@amasya.edu.tr>
-Reply-To: Bellucci Capital Partners <info@belluccicp.net>
-Message-ID: <1258862030.140024.1572654142168.JavaMail.zimbra@amasya.edu.tr>
-Subject: 
+        Fri, 1 Nov 2019 20:31:54 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x195so4627577pfd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 17:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RmKwPYUz22DWejWNDVX+p+n7NWEKBj1pY8e7LLu4FLs=;
+        b=NKEQCCyXBdgTsGovN13Be6nAO4bGEHx/a7ewD11xgbfrfEdejeHj3o4flLocvdw49X
+         5B7JbUckbmB9lrKYnDlhDzzEliMODTUXLmKaeYRp+zDBxNYZOLVd81WSrt1Rc3BVT7JM
+         CcPUfhLlVwhjRytWNNpLKQWXQ0eGOSwwk+S4cTzycQvkobf81mn6l591ypI/5qgNxvCd
+         ulpR5dD4A88Kh3jdtBjo0S9giVajmA95L6j7JF0QMK/R5FmH5UzfoPFxfUEXy7LL1ubw
+         44YroGDFlduFRzbV2uzcvcFQZ001lOP3k9Z6qreygswNFG+/QCrg9FfLR6iw6m/JAAzo
+         QELA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RmKwPYUz22DWejWNDVX+p+n7NWEKBj1pY8e7LLu4FLs=;
+        b=FTbMG3ueeVqt3QWyt7EPCA5jXi7mheWio7EDFZ5wbQz8XQtJviGHafUPCvBH67EgNl
+         lsj+wE3WOoC2XOZlC7IE3QzlKazL2AHNsWhzM78h6tZy6lw+T95IPsSrwTsFWhThEKV1
+         Uz4FG109vnVRp/5CwvhozyIU8kEDT54iZePD0Cb1APmQIXCWBq1hrnrA76vciIPpb5nj
+         XUIhtk8og3mk8n+exUNZCm0bKjDiUrg2LXf4zFCqpkf1Rj73WrSrKlasAiKKIeEd7cRV
+         zE5oeT8y9x80l+DRhj7BIcjUglF606UDQrBQAsed66E0OnhCFdda6GQkY3pbz1QrrGaQ
+         BU5w==
+X-Gm-Message-State: APjAAAU2AUDWXHydDohiyXpl3UyZcqxK5DH5PqmltbiB50Kw5c4X/Yi4
+        yOWcAPB04A0Uk0bB3hnwP2ntfpi80wI=
+X-Google-Smtp-Source: APXvYqyA6507ov8iEXResqYrB3v7w2XAzOhHSiJo19Q5bEyZRWThuZq6+g+rzLB4CPtyR+YiNFevRA==
+X-Received: by 2002:a63:5848:: with SMTP id i8mr16181286pgm.217.1572654711927;
+        Fri, 01 Nov 2019 17:31:51 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v2sm7957522pfm.13.2019.11.01.17.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 17:31:51 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] arm64: dts: qcom: sdm845: Add PCIe nodes
+Date:   Fri,  1 Nov 2019 17:31:45 -0700
+Message-Id: <20191102003148.4091335-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [37.48.118.105]
-X-Mailer: Zimbra 8.8.15_GA_3869 (ZimbraWebClient - GC77 (Win)/8.8.15_GA_3869)
-Thread-Index: 9n9KdcSWF637BLyQ1VRX5l7YCuxARQ==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add PCIe controller and PHY nodes for SDM845 and enable them for the
+Dragonboard 845c.
 
+The two series' that adding the PHY drivers and controller support can be found
+here:
+https://lore.kernel.org/linux-arm-msm/20191102001628.4090861-1-bjorn.andersson@linaro.org/T/#m6a892f4d6a8eefdd2c16b29b1cebb0023c69eac0
+https://lore.kernel.org/linux-arm-msm/20191102002721.4091180-1-bjorn.andersson@linaro.org/T/#m42ca469f4b23d534000a4b45a55d9739edbebdc4
 
-Hallo,
+Bjorn Andersson (3):
+  arm64: dts: qcom: sdm845: Add first PCIe controller and PHY
+  arm64: dts: qcom: sdm845: Add second PCIe PHY and controller
+  arm64: dts: qcom: db845c: Enable PCIe controllers
 
-Wir verf=C3=BCgen =C3=BCber ein breites Kreditportfolio und sind an der Fin=
-anzierung von Gro=C3=9Fprojekten interessiert. Die Verfahren sind wie folgt=
-:
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts |  91 +++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi       | 215 +++++++++++++++++++++
+ 2 files changed, 306 insertions(+)
 
-1-Der Kunde muss eine kurze Zusammenfassung des Projekts senden. Dies muss =
-den f=C3=BCr das Projekt erforderlichen Gesamtbetrag, die gesch=C3=A4tzte K=
-apitalrendite und die Kreditr=C3=BCckzahlungsfrist enthalten, die nicht meh=
-r als 15 Jahre betragen darf.
+-- 
+2.23.0
 
-2- Der Kunde muss das besagte Projekt bei einer Versicherungsgesellschaft m=
-it der Gesamtsumme des Darlehens versichern, um das Darlehen als Sicherheit=
- zu gew=C3=A4hrleisten.
-
-3- Der Zinssatz betr=C3=A4gt 1% j=C3=A4hrlich.
-
-4-R=C3=BCckzahlungsdauer betr=C3=A4gt 15 Jahre
-
-5 Ab dem Tag, an dem Sie die Versicherungsbescheinigung vorlegen, dauert di=
-e Finanzierung ca. 10 Bankarbeitstage.
-
-
-Wenn Sie mit den oben genannten Verfahren zufrieden sind, senden Sie mir ei=
-ne Absichtserkl=C3=A4rung auf Ihren Firmenbriefkopf.
-
-F=C3=BCr weitere Informationen zur Kreditbeschaffung von: Bitte antworten S=
-ie umgehend auf diese E-Mail:
-info@belluccicp.net
-
-Gr=C3=BC=C3=9Fe, wie wir auf deine Antwort warten.
-
-Freundliche Gr=C3=BC=C3=9Fe
-Manuel Baressi
-Anzeigenpersonal
-WEB: https://www.belluccicp.net
-Bu e-posta mesaji kisiye ozel olup, gizli bilgiler iceriyor olabilir. Eger bu e-posta mesaji size yanlislikla ulasmissa, icerigini hicbir sekilde kullanmayiniz ve e-postayi siliniz. Amasya Universitesi bu e-posta mesajinin icerigi ile ilgili olarak hicbir hukuksal sorumlulugu kabul etmez. The information contained in this communication may contain confidential or legally privileged information. Amasya University doesn't accept any legal responsibility for the contents and attachments of this message. The sender does not accept any liability for any errors or omissions or any viruses in the context of this message which arise as a result of internet transmission.
