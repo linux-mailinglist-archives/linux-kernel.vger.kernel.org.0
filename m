@@ -2,77 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A30EECCF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:56:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 786B5ECCEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfKBC42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 22:56:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:33710 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfKBC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 22:56:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 19:56:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,257,1569308400"; 
-   d="scan'208";a="226214138"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 19:56:26 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
-        kevin.tian@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] MAINTAINERS: Update for INTEL IOMMU (VT-d) entry
-Date:   Sat,  2 Nov 2019 10:53:11 +0800
-Message-Id: <20191102025311.3440-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727574AbfKBCzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 22:55:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34801 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfKBCzO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 22:55:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e4so7608543pgs.1;
+        Fri, 01 Nov 2019 19:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7ZNNTe5mkOuzZ1b3W8Xkq2eMV4qjyE7CsioiQ3occ8s=;
+        b=JgBG/edDtW18OFtkSYrEnJo1YamRpxQlTLQnoYLDbIDMyNZv3mVxKQzwAEE3KI9Cz0
+         iBJWao3C2C8VQJZrubB5eHV4+I4iKNohnhwjQJnnnjeVNOS1yRtI/7JuCO+vfwFDIzcw
+         npNswin/PMLjK5R9h/kE9NHOP2G4O3PJqiJJ3R1yy5zPY7JAQYidXb4UtSGO5Hapv70t
+         4aPLzEN9KCBVaK7EaUuWLb3SOKddLqc7A12/va8N2IoCRCShOy+M2MIq/H0v11X9TB/2
+         5+UdFuAo4sAX3kn5gIFCdgGvUd5585gtZybpTc0wdozCAp0DqtWFVeC/fTjcvYbuvdZk
+         RW0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7ZNNTe5mkOuzZ1b3W8Xkq2eMV4qjyE7CsioiQ3occ8s=;
+        b=kltTa3xW/1BHZmpVhFCBtqjKtprBffxn6PG9Z6zan/qqTBbMrFxFUEaQ0uSTsdlVsd
+         YkrdsTHwCGjkBkL7NUI0ImbVBP0oSYuC8Q0O1HZwBUKux1RT9ome5swOSlN/Zr/ui7n5
+         omH2lKuzTGd6YExULRIKjj1LmtPmBDtGkGehWAJFLDugGydi1cEYZrTLXDFGz+LDsqwi
+         2vpbNjmCovaqa+824WIrz9hNhSm+zWMGifGEu0kJ9LoDqseYQmoGFRtP26aWjTFYnR3J
+         t9b3FaJlqE/QVFEIDbULuPLAWmg3n4qma4tKARBdRm8EYJAMfXFwf+eogOGSIDohalin
+         g0Sg==
+X-Gm-Message-State: APjAAAVWNUhZ865KwnefAzO8tZl0CLasX6UFngWZJoAqHB7xGWrk5swA
+        xRyYP0CJK/tlr5QXUiXX2nk=
+X-Google-Smtp-Source: APXvYqxg4OgJaYUyM3OKDwg+WHMVAXgkfTOYP2+s9ay3+BRTVdfbTd4PGssEzC8VuRD1mvWisVejHg==
+X-Received: by 2002:aa7:9639:: with SMTP id r25mr17314826pfg.17.1572663313252;
+        Fri, 01 Nov 2019 19:55:13 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id z14sm5449440pfq.66.2019.11.01.19.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2019 19:55:12 -0700 (PDT)
+Subject: Re: [PATCH 1/2] pinctrl: bcm: nsp: use gpiolib infrastructure for
+ interrupts
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20191101015621.12451-1-chris.packham@alliedtelesis.co.nz>
+ <20191101015621.12451-2-chris.packham@alliedtelesis.co.nz>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <b681ed9d-a31a-e5cc-04ba-6f38a5cc745b@gmail.com>
+Date:   Fri, 1 Nov 2019 19:55:11 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
+MIME-Version: 1.0
+In-Reply-To: <20191101015621.12451-2-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the INTEL IOMMU (VT-d) entry and add myself as the
-co-maintainer. I have several years of VT-d development
-experience and have actively contributed to Intel VT-d
-driver during recent two years. I volunteer to take this
-rule. With this role, I can better help review and test
-patches.
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- MAINTAINERS | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cba1095547fd..86b999000fcb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8299,11 +8299,14 @@ F:	drivers/hid/intel-ish-hid/
- 
- INTEL IOMMU (VT-d)
- M:	David Woodhouse <dwmw2@infradead.org>
-+M:	Lu Baolu <baolu.lu@linux.intel.com>
- L:	iommu@lists.linux-foundation.org
--T:	git git://git.infradead.org/iommu-2.6.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
- S:	Supported
--F:	drivers/iommu/intel-iommu.c
-+F:	drivers/iommu/dmar.c
-+F:	drivers/iommu/intel*.[ch]
- F:	include/linux/intel-iommu.h
-+F:	include/linux/intel-svm.h
- 
- INTEL IOP-ADMA DMA DRIVER
- R:	Dan Williams <dan.j.williams@intel.com>
+On 10/31/2019 6:56 PM, Chris Packham wrote:
+> Use more of the gpiolib infrastructure for handling interrupts. The
+> root interrupt still needs to be handled manually as it is shared with
+> other peripherals on the SoC.
+> 
+> This will allow multiple instances of this driver to be supported and
+> will clean up gracefully on failure thanks to the device managed APIs.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+
+Just a couple of comments below:
+
+[snip]
+
+> +		irqc->name = dev_name(dev);
+
+The irq_chip used to be named "gpio-a" now it most likely will contain
+the address.unit-name notation from Device Tree, since this is visible
+in /proc/interrupts one might consider this to be an ABI breakage.
+
+> +		irqc->irq_ack = nsp_gpio_irq_ack;
+> +		irqc->irq_mask = nsp_gpio_irq_mask;
+> +		irqc->irq_unmask = nsp_gpio_irq_unmask;
+> +		irqc->irq_set_type = nsp_gpio_irq_set_type;
+>  
+> -			irq_set_chip_and_handler(irq, &nsp_gpio_irq_chip,
+> -						 handle_simple_irq);
+> -			irq_set_chip_data(irq, chip);
+> -		}
+> +		val = readl(chip->base + NSP_CHIP_A_INT_MASK);
+> +		val = val | NSP_CHIP_A_GPIO_INT_BIT;
+> +		writel(val, (chip->base + NSP_CHIP_A_INT_MASK));
+>  
+>  		/* Install ISR for this GPIO controller. */
+> -		ret = devm_request_irq(&pdev->dev, irq, nsp_gpio_irq_handler,
+> -				       IRQF_SHARED, "gpio-a", chip);
+> +		ret = devm_request_irq(dev, irq, nsp_gpio_irq_handler,
+> +				       IRQF_SHARED, "gpio-a", &chip->gc);
+>  		if (ret) {
+>  			dev_err(&pdev->dev, "Unable to request IRQ%d: %d\n",
+>  				irq, ret);
+> -			goto err_rm_gpiochip;
+> +			return ret;
+>  		}
+>  
+> -		val = readl(chip->base + NSP_CHIP_A_INT_MASK);
+> -		val = val | NSP_CHIP_A_GPIO_INT_BIT;
+> -		writel(val, (chip->base + NSP_CHIP_A_INT_MASK));
+> +		girq = &chip->gc.irq;
+> +		girq->chip = irqc;
+> +		/* This will let us handle the parent IRQ in the driver */
+> +		girq->parent_handler = NULL;
+> +		girq->num_parents = 0;
+> +		girq->parents = NULL;
+> +		girq->default_type = IRQ_TYPE_NONE;
+> +		girq->handler = handle_simple_irq;
+
+It might be worth creating a helper that can be called to initialize all
+relevant members to the values that indicate: let me manage the
+interrupt. This would make us more future proof with respect to
+assumptions being made in gpiolib as well as if new fields are added in
+the future. This would be a separate patch obviously.
+
+Other than that:
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.17.1
-
+Florian
