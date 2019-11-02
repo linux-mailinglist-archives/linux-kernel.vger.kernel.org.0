@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4DFECCA4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 02:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F02B6ECCB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 02:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfKBBNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 21:13:47 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:59692 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726892AbfKBBNr (ORCPT
+        id S1728713AbfKBBOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 21:14:40 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:48721 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbfKBBOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 21:13:47 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TgyIBrx_1572657222;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TgyIBrx_1572657222)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 02 Nov 2019 09:13:43 +0800
-Subject: Re: [PATCH v2] sched/numa: advanced per-cgroup numa statistic
-To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-References: <46b0fd25-7b73-aa80-372a-9fcd025154cb@linux.alibaba.com>
- <682ed1d4-abf1-92f6-851f-567ff9b9a841@linux.alibaba.com>
- <20191101173936.GB16165@blackbody.suse.cz>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <0b7a20a3-4ff4-6183-c6e1-7c8c37efd0e2@linux.alibaba.com>
-Date:   Sat, 2 Nov 2019 09:13:42 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Fri, 1 Nov 2019 21:14:15 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id CD348224C1;
+        Sat,  2 Nov 2019 02:14:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc;
+        s=mail2016061301; t=1572657253;
+        bh=coap/IZFRQ4M2syEqYhwbUnfZttYrUZ66xrrwe3nm60=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Be22zF5FD1O9jgvo3ulntDV80CWrh0L3745rj+Rsng7D/bvXHUYwn71K8UNqpSAer
+         /9itjG7lg1wG/05NpqcaR4fhTBiA5vK9JJU7a94cbyl/OhNKrxLhMv1MRvGxYBOK44
+         7T+yIpb+Sl4kwuI96Sfc5qr2mRnJK+wTLxnjicEs=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     Michael Walle <michael@walle.cc>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Simon Horman <simon.horman@netronome.com>
+Subject: [PATCH 0/5] net: phy: at803x device tree binding
+Date:   Sat,  2 Nov 2019 02:13:46 +0100
+Message-Id: <20191102011351.6467-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191101173936.GB16165@blackbody.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.101.4 at web
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Michal
+Adds a device tree binding to configure the clock and the RGMII voltage.
 
-On 2019/11/2 上午1:39, Michal Koutný wrote:
-> Hello Yun.
-> 
-> On Tue, Oct 29, 2019 at 03:57:20PM +0800, 王贇 <yun.wang@linux.alibaba.com> wrote:
->> +static void update_numa_statistics(struct cfs_rq *cfs_rq)
->> +{
->> +	int idx;
->> +	unsigned long remote = current->numa_faults_locality[3];
->> +	unsigned long local = current->numa_faults_locality[4];
->> +
->> +	cfs_rq->nstat.jiffies++;
-> This statistics effectively doubles what
-> kernel/sched/cpuacct.c:cpuacct_charge() does (measuring per-cpu time).
-> Hence it seems redundant.
+Changes since the RFC:
+ - renamed the Kconfig entry to "Qualcomm Atheros.." and reordered the
+   item
+ - renamed the prefix from atheros to qca
+ - use the correct name AR803x (instead of AT803x) in new files and
+   dt-bindings.
+ - listed the PHY maintainers in the new schema. Hopefully, thats ok.
+ - fixed a typo in the bindings schema
+ - run dtb_checks and dt_binding_check and fixed the schema
+ - dropped the rgmii-io-1v8 property; instead provide two regulators vddh
+   and vddio, add one consumer vddio-supply
+ - fix the clock settings for the AR8030/AR8035
+ - only the AR8031 supports chaning the LDO and the PLL mode in software.
+   Check if we have the correct PHY.
+ - new patch to mention the AR8033 which is the same as the AR8031 just
+   without PTP support
+ - new patch which corrects any displayed PHY names and comments. Be
+   consistent.
 
-Yes, while there is no guarantee the cpu cgroup always binding
-with cpuacct in v1, we can't rely on that...
+Michael Walle (5):
+  net: phy: at803x: fix Kconfig description
+  dt-bindings: net: phy: Add support for AT803X
+  net: phy: at803x: add device tree binding
+  net: phy: at803x: mention AR8033 as same as AR8031
+  net: phy: at803x: fix the PHY names
 
-> 
->> +
->> +	if (!remote && !local)
->> +		return;
->> +
->> +	idx = (NR_NL_INTERVAL - 1) * local / (remote + local);
->> +	cfs_rq->nstat.locality[idx]++;
-> IIUC, the mechanism numa_faults_locality values, this statistics only
-> estimates the access locality based on NUMA balancing samples, i.e.
-> there exists more precise source of that information.>
-> All in all, I'd concur to Mel's suggestion of external measurement.
+ .../devicetree/bindings/net/qca,ar803x.yaml   | 111 +++++++
+ MAINTAINERS                                   |   2 +
+ drivers/net/phy/Kconfig                       |  10 +-
+ drivers/net/phy/at803x.c                      | 301 +++++++++++++++++-
+ include/dt-bindings/net/qca-ar803x.h          |  13 +
+ 5 files changed, 422 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/qca,ar803x.yaml
+ create mode 100644 include/dt-bindings/net/qca-ar803x.h
 
-Currently I can only find numa balancing who is telling the real story,
-at least we know after the PF, task do access the page on that CPU,
-although it can't cover all the cases, it still giving good hints :-)
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Simon Horman <simon.horman@netronome.com>
+-- 
+2.20.1
 
-It would be great if we could find more similar indicators, like the
-migration failure counter Mel mentioned, which give good hints on
-memory policy problems, could be used as external measurement.
-
-Regards,
-Michael Wang
-
-> 
-> Michal
-> 
