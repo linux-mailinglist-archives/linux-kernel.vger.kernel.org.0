@@ -2,107 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65D8ECCE0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A30EECCF3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbfKBC0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 22:26:20 -0400
-Received: from mail-io1-f49.google.com ([209.85.166.49]:35234 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfKBC0T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 22:26:19 -0400
-Received: by mail-io1-f49.google.com with SMTP id h9so12903646ioh.2;
-        Fri, 01 Nov 2019 19:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=km/bRRqzLSK+jYkK4Cv+iSycZzlFkGrMc7Hf3ZngsJQ=;
-        b=SA9GgVQ2tSIzkTNSJ0i6PsQ/bNWbOcs5/Z9xR3SDkH/vqZw8SKwdlrVtQHUctvcA9F
-         o8rVaPbF2ikSJNZ/riaPijDdixrl6+oMq8z6xNVOSxJpkaYpd870jUNjAT5oJ3oVPoYL
-         xPJeLQekf5Rq94VfZuZYecC2aIJ/UWrFGbB17wJSro4l0a0jY/KHY/WVFO2plrtGKBhn
-         0717FLIwcQ3jmcNawRowlCkuIIrL5VV1nEMb2et5eGblAbawfya6wGg55SpZKhU+aa+b
-         Q6U4y/rnbhxJO8gwf9J0GMzHXtkamzlCB5b8gKfYMyOikhfk1P7rLdaCFWvi3bmPym8i
-         eDIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=km/bRRqzLSK+jYkK4Cv+iSycZzlFkGrMc7Hf3ZngsJQ=;
-        b=pepfJcC1clE9osDufO25pgBT4wMe0EmeZPyRq9b1c6VWHYnA6a374CFMMkFtFgkcZN
-         x3z0vqrvRhiKH36hzT8ZMzWW/LG3PkSaYGnZ8R36I36ht4kuu6uKQv0SD+g4grGZVuZ1
-         YVk9/RpWqbyvQqs7nV5wGJwDoQJjOnYkBVcD3941LfHsEm4BQT56lfoCqJumUYlUwrQM
-         iwwqxK6Zoe1rZaWNUI5hHaZSzeDpiQtNhqoHvYaHZFDlhJjcmzd9OGdLL24/BoWKD4Nb
-         v3wA7oeIRONZlFhk6OlFh1GznBdoEtQAuimWhRFzHOUIxhT7KQjLFRDdxsy2XAL1HAIp
-         8uwA==
-X-Gm-Message-State: APjAAAUg/pUUX+phh5f8OvoFTk5GhLjad0L6oGHzW+ti5rSuYXlrStco
-        n3nNZ8jq8hB9GlpHG/3yFZuFXQo6jaR4cXNYpSJYd7j9zpU=
-X-Google-Smtp-Source: APXvYqwsxYiGowXq90USUBDJR75/1v4T+N1tzLJlspfc5iBedw3iuPuxluH9BJxqbCHvUfe22uvXr8AUydndzwo4KAA=
-X-Received: by 2002:a6b:8b0a:: with SMTP id n10mr13154119iod.280.1572661576984;
- Fri, 01 Nov 2019 19:26:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOzgRdbjf7AkxXtgQ_ZxWU_QW2XqT+=CpSTBt0_T10+gynXtTw@mail.gmail.com>
- <CAOzgRdYLYB5eB2aNiGL7wuS5tvF7M8cEWiOqLFKcnMsWOe=zNA@mail.gmail.com>
-In-Reply-To: <CAOzgRdYLYB5eB2aNiGL7wuS5tvF7M8cEWiOqLFKcnMsWOe=zNA@mail.gmail.com>
-From:   youling 257 <youling257@gmail.com>
-Date:   Sat, 2 Nov 2019 10:26:03 +0800
-Message-ID: <CAOzgRdbhSwY3GY8V-w3b41eA-vz7MatkCSX2RbOL5Lk-06ZtSg@mail.gmail.com>
-Subject: Re: x86/boot: add ramoops.mem_size=1048576 boot parameter cause can't boot
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727869AbfKBC42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 22:56:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33710 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbfKBC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 22:56:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 19:56:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,257,1569308400"; 
+   d="scan'208";a="226214138"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 19:56:26 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
+        kevin.tian@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] MAINTAINERS: Update for INTEL IOMMU (VT-d) entry
+Date:   Sat,  2 Nov 2019 10:53:11 +0800
+Message-Id: <20191102025311.3440-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ram map
+Update the INTEL IOMMU (VT-d) entry and add myself as the
+co-maintainer. I have several years of VT-d development
+experience and have actively contributed to Intel VT-d
+driver during recent two years. I volunteer to take this
+rule. With this role, I can better help review and test
+patches.
 
-[ 0.000000] BIOS-provided physical RAM map:
-[ 0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000008efff] usable
-[ 0.000000] BIOS-e820: [mem 0x000000000008f000-0x000000000008ffff] ACPI NVS
-[ 0.000000] BIOS-e820: [mem 0x0000000000090000-0x000000000009ffff] usable
-[ 0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001effffff] usable
-[ 0.000000] BIOS-e820: [mem 0x000000001f000000-0x00000000201fffff] reserved
-[ 0.000000] BIOS-e820: [mem 0x0000000020200000-0x00000000b6de7fff] usable
-[ 0.000000] BIOS-e820: [mem 0x00000000b6de8000-0x00000000b6e08fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000b6e09000-0x00000000ba608fff] usable
-[ 0.000000] BIOS-e820: [mem 0x00000000ba609000-0x00000000ba698fff] type 20
-[ 0.000000] BIOS-e820: [mem 0x00000000ba699000-0x00000000baf18fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000baf19000-0x00000000bb018fff] ACPI NVS
-[ 0.000000] BIOS-e820: [mem 0x00000000bb019000-0x00000000bb058fff] ACPI dat=
-a
-[ 0.000000] BIOS-e820: [mem 0x00000000bb059000-0x00000000bbffffff] usable
-[ 0.000000] BIOS-e820: [mem 0x00000000e0000000-0x00000000e3ffffff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fea00000-0x00000000feafffff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed01000-0x00000000fed01fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed03000-0x00000000fed03fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed06000-0x00000000fed06fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed08000-0x00000000fed09fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1cfff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fed80000-0x00000000fedbffff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
-[ 0.000000] BIOS-e820: [mem 0x00000000ffc00000-0x00000000ffffffff] reserved
-[ 0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
-[ 0.000000] NX (Execute Disable) protection: active
-[ 0.000000] efi: EFI v2.40 by INSYDE Corp.
-[ 0.000000] efi: ACPI 2.0=3D0xbb058014 SMBIOS=3D0xba6a9000 ESRT=3D0xba6ac91=
-8
-[ 0.000000] SMBIOS 2.8 present.
-[ 0.000000] DMI: jumper EZpad/EZpad, BIOS Jumper8.S106x.A00C.1066 12/22/201=
-5
-[ 0.000000] tsc: Detected 1440.000 MHz processor
-[ 0.000298] e820: update [mem 0x00000000-0x00000fff] usable =3D=3D> reserve=
-d
-[ 0.000302] e820: remove [mem 0x000a0000-0x000fffff] usable
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ MAINTAINERS | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-youling 257 <youling257@gmail.com> =E4=BA=8E2019=E5=B9=B411=E6=9C=882=E6=97=
-=A5=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=8810:23=E5=86=99=E9=81=93=EF=BC=9A
->
-> only add ramoops.mem_size=3D1048576 boot parameter cause can't boot on
-> my device, stop at booting command list, no anyting happen, no dmesg.
->
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cba1095547fd..86b999000fcb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8299,11 +8299,14 @@ F:	drivers/hid/intel-ish-hid/
+ 
+ INTEL IOMMU (VT-d)
+ M:	David Woodhouse <dwmw2@infradead.org>
++M:	Lu Baolu <baolu.lu@linux.intel.com>
+ L:	iommu@lists.linux-foundation.org
+-T:	git git://git.infradead.org/iommu-2.6.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+ S:	Supported
+-F:	drivers/iommu/intel-iommu.c
++F:	drivers/iommu/dmar.c
++F:	drivers/iommu/intel*.[ch]
+ F:	include/linux/intel-iommu.h
++F:	include/linux/intel-svm.h
+ 
+ INTEL IOP-ADMA DMA DRIVER
+ R:	Dan Williams <dan.j.williams@intel.com>
+-- 
+2.17.1
+
