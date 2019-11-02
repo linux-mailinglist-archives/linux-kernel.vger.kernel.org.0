@@ -2,198 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC055ECC10
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 00:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B52ECC23
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 01:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfKAX7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 19:59:21 -0400
-Received: from mga04.intel.com ([192.55.52.120]:63647 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727964AbfKAX7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 19:59:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 16:59:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,257,1569308400"; 
-   d="scan'208";a="199469599"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Nov 2019 16:59:17 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v10 8/8] PCI/ACPI: Enable EDR support
-Date:   Fri,  1 Nov 2019 16:56:56 -0700
-Message-Id: <b271f0614e90dd9222c5e5b043ee0d0937f3c54f.1572652041.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1572652041.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1572652041.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1727580AbfKBAKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 20:10:21 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39840 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfKBAKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 20:10:20 -0400
+Received: by mail-io1-f66.google.com with SMTP id k1so858674ioj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 17:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=R4g9gOLIew2+KTvYBHfgUUJIvnc8PoIFwQ4bbvEGKSM=;
+        b=ew0T8k9aits0F01j0SCwzTDVdrwqraAac6R6T/eJc3oSA2z3b/L47RmzsCJDmrKCdm
+         xRmK251jDrQNYOCPOsfqriSuW+FWLrHxW/I13haysmKdGOl/yD/1OhzNCfKoeb5KaHJQ
+         PTrYhDqOCfRySq4ojgXSUbkhYs+BhrJxBuH4XpYljYx829VVbV7aP2Xz/O09EWhj0BQJ
+         /H5XaERUqLs4fsF2mOjqneZa7t6ac2FZpk/H09BNkp5hyWZ2e+RK2Nj4AbPaoKaopXXB
+         LgcXTa4dpNMQcX2TK/HPQlPOEVHaemD/CvJBb0zfSCPKqQROlSe91O/gAg84p7Gwl0C2
+         OlNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=R4g9gOLIew2+KTvYBHfgUUJIvnc8PoIFwQ4bbvEGKSM=;
+        b=Os5EpdQYGimgX+zB2rexjeucgxr7H7/5uHwOElGiNtRBR2vYhoPVnG1t+7ESpxmI9Y
+         tN/HKxe4xOnn00eoamQcgu3t8VfM1rW+urQRpjQemIyENTeyUA46Z14rT//aHzti77N6
+         Yl+3dZKy1UVTQ1oRoXnrYXXZwdb386ZFnKOkdp9VJ6Xz3C9CXUkHrrHEJEPVcYNODIyc
+         jdAXJUjP0mmbtyIxqeok5rXpBULEhwCzCzzgi55Vr7CpHQ7SVt5FMB9wZG1M8J8Gmtbo
+         GDe7Up46/z4F0NDKbjMD/Oe0gUq8SPDH+3VItGA2JPPufI9NMorpjNIgJTUuodImgRgf
+         8giw==
+X-Gm-Message-State: APjAAAUVTzou1BQpa3JGWeEU1cB15YGGo3re5daamL7/CPlMsQ11Qif/
+        7Em01MlPFrmbuHz4jUWF5uzH0g==
+X-Google-Smtp-Source: APXvYqxGpyL4YgS3iSeyRBb2/XoW4OF6ZRzRHuG1o1Desi8MbbyMgsZb3vvZgX51aCkTVbWIlDWxLg==
+X-Received: by 2002:a5d:94d8:: with SMTP id y24mr5101499ior.131.1572653418511;
+        Fri, 01 Nov 2019 17:10:18 -0700 (PDT)
+Received: from localhost (67-0-26-4.albq.qwest.net. [67.0.26.4])
+        by smtp.gmail.com with ESMTPSA id m9sm1259660ilc.44.2019.11.01.17.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2019 17:10:18 -0700 (PDT)
+Date:   Fri, 1 Nov 2019 17:10:16 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     torvalds@linux-foundation.org
+cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RISC-V updates for v5.4-rc6
+Message-ID: <alpine.DEB.2.21.9999.1911011707090.16921@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Linus,
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+The following changes since commit d6d5df1db6e9d7f8f76d2911707f7d5877251b02:
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+  Linux 5.4-rc5 (2019-10-27 13:19:19 -0400)
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
+are available in the Git repository at:
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c         | 9 +++++++++
- drivers/pci/pcie/portdrv_core.c | 8 +++++++-
- drivers/pci/probe.c             | 1 +
- include/linux/acpi.h            | 6 ++++--
- include/linux/pci.h             | 3 ++-
- 5 files changed, 23 insertions(+), 4 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv/for-v5.4-rc6
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..134e20474dfd 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_PCIE_DPC))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +923,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 1b330129089f..1b54a39df795 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -250,8 +250,14 @@ static int get_port_device_capability(struct pci_dev *dev)
- 		pcie_pme_interrupt_enable(dev, false);
- 	}
- 
-+	/*
-+	 * If EDR support is enabled in OS, then even if AER is not handled in
-+	 * OS, DPC service can be enabled.
-+	 */
- 	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
--	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
-+	    ((IS_ENABLED(CONFIG_PCIE_EDR) && !host->native_dpc) ||
-+	    (pci_aer_available() && services & PCIE_PORT_SERVICE_AER &&
-+	    (pcie_ports_native || host->native_dpc))))
- 		services |= PCIE_PORT_SERVICE_DPC;
- 
- 	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 3d5271a7a849..54be2f93eba3 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -596,6 +596,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 8b4e516bac00..71452d4959ec 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -515,8 +515,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -525,7 +526,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index f9088c89a534..dc0751df03f5 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -509,8 +509,9 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
--	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 
-+	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 	/* Resource alignment requirements */
- 	resource_size_t (*align_resource)(struct pci_dev *dev,
- 			const struct resource *res,
--- 
-2.21.0
+for you to fetch changes up to 1d9b0b66c3ef03e42db63068e1a4e7250992e2b1:
 
+  MAINTAINERS: Change to my personal email address (2019-10-30 01:03:34 -0700)
+
+----------------------------------------------------------------
+RISC-V updates for v5.4-rc6
+
+One fix for PCIe users:
+
+- Fix legacy PCI I/O port access emulation
+
+One set of cleanups:
+
+- Resolve most of the warnings generated by sparse across arch/riscv.
+  No functional changes
+
+And one MAINTAINERS update:
+
+- Update Palmer's E-mail address
+
+----------------------------------------------------------------
+Palmer Dabbelt (1):
+      MAINTAINERS: Change to my personal email address
+
+Paul Walmsley (6):
+      riscv: add prototypes for assembly language functions from head.S
+      riscv: init: merge split string literals in preprocessor directive
+      riscv: mark some code and data as file-static
+      riscv: add missing header file includes
+      riscv: fp: add missing __user pointer annotations
+      riscv: for C functions called only from assembly, mark with __visible
+
+Yash Shah (1):
+      RISC-V: Add PCIe I/O BAR memory mapping
+
+ MAINTAINERS                         |  6 +++---
+ arch/riscv/include/asm/io.h         |  7 +++++++
+ arch/riscv/include/asm/irq.h        |  3 +++
+ arch/riscv/include/asm/pgtable.h    |  7 ++++++-
+ arch/riscv/include/asm/switch_to.h  |  1 +
+ arch/riscv/kernel/cpufeature.c      |  1 +
+ arch/riscv/kernel/head.h            | 21 +++++++++++++++++++++
+ arch/riscv/kernel/irq.c             |  2 +-
+ arch/riscv/kernel/module-sections.c |  1 +
+ arch/riscv/kernel/process.c         |  2 ++
+ arch/riscv/kernel/ptrace.c          |  4 ++--
+ arch/riscv/kernel/reset.c           |  1 +
+ arch/riscv/kernel/setup.c           |  2 ++
+ arch/riscv/kernel/signal.c          |  8 ++++----
+ arch/riscv/kernel/smp.c             |  2 ++
+ arch/riscv/kernel/smpboot.c         |  5 ++++-
+ arch/riscv/kernel/syscall_table.c   |  1 +
+ arch/riscv/kernel/time.c            |  1 +
+ arch/riscv/kernel/traps.c           |  5 +++--
+ arch/riscv/kernel/vdso.c            |  3 ++-
+ arch/riscv/mm/context.c             |  1 +
+ arch/riscv/mm/fault.c               |  2 ++
+ arch/riscv/mm/init.c                |  5 +++--
+ arch/riscv/mm/sifive_l2_cache.c     |  2 +-
+ 24 files changed, 75 insertions(+), 18 deletions(-)
+ create mode 100644 arch/riscv/kernel/head.h
