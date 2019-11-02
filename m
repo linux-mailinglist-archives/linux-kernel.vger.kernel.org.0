@@ -2,85 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1C0ECFDE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 18:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 934BDECFE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 18:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfKBRMD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 2 Nov 2019 13:12:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45724 "EHLO mx1.redhat.com"
+        id S1726893AbfKBROW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 2 Nov 2019 13:14:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726893AbfKBRMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Nov 2019 13:12:03 -0400
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726454AbfKBROW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Nov 2019 13:14:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 30B2BC04BE1B
-        for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2019 17:12:03 +0000 (UTC)
-Received: by mail-ot1-f69.google.com with SMTP id f17so7971881otp.13
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2019 10:12:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zl9fDks+mlVguzbhaExkNR5P4dBXCVz91rnRw1qkYoM=;
-        b=bMHK0Fhd7ExIhxx0tSmQAwuU5Y+dy1WNNPmhXv0VuscxxjK4M7RRCifvDyaN9pn8dT
-         RkUJ7+8oolTPhytnK7HdmoASrhCv5H2YK6CyJkWv9VAnfGnMgDze/1frgrHqp2zZq0D0
-         XCYRukavmG1Z7cn2m2is1lVvhGkx4zpVykuPrUA3iz0U1GyvzuJ68WnmyDKCUvaEzCux
-         cOCYnpxMoWLVNlGT7aiPt7/ghshwNf9NmE+bUuV4zrl/ogHQwRp2r5rbuQ4dcVVFBiSa
-         oL9hQjgL27zACC2ZbuCIz0IITC/vwIHS9CMGFIBE4bqemAseF+5qJ1P+2+cTGzBUqpMo
-         QrYw==
-X-Gm-Message-State: APjAAAWg+vyGA7xTRipqWJ4jjE09l1WWfOEOzWfaaTVDkwmqXaJKvkdU
-        mjiFV7oWETrTO3AE9qj9i9kxdcThH3V8lFy6uIN/v+QsvvHTD/3Qt7YQFPH6y8lB619IdheZ1di
-        6HKCakYoMFkoZOuQLJwNPnFu2+5O5TMwwr3eC5OmL
-X-Received: by 2002:aca:b03:: with SMTP id 3mr8429427oil.24.1572714722655;
-        Sat, 02 Nov 2019 10:12:02 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzBeIHHDezjGUM47ip6RrosGeU264dgnNDsmFABP4CYUabIN4mVl/m2b8xL3KrISyeUZ+KMCTs+c2qfLxq5oBI=
-X-Received: by 2002:aca:b03:: with SMTP id 3mr8429400oil.24.1572714722376;
- Sat, 02 Nov 2019 10:12:02 -0700 (PDT)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7848021855;
+        Sat,  2 Nov 2019 17:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572714862;
+        bh=vXa/QkOcySgkQ/5on8HqE0PLqKV33p9ytcqF+FfU5nU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hXBWS7duijEfYwtFet1jD6NAD47LDPQHmxGlkV1oPIB7asl1Did/JNgSQycI5PlLV
+         i19vNPoYt9c2no46JN5KUKHraNhdtmIMkZf5XusTJ3N1pEeoho7FmP1h9U/uOsoGff
+         YLNAdeLXD9px3DUxHGLyXgh6tnXwoueUHMOfg3hA=
+Date:   Sat, 2 Nov 2019 18:14:19 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [GIT PULL 1/7] intel_th: gth: Fix the window switching sequence
+Message-ID: <20191102171419.GA484428@kroah.com>
+References: <20191028070651.9770-1-alexander.shishkin@linux.intel.com>
+ <20191028070651.9770-2-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-References: <20191031064741.4567-1-christophe.jaillet@wanadoo.fr>
- <c7a0b6b0-96cd-1fd3-3d98-94a3692bda38@cogentembedded.com> <1b33ca33-a02b-1923-cbee-814e520b9700@wanadoo.fr>
-In-Reply-To: <1b33ca33-a02b-1923-cbee-814e520b9700@wanadoo.fr>
-From:   Stefano Garzarella <sgarzare@redhat.com>
-Date:   Sat, 2 Nov 2019 18:11:50 +0100
-Message-ID: <CAGxU2F5wS9VnNu5ETFbbFcyaCx+UPD9jqjBPVp_rKKZ0-am1tQ@mail.gmail.com>
-Subject: Re: [PATCH] vsock: Simplify '__vsock_release()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>, sunilmut@microsoft.com,
-        Willem de Bruijn <willemb@google.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, ytht.net@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>, tglx@linutronix.de,
-        Dexuan Cui <decui@microsoft.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028070651.9770-2-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 10:49 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 31/10/2019 à 10:36, Sergei Shtylyov a écrit :
-> > Hello!
-> >
-> > On 31.10.2019 9:47, Christophe JAILLET wrote:
-> >
-> >> Use '__skb_queue_purge()' instead of re-implementing it.
-> >
-> >    In don't see that double underscore below...
-> This is a typo in the commit message.
->
-> There is no need for __ because skb_dequeue was used.
->
-> Could you fix it directly in the commit message (preferred solution for
-> me) or should I send a V2?
->
+On Mon, Oct 28, 2019 at 09:06:45AM +0200, Alexander Shishkin wrote:
+> Commit 8116db57cf16 ("intel_th: Add switch triggering support") added
+> a trigger assertion of the CTS, but forgot to de-assert it at the end
+> of the sequence. This results in window switches randomly not happening.
+> 
+> Fix that by de-asserting the trigger at the end of the window switch
+> sequence.
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/hwtracing/intel_th/gth.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-I think is better if you send a v2 fixing this and including the R-b tags.
-My R-b stays with that fixed :-)
+Shouldn't this have a Fixes: tag and a cc: stable@ in it?
 
-Thanks,
-Stefano
+I can add it if you say it's ok to.
+
+thanks,
+
+greg k-h
