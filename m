@@ -2,53 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2031EECC95
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 02:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4DFECCA4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 02:13:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfKBBKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 21:10:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbfKBBKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 21:10:05 -0400
-Subject: Re: [GIT] Networking
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572657004;
-        bh=ZYV85FHuO1FdPrybf86qqk8CVzLbbZiKCSTfisWt48c=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=SQMqRfCov5NVt87mCr+ounSt0E8cGcv5oeFDKG8tDM/F27EusUSuu+3XAG5XXPtw0
-         /5mdnBDfWbrhq6/5IjUSCrVo3mLm/9Aq/oXNhZkDOt6eM5xrCj9cwZz2aoPsvCNwc+
-         4In9GIqGcFDvtHleccW3PlBTWC4I2j1bxRg8SgrU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191101.165029.1804551650613208564.davem@davemloft.net>
-References: <20191101.165029.1804551650613208564.davem@davemloft.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191101.165029.1804551650613208564.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
- refs/heads/master
-X-PR-Tracked-Commit-Id: aeb1b85c340c54dc1d68ff96b02d439d6a4f7150
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1204c70d9dcba31164f78ad5d8c88c42335d51f8
-Message-Id: <157265700474.2997.4709703528603617408.pr-tracker-bot@kernel.org>
-Date:   Sat, 02 Nov 2019 01:10:04 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1727768AbfKBBNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 21:13:47 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:59692 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726892AbfKBBNr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Nov 2019 21:13:47 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TgyIBrx_1572657222;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TgyIBrx_1572657222)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 02 Nov 2019 09:13:43 +0800
+Subject: Re: [PATCH v2] sched/numa: advanced per-cgroup numa statistic
+To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org
+References: <46b0fd25-7b73-aa80-372a-9fcd025154cb@linux.alibaba.com>
+ <682ed1d4-abf1-92f6-851f-567ff9b9a841@linux.alibaba.com>
+ <20191101173936.GB16165@blackbody.suse.cz>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <0b7a20a3-4ff4-6183-c6e1-7c8c37efd0e2@linux.alibaba.com>
+Date:   Sat, 2 Nov 2019 09:13:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191101173936.GB16165@blackbody.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 01 Nov 2019 16:50:29 -0700 (PDT):
+Hi, Michal
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git refs/heads/master
+On 2019/11/2 上午1:39, Michal Koutný wrote:
+> Hello Yun.
+> 
+> On Tue, Oct 29, 2019 at 03:57:20PM +0800, 王贇 <yun.wang@linux.alibaba.com> wrote:
+>> +static void update_numa_statistics(struct cfs_rq *cfs_rq)
+>> +{
+>> +	int idx;
+>> +	unsigned long remote = current->numa_faults_locality[3];
+>> +	unsigned long local = current->numa_faults_locality[4];
+>> +
+>> +	cfs_rq->nstat.jiffies++;
+> This statistics effectively doubles what
+> kernel/sched/cpuacct.c:cpuacct_charge() does (measuring per-cpu time).
+> Hence it seems redundant.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1204c70d9dcba31164f78ad5d8c88c42335d51f8
+Yes, while there is no guarantee the cpu cgroup always binding
+with cpuacct in v1, we can't rely on that...
 
-Thank you!
+> 
+>> +
+>> +	if (!remote && !local)
+>> +		return;
+>> +
+>> +	idx = (NR_NL_INTERVAL - 1) * local / (remote + local);
+>> +	cfs_rq->nstat.locality[idx]++;
+> IIUC, the mechanism numa_faults_locality values, this statistics only
+> estimates the access locality based on NUMA balancing samples, i.e.
+> there exists more precise source of that information.>
+> All in all, I'd concur to Mel's suggestion of external measurement.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Currently I can only find numa balancing who is telling the real story,
+at least we know after the PF, task do access the page on that CPU,
+although it can't cover all the cases, it still giving good hints :-)
+
+It would be great if we could find more similar indicators, like the
+migration failure counter Mel mentioned, which give good hints on
+memory policy problems, could be used as external measurement.
+
+Regards,
+Michael Wang
+
+> 
+> Michal
+> 
