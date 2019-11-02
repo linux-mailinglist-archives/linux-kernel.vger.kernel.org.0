@@ -2,54 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33D2ECD49
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 06:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A77B8ECD29
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 06:01:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfKBFV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 2 Nov 2019 01:21:56 -0400
-Received: from hn.kd.ny.adsl ([42.231.162.229]:1730 "HELO zoosbook.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1725820AbfKBFVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Nov 2019 01:21:55 -0400
-Received: from relay37.vosimerkam.net [44.80.224.246] by mail.naihautsui.co.kr with ESMTP; Sat, 02 Nov 2019 08:18:06 +0300
-Received: from unknown (HELO relay.2yahoo.com) (Sat, 02 Nov 2019 08:01:56 +0300)
-        by rsmail.alkoholic.net with ASMTP; Sat, 02 Nov 2019 08:01:56 +0300
-Received: from unknown (34.86.30.149)
-        by mail.webhostings4u.com with SMTP; Sat, 02 Nov 2019 07:56:24 +0300
-Received: from group21.345mail.com [141.24.205.28] by asx121.turbo-inline.com with NNFMP; Sat, 02 Nov 2019 07:38:17 +0300
-Message-ID: <37BFBAE5.BB3087DD@zoosbook.com>
-Date:   Sat, 02 Nov 2019 07:26:07 +0300
-Reply-To: "zoosbook.com" <admin@zoosbook.com>
-From:   "zoosbook.com" <admin@zoosbook.com>
-User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.4) Gecko/20100608 Lightning/1.0b2 Thunderbird/3.1
-X-Accept-Language: en-us
-MIME-Version: 1.0
-To:     <linux-assembly@vger.kernel.org>
-Subject: FREE Bestiality Social Network
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1727121AbfKBFBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 2 Nov 2019 01:01:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49948 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfKBFBu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Nov 2019 01:01:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0233860FBB; Sat,  2 Nov 2019 05:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572670908;
+        bh=3jrpzDJ3un/OnOp4reXw1SVjx+Aq9j/kB2TL+7OU6WU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PL0wqpXRehSrxIoUNFs+oMSNxcwqF1htCO70LuD1PcxuiwMgZvNOq/jTYDTFzi2sk
+         OjUaMKXfN4Zrp8f2nBQbs0LN0T6vv8qBY3nmjOSHdz0+5aZkwnCpSZUeUV1Iod/WZO
+         Nwhm0P/C2m3tzPcPTEEyxSAHNtE3OGAhNiq6k/TY=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DB756614A3;
+        Sat,  2 Nov 2019 05:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572670907;
+        bh=3jrpzDJ3un/OnOp4reXw1SVjx+Aq9j/kB2TL+7OU6WU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iRMzXg58P/yMnLCb1FmT+AgGyUgzZoO+iHQmKWkHVkvklOMYNspST3jisHq2GQWaE
+         bw6I4FkToKB0uGTBi6QnS4YmArFTE56NyaXS9hhNbWU36dCgTVXXOWJ4WbvGGVdT9V
+         zAAEIEnIVGoNNn49H/yC0giQllO2K7fsU7pMyz3s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB756614A3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        cang@codeaurora.org
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/5] scsi: Adjust DBD setting in mode sense for caching mode page per LLD
+Date:   Fri,  1 Nov 2019 22:01:34 -0700
+Message-Id: <1572670898-750-2-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1572670898-750-1-git-send-email-cang@codeaurora.org>
+References: <1572670898-750-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, 
+Host sends MODE_SENSE_10 with caching mode page, to check if the device
+supports the cache feature.
+UFS JEDEC standards require DBD field to be set to 1.
 
-Bestiality Social Networking Platform. With pictures, videos and friend
-about bestiality and zoophilia porn. 
-Here you can meet and talk with people that love zoo sex.
+This patch allows LLD to define the setting of DBD if required.
 
-Register for a free account with us today
-https://www.zoosbook.com/register
+Signed-off-by: Can Guo <cang@codeaurora.org>
+---
+ drivers/scsi/sd.c        | 2 +-
+ include/scsi/scsi_host.h | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Let your animalic thoughts get alive.
-
-After you`ll get a feeling of the things inside, please give us a nice
-review here
-https://www.scamadviser.com/check-website/zoosbook.com
-
-
-See you inside
-
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index aab4ed8..a9cca2f 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2660,7 +2660,7 @@ static int sd_try_rc16_first(struct scsi_device *sdp)
+ 		dbd = 8;
+ 	} else {
+ 		modepage = 8;
+-		dbd = 0;
++		dbd = sdp->host->set_dbd_for_caching ? 8 : 0;
+ 	}
+ 
+ 	/* cautiously ask */
+diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+index 2c3f0c5..3900987 100644
+--- a/include/scsi/scsi_host.h
++++ b/include/scsi/scsi_host.h
+@@ -650,6 +650,12 @@ struct Scsi_Host {
+ 	unsigned no_scsi2_lun_in_cdb:1;
+ 
+ 	/*
++	 * Set "DBD" field in mode_sense caching mode page in case it is
++	 * mandatory by LLD standard.
++	 */
++	unsigned set_dbd_for_caching:1;
++
++	/*
+ 	 * Optional work queue to be utilized by the transport
+ 	 */
+ 	char work_q_name[20];
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
