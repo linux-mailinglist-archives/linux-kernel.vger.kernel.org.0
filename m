@@ -2,65 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22250ECCF1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 867B9ECCF5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 03:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfKBCzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 22:55:51 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39111 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfKBCzu (ORCPT
+        id S1728036AbfKBC5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 22:57:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45488 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfKBC5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 22:55:50 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p12so7587993pgn.6;
-        Fri, 01 Nov 2019 19:55:50 -0700 (PDT)
+        Fri, 1 Nov 2019 22:57:45 -0400
+Received: by mail-pf1-f196.google.com with SMTP id z4so2219342pfn.12;
+        Fri, 01 Nov 2019 19:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xFTNRYksg5hjJmBCliKtQprKj5dj8NPap0MuwQWTDx4=;
-        b=JzZ54Ca/aYsIg4kl18Pwqdb56A5YbfqFYibHegzjtPq+/nX8Jjnlx/bGP2fg4zmtwo
-         9xDBCMkAHy7y4Xdz9M9qSFy82GikNWN5LpelPlZx5XdwhziozECm7OoX7alN6A8m0X6u
-         r4qKj0mKq4G297mGlLafNrWWjo9yceMvuUh0wMF68fopww0lGjjLjdFOALD2wEXiEihp
-         Auhf9xfLG7yc8vaWgNvjwfNI7SxPj09U9GIlSQP4zFQTNES9deSfyvRgFOIlQuZNKBy+
-         +bykio1h3I2Z95fvIYqXzjvFzj/cRH/+JkJd/odg6JGebDGcB9b8xdBcH3EToVhG1iXF
-         IpMw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=n2h/6gw/JXQvSnG6kqsCmbuh4pHjwKVhPunR1jD3PYo=;
+        b=k/lAPfaXO1Z/m7JispyJ0Mi720wSeEGtZWo2EG7jbQ7DBr7kQ0ewnkVgn+W1KS6SVi
+         ah5c1RZtP5SQovQ9b6E0LBXVon3Xp4kN73haxEZQaeFk/tvq5cdOJDWwXaz6J3ZGbuOd
+         22RKmtHVvqdIbGiqHRCVn0K6bsXENhR49sNtN+VJxZJvgatxwc4t+0uxIlYd0qfN6Mx3
+         Mv/8dg8sfZwRr+6C1TuvsX+8/wmTlD3wi29N7f4Kd2BPcGiso0eg7/g95TSa1eM3+Z97
+         IHr1bHsnR9raSb8aJsedM9v46cKGSc/NwOeF45Luqr/Uo1VXjKWnyN/I7xp7F94fz5O4
+         9TNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xFTNRYksg5hjJmBCliKtQprKj5dj8NPap0MuwQWTDx4=;
-        b=BCLSO7MvFTHa9UJfjYzW43BIVWB9d0WMaC30H5/Qta3UNFGnZJ6p0wugKAA87FSLco
-         cfUKwHDajSiIpzNFedUUqzxuK3oqq3Aob6PId45TZDbdHHOfXy+xydpcHGt//hFQfBQP
-         if5svLd8cXx4TkcMr3BQyenCRaowTXO84IdZTKMPEb8zBSu0qqUdp5YwMw6tYhyuPP6u
-         b3PNDMPyPGXbIHH+M82sLdnujO8/uhO+sEUysRRkWpvHkqnRkiEbtji62/3P+GnsKUwF
-         V6wCwfVeutwfcwV4fWf5FmMpLPSDYonq9kqDxnJIrTBKZ4bgx7PJLh+IWek6yGke2iHE
-         EhkA==
-X-Gm-Message-State: APjAAAWIiNUar3OPuWxT1+DvZrOCAPYE2GojJ46t657WCzOSOd6IKZcY
-        bl0Qen6RclVjcbVpdGMU6Yo=
-X-Google-Smtp-Source: APXvYqzeyJwMJ3x8rKK5HX81hTOz8v7spnlXbx1lkmavVOINNHDRP65dyZnjDg9DB0XkFShAoj29Cw==
-X-Received: by 2002:a17:90a:9291:: with SMTP id n17mr19824023pjo.60.1572663349847;
-        Fri, 01 Nov 2019 19:55:49 -0700 (PDT)
+        bh=n2h/6gw/JXQvSnG6kqsCmbuh4pHjwKVhPunR1jD3PYo=;
+        b=r7PiQyYq4f5SrHl7ad4Gbg5Lndoj3/FTECDdXB2+RP15tfpprkR/CqNyiWGuJRwHvC
+         H277PpRn7axbIQ1cTCcdUnhA4SBeYWCh71FdOGWQc8www1spzktLOO6z8XHxAWa0G5JA
+         z/QKjFS9SB8ki4e8P4NMxqLRWbqtQFcUHq3H0rLFgro3nz6p/FYEvSvQD8yvH8j8+enx
+         I/QExxa5e6kAXexjr/JDWv2lQxperq1GQ0NQuRS7fcFUKMMu2gslsjSZd4pijP9+S7fz
+         5k1cNkpO6OBpPkOmZSalzeaPSKcy8SBkwhlJe5V8J/UJCxFvSs3cug4cQ3uJr8cGXz6G
+         0eYg==
+X-Gm-Message-State: APjAAAXDv27Kq4h0WhJzYbtoLv24oVNKHGtyWBXWK4Lx4JEcVnlRhhzd
+        bLnXJvJudn9bawYKa08iyQ7wONii
+X-Google-Smtp-Source: APXvYqwPkVI4cApDiM5uPUR23Hj6kbJM6kTPVWlhb0LBkdhVDSHEs6qzMeVX23pTV8oJ8FuEB7sYLg==
+X-Received: by 2002:a17:90a:2623:: with SMTP id l32mr20309858pje.70.1572663464484;
+        Fri, 01 Nov 2019 19:57:44 -0700 (PDT)
 Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id a12sm3441851pfo.136.2019.11.01.19.55.47
+        by smtp.gmail.com with ESMTPSA id m68sm7995310pfb.122.2019.11.01.19.57.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2019 19:55:49 -0700 (PDT)
-Subject: Re: [PATCH 2/2] pinctrl: bcm: nsp: implement get_direction
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20191101015621.12451-1-chris.packham@alliedtelesis.co.nz>
- <20191101015621.12451-3-chris.packham@alliedtelesis.co.nz>
+        Fri, 01 Nov 2019 19:57:43 -0700 (PDT)
+Subject: Re: [PATCH 1/5] net: phy: at803x: fix Kconfig description
+To:     Michael Walle <michael@walle.cc>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org
+References: <20191102011351.6467-1-michael@walle.cc>
+ <20191102011351.6467-2-michael@walle.cc>
 From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <3cc0fc66-c6da-45ba-c2d5-32877a180b57@gmail.com>
-Date:   Fri, 1 Nov 2019 19:55:48 -0700
+Message-ID: <11e4c62b-6f63-5450-8335-1713040a9f13@gmail.com>
+Date:   Fri, 1 Nov 2019 19:57:43 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.0
 MIME-Version: 1.0
-In-Reply-To: <20191101015621.12451-3-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20191102011351.6467-2-michael@walle.cc>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,14 +68,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 10/31/2019 6:56 PM, Chris Packham wrote:
-> The get_direction api is strongly recommended to be implemented. In fact
-> if it is not implemented gpio-hogs will not get the correct direction.
-> Add an implementation of get_direction for the nsp-gpio driver.
+On 11/1/2019 6:13 PM, Michael Walle wrote:
+> The name of the PHY is actually AR803x not AT803x. Additionally, add the
+> name of the vendor and mention the AR8031 support.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Signed-off-by: Michael Walle <michael@walle.cc>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
 -- 
 Florian
