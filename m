@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89AF9ECC70
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 01:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F51ECC79
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2019 01:43:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbfKBAb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 1 Nov 2019 20:31:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35762 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728313AbfKBAb4 (ORCPT
+        id S1728034AbfKBAm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 1 Nov 2019 20:42:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35640 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbfKBAm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Nov 2019 20:31:56 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c8so7471622pgb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 17:31:56 -0700 (PDT)
+        Fri, 1 Nov 2019 20:42:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l10so11201680wrb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2019 17:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IzNtFT+Ywg6fAANt4Dbe5JETPNXOEpHrB/MK+SSdmpc=;
-        b=trPLlTjmU0FOKvC+IFGbJIX6Xg3RtTJc6kQWsSfAflR2mK+AOUsDDE+k9iVRLEIVjg
-         nqSWWL17ieUWYq6S4NmnIPOfNZPCVo3nF1/jTaDgNDXgGoeki1QEflduK941OcBgvnXC
-         F6LwbHizOMV4TXEs8EYBiKGixJaJqZ1y2capBCXogKe4RmlVA+h6XN7KA6U+2xMwOZCI
-         PDwbcu+WSAXSRz5Iy+A61/8cY/wKKE4nOl3sRUKKvvujpzwCdFfTp5C6bYgAgsAxvvjJ
-         Pewv6Dh/Sp5MPGtttGIQ/d9dJLWAXWCLl/N2WsUl3ZNHofgZRJ9GmnMzMbk6+nqjji7K
-         HexA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OebC6aVMcC2jE8zsuehSJZa7VRGYhUzWUik+Vnx7pS0=;
+        b=dCR+ereuD8LxHOyd/DrOqk/4Z2UB/vmMo0sE+MIaxM/mXEyDlA6z99rafM+yvWIIvb
+         utCF/mHGnwXbD3D2HJrGCzYFRnfTQCPu04oHH22mvdlrXAsXznVSoLE2n40cyu6Eprq2
+         6mfG5aLjYHbp5CCPCnreKLYvtUsuRselKHa20RKzWYssSTMd1aTt0Faj/ITpt2rYEOk7
+         CczhUgohsEf83N9OYkykkhv1d8jLf7DgUyueJwYurSpAdA/lcVjEsy6QkE4FZW0I3TKA
+         DqzKPJMAktIjESZTZ9nHKgSh/h8OqgD7tBezlt5w9hQNsg7ZQz7F4+z04WP4dqaHbKgM
+         eBmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IzNtFT+Ywg6fAANt4Dbe5JETPNXOEpHrB/MK+SSdmpc=;
-        b=JAREMXjH6kAzSv77wqyyz7pi3f4OZmEqX9l0/MXnI0ucLSCP4bBPvyVOPfEE7qwjEj
-         H92XQlegUYoS8g2Z2sc42tV6pMeOcJ5HRXl7r8G0uz0fVli5/JuT1UvfooJRp70tMwvc
-         B4hTFyid2m3DmCUpTvpps2ruK+PsOXBmu12PRsshYQrHgFecWPuQDRpwQpm8fimu+F9y
-         aXB8GqbRpSFWOiul3U+ypEruAWVan1Qj5Z7VJpswohlISSnUU6oM97LTL+fNwnq5GR23
-         8Mnxxn8izcxRds644qrsHtf9pIIJcdxyVYHqngtVlWIIordCEm/i5lZ+Y8J8utai9RTz
-         A5Ng==
-X-Gm-Message-State: APjAAAU0j9nwvdtFrQ9a6gdOpY6gautJxTJivp3Ys35rW3kX5VybVL/R
-        rqnO6SdG2jX6fWeRZdbf/x7QSA==
-X-Google-Smtp-Source: APXvYqytbiz95EC/cgJxnFlwqHQtaYez+AuORPX6vKWHXecRxc/A0TOfu4PpQ3ilxIqO+VriFYELqw==
-X-Received: by 2002:a63:e055:: with SMTP id n21mr16303184pgj.411.1572654715530;
-        Fri, 01 Nov 2019 17:31:55 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v2sm7957522pfm.13.2019.11.01.17.31.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OebC6aVMcC2jE8zsuehSJZa7VRGYhUzWUik+Vnx7pS0=;
+        b=hgRAjLNHrFPKxcoXuCg2QvJTqmVpAlJQ2gZ7kr66yldWzm6oR4JTiUJnk7BaXytnQO
+         5WSnvFYCX1asvH0yaxkbYA6WSM3sWj3j51RhV6nWmgIojqeU56ASsmJAhNQFEGQeX9lT
+         QYrtkQN1s9pGMsOlnsbfJRK5O7H9iQlg5RYDlpvzbFxQIk4yw5GrP4if0zmkS7E1XJBw
+         Qlhd6iV6Ntk3VlI0JymZ66/HEJrB+ew6cbK4RKfoph2YtKSWkV1F30r3NDrNC6b+equ+
+         Jo9RvManvVwrHw5dhZezFMyyEjsY9Rar9waoNoa6ljvpQoTXfSXQoT4zl44Wrs0F2Rlg
+         opSQ==
+X-Gm-Message-State: APjAAAW/VeaHig9gCO4KapaWobbkUss7v+n+io8bmioSr40uPBFYm21A
+        ImTZnMLRLotyP6SPvGJ2Mg==
+X-Google-Smtp-Source: APXvYqxsPeqTU5bA5Ce+J+KH23f7s/LwxT+2sDzXy6ocZsRTFxy5mYbSwBt9IPd/HRptGG90B4VN3g==
+X-Received: by 2002:adf:e944:: with SMTP id m4mr13514286wrn.49.1572655343846;
+        Fri, 01 Nov 2019 17:42:23 -0700 (PDT)
+Received: from ninjahub.lan (79-73-36-243.dynamic.dsl.as9105.com. [79.73.36.243])
+        by smtp.googlemail.com with ESMTPSA id d202sm8667642wmd.47.2019.11.01.17.42.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 17:31:54 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: qcom: db845c: Enable PCIe controllers
-Date:   Fri,  1 Nov 2019 17:31:48 -0700
-Message-Id: <20191102003148.4091335-4-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191102003148.4091335-1-bjorn.andersson@linaro.org>
-References: <20191102003148.4091335-1-bjorn.andersson@linaro.org>
+        Fri, 01 Nov 2019 17:42:23 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     julia.lawall@lip6.fr, gregkh@linuxfoundation.org,
+        m.tretter@pengutronix.de, linux-kernel@vger.kernel.org,
+        Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH] staging: allegreo-dvt: fix warning of comparison of 0/1 to bool
+Date:   Sat,  2 Nov 2019 00:42:13 +0000
+Message-Id: <20191102004213.24909-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,129 +61,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the two PCIe controllers found on the Dragonboard845c.
+Fix warning of comparison of 0/1 to bool variable.
+Warning reported by coccinelle tool.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 91 ++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+ drivers/staging/media/allegro-dvt/nal-h264.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index f5a85caff1a3..c314b5d55796 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -340,6 +340,39 @@
- 			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>;
- };
+diff --git a/drivers/staging/media/allegro-dvt/nal-h264.c b/drivers/staging/media/allegro-dvt/nal-h264.c
+index 4e14b77851e1..bd48b8883572 100644
+--- a/drivers/staging/media/allegro-dvt/nal-h264.c
++++ b/drivers/staging/media/allegro-dvt/nal-h264.c
+@@ -235,7 +235,7 @@ static inline int rbsp_write_bit(struct rbsp *rbsp, bool value)
  
-+&pcie0 {
-+	status = "okay";
-+	perst-gpio = <&tlmm 35 GPIO_ACTIVE_LOW>;
-+	enable-gpio = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-+
-+	vddpe-3v3-supply = <&pcie0_3p3v_dual>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_default_state>;
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l26a_1p2>;
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+	perst-gpio = <&tlmm 102 GPIO_ACTIVE_LOW>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_default_state>;
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l26a_1p2>;
-+};
-+
- &pm8998_gpio {
- 	vol_up_pin_a: vol-up-active {
- 		pins = "gpio6";
-@@ -382,6 +415,31 @@
- };
+ 	rbsp->pos++;
  
- &tlmm {
-+	pcie0_default_state: pcie0-default {
-+		clkreq {
-+			pins = "gpio36";
-+			function = "pci_e0";
-+			bias-pull-up;
-+		};
-+
-+		reset-n {
-+			pins = "gpio35";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			output-low;
-+			bias-pull-down;
-+		};
-+
-+		wake-n {
-+			pins = "gpio37";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	pcie0_pwren_state: pcie0-pwren {
- 		pins = "gpio90";
- 		function = "gpio";
-@@ -390,6 +448,39 @@
- 		bias-disable;
- 	};
- 
-+	pcie1_default_state: pcie1-default {
-+		perst-n {
-+			pins = "gpio102";
-+			function = "gpio";
-+
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+
-+		clkreq {
-+			pins = "gpio103";
-+			function = "pci_e1";
-+			bias-pull-up;
-+		};
-+
-+		wake-n {
-+			pins = "gpio11";
-+			function = "gpio";
-+
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		reset-n {
-+			pins = "gpio75";
-+			function = "gpio";
-+
-+			drive-strength = <16>;
-+			bias-pull-up;
-+			output-high;
-+		};
-+	};
-+
- 	sdc2_default_state: sdc2-default {
- 		clk {
- 			pins = "sdc2_clk";
+-	if (value == 1 ||
++	if (value ||
+ 	    (rbsp->num_consecutive_zeros < 7 && (rbsp->pos % 8 == 0))) {
+ 		rbsp->num_consecutive_zeros = 0;
+ 	} else {
 -- 
-2.23.0
+2.21.0
 
