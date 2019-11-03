@@ -2,61 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24264ED3EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 18:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1D03ED3F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 18:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfKCRMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 12:12:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbfKCRMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 12:12:17 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7690A20848;
-        Sun,  3 Nov 2019 17:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572801137;
-        bh=PyxTSC1C5MxIjStz3/uFjvsyUByKR5YzlFl8BnqdxBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wf45GPnt1R7oSD0IaUsepFyhAZZJvHoOp7O2ouB2374DuFmsVSiw02Y3PyZOaDKDn
-         t8zEyeynYLFYman81XMjQYcxNiKHtaXsiHT2EFUgqmG59iD1LKON/xYVD5icDLXly+
-         JTnAuXbPhYlTX+17QXDq8YdJcoYLcmq7Y/hhnaMg=
-Date:   Sun, 3 Nov 2019 18:12:13 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: debugfs: Document debugfs helper for
- unsigned long values
-Message-ID: <20191103171213.GA700196@kroah.com>
-References: <20191021150645.32440-1-geert+renesas@glider.be>
+        id S1727880AbfKCRMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 12:12:45 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:35760 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbfKCRMp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 12:12:45 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iRJQT-0003cs-DB; Sun, 03 Nov 2019 18:12:29 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DF7451C0018;
+        Sun,  3 Nov 2019 18:12:28 +0100 (CET)
+Date:   Sun, 03 Nov 2019 17:12:28 -0000
+From:   "tip-bot2 for Xiaochen Shen" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/resctrl: Prevent NULL pointer dereference when
+ reading mondata
+Cc:     Xiaochen Shen <xiaochen.shen@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        pei.p.jia@intel.com, Reinette Chatre <reinette.chatre@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <1572326702-27577-1-git-send-email-xiaochen.shen@intel.com>
+References: <1572326702-27577-1-git-send-email-xiaochen.shen@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021150645.32440-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Message-ID: <157280114858.29376.4595330962343256563.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 05:06:45PM +0200, Geert Uytterhoeven wrote:
-> When debugfs_create_ulong() was added, it was not documented.
-> 
-> Fixes: c23fe83138ed7b11 ("debugfs: Add debugfs_create_ulong()")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  Documentation/filesystems/debugfs.txt | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+The following commit has been merged into the x86/urgent branch of tip:
 
-Jon, I had to take this in my tree too as Geert sent a follow-on patch
-that requires this.  Hopefully linux-next will not have many merge
-issues with it.
+Commit-ID:     26467b0f8407cbd628fa5b7bcfd156e772004155
+Gitweb:        https://git.kernel.org/tip/26467b0f8407cbd628fa5b7bcfd156e772004155
+Author:        Xiaochen Shen <xiaochen.shen@intel.com>
+AuthorDate:    Tue, 29 Oct 2019 13:25:02 +08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Sun, 03 Nov 2019 17:51:22 +01:00
 
-thanks,
+x86/resctrl: Prevent NULL pointer dereference when reading mondata
 
-greg k-h
+When a mon group is being deleted, rdtgrp->flags is set to RDT_DELETED
+in rdtgroup_rmdir_mon() firstly. The structure of rdtgrp will be freed
+until rdtgrp->waitcount is dropped to 0 in rdtgroup_kn_unlock() later.
+
+During the window of deleting a mon group, if an application calls
+rdtgroup_mondata_show() to read mondata under this mon group,
+'rdtgrp' returned from rdtgroup_kn_lock_live() is a NULL pointer when
+rdtgrp->flags is RDT_DELETED. And then 'rdtgrp' is passed in this path:
+rdtgroup_mondata_show() --> mon_event_read() --> mon_event_count().
+Thus it results in NULL pointer dereference in mon_event_count().
+
+Check 'rdtgrp' in rdtgroup_mondata_show(), and return -ENOENT
+immediately when reading mondata during the window of deleting a mon
+group.
+
+Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: pei.p.jia@intel.com
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1572326702-27577-1-git-send-email-xiaochen.shen@intel.com
+---
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index efbd54c..055c861 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -522,6 +522,10 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 	int ret = 0;
+ 
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		ret = -ENOENT;
++		goto out;
++	}
+ 
+ 	md.priv = of->kn->priv;
+ 	resid = md.u.rid;
