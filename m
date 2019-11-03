@@ -2,82 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF5EEED2DB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 11:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4326BED2DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 11:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfKCKbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 05:31:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbfKCKbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 05:31:14 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E13992080F;
-        Sun,  3 Nov 2019 10:31:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572777074;
-        bh=20l8v/y2V3ek5NI+W8ID8qa7S1TqL/BeyjegTojxYIk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MZX2QdfeJVHnNlbg1uGWwQTvF3A2/JmXrlYm6bNiiXpJxecg9O+lUkLqJIJaeAE4d
-         wr7MeS0gQLvVS4XG1LqtIGBJlcMKDRqxn9MTdrqveO0TOzrKWVmKegNoaOCxD3aaRF
-         7ThQWgAXtTZLt0fwygqYNrrNXEtaMpI4MasF6XV4=
-Date:   Sun, 3 Nov 2019 10:31:09 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <dragos.bogdan@analog.com>
-Subject: Re: [PATCH 05/10] iio: imu: adis: check ret val for non-zero vs
- less-than-zero
-Message-ID: <20191103103109.37849bc2@archlinux>
-In-Reply-To: <20191101093505.9408-6-alexandru.ardelean@analog.com>
-References: <20191101093505.9408-1-alexandru.ardelean@analog.com>
-        <20191101093505.9408-6-alexandru.ardelean@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727653AbfKCKfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 05:35:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56864 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726408AbfKCKfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 05:35:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3CAFAB13E;
+        Sun,  3 Nov 2019 10:35:04 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-mips@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>
+Subject: [net v2 1/4] net: sgi: ioc3-eth: don't abuse dma_direct_* calls
+Date:   Sun,  3 Nov 2019 11:34:30 +0100
+Message-Id: <20191103103433.26826-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Nov 2019 11:35:00 +0200
-Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
+From: Christoph Hellwig <hch@lst.de>
 
-> The ADIS library functions return zero on success, and negative values for
-> error. Positive values aren't returned, but we only care about the success
-> value (which is zero).
-> 
-> This change is mostly needed so that the compiler won't make any inferences
-> about some about values being potentially un-initialized. This only
-> triggers after making some functions inline, because the compiler can
-> better follow return paths.
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Applied.
+dma_direct_ is a low-level API that must never be used by drivers
+directly.  Switch to use the proper DMA API instead.
 
-thanks,
+Change in v2:
+- ensure that tx ring is 16kB aligned
 
-Jonathan
+Fixes: ed870f6a7aa2 ("net: sgi: ioc3-eth: use dma-direct for dma allocations")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-> ---
->  drivers/iio/imu/adis.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-> index 1631c255deab..dc2f9e061d98 100644
-> --- a/drivers/iio/imu/adis.c
-> +++ b/drivers/iio/imu/adis.c
-> @@ -286,7 +286,7 @@ int adis_check_status(struct adis *adis)
->  	int i;
->  
->  	ret = adis_read_reg_16(adis, adis->data->diag_stat_reg, &status);
-> -	if (ret < 0)
-> +	if (ret)
->  		return ret;
->  
->  	status &= adis->data->status_error_mask;
+---
+ drivers/net/ethernet/sgi/ioc3-eth.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/sgi/ioc3-eth.c b/drivers/net/ethernet/sgi/ioc3-eth.c
+index deb636d653f3..4879dedf1f60 100644
+--- a/drivers/net/ethernet/sgi/ioc3-eth.c
++++ b/drivers/net/ethernet/sgi/ioc3-eth.c
+@@ -48,7 +48,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/ethtool.h>
+ #include <linux/skbuff.h>
+-#include <linux/dma-direct.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <net/ip.h>
+ 
+@@ -89,6 +89,7 @@ struct ioc3_private {
+ 	struct device *dma_dev;
+ 	u32 *ssram;
+ 	unsigned long *rxr;		/* pointer to receiver ring */
++	void *tx_ring;
+ 	struct ioc3_etxd *txr;
+ 	dma_addr_t rxr_dma;
+ 	dma_addr_t txr_dma;
+@@ -1242,8 +1243,8 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	ioc3_stop(ip);
+ 
+ 	/* Allocate rx ring.  4kb = 512 entries, must be 4kb aligned */
+-	ip->rxr = dma_direct_alloc_pages(ip->dma_dev, RX_RING_SIZE,
+-					 &ip->rxr_dma, GFP_ATOMIC, 0);
++	ip->rxr = dma_alloc_coherent(ip->dma_dev, RX_RING_SIZE, &ip->rxr_dma,
++				     GFP_ATOMIC);
+ 	if (!ip->rxr) {
+ 		pr_err("ioc3-eth: rx ring allocation failed\n");
+ 		err = -ENOMEM;
+@@ -1251,14 +1252,16 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 
+ 	/* Allocate tx rings.  16kb = 128 bufs, must be 16kb aligned  */
+-	ip->txr = dma_direct_alloc_pages(ip->dma_dev, TX_RING_SIZE,
+-					 &ip->txr_dma,
+-					 GFP_KERNEL | __GFP_ZERO, 0);
+-	if (!ip->txr) {
++	ip->tx_ring = dma_alloc_coherent(ip->dma_dev, TX_RING_SIZE + SZ_16K - 1,
++					 &ip->txr_dma, GFP_KERNEL | __GFP_ZERO);
++	if (!ip->tx_ring) {
+ 		pr_err("ioc3-eth: tx ring allocation failed\n");
+ 		err = -ENOMEM;
+ 		goto out_stop;
+ 	}
++	/* Align TX ring */
++	ip->txr = PTR_ALIGN(ip->tx_ring, SZ_16K);
++	ip->txr_dma = ALIGN(ip->txr_dma, SZ_16K);
+ 
+ 	ioc3_init(dev);
+ 
+@@ -1313,11 +1316,11 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ out_stop:
+ 	del_timer_sync(&ip->ioc3_timer);
+ 	if (ip->rxr)
+-		dma_direct_free_pages(ip->dma_dev, RX_RING_SIZE, ip->rxr,
+-				      ip->rxr_dma, 0);
+-	if (ip->txr)
+-		dma_direct_free_pages(ip->dma_dev, TX_RING_SIZE, ip->txr,
+-				      ip->txr_dma, 0);
++		dma_free_coherent(ip->dma_dev, RX_RING_SIZE, ip->rxr,
++				  ip->rxr_dma);
++	if (ip->tx_ring)
++		dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->tx_ring,
++				  ip->txr_dma);
+ out_res:
+ 	pci_release_regions(pdev);
+ out_free:
+@@ -1335,10 +1338,8 @@ static void ioc3_remove_one(struct pci_dev *pdev)
+ 	struct net_device *dev = pci_get_drvdata(pdev);
+ 	struct ioc3_private *ip = netdev_priv(dev);
+ 
+-	dma_direct_free_pages(ip->dma_dev, RX_RING_SIZE, ip->rxr,
+-			      ip->rxr_dma, 0);
+-	dma_direct_free_pages(ip->dma_dev, TX_RING_SIZE, ip->txr,
+-			      ip->txr_dma, 0);
++	dma_free_coherent(ip->dma_dev, RX_RING_SIZE, ip->rxr, ip->rxr_dma);
++	dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->tx_ring, ip->txr_dma);
+ 
+ 	unregister_netdev(dev);
+ 	del_timer_sync(&ip->ioc3_timer);
+-- 
+2.16.4
 
