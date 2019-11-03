@@ -2,94 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7695ED359
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 13:35:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A64EED35E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 13:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfKCMfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 07:35:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbfKCMfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 07:35:42 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD1D2080F;
-        Sun,  3 Nov 2019 12:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572784540;
-        bh=BK+D11+cHY70edHKin0so2otIas8a6H8FGw7tK2gm0A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I1yyuyK5TLDhI39cGDdu78riruurLy+CQ/IxmIXX2JVPEI3xSJZBLG4f8bu/lFF89
-         KHBPHm4NjHnkVqDvJ0Nswc2NfEvrBTe/cZZPHNWg+V9HX0J2N/28IEVVQ363/qUkvo
-         R7sLDqJ0FA4In7icqVPgIlmHFlm3c7nRzrTkNqGc=
-Date:   Sun, 3 Nov 2019 13:35:38 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     rama <ramakumar.kanasundara@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        nishadkamdar@gmail.com
-Subject: Re: [PATCH] FBTFT: fb_sh: Changed udelay() to usleep_range() based
- on the Document, Documentation/timers/timers-howto.rst Excerpt from the
- document: -SLEEPING FOR ~USECS OR SMALL MSECS ( 10us - 20ms): * Use
- usleep_range
-Message-ID: <20191103123538.GA604630@kroah.com>
-References: <20191103005906.17112-1-ramakumar.kanasundara@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191103005906.17112-1-ramakumar.kanasundara@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1727719AbfKCMhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 07:37:46 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:48260 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727377AbfKCMhp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 07:37:45 -0500
+Received: from grover.flets-west.jp (softbank126021098169.bbtec.net [126.21.98.169]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id xA3CaIVC018623;
+        Sun, 3 Nov 2019 21:36:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com xA3CaIVC018623
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572784579;
+        bh=iCIrgjy/jBJIf7jd88C0TplYGpd505IJ9u3iionPOJc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=k94a7PKgsuhGwzrYW+HBq+d1x8NxPSysqFdJPm243dZ4BqqhP0dVDEZ0UtIFzcnqT
+         xEqRRE3szsW3yOb82Kc+ne5P2W+rFpq3a6uLw0feK2WsLlWZmoa/3s/M1QMgWUmbSX
+         f+w8mATLjKjscOy0aV6inAfVfJcsM7vlfUobBihxLdvtK2M6eKM4Rau8UcGqq/vHhc
+         sZeS5Elo3QaFRcvLNxyfzLMmBQSdlOCUpMbUZx36H0y5XD12krQKATfIbyZxlbgMVp
+         DsQfTYH2QMzY2WQZDEsovfM9aYvaAdoaV6VlWpQ8cLG+1nvWqsbaDONTDVTtSb/KwF
+         c93WuDR7Jvt2w==
+X-Nifty-SrcIP: [126.21.98.169]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        David Hildenbrand <david@redhat.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yu Zhao <yuzhao@google.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: mm: simplify the page end calculation in __create_pgd_mapping()
+Date:   Sun,  3 Nov 2019 21:35:58 +0900
+Message-Id: <20191103123559.8866-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 07:59:06PM -0500, rama wrote:
-> ---
->  drivers/staging/fbtft/fb_agm1264k-fl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Calculate the page-aligned end address more simply.
 
-Hi,
+The local variable, "length" is unneeded.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+ arch/arm64/mm/mmu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-- Your patch does not have a Signed-off-by: line.  Please read the
-  kernel file, Documentation/SubmittingPatches and resend it after
-  adding that line.  Note, the line needs to be in the body of the
-  email, before the patch, not at the bottom of the patch or in the
-  email signature.
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 60c929f3683b..a9f541912289 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -338,7 +338,7 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 				 phys_addr_t (*pgtable_alloc)(int),
+ 				 int flags)
+ {
+-	unsigned long addr, length, end, next;
++	unsigned long addr, end, next;
+ 	pgd_t *pgdp = pgd_offset_raw(pgdir, virt);
+ 
+ 	/*
+@@ -350,9 +350,8 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 
+ 	phys &= PAGE_MASK;
+ 	addr = virt & PAGE_MASK;
+-	length = PAGE_ALIGN(size + (virt & ~PAGE_MASK));
++	end = PAGE_ALIGN(virt + size);
+ 
+-	end = addr + length;
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+ 		alloc_init_pud(pgdp, addr, next, phys, prot, pgtable_alloc,
+-- 
+2.17.1
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what is needed in order to
-  properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what a proper Subject: line should
-  look like.
-
-- It looks like you did not use your "real" name for the patch on either
-  the Signed-off-by: line, or the From: line (both of which have to
-  match).  Please read the kernel file, Documentation/SubmittingPatches
-  for how to do this correctly.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
