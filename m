@@ -2,114 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D271ED401
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 18:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C31ED404
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 18:32:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbfKCR2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 12:28:06 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38872 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbfKCR2F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 12:28:05 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p20so2066987qtq.5
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 09:28:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=s+EzbwL8S2hwj+KLECNMt4Xqg3n8g5zJ+ZHzZns/5IM=;
-        b=ooHLzy9TycPdB5iX2ZI3L16Te3F2LBJoM56yygOeBp0cKxudHwzIBHHAZuQPQOhR2t
-         Op5FiMoTobUoaSgEm8ft5yprDTLfLAwHcjtLoZSw7FKwHbVWT+sUYyNdN7z/jCbeD+It
-         V81eg9yAhO8HzKJMtZmE99kx44meGF7wRvFkaeBJfmskVTiYHLSFrxhkqODEZ1Nu2Q+s
-         kdrzgV2PnqHTGXRk0623SLtUqprN27NWsEYoVgHBRTZ2p8DXo/uVkearXG7MTqNDQt8M
-         +/8tnfy7XY+XaPlHyzgh25buFCjLfq4ReZnRkhMNipXtdWoFe8TGEXvpsl0BHRAluEdl
-         8nEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=s+EzbwL8S2hwj+KLECNMt4Xqg3n8g5zJ+ZHzZns/5IM=;
-        b=A3s32qwzCay5fklnv6dR1kYD/qxYgWJ/HSpKRHTVk/VvUh2d4A93RVWsj7U2XgCrS7
-         qvFVattIhVQ3YSSlh32Hcpgyk3phnU10px53De5gnFSRwCaEMyZ/7FsAMPQmdxDKPLOH
-         Snd3nNXogwiG/YDEb85T00uNpOVspWo3uwtmxD3hxXoe+mcF7BVTlXLQ6XBjyHaZ05zF
-         Xhk+5FX2/AG4I10ndzDS3KW7+gLCXzriQeadE/fqgzeumi0ANnNdFH1XnxjCN4u658gT
-         UFmwYZJfrncv99SpMUqJZwXfL2hWt+5SQfOFH5lifNWOcPsvjhPdJqz8yd3jSLNvEuWS
-         Ka8w==
-X-Gm-Message-State: APjAAAVnnAM8zzo/L9sVbQ3hiFub3K738zX413mUOPhTdfcE3o1dxpVF
-        aUO0B7HJ7Emfq9XwIauAoJNic5tvKd+vgLw5460=
-X-Google-Smtp-Source: APXvYqwkfsPVOJThNaO5URHMRzX7abU8OgIPaxa8FxYb1k1jK6fY3zg+qvdR4Hia8oWBjYcd5JxlqszbtZMvtdSbumw=
-X-Received: by 2002:a0c:fecc:: with SMTP id z12mr5454870qvs.189.1572802084356;
- Sun, 03 Nov 2019 09:28:04 -0800 (PST)
+        id S1727842AbfKCRcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 12:32:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfKCRcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 12:32:31 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6A782080F;
+        Sun,  3 Nov 2019 17:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572802350;
+        bh=UzLLL1Ca+sjdIQykVRqTI78sHlr2eCUpPuADKt3IhL0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A1fyaYe43+mDax1rBL8Mn178Q81As7bkN3B8ZbBrGbLDS82jKqipE6imQiPJYGnlz
+         M+9e1IPNj3aLpjH6GHNqG9sApJmYWFEOAuYOM6PybzHSwjH+lDSQ+ENzyJ1mXiZ7us
+         nslC1hLxRXdLoLVYm6Ma8hr3egT4FlCHajlZSJHU=
+Date:   Sun, 3 Nov 2019 18:32:27 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v11 4/7] drm/sun4i: dsi: Handle bus clock explicitly
+Message-ID: <20191103173227.GF7001@gilmour>
+References: <20191025175625.8011-1-jagan@amarulasolutions.com>
+ <20191025175625.8011-5-jagan@amarulasolutions.com>
+ <20191028153427.pc3tnoz2d23filhx@hendrix>
+ <CAMty3ZCisTrFGjzHyqSofqFAsKSLV1n2xP5Li3Lonhdi0WUZVA@mail.gmail.com>
+ <20191029085401.gvqpwmmpyml75vis@hendrix>
+ <CAMty3ZAWPZSHtAZDf_0Dpx588YGGv3pJX1cXMfkZus3+WF94cA@mail.gmail.com>
 MIME-Version: 1.0
-Reply-To: drphasani.sungan@yandex.com
-Received: by 2002:ad4:55ef:0:0:0:0:0 with HTTP; Sun, 3 Nov 2019 09:28:03 -0800 (PST)
-From:   Dr Phasani Sungan <dr.phasanisungan@gmail.com>
-Date:   Sun, 3 Nov 2019 09:28:03 -0800
-X-Google-Sender-Auth: VmwK1dFdhlvyBKpQmOAnDB0IkW0
-Message-ID: <CAD6ejPQNh7zSwqa19FPBdyv5XE3opsOnL86Khkrzj8D4h0SRQA@mail.gmail.com>
-Subject: PLEASE RESPOND VERY URGENTLY
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dFWYt1i2NyOo1oI9"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZAWPZSHtAZDf_0Dpx588YGGv3pJX1cXMfkZus3+WF94cA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
 
-with due respect, i have decided to contact you on a business
-transaction that will be beneficial to both of us. At the bank last
-account and auditing evaluation, my staffs came across an old account
-which was being maintained by a foreign client who we learn was among
-the deceased passengers of motor accident on november.2003, the
-deceased was unable to run this account since his death. The account
-has remained dormant without the knowledge of his family since it was
-put in a safe deposit account in the bank for future investment by the
-client.
+--dFWYt1i2NyOo1oI9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit account
-until i discovered that it cannot be claimed since our client is a
-foreign national and we are sure that he has no next of kin here to
-file claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done.
-i decided to seek ways through which to transfer this money out of the
-bank and out of the country too.
+On Fri, Nov 01, 2019 at 07:42:55PM +0530, Jagan Teki wrote:
+> Hi Maxime,
+>
+> On Tue, Oct 29, 2019 at 2:24 PM Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > On Tue, Oct 29, 2019 at 04:03:56AM +0530, Jagan Teki wrote:
+> > > > > explicit handling of common clock would require since the A64
+> > > > > doesn't need to mention the clock-names explicitly in dts since it
+> > > > > support only one bus clock.
+> > > > >
+> > > > > Also pass clk_id NULL instead "bus" to regmap clock init function
+> > > > > since the single clock variants no need to mention clock-names
+> > > > > explicitly.
+> > > >
+> > > > You don't need explicit clock handling. Passing NULL as the argument
+> > > > in regmap_init_mmio_clk will make it use the first clock, which is the
+> > > > bus clock.
+> > >
+> > > Indeed I tried that, since NULL clk_id wouldn't enable the bus clock
+> > > during regmap_mmio_gen_context code, passing NULL triggering vblank
+> > > timeout.
+> >
+> > There's a bunch of users of NULL in tree, so finding out why NULL
+> > doesn't work is the way forward.
+>
+> I'd have looked the some of the users before checking the code as
+> well. As I said passing NULL clk_id to devm_regmap_init_mmio_clk =>
+> __devm_regmap_init_mmio_clk would return before processing the clock.
+>
+> Here is the code snippet on the tree just to make sure I'm on the same
+> page or not.
+>
+> static struct regmap_mmio_context *regmap_mmio_gen_context(struct device *dev,
+>                                         const char *clk_id,
+>                                         void __iomem *regs,
+>                                         const struct regmap_config *config)
+> {
+>         -----------------------
+>         --------------
+>         if (clk_id == NULL)
+>                 return ctx;
+>
+>         ctx->clk = clk_get(dev, clk_id);
+>         if (IS_ERR(ctx->clk)) {
+>                 ret = PTR_ERR(ctx->clk);
+>                 goto err_free;
+>         }
+>
+>         ret = clk_prepare(ctx->clk);
+>         if (ret < 0) {
+>                 clk_put(ctx->clk);
+>                 goto err_free;
+>         }
+>         -------------
+>         ---------------
+> }
+>
+> Yes, I did check on the driver in the tree before committing explicit
+> clock handle, which make similar requirements like us in [1]. this
+> imx2 wdt driver is handling the explicit clock as well. I'm sure this
+> driver is updated as I have seen few changes related to this driver in
+> ML.
 
-The total amount in the account is (18.6 million) with my positions as
-a staff of this bank, i am handicapped because i cannot operate
-foreign accounts and cannot lay benefice claim over this money. The
-client was a foreign national and you will only be asked to act as his
-next of kin and i will supply you with all the necessary information
-and bank data to assist you in being able to transfer this money to
-any bank of your choice where this money could be transferred into.
+I guess we have two ways to go at this then.
 
-The total sum will be shared as follows: 50% for me, 50% for you, and
-expenses incidental occur during the transfer will be incur by both of
-us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund transfer to your account. Since I
-work in this bank that is why you should be confident in the success
-of this transaction because you will be updated with information=E2=80=99s =
-as
-at when desired.
+Either we remove the return, but it might have a few side-effects, or
+we call clk_get with NULL or bus depending on the case, and then call
+regmap_mmio_attach_clk.
 
-I will wish you to keep this transaction secret and confidential as I
-am hoping to retire with my share of this money at the end of
-transaction which will be when this money is safety in your account. I
-will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May god help you to help me to a restive retirement?
+Maxime
 
-(1) Your full name..............
-(2) Your age:................
-(3) Sex:.....................
-(4) Your telephone number:.................
-(5) Your occupation:.....................
-(6) Your country:.....................
+--dFWYt1i2NyOo1oI9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yours sincerely,
-Dr Phasani Sungan
-+226 58779013
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXb8PKwAKCRDj7w1vZxhR
+xRo6AQC7cJgPCdmPtwa3+DvnOiO0l+RhF95zulrMO4b+JAewRgEA74E3tqth973g
+U2/28LW5VnoPT0M0gUDV7UgvhyVeGQA=
+=PgiZ
+-----END PGP SIGNATURE-----
+
+--dFWYt1i2NyOo1oI9--
