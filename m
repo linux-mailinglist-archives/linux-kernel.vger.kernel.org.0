@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED00DED325
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FEBED326
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfKCLkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727653AbfKCLkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 3 Nov 2019 06:40:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37826 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:37830 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727425AbfKCLkS (ORCPT
+        with ESMTP id S1727490AbfKCLkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 06:40:18 -0500
+        Sun, 3 Nov 2019 06:40:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XkmRPUeClc7nYwmMTVch/YYfTYfzG+tL2jIbHBdAbug=; b=k2UFyBNO9lQmQ4PtZ2UmuS0oIa
-        waVp7M57NalvnM06boakfBuF48Dlke19XeUxonB7qd/6mYtMSgl06r0xfmFDoaEl0mkF7VpBX0gpe
-        b5eAJxNGLAFiANN8RcQ40207KGf5bdDgMWXhHavSU5kF+uQjlc0wFqaPAiyX8Y235awfwBMrR3SsB
-        5r0/FVqH5HaNDfvQgJdmAOzIMVB1EDdiFbo7v7Z/6fkHQxd/70ZIRZk6tlH3GVi0FO+U+P3RaOGhG
-        raJxplfEwD2UiDKjfmm19BiPyAO04Vv38XYh+WiT6IrIJ2To00WIGJvrVV611QeTq8hI+4YkTlxZK
-        QXpvJMpg==;
+        bh=QZwbIl32wtdb1hDy/RfILml4N68pdoZTulXrSI8X8Dc=; b=Avnfl6fiqTFPsByn0fcSNgCfwN
+        uSS6E5387BSOiQc6fLoxHOgmWl8fq170+6g410ZiHSh7bvW00eOsTiv9JHwfd63gHj6RCgkHpHmLp
+        GXf5O8v+in5r53xK4ITIx1MvSNE0ImAxkxXrlwOdnmx5tyVWtclVokMU1UY7zl4pLc0yIlDyb4GNu
+        6LymXMmbchsWjPYmkvdokwisQqO4MX5CHtmmSH+uH6l+/wcSGBG1mURWfOz+2wG86cRCbOiVJTHqt
+        GnyNB1CCjTcP1pjmt4zrG4rmjCvvU5tJMTOI20FTW/8XmELPnM8yVrHN4/mDsq46JFILtHcCYqYDX
+        9C7YyYmA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iREEz-0007q5-Lf; Sun, 03 Nov 2019 11:40:17 +0000
+        id 1iREEz-0007qC-Mr; Sun, 03 Nov 2019 11:40:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [PATCH 2/5] idr: Fix idr_get_next_ul race with idr_remove
-Date:   Sun,  3 Nov 2019 03:40:08 -0800
-Message-Id: <20191103114012.30027-3-willy@infradead.org>
+Subject: [PATCH 3/5] radix tree: Remove radix_tree_iter_find
+Date:   Sun,  3 Nov 2019 03:40:09 -0800
+Message-Id: <20191103114012.30027-4-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191103114012.30027-1-willy@infradead.org>
 References: <20191103114012.30027-1-willy@infradead.org>
@@ -45,90 +45,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Commit 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
-neglected to fix idr_get_next_ul().  As far as I can tell, nobody's
-actually using this interface under the RCU read lock, but fix it now
-before anybody decides to use it.
+This API is unsafe to use under the RCU lock.  With no in-tree users
+remaining, remove it to prevent future bugs.
 
-Fixes: 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- lib/idr.c | 31 +++++++++++--------------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+ include/linux/radix-tree.h | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/lib/idr.c b/lib/idr.c
-index 66a374892482..c2cf2c52bbde 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -215,7 +215,7 @@ int idr_for_each(const struct idr *idr,
- EXPORT_SYMBOL(idr_for_each);
- 
- /**
-- * idr_get_next() - Find next populated entry.
-+ * idr_get_next_ul() - Find next populated entry.
-  * @idr: IDR handle.
-  * @nextid: Pointer to an ID.
-  *
-@@ -224,7 +224,7 @@ EXPORT_SYMBOL(idr_for_each);
-  * to the ID of the found value.  To use in a loop, the value pointed to by
-  * nextid must be incremented by the user.
-  */
--void *idr_get_next(struct idr *idr, int *nextid)
-+void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
- {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
-@@ -245,18 +245,14 @@ void *idr_get_next(struct idr *idr, int *nextid)
- 	}
- 	if (!slot)
- 		return NULL;
--	id = iter.index + base;
--
--	if (WARN_ON_ONCE(id > INT_MAX))
--		return NULL;
- 
--	*nextid = id;
-+	*nextid = iter.index + base;
- 	return entry;
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index b5116013f27e..63e62372443a 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -315,24 +315,6 @@ radix_tree_iter_lookup(const struct radix_tree_root *root,
+ 	return radix_tree_next_chunk(root, iter, RADIX_TREE_ITER_CONTIG);
  }
--EXPORT_SYMBOL(idr_get_next);
-+EXPORT_SYMBOL(idr_get_next_ul);
  
- /**
-- * idr_get_next_ul() - Find next populated entry.
-+ * idr_get_next() - Find next populated entry.
-  * @idr: IDR handle.
-  * @nextid: Pointer to an ID.
-  *
-@@ -265,22 +261,17 @@ EXPORT_SYMBOL(idr_get_next);
-  * to the ID of the found value.  To use in a loop, the value pointed to by
-  * nextid must be incremented by the user.
-  */
--void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
-+void *idr_get_next(struct idr *idr, int *nextid)
- {
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	unsigned long base = idr->idr_base;
- 	unsigned long id = *nextid;
-+	void *entry = idr_get_next_ul(idr, &id);
- 
--	id = (id < base) ? 0 : id - base;
--	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
--	if (!slot)
-+	if (WARN_ON_ONCE(id > INT_MAX))
- 		return NULL;
+-/**
+- * radix_tree_iter_find - find a present entry
+- * @root: radix tree root
+- * @iter: iterator state
+- * @index: start location
+- *
+- * This function returns the slot containing the entry with the lowest index
+- * which is at least @index.  If @index is larger than any present entry, this
+- * function returns NULL.  The @iter is updated to describe the entry found.
+- */
+-static inline void __rcu **
+-radix_tree_iter_find(const struct radix_tree_root *root,
+-			struct radix_tree_iter *iter, unsigned long index)
+-{
+-	radix_tree_iter_init(iter, index);
+-	return radix_tree_next_chunk(root, iter, 0);
+-}
 -
--	*nextid = iter.index + base;
--	return rcu_dereference_raw(*slot);
-+	*nextid = id;
-+	return entry;
- }
--EXPORT_SYMBOL(idr_get_next_ul);
-+EXPORT_SYMBOL(idr_get_next);
- 
  /**
-  * idr_replace() - replace pointer for given ID.
+  * radix_tree_iter_retry - retry this chunk of the iteration
+  * @iter:	iterator state
 -- 
 2.24.0.rc1
 
