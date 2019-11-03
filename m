@@ -2,141 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE87ED5EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 22:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD7FAED5F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 22:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfKCVsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 16:48:25 -0500
-Received: from mail-eopbgr720075.outbound.protection.outlook.com ([40.107.72.75]:31778
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727380AbfKCVsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 16:48:24 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I6rXaW0cWt/OEdmRSPX0uEcOwcumCzz0Q1q5oxaUBMJEiz1o2Jr2L8Nt06r2xdouxRUt/NEDyZ/nhMhL7QpMc7IGj8kLFEooaQ9tHNCExKJc/oh90UcLIEpujvNxWlpymvs02IFV+lRCPa2f81UolWiyHhJ1lTPmItSdW74BDky/IqEI9StFiDj/01x11KfiKz5mwCB7ms9Ejq2xP9IoNN6Mi7wVyCwSn4aHmRzwHP/TP09rTda28e7e72xxbHmXTKt+jKy4dVWfByAdb/5qLuz+KiHJ7H8qluZ8ALdxzJ+d5+o1MxHgEFTROayThwCWkKAQl+ePAWRjveLV+2vbPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zejbrqEKQGDYF/KIwYBptiqiFlWq9BFmXv/lk+2w4J4=;
- b=S5dL0l0TavrQDEzakk/+zz/4KkpsRgNSPpatoso4Tj3jBC1p05my6RBQKaAx97AgnnWZI8UTyDQK+G3/04gg6lgxxQ63yYRY1VV4tLPtiOvGEwqs15QUXNm3OOd6kHoqawRSFmZ2oKxWga72LXixRitS0eJbkU1NG65uPtkBLsT1CwslYIqLdPYdLzAO/pcrX5uwWAyrnKi/j4XE2qOw7XYD1d6HTmlJSZUKC/dCtXl6l8v17eys5LvPe63Ria7B7R1rqyyaHRH4+YpyvNQYMLIh0IbCuCcr6oXBRzQY1Jt7eAa8hk58R5NUJZp2mwePIOEAwc7y61KZwb7oash59w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zejbrqEKQGDYF/KIwYBptiqiFlWq9BFmXv/lk+2w4J4=;
- b=Ypuu2IDehUdmULwUKHS39y+LxdbXBrUgovwgEcKqVtRXNM3CU4Hao7j3iesMr5e+CnGNNhN4qah4zxL4W5C8nfIWJhusEEJfKs0x/vPuZzIfth43HhgbRk6VvnH2c3QEEv9G72476weZwrX7ss5shsZOy/M6Br0zzIKjy55L7uw=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
- BN7PR08MB4243.namprd08.prod.outlook.com (52.133.223.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.24; Sun, 3 Nov 2019 21:48:12 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::a91a:c2f5:c557:4285]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::a91a:c2f5:c557:4285%6]) with mapi id 15.20.2408.024; Sun, 3 Nov 2019
- 21:48:12 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Can Guo <cang@codeaurora.org>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        "saravanak@google.com" <saravanak@google.com>,
-        "salyzyn@google.com" <salyzyn@google.com>
-CC:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] [PATCH v1 1/6] scsi: ufs: Add device reset in link recovery
- path
-Thread-Topic: [EXT] [PATCH v1 1/6] scsi: ufs: Add device reset in link
- recovery path
-Thread-Index: AQHVkTrz6+VE0soB0Uye9d1xl2uesqd5/YiQ
-Date:   Sun, 3 Nov 2019 21:48:12 +0000
-Message-ID: <BN7PR08MB56845B4A5F206A319CAFD3B1DB7C0@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <1572671016-883-1-git-send-email-cang@codeaurora.org>
- <1572671016-883-2-git-send-email-cang@codeaurora.org>
-In-Reply-To: <1572671016-883-2-git-send-email-cang@codeaurora.org>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLWEwMTlkMDA2LWZlODMtMTFlOS04Yjg1LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFxhMDE5ZDAwOC1mZTgzLTExZTktOGI4NS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjEyNDgiIHQ9IjEzMjE3MjkxMjkwMTg4Nzg2MyIgaD0iQk5wL2N5Tk5PdmVaSUEzWHF2ODhTVTJwdkpBPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.80.130]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f56c60cf-14ca-42a1-f629-08d760a78649
-x-ms-traffictypediagnostic: BN7PR08MB4243:|BN7PR08MB4243:|BN7PR08MB4243:
-x-microsoft-antispam-prvs: <BN7PR08MB4243AA86F2394957ADE0664ADB7C0@BN7PR08MB4243.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:660;
-x-forefront-prvs: 0210479ED8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(136003)(396003)(376002)(366004)(189003)(199004)(71190400001)(26005)(446003)(2501003)(76116006)(76176011)(7696005)(25786009)(66946007)(64756008)(66476007)(66066001)(2906002)(99286004)(55016002)(2201001)(14454004)(86362001)(66446008)(6506007)(110136005)(186003)(316002)(55236004)(102836004)(54906003)(229853002)(7416002)(5024004)(14444005)(476003)(11346002)(5660300002)(8936002)(478600001)(66556008)(81166006)(9686003)(81156014)(6246003)(33656002)(305945005)(4326008)(486006)(74316002)(256004)(6436002)(8676002)(71200400001)(6116002)(3846002)(52536014)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4243;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oo+NqyPxcJcrZ02y0xPhOpDl+ee/ZpARE+iR4hQNrKXRimZYaMooyvS78XtYMml+11BLBeEhCgt/+g2ctLLL39zjxmycnHtjMbLStmmz394ms8Vs7/bGWel1s7s7jDnie48e9hzvsQ1nnTJB8FMTwrcTLYrEOKDsN+Du5onpb6vDclBtUSSbkSa8rbNMK9CgEiOQybbN2yKytIgyHh7pdJKisMPRZdLg/7NLAWldF9qfoQJ9WRyzu+Kp+uwVWn6M7SNseL3mWLyhin6appOrSLhj9ky1fBRhCfgSEjGoRCPGBwYe+QRomLcprJ6F04VFuxBc0QmGXk/NmNwApNwVygwMiMIO8ThaEv7PByVghvjUEKVM+lMcYMqSDliV8ozGl2VNWasjQ2j2/jP4CKoK4Id/k9mgPb9+TxFBj/AM88uv9kJfnm4UKMcj82eAccee
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728332AbfKCVv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 16:51:29 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34955 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfKCVv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 16:51:29 -0500
+Received: by mail-io1-f67.google.com with SMTP id x21so677527iol.2;
+        Sun, 03 Nov 2019 13:51:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lgLWVbnYsmp8GTfjtkJQ6PMmsjA0Nkny+EyycF5N+NM=;
+        b=Hoy5ufyo3HMrwiKzs049mLa9IUVYs0l4COHDLR2cN8MCEGzesPfcSq/UAzytFwcSpX
+         jdssTa/6NE0Vzyh4B+HRPhkFOcrF52w4Dzd4eqeOVRBcLrE3XkkmUib+6nzjCL22kyiS
+         vDq/DJSzEQSNZsqIVkZM2BxCBVxEEiyL343EZsZLi3UM9Yqm57zfeCq3HN3XZRt0UrqK
+         GasW+HfOgIeEMAUz1lmSOUKWonItNX/wG+ijzsT1Y+rPBeq9dRxSzn4Y/5A4irsXzJiz
+         YhNuURecQGWkBNQnaEMoUw7yR3My+3PMK+VmTj9PV378/3pmv01kiDpaRtXztVKPTMaH
+         bVIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lgLWVbnYsmp8GTfjtkJQ6PMmsjA0Nkny+EyycF5N+NM=;
+        b=b+/cykFbX1WOoK13o4oECnFkOfx1BStlPqr57A2W65Ri8ZpfLqckNcmen2p4bRxDLJ
+         /3ECzKDGEXV/Yo5TA6m/VNM/f3bZRxUmV7bjtDDSJGzC8B8gRVemzOPHTPq2bETuZU1b
+         iDVwNLT3vvDjjbvN0SL1GL3LRSJIQQfKbn3jMZQFryoi253Di5If7q2OC1tZEYsZJgFH
+         2InSlPfzw6k9uJA5xmHLbubwLQWvtqO4Gw6xShi89g2sN2Z/RB8D6UvZLE43BvxA7kRf
+         +68Sl+UMG+0eS9TThbD4mFIQfpHCCzpCwR3zqqPVT0ydt+KiADDqcdzTCnnVF+jey8Mq
+         m/VQ==
+X-Gm-Message-State: APjAAAWSgE3LX4LUJu2JJ0qlALiYwB3edx4F04h/WDhQ+CMwEMKbXM44
+        WuFns1XpQnEwgmiUp92QF1Qu/+c3X6dSSPd9QNY=
+X-Google-Smtp-Source: APXvYqyji1eJd3MTZ9BmTrD9R9Rf5+0/OgRzgO+3osoTpI9uw+bnkZe69du9hFxeNIXjyWCvn5/9l1SQVAlWerAk1XY=
+X-Received: by 2002:a5d:91d2:: with SMTP id k18mr20651366ior.178.1572817888371;
+ Sun, 03 Nov 2019 13:51:28 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f56c60cf-14ca-42a1-f629-08d760a78649
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2019 21:48:12.2614
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SuPm61+DRUIRHRw0GSxoGRpDCiAyFFBmkXgJ83RbVOOmgiwglVWK2DLWysIbsCeB7gtklZEs8aVLEe4F15WXkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4243
+References: <20191021154616.25457-1-jeffrey.l.hugo@gmail.com> <20191027055528.GJ5514@hector.lan>
+In-Reply-To: <20191027055528.GJ5514@hector.lan>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Sun, 3 Nov 2019 14:51:17 -0700
+Message-ID: <CAOCk7Nptm=Cz17FFKKvsgVxXRgJ-m9zK4RKysqhjb4cwPweSXg@mail.gmail.com>
+Subject: Re: [PATCH v2] tty: serial: msm_serial: Fix flow control
+To:     Andy Gross <agross@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, jslaby@suse.com,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        linux-serial@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Can Guo
+On Sat, Oct 26, 2019 at 11:55 PM Andy Gross <agross@kernel.org> wrote:
+>
+> On Mon, Oct 21, 2019 at 08:46:16AM -0700, Jeffrey Hugo wrote:
+> > hci_qca interfaces to the wcn3990 via a uart_dm on the msm8998 mtp and
+> > Lenovo Miix 630 laptop.  As part of initializing the wcn3990, hci_qca
+> > disables flow, configures the uart baudrate, and then reenables flow - at
+> > which point an event is expected to be received over the uart from the
+> > wcn3990.  It is observed that this event comes after the baudrate change
+> > but before hci_qca re-enables flow. This is unexpected, and is a result of
+> > msm_reset() being broken.
+> >
+> > According to the uart_dm hardware documentation, it is recommended that
+> > automatic hardware flow control be enabled by setting RX_RDY_CTL.  Auto
+> > hw flow control will manage RFR based on the configured watermark.  When
+> > there is space to receive data, the hw will assert RFR.  When the watermark
+> > is hit, the hw will de-assert RFR.
+> >
+> > The hardware documentation indicates that RFR can me manually managed via
+> > CR when RX_RDY_CTL is not set.  SET_RFR asserts RFR, and RESET_RFR
+> > de-asserts RFR.
+> >
+> > msm_reset() is broken because after resetting the hardware, it
+> > unconditionally asserts RFR via SET_RFR.  This enables flow regardless of
+> > the current configuration, and would undo a previous flow disable
+> > operation.  It should instead de-assert RFR via RESET_RFR to block flow
+> > until the hardware is reconfigured.  msm_serial should rely on the client
+> > to specify that flow should be enabled, either via mctrl() or the termios
+> > structure, and only assert RFR in response to those triggers.
+> >
+> > Fixes: 04896a77a97b ("msm_serial: serial driver for MSM7K onboard serial peripheral.")
+> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > ---
+>
+> Reviewed-by: Andy Gross <agross@kernel.org>
+>
+> Greg, can you pick this one up?
+>
+> Thanks,
+> Andy
 
-> In order to recover from hibern8 exit failure, perform a reset in link re=
-covery
-> path before issuing link start-up.
->=20
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
-> c28c144..525f8e6 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -3859,6 +3859,9 @@ static int ufshcd_link_recovery(struct ufs_hba *hba=
-)
->  	ufshcd_set_eh_in_progress(hba);
->  	spin_unlock_irqrestore(hba->host->host_lock, flags);
->=20
-> +	/* Reset the attached device */
-> +	ufshcd_vops_device_reset(hba);
-> +
->  	ret =3D ufshcd_host_reset_and_restore(hba);
->=20
-There is time consumption in reset,  It is true that reset can hide/solve s=
-ome issues.
-I don't know if you experienced issue resulting from an absent reset in thi=
-s case mentioned in
-Patch commit comment.
-
->  	spin_lock_irqsave(hba->host->host_lock, flags);
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum=
-,
-> a Linux Foundation Collaborative Project
-
+Greg, will this be queued for 5.5?
