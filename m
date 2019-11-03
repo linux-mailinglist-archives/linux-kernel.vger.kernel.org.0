@@ -2,78 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79823ED14D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 02:11:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E72ED16C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 02:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfKCA7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 2 Nov 2019 20:59:11 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34794 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfKCA7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Nov 2019 20:59:11 -0400
-Received: by mail-yb1-f193.google.com with SMTP id f6so1600066ybp.1
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2019 17:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7q6Xq7rmHNSrovKS8aUtbAZiEFB5v4eQ1NKAasuvin0=;
-        b=qe/QV06/xian0rDAQgM+qAbX7/ACLaPY6U1qvPK/JYxMuZyLu2TBZKiDYgtCNho9yN
-         X/5uQFQKrr2HY5fpULDVYzwpvHhOFgiz7Fd4ZyBYRMyU2ETDArGOjhuYvUXOtANWQcac
-         mI9wPqYc4Q73sSkILRIey5fKQbxxgp1Akcpc9cwO4HkDMu2b2iTk8/7ALLRm0pTYEVPd
-         pWUd2f3unLUTvaCnhekTDYQuKrwTE4o13OL1L3RiKIlFlAsjiDxeyJ/QhK1Vmn8WtS7K
-         6vd9nU2q0zw7sgG95ROLQ0qOptvzbgC/xh6BWQ0ay+Dc8LTqOs19AGR0dcJJWiTt1c43
-         ytOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7q6Xq7rmHNSrovKS8aUtbAZiEFB5v4eQ1NKAasuvin0=;
-        b=js1t0gOsrEE5BKrPgMmPp9Sa+AEgfvRqIBC9yY6HesFjzkbZPA1Qk5yQGVWk5nS2cT
-         vbIHw/LE8P8SawTFB7iNsbSNvltgpWPYgONkiukwd7naqNTdvDX5ewz/IX/VJccVVIMc
-         1QG8d1mv7Vq6ohczQNL4RjDr4W5WG0pzmVO7LZkGVmi2zUrhlbzBzDfMcK0c1DQkDsDi
-         M3jhAvpzxMk2f1UsWB68PcHWfo7bJfgxz4H5lJD5yI76sWwGrhRM13HlBJmCvuMn5weR
-         twNWSSJzxz/ysfphKhrZl+0EjlWcUZ1OkQbh+0cpF6JwC1SG6TgOwjK5sMA+A8n2y4et
-         ZiUg==
-X-Gm-Message-State: APjAAAVkqrgZD8pcO6HCjaWnzEvgJMip8x1fibSu0Fwnj3FI8lWC47Gp
-        zXbWSFGL6c7XsgrLCYPzrZ0=
-X-Google-Smtp-Source: APXvYqxSp4k92cn+p3Zvs5Fp7XQQ7Lm/W5dD+hONzeMlFEuxTsXcX1OL+HSDoXeqW8IDYsqLL5yIHg==
-X-Received: by 2002:a25:13ca:: with SMTP id 193mr17124173ybt.196.1572742750301;
-        Sat, 02 Nov 2019 17:59:10 -0700 (PDT)
-Received: from rkanasun-VirtualBox.ad.cirrus.com ([141.131.2.3])
-        by smtp.gmail.com with ESMTPSA id 203sm5240896ywp.76.2019.11.02.17.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2019 17:59:09 -0700 (PDT)
-From:   rama <ramakumar.kanasundara@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     jeremy@azazel.net, nishadkamdar@gmail.com,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        rama <ramakumar.kanasundara@gmail.com>
-Subject: [PATCH] FBTFT: fb_sh: Changed udelay() to usleep_range() based on the Document, Documentation/timers/timers-howto.rst Excerpt from the document: -SLEEPING FOR ~USECS OR SMALL MSECS ( 10us - 20ms):           * Use usleep_range
-Date:   Sat,  2 Nov 2019 19:59:06 -0500
-Message-Id: <20191103005906.17112-1-ramakumar.kanasundara@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727711AbfKCBhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 2 Nov 2019 21:37:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59400 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727335AbfKCBgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Nov 2019 21:36:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6EF21AF23;
+        Sun,  3 Nov 2019 01:36:52 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-realtek-soc@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [RFC 00/11] ARM: Realtek RTD1195/RTD1295 SoC info
+Date:   Sun,  3 Nov 2019 02:36:34 +0100
+Message-Id: <20191103013645.9856-1-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- drivers/staging/fbtft/fb_agm1264k-fl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello,
 
-diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c b/drivers/staging/fbtft/fb_agm1264k-fl.c
-index eeeeec97ad27..471a145e3c00 100644
---- a/drivers/staging/fbtft/fb_agm1264k-fl.c
-+++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
-@@ -85,7 +85,7 @@ static void reset(struct fbtft_par *par)
- 	dev_dbg(par->info->device, "%s()\n", __func__);
- 
- 	gpiod_set_value(par->gpio.reset, 0);
--	udelay(20);
-+	usleep_range(20,20);
- 	gpiod_set_value(par->gpio.reset, 1);
- 	mdelay(120);
- }
+This series adds a soc bus driver for Realtek RTD1195 and RTD1295 SoC families.
+
+The detection magic for RTD1295 family was mostly borrowed from downstream code
+and the bit meanings are entirely undocumented. In case of RTD1293 I had to
+invent my own detection logic, possibly flawed.
+It is expected that this driver will need to be tweaked as new models emerge.
+
+One general consideration here is that some register accesses are not well
+self-contained within a block so that a syscon might in theory help - but
+for lack of documentation we don't really have an overview of the IP blocks
+and their names, starts and sizes; downstream trees just hardcoded addresses.
+
+I therefore split off the DT change to add a second/third reg entry for now,
+so that we could move ahead with a basic driver initially.
+
+We have no RTD1294 DT, so it is included here mainly for illustration of the
+unpredictable register dependencies affecting this binding/driver.
+
+Using reg-names might clean this up a little but would blow up the driver code
+as there appears to be no handy helper function provided.
+
+Finally, I've been struggling to find an overarching name for the SoC families.
+Realtek.com groups them as "Digital Home Center" - not sure whether that fits?
+For now I use Phoenix/Kylin/etc. with DHC only as fallback, but I wonder
+whether those family names should rather be soc_id than family contents?
+
+Prepared but not included here is:
+* RTD1395 family, which we don't have a DT for yet,
+* RTD1619 family, which we don't have a DT for yet, Chip ID to be verified,
+* RTD1319 family, which we don't have a DT for yet, with TODO for its Chip ID.
+
+Latest experimental patches at:
+https://github.com/afaerber/linux/commits/rtd1295-next
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+
+Andreas Färber (11):
+  dt-bindings: soc: Add Realtek RTD1195 chip info binding
+  soc: Add Realtek chip info driver for RTD1195 and RTD1295
+  arm64: dts: realtek: rtd129x: Add chip info node
+  ARM: dts: rtd1195: Add chip info node
+  dt-bindings: soc: realtek: rtd1195-chip: Extend reg property
+  soc: realtek: chip: Detect RTD1296
+  arm64: dts: realtek: rtd129x: Extend chip-info reg with CHIP_INFO1
+  soc: realtek: chip: Detect RTD1293
+  dt-bindings: soc: realtek: rtd1195-chip: Extend reg node again
+  soc: realtek: chip: Detect RTD1294
+  arm64: dts: realtek: rtd129x: Extend chip-info reg with efuse
+
+ .../bindings/soc/realtek/realtek,rtd1195-chip.yaml |  47 +++++
+ MAINTAINERS                                        |   1 +
+ arch/arm/boot/dts/rtd1195.dtsi                     |   5 +
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi           |   7 +
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/realtek/Kconfig                        |  13 ++
+ drivers/soc/realtek/Makefile                       |   2 +
+ drivers/soc/realtek/chip.c                         | 190 +++++++++++++++++++++
+ 9 files changed, 267 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/realtek/realtek,rtd1195-chip.yaml
+ create mode 100644 drivers/soc/realtek/Kconfig
+ create mode 100644 drivers/soc/realtek/Makefile
+ create mode 100644 drivers/soc/realtek/chip.c
+
 -- 
-2.17.1
+2.16.4
 
