@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84120ED66E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 00:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A82ED66C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 00:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfKCXam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 18:30:42 -0500
+        id S1728652AbfKCXan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 18:30:43 -0500
 Received: from mga06.intel.com ([134.134.136.31]:59008 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728519AbfKCXab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 18:30:31 -0500
+        id S1728535AbfKCXac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 18:30:32 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Nov 2019 15:30:30 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Nov 2019 15:30:31 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,265,1569308400"; 
-   d="scan'208";a="204445788"
+   d="scan'208";a="204445792"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.25])
-  by orsmga003.jf.intel.com with ESMTP; 03 Nov 2019 15:30:30 -0800
+  by orsmga003.jf.intel.com with ESMTP; 03 Nov 2019 15:30:31 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
         alexander.shishkin@linux.intel.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 10/14] perf/x86/intel: Name global status bit in NMI handler
-Date:   Sun,  3 Nov 2019 15:29:16 -0800
-Message-Id: <20191103232920.20309-11-kan.liang@linux.intel.com>
+Subject: [PATCH V5 11/14] perf/x86: Use event_base_rdpmc for RDPMC userspace support
+Date:   Sun,  3 Nov 2019 15:29:17 -0800
+Message-Id: <20191103232920.20309-12-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191103232920.20309-1-kan.liang@linux.intel.com>
 References: <20191103232920.20309-1-kan.liang@linux.intel.com>
@@ -39,72 +39,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The bit index number of global status is directly used in current NMI
-handler. Using a meaningful name to replace the number to improve the
-readability of code.
+The RDPMC index is always re-calculated in RDPMC userspace support,
+especially for fixed counters.
+
+The RDPMC index value is stored in variable event_base_rdpmc for kernel
+usage, which can be used for RDPMC userspace support as well. Only the
+metrics event has to be specially handled.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V4
 
- arch/x86/events/intel/core.c      | 6 +++---
- arch/x86/include/asm/perf_event.h | 7 +++++--
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/events/core.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 7fbf268f5143..bc6468329c52 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2616,7 +2616,7 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
- 	/*
- 	 * PEBS overflow sets bit 62 in the global status register
- 	 */
--	if (__test_and_clear_bit(62, (unsigned long *)&status)) {
-+	if (__test_and_clear_bit(GLOBAL_STATUS_BUFFER_OVF_BIT, (unsigned long *)&status)) {
- 		handled++;
- 		x86_pmu.drain_pebs(regs);
- 		status &= x86_pmu.intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
-@@ -2625,7 +2625,7 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
- 	/*
- 	 * Intel PT
- 	 */
--	if (__test_and_clear_bit(55, (unsigned long *)&status)) {
-+	if (__test_and_clear_bit(GLOBAL_STATUS_TRACE_TOPAPMI_BIT, (unsigned long *)&status)) {
- 		handled++;
- 		if (unlikely(perf_guest_cbs && perf_guest_cbs->is_in_guest() &&
- 			perf_guest_cbs->handle_intel_pt_intr))
-@@ -2637,7 +2637,7 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
- 	/*
- 	 * Intel Perf mertrics
- 	 */
--	if (__test_and_clear_bit(48, (unsigned long *)&status)) {
-+	if (__test_and_clear_bit(GLOBAL_STATUS_PERF_METRICS_OVF_BIT, (unsigned long *)&status)) {
- 		handled++;
- 		if (x86_pmu.update_topdown_event)
- 			x86_pmu.update_topdown_event(NULL);
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 3f1290424c52..e684e7851b48 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -220,12 +220,15 @@ static inline bool is_topdown_idx(int idx)
- #define INTEL_PMC_OTHER_TOPDOWN_BITS(bit)	(~(0x1ull << bit) & INTEL_PMC_MSK_TOPDOWN)
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 48dd920c5e7d..3ab18277e4a7 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2203,20 +2203,16 @@ static void x86_pmu_event_unmapped(struct perf_event *event, struct mm_struct *m
  
- #define GLOBAL_STATUS_COND_CHG				BIT_ULL(63)
--#define GLOBAL_STATUS_BUFFER_OVF			BIT_ULL(62)
-+#define GLOBAL_STATUS_BUFFER_OVF_BIT			62
-+#define GLOBAL_STATUS_BUFFER_OVF			BIT_ULL(GLOBAL_STATUS_BUFFER_OVF_BIT)
- #define GLOBAL_STATUS_UNC_OVF				BIT_ULL(61)
- #define GLOBAL_STATUS_ASIF				BIT_ULL(60)
- #define GLOBAL_STATUS_COUNTERS_FROZEN			BIT_ULL(59)
- #define GLOBAL_STATUS_LBRS_FROZEN			BIT_ULL(58)
--#define GLOBAL_STATUS_TRACE_TOPAPMI			BIT_ULL(55)
-+#define GLOBAL_STATUS_TRACE_TOPAPMI_BIT			55
-+#define GLOBAL_STATUS_TRACE_TOPAPMI			BIT_ULL(GLOBAL_STATUS_TRACE_TOPAPMI_BIT)
-+#define GLOBAL_STATUS_PERF_METRICS_OVF_BIT		48
+ static int x86_pmu_event_idx(struct perf_event *event)
+ {
+-	int idx = event->hw.idx;
++	struct hw_perf_event *hwc = &event->hw;
  
- /*
-  * Adaptive PEBS v4
+-	if (!(event->hw.flags & PERF_X86_EVENT_RDPMC_ALLOWED))
++	if (!(hwc->flags & PERF_X86_EVENT_RDPMC_ALLOWED))
+ 		return 0;
+ 
+ 	/* Return PERF_METRICS MSR value for metrics event */
+-	if (is_metric_idx(idx))
+-		idx = 1 << 29;
+-	else if (x86_pmu.num_counters_fixed && idx >= INTEL_PMC_IDX_FIXED) {
+-		idx -= INTEL_PMC_IDX_FIXED;
+-		idx |= 1 << 30;
+-	}
+-
+-	return idx + 1;
++	if (is_metric_idx(hwc->idx))
++		return (1 << 29) + 1;
++	else
++		return hwc->event_base_rdpmc + 1;
+ }
+ 
+ static ssize_t get_attr_rdpmc(struct device *cdev,
 -- 
 2.17.1
 
