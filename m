@@ -2,50 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7E3ED244
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 07:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C49ED245
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 07:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfKCGBJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 3 Nov 2019 01:01:09 -0500
-Received: from 178-136-118-181.od.vega-ua.net ([178.136.118.181]:54848 "EHLO
-        mail.dfogs.gov.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfKCGBJ (ORCPT
+        id S1727444AbfKCGL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 01:11:26 -0500
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:29876 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfKCGLZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 01:01:09 -0500
-X-Spam-Status: No, hits=3.4 required=4.0
-        tests=AWL: -0.668,BAYES_99: 4.07,TOTAL_SCORE: 3.402,autolearn=no
-X-Spam-Level: ***
-Received: from minnes.com ([192.168.1.99])
-        by mail.dfogs.gov.ua (Kerio Connect 8.3.4 patch 1)
-        for linux-kernel@vger.kernel.org;
-        Sat, 2 Nov 2019 19:38:21 +0200
-Reply-To: johnkenzie@yandex.com
-From:   "Engr. John Kenzie" <jkenzie@minnes.com>
-To:     linux-kernel@vger.kernel.org
-Subject: Partnership ( GLOBAL MINNING ) 
-Date:   02 Nov 2019 10:38:15 -0700
-Message-ID: <20191102103814.CE183B82CEC2A8C8@minnes.com>
+        Sun, 3 Nov 2019 01:11:25 -0500
+Received: from localhost.localdomain ([93.23.13.15])
+        by mwinf5d36 with ME
+        id MJBK2100J0KV3P903JBLU9; Sun, 03 Nov 2019 07:11:22 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 03 Nov 2019 07:11:22 +0100
+X-ME-IP: 93.23.13.15
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     davem@davemloft.net, stefanha@redhat.com, ytht.net@gmail.com,
+        sunilmut@microsoft.com, willemb@google.com, arnd@arndb.de,
+        tglx@linutronix.de, decui@microsoft.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH v2] vsock: Simplify '__vsock_release()'
+Date:   Sun,  3 Nov 2019 07:11:11 +0100
+Message-Id: <20191103061111.22003-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-My name is Engr John Kenzie of Global Mining Company SL Limited
-in Botswana. I am in search of a (Foreign Transaction Manager)
-who will participant in our current Gold Sales Contracts between
-our Mining Company and Prospective Gold Buyers. Please kindly
-confirm to us if you are interested to participate in this Job
-Contract.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+---
+V2: fix a typo in the commit message
+    Add R-b tags
+---
+ net/vmw_vsock/af_vsock.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-If you have any question don't hesitate to let me know. Best
-Regards
-
-John Kenzie
-Global Mining Company SL Limited
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 2ab43b2bba31..2983dc92ca63 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -641,7 +641,6 @@ EXPORT_SYMBOL_GPL(__vsock_create);
+ static void __vsock_release(struct sock *sk, int level)
+ {
+ 	if (sk) {
+-		struct sk_buff *skb;
+ 		struct sock *pending;
+ 		struct vsock_sock *vsk;
+ 
+@@ -662,8 +661,7 @@ static void __vsock_release(struct sock *sk, int level)
+ 		sock_orphan(sk);
+ 		sk->sk_shutdown = SHUTDOWN_MASK;
+ 
+-		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+-			kfree_skb(skb);
++		skb_queue_purge(&sk->sk_receive_queue);
+ 
+ 		/* Clean up any sockets that never were accepted. */
+ 		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+-- 
+2.20.1
 
