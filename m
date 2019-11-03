@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF5AED32B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED00DED325
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfKCLkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 06:40:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37824 "EHLO
+        id S1727683AbfKCLkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 06:40:19 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37826 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbfKCLkR (ORCPT
+        with ESMTP id S1727425AbfKCLkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 06:40:17 -0500
+        Sun, 3 Nov 2019 06:40:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=gmf67+Ll0+MI5uOPN1vksIbzWN3wBWxYCmVFnmReHxQ=; b=B42CUxdoMboDlC/O9HvyY34JTw
-        Ke23nH1DggN/87kcGLu87eMh/Av6uh1pVJ1GEifmFHejCY+oE8rMTkbDHYgrcVqv/5lpzeSxZpPZE
-        P01Ao52Of/Y4UhfAwVKjSmkCn7jSDT0lsf6y34QhcYr6f4rvemHoiEkkW/8lwZlBz2dlBjvupOjpk
-        k3yDPLKrIlXEdfrc+QNj+b/qWVex12iv34OwRbT5jIEqp4Ev0bPS5Ms9a488+r7TWBRwVGuUL5pWg
-        czEtPUmVpWDGYl+eHmIZ9fMdB5wuEvjabLvCdG7rDkl43HMnEVZBPv97Qtg5q4kD5zmgo98TQ7gLe
-        esrD+XKQ==;
+        bh=XkmRPUeClc7nYwmMTVch/YYfTYfzG+tL2jIbHBdAbug=; b=k2UFyBNO9lQmQ4PtZ2UmuS0oIa
+        waVp7M57NalvnM06boakfBuF48Dlke19XeUxonB7qd/6mYtMSgl06r0xfmFDoaEl0mkF7VpBX0gpe
+        b5eAJxNGLAFiANN8RcQ40207KGf5bdDgMWXhHavSU5kF+uQjlc0wFqaPAiyX8Y235awfwBMrR3SsB
+        5r0/FVqH5HaNDfvQgJdmAOzIMVB1EDdiFbo7v7Z/6fkHQxd/70ZIRZk6tlH3GVi0FO+U+P3RaOGhG
+        raJxplfEwD2UiDKjfmm19BiPyAO04Vv38XYh+WiT6IrIJ2To00WIGJvrVV611QeTq8hI+4YkTlxZK
+        QXpvJMpg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iREEz-0007q0-KY; Sun, 03 Nov 2019 11:40:17 +0000
+        id 1iREEz-0007q5-Lf; Sun, 03 Nov 2019 11:40:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 1/5] XArray: Fix xas_next() with a single entry at 0
-Date:   Sun,  3 Nov 2019 03:40:07 -0800
-Message-Id: <20191103114012.30027-2-willy@infradead.org>
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH 2/5] idr: Fix idr_get_next_ul race with idr_remove
+Date:   Sun,  3 Nov 2019 03:40:08 -0800
+Message-Id: <20191103114012.30027-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191103114012.30027-1-willy@infradead.org>
 References: <20191103114012.30027-1-willy@infradead.org>
@@ -46,83 +45,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-If there is only a single entry at 0, the first time we call xas_next(),
-we return the entry.  Unfortunately, all subsequent times we call
-xas_next(), we also return the entry at 0 instead of noticing that the
-xa_index is now greater than zero.  This broke find_get_pages_contig().
+Commit 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
+neglected to fix idr_get_next_ul().  As far as I can tell, nobody's
+actually using this interface under the RCU read lock, but fix it now
+before anybody decides to use it.
 
-Fixes: 64d3e9a9e0cc ("xarray: Step through an XArray")
-Reported-by: Kent Overstreet <kent.overstreet@gmail.com>
+Fixes: 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- lib/test_xarray.c | 24 ++++++++++++++++++++++++
- lib/xarray.c      |  4 ++++
- 2 files changed, 28 insertions(+)
+ lib/idr.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 9d631a7b6a70..7df4f7f395bf 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -1110,6 +1110,28 @@ static noinline void check_find_entry(struct xarray *xa)
- 	XA_BUG_ON(xa, !xa_empty(xa));
- }
+diff --git a/lib/idr.c b/lib/idr.c
+index 66a374892482..c2cf2c52bbde 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -215,7 +215,7 @@ int idr_for_each(const struct idr *idr,
+ EXPORT_SYMBOL(idr_for_each);
  
-+static noinline void check_move_tiny(struct xarray *xa)
-+{
-+	XA_STATE(xas, xa, 0);
-+
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+	rcu_read_lock();
-+	XA_BUG_ON(xa, xas_next(&xas) != NULL);
-+	XA_BUG_ON(xa, xas_next(&xas) != NULL);
-+	rcu_read_unlock();
-+	xa_store_index(xa, 0, GFP_KERNEL);
-+	rcu_read_lock();
-+	xas_set(&xas, 0);
-+	XA_BUG_ON(xa, xas_next(&xas) != xa_mk_index(0));
-+	XA_BUG_ON(xa, xas_next(&xas) != NULL);
-+	xas_set(&xas, 0);
-+	XA_BUG_ON(xa, xas_prev(&xas) != xa_mk_index(0));
-+	XA_BUG_ON(xa, xas_prev(&xas) != NULL);
-+	rcu_read_unlock();
-+	xa_erase_index(xa, 0);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
- static noinline void check_move_small(struct xarray *xa, unsigned long idx)
+ /**
+- * idr_get_next() - Find next populated entry.
++ * idr_get_next_ul() - Find next populated entry.
+  * @idr: IDR handle.
+  * @nextid: Pointer to an ID.
+  *
+@@ -224,7 +224,7 @@ EXPORT_SYMBOL(idr_for_each);
+  * to the ID of the found value.  To use in a loop, the value pointed to by
+  * nextid must be incremented by the user.
+  */
+-void *idr_get_next(struct idr *idr, int *nextid)
++void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
  {
- 	XA_STATE(xas, xa, 0);
-@@ -1217,6 +1239,8 @@ static noinline void check_move(struct xarray *xa)
+ 	struct radix_tree_iter iter;
+ 	void __rcu **slot;
+@@ -245,18 +245,14 @@ void *idr_get_next(struct idr *idr, int *nextid)
+ 	}
+ 	if (!slot)
+ 		return NULL;
+-	id = iter.index + base;
+-
+-	if (WARN_ON_ONCE(id > INT_MAX))
+-		return NULL;
  
- 	xa_destroy(xa);
+-	*nextid = id;
++	*nextid = iter.index + base;
+ 	return entry;
+ }
+-EXPORT_SYMBOL(idr_get_next);
++EXPORT_SYMBOL(idr_get_next_ul);
  
-+	check_move_tiny(xa);
-+
- 	for (i = 0; i < 16; i++)
- 		check_move_small(xa, 1UL << i);
+ /**
+- * idr_get_next_ul() - Find next populated entry.
++ * idr_get_next() - Find next populated entry.
+  * @idr: IDR handle.
+  * @nextid: Pointer to an ID.
+  *
+@@ -265,22 +261,17 @@ EXPORT_SYMBOL(idr_get_next);
+  * to the ID of the found value.  To use in a loop, the value pointed to by
+  * nextid must be incremented by the user.
+  */
+-void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
++void *idr_get_next(struct idr *idr, int *nextid)
+ {
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
+-	unsigned long base = idr->idr_base;
+ 	unsigned long id = *nextid;
++	void *entry = idr_get_next_ul(idr, &id);
  
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 446b956c9188..1237c213f52b 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -994,6 +994,8 @@ void *__xas_prev(struct xa_state *xas)
+-	id = (id < base) ? 0 : id - base;
+-	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
+-	if (!slot)
++	if (WARN_ON_ONCE(id > INT_MAX))
+ 		return NULL;
+-
+-	*nextid = iter.index + base;
+-	return rcu_dereference_raw(*slot);
++	*nextid = id;
++	return entry;
+ }
+-EXPORT_SYMBOL(idr_get_next_ul);
++EXPORT_SYMBOL(idr_get_next);
  
- 	if (!xas_frozen(xas->xa_node))
- 		xas->xa_index--;
-+	if (!xas->xa_node)
-+		return set_bounds(xas);
- 	if (xas_not_node(xas->xa_node))
- 		return xas_load(xas);
- 
-@@ -1031,6 +1033,8 @@ void *__xas_next(struct xa_state *xas)
- 
- 	if (!xas_frozen(xas->xa_node))
- 		xas->xa_index++;
-+	if (!xas->xa_node)
-+		return set_bounds(xas);
- 	if (xas_not_node(xas->xa_node))
- 		return xas_load(xas);
- 
+ /**
+  * idr_replace() - replace pointer for given ID.
 -- 
 2.24.0.rc1
 
