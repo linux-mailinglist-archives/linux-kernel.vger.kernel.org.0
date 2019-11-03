@@ -2,97 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A62ED1C2
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 05:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEF0ED1C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 06:01:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfKCE4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 00:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfKCE4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 00:56:17 -0400
-Received: from localhost (unknown [106.206.115.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1C7220848;
-        Sun,  3 Nov 2019 04:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572756977;
-        bh=LNDBIGrezfGTuxdh0E7VEudgND+qq4oiCQ1SZqWL0Mc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V/I69N0+C9oVDKL7HN9+0fKDiBaDsDsasQC9P8sMi9jalbpYL7ZllA/HXhYQEdAvO
-         0ZPXGRHtRXFtQwiI8I8JF3HBGupOzfho0vOE435xH/7PKZnc5LMJpDr0Z8JeGgFdPK
-         +6K4W2ZUsZbnsyMgci6mMGOZ8nKizI7GbalGYUoc=
-Date:   Sun, 3 Nov 2019 10:26:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH 1/4] soundwire: sdw_slave: add new fields to track probe
- status
-Message-ID: <20191103045604.GE2695@vkoul-mobl.Dlink>
-References: <20191023210657.32440-1-pierre-louis.bossart@linux.intel.com>
- <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
+        id S1727429AbfKCFB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 01:01:26 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:58281 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726408AbfKCFB0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 01:01:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=laijs@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Th1RgFd_1572757281;
+Received: from 192.168.2.229(mailfrom:laijs@linux.alibaba.com fp:SMTPD_---0Th1RgFd_1572757281)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 03 Nov 2019 13:01:22 +0800
+Subject: Re: [PATCH V2 2/7] rcu: cleanup rcu_preempt_deferred_qs()
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org
+References: <20191102124559.1135-1-laijs@linux.alibaba.com>
+ <20191102124559.1135-3-laijs@linux.alibaba.com>
+ <20191103020150.GA23770@tardis>
+From:   Lai Jiangshan <laijs@linux.alibaba.com>
+Message-ID: <7489f817-adaf-275b-b19d-18ad248b071f@linux.alibaba.com>
+Date:   Sun, 3 Nov 2019 13:01:21 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191103020150.GA23770@tardis>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-10-19, 16:06, Pierre-Louis Bossart wrote:
-> Changes to the sdw_slave structure needed to solve race conditions on
-> driver probe.
 
-Can you please explain the race you have observed, it would be a very
-useful to document it as well
+
+On 2019/11/3 10:01 上午, Boqun Feng wrote:
+> Hi Jiangshan,
+> 
+> 
+> I haven't checked the correctness of this patch carefully, but..
+> 
+> 
+> On Sat, Nov 02, 2019 at 12:45:54PM +0000, Lai Jiangshan wrote:
+>> Don't need to set ->rcu_read_lock_nesting negative, irq-protected
+>> rcu_preempt_deferred_qs_irqrestore() doesn't expect
+>> ->rcu_read_lock_nesting to be negative to work, it even
+>> doesn't access to ->rcu_read_lock_nesting any more.
+> 
+> rcu_preempt_deferred_qs_irqrestore() will report RCU qs, and may
+> eventually call swake_up() or its friends to wake up, say, the gp
+> kthread, and the wake up functions could go into the scheduler code
+> path which might have RCU read-side critical section in it, IOW,
+> accessing ->rcu_read_lock_nesting.
+
+Sure, thank you for pointing it out.
+
+I should rewrite the changelog in next round. Like this:
+
+rcu: cleanup rcu_preempt_deferred_qs()
+
+IRQ-protected rcu_preempt_deferred_qs_irqrestore() itself doesn't
+expect ->rcu_read_lock_nesting to be negative to work.
+
+There might be RCU read-side critical section in it (from wakeup()
+or so), 1711d15bf5ef(rcu: Clear ->rcu_read_unlock_special only once)
+will ensure that ->rcu_read_unlock_special is zero and these RCU
+read-side critical sections will not call rcu_read_unlock_special().
+
+Thanks
+Lai
+
+===
+PS: Were 1711d15bf5ef(rcu: Clear ->rcu_read_unlock_special only once)
+not applied earlier, it will be protected by previous patch (patch1)
+in this series
+"rcu: use preempt_count to test whether scheduler locks is held"
+when rcu_read_unlock_special() is called.
+
+
 
 > 
-> The functionality is added in the next patch.
-
-which one..?
-
+> Again, haven't checked closely, but this argument in the commit log
+> seems untrue.
 > 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  include/linux/soundwire/sdw.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Regards,
+> Boqun
 > 
-> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-> index 688b40e65c89..a381a596212b 100644
-> --- a/include/linux/soundwire/sdw.h
-> +++ b/include/linux/soundwire/sdw.h
-> @@ -545,6 +545,10 @@ struct sdw_slave_ops {
->   * @node: node for bus list
->   * @port_ready: Port ready completion flag for each Slave port
->   * @dev_num: Device Number assigned by Bus
-> + * @probed: boolean tracking driver state
-> + * @probe_complete: completion utility to control potential races
-> + * on startup between driver probe/initialization and SoundWire
-> + * Slave state changes/imp-def interrupts
->   */
->  struct sdw_slave {
->  	struct sdw_slave_id id;
-> @@ -559,6 +563,8 @@ struct sdw_slave {
->  	struct list_head node;
->  	struct completion *port_ready;
->  	u16 dev_num;
-> +	bool probed;
-> +	struct completion probe_complete;
->  };
->  
->  #define dev_to_sdw_dev(_dev) container_of(_dev, struct sdw_slave, dev)
-> -- 
-> 2.20.1
-
--- 
-~Vinod
+>>
+>> It is true that NMI over rcu_preempt_deferred_qs_irqrestore()
+>> may access to ->rcu_read_lock_nesting, but it is still safe
+>> since rcu_read_unlock_special() can protect itself from NMI.
+>>
+>> Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
+>> ---
+>>   kernel/rcu/tree_plugin.h | 5 -----
+>>   1 file changed, 5 deletions(-)
+>>
+>> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+>> index aba5896d67e3..2fab8be2061f 100644
+>> --- a/kernel/rcu/tree_plugin.h
+>> +++ b/kernel/rcu/tree_plugin.h
+>> @@ -552,16 +552,11 @@ static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
+>>   static void rcu_preempt_deferred_qs(struct task_struct *t)
+>>   {
+>>   	unsigned long flags;
+>> -	bool couldrecurse = t->rcu_read_lock_nesting >= 0;
+>>   
+>>   	if (!rcu_preempt_need_deferred_qs(t))
+>>   		return;
+>> -	if (couldrecurse)
+>> -		t->rcu_read_lock_nesting -= RCU_NEST_BIAS;
+>>   	local_irq_save(flags);
+>>   	rcu_preempt_deferred_qs_irqrestore(t, flags);
+>> -	if (couldrecurse)
+>> -		t->rcu_read_lock_nesting += RCU_NEST_BIAS;
+>>   }
+>>   
+>>   /*
+>> -- 
+>> 2.20.1
+>>
