@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00303ED36F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 14:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D02AED374
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 14:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfKCNPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 08:15:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43525 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbfKCNPo (ORCPT
+        id S1727687AbfKCNUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 08:20:09 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48712 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727425AbfKCNUJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 08:15:44 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iRFjG-0000uQ-Tu; Sun, 03 Nov 2019 13:15:39 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: hns3: remove unused macros
-Date:   Sun,  3 Nov 2019 13:15:38 +0000
-Message-Id: <20191103131538.25234-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 3 Nov 2019 08:20:09 -0500
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xA3DJiKl031415
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 3 Nov 2019 08:19:45 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 8F331420311; Sun,  3 Nov 2019 08:19:44 -0500 (EST)
+Date:   Sun, 3 Nov 2019 08:19:44 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Guenter Roeck <groeck@google.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Chao Yu <chao@kernel.org>,
+        Ryo Hashimoto <hashimoto@chromium.org>,
+        Vadim Sukhomlinov <sukhomlinov@google.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Andrey Pronin <apronin@chromium.org>,
+        linux-doc@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] Revert "ext4 crypto: fix to check feature status before
+ get policy"
+Message-ID: <20191103131944.GB20210@mit.edu>
+References: <20191030100618.1.Ibf7a996e4a58e84f11eec910938cfc3f9159c5de@changeid>
+ <20191030173758.GC693@sol.localdomain>
+ <CAD=FV=Uzma+eSGG1S1Aq6s3QdMNh4J-c=g-5uhB=0XBtkAawcA@mail.gmail.com>
+ <20191030190226.GD693@sol.localdomain>
+ <20191030205745.GA216218@sol.localdomain>
+ <CAD=FV=X6Q3QZaND-tfYr9mf-KYMeKFmJDca3ee-i9roWj+GHsQ@mail.gmail.com>
+ <CAD=FV=URZX4t-TB2Ne8y5ZfeBGoyhsPZhcncQ0yPe3cRXi=1gw@mail.gmail.com>
+ <20191101043620.GA703@sol.localdomain>
+ <CABXOdTddU2Kn8hJyofAC9eofZHAA4ddBhjNXc8GwC5dm3beMZA@mail.gmail.com>
+ <CABXOdTeu3KdT=arT+AKAOiPPM0U45krUfmDx6NH5nmDZ0pPa=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABXOdTeu3KdT=arT+AKAOiPPM0U45krUfmDx6NH5nmDZ0pPa=A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, Nov 02, 2019 at 03:10:17PM -0700, Guenter Roeck wrote:
+> 
+> This change is now in our code base:
+> 
+> https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/5c5b06fded399013b9cce3d504c3d968ee84ab8b
+> 
+> If the revert has not made it upstream, I would suggest to hold it off
+> for the time being. I'll do more testing next week, but as it looks
+> like it may no longer be needed, at least not from a Chrome OS
+> perspective.
 
-The macros HCLGE_MPF_ENBALE and HCLGEVF_MPF_ENBALE are defined but never
-used.  I was going to fix the spelling mistake "ENBALE" -> "ENABLE" but
-found these macros are not used, so they can be removed.
+Thanks, I'll hold off on requesting a pull request from Linus for this
+change.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h   | 2 --
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h | 2 --
- 2 files changed, 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 9e59f0e074be..0b20b42f8ceb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -226,8 +226,6 @@ enum hclge_evt_cause {
- 	HCLGE_VECTOR0_EVENT_OTHER,
- };
- 
--#define HCLGE_MPF_ENBALE 1
--
- enum HCLGE_MAC_SPEED {
- 	HCLGE_MAC_SPEED_UNKNOWN = 0,		/* unknown */
- 	HCLGE_MAC_SPEED_10M	= 10,		/* 10 Mbps */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-index ef86155de9e0..2f4c81bf4169 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-@@ -150,8 +150,6 @@ enum hclgevf_states {
- 	HCLGEVF_STATE_CMD_DISABLE,
- };
- 
--#define HCLGEVF_MPF_ENBALE 1
--
- struct hclgevf_mac {
- 	u8 media_type;
- 	u8 module_type;
--- 
-2.20.1
-
+					- Ted
