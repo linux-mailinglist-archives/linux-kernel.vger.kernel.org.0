@@ -2,151 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5BFED263
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 08:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B19ED26B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 08:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfKCHcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 02:32:10 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:39333 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfKCHcK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 02:32:10 -0500
-Received: by mail-il1-f198.google.com with SMTP id o11so12827830ilc.6
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 00:32:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OxWi94xHP31q5a9KApVWh0caRuymGgMlgK/O/hLQdiM=;
-        b=Brgizx5EYO6NOae+fvwZXuygPJH+Y2B0GsVpXJ41YCZ9mg7nJBk6XFzht9+k02wzxW
-         y8BMcGB9jo52+dggMgSP4foxgAra/HOnyElPJ+FYWkAJA26+BBfB6DLhYwGV0EojbtmM
-         2VQT14NsMpM0y3dmZyFZx+1Z/Mcwi+y/XtMQHRxew51gUtnnt24ctTKzVc7DKpQ4HRt1
-         D8wfSkzT7zwzh8p/zlRVVJ7Jnlazy3mx9+qAJ/gn5mlyo6O9MWSCP3ZP0UPAVNL7V0r8
-         j7umDTpJ8bFvEwYJXjQRKckA7lL+ww7J2Z0wql5fyTs6E3YxCmCLHuAGm5rnnqXXfz2n
-         BSdQ==
-X-Gm-Message-State: APjAAAUXJ50oiyybpH96cGaA+htlElhUP5PvBTiVb2zGBPE7g9t9vBMd
-        TN7tYimRCLYh92CWtMYJPt91Ces48Q6cf3/WrvKgspO3zYyk
-X-Google-Smtp-Source: APXvYqwx8axyi1n5oNv2qIOcSdMZnOXjXYppWlnlU7QlEY9jEb/qgC3xcn5wilu8IkYhXVt7AUijeM9eL4UP8M/HfH/aw6wSSlno
+        id S1727429AbfKCHv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 02:51:26 -0500
+Received: from mga05.intel.com ([192.55.52.43]:51508 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbfKCHv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 02:51:26 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Nov 2019 00:51:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,262,1569308400"; 
+   d="scan'208";a="352542670"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 03 Nov 2019 00:51:24 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iRAfT-000DzM-E7; Sun, 03 Nov 2019 15:51:23 +0800
+Date:   Sun, 3 Nov 2019 15:51:00 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     allen <allen.chen@ite.com.tw>
+Cc:     kbuild-all@lists.01.org, Allen Chen <allen.chen@ite.com.tw>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking
+ timings logic
+Message-ID: <201911031510.4s2wqcIN%lkp@intel.com>
+References: <1572595463-30970-1-git-send-email-allen.chen@ite.com.tw>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:626:: with SMTP id h6mr2440063jar.113.1572766328902;
- Sun, 03 Nov 2019 00:32:08 -0700 (PDT)
-Date:   Sun, 03 Nov 2019 00:32:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000595be405966c3231@google.com>
-Subject: general protection fault in j1939_priv_get_by_ndev_locked
-From:   syzbot <syzbot+feff46f1778030d14234@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kernel@pengutronix.de,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
-        robin@protonic.nl, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572595463-30970-1-git-send-email-allen.chen@ite.com.tw>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi allen,
 
-syzbot found the following crash on:
+I love your patch! Perhaps something to improve:
 
-HEAD commit:    7de08690 powerpc/bpf: Fix tail call implementation
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=178ba242e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2cc209e226c8fbbd
-dashboard link: https://syzkaller.appspot.com/bug?extid=feff46f1778030d14234
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1726e97ce00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1678e4ece00000
+[auto build test WARNING on linus/master]
+[also build test WARNING on v5.4-rc5 next-20191031]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+feff46f1778030d14234@syzkaller.appspotmail.com
+url:    https://github.com/0day-ci/linux/commits/allen/drm-edid-fixup-EDID-1-3-and-1-4-judge-reduced-blanking-timings-logic/20191102-200357
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 1204c70d9dcba31164f78ad5d8c88c42335d51f8
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8769 Comm: syz-executor448 Not tainted 5.4.0-rc3+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:j1939_ndev_to_priv net/can/j1939/main.c:210 [inline]
-RIP: 0010:j1939_priv_get_by_ndev_locked+0xf5/0x190 net/can/j1939/main.c:222
-Code: 03 80 3c 02 00 0f 85 ae 00 00 00 48 8b 9b 88 05 00 00 48 b8 00 00 00  
-00 00 fc ff df 48 8d bb 28 60 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
-7f 4c 8b a3 28 60 00 00 4d 85 e4 74 12 e8 e4 9c f4
-RSP: 0018:ffff8880949bf8e8 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff867e77c7
-RDX: 0000000000000c05 RSI: ffffffff867e77d4 RDI: 0000000000006028
-RBP: ffff8880949bf900 R08: ffff8880a879c340 R09: ffffed1012937f10
-R10: ffffed1012937f0f R11: 0000000000000003 R12: 0000000000000000
-R13: 0000000000000118 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000789880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8c146c1518 CR3: 000000009fc92000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  j1939_priv_get_by_ndev net/can/j1939/main.c:234 [inline]
-  j1939_netdev_notify+0x47/0x120 net/can/j1939/main.c:344
-  notifier_call_chain+0xc2/0x230 kernel/notifier.c:95
-  __raw_notifier_call_chain kernel/notifier.c:396 [inline]
-  raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:403
-  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1668
-  call_netdevice_notifiers_extack net/core/dev.c:1680 [inline]
-  call_netdevice_notifiers net/core/dev.c:1694 [inline]
-  rollback_registered_many+0x9b9/0xfc0 net/core/dev.c:8521
-  rollback_registered+0x109/0x1d0 net/core/dev.c:8563
-  unregister_netdevice_queue net/core/dev.c:9655 [inline]
-  unregister_netdevice_queue+0x1ee/0x2c0 net/core/dev.c:9648
-  unregister_netdevice include/linux/netdevice.h:2637 [inline]
-  __tun_detach+0xd8a/0x1040 drivers/net/tun.c:723
-  tun_detach drivers/net/tun.c:740 [inline]
-  tun_chr_close+0xe0/0x180 drivers/net/tun.c:3448
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x904/0x2e60 kernel/exit.c:817
-  do_group_exit+0x135/0x360 kernel/exit.c:921
-  __do_sys_exit_group kernel/exit.c:932 [inline]
-  __se_sys_exit_group kernel/exit.c:930 [inline]
-  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:930
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ee08
-Code: Bad RIP value.
-RSP: 002b:00007fff3faf5578 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ee08
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004be608 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 78c1c985ae8b77ec ]---
-RIP: 0010:j1939_ndev_to_priv net/can/j1939/main.c:210 [inline]
-RIP: 0010:j1939_priv_get_by_ndev_locked+0xf5/0x190 net/can/j1939/main.c:222
-Code: 03 80 3c 02 00 0f 85 ae 00 00 00 48 8b 9b 88 05 00 00 48 b8 00 00 00  
-00 00 fc ff df 48 8d bb 28 60 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
-7f 4c 8b a3 28 60 00 00 4d 85 e4 74 12 e8 e4 9c f4
-RSP: 0018:ffff8880949bf8e8 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff867e77c7
-RDX: 0000000000000c05 RSI: ffffffff867e77d4 RDI: 0000000000006028
-RBP: ffff8880949bf900 R08: ffff8880a879c340 R09: ffffed1012937f10
-R10: ffffed1012937f0f R11: 0000000000000003 R12: 0000000000000000
-R13: 0000000000000118 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000789880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043edde CR3: 000000009fc92000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
+smatch warnings:
+drivers/gpu/drm/drm_edid.c:2042 drm_monitor_supports_rb() warn: always true condition '(closure.support_rb >= 0) => (0-255 >= 0)'
+
+vim +2042 drivers/gpu/drm/drm_edid.c
+
+  2030	
+  2031	/* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
+  2032	static bool
+  2033	drm_monitor_supports_rb(struct edid *edid)
+  2034	{
+  2035		struct edid_support_rb_closure closure = {
+  2036			.edid = edid,
+  2037			.support_rb = -1,
+  2038		};
+  2039	
+  2040		if (edid->revision >= 4) {
+  2041			drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
+> 2042			if (closure.support_rb >= 0)
+  2043				return closure.support_rb;
+  2044		}
+  2045	
+  2046		return true;
+  2047	}
+  2048	
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
