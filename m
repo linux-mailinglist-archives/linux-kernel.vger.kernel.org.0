@@ -2,166 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E43A6ED440
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 19:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E652ED443
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 20:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfKCSzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 13:55:17 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:58869 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbfKCSzR (ORCPT
+        id S1728061AbfKCTAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 14:00:50 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:34338 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbfKCTAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 13:55:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1572807316; x=1604343316;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=RzA+PurWZlAL959Q0Fc8ISMLr2TFsmZsdWcAa6rvGqo=;
-  b=RH0xrYrVbiw187JSHGEc7F3cKdvbfRVRp/u40CEl4myBe2uEnn1MdoGt
-   Ng3bP1IGrPRj1f1JE/+/uFpid/Mj6Hn3j2hEAJ3yhJAJJ8GGB690hHOWH
-   dkQAi/IiXbbZirPBp4VpdOWLL5l4mj+FfaIOpBcQpUBbrADdNMQSae0yD
-   CoUTWPSCC138QrSKd+FsuhbR24V3Ua+dVVzZ/4vkf65DC2ETL8/+8FJGY
-   9ql641MxYnsJjQ60xx/R0Kae2UT83MFBdRRzVomaDb9GPNKDWg4tTiXn9
-   55WszPzCwe81WaSNqeQzTawr3RJRBlKEFFFWRAyeQDQlrFpY7e085VXqE
-   A==;
-IronPort-SDR: ISFXh6M9sd0sugAB594TitF5eVgs7M6AdJ+IJ6NFNd5ZIq/GG3u6Ezfp7FDLCp10+qwhojv7wb
- 7avJQAY8hkttbd2R/UZID/lyZ72dqyKdP/3mZdwsJMZ57xN6bTLEb+RNIN9scdJ/Kw1rdpx0xw
- O0Z8HlX0uaZCNj8+n2RE9RErsTtp1p2RHgKgZstknVhuBFtZNMT5RyPgGG3SHDT2439R0P+cqL
- pieoLrp7L/id6y/YUUpdBJrIo+15bG0X3RXlF6jru4EJL9cDZIMwaKIU1tkynfOEE81beFN3WP
- N0o=
-X-IronPort-AV: E=Sophos;i="5.68,264,1569254400"; 
-   d="scan'208";a="122013056"
-Received: from mail-co1nam03lp2057.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([104.47.40.57])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Nov 2019 02:55:16 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=In72s1xsOU2O3vv1iBD9ySPCUjznqtZmr13R2YcgZrBQiXubmHXZkcH7Lr1cFMFCLCW7EPmlRGd7+aLlffL0K4a8B8aF72SWZFwbu8C9SdGTVM7zh+BjE0aolXyjWeBflb/Pwyv0eGOE3R7IlwPmjJxfO5ioq7EfSHtaBQ/KQwej092x8uk252M2204bdstg4o3o3ig9tlP1d1S7Nqj+I17yMKNeI4DnpI1EURxxKUMiihl8Whgle11aIfyqJPWVCaQ2bSlXmHZeTip8simV/BGql2zCFhqUU616uVNCFrrKBSvazXXDLFVwB8C4A9wkD2pVwM8ksn/IS0989eSfXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q7NLUppQ4MERkczk5lhlhBf7kQmzcbUTSqEYsnrPWlc=;
- b=IINMuzuiT6tJjCVcz0E3ye65/XshaVSNPF1GpnVwbNWTUeaebXZ25rNBTKdu7V7pNuFo5KiecIHzG5dDv6RDmksol18ZWCjybA+llxZxzbMQOrIJ9dObvBAVf2MqSh08Hca25cnWYllh3TbGmA4Sppe5igejLR/ac6mUsc9kV9LdW1kkmnKtksul8ku4cmt4vtr4aVRm/rJJyLJoI8Odxpcf6Ng99T8LE+XQZTHqIXZbHQQb/qqft8qNGJ5V3TDPUku8pCLcg3ors7M/PkIwr4XqqWSRbGasMBy77TD86ey22IDHdZMZIoPIasnMe7uM+DfTmcypLqY+adfl6g3A6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q7NLUppQ4MERkczk5lhlhBf7kQmzcbUTSqEYsnrPWlc=;
- b=Ke7dZUqRAYPhx+7nSbLN+uV6GnvUdAh5Wf/bbW1JT9HBSlwZoSTjc4m6B/gqM/6k63OJ5jF1h0aa9nc1yJJP79fEGCVbz0JW6eND/kToJTemXsX8DKxRyS272EZrhC+X/3H/J4uNzLyLQHAZvOIM6hCD4n2x54za9yKj2sh8Ixk=
-Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.57.21) by
- BYAPR04MB4678.namprd04.prod.outlook.com (52.135.240.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.23; Sun, 3 Nov 2019 18:55:14 +0000
-Received: from BYAPR04MB5749.namprd04.prod.outlook.com
- ([fe80::6066:cd5d:206:5e04]) by BYAPR04MB5749.namprd04.prod.outlook.com
- ([fe80::6066:cd5d:206:5e04%6]) with mapi id 15.20.2408.024; Sun, 3 Nov 2019
- 18:55:14 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>
-CC:     Sagi Grimberg <sagi@grimberg.me>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: Re: [RFC] nvmet: Always remove processed AER elements from list
-Thread-Topic: [RFC] nvmet: Always remove processed AER elements from list
-Thread-Index: AQHVjzYhgmqnvQGm+02Suay/wXEq1Q==
-Date:   Sun, 3 Nov 2019 18:55:14 +0000
-Message-ID: <BYAPR04MB574907EE2666D6DA48DE30AD867C0@BYAPR04MB5749.namprd04.prod.outlook.com>
-References: <20191030152418.23753-1-dwagner@suse.de>
- <20191031145127.GC6024@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
-x-originating-ip: [199.255.45.62]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 95cb049a-9583-48d2-1954-08d7608f5ca4
-x-ms-traffictypediagnostic: BYAPR04MB4678:
-x-microsoft-antispam-prvs: <BYAPR04MB4678FBABC0AF3692A92A67F9867C0@BYAPR04MB4678.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0210479ED8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(199004)(189003)(52536014)(4326008)(53546011)(7696005)(14444005)(55016002)(2906002)(9686003)(86362001)(6436002)(71190400001)(71200400001)(25786009)(76116006)(229853002)(6246003)(54906003)(66066001)(256004)(476003)(110136005)(478600001)(305945005)(66556008)(74316002)(8936002)(6506007)(66946007)(26005)(486006)(316002)(64756008)(81166006)(99286004)(7736002)(6116002)(76176011)(446003)(102836004)(3846002)(8676002)(81156014)(14454004)(5660300002)(66476007)(66446008)(186003)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4678;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: h1Jy1c42RhZ5ir4V4p1PEeKKQXTji/ssWViHg8WT2t7BEj+NETZCblBvSkea+fBoQUE5Cg7WgdCY6ZvmmQsGo6t1Z1ITxLZDexiAJc/qa544mwAGDMnZCwOEpf22OUbsryMEv2IYk8UGL/VKizOGfVjO5aI3HuqMZAQq9naSI6pAcvRP3kwj5NGzhfGguUqLb62/WjdBV1zN+hZEukseswkVBViO72tHB3VKUL2Vznk+COmfV8gXfZAltIqiywOci9vOC7Q77VzKZUFYZbVmUVcsDPfv22dQyRBB1dvJV2cukSMs7w10sdPNyzqsdKH/iHm0dW086AkV1hRdgoLjCL/l/HeF2/YyrxcMjVbZqRFfLzTj5Z+/BLLdmwUPMADmxITCxBMDvpxX2aNCnWavBq1gyblEpy63hx/dHeCng6EoexpDC+gplibSIGDFxnPW
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 3 Nov 2019 14:00:50 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iRL7H-0006EK-Uw; Sun, 03 Nov 2019 12:00:47 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iRL7H-0002uW-5J; Sun, 03 Nov 2019 12:00:47 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Down <chris@chrisdown.name>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+References: <20191031221602.9375-1-hannes@cmpxchg.org>
+        <20191031162825.a545a5d4d8567368501769bd@linux-foundation.org>
+        <20191101110901.GB690103@chrisdown.name>
+        <20191101144540.GA12808@cmpxchg.org>
+        <20191101115950.bb88d49849bfecb1af0a88bf@linux-foundation.org>
+        <20191101192405.GA866154@chrisdown.name>
+        <20191101122920.798a6d61b2725da8cfe80549@linux-foundation.org>
+        <20191101123544.c9b0024a1e8f5ddf63148b48@linux-foundation.org>
+        <20191102155536.GA10251@avx2>
+Date:   Sun, 03 Nov 2019 13:00:36 -0600
+In-Reply-To: <20191102155536.GA10251@avx2> (Alexey Dobriyan's message of "Sat,
+        2 Nov 2019 18:55:36 +0300")
+Message-ID: <8736f4g4yz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95cb049a-9583-48d2-1954-08d7608f5ca4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2019 18:55:14.4933
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: azcSfx1I/x7MwA5d11OHaxLHT0UCSQH0jXsyFQO5jTqSuxK0EJQFGRwTjK0gcyU5Umog3kn39fVM59eGUtu/jdCK8+0J/X6aOWwvIqfUbYQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4678
+Content-Type: text/plain
+X-XM-SPF: eid=1iRL7H-0002uW-5J;;;mid=<8736f4g4yz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/cawXAkuIqWPyW19UfJY94OZ2QLEcEU+A=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.5 required=8.0 tests=ALL_TRUSTED,BAYES_40,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        XM_Body_Dirty_Words autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+        *      [score: 0.3961]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.5 XM_Body_Dirty_Words Contains a dirty word
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Alexey Dobriyan <adobriyan@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.8 (0.8%), b_tie_ro: 2.1 (0.6%), parse: 0.77
+        (0.2%), extract_message_metadata: 10 (2.8%), get_uri_detail_list: 1.14
+        (0.3%), tests_pri_-1000: 4.4 (1.2%), tests_pri_-950: 1.17 (0.3%),
+        tests_pri_-900: 0.90 (0.2%), tests_pri_-90: 20 (5.5%), check_bayes: 19
+        (5.1%), b_tokenize: 6 (1.5%), b_tok_get_all: 6 (1.7%), b_comp_prob:
+        2.1 (0.6%), b_tok_touch_all: 2.8 (0.8%), b_finish: 0.65 (0.2%),
+        tests_pri_0: 315 (86.3%), check_dkim_signature: 0.95 (0.3%),
+        check_dkim_adsp: 3.8 (1.1%), poll_dns_idle: 0.28 (0.1%), tests_pri_10:
+        1.85 (0.5%), tests_pri_500: 5 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] kernel: sysctl: make drop_caches write-only
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/2019 07:51 AM, Christoph Hellwig wrote:=0A=
-> On Wed, Oct 30, 2019 at 04:24:18PM +0100, Daniel Wagner wrote:=0A=
->> All async events are enqueued via nvmet_add_async_event() which=0A=
->> updates the ctrl->async_event_cmds[] array and additionally an struct=0A=
->> nvmet_async_event is added to the ctrl->async_events list.=0A=
->>=0A=
->> Under normal operations the nvmet_async_event_work() updates again the=
-=0A=
->> ctrl->async_event_cmds and removes the corresponding struct=0A=
->> nvmet_async_event from the list again. Though nvmet_sq_destroy() could=
-=0A=
->> be called which calles nvmet_async_events_free() which only updates=0A=
->> the ctrl->async_event_cmds[] array.=0A=
->>=0A=
->> Add a new function nvmet_async_events_process() which processes the=0A=
->> async events and updates both array and the list. With this we avoid=0A=
->> having two places where the array and list are modified.=0A=
->=0A=
-> I don't think this patch is correct.  We can have AEN commands pending=0A=
-> that aren't used - that is the host sent the command, but the target=0A=
-> did not have even event yet.  That means the command sits in=0A=
-> async_event_cmds, but there is no entry in >async_events for it yet.=0A=
->=0A=
-> That being said I think what we want is to do the loop in your new=0A=
-> nvmet_async_events_free first, but after that still call the loop in=0A=
-> the existing nvmet_async_events_free after that.  That ensures we first=
-=0A=
-> flush out everything in ->async_events, and then also return any=0A=
-> potential remaining entry.=0A=
->=0A=
-Something like following on the top of this patch ?=0A=
-(compile tested only).=0A=
-=0A=
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c=0A=
-index b1b9dc58c3b4..36a859082846 100644=0A=
---- a/drivers/nvme/target/core.c=0A=
-+++ b/drivers/nvme/target/core.c=0A=
-@@ -153,6 +153,18 @@ static void nvmet_async_events_process(struct =0A=
-nvmet_ctrl *ctrl, u16 status)=0A=
-                 mutex_unlock(&ctrl->lock);=0A=
-                 nvmet_req_complete(req, status);=0A=
-         }=0A=
-+=0A=
-+       while (1) {=0A=
-+               mutex_lock(&ctrl->lock);=0A=
-+               if (!ctrl->nr_async_event_cmds) {=0A=
-+                       mutex_unlock(&ctrl->lock);=0A=
-+                       return;=0A=
-+               }=0A=
-+=0A=
-+               req =3D ctrl->async_event_cmds[--ctrl->nr_async_event_cmds]=
-;=0A=
-+               mutex_unlock(&ctrl->lock);=0A=
-+               nvmet_req_complete(req, NVME_SC_INTERNAL | NVME_SC_DNR);=0A=
-+       }=0A=
-  }=0A=
-=0A=
-  static void nvmet_async_events_free(struct nvmet_ctrl *ctrl)=0A=
+Alexey Dobriyan <adobriyan@gmail.com> writes:
+
+> On Fri, Nov 01, 2019 at 12:35:44PM -0700, Andrew Morton wrote:
+>> On Fri, 1 Nov 2019 12:29:20 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>> 
+>> > > Either change is an upgrade from the current situation, at least. I prefer 
+>> > > towards whatever makes the API the least confusing, which appears to be 
+>> > > Johannes' original change, but I'd support a patch which always set it to 
+>> > > 0 instead if it was deemed safer.
+>> > 
+>> > On the other hand..  As I mentioned earlier, if someone's code is
+>> > failing because of the permissions change, they can chmod
+>> > /proc/sys/vm/drop_caches at boot time and be happy.  They have no such
+>> > workaround if their software misbehaves due to a read always returning
+>> > "0".
+>> 
+>> I lied.  I can chmod things in /proc but I can't chmod things in
+>> /proc/sys/vm.  Huh, why did we do that?
+>
+> To conserve memory! It was in 2007.
+> For the record I support 0200 on vm.drop_caches.
+>
+> 	commit 77b14db502cb85a031fe8fde6c85d52f3e0acb63
+> 	[PATCH] sysctl: reimplement the sysctl proc support
+>
+> 	+static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
+> 	+{
+> 	+       struct inode *inode = dentry->d_inode;
+> 	+       int error;
+> 	+
+> 	+       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+> 	+               return -EPERM;
+
+
+Almost.
+
+The rewrite was both to concerve memory and to support the network
+namespace.  Which required a different view of proc files.
+
+But in this case we have always unconditionally called sysctl_perm.  The
+change above at best removed a layer of obfuscation that made it look
+like some other permission check was being honored.
+
+Eric
