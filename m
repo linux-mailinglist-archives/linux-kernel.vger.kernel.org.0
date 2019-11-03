@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63FEBED326
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57676ED328
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfKCLkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 06:40:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37830 "EHLO
+        id S1727733AbfKCLkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 06:40:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37834 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfKCLkR (ORCPT
+        with ESMTP id S1727500AbfKCLkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 06:40:17 -0500
+        Sun, 3 Nov 2019 06:40:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QZwbIl32wtdb1hDy/RfILml4N68pdoZTulXrSI8X8Dc=; b=Avnfl6fiqTFPsByn0fcSNgCfwN
-        uSS6E5387BSOiQc6fLoxHOgmWl8fq170+6g410ZiHSh7bvW00eOsTiv9JHwfd63gHj6RCgkHpHmLp
-        GXf5O8v+in5r53xK4ITIx1MvSNE0ImAxkxXrlwOdnmx5tyVWtclVokMU1UY7zl4pLc0yIlDyb4GNu
-        6LymXMmbchsWjPYmkvdokwisQqO4MX5CHtmmSH+uH6l+/wcSGBG1mURWfOz+2wG86cRCbOiVJTHqt
-        GnyNB1CCjTcP1pjmt4zrG4rmjCvvU5tJMTOI20FTW/8XmELPnM8yVrHN4/mDsq46JFILtHcCYqYDX
-        9C7YyYmA==;
+        bh=mUecl1ymvCsPKwliC8bJs5irxFrzIkg1S1DnHsAhQOc=; b=ABsAtfIMul9GYC+MLWxLDMC5uE
+        CAtVk2PmR7CONITx6yDa+Bofv3uMc6QfcFEDoySxwHdjlecMCWkl7HKoFwLLOKK5k4MjUxdjlnney
+        TjXWa7U5eL2VCtTWQZbe0FhgFlY4zF2sZFPGXwoW6I+D92M/s7EIcYy2gvkv1tgtB+m3CEBVTNyO0
+        CP1v4HjlhBBTUB3Gmr9FpG/RvLzYLO26iHDlEZjkmICI68LkWR5u3ybFyIAgh4VlHS2whoyqd24OI
+        Wmv3w7hW7+axEfTeAn3loc77Wu4uAyc/1c68exB34zAhtL+N0g8Aovek/sgmW/hbQCg15jbGMEBcw
+        dIsXNrGQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iREEz-0007qC-Mr; Sun, 03 Nov 2019 11:40:17 +0000
+        id 1iREEz-0007qL-O3; Sun, 03 Nov 2019 11:40:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [PATCH 3/5] radix tree: Remove radix_tree_iter_find
-Date:   Sun,  3 Nov 2019 03:40:09 -0800
-Message-Id: <20191103114012.30027-4-willy@infradead.org>
+Subject: [PATCH 4/5] idr: Fix integer overflow in idr_for_each_entry
+Date:   Sun,  3 Nov 2019 03:40:10 -0800
+Message-Id: <20191103114012.30027-5-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191103114012.30027-1-willy@infradead.org>
 References: <20191103114012.30027-1-willy@infradead.org>
@@ -45,43 +45,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-This API is unsafe to use under the RCU lock.  With no in-tree users
-remaining, remove it to prevent future bugs.
+If there is an entry at INT_MAX then idr_for_each_entry() will increment
+id after handling it.  This is undefined behaviour, and is caught by
+UBSAN.  Adding 1U to id forces the operation to be carried out as an
+unsigned addition which (when assigned to id) will result in INT_MIN.
+Since there is never an entry stored at INT_MIN, idr_get_next() will
+return NULL, ending the loop as expected.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/radix-tree.h | 18 ------------------
- 1 file changed, 18 deletions(-)
+ include/linux/idr.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index b5116013f27e..63e62372443a 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -315,24 +315,6 @@ radix_tree_iter_lookup(const struct radix_tree_root *root,
- 	return radix_tree_next_chunk(root, iter, RADIX_TREE_ITER_CONTIG);
- }
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index ee7abae143d3..dc09bd646bcb 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -185,7 +185,7 @@ static inline void idr_preload_end(void)
+  * is convenient for a "not found" value.
+  */
+ #define idr_for_each_entry(idr, entry, id)			\
+-	for (id = 0; ((entry) = idr_get_next(idr, &(id))) != NULL; ++id)
++	for (id = 0; ((entry) = idr_get_next(idr, &(id))) != NULL; id += 1U)
  
--/**
-- * radix_tree_iter_find - find a present entry
-- * @root: radix tree root
-- * @iter: iterator state
-- * @index: start location
-- *
-- * This function returns the slot containing the entry with the lowest index
-- * which is at least @index.  If @index is larger than any present entry, this
-- * function returns NULL.  The @iter is updated to describe the entry found.
-- */
--static inline void __rcu **
--radix_tree_iter_find(const struct radix_tree_root *root,
--			struct radix_tree_iter *iter, unsigned long index)
--{
--	radix_tree_iter_init(iter, index);
--	return radix_tree_next_chunk(root, iter, 0);
--}
--
  /**
-  * radix_tree_iter_retry - retry this chunk of the iteration
-  * @iter:	iterator state
+  * idr_for_each_entry_ul() - Iterate over an IDR's elements of a given type.
 -- 
 2.24.0.rc1
 
