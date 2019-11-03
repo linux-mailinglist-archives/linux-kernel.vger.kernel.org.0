@@ -2,129 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81496ED31E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:25:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB5FED32A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2019 12:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfKCLZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 06:25:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727554AbfKCLZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 06:25:46 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AB602080F;
-        Sun,  3 Nov 2019 11:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572780345;
-        bh=iVW9cBPnp0fjG+zTXydLaRUI+YAsffRYMHdiQGWeTNo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KnLJ+ocoKBFLnYGZIbVgwmWNxa5NTEVReT7rXqEDHZFdSgW8ESY92vPuukCGO5mN5
-         y9vqz0hcZ3nU0N3F5FZomd4QzsIqsOyxrHhXvE+x5X+YxUZ9W2fXjI1LxKiU3qhAkW
-         xI7w+lUfCUUpXO6DQQ9rXH3gMMs4gyKQZjNPR5QU=
-Date:   Sun, 3 Nov 2019 11:25:40 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iio: imu: adis16460: use DEFINE_DEBUGFS_ATTRIBUTE
- to define debugfs fops
-Message-ID: <20191103112540.5fdfccad@archlinux>
-In-Reply-To: <5DB958DA.7080305@huawei.com>
-References: <1572423581-59762-1-git-send-email-zhongjiang@huawei.com>
-        <1572423581-59762-2-git-send-email-zhongjiang@huawei.com>
-        <fb8722ad2c1ef51944dc814a7b24433f4348721e.camel@analog.com>
-        <5DB958DA.7080305@huawei.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727613AbfKCLkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 06:40:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727488AbfKCLkR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 06:40:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WYmoxt5EscE5r7grbtiPN7YMN6PCvdXJNdomuLZNkP4=; b=cELr4Q3c4Nkcm145dSMIL9RtR
+        VY5bbN3wOjxgu4t3k2oglC6gGo4R4phq+u80vxU7jOmt13yrNucXh6evU2/d+Bcv5xWH/ZypqWCu4
+        x003Ec2E5ytZ+MBBe/HmwjUY08PSUNNxouT370/AqhSOeKHNcV2YGHEv80zrvBC1/Z4gBkI4ewe5V
+        cwuSqQoBLcZWjx+SCddQYgGoEVaH3VL/dV5r3VqkakSFGjt3DGtonsl2jPmM12ZpKxMboxDHzz+qx
+        zfZo12QOEVpqyosvJjukZuL72keU9v0JynLx4AaAyv7sCzGs3hwdiw/qUND4o/7tu5FzrPTHq83v0
+        /s6HgYehg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iREEz-0007px-JS; Sun, 03 Nov 2019 11:40:17 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH 0/5] Misc XArray, IDR & Radix Tree patches
+Date:   Sun,  3 Nov 2019 03:40:06 -0800
+Message-Id: <20191103114012.30027-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Oct 2019 17:33:14 +0800
-zhong jiang <zhongjiang@huawei.com> wrote:
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-> On 2019/10/30 17:13, Ardelean, Alexandru wrote:
-> > On Wed, 2019-10-30 at 16:19 +0800, zhong jiang wrote:  
-> >> [External]
-> >>
-> >> It is more clear to use DEFINE_DEBUGFS_ATTRIBUTE to define debugfs file
-> >> operation rather than DEFINE_SIMPLE_ATTRIBUTE.  
-> > Not sure if "more clear" is the word.  
-> Should be more clearly. :-)
-> > But it is more correct to use DEFINE_DEBUGFS_ATTRIBUTE(), since they are
-> > debugfs attrs.
-> >
-> > In any case, this is no big deal.
-> > So:
-> >
-> > Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> >  
-> >> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-I started looking into why this attributes were introduced.
-There are potential issues, so Alex can you confirm you've tested this
-series.  Whilst it looks right, it seems some other patches making this
-change have had to switch over to the unsafe registration functions.
+These patches all fix various bugs, some of which people have tripped
+over and some of which have been caught by automatic tools.  Find them
+in this git tree:
 
-https://patchwork.kernel.org/patch/11051725/
-https://lkml.org/lkml/2019/10/30/144
+http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray
 
-The reference counting is subtly different between the two versions.
-Seems you are getting some push back on similar patches.
+Matthew Wilcox (Oracle) (5):
+  XArray: Fix xas_next() with a single entry at 0
+  idr: Fix idr_get_next_ul race with idr_remove
+  radix tree: Remove radix_tree_iter_find
+  idr: Fix integer overflow in idr_for_each_entry
+  idr: Fix idr_alloc_u32 on 32-bit systems
 
-Perhaps a v2 with reference to the other threads if those get resolved
-to say it is sensible to make this change.
+ include/linux/idr.h        |  2 +-
+ include/linux/radix-tree.h | 18 ------------------
+ lib/idr.c                  | 31 +++++++++++--------------------
+ lib/radix-tree.c           |  2 +-
+ lib/test_xarray.c          | 24 ++++++++++++++++++++++++
+ lib/xarray.c               |  4 ++++
+ 6 files changed, 41 insertions(+), 40 deletions(-)
 
-Thanks,
-
-Jonathan
-
-
-> >> ---
-> >>  drivers/iio/imu/adis16460.c | 6 +++---
-> >>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/imu/adis16460.c b/drivers/iio/imu/adis16460.c
-> >> index 6aed9e8..2e7a582 100644
-> >> --- a/drivers/iio/imu/adis16460.c
-> >> +++ b/drivers/iio/imu/adis16460.c
-> >> @@ -87,7 +87,7 @@ static int adis16460_show_serial_number(void *arg, u64
-> >> *val)
-> >>  
-> >>  	return 0;
-> >>  }
-> >> -DEFINE_SIMPLE_ATTRIBUTE(adis16460_serial_number_fops,
-> >> +DEFINE_DEBUGFS_ATTRIBUTE(adis16460_serial_number_fops,
-> >>  	adis16460_show_serial_number, NULL, "0x%.4llx\n");
-> >>  
-> >>  static int adis16460_show_product_id(void *arg, u64 *val)
-> >> @@ -105,7 +105,7 @@ static int adis16460_show_product_id(void *arg, u64
-> >> *val)
-> >>  
-> >>  	return 0;
-> >>  }
-> >> -DEFINE_SIMPLE_ATTRIBUTE(adis16460_product_id_fops,
-> >> +DEFINE_DEBUGFS_ATTRIBUTE(adis16460_product_id_fops,
-> >>  	adis16460_show_product_id, NULL, "%llu\n");
-> >>  
-> >>  static int adis16460_show_flash_count(void *arg, u64 *val)
-> >> @@ -123,7 +123,7 @@ static int adis16460_show_flash_count(void *arg, u64
-> >> *val)
-> >>  
-> >>  	return 0;
-> >>  }
-> >> -DEFINE_SIMPLE_ATTRIBUTE(adis16460_flash_count_fops,
-> >> +DEFINE_DEBUGFS_ATTRIBUTE(adis16460_flash_count_fops,
-> >>  	adis16460_show_flash_count, NULL, "%lld\n");
-> >>  
-> >>  static int adis16460_debugfs_init(struct iio_dev *indio_dev)  
-> 
-> 
+-- 
+2.24.0.rc1
 
