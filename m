@@ -2,39 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DECE8EEFF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A56D1EEE7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388372AbfKDWYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:24:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45974 "EHLO mail.kernel.org"
+        id S2389317AbfKDWPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:15:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730762AbfKDVw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:29 -0500
+        id S2388851AbfKDWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:06:44 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06839217F4;
-        Mon,  4 Nov 2019 21:52:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF71217F4;
+        Mon,  4 Nov 2019 22:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904348;
-        bh=H12XsaAVdOeeHzLMIlQdJrBU963KqbPjLFf+EN77ZTo=;
+        s=default; t=1572905203;
+        bh=jn36PS6JD/UCan94jV0PXlMdlJkaCs61c+4OM1G1KZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPB9znlvRjIa7+UoDVOqYJVXzzzKEExF6jVloXglgecnZ2dsPxCQ5XEioB59XxRx3
-         +Rnw62E780PdkpEzKkdErvgUgJc2PA8EG4IuUuVCMrvg+M1sJUuGisdVhv1pVk3R+o
-         iM8hSa/ZUptQBdWNmZm9pLu3r4S9cQky7R+d+tpo=
+        b=iHORfobpQSOBnICn5WOowlXS6OseSUT38JZv4LxOSNpDYK6tF8KrpDy8JlQUMs2+E
+         hoNSFI01iWz5IYGMQ0W+EqDrBhEZ26QMe5XHKczK7gVFnsKa588Cv01MbSISFJ3ACM
+         9eAEtjzpcbCrOK1gb0OTV00Gpq+ud0XRtTttyc4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan-Marek Glogowski <glogow@fbihome.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 16/95] usb: handle warm-reset port requests on hub resume
-Date:   Mon,  4 Nov 2019 22:44:14 +0100
-Message-Id: <20191104212045.768461327@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Auld <pauld@redhat.com>,
+        Xuewei Zhang <xueweiz@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 065/163] sched/fair: Scale bandwidth quota and period without losing quota/period ratio precision
+Date:   Mon,  4 Nov 2019 22:44:15 +0100
+Message-Id: <20191104212144.712060978@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +54,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan-Marek Glogowski <glogow@fbihome.de>
+From: Xuewei Zhang <xueweiz@google.com>
 
-[ Upstream commit 4fdc1790e6a9ef22399c6bc6e63b80f4609f3b7e ]
+[ Upstream commit 4929a4e6faa0f13289a67cae98139e727f0d4a97 ]
 
-On plug-in of my USB-C device, its USB_SS_PORT_LS_SS_INACTIVE
-link state bit is set. Greping all the kernel for this bit shows
-that the port status requests a warm-reset this way.
+The quota/period ratio is used to ensure a child task group won't get
+more bandwidth than the parent task group, and is calculated as:
 
-This just happens, if its the only device on the root hub, the hub
-therefore resumes and the HCDs status_urb isn't yet available.
-If a warm-reset request is detected, this sets the hubs event_bits,
-which will prevent any auto-suspend and allows the hubs workqueue
-to warm-reset the port later in port_event.
+  normalized_cfs_quota() = [(quota_us << 20) / period_us]
 
-Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If the quota/period ratio was changed during this scaling due to
+precision loss, it will cause inconsistency between parent and child
+task groups.
+
+See below example:
+
+A userspace container manager (kubelet) does three operations:
+
+ 1) Create a parent cgroup, set quota to 1,000us and period to 10,000us.
+ 2) Create a few children cgroups.
+ 3) Set quota to 1,000us and period to 10,000us on a child cgroup.
+
+These operations are expected to succeed. However, if the scaling of
+147/128 happens before step 3, quota and period of the parent cgroup
+will be changed:
+
+  new_quota: 1148437ns,   1148us
+ new_period: 11484375ns, 11484us
+
+And when step 3 comes in, the ratio of the child cgroup will be
+104857, which will be larger than the parent cgroup ratio (104821),
+and will fail.
+
+Scaling them by a factor of 2 will fix the problem.
+
+Tested-by: Phil Auld <pauld@redhat.com>
+Signed-off-by: Xuewei Zhang <xueweiz@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Phil Auld <pauld@redhat.com>
+Cc: Anton Blanchard <anton@ozlabs.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Fixes: 2e8e19226398 ("sched/fair: Limit sched_cfs_period_timer() loop to avoid hard lockup")
+Link: https://lkml.kernel.org/r/20191004001243.140897-1-xueweiz@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hub.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/sched/fair.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index b543a4730ef24..bb20aa433e984 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -104,6 +104,8 @@ EXPORT_SYMBOL_GPL(ehci_cf_port_reset_rwsem);
- static void hub_release(struct kref *kref);
- static int usb_reset_and_verify_device(struct usb_device *udev);
- static int hub_port_disable(struct usb_hub *hub, int port1, int set_state);
-+static bool hub_port_warm_reset_required(struct usb_hub *hub, int port1,
-+		u16 portstatus);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 86cfc5d5129ce..16b5d29bd7300 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4995,20 +4995,28 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ 		if (++count > 3) {
+ 			u64 new, old = ktime_to_ns(cfs_b->period);
  
- static inline char *portspeed(struct usb_hub *hub, int portstatus)
- {
-@@ -1110,6 +1112,11 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 						   USB_PORT_FEAT_ENABLE);
- 		}
- 
-+		/* Make sure a warm-reset request is handled by port_event */
-+		if (type == HUB_RESUME &&
-+		    hub_port_warm_reset_required(hub, port1, portstatus))
-+			set_bit(port1, hub->event_bits);
+-			new = (old * 147) / 128; /* ~115% */
+-			new = min(new, max_cfs_quota_period);
+-
+-			cfs_b->period = ns_to_ktime(new);
+-
+-			/* since max is 1s, this is limited to 1e9^2, which fits in u64 */
+-			cfs_b->quota *= new;
+-			cfs_b->quota = div64_u64(cfs_b->quota, old);
+-
+-			pr_warn_ratelimited(
+-	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us %lld, cfs_quota_us = %lld)\n",
+-				smp_processor_id(),
+-				div_u64(new, NSEC_PER_USEC),
+-				div_u64(cfs_b->quota, NSEC_PER_USEC));
++			/*
++			 * Grow period by a factor of 2 to avoid losing precision.
++			 * Precision loss in the quota/period ratio can cause __cfs_schedulable
++			 * to fail.
++			 */
++			new = old * 2;
++			if (new < max_cfs_quota_period) {
++				cfs_b->period = ns_to_ktime(new);
++				cfs_b->quota *= 2;
 +
- 		/*
- 		 * Add debounce if USB3 link is in polling/link training state.
- 		 * Link will automatically transition to Enabled state after
++				pr_warn_ratelimited(
++	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us = %lld, cfs_quota_us = %lld)\n",
++					smp_processor_id(),
++					div_u64(new, NSEC_PER_USEC),
++					div_u64(cfs_b->quota, NSEC_PER_USEC));
++			} else {
++				pr_warn_ratelimited(
++	"cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
++					smp_processor_id(),
++					div_u64(old, NSEC_PER_USEC),
++					div_u64(cfs_b->quota, NSEC_PER_USEC));
++			}
+ 
+ 			/* reset count so we don't come right back in here */
+ 			count = 0;
 -- 
 2.20.1
 
