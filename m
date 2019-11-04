@@ -2,111 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2CFEEB56
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B445EECBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbfKDVo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:44:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33819 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbfKDVo3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:44:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e4so12399314pgs.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:44:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:from:to:user-agent:date;
-        bh=oDBr9/oFH4uj0TcWt5+hNxdLZNFzTGYbiWx7cDw1BXk=;
-        b=KQcEZHNmmz0KcwFTyLZr214Hyq78kr87VR/k9odOVNnbzAJL+GLXRuxzL4jRfJ8fAb
-         8NDz/wkG7qrmwBW89xK3lrqy7czNP39gNhn5TP44WRi2UhnE916/a8s/Uzu505IjIono
-         NdyE0yEXI5SUoDpRq6j3bN9m4KTjeYxyJrmUE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:from:to
-         :user-agent:date;
-        bh=oDBr9/oFH4uj0TcWt5+hNxdLZNFzTGYbiWx7cDw1BXk=;
-        b=o2XuFb+n6oV6FXYAFY7UCFqARt2rIuBZmRVMYR52SoeRevk7xwNaGDgb9HO+teZhXL
-         5ku2/LTIezPNWXCNGsXO91/8RPeS9LbN40vmQbJEiA0lkw5jB1l5DUxi7dZmBmQi3fVs
-         WLtCVJebNaS83w1hIc9BiwHNZkb1x7FRIAldz2ma9NBSu04lyBTjLQYOETmHpVVfoomx
-         xOJAXWlsMhovJd13e78bTD+WYSdDuyhHp2egryQ/pBqfAYAMzRRbf3vfYh5Sohug1ozQ
-         Ndlz1/sPPBZq60DMte02CeJ7Ipr9V5VTqauSuQ5pZVcNjguoDk5NkREBGi2HA14QfdpK
-         UWxQ==
-X-Gm-Message-State: APjAAAWpI0O+gmC9+08eYUXkgX3tnjksL6+n2BzDmR8J/BUPddxVDsqZ
-        aLvfKvcBeIAoxcHrOxG/R/zyXQ==
-X-Google-Smtp-Source: APXvYqxULdu2yok9osG2dgC/wKOKO0AYP4xnZcw5ULrVYfDMRd3mLMzhSqWhO9gPC7VRZ3QfMrhwrA==
-X-Received: by 2002:a65:49c7:: with SMTP id t7mr5242177pgs.431.1572903868384;
-        Mon, 04 Nov 2019 13:44:28 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id w26sm27836645pfj.123.2019.11.04.13.44.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 13:44:27 -0800 (PST)
-Message-ID: <5dc09bbb.1c69fb81.196e5.9770@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2388793AbfKDWAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:00:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388377AbfKDWAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:00:02 -0500
+Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A2B320650;
+        Mon,  4 Nov 2019 22:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572904801;
+        bh=BYsbJjo25ob2w4vEbmdMvtR1SJRInPAA1UGSNr2lkXU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tEyz9tq2L5/8/TXx3BXjMGDbadYS/bQ57orfzrncrvJ8aUvgyajL0aPq90Wy9HqTw
+         VzmTvO6fyfu/f8HxFI8FQecH4EO3TR4rJ0eu1NDT56TtbHiqdLfzWMmQGXsbfBCdgT
+         eLSrzbTa7KVaT/7SC715dbRTIlLfI+2Acqu8xAYE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 074/149] nfs: Fix nfsi->nrequests count error on nfs_inode_remove_request
+Date:   Mon,  4 Nov 2019 22:44:27 +0100
+Message-Id: <20191104212141.859801797@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1572610108-1363-2-git-send-email-rkambl@codeaurora.org>
-References: <1572610108-1363-1-git-send-email-rkambl@codeaurora.org> <1572610108-1363-2-git-send-email-rkambl@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sivaa@codeaurora.org,
-        sanm@codeaurora.org, Rajeshwari <rkambl@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 1/1] arm64: dts: qcom: sc7180:  Add device node support for TSENS in SC7180
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rajeshwari <rkambl@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 04 Nov 2019 13:44:27 -0800
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajeshwari (2019-11-01 05:08:28)
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/q=
-com/sc7180.dtsi
-> index 07ea393..06ded1d 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -449,6 +465,508 @@
->                 };
->         };
-> =20
-> +       thermal-zones {
-> +               aoss-0-usr {
-> +                       polling-delay-passive =3D <0>;
-> +                       polling-delay =3D <0>;
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-Can we get real polling delays instead of 0?
+[ Upstream commit 33ea5aaa87cdae0f9af4d6b7ee4f650a1a36fd1d ]
 
-> +                       thermal-governor =3D "user_space";
-> +                       thermal-sensors =3D <&tsens0 0>;
-> +                       wake-capable-sensor;
+When xfstests testing, there are some WARNING as below:
 
-What is this property?
+WARNING: CPU: 0 PID: 6235 at fs/nfs/inode.c:122 nfs_clear_inode+0x9c/0xd8
+Modules linked in:
+CPU: 0 PID: 6235 Comm: umount.nfs
+Hardware name: linux,dummy-virt (DT)
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : nfs_clear_inode+0x9c/0xd8
+lr : nfs_evict_inode+0x60/0x78
+sp : fffffc000f68fc00
+x29: fffffc000f68fc00 x28: fffffe00c53155c0
+x27: fffffe00c5315000 x26: fffffc0009a63748
+x25: fffffc000f68fd18 x24: fffffc000bfaaf40
+x23: fffffc000936d3c0 x22: fffffe00c4ff5e20
+x21: fffffc000bfaaf40 x20: fffffe00c4ff5d10
+x19: fffffc000c056000 x18: 000000000000003c
+x17: 0000000000000000 x16: 0000000000000000
+x15: 0000000000000040 x14: 0000000000000228
+x13: fffffc000c3a2000 x12: 0000000000000045
+x11: 0000000000000000 x10: 0000000000000000
+x9 : 0000000000000000 x8 : 0000000000000000
+x7 : 0000000000000000 x6 : fffffc00084b027c
+x5 : fffffc0009a64000 x4 : fffffe00c0e77400
+x3 : fffffc000c0563a8 x2 : fffffffffffffffb
+x1 : 000000000000764e x0 : 0000000000000001
+Call trace:
+ nfs_clear_inode+0x9c/0xd8
+ nfs_evict_inode+0x60/0x78
+ evict+0x108/0x380
+ dispose_list+0x70/0xa0
+ evict_inodes+0x194/0x210
+ generic_shutdown_super+0xb0/0x220
+ nfs_kill_super+0x40/0x88
+ deactivate_locked_super+0xb4/0x120
+ deactivate_super+0x144/0x160
+ cleanup_mnt+0x98/0x148
+ __cleanup_mnt+0x38/0x50
+ task_work_run+0x114/0x160
+ do_notify_resume+0x2f8/0x308
+ work_pending+0x8/0x14
 
-> +                       trips {
-> +                               active-config0 {
-> +                                       temperature =3D <125000>;
-> +                                       hysteresis =3D <1000>;
-> +                                       type =3D "passive";
-> +                               };
-> +                               reset-mon-cfg {
-> +                                       temperature =3D <115000>;
-> +                                       hysteresis =3D <5000>;
-> +                                       type =3D "passive";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               cpu-0-0-usr {
-> +                       polling-delay-passive =3D <0>;
-> +                       polling-delay =3D <0>;
-> +                       thermal-governor =3D "user_space";
+The nrequest should be increased/decreased only if PG_INODE_REF flag
+was setted.
 
-What is this property?
+But in the nfs_inode_remove_request function, it maybe decrease when
+no PG_INODE_REF flag, this maybe lead nrequests count error.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/nfs/write.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 5ab997912d8d5..117ffd90419e2 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -783,7 +783,6 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 	struct nfs_inode *nfsi = NFS_I(inode);
+ 	struct nfs_page *head;
+ 
+-	atomic_long_dec(&nfsi->nrequests);
+ 	if (nfs_page_group_sync_on_bit(req, PG_REMOVE)) {
+ 		head = req->wb_head;
+ 
+@@ -796,8 +795,10 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 		spin_unlock(&mapping->private_lock);
+ 	}
+ 
+-	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags))
++	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags)) {
+ 		nfs_release_request(req);
++		atomic_long_dec(&nfsi->nrequests);
++	}
+ }
+ 
+ static void
+-- 
+2.20.1
+
+
 
