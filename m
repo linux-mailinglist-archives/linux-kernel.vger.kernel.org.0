@@ -2,68 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 991DDEE4E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E54DEE4EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:43:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbfKDQmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:42:17 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:48226 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbfKDQmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:42:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=sHehTGcVoX2o9hizOaow9QsBaYLM8i35tX23WVyF6H4=; b=HG1hjyBfZkWV9J95TsPA1owdqx
-        jMpZh4dVKajkKUfxqltYYhJ5EFvydqJWB0Co+19lgFtFwT9TVVkhTOLrRlLjYf1o53lPFzEPrrGr6
-        ujgMEDt4UprxGPMRU3d7FxittQcP0shp2+dOv1IR6LqpnddJY93iu8Zc/DaBRyb/ty0s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iRfQf-00057J-Bt; Mon, 04 Nov 2019 17:42:09 +0100
-Date:   Mon, 4 Nov 2019 17:42:09 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Jack Ping CHNG <jack.ping.chng@intel.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, davem@davemloft.net,
-        andriy.shevchenko@intel.com, mallikarjunax.reddy@linux.intel.com,
-        cheol.yong.kim@intel.com
-Subject: Re: [PATCH v1] staging: intel-dpa: gswip: Introduce Gigabit Ethernet
- Switch (GSWIP) device driver
-Message-ID: <20191104164209.GC16970@lunn.ch>
-References: <03832ecb6a34876ef26a24910816f22694c0e325.1572863013.git.jack.ping.chng@intel.com>
- <20191104122009.GA2126921@kroah.com>
+        id S1729194AbfKDQm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:42:57 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40621 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727861AbfKDQm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:42:57 -0500
+Received: by mail-vs1-f65.google.com with SMTP id m20so935537vsa.7
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:42:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z61Nf+IXfPnYSf/CB16houpRDee1KdZw1ehNvN59rnE=;
+        b=PjhxObLSYnDarkuAbAcbN/xcMBh9/RLTTwOBpfJMobbA2sy11V60GhbV1hoQ3TnrVQ
+         MIGqkV7apEXKziLYFAgmPcnR7gDQ1QIfFx/fgaFfieqf9BvRpo2jDlght+XCs8RdEaeA
+         x8ARi7tdM/WujTuWotF0tyekaX2W6yMiIuW12MuP0uaNGXCLGc9wvXUnbz0dJin1Q31V
+         ddXKsHwKyEREN9TPTpjsetiMHoYvt7iPZtSmkRC9qkz3ySM678YNrAr5VbKNNH+CjtlH
+         7GUkM+JblIdOMXy6FxStWdstKENAqGAK8jaJpNvnDfUZEztTCL3vbhro+Z+9dJyt/fJF
+         aZjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z61Nf+IXfPnYSf/CB16houpRDee1KdZw1ehNvN59rnE=;
+        b=EKcj2QQilP7NccAkMkxilFvzGDVXKDhBJYuXvYFVcu0z6yCgJxmn+dN7QVLTJ0wWY1
+         LgnrF7/+fqAoTWSmnd4B/BL0Sa+f5A0lBHeJnzn7Cu54bSFYV2tgqiR8DVazHdNlb0u5
+         AS2hFwdTMMzJD5lDHlXBUqvq6gR1t/mnlaFdM0YbuFm1+8PvVa6FgtLaIbLO/pTUOH34
+         QctB2dI+XmyyZhSOWebToiuPIAs0C0cA0U782WMPSpWHEyQfA0OYHbOeNBCbnVXc3QcU
+         ynOA6J0MZTjRnr2NVRZyXIs/P5QTQF7wCwzap/+pCTx/hJeHUmKFkVcuYClBnK2mXtXM
+         QR7g==
+X-Gm-Message-State: APjAAAXb57+UnX13DS8JG1FWQC64wg1G2j4yPOWJ+lk3dI+3lcFXS7jX
+        1AtGvSavtp8E8mHnpASBHH+uI4FKPIQiaSNYAJ85+g==
+X-Google-Smtp-Source: APXvYqyDVcfgLDeXQC3A5gJNX8/wN+mjRR+GghpG8/3JWVcJW3k8DuwIYEezXPcXMkAZs+NIu3TLNRNVKUeU+c1tML4=
+X-Received: by 2002:a05:6102:36a:: with SMTP id f10mr8580793vsa.44.1572885775766;
+ Mon, 04 Nov 2019 08:42:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104122009.GA2126921@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com> <20191101221150.116536-7-samitolvanen@google.com>
+ <791fc70f7bcaf13a89abaee9aae52dfe@www.loen.fr>
+In-Reply-To: <791fc70f7bcaf13a89abaee9aae52dfe@www.loen.fr>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Mon, 4 Nov 2019 08:42:43 -0800
+Message-ID: <CABCJKuegREpQiJCY01B_=nsNJFFCkyxxp63tQOPT=h+yAPifyA@mail.gmail.com>
+Subject: Re: [PATCH v4 06/17] scs: add accounting
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <dave.martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 01:20:09PM +0100, Greg KH wrote:
-> On Mon, Nov 04, 2019 at 07:22:20PM +0800, Jack Ping CHNG wrote:
-> > This driver enables the Intel's LGM SoC GSWIP block.
-> > GSWIP is a core module tailored for L2/L3/L4+ data plane and QoS functions.
-> > It allows CPUs and other accelerators connected to the SoC datapath
-> > to enqueue and dequeue packets through DMAs.
-> > Most configuration values are stored in tables such as
-> > Parsing and Classification Engine tables, Buffer Manager tables and
-> > Pseudo MAC tables.
-> 
-> Why is this being submitted to staging?  What is wrong with the "real"
-> part of the kernel for this?
+On Mon, Nov 4, 2019 at 5:13 AM Marc Zyngier <maz@kernel.org> wrote:
+> Is there any reason why you're not consistently using only one of
+> "#if IS_ENABLED(...)" or "#ifdef ...", but instead a mix of both?
 
-Or even, what is wrong with the current driver?
-drivers/net/dsa/lantiq_gswip.c?
+This is to match the style already used in each file. For example,
+fs/proc/meminfo.c uses #ifdef for other configs in the same function,
+and include/linux/mmzone.h uses #if IS_ENABLED(...).
 
-Jack, your patch does not seem to of made it to any of the lists. So i
-cannot comment on it contents. If this is a switch driver, please
-ensure you Cc: the usual suspects for switch drivers.
-
-       Andrew
+Sami
