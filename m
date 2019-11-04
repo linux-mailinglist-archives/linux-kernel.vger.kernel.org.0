@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 419F7EEB7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F960EEC5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbfKDVsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38478 "EHLO mail.kernel.org"
+        id S2388404AbfKDV4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:56:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729968AbfKDVsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:16 -0500
+        id S2388330AbfKDV4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:31 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2BC121D81;
-        Mon,  4 Nov 2019 21:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2107321D7D;
+        Mon,  4 Nov 2019 21:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904096;
-        bh=AW8JRg+49P+wsK0+18mdLzxYSUk1aFhVRS5tmh8A+Fw=;
+        s=default; t=1572904590;
+        bh=dcVigU6fDMmZoextzHaCniTrTK6eBi3KgAmY8viInsA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atsjtR3JU5vElkB03GF0qkbS2FNCO6qZZS0hgDbTRoEu2KfrM4EyFhO2lMRFkiKKI
-         1Vh83QAy/MpG2XKl/XR47ozzZUjQ7ggKM33DOkLgW6vlvl9vOoDYm7Jg9s0vul3FBh
-         hYle5UiSViAhzbgyhPmMshxE3T+JTr4Khz0DyUVw=
+        b=O/8iY5E/SV3AR03T5nRgDdOjOeP6+z0GarXJE6I2dXVg1oxWl9lUrDCjos3er6Oo2
+         USzT1kogqjUj+JolvlBRSoO2rvbMCbtw51u8wcXzH6aLKU3kePuBmhPGpReq/BOiVe
+         Nph7c+AnwZOmdccYCTcZoLAVWTtDPGF3GNC2aGWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Xiubo Li <xiubli@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 20/46] NFSv4: Fix leak of clp->cl_acceptor string
+Subject: [PATCH 4.14 53/95] nbd: fix possible sysfs duplicate warning
 Date:   Mon,  4 Nov 2019 22:44:51 +0100
-Message-Id: <20191104211850.806653505@linuxfoundation.org>
+Message-Id: <20191104212104.916016633@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-[ Upstream commit 1047ec868332034d1fbcb2fae19fe6d4cb869ff2 ]
+[ Upstream commit 862488105b84ca744b3d8ff131e0fcfe10644be1 ]
 
-Our client can issue multiple SETCLIENTID operations to the same
-server in some circumstances. Ensure that calls to
-nfs4_proc_setclientid() after the first one do not overwrite the
-previously allocated cl_acceptor string.
+1. nbd_put takes the mutex and drops nbd->ref to 0. It then does
+idr_remove and drops the mutex.
 
-unreferenced object 0xffff888461031800 (size 32):
-  comm "mount.nfs", pid 2227, jiffies 4294822467 (age 1407.749s)
-  hex dump (first 32 bytes):
-    6e 66 73 40 6b 6c 69 6d 74 2e 69 62 2e 31 30 31  nfs@klimt.ib.101
-    35 67 72 61 6e 67 65 72 2e 6e 65 74 00 00 00 00  5granger.net....
-  backtrace:
-    [<00000000ab820188>] __kmalloc+0x128/0x176
-    [<00000000eeaf4ec8>] gss_stringify_acceptor+0xbd/0x1a7 [auth_rpcgss]
-    [<00000000e85e3382>] nfs4_proc_setclientid+0x34e/0x46c [nfsv4]
-    [<000000003d9cf1fa>] nfs40_discover_server_trunking+0x7a/0xed [nfsv4]
-    [<00000000b81c3787>] nfs4_discover_server_trunking+0x81/0x244 [nfsv4]
-    [<000000000801b55f>] nfs4_init_client+0x1b0/0x238 [nfsv4]
-    [<00000000977daf7f>] nfs4_set_client+0xfe/0x14d [nfsv4]
-    [<0000000053a68a2a>] nfs4_create_server+0x107/0x1db [nfsv4]
-    [<0000000088262019>] nfs4_remote_mount+0x2c/0x59 [nfsv4]
-    [<00000000e84a2fd0>] legacy_get_tree+0x2d/0x4c
-    [<00000000797e947c>] vfs_get_tree+0x20/0xc7
-    [<00000000ecabaaa8>] fc_mount+0xe/0x36
-    [<00000000f15fafc2>] vfs_kern_mount+0x74/0x8d
-    [<00000000a3ff4e26>] nfs_do_root_mount+0x8a/0xa3 [nfsv4]
-    [<00000000d1c2b337>] nfs4_try_mount+0x58/0xad [nfsv4]
-    [<000000004c9bddee>] nfs_fs_mount+0x820/0x869 [nfs]
+2. nbd_genl_connect takes the mutex. idr_find/idr_for_each fails
+to find an existing device, so it does nbd_dev_add.
 
-Fixes: f11b2a1cfbf5 ("nfs4: copy acceptor name from context ... ")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+3. just before the nbd_put could call nbd_dev_remove or not finished
+totally, but if nbd_dev_add try to add_disk, we can hit:
+
+debugfs: Directory 'nbd1' with parent 'block' already present!
+
+This patch will make sure all the disk add/remove stuff are done
+by holding the nbd_index_mutex lock.
+
+Reported-by: Mike Christie <mchristi@redhat.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/nbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index d1816ee0c11be..900a62a9ad4e5 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -5255,6 +5255,7 @@ int nfs4_proc_setclientid(struct nfs_client *clp, u32 program,
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index a234600849558..3e45004407963 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -228,8 +228,8 @@ static void nbd_put(struct nbd_device *nbd)
+ 	if (refcount_dec_and_mutex_lock(&nbd->refs,
+ 					&nbd_index_mutex)) {
+ 		idr_remove(&nbd_index_idr, nbd->index);
+-		mutex_unlock(&nbd_index_mutex);
+ 		nbd_dev_remove(nbd);
++		mutex_unlock(&nbd_index_mutex);
  	}
- 	status = task->tk_status;
- 	if (setclientid.sc_cred) {
-+		kfree(clp->cl_acceptor);
- 		clp->cl_acceptor = rpcauth_stringify_acceptor(setclientid.sc_cred);
- 		put_rpccred(setclientid.sc_cred);
- 	}
+ }
+ 
 -- 
 2.20.1
 
