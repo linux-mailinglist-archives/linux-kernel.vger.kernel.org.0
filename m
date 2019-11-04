@@ -2,169 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA337EE64C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:41:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E840BEE653
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbfKDRlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:41:36 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35225 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728392AbfKDRlg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:41:36 -0500
-Received: by mail-pg1-f194.google.com with SMTP id q22so4171770pgk.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:41:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lPIDgQKTrSezXBvWSPccLapRG8yo6gcHIljKbjtAJu0=;
-        b=CUu1FmB3LjsCLSEP705SvIqj35uHr2X5ys8TEcTirMe4Xm0h+XWqfzbWLbA/hhtDBw
-         eBlTxyj2xuSt7s0M3YUzkirkkX9V7uBiKPkWbfNsrubIH3WrdU/9DABtq8wDPUrFQXkG
-         7ibo3Z1mBB3nyR9Q4tDPS0IrWjhg5zGf+d0yp+PbZyYuez8PqSX81RKDIMG4OY6FkQ0/
-         ml3xQhwX4iBRmcnHBGtOrWcysVepLJo7C8TxzAl3LFclFOH9MxW3uoDksButKbroYTKP
-         DO6Mo6b1c/qIjgpNcBQx7oTHpiAiZXJf6ppiFLI8Bm25SiQMVIEKLEQE+58JBZg+pY2/
-         YEjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lPIDgQKTrSezXBvWSPccLapRG8yo6gcHIljKbjtAJu0=;
-        b=X8iIM+0e7Qm5opTNNA8ooCe3fnIB1DRQy8d7N2S6GFhTlnYgI7S73c4t0ZYHaNVHCz
-         GsdAXMizVKNS23eAP04ANWGVpqqu+JsR1HEQYkM0fKZftDo1/k4wiaOm1V0OIuVUAXVO
-         aMVlE5Juzh2ZD59+EtQUFVbfpziBHc4gQGrq3Uk8ef4/XBAW2cZa6+qEg/DrYmfV2Cis
-         3Ip8qgWNWGhirBZ3lU9owft37HXloTrrxiLW4J9HtVnSndqIdXfNuHN5Ga7qOnFY0q1a
-         3XFY7ZXYRq0VB16pseegTnnbtQdNcYLnB6taBiLGyeotcKrFGK7ziKhNaCV6ftt6jEtD
-         0r+A==
-X-Gm-Message-State: APjAAAVOTJwhvzA6c9450W5/t2xoIuYkGJaPR/S8pe27Xot/lBdLS3Rq
-        VdSABRP6b9l61kDDFoDyCXmK4w==
-X-Google-Smtp-Source: APXvYqzzZ+dkZOr3JoygRmb96xE/xUJESRhqGzvY+WG7dsAngzbq/NLr5tF1PTBC6l38feevSQDYnQ==
-X-Received: by 2002:a63:b62:: with SMTP id a34mr11473288pgl.123.1572889293842;
-        Mon, 04 Nov 2019 09:41:33 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v14sm11345300pfm.51.2019.11.04.09.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 09:41:33 -0800 (PST)
-Date:   Mon, 4 Nov 2019 09:41:30 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCHv7 0/3] QCOM smmu-500 wait-for-safe handling for sdm845
-Message-ID: <20191104174130.GA586@tuxbook-pro>
-References: <cover.1568966170.git.saiprakash.ranjan@codeaurora.org>
- <20191101163136.GC3603@willie-the-truck>
- <af7e9a14ae7512665f0cae32e08c8b06@codeaurora.org>
- <20191101172508.GB3983@willie-the-truck>
- <119d4bcf5989d1aa0686fd674c6a3370@codeaurora.org>
- <20191104051925.GC5299@hector.lan>
- <20191104151506.GB24909@willie-the-truck>
- <20191104162339.GD24909@willie-the-truck>
+        id S1729466AbfKDRmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:42:06 -0500
+Received: from foss.arm.com ([217.140.110.172]:48194 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728287AbfKDRmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 12:42:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0C401F1;
+        Mon,  4 Nov 2019 09:42:01 -0800 (PST)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D262B3F71A;
+        Mon,  4 Nov 2019 09:41:59 -0800 (PST)
+Subject: Re: [Patch v4 2/6] sched: Add infrastructure to store and update
+ instantaneous thermal pressure
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Quentin Perret <qperret@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
+ <1571776465-29763-3-git-send-email-thara.gopinath@linaro.org>
+ <379d23e5-79a5-9d90-0fb6-125d9be85e99@arm.com> <5DBC9C57.3040504@linaro.org>
+ <dc30ed89-6581-d99d-03bb-58ea40b74a3d@arm.com>
+ <CAKfTPtBQ1_7ApBkAQrEBy7twohSiM3WcYa-JiHekbedR8C3EKg@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <d7c590b5-f415-ecad-0e81-def9f9bc1296@arm.com>
+Date:   Mon, 4 Nov 2019 18:41:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104162339.GD24909@willie-the-truck>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAKfTPtBQ1_7ApBkAQrEBy7twohSiM3WcYa-JiHekbedR8C3EKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04 Nov 08:23 PST 2019, Will Deacon wrote:
+On 04/11/2019 18:34, Vincent Guittot wrote:
+> On Mon, 4 Nov 2019 at 18:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 01/11/2019 21:57, Thara Gopinath wrote:
+>>> On 11/01/2019 08:17 AM, Dietmar Eggemann wrote:
+>>>> On 22.10.19 22:34, Thara Gopinath wrote:
 
-> On Mon, Nov 04, 2019 at 03:15:06PM +0000, Will Deacon wrote:
-> > On Sun, Nov 03, 2019 at 11:19:25PM -0600, Andy Gross wrote:
-> > > On Fri, Nov 01, 2019 at 11:01:59PM +0530, Sai Prakash Ranjan wrote:
-> > > > >>> What's the plan for getting this merged? I'm not happy taking the
-> > > > >>> firmware
-> > > > >>> bits without Andy's ack, but I also think the SMMU changes should go via
-> > > > >>> the IOMMU tree to avoid conflicts.
-> > > > >>>
-> > > > >>> Andy?
-> > > > >>>
-> > > > >>
-> > > > >>Bjorn maintains QCOM stuff now if I am not wrong and he has already
-> > > > >>reviewed
-> > > > >>the firmware bits. So I'm hoping you could take all these through IOMMU
-> > > > >>tree.
-> > > > >
-> > > > >Oh, I didn't realise that. Is there a MAINTAINERS update someplace? If I
-> > > > >run:
-> > > > >
-> > > > >$ ./scripts/get_maintainer.pl -f drivers/firmware/qcom_scm-64.c
-> > > > >
-> > > > >in linux-next, I get:
-> > > > >
-> > > > >Andy Gross <agross@kernel.org> (maintainer:ARM/QUALCOMM SUPPORT)
-> > > > >linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT)
-> > > > >linux-kernel@vger.kernel.org (open list)
-> > > > >
-> > > > 
-> > > > It hasn't been updated yet then. I will leave it to Bjorn or Andy to comment
-> > > > on this.
-> > > 
-> > > The rumors of my demise have been greatly exaggerated.  All kidding aside, I
-> > > ack'ed both.  Bjorn will indeed be coming on as a co-maintener at some point.
-> > > He has already done a lot of yeomans work in helping me out the past 3 months.
-> > 
-> > Cheers Andy, and I'm pleased to hear that you're still with us! I've queued
-> > this lot for 5.5 and I'll send to Joerg this week.
-> 
-> Bah, in doing so I spotted that the existing code doesn't handle error codes
-> properly because 'a0' is unsigned. I'll queue the patch below at the start
-> of the series.
-> 
+[...]
 
-Thanks, I've hit this a few times but missed this and assumed it was a
-firmware issue...
+>>> You still need now.All the update_*_avg apis take now as a parameter.
+>>
+>> You do need it for the ___update_load_sum() call inside the
+>> foo_load_avg() functions. But that doesn't mean you have to pass it into
+>> foo_load_avg(). Look at update_irq_load_avg() for example. We don't pass
+>> rq->clock as now in there.
+> 
+> update_irq_load_avg is the exception but having now as a parameter is
+> the default behavior that update_thermal_load_avg have to follow
 
-In case you haven't published your branch:
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Why would this be? Just so the functions have the the same parameters?
 
-Regards,
-Bjorn
+In this case you could argue that update_irq_load_avg() has to pass in
+rq->clock as now.
 
-> Will
-> 
-> --->8
-> 
-> From a9a1047f08de0eff249fb65e2d5d6f6f8b2a87f0 Mon Sep 17 00:00:00 2001
-> From: Will Deacon <will@kernel.org>
-> Date: Mon, 4 Nov 2019 15:58:15 +0000
-> Subject: [PATCH] firmware: qcom: scm: Ensure 'a0' status code is treated as
->  signed
-> 
-> The 'a0' member of 'struct arm_smccc_res' is declared as 'unsigned long',
-> however the Qualcomm SCM firmware interface driver expects to receive
-> negative error codes via this field, so ensure that it's cast to 'long'
-> before comparing to see if it is less than 0.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  drivers/firmware/qcom_scm-64.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
-> index 91d5ad7cf58b..25e0f60c759a 100644
-> --- a/drivers/firmware/qcom_scm-64.c
-> +++ b/drivers/firmware/qcom_scm-64.c
-> @@ -150,7 +150,7 @@ static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
->  		kfree(args_virt);
->  	}
->  
-> -	if (res->a0 < 0)
-> +	if ((long)res->a0 < 0)
->  		return qcom_scm_remap_error(res->a0);
->  
->  	return 0;
-> -- 
-> 2.24.0.rc1.363.gb1bccd3e3d-goog
-> 
+>> -int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
+>> +extern int sched_thermal_decay_coeff;
+>> +
+>> +int update_thermal_load_avg(struct rq *rq, u64 capacity)
+>>  {
+>> +       u64 now = rq_clock_task(rq) >> sched_thermal_decay_coeff;
+>> +
+>>         if (___update_load_sum(now, &rq->avg_thermal,
+>>                                capacity,
+>>                                capacity,
