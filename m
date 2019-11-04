@@ -2,112 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95916EE044
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FC7BEE051
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbfKDMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:43:44 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45618 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728504AbfKDMnn (ORCPT
+        id S1729066AbfKDMou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 07:44:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42566 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727891AbfKDMou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:43:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572871423;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=by0LJRZGbj39K8dHeEoPBdx+Y6mM9EbKDWT2TWm0iZo=;
-        b=JisxScNlh0ra4gDMyzxLRczmS6q+lxU6Hjw334LN0v4rNpcNXFZt01kSQIdat6PXK3pwR9
-        kQQ04FvD52phfW4QPNbIDaaVHyc4TrbIjHbAWgtRJspoFlxG9MU/9YEKceHh0vWGVLxbJw
-        sA54Yc+OXy/X3ijbBFqEefXaljIg8/g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-90-U6HVbOMqNu-WA_nfEpHEwg-1; Mon, 04 Nov 2019 07:43:39 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A180D1005500;
-        Mon,  4 Nov 2019 12:43:38 +0000 (UTC)
-Received: from dhcp-128-227.nay.redhat.com (unknown [10.66.128.227])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 556275D6C8;
-        Mon,  4 Nov 2019 12:43:35 +0000 (UTC)
-From:   Honggang LI <honli@redhat.com>
-To:     jlbec@evilplan.org, hch@lst.de
-Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        bvanassche@acm.org, Honggang Li <honli@redhat.com>
-Subject: [PATCH] configfs: calculate the depth of parent item
-Date:   Mon,  4 Nov 2019 20:43:22 +0800
-Message-Id: <20191104124322.31226-1-honli@redhat.com>
+        Mon, 4 Nov 2019 07:44:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GCF2W9GoIMji6P38lZAtJnQ1QMJqaRDISSiKFCZJSos=; b=aHYYCN5FMrrDV3IW2Wm1dOk7Y
+        qHXnr8PE3zYbFMQzzk57EgX0MVsQyY+5rdu8OnJvm308QAMb/jTTmkq0hrGqaFscVpC1EchB3As00
+        TcbaP+kotvQewwUk0lrV7gUeBU4hz8j8lYglMoMP2qzmWNg7PqbH8aV8fe7bFKLvZqU7Q=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iRbiv-0002YG-OD; Mon, 04 Nov 2019 12:44:45 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id AB2D3274301E; Mon,  4 Nov 2019 12:44:44 +0000 (GMT)
+Date:   Mon, 4 Nov 2019 12:44:44 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: spi-mem and gpio chipselects
+Message-ID: <20191104124444.GB5238@sirena.co.uk>
+References: <cbe69f5457c4dd1c2cc96a247c6c6fca61c0d43c.camel@alliedtelesis.co.nz>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: U6HVbOMqNu-WA_nfEpHEwg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Content-Disposition: inline
+In-Reply-To: <cbe69f5457c4dd1c2cc96a247c6c6fca61c0d43c.camel@alliedtelesis.co.nz>
+X-Cookie: This page intentionally left blank.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honggang Li <honli@redhat.com>
 
-When create symbolic link, create_link should calculate the depth
-of the parent item. However, both the first and second parameters
-of configfs_get_target_path had been set to the target. Broken
-symbolic link created.
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-$ targetcli ls /
-o- / ............................................................. [...]
-  o- backstores .................................................. [...]
-  | o- block ...................................... [Storage Objects: 0]
-  | o- fileio ..................................... [Storage Objects: 2]
-  | | o- vdev0 .......... [/dev/ramdisk1 (16.0MiB) write-thru activated]
-  | | | o- alua ....................................... [ALUA Groups: 1]
-  | | |   o- default_tg_pt_gp ........... [ALUA state: Active/optimized]
-  | | o- vdev1 .......... [/dev/ramdisk2 (16.0MiB) write-thru activated]
-  | |   o- alua ....................................... [ALUA Groups: 1]
-  | |     o- default_tg_pt_gp ........... [ALUA state: Active/optimized]
-  | o- pscsi ...................................... [Storage Objects: 0]
-  | o- ramdisk .................................... [Storage Objects: 0]
-  o- iscsi ................................................ [Targets: 0]
-  o- loopback ............................................. [Targets: 0]
-  o- srpt ................................................. [Targets: 2]
-  | o- ib.e89a8f91cb3200000000000000000000 ............... [no-gen-acls]
-  | | o- acls ................................................ [ACLs: 2]
-  | | | o- ib.e89a8f91cb3200000000000000000000 ........ [Mapped LUNs: 2]
-  | | | | o- mapped_lun0 ............................. [BROKEN LUN LINK]
-  | | | | o- mapped_lun1 ............................. [BROKEN LUN LINK]
-  | | | o- ib.e89a8f91cb3300000000000000000000 ........ [Mapped LUNs: 2]
-  | | |   o- mapped_lun0 ............................. [BROKEN LUN LINK]
-  | | |   o- mapped_lun1 ............................. [BROKEN LUN LINK]
-  | | o- luns ................................................ [LUNs: 2]
-  | |   o- lun0 ...... [fileio/vdev0 (/dev/ramdisk1) (default_tg_pt_gp)]
-  | |   o- lun1 ...... [fileio/vdev1 (/dev/ramdisk2) (default_tg_pt_gp)]
-  | o- ib.e89a8f91cb3300000000000000000000 ............... [no-gen-acls]
-  |   o- acls ................................................ [ACLs: 0]
-  |   o- luns ................................................ [LUNs: 0]
-  o- vhost ................................................ [Targets: 0]
+On Mon, Nov 04, 2019 at 12:35:24AM +0000, Chris Packham wrote:
 
-Fixes: e9c03af21cc7 ("configfs: calculate the symlink target only once")
-Signed-off-by: Honggang Li <honli@redhat.com>
----
- fs/configfs/symlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> I'm working on a platform that has a slightly complicated scheme for
+> SPI chip-selects using gpios[1]. The spi controller driver in this case
+> supports the spi-mem operations which appear to bypass the generic
+> spi_set_cs().
 
-diff --git a/fs/configfs/symlink.c b/fs/configfs/symlink.c
-index dc5dbf6a81d7..cb61467478ca 100644
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -101,7 +101,7 @@ static int create_link(struct config_item *parent_item,
- =09}
- =09target_sd->s_links++;
- =09spin_unlock(&configfs_dirent_lock);
--=09ret =3D configfs_get_target_path(item, item, body);
-+=09ret =3D configfs_get_target_path(parent_item, item, body);
- =09if (!ret)
- =09=09ret =3D configfs_create_link(target_sd, parent_item->ci_dentry,
- =09=09=09=09=09   dentry, body);
---=20
-2.21.0
+> Would there be any harm in adding calls to spi_set_cs() to spi-mem.c?
+> Naively spi_mem_access_start() and spi_mem_access_end() seem like
+> convenient places to start.
 
+That's only going to work in cases where the controller translates
+things into a single SPI operation on the flash which I'm not sure is
+always going to be the case.  We'd need a way to guarantee that the
+controller is going to do that in order to avoid data corruption issues.
+
+--Fba/0zbH8Xs+Fj9o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3AHTsACgkQJNaLcl1U
+h9CKcgf/a3Rsv/nEWYK652244fSFdDjB0Ae/GjNHxD+cHFj3PApNAkCG1mA1XAux
+nu2t/yNhOlkeXysq1o7zHbsttZpVI9MPh9seGhrvyk1vMVnRv3DghWjgVNAZKv1h
+pmWU3zN6MAU0K05C46j5B6QgF4euavsIS61ynsokTvdOdGfRLZQe2eBuRokPut5B
+2scTuUx7HB6ybEWU+vjeXN53v3UYDfCoKYI0A3XiX9F4n3m7WTW+5xPu2etP8a1C
+C0OFvD/mkVWCoQDeFWCIOTQ7thQc9HiAK2xgtTPeSggqQi7cj/bb14bE0FtGnCrM
+5m6A7jwYbpby8OEZPG9MJphRUVclhw==
+=E4bF
+-----END PGP SIGNATURE-----
+
+--Fba/0zbH8Xs+Fj9o--
