@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5E7EEE1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C72AAEED22
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388979AbfKDWL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:11:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45336 "EHLO mail.kernel.org"
+        id S2389148AbfKDWDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388028AbfKDWLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:11:53 -0500
+        id S2389133AbfKDWDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:50 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F240214D8;
-        Mon,  4 Nov 2019 22:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926AD222D4;
+        Mon,  4 Nov 2019 22:03:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905513;
-        bh=SQws7LQUsN35hj9MY23G6kH0kbXpCXwrL5tfbVE5b7Y=;
+        s=default; t=1572905030;
+        bh=3COlhzhvPOBrpE/6ph6hpqEDpr+0arf86B8sdJA0n2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9DxKLOyfp8h/Niy2yNEsbqqAQjE5aG0tGBhW7u6jC4DN1Mnl+BqW7O3XOaNy8dih
-         fujpVY64nEpTBw68K+Ue/6BCQt75rtsFmZC288zbW+W73EzdIOeUvYwHZZt3Yew/lH
-         2VjeNIqzwW/gO1D2NbTePiQrlHTsVTGohLHeKGWI=
+        b=0jOetgHGrDPKLRsXKhWbekaP9EvjlOIC9l/19EEZ1EcqaUqVLZLiaG4fuK3YSDQGR
+         syGTmQzhB0iAyzOiDa+WkUPkGyhsRG6/Vbfr0LhjqOqsqlghh5+Cl2WPiTvl85wahr
+         2X9oy+IE6SAKYbxpq2pyNjQG8hWdJibfLeCMqr9s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Tianci Yin <tianci.yin@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.3 137/163] drm/amdgpu/gmc10: properly set BANK_SELECT and FRAGMENT_SIZE
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.19 134/149] NFS: Fix an RCU lock leak in nfs4_refresh_delegation_stateid()
 Date:   Mon,  4 Nov 2019 22:45:27 +0100
-Message-Id: <20191104212150.273916176@linuxfoundation.org>
+Message-Id: <20191104212146.168377819@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 30ef5c7eaba0ddafc6c23eca65ebe52169dfcc60 upstream.
+commit 79cc55422ce99be5964bde208ba8557174720893 upstream.
 
-These were not aligned for optimal performance for GPUVM.
+A typo in nfs4_refresh_delegation_stateid() means we're leaking an
+RCU lock, and always returning a value of 'false'. As the function
+description states, we were always supposed to return 'true' if a
+matching delegation was found.
 
-Acked-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Tianci Yin <tianci.yin@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: 12f275cdd163 ("NFSv4: Retry CLOSE and DELEGRETURN on NFS4ERR_OLD_STATEID.")
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/gfxhub_v2_0.c |    9 +++++++++
- drivers/gpu/drm/amd/amdgpu/mmhub_v2_0.c  |    9 +++++++++
- 2 files changed, 18 insertions(+)
+ fs/nfs/delegation.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_0.c
-@@ -151,6 +151,15 @@ static void gfxhub_v2_0_init_cache_regs(
- 	WREG32_SOC15(GC, 0, mmGCVM_L2_CNTL2, tmp);
- 
- 	tmp = mmGCVM_L2_CNTL3_DEFAULT;
-+	if (adev->gmc.translate_further) {
-+		tmp = REG_SET_FIELD(tmp, GCVM_L2_CNTL3, BANK_SELECT, 12);
-+		tmp = REG_SET_FIELD(tmp, GCVM_L2_CNTL3,
-+				    L2_CACHE_BIGK_FRAGMENT_SIZE, 9);
-+	} else {
-+		tmp = REG_SET_FIELD(tmp, GCVM_L2_CNTL3, BANK_SELECT, 9);
-+		tmp = REG_SET_FIELD(tmp, GCVM_L2_CNTL3,
-+				    L2_CACHE_BIGK_FRAGMENT_SIZE, 6);
-+	}
- 	WREG32_SOC15(GC, 0, mmGCVM_L2_CNTL3, tmp);
- 
- 	tmp = mmGCVM_L2_CNTL4_DEFAULT;
---- a/drivers/gpu/drm/amd/amdgpu/mmhub_v2_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v2_0.c
-@@ -137,6 +137,15 @@ static void mmhub_v2_0_init_cache_regs(s
- 	WREG32_SOC15(MMHUB, 0, mmMMVM_L2_CNTL2, tmp);
- 
- 	tmp = mmMMVM_L2_CNTL3_DEFAULT;
-+	if (adev->gmc.translate_further) {
-+		tmp = REG_SET_FIELD(tmp, MMVM_L2_CNTL3, BANK_SELECT, 12);
-+		tmp = REG_SET_FIELD(tmp, MMVM_L2_CNTL3,
-+				    L2_CACHE_BIGK_FRAGMENT_SIZE, 9);
-+	} else {
-+		tmp = REG_SET_FIELD(tmp, MMVM_L2_CNTL3, BANK_SELECT, 9);
-+		tmp = REG_SET_FIELD(tmp, MMVM_L2_CNTL3,
-+				    L2_CACHE_BIGK_FRAGMENT_SIZE, 6);
-+	}
- 	WREG32_SOC15(MMHUB, 0, mmMMVM_L2_CNTL3, tmp);
- 
- 	tmp = mmMMVM_L2_CNTL4_DEFAULT;
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -1154,7 +1154,7 @@ bool nfs4_refresh_delegation_stateid(nfs
+ 	if (delegation != NULL &&
+ 	    nfs4_stateid_match_other(dst, &delegation->stateid)) {
+ 		dst->seqid = delegation->stateid.seqid;
+-		return ret;
++		ret = true;
+ 	}
+ 	rcu_read_unlock();
+ out:
 
 
