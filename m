@@ -2,393 +2,376 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F40EE7E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:04:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BDCEE7F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:05:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbfKDTEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 14:04:42 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16344 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728322AbfKDTEl (ORCPT
+        id S1729513AbfKDTFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 14:05:32 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38332 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbfKDTFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 14:04:41 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc0764e0000>; Mon, 04 Nov 2019 11:04:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 04 Nov 2019 11:04:39 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 04 Nov 2019 11:04:39 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
- 2019 19:04:38 +0000
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191104173325.GD5134@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <be9de35c-57e9-75c3-2e86-eae50904bbdf@nvidia.com>
-Date:   Mon, 4 Nov 2019 11:04:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 4 Nov 2019 14:05:32 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iRhfE-0003cU-49; Mon, 04 Nov 2019 20:05:20 +0100
+Date:   Mon, 4 Nov 2019 20:05:18 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, daniel.lezcano@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-microchip-pit64b: add
+ Microchip PIT64B support
+In-Reply-To: <1572880204-4514-3-git-send-email-claudiu.beznea@microchip.com>
+Message-ID: <alpine.DEB.2.21.1911041851230.17054@nanos.tec.linutronix.de>
+References: <1572880204-4514-1-git-send-email-claudiu.beznea@microchip.com> <1572880204-4514-3-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20191104173325.GD5134@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572894286; bh=kXFfoa96CjeMxu/yNlagPA6LLNAu70eBUsA06ExlOtg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=CGhErLefJ4Rd4fl6xSTC12CgERoyFjHWQGLEBwXbgJ2nZYGGuplhwaAucXTJzeeNK
-         7KRJyNQnA11L4vItnHz1sLBsORlDWdAkA/ZWVdCe/zvdJMM52vn/1Yk2OBp/W/Dq1T
-         cFSSDEh86RVrVz/0q78GLgUN0uUGLFJZUZdX2Fl6rpKC6TlU/Ir0hTy7uItCyFW8Za
-         W+S8GdUZi+MhpaV5QT4z4khopwYOYhIHRBDl1hUf1rvr4b1dc8B1ZAcRLRgjjchNom
-         s2Ey6jwAxh3PTYyEBkc6VY0f/i8pk0d/xLfZmGpLvA4HcRrg88VOSkXk7tAEv24uKR
-         Y51dSM7lMwnHw==
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/19 9:33 AM, Jerome Glisse wrote:
-...
->=20
-> Few nitpick belows, nonetheless:
->=20
-> Reviewed-by: J=E9r=F4me Glisse <jglisse@redhat.com>
-> [...]
->> +
->> +CASE 3: ODP
->> +-----------
->> +(Mellanox/Infiniband On Demand Paging: the hardware supports
->> +replayable page faulting). There are GUP references to pages serving as=
- DMA
->> +buffers. For ODP, MMU notifiers are used to synchronize with page_mkcle=
-an()
->> +and munmap(). Therefore, normal GUP calls are sufficient, so neither fl=
-ag
->> +needs to be set.
->=20
-> I would not include ODP or anything like it here, they do not use
-> GUP anymore and i believe it is more confusing here. I would how-
-> ever include some text in this documentation explaining that hard-
-> ware that support page fault is superior as it does not incur any
-> of the issues described here.
+On Mon, 4 Nov 2019, Claudiu Beznea wrote:
+> +struct mchp_pit64b_common_data {
+> +	void __iomem *base;
+> +	struct clk *pclk;
+> +	struct clk *gclk;
+> +	u64 cycles;
+> +	u8 pres;
 
-OK, agreed, here's a new write up that I'll put in v3:
+Can you please make the members tabular for readability sake in all the
+structs?
+
+struct mchp_pit64b_common_data {
+	void __iomem	*base;
+	struct clk	*pclk;
+	struct clk	*gclk;
+	u64		cycles;
+	u8		pres;
+};
 
 
-CASE 3: ODP
------------
-Advanced, but non-CPU (DMA) hardware that supports replayable page faults.
-Here, a well-written driver doesn't normally need to pin pages at all. Howe=
-ver,
-if the driver does choose to do so, it can register MMU notifiers for the r=
-ange,
-and will be called back upon invalidation. Either way (avoiding page pinnin=
-g, or
-using MMU notifiers to unpin upon request), there is proper synchronization=
- with=20
-both filesystem and mm (page_mkclean(), munmap(), etc).
+> +static struct mchp_pit64b_data {
+> +	struct mchp_pit64b_clksrc_data *csd;
+> +	struct mchp_pit64b_clkevt_data *ced;
+> +} data;
 
-Therefore, neither flag needs to be set.
+This is suboptimal style for two reasons:
 
-It's worth mentioning here that pinning pages should not be the first desig=
-n
-choice. If page fault capable hardware is available, then the software shou=
-ld
-be written so that it does not pin pages. This allows mm and filesystems to
-operate more efficiently and reliably.
+     1) Having a seperate struct and instance declaration is way simpler to
+     	parse.
 
-> [...]
->=20
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 199da99e8ffc..1aea48427879 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->=20
-> [...]
->=20
->> @@ -1014,7 +1018,16 @@ static __always_inline long __get_user_pages_lock=
-ed(struct task_struct *tsk,
->>  		BUG_ON(*locked !=3D 1);
->>  	}
->> =20
->> -	if (pages)
->> +	/*
->> +	 * FOLL_PIN and FOLL_GET are mutually exclusive. Traditional behavior
->> +	 * is to set FOLL_GET if the caller wants pages[] filled in (but has
->> +	 * carelessly failed to specify FOLL_GET), so keep doing that, but onl=
-y
->> +	 * for FOLL_GET, not for the newer FOLL_PIN.
->> +	 *
->> +	 * FOLL_PIN always expects pages to be non-null, but no need to assert
->> +	 * that here, as any failures will be obvious enough.
->> +	 */
->> +	if (pages && !(flags & FOLL_PIN))
->>  		flags |=3D FOLL_GET;
->=20
-> Did you look at user that have pages and not FOLL_GET set ?
-> I believe it would be better to first fix them to end up
-> with FOLL_GET set and then error out if pages is !=3D NULL but
-> nor FOLL_GET or FOLL_PIN is set.
->=20
+     2) Naming a global variable with a generic name is unintuitive and is
+     	too easily confused with local variable names. See below.
 
-I was perhaps overly cautious, and didn't go there. However, it's probably
-doable, given that there was already the following in __get_user_pages():
+> +static inline u64 mchp_pit64b_get_period(void __iomem *base)
+> +{
+> +	u32 lsb, msb;
 
-    VM_BUG_ON(!!pages !=3D !!(gup_flags & FOLL_GET));
+lsb and msb are not really correct here. They stand for Least/Most
+Significant Bit (Byte).
 
-...which will have conditioned people and code to set FOLL_GET together wit=
-h
-pages. So I agree that the time is right.
+lsw/msw would be more correct, but 'high/low' would be sufficiently self
+explaining as well.
 
-In order to make bisecting future failures simpler, I can insert a patch ri=
-ght=20
-before this one, that changes the FOLL_GET setting into an assert, like thi=
-s:
+      /*
+       * Please use proper multi-line comments and not the network style.
+       * below. Can you spot the difference?
+       */
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 8f236a335ae9..be338961e80d 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1014,8 +1014,8 @@ static __always_inline long __get_user_pages_locked(s=
-truct task_struct *tsk,
-                BUG_ON(*locked !=3D 1);
-        }
-=20
--       if (pages)
--               flags |=3D FOLL_GET;
-+       if (pages && WARN_ON_ONCE(!(gup_flags & FOLL_GET)))
-+               return -EINVAL;
-=20
-        pages_done =3D 0;
-        lock_dropped =3D false;
+> +	/* LSB must be read first to guarantee an atomic read of the 64 bit
+> +	 * timer.
+> +	 */
 
+Does that mean that the hardware latches the upper 32bit when the lower
+32bit are read? If so, please write it out.
 
-...and then add in FOLL_PIN, with this patch.
+But aside of that this is fundamentally broken not only on SMP, but also on
+UP because the clocksource read function can be called in preemptible
+and/or interruptible context.
 
->> =20
->>  	pages_done =3D 0;
->=20
->> @@ -2373,24 +2402,9 @@ static int __gup_longterm_unlocked(unsigned long =
-start, int nr_pages,
->>  	return ret;
->>  }
->> =20
->> -/**
->> - * get_user_pages_fast() - pin user pages in memory
->> - * @start:	starting user address
->> - * @nr_pages:	number of pages from start to pin
->> - * @gup_flags:	flags modifying pin behaviour
->> - * @pages:	array that receives pointers to the pages pinned.
->> - *		Should be at least nr_pages long.
->> - *
->> - * Attempt to pin user pages in memory without taking mm->mmap_sem.
->> - * If not successful, it will fall back to taking the lock and
->> - * calling get_user_pages().
->> - *
->> - * Returns number of pages pinned. This may be fewer than the number
->> - * requested. If nr_pages is 0 or negative, returns 0. If no pages
->> - * were pinned, returns -errno.
->> - */
->> -int get_user_pages_fast(unsigned long start, int nr_pages,
->> -			unsigned int gup_flags, struct page **pages)
->> +static int internal_get_user_pages_fast(unsigned long start, int nr_pag=
-es,
->> +					unsigned int gup_flags,
->> +					struct page **pages)
->=20
-> Usualy function are rename to _old_func_name ie add _ in front. So
-> here it would become _get_user_pages_fast but i know some people
-> don't like that as sometimes we endup with ___function_overloaded :)
+   thread()
+     ktime_get))
+       t = clocksource->read()
+          low = read(LSW); <- Latches MSW
 
-Exactly: the __get_user_pages* names were already used for *non*-internal
-routines, so I attempted to pick the next best naming prefix.
+---> interrupt or preemption
 
->=20
->>  {
->>  	unsigned long addr, len, end;
->>  	int nr =3D 0, ret =3D 0;
->=20
->=20
->> @@ -2435,4 +2449,215 @@ int get_user_pages_fast(unsigned long start, int=
- nr_pages,
->=20
-> [...]
->=20
->> +/**
->> + * pin_user_pages_remote() - pin pages for (typically) use by Direct IO=
-, and
->> + * return the pages to the user.
->=20
-> Not a fan of (typically) maybe:
-> pin_user_pages_remote() - pin pages of a remote process (task !=3D curren=
-t)
->=20
-> I think here the remote part if more important that DIO. Remote is use by
-> other thing that DIO.
+       ktime_get))
+         t = clocksource->read()
+            low = read(LSW);    <- Latches MSW
+	    high = read(MSW);   <- Reads correct MSW
 
-Yes, good point. I'll use your wording:
+<--- interrupt or preemption ends
 
- * pin_user_pages_remote() - pin pages of a remote process (task !=3D curre=
-nt)
+          high = read(MSW);     <- Read incorrect MSW
 
+On SMP the same issue exists between two CPUs....
 
+> +	lsb = mchp_pit64b_read(base, MCHP_PIT64B_TLSBR);
+> +	msb = mchp_pit64b_read(base, MCHP_PIT64B_TMSBR);
 
->=20
->> + *
->> + * Nearly the same as get_user_pages_remote(), except that FOLL_PIN is =
-set. See
->> + * get_user_pages_remote() for documentation on the function arguments,=
- because
->> + * the arguments here are identical.
->> + *
->> + * FOLL_PIN means that the pages must be released via put_user_page(). =
-Please
->> + * see Documentation/vm/pin_user_pages.rst for details.
->> + *
->> + * This is intended for Case 1 (DIO) in Documentation/vm/pin_user_pages=
-.rst. It
->> + * is NOT intended for Case 2 (RDMA: long-term pins).
->> + */
->> +long pin_user_pages_remote(struct task_struct *tsk, struct mm_struct *m=
-m,
->> +			   unsigned long start, unsigned long nr_pages,
->> +			   unsigned int gup_flags, struct page **pages,
->> +			   struct vm_area_struct **vmas, int *locked)
->> +{
->> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->> +	if (WARN_ON_ONCE(gup_flags & FOLL_GET))
->> +		return -EINVAL;
->> +
->> +	gup_flags |=3D FOLL_TOUCH | FOLL_REMOTE | FOLL_PIN;
->> +
->> +	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
->> +				       locked, gup_flags);
->> +}
->> +EXPORT_SYMBOL(pin_user_pages_remote);
->> +
->> +/**
->> + * pin_longterm_pages_remote() - pin pages for (typically) use by Direc=
-t IO, and
->> + * return the pages to the user.
->=20
-> I think you copy pasted this from pin_user_pages_remote() :)
+> +static inline void mchp_pit64b_set_period(void __iomem *base, u64 cycles)
+> +{
+> +	u32 lsb, msb;
+> +
+> +	lsb = cycles & MCHP_PIT64B_LSBMASK;
+> +	msb = cycles >> 32;
+> +
+> +	/* LSB must be write last to guarantee an atomic update of the timer
 
-I admit to nothing, with respect to copy-paste! :)
+s/write/written/
 
-This one can simply be:
+> +	 * even when SMOD=1.
+> +	 */
+> +	mchp_pit64b_write(base, MCHP_PIT64B_MSB_PR, msb);
+> +	mchp_pit64b_write(base, MCHP_PIT64B_LSB_PR, lsb);
+> +}
+> +
+> +static inline void mchp_pit64b_reset(struct mchp_pit64b_common_data *data,
 
- * pin_longterm_pages_remote() - pin pages of a remote process (task !=3D c=
-urrent)
+And this is exactly the issue I mentioned above. You have a local argument
+name which shadows a global variable name. Bah.
 
+> +				     u32 mode, bool irq_ena)
+> +{
+> +	mode |= MCHP_PIT64B_PRESCALER(data->pres);
+> +	if (data->gclk)
+> +		mode |= MCHP_PIT64B_MR_SGCLK;
+> +
+> +	mchp_pit64b_write(data->base, MCHP_PIT64B_CR, MCHP_PIT64B_CR_SWRST);
+> +	mchp_pit64b_write(data->base, MCHP_PIT64B_MR, mode);
+> +	mchp_pit64b_set_period(data->base, data->cycles);
+> +	if (irq_ena)
+> +		mchp_pit64b_write(data->base, MCHP_PIT64B_IER,
+> +				  MCHP_PIT64B_IER_PERIOD);
 
->=20
->> + *
->> + * Nearly the same as get_user_pages_remote(), but note that FOLL_TOUCH=
- is not
->> + * set, and FOLL_PIN and FOLL_LONGTERM are set. See get_user_pages_remo=
-te() for
->> + * documentation on the function arguments, because the arguments here =
-are
->> + * identical.
->> + *
->> + * FOLL_PIN means that the pages must be released via put_user_page(). =
-Please
->> + * see Documentation/vm/pin_user_pages.rst for further details.
->> + *
->> + * FOLL_LONGTERM means that the pages are being pinned for "long term" =
-use,
->> + * typically by a non-CPU device, and we cannot be sure that waiting fo=
-r a
->> + * pinned page to become unpin will be effective.
->> + *
->> + * This is intended for Case 2 (RDMA: long-term pins) in
->> + * Documentation/vm/pin_user_pages.rst.
->> + */
->> +long pin_longterm_pages_remote(struct task_struct *tsk, struct mm_struc=
-t *mm,
->> +			       unsigned long start, unsigned long nr_pages,
->> +			       unsigned int gup_flags, struct page **pages,
->> +			       struct vm_area_struct **vmas, int *locked)
->> +{
->> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->> +	if (WARN_ON_ONCE(gup_flags & FOLL_GET))
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * FIXME: as noted in the get_user_pages_remote() implementation, it
->> +	 * is not yet possible to safely set FOLL_LONGTERM here. FOLL_LONGTERM
->> +	 * needs to be set, but for now the best we can do is a "TODO" item.
->> +	 */
->> +	gup_flags |=3D FOLL_REMOTE | FOLL_PIN;
->=20
-> Wouldn't it be better to not add pin_longterm_pages_remote() until
-> it can be properly implemented ?
->=20
+This lacks brackets as after the condition follows a multi-line statement.
+It's techincally a single line, but visually a multi-line statement due to
+the line break.
 
-Well, the problem is that I need each call site that requires FOLL_PIN
-to use a proper wrapper. It's the FOLL_PIN that is the focus here, because
-there is a hard, bright rule, which is: if and only if a caller sets
-FOLL_PIN, then the dma-page tracking happens, and put_user_page() must
-be called.
+> +	mchp_pit64b_write(data->base, MCHP_PIT64B_CR, MCHP_PIT64B_CR_START);
+> +}
+> +
+> +static u64 mchp_pit64b_read_clk(struct clocksource *cs)
+> +{
+> +	return mchp_pit64b_get_period(data.csd->cd->base);
 
-So this leaves me with only two reasonable choices:
+Lot of indirection here in the hotpath. You surely could avoid touching
+multiple cache-lines here by restructuring your data layout so that you
+have the only interesting element of 'common data', i.e. base, in the
+structure which encapsulates the 'clocksource'.
 
-a) Convert the call site as above: pin_longterm_pages_remote(), which sets
-FOLL_PIN (the key point!), and leaves the FOLL_LONGTERM situation exactly
-as it has been so far. When the FOLL_LONGTERM situation is fixed, the call
-site *might* not need any changes to adopt the working gup.c code.
+struct mchp_cs {
+	void __iomem		*base;
+	struct clocksource 	cs;
+};
 
-b) Convert the call site to pin_user_pages_remote(), which also sets
-FOLL_PIN, and also leaves the FOLL_LONGTERM situation exactly as before.
-There would also be a comment at the call site, to the effect of, "this
-is the wrong call to make: it really requires FOLL_LONGTERM behavior".
+And then your read function becomes either:
+{
+    struct mchp_cs *mcs = container_of(cs, struct mchp_cs, cs);
 
-When the FOLL_LONGTERM situation is fixed, the call site will need to be
-changed to pin_longterm_pages_remote().
+    return read_cs(mcs->base);
+}
 
-So you can probably see why I picked (a).
+or if you have he clocksource statically allocated, i.e.:
+
+struct mchp_cs mchp_clksource = { /* init here */ };
+
+{
+	return read_cs(mchp_clksource.base);
+}
+	
+> +static u64 mchp_sched_read_clk(void)
+> +{
+> +	return mchp_pit64b_get_period(data.csd->cd->base);
+
+Ditto
+
+> +
+> +static int mchp_pit64b_clkevt_set_next_event(unsigned long evt,
+> +					     struct clock_event_device *cedev)
+> +{
+> +	mchp_pit64b_set_period(data.ced->cd->base, evt);
+> +	mchp_pit64b_write(data.ced->cd->base, MCHP_PIT64B_CR,
+> +			  MCHP_PIT64B_CR_START);
+
+Same issue here.
+
+> +static irqreturn_t mchp_pit64b_interrupt(int irq, void *dev_id)
+> +{
+> +	struct mchp_pit64b_clkevt_data *irq_data = dev_id;
+> +
+> +	if (data.ced != irq_data)
+> +		return IRQ_NONE;
+
+How is this supposed to happen?
+
+> +
+> +	if (mchp_pit64b_read(irq_data->cd->base, MCHP_PIT64B_ISR) &
+> +	    MCHP_PIT64B_ISR_PERIOD) {
+
+Why are you reading this from the device and not from the mode information
+of the clockevent which would be faster obviously?
+
+> +static int __init mchp_pit64b_pres_compute(u32 *pres, u32 clk_rate,
+> +					   u32 max_rate)
+> +{
+> +	u32 tmp;
+> +
+> +	for (*pres = 0; *pres < MCHP_PIT64B_PRES_MAX; (*pres)++) {
+> +		tmp = clk_rate / (*pres + 1);
+> +		if (tmp <= max_rate)
+> +			break;
+> +	}
+> +
+> +	if (*pres == MCHP_PIT64B_PRES_MAX)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init mchp_pit64b_pres_prepare(struct mchp_pit64b_common_data *cd,
+> +					   unsigned long max_rate)
+> +{
+> +	unsigned long pclk_rate, diff = 0, best_diff = ULONG_MAX;
+> +	long gclk_round = 0;
+> +	u32 pres, best_pres = 0;
+> +	int ret = 0;
+> +
+> +	pclk_rate = clk_get_rate(cd->pclk);
+> +	if (!pclk_rate)
+> +		return -EINVAL;
+> +
+> +	if (cd->gclk) {
+> +		gclk_round = clk_round_rate(cd->gclk, max_rate);
+> +		if (gclk_round < 0)
+> +			goto pclk;
+> +
+> +		if (pclk_rate / gclk_round < 3)
+> +			goto pclk;
+> +
+> +		ret = mchp_pit64b_pres_compute(&pres, gclk_round, max_rate);
+> +		if (ret)
+> +			best_diff = abs(gclk_round - max_rate);
+> +		else
+> +			best_diff = abs(gclk_round / (pres + 1) - max_rate);
+> +		best_pres = pres;
+> +	}
+> +
+> +pclk:
+> +	/* Check if requested rate could be obtained using PCLK. */
+> +	ret = mchp_pit64b_pres_compute(&pres, pclk_rate, max_rate);
+> +	if (ret)
+> +		diff = abs(pclk_rate - max_rate);
+> +	else
+> +		diff = abs(pclk_rate / (pres + 1) - max_rate);
+> +
+> +	if (best_diff > diff) {
+> +		/* Use PCLK. */
+> +		cd->gclk = NULL;
+> +		best_pres = pres;
+> +	} else {
+> +		clk_set_rate(cd->gclk, gclk_round);
+> +	}
+> +
+> +	cd->pres = best_pres;
+> +
+> +	pr_info("PIT64B: using clk=%s with prescaler %u, freq=%lu [Hz]\n",
+> +		cd->gclk ? "gclk" : "pclk", cd->pres,
+> +		cd->gclk ? gclk_round / (cd->pres + 1)
+> +			 : pclk_rate / (cd->pres + 1));
+> +
+> +	return 0;
+
+Lots of undocumented functionality which open codes stuff which exists
+already in the clk framework AFAICT.
+
+Why are you not simply implementing this as clk framework components?
 
 
-thanks,
+            |-----|
+  gclk ---->|     |    |---------|
+            | MUX |--->| Divider |->
+  pclk ---->|     |    |---------|
+            |-----|
 
-John Hubbard
-NVIDIA
+which is exaxtly how your hardware looks like. The clk framework has all
+the selection mechanisms in place and all this conditional clock stuff can
+be removed all over the place simply because you just ask for the desired
+frequency on init. Also suspend/resume and all the other stuff just works
+without all the mess involved.
+
+> +free:
+> +	kfree(csd);
+> +	data.csd = NULL;
+
+It does not matter here, but for correctness sake this is the wrong
+order and triggers my built-in UAF-race detector.
+
+You need to NULL the pointer _before_ freeing the underlying memory.
+
+> +static int __init mchp_pit64b_dt_init(struct device_node *node)
+> +{
+> +	struct mchp_pit64b_common_data *cd;
+> +	u32 irq;
+> +	int ret;
+> +
+> +	if (data.csd && data.ced)
+> +		return -EBUSY;
+
+Huch?
+
+> +	cd = kzalloc(sizeof(*cd), GFP_KERNEL);
+> +	if (!cd)
+> +		return -ENOMEM;
+
+If either data.csd or data.ced exists then the common data exists as
+well. Why would you allocate another instance?
+
+> +
+> +	cd->pclk = of_clk_get_by_name(node, "pclk");
+> +	if (IS_ERR(cd->pclk)) {
+> +		ret = PTR_ERR(cd->pclk);
+> +		goto free;
+> +	}
+
+....
+
+> +	if (!data.ced) {
+
+And here you actually have a conditional which is confusing at best.
+
+> +		irq = irq_of_parse_and_map(node, 0);
+> +		if (!irq) {
+> +			pr_debug("%s: Failed to get PIT64B clockevent IRQ!\n",
+> +				 MCHP_PIT64B_NAME);
+> +			ret = -ENODEV;
+> +			goto gclk_unprepare;
+> +		}
+> +		ret = mchp_pit64b_dt_init_clkevt(cd, irq);
+> +		if (ret)
+> +			goto irq_unmap;
+> +	} else {
+> +		ret = mchp_pit64b_dt_init_clksrc(cd);
+> +		if (ret)
+> +			goto gclk_unprepare;
+> +	}
+
+So the first invocation of this init function is supposed to init the clock
+event device and the second one inits the clock source. And both allocate
+common data. How is that common?
+
+Thanks,
+
+	tglx
