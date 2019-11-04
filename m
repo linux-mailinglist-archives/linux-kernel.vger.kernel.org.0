@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D8EEECC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3867EEEC09
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388455AbfKDWAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:00:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57720 "EHLO mail.kernel.org"
+        id S1730941AbfKDVxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388238AbfKDWAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:10 -0500
+        id S2387493AbfKDVxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:14 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0DB420650;
-        Mon,  4 Nov 2019 22:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FF4C2053B;
+        Mon,  4 Nov 2019 21:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904809;
-        bh=a7lsjfD5XOqATd/HHMEqnA12kAyKJex2d6w/wuLsBQY=;
+        s=default; t=1572904393;
+        bh=Eadezpx4hJatFGFqkr2djcRhSm0C6yPSUVhZaEGuvjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTCWu1CZPMORKzJvJb7xZM04CHgQrQq+XuEXICFYshV91zKLoIWyTRkKrp5c694um
-         8El2vpRR/ST3Zj4BakIbNejdORfsaNFHPfWJP6XTnEsXbUUsDpoq2AmEXX/yhbI/7p
-         SI3U2pyYovvMrwTbueBgPbUH9bgWsl/eKPds3VFI=
+        b=ccohMG/7H74cCFtb9b36jUnUb8abqsgYms/VWHPidJSgMntEMYSbbBYTXlrY9i3dC
+         FDOrJ+Va0Bbqq4XqxsbR+Gxhpmjn5WcB0tB2Wmi3yf7zhDWyS7bgLWMsVrpn39edHz
+         3f1zCIafYz7Fl5Cvat7GqSiINGNvyKJ8LUj1rw/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/149] tty: serial: owl: Fix the link time qualifier of owl_uart_exit()
+Subject: [PATCH 4.14 31/95] RDMA/hfi1: Prevent memory leak in sdma_init
 Date:   Mon,  4 Nov 2019 22:44:29 +0100
-Message-Id: <20191104212141.969200638@linuxfoundation.org>
+Message-Id: <20191104212057.291359966@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 6264dab6efd6069f0387efb078a9960b5642377b ]
+[ Upstream commit 34b3be18a04ecdc610aae4c48e5d1b799d8689f6 ]
 
-'exit' functions should be marked as __exit, not __init.
+In sdma_init if rhashtable_init fails the allocated memory for
+tmp_sdma_rht should be released.
 
-Fixes: fc60a8b675bd ("tty: serial: owl: Implement console driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20190910041129.6978-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 5a52a7acf7e2 ("IB/hfi1: NULL pointer dereference when freeing rhashtable")
+Link: https://lore.kernel.org/r/20190925144543.10141-1-navid.emamdoost@gmail.com
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/owl-uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/sdma.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 29a6dc6a8d23c..73fcc6bdb0312 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -742,7 +742,7 @@ static int __init owl_uart_init(void)
- 	return ret;
- }
+diff --git a/drivers/infiniband/hw/hfi1/sdma.c b/drivers/infiniband/hw/hfi1/sdma.c
+index 6781bcdb10b31..741938409f8e3 100644
+--- a/drivers/infiniband/hw/hfi1/sdma.c
++++ b/drivers/infiniband/hw/hfi1/sdma.c
+@@ -1529,8 +1529,11 @@ int sdma_init(struct hfi1_devdata *dd, u8 port)
+ 	}
  
--static void __init owl_uart_exit(void)
-+static void __exit owl_uart_exit(void)
- {
- 	platform_driver_unregister(&owl_uart_platform_driver);
- 	uart_unregister_driver(&owl_uart_driver);
+ 	ret = rhashtable_init(tmp_sdma_rht, &sdma_rht_params);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(tmp_sdma_rht);
+ 		goto bail;
++	}
++
+ 	dd->sdma_rht = tmp_sdma_rht;
+ 
+ 	dd_dev_info(dd, "SDMA num_sdma: %u\n", dd->num_sdma);
 -- 
 2.20.1
 
