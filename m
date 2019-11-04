@@ -2,47 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 163B1EECD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:01:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DB2EEDD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388182AbfKDWA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:00:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58584 "EHLO mail.kernel.org"
+        id S2390536AbfKDWKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388908AbfKDWAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:47 -0500
+        id S2390522AbfKDWKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:19 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECFB0214D8;
-        Mon,  4 Nov 2019 22:00:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B2EC20650;
+        Mon,  4 Nov 2019 22:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904845;
-        bh=hPBs8wEL15WhpBtdpduXLOmv9HsrP8W5sGpi4Xp2Jtc=;
+        s=default; t=1572905418;
+        bh=hnk8VfwAow7cYuRhDBroNSThsGc48+kAJd2FwB4YOvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1U6lODMeQh2GrA/1r+W3ks3kL5BpuZl5ALNlIcOtulGk+oZGxCq9fMecQmfZ7egD
-         PBqIula/Rbtpz5ym+1vp47QcuLT0iEK8U2qGmIJMVgWLCOhSENkisyUYjCllz4VklJ
-         CHHziGCM/8lXa+29vDCdXvlauTwRGUB30EefFTHo=
+        b=bSC2hclUNBiW2j4jZfGVbIhKh4Dfhpcvo4/XtaZq3O+H2lO7mz5nk2GpzLtBRulz9
+         AcQ+73bHThcq8NpGpXQ8T1wfXXzH0tMa5tvfSvU5adnysaVHDLBVER1o9bOclAmj8q
+         Gm5+f/bd2+w+WanRVJE5eqretXdUdSvsZa8Csol8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/149] perf/x86/amd: Change/fix NMI latency mitigation to use a timestamp
-Date:   Mon,  4 Nov 2019 22:44:45 +0100
-Message-Id: <20191104212142.909085491@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.3 096/163] fuse: truncate pending writes on O_TRUNC
+Date:   Mon,  4 Nov 2019 22:44:46 +0100
+Message-Id: <20191104212147.071968528@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,131 +42,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit df4d29732fdad43a51284f826bec3e6ded177540 ]
+commit e4648309b85a78f8c787457832269a8712a8673e upstream.
 
-It turns out that the NMI latency workaround from commit:
+Make sure cached writes are not reordered around open(..., O_TRUNC), with
+the obvious wrong results.
 
-  6d3edaae16c6 ("x86/perf/amd: Resolve NMI latency issues for active PMCs")
+Fixes: 4d99ff8f12eb ("fuse: Turn writeback cache on")
+Cc: <stable@vger.kernel.org> # v3.15+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-ends up being too conservative and results in the perf NMI handler claiming
-NMIs too easily on AMD hardware when the NMI watchdog is active.
-
-This has an impact, for example, on the hpwdt (HPE watchdog timer) module.
-This module can produce an NMI that is used to reset the system. It
-registers an NMI handler for the NMI_UNKNOWN type and relies on the fact
-that nothing has claimed an NMI so that its handler will be invoked when
-the watchdog device produces an NMI. After the referenced commit, the
-hpwdt module is unable to process its generated NMI if the NMI watchdog is
-active, because the current NMI latency mitigation results in the NMI
-being claimed by the perf NMI handler.
-
-Update the AMD perf NMI latency mitigation workaround to, instead, use a
-window of time. Whenever a PMC is handled in the perf NMI handler, set a
-timestamp which will act as a perf NMI window. Any NMIs arriving within
-that window will be claimed by perf. Anything outside that window will
-not be claimed by perf. The value for the NMI window is set to 100 msecs.
-This is a conservative value that easily covers any NMI latency in the
-hardware. While this still results in a window in which the hpwdt module
-will not receive its NMI, the window is now much, much smaller.
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 6d3edaae16c6 ("x86/perf/amd: Resolve NMI latency issues for active PMCs")
-Link: https://lkml.kernel.org/r/Message-ID:
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/core.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ fs/fuse/file.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 27ade3cb6482c..defb536aebce2 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -4,12 +4,14 @@
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <linux/delay.h>
-+#include <linux/jiffies.h>
- #include <asm/apicdef.h>
- #include <asm/nmi.h>
- 
- #include "../perf_event.h"
- 
--static DEFINE_PER_CPU(unsigned int, perf_nmi_counter);
-+static DEFINE_PER_CPU(unsigned long, perf_nmi_tstamp);
-+static unsigned long perf_nmi_window;
- 
- static __initconst const u64 amd_hw_cache_event_ids
- 				[PERF_COUNT_HW_CACHE_MAX]
-@@ -640,11 +642,12 @@ static void amd_pmu_disable_event(struct perf_event *event)
-  * handler when multiple PMCs are active or PMC overflow while handling some
-  * other source of an NMI.
-  *
-- * Attempt to mitigate this by using the number of active PMCs to determine
-- * whether to return NMI_HANDLED if the perf NMI handler did not handle/reset
-- * any PMCs. The per-CPU perf_nmi_counter variable is set to a minimum of the
-- * number of active PMCs or 2. The value of 2 is used in case an NMI does not
-- * arrive at the LAPIC in time to be collapsed into an already pending NMI.
-+ * Attempt to mitigate this by creating an NMI window in which un-handled NMIs
-+ * received during this window will be claimed. This prevents extending the
-+ * window past when it is possible that latent NMIs should be received. The
-+ * per-CPU perf_nmi_tstamp will be set to the window end time whenever perf has
-+ * handled a counter. When an un-handled NMI is received, it will be claimed
-+ * only if arriving within that window.
-  */
- static int amd_pmu_handle_irq(struct pt_regs *regs)
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -201,7 +201,7 @@ int fuse_open_common(struct inode *inode
  {
-@@ -662,21 +665,19 @@ static int amd_pmu_handle_irq(struct pt_regs *regs)
- 	handled = x86_pmu_handle_irq(regs);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	int err;
+-	bool lock_inode = (file->f_flags & O_TRUNC) &&
++	bool is_wb_truncate = (file->f_flags & O_TRUNC) &&
+ 			  fc->atomic_o_trunc &&
+ 			  fc->writeback_cache;
  
- 	/*
--	 * If a counter was handled, record the number of possible remaining
--	 * NMIs that can occur.
-+	 * If a counter was handled, record a timestamp such that un-handled
-+	 * NMIs will be claimed if arriving within that window.
- 	 */
- 	if (handled) {
--		this_cpu_write(perf_nmi_counter,
--			       min_t(unsigned int, 2, active));
-+		this_cpu_write(perf_nmi_tstamp,
-+			       jiffies + perf_nmi_window);
+@@ -209,16 +209,20 @@ int fuse_open_common(struct inode *inode
+ 	if (err)
+ 		return err;
  
- 		return handled;
- 	}
+-	if (lock_inode)
++	if (is_wb_truncate) {
+ 		inode_lock(inode);
++		fuse_set_nowrite(inode);
++	}
  
--	if (!this_cpu_read(perf_nmi_counter))
-+	if (time_after(jiffies, this_cpu_read(perf_nmi_tstamp)))
- 		return NMI_DONE;
+ 	err = fuse_do_open(fc, get_node_id(inode), file, isdir);
  
--	this_cpu_dec(perf_nmi_counter);
--
- 	return NMI_HANDLED;
+ 	if (!err)
+ 		fuse_finish_open(inode, file);
+ 
+-	if (lock_inode)
++	if (is_wb_truncate) {
++		fuse_release_nowrite(inode);
+ 		inode_unlock(inode);
++	}
+ 
+ 	return err;
  }
- 
-@@ -908,6 +909,9 @@ static int __init amd_core_pmu_init(void)
- 	if (!boot_cpu_has(X86_FEATURE_PERFCTR_CORE))
- 		return 0;
- 
-+	/* Avoid calulating the value each time in the NMI handler */
-+	perf_nmi_window = msecs_to_jiffies(100);
-+
- 	switch (boot_cpu_data.x86) {
- 	case 0x15:
- 		pr_cont("Fam15h ");
--- 
-2.20.1
-
 
 
