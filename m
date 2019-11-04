@@ -2,41 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A84EEBAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99724EEC08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387605AbfKDVuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:50:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41852 "EHLO mail.kernel.org"
+        id S1730930AbfKDVxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387590AbfKDVuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:03 -0500
+        id S1730894AbfKDVxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:05 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B51E6217F4;
-        Mon,  4 Nov 2019 21:50:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84EBD21D71;
+        Mon,  4 Nov 2019 21:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904202;
-        bh=dFJ9J0sls9xYbRtaMHJDsnxWSXWHVAFr2FWvnRleKCM=;
+        s=default; t=1572904384;
+        bh=fjQiodUtUnL7E1QsrnGW+Yr+9a3iGa0tjDl/Uey1G/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fdTYyakxHzin/awug+mxu8QWohETsyuPZFe4MA14QutDFHne6xN25d4HTk1XohmwH
-         F9yt9vNycGqr3NoMd8Yv8YVY4WN1H5ZZqYOreAw0bYsiDfg5wZiy4rWEPTa2x1qQRA
-         cAdAasDSHb6VmQlSMViTo3owe1ztsKLyi6eJ1LLQ=
+        b=ReUHcutN+PmOC2S222YjGU6Qntk6URMFJlrRS/4h+I5C+K7jmS8X/N+/WUQdEs4iq
+         Tj+lvAnV7skHog+L+jFJFCE8vTrjJt0yrCa2+UT2J3bLO0eXGUGx6BA+uGGC26s/mp
+         /rqFbQuUY+taciv9P3XzjUuLjZRh5y/lUxUuupAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guruswamy Basavaiah <guru2018@gmail.com>,
-        Nikos Tsironis <ntsironis@arrikto.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+        stable@vger.kernel.org,
+        Steve MacLean <Steve.MacLean@Microsoft.com>,
+        Brian Robbins <brianrob@microsoft.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        John Keeping <john@metanate.com>,
+        John Salem <josalem@microsoft.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Tom McDonald <thomas.mcdonald@microsoft.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/62] dm snapshot: rework COW throttling to fix deadlock
-Date:   Mon,  4 Nov 2019 22:44:25 +0100
-Message-Id: <20191104211903.714156948@linuxfoundation.org>
+Subject: [PATCH 4.14 28/95] perf map: Fix overlapped map handling
+Date:   Mon,  4 Nov 2019 22:44:26 +0100
+Message-Id: <20191104212056.591490118@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,244 +60,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Steve MacLean <Steve.MacLean@microsoft.com>
 
-[ Upstream commit b21555786f18cd77f2311ad89074533109ae3ffa ]
+[ Upstream commit ee212d6ea20887c0ef352be8563ca13dbf965906 ]
 
-Commit 721b1d98fb517a ("dm snapshot: Fix excessive memory usage and
-workqueue stalls") introduced a semaphore to limit the maximum number of
-in-flight kcopyd (COW) jobs.
+Whenever an mmap/mmap2 event occurs, the map tree must be updated to add a new
+entry. If a new map overlaps a previous map, the overlapped section of the
+previous map is effectively unmapped, but the non-overlapping sections are
+still valid.
 
-The implementation of this throttling mechanism is prone to a deadlock:
+maps__fixup_overlappings() is responsible for creating any new map entries from
+the previously overlapped map. It optionally creates a before and an after map.
 
-1. One or more threads write to the origin device causing COW, which is
-   performed by kcopyd.
+When creating the after map the existing code failed to adjust the map.pgoff.
+This meant the new after map would incorrectly calculate the file offset
+for the ip. This results in incorrect symbol name resolution for any ip in the
+after region.
 
-2. At some point some of these threads might reach the s->cow_count
-   semaphore limit and block in down(&s->cow_count), holding a read lock
-   on _origins_lock.
+Make maps__fixup_overlappings() correctly populate map.pgoff.
 
-3. Someone tries to acquire a write lock on _origins_lock, e.g.,
-   snapshot_ctr(), which blocks because the threads at step (2) already
-   hold a read lock on it.
+Add an assert that new mapping matches old mapping at the beginning of
+the after map.
 
-4. A COW operation completes and kcopyd runs dm-snapshot's completion
-   callback, which ends up calling pending_complete().
-   pending_complete() tries to resubmit any deferred origin bios. This
-   requires acquiring a read lock on _origins_lock, which blocks.
+Committer-testing:
 
-   This happens because the read-write semaphore implementation gives
-   priority to writers, meaning that as soon as a writer tries to enter
-   the critical section, no readers will be allowed in, until all
-   writers have completed their work.
+Validated correct parsing of libcoreclr.so symbols from .NET Core 3.0 preview9
+(which didn't strip symbols).
 
-   So, pending_complete() waits for the writer at step (3) to acquire
-   and release the lock. This writer waits for the readers at step (2)
-   to release the read lock and those readers wait for
-   pending_complete() (the kcopyd thread) to signal the s->cow_count
-   semaphore: DEADLOCK.
+Preparation:
 
-The above was thoroughly analyzed and documented by Nikos Tsironis as
-part of his initial proposal for fixing this deadlock, see:
-https://www.redhat.com/archives/dm-devel/2019-October/msg00001.html
+  ~/dotnet3.0-preview9/dotnet new webapi -o perfSymbol
+  cd perfSymbol
+  ~/dotnet3.0-preview9/dotnet publish
+  perf record ~/dotnet3.0-preview9/dotnet \
+      bin/Debug/netcoreapp3.0/publish/perfSymbol.dll
+  ^C
 
-Fix this deadlock by reworking COW throttling so that it waits without
-holding any locks. Add a variable 'in_progress' that counts how many
-kcopyd jobs are running. A function wait_for_in_progress() will sleep if
-'in_progress' is over the limit. It drops _origins_lock in order to
-avoid the deadlock.
+Before:
 
-Reported-by: Guruswamy Basavaiah <guru2018@gmail.com>
-Reported-by: Nikos Tsironis <ntsironis@arrikto.com>
-Reviewed-by: Nikos Tsironis <ntsironis@arrikto.com>
-Tested-by: Nikos Tsironis <ntsironis@arrikto.com>
-Fixes: 721b1d98fb51 ("dm snapshot: Fix excessive memory usage and workqueue stalls")
-Cc: stable@vger.kernel.org # v5.0+
-Depends-on: 4a3f111a73a8c ("dm snapshot: introduce account_start_copy() and account_end_copy()")
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+  perf script --show-mmap-events 2>&1 | grep -e MMAP -e unknown |\
+     grep libcoreclr.so | head -n 4
+        dotnet  1907 373352.698780: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615726000(0x768000) @ 0 08:02 5510620 765057155]: \
+            r-xp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701091: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615974000(0x1000) @ 0x24e000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701241: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615c42000(0x1000) @ 0x51c000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.705249:     250000 cpu-clock: \
+             7fe6159a1f99 [unknown] \
+             (.../3.0.0-preview9-19423-09/libcoreclr.so)
+
+After:
+
+  perf script --show-mmap-events 2>&1 | grep -e MMAP -e unknown |\
+     grep libcoreclr.so | head -n 4
+        dotnet  1907 373352.698780: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615726000(0x768000) @ 0 08:02 5510620 765057155]: \
+            r-xp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701091: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615974000(0x1000) @ 0x24e000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+        dotnet  1907 373352.701241: PERF_RECORD_MMAP2 1907/1907: \
+            [0x7fe615c42000(0x1000) @ 0x51c000 08:02 5510620 765057155]: \
+            rwxp .../3.0.0-preview9-19423-09/libcoreclr.so
+
+All the [unknown] symbols were resolved.
+
+Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+Tested-by: Brian Robbins <brianrob@microsoft.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Cc: John Keeping <john@metanate.com>
+Cc: John Salem <josalem@microsoft.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
+Link: http://lore.kernel.org/lkml/BN8PR21MB136270949F22A6A02335C238F7800@BN8PR21MB1362.namprd21.prod.outlook.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-snap.c | 80 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 64 insertions(+), 16 deletions(-)
+ tools/perf/util/map.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index ef51ab8a5dcb2..cf2f44e500e24 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -19,7 +19,6 @@
- #include <linux/vmalloc.h>
- #include <linux/log2.h>
- #include <linux/dm-kcopyd.h>
--#include <linux/semaphore.h>
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 4e7bd27501224..63db9872c8808 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "symbol.h"
++#include <assert.h>
+ #include <errno.h>
+ #include <inttypes.h>
+ #include <limits.h>
+@@ -737,6 +738,8 @@ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp
+ 			}
  
- #include "dm.h"
- 
-@@ -106,8 +105,8 @@ struct dm_snapshot {
- 	/* The on disk metadata handler */
- 	struct dm_exception_store *store;
- 
--	/* Maximum number of in-flight COW jobs. */
--	struct semaphore cow_count;
-+	unsigned in_progress;
-+	wait_queue_head_t in_progress_wait;
- 
- 	struct dm_kcopyd_client *kcopyd_client;
- 
-@@ -158,8 +157,8 @@ struct dm_snapshot {
-  */
- #define DEFAULT_COW_THRESHOLD 2048
- 
--static int cow_threshold = DEFAULT_COW_THRESHOLD;
--module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
-+static unsigned cow_threshold = DEFAULT_COW_THRESHOLD;
-+module_param_named(snapshot_cow_threshold, cow_threshold, uint, 0644);
- MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
- 
- DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
-@@ -1206,7 +1205,7 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		goto bad_hash_tables;
- 	}
- 
--	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
-+	init_waitqueue_head(&s->in_progress_wait);
- 
- 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
- 	if (IS_ERR(s->kcopyd_client)) {
-@@ -1396,17 +1395,54 @@ static void snapshot_dtr(struct dm_target *ti)
- 
- 	dm_put_device(ti, s->origin);
- 
-+	WARN_ON(s->in_progress);
-+
- 	kfree(s);
- }
- 
- static void account_start_copy(struct dm_snapshot *s)
- {
--	down(&s->cow_count);
-+	spin_lock(&s->in_progress_wait.lock);
-+	s->in_progress++;
-+	spin_unlock(&s->in_progress_wait.lock);
- }
- 
- static void account_end_copy(struct dm_snapshot *s)
- {
--	up(&s->cow_count);
-+	spin_lock(&s->in_progress_wait.lock);
-+	BUG_ON(!s->in_progress);
-+	s->in_progress--;
-+	if (likely(s->in_progress <= cow_threshold) &&
-+	    unlikely(waitqueue_active(&s->in_progress_wait)))
-+		wake_up_locked(&s->in_progress_wait);
-+	spin_unlock(&s->in_progress_wait.lock);
-+}
-+
-+static bool wait_for_in_progress(struct dm_snapshot *s, bool unlock_origins)
-+{
-+	if (unlikely(s->in_progress > cow_threshold)) {
-+		spin_lock(&s->in_progress_wait.lock);
-+		if (likely(s->in_progress > cow_threshold)) {
-+			/*
-+			 * NOTE: this throttle doesn't account for whether
-+			 * the caller is servicing an IO that will trigger a COW
-+			 * so excess throttling may result for chunks not required
-+			 * to be COW'd.  But if cow_threshold was reached, extra
-+			 * throttling is unlikely to negatively impact performance.
-+			 */
-+			DECLARE_WAITQUEUE(wait, current);
-+			__add_wait_queue(&s->in_progress_wait, &wait);
-+			__set_current_state(TASK_UNINTERRUPTIBLE);
-+			spin_unlock(&s->in_progress_wait.lock);
-+			if (unlock_origins)
-+				up_read(&_origins_lock);
-+			io_schedule();
-+			remove_wait_queue(&s->in_progress_wait, &wait);
-+			return false;
-+		}
-+		spin_unlock(&s->in_progress_wait.lock);
-+	}
-+	return true;
- }
- 
- /*
-@@ -1424,7 +1460,7 @@ static void flush_bios(struct bio *bio)
- 	}
- }
- 
--static int do_origin(struct dm_dev *origin, struct bio *bio);
-+static int do_origin(struct dm_dev *origin, struct bio *bio, bool limit);
- 
- /*
-  * Flush a list of buffers.
-@@ -1437,7 +1473,7 @@ static void retry_origin_bios(struct dm_snapshot *s, struct bio *bio)
- 	while (bio) {
- 		n = bio->bi_next;
- 		bio->bi_next = NULL;
--		r = do_origin(s->origin, bio);
-+		r = do_origin(s->origin, bio, false);
- 		if (r == DM_MAPIO_REMAPPED)
- 			generic_make_request(bio);
- 		bio = n;
-@@ -1726,8 +1762,11 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio)
- 	if (!s->valid)
- 		return -EIO;
- 
--	/* FIXME: should only take write lock if we need
--	 * to copy an exception */
-+	if (bio_data_dir(bio) == WRITE) {
-+		while (unlikely(!wait_for_in_progress(s, false)))
-+			; /* wait_for_in_progress() has slept */
-+	}
-+
- 	mutex_lock(&s->lock);
- 
- 	if (!s->valid || (unlikely(s->snapshot_overflowed) &&
-@@ -1876,7 +1915,7 @@ redirect_to_origin:
- 
- 	if (bio_data_dir(bio) == WRITE) {
- 		mutex_unlock(&s->lock);
--		return do_origin(s->origin, bio);
-+		return do_origin(s->origin, bio, false);
- 	}
- 
- out_unlock:
-@@ -2212,15 +2251,24 @@ next_snapshot:
- /*
-  * Called on a write from the origin driver.
-  */
--static int do_origin(struct dm_dev *origin, struct bio *bio)
-+static int do_origin(struct dm_dev *origin, struct bio *bio, bool limit)
- {
- 	struct origin *o;
- 	int r = DM_MAPIO_REMAPPED;
- 
-+again:
- 	down_read(&_origins_lock);
- 	o = __lookup_origin(origin->bdev);
--	if (o)
-+	if (o) {
-+		if (limit) {
-+			struct dm_snapshot *s;
-+			list_for_each_entry(s, &o->snapshots, list)
-+				if (unlikely(!wait_for_in_progress(s, true)))
-+					goto again;
-+		}
-+
- 		r = __origin_write(&o->snapshots, bio->bi_iter.bi_sector, bio);
-+	}
- 	up_read(&_origins_lock);
- 
- 	return r;
-@@ -2333,7 +2381,7 @@ static int origin_map(struct dm_target *ti, struct bio *bio)
- 		dm_accept_partial_bio(bio, available_sectors);
- 
- 	/* Only tell snapshots if this is a write */
--	return do_origin(o->dev, bio);
-+	return do_origin(o->dev, bio, true);
- }
- 
- static long origin_direct_access(struct dm_target *ti, sector_t sector,
+ 			after->start = map->end;
++			after->pgoff += map->end - pos->start;
++			assert(pos->map_ip(pos, map->end) == after->map_ip(after, map->end));
+ 			__map_groups__insert(pos->groups, after);
+ 			if (verbose >= 2 && !use_browser)
+ 				map__fprintf(after, fp);
 -- 
 2.20.1
 
