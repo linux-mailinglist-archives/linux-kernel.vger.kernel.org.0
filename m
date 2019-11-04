@@ -2,79 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E133EF12D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0943EEF14B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbfKDX1U convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 18:27:20 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27169 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728810AbfKDX1T (ORCPT
+        id S1729934AbfKDXlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 18:41:22 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39134 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfKDXlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 18:27:19 -0500
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-337-f_r9c5y6OXCN-NgBxiEUDg-1; Mon, 04 Nov 2019 18:27:16 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7654C800C73;
-        Mon,  4 Nov 2019 23:27:14 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-100.brq.redhat.com [10.40.204.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E4F219C58;
-        Mon,  4 Nov 2019 23:27:12 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH] perf tools: Fix time sorting
-Date:   Tue,  5 Nov 2019 00:27:11 +0100
-Message-Id: <20191104232711.16055-1-jolsa@kernel.org>
+        Mon, 4 Nov 2019 18:41:21 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iRlg1-00012v-EZ; Tue, 05 Nov 2019 00:22:26 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A45E61C0105;
+        Tue,  5 Nov 2019 00:22:24 +0100 (CET)
+Date:   Mon, 04 Nov 2019 23:22:24 -0000
+From:   "tip-bot2 for Jan Beulich" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/apic/32: Avoid bogus LDR warnings
+Cc:     Jan Beulich <jbeulich@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com>
+References: <666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: f_r9c5y6OXCN-NgBxiEUDg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Message-ID: <157290974421.29376.16287501451478726858.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The final sort might get confused when the comparison
-is done over bigger numbers than int like for -s time.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Check following report for longer workloads:
-  $ perf report -s time -F time,overhead --stdio
+Commit-ID:     fe6f85ca121e9c74e7490fe66b0c5aae38e332c3
+Gitweb:        https://git.kernel.org/tip/fe6f85ca121e9c74e7490fe66b0c5aae38e332c3
+Author:        Jan Beulich <jbeulich@suse.com>
+AuthorDate:    Tue, 29 Oct 2019 10:34:19 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 05 Nov 2019 00:11:00 +01:00
 
-Fixing hist_entry__sort to properly return int64_t and
-not possible cut int.
+x86/apic/32: Avoid bogus LDR warnings
 
-Cc: Andi Kleen <ak@linux.intel.com>
-Link: http://lkml.kernel.org/n/tip-uetl5z1eszpubzqykvdftaq6@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+The removal of the LDR initialization in the bigsmp_32 APIC code unearthed
+a problem in setup_local_APIC().
+
+The code checks unconditionally for a mismatch of the logical APIC id by
+comparing the early APIC id which was initialized in get_smp_config() with
+the actual LDR value in the APIC.
+
+Due to the removal of the bogus LDR initialization the check now can
+trigger on bigsmp_32 APIC systems emitting a warning for every booting
+CPU. This is of course a false positive because the APIC is not using
+logical destination mode.
+
+Restrict the check and the possibly resulting fixup to systems which are
+actually using the APIC in logical destination mode.
+
+[ tglx: Massaged changelog and added Cc stable ]
+
+Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com
 ---
- tools/perf/util/hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/apic.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 679a1d75090c..7b6eaf5e0bda 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1625,7 +1625,7 @@ int hists__collapse_resort(struct hists *hists, struct ui_progress *prog)
- 	return 0;
- }
- 
--static int hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
-+static int64_t hist_entry__sort(struct hist_entry *a, struct hist_entry *b)
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 9e2dd2b..2b0faf8 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1586,9 +1586,6 @@ static void setup_local_APIC(void)
  {
- 	struct hists *hists = a->hists;
- 	struct perf_hpp_fmt *fmt;
--- 
-2.21.0
-
+ 	int cpu = smp_processor_id();
+ 	unsigned int value;
+-#ifdef CONFIG_X86_32
+-	int logical_apicid, ldr_apicid;
+-#endif
+ 
+ 	if (disable_apic) {
+ 		disable_ioapic_support();
+@@ -1626,16 +1623,21 @@ static void setup_local_APIC(void)
+ 	apic->init_apic_ldr();
+ 
+ #ifdef CONFIG_X86_32
+-	/*
+-	 * APIC LDR is initialized.  If logical_apicid mapping was
+-	 * initialized during get_smp_config(), make sure it matches the
+-	 * actual value.
+-	 */
+-	logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
+-	ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
+-	WARN_ON(logical_apicid != BAD_APICID && logical_apicid != ldr_apicid);
+-	/* always use the value from LDR */
+-	early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	if (apic->dest_logical) {
++		int logical_apicid, ldr_apicid;
++
++		/*
++		 * APIC LDR is initialized.  If logical_apicid mapping was
++		 * initialized during get_smp_config(), make sure it matches
++		 * the actual value.
++		 */
++		logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
++		ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
++		if (logical_apicid != BAD_APICID)
++			WARN_ON(logical_apicid != ldr_apicid);
++		/* Always use the value from LDR. */
++		early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
++	}
+ #endif
+ 
+ 	/*
