@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A643EEEF7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE03EED3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388586AbfKDV51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:57:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
+        id S2389729AbfKDWEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:04:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388568AbfKDV5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:57:23 -0500
+        id S2389718AbfKDWEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:04:43 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46990214D8;
-        Mon,  4 Nov 2019 21:57:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63BE2217F4;
+        Mon,  4 Nov 2019 22:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904641;
-        bh=2K3Nhn17oyQlttcoEwq3Au9rsNdUXZ/WhlXS/lb70BA=;
+        s=default; t=1572905082;
+        bh=YWefkR9LMZuyDk383P/EHzICtHOQ03NgYUEwjlP1mDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JmEiOEMR4EPmST5Pnylvv3fW6hzK2XJ30TADNB7n0MR7pSVOyxZXeSbTa0OW3djKA
-         QZiEYENmtN8T0Q23KeyssihVVnq6Ez6shDNdPLFor5tGTt0I72Y11pfmqecx+I6CbF
-         KoAZK0wMcMhwGSrXReUQT7kV7MtpuTrTFT6eaA64=
+        b=DC9WG9LjdfrcPowBQAXEg/nWwEJ9IViZ8FhonkMcc82E6S7KG36k6vi4MaMofANB1
+         PU1D2e82eVRiHe/KC7a6+cqf3KoR5zrEuPytADU6LfnrFZ+02e52Slgh57IIy5dFf6
+         gG3K1IEhXdMe3n2M9YZD8vSQdo7GNOSwoI9pNqws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Rahul Kundu <rahul.kundu@chelsio.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 019/149] drm/msm/dpu: handle failures while initializing displays
-Date:   Mon,  4 Nov 2019 22:43:32 +0100
-Message-Id: <20191104212136.271271541@linuxfoundation.org>
+Subject: [PATCH 5.3 023/163] RDMA/iw_cxgb4: fix SRQ access from dump_qp()
+Date:   Mon,  4 Nov 2019 22:43:33 +0100
+Message-Id: <20191104212142.043159001@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,109 +45,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeykumar Sankaran <jsanka@codeaurora.org>
+From: Potnuri Bharat Teja <bharat@chelsio.com>
 
-[ Upstream commit a802ee99c448ca0496fa307f3e46b834ae2a46a3 ]
+[ Upstream commit 91724c1e5afe45b64970036170659726e7dc5cff ]
 
-Bail out KMS hw init on display initialization failures with
-proper error logging.
+dump_qp() is wrongly trying to dump SRQ structures as QP when SRQ is used
+by the application. This patch matches the QPID before dumping them.  Also
+removes unwanted SRQ id addition to QP id xarray.
 
-changes in v3:
-    - introduced in the series
-changes in v4:
-    - avoid duplicate return on errors (Sean Paul)
-    - avoid spamming errors on failures (Jordon Crouse)
-
-Signed-off-by: Jeykumar Sankaran <jsanka@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Fixes: 2f43129127e6 ("cxgb4: Convert qpidr to XArray")
+Link: https://lore.kernel.org/r/20190930074119.20046-1-bharat@chelsio.com
+Signed-off-by: Rahul Kundu <rahul.kundu@chelsio.com>
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 31 ++++++++++++++-----------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+ drivers/infiniband/hw/cxgb4/device.c |  7 +++++--
+ drivers/infiniband/hw/cxgb4/qp.c     | 10 +---------
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 74cc204b07e80..2d9b7b5fb49c8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -442,35 +442,38 @@ static void dpu_kms_wait_for_commit_done(struct msm_kms *kms,
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index a8b9548bd1a26..599340c1f0b82 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -242,10 +242,13 @@ static void set_ep_sin6_addrs(struct c4iw_ep *ep,
  	}
  }
  
--static void _dpu_kms_initialize_dsi(struct drm_device *dev,
-+static int _dpu_kms_initialize_dsi(struct drm_device *dev,
- 				    struct msm_drm_private *priv,
- 				    struct dpu_kms *dpu_kms)
+-static int dump_qp(struct c4iw_qp *qp, struct c4iw_debugfs_data *qpd)
++static int dump_qp(unsigned long id, struct c4iw_qp *qp,
++		   struct c4iw_debugfs_data *qpd)
  {
- 	struct drm_encoder *encoder = NULL;
--	int i, rc;
-+	int i, rc = 0;
-+
-+	if (!(priv->dsi[0] || priv->dsi[1]))
-+		return rc;
+ 	int space;
+ 	int cc;
++	if (id != qp->wq.sq.qid)
++		return 0;
  
- 	/*TODO: Support two independent DSI connectors */
- 	encoder = dpu_encoder_init(dev, DRM_MODE_ENCODER_DSI);
--	if (IS_ERR_OR_NULL(encoder)) {
-+	if (IS_ERR(encoder)) {
- 		DPU_ERROR("encoder init failed for dsi display\n");
--		return;
-+		return PTR_ERR(encoder);
- 	}
+ 	space = qpd->bufsize - qpd->pos - 1;
+ 	if (space == 0)
+@@ -350,7 +353,7 @@ static int qp_open(struct inode *inode, struct file *file)
  
- 	priv->encoders[priv->num_encoders++] = encoder;
+ 	xa_lock_irq(&qpd->devp->qps);
+ 	xa_for_each(&qpd->devp->qps, index, qp)
+-		dump_qp(qp, qpd);
++		dump_qp(index, qp, qpd);
+ 	xa_unlock_irq(&qpd->devp->qps);
  
- 	for (i = 0; i < ARRAY_SIZE(priv->dsi); i++) {
--		if (!priv->dsi[i]) {
--			DPU_DEBUG("invalid msm_dsi for ctrl %d\n", i);
--			return;
--		}
-+		if (!priv->dsi[i])
-+			continue;
+ 	qpd->buf[qpd->pos++] = 0;
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index eb9368be28c1d..bbcac539777a2 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -2737,15 +2737,11 @@ int c4iw_create_srq(struct ib_srq *ib_srq, struct ib_srq_init_attr *attrs,
+ 	if (CHELSIO_CHIP_VERSION(rhp->rdev.lldi.adapter_type) > CHELSIO_T6)
+ 		srq->flags = T4_SRQ_LIMIT_SUPPORT;
  
- 		rc = msm_dsi_modeset_init(priv->dsi[i], dev, encoder);
- 		if (rc) {
- 			DPU_ERROR("modeset_init failed for dsi[%d], rc = %d\n",
- 				i, rc);
--			continue;
-+			break;
- 		}
- 	}
-+
-+	return rc;
- }
- 
- /**
-@@ -481,16 +484,16 @@ static void _dpu_kms_initialize_dsi(struct drm_device *dev,
-  * @dpu_kms:    Pointer to dpu kms structure
-  * Returns:     Zero on success
-  */
--static void _dpu_kms_setup_displays(struct drm_device *dev,
-+static int _dpu_kms_setup_displays(struct drm_device *dev,
- 				    struct msm_drm_private *priv,
- 				    struct dpu_kms *dpu_kms)
- {
--	_dpu_kms_initialize_dsi(dev, priv, dpu_kms);
+-	ret = xa_insert_irq(&rhp->qps, srq->wq.qid, srq, GFP_KERNEL);
+-	if (ret)
+-		goto err_free_queue;
 -
- 	/**
- 	 * Extend this function to initialize other
- 	 * types of displays
- 	 */
-+
-+	return _dpu_kms_initialize_dsi(dev, priv, dpu_kms);
- }
+ 	if (udata) {
+ 		srq_key_mm = kmalloc(sizeof(*srq_key_mm), GFP_KERNEL);
+ 		if (!srq_key_mm) {
+ 			ret = -ENOMEM;
+-			goto err_remove_handle;
++			goto err_free_queue;
+ 		}
+ 		srq_db_key_mm = kmalloc(sizeof(*srq_db_key_mm), GFP_KERNEL);
+ 		if (!srq_db_key_mm) {
+@@ -2789,8 +2785,6 @@ err_free_srq_db_key_mm:
+ 	kfree(srq_db_key_mm);
+ err_free_srq_key_mm:
+ 	kfree(srq_key_mm);
+-err_remove_handle:
+-	xa_erase_irq(&rhp->qps, srq->wq.qid);
+ err_free_queue:
+ 	free_srq_queue(srq, ucontext ? &ucontext->uctx : &rhp->rdev.uctx,
+ 		       srq->wr_waitp);
+@@ -2813,8 +2807,6 @@ void c4iw_destroy_srq(struct ib_srq *ibsrq, struct ib_udata *udata)
+ 	rhp = srq->rhp;
  
- static void _dpu_kms_drm_obj_destroy(struct dpu_kms *dpu_kms)
-@@ -552,7 +555,9 @@ static int _dpu_kms_drm_obj_init(struct dpu_kms *dpu_kms)
- 	 * Create encoder and query display drivers to create
- 	 * bridges and connectors
- 	 */
--	_dpu_kms_setup_displays(dev, priv, dpu_kms);
-+	ret = _dpu_kms_setup_displays(dev, priv, dpu_kms);
-+	if (ret)
-+		goto fail;
- 
- 	max_crtc_count = min(catalog->mixer_count, priv->num_encoders);
- 
+ 	pr_debug("%s id %d\n", __func__, srq->wq.qid);
+-
+-	xa_erase_irq(&rhp->qps, srq->wq.qid);
+ 	ucontext = rdma_udata_to_drv_context(udata, struct c4iw_ucontext,
+ 					     ibucontext);
+ 	free_srq_queue(srq, ucontext ? &ucontext->uctx : &rhp->rdev.uctx,
 -- 
 2.20.1
 
