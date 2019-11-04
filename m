@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8430EED7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB67EEF59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389994AbfKDWGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:06:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38434 "EHLO mail.kernel.org"
+        id S2389477AbfKDWUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:20:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389044AbfKDWGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:06:33 -0500
+        id S1731078AbfKDV7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:59:17 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA93221744;
-        Mon,  4 Nov 2019 22:06:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9DC6217F5;
+        Mon,  4 Nov 2019 21:59:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905192;
-        bh=l4ufX9DFTWVEsodenjVNjo/1QN5IcvrZe4Qls64Ta0g=;
+        s=default; t=1572904757;
+        bh=A1CC+d9DZVVwc+jQwceLaceB74uPRg43Vtk7GxRaMSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0tpWy91MziLzKuyO4d2YYC+Et6nug1/3RxGKOGBowt8tL2ZhX1sYbVGvYXNolGvP
-         80trMnp2Ho4NG2GNYiMPiidcUfSkWxww0jvTgrWj4ZvAHrGpBY8RFpgS4BijYxT/Sk
-         DovGPHpVeS0TqlWXJPaVBbDp7jHoAByBtOdfCjkY=
+        b=pW0aWSAHE9ytKbDO9u7TYDFbwvL2uKYYY+84SBFtar2ZZERWNWCN4RCN69l+9AI1Z
+         GZZc40hnyhGKDs7hD3XtFEZtzBpec0iMMkCPYxK6z/Wyg5B1Enh8dIUVPXpItac83X
+         J2QjqrEOfHf6zfcPuRgpI+e7tOoP+miSwDniXSGo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Pascal Bouwmann <bouwmann@tau-tec.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 061/163] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
-Date:   Mon,  4 Nov 2019 22:44:11 +0100
-Message-Id: <20191104212144.472508122@linuxfoundation.org>
+Subject: [PATCH 4.19 059/149] iio: fix center temperature of bmc150-accel-core
+Date:   Mon,  4 Nov 2019 22:44:12 +0100
+Message-Id: <20191104212140.681522108@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,56 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Pascal Bouwmann <bouwmann@tau-tec.de>
 
-[ Upstream commit 2abb7d3b12d007c30193f48bebed781009bebdd2 ]
+[ Upstream commit 6c59a962e081df6d8fe43325bbfabec57e0d4751 ]
 
-In ocfs2_info_scan_inode_alloc(), there is an if statement on line 283
-to check whether inode_alloc is NULL:
+The center temperature of the supported devices stored in the constant
+BMC150_ACCEL_TEMP_CENTER_VAL is not 24 degrees but 23 degrees.
 
-    if (inode_alloc)
+It seems that some datasheets were inconsistent on this value leading
+to the error.  For most usecases will only make minor difference so
+not queued for stable.
 
-When inode_alloc is NULL, it is used on line 287:
-
-    ocfs2_inode_lock(inode_alloc, &bh, 0);
-        ocfs2_inode_lock_full_nested(inode, ...)
-            struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
-
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, inode_alloc is checked on line 286.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Link: http://lkml.kernel.org/r/20190726033717.32359-1-baijiaju1990@gmail.com
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Pascal Bouwmann <bouwmann@tau-tec.de>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/ioctl.c | 2 +-
+ drivers/iio/accel/bmc150-accel-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
-index d6f7b299eb236..efeea208fdebd 100644
---- a/fs/ocfs2/ioctl.c
-+++ b/fs/ocfs2/ioctl.c
-@@ -283,7 +283,7 @@ static int ocfs2_info_scan_inode_alloc(struct ocfs2_super *osb,
- 	if (inode_alloc)
- 		inode_lock(inode_alloc);
+diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+index 383c802eb5b86..cb8c98a440109 100644
+--- a/drivers/iio/accel/bmc150-accel-core.c
++++ b/drivers/iio/accel/bmc150-accel-core.c
+@@ -125,7 +125,7 @@
+ #define BMC150_ACCEL_SLEEP_1_SEC		0x0F
  
--	if (o2info_coherent(&fi->ifi_req)) {
-+	if (inode_alloc && o2info_coherent(&fi->ifi_req)) {
- 		status = ocfs2_inode_lock(inode_alloc, &bh, 0);
- 		if (status < 0) {
- 			mlog_errno(status);
+ #define BMC150_ACCEL_REG_TEMP			0x08
+-#define BMC150_ACCEL_TEMP_CENTER_VAL		24
++#define BMC150_ACCEL_TEMP_CENTER_VAL		23
+ 
+ #define BMC150_ACCEL_AXIS_TO_REG(axis)	(BMC150_ACCEL_REG_XOUT_L + (axis * 2))
+ #define BMC150_AUTO_SUSPEND_DELAY_MS		2000
 -- 
 2.20.1
 
