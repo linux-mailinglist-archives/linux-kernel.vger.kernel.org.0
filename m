@@ -2,222 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74E04EEB19
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:29:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C38EEEB45
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:37:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbfKDV3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:29:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50335 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbfKDV3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:29:09 -0500
-Received: by mail-wm1-f66.google.com with SMTP id 11so18404540wmk.0;
-        Mon, 04 Nov 2019 13:29:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Tp7E0KMvbL6BOAUu2NNrtQeKJbNH0Cxz/NvxU3jQlik=;
-        b=PtstzIB3y4gOTVfBvLknyAu6/bRt6HO26iBUPi+jtjtcHKqtC3BAX5Vglcl36CTDXk
-         vdyO63PGHx/jlldvBKhG8dxzO7elOem1o6UxjLObum4u9ajaoYO15TOxkzTfyi9+RJHj
-         8OQSze8CiegkGhAtfI3YvVvmgWMysT+QVDDuxjtgzHuQ4Puuj5RAelKdHfv8VvA95X/9
-         HEgwmpl6TybsMjv1V37wNav+xhxMHOHetk02mcJCJc12/4hedag2qv6OhSzyzep+xrjV
-         aMz2z1v45p9bp93fv6GljUmPm9IfNkk8wxwViMJJJhPGskW53ydGxQTTzjsNzJljfi0G
-         3jrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Tp7E0KMvbL6BOAUu2NNrtQeKJbNH0Cxz/NvxU3jQlik=;
-        b=bGqdcvmEEsuUex7IEna/S4sCp0IM6mLN652DaTIvVi5irxQCZV2ifWZS/WZfesxnUu
-         l3h0MXQZaXvkLIOeC4wMq/6FyHV/6DOUC0Osqh9QRHkGUiB9ZW3+QMilCZPDfHzFM9+/
-         OKyibZHx7JkVIDi6g4Wf82aNXh2qCpiNkli3l79NUVXx5uobSu3zuSG/4Is51fym7Zqu
-         Tl/GKB61zpf/7KFPBf5bHFHqJsI4ffNfHLUPJ26WsiZCtBblAFT0kFl6NK01ZvyfTUue
-         mWgxaGiSXZuIXBNYTqPw8VAghrzt4b3fXnLmDGgKp4cm32y0LjwGfympaSSdmkRrT3D9
-         PmYA==
-X-Gm-Message-State: APjAAAXMWHR/NgWexXFAXFdBRloXWRpKS4ngvlFki6BJ4zkVTkb7kRso
-        /abVpIhrVq3juctp7fjEXGQeBHp54zhRec8EozI=
-X-Google-Smtp-Source: APXvYqyn++80Z0P0IqvOwdBOky/MrB6MAOFkJrrpZmla4Vmh4glLP0MhXJPlaBoPF3H93AUZ23e4xWA86T3r+VljyWI=
-X-Received: by 2002:a05:600c:228e:: with SMTP id 14mr937906wmf.119.1572902945693;
- Mon, 04 Nov 2019 13:29:05 -0800 (PST)
+        id S1729592AbfKDVhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:37:34 -0500
+Received: from canardo.mork.no ([148.122.252.1]:48009 "EHLO canardo.mork.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728377AbfKDVhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:37:33 -0500
+X-Greylist: delayed 887 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 16:37:33 EST
+Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id xA4LMV2u006902
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 4 Nov 2019 22:22:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1572902556; bh=48oj23vht5x5+7JKYCCyMc5bdK+KmMf3l3mvdQ60FJQ=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=nsp4z2A0Ol0ZPMNtpvgXHP/QHASiVnZT0tLNU9H0xfszOUbrCOyeBClHdJHWz1/im
+         cy+MsmDRoekwPAsBW7OmzgqJ5K3fR6gi8KlZdBmLOf+ECqQ4CcehiszZpfY7TXfyQC
+         6umMwZjJVfImOgRcPXXfNRL2AoBoKQHDnJ8+5heQ=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
+        (envelope-from <bjorn@mork.no>)
+        id 1iRjnx-0003Uh-Se; Mon, 04 Nov 2019 22:22:29 +0100
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     syzbot <syzbot+0631d878823ce2411636@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, glider@google.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, oliver@neukum.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KMSAN: uninit-value in cdc_ncm_set_dgram_size
+Organization: m
+References: <00000000000013c4c1059625a655@google.com>
+Date:   Mon, 04 Nov 2019 22:22:29 +0100
+In-Reply-To: <00000000000013c4c1059625a655@google.com> (syzbot's message of
+        "Wed, 30 Oct 2019 12:22:07 -0700")
+Message-ID: <87ftj32v6y.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20191103203334.10539-1-peron.clem@gmail.com> <20191103203334.10539-5-peron.clem@gmail.com>
- <20191104083835.m2pd4fvhn2ze6bjt@pengutronix.de>
-In-Reply-To: <20191104083835.m2pd4fvhn2ze6bjt@pengutronix.de>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Mon, 4 Nov 2019 22:28:54 +0100
-Message-ID: <CAJiuCccjgtMcJa-pZCB_DGN6L8m9bDTgQRoV6WUKPSjv8kn8vA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] pwm: sun4i: Add support to output source clock directly
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-pwm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.101.4 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe
+syzbot <syzbot+0631d878823ce2411636@syzkaller.appspotmail.com> writes:
 
-On Mon, 4 Nov 2019 at 09:38, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+> syzbot found the following crash on:
 >
-> On Sun, Nov 03, 2019 at 09:33:31PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
-> > From: Jernej Skrabec <jernej.skrabec@siol.net>
-> >
-> > PWM core has an option to bypass whole logic and output unchanged sourc=
-e
-> > clock as PWM output. This is achieved by enabling bypass bit.
-> >
-> > Note that when bypass is enabled, no other setting has any meaning, not
-> > even enable bit.
-> >
-> > This mode of operation is needed to achieve high enough frequency to
-> > serve as clock source for AC200 chip, which is integrated into same
-> > package as H6 SoC.
+> HEAD commit:    96c6c319 net: kasan: kmsan: support CONFIG_GENERIC_CSUM o=
+n..
+> git tree:       https://github.com/google/kmsan.git master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11f103bce00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9e324dfe9c7b0=
+360
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0631d878823ce24=
+11636
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10dd9774e00=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13651a24e00000
 >
-> I think the , should be dropped.
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
 >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > ---
-> >  drivers/pwm/pwm-sun4i.c | 39 ++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 38 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> > index b5e7ac364f59..2441574674d9 100644
-> > --- a/drivers/pwm/pwm-sun4i.c
-> > +++ b/drivers/pwm/pwm-sun4i.c
-> > @@ -3,6 +3,10 @@
-> >   * Driver for Allwinner sun4i Pulse Width Modulation Controller
-> >   *
-> >   * Copyright (C) 2014 Alexandre Belloni <alexandre.belloni@free-electr=
-ons.com>
-> > + *
-> > + * Limitations:
-> > + * - When outputing the source clock directly, the PWM logic will be b=
-ypassed
-> > + *   and the currently running period is not guaranted to be completed
->
-> Typo: guaranted  -> guaranteed
->
-> >   */
-> >
-> >  #include <linux/bitops.h>
-> > @@ -73,6 +77,7 @@ static const u32 prescaler_table[] =3D {
-> >
-> >  struct sun4i_pwm_data {
-> >       bool has_prescaler_bypass;
-> > +     bool has_direct_mod_clk_output;
-> >       unsigned int npwm;
-> >  };
-> >
-> > @@ -118,6 +123,20 @@ static void sun4i_pwm_get_state(struct pwm_chip *c=
-hip,
-> >
-> >       val =3D sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
-> >
-> > +     /*
-> > +      * PWM chapter in H6 manual has a diagram which explains that if =
-bypass
-> > +      * bit is set, no other setting has any meaning. Even more, exper=
-iment
-> > +      * proved that also enable bit is ignored in this case.
-> > +      */
-> > +     if ((val & BIT_CH(PWM_BYPASS, pwm->hwpwm)) &&
-> > +         data->has_direct_mod_clk_output) {
-> > +             state->period =3D DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, clk=
-_rate);
-> > +             state->duty_cycle =3D state->period / 2;
-> > +             state->polarity =3D PWM_POLARITY_NORMAL;
-> > +             state->enabled =3D true;
-> > +             return;
-> > +     }
->
-> Not sure how the rest of sun4i_pwm_get_state behaves, but I would prefer
-> to let .get_state() round up which together with .apply_state() rounding
-> down yields sound behaviour.
-Ok
->
-> > +
-> >       if ((PWM_REG_PRESCAL(val, pwm->hwpwm) =3D=3D PWM_PRESCAL_MASK) &&
-> >           sun4i_pwm->data->has_prescaler_bypass)
-> >               prescaler =3D 1;
-> > @@ -203,7 +222,8 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, s=
-truct pwm_device *pwm,
-> >  {
-> >       struct sun4i_pwm_chip *sun4i_pwm =3D to_sun4i_pwm_chip(chip);
-> >       struct pwm_state cstate;
-> > -     u32 ctrl;
-> > +     u32 ctrl, clk_rate;
-> > +     bool bypass;
-> >       int ret;
-> >       unsigned int delay_us;
-> >       unsigned long now;
-> > @@ -218,6 +238,16 @@ static int sun4i_pwm_apply(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >               }
-> >       }
-> >
-> > +     /*
-> > +      * Although it would make much more sense to check for bypass in
-> > +      * sun4i_pwm_calculate(), value of bypass bit also depends on "en=
-abled".
-> > +      * Period is allowed to be rounded up or down.
-> > +      */
-> > +     clk_rate =3D clk_get_rate(sun4i_pwm->clk);
-> > +     bypass =3D ((state->period * clk_rate >=3D NSEC_PER_SEC &&
-> > +                state->period * clk_rate < NSEC_PER_SEC + clk_rate) &&
-> > +               state->enabled);
->
-> I guess the compiler is smart enough here, but checking for
-> state->enabled is cheaper than the other checks, so putting this at the
-> start of the expression seems sensible.
->
-> The comment doesn't match the code. You don't round up state->period.
-> (This is good, please fix the comment.) I think dropping the check
->
->         state->period * clk_rate < NSEC_PER_SEC + clk_rate
->
-> would be fine, too.
-Ok
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in cdc_ncm_set_dgram_size+0x6ba/0xbc0
+> drivers/net/usb/cdc_ncm.c:587
+> CPU: 0 PID: 11865 Comm: kworker/0:3 Not tainted 5.4.0-rc5+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> BIOS Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+>  kmsan_report+0x128/0x220 mm/kmsan/kmsan_report.c:108
+>  __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:245
+>  cdc_ncm_set_dgram_size+0x6ba/0xbc0 drivers/net/usb/cdc_ncm.c:587
 
->
-> I'd like to have a check for
->
->         state->duty_cycle * clk_rate >=3D NSEC_PER_SEC / 2 &&
->         state->duty_cycle * clk_rate < NSEC_PER_SEC
->
-> here. If this isn't true rather disable the PWM or output a 100% duty
-> cycle with a larger period.
+..
+> Variable was created at:
+>  cdc_ncm_set_dgram_size+0xf5/0xbc0 drivers/net/usb/cdc_ncm.c:564
+>  cdc_ncm_set_dgram_size+0xf5/0xbc0 drivers/net/usb/cdc_ncm.c:564
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
 
-Why not just having the duty_cycle is 50% only ?
-state->duty_cycle * 2 =3D=3D state->period;
+This looks like a false positive to me. max_datagram_size is two bytes
+declared as
 
-Regards,
-Clement
+	__le16 max_datagram_size;
 
->
-> > +
-> >       spin_lock(&sun4i_pwm->ctrl_lock);
-> >       ctrl =3D sun4i_pwm_readl(sun4i_pwm, PWM_CTRL_REG);
-> >
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+and the code leading up to the access on drivers/net/usb/cdc_ncm.c:587
+is:
+
+	/* read current mtu value from device */
+	err =3D usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
+			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
+			      0, iface_no, &max_datagram_size, 2);
+	if (err < 0) {
+		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
+		goto out;
+	}
+
+	if (le16_to_cpu(max_datagram_size) =3D=3D ctx->max_datagram_size)
+
+
+
+AFAICS, there is no way max_datagram_size can be uninitialized here.
+usbnet_read_cmd() either read 2 bytes into it or returned an error,
+causing the access to be skipped.  Or am I missing something?
+
+I tried to read the syzbot manual to figure out how to tell this to the
+bot, but couldn't find that either.  Not my day today it seems ;-)
+
+Please let me know what to do about this.
+
+
+Bj=C3=B8rn
