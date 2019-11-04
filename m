@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9AEEE0DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:20:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B1EEE0E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbfKDNUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:20:15 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5263 "EHLO huawei.com"
+        id S1729260AbfKDNUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:20:32 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6141 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728647AbfKDNUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:20:12 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 85936DDBF7F52DD8DC5E;
-        Mon,  4 Nov 2019 21:20:09 +0800 (CST)
+        id S1729089AbfKDNUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 08:20:16 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9D496C3CDEE1AE381537;
+        Mon,  4 Nov 2019 21:20:14 +0800 (CST)
 Received: from huawei.com (10.90.53.225) by DGGEMS410-HUB.china.huawei.com
  (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 4 Nov 2019
  21:20:03 +0800
@@ -25,9 +25,9 @@ To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
 CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
         <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH 2/7] drm/amdgpu: add function parameter description in 'amdgpu_device_set_cg_state'
-Date:   Mon, 4 Nov 2019 21:27:21 +0800
-Message-ID: <1572874046-30996-3-git-send-email-yukuai3@huawei.com>
+Subject: [PATCH 3/7] drm/amdgpu: add function parameter description in 'amdgpu_gart_bind'
+Date:   Mon, 4 Nov 2019 21:27:22 +0800
+Message-ID: <1572874046-30996-4-git-send-email-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1572874046-30996-1-git-send-email-yukuai3@huawei.com>
 References: <1572874046-30996-1-git-send-email-yukuai3@huawei.com>
@@ -42,27 +42,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes gcc warning:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:1954: warning: Function
-parameter or member 'state' not described in 'amdgpu_device_set_cg_state'
+drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c:313: warning: Function
+parameter or member 'flags' not described in 'amdgpu_gart_bind'
 
-Fixes: e3ecdffac9cc ("drm/amdgpu: add documentation for amdgpu_device.c")
+Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index b4fb6d8..26c43e5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1941,6 +1941,7 @@ static bool amdgpu_device_check_vram_lost(struct amdgpu_device *adev)
-  * amdgpu_device_set_cg_state - set clockgating for amdgpu device
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
+index 19705e3..e01e681 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
+@@ -302,6 +302,7 @@ int amdgpu_gart_map(struct amdgpu_device *adev, uint64_t offset,
+  * @pages: number of pages to bind
+  * @pagelist: pages to bind
+  * @dma_addr: DMA addresses of pages
++ * @flags: page table entry flags
   *
-  * @adev: amdgpu_device pointer
-+ * @state: clockgating state (gate or ungate)
-  *
-  * The list of all the hardware IPs that make up the asic is walked and the
-  * set_clockgating_state callbacks are run.
+  * Binds the requested pages to the gart page table
+  * (all asics).
 -- 
 2.7.4
 
