@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B560EEF53
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29CF1EED5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389272AbfKDWU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:20:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
+        id S2389434AbfKDWFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:05:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388271AbfKDV7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:36 -0500
+        id S2388286AbfKDWFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:05:46 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09E3620650;
-        Mon,  4 Nov 2019 21:59:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96DCF205C9;
+        Mon,  4 Nov 2019 22:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904775;
-        bh=uhPeJNd+u49dcc0yqvWhoBEO7i98kn3a/Loq3BHxCWo=;
+        s=default; t=1572905146;
+        bh=/TiINZmJsoedbiu+tJ48La03mc4J9pQ/MseuO/2nh5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0WhniwCqQYvJ1cq3XS/0KzL1RoYDtLZcC2aZrEJgW9D/HsrzL3/SDdg3USGqeFPWN
-         f5YD97z5v+hvhM+TS72zCW9YLdWC/bguToUjvzxhiSs4aHCEkAlTE5BC5YbSGq12bs
-         iovA2oU2mrZbhniQ3pq4BpUX0kcUlfTbkFsGaGAU=
+        b=hjSjrtvCExkIGII6glN6AX8sMr+MNmwF8Rvu2/gp6WemaaGHWmXPA2PwE1hPLDDTY
+         OFasr45yqpyvD9OdUVyk8T3WIh7q4vjXqH5FnBDFBz+cOX4YqOFwmsA3WgV4FMVaxw
+         geCmNNy89fhgUBaJcg/vi/hhTKnflCK1hodRzxzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 039/149] usb: dwc3: gadget: clear DWC3_EP_TRANSFER_STARTED on cmd complete
-Date:   Mon,  4 Nov 2019 22:43:52 +0100
-Message-Id: <20191104212138.540612440@linuxfoundation.org>
+Subject: [PATCH 5.3 043/163] gpio: max77620: Use correct unit for debounce times
+Date:   Mon,  4 Nov 2019 22:43:53 +0100
+Message-Id: <20191104212143.370815953@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit acbfa6c26f21a18830ee064b588c92334305b6af ]
+[ Upstream commit fffa6af94894126994a7600c6f6f09b892e89fa9 ]
 
-We must wait until End Transfer completes in order to clear
-DWC3_EP_TRANSFER_STARTED, otherwise we may confuse the driver.
+The gpiod_set_debounce() function takes the debounce time in
+microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
+the correct unit.
 
-This patch is in preparation to fix a rare race condition that happens
-upon Disconnect Interrupt.
-
-Tested-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20191002122825.3948322-1-thierry.reding@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-max77620.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 7b0957c530485..54de732550648 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -375,19 +375,9 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- 
- 	trace_dwc3_gadget_ep_cmd(dep, cmd, params, cmd_status);
- 
--	if (ret == 0) {
--		switch (DWC3_DEPCMD_CMD(cmd)) {
--		case DWC3_DEPCMD_STARTTRANSFER:
--			dep->flags |= DWC3_EP_TRANSFER_STARTED;
--			dwc3_gadget_ep_get_transfer_index(dep);
--			break;
--		case DWC3_DEPCMD_ENDTRANSFER:
--			dep->flags &= ~DWC3_EP_TRANSFER_STARTED;
--			break;
--		default:
--			/* nothing */
--			break;
--		}
-+	if (ret == 0 && DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
-+		dep->flags |= DWC3_EP_TRANSFER_STARTED;
-+		dwc3_gadget_ep_get_transfer_index(dep);
- 	}
- 
- 	if (unlikely(susphy)) {
-@@ -2417,7 +2407,8 @@ static void dwc3_endpoint_interrupt(struct dwc3 *dwc,
- 		cmd = DEPEVT_PARAMETER_CMD(event->parameters);
- 
- 		if (cmd == DWC3_DEPCMD_ENDTRANSFER) {
--			dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
-+			dep->flags &= ~(DWC3_EP_END_TRANSFER_PENDING |
-+					DWC3_EP_TRANSFER_STARTED);
- 			dwc3_gadget_ep_cleanup_cancelled_requests(dep);
- 		}
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index b7d89e30131e2..06e8caaafa811 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -192,13 +192,13 @@ static int max77620_gpio_set_debounce(struct max77620_gpio *mgpio,
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
  		break;
+-	case 1 ... 8:
++	case 1000 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9 ... 16:
++	case 9000 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17 ... 32:
++	case 17000 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
 -- 
 2.20.1
 
