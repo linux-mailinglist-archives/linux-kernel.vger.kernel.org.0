@@ -2,117 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF36EDD27
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE6DEDD2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:59:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfKDK5x convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 05:57:53 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38172 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727320AbfKDK5x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:57:53 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA4AtCOC089296
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2019 05:57:52 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w2hubsq8r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 05:57:51 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <vaibhav@linux.ibm.com>;
-        Mon, 4 Nov 2019 10:57:50 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Nov 2019 10:57:46 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA4AvjSh39845932
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Nov 2019 10:57:45 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C2F711C05E;
-        Mon,  4 Nov 2019 10:57:45 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9FD5811C050;
-        Mon,  4 Nov 2019 10:57:41 +0000 (GMT)
-Received: from vajain21.in.ibm.com (unknown [9.109.195.239])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Mon,  4 Nov 2019 10:57:41 +0000 (GMT)
-Received: by vajain21.in.ibm.com (sSMTP sendmail emulation); Mon, 04 Nov 2019 16:27:40 +0530
-From:   Vaibhav Jain <vaibhav@linux.ibm.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] powerpc/papr_scm: Delete unnecessary assignment for the
- field =?utf-8?B?4oCcb3duZXLigJ0=?=
-In-Reply-To: <389022fc-71b0-7952-3404-1da136dbdfd9@web.de>
-References: <389022fc-71b0-7952-3404-1da136dbdfd9@web.de>
-Date:   Mon, 04 Nov 2019 16:27:40 +0530
+        id S1728607AbfKDK7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:59:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727663AbfKDK7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 05:59:13 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5306221D71;
+        Mon,  4 Nov 2019 10:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572865152;
+        bh=HUdxCMu6xBUopH6EcbPDSSLqXUxI0M4SppvWvEPfEqs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kJ5Hj/mtkdgzOR3bdrfZhnnr5sFiwZWuPbBF16OhIo0gKg4uerNuOVtWt8Cj4gLZH
+         ZFSxzpbAoI37D8a5ZCXnZuXjrlNSvw/SA4sjK9XgRsluGY2ZyMFB8JxZo4LD+ZsDyZ
+         5BdL1nCchdXhk772IsIrWEtUDPU+hnGmQHwNaObE=
+Date:   Mon, 4 Nov 2019 11:59:10 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hanjun Guo <guohanjun@huawei.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, suzuki.poulose@arm.com,
+        catalin.marinas@arm.com, john.garry@huawei.com,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        zhangshaokun@hisilicon.com, lkft-triage@lists.linaro.org,
+        andrew.murray@arm.com, will@kernel.org,
+        Dave P Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: stable-rc-4.19: cpufeature.c:909:21: error: 'MIDR_HISI_TSV110'
+ undeclared
+Message-ID: <20191104105910.GB1945210@kroah.com>
+References: <CA+G9fYtoODTuayzXdsv=bFuRPvw1-+dmZxHqQePy6LX8ixOG5A@mail.gmail.com>
+ <98f10e13-8ec8-1690-a867-f212bcea969f@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19110410-0020-0000-0000-00000382562B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110410-0021-0000-0000-000021D87950
-Message-Id: <87k18fewnv.fsf@vajain21.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=997 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1911040109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98f10e13-8ec8-1690-a867-f212bcea969f@huawei.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
+On Mon, Nov 04, 2019 at 09:10:06AM +0800, Hanjun Guo wrote:
+> Hi Sasha, Greg,
+> 
+> On 2019/11/4 7:22, Naresh Kamboju wrote:
+> > stable rc 4.19  branch build broken for arm64 with the below error log,
+> > 
+> > Build error log,
+> > arch/arm64/kernel/cpufeature.c: In function 'unmap_kernel_at_el0':
+> > arch/arm64/kernel/cpufeature.c:909:21: error: 'MIDR_HISI_TSV110'
+> > undeclared (first use in this function); did you mean
+> > 'GICR_ISACTIVER0'?
+> >   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+> >                     ^
+> > arch/arm64/include/asm/cputype.h:141:12: note: in definition of macro
+> > 'MIDR_RANGE'
+> >   .model = m,     \
+> >            ^
+> > arch/arm64/kernel/cpufeature.c:909:3: note: in expansion of macro
+> > 'MIDR_ALL_VERSIONS'
+> >   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+> >   ^~~~~~~~~~~~~~~~~
+> > arch/arm64/kernel/cpufeature.c:909:21: note: each undeclared
+> > identifier is reported only once for each function it appears in
+> >   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+> >                     ^
+> > arch/arm64/include/asm/cputype.h:141:12: note: in definition of macro
+> > 'MIDR_RANGE'
+> >   .model = m,     \
+> >            ^
+> > arch/arm64/kernel/cpufeature.c:909:3: note: in expansion of macro
+> > 'MIDR_ALL_VERSIONS'
+> >   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+> 
+> Patch "efd00c7 arm64: Add MIDR encoding for HiSilicon Taishan CPUs" needs to
+> be bacported as well, would you like me to do that, or just cherry-pick by yourself?
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 3 Nov 2019 13:23:13 +0100
->
-> The field “owner” is set by the core.
-> Thus delete an unneeded initialisation.
->
-> Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/powerpc/platforms/pseries/papr_scm.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
-> index ee07d0718bf1..f87b474d25a7 100644
-> --- a/arch/powerpc/platforms/pseries/papr_scm.c
-> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
-> @@ -513,7 +513,6 @@ static struct platform_driver papr_scm_driver = {
->  	.remove = papr_scm_remove,
->  	.driver = {
->  		.name = "papr_scm",
-> -		.owner = THIS_MODULE,
->  		.of_match_table = papr_scm_match,
->  	},
->  };
-> --
-> 2.23.0
->
-LGTM
+I need the backport please, cherry-pick fails :(
 
-Acked-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+thanks,
 
-Thanks,
--- 
-Vaibhav Jain <vaibhav@linux.ibm.com>
-Linux Technology Center, IBM India Pvt. Ltd.
-
+greg k-h
