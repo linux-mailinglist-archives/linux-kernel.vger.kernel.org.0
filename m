@@ -2,86 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCEAEEB64
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0074EEB6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:47:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbfKDVrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:47:04 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40563 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728778AbfKDVrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:47:04 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r4so13405292pfl.7
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:47:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:from:to:user-agent:date;
-        bh=7jJQ1NcKveBtKcGJsD99Mt4fr4vw7vgm5QVERgCCc+c=;
-        b=gakghABf83nmBd5F1TCaDE+0Bjc80TbJMSz2bp93N5g5x2zSpsgpZVNXSoV20PykSY
-         rT8mFpFNgxFS8eMOBoBhp1oC4PK4JauOvaWKfCsT0TeNa8+Uy61MRkDHl9lgUT40Imys
-         2t/my0Tw/9hzxlBn8mziKSliVWFTKoBozUoNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:from:to
-         :user-agent:date;
-        bh=7jJQ1NcKveBtKcGJsD99Mt4fr4vw7vgm5QVERgCCc+c=;
-        b=FMKeez37/yrx+UV92caBCeq8ofoiguiHMZrHEBkvmFkTwlYBpGJPTcvzSMvBn63t/X
-         fgXWUSktLzVhoNNgTcxQUbSiN3o4FjyX4qxV2dLy0r8MPoz1fhkoi7j2cfWiCAeNlPbK
-         v+BFZjh53nAa+xXqEIcPiwHUU8qoHHcc4nyfAJk18SuPh3r20yqsQKlul0TWEJKK10z7
-         ZiaIySZqayZB7HP3Uy57Oq3vrzCZRhTkf2Z/PgQX+P6rCJ9SOkRIWSXexZtnVZVFVic6
-         25w7Hx1GPyN7ltguH3BmbgvGRJva2soDeRmSvp5NcJds1v48si2MYWTXAfvCAjl42szw
-         dKwg==
-X-Gm-Message-State: APjAAAUR6TQ3yrIk8IrtAmg4q17R4WSJpPEY1DOr4xd49iNWozl3BONi
-        n6e5CRMfAJxh6ZMwsp4oVOyYq7Th7cNR7w==
-X-Google-Smtp-Source: APXvYqzMgIlIOYaSeTWk9M5N2B38HWf8Mps81hZBv9twl3u8F3n9PNF6iVEqNVar8mMp7FeTgxDSSQ==
-X-Received: by 2002:a63:4c2:: with SMTP id 185mr32077554pge.233.1572904021801;
-        Mon, 04 Nov 2019 13:47:01 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 6sm19410658pfy.43.2019.11.04.13.47.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 13:47:01 -0800 (PST)
-Message-ID: <5dc09c55.1c69fb81.f5014.840a@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1729765AbfKDVrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:47:42 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47674 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729461AbfKDVrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:47:41 -0500
+Received: from zn.tnic (p200300EC2F0AFA002D6457FFE0CB40E6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:fa00:2d64:57ff:e0cb:40e6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8644B1EC068C;
+        Mon,  4 Nov 2019 22:47:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1572904059;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=wPRvSQgI8DD01H/5uwJTXGdMfNFer44SzSLi7KoHieI=;
+        b=panHx+XxT1wW0qS/bUXFkU78ppfI+M3y5fnJ74FgnZ/ES1gcJ5iRWHAJgqjnAGv5qU4rch
+        b429IcWjWAmtMZSFBYS7jnG/j4A+5vRPY/R3UobsTt76n0kooBoM+c6d5mSDVaKNX/l6rm
+        yhVTO02fIe0VNRzMJgA3KfDWsb/44Nc=
+Date:   Mon, 4 Nov 2019 22:47:34 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/Kconfig: Rename UMIP config parameter
+Message-ID: <20191104214734.GB7862@zn.tnic>
+References: <157290058655.2477.5193340480187879024.stgit@naples-babu.amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1572408318-28681-2-git-send-email-mkshah@codeaurora.org>
-References: <1572408318-28681-1-git-send-email-mkshah@codeaurora.org> <1572408318-28681-2-git-send-email-mkshah@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, ilina@codeaurora.org, lsrao@codeaurora.org,
-        mka@chromium.org, evgreen@chromium.org, dianders@chromium.org,
-        Maulik Shah <mkshah@codeaurora.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Add cpuidle low power states
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Maulik Shah <mkshah@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org
-User-Agent: alot/0.8.1
-Date:   Mon, 04 Nov 2019 13:47:00 -0800
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <157290058655.2477.5193340480187879024.stgit@naples-babu.amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Maulik Shah (2019-10-29 21:05:18)
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/q=
-com/sc7180.dtsi
-> index fceac50..69d5e2c 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -157,12 +178,69 @@
-[...]
-> +                       CLUSTER_SLEEP_0: cluster-sleep-0 {
-> +                               compatible =3D "arm,idle-state";
-> +                               idle-state-name =3D "cluster-power-down";
-> +                               arm,psci-suspend-param =3D <0x400000F4>;
+On Mon, Nov 04, 2019 at 08:50:51PM +0000, Moger, Babu wrote:
+> AMD 2nd generation EPYC processors support the UMIP (User-Mode
+> Instruction Prevention) feature. So, rename X86_INTEL_UMIP to
+> generic X86_UMIP and modify the text to cover both Intel and AMD.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+> v2:
+>   Learned that for the hardware that support UMIP, we dont need to
+>   emulate. Removed the emulation related code and just submitting
+>   the config changes.
+> 
+>  arch/x86/Kconfig                         |    8 ++++----
+>  arch/x86/include/asm/disabled-features.h |    2 +-
+>  arch/x86/include/asm/umip.h              |    4 ++--
+>  arch/x86/kernel/Makefile                 |    2 +-
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d6e1faa28c58..821b7cebff31 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1880,13 +1880,13 @@ config X86_SMAP
+>  
+>  	  If unsure, say Y.
+>  
+> -config X86_INTEL_UMIP
+> +config X86_UMIP
+>  	def_bool y
+> -	depends on CPU_SUP_INTEL
+> -	prompt "Intel User Mode Instruction Prevention" if EXPERT
+> +	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+		   ^^^
 
-Nitpick: Lowercase hex please.
+What's the dependency on X86 for?
 
-> +                               entry-latency-us =3D <3263>;
-> +                               exit-latency-us =3D <6562>;
-> +                               min-residency-us =3D <9987>;
-> +                               local-timer-stop;
-> +                       };
-> +               };
+Aren't the CPU_SUP_* things enough?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
