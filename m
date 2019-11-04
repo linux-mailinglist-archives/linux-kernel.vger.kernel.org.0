@@ -2,45 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4416CEEBEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05EB5EEB74
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbfKDVwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45158 "EHLO mail.kernel.org"
+        id S1729904AbfKDVsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:48:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730220AbfKDVwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:01 -0500
+        id S1729829AbfKDVsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:48:03 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF3F82053B;
-        Mon,  4 Nov 2019 21:51:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0431F20869;
+        Mon,  4 Nov 2019 21:48:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904320;
-        bh=6bX3JZ0mNSoPeAZpx5MEgdqiywAKLyT661TKt6eO82w=;
+        s=default; t=1572904082;
+        bh=7SOk7tiTVGhBb6vH7JX2MPjaoKS77atUxG4Pvnesje8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qi8cKb0D0ezUspQEsHit3hvrI+aatrdPtFGWxcJLu4CQL07iTfCN1Pe2KG+QiC7dG
-         7WDEA/zoBgwjGOm6wAohSRhBqSev8ucfTmRUspBFYrjdK23lYeFSh+5s2/dvYzABnU
-         tRJtokSxq/WtY+l3COiz+sCR3pseVEjtLhpRvgRk=
+        b=PPRkre1W7gQfHRCB2PfJCa6+aZBHLShgmm6u6KBslI6w5ZdEcm2eS0fdIt/i9KMn8
+         94ck55qSZ6iaFFuiSWEUpHLAUfotn94S0J99CHyjYIcNtaVjgIN7hckWUFxhwA4LfY
+         8VD6vNRRY2daodl0Ji0U6ry9gEIE5N4Qi/Qpg2qo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia Guo <guojia12@huawei.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <joseph.qi@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Dave Young <dyoung@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 23/62] ocfs2: clear zero in unaligned direct IO
-Date:   Mon,  4 Nov 2019 22:44:45 +0100
-Message-Id: <20191104211923.705375566@linuxfoundation.org>
+        Lyude Paul <lyude@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Scott Talbert <swt@techie.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 15/46] efi/cper: Fix endianness of PCIe class code
+Date:   Mon,  4 Nov 2019 22:44:46 +0100
+Message-Id: <20191104211844.447008458@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,91 +57,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia Guo <guojia12@huawei.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 7a243c82ea527cd1da47381ad9cd646844f3b693 ]
+[ Upstream commit 6fb9367a15d1a126d222d738b2702c7958594a5f ]
 
-Unused portion of a part-written fs-block-sized block is not set to zero
-in unaligned append direct write.This can lead to serious data
-inconsistencies.
+The CPER parser assumes that the class code is big endian, but at least
+on this edk2-derived Intel Purley platform it's little endian:
 
-Ocfs2 manage disk with cluster size(for example, 1M), part-written in
-one cluster will change the cluster state from UN-WRITTEN to WRITTEN,
-VFS(function dio_zero_block) doesn't do the cleaning because bh's state
-is not set to NEW in function ocfs2_dio_wr_get_block when we write a
-WRITTEN cluster.  For example, the cluster size is 1M, file size is 8k
-and we direct write from 14k to 15k, then 12k~14k and 15k~16k will
-contain dirty data.
+    efi: EFI v2.50 by EDK II BIOS ID:PLYDCRB1.86B.0119.R05.1701181843
+    DMI: Intel Corporation PURLEY/PURLEY, BIOS PLYDCRB1.86B.0119.R05.1701181843 01/18/2017
 
-We have to deal with two cases:
- 1.The starting position of direct write is outside the file.
- 2.The starting position of direct write is located in the file.
+    {1}[Hardware Error]:   device_id: 0000:5d:00.0
+    {1}[Hardware Error]:   slot: 0
+    {1}[Hardware Error]:   secondary_bus: 0x5e
+    {1}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x2030
+    {1}[Hardware Error]:   class_code: 000406
+                                       ^^^^^^ (should be 060400)
 
-We need set bh's state to NEW in the first case.  In the second case, we
-need mapped twice because bh's state of area out file should be set to
-NEW while area in file not.
-
-[akpm@linux-foundation.org: coding style fixes]
-Link: http://lkml.kernel.org/r/5292e287-8f1a-fd4a-1a14-661e555e0bed@huawei.com
-Signed-off-by: Jia Guo <guojia12@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <joseph.qi@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Matthew Garrett <mjg59@google.com>
+Cc: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Talbert <swt@techie.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/aops.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/cper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index c26d046adaaac..7c20a23c0ed7d 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2143,13 +2143,30 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
- 	struct ocfs2_dio_write_ctxt *dwc = NULL;
- 	struct buffer_head *di_bh = NULL;
- 	u64 p_blkno;
--	loff_t pos = iblock << inode->i_sb->s_blocksize_bits;
-+	unsigned int i_blkbits = inode->i_sb->s_blocksize_bits;
-+	loff_t pos = iblock << i_blkbits;
-+	sector_t endblk = (i_size_read(inode) - 1) >> i_blkbits;
- 	unsigned len, total_len = bh_result->b_size;
- 	int ret = 0, first_get_block = 0;
- 
- 	len = osb->s_clustersize - (pos & (osb->s_clustersize - 1));
- 	len = min(total_len, len);
- 
-+	/*
-+	 * bh_result->b_size is count in get_more_blocks according to write
-+	 * "pos" and "end", we need map twice to return different buffer state:
-+	 * 1. area in file size, not set NEW;
-+	 * 2. area out file size, set  NEW.
-+	 *
-+	 *		   iblock    endblk
-+	 * |--------|---------|---------|---------
-+	 * |<-------area in file------->|
-+	 */
-+
-+	if ((iblock <= endblk) &&
-+	    ((iblock + ((len - 1) >> i_blkbits)) > endblk))
-+		len = (endblk - iblock + 1) << i_blkbits;
-+
- 	mlog(0, "get block of %lu at %llu:%u req %u\n",
- 			inode->i_ino, pos, len, total_len);
- 
-@@ -2233,6 +2250,9 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
- 	if (desc->c_needs_zero)
- 		set_buffer_new(bh_result);
- 
-+	if (iblock > endblk)
-+		set_buffer_new(bh_result);
-+
- 	/* May sleep in end_io. It should not happen in a irq context. So defer
- 	 * it to dio work queue. */
- 	set_buffer_defer_completion(bh_result);
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index f40f7df4b7344..c0e54396f2502 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -375,7 +375,7 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
+ 		printk("%s""vendor_id: 0x%04x, device_id: 0x%04x\n", pfx,
+ 		       pcie->device_id.vendor_id, pcie->device_id.device_id);
+ 		p = pcie->device_id.class_code;
+-		printk("%s""class_code: %02x%02x%02x\n", pfx, p[0], p[1], p[2]);
++		printk("%s""class_code: %02x%02x%02x\n", pfx, p[2], p[1], p[0]);
+ 	}
+ 	if (pcie->validation_bits & CPER_PCIE_VALID_SERIAL_NUMBER)
+ 		printk("%s""serial number: 0x%04x, 0x%04x\n", pfx,
 -- 
 2.20.1
 
