@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC890EEBEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD5EEEC9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:58:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbfKDVwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45552 "EHLO mail.kernel.org"
+        id S1730791AbfKDV6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730690AbfKDVwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:12 -0500
+        id S1730089AbfKDV6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:58:42 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2E8217F5;
-        Mon,  4 Nov 2019 21:52:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E27E7214D9;
+        Mon,  4 Nov 2019 21:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904331;
-        bh=Ew1uxJTVJthNfzNREG7gYLsWwvyHdnXZixxGGJqsyBc=;
+        s=default; t=1572904721;
+        bh=YL/GOslPbKzWPVIGCvbmtekbS/5Pr6SFRznL14kivv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UkcK20AvDSgUvxLkTjh+zLb+TvyollYHzaHN7vzsqFvoD2BRUXdT6N5bOAH6QBqmj
-         GczXFe4FH3TlhPgr1hyakHl3jBKmiXNOUoyn6lgKhKC45aiDwYN7ek6KerryfwdiFw
-         FAu1WXcc3ivSTWbAO8piLuHSdU/sTZaSwCuHLa30=
+        b=rsulxHnkFFlYmDJ7n1cXjjkwULqpzC6MD3WqIh6V60BA+0tajkQVk+KA4/Idjc8Fi
+         i4Jyi81qbyohamRM++kUN/bdNNIgUtO7nxUloKRy68wNj3fPM86mxhTHfkOC7P314q
+         sepN6FJOrGzZ0v/R7UmVAu4TWgPgGnThPmDa3kys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chenwandun <chenwandun@huawei.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/95] zram: fix race between backing_dev_show and backing_dev_store
-Date:   Mon,  4 Nov 2019 22:43:59 +0100
-Message-Id: <20191104212038.811379835@linuxfoundation.org>
+Subject: [PATCH 4.19 047/149] scsi: lpfc: Correct localport timeout duration error
+Date:   Mon,  4 Nov 2019 22:44:00 +0100
+Message-Id: <20191104212139.389997986@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,66 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f7daefe4231e57381d92c2e2ad905a899c28e402 ]
+From: James Smart <jsmart2021@gmail.com>
 
-CPU0:				       CPU1:
-backing_dev_show		       backing_dev_store
-    ......				   ......
-    file = zram->backing_dev;
-    down_read(&zram->init_lock);	   down_read(&zram->init_init_lock)
-    file_path(file, ...);		   zram->backing_dev = backing_dev;
-    up_read(&zram->init_lock);		   up_read(&zram->init_lock);
+[ Upstream commit 2a0fb340fcc816975b8b0f2fef913d11999c39cf ]
 
-gets the value of zram->backing_dev too early in backing_dev_show, which
-resultin the value being NULL at the beginning, and not NULL later.
+Current code incorrectly specifies a completion wait timeout duration in 5
+jiffies, when it should have been 5 seconds.
 
-backtrace:
-  d_path+0xcc/0x174
-  file_path+0x10/0x18
-  backing_dev_show+0x40/0xb4
-  dev_attr_show+0x20/0x54
-  sysfs_kf_seq_show+0x9c/0x10c
-  kernfs_seq_show+0x28/0x30
-  seq_read+0x184/0x488
-  kernfs_fop_read+0x5c/0x1a4
-  __vfs_read+0x44/0x128
-  vfs_read+0xa0/0x138
-  SyS_read+0x54/0xb4
+Fix the adjust for units for the completion timeout call.
 
-Link: http://lkml.kernel.org/r/1571046839-16814-1-git-send-email-chenwandun@huawei.com
-Signed-off-by: Chenwandun <chenwandun@huawei.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: <stable@vger.kernel.org>	[4.14+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[mkp: manual merge]
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/zram/zram_drv.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_nvmet.c | 6 +++++-
+ drivers/scsi/lpfc/lpfc_nvmet.h | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 133178c9b2cf3..1b4e195c0d3c9 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -291,13 +291,14 @@ static void reset_bdev(struct zram *zram)
- static ssize_t backing_dev_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-+	struct file *file;
- 	struct zram *zram = dev_to_zram(dev);
--	struct file *file = zram->backing_dev;
- 	char *p;
- 	ssize_t ret;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index e2575c8ec93e8..22efefcc6cd84 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1713,7 +1713,11 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+ 		}
+ 		tgtp->tport_unreg_cmp = &tport_unreg_cmp;
+ 		nvmet_fc_unregister_targetport(phba->targetport);
+-		wait_for_completion_timeout(&tport_unreg_cmp, 5);
++		if (!wait_for_completion_timeout(tgtp->tport_unreg_cmp,
++					msecs_to_jiffies(LPFC_NVMET_WAIT_TMO)))
++			lpfc_printf_log(phba, KERN_ERR, LOG_NVME,
++					"6179 Unreg targetport %p timeout "
++					"reached.\n", phba->targetport);
+ 		lpfc_nvmet_cleanup_io_context(phba);
+ 	}
+ 	phba->targetport = NULL;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.h b/drivers/scsi/lpfc/lpfc_nvmet.h
+index 0ec1082ce7ef6..3b170284a0e59 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.h
++++ b/drivers/scsi/lpfc/lpfc_nvmet.h
+@@ -31,6 +31,8 @@
+ #define LPFC_NVMET_MRQ_AUTO		0
+ #define LPFC_NVMET_MRQ_MAX		16
  
- 	down_read(&zram->init_lock);
--	if (!zram_wb_enabled(zram)) {
-+	file = zram->backing_dev;
-+	if (!file) {
- 		memcpy(buf, "none\n", 5);
- 		up_read(&zram->init_lock);
- 		return 5;
++#define LPFC_NVMET_WAIT_TMO		(5 * MSEC_PER_SEC)
++
+ /* Used for NVME Target */
+ struct lpfc_nvmet_tgtport {
+ 	struct lpfc_hba *phba;
 -- 
 2.20.1
 
