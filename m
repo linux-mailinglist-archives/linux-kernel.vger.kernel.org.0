@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F25EEC40
+	by mail.lfdr.de (Postfix) with ESMTP id 19567EEC3F
 	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388151AbfKDVzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50444 "EHLO mail.kernel.org"
+        id S2388138AbfKDVzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:55:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387652AbfKDVzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:14 -0500
+        id S2387661AbfKDVzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:55:17 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E89DA217F4;
-        Mon,  4 Nov 2019 21:55:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FD1F2053B;
+        Mon,  4 Nov 2019 21:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904514;
-        bh=StqaMSxdh6xeqT2gB1aXpUZsi+7s35JBbpkh66VjhEc=;
+        s=default; t=1572904516;
+        bh=DNPIpdozo26dNOXOnXgTOxy4GC8/wcGQjQLHdUo94HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JjBB4B+SrmtLaSLEKLk7g5ubMqSYQCkCBUiwtOAVxInvvjDkwApKLWH4LDtsgalfr
-         4rnPXw6qLuWk7QPNJMq6AJBND5ZBCvhwgISoPOtjCbRTJRWrK+nTS8Q5MV7umuyUPE
-         WtNfm6UoXDguziukXraBW+W/ZOu3IbvE81ddDako=
+        b=Jc/ewYQHrMZN30s1tXyX1NyiKR7Ld7XkzSsrApSWcrRH4sU7TAOzafbzwQwR9R1jh
+         1o7gyfqNAcpASpky6/UelhuEJbFGmPGc1WrBqvm6RTBW+Q/9UEMQKnlVSH+/Q6Uner
+         Bk0E0xgLVKMZPRLFFVdX+vNqde338D0PverH+j0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 72/95] USB: serial: whiteheat: fix potential slab corruption
-Date:   Mon,  4 Nov 2019 22:45:10 +0100
-Message-Id: <20191104212115.478466063@linuxfoundation.org>
+Subject: [PATCH 4.14 73/95] USB: serial: whiteheat: fix line-speed endianness
+Date:   Mon,  4 Nov 2019 22:45:11 +0100
+Message-Id: <20191104212116.160620318@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
 References: <20191104212038.056365853@linuxfoundation.org>
@@ -44,33 +44,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 1251dab9e0a2c4d0d2d48370ba5baa095a5e8774 upstream.
+commit 84968291d7924261c6a0624b9a72f952398e258b upstream.
 
-Fix a user-controlled slab buffer overflow due to a missing sanity check
-on the bulk-out transfer buffer used for control requests.
+Add missing endianness conversion when setting the line speed so that
+this driver might work also on big-endian machines.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
+Also use an unsigned format specifier in the corresponding debug
+message.
+
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191029102354.2733-2-johan@kernel.org
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191029102354.2733-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/whiteheat.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/serial/whiteheat.c |    9 ++++++---
+ drivers/usb/serial/whiteheat.h |    2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
 --- a/drivers/usb/serial/whiteheat.c
 +++ b/drivers/usb/serial/whiteheat.c
-@@ -575,6 +575,10 @@ static int firm_send_command(struct usb_
+@@ -652,6 +652,7 @@ static void firm_setup_port(struct tty_s
+ 	struct device *dev = &port->dev;
+ 	struct whiteheat_port_settings port_settings;
+ 	unsigned int cflag = tty->termios.c_cflag;
++	speed_t baud;
  
- 	command_port = port->serial->port[COMMAND_PORT];
- 	command_info = usb_get_serial_port_data(command_port);
-+
-+	if (command_port->bulk_out_size < datasize + 1)
-+		return -EIO;
-+
- 	mutex_lock(&command_info->mutex);
- 	command_info->command_finished = false;
+ 	port_settings.port = port->port_number + 1;
  
+@@ -712,11 +713,13 @@ static void firm_setup_port(struct tty_s
+ 	dev_dbg(dev, "%s - XON = %2x, XOFF = %2x\n", __func__, port_settings.xon, port_settings.xoff);
+ 
+ 	/* get the baud rate wanted */
+-	port_settings.baud = tty_get_baud_rate(tty);
+-	dev_dbg(dev, "%s - baud rate = %d\n", __func__, port_settings.baud);
++	baud = tty_get_baud_rate(tty);
++	port_settings.baud = cpu_to_le32(baud);
++	dev_dbg(dev, "%s - baud rate = %u\n", __func__, baud);
+ 
+ 	/* fixme: should set validated settings */
+-	tty_encode_baud_rate(tty, port_settings.baud, port_settings.baud);
++	tty_encode_baud_rate(tty, baud, baud);
++
+ 	/* handle any settings that aren't specified in the tty structure */
+ 	port_settings.lloop = 0;
+ 
+--- a/drivers/usb/serial/whiteheat.h
++++ b/drivers/usb/serial/whiteheat.h
+@@ -91,7 +91,7 @@ struct whiteheat_simple {
+ 
+ struct whiteheat_port_settings {
+ 	__u8	port;		/* port number (1 to N) */
+-	__u32	baud;		/* any value 7 - 460800, firmware calculates
++	__le32	baud;		/* any value 7 - 460800, firmware calculates
+ 				   best fit; arrives little endian */
+ 	__u8	bits;		/* 5, 6, 7, or 8 */
+ 	__u8	stop;		/* 1 or 2, default 1 (2 = 1.5 if bits = 5) */
 
 
