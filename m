@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26618EE1AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F39BEE1B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfKDNyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:54:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727838AbfKDNyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:54:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3D45AF05;
-        Mon,  4 Nov 2019 13:54:48 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     catalin.marinas@arm.com, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Qian Cai <cai@lca.pw>, Will Deacon <will@kernel.org>
-Subject: [PATCH 2/2] arm64: mm: reserve CMA and crashkernel in ZONE_DMA32
-Date:   Mon,  4 Nov 2019 14:54:12 +0100
-Message-Id: <20191104135412.32118-3-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104135412.32118-1-nsaenzjulienne@suse.de>
-References: <20191104135412.32118-1-nsaenzjulienne@suse.de>
+        id S1729138AbfKDNzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:55:48 -0500
+Received: from foss.arm.com ([217.140.110.172]:43552 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727838AbfKDNzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 08:55:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D21141FB;
+        Mon,  4 Nov 2019 05:55:44 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976583F6C4;
+        Mon,  4 Nov 2019 05:55:42 -0800 (PST)
+Date:   Mon, 4 Nov 2019 13:55:40 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
+        James.Bottomley@HansenPartnership.com, james.morse@arm.com,
+        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
+        linux-parisc@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
+        takahiro.akashi@linaro.org, will@kernel.org
+Subject: Re: [PATCHv2 4/8] arm64: module/ftrace: intialize PLT at load time
+Message-ID: <20191104135540.GH45140@lakrids.cambridge.arm.com>
+References: <20191029165832.33606-1-mark.rutland@arm.com>
+ <20191029165832.33606-5-mark.rutland@arm.com>
+ <d22b27b5-6b76-6124-efff-fd577a8f482e@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d22b27b5-6b76-6124-efff-fd577a8f482e@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of ZONE_DMA in arm64 we moved the default CMA and
-crashkernel reservation into that area. This caused a regression on big
-machines that need big CMA and crashkernel reservations. Note that
-ZONE_DMA is only 1GB big.
+On Sat, Nov 02, 2019 at 05:50:02PM +0530, Amit Daniel Kachhap wrote:
+> On 10/29/19 10:28 PM, Mark Rutland wrote:
+> > @@ -485,24 +486,33 @@ static const Elf_Shdr *find_section(const Elf_Ehdr *hdr,
+> >   	return NULL;
+> >   }
+> > +int module_init_ftrace_plt(const Elf_Ehdr *hdr,
+> > +			   const Elf_Shdr *sechdrs,
+> > +			   struct module *mod)
+> I think this function can be made static as it is not used anywhere.
 
-Restore the previous behavior as the wide majority of devices are OK
-with reserving these in ZONE_DMA32. The ones that need them in ZONE_DMA
-will configure it explicitly.
+It's only called by module_finalize() below, so making it static makese
+sense; done.
 
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- arch/arm64/mm/init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks
+Mark.
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 580d1052ac34..8385d3c0733f 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -88,7 +88,7 @@ static void __init reserve_crashkernel(void)
- 
- 	if (crash_base == 0) {
- 		/* Current arm64 boot protocol requires 2MB alignment */
--		crash_base = memblock_find_in_range(0, ARCH_LOW_ADDRESS_LIMIT,
-+		crash_base = memblock_find_in_range(0, arm64_dma32_phys_limit,
- 				crash_size, SZ_2M);
- 		if (crash_base == 0) {
- 			pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
-@@ -454,7 +454,7 @@ void __init arm64_memblock_init(void)
- 
- 	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
- 
--	dma_contiguous_reserve(arm64_dma_phys_limit ? : arm64_dma32_phys_limit);
-+	dma_contiguous_reserve(arm64_dma32_phys_limit);
- }
- 
- void __init bootmem_init(void)
--- 
-2.23.0
-
+> > +{
+> > +#if defined(CONFIG_ARM64_MODULE_PLTS) && defined(CONFIG_DYNAMIC_FTRACE)
+> > +	const Elf_Shdr *s;
+> > +	struct plt_entry *plt;
+> > +
+> > +	s = find_section(hdr, sechdrs, ".text.ftrace_trampoline");
+> > +	if (!s)
+> > +		return -ENOEXEC;
+> > +
+> > +	plt = (void *)s->sh_addr;
+> > +	*plt = get_plt_entry(FTRACE_ADDR, plt);
+> > +	mod->arch.ftrace_trampoline = plt;
+> > +#endif
+> > +	return 0;
+> > +}
+> > +
+> >   int module_finalize(const Elf_Ehdr *hdr,
+> >   		    const Elf_Shdr *sechdrs,
+> >   		    struct module *me)
+> >   {
+> >   	const Elf_Shdr *s;
+> > -
+> >   	s = find_section(hdr, sechdrs, ".altinstructions");
+> >   	if (s)
+> >   		apply_alternatives_module((void *)s->sh_addr, s->sh_size);
+> > -#ifdef CONFIG_ARM64_MODULE_PLTS
+> > -	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE)) {
+> > -		s = find_section(hdr, sechdrs, ".text.ftrace_trampoline");
+> > -		if (!s)
+> > -			return -ENOEXEC;
+> > -		me->arch.ftrace_trampoline = (void *)s->sh_addr;
+> > -	}
+> > -#endif
+> > -
+> > -	return 0;
+> > +	return module_init_ftrace_plt(hdr, sechdrs, me);
+> >   }
+> > 
