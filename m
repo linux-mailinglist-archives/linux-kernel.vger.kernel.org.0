@@ -2,103 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A25EDBB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B275EDBCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbfKDJfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 04:35:38 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42540 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbfKDJfi (ORCPT
+        id S1728014AbfKDJle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 04:41:34 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:53207 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727553AbfKDJld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 04:35:38 -0500
-Received: by mail-wr1-f67.google.com with SMTP id a15so16154420wrf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 01:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/q/Jy46HAl5qDXGb5pMNUar0Ktcd+mxfRNJZDPc+0iA=;
-        b=cbz46ZF4/8Y+P96GJfJgqFSAzXtlzcvpN6rYWoHc+Bc8gxO/OHCXy9vBcfZbht65VU
-         cfjEYKbmRFxx8c4gfyYUwt5aF45wDHFz4Me5jgojTPUDHsJar6DdJRq1Tb5wvK89nWCx
-         mJw8dvIDh0chO6vIDUmC2KucxY+vz8LaxmwiPaqqK+yw6RXFVnJzYYQAov7GqelcbGm0
-         snLp2xSC+qkU8IQ4Jc3t1h87nvBIDMCQCt4RxtWiPdRSa8ibUa4AzoFq0ddXg47PRpL/
-         mkHd/qFeSuq4B1l1WrRgn9gfigdbvZmzt0P5bdt2KC2q1mQ9O+nQekY19UFuTT0firaM
-         U+ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/q/Jy46HAl5qDXGb5pMNUar0Ktcd+mxfRNJZDPc+0iA=;
-        b=fP94HeABjwowEDAqQ7kW0jiJflwBnk7Vgi4XoGM2itBwc7+okxxZh3bkpVtHD4OqJC
-         9o/BbTrrkOvxut4wG2IIKRAZbA7H6kdydIzOc+4gC05G0lTMPMX0NTl8q9RI6bbKgZ0+
-         TzG2GlmXkMAV2zX/cjqu5LqtSJBHmRcFp6X3ojvdO79qKmw3dy5QCClniPWzTdPmVpjx
-         G9vILIWX+PrNQMrqBCPXtfvBkoSir5MtEKZoQCvRSbCPkRTLkH3+SvNFfJ6NcdfxSlC+
-         CKYWNP6h27shS3AqD3g+G231SbScqnGawAjBDI1aVOOGP553+E/upx2wvxFOvxoGAlAV
-         8p+w==
-X-Gm-Message-State: APjAAAUvj2KH/zLaKc4vCF257RcQxenaaDLLO7gyAbxJB5UQGWA3SEB4
-        WU4wDzio5xemE9UwEI7hzLLnKA==
-X-Google-Smtp-Source: APXvYqxElW8oVQU4a1AD6VV1NNkiEHVf6/MACgp9Py33Zz2M9a29Io3XDGtIDAPS4xVT66PYeZxpHQ==
-X-Received: by 2002:adf:e28f:: with SMTP id v15mr21444957wri.130.1572860135741;
-        Mon, 04 Nov 2019 01:35:35 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id b8sm9771016wrt.39.2019.11.04.01.35.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 01:35:34 -0800 (PST)
-Subject: Re: [PATCH v3 08/11] dt-bindings: pinctrl: qcom-wcd934x: Add bindings
- for gpio
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, vinod.koul@linaro.org,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
- <20191029112700.14548-9-srinivas.kandagatla@linaro.org>
- <CACRpkdYc-3Nk7VGj8mAjaM4C0dc_X7ZOK0cptW2Sr+kKwvyFVg@mail.gmail.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <4f0e22ab-6aa1-2ed1-a85b-fb66531e0b2a@linaro.org>
-Date:   Mon, 4 Nov 2019 09:35:34 +0000
+        Mon, 4 Nov 2019 04:41:33 -0500
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id RYrQia6J69P9bRYrViVSex; Mon, 04 Nov 2019 10:41:30 +0100
+Subject: Re: [PATCH 4/4] v4l2-ctl: Support setting V4L2_CTRL_TYPE_AREA
+ controls
+To:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191101112509.29723-1-ribalda@kernel.org>
+ <20191101112509.29723-4-ribalda@kernel.org>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <31815641-550c-88ab-c037-2e743cea59b3@xs4all.nl>
+Date:   Mon, 4 Nov 2019 10:41:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYc-3Nk7VGj8mAjaM4C0dc_X7ZOK0cptW2Sr+kKwvyFVg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191101112509.29723-4-ribalda@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLHx2lXm3zADOqbQZkkkD01AMPJ03Xm5aaOAeDjEfL6lIZPvSL2vMYiRWEQIlH0m0UG0JSdDG5JwQUhH16IMnAoVfGabqymDiL56uwuQwb4jjwkS+rpU
+ XBoJO/1JWPZPxw8NC9bt1lHIgSqvND4zeJkh9OD1rmX9h3AGnkUgf2+2XDnsHWqKo+PyJPjrnm8AQHOgCQ7yiePxJu6OJWWgWysz8G9O655xNd+e9ZYqOn4+
+ jkJ/J/T7M08tkCtLKUcsFA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for reviewing this!
-
-On 03/11/2019 23:19, Linus Walleij wrote:
-> On Tue, Oct 29, 2019 at 12:29 PM Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> wrote:
+On 11/1/19 12:25 PM, Ricardo Ribalda Delgado wrote:
+> $ v4l2-ctl  -d /dev/video1  -c area=123123x233
 > 
->> Qualcomm Technologies Inc WCD9340/WCD9341 Audio Codec has integrated
->> gpio controller to control 5 gpios on the chip. This patch adds
->> required device tree bindings for it.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../pinctrl/qcom,wcd934x-pinctrl.yaml         | 52 +++++++++++++++++++
+> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+> ---
+>  utils/v4l2-ctl/v4l2-ctl-common.cpp | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> The bindings look OK, but remind me if I have asked before (sorry then)
-> does these GPIOs expose some pin control properties and that is why
-> the driver is placed under pin control rather than the GPIO namespace?
+> diff --git a/utils/v4l2-ctl/v4l2-ctl-common.cpp b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+> index 95339561..676b05e0 100644
+> --- a/utils/v4l2-ctl/v4l2-ctl-common.cpp
+> +++ b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+> @@ -973,6 +973,10 @@ void common_set(cv4l_fd &_fd)
+>  					strncpy(ctrl.string, iter->second.c_str(), qc.maximum);
+>  					ctrl.string[qc.maximum] = 0;
+>  					break;
+> +				case V4L2_CTRL_TYPE_AREA:
+> +					sscanf(iter->second.c_str(), "%dx%d",
+
+Use %ux%u since these are unsigned values.
+
+Regards,
+
+	Hans
+
+> +					       &ctrl.p_area->width, &ctrl.p_area->height);
+> +					break;
+>  				default:
+>  					fprintf(stderr, "%s: unsupported payload type\n",
+>  							qc.name);
 > 
-I don't remember you asking about this before :-),
 
-This controller just has Output enable bits, No pin control properties.
-
-As you suggested I can move this to drivers/gpio in next version.
-
-Thanks,
-srini
