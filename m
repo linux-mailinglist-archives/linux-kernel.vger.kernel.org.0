@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80627EED07
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62838EED96
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389380AbfKDWCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:02:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32796 "EHLO mail.kernel.org"
+        id S2390190AbfKDWIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388532AbfKDWCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:02:39 -0500
+        id S2388489AbfKDWIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:08:04 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3486205C9;
-        Mon,  4 Nov 2019 22:02:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21E3B205C9;
+        Mon,  4 Nov 2019 22:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904959;
-        bh=w406F0HmU4jhcRSyeci8vZ/7K4lSmXJWWg2uxt+sgdM=;
+        s=default; t=1572905283;
+        bh=6lQVyhzOLL8aPXCH/uMZev8n5PhKZsk+ymbNmbvjk7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4k9U5cVQp3hWs9bsvRth7ONsyYVpuQfQvGKW/brs6Il7Tc6v2eL2+kDTCyJGPNdW
-         WPWHP3CFyG3lqoYx1UUkZOCrg/mkCPPVnJFptbTXcMsJzIJVEiHtXYlzMnM3GfKdLZ
-         h8ky9RtZiBQoYdemRnZHQ6Pyb7Jttp9q7WUzwW+k=
+        b=ez/FDe7bH1Dl3c0YheczbXVar7eAWP7ywVwYreHIaAmTxeV5vLIQAfXg5DF55rYK3
+         2Tgyde9swqv/lNOQN4Q7GVYF97fC3vJFCEmbJLw5Qqv+H0z/ehSy78OoxAYfpSaLeE
+         B22IMkuiqvFtwqhRCQ4/CZZjLxHx4jBnorlrRuG8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/149] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_write_end_nolock()
+Subject: [PATCH 5.3 090/163] rtw88: Fix misuse of GENMASK macro
 Date:   Mon,  4 Nov 2019 22:44:40 +0100
-Message-Id: <20191104212142.628260397@linuxfoundation.org>
+Message-Id: <20191104212146.723650192@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,57 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Joe Perches <joe@perches.com>
 
-[ Upstream commit 583fee3e12df0e6f1f66f063b989d8e7fed0e65a ]
+[ Upstream commit 5ff29d836d1beb347080bd96e6321c811a8e3f62 ]
 
-In ocfs2_write_end_nolock(), there are an if statement on lines 1976,
-2047 and 2058, to check whether handle is NULL:
+Arguments are supposed to be ordered high then low.
 
-    if (handle)
-
-When handle is NULL, it is used on line 2045:
-
-	ocfs2_update_inode_fsync_trans(handle, inode, 1);
-        oi->i_sync_tid = handle->h_transaction->t_tid;
-
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, handle is checked before calling
-ocfs2_update_inode_fsync_trans().
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Link: http://lkml.kernel.org/r/20190726033705.32307-1-baijiaju1990@gmail.com
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Joe Perches <joe@perches.com>
+Acked-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/aops.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtw88/rtw8822b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index dc773e163132c..543efa3e5655f 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2056,7 +2056,8 @@ out_write_size:
- 		inode->i_mtime = inode->i_ctime = current_time(inode);
- 		di->i_mtime = di->i_ctime = cpu_to_le64(inode->i_mtime.tv_sec);
- 		di->i_mtime_nsec = di->i_ctime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
--		ocfs2_update_inode_fsync_trans(handle, inode, 1);
-+		if (handle)
-+			ocfs2_update_inode_fsync_trans(handle, inode, 1);
- 	}
- 	if (handle)
- 		ocfs2_journal_dirty(handle, wc->w_di_bh);
+diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822b.c b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
+index 1172f6c0605b3..d61d534396c73 100644
+--- a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
++++ b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
+@@ -997,7 +997,7 @@ static void rtw8822b_do_iqk(struct rtw_dev *rtwdev)
+ 	rtw_write_rf(rtwdev, RF_PATH_A, RF_DTXLOK, RFREG_MASK, 0x0);
+ 
+ 	reload = !!rtw_read32_mask(rtwdev, REG_IQKFAILMSK, BIT(16));
+-	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK, GENMASK(0, 7));
++	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK, GENMASK(7, 0));
+ 	rtw_dbg(rtwdev, RTW_DBG_PHY,
+ 		"iqk counter=%d reload=%d do_iqk_cnt=%d n_iqk_fail(mask)=0x%02x\n",
+ 		counter, reload, ++do_iqk_cnt, iqk_fail_mask);
 -- 
 2.20.1
 
