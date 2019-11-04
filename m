@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2300DEED52
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20176EEE9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbfKDWFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:05:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36814 "EHLO mail.kernel.org"
+        id S2389849AbfKDWFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:05:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389266AbfKDWF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:05:26 -0500
+        id S2388444AbfKDWF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:05:29 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9598C218BA;
-        Mon,  4 Nov 2019 22:05:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A182E2084D;
+        Mon,  4 Nov 2019 22:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905126;
-        bh=uA6XdKv2+2SDhsP+E379mscL9KCCmxo7feDnHtH9r3g=;
+        s=default; t=1572905129;
+        bh=NjxgLiEaplHS39J1mvZTecb/FKS7xh3ECqXe5Meeb1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2MkFi2jO69Nu5wPgHisfE4gfHCrXVutyLdiEwUWRiglec9tIuCJCCvljwu1/XfXZE
-         emtCDECvwfCcyzLXX4/f6CqnfI/DFcM2b+jy/jAv5bgQ/5s/Chp+Ovl33W12F0H/CM
-         qaf1huj7D7w/r+zudtCFuFW6+DHDzJBPS7tH3030=
+        b=FdiwL18mZDpu6kEsp5i85i1dCXuR1t4mTmy0p+0BH8B8q47pwC4kbO9cm8JoHIAPf
+         5chXSz4JXu62ThtCMigsuZ0yV/GiKBOEjg0aG9em8CT7U7BB0uE2j4K7Qgso9YBitQ
+         Cspbzz74MOAVbDsopL8o7542hNgjcHYam8T3bpm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 036/163] misc: fastrpc: prevent memory leak in fastrpc_dma_buf_attach
-Date:   Mon,  4 Nov 2019 22:43:46 +0100
-Message-Id: <20191104212142.834864609@linuxfoundation.org>
+Subject: [PATCH 5.3 037/163] RDMA/core: Fix an error handling path in res_get_common_doit()
+Date:   Mon,  4 Nov 2019 22:43:47 +0100
+Message-Id: <20191104212142.888554239@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
 References: <20191104212140.046021995@linuxfoundation.org>
@@ -44,33 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit fc739a058d99c9297ef6bfd923b809d85855b9a9 ]
+[ Upstream commit ab59ca3eb4e7059727df85eee68bda169d26c8f8 ]
 
-In fastrpc_dma_buf_attach if dma_get_sgtable fails the allocated memory
-for a should be released.
+According to surrounding error paths, it is likely that 'goto err_get;' is
+expected here. Otherwise, a call to 'rdma_restrack_put(res);' would be
+missing.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Link: https://lore.kernel.org/r/20190925152742.16258-1-navid.emamdoost@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: c5dfe0ea6ffa ("RDMA/nldev: Add resource tracker doit callback")
+Link: https://lore.kernel.org/r/20190818091044.8845-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/fastrpc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/core/nldev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 98603e235cf04..a76b6c6fd660f 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -499,6 +499,7 @@ static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
- 			      FASTRPC_PHYS(buffer->phys), buffer->size);
- 	if (ret < 0) {
- 		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
-+		kfree(a);
- 		return -EINVAL;
+diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
+index 020c269765584..91e2cc9ddb9f8 100644
+--- a/drivers/infiniband/core/nldev.c
++++ b/drivers/infiniband/core/nldev.c
+@@ -1230,7 +1230,7 @@ static int res_get_common_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
+ 	if (!msg) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto err_get;
  	}
  
+ 	nlh = nlmsg_put(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq,
 -- 
 2.20.1
 
