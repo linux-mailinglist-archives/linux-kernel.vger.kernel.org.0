@@ -2,112 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9536EEC7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53940EEB52
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388575AbfKDV5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387818AbfKDV5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:57:19 -0500
-Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6719D2184C;
-        Mon,  4 Nov 2019 21:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904639;
-        bh=8h+FkDc3xXvETtsrZrbsTH8LmB+VdeBjN9RyUmQkvEs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=imenMDP9BHo9/Tg+KjECk4+XhNY6Fp3iqmyBGShcm27zUwIVvgkH7pDq14qtBAMj8
-         TMZC33MP6HxdvffAbZ/UdzEaq0CZE7m9YypEUjw2Wo+ERlE6fqAFfBlfR05DEKGJk5
-         SeapVj99j+r8DjdgkygLfFIrDDM3pNa/WK7xVwxU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Aristeu Rozanski <aris@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Megha Dey <megha.dey@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 018/149] x86/cpu: Add Atom Tremont (Jacobsville)
-Date:   Mon,  4 Nov 2019 22:43:31 +0100
-Message-Id: <20191104212136.034136452@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729194AbfKDVnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:43:45 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44119 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbfKDVno (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:43:44 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n48so15763699ota.11;
+        Mon, 04 Nov 2019 13:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HqgsGp53OtlR6neqVOzYFTFQROyiEWTcquDxocb9OCI=;
+        b=rKoYLnzq0DyJN6YnznKHfWTUnH5xlWLMgunCpjXOUAPQKbi1s6hW12cgqc3z997Wix
+         hWVHKAy61sZDse7QZAV+1H38ZXD9uNumjjaRBfocXsAIpbbY71tB4DwG0VUItBdm20A8
+         fqKmjl4B4Ut0f/MNYMe+B5xxZff7P1mTrGJWNUmJSj0uPUESmoLEwYehsRFqXXec1QTH
+         NsC5T3xvpLWeFfsyJXkeogzBN3mwhMy4liDUO3iHmEQtwndgYAw/I7Td4fQEuvdatGQU
+         4v/u2ZsxDfX2T+xZHmxLMLCFicFRRog6ueCEX1IX2Sie1oblMnoxMrpqtIcvFgw8MTWc
+         l80A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HqgsGp53OtlR6neqVOzYFTFQROyiEWTcquDxocb9OCI=;
+        b=NNeWiqtv+IhnrjF1Us3fB9aRz1UwPROjn8qIiVnVkMIudGNjqnm3GvkES+89goGYv0
+         JU/T14ML3OAse+vVlzrvve7+/VYKpYDSdpTHrPQQEYaOPtvcKaUnV8Pw4P6CKpldfmZ0
+         vIXGg0c8GzKUBcvvr+jthSFICYzWL5t2sHu0ILOvL9kRd265DNJ33qquUW4Nf548jiiL
+         HVI+n65DsmdZWNfGTCL/y8lo3fFxzVau5V1kQMX2vexHBqllWglWVvz3tW/hKgPMpY33
+         LDEX/Zyuk+yzKuJ3rGfQUakY3SBXRhRNmjJqlvgc0M6NQbA+6poSeZ5vb1ySYKs35VJO
+         xt+A==
+X-Gm-Message-State: APjAAAXg0aLBDmAbr2XOzKWVBfiADBmSbd0QwS0CtC7Popc1unHtvN52
+        zXJl4YCkUzDE06kNE4NWRW0+oHSvk7uN9+Cz0AKkkGp9
+X-Google-Smtp-Source: APXvYqyBkkUvqZgxzUUjvR+AW6uTCN7bzCA6HUt9VFBPvsLnErJvmzyH79ZRpGqofhHq5x2faMIpi0D+Zn+saszXe90=
+X-Received: by 2002:a05:6830:11d2:: with SMTP id v18mr15278490otq.116.1572903823498;
+ Mon, 04 Nov 2019 13:43:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191104070116.GM57214@dtor-ws> <20191104183702.8894-1-TheSven73@gmail.com>
+ <CAHCN7xJc6DeyQV27OVjD14a8hZT+_Fo9qo-iHgLO414t3y6hVQ@mail.gmail.com>
+In-Reply-To: <CAHCN7xJc6DeyQV27OVjD14a8hZT+_Fo9qo-iHgLO414t3y6hVQ@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 4 Nov 2019 16:43:32 -0500
+Message-ID: <CAGngYiXp52g7X=KLVqxTAhK0AJ9mpgGyaptbkYvhwWfRkQCaXQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Marek Vasut <marex@denx.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hi Adam,
 
-[ Upstream commit 00ae831dfe4474ef6029558f5eb3ef0332d80043 ]
+On Mon, Nov 4, 2019 at 4:28 PM Adam Ford <aford173@gmail.com> wrote:
+>
+> I am using IRQ_TYPE_EDGE_RISING for the 2117A.  Is that correct?  For
+> my touchscreen, the IRQ line is low until a touch is detected, so I
+> assume we want to capure on the rising edge.
 
-Add the Atom Tremont model number to the Intel family list.
+That is correct for the 2117A, as far as I know. I am using the same
+setting.
 
-[ Tony: Also update comment at head of file to say "_X" suffix is
-  also used for microserver parts. ]
+>
+> Regarding Dmitry's patch,
+> Is it a good idea to use msleep in an IRQ?  It seems like using the
+> schedule_delayed_work() call seems like it will get in and get out of
+> the ISR faster.
+>
+> If we use msleep and scan again, isn't it possible to starve other processes?
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Aristeu Rozanski <aris@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Megha Dey <megha.dey@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190125195902.17109-4-tony.luck@intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/include/asm/intel-family.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I believe using msleep() is ok because this is not a "real" interrupt handler,
+but a threaded one. It runs in a regular kernel thread, with its interrupt
+turned off (but all other interrupts remain enabled). Its interrupt is
+re-enabled automatically after the threaded handler returns.
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 5d0b72f281402..82a57d344b9bc 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -6,7 +6,7 @@
-  * "Big Core" Processors (Branded as Core, Xeon, etc...)
-  *
-  * The "_X" parts are generally the EP and EX Xeons, or the
-- * "Extreme" ones, like Broadwell-E.
-+ * "Extreme" ones, like Broadwell-E, or Atom microserver.
-  *
-  * While adding a new CPUID for a new microarchitecture, add a new
-  * group to keep logically sorted out in chronological order. Within
-@@ -80,6 +80,7 @@
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denverton */
- #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
-+#define INTEL_FAM6_ATOM_TREMONT_X	0x86 /* Jacobsville */
- 
- /* Xeon Phi */
- 
--- 
-2.20.1
+See
+https://elixir.bootlin.com/linux/latest/source/include/linux/interrupt.h#L50
 
+> > @@ -268,7 +278,7 @@ static irqreturn_t ili210x_irq(int irq, void *irq_data)
+> >                 }
+> >
+> >                 touch = ili210x_report_events(priv, touchdata);
+> > -               keep_polling = touch || chip->continue_polling(touchdata);
+> > +               keep_polling = chip->continue_polling(touchdata, touch);
+> >                 if (keep_polling)
+>
+> Why not just check the value of touch instead of invoking the function
+> pointer which takes the value of touch in as a parameter?
+>
 
+The value of touch must be checked inside the callback, because
+some variants use it to decide if they should poll again, and
+some do not, such as the ili211x.
 
+If I have misinterpreted your suggestion, could you perhaps
+express it in C, so I can understand better?
