@@ -2,146 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75F1EED98A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FB2ED992
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbfKDG6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:58:36 -0500
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:26739 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfKDG6e (ORCPT
+        id S1727454AbfKDG7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:59:01 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45195 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727327AbfKDG7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:58:34 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id DF62E48712;
-        Mon,  4 Nov 2019 07:58:32 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=o3U7QakB;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Ur9y7ujEeHB9; Mon,  4 Nov 2019 07:58:32 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 5A4BA4870E;
-        Mon,  4 Nov 2019 07:58:30 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id A2E1C36018B;
-        Mon,  4 Nov 2019 07:58:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1572850710; bh=Knia7PL3WYPr8ZFxy9LDalAxNnA936rV5YZvB91TRQo=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=o3U7QakB7SnaTNZLhj32YXWDdyiAQrW5mQ+Vke2pH+u5Kx7tmzd+ClR+HZxBHigk0
-         KzZck+2B+9O24SYJdg6//5anvdyy0ehyi7vG+PIKNU74S9mgb457/Yv8NvLjHqHVYS
-         d2Os6HyzZvKT0AG6qptUgbD0kG5kFjP5f/x8l2WU=
-Subject: Re: dma coherent memory user-space maps
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <b811f66d-2353-23c6-c9fa-e279cdb0f832@shipmail.org>
- <20191031215415.GA9809@infradead.org>
- <7d5f8ec3-41a2-2ceb-aaa1-0bf3aa03d9a1@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <f7e76770-e716-6bcb-6b33-8f156e51ee2e@shipmail.org>
-Date:   Mon, 4 Nov 2019 07:58:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 4 Nov 2019 01:59:00 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n21so2667459ljg.12
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 22:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
+        b=vvdCJc1RINMcL5JoJz312DaAniIDfMzCcnwAI/nzlhioj8GGGYgW5khIKfb5WKPoih
+         qMp+vCbDbemdWq8i0Mf58v3uh/mu8EhKBMgRhulZLShXtK+MNVeAUm7PQ2aQiAtYd/+j
+         Jg6nmlI9XTaqFYG/d/qIJDVf1ikfm6/i0iK1k912esWDVF1151DSFoBkdr1dAOlWvfmC
+         jsn+40LPewRJA3SIUnwPlyony4u564JLgwa29HfMy3fBdaUY2d1amOC0D3N4Y4FXSyEs
+         uXfrP9qkdne00KhZwEYKvXolsJ2gV5a0/Mi5PvdRJEwJ90Nr/tnHijeE3ql/YqVMQM1K
+         AvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
+        b=CRAEb+nMqBeFxGcil9N5t4gqW7YtJGwLLLEBpk5xDT12JL6OufKvyDXNeQmKMs0jp9
+         lyrEdjsaTso1g0NznJHK0u8uBMMfVwqFxF/cMTio3SWr2sfrfxeg+5hxRJj6AN+1I+0k
+         jVDRuf4ApbBDKRlG5FfqR4ci9E9EW5Q3s6F2FSySUq2nsv/p5inx7VwHDMA8Ig9t7e/b
+         B/aDPP4/wlOBojHHG1Mgj7zS/WHiGctPYWpT8P2LOMX69W0iZrO9UidHauiY1ZdUBPwi
+         wB4HtxMfNLdlyk3uCQs8UZQ41Fhhq9HBrudY9kAY+HWs9lTyEIw76L3OItlYssRdIXst
+         LBHQ==
+X-Gm-Message-State: APjAAAWw+HeZW4Dd8vn5vRs/VmTVGYBMmm1B5HMPmDYpyYiybNmCySGb
+        EjCoQ9csLJL8dZekUEOHnj/tNJS0gZwpo7GnYVMApA==
+X-Google-Smtp-Source: APXvYqwDEcaV1wOC5X14ad1vPw2VW4B5zXbZYrai12akzfGxkCIeR+UrJYYWYChUz2q1aw4cIzuU9bUsn4PO7ZkCq3g=
+X-Received: by 2002:a2e:9a12:: with SMTP id o18mr9966567lji.191.1572850738786;
+ Sun, 03 Nov 2019 22:58:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7d5f8ec3-41a2-2ceb-aaa1-0bf3aa03d9a1@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+ <1572530323-14802-7-git-send-email-sumit.garg@linaro.org> <20191031214745.GG10507@linux.intel.com>
+ <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com> <20191101201957.GA8369@linux.intel.com>
+In-Reply-To: <20191101201957.GA8369@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 4 Nov 2019 12:28:47 +0530
+Message-ID: <CAFA6WYNwSSaZv5OM=q+LCyn0mEdpg7K+W_v2_NBHhtktg1BFXw@mail.gmail.com>
+Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted Keys
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Stuart Yoder <stuart.yoder@arm.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/19 7:38 AM, Thomas Hellström (VMware) wrote:
-> Hi, Crhistoph,
+On Sat, 2 Nov 2019 at 01:50, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
-> On 10/31/19 10:54 PM, Christoph Hellwig wrote:
->> Hi Thomas,
->>
->> sorry for the delay.  I've been travelling way to much laterly and had
->> a hard time keeping up.
->>
->> On Tue, Oct 08, 2019 at 02:34:17PM +0200, Thomas Hellström (VMware) 
->> wrote:
->>> /* Obtain struct dma_pfn pointers from a dma coherent allocation */
->>> int dma_get_dpfns(struct device *dev, void *cpu_addr, dma_addr_t 
->>> dma_addr,
->>>            pgoff_t offset, pgoff_t num, dma_pfn_t dpfns[]);
->>>
->>> I figure, for most if not all architectures we could use an ordinary 
->>> pfn as
->>> dma_pfn_t, but the dma layer would still have control over how those 
->>> pfns
->>> are obtained and how they are used in the kernel's mapping APIs.
->>>
->>> If so, I could start looking at this, time permitting,  for the 
->>> cases where
->>> the pfn can be obtained from the kernel address or from
->>> arch_dma_coherent_to_pfn(), and also the needed work to have a tailored
->>> vmap_pfn().
->> I'm not sure that infrastructure is all that helpful unfortunately, even
->> if it ended up working.  The problem with the 'coherent' DMA mappings
->> is that we they have a few different backends.  For architectures that
->> are DMA coherent everything is easy and we use the normal page
->> allocator, and your above is trivially doable as wrappers around the
->> existing functionality.  Other remap ptes to be uncached, either
->> in-place or using vmap, and the remaining ones use weird special
->> allocators for which almost everything we can mormally do in the VM
->> will fail.
+> On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
 >
-> Hmm, yes I was hoping one could hide that behind the dma_pfn_t and the 
-> interface, so that non-trivial backends would be able to define the 
-> dma_pfn_t as needed and also if needed have their own special 
-> implementation of the interface functions. The interface was spec'ed 
-> from the user's (TTM) point of view assuming that with a page-prot and 
-> an opaque dma_pfn_t we'd be able to support most non-trivial backends, 
-> but that's perhaps not the case?
+> > Isn't this statement contradicting with your earlier statement
+> > regarding the right order would be to complete TEE patches review
+> > first and then come up with documentation here [2]?
+> >
+> > [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
+> > [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
 >
->>
->> I promised Christian an uncached DMA allocator a while ago, and still
->> haven't finished that either unfortunately.  But based on looking at
->> the x86 pageattr code I'm now firmly down the road of using the
->> set_memory_* helpers that change the pte attributes in place, as
->> everything else can't actually work on x86 which doesn't allow
->> aliasing of PTEs with different caching attributes.  The arm64 folks
->> also would prefer in-place remapping even if they don't support it
->> yet, and that is something the i915 code already does in a somewhat
->> hacky way, and something the msm drm driver wants.  So I decided to
->> come up with an API that gives back 'coherent' pages on the
->> architectures that support it and otherwise just fail.
->>
->> Do you care about architectures other than x86 and arm64?  If not I'll
->> hopefully have something for you soon.
->
-> For VMware we only care about x86 and arm64, but i think Christian 
-> needs to fill in here.
+> With the intersecting issues, namely key generation and conflicting
+> keyctl parameters, that was not a well considered statement.
 
-And also for VMware the most important missing functionality is vmap() 
-of a combined set of coherent memory allocations, as TTM buffer objects 
-are, when using coherent memory, built by coalescing coherent memory 
-allocations from a pool.
+Okay, let me work on documentation first, but I think resending whole
+patch-set just for documentation review and rework would be an
+overkill. Would minor revisions of this patch only like v3.1, v3.2
+etc. work for you? And later I could send next version of this
+patch-set once we agree on documentation.
 
-Thanks,
-/Thomas
-
+-Sumit
 
 >
-> Thanks,
->
-> Thomas
->
-
+> /Jarkko
