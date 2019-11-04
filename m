@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD346EECB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3CEEEBAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388773AbfKDV7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57248 "EHLO mail.kernel.org"
+        id S2387592AbfKDVuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:50:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387947AbfKDV7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:53 -0500
+        id S2387579AbfKDVuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:50:00 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 173F2214D8;
-        Mon,  4 Nov 2019 21:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4675920B7C;
+        Mon,  4 Nov 2019 21:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904792;
-        bh=m3eqnAyX7YQq/GZ/dsrQcZVOFLqUBgDqsTcp4cZvz+s=;
+        s=default; t=1572904199;
+        bh=Rn0/Mi5LHX/GqRyJtr5QLbTHjuFr7bTB1sLx5GUORZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Y7bPR7OqawmC9TphYMQEPG3vQrz4pEYyfwbzIE59umdWoCxFqX6/cEVX/rkWlVl4
-         Cn3pJXxh2MTjiXTgomG+zdnsqz1p2txCc0UU6AjnK++2KLWf861relzf/JSja7EVBa
-         SK3AaBnAQcraRUqrPymEx8GVb5DiXjOalAu24jKE=
+        b=RpZQSG5kTHUnurEAbb9jXOQE/gAalxzmODFx09uwj1ymRfCqgiqZnKBNmMRZjA3I4
+         BNjcuCVDedkfBq2spTLeNDfidGAYOJ6oM0ps5W6uuLlrS2nY/G7dK0ypVcRVSW2WTq
+         wdtYVKxzbBZizE6ZUz636Up0ANoM5nDXqg9TBAyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Nikos Tsironis <ntsironis@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/149] RDMA/hfi1: Prevent memory leak in sdma_init
+Subject: [PATCH 4.9 02/62] dm snapshot: introduce account_start_copy() and account_end_copy()
 Date:   Mon,  4 Nov 2019 22:44:24 +0100
-Message-Id: <20191104212141.675049725@linuxfoundation.org>
+Message-Id: <20191104211902.785967140@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 34b3be18a04ecdc610aae4c48e5d1b799d8689f6 ]
+[ Upstream commit a2f83e8b0c82c9500421a26c49eb198b25fcdea3 ]
 
-In sdma_init if rhashtable_init fails the allocated memory for
-tmp_sdma_rht should be released.
+This simple refactoring moves code for modifying the semaphore cow_count
+into separate functions to prepare for changes that will extend these
+methods to provide for a more sophisticated mechanism for COW
+throttling.
 
-Fixes: 5a52a7acf7e2 ("IB/hfi1: NULL pointer dereference when freeing rhashtable")
-Link: https://lore.kernel.org/r/20190925144543.10141-1-navid.emamdoost@gmail.com
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/sdma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/md/dm-snap.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/sdma.c b/drivers/infiniband/hw/hfi1/sdma.c
-index d648a4167832c..64ab92f8a4a28 100644
---- a/drivers/infiniband/hw/hfi1/sdma.c
-+++ b/drivers/infiniband/hw/hfi1/sdma.c
-@@ -1518,8 +1518,11 @@ int sdma_init(struct hfi1_devdata *dd, u8 port)
- 	}
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index e5b0e13f5c92d..ef51ab8a5dcb2 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1399,6 +1399,16 @@ static void snapshot_dtr(struct dm_target *ti)
+ 	kfree(s);
+ }
  
- 	ret = rhashtable_init(tmp_sdma_rht, &sdma_rht_params);
--	if (ret < 0)
-+	if (ret < 0) {
-+		kfree(tmp_sdma_rht);
- 		goto bail;
-+	}
++static void account_start_copy(struct dm_snapshot *s)
++{
++	down(&s->cow_count);
++}
 +
- 	dd->sdma_rht = tmp_sdma_rht;
++static void account_end_copy(struct dm_snapshot *s)
++{
++	up(&s->cow_count);
++}
++
+ /*
+  * Flush a list of buffers.
+  */
+@@ -1581,7 +1591,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
+ 		}
+ 		list_add(&pe->out_of_order_entry, lh);
+ 	}
+-	up(&s->cow_count);
++	account_end_copy(s);
+ }
  
- 	dd_dev_info(dd, "SDMA num_sdma: %u\n", dd->num_sdma);
+ /*
+@@ -1605,7 +1615,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
+ 	dest.count = src.count;
+ 
+ 	/* Hand over to kcopyd */
+-	down(&s->cow_count);
++	account_start_copy(s);
+ 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
+ }
+ 
+@@ -1625,7 +1635,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
+ 	pe->full_bio = bio;
+ 	pe->full_bio_end_io = bio->bi_end_io;
+ 
+-	down(&s->cow_count);
++	account_start_copy(s);
+ 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
+ 						   copy_callback, pe);
+ 
 -- 
 2.20.1
 
