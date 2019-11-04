@@ -2,170 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4B7EE080
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC01EDF4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbfKDM4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:56:46 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:11184 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727663AbfKDM4p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:56:45 -0500
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: dbAug5vvENl8xXGmZB86dPAacdvNNvFH0BLXftjyU665RcYwrlBP5bco/BWV10dqj6MYt4LtaL
- vm53q9uncluOmePQbeXp32euhwjyMxFCy3JwyrcnqFQGMqhPNlt1waOn4/FfZt2v3UQxRqKHx2
- hBm6hX+0nKmTrnrNnyqfj9Vr5eoOGztCUn7HmgYZJBhrf23DQf3PDCFiAQbLRK7N16qDE3NyZe
- Y7yHTDNgiaqkhImm8tsRifaEeFQr5N1LWT9B51poDy8Dr528t9cxd6ydFy6lgEddLyfC3KOK6q
- jqA=
-X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
-   d="scan'208";a="54041455"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Nov 2019 05:56:45 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 4 Nov 2019 05:56:24 -0700
-Received: from rob-ult-m19940.corp.atmel.com (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Mon, 4 Nov 2019 05:56:21 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <mpm@selenic.com>, <herbert@gondor.apana.org.au>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <arnd@arndb.de>,
-        <Tudor.Ambarus@microchip.com>, <Claudiu.Beznea@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [PATCH v2 2/2] hwrng: atmel: add new platform support for sam9x60
-Date:   Mon, 4 Nov 2019 13:54:57 +0200
-Message-ID: <20191104115457.2681-2-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191104115457.2681-1-codrin.ciubotariu@microchip.com>
-References: <20191104115457.2681-1-codrin.ciubotariu@microchip.com>
+        id S1728781AbfKDLzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:55:33 -0500
+Received: from mx1.cock.li ([185.10.68.5]:40375 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726633AbfKDLzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:55:33 -0500
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1572868528; bh=vmxjRyQgEUDK/8GgIfNKnes8hfD4jOj3v99OYfZ6FZ0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=u8uS4jJdXlkcZaXC2J9dXaG+7JbtLi5q4EPmIdnieJO9zqPoyjX+SKGGoe8wSQAjx
+         zeuMRebv3xd5D1RuwS3gY6yOe0/oWVoMk5vpggrb6dtwnoI0cWf7hip/nriBzNX7nU
+         Lbu5N+LIV+oQfkdNBr6pJnt2NMS4HcFuxFegiFSPAQTV7WmNcgV9TJT+PLv5dWTMX1
+         b2LMx1rS29RnkKXmf7EfjC2ufd21XTQ4Ve0NUHKeNNY8qBcr2Lr4vtEjPB0+cGwVEx
+         akkfehQjehBCm6E1XhdO+263SrUqmGgv1y71ZrIIafIr2vtjDHrhO8jutxceh+QcO6
+         Z1NDkE1xkgYCw==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 04 Nov 2019 11:55:28 +0000
+From:   gameonlinux@redchan.it
+To:     =?UTF-8?Q?Alexandre_Fran=C3=A7ois_Garreau?= 
+        <galex-713@galex-713.eu>
+Cc:     Jean Louis <bugs@gnu.support>, gnu-misc-discuss@gnu.org,
+        gnu-misc-discuss 
+        <gnu-misc-discuss-bounces+gameonlinux=redchan.it@gnu.org>,
+        rms@gnu.org, ruben@mrbrklyn.com, mrbrklyn@panix.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: Support for RMS and criticism of the bottom-up/social contract
+ power grab attempt. - Why fewer contributors?
+In-Reply-To: <3597943.aDa7FIykWb@pc-713>
+References: <5ec38bda-be9c-337e-ec18-a3b983a68b73@runbox.com>
+ <6191342.WJX1yqFeDY@pc-713> <20191104111140.GU21905@protected.rcdrun.com>
+ <3597943.aDa7FIykWb@pc-713>
+Message-ID: <adb26c6a71ea3b38018a99dca22cf200@redchan.it>
+X-Sender: gameonlinux@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add platform support for the new IP found on sam9x60 SoC. For this
-version, if the peripheral clk is above 100MHz, the HALFR bit must be
-set. This bit is available only if the IP can generate a random number
-every 168 cycles (instead of 84).
+Bird in the hand is worth three in the bush.
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
+You have men contributing to GNU now.
+You want to bend them to obey women's speech codes, so you "can get more 
+women".
+You do not value your male contributors: you take them for granted.
 
-Changes in v2:
- - replaced '*pdata' with '*data';
- - added 'const' to trng_data configs;
+Reasons fewer men contribute to GNU:
+Have to reveal identity.
+Have to assign copyright (a submissive act).
 
- drivers/char/hw_random/atmel-rng.c | 39 ++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+Reasons very few women contribute to GNU:
+Have to reveal identity.
+Have to assign copyright.
+Too many "loser" men involved.
 
-diff --git a/drivers/char/hw_random/atmel-rng.c b/drivers/char/hw_random/atmel-rng.c
-index b3138ec26f85..ecb71c4317a5 100644
---- a/drivers/char/hw_random/atmel-rng.c
-+++ b/drivers/char/hw_random/atmel-rng.c
-@@ -14,14 +14,22 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/hw_random.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
- #define TRNG_CR		0x00
-+#define TRNG_MR		0x04
- #define TRNG_ISR	0x1c
- #define TRNG_ODATA	0x50
- 
- #define TRNG_KEY	0x524e4700 /* RNG */
- 
-+#define TRNG_HALFR	BIT(0) /* generate RN every 168 cycles */
-+
-+struct atmel_trng_data {
-+	bool has_half_rate;
-+};
-+
- struct atmel_trng {
- 	struct clk *clk;
- 	void __iomem *base;
-@@ -62,6 +70,7 @@ static void atmel_trng_disable(struct atmel_trng *trng)
- static int atmel_trng_probe(struct platform_device *pdev)
- {
- 	struct atmel_trng *trng;
-+	const struct atmel_trng_data *data;
- 	int ret;
- 
- 	trng = devm_kzalloc(&pdev->dev, sizeof(*trng), GFP_KERNEL);
-@@ -75,6 +84,17 @@ static int atmel_trng_probe(struct platform_device *pdev)
- 	trng->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(trng->clk))
- 		return PTR_ERR(trng->clk);
-+	data = of_device_get_match_data(&pdev->dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	if (data->has_half_rate) {
-+		unsigned long rate = clk_get_rate(trng->clk);
-+
-+		/* if peripheral clk is above 100MHz, set HALFR */
-+		if (rate > 100000000)
-+			writel(TRNG_HALFR, trng->base + TRNG_MR);
-+	}
- 
- 	ret = clk_prepare_enable(trng->clk);
- 	if (ret)
-@@ -139,9 +159,24 @@ static const struct dev_pm_ops atmel_trng_pm_ops = {
- };
- #endif /* CONFIG_PM */
- 
-+static const struct atmel_trng_data at91sam9g45_config = {
-+	.has_half_rate = false,
-+};
-+
-+static const struct atmel_trng_data sam9x60_config = {
-+	.has_half_rate = true,
-+};
-+
- static const struct of_device_id atmel_trng_dt_ids[] = {
--	{ .compatible = "atmel,at91sam9g45-trng" },
--	{ /* sentinel */ }
-+	{
-+		.compatible = "atmel,at91sam9g45-trng",
-+		.data = &at91sam9g45_config,
-+	}, {
-+		.compatible = "microchip,sam9x60-trng",
-+		.data = &sam9x60_config,
-+	}, {
-+		/* sentinel */
-+	}
- };
- MODULE_DEVICE_TABLE(of, atmel_trng_dt_ids);
- 
--- 
-2.20.1
+RMS's previous statements that the woman finds "disgusting" were fine.
+I'm sad he walked them back.
 
+Most old religions allowed men to marry young girls.
+See: Devarim chapter 22, verse 28.
+(Masoretic Text: Na'ar) (Nachmanides points out that a child may be 
+called na'ar from the moment he is born.)
+(Greek Septuagint: Padia) (padia+philos = paedophillia)
+(Latin Vulgate: Puella (young girl))
+
+Bukari Hadiths book 5, hadith number 200+ or so (Ashia's age at 
+marriage)
+
+Vedic tradition (father who fails to marry his daughter by 12 or 9 goes 
+to a hell)
+
+
+American men prevent all this, in keeping with their crusade against the 
+beliefs of the rest of the world; to bend it into something that is 
+"safe" for their "democracy" (white women ruling the world, with her 
+unleashed dog (he is leashed and muzzled at home, ofcourse)
+Islam will probably win, however, and bring it back. We had hoped the 
+Jews would have been successful in doing so, but they were unable to 
+bring freedom and have given up now. They tried very hard however (60s, 
+70s, 80s), but were violently beaten back by the Proud American Men in 
+the latter 80s, 90s, 2000s, 2010s.
+
+RMS's now-reversed views were perhaps part of that wider liberation 
+attempt. But what has he gotten for it? He's given up that attempt now, 
+sadly. But what can you do? America only cares about the happiness of 
+it's white women: it cares nothing for males who are simply beasts of 
+burden to "provide" for the woman, under the American religion. (It 
+cares even less for everyone else: who it sets the dogs on)
+
+The Muslims will solve it all, I'm glad the politicians brought them in. 
+They also don't rip you off when you get your car fixed: very honest in 
+business from my view.
+
+> Nachmanides points out that a child may be called na'ar from the moment
+> he is born.
+> https://ohr.edu/ask_db/ask_main.php/179/Q3/
+
+----
+
+I wish RMS could have a nice marriage.
+Ruben Safir: could you help him in that, from your community.
+The American Men and Women have attacked him and "canceled" him; after 
+all he's done for them.
+
+
+On 2019-11-04 11:28, Alexandre François Garreau wrote:
+> Le lundi 4 novembre 2019 12:11:40 CET, vous avez écrit :
+>> * Alexandre François Garreau <galex-713@galex-713.eu> [2019-11-04 
+>> 11:52]:
+>> > Le lundi 4 novembre 2019 10:50:56 CET, vous avez écrit :
+>> > > * Federico Leva <nemowiki@gmail.com> [2019-11-04 09:02]:
+>> > > > Alexandre François Garreau, 01/11/19 18:30:
+>> > > > > Though women participate in GNU,
+>> > > > > are any of them fortunately software package maintainer?
+>> > > > > Unfortunately,
+>> > > > > I’m
+>> > > > > not sure about this :/
+>> > >
+>> > > LibrePlanet media is good place to see that it is not male society:
+>> > > https://media.libreplanet.org/
+>> > >
+>> > > There is no discrimination. Package maintainer are not looked upon
+>> > > because of their gender.
+>> >
+>> > I think people may be worried about either internal inconscious, unwilling
+>> > discrimination, either about external discrimination that might make women
+>> > dislike that place.
+>> 
+>> Do you mean ""unconscious" with "inconscious"? I don't share opinion
+>> that internal uncoscious unwilling discrimination is making worry to
+>> anybody. Such statement is based on imagination or could be said to be
+>> fabrication.
+> 
+> I think women (and more generally, contributors, and stable ones) are 
+> even too
+> few to see any formal preference of anybody over anybody within GNU 
+> yet.
+> 
+>> External discrimination is maybe what you think as "public"
+>> discrimination, such does not exist in GNU project, and statement
+>> falls into fabrications.
+> 
+> No, external means external to GNU, not coming from GNU members, but 
+> from
+> women who might not want to join.  And that could be caused because of 
+> stuff
+> internal to GNU (image, atmosphere, etc.).  That’s the position of the
+> signatories of the Joint statement, I think.
