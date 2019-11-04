@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA0FEEFA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24440EEDA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387985AbfKDVyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:54:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
+        id S2390290AbfKDWIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:08:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387971AbfKDVye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:54:34 -0500
+        id S2388158AbfKDWIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:08:45 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 878FD217F4;
-        Mon,  4 Nov 2019 21:54:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76B21214D8;
+        Mon,  4 Nov 2019 22:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904474;
-        bh=vIY7s/sWc35wae5Q2HDnJ+V/vP5qanCNZjWVkgXUNS8=;
+        s=default; t=1572905324;
+        bh=5OK+09pmuILU+2bDs11edp42TY7UT0xvLUG+Qff8SaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBSSWHOxCsUtqnt57QZMo6/kS2CBAS/13/VBu6AXWxTfPRY19FyaMZ8tnP0Zz5bPP
-         6kK9fCqgiNyy1TAcV1HzNKLmcuROQw+2IydMD877iGgpWQMhK0UQExFKY30LeAEtqa
-         kRXEgM4uCyfA7phJquWh14Mae8KGi+S5iAdeJv2s=
+        b=dXSVEcldQGp60PuXoOt0H9fa1eD/DYQ3U+lI9TA/K+5awi/yy2F1gVcOP2JV13DAz
+         KD1b+7aHzCL3QLJl117VTKU3rgvxjdFxPiGW9pwCsbRDobH6XC8Z+q8meeoEb203Ft
+         WljqUwyEAlo+i/CZte0Ru2Va7ScpCaf4Ljc7dbwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zubin Mithra <zsm@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 59/95] net_sched: check cops->tcf_block in tc_bind_tclass()
+        syzbot+a4fbb3bb76cda0ea4e58@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 107/163] USB: ldusb: fix control-message timeout
 Date:   Mon,  4 Nov 2019 22:44:57 +0100
-Message-Id: <20191104212106.949412581@linuxfoundation.org>
+Message-Id: <20191104212147.907150008@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,43 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 8b142a00edcf8422ca48b8de88d286efb500cb53 upstream
+commit 52403cfbc635d28195167618690595013776ebde upstream.
 
-At least sch_red and sch_tbf don't implement ->tcf_block()
-while still have a non-zero tc "class".
+USB control-message timeouts are specified in milliseconds, not jiffies.
+Waiting 83 minutes for a transfer to complete is a bit excessive.
 
-Instead of adding nop implementations to each of such qdisc's,
-we can just relax the check of cops->tcf_block() in
-tc_bind_tclass(). They don't support TC filter anyway.
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Reported-by: syzbot+a4fbb3bb76cda0ea4e58@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191022153127.22295-1-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_api.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/misc/ldusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index 637949b576c63..296e95f72eb15 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1695,6 +1695,8 @@ static void tc_bind_tclass(struct Qdisc *q, u32 portid, u32 clid,
- 	cl = cops->find(q, portid);
- 	if (!cl)
- 		return;
-+	if (!cops->tcf_block)
-+		return;
- 	block = cops->tcf_block(q, cl);
- 	if (!block)
- 		return;
--- 
-2.20.1
-
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -580,7 +580,7 @@ static ssize_t ld_usb_write(struct file
+ 					 1 << 8, 0,
+ 					 dev->interrupt_out_buffer,
+ 					 bytes_to_write,
+-					 USB_CTRL_SET_TIMEOUT * HZ);
++					 USB_CTRL_SET_TIMEOUT);
+ 		if (retval < 0)
+ 			dev_err(&dev->intf->dev,
+ 				"Couldn't submit HID_REQ_SET_REPORT %d\n",
 
 
