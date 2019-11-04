@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDDAEEE26
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E70EEDDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389067AbfKDWMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:12:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
+        id S2389847AbfKDWKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390142AbfKDWKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:43 -0500
+        id S2390584AbfKDWKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:45 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87F8F205C9;
-        Mon,  4 Nov 2019 22:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A8F2205C9;
+        Mon,  4 Nov 2019 22:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905442;
-        bh=k9jy+lx+shuuvnVRszCf8uaiSUPr42VBGyRwNfbn6ak=;
+        s=default; t=1572905444;
+        bh=kFVJqAmDWjyPXzyh/0UkZ7lPETI8p4Ajzx7UBi59TOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NMiqffWCyelQNQ9SDa0IJ8+jbwFl3dqPGbXoXEfJUQ9oHAJrcZMnB65DHWg4g/TAF
-         NKsHiFQQmL16H2+O9a9PMNZtvRIkbdgaCdmLmaBtIvcBn0FnJOZ3TWYmZi0cvH1n/C
-         EFSHppZLImI9IkN9NS6LfQoPVVLYBIjVpvOf/eyI=
+        b=n1G0jxSxGQ6VHUPcoPxIW3OlzFIdBPA/CCZcrSo8G9Z/JMJ4myhufhPi649o0x+7o
+         3QuGaaeIki5JN/YTuD8lcx/5VDBw0IUp+NdV+Vy0WYYcwod36Jtj1zvOY0y02w3QJv
+         zcwuHit57piXqrRDBRDzojV1OHIpEBQr25PxizQE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+d850c266e3df14da1d31@syzkaller.appspotmail.com,
+        syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com,
         David Howells <dhowells@redhat.com>
-Subject: [PATCH 5.3 148/163] rxrpc: Fix call ref leak
-Date:   Mon,  4 Nov 2019 22:45:38 +0100
-Message-Id: <20191104212151.036425778@linuxfoundation.org>
+Subject: [PATCH 5.3 149/163] rxrpc: rxrpc_peer needs to hold a ref on the rxrpc_local record
+Date:   Mon,  4 Nov 2019 22:45:39 +0100
+Message-Id: <20191104212151.103290248@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
 References: <20191104212140.046021995@linuxfoundation.org>
@@ -46,45 +46,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-commit c48fc11b69e95007109206311b0187a3090591f3 upstream.
+commit 9ebeddef58c41bd700419cdcece24cf64ce32276 upstream.
 
-When sendmsg() finds a call to continue on with, if the call is in an
-inappropriate state, it doesn't release the ref it just got on that call
-before returning an error.
+The rxrpc_peer record needs to hold a reference on the rxrpc_local record
+it points as the peer is used as a base to access information in the
+rxrpc_local record.
 
-This causes the following symptom to show up with kasan:
+This can cause problems in __rxrpc_put_peer(), where we need the network
+namespace pointer, and in rxrpc_send_keepalive(), where we need to access
+the UDP socket, leading to symptoms like:
 
-	BUG: KASAN: use-after-free in rxrpc_send_keepalive+0x8a2/0x940
-	net/rxrpc/output.c:635
-	Read of size 8 at addr ffff888064219698 by task kworker/0:3/11077
+    BUG: KASAN: use-after-free in __rxrpc_put_peer net/rxrpc/peer_object.c:411
+    [inline]
+    BUG: KASAN: use-after-free in rxrpc_put_peer+0x685/0x6a0
+    net/rxrpc/peer_object.c:435
+    Read of size 8 at addr ffff888097ec0058 by task syz-executor823/24216
 
-where line 635 is:
+Fix this by taking a ref on the local record for the peer record.
 
-	whdr.epoch	= htonl(peer->local->rxnet->epoch);
-
-The local endpoint (which cannot be pinned by the call) has been released,
-but not the peer (which is pinned by the call).
-
-Fix this by releasing the call in the error path.
-
-Fixes: 37411cad633f ("rxrpc: Fix potential NULL-pointer exception")
-Reported-by: syzbot+d850c266e3df14da1d31@syzkaller.appspotmail.com
+Fixes: ace45bec6d77 ("rxrpc: Fix firewall route keepalive")
+Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
+Reported-by: syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rxrpc/sendmsg.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/rxrpc/peer_object.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -661,6 +661,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *
- 		case RXRPC_CALL_SERVER_PREALLOC:
- 		case RXRPC_CALL_SERVER_SECURING:
- 		case RXRPC_CALL_SERVER_ACCEPTING:
-+			rxrpc_put_call(call, rxrpc_call_put);
- 			ret = -EBUSY;
- 			goto error_release_sock;
- 		default:
+--- a/net/rxrpc/peer_object.c
++++ b/net/rxrpc/peer_object.c
+@@ -216,7 +216,7 @@ struct rxrpc_peer *rxrpc_alloc_peer(stru
+ 	peer = kzalloc(sizeof(struct rxrpc_peer), gfp);
+ 	if (peer) {
+ 		atomic_set(&peer->usage, 1);
+-		peer->local = local;
++		peer->local = rxrpc_get_local(local);
+ 		INIT_HLIST_HEAD(&peer->error_targets);
+ 		peer->service_conns = RB_ROOT;
+ 		seqlock_init(&peer->service_conn_lock);
+@@ -307,7 +307,6 @@ void rxrpc_new_incoming_peer(struct rxrp
+ 	unsigned long hash_key;
+ 
+ 	hash_key = rxrpc_peer_hash_key(local, &peer->srx);
+-	peer->local = local;
+ 	rxrpc_init_peer(rx, peer, hash_key);
+ 
+ 	spin_lock(&rxnet->peer_hash_lock);
+@@ -417,6 +416,7 @@ static void __rxrpc_put_peer(struct rxrp
+ 	list_del_init(&peer->keepalive_link);
+ 	spin_unlock_bh(&rxnet->peer_hash_lock);
+ 
++	rxrpc_put_local(peer->local);
+ 	kfree_rcu(peer, rcu);
+ }
+ 
+@@ -450,6 +450,7 @@ void rxrpc_put_peer_locked(struct rxrpc_
+ 	if (n == 0) {
+ 		hash_del_rcu(&peer->hash_link);
+ 		list_del_init(&peer->keepalive_link);
++		rxrpc_put_local(peer->local);
+ 		kfree_rcu(peer, rcu);
+ 	}
+ }
 
 
