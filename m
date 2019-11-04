@@ -2,48 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B61EEBEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A9FBEEC9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfKDVwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45658 "EHLO mail.kernel.org"
+        id S1730764AbfKDV6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:58:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730715AbfKDVwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:17 -0500
+        id S1730642AbfKDV6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:58:39 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D330F2184C;
-        Mon,  4 Nov 2019 21:52:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587AE214E0;
+        Mon,  4 Nov 2019 21:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904336;
-        bh=YHKFDJ05IoqcfJ98B3LPS/7pSJydcSY5/SM6/5BKDdE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AofODcxqXTVMePbkV8gRLD9rw2dCQKs6e8P089m7kJ2eYhXpcajRYm0G/P2Ps67Ee
-         9gGuPT9QNUQsgdC13DpsJWxaQE9bhny6PaBtJnh8PHIxWSYxCUSIjYJFudHSXNKrbc
-         rioWRZg0i2FXT+jnpBFvpFfuvWjYGVHnGks8ou/0=
+        s=default; t=1572904719;
+        bh=ZJYf2k6zhyTX1xXuLoy2aCZTsKNBjuiBVrsoQEYs18M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eiyRW02FRHW4xRYpVLl7XqDh3tnlefucwS3HHxfziwvc4c/QlcSTOX9XWumkOx56P
+         8qCu8badH15Y4iRnmcCWCvGVd6hYtIVAiLCUOrFU65aeA20RZiOckqwsIBcl/TPzz0
+         GuRHhWBHqfXmcbcfD67DJ/cJDdr/7CJKrYNUnnzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/95] 4.14.152-stable review
-Date:   Mon,  4 Nov 2019 22:43:58 +0100
-Message-Id: <20191104212038.056365853@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 046/149] net: stmmac: Fix NAPI poll in TX path when in multi-queue
+Date:   Mon,  4 Nov 2019 22:43:59 +0100
+Message-Id: <20191104212139.335872248@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.152-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.152-rc1
-X-KernelTest-Deadline: 2019-11-06T21:21+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,429 +48,255 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.152 release.
-There are 95 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Jose Abreu <jose.abreu@synopsys.com>
+
+[ Upstream commit 4ccb45857c2c0776d0f72e39768295062c1a0de1 ]
+
+Commit 8fce33317023 introduced the concept of NAPI per-channel and
+independent cleaning of TX path.
+
+This is currently breaking performance in some cases. The scenario
+happens when all packets are being received in Queue 0 but the TX is
+performed in Queue != 0.
+
+Fix this by using different NAPI instances per each TX and RX queue, as
+suggested by Florian.
+
+Changes from v2:
+	- Only force restart transmission if there are pending packets
+Changes from v1:
+	- Pass entire ring size to TX clean path (Florian)
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |   5 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 115 ++++++++++--------
+ 2 files changed, 68 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index 63e1064b27a24..e697ecd9b0a64 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -78,11 +78,10 @@ struct stmmac_rx_queue {
+ };
+ 
+ struct stmmac_channel {
+-	struct napi_struct napi ____cacheline_aligned_in_smp;
++	struct napi_struct rx_napi ____cacheline_aligned_in_smp;
++	struct napi_struct tx_napi ____cacheline_aligned_in_smp;
+ 	struct stmmac_priv *priv_data;
+ 	u32 index;
+-	int has_rx;
+-	int has_tx;
+ };
+ 
+ struct stmmac_tc_entry {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 014fe93ed2d82..f4542ac0852d2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -155,7 +155,10 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_disable(&ch->napi);
++		if (queue < rx_queues_cnt)
++			napi_disable(&ch->rx_napi);
++		if (queue < tx_queues_cnt)
++			napi_disable(&ch->tx_napi);
+ 	}
+ }
+ 
+@@ -173,7 +176,10 @@ static void stmmac_enable_all_queues(struct stmmac_priv *priv)
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_enable(&ch->napi);
++		if (queue < rx_queues_cnt)
++			napi_enable(&ch->rx_napi);
++		if (queue < tx_queues_cnt)
++			napi_enable(&ch->tx_napi);
+ 	}
+ }
+ 
+@@ -1946,6 +1952,10 @@ static int stmmac_tx_clean(struct stmmac_priv *priv, int budget, u32 queue)
+ 		mod_timer(&priv->eee_ctrl_timer, STMMAC_LPI_T(eee_timer));
+ 	}
+ 
++	/* We still have pending packets, let's call for a new scheduling */
++	if (tx_q->dirty_tx != tx_q->cur_tx)
++		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
++
+ 	__netif_tx_unlock_bh(netdev_get_tx_queue(priv->dev, queue));
+ 
+ 	return count;
+@@ -2036,23 +2046,15 @@ static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
+ 	int status = stmmac_dma_interrupt_status(priv, priv->ioaddr,
+ 						 &priv->xstats, chan);
+ 	struct stmmac_channel *ch = &priv->channel[chan];
+-	bool needs_work = false;
+-
+-	if ((status & handle_rx) && ch->has_rx) {
+-		needs_work = true;
+-	} else {
+-		status &= ~handle_rx;
+-	}
+ 
+-	if ((status & handle_tx) && ch->has_tx) {
+-		needs_work = true;
+-	} else {
+-		status &= ~handle_tx;
++	if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
++		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
++		napi_schedule_irqoff(&ch->rx_napi);
+ 	}
+ 
+-	if (needs_work && napi_schedule_prep(&ch->napi)) {
++	if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
+ 		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+-		__napi_schedule(&ch->napi);
++		napi_schedule_irqoff(&ch->tx_napi);
+ 	}
+ 
+ 	return status;
+@@ -2248,8 +2250,14 @@ static void stmmac_tx_timer(struct timer_list *t)
+ 
+ 	ch = &priv->channel[tx_q->queue_index];
+ 
+-	if (likely(napi_schedule_prep(&ch->napi)))
+-		__napi_schedule(&ch->napi);
++	/*
++	 * If NAPI is already running we can miss some events. Let's rearm
++	 * the timer and try again.
++	 */
++	if (likely(napi_schedule_prep(&ch->tx_napi)))
++		__napi_schedule(&ch->tx_napi);
++	else
++		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
+ }
+ 
+ /**
+@@ -3506,7 +3514,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 			else
+ 				skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 
+-			napi_gro_receive(&ch->napi, skb);
++			napi_gro_receive(&ch->rx_napi, skb);
+ 
+ 			priv->dev->stats.rx_packets++;
+ 			priv->dev->stats.rx_bytes += frame_len;
+@@ -3520,40 +3528,45 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 	return count;
+ }
+ 
+-/**
+- *  stmmac_poll - stmmac poll method (NAPI)
+- *  @napi : pointer to the napi structure.
+- *  @budget : maximum number of packets that the current CPU can receive from
+- *	      all interfaces.
+- *  Description :
+- *  To look at the incoming frames and clear the tx resources.
+- */
+-static int stmmac_napi_poll(struct napi_struct *napi, int budget)
++static int stmmac_napi_poll_rx(struct napi_struct *napi, int budget)
+ {
+ 	struct stmmac_channel *ch =
+-		container_of(napi, struct stmmac_channel, napi);
++		container_of(napi, struct stmmac_channel, rx_napi);
+ 	struct stmmac_priv *priv = ch->priv_data;
+-	int work_done, rx_done = 0, tx_done = 0;
+ 	u32 chan = ch->index;
++	int work_done;
+ 
+ 	priv->xstats.napi_poll++;
+ 
+-	if (ch->has_tx)
+-		tx_done = stmmac_tx_clean(priv, budget, chan);
+-	if (ch->has_rx)
+-		rx_done = stmmac_rx(priv, budget, chan);
++	work_done = stmmac_rx(priv, budget, chan);
++	if (work_done < budget && napi_complete_done(napi, work_done))
++		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
++	return work_done;
++}
+ 
+-	work_done = max(rx_done, tx_done);
+-	work_done = min(work_done, budget);
++static int stmmac_napi_poll_tx(struct napi_struct *napi, int budget)
++{
++	struct stmmac_channel *ch =
++		container_of(napi, struct stmmac_channel, tx_napi);
++	struct stmmac_priv *priv = ch->priv_data;
++	struct stmmac_tx_queue *tx_q;
++	u32 chan = ch->index;
++	int work_done;
+ 
+-	if (work_done < budget && napi_complete_done(napi, work_done)) {
+-		int stat;
++	priv->xstats.napi_poll++;
++
++	work_done = stmmac_tx_clean(priv, DMA_TX_SIZE, chan);
++	work_done = min(work_done, budget);
+ 
++	if (work_done < budget && napi_complete_done(napi, work_done))
+ 		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
+-		stat = stmmac_dma_interrupt_status(priv, priv->ioaddr,
+-						   &priv->xstats, chan);
+-		if (stat && napi_reschedule(napi))
+-			stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
++
++	/* Force transmission restart */
++	tx_q = &priv->tx_queue[chan];
++	if (tx_q->cur_tx != tx_q->dirty_tx) {
++		stmmac_enable_dma_transmission(priv, priv->ioaddr);
++		stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr,
++				       chan);
+ 	}
+ 
+ 	return work_done;
+@@ -4376,13 +4389,14 @@ int stmmac_dvr_probe(struct device *device,
+ 		ch->priv_data = priv;
+ 		ch->index = queue;
+ 
+-		if (queue < priv->plat->rx_queues_to_use)
+-			ch->has_rx = true;
+-		if (queue < priv->plat->tx_queues_to_use)
+-			ch->has_tx = true;
+-
+-		netif_napi_add(ndev, &ch->napi, stmmac_napi_poll,
+-			       NAPI_POLL_WEIGHT);
++		if (queue < priv->plat->rx_queues_to_use) {
++			netif_napi_add(ndev, &ch->rx_napi, stmmac_napi_poll_rx,
++				       NAPI_POLL_WEIGHT);
++		}
++		if (queue < priv->plat->tx_queues_to_use) {
++			netif_napi_add(ndev, &ch->tx_napi, stmmac_napi_poll_tx,
++				       NAPI_POLL_WEIGHT);
++		}
+ 	}
+ 
+ 	mutex_init(&priv->lock);
+@@ -4438,7 +4452,10 @@ error_mdio_register:
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		netif_napi_del(&ch->napi);
++		if (queue < priv->plat->rx_queues_to_use)
++			netif_napi_del(&ch->rx_napi);
++		if (queue < priv->plat->tx_queues_to_use)
++			netif_napi_del(&ch->tx_napi);
+ 	}
+ error_hw_init:
+ 	destroy_workqueue(priv->wq);
+-- 
+2.20.1
 
-Responses should be made by Wed 06 Nov 2019 09:14:04 PM UTC.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.152-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.152-rc1
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: timer: Fix mutex deadlock at releasing card
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: timer: Simplify error path in snd_timer_open()
-
-Vratislav Bendel <vbendel@redhat.com>
-    xfs: Correctly invert xfs_buftarg LRU isolation logic
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: not bind the socket in sctp_connect
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: fix the issue that flags are ignored when using kernel_connect
-
-Eric Dumazet <edumazet@google.com>
-    sch_netem: fix rcu splat in netem_enqueue()
-
-Valentin Vidic <vvidic@valentin-vidic.from.hr>
-    net: usb: sr9800: fix uninitialized local variable
-
-Eric Dumazet <edumazet@google.com>
-    bonding: fix potential NULL deref in bond_update_slave_arr
-
-Johan Hovold <johan@kernel.org>
-    NFC: pn533: fix use-after-free and memleaks
-
-David Howells <dhowells@redhat.com>
-    rxrpc: Fix call ref leak
-
-Eric Biggers <ebiggers@google.com>
-    llc: fix sk_buff leak in llc_conn_service()
-
-Eric Biggers <ebiggers@google.com>
-    llc: fix sk_buff leak in llc_sap_state_process()
-
-Tony Lindgren <tony@atomide.com>
-    dmaengine: cppi41: Fix cppi41_dma_prep_slave_sg() when idle
-
-Laura Abbott <labbott@redhat.com>
-    rtlwifi: Fix potential overflow on P2P code
-
-Catalin Marinas <catalin.marinas@arm.com>
-    arm64: Ensure VM_WRITE|VM_SHARED ptes are clean by default
-
-Heiko Carstens <heiko.carstens@de.ibm.com>
-    s390/idle: fix cpu idle time calculation
-
-Yihui ZENG <yzeng56@asu.edu>
-    s390/cmm: fix information leak in cmm_timeout_handler()
-
-Markus Theil <markus.theil@tu-ilmenau.de>
-    nl80211: fix validation of mesh path nexthop
-
-Michał Mirosław <mirq-linux@rere.qmqm.pl>
-    HID: fix error message in hid_open_report()
-
-Alan Stern <stern@rowland.harvard.edu>
-    HID: Fix assumption that devices have inputs
-
-Hans de Goede <hdegoede@redhat.com>
-    HID: i2c-hid: add Trekstor Primebook C11B to descriptor override
-
-Bart Van Assche <bvanassche@acm.org>
-    scsi: target: cxgbit: Fix cxgbit_fw4_ack()
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: whiteheat: fix line-speed endianness
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: whiteheat: fix potential slab corruption
-
-Johan Hovold <johan@kernel.org>
-    USB: ldusb: fix control-message timeout
-
-Johan Hovold <johan@kernel.org>
-    USB: ldusb: fix ring-buffer locking
-
-Alan Stern <stern@rowland.harvard.edu>
-    usb-storage: Revert commit 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: gadget: Reject endpoints with 0 maxpacket value
-
-Alan Stern <stern@rowland.harvard.edu>
-    UAS: Revert commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Add support for ALC623
-
-Aaron Ma <aaron.ma@canonical.com>
-    ALSA: hda/realtek - Fix 2 front mics of codec 0x623
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    ALSA: bebob: Fix prototype of helper function to return negative value
-
-Miklos Szeredi <mszeredi@redhat.com>
-    fuse: truncate pending writes on O_TRUNC
-
-Miklos Szeredi <mszeredi@redhat.com>
-    fuse: flush dirty data/metadata before non-truncate setattr
-
-Hui Peng <benquike@gmail.com>
-    ath6kl: fix a NULL-ptr-deref bug in ath6kl_usb_alloc_urb_from_pipe()
-
-Mika Westerberg <mika.westerberg@linux.intel.com>
-    thunderbolt: Use 32-bit writes when writing ring producer/consumer
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    net_sched: check cops->tcf_block in tc_bind_tclass()
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    USB: legousbtower: fix a signedness bug in tower_probe()
-
-Mike Christie <mchristi@redhat.com>
-    nbd: verify socket is supported during setup
-
-Petr Mladek <pmladek@suse.com>
-    tracing: Initialize iter->seq after zeroing in tracing_read_pipe()
-
-Christian Borntraeger <borntraeger@de.ibm.com>
-    s390/uaccess: avoid (false positive) compiler warnings
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSv4: Fix leak of clp->cl_acceptor string
-
-Xiubo Li <xiubli@redhat.com>
-    nbd: fix possible sysfs duplicate warning
-
-Thomas Bogendoerfer <tbogendoerfer@suse.de>
-    MIPS: fw: sni: Fix out of bounds init of o32 stack
-
-Thomas Bogendoerfer <tbogendoerfer@suse.de>
-    MIPS: include: Mark __xchg as __always_inline
-
-Tom Lendacky <thomas.lendacky@amd.com>
-    perf/x86/amd: Change/fix NMI latency mitigation to use a timestamp
-
-Frederic Weisbecker <frederic@kernel.org>
-    sched/vtime: Fix guest/system mis-accounting on task switch
-
-Jia-Ju Bai <baijiaju1990@gmail.com>
-    fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
-
-Jia-Ju Bai <baijiaju1990@gmail.com>
-    fs: ocfs2: fix a possible null-pointer dereference in ocfs2_write_end_nolock()
-
-Jia-Ju Bai <baijiaju1990@gmail.com>
-    fs: ocfs2: fix possible null-pointer dereferences in ocfs2_xa_prepare_entry()
-
-Jia Guo <guojia12@huawei.com>
-    ocfs2: clear zero in unaligned direct IO
-
-Boris Ostrovsky <boris.ostrovsky@oracle.com>
-    x86/xen: Return from panic notifier
-
-Thomas Bogendoerfer <tbogendoerfer@suse.de>
-    MIPS: include: Mark __cmpxchg as __always_inline
-
-Dave Young <dyoung@redhat.com>
-    efi/x86: Do not clean dummy variable in kexec path
-
-Lukas Wunner <lukas@wunner.de>
-    efi/cper: Fix endianness of PCIe class code
-
-Adam Ford <aford173@gmail.com>
-    serial: mctrl_gpio: Check for NULL pointer
-
-Austin Kim <austindh.kim@gmail.com>
-    fs: cifs: mute -Wunused-const-variable message
-
-Thierry Reding <treding@nvidia.com>
-    gpio: max77620: Use correct unit for debounce times
-
-Randy Dunlap <rdunlap@infradead.org>
-    tty: n_hdlc: fix build on SPARC
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    tty: serial: owl: Fix the link time qualifier of 'owl_uart_exit()'
-
-James Morse <james.morse@arm.com>
-    arm64: ftrace: Ensure synchronisation in PLT setup for Neoverse-N1 #1542419
-
-ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-    nfs: Fix nfsi->nrequests count error on nfs_inode_remove_request
-
-Dexuan Cui <decui@microsoft.com>
-    HID: hyperv: Use in-place iterator API in the channel callback
-
-Bart Van Assche <bvanassche@acm.org>
-    RDMA/iwcm: Fix a lock inversion issue
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    RDMA/hfi1: Prevent memory leak in sdma_init
-
-Connor Kuehl <connor.kuehl@canonical.com>
-    staging: rtl8188eu: fix null dereference when kzalloc fails
-
-Andi Kleen <ak@linux.intel.com>
-    perf jevents: Fix period for Intel fixed counters
-
-Steve MacLean <Steve.MacLean@microsoft.com>
-    perf map: Fix overlapped map handling
-
-Ian Rogers <irogers@google.com>
-    perf tests: Avoid raising SEGV using an obvious NULL dereference
-
-Ian Rogers <irogers@google.com>
-    libsubcmd: Make _FORTIFY_SOURCE defines dependent on the feature
-
-Pascal Bouwmann <bouwmann@tau-tec.de>
-    iio: fix center temperature of bmc150-accel-core
-
-Remi Pommarel <repk@triplefau.lt>
-    iio: adc: meson_saradc: Fix memory allocation order
-
-Sven Van Asbroeck <thesven73@gmail.com>
-    power: supply: max14656: fix potential use-after-free
-
-Sven Van Asbroeck <thesven73@gmail.com>
-    PCI/PME: Fix possible use-after-free on remove
-
-Kees Cook <keescook@chromium.org>
-    exec: load_script: Do not exec truncated interpreter path
-
-Lucas A. M. Magalhães <lucmaga@gmail.com>
-    media: vimc: Remove unused but set variables
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: hda/realtek - Apply ALC294 hp init also for S4 resume
-
-Nir Dotan <nird@mellanox.com>
-    mlxsw: spectrum: Set LAG port collector only when active
-
-Sam Ravnborg <sam@ravnborg.org>
-    rtc: pcf8523: set xtal load capacitance from DT
-
-Jan-Marek Glogowski <glogow@fbihome.de>
-    usb: handle warm-reset port requests on hub resume
-
-NOGUCHI Hiroshi <drvlabo@gmail.com>
-    HID: Add ASUS T100CHI keyboard dock battery quirks
-
-Brian Norris <briannorris@chromium.org>
-    scripts/setlocalversion: Improve -dirty check with git-status --no-optional-locks
-
-Yi Wang <wang.yi59@zte.com.cn>
-    clk: boston: unregister clks on failure in clk_boston_setup()
-
-Hans de Goede <hdegoede@redhat.com>
-    HID: i2c-hid: Add Odys Winbook 13 to descriptor override
-
-Kan Liang <kan.liang@linux.intel.com>
-    x86/cpu: Add Atom Tremont (Jacobsville)
-
-Julian Sax <jsbc@gmx.de>
-    HID: i2c-hid: add Direkt-Tek DTLAPY133-1 to descriptor override
-
-David Hildenbrand <david@redhat.com>
-    powerpc/powernv: hold device_hotplug_lock when calling memtrace_offline_pages()
-
-Phil Elwell <phil@raspberrypi.org>
-    sc16is7xx: Fix for "Unexpected interrupt: 8"
-
-James Smart <jsmart2021@gmail.com>
-    scsi: lpfc: Fix a duplicate 0711 log message number.
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: flush quota blocks after turnning it off
-
-Kent Overstreet <kent.overstreet@gmail.com>
-    dm: Use kzalloc for all structs with embedded biosets/mempools
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm snapshot: rework COW throttling to fix deadlock
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm snapshot: introduce account_start_copy() and account_end_copy()
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm snapshot: use mutex instead of rw_semaphore
-
-Sasha Levin <sashal@kernel.org>
-    zram: fix race between backing_dev_show and backing_dev_store
-
-
--------------
-
-Diffstat:
-
- Documentation/admin-guide/kernel-parameters.txt  |   4 +
- Makefile                                         |   4 +-
- arch/arm64/include/asm/pgtable-prot.h            |  15 +-
- arch/arm64/kernel/ftrace.c                       |   8 +-
- arch/mips/fw/sni/sniprom.c                       |   2 +-
- arch/mips/include/asm/cmpxchg.h                  |   9 +-
- arch/powerpc/platforms/powernv/memtrace.c        |   4 +-
- arch/s390/include/asm/uaccess.h                  |   4 +-
- arch/s390/kernel/idle.c                          |  29 +++-
- arch/s390/mm/cmm.c                               |  12 +-
- arch/x86/events/amd/core.c                       |  30 ++--
- arch/x86/include/asm/intel-family.h              |   3 +-
- arch/x86/platform/efi/efi.c                      |   3 -
- arch/x86/xen/enlighten.c                         |  28 +++-
- drivers/block/nbd.c                              |  25 +++-
- drivers/block/zram/zram_drv.c                    |   5 +-
- drivers/clk/imgtec/clk-boston.c                  |  18 ++-
- drivers/dma/cppi41.c                             |  21 ++-
- drivers/firmware/efi/cper.c                      |   2 +-
- drivers/gpio/gpio-max77620.c                     |   6 +-
- drivers/hid/hid-axff.c                           |  11 +-
- drivers/hid/hid-core.c                           |   7 +-
- drivers/hid/hid-dr.c                             |  12 +-
- drivers/hid/hid-emsff.c                          |  12 +-
- drivers/hid/hid-gaff.c                           |  12 +-
- drivers/hid/hid-holtekff.c                       |  12 +-
- drivers/hid/hid-hyperv.c                         |  56 ++-----
- drivers/hid/hid-input.c                          |   3 +
- drivers/hid/hid-lg2ff.c                          |  12 +-
- drivers/hid/hid-lg3ff.c                          |  11 +-
- drivers/hid/hid-lg4ff.c                          |  11 +-
- drivers/hid/hid-lgff.c                           |  11 +-
- drivers/hid/hid-logitech-hidpp.c                 |  11 +-
- drivers/hid/hid-sony.c                           |  12 +-
- drivers/hid/hid-tmff.c                           |  12 +-
- drivers/hid/hid-zpff.c                           |  12 +-
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c         |  35 +++++
- drivers/iio/accel/bmc150-accel-core.c            |   2 +-
- drivers/iio/adc/meson_saradc.c                   |  10 +-
- drivers/infiniband/core/cma.c                    |   3 +-
- drivers/infiniband/hw/hfi1/sdma.c                |   5 +-
- drivers/md/dm-bio-prison-v1.c                    |   2 +-
- drivers/md/dm-bio-prison-v2.c                    |   2 +-
- drivers/md/dm-io.c                               |   2 +-
- drivers/md/dm-kcopyd.c                           |   2 +-
- drivers/md/dm-region-hash.c                      |   2 +-
- drivers/md/dm-snap.c                             | 178 +++++++++++++++--------
- drivers/md/dm-thin.c                             |   2 +-
- drivers/media/platform/vimc/vimc-sensor.c        |   7 -
- drivers/net/bonding/bond_main.c                  |   2 +-
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c   |  62 +++++---
- drivers/net/usb/sr9800.c                         |   2 +-
- drivers/net/wireless/ath/ath6kl/usb.c            |   8 +
- drivers/net/wireless/realtek/rtlwifi/ps.c        |   6 +
- drivers/nfc/pn533/usb.c                          |   9 +-
- drivers/pci/pcie/pme.c                           |   1 +
- drivers/power/supply/max14656_charger_detector.c |  17 ++-
- drivers/rtc/rtc-pcf8523.c                        |  28 +++-
- drivers/scsi/lpfc/lpfc_scsi.c                    |   2 +-
- drivers/staging/rtl8188eu/os_dep/usb_intf.c      |   6 +-
- drivers/target/iscsi/cxgbit/cxgbit_cm.c          |   3 +-
- drivers/thunderbolt/nhi.c                        |  22 ++-
- drivers/tty/n_hdlc.c                             |   5 +
- drivers/tty/serial/owl-uart.c                    |   2 +-
- drivers/tty/serial/sc16is7xx.c                   |  28 ++++
- drivers/tty/serial/serial_mctrl_gpio.c           |   3 +
- drivers/usb/core/hub.c                           |   7 +
- drivers/usb/gadget/udc/core.c                    |  11 ++
- drivers/usb/misc/ldusb.c                         |   6 +-
- drivers/usb/misc/legousbtower.c                  |   2 +-
- drivers/usb/serial/whiteheat.c                   |  13 +-
- drivers/usb/serial/whiteheat.h                   |   2 +-
- drivers/usb/storage/scsiglue.c                   |  10 --
- drivers/usb/storage/uas.c                        |  20 ---
- fs/binfmt_script.c                               |  57 ++++++--
- fs/cifs/netmisc.c                                |   4 -
- fs/f2fs/super.c                                  |   6 +
- fs/fuse/dir.c                                    |  13 ++
- fs/fuse/file.c                                   |  10 +-
- fs/nfs/nfs4proc.c                                |   1 +
- fs/nfs/write.c                                   |   5 +-
- fs/ocfs2/aops.c                                  |  25 +++-
- fs/ocfs2/ioctl.c                                 |   2 +-
- fs/ocfs2/xattr.c                                 |  56 +++----
- fs/xfs/xfs_buf.c                                 |   2 +-
- include/net/llc_conn.h                           |   2 +-
- include/net/sch_generic.h                        |   5 +
- include/net/sctp/sctp.h                          |   2 +
- kernel/sched/cputime.c                           |   6 +-
- kernel/trace/trace.c                             |   1 +
- net/llc/llc_c_ac.c                               |   8 +-
- net/llc/llc_conn.c                               |  32 ++--
- net/llc/llc_s_ac.c                               |  12 +-
- net/llc/llc_sap.c                                |  23 +--
- net/rxrpc/sendmsg.c                              |   1 +
- net/sched/sch_api.c                              |   2 +
- net/sched/sch_netem.c                            |   2 +-
- net/sctp/ipv6.c                                  |   2 +-
- net/sctp/protocol.c                              |   2 +-
- net/sctp/socket.c                                |  55 +++----
- net/wireless/nl80211.c                           |   3 +-
- scripts/setlocalversion                          |  12 +-
- sound/core/timer.c                               |  63 ++++----
- sound/firewire/bebob/bebob_stream.c              |   3 +-
- sound/pci/hda/patch_realtek.c                    |  15 +-
- tools/lib/subcmd/Makefile                        |   8 +-
- tools/perf/pmu-events/jevents.c                  |  12 +-
- tools/perf/tests/perf-hooks.c                    |   3 +-
- tools/perf/util/map.c                            |   3 +
- 109 files changed, 959 insertions(+), 477 deletions(-)
 
 
