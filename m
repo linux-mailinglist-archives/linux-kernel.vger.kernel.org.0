@@ -2,94 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F111EDCCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53425EDCD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:47:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfKDKpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:45:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45102 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727663AbfKDKpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:45:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E6E61B1D8;
-        Mon,  4 Nov 2019 10:45:22 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-mips@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [net v3 5/5] net: sgi: ioc3-eth: ensure tx ring is 16k aligned.
-Date:   Mon,  4 Nov 2019 11:45:15 +0100
-Message-Id: <20191104104515.7066-5-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191104104515.7066-1-tbogendoerfer@suse.de>
-References: <20191104104515.7066-1-tbogendoerfer@suse.de>
+        id S1728568AbfKDKrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:47:22 -0500
+Received: from foss.arm.com ([217.140.110.172]:39554 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727500AbfKDKrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 05:47:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EDEC31F;
+        Mon,  4 Nov 2019 02:47:21 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E82E33F71A;
+        Mon,  4 Nov 2019 02:47:20 -0800 (PST)
+Date:   Mon, 4 Nov 2019 10:47:19 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Dilip Kota <eswara.kota@linux.intel.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org,
+        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+        hch@infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+Subject: Re: [PATCH v4 2/3] dwc: PCI: intel: PCIe RC controller driver
+Message-ID: <20191104104718.GK9723@e119886-lin.cambridge.arm.com>
+References: <cover.1571638827.git.eswara.kota@linux.intel.com>
+ <c46ba3f4187fe53807948b4f10996b89a75c492c.1571638827.git.eswara.kota@linux.intel.com>
+ <20191021130339.GP47056@e119886-lin.cambridge.arm.com>
+ <661f7e9c-a79f-bea6-08d8-4df54f500019@linux.intel.com>
+ <20191025090926.GX47056@e119886-lin.cambridge.arm.com>
+ <6f8b2e72-caa3-30b8-4c76-8ad7bb321ce2@linux.intel.com>
+ <20191101105902.GB9723@e119886-lin.cambridge.arm.com>
+ <ecab7cc2-f4c2-ecc0-7f97-92686db1fd1b@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ecab7cc2-f4c2-ecc0-7f97-92686db1fd1b@linux.intel.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOC3 hardware needs a 16k aligned TX ring.
+On Mon, Nov 04, 2019 at 05:34:54PM +0800, Dilip Kota wrote:
+> 
+> On 11/1/2019 6:59 PM, Andrew Murray wrote:
+> > On Tue, Oct 29, 2019 at 04:59:17PM +0800, Dilip Kota wrote:
+> > > On 10/25/2019 5:09 PM, Andrew Murray wrote:
+> > > > On Tue, Oct 22, 2019 at 05:04:21PM +0800, Dilip Kota wrote:
+> > > > > Hi Andrew Murray,
+> > > > > 
+> > > > > On 10/21/2019 9:03 PM, Andrew Murray wrote:
+> > > > > > On Mon, Oct 21, 2019 at 02:39:19PM +0800, Dilip Kota wrote:
+> > > > > > > +
+> > > > > > > +void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts)
+> > > > > > > +{
+> > > > > > > +	u32 val;
+> > > > > > > +
+> > > > > > > +	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+> > > > > > > +	val &= ~PORT_LOGIC_N_FTS;
+> > > > > > > +	val |= n_fts;
+> > > > > > > +	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+> > > > > > > +}
+> > > > > > I notice that pcie-artpec6.c (artpec6_pcie_set_nfts) also writes the FTS
+> > > > > > and defines a bunch of macros to support this. It doesn't make sense to
+> > > > > > duplicate this there. Therefore I think we need to update pcie-artpec6.c
+> > > > > > to use this new function.
+> > > > > I think we can do in a separate patch after these changes get merged and
+> > > > > keep this patch series for intel PCIe driver and required changes in PCIe
+> > > > > DesignWare framework.
+> > > > The pcie-artpec6.c is a DWC driver as well. So I think we can do all this
+> > > > together. This helps reduce the technical debt that will otherwise build up
+> > > > in duplicated code.
+> > > I agree with you to remove duplicated code, but at this point not sure what
+> > > all drivers has defined FTS configuration.
+> > > Reviewing all other DWC drivers and removing them can be done in one single
+> > > separate patch.
+> > I'm not asking to set up an FTS configuration for all DWC drivers, but instead
+> > to move this helper function you've created to somewhere like pcie-designware.c
+> > and call it from this driver and pcie-artpec6.c.
+> What i mean is, we need to check how many of the current DWC drivers are
+> configuring the FTS
+> and call the helper function.
+> Today i have grep all the DWC based drivers and i see pcie-artpec6.c is the
+> only driver doing FTS configuration.
+> 
+> I will add the helper function call in pcie-artpec6.c in the next patch
+> version.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- drivers/net/ethernet/sgi/ioc3-eth.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Thanks that's very much appreciated.
 
-diff --git a/drivers/net/ethernet/sgi/ioc3-eth.c b/drivers/net/ethernet/sgi/ioc3-eth.c
-index 1af68826810a..d242906ae233 100644
---- a/drivers/net/ethernet/sgi/ioc3-eth.c
-+++ b/drivers/net/ethernet/sgi/ioc3-eth.c
-@@ -89,6 +89,7 @@ struct ioc3_private {
- 	struct device *dma_dev;
- 	u32 *ssram;
- 	unsigned long *rxr;		/* pointer to receiver ring */
-+	void *tx_ring;
- 	struct ioc3_etxd *txr;
- 	dma_addr_t rxr_dma;
- 	dma_addr_t txr_dma;
-@@ -1236,13 +1237,16 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	}
- 
- 	/* Allocate tx rings.  16kb = 128 bufs, must be 16kb aligned  */
--	ip->txr = dma_alloc_coherent(ip->dma_dev, TX_RING_SIZE, &ip->txr_dma,
--				     GFP_KERNEL);
--	if (!ip->txr) {
-+	ip->tx_ring = dma_alloc_coherent(ip->dma_dev, TX_RING_SIZE + SZ_16K - 1,
-+					 &ip->txr_dma, GFP_KERNEL);
-+	if (!ip->tx_ring) {
- 		pr_err("ioc3-eth: tx ring allocation failed\n");
- 		err = -ENOMEM;
- 		goto out_stop;
- 	}
-+	/* Align TX ring */
-+	ip->txr = PTR_ALIGN(ip->tx_ring, SZ_16K);
-+	ip->txr_dma = ALIGN(ip->txr_dma, SZ_16K);
- 
- 	ioc3_init(dev);
- 
-@@ -1299,8 +1303,8 @@ static int ioc3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ip->rxr)
- 		dma_free_coherent(ip->dma_dev, RX_RING_SIZE, ip->rxr,
- 				  ip->rxr_dma);
--	if (ip->txr)
--		dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->txr,
-+	if (ip->tx_ring)
-+		dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->tx_ring,
- 				  ip->txr_dma);
- out_res:
- 	pci_release_regions(pdev);
-@@ -1320,7 +1324,7 @@ static void ioc3_remove_one(struct pci_dev *pdev)
- 	struct ioc3_private *ip = netdev_priv(dev);
- 
- 	dma_free_coherent(ip->dma_dev, RX_RING_SIZE, ip->rxr, ip->rxr_dma);
--	dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->txr, ip->txr_dma);
-+	dma_free_coherent(ip->dma_dev, TX_RING_SIZE, ip->tx_ring, ip->txr_dma);
- 
- 	unregister_netdev(dev);
- 	del_timer_sync(&ip->ioc3_timer);
--- 
-2.16.4
+Thanks,
 
+Andrew Murray
+
+> 
+> 
+> Regards,
+> Dilip
+> 
+> 
+> > 
+> > Thanks,
+> > 
+> > Andrew Murray
+> > 
+> > > Regards,
+> > > Dilip
