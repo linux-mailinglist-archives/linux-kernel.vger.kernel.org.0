@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2766EEBD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9233BEEBD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730497AbfKDVvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:51:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44194 "EHLO mail.kernel.org"
+        id S1730513AbfKDVv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730046AbfKDVvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:17 -0500
+        id S1730057AbfKDVvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:20 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56415217F4;
-        Mon,  4 Nov 2019 21:51:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA01B21929;
+        Mon,  4 Nov 2019 21:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904276;
-        bh=QMUjP7/xk8cI4iGd54vDyzBBl3zgStXVnzmzUoipMP4=;
+        s=default; t=1572904279;
+        bh=x6vR3NQ+bGrQ/ymKfMGPZ1eXkd7tZ1So3e3ueerPjaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hy0bT+9IrrJgzT2RXhTNI0gp+DyekdObsfk9/ZR5OSj0bBw62ZI73lvGzJX/PiLFg
-         SIeqCEtiCvav9inPdcMaZbMFrK6ZEr/iqR0I+A7wyzYbpAvGIAIkNKqsY/VAURf7J3
-         m3jGIgUIbQ9UQcaC017KddA8a0GbgFjDzR43rALA=
+        b=ELsVVh0c9XxX/1r8nNhq8UnNgzeMQ2aDRxoX4rnZF8hi68nR1zxl3M3PY/Ar5+R8H
+         NnExMALBGo3vCz9X37N+G3NlsjbcHmzr/93ziKkQ2I2UDXaxRxgWlPcAFOjMqFlzbl
+         SRUPSR5TjGGVAElz9wr5RtMgO8wF3MdF2JqeCj9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Markus Theil <markus.theil@tu-ilmenau.de>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 47/62] nl80211: fix validation of mesh path nexthop
-Date:   Mon,  4 Nov 2019 22:45:09 +0100
-Message-Id: <20191104211949.807075592@linuxfoundation.org>
+        stable@vger.kernel.org, Yihui Zeng <yzeng56@asu.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 4.9 48/62] s390/cmm: fix information leak in cmm_timeout_handler()
+Date:   Mon,  4 Nov 2019 22:45:10 +0100
+Message-Id: <20191104211951.474918795@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
 References: <20191104211901.387893698@linuxfoundation.org>
@@ -43,35 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Theil <markus.theil@tu-ilmenau.de>
+From: Yihui ZENG <yzeng56@asu.edu>
 
-commit 1fab1b89e2e8f01204a9c05a39fd0b6411a48593 upstream.
+commit b8e51a6a9db94bc1fb18ae831b3dab106b5a4b5f upstream.
 
-Mesh path nexthop should be a ethernet address, but current validation
-checks against 4 byte integers.
+The problem is that we were putting the NUL terminator too far:
 
+	buf[sizeof(buf) - 1] = '\0';
+
+If the user input isn't NUL terminated and they haven't initialized the
+whole buffer then it leads to an info leak.  The NUL terminator should
+be:
+
+	buf[len - 1] = '\0';
+
+Signed-off-by: Yihui Zeng <yzeng56@asu.edu>
 Cc: stable@vger.kernel.org
-Fixes: 2ec600d672e74 ("nl80211/cfg80211: support for mesh, sta dumping")
-Signed-off-by: Markus Theil <markus.theil@tu-ilmenau.de>
-Link: https://lore.kernel.org/r/20191029093003.10355-1-markus.theil@tu-ilmenau.de
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[heiko.carstens@de.ibm.com: keep semantics of how *lenp and *ppos are handled]
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/nl80211.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/mm/cmm.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -295,7 +295,8 @@ static const struct nla_policy nl80211_p
- 	[NL80211_ATTR_MNTR_FLAGS] = { /* NLA_NESTED can't be empty */ },
- 	[NL80211_ATTR_MESH_ID] = { .type = NLA_BINARY,
- 				   .len = IEEE80211_MAX_MESH_ID_LEN },
--	[NL80211_ATTR_MPATH_NEXT_HOP] = { .type = NLA_U32 },
-+	[NL80211_ATTR_MPATH_NEXT_HOP] = { .type = NLA_BINARY,
-+					  .len = ETH_ALEN },
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -306,16 +306,16 @@ static int cmm_timeout_handler(struct ct
+ 	}
  
- 	[NL80211_ATTR_REG_ALPHA2] = { .type = NLA_STRING, .len = 2 },
- 	[NL80211_ATTR_REG_RULES] = { .type = NLA_NESTED },
+ 	if (write) {
+-		len = *lenp;
+-		if (copy_from_user(buf, buffer,
+-				   len > sizeof(buf) ? sizeof(buf) : len))
++		len = min(*lenp, sizeof(buf));
++		if (copy_from_user(buf, buffer, len))
+ 			return -EFAULT;
+-		buf[sizeof(buf) - 1] = '\0';
++		buf[len - 1] = '\0';
+ 		cmm_skip_blanks(buf, &p);
+ 		nr = simple_strtoul(p, &p, 0);
+ 		cmm_skip_blanks(p, &p);
+ 		seconds = simple_strtoul(p, &p, 0);
+ 		cmm_set_timeout(nr, seconds);
++		*ppos += *lenp;
+ 	} else {
+ 		len = sprintf(buf, "%ld %ld\n",
+ 			      cmm_timeout_pages, cmm_timeout_seconds);
+@@ -323,9 +323,9 @@ static int cmm_timeout_handler(struct ct
+ 			len = *lenp;
+ 		if (copy_to_user(buffer, buf, len))
+ 			return -EFAULT;
++		*lenp = len;
++		*ppos += len;
+ 	}
+-	*lenp = len;
+-	*ppos += len;
+ 	return 0;
+ }
+ 
 
 
