@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8851DEF009
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AAE3EEEAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:16:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388779AbfKDWZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:25:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
+        id S2389109AbfKDWDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730627AbfKDVvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:52 -0500
+        id S2387972AbfKDWDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:40 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C6832053B;
-        Mon,  4 Nov 2019 21:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D8E205C9;
+        Mon,  4 Nov 2019 22:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904310;
-        bh=9O/v+1/bywBKN63pqCoNkkXzmZ9XNOTcftS8wLfD++I=;
+        s=default; t=1572905018;
+        bh=hXh3Eq5I81mqQAHVTeD/K1pcz2p9HTdgos6iBg4pz9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WmG1uNYGQdxUkDQAhWvjTIg1Kvl6e/Uoknw/2ZqCyba8l/Ijlh6rRI1IPl66IbhPQ
-         TyV4NOjsDYqIUDQi4ZK3hc21q4/9CNKPcam+l2cgkD7PXPSeRy2YNCFQDNbr08nSXX
-         aJKQ8ODMWCVKj6EtmeZp4Xo1cweRz0FQyYeNI27g=
+        b=xYKrY4v9vRR0wx2cJfWZHJyI5RSZc80y/XXyPky/v5C6ia3S7TFzripwhiII/q9cS
+         UuPWjkETYjBgYwU/x9oyHV2H5lqMkQ+FE1Jp5rpm+CEwpUlZrOg1lJSghvg/UVRglf
+         cXSIEl2K3jOX2tKQeBLsDVxiRbR7hpSS4v86z2RU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 60/62] ALSA: timer: Limit max instances per timer
-Date:   Mon,  4 Nov 2019 22:45:22 +0100
-Message-Id: <20191104212000.057001996@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Waisman <nico@semmle.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 130/149] rtlwifi: Fix potential overflow on P2P code
+Date:   Mon,  4 Nov 2019 22:45:23 +0100
+Message-Id: <20191104212145.811534184@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,250 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 9b7d869ee5a77ed4a462372bb89af622e705bfb8 ]
+commit 8c55dedb795be8ec0cf488f98c03a1c2176f7fb1 upstream.
 
-Currently we allow unlimited number of timer instances, and it may
-bring the system hogging way too much CPU when too many timer
-instances are opened and processed concurrently.  This may end up with
-a soft-lockup report as triggered by syzkaller, especially when
-hrtimer backend is deployed.
+Nicolas Waisman noticed that even though noa_len is checked for
+a compatible length it's still possible to overrun the buffers
+of p2pinfo since there's no check on the upper bound of noa_num.
+Bound noa_num against P2P_MAX_NOA_NUM.
 
-Since such insane number of instances aren't demanded by the normal
-use case of ALSA sequencer and it merely  opens a risk only for abuse,
-this patch introduces the upper limit for the number of instances per
-timer backend.  As default, it's set to 1000, but for the fine-grained
-timer like hrtimer, it's set to 100.
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: syzbot
-Tested-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/sound/timer.h |  2 ++
- sound/core/hrtimer.c  |  1 +
- sound/core/timer.c    | 67 ++++++++++++++++++++++++++++++++++---------
- 3 files changed, 57 insertions(+), 13 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/ps.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/sound/timer.h b/include/sound/timer.h
-index c4d76ff056c6e..7ae226ab69908 100644
---- a/include/sound/timer.h
-+++ b/include/sound/timer.h
-@@ -90,6 +90,8 @@ struct snd_timer {
- 	struct list_head ack_list_head;
- 	struct list_head sack_list_head; /* slow ack list head */
- 	struct tasklet_struct task_queue;
-+	int max_instances;	/* upper limit of timer instances */
-+	int num_instances;	/* current number of timer instances */
- };
- 
- struct snd_timer_instance {
-diff --git a/sound/core/hrtimer.c b/sound/core/hrtimer.c
-index e2f27022b363c..d7dddb75e7bb8 100644
---- a/sound/core/hrtimer.c
-+++ b/sound/core/hrtimer.c
-@@ -159,6 +159,7 @@ static int __init snd_hrtimer_init(void)
- 	timer->hw = hrtimer_hw;
- 	timer->hw.resolution = resolution;
- 	timer->hw.ticks = NANO_SEC / resolution;
-+	timer->max_instances = 100; /* lower the limit */
- 
- 	err = snd_timer_global_register(timer);
- 	if (err < 0) {
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index cfcc6718aafce..95c5838747754 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -179,7 +179,7 @@ static void snd_timer_request(struct snd_timer_id *tid)
-  *
-  * call this with register_mutex down.
-  */
--static void snd_timer_check_slave(struct snd_timer_instance *slave)
-+static int snd_timer_check_slave(struct snd_timer_instance *slave)
- {
- 	struct snd_timer *timer;
- 	struct snd_timer_instance *master;
-@@ -189,16 +189,21 @@ static void snd_timer_check_slave(struct snd_timer_instance *slave)
- 		list_for_each_entry(master, &timer->open_list_head, open_list) {
- 			if (slave->slave_class == master->slave_class &&
- 			    slave->slave_id == master->slave_id) {
-+				if (master->timer->num_instances >=
-+				    master->timer->max_instances)
-+					return -EBUSY;
- 				list_move_tail(&slave->open_list,
- 					       &master->slave_list_head);
-+				master->timer->num_instances++;
- 				spin_lock_irq(&slave_active_lock);
- 				slave->master = master;
- 				slave->timer = master->timer;
- 				spin_unlock_irq(&slave_active_lock);
--				return;
-+				return 0;
+--- a/drivers/net/wireless/realtek/rtlwifi/ps.c
++++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
+@@ -775,6 +775,9 @@ static void rtl_p2p_noa_ie(struct ieee80
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
++
  			}
- 		}
- 	}
-+	return 0;
- }
- 
- /*
-@@ -207,7 +212,7 @@ static void snd_timer_check_slave(struct snd_timer_instance *slave)
-  *
-  * call this with register_mutex down.
-  */
--static void snd_timer_check_master(struct snd_timer_instance *master)
-+static int snd_timer_check_master(struct snd_timer_instance *master)
- {
- 	struct snd_timer_instance *slave, *tmp;
- 
-@@ -215,7 +220,11 @@ static void snd_timer_check_master(struct snd_timer_instance *master)
- 	list_for_each_entry_safe(slave, tmp, &snd_timer_slave_list, open_list) {
- 		if (slave->slave_class == master->slave_class &&
- 		    slave->slave_id == master->slave_id) {
-+			if (master->timer->num_instances >=
-+			    master->timer->max_instances)
-+				return -EBUSY;
- 			list_move_tail(&slave->open_list, &master->slave_list_head);
-+			master->timer->num_instances++;
- 			spin_lock_irq(&slave_active_lock);
- 			spin_lock(&master->timer->lock);
- 			slave->master = master;
-@@ -227,8 +236,11 @@ static void snd_timer_check_master(struct snd_timer_instance *master)
- 			spin_unlock_irq(&slave_active_lock);
- 		}
- 	}
-+	return 0;
- }
- 
-+static int snd_timer_close_locked(struct snd_timer_instance *timeri);
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
+@@ -869,6 +872,9 @@ static void rtl_p2p_action_ie(struct iee
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
 +
- /*
-  * open a timer instance
-  * when opening a master, the slave id must be here given.
-@@ -239,6 +251,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
- {
- 	struct snd_timer *timer;
- 	struct snd_timer_instance *timeri = NULL;
-+	int err;
- 
- 	if (tid->dev_class == SNDRV_TIMER_CLASS_SLAVE) {
- 		/* open a slave instance */
-@@ -258,10 +271,14 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 		timeri->slave_id = tid->device;
- 		timeri->flags |= SNDRV_TIMER_IFLG_SLAVE;
- 		list_add_tail(&timeri->open_list, &snd_timer_slave_list);
--		snd_timer_check_slave(timeri);
-+		err = snd_timer_check_slave(timeri);
-+		if (err < 0) {
-+			snd_timer_close_locked(timeri);
-+			timeri = NULL;
-+		}
- 		mutex_unlock(&register_mutex);
- 		*ti = timeri;
--		return 0;
-+		return err;
- 	}
- 
- 	/* open a master instance */
-@@ -287,6 +304,10 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 			return -EBUSY;
- 		}
- 	}
-+	if (timer->num_instances >= timer->max_instances) {
-+		mutex_unlock(&register_mutex);
-+		return -EBUSY;
-+	}
- 	timeri = snd_timer_instance_new(owner, timer);
- 	if (!timeri) {
- 		mutex_unlock(&register_mutex);
-@@ -313,25 +334,27 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 	}
- 
- 	list_add_tail(&timeri->open_list, &timer->open_list_head);
--	snd_timer_check_master(timeri);
-+	timer->num_instances++;
-+	err = snd_timer_check_master(timeri);
-+	if (err < 0) {
-+		snd_timer_close_locked(timeri);
-+		timeri = NULL;
-+	}
- 	mutex_unlock(&register_mutex);
- 	*ti = timeri;
--	return 0;
-+	return err;
- }
- EXPORT_SYMBOL(snd_timer_open);
- 
- /*
-  * close a timer instance
-+ * call this with register_mutex down.
-  */
--int snd_timer_close(struct snd_timer_instance *timeri)
-+static int snd_timer_close_locked(struct snd_timer_instance *timeri)
- {
- 	struct snd_timer *timer = NULL;
- 	struct snd_timer_instance *slave, *tmp;
- 
--	if (snd_BUG_ON(!timeri))
--		return -ENXIO;
--
--	mutex_lock(&register_mutex);
- 	list_del(&timeri->open_list);
- 
- 	/* force to stop the timer */
-@@ -339,6 +362,7 @@ int snd_timer_close(struct snd_timer_instance *timeri)
- 
- 	timer = timeri->timer;
- 	if (timer) {
-+		timer->num_instances--;
- 		/* wait, until the active callback is finished */
- 		spin_lock_irq(&timer->lock);
- 		while (timeri->flags & SNDRV_TIMER_IFLG_CALLBACK) {
-@@ -354,6 +378,7 @@ int snd_timer_close(struct snd_timer_instance *timeri)
- 		list_for_each_entry_safe(slave, tmp, &timeri->slave_list_head,
- 					 open_list) {
- 			list_move_tail(&slave->open_list, &snd_timer_slave_list);
-+			timer->num_instances--;
- 			slave->master = NULL;
- 			slave->timer = NULL;
- 			list_del_init(&slave->ack_list);
-@@ -381,9 +406,24 @@ int snd_timer_close(struct snd_timer_instance *timeri)
- 		module_put(timer->module);
- 	}
- 
--	mutex_unlock(&register_mutex);
- 	return 0;
- }
-+
-+/*
-+ * close a timer instance
-+ */
-+int snd_timer_close(struct snd_timer_instance *timeri)
-+{
-+	int err;
-+
-+	if (snd_BUG_ON(!timeri))
-+		return -ENXIO;
-+
-+	mutex_lock(&register_mutex);
-+	err = snd_timer_close_locked(timeri);
-+	mutex_unlock(&register_mutex);
-+	return err;
-+}
- EXPORT_SYMBOL(snd_timer_close);
- 
- unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
-@@ -854,6 +894,7 @@ int snd_timer_new(struct snd_card *card, char *id, struct snd_timer_id *tid,
- 	spin_lock_init(&timer->lock);
- 	tasklet_init(&timer->task_queue, snd_timer_tasklet,
- 		     (unsigned long)timer);
-+	timer->max_instances = 1000; /* default limit per timer */
- 	if (card != NULL) {
- 		timer->module = card->module;
- 		err = snd_device_new(card, SNDRV_DEV_TIMER, timer, &ops);
--- 
-2.20.1
-
+ 			}
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
 
 
