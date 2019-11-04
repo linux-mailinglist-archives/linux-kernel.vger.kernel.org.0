@@ -2,119 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D75D4EE378
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8584EE37E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:18:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfKDPSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:18:38 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41338 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbfKDPSh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:18:37 -0500
-Received: by mail-lf1-f68.google.com with SMTP id j14so12535017lfb.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 07:18:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+E7LWzV2qXCNRIBtcAIV+W0ZCP1K/HQKiWB7nT2TOy8=;
-        b=D/cI3U9xqryIIgDDI2eBVyrOv6zSDY4Pv+f328Xd9w0FWRKPL9SepMctPo8vzhaaXq
-         JKh/YWLF8H8HIBlZDPxh1/vPfUusVLkKj9OZoYWNzerJtUMNPqKhjNTdpnRpyqslruwb
-         CegL3eXGFM1VOu/QZKgQ/twCosf0mPtB6Kxb9u42OOC+Ssqzahiso82Zdjw2L1L1kNgH
-         IcnrI8vlT9QbPm3Y1rddZ4S8y8GqiWg7CJ4+g2TaNNPSbjKt8VyTvY6valcRjKybX5Vs
-         5ePdycM5TguOwltalFWXkyGhlR5maH6n+maZG1hptHww/xI9mWVeSA391hIKB7dsGeTZ
-         J89A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+E7LWzV2qXCNRIBtcAIV+W0ZCP1K/HQKiWB7nT2TOy8=;
-        b=RlCVD2+pOc6F2PNl//wkEH2ScQvbHYtzF78Wv4GA3HD9h6THKMLImufuKpATeW18g6
-         HWVceJi62v4h6Y4gYZOW6dWcYPn6s7pBKs68XSKCI0KySXweHAD9Bn1T9jhXx9aepapw
-         eJBXKlMExeMgsSZTOhBoh7B0n+dm3uhtkkxTVOX283HVPm8yL9QiUHWZfFYos1gQ2+mk
-         Fz40RsxkgbM9GrmL0mks2cL4lU7Kde0PITN8y/UV9b7Vqiip6wxLluIgPaYV9sUVQ8SL
-         Vh/J3Z0llOYsa7lIrBagPGl2oRD0Gi6d8PvAS4FECcizTpFMfzQXEYy+MC0ett+Rq5MX
-         DopA==
-X-Gm-Message-State: APjAAAWi1qa57fj3c3s0C9K3GJbyeNfLzccTowXolxy7lFCkEAZEWHLF
-        tWfG4hqFYOKohSgPtY4VcMu88PqiYhbR6OaMFj3vxQ==
-X-Google-Smtp-Source: APXvYqzj/twzOpW0JzQapnFO7QVDw82naU/CokfBf0anIa43kxBTcOQzzxx1Ne85jRVyIt1xkLGVqg4MTcpngDB6R7k=
-X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr16950975lfp.5.1572880715670;
- Mon, 04 Nov 2019 07:18:35 -0800 (PST)
+        id S1729341AbfKDPSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:18:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728701AbfKDPSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 10:18:52 -0500
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EB5521850;
+        Mon,  4 Nov 2019 15:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572880732;
+        bh=/ilrDL5VFaGpvPXs/d5mauxhkJ0VKGY7RHd5Pe6j8b0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wTywLaNuB1HoB+eHGZmmElU4pQpLJ/PV5mF36CJuy/1bQfcipZr84T1PqmiUIArU5
+         ftG3HQxRIspAdhGGux+9pRkRszRercjMzWg7Mvc2qjLl6LUTu+M5u63eWY+9Ngmmt8
+         pHfzfEv5zhebUS6m4ity8kDROsNzhpnJln/zzRKM=
+Received: by mail-qt1-f177.google.com with SMTP id r22so14367995qtt.2;
+        Mon, 04 Nov 2019 07:18:52 -0800 (PST)
+X-Gm-Message-State: APjAAAVquLknXXRDybn1jwG9xNDYI+E4KCEnfhOkhaqTRY6Zai/m8vuH
+        ftEfSknEPkom2mr3j34sf/8yX+PH79Vt8Ji5Wg==
+X-Google-Smtp-Source: APXvYqz6VOGe10++SnT2O1uuLn6+9WTHPod7Ohdefkb2HVUrRipukxsh2BWWbxVhlbAuqfj5fPwaTiEMADzf53iiCnc=
+X-Received: by 2002:a05:6214:8e5:: with SMTP id dr5mr21902677qvb.79.1572880731365;
+ Mon, 04 Nov 2019 07:18:51 -0800 (PST)
 MIME-Version: 1.0
-References: <5dbb2acf.1c69fb81.54ce2.2f48@mx.google.com> <9d1a6cba9687f94b2d36a82f42f5d4be2b16e7a6.camel@alliedtelesis.co.nz>
-In-Reply-To: <9d1a6cba9687f94b2d36a82f42f5d4be2b16e7a6.camel@alliedtelesis.co.nz>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Nov 2019 16:18:23 +0100
-Message-ID: <CACRpkdamE_Zyein+6x70noJ5Z6RJpV2qJEHOVwPxysONH+-Rag@mail.gmail.com>
-Subject: Re: linusw/devel boot bisection: v5.4-rc1-31-g6a41b6c5fc20 on rk3399-puma-haikou
-To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc:     "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "tomeu.vizoso@collabora.com" <tomeu.vizoso@collabora.com>,
-        "mgalka@collabora.com" <mgalka@collabora.com>,
-        "matthew.hart@linaro.org" <matthew.hart@linaro.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "bot@kernelci.org" <bot@kernelci.org>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "guillaume.tucker@collabora.com" <guillaume.tucker@collabora.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+References: <20191028220027.251605-1-saravanak@google.com> <20191028220027.251605-6-saravanak@google.com>
+In-Reply-To: <20191028220027.251605-6-saravanak@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 4 Nov 2019 09:18:39 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+obCEeaNjpvJ6VvO6b2F6A5oHcRD8PYAifUvBQHbQ_Og@mail.gmail.com>
+Message-ID: <CAL_Jsq+obCEeaNjpvJ6VvO6b2F6A5oHcRD8PYAifUvBQHbQ_Og@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] of: property: Skip adding device links to
+ suppliers that aren't devices
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Len Brown <lenb@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "rjui@broadcom.com" <rjui@broadcom.com>
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 8:35 PM Chris Packham
-<Chris.Packham@alliedtelesis.co.nz> wrote:
-> On Thu, 2019-10-31 at 11:41 -0700, kernelci.org bot wrote:
-
-> > Breaking commit found:
-> >
-> > -------------------------------------------------------------------------------
-> > commit 6a41b6c5fc20abced88fa0eed42ae5e5cb70b280
-> > Author: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > Date:   Fri Oct 25 09:27:03 2019 +1300
-> >
-> >     gpio: Add xgs-iproc driver
-> >
-> >     This driver supports the Chip Common A GPIO controller present on a
-> >     number of Broadcom switch ASICs with integrated SoCs. The controller is
-> >     similar to the pinctrl-nsp-gpio and pinctrl-iproc-gpio blocks but
-> >     different enough that a separate driver is required.
-> >
-> >     This has been ported from Broadcom's XLDK 5.0.3 retaining only the CCA
-> >     support (pinctrl-iproc-gpio covers CCB).
-> >
-> >     Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> >     Link: https://lore.kernel.org/r/20191024202703.8017-3-chris.packham@alliedtelesis.co.nz
-> >     Acked-by: Scott Branden <scott.branden@broadcom.com>
-> >     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Mon, Oct 28, 2019 at 5:00 PM Saravana Kannan <saravanak@google.com> wrote:
 >
-> Hmm,
+> Some devices need to be initialized really early and can't wait for
+> driver core or drivers to be functional.  These devices are typically
+> initialized without creating a struct device for their device nodes.
 >
-> I don't see how this commit would have caused the oops. The new driver
-> shouldn't (and doesn't appear to be) run on any platform as nothing
-> declares .compatible = "brcm,iproc-gpio-cca" (yet).
+> If a supplier ends up being one of these devices, skip trying to add
+> device links to them.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/of/property.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index f16f85597ccc..21c9d251318a 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1038,6 +1038,7 @@ static int of_link_to_phandle(struct device *dev, struct device_node *sup_np,
+>         struct device *sup_dev;
+>         int ret = 0;
+>         struct device_node *tmp_np = sup_np;
+> +       int is_populated;
+>
+>         of_node_get(sup_np);
+>         /*
+> @@ -1062,9 +1063,10 @@ static int of_link_to_phandle(struct device *dev, struct device_node *sup_np,
+>                 return -EINVAL;
+>         }
+>         sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
+> +       is_populated = of_node_check_flag(sup_np, OF_POPULATED);
+>         of_node_put(sup_np);
+>         if (!sup_dev)
+> -               return -EAGAIN;
+> +               return is_populated ? 0 : -EAGAIN;
 
-I think it looks really bogus as well.
+You're only using the flag in one spot and a comment would be good
+here, so I'd just do:
 
-Could it be that these systems are memory constrained such that
-the kernel image just exactly right now collides with the upper
-memory limit or corrupts its own ramdisk?
+if (of_node_check_flag(sup_np, OF_POPULATED))
+        return 0; /* Early device without a struct device */
 
-I suppose I can't ask the kernel robot to do any more detailed
-debugging.
-
-I can't see any problem with this patch.
-
-Yours,
-Linus Walleij
+>         if (!device_link_add(dev, sup_dev, dl_flags))
+>                 ret = -EAGAIN;
+>         put_device(sup_dev);
+> --
+> 2.24.0.rc0.303.g954a862665-goog
+>
