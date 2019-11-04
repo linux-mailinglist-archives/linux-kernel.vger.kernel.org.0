@@ -2,85 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60DAAEE5FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62376EE635
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:39:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfKDR3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:29:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:47984 "EHLO foss.arm.com"
+        id S1729443AbfKDRjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:39:03 -0500
+Received: from ackle.nomi.cz ([81.31.33.35]:53802 "EHLO ackle.nomi.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbfKDR33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:29:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D9E91F1;
-        Mon,  4 Nov 2019 09:29:29 -0800 (PST)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 68C9A3F71A;
-        Mon,  4 Nov 2019 09:29:27 -0800 (PST)
-Subject: Re: [Patch v4 2/6] sched: Add infrastructure to store and update
- instantaneous thermal pressure
-To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com
-Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-3-git-send-email-thara.gopinath@linaro.org>
- <379d23e5-79a5-9d90-0fb6-125d9be85e99@arm.com> <5DBC9C57.3040504@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <dc30ed89-6581-d99d-03bb-58ea40b74a3d@arm.com>
-Date:   Mon, 4 Nov 2019 18:29:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728144AbfKDRjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 12:39:03 -0500
+X-Greylist: delayed 480 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 12:39:03 EST
+Received: from localhost (unknown [IPv6:2a02:8308:a03d:b400:3f23:631f:7f50:8a55])
+        by ackle.nomi.cz (Postfix) with ESMTPSA id 91C9BA160B;
+        Mon,  4 Nov 2019 18:31:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nomi.cz; s=201904;
+        t=1572888661; bh=yZ8QHx6Jn7mHWh6no66HGyTrTgzeSBLiEMHqWT7L0Xo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fyKb+bxbPX+wibnMqLCBAvymI7w9BLIwunyOqShLQgTklVxXhO0gjocl9E/iuXL5/
+         GQjmRdu18bRqW4ZeGnHBUnqpXhFDoo4ksEaCWUpHLBBlAilKy5vnX923T2ATHzgl5c
+         +Yb6ivx/DoPD4X/ix7AtrCnvlvQtxLr/LgRzu8KDZXN/Iea9ol5TeJMcYpnEkjpJID
+         P/h72jv8t5asJUMqq5HWLz7RHJzgUerzYexfYdt9MYndMQ+HPYzv72H/BiJ4YM7BQA
+         Us0TuJMgPk8LqPL+FBzsacOi9So9+6q+GDpUTUI+H0p5DE9Jr6cDdR38xV0BTwtJdx
+         qWuvSrVd+L0aQ==
+Date:   Mon, 4 Nov 2019 18:31:01 +0100
+From:   Tomas Janousek <tomi@nomi.cz>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ck@xatom.net>,
+        intel-gfx@lists.freedesktop.org, Takashi Iwai <tiwai@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: Re: snd_hda_intel 0000:00:1f.3: No response from codec, resetting
+ bus: last cmd=
+Message-ID: <20191104173101.ugg77cwr4rdguzx6@notes.lisk.in>
+References: <b31b8649-cb2d-890b-2d4d-881e47895ee6@molgen.mpg.de>
 MIME-Version: 1.0
-In-Reply-To: <5DBC9C57.3040504@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b31b8649-cb2d-890b-2d4d-881e47895ee6@molgen.mpg.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/11/2019 21:57, Thara Gopinath wrote:
-> On 11/01/2019 08:17 AM, Dietmar Eggemann wrote:
->> On 22.10.19 22:34, Thara Gopinath wrote:
->>
->> [...]
->>
->>> +/**
->>> + * trigger_thermal_pressure_average: Trigger the thermal pressure accumulate
->>> + *				     and average algorithm
->>> + */
->>> +void trigger_thermal_pressure_average(struct rq *rq)
->>> +{
->>> +	update_thermal_load_avg(rq_clock_task(rq), rq,
->>> +				per_cpu(delta_capacity, cpu_of(rq)));
->>> +}
->>
->> Why not call update_thermal_load_avg() directly in fair.c? We do this for all
->> the other update_foo_load_avg() functions (foo eq. irq, rt_rq, dl_rq ...)
-> thermal.c is going away in next version and I am moving everything to
-> fair.c. So this is taken care of
-> 
->>
->> You don't have to pass 'u64 now', so you can hide it plus the 
-> 
-> You still need now.All the update_*_avg apis take now as a parameter.
+Hi Paul,
 
-You do need it for the ___update_load_sum() call inside the
-foo_load_avg() functions. But that doesn't mean you have to pass it into
-foo_load_avg(). Look at update_irq_load_avg() for example. We don't pass
-rq->clock as now in there.
+On Mon, Nov 04, 2019 at 01:57:54PM +0100, Paul Menzel wrote:
+> On the Dell XPS 13 9380 with Debian Sid/unstable with Linux 5.3.7
+> resuming0with Dell’s Thunderbolt TB16 dock connected, Linux spews
+> the errors below.
+> 
+> ```
+> [    0.000000] Linux version 5.3.0-1-amd64 (debian-kernel@lists.debian.org) (gcc version 9.2.1 20191008 (Debian 9.2.1-9)) #1 SMP Debian 5.3.7-1 (2019-10-19)
+> […]
+> [    1.596619] pci 0000:00:1f.3: Adding to iommu group 12
+> [   14.536274] snd_hda_intel 0000:00:1f.3: enabling device (0000 -> 0002)
+> [   14.544100] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops i915_audio_component_bind_ops [i915])
+> [   14.760751] input: HDA Intel PCH Headphone Mic as /devices/pci0000:00/0000:00:1f.3/sound/card0/input16
+> [   14.760790] input: HDA Intel PCH HDMI as /devices/pci0000:00/0000:00:1f.3/sound/card0/input17
+> [  156.614284] snd_hda_intel 0000:00:1f.3: No response from codec, disabling MSI: last cmd=0x20270503
+> [  157.622232] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
+> [  158.626371] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20370503
+> [  159.634102] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x201f0500
+> [  161.678121] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
+> [  162.682272] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20370503
+> [  163.694234] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x201f0500
+> [  165.730142] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
+> […]
+> ```
 
--int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
-+extern int sched_thermal_decay_coeff;
-+
-+int update_thermal_load_avg(struct rq *rq, u64 capacity)
- {
-+       u64 now = rq_clock_task(rq) >> sched_thermal_decay_coeff;
-+
-        if (___update_load_sum(now, &rq->avg_thermal,
-                               capacity,
-                               capacity,
+Debian's 5.3.0-1-amd64 has a corrupted signature on the snd-hda-codec-hdmi
+module which prevents the module from loading and causes these errors. Further
+details here: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=942881
+
+Workaround: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=942881#20
+
+-- 
+Tomáš Janoušek, a.k.a. Pivník, a.k.a. Liskni_si, http://work.lisk.in/
