@@ -2,106 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F6AEE578
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C46EE581
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfKDRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:03:08 -0500
-Received: from smtp118.ord1d.emailsrvr.com ([184.106.54.118]:36596 "EHLO
-        smtp118.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727989AbfKDRDI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:03:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
-        s=20190322-9u7zjiwi; t=1572886986;
-        bh=SJS/ittzgAH8BlGqcQ8TbkYpepfiiLoeVfFqeIS8430=;
-        h=Subject:To:From:Date:From;
-        b=lSOCFHyVtAeGxGgsfdwN3OXRioUUfK9ced6m1o9WRgKUOJhHYTTDo0w4ZKOjxfbtd
-         NrovYV19+Y/qcbWh1Hije4nU3yMY8ZJp4aqdXUyU0q1WyZ4syNsAk6zCQPp1dV0uWv
-         rS9vbqEROMFLMag9wJPmxIMI1BBHhPUcbUXu84bo=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1572886986;
-        bh=SJS/ittzgAH8BlGqcQ8TbkYpepfiiLoeVfFqeIS8430=;
-        h=Subject:To:From:Date:From;
-        b=blcGG18hc9sNzm6nF7m1Q5GAVQwpvZ8AWKKBn3b8Zjwg+xhK8t5HB4ENZtqI1xhi7
-         E/MIKF7dE9Up0f6KO4aqeiVhuQKF9wUAD1oylcBCwLH2HtECNMu0LxLEDjuxrFP+8L
-         2jAEN9PfXpt02C3WcyFcCkvbSHt/sGdQ3Jgb/lKE=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 985A320362;
-        Mon,  4 Nov 2019 12:03:05 -0500 (EST)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Mon, 04 Nov 2019 12:03:06 -0500
-Subject: Re: [PATCH v2] staging: comedi: rewrite macro function with GNU
- extension typeof
-To:     Jules Irenge <jbi.octave@gmail.com>,
-        outreachy-kernel@googlegroups.com
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, hsweeten@visionengravers.com
-References: <20191104163331.68173-1-jbi.octave@gmail.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <84a2d50f-a1ac-bdc5-989c-b0294e9dea22@mev.co.uk>
-Date:   Mon, 4 Nov 2019 17:03:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728568AbfKDRFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:05:03 -0500
+Received: from foss.arm.com ([217.140.110.172]:47476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727861AbfKDRFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 12:05:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9992D1F1;
+        Mon,  4 Nov 2019 09:05:02 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 605073F71A;
+        Mon,  4 Nov 2019 09:05:00 -0800 (PST)
+Date:   Mon, 4 Nov 2019 17:04:54 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 10/17] arm64: disable kretprobes with SCS
+Message-ID: <20191104170454.GA2024@lakrids.cambridge.arm.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com>
+ <20191101221150.116536-11-samitolvanen@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20191104163331.68173-1-jbi.octave@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101221150.116536-11-samitolvanen@google.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/11/2019 16:33, Jules Irenge wrote:
-> Rewrite macro function with the GNU extension typeof
-> to remove a possible side-effects of MACRO argument reuse "x".
->   - Problem could rise if arguments have different types
-> and different use though.
-> 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+On Fri, Nov 01, 2019 at 03:11:43PM -0700, Sami Tolvanen wrote:
+> With CONFIG_KRETPROBES, function return addresses are modified to
+> redirect control flow to kretprobe_trampoline. This is incompatible
+> with SCS.
+
+I'm a bit confused as to why that's the case -- could you please
+elaborate on how this is incompatible?
+
+IIUC kretrobes works by patching the function entry point with a BRK, so
+that it can modify the LR _before_ it is saved to the stack. I don't see
+how SCS affects that.
+
+When the instrumented function returns, it'll balance its SCS state,
+then "return" to kretprobe_trampoline. Since kretprobe_trampoline is
+plain assembly, it doesn't have SCS, and can modify the LR live, as it
+does.
+
+So functionally, that appears to work. What am I missing? 
+
+Thanks,
+Mark.
+
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 > ---
-> v1 - had no full commit log message, with changes not intended to be in the patch
-> v2 - remove some changes not intended to be in this driver
->       include note of a potential problem
->   drivers/staging/comedi/comedi.h | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+>  arch/arm64/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/staging/comedi/comedi.h b/drivers/staging/comedi/comedi.h
-> index 09a940066c0e..a57691a2e8d8 100644
-> --- a/drivers/staging/comedi/comedi.h
-> +++ b/drivers/staging/comedi/comedi.h
-> @@ -1103,8 +1103,10 @@ enum ni_common_signal_names {
->   
->   /* *** END GLOBALLY-NAMED NI TERMINALS/SIGNALS *** */
->   
-> -#define NI_USUAL_PFI_SELECT(x)	(((x) < 10) ? (0x1 + (x)) : (0xb + (x)))
-> -#define NI_USUAL_RTSI_SELECT(x)	(((x) < 7) ? (0xb + (x)) : 0x1b)
-> +#define NI_USUAL_PFI_SELECT(x)\
-> +	({typeof(x) x_ = (x); (x_ < 10) ? (0x1 + x_) : (0xb + x_); })
-> +#define NI_USUAL_RTSI_SELECT(x)\
-> +	({typeof(x) x_ = (x); (x_ < 7) ? (0xb + x_) : 0x1b; })
->   
->   /*
->    * mode bits for NI general-purpose counters, set with
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 3f047afb982c..e7b57a8a5531 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -165,7 +165,7 @@ config ARM64
+>  	select HAVE_STACKPROTECTOR
+>  	select HAVE_SYSCALL_TRACEPOINTS
+>  	select HAVE_KPROBES
+> -	select HAVE_KRETPROBES
+> +	select HAVE_KRETPROBES if !SHADOW_CALL_STACK
+>  	select HAVE_GENERIC_VDSO
+>  	select IOMMU_DMA if IOMMU_SUPPORT
+>  	select IRQ_DOMAIN
+> -- 
+> 2.24.0.rc1.363.gb1bccd3e3d-goog
 > 
-
-I wasn't sure about this the first time around due to the use of GNU 
-extensions in uapi header files, but I see there are a few, rare 
-instances of this GNU extension elsewhere in other uapi headers (mainly 
-in netfilter stuff), so I guess it's OK.  However, it  does mean that 
-user code that uses these macros will no longer compile unless GNU 
-extensions are enabled.
-
-Does anyone know any "best practices" regarding use of GNU extensions in 
-user header files under Linux?
-
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
