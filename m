@@ -2,92 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C4AEE0B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:10:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D836EE0BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:12:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbfKDNK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:10:29 -0500
-Received: from mga17.intel.com ([192.55.52.151]:13556 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728600AbfKDNK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:10:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 05:10:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
-   d="scan'208";a="212312059"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 04 Nov 2019 05:10:25 -0800
-Received: by lahna (sSMTP sendmail emulation); Mon, 04 Nov 2019 15:10:24 +0200
-Date:   Mon, 4 Nov 2019 15:10:24 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ck@xatom.net>,
-        intel-gfx@lists.freedesktop.org, Takashi Iwai <tiwai@suse.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: Re: snd_hda_intel 0000:00:1f.3: No response from codec, resetting
- bus: last cmd=
-Message-ID: <20191104131024.GB2552@lahna.fi.intel.com>
-References: <b31b8649-cb2d-890b-2d4d-881e47895ee6@molgen.mpg.de>
+        id S1729011AbfKDNMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:12:02 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37378 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727236AbfKDNMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 08:12:01 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8F5C42910DE0A13ECD44;
+        Mon,  4 Nov 2019 21:11:59 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 4 Nov 2019
+ 21:11:49 +0800
+Subject: Re: stable-rc-4.19: cpufeature.c:909:21: error: 'MIDR_HISI_TSV110'
+ undeclared
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <suzuki.poulose@arm.com>,
+        <catalin.marinas@arm.com>, <john.garry@huawei.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        <zhangshaokun@hisilicon.com>, <lkft-triage@lists.linaro.org>,
+        <andrew.murray@arm.com>, <will@kernel.org>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <CA+G9fYtoODTuayzXdsv=bFuRPvw1-+dmZxHqQePy6LX8ixOG5A@mail.gmail.com>
+ <98f10e13-8ec8-1690-a867-f212bcea969f@huawei.com>
+ <20191104105910.GB1945210@kroah.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <b4249354-a84e-73c8-ae76-81306301b1c1@huawei.com>
+Date:   Mon, 4 Nov 2019 21:11:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b31b8649-cb2d-890b-2d4d-881e47895ee6@molgen.mpg.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191104105910.GB1945210@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Nov 04, 2019 at 01:57:54PM +0100, Paul Menzel wrote:
-> Dear Linux folks,
+On 2019/11/4 18:59, Greg Kroah-Hartman wrote:
+> On Mon, Nov 04, 2019 at 09:10:06AM +0800, Hanjun Guo wrote:
+>> Hi Sasha, Greg,
+>>
+>> On 2019/11/4 7:22, Naresh Kamboju wrote:
+>>> stable rc 4.19  branch build broken for arm64 with the below error log,
+>>>
+>>> Build error log,
+>>> arch/arm64/kernel/cpufeature.c: In function 'unmap_kernel_at_el0':
+>>> arch/arm64/kernel/cpufeature.c:909:21: error: 'MIDR_HISI_TSV110'
+>>> undeclared (first use in this function); did you mean
+>>> 'GICR_ISACTIVER0'?
+>>>   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+>>>                     ^
+>>> arch/arm64/include/asm/cputype.h:141:12: note: in definition of macro
+>>> 'MIDR_RANGE'
+>>>   .model = m,     \
+>>>            ^
+>>> arch/arm64/kernel/cpufeature.c:909:3: note: in expansion of macro
+>>> 'MIDR_ALL_VERSIONS'
+>>>   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+>>>   ^~~~~~~~~~~~~~~~~
+>>> arch/arm64/kernel/cpufeature.c:909:21: note: each undeclared
+>>> identifier is reported only once for each function it appears in
+>>>   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+>>>                     ^
+>>> arch/arm64/include/asm/cputype.h:141:12: note: in definition of macro
+>>> 'MIDR_RANGE'
+>>>   .model = m,     \
+>>>            ^
+>>> arch/arm64/kernel/cpufeature.c:909:3: note: in expansion of macro
+>>> 'MIDR_ALL_VERSIONS'
+>>>   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
+>>
+>> Patch "efd00c7 arm64: Add MIDR encoding for HiSilicon Taishan CPUs" needs to
+>> be bacported as well, would you like me to do that, or just cherry-pick by yourself?
 > 
-> 
-> On the Dell XPS 13 9380 with Debian Sid/unstable with Linux 5.3.7
-> resuming0with Dell’s Thunderbolt TB16 dock connected, Linux spews
-> the errors below.
+> I need the backport please, cherry-pick fails :(
 
-I have this machine here so can try to reproduce it as well.
+I will send it out later.
 
-> ```
-> [    0.000000] Linux version 5.3.0-1-amd64 (debian-kernel@lists.debian.org) (gcc version 9.2.1 20191008 (Debian 9.2.1-9)) #1 SMP Debian 5.3.7-1 (2019-10-19)
-> […]
-> [    1.596619] pci 0000:00:1f.3: Adding to iommu group 12
-> [   14.536274] snd_hda_intel 0000:00:1f.3: enabling device (0000 -> 0002)
-> [   14.544100] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops i915_audio_component_bind_ops [i915])
-> [   14.760751] input: HDA Intel PCH Headphone Mic as /devices/pci0000:00/0000:00:1f.3/sound/card0/input16
-> [   14.760790] input: HDA Intel PCH HDMI as /devices/pci0000:00/0000:00:1f.3/sound/card0/input17
-> [  156.614284] snd_hda_intel 0000:00:1f.3: No response from codec, disabling MSI: last cmd=0x20270503
-> [  157.622232] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
-> [  158.626371] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20370503
-> [  159.634102] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x201f0500
-> [  161.678121] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
-> [  162.682272] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20370503
-> [  163.694234] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x201f0500
-> [  165.730142] snd_hda_intel 0000:00:1f.3: No response from codec, resetting bus: last cmd=0x20270503
-> […]
-> ```
-> 
-> In the bug report *[Intel Ice Lake, snd-hda-intel, HDMI] "No
-> response from codec" (after display hotplug?)* [1], note it’s a
-> different model, Takashi comments that this is a Thunderbolt or
-> i915 issue.
+Thanks
+Hanjun
 
-0000:00:1f.3 is on PCH so not sure how it could be related to
-Thunderbolt, well or i915 for that matter.
-
-> Please tell me, how to debug this further.
-
-Unfortunately I don't know much about the HDA driver so can't really
-suggest anything.
