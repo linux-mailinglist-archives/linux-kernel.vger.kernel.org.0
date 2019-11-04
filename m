@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6B8EEBC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55588EEBD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfKDVvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:51:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43824 "EHLO mail.kernel.org"
+        id S1730472AbfKDVvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730411AbfKDVvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:05 -0500
+        id S1729997AbfKDVvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:08 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31229217F5;
-        Mon,  4 Nov 2019 21:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3BD5217F5;
+        Mon,  4 Nov 2019 21:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904264;
-        bh=taHtxd+ytwMIQ/xVfUB+ba14QxmtBFsEvaK2BHFPEc0=;
+        s=default; t=1572904267;
+        bh=d11sopKfzpOkYe5kN+ObEO6qxaUWsS4eeR8/fg6kiik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCeIyKxruYEw4QZmZXbjOlT09IdgOgvnVn3XFviiSyUzJYTAINo+j+YCCJdPQXly1
-         fPpysH6C6YKx1XZiTPkBL/T+2iGCFYTg30qu5qvgOorYoOkoa4BgYecUupxnWDusq6
-         K4WsDCIXn4uNk3JowNPJsmfuiyKG3fe9/FmKiE1g=
+        b=b8gG50WTLcz4sIySVj9D6blRnhNH8uYzD07LvmYeVurz4qLycpoiWcAaS+rMAE/0b
+         v7AzfS0z9Q0s3jy9gVKQtllu8H4b2u4HL+oW3KifpDes+NrIXcaQWUdhj4q1wjMG3N
+         6DNSsJLSb9hfyXGp7u8pQXNwksQJSP2bW6l1DY5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 43/62] USB: serial: whiteheat: fix line-speed endianness
-Date:   Mon,  4 Nov 2019 22:45:05 +0100
-Message-Id: <20191104211947.080300933@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 4.9 44/62] HID: i2c-hid: add Trekstor Primebook C11B to descriptor override
+Date:   Mon,  4 Nov 2019 22:45:06 +0100
+Message-Id: <20191104211947.498163681@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
 References: <20191104211901.387893698@linuxfoundation.org>
@@ -42,63 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 84968291d7924261c6a0624b9a72f952398e258b upstream.
+commit 09f3dbe474735df13dd8a66d3d1231048d9b373f upstream.
 
-Add missing endianness conversion when setting the line speed so that
-this driver might work also on big-endian machines.
+The Primebook C11B uses the SIPODEV SP1064 touchpad. There are 2 versions
+of this 2-in-1 and the touchpad in the older version does not supply
+descriptors, so it has to be added to the override list.
 
-Also use an unsigned format specifier in the corresponding debug
-message.
-
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191029102354.2733-3-johan@kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/whiteheat.c |    9 ++++++---
- drivers/usb/serial/whiteheat.h |    2 +-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/usb/serial/whiteheat.c
-+++ b/drivers/usb/serial/whiteheat.c
-@@ -681,6 +681,7 @@ static void firm_setup_port(struct tty_s
- 	struct device *dev = &port->dev;
- 	struct whiteheat_port_settings port_settings;
- 	unsigned int cflag = tty->termios.c_cflag;
-+	speed_t baud;
- 
- 	port_settings.port = port->port_number + 1;
- 
-@@ -741,11 +742,13 @@ static void firm_setup_port(struct tty_s
- 	dev_dbg(dev, "%s - XON = %2x, XOFF = %2x\n", __func__, port_settings.xon, port_settings.xoff);
- 
- 	/* get the baud rate wanted */
--	port_settings.baud = tty_get_baud_rate(tty);
--	dev_dbg(dev, "%s - baud rate = %d\n", __func__, port_settings.baud);
-+	baud = tty_get_baud_rate(tty);
-+	port_settings.baud = cpu_to_le32(baud);
-+	dev_dbg(dev, "%s - baud rate = %u\n", __func__, baud);
- 
- 	/* fixme: should set validated settings */
--	tty_encode_baud_rate(tty, port_settings.baud, port_settings.baud);
-+	tty_encode_baud_rate(tty, baud, baud);
-+
- 	/* handle any settings that aren't specified in the tty structure */
- 	port_settings.lloop = 0;
- 
---- a/drivers/usb/serial/whiteheat.h
-+++ b/drivers/usb/serial/whiteheat.h
-@@ -91,7 +91,7 @@ struct whiteheat_simple {
- 
- struct whiteheat_port_settings {
- 	__u8	port;		/* port number (1 to N) */
--	__u32	baud;		/* any value 7 - 460800, firmware calculates
-+	__le32	baud;		/* any value 7 - 460800, firmware calculates
- 				   best fit; arrives little endian */
- 	__u8	bits;		/* 5, 6, 7, or 8 */
- 	__u8	stop;		/* 1 or 2, default 1 (2 = 1.5 if bits = 5) */
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -323,6 +323,25 @@ static const struct dmi_system_id i2c_hi
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
+ 	{
++		/*
++		 * There are at least 2 Primebook C11B versions, the older
++		 * version has a product-name of "Primebook C11B", and a
++		 * bios version / release / firmware revision of:
++		 * V2.1.2 / 05/03/2018 / 18.2
++		 * The new version has "PRIMEBOOK C11B" as product-name and a
++		 * bios version / release / firmware revision of:
++		 * CFALKSW05_BIOS_V1.1.2 / 11/19/2018 / 19.2
++		 * Only the older version needs this quirk, note the newer
++		 * version will not match as it has a different product-name.
++		 */
++		.ident = "Trekstor Primebook C11B",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TREKSTOR"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Primebook C11B"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
++	{
+ 		.ident = "Direkt-Tek DTLAPY116-2",
+ 		.matches = {
+ 			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Direkt-Tek"),
 
 
