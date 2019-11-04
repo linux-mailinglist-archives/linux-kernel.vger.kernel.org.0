@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E27EEDBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3B9EF01D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389032AbfKDWJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:09:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42620 "EHLO mail.kernel.org"
+        id S1730106AbfKDVv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390410AbfKDWJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:29 -0500
+        id S1730480AbfKDVvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:22 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BCC2205C9;
-        Mon,  4 Nov 2019 22:09:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36BE0217F4;
+        Mon,  4 Nov 2019 21:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905369;
-        bh=rAJzLnzBVgEPuV8kR1+7VCm/ydjwode9suZJvidJaO4=;
+        s=default; t=1572904281;
+        bh=GlhZ2HzOLMzQhFoybuhn7NpPMhBIK64mRol5aXbkL/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HfFB5GuiEk3eLVVUzcpMJ340Z1NTOaU8ZsZjuaGyUdMoNwIKyfar0npfGU8h0DOhV
-         Sqcp7UJJ4jXh3/wGWZPRACExJ+0E+P0IEY5myio5+8uWPFfypAkfdJ9/nayR132I07
-         TbHJVo9qK9bNQGM9Sb/agBxq3ZG4oWoGsQy0zU7s=
+        b=b/KVFWXAS58Gxq3oTynLLMsFr/7SbAPpmoOdrlgJAZojuvBUMBAJ1yL3p4gN44kjm
+         jP2j2BshAqKoXz8r8VIyHWOFoQqSH8ooY9eDBwvrE3LDiHg9Y81k/zQZ/Wonlpyc2/
+         X+CURBS3VDHD7d/8rNFt2Vbmm4aU4pioglWQnX2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.3 121/163] um-ubd: Entrust re-queue to the upper layers
+        stable@vger.kernel.org, Nicolas Waisman <nico@semmle.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 49/62] rtlwifi: Fix potential overflow on P2P code
 Date:   Mon,  4 Nov 2019 22:45:11 +0100
-Message-Id: <20191104212148.975125444@linuxfoundation.org>
+Message-Id: <20191104211951.566497653@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+From: Laura Abbott <labbott@redhat.com>
 
-commit d848074b2f1eb11a38691285f7366bce83087014 upstream.
+commit 8c55dedb795be8ec0cf488f98c03a1c2176f7fb1 upstream.
 
-Fixes crashes due to ubd requeue logic conflicting with the block-mq
-logic. Crash is reproducible in 5.0 - 5.3.
+Nicolas Waisman noticed that even though noa_len is checked for
+a compatible length it's still possible to overrun the buffers
+of p2pinfo since there's no check on the upper bound of noa_num.
+Bound noa_num against P2P_MAX_NOA_NUM.
 
-Fixes: 53766defb8c8 ("um: Clean-up command processing in UML UBD driver")
-Cc: stable@vger.kernel.org # v5.0+
-Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/um/drivers/ubd_kern.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/ps.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -1403,8 +1403,12 @@ static blk_status_t ubd_queue_rq(struct
- 
- 	spin_unlock_irq(&ubd_dev->lock);
- 
--	if (ret < 0)
--		blk_mq_requeue_request(req, true);
-+	if (ret < 0) {
-+		if (ret == -ENOMEM)
-+			res = BLK_STS_RESOURCE;
-+		else
-+			res = BLK_STS_DEV_RESOURCE;
-+	}
- 
- 	return res;
- }
+--- a/drivers/net/wireless/realtek/rtlwifi/ps.c
++++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
+@@ -770,6 +770,9 @@ static void rtl_p2p_noa_ie(struct ieee80
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
++
+ 			}
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
+@@ -864,6 +867,9 @@ static void rtl_p2p_action_ie(struct iee
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
++
+ 			}
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
 
 
