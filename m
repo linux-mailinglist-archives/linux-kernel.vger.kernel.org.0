@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13794EDF3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF1AEDF42
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfKDLyV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 06:54:21 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:51798 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbfKDLyR (ORCPT
+        id S1729244AbfKDLy2 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 06:54:28 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:47360 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729197AbfKDLy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:54:17 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        Mon, 4 Nov 2019 06:54:27 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id E384360038F;
-        Mon,  4 Nov 2019 12:54:13 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+        by skedge03.snt-world.com (Postfix) with ESMTPS id B55B360CAED;
+        Mon,  4 Nov 2019 12:54:16 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 4 Nov 2019
- 12:54:13 +0100
+ 12:54:16 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 4 Nov 2019 12:54:13 +0100
+ 15.01.1713.004; Mon, 4 Nov 2019 12:54:16 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
@@ -38,13 +38,13 @@ CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 6/9] ARM: dts: imx6ul-kontron-n6x1x: Add 'chosen' node with
- 'stdout-path'
-Thread-Topic: [PATCH v4 6/9] ARM: dts: imx6ul-kontron-n6x1x: Add 'chosen' node
- with 'stdout-path'
-Thread-Index: AQHVkwaTeRRZFHGW4UG8zlJmKJZv9A==
-Date:   Mon, 4 Nov 2019 11:54:13 +0000
-Message-ID: <20191104115352.8728-7-frieder.schrempf@kontron.de>
+Subject: [PATCH v4 7/9] ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply and
+ overcurrent polarity to usb nodes
+Thread-Topic: [PATCH v4 7/9] ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply
+ and overcurrent polarity to usb nodes
+Thread-Index: AQHVkwaVufhtjmqoVUmeatWPXxjOJA==
+Date:   Mon, 4 Nov 2019 11:54:16 +0000
+Message-ID: <20191104115352.8728-8-frieder.schrempf@kontron.de>
 References: <20191104115352.8728-1-frieder.schrempf@kontron.de>
 In-Reply-To: <20191104115352.8728-1-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -58,7 +58,7 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: E384360038F.AE84F
+X-SnT-MailScanner-ID: B55B360CAED.A29C4
 X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
@@ -75,31 +75,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The Kontron N6x1x SoMs all use uart4 as a debug serial interface.
-Therefore we set it in the 'chosen' node.
+To silence the warnings shown by the driver at boot time, we add a
+fixed regulator for the 5V supply of usbotg2 and specify the polarity
+of the overcurrent signal for usbotg1.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
-index a843e028bcde..a17af4d9bfdf 100644
---- a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
-@@ -7,6 +7,12 @@
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
+index 93a0f0ca5b84..5725e5fc271b 100644
+--- a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
+@@ -45,6 +45,13 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
  
- #include <dt-bindings/gpio/gpio.h>
- 
-+/ {
-+	chosen {
-+		stdout-path = &uart4;
++	reg_5v: regulator-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
 +	};
-+};
 +
- &ecspi2 {
- 	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
- 	pinctrl-names = "default";
+ 	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb_otg1_vbus";
+@@ -187,6 +194,7 @@
+ 	srp-disable;
+ 	hnp-disable;
+ 	adp-disable;
++	over-current-active-low;
+ 	vbus-supply = <&reg_usb_otg1_vbus>;
+ 	status = "okay";
+ };
+@@ -194,6 +202,7 @@
+ &usbotg2 {
+ 	dr_mode = "host";
+ 	disable-over-current;
++	vbus-supply = <&reg_5v>;
+ 	status = "okay";
+ };
+ 
 -- 
 2.17.1
