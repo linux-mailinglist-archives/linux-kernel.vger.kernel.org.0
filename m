@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31ED1EE704
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 19:13:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F08EE70E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 19:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfKDSNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 13:13:09 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42085 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729575AbfKDSNE (ORCPT
+        id S1729674AbfKDSNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 13:13:35 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34649 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729573AbfKDSND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 13:13:04 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s5so4591253pfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 10:13:02 -0800 (PST)
+        Mon, 4 Nov 2019 13:13:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id e4so11880994pgs.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 10:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=U+l5F417FgwxWcTtFu32EwI1EYbG0FhwLJDw4Yrt6Kk=;
-        b=a1jb8OcwTE5t6kokOfUIYVmLkWL2FZZgFIN/0R5uVkBpmKKDWvJfCvPfJ9u8yB8Kf8
-         NTYF3XWmVTiaxaNVI32u9UZmU5S+IS08LieUsFQCNBRqlL9X8OJqF/sARnquhMvO75/Y
-         u5RXCedd4ox1Jw6PcwNFBSW6IQXUOSYq/74z0p/hT6/d2jnWw9niOxQVdYx9gHNJ1evp
-         U5GRkytFxc9LurRnKgxfZU8Nh1B+6qqbkdCPXF0puBUkhJdlYIWgdJQqoMmIY5O494AJ
-         zycuKZEwFVUJwV3QkUlpeRJpzomlzAhsRU5TuINBJeTDcM+2v1UbRJQFYB6bSImL5fH7
-         WBKg==
+        bh=7stn5BvcqloAoNFXBRjk24YnQtbNG8jrtuNQJLNGPFg=;
+        b=EMQbpOtI2YNym5gI75LlpBcBp14xUt5R7POgwM7ZPd9UULrfsWzvLsBIy0RkRVMprw
+         vLnspaQOxFB1BYjNjYrhC6eSCyqdMOlvaosK530wtsApKQVKpRieKHKJFahv6E9avbXD
+         vtAFBxBriElcz+PI689voveZ014HXJbT74mdK6zrubEhk3UJjIKRT9AyKaHGiJhXn13x
+         c2k/omTkcmBzJsJMLJhM+28dBfx7G0QAwbI6KY1N2Ml536/XZ3pRUDLnnhuZld/KO/zB
+         xGyEFN+3GcnMsF6BWXu3wNquc5Tkj7h47UE2r+t1roOHuxrUVdTzVy+OWQmbUubOXvtT
+         iqzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=U+l5F417FgwxWcTtFu32EwI1EYbG0FhwLJDw4Yrt6Kk=;
-        b=FUtJgCiCEQaK+AYq26AlUQOo1xIDi8xQb/scMH/IPS/OfMlnYjM1zQYtphY4kIHnvV
-         U6/+AwG6vd1JdyBJ+aqinao0fStfMRE2+lprtvLKTN4FdIHaPyEqMFrRw2cW6kHkhwy4
-         TbiB7KVVTYYRLl3jwK0g6M4vRC2QsS2Cbh0ys5lNKSaWoUvQ39QXo4epqMwZ60AiZdJZ
-         Ajl96ZtsGcQ0gmqB6uqRa/xX6g6Hy6Wl0SrS3SALgmUyJlW2UGfBuxVMMdQyB7VIZvFI
-         E/UkbOxtWnAO3kqjRxYEZ59lo91TVLXCgudMig2WN4ZCuOuWAKtgEheHBYdokixETk89
-         j4ww==
-X-Gm-Message-State: APjAAAXOeyzhueIJfkx4bkZ1U//CQ+h/dVyKXtwYdQbfcfg11IYISzsr
-        GoNuGfONdbvXoUul+gGm3NaQtEUmEcM=
-X-Google-Smtp-Source: APXvYqzCIazSOlhg8dtcxCKtg7yczg0yxQQqajiW7v+NNEdksIMYQDL6Q4pZV46stS56NlEV7na6IA==
-X-Received: by 2002:a17:90a:7188:: with SMTP id i8mr601428pjk.54.1572891181785;
-        Mon, 04 Nov 2019 10:13:01 -0800 (PST)
+        bh=7stn5BvcqloAoNFXBRjk24YnQtbNG8jrtuNQJLNGPFg=;
+        b=R7gEY84Fn1UprcMDA3XQzKqCz8W09eR6AQUEty3j/rt/2NJsAtSyl6zgP1xEByIvfA
+         U2MOA17IFByCXLb6CXwQD4uJow6vPaPYpzn3KjFgvGsjr2WlUWWRkPbQ2+NBKSmh9A6V
+         LvX3OnMni5iPLOEfBinszc6QbuT+REWm93soHcKc5w98xAmKiWzYIRFiFux9m0VK74Bh
+         IbolwlvUZEjizsT5HvDBI6qGuvpk+Y751n+jaV2/fyAMcvjxgHzxeusGGivjaO8OBvPh
+         nuRrq1gk6aznfiHtSDzXXNGf1vt/HxGPlcWgiuOVX7H4w8ybB2zJHXf0KD8iTtyCN1kC
+         Cvxg==
+X-Gm-Message-State: APjAAAU76+7RNYdRi3u7Bvq5osdkkQqwx00UNa0TsLNZqjECZA4imlEK
+        +s5KDtH0nT2Ib1UbcGPdC0kouQ==
+X-Google-Smtp-Source: APXvYqzkQy2pzCtrTxcMra33CDej6fLIaKuyqjk5BkOvfXv7zUxPzz3Io93GJfRoooqN07tfN+gfrQ==
+X-Received: by 2002:a63:1c03:: with SMTP id c3mr30491255pgc.198.1572891182711;
+        Mon, 04 Nov 2019 10:13:02 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
         by smtp.gmail.com with ESMTPSA id o12sm16149520pgl.86.2019.11.04.10.13.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 10:13:01 -0800 (PST)
+        Mon, 04 Nov 2019 10:13:02 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/14] coresight: etm4x: Improve usability of sysfs - include/exclude addr.
-Date:   Mon,  4 Nov 2019 11:12:45 -0700
-Message-Id: <20191104181251.26732-9-mathieu.poirier@linaro.org>
+Subject: [PATCH 09/14] coresight: etm4x: Improve usability of sysfs - CID and VMID masks.
+Date:   Mon,  4 Nov 2019 11:12:46 -0700
+Message-Id: <20191104181251.26732-10-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191104181251.26732-1-mathieu.poirier@linaro.org>
 References: <20191104181251.26732-1-mathieu.poirier@linaro.org>
@@ -60,62 +60,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mike Leach <mike.leach@linaro.org>
 
-Setting include / exclude on a range had to be done by setting
-the bit in 'mode' before setting the range. However, setting this
-bit also had the effect of altering the current range as well.
+Context ID and VM ID masks required 2 value inputs, even when the
+second value is ignored as insufficient CID / VMID comparators are
+implemented.
 
-Changed to only set include / exclude setting of a range at the point of
-setting that range. Either use a 3rd input parameter as the include exclude
-value, or if not present use the current value of 'mode'. Do not change
-current range when 'mode' changes.
+Permit a single value to be used if that is sufficient to cover all
+implemented comparators.
 
 Signed-off-by: Mike Leach <mike.leach@linaro.org>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- .../hwtracing/coresight/coresight-etm4x-sysfs.c    | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x-sysfs.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-index ea1e034809a0..8c056dd1a55e 100644
+index 8c056dd1a55e..1cfbddda0b4d 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-@@ -297,8 +297,6 @@ static ssize_t mode_store(struct device *dev,
- 
- 	spin_lock(&drvdata->spinlock);
- 	config->mode = val & ETMv4_MODE_ALL;
--	etm4_set_mode_exclude(drvdata,
--			      config->mode & ETM_MODE_EXCLUDE ? true : false);
- 
- 	if (drvdata->instrp0 == true) {
- 		/* start by clearing instruction P0 field */
-@@ -972,8 +970,12 @@ static ssize_t addr_range_store(struct device *dev,
- 	unsigned long val1, val2;
+@@ -1794,6 +1794,7 @@ static ssize_t ctxid_masks_store(struct device *dev,
+ 	unsigned long val1, val2, mask;
  	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  	struct etmv4_config *config = &drvdata->config;
-+	int elements, exclude;
++	int nr_inputs;
  
--	if (sscanf(buf, "%lx %lx", &val1, &val2) != 2)
-+	elements = sscanf(buf, "%lx %lx %x", &val1, &val2, &exclude);
-+
-+	/*  exclude is optional, but need at least two parameter */
-+	if (elements < 2)
- 		return -EINVAL;
- 	/* lower address comparator cannot have a higher address value */
- 	if (val1 > val2)
-@@ -1001,9 +1003,11 @@ static ssize_t addr_range_store(struct device *dev,
  	/*
- 	 * Program include or exclude control bits for vinst or vdata
- 	 * whenever we change addr comparators to ETM_ADDR_TYPE_RANGE
-+	 * use supplied value, or default to bit set in 'mode'
+ 	 * Don't use contextID tracing if coming from a PID namespace.  See
+@@ -1809,7 +1810,9 @@ static ssize_t ctxid_masks_store(struct device *dev,
  	 */
--	etm4_set_mode_exclude(drvdata,
--			      config->mode & ETM_MODE_EXCLUDE ? true : false);
-+	if (elements != 3)
-+		exclude = config->mode & ETM_MODE_EXCLUDE;
-+	etm4_set_mode_exclude(drvdata, exclude ? true : false);
+ 	if (!drvdata->ctxid_size || !drvdata->numcidc)
+ 		return -EINVAL;
+-	if (sscanf(buf, "%lx %lx", &val1, &val2) != 2)
++	/* one mask if <= 4 comparators, two for up to 8 */
++	nr_inputs = sscanf(buf, "%lx %lx", &val1, &val2);
++	if ((drvdata->numcidc > 4) && (nr_inputs != 2))
+ 		return -EINVAL;
  
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
+ 	spin_lock(&drvdata->spinlock);
+@@ -1983,6 +1986,7 @@ static ssize_t vmid_masks_store(struct device *dev,
+ 	unsigned long val1, val2, mask;
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 	struct etmv4_config *config = &drvdata->config;
++	int nr_inputs;
+ 
+ 	/*
+ 	 * only implemented when vmid tracing is enabled, i.e. at least one
+@@ -1990,7 +1994,9 @@ static ssize_t vmid_masks_store(struct device *dev,
+ 	 */
+ 	if (!drvdata->vmid_size || !drvdata->numvmidc)
+ 		return -EINVAL;
+-	if (sscanf(buf, "%lx %lx", &val1, &val2) != 2)
++	/* one mask if <= 4 comparators, two for up to 8 */
++	nr_inputs = sscanf(buf, "%lx %lx", &val1, &val2);
++	if ((drvdata->numvmidc > 4) && (nr_inputs != 2))
+ 		return -EINVAL;
+ 
+ 	spin_lock(&drvdata->spinlock);
 -- 
 2.17.1
 
