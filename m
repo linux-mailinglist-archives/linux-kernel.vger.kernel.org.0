@@ -2,96 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5EB8EDB4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36720EDB4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:09:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbfKDJKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 04:10:33 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41616 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfKDJKc (ORCPT
+        id S1728305AbfKDJJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 04:09:50 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33300 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfKDJJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 04:10:32 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA49976c100924;
-        Mon, 4 Nov 2019 09:10:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2019-08-05;
- bh=roilGUmbFv/GpGLtZL/JxWvuhLiWtGDGU3pEf7QNJdU=;
- b=Rk94t5TFt6sQB93LOLcjE2UVxWCD+WxZ+mvEPU8fy7ivzRucxQzIy+wgxxE2pjp5Qulr
- K8hbfz/xzcTcM1O3k3JY73zsUT0fQMfrFeBqD2BXJhBL3IZwSQkqNAH7LaTUOz7uvMaP
- ljepEcmGujHrXRCD6ZyzrOJPsJT+S7N66rhED72WvKSb2pFeJ6ebtUC1QCmQTSjZ9uth
- ibivx/2KRHh5HyWsvWOjbdq5xx4lLjbWWvAdVMDdLFiHOX2DeKDDDWx2UY5tb/X38qHa
- S8rpShX7P5gDwJpwFoIsdR6UNN+NhHVOAiJNmqx2IOCI4jPWcQ+TZHqbhUy84Pcz7QbH ug== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2w12eqwpyh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 09:10:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA499EGY090692;
-        Mon, 4 Nov 2019 09:10:14 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2w1kxcvkdm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 09:10:14 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA49AC4Q007859;
-        Mon, 4 Nov 2019 09:10:12 GMT
-Received: from z2.cn.oracle.com (/10.182.71.218)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Nov 2019 01:10:11 -0800
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     yamada.masahiro@socionext.com, jeyu@kernel.org,
-        gladkov.alexey@gmail.com, rusty@rustcorp.com.au,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH] moduleparam: fix parameter description mismatch
-Date:   Mon,  4 Nov 2019 17:09:37 +0800
-Message-Id: <1572858577-8349-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911040091
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911040091
+        Mon, 4 Nov 2019 04:09:50 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 9DB8E1C06CF; Mon,  4 Nov 2019 10:09:48 +0100 (CET)
+Date:   Mon, 4 Nov 2019 10:09:48 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Riku Voipio <riku.voipio@iki.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 01/10] leds: pca953x: Use of_device_get_match_data()
+Message-ID: <20191104090948.GH12355@duo.ucw.cz>
+References: <20191004214334.149976-1-swboyd@chromium.org>
+ <20191004214334.149976-2-swboyd@chromium.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tT3UgwmDxwvOMqfu"
+Content-Disposition: inline
+In-Reply-To: <20191004214334.149976-2-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first parameter of module_param is @name, but @value is used
-in description. Fix it.
 
-Fixes: 546970bc6afc ("param: add kerneldoc to moduleparam.h")
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
----
- include/linux/moduleparam.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--tT3UgwmDxwvOMqfu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index 5ba250d..e5c3e23 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -100,11 +100,11 @@ struct kparam_array
- 
- /**
-  * module_param - typesafe helper for a module/cmdline parameter
-- * @value: the variable to alter, and exposed parameter name.
-+ * @name: the variable to alter, and exposed parameter name.
-  * @type: the type of the parameter
-  * @perm: visibility in sysfs.
-  *
-- * @value becomes the module parameter, or (prefixed by KBUILD_MODNAME and a
-+ * @name becomes the module parameter, or (prefixed by KBUILD_MODNAME and a
-  * ".") the kernel commandline parameter.  Note that - is changed to _, so
-  * the user can use "foo-bar=1" even for variable "foo_bar".
-  *
--- 
-1.8.3.1
+Hi!
 
+> This driver can use the of_device_get_match_data() API to simplify the
+> code. Replace calls to of_match_device() with this newer API under the
+> assumption that where it is called will be when we know the device is
+> backed by a DT node. This nicely avoids referencing the match table when
+> it is undefined with configurations where CONFIG_OF=3Dn.
+
+
+> Please ack or pick for immediate merge so the last patch can be
+  merged.
+
+I see nothing obviously wrong, so...
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+=2E.. but it did not apply on top of leds-next tree.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tT3UgwmDxwvOMqfu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q3AAKCRAw5/Bqldv6
+8s7OAJ9ckVxuB03nzIBp5YGyOjKGWbJUbwCbBI3dtPnhr0M5qongHi/gtWVsHX0=
+=+nqt
+-----END PGP SIGNATURE-----
+
+--tT3UgwmDxwvOMqfu--
