@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B9FEEBB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:50:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 631A3EEC0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387681AbfKDVuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:50:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42316 "EHLO mail.kernel.org"
+        id S1730997AbfKDVxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbfKDVuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:18 -0500
+        id S1730973AbfKDVx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:26 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A306218BA;
-        Mon,  4 Nov 2019 21:50:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7B7A21929;
+        Mon,  4 Nov 2019 21:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904216;
-        bh=NKZrH064zSWHbCkv4ldq9xtQnckfn8tIW6d4IdRtN2M=;
+        s=default; t=1572904405;
+        bh=Xcw/RNR9EXgHEbuvdCsh/HVA7ipQvPjNV0sKMexd29I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HM26WWjzLZOWSbNgoqtfFvvxwkD+sOE/WkwKdrvztY/HqAiZMs7ZK2caJxjPx8qXC
-         LqQaRxEngVGrN7Ue+mVaet+oom9T1YNc6P+a5ujcWhFxqvewzwPdGl/oxBk48iJ8tH
-         RYcqBeY0x2C1MJq153Pf61vE6iaIs4c+eIYpdmxw=
+        b=Lz/l83yR/9+lReNvH76yglmndTa0zcYC1lVs5pupRPnsfu6/WKh63B8o3q7knBRCF
+         DAqh/6QtGAzmyrQS7RYgdbppFG4d1BDW/WeVbdlTiWPHVF97Xm6nQ3coEOalIsDqi9
+         sshKUs7HBNjA8Azem5V+s4+KE6GK+5u+ZDyIgjUo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Kujau <lists@nerdbynature.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Genki Sky <sky@genki.is>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 09/62] scripts/setlocalversion: Improve -dirty check with git-status --no-optional-locks
-Date:   Mon,  4 Nov 2019 22:44:31 +0100
-Message-Id: <20191104211911.247873148@linuxfoundation.org>
+Subject: [PATCH 4.14 34/95] nfs: Fix nfsi->nrequests count error on nfs_inode_remove_request
+Date:   Mon,  4 Nov 2019 22:44:32 +0100
+Message-Id: <20191104212059.355168342@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +45,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-[ Upstream commit ff64dd4857303dd5550faed9fd598ac90f0f2238 ]
+[ Upstream commit 33ea5aaa87cdae0f9af4d6b7ee4f650a1a36fd1d ]
 
-git-diff-index does not refresh the index for you, so using it for a
-"-dirty" check can give misleading results. Commit 6147b1cf19651
-("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-fix this by switching to git-status, but it overlooked the fact that
-git-status also writes to the .git directory of the source tree, which
-is definitely not kosher for an out-of-tree (O=) build. That is getting
-reverted.
+When xfstests testing, there are some WARNING as below:
 
-Fortunately, git-status now supports avoiding writing to the index via
-the --no-optional-locks flag, as of git 2.14. It still calculates an
-up-to-date index, but it avoids writing it out to the .git directory.
+WARNING: CPU: 0 PID: 6235 at fs/nfs/inode.c:122 nfs_clear_inode+0x9c/0xd8
+Modules linked in:
+CPU: 0 PID: 6235 Comm: umount.nfs
+Hardware name: linux,dummy-virt (DT)
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : nfs_clear_inode+0x9c/0xd8
+lr : nfs_evict_inode+0x60/0x78
+sp : fffffc000f68fc00
+x29: fffffc000f68fc00 x28: fffffe00c53155c0
+x27: fffffe00c5315000 x26: fffffc0009a63748
+x25: fffffc000f68fd18 x24: fffffc000bfaaf40
+x23: fffffc000936d3c0 x22: fffffe00c4ff5e20
+x21: fffffc000bfaaf40 x20: fffffe00c4ff5d10
+x19: fffffc000c056000 x18: 000000000000003c
+x17: 0000000000000000 x16: 0000000000000000
+x15: 0000000000000040 x14: 0000000000000228
+x13: fffffc000c3a2000 x12: 0000000000000045
+x11: 0000000000000000 x10: 0000000000000000
+x9 : 0000000000000000 x8 : 0000000000000000
+x7 : 0000000000000000 x6 : fffffc00084b027c
+x5 : fffffc0009a64000 x4 : fffffe00c0e77400
+x3 : fffffc000c0563a8 x2 : fffffffffffffffb
+x1 : 000000000000764e x0 : 0000000000000001
+Call trace:
+ nfs_clear_inode+0x9c/0xd8
+ nfs_evict_inode+0x60/0x78
+ evict+0x108/0x380
+ dispose_list+0x70/0xa0
+ evict_inodes+0x194/0x210
+ generic_shutdown_super+0xb0/0x220
+ nfs_kill_super+0x40/0x88
+ deactivate_locked_super+0xb4/0x120
+ deactivate_super+0x144/0x160
+ cleanup_mnt+0x98/0x148
+ __cleanup_mnt+0x38/0x50
+ task_work_run+0x114/0x160
+ do_notify_resume+0x2f8/0x308
+ work_pending+0x8/0x14
 
-So, let's retry the solution from commit 6147b1cf19651 using this new
-flag first, and if it fails, we assume this is an older version of git
-and just use the old git-diff-index method.
+The nrequest should be increased/decreased only if PG_INODE_REF flag
+was setted.
 
-It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-the output of git-status (you have to be careful about the difference
-betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-directly to grep and use a regex that's good enough for both the
-git-status and git-diff-index version.
+But in the nfs_inode_remove_request function, it maybe decrease when
+no PG_INODE_REF flag, this maybe lead nrequests count error.
 
-Cc: Christian Kujau <lists@nerdbynature.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Genki Sky <sky@genki.is>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/setlocalversion | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/nfs/write.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 966dd3924ea9c..aa28c3f298093 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -72,8 +72,16 @@ scm_version()
- 			printf -- '-svn%s' "`git svn find-rev $head`"
- 		fi
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 3c1e46f4bce32..01b9d9341b541 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -783,7 +783,6 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 	struct nfs_inode *nfsi = NFS_I(inode);
+ 	struct nfs_page *head;
  
--		# Check for uncommitted changes
--		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-+		# Check for uncommitted changes.
-+		# First, with git-status, but --no-optional-locks is only
-+		# supported in git >= 2.14, so fall back to git-diff-index if
-+		# it fails. Note that git-diff-index does not refresh the
-+		# index, so it may give misleading results. See
-+		# git-update-index(1), git-diff-index(1), and git-status(1).
-+		if {
-+			git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-+			git diff-index --name-only HEAD
-+		} | grep -qvE '^(.. )?scripts/package'; then
- 			printf '%s' -dirty
- 		fi
+-	atomic_long_dec(&nfsi->nrequests);
+ 	if (nfs_page_group_sync_on_bit(req, PG_REMOVE)) {
+ 		head = req->wb_head;
  
+@@ -796,8 +795,10 @@ static void nfs_inode_remove_request(struct nfs_page *req)
+ 		spin_unlock(&mapping->private_lock);
+ 	}
+ 
+-	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags))
++	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags)) {
+ 		nfs_release_request(req);
++		atomic_long_dec(&nfsi->nrequests);
++	}
+ }
+ 
+ static void
 -- 
 2.20.1
 
