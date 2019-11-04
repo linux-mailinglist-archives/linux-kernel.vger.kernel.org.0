@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93427EEF34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D8ABEEFC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389347AbfKDWTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:19:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58692 "EHLO mail.kernel.org"
+        id S2387950AbfKDVya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:54:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388141AbfKDWAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:48 -0500
+        id S2387459AbfKDVyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:54:25 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9962A20659;
-        Mon,  4 Nov 2019 22:00:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80E2D2053B;
+        Mon,  4 Nov 2019 21:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904848;
-        bh=Dr07u1IWmJ4xY9s/UFzSO3UPZDv9wy6lz4GnA0jH21c=;
+        s=default; t=1572904465;
+        bh=6lfw3MQx37kk/pOuC3qfn5dmCfIy7mklSWz7Kk50wx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHnFmuwcXpW7tjodnpo2CGV3Jq3PfpMgPfA+3mD9EY8QMWRsV8drAHgzJc65cA++I
-         wUopS8kJ947gNcSFO2hPldoS+dLuxbCIdBRomLqZz2xWvzbdEN6qhr5ZHRBqYtuPbc
-         i4VSOUcXlO2qrLzAblBa7iYMYQATMtG+ZNb6Rusw=
+        b=WDR/9lZOggmZ/c0CjwKKBF5CeAGH+1FxHPTVszepReFC8L+1Q1iNtK51nd5zKeudQ
+         P0KFKGy8+y8Kj1vNfNrXLAF43aca1pYpzdSUoDQJdRi9OFkCE+dgbJ7MNbTAJ1vwHK
+         2GZKW+PTtgl4KEykn3H4hL6rMdUw37RyxS3AqeKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nirmoy Das <nirmoy.das@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/149] drm/amdgpu: fix memory leak
+Subject: [PATCH 4.14 48/95] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
 Date:   Mon,  4 Nov 2019 22:44:46 +0100
-Message-Id: <20191104212143.005061860@linuxfoundation.org>
+Message-Id: <20191104212103.355281543@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +51,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nirmoy Das <nirmoy.das@amd.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 083164dbdb17c5ea4ad92c1782b59c9d75567790 ]
+[ Upstream commit 2abb7d3b12d007c30193f48bebed781009bebdd2 ]
 
-cleanup error handling code and make sure temporary info array
-with the handles are freed by amdgpu_bo_list_put() on
-idr_replace()'s failure.
+In ocfs2_info_scan_inode_alloc(), there is an if statement on line 283
+to check whether inode_alloc is NULL:
 
-Signed-off-by: Nirmoy Das <nirmoy.das@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+    if (inode_alloc)
+
+When inode_alloc is NULL, it is used on line 287:
+
+    ocfs2_inode_lock(inode_alloc, &bh, 0);
+        ocfs2_inode_lock_full_nested(inode, ...)
+            struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, inode_alloc is checked on line 286.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Link: http://lkml.kernel.org/r/20190726033717.32359-1-baijiaju1990@gmail.com
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/ocfs2/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-index b80243d3972e4..ce7f18c5ccb26 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-@@ -264,7 +264,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index ab30c005cc4bc..9fa98abecfc6b 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -290,7 +290,7 @@ static int ocfs2_info_scan_inode_alloc(struct ocfs2_super *osb,
+ 	if (inode_alloc)
+ 		inode_lock(inode_alloc);
  
- 	r = amdgpu_bo_create_list_entry_array(&args->in, &info);
- 	if (r)
--		goto error_free;
-+		return r;
- 
- 	switch (args->in.operation) {
- 	case AMDGPU_BO_LIST_OP_CREATE:
-@@ -277,8 +277,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
- 		r = idr_alloc(&fpriv->bo_list_handles, list, 1, 0, GFP_KERNEL);
- 		mutex_unlock(&fpriv->bo_list_lock);
- 		if (r < 0) {
--			amdgpu_bo_list_put(list);
--			return r;
-+			goto error_put_list;
- 		}
- 
- 		handle = r;
-@@ -300,9 +299,8 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
- 		mutex_unlock(&fpriv->bo_list_lock);
- 
- 		if (IS_ERR(old)) {
--			amdgpu_bo_list_put(list);
- 			r = PTR_ERR(old);
--			goto error_free;
-+			goto error_put_list;
- 		}
- 
- 		amdgpu_bo_list_put(old);
-@@ -319,8 +317,10 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
- 
- 	return 0;
- 
-+error_put_list:
-+	amdgpu_bo_list_put(list);
-+
- error_free:
--	if (info)
--		kvfree(info);
-+	kvfree(info);
- 	return r;
- }
+-	if (o2info_coherent(&fi->ifi_req)) {
++	if (inode_alloc && o2info_coherent(&fi->ifi_req)) {
+ 		status = ocfs2_inode_lock(inode_alloc, &bh, 0);
+ 		if (status < 0) {
+ 			mlog_errno(status);
 -- 
 2.20.1
 
