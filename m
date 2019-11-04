@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02281EECA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD12EEC0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbfKDV7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55974 "EHLO mail.kernel.org"
+        id S1730969AbfKDVxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbfKDV6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:58:53 -0500
+        id S1730951AbfKDVxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:20 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EE4D214E0;
-        Mon,  4 Nov 2019 21:58:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06E0A2053B;
+        Mon,  4 Nov 2019 21:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904732;
-        bh=5lwm5aHSV+vFhzsKNzTGTuGddmHkxCu6wDISBI82sz4=;
+        s=default; t=1572904399;
+        bh=g+wi91HW9+cZs9M5/NkuPzE5YUQtA1qquDKeM0/R1KA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RaLjA9LgM17A9MDJ7alr52p3Q0AtU0LMWZWv6w98r9RKGvvtVGvs7UDakH4WE5Qs6
-         nR9l/8QvPqSDVhWBf7U9DSCf2klq9Vvj+lPpV5cQjI+wGshJnp4+sej6DYGWYpQluT
-         74mUsi1fnmPSmpc2+J+B6hCmMUIJm/HRChVinGHo=
+        b=kyJCpkgtACcte+yUHHQSWJkI7giNr5GvNGiDU7ErAYzNUA9LQdNnLFqP4zWO8C4gP
+         6q8YjpKkSLw3uHxbjOcfRX14ofx8bRd6xFF0YGR/W7N6jNDDzduhtDCcksL5TM1IBh
+         01IZUox1GKuKZzvzA75LIN/ZR982mOsUXN6ojgw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Lucas=20A . =20M . =20Magalh=C3=A3es?=" 
-        <lucmaga@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/149] media: vimc: Remove unused but set variables
+Subject: [PATCH 4.14 06/95] f2fs: flush quota blocks after turnning it off
 Date:   Mon,  4 Nov 2019 22:44:04 +0100
-Message-Id: <20191104212139.695013724@linuxfoundation.org>
+Message-Id: <20191104212040.828524358@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas A. M. Magalhães <lucmaga@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 5515e414f42bf2769caae15b634004d456658284 ]
+[ Upstream commit 0e0667b625cf64243df83171bff61f9d350b9ca5 ]
 
-Remove unused but set variables to clean up the code and avoid
-warning.
+After quota_off, we'll get some dirty blocks. If put_super don't have a chance
+to flush them by checkpoint, it causes NULL pointer exception in end_io after
+iput(node_inode). (e.g., by checkpoint=disable)
 
-Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vimc/vimc-sensor.c | 7 -------
- 1 file changed, 7 deletions(-)
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
-index 9e0d70e9f119c..3f0ffd4915cd2 100644
---- a/drivers/media/platform/vimc/vimc-sensor.c
-+++ b/drivers/media/platform/vimc/vimc-sensor.c
-@@ -204,13 +204,6 @@ static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
- {
- 	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
- 						    ved);
--	const struct vimc_pix_map *vpix;
--	unsigned int frame_size;
--
--	/* Calculate the frame size */
--	vpix = vimc_pix_map_by_code(vsen->mbus_format.code);
--	frame_size = vsen->mbus_format.width * vpix->bpp *
--		     vsen->mbus_format.height;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e70975ca723b7..0f3209b23c940 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1523,6 +1523,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
+ 		}
+ 	}
++	/*
++	 * In case of checkpoint=disable, we must flush quota blocks.
++	 * This can cause NULL exception for node_inode in end_io, since
++	 * put_super already dropped it.
++	 */
++	sync_filesystem(sb);
+ }
  
- 	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
- 	return vsen->frame;
+ int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 -- 
 2.20.1
 
