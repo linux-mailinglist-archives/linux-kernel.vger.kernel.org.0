@@ -2,102 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58398EF156
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED971EF158
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387435AbfKDXoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 18:44:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57754 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387400AbfKDXoS (ORCPT
+        id S1729917AbfKDXow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 18:44:52 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42169 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728602AbfKDXow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 18:44:18 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B5EA860E07; Mon,  4 Nov 2019 23:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572911056;
-        bh=EYW8abyE8lJm8s9y7qGJ4MoU1MjvPiVlESI93EIvGVM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o05vGWKJ4TCep6Hn7jc9yhOW3zkUofrWiCjvTUcUexx/SXDmpfODQbGvliSV3Cglr
-         m096Ah5thZPeSnkvvGAIXhlmDS+G53owwjwHrysxhWf+yRzvXbccMPoY9vNDtB913f
-         5GaxfigMEEOUTFIzvB+4Kitc4nw38w5FS1wfFTxc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3080C60D7C;
-        Mon,  4 Nov 2019 23:44:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572911055;
-        bh=EYW8abyE8lJm8s9y7qGJ4MoU1MjvPiVlESI93EIvGVM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eRCQEVHm6BTWoZ77VL8qmiH4MrC7Jd/x1nU1V9JFv8tF6nQINUNK6ClHVFLatr+W2
-         MCTqRoSF9h7iTmfEKaZr5vHPrnybElrH88gHsqU9iAkWh8R9s7wYJx/EnL5mWGcZ7A
-         0i/elXwCqxjPfRh5fHzHCqIWP45auqrZEIFKCdu8=
+        Mon, 4 Nov 2019 18:44:52 -0500
+Received: by mail-ua1-f68.google.com with SMTP id 31so1849932uas.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 15:44:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SpNwJfSJO9MidRCrn2p9uupIwuhjvEPSgYuh9TBYZuw=;
+        b=XWr7kryZXstmsXgYE4dBJ4NrnDur3s/AC0seExuiGF6z4UGQCwWfIPFNeY7JeVwPM3
+         wnP1G5A/K76IWU2DyV/IUlCtYDCgPO0n/bDVtTP4pu+zHCoH+fei6dyO2OcLB2gsC6W7
+         yHM2c0/FUmsEcEYZY0y9ta70pnWbez+C+rMSFS+aiM6DHbB5OA98h3MrtmOeV6q9EDtK
+         bw1zfaHUujqN+zHGVRnnbiam+tcW3d2rc3/Pvust522b4CCrQ9v9kAdVmg3Axk3wD37y
+         xqCPcphfjtbZ+wkJQy35r/dA4lS8knkpiqdmkjVq1MbYxp8Jbw1P5SRRjv/N4BJhioPs
+         zRZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SpNwJfSJO9MidRCrn2p9uupIwuhjvEPSgYuh9TBYZuw=;
+        b=YypXnw6+E9XZuK1UPxRSW0cNpDMyqfntQCYbpMWx7VDvNT6DtwEI6cN/3pi4lRKBpM
+         CCXcdUtyLmjk2U3/t6+ogPZDZkIcuS80c4EqEqqVA36kbb2Dh1b37ToVWWEtRLUaEr9j
+         Z9SjilK0J4v7MWaR9e/XEnlHT0XJ3kGG9ZbIXb+FtVf8135ozwtn461Kzw/2/CRK+xEI
+         LR+Jyhz5qxsqtUcG/jrJWwNqAMa4nMKhhvia7Uer4vRzfVmtjgoty0etsN7Mb2gP0Y9N
+         k56uua56Cm+KxG6pxyRbkQzRMoi0hbCDtLeoAJ7OiR+hx509uJIqxm8nVyqOhRrU688J
+         QR4Q==
+X-Gm-Message-State: APjAAAUNe2pvCjdSsWbDGtkKFaefLAK8OXpzr/RoLzWXKzpGv1mZwSYu
+        JmMAPR+xFNs3OiMOETAqRoke/Y49fcnqqo6qYHniOg==
+X-Google-Smtp-Source: APXvYqwMrHXnmCbhr/Nl5pMJrYHuxKP6Lu2UQKV7ItSK55vLCW1x6A4Use4SMcLe4G85I9Dvt99c2soxGNjz4r8rNRQ=
+X-Received: by 2002:ab0:4587:: with SMTP id u7mr3850575uau.67.1572911090684;
+ Mon, 04 Nov 2019 15:44:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 05 Nov 2019 07:44:13 +0800
-From:   cang@codeaurora.org
-To:     Avri Altman <Avri.Altman@wdc.com>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] scsi: ufs: Introduce a vops for resetting host
- controller
-In-Reply-To: <MN2PR04MB69911784473463D0926AE3B5FC7F0@MN2PR04MB6991.namprd04.prod.outlook.com>
-References: <1571804009-29787-1-git-send-email-cang@codeaurora.org>
- <1571804009-29787-2-git-send-email-cang@codeaurora.org>
- <MN2PR04MB69911784473463D0926AE3B5FC7F0@MN2PR04MB6991.namprd04.prod.outlook.com>
-Message-ID: <1ab0a928184dd11540726d6456056e02@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com> <20191101221150.116536-12-samitolvanen@google.com>
+ <20191104171132.GB2024@lakrids.cambridge.arm.com>
+In-Reply-To: <20191104171132.GB2024@lakrids.cambridge.arm.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Mon, 4 Nov 2019 15:44:39 -0800
+Message-ID: <CABCJKufDnLjP9vA-wSW0gSY05Cbr=NOpJ-WCh-bdj2ZNq7VNXw@mail.gmail.com>
+Subject: Re: [PATCH v4 11/17] arm64: disable function graph tracing with SCS
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-04 22:28, Avri Altman wrote:
-> Hi,
->> 
->> Some UFS host controllers need their specific implementations of 
->> resetting to
->> get them into a good state. Provide a new vops to allow the platform 
->> driver to
->> implement this own reset operation.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Did you withdraw from this patches and insert them to one of your fix 
-> bundle?
-> I couldn't tell.
-> As this is a vop, in what way its functionality can't be included in
-> the device reset that was recently added?
-> 
-> Thanks,
-> Avri
+On Mon, Nov 4, 2019 at 9:11 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> Can you please elaborate on _how_ this is incompatible in the commit
+> message?
+>
+> For example, it's not clear to me if you mean that's functionally
+> incompatible, or if you're trying to remove return-altering gadgets.
+>
+> If there's a functional incompatibility, please spell that out a bit
+> more clearly. Likewise if this is about minimizing the set of places
+> that can mess with control-flow outside of usual function conventions.
 
-Hi Avri,
+Sure, I'll add a better description in v5. In this case, the return
+address is modified in the kernel stack, which means the changes are
+ignored with SCS.
 
-Sorry for making you confused.
-Yes, I dropped this series because it cannot fulfil its purpose anymore. 
-I come up with a way which puts the reset in the right place in UFS QCOM 
-platfrom driver without an extra vops, so I inserted the two changes in 
-fix bundle 3.
-
-Thanks,
-Can Guo.
-
+Sami
