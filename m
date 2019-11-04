@@ -2,49 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56D1EEE7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:15:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A300EEF55
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbfKDWPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:15:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38776 "EHLO mail.kernel.org"
+        id S2389273AbfKDWUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388851AbfKDWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:06:44 -0500
+        id S2388155AbfKDV71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:59:27 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EF71217F4;
-        Mon,  4 Nov 2019 22:06:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92FE920650;
+        Mon,  4 Nov 2019 21:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905203;
-        bh=jn36PS6JD/UCan94jV0PXlMdlJkaCs61c+4OM1G1KZo=;
+        s=default; t=1572904767;
+        bh=VxPe53bJmI0+m8+ilMm7PTOAeAZoj1mvrbS4fD+q3hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iHORfobpQSOBnICn5WOowlXS6OseSUT38JZv4LxOSNpDYK6tF8KrpDy8JlQUMs2+E
-         hoNSFI01iWz5IYGMQ0W+EqDrBhEZ26QMe5XHKczK7gVFnsKa588Cv01MbSISFJ3ACM
-         9eAEtjzpcbCrOK1gb0OTV00Gpq+ud0XRtTttyc4A=
+        b=uFfIyn3NkH/rQGrzmhxX+pB1hGAPrXXCmZhjhTvZY3lM41yYfW7iW712i7kOlmAPW
+         BTTPeTA6AeJVqv/pzzkqea2kRmnTjfj+4I/w68ijcgbziV01+mP8jwBrV3A53IpywQ
+         hMT+v4TsQFnob2rUZyQMwj6tQ8nfDqvZ1jfBvvzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Auld <pauld@redhat.com>,
-        Xuewei Zhang <xueweiz@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Ben Segall <bsegall@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 065/163] sched/fair: Scale bandwidth quota and period without losing quota/period ratio precision
-Date:   Mon,  4 Nov 2019 22:44:15 +0100
-Message-Id: <20191104212144.712060978@linuxfoundation.org>
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 063/149] perf script brstackinsn: Fix recovery from LBR/binary mismatch
+Date:   Mon,  4 Nov 2019 22:44:16 +0100
+Message-Id: <20191104212141.179859359@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,109 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xuewei Zhang <xueweiz@google.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 4929a4e6faa0f13289a67cae98139e727f0d4a97 ]
+[ Upstream commit e98df280bc2a499fd41d7f9e2d6733884de69902 ]
 
-The quota/period ratio is used to ensure a child task group won't get
-more bandwidth than the parent task group, and is calculated as:
+When the LBR data and the instructions in a binary do not match the loop
+printing instructions could get confused and print a long stream of
+bogus <bad> instructions.
 
-  normalized_cfs_quota() = [(quota_us << 20) / period_us]
+The problem was that if the instruction decoder cannot decode an
+instruction it ilen wasn't initialized, so the loop going through the
+basic block would continue with the previous value.
 
-If the quota/period ratio was changed during this scaling due to
-precision loss, it will cause inconsistency between parent and child
-task groups.
+Harden the code to avoid such problems:
 
-See below example:
+- Make sure ilen is always freshly initialized and is 0 for bad
+  instructions.
 
-A userspace container manager (kubelet) does three operations:
+- Do not overrun the code buffer while printing instructions
 
- 1) Create a parent cgroup, set quota to 1,000us and period to 10,000us.
- 2) Create a few children cgroups.
- 3) Set quota to 1,000us and period to 10,000us on a child cgroup.
+- Print a warning message if the final jump is not on an instruction
+  boundary.
 
-These operations are expected to succeed. However, if the scaling of
-147/128 happens before step 3, quota and period of the parent cgroup
-will be changed:
-
-  new_quota: 1148437ns,   1148us
- new_period: 11484375ns, 11484us
-
-And when step 3 comes in, the ratio of the child cgroup will be
-104857, which will be larger than the parent cgroup ratio (104821),
-and will fail.
-
-Scaling them by a factor of 2 will fix the problem.
-
-Tested-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Xuewei Zhang <xueweiz@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Phil Auld <pauld@redhat.com>
-Cc: Anton Blanchard <anton@ozlabs.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Fixes: 2e8e19226398 ("sched/fair: Limit sched_cfs_period_timer() loop to avoid hard lockup")
-Link: https://lkml.kernel.org/r/20191004001243.140897-1-xueweiz@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20190927233546.11533-1-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/fair.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+ tools/perf/builtin-script.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 86cfc5d5129ce..16b5d29bd7300 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4995,20 +4995,28 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
- 		if (++count > 3) {
- 			u64 new, old = ktime_to_ns(cfs_b->period);
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 53c11fc0855ee..d20f851796c52 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1021,7 +1021,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 			continue;
  
--			new = (old * 147) / 128; /* ~115% */
--			new = min(new, max_cfs_quota_period);
--
--			cfs_b->period = ns_to_ktime(new);
--
--			/* since max is 1s, this is limited to 1e9^2, which fits in u64 */
--			cfs_b->quota *= new;
--			cfs_b->quota = div64_u64(cfs_b->quota, old);
--
--			pr_warn_ratelimited(
--	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us %lld, cfs_quota_us = %lld)\n",
--				smp_processor_id(),
--				div_u64(new, NSEC_PER_USEC),
--				div_u64(cfs_b->quota, NSEC_PER_USEC));
-+			/*
-+			 * Grow period by a factor of 2 to avoid losing precision.
-+			 * Precision loss in the quota/period ratio can cause __cfs_schedulable
-+			 * to fail.
-+			 */
-+			new = old * 2;
-+			if (new < max_cfs_quota_period) {
-+				cfs_b->period = ns_to_ktime(new);
-+				cfs_b->quota *= 2;
-+
-+				pr_warn_ratelimited(
-+	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-+					smp_processor_id(),
-+					div_u64(new, NSEC_PER_USEC),
-+					div_u64(cfs_b->quota, NSEC_PER_USEC));
-+			} else {
-+				pr_warn_ratelimited(
-+	"cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-+					smp_processor_id(),
-+					div_u64(old, NSEC_PER_USEC),
-+					div_u64(cfs_b->quota, NSEC_PER_USEC));
-+			}
+ 		insn = 0;
+-		for (off = 0;; off += ilen) {
++		for (off = 0; off < (unsigned)len; off += ilen) {
+ 			uint64_t ip = start + off;
  
- 			/* reset count so we don't come right back in here */
- 			count = 0;
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+@@ -1029,6 +1029,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
+ 				break;
+ 			} else {
++				ilen = 0;
+ 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+ 						   dump_insn(&x, ip, buffer + off, len - off, &ilen));
+ 				if (ilen == 0)
+@@ -1036,6 +1037,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 				insn++;
+ 			}
+ 		}
++		if (off != (unsigned)len)
++			printed += fprintf(fp, "\tmismatch of LBR data and executable\n");
+ 	}
+ 
+ 	/*
+@@ -1066,6 +1069,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 		goto out;
+ 	}
+ 	for (off = 0; off <= end - start; off += ilen) {
++		ilen = 0;
+ 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", start + off,
+ 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
+ 		if (ilen == 0)
 -- 
 2.20.1
 
