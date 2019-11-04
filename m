@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5708EEC3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BF5EEB9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:49:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388116AbfKDVzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50296 "EHLO mail.kernel.org"
+        id S2387461AbfKDVtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388075AbfKDVzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:09 -0500
+        id S2387420AbfKDVte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:49:34 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99930217F4;
-        Mon,  4 Nov 2019 21:55:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCEDA20B7C;
+        Mon,  4 Nov 2019 21:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904509;
-        bh=UV1M5/gA4SkMgON+EcMHEN4/oOwh67vj+z8Wz/ZKckc=;
+        s=default; t=1572904173;
+        bh=pg9I1HNkHc+Ox9DH4bnOTqHT5B+4AkbZy06aP3YKRHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JQHDR7ZjEjWsfn3cB2KeAyPoF3lMgSFeGO1+fUv4cJCcMOz0PGIXQIiHrPbejw0Zn
-         xD49dsxm1Vm0R9Vu+BoorIy4sXoot8QgIoGiyz3INh8WmK5dxjSDfeH1DlupvzNueu
-         NwtlcGtt3rErgRNBPGDEbm0d8hlwtS69h8JOFq+A=
+        b=Wnv0jktGXPaJWqF+r2clrEWH88t8Zyt+xhmCQpwrfFwTcstJ6UrFQwYS1+37j/nkb
+         Ea24I846LemLf/ASFWKZCxJtjGCNIPu/VRa2Oy9EtRkrkkZ6+Zy+RX8soS0LxIakqu
+         VJpUAMNSbpo8UvwfEnrbXzvzjYWZRjtIlpkWYgE0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 70/95] USB: ldusb: fix ring-buffer locking
-Date:   Mon,  4 Nov 2019 22:45:08 +0100
-Message-Id: <20191104212113.778507135@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Waisman <nico@semmle.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 38/46] rtlwifi: Fix potential overflow on P2P code
+Date:   Mon,  4 Nov 2019 22:45:09 +0100
+Message-Id: <20191104211911.242011465@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,48 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Laura Abbott <labbott@redhat.com>
 
-commit d98ee2a19c3334e9343df3ce254b496f1fc428eb upstream.
+commit 8c55dedb795be8ec0cf488f98c03a1c2176f7fb1 upstream.
 
-The custom ring-buffer implementation was merged without any locking or
-explicit memory barriers, but a spinlock was later added by commit
-9d33efd9a791 ("USB: ldusb bugfix").
+Nicolas Waisman noticed that even though noa_len is checked for
+a compatible length it's still possible to overrun the buffers
+of p2pinfo since there's no check on the upper bound of noa_num.
+Bound noa_num against P2P_MAX_NOA_NUM.
 
-The lock did not cover the update of the tail index once the entry had
-been processed, something which could lead to memory corruption on
-weakly ordered architectures or due to compiler optimisations.
-
-Specifically, a completion handler running on another CPU might observe
-the incremented tail index and update the entry before ld_usb_read() is
-done with it.
-
-Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
-Fixes: 9d33efd9a791 ("USB: ldusb bugfix")
-Cc: stable <stable@vger.kernel.org>     # 2.6.13
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191022143203.5260-2-johan@kernel.org
+Reported-by: Nicolas Waisman <nico@semmle.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/ldusb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/ps.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/misc/ldusb.c
-+++ b/drivers/usb/misc/ldusb.c
-@@ -498,11 +498,11 @@ static ssize_t ld_usb_read(struct file *
- 		retval = -EFAULT;
- 		goto unlock_exit;
- 	}
--	dev->ring_tail = (dev->ring_tail+1) % ring_buffer_size;
--
- 	retval = bytes_to_read;
- 
- 	spin_lock_irq(&dev->rbsl);
-+	dev->ring_tail = (dev->ring_tail + 1) % ring_buffer_size;
+--- a/drivers/net/wireless/realtek/rtlwifi/ps.c
++++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
+@@ -781,6 +781,9 @@ static void rtl_p2p_noa_ie(struct ieee80
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
 +
- 	if (dev->buffer_overflow) {
- 		dev->buffer_overflow = 0;
- 		spin_unlock_irq(&dev->rbsl);
+ 			}
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
+@@ -875,6 +878,9 @@ static void rtl_p2p_action_ie(struct iee
+ 				return;
+ 			} else {
+ 				noa_num = (noa_len - 2) / 13;
++				if (noa_num > P2P_MAX_NOA_NUM)
++					noa_num = P2P_MAX_NOA_NUM;
++
+ 			}
+ 			noa_index = ie[3];
+ 			if (rtlpriv->psc.p2p_ps_info.p2p_ps_mode ==
 
 
