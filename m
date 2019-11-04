@@ -2,196 +2,567 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B84EEED6B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5536ED6BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbfKDAsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 19:48:35 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:60758 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728277AbfKDAsf (ORCPT
+        id S1728578AbfKDA40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 19:56:26 -0500
+Received: from forward500o.mail.yandex.net ([37.140.190.195]:43575 "EHLO
+        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726362AbfKDA40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 19:48:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572828513;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+4UAof6OUD9D1BtmvPOk/oqTkYL61W/5InMZJOYHD5s=;
-        b=CCCb6IZYOlB51wYkwiulxJJAq/YrswvP8Z8QNqaSrwid8KHpvNJ7ithppJp3ztxCJivMLl
-        Ifvc5L1ynRB/X4rqn586ByUFeRGgUL4Dgeu0/phfJHWPZoQg9hm94+rAdVU854Jj4Btal8
-        /vvqEkQefz3PDPCwpWOmuDENREwE46A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-363-A3L4x0LcPVK6dNEBo2xXqQ-1; Sun, 03 Nov 2019 19:48:29 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8BA601800D53;
-        Mon,  4 Nov 2019 00:48:28 +0000 (UTC)
-Received: from localhost (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D819916D20;
-        Mon,  4 Nov 2019 00:48:27 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 08:48:25 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] x86/mm/KASLR: Adjust the padding size for the
- direct  mapping.
-Message-ID: <20191104004825.GK7616@MiWiFi-R3L-srv>
-References: <20191102010911.21460-1-msys.mizuma@gmail.com>
- <20191102010911.21460-5-msys.mizuma@gmail.com>
+        Sun, 3 Nov 2019 19:56:26 -0500
+X-Greylist: delayed 315 seconds by postgrey-1.27 at vger.kernel.org; Sun, 03 Nov 2019 19:56:20 EST
+Received: from mxback21o.mail.yandex.net (mxback21o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::72])
+        by forward500o.mail.yandex.net (Yandex) with ESMTP id A9ED96025A;
+        Mon,  4 Nov 2019 03:51:03 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback21o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id lMGSdc01pP-p1luJ7u6;
+        Mon, 04 Nov 2019 03:51:02 +0300
+Received: by iva4-35f072fa8e4e.qloud-c.yandex.net with HTTP;
+        Mon, 04 Nov 2019 03:51:01 +0300
+From:   Shawn Landden <shawn@git.icu>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Keith Packard <keithp@keithp.com>
+In-Reply-To: <20191104002909.25783-1-shawn@git.icu>
+References: <20191104002909.25783-1-shawn@git.icu>
+Subject: Re: [RFC v2 PATCH] futex: extend set_robust_list to allow 2 locking ABIs at the same time.
 MIME-Version: 1.0
-In-Reply-To: <20191102010911.21460-5-msys.mizuma@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: A3L4x0LcPVK6dNEBo2xXqQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Sun, 03 Nov 2019 19:51:01 -0500
+Message-Id: <59708281572828661@iva4-35f072fa8e4e.qloud-c.yandex.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/19 at 09:09pm, Masayoshi Mizuma wrote:
+I am sorry, I will fix this and resubmit.
+
+03.11.2019, 19:29, "Shawn Landden" <shawn@git.icu>:
+> The robust futexes ABI was designed to be flexible to changing ABIs in
+> glibc, however it did not take into consideration that this ABI is
+> particularly sticky, and suffers from lock-step problems, due to the
+> fact that the ABI is shared between processes. This introduces a new
+> size in set_robust_list that takes an additional futex_offset2 value
+> so that two locking ABIs can be used at the same time.
+>
+> If this new ABI is used, then bit 1 of the *next pointer of the
+> user-space robust_list indicates that the futex_offset2 value should
+> be used in place of the existing futex_offset.
+>
+> The use case for this is sharing locks between 32-bit and 64-bit
+> processes, which Linux supports, but glibc does not, and is difficult
+> to implement with the current Linux support because of mix-matched
+> ABIs. Keith Packard has complained about this:
+> https://keithp.com/blogs/Shared_Memory_Fences/
+>
+> This can also be used to add a new ABI that uses smaller structs,
+> as the existing ABI on x86_64 is a minimum of 32 bytes, and 20 bytes
+> would suffice.
+>
+> v2: fix size of compat_extended_robust_list_head
+>     fix some issues with number literals being implicitly ints
 > ---
->  arch/x86/mm/kaslr.c | 65 ++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 50 insertions(+), 15 deletions(-)
->=20
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index dc6182eec..a80eed563 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -70,15 +70,60 @@ static inline bool kaslr_memory_enabled(void)
->  =09return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
->  }
-> =20
-> +/*
-> + * Even though a huge virtual address space is reserved for the direct
-> + * mapping of physical memory, e.g in 4-level paging mode, it's 64TB,
-> + * rare system can own enough physical memory to use it up, most are
-> + * even less than 1TB. So with KASLR enabled, we adapt the size of
-> + * direct mapping area to the size of actual physical memory plus the
-> + * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
-> + * The left part will be taken out to join memory randomization.
+>  include/linux/compat.h | 5 +
+>  include/linux/sched.h | 6 ++
+>  include/uapi/linux/futex.h | 31 +++++++
+>  kernel/futex.c | 182 ++++++++++++++++++++++++-------------
+>  4 files changed, 160 insertions(+), 64 deletions(-)
+>
+> diff --git a/include/linux/compat.h b/include/linux/compat.h
+> index 16dafd9f4b86..00a0741bf658 100644
+> --- a/include/linux/compat.h
+> +++ b/include/linux/compat.h
+> @@ -379,10 +379,15 @@ struct compat_robust_list_head {
+>          struct compat_robust_list list;
+>          compat_long_t futex_offset;
+>          compat_uptr_t list_op_pending;
+>  };
+>
+> +struct compat_extended_robust_list_head {
+> + struct compat_robust_list_head list_head;
+> + compat_long_t futex_offset2;
+> +};
+> +
+>  #ifdef CONFIG_COMPAT_OLD_SIGACTION
+>  struct compat_old_sigaction {
+>          compat_uptr_t sa_handler;
+>          compat_old_sigset_t sa_mask;
+>          compat_ulong_t sa_flags;
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 9f51932bd543..894258fd44ac 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1057,10 +1057,16 @@ struct task_struct {
+>  #ifdef CONFIG_X86_CPU_RESCTRL
+>          u32 closid;
+>          u32 rmid;
+>  #endif
+>  #ifdef CONFIG_FUTEX
+> + /*
+> + * bottom two bits are masked
+> + * 0: struct extended_robust_list_head
+> + * 1: struct robust_list_head
+> + * same for compat_robust_list
 > + */
-> +static inline unsigned long calc_direct_mapping_size(void)
-> +{
-> +=09unsigned long padding =3D CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> +=09unsigned long size_tb, memory_tb;
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +=09unsigned long actual, maximum, base;
+>          struct robust_list_head __user *robust_list;
+>  #ifdef CONFIG_COMPAT
+>          struct compat_robust_list_head __user *compat_robust_list;
+>  #endif
+>          struct list_head pi_state_list;
+> diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
+> index a89eb0accd5e..30c08e07f26b 100644
+> --- a/include/uapi/linux/futex.h
+> +++ b/include/uapi/linux/futex.h
+> @@ -92,10 +92,41 @@ struct robust_list_head {
+>           * so only truly owned locks will be handled.
+>           */
+>          struct robust_list __user *list_op_pending;
+>  };
+>
+> +/*
+> + * Extensible per-thread list head:
+> + *
+> + * As locks are shared between processes, the futex_offset field
+> + * has ABI lock-stepping issues, which the original robust_list_head
+> + * structure did not anticipate. (And which prevents 32-bit/64-bit
+> + * interoperability, as well as shrinking of mutex structures).
+> + * This new extensible_robust_list_head allows multiple
+> + * concurrent futex_offset values, chosen using the bottom 2 bits of the
+> + * robust_list *next pointer, which are now masked in BOTH the old and
+> + * new ABI.
+> + *
+> + * Note: this structure is part of the syscall ABI like
+> + * robust_list_head above, and must have a different size than
+> + * robust_list_head.
+> + *
+> + */
+> +struct extended_robust_list_head {
+> + struct robust_list_head list_head;
 > +
-> +=09if (boot_params.max_addr) {
-> +=09=09/*
-> +=09=09 * The padding size should set to get for kaslr_regions[].base
-> +=09=09 * bigger address than the maximum memory address the system can
-> +=09=09 * have. kaslr_regions[].base points "actual size + padding" or
-> +=09=09 * higher address. If "actual size + padding" points the lower
-> +=09=09 * address than the maximum memory size, fix the padding size.
-> +=09=09 */
-> +=09=09actual =3D roundup(PFN_PHYS(max_pfn), 1UL << TB_SHIFT);
-> +=09=09maximum =3D roundup(boot_params.max_addr, 1UL << TB_SHIFT);
-> +=09=09base =3D actual + (padding << TB_SHIFT);
+> + /*
+> + * These relative offsets are set by user-space. They give the kernel
+> + * the relative position of the futex field to examine, based on the
+> + * bit 1 *next pointer.
+> + * The original version was insufficiently flexible. Locks are held
+> + * in shared memory between processes, and a process might want to hold
+> + * locks of two ABIs at the same time.
+> + */
+> + long futex_offset2;
+> +};
 > +
-> +=09=09if (maximum > base)
-> +=09=09=09padding =3D (maximum - actual) >> TB_SHIFT;
-> +=09}
-> +#endif
-> +=09memory_tb =3D  DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-> +=09=09=09padding;
-
-Yes, wrapping up the whole adjusting code block for the direct mapping
-area into a function looks much better. This was also suggested by Ingo
-when I posted UV system issue fix before, just later the UV system issue
-is not seen in the current code.
-
-However, I have a small concern about the memory_tb calculateion here.
-We can treat the (actual RAM + CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING)
-as the default memory_tb, then check if we need adjst it according to
-boot_params.max_addr. Discarding the local padding variable can make
-code much simpler? And it is a little confusing when mix with the
-later padding concept when doing randomization, I mean the get_padding()
-thing.
-
-
-=09memory_tb =3D DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-                CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-
-=09if (boot_params.max_addr) {
-=09=09maximum =3D roundup(boot_params.max_addr, 1UL << TB_SHIFT);
-
-=09=09if (maximum > memory_tb)
-=09=09=09memory_tb =3D maximum;
-=09}
-#endif
-
-Personal opinion. Anyway, this patch looks good to me. Thanks.
-
-Thanks
-Baoquan
-
-
+>  /*
+>   * Are there any waiters for this robust futex:
+>   */
+>  #define FUTEX_WAITERS 0x80000000
+>
+> diff --git a/kernel/futex.c b/kernel/futex.c
+> index 6d50728ef2e7..3a17d2d63178 100644
+> --- a/kernel/futex.c
+> +++ b/kernel/futex.c
+> @@ -3396,17 +3396,20 @@ static int futex_wait_requeue_pi(u32 __user *uaddr, unsigned int flags,
+>  SYSCALL_DEFINE2(set_robust_list, struct robust_list_head __user *, head,
+>                  size_t, len)
+>  {
+>          if (!futex_cmpxchg_enabled)
+>                  return -ENOSYS;
+> - /*
+> - * The kernel knows only one size for now:
+> - */
+> - if (unlikely(len != sizeof(*head)))
 > +
-> +=09size_tb =3D 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
+> + if (unlikely(len != sizeof(struct robust_list_head) &&
+> + len != sizeof(struct extensible_robust_list_head)))
+>                  return -EINVAL;
+>
+> - current->robust_list = head;
+> + current->robust_list = head & 0b11UL;
+> + BUILD_BUG_ON(sizeof(struct robust_list_head) ==
+> + sizeof(struct extended_robust_list_head));
+> + if (len == sizeof(struct robust_list_head))
+> + current->robust_list |= 1;
+>
+>          return 0;
+>  }
+>
+>  /**
+> @@ -3419,10 +3422,11 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
+>                  struct robust_list_head __user * __user *, head_ptr,
+>                  size_t __user *, len_ptr)
+>  {
+>          struct robust_list_head __user *head;
+>          unsigned long ret;
+> + size_t len;
+>          struct task_struct *p;
+>
+>          if (!futex_cmpxchg_enabled)
+>                  return -ENOSYS;
+>
+> @@ -3439,14 +3443,18 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
+>
+>          ret = -EPERM;
+>          if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+>                  goto err_unlock;
+>
+> - head = p->robust_list;
+> + head = p->robust_list & ~0b11UL;
+> + if (p->robust_list & 0b11 == 0b1)
+> + len = sizeof(struct robust_list_head);
+> + else
+> + len = sizeof(struct extended_robust_list_head);
+>          rcu_read_unlock();
+>
+> - if (put_user(sizeof(*head), len_ptr))
+> + if (put_user(len, len_ptr))
+>                  return -EFAULT;
+>          return put_user(head, head_ptr);
+>
+>  err_unlock:
+>          rcu_read_unlock();
+> @@ -3524,23 +3532,26 @@ static int handle_futex_death(u32 __user *uaddr, struct task_struct *curr, int p
+>
+>          return 0;
+>  }
+>
+>  /*
+> - * Fetch a robust-list pointer. Bit 0 signals PI futexes:
+> + * Fetch a robust-list pointer. Bit 0 signals PI futexes. Bit 1 choses which
+> + * futex_offset to use:
+>   */
+>  static inline int fetch_robust_entry(struct robust_list __user **entry,
+>                                       struct robust_list __user * __user *head,
+> - unsigned int *pi)
+> + unsigned int *pi,
+> + *unsigned int *second_abi)
+>  {
+>          unsigned long uentry;
+>
+>          if (get_user(uentry, (unsigned long __user *)head))
+>                  return -EFAULT;
+>
+> - *entry = (void __user *)(uentry & ~1UL);
+> + *entry = (void __user *)(uentry & ~0b11UL);
+>          *pi = uentry & 1;
+> + *second_abi = uentry & 0b10;
+>
+>          return 0;
+>  }
+>
+>  /*
+> @@ -3549,69 +3560,84 @@ static inline int fetch_robust_entry(struct robust_list __user **entry,
+>   *
+>   * We silently return on any sign of list-walking problem.
+>   */
+>  void exit_robust_list(struct task_struct *curr)
+>  {
+> - struct robust_list_head __user *head = curr->robust_list;
+> - struct robust_list __user *entry, *next_entry, *pending;
+> - unsigned int limit = ROBUST_LIST_LIMIT, pi, pip;
+> - unsigned int uninitialized_var(next_pi);
+> - unsigned long futex_offset;
+> + struct robust_list_head __user *head_ptr = curr->robust_list & ~1UL;
+> + unsigned int is_extended_list = curr->robust_list & 1 == 0;
+> + struct extended_robust_list_head head;
+> + struct robust_list __user *entry = &head->list_head.list.next,
+> + *next_entry, *pending;
+> + unsigned int limit = ROBUST_LIST_LIMIT, pi, pip, second_abi,
+> + second_abip;
+> + unsigned int uninitialized_var(next_pi),
+> + uninitialized_var(next_second_abi);
+>          int rc;
+>
+>          if (!futex_cmpxchg_enabled)
+>                  return;
+>
+>          /*
+> - * Fetch the list head (which was registered earlier, via
+> - * sys_set_robust_list()):
+> + * fetch_robust_entry code is duplicated here to avoid excessive calls
+> + * to get_user()
+>           */
+> - if (fetch_robust_entry(&entry, &head->list.next, &pi))
+> - return;
+> - /*
+> - * Fetch the relative futex offset:
+> - */
+> - if (get_user(futex_offset, &head->futex_offset))
+> - return;
+> - /*
+> - * Fetch any possibly pending lock-add first, and handle it
+> - * if it exists:
+> - */
+> - if (fetch_robust_entry(&pending, &head->list_op_pending, &pip))
+> - return;
+> + if (is_extended_list) {
+> + if (get_user(head, (struct extended_robust_list_head *)
+> + head_ptr))
+> + return;
+> + } else {
+> + if (get_user(head.list_head, head_ptr))
+> + return;
+> + }
 > +
-> +=09/*
-> +=09 * Adapt physical memory region size based on available memory
-> +=09 */
-> +=09if (memory_tb < size_tb)
-> +=09=09size_tb =3D memory_tb;
+> + pi = head.list_head.list.next & 1;
+> + second_abi = head.list_head.list.next & 0b10;
+> + head.list_head.list.next &= ~0b11UL;
+> + pip = head.list_head.list_op_pending & 1;
+> + second_abip = head.list_head.list_op_pending & 0b10;
+> + head.list_head.list_op_pending &= ~0b11UL;
+>
+>          next_entry = NULL; /* avoid warning with gcc */
+> - while (entry != &head->list) {
+> + while (entry != &head->list_head.list) {
+>                  /*
+>                   * Fetch the next entry in the list before calling
+>                   * handle_futex_death:
+>                   */
+> - rc = fetch_robust_entry(&next_entry, &entry->next, &next_pi);
+> + rc = fetch_robust_entry(&next_entry, &entry->next, &next_pi,
+> + &next_second_abi);
+>                  /*
+>                   * A pending lock might already be on the list, so
+>                   * don't process it twice:
+>                   */
+> - if (entry != pending)
+> + if (entry != pending) {
+> + long futex_offset = second_abi ?
+> + head.futex_offset2 :
+> + head.list_head.futex_offset;
+>                          if (handle_futex_death((void __user *)entry + futex_offset,
+>                                                  curr, pi))
+>                                  return;
+> + }
+>                  if (rc)
+>                          return;
+>                  entry = next_entry;
+>                  pi = next_pi;
+> + second_abi = next_second_abi;
+>                  /*
+>                   * Avoid excessively long or circular lists:
+>                   */
+>                  if (!--limit)
+>                          break;
+>
+>                  cond_resched();
+>          }
+>
+> - if (pending)
+> + if (pending) {
+> + long futex_offset = second_abip ? head.futex_offset2 :
+> + head.list_head.futex_offset;
+>                  handle_futex_death((void __user *)pending + futex_offset,
+>                                     curr, pip);
+> + }
+>  }
+>
+>  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+>                  u32 __user *uaddr2, u32 val2, u32 val3)
+>  {
+> @@ -3707,21 +3733,25 @@ SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
+>          return do_futex(uaddr, op, val, tp, uaddr2, val2, val3);
+>  }
+>
+>  #ifdef CONFIG_COMPAT
+>  /*
+> - * Fetch a robust-list pointer. Bit 0 signals PI futexes:
+> + * Fetch a robust-list pointer. Bit 0 signals PI futexes.
+> + * Bit 1 choses which futex_offset to use:
+>   */
+>  static inline int
+> -compat_fetch_robust_entry(compat_uptr_t *uentry, struct robust_list __user **entry,
+> - compat_uptr_t __user *head, unsigned int *pi)
+> +compat_fetch_robust_entry(compat_uptr_t *uentry,
+> + struct robust_list __user **entry,
+> + compat_uptr_t __user *head, unsigned int *pi,
+> + unsigned int *second_abi)
+>  {
+>          if (get_user(*uentry, head))
+>                  return -EFAULT;
+>
+> - *entry = compat_ptr((*uentry) & ~1);
+> + *entry = compat_ptr((*uentry) & ~0b11);
+>          *pi = (unsigned int)(*uentry) & 1;
+> + *second_abi = (unsigned int)(*uentry) & 0b10;
+>
+>          return 0;
+>  }
+>
+>  static void __user *futex_uaddr(struct robust_list __user *entry,
+> @@ -3739,72 +3769,86 @@ static void __user *futex_uaddr(struct robust_list __user *entry,
+>   *
+>   * We silently return on any sign of list-walking problem.
+>   */
+>  void compat_exit_robust_list(struct task_struct *curr)
+>  {
+> - struct compat_robust_list_head __user *head = curr->compat_robust_list;
+> - struct robust_list __user *entry, *next_entry, *pending;
+> - unsigned int limit = ROBUST_LIST_LIMIT, pi, pip;
+> - unsigned int uninitialized_var(next_pi);
+> + struct compat_robust_list_head __user *head = curr->compat_robust_list &
+> + ~1UL;
+> + unsigned int is_extended_list = curr->compat_robust_list & 1 == 0;
+> + struct compat_extended_robust_list_head head;
+> + struct robust_list __user *entry = &head->list_head.list.next,
+> + *next_entry, *pending;
+> + unsigned int limit = ROBUST_LIST_LIMIT, pi, pip, second_abi,
+> + second_abip;
+> + unsigned int uninitialized_var(next_pi),
+> + uninitialized_var(next_second_abi);
+>          compat_uptr_t uentry, next_uentry, upending;
+> - compat_long_t futex_offset;
+>          int rc;
+>
+>          if (!futex_cmpxchg_enabled)
+>                  return;
+>
+>          /*
+> - * Fetch the list head (which was registered earlier, via
+> - * sys_set_robust_list()):
+> - */
+> - if (compat_fetch_robust_entry(&uentry, &entry, &head->list.next, &pi))
+> - return;
+> - /*
+> - * Fetch the relative futex offset:
+> - */
+> - if (get_user(futex_offset, &head->futex_offset))
+> - return;
+> - /*
+> - * Fetch any possibly pending lock-add first, and handle it
+> - * if it exists:
+> + * compat_fetch_robust_entry code is duplicated here to avoid excessive
+> + * calls to get_user()
+>           */
+> - if (compat_fetch_robust_entry(&upending, &pending,
+> - &head->list_op_pending, &pip))
+> - return;
+> + if (is_extended_list) {
+> + if (get_user(head, (struct compat_extended_robust_list_head *)
+> + head_ptr))
+> + return;
+> + } else {
+> + if (get_user(head.list_head, head_ptr))
+> + return;
+> + }
 > +
-> +=09return size_tb;
-> +}
-> +
->  /* Initialize base and padding for each memory region randomized with KA=
-SLR */
->  void __init kernel_randomize_memory(void)
->  {
-> -=09size_t i;
-> -=09unsigned long vaddr_start, vaddr;
-> -=09unsigned long rand, memory_tb;
-> -=09struct rnd_state rand_state;
-> +=09unsigned long vaddr_start, vaddr, rand;
->  =09unsigned long remain_entropy;
->  =09unsigned long vmemmap_size;
-> +=09struct rnd_state rand_state;
-> +=09size_t i;
-> =20
->  =09vaddr_start =3D pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE=
-_OFFSET_BASE_L4;
->  =09vaddr =3D vaddr_start;
-> @@ -95,20 +140,10 @@ void __init kernel_randomize_memory(void)
->  =09if (!kaslr_memory_enabled())
->  =09=09return;
-> =20
-> -=09kaslr_regions[0].size_tb =3D 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
-> +=09kaslr_regions[0].size_tb =3D calc_direct_mapping_size();
->  =09kaslr_regions[1].size_tb =3D VMALLOC_SIZE_TB;
-> =20
-> -=09/*
-> -=09 * Update Physical memory mapping to available and
-> -=09 * add padding if needed (especially for memory hotplug support).
-> -=09 */
->  =09BUG_ON(kaslr_regions[0].base !=3D &page_offset_base);
-> -=09memory_tb =3D DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-> -=09=09CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> -
-> -=09/* Adapt phyiscal memory region size based on available memory */
-> -=09if (memory_tb < kaslr_regions[0].size_tb)
-> -=09=09kaslr_regions[0].size_tb =3D memory_tb;
-> =20
->  =09/*
->  =09 * Calculate the vmemmap region size in TBs, aligned to a TB
-> --=20
+> + pi = head.list_head.list.next & 1;
+> + second_abi = head.list_head.list.next & 0b10;
+> + head.list_head.list.next &= ~0b11UL;
+> + pip = head.list_head.list_op_pending & 1;
+> + second_abip = head.list_head.list_op_pending & 0b10;
+> + head.list_head.list_op_pending &= ~0b11UL;
+>
+>          next_entry = NULL; /* avoid warning with gcc */
+>          while (entry != (struct robust_list __user *) &head->list) {
+>                  /*
+>                   * Fetch the next entry in the list before calling
+>                   * handle_futex_death:
+>                   */
+>                  rc = compat_fetch_robust_entry(&next_uentry, &next_entry,
+> - (compat_uptr_t __user *)&entry->next, &next_pi);
+> + (compat_uptr_t __user *)&entry->next, &next_pi,
+> + &next_second_abi);
+>                  /*
+>                   * A pending lock might already be on the list, so
+>                   * dont process it twice:
+>                   */
+>                  if (entry != pending) {
+> + compat_long_t futex_offset = second_abi ?
+> + head.futex_offset2 :
+> + head.list_head.futex_offset;
+>                          void __user *uaddr = futex_uaddr(entry, futex_offset);
+>
+>                          if (handle_futex_death(uaddr, curr, pi))
+>                                  return;
+>                  }
+>                  if (rc)
+>                          return;
+>                  uentry = next_uentry;
+>                  entry = next_entry;
+>                  pi = next_pi;
+> + second_abi = next_second_abi;
+>                  /*
+>                   * Avoid excessively long or circular lists:
+>                   */
+>                  if (!--limit)
+>                          break;
+>
+>                  cond_resched();
+>          }
+>          if (pending) {
+> + compat_long_t futex_offset = second_abip ?
+> + head.futex_offset2 :
+> + head.list_head.futex_offset;
+>                  void __user *uaddr = futex_uaddr(pending, futex_offset);
+>
+>                  handle_futex_death(uaddr, curr, pip);
+>          }
+>  }
+> @@ -3814,23 +3858,29 @@ COMPAT_SYSCALL_DEFINE2(set_robust_list,
+>                  compat_size_t, len)
+>  {
+>          if (!futex_cmpxchg_enabled)
+>                  return -ENOSYS;
+>
+> - if (unlikely(len != sizeof(*head)))
+> + if (unlikely(len != sizeof(struct compat_robust_list_head) &&
+> + len != sizeof(struct compat_extended_robust_list_head)))
+>                  return -EINVAL;
+>
+> - current->compat_robust_list = head;
+> + current->compat_robust_list = head & ~0b11;
+> + BUILD_BUG_ON(sizeof(compat_robust_list_head) ==
+> + sizeof(compat_extended_robust_list_head));
+> + if (len == sizeof(compat_robust_list_head))
+> + current->compat_robust_list |= 0b1;
+>
+>          return 0;
+>  }
+>
+>  COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
+>                          compat_uptr_t __user *, head_ptr,
+>                          compat_size_t __user *, len_ptr)
+>  {
+>          struct compat_robust_list_head __user *head;
+> + size_t len;
+>          unsigned long ret;
+>          struct task_struct *p;
+>
+>          if (!futex_cmpxchg_enabled)
+>                  return -ENOSYS;
+> @@ -3848,14 +3898,18 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
+>
+>          ret = -EPERM;
+>          if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+>                  goto err_unlock;
+>
+> - head = p->compat_robust_list;
+> + head = p->compat_robust_list & ~0b11;
+> + if (p->compat_robust_list & 0b11 == 0b1)
+> + len = sizeof(struct compat_robust_list_head);
+> + else
+> + len = sizeof(struct compat_extended_robust_list_head);
+>          rcu_read_unlock();
+>
+> - if (put_user(sizeof(*head), len_ptr))
+> + if (put_user(len, len_ptr))
+>                  return -EFAULT;
+>          return put_user(ptr_to_compat(head), head_ptr);
+>
+>  err_unlock:
+>          rcu_read_unlock();
+> --
 > 2.20.1
->=20
+
+-- 
+Shawn Landden
 
