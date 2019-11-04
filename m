@@ -2,44 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2696EEBFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 542A7EECB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbfKDVws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46376 "EHLO mail.kernel.org"
+        id S2388730AbfKDV7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:59:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730796AbfKDVwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:44 -0500
+        id S2388236AbfKDV7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:59:42 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7350B217F5;
-        Mon,  4 Nov 2019 21:52:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A358B214E0;
+        Mon,  4 Nov 2019 21:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904364;
-        bh=eB8OcREBndT+A5hyfQrTyGkWl3QxuRF+jZflQikaaIU=;
+        s=default; t=1572904781;
+        bh=FxnXi6ieQJiByUUrfBmm0/Y9UkyehQruV0wZx9VOxbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v1QRgc2XDSMATgUVC/XwdHbHwMuX1O5BuGUuLA6v0oOhoLYXit7AIZpZCqhccYYWq
-         we6mZaR4GOOAWkLBdXnIz0WGQobQW3ysO83wz69V5igXgLJ9c50lRI1RmurdUIjmuY
-         VZ8EYJa34c46zZf3Bbg5YqIy/PR6TUdLW/BDtFQE=
+        b=Wz6smU5jF1N+ALuPeffF03G0ImrE1CokgefDqDXzLUXl4XwaTfLdPdAtB/d5Aohh6
+         C2jntGnaLSlul3RvC3nT7JGBc3jo0tBrG1au3kdgUcVXaRNSymcMyKDfarb9q79inE
+         +Fowb+dRQdWXOos4qqD+rXIfisxpvBxtrVP0MJTM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/95] PCI/PME: Fix possible use-after-free on remove
+        stable@vger.kernel.org,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.19 067/149] perf annotate: Fix the signedness of failure returns
 Date:   Mon,  4 Nov 2019 22:44:20 +0100
-Message-Id: <20191104212052.393906364@linuxfoundation.org>
+Message-Id: <20191104212141.427318113@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,39 +51,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <thesven73@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 7cf58b79b3072029af127ae865ffc6f00f34b1f8 ]
+[ Upstream commit 28f4417c3333940b242af03d90214f713bbef232 ]
 
-In remove(), ensure that the PME work cannot run after kfree() is called.
-Otherwise, this could result in a use-after-free.
+Callers of symbol__annotate() expect a errno value or some other
+extended error value range in symbol__strerror_disassemble() to
+convert to a proper error string, fix it when propagating a failure to
+find the arch specific annotation routines via arch__find(arch_name).
 
-This issue was detected with the help of Coccinelle.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Sinan Kaya <okaya@kernel.org>
-Cc: Frederick Lawler <fred@fredlawl.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+Cc: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/n/tip-o0k6dw7cas0vvmjjvgsyvu1i@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pcie/pme.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/annotate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-index c2e6e3d1073f8..5500660bbb104 100644
---- a/drivers/pci/pcie/pme.c
-+++ b/drivers/pci/pcie/pme.c
-@@ -441,6 +441,7 @@ static void pcie_pme_remove(struct pcie_device *srv)
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 4ef62bcdc80f0..b4946ef48b621 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1875,7 +1875,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
  
- 	pcie_pme_disable_interrupt(srv->port, data);
- 	free_irq(srv->irq, srv);
-+	cancel_work_sync(&data->work);
- 	kfree(data);
- }
+ 	args.arch = arch = arch__find(arch_name);
+ 	if (arch == NULL)
+-		return -ENOTSUP;
++		return ENOTSUP;
  
+ 	if (parch)
+ 		*parch = arch;
 -- 
 2.20.1
 
