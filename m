@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82982EEC5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE72EEC6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:57:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387481AbfKDV41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:56:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51954 "EHLO mail.kernel.org"
+        id S2388484AbfKDV4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:56:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388349AbfKDV4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:56:22 -0500
+        id S2388407AbfKDV4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:49 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1363421D7D;
-        Mon,  4 Nov 2019 21:56:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0226320650;
+        Mon,  4 Nov 2019 21:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904581;
-        bh=arJ2BRB1IpfGYQd0+0FKKEMEfGuTLFKQTpwb9QW2mZM=;
+        s=default; t=1572904608;
+        bh=nHrJQy6IRtduNdoMR+OvKKGPN+3FdGijZZWTnM9090E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v4EMo4LAbF34jT0AU1Obbdo9QLR1zq6PxZGY/qxfpQmgO95Dz7FVQruiSIR31vkd0
-         vt0JLZIBLNLNr8zAp775jb4flFHCzYG8bGUXAdZHxvBFFgwdYQecCnIlrFWFGIjQB0
-         dggk2T+f0dzgvnnQspguHYtj19Q6yhpKqwCEnZqQ=
+        b=dwoKBTpW1mJflVVXYO8tjq2aML/qbg7io9X6zc+plkLWQL/RMavz/PdCFv1UwtMHF
+         +4HJ3b8UXaZ5bqiuR3E4BoUYws0N5q5+Hfmf0dZZ/MXKl4nO6EFb4dGCCv5biqQOTm
+         s4IApHk98/UJVMmKalNGDSHKLnwaRVu4/HeFP1Qg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 92/95] sctp: not bind the socket in sctp_connect
-Date:   Mon,  4 Nov 2019 22:45:30 +0100
-Message-Id: <20191104212124.460000853@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 94/95] ALSA: timer: Simplify error path in snd_timer_open()
+Date:   Mon,  4 Nov 2019 22:45:32 +0100
+Message-Id: <20191104212125.226357372@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
 References: <20191104212038.056365853@linuxfoundation.org>
@@ -46,72 +43,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9b6c08878e23adb7cc84bdca94d8a944b03f099e upstream.
+[ Upstream commit 41672c0c24a62699d20aab53b98d843b16483053 ]
 
-Now when sctp_connect() is called with a wrong sa_family, it binds
-to a port but doesn't set bp->port, then sctp_get_af_specific will
-return NULL and sctp_connect() returns -EINVAL.
+Just a minor refactoring to use the standard goto for error paths in
+snd_timer_open() instead of open code.  The first mutex_lock() is
+moved to the beginning of the function to make the code clearer.
 
-Then if sctp_bind() is called to bind to another port, the last
-port it has bound will leak due to bp->port is NULL by then.
-
-sctp_connect() doesn't need to bind ports, as later __sctp_connect
-will do it if bp->port is NULL. So remove it from sctp_connect().
-While at it, remove the unnecessary sockaddr.sa_family len check
-as it's already done in sctp_inet_connect.
-
-Fixes: 644fbdeacf1d ("sctp: fix the issue that flags are ignored when using kernel_connect")
-Reported-by: syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/socket.c |   21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ sound/core/timer.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -4168,34 +4168,17 @@ out_nounlock:
- static int sctp_connect(struct sock *sk, struct sockaddr *addr,
- 			int addr_len, int flags)
- {
--	struct inet_sock *inet = inet_sk(sk);
- 	struct sctp_af *af;
--	int err = 0;
-+	int err = -EINVAL;
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 2c0f292226d79..b50f7601cc2b0 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -254,19 +254,20 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	struct snd_timer_instance *timeri = NULL;
+ 	int err;
  
- 	lock_sock(sk);
--
- 	pr_debug("%s: sk:%p, sockaddr:%p, addr_len:%d\n", __func__, sk,
- 		 addr, addr_len);
++	mutex_lock(&register_mutex);
+ 	if (tid->dev_class == SNDRV_TIMER_CLASS_SLAVE) {
+ 		/* open a slave instance */
+ 		if (tid->dev_sclass <= SNDRV_TIMER_SCLASS_NONE ||
+ 		    tid->dev_sclass > SNDRV_TIMER_SCLASS_OSS_SEQUENCER) {
+ 			pr_debug("ALSA: timer: invalid slave class %i\n",
+ 				 tid->dev_sclass);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto unlock;
+ 		}
+-		mutex_lock(&register_mutex);
+ 		timeri = snd_timer_instance_new(owner, NULL);
+ 		if (!timeri) {
+-			mutex_unlock(&register_mutex);
+-			return -ENOMEM;
++			err = -ENOMEM;
++			goto unlock;
+ 		}
+ 		timeri->slave_class = tid->dev_sclass;
+ 		timeri->slave_id = tid->device;
+@@ -277,13 +278,10 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 			snd_timer_close_locked(timeri);
+ 			timeri = NULL;
+ 		}
+-		mutex_unlock(&register_mutex);
+-		*ti = timeri;
+-		return err;
++		goto unlock;
+ 	}
  
--	/* We may need to bind the socket. */
--	if (!inet->inet_num) {
--		if (sk->sk_prot->get_port(sk, 0)) {
--			release_sock(sk);
--			return -EAGAIN;
--		}
--		inet->inet_sport = htons(inet->inet_num);
--	}
--
- 	/* Validate addr_len before calling common connect/connectx routine. */
- 	af = sctp_get_af_specific(addr->sa_family);
--	if (!af || addr_len < af->sockaddr_len) {
--		err = -EINVAL;
--	} else {
--		/* Pass correct addr len to common routine (so it knows there
--		 * is only one address being passed.
--		 */
-+	if (af && addr_len >= af->sockaddr_len)
- 		err = __sctp_connect(sk, addr, af->sockaddr_len, flags, NULL);
--	}
+ 	/* open a master instance */
+-	mutex_lock(&register_mutex);
+ 	timer = snd_timer_find(tid);
+ #ifdef CONFIG_MODULES
+ 	if (!timer) {
+@@ -294,25 +292,26 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	}
+ #endif
+ 	if (!timer) {
+-		mutex_unlock(&register_mutex);
+-		return -ENODEV;
++		err = -ENODEV;
++		goto unlock;
+ 	}
+ 	if (!list_empty(&timer->open_list_head)) {
+ 		timeri = list_entry(timer->open_list_head.next,
+ 				    struct snd_timer_instance, open_list);
+ 		if (timeri->flags & SNDRV_TIMER_IFLG_EXCLUSIVE) {
+-			mutex_unlock(&register_mutex);
+-			return -EBUSY;
++			err = -EBUSY;
++			timeri = NULL;
++			goto unlock;
+ 		}
+ 	}
+ 	if (timer->num_instances >= timer->max_instances) {
+-		mutex_unlock(&register_mutex);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto unlock;
+ 	}
+ 	timeri = snd_timer_instance_new(owner, timer);
+ 	if (!timeri) {
+-		mutex_unlock(&register_mutex);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto unlock;
+ 	}
+ 	/* take a card refcount for safe disconnection */
+ 	if (timer->card)
+@@ -321,16 +320,16 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	timeri->slave_id = slave_id;
  
- 	release_sock(sk);
+ 	if (list_empty(&timer->open_list_head) && timer->hw.open) {
+-		int err = timer->hw.open(timer);
++		err = timer->hw.open(timer);
+ 		if (err) {
+ 			kfree(timeri->owner);
+ 			kfree(timeri);
++			timeri = NULL;
+ 
+ 			if (timer->card)
+ 				put_device(&timer->card->card_dev);
+ 			module_put(timer->module);
+-			mutex_unlock(&register_mutex);
+-			return err;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -341,6 +340,8 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 		snd_timer_close_locked(timeri);
+ 		timeri = NULL;
+ 	}
++
++ unlock:
+ 	mutex_unlock(&register_mutex);
+ 	*ti = timeri;
  	return err;
+-- 
+2.20.1
+
 
 
