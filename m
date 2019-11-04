@@ -2,126 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DDCEE6A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827B5EE6B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfKDRwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:52:12 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38584 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfKDRwM (ORCPT
+        id S1729530AbfKDRy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:54:28 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38036 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728766AbfKDRyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:52:12 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w8so7913944plq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:52:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:from:subject:to:user-agent:date;
-        bh=3CHrSHD37ZopVTCrhzgKR9E8ooKOmK/8OxMVDS6vwuI=;
-        b=aLtOeSffc2ESdeStgh0gvZWVGC4SVaxngt6L3IAywqqZTvFkn+X676dv17c4L6eGba
-         SnLWjpu0qWDl8sFS8//6SiqVNR9FxZ1NRQCXVSYm1+GH1eGC3imZpqxJJVpp1zDsB/n0
-         qT2qm86muT+AU+DwWe6nV0XwIj9ZbPbZlOtyI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:from:subject:to
-         :user-agent:date;
-        bh=3CHrSHD37ZopVTCrhzgKR9E8ooKOmK/8OxMVDS6vwuI=;
-        b=jp5BmogbOD0H7O1Hq+doPPypxNhW6hOeMmJ0eACzHeM9tqDNZQFgmBAX7puHUeaTZa
-         K2RfQTzn04bUif83PPoOCmdv8NEkGKa8Kta8k6GtkOcjb0q3az3OSoP+cZGVWuBYFs+W
-         5Min/3+h9vUUYDbfZDi+HGEPwu1uK8VwcXhy26I1kUja9T7+d7w/xX21aI1gf7npxR1T
-         vZCRbC4AGj1xPxX7S/kAwkIZoheCTYnt2k1OP2ySo+yP6yPsQYcUXNRJHuIh+R33AaXF
-         CNZ3Pwhf730Tms7RKQK9dttQ6qVcF8rw2TteepcwKGD4FfPmEg+9tmGqZMwWYMcTjJH9
-         3Q4g==
-X-Gm-Message-State: APjAAAWUaTEcpEaYbfSkGYGdXyefgBcajkjlJD/4VJLAjbBFoMf5bEpA
-        39fNOKVCePSMHZ+TjUkh7XaqBA==
-X-Google-Smtp-Source: APXvYqxrYy0bhV9BstiDpY6WoRWDrnAIP8w3jFR5/bWWHdykonSQNVFdZDTiO5WNLjo1Bbf3S55xnw==
-X-Received: by 2002:a17:902:16b:: with SMTP id 98mr28484214plb.154.1572889931654;
-        Mon, 04 Nov 2019 09:52:11 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id f2sm14089155pfg.48.2019.11.04.09.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 09:52:11 -0800 (PST)
-Message-ID: <5dc0654b.1c69fb81.5f215.8c24@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 4 Nov 2019 12:54:21 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iRgYQ-0002ZH-Ap; Mon, 04 Nov 2019 18:54:14 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E2BD51C0017;
+        Mon,  4 Nov 2019 18:54:13 +0100 (CET)
+Date:   Mon, 04 Nov 2019 17:54:13 -0000
+From:   "tip-bot2 for Chuhong Yuan" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] clocksource/drivers/asm9260: Add a check for of_clk_get
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191016124330.22211-1-hslester96@gmail.com>
+References: <20191016124330.22211-1-hslester96@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1572591543-15501-1-git-send-email-kgunda@codeaurora.org>
-References: <1572591543-15501-1-git-send-email-kgunda@codeaurora.org>
-Cc:     Kiran Gunda <kgunda@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH V1] mfd: qcom-spmi-pmic: Add support for pm6150 and pm6150l
-To:     Andy Gross <agross@kernel.org>,
-        Kiran Gunda <kgunda@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org
-User-Agent: alot/0.8.1
-Date:   Mon, 04 Nov 2019 09:52:10 -0800
+Message-ID: <157289005359.29376.7826557448523708212.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Kiran Gunda (2019-10-31 23:59:03)
-> Add the compatibles and PMIC ids for pm6150 and pm6150l PMICs
-> found on SC7180 based platforms.
->=20
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt | 2 ++
->  drivers/mfd/qcom-spmi-pmic.c                             | 4 ++++
->  2 files changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt b/D=
-ocumentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> index 1437062..b5fc64e 100644
-> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-> @@ -32,6 +32,8 @@ Required properties:
->                     "qcom,pm8998",
->                     "qcom,pmi8998",
->                     "qcom,pm8005",
-> +                  "qcom,pm6150",
-> +                  "qcom,pm6150l",
+The following commit has been merged into the timers/core branch of tip:
 
-Please sort on compatible string
+Commit-ID:     6e001f6a4cc73cd06fc7b8c633bc4906c33dd8ad
+Gitweb:        https://git.kernel.org/tip/6e001f6a4cc73cd06fc7b8c633bc4906c33dd8ad
+Author:        Chuhong Yuan <hslester96@gmail.com>
+AuthorDate:    Wed, 16 Oct 2019 20:43:30 +08:00
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Mon, 04 Nov 2019 10:40:10 +01:00
 
->                     or generalized "qcom,spmi-pmic".
->  - reg:             Specifies the SPMI USID slave address for this device.
->                     For more information see:
-> diff --git a/drivers/mfd/qcom-spmi-pmic.c b/drivers/mfd/qcom-spmi-pmic.c
-> index e8fe705..d916aa8 100644
-> --- a/drivers/mfd/qcom-spmi-pmic.c
-> +++ b/drivers/mfd/qcom-spmi-pmic.c
-> @@ -34,6 +34,8 @@
->  #define PM8998_SUBTYPE         0x14
->  #define PMI8998_SUBTYPE                0x15
->  #define PM8005_SUBTYPE         0x18
-> +#define PM6150L_SUBTYPE                0x27
-> +#define PM6150_SUBTYPE         0x28
+clocksource/drivers/asm9260: Add a check for of_clk_get
 
-And on macro name here.
+asm9260_timer_init misses a check for of_clk_get.
+Add a check for it and print errors like other clocksource drivers.
 
-> =20
->  static const struct of_device_id pmic_spmi_id_table[] =3D {
->         { .compatible =3D "qcom,spmi-pmic", .data =3D (void *)COMMON_SUBT=
-YPE },
-> @@ -53,6 +55,8 @@
->         { .compatible =3D "qcom,pm8998",    .data =3D (void *)PM8998_SUBT=
-YPE },
->         { .compatible =3D "qcom,pmi8998",   .data =3D (void *)PMI8998_SUB=
-TYPE },
->         { .compatible =3D "qcom,pm8005",    .data =3D (void *)PM8005_SUBT=
-YPE },
-> +       { .compatible =3D "qcom,pm6150l",   .data =3D (void *)PM6150L_SUB=
-TYPE },
-> +       { .compatible =3D "qcom,pm6150",    .data =3D (void *)PM6150_SUBT=
-YPE },
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191016124330.22211-1-hslester96@gmail.com
+---
+ drivers/clocksource/asm9260_timer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-And compatible here.
-
->         { }
+diff --git a/drivers/clocksource/asm9260_timer.c b/drivers/clocksource/asm9260_timer.c
+index 9f09a59..5b39d37 100644
+--- a/drivers/clocksource/asm9260_timer.c
++++ b/drivers/clocksource/asm9260_timer.c
+@@ -194,6 +194,10 @@ static int __init asm9260_timer_init(struct device_node *np)
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		pr_err("Failed to get clk!\n");
++		return PTR_ERR(clk);
++	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
