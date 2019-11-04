@@ -2,74 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B1DED8C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 06:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D21AEED8C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:03:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfKDF54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 00:57:56 -0500
-Received: from sonic317-28.consmr.mail.bf2.yahoo.com ([74.6.129.83]:42008 "EHLO
-        sonic317-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbfKDF5z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 00:57:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1572847074; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=XjTs7/A2PX/qca+GCgku9hZylbWYGv2IJx2kSsaeQTwgrk40MKCbWrvi0gROdOD5mM6fLOp5LjtqJz2ehRWa1ey2u16eRRrHMbvoBcimGEMVuwCdbAxS3K81hEz8kojVjKuXc6ZjzBIWIPSfBsGHNwXGfSZS8wZBY6dgTczqrD5RJcYFNZYFxKCBgAkE4CLuVVO/PusolfH1JuB/Q3fnmsObqAbnrhdLL82iZpTzFPL5/5pidKzPW20V2yu6PciLVy9pj/0pMrl3Zugw8Qwd/2hE3IPe8jL3OVmacAzhBxsQJdlt8NXolpGuOWFbZ5vgJyMKQ7TeGv/1MHyfd/XC0g==
-X-YMail-OSG: K3RhNE0VM1mPPQ2PVK9.IqUwKJKE6Tl7ie9VkmZ8GwV0ebzvvzg1V0l_qkLqEwJ
- Bti.UpMAi2bjmZj_J85csh7M80yJ37omPres4q0yWdDOLw30l.hx30ZEODVlA70SbeFGwUr2caib
- LchT3rmNlRYlkDpf0zzvD7aU4sEbr9lvjt1sxPgdvjX23ybrwgPTnmMqcqqnhLY06Qqgmc3knMUm
- oApwXDZSSrdJblwjPHEo4nVd3pAJcDH7O1PbBuFy0rlbrZy9xAzb3mhVFvd6Ng_fX2gsmNlNa7xO
- nyBlQ4pA3Ph1BYQ1CGU4_cpYNL8LEJn48uYTD1bKGLu_rWgytklcX.wEDSG6OSu18b9.VM9ZD_se
- 4gVkqACzmVpu0Uc0MZFAw2kn4fEzbv.oHts8x_QwsluamEI7QXugLJhZ53f6wlQg6oCUc9hNX5n6
- NNmcmKKso4pMJgAzWTjMnb4fC7QyJYGrmydvK4LREs93DaPdDrwjngHMA77g3WOIsL3Xt2hGeaR1
- 9vH8nidjSt7GxQY0yZveV56hdFsLYbHsVZ4GtJt87P6rx1hZ_kK5xZJPiIvGQg3ZZAs2Rz7cMBTL
- 3mxVTFZwopfGj5_4eIbrEIu1KjQK.mEzWIunu9ANJxu0CXF6HbItq0TRqJ8yAsQVaIWEUxfCO89c
- vnpueGahG7LTwc8236fJfrEiCZkSPPRUiyDchJ__.TNnWbBSlTI98irWflRp9_tNCIsI6gUO3GJU
- JnyI6r2ELtyJ5UZnIrMQm972TMBmYqtRvZ4Ek_gzhrDIAzwilQH1xzaDrCA46o7h.uqYITRFnmsc
- 0ABREuEXr_6UDnh0QuZCy1AyKVn9gOi2PdPcW3stn6Vpc1Diuoxxp4oY06eagf_.38.J3B88POb6
- Xs5lRS4.7Hbb8K.NM_m.BpTkP6KT13PffWtMWHGuELSTy5bQUtRconcJ1TNHY9IUoZO3Cj0q1MB.
- ykeuEULGHle9g6xKe6l6iqnUgCYkD7yHY9NbDG4s_aQqGpZRBgZU02564TgRqcKmOZm.tDgitsZy
- qiaWdwyPkN0hpTYYn.aaV4dj2Usi7dGaV7NMTfPkKfSugqrriojVMwcNy4imSL4s4gV5ivM_p8_H
- 86DwA3zi7fFai28PnhuE5r4.n0mp3BCHugy8Wtza46fgqsU2wWAapbrpjH_Lzk.V_goMTuMrLQuc
- p6S7TkQiV9JjObMVUypuGIjXPIbYTi9u0sejVfeGSOhIdrqtbTsgZxcnht0noXjWRqf.EoBYjw1z
- aZx3bbmGiTc3_aSRHt8Ezxg_ne3DwNwOq2y.DD5UJIt8MBip8b.b6bshzMZ262C_Z.bQOskYK8F2
- qsJkiSw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Mon, 4 Nov 2019 05:57:54 +0000
-Date:   Mon, 4 Nov 2019 05:57:53 +0000 (UTC)
-From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
-Reply-To: ms.lisahugh000@gmail.com
-Message-ID: <260798141.461284.1572847073934@mail.yahoo.com>
-Subject: BUSINESS AFFAIR CO-OPERATION
+        id S1727938AbfKDGDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:03:01 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5697 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726018AbfKDGDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 01:03:00 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1E3CFAD45C0D4A48A932;
+        Mon,  4 Nov 2019 14:02:57 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 4 Nov 2019
+ 14:02:47 +0800
+Subject: Re: [PATCH] lib: optimize cpumask_local_spread()
+To:     Andrew Morton <akpm@linux-foundation.org>
+References: <1572501813-2125-1-git-send-email-zhangshaokun@hisilicon.com>
+ <20191031173721.e2a40b037799a149433a4867@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, yuqi jin <jinyuqi@huawei.com>,
+        "Mike Rapoport" <rppt@linux.ibm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        "Michal Hocko" <mhocko@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Anshuman Khandual" <anshuman.khandual@arm.com>
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+Message-ID: <cc3640e1-0e29-f196-97e4-ebf0bc8be78b@hisilicon.com>
+Date:   Mon, 4 Nov 2019 14:02:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20191031173721.e2a40b037799a149433a4867@linux-foundation.org>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
+On 2019/11/1 8:37, Andrew Morton wrote:
+> On Thu, 31 Oct 2019 14:03:33 +0800 Shaokun Zhang <zhangshaokun@hisilicon.com> wrote:
+> 
+>> From: yuqi jin <jinyuqi@huawei.com>
+>>
+>> In the multi-processor and NUMA system, A device may have many numa
+>> nodes belonging to multiple cpus. When we get a local numa, it is better
+>> to find the node closest to the local numa node to return instead of
+>> going to the online cpu immediately.
+>>
+>> For example, In Huawei Kunpeng 920 system, there are 4 NUMA node(0 -3)
+>> in the 2-socket system(0 - 1). If the I/O device is in socket1
+>> and the local NUMA node is 2, we shall choose the non-local node3 in
+>> the same socket when cpu core in NUMA node2 is less that I/O requirements.
+>> If we directly pick one cpu core from all online ones, it may be in
+>> the another socket and it is not friendly for performance.
+>>
+>> ...
+>>
+>> Changes from RFC:
+>>      Address Michal Hocko's comment: Use GFP_ATOMIC instead of GFP_KERNEL
+> 
+> Are you sure this is necessary?  cpumask_local_spread() is typically
+> called when a device driver is initializing irq affinities, and
+> sleeping allocations are usually OK at driver initialization time.  If
 
-Dear Friend,
+Got it and my limited realization, thanks for more explanations about it.
 
-I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
+> there is some driver which is calling cpumask_local_spread() from
+> atomic context, I bet it's pretty easy to fix.
+> 
+>> --- a/lib/cpumask.c
+>> +++ b/lib/cpumask.c
+>> @@ -192,6 +192,33 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
+>>  }
+>>  #endif
+>>  
+>> +static void calc_node_distance(int *node_dist, int node)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < nr_node_ids; i++)
+>> +		node_dist[i] = node_distance(node, i);
+>> +}
+>> +
+>> +static int find_nearest_node(int *node_dist, bool *used_flag)
+> 
+> The name "used_flag" is rather redundant for a thing of type bool - we
+> know it's a flag!  "used" would suffice.
+> 
 
-Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
+Ok
 
-I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
+>> +{
+>> +	int i, min_dist = node_dist[0], node_id = -1;
+>> +
+>> +	for (i = 0; i < nr_node_ids; i++)
+>> +		if (used_flag[i] == 0) {
+>> +			min_dist = node_dist[i];
+>> +			node_id = i;
+>> +			break;
+>> +		}
+>> +	for (i = 0; i < nr_node_ids; i++)
+>> +		if (node_dist[i] < min_dist && used_flag[i] == 0) {
+>> +			min_dist = node_dist[i];
+>> +			node_id = i;
+>> +		}
+>> +
+>> +	return node_id;
+>> +}
+>> +
+>>  /**
+>>   * cpumask_local_spread - select the i'th cpu with local numa cpu's first
+>>   * @i: index number
+>> @@ -205,7 +232,8 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
+>>   */
+>>  unsigned int cpumask_local_spread(unsigned int i, int node)
+> 
+> Yes, this has become quite an expensive function.  That seems harmless
+> given the typical callsites.
+> 
+>>  {
+>> -	int cpu;
+>> +	int cpu, j, id, *node_dist;
+>> +	bool *used_flag;
+>>  
+>>  	/* Wrap: we always want a cpu. */
+>>  	i %= num_online_cpus();
+>> @@ -215,19 +243,45 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
+>>  			if (i-- == 0)
+>>  				return cpu;
+>>  	} else {
+>> -		/* NUMA first. */
+>> -		for_each_cpu_and(cpu, cpumask_of_node(node), cpu_online_mask)
+>> -			if (i-- == 0)
+>> -				return cpu;
+>> +		node_dist = kmalloc_array(nr_node_ids, sizeof(int), GFP_ATOMIC);
+>> +		if (!node_dist)
+>> +			for_each_cpu(cpu, cpu_online_mask)
+>> +				if (i-- == 0)
+>> +					return cpu;
+>>  
+>> -		for_each_cpu(cpu, cpu_online_mask) {
+>> -			/* Skip NUMA nodes, done above. */
+>> -			if (cpumask_test_cpu(cpu, cpumask_of_node(node)))
+>> -				continue;
+>> +		used_flag = kmalloc_array(nr_node_ids, sizeof(bool), GFP_ATOMIC);
+> 
+> This could actually be an array of bits (include/linux/bitmap.h), but
+> it hardly seems important.
+> 
 
-Note/ 50% for you why 50% for me after success of the transfer to your bank
-account.
+Ok,
 
-Below information is what i need from you so will can be reaching each
-other
+> In fact with CONFIG_NODES_SHIFT <= 10, such a bitmap would have max
+> size of 128 bytes and could be a local.  But again, this is unimportant
+> as long as the other kmalloc is in there.
+> 
 
-1)Full name ...
-2)Private telephone number...
-3)Age...
-4)Nationality...
-5)Occupation ...
+Got it and I will follow it in next version.
 
+Thanks,
+Shaokun
 
-Thanks.
+> 
+>> +		if (!used_flag)
+>> +			for_each_cpu(cpu, cpu_online_mask)
+>> +				if (i-- == 0) {
+>> +					kfree(node_dist);
+>> +					return cpu;
+>> +				}
+>> +		memset(used_flag, 0, nr_node_ids * sizeof(bool));
+>>  
+>> -			if (i-- == 0)
+>> -				return cpu;
+>> +		calc_node_distance(node_dist, node);
+>> +		for (j = 0; j < nr_node_ids; j++) {
+>> +			id = find_nearest_node(node_dist, used_flag);
+>> +			if (id < 0)
+>> +				break;
+>> +			for_each_cpu_and(cpu,
+>> +				cpumask_of_node(id), cpu_online_mask)
+>> +				if (i-- == 0) {
+>> +					kfree(node_dist);
+>> +					kfree(used_flag);
+>> +					return cpu;
+>> +				}
+>> +			used_flag[id] = 1;
+>>  		}
+>> +
+>> +		for_each_cpu(cpu, cpu_online_mask)
+>> +			if (i-- == 0) {
+>> +				kfree(node_dist);
+>> +				kfree(used_flag);
+>> +				return cpu;
+>> +			}
+>> +
+>> +		kfree(node_dist);
+>> +		kfree(used_flag);
+>>  	}
+>>  	BUG();
+>>  }
+> 
+> 
+> .
+> 
 
-Ms Lisa Hugh
