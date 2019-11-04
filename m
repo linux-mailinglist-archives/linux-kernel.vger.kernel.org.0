@@ -2,79 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E0AEE883
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 616F5EE8A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:33:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387446AbfKDTch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 14:32:37 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47670 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387420AbfKDTcb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 14:32:31 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA4JWU83000954;
-        Mon, 4 Nov 2019 13:32:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572895950;
-        bh=McaddMrB7i3FpMcjLLfEBDVoAK/8NrLPN+r8JmCdhq8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yNI81/opVzEDaouLYMga7odkxF+cIsvP1t2+IIfmMwP5VMVS4bw7eFuTIiHhfumPs
-         4DNo5Nem4X0Z76gbSA4Uj+WU1HE26Ruzz312qrqwXSyYDOgOp9t2iX8N6pQbsA6IfX
-         HGNxWIsUKhLsvIip9McOlHivkIv/eDRFkqqgx4dg=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA4JWUub022147
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Nov 2019 13:32:30 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 4 Nov
- 2019 13:32:15 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 4 Nov 2019 13:32:15 -0600
-Received: from ula0869644.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA4JVmdJ096934;
-        Mon, 4 Nov 2019 13:32:29 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v2 20/20] MAINTAINERS: Add ti,cal.yaml
-Date:   Mon, 4 Nov 2019 13:31:40 -0600
-Message-ID: <20191104193140.31145-21-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191104193140.31145-1-bparrot@ti.com>
-References: <20191104193140.31145-1-bparrot@ti.com>
+        id S1729851AbfKDTdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 14:33:19 -0500
+Received: from mga14.intel.com ([192.55.52.115]:54081 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728322AbfKDTdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 14:33:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 11:33:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
+   d="scan'208";a="376436010"
+Received: from jleigh1-mobl.ger.corp.intel.com (HELO [10.251.83.74]) ([10.251.83.74])
+  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2019 11:33:10 -0800
+Subject: Re: [PATCH 06/14] soundwire: add support for sdw_slave_type
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
+ <20191023212823.608-7-pierre-louis.bossart@linux.intel.com>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <71b50d6d-0000-340a-eb5d-6a63564dd2d6@intel.com>
+Date:   Mon, 4 Nov 2019 20:33:08 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191023212823.608-7-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ti,cal.yaml to the MAINTAINERS file.
+On 2019-10-23 23:28, Pierre-Louis Bossart wrote:
+> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
+> index 9a0fd3ee1014..5df095f4e12f 100644
+> --- a/drivers/soundwire/bus_type.c
+> +++ b/drivers/soundwire/bus_type.c
+> @@ -49,9 +49,16 @@ int sdw_slave_modalias(const struct sdw_slave *slave, char *buf, size_t size)
+>   
+>   static int sdw_uevent(struct device *dev, struct kobj_uevent_env *env)
+>   {
+> -	struct sdw_slave *slave = to_sdw_slave_device(dev);
+> +	struct sdw_slave *slave;
+>   	char modalias[32];
+>   
+> +	if (is_sdw_slave(dev)) {
+> +		slave = to_sdw_slave_device(dev);
+> +	} else {
+> +		dev_warn(dev, "uevent for unknown Soundwire type\n");
+> +		return -EINVAL;
+> +	}
+> +
+>   	sdw_slave_modalias(slave, modalias, sizeof(modalias));
+>   
+>   	if (add_uevent_var(env, "MODALIAS=%s", modalias))
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Positive evaluation of is_sdw_slave() check is required for function to 
+continue, thus you might as well do:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8077b453f2e9..d360df48f9f2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16315,6 +16315,7 @@ W:	http://linuxtv.org/
- Q:	http://patchwork.linuxtv.org/project/linux-media/list/
- S:	Maintained
- F:	drivers/media/platform/ti-vpe/
-+F:	Documentation/devicetree/bindings/media/ti,cal.yaml
- 
- TI WILINK WIRELESS DRIVERS
- L:	linux-wireless@vger.kernel.org
--- 
-2.17.1
+if (!is_sdw_slave(dev)) {
+	dev_warn();
+	return -EINVAL;
+}
 
+slave = to_sdw_slave_device(dev);
+(...)
+
+Czarek
