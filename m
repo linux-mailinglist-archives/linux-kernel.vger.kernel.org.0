@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF012EEE2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D40EEF9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbfKDWNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:13:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
+        id S2388328AbfKDWWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:22:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389737AbfKDWKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:16 -0500
+        id S2388296AbfKDV4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:09 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C96C20650;
-        Mon,  4 Nov 2019 22:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD56221929;
+        Mon,  4 Nov 2019 21:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905415;
-        bh=pn2srYfvy9VzBDlTEG8iipOq6A4GH+NorzMhe9cGsPE=;
+        s=default; t=1572904569;
+        bh=AEX36XsO5lXsy2UodCcGI6ADsqU81+EXoRM9bAA0rL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=03leRyNnfV7HZYgm8cyYHAiZR9zZjQfTvVxswxmWNL9WPBNxebbq+hbN9Brssz+aH
-         tAUTZKFAL5XALrUNm9MyXiZk/WYImyeSnBo0zgIuhUW+g1WsFS7wcD+JnPX6knR4FL
-         sxygT0NAfhxu/KkLKZzXGb4s1sNgyRw5aG8laKkM=
+        b=0Zj5JGlxsVrRz7bZ9vA2ySbutcsi3r3rQKqn0w1z3qjYBx920ZciiJswKu5ui9KwL
+         cQNRlGB8+LpT9ErkIDGkqcuNEPlFVkb1MHK/jS68po76RBi4253d2YA2NKNTk7QAKi
+         x+V10rsKNdaCeenaKx33Kp0GikaB8gkStBHWOaLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Tony Lindgren <tony@atomide.com>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.3 136/163] dmaengine: cppi41: Fix cppi41_dma_prep_slave_sg() when idle
-Date:   Mon,  4 Nov 2019 22:45:26 +0100
-Message-Id: <20191104212150.203506300@linuxfoundation.org>
+        syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 89/95] net: usb: sr9800: fix uninitialized local variable
+Date:   Mon,  4 Nov 2019 22:45:27 +0100
+Message-Id: <20191104212123.803874685@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Valentin Vidic <vvidic@valentin-vidic.from.hr>
 
-commit bacdcb6675e170bb2e8d3824da220e10274f42a7 upstream.
+commit 77b6d09f4ae66d42cd63b121af67780ae3d1a5e9 upstream.
 
-Yegor Yefremov <yegorslists@googlemail.com> reported that musb and ftdi
-uart can fail for the first open of the uart unless connected using
-a hub.
+Make sure res does not contain random value if the call to
+sr_read_cmd fails for some reason.
 
-This is because the first dma call done by musb_ep_program() must wait
-if cppi41 is PM runtime suspended. Otherwise musb_ep_program() continues
-with other non-dma packets before the DMA transfer is started causing at
-least ftdi uarts to fail to receive data.
-
-Let's fix the issue by waking up cppi41 with PM runtime calls added to
-cppi41_dma_prep_slave_sg() and return NULL if still idled. This way we
-have musb_ep_program() continue with PIO until cppi41 is awake.
-
-Fixes: fdea2d09b997 ("dmaengine: cppi41: Add basic PM runtime support")
-Reported-by: Yegor Yefremov <yegorslists@googlemail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable@vger.kernel.org # v4.9+
-Link: https://lore.kernel.org/r/20191023153138.23442-1-tony@atomide.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported-by: syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com
+Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/ti/cppi41.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/net/usb/sr9800.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/ti/cppi41.c
-+++ b/drivers/dma/ti/cppi41.c
-@@ -586,9 +586,22 @@ static struct dma_async_tx_descriptor *c
- 	enum dma_transfer_direction dir, unsigned long tx_flags, void *context)
+--- a/drivers/net/usb/sr9800.c
++++ b/drivers/net/usb/sr9800.c
+@@ -336,7 +336,7 @@ static void sr_set_multicast(struct net_
+ static int sr_mdio_read(struct net_device *net, int phy_id, int loc)
  {
- 	struct cppi41_channel *c = to_cpp41_chan(chan);
-+	struct dma_async_tx_descriptor *txd = NULL;
-+	struct cppi41_dd *cdd = c->cdd;
- 	struct cppi41_desc *d;
- 	struct scatterlist *sg;
- 	unsigned int i;
-+	int error;
-+
-+	error = pm_runtime_get(cdd->ddev.dev);
-+	if (error < 0) {
-+		pm_runtime_put_noidle(cdd->ddev.dev);
-+
-+		return NULL;
-+	}
-+
-+	if (cdd->is_suspended)
-+		goto err_out_not_ready;
+ 	struct usbnet *dev = netdev_priv(net);
+-	__le16 res;
++	__le16 res = 0;
  
- 	d = c->desc;
- 	for_each_sg(sgl, sg, sg_len, i) {
-@@ -611,7 +624,13 @@ static struct dma_async_tx_descriptor *c
- 		d++;
- 	}
- 
--	return &c->txd;
-+	txd = &c->txd;
-+
-+err_out_not_ready:
-+	pm_runtime_mark_last_busy(cdd->ddev.dev);
-+	pm_runtime_put_autosuspend(cdd->ddev.dev);
-+
-+	return txd;
- }
- 
- static void cppi41_compute_td_desc(struct cppi41_desc *d)
+ 	mutex_lock(&dev->phy_mutex);
+ 	sr_set_sw_mii(dev);
 
 
