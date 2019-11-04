@@ -2,101 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 105E9EE297
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 964EBEE296
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:32:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfKDOcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 09:32:45 -0500
-Received: from mail-io1-f49.google.com ([209.85.166.49]:46771 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfKDOco (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 09:32:44 -0500
-Received: by mail-io1-f49.google.com with SMTP id c6so18600150ioo.13
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 06:32:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=pPoc1LYjuuWW85w5om7p6J+XA/2Iiyol16QOP7FwRGU=;
-        b=lyVW5vXOD7ThTrnsn2DY0eCQkEyMbv/U7Sr+YigbWns8kxBBvKvu10euWMUMb+FEpz
-         p6aa2S8RKRnGntEKUz6pOXZ2cUtAXGuDWKTu8yf7GEVv6vM2oTY2WTtLrrMXmZNtjiPM
-         m5fXHEUPf5rgupIGT4bDAVnR6IF8KW3mrmOyZ8+GUblTJVP4a6Ddmp37j5w1fJkXci4b
-         1GCau1W/kFlYI0tlLtjF3K8UK1FXsFlBj73fgDNl6Siy88f6bZj4wgYmTnLJOibG3qZu
-         VLp7YJEEVsv88yVH+6YFfQLWJ02XKASZEucjQVva2BLQlV6nmVHHTYE99hXyBAAIeXcT
-         GdnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=pPoc1LYjuuWW85w5om7p6J+XA/2Iiyol16QOP7FwRGU=;
-        b=c6t/yp8mfm5njtqGd7lPYC3hzFRGaMctLo6sErRVMQlpDwfz5P53WPj8/4eikLrib1
-         xqR6+bnVS+W29PZIP1ig1A2tpq5AjjxV3xp5j/oMyZcLygQecYKIkvSWzXtbiv3W2KH6
-         sM3RolZqeK++Uf2TvdvsavFzS+lvMI5oVu1MMUg0aVs1Bq69ftYjh8qVhSVvh5CSud+g
-         SfRmc/YJEzk1zDyrvOk4Q28tlsnjAaNBw/2ULresC4ZYjbnBiMyNW70Em19TVUcHd3qG
-         j7bEwM+5wShPS2B+lzB5jtn+04SFt0bESSq04x8KNzPj9utBiZ+NJ4gVyRKygWx2P5Mr
-         ojqw==
-X-Gm-Message-State: APjAAAWtgF5zBF8s3V3Q8BJW3kYsDWOYUC5GCbDIVKRuXmltcFJGWmvm
-        RmfT+2v9pBVaetseGCRXR148MQRVNYwYGkPowZrHLaOc
-X-Google-Smtp-Source: APXvYqx6MDx6C3PO2aqgCXGuFud0ElWF1FLT862wB4fORTO+GoUuV6nfKQZllGGbF8zFknZ9v9Ch1Zy2BUq3DpvuCI8=
-X-Received: by 2002:a6b:7b4d:: with SMTP id m13mr16990964iop.23.1572877962831;
- Mon, 04 Nov 2019 06:32:42 -0800 (PST)
+        id S1728888AbfKDOcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 09:32:42 -0500
+Received: from mga03.intel.com ([134.134.136.65]:2377 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728810AbfKDOcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 09:32:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 06:32:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
+   d="scan'208";a="402989494"
+Received: from cckuo1-mobl2.amr.corp.intel.com (HELO [10.251.130.8]) ([10.251.130.8])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Nov 2019 06:32:38 -0800
+Subject: Re: [alsa-devel] [PATCH 1/4] soundwire: sdw_slave: add new fields to
+ track probe status
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191023210657.32440-1-pierre-louis.bossart@linux.intel.com>
+ <20191023210657.32440-2-pierre-louis.bossart@linux.intel.com>
+ <20191103045604.GE2695@vkoul-mobl.Dlink>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f53b28bb-1ec7-a400-54ed-51fd55819ecd@linux.intel.com>
+Date:   Mon, 4 Nov 2019 08:32:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-References: <CAFSh4UxSx7SYT=Ja6TbwFwCJm_yn6VtMapXGv3B=+g2rQcALSA@mail.gmail.com>
- <20191104135111.GF28764@mit.edu>
-In-Reply-To: <20191104135111.GF28764@mit.edu>
-From:   Tom Cook <tom.k.cook@gmail.com>
-Date:   Mon, 4 Nov 2019 14:32:30 +0000
-Message-ID: <CAFSh4UxquUDSbw+JA1t=VBpe1yn+ar3MjsFbJP9bRo5a3BWAnw@mail.gmail.com>
-Subject: Re: Power management - HP 15-ds0502na
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191103045604.GE2695@vkoul-mobl.Dlink>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 1:51 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> This is actually the laptop's ACPI and/or EC not supporting
-> suspend-to-ram at all.  Suspend to idle is the new hotness, because it
-> gives the OS much more control (but also gives the OS much more
-> opportunity to screw up).  The Dell XPS 13 (models 9370 and 9380)
-> supports both s2idle and s2ram, but s2idle doesn't work well at all on
-> Linux.  (Well, at least not the upstream kernels; the official Dell
-> Ubuntu kernel and userspace apparently has enough tweaks that it works
-> well.)
 
-s2idle sort of works - the thing appears to go to sleep and wake up
-okay - but the power savings are not really enough to make it
-worthwhile.  Putting it into s2idle state and putting it in a bag
-results in a very hot laptop - and of course that makes battery life
-not great.  I'm guessing this is the Ryzen 7 CPU idle states not being
-very well supported?
 
-> > * There are a few devices that appear to be on I2C buses and declared
-> > in the ACPI tables (eg the fingerprint sensor) which don't show up
-> > under Linux.  They did under Windows, until I blew the Windows
-> > installation away to install Linux, and I'm assuming that Windows
-> > found them through the ACPI DSDT.  Now thinking it may have been handy
-> > to keep Windows around for debugging, but that's regrets for you.
->
-> Even if they showed up, it's unclear the device driver would exist for
-> Linux.  Most fingerprint readers have proprietary interfaces and
-> aren't well supported by Linux in general.
+On 11/2/19 11:56 PM, Vinod Koul wrote:
+> On 23-10-19, 16:06, Pierre-Louis Bossart wrote:
+>> Changes to the sdw_slave structure needed to solve race conditions on
+>> driver probe.
+> 
+> Can you please explain the race you have observed, it would be a very
+> useful to document it as well
 
-Yes, understood.  But the first step would be enumerating them through
-the ACPI tables (if indeed that is how they are announced).
+the races are explained in the [PATCH 00/18] soundwire: code hardening 
+and suspend-resume support series.
 
-> > Is this the right place to raise this?  If there's some other place
-> > that Linux ACPI issues are dealt with, please point me there as I've
-> > not had any luck googling.
->
-> There is the linux-acpi@vger.kernel.org mailing list and the
-> linux-pm@vger.kernel.org (pm --> "power management") where you might
-> try asking about the s2idle.  A lot of the issues with s2idle appear
-> to be very device driver specific, and not about the power management
-> core, so it's unclear folks on those lists will be able to help.  But
-> it's worth a try...
+>>
+>> The functionality is added in the next patch.
+> 
+> which one..?
 
-Thanks.
+[PATCH 00/18] soundwire: code hardening and suspend-resume support
 
-Tom
+
+> 
+>>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   include/linux/soundwire/sdw.h | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
+>> index 688b40e65c89..a381a596212b 100644
+>> --- a/include/linux/soundwire/sdw.h
+>> +++ b/include/linux/soundwire/sdw.h
+>> @@ -545,6 +545,10 @@ struct sdw_slave_ops {
+>>    * @node: node for bus list
+>>    * @port_ready: Port ready completion flag for each Slave port
+>>    * @dev_num: Device Number assigned by Bus
+>> + * @probed: boolean tracking driver state
+>> + * @probe_complete: completion utility to control potential races
+>> + * on startup between driver probe/initialization and SoundWire
+>> + * Slave state changes/imp-def interrupts
+>>    */
+>>   struct sdw_slave {
+>>   	struct sdw_slave_id id;
+>> @@ -559,6 +563,8 @@ struct sdw_slave {
+>>   	struct list_head node;
+>>   	struct completion *port_ready;
+>>   	u16 dev_num;
+>> +	bool probed;
+>> +	struct completion probe_complete;
+>>   };
+>>   
+>>   #define dev_to_sdw_dev(_dev) container_of(_dev, struct sdw_slave, dev)
+>> -- 
+>> 2.20.1
+> 
