@@ -2,86 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3867EEEC09
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E27EEB58
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730941AbfKDVxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:53:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbfKDVxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:53:14 -0500
-Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FF4C2053B;
-        Mon,  4 Nov 2019 21:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904393;
-        bh=Eadezpx4hJatFGFqkr2djcRhSm0C6yPSUVhZaEGuvjE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ccohMG/7H74cCFtb9b36jUnUb8abqsgYms/VWHPidJSgMntEMYSbbBYTXlrY9i3dC
-         FDOrJ+Va0Bbqq4XqxsbR+Gxhpmjn5WcB0tB2Wmi3yf7zhDWyS7bgLWMsVrpn39edHz
-         3f1zCIafYz7Fl5Cvat7GqSiINGNvyKJ8LUj1rw/M=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 31/95] RDMA/hfi1: Prevent memory leak in sdma_init
-Date:   Mon,  4 Nov 2019 22:44:29 +0100
-Message-Id: <20191104212057.291359966@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729688AbfKDVon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:44:43 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38627 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728634AbfKDVon (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:44:43 -0500
+Received: by mail-ua1-f65.google.com with SMTP id u99so5470700uau.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:44:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kaXvf9wE3k9UaecG65PnRrmHU9a0z9eeJYq+CJlozEg=;
+        b=pHQfGMcFvDs8Sz/sj2D9FDXz3MnOQRQu+N4CdnI6FNzotw2uFLAsGlw2AfCslqt5i1
+         NhuT8B5Ezfwhp9svCCthVzKrqQzSaREP2/BOyA4VdDO3mOGFMeEnNqjZV9EKKb5BwgAH
+         bM/dxgbkeGBwpw6v8NjWHN7WfR5TQqN/xXvS5kz11espcMoT6/ho31I/XOxv81JBcV1z
+         GeqbggJuYjxj2QeyalY3/MCFCfCDWJn8/AxC+ZFPpCHvzX/Cpnxf1nw4yPeZBVh+ScLp
+         O8nGwga8BiVRzIj9L+z7DaZgwmXUgoNZyiEQqIULFC5kXaLbkCP27rPqGbTAVSPqhK1Q
+         tN3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kaXvf9wE3k9UaecG65PnRrmHU9a0z9eeJYq+CJlozEg=;
+        b=pw85w+UJJW7EwfDR36rUuhDvNoBqU5654RZC08wpQ9HN/WIG4jq87LZVM2gG6gWZ7E
+         4+7hTnY2T4k2MNWyNDrjiBddoRvs+kA9hVAHm3vonYZ52ejb0RGIPHbgGStGclq6dkUJ
+         TLoezRK0uSfjw+henWgWAoUqknWUtsagGye0RqDNDwMKQ4ZXw6et2UB/oO3DPVXaK2qy
+         h5iuhSYRakpfFAHwxp/jELtp5m2E7vyVCaGyjqRsyEppNjN+xRTM5bvnIphsFPcCEmMr
+         HkeDbpnIF9BM/xtD2rqKJ4lGqXfRM1aSdUoFHREz99hJYYkZWTirj/nOUWzE9OGt8qSD
+         f1ZA==
+X-Gm-Message-State: APjAAAXFELOFzea8TmKoRoaAgy1ttYmEvI5HSgafW8zPT7kuR31biVWU
+        /dKrt+/GEC0pm67Lr1bHTlc6AWzppYTXfrKyi3mprQ==
+X-Google-Smtp-Source: APXvYqyozZ81Thh7mlXHgf1QUiqKh64ERV1FrTZSir+nNNiHAQ72oavyDPOWqxJDAI6llfn+2fNkSSVjyIyFG0syB7k=
+X-Received: by 2002:ab0:5981:: with SMTP id g1mr1829842uad.98.1572903881724;
+ Mon, 04 Nov 2019 13:44:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com> <20191101221150.116536-4-samitolvanen@google.com>
+ <20191104115138.GB45140@lakrids.cambridge.arm.com>
+In-Reply-To: <20191104115138.GB45140@lakrids.cambridge.arm.com>
+From:   Sami Tolvanen <samitolvanen@google.com>
+Date:   Mon, 4 Nov 2019 13:44:30 -0800
+Message-ID: <CABCJKuf4wi6oUkJ68Z49UkK5q4WYYmSPt1X0pyw34ueNMkGC5Q@mail.gmail.com>
+Subject: Re: [PATCH v4 03/17] arm64: kvm: stop treating register x18 as caller save
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+On Mon, Nov 4, 2019 at 3:51 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > --- a/arch/arm64/kvm/hyp/entry.S
+> > +++ b/arch/arm64/kvm/hyp/entry.S
+> > @@ -23,6 +23,7 @@
+> >       .pushsection    .hyp.text, "ax"
+> >
+>
+> Could we please add a note here, e.g.
+>
+> /*
+>  * We treat x18 as callee-saved as the host may use it as a platform
+>  * register (e.g. for shadow call stack).
+>  */
+>
+> ... as that will avoid anyone trying to optimize this away in future
+> after reading the AAPCS.
 
-[ Upstream commit 34b3be18a04ecdc610aae4c48e5d1b799d8689f6 ]
+Sure, that's a good idea.
 
-In sdma_init if rhashtable_init fails the allocated memory for
-tmp_sdma_rht should be released.
+> >  .macro restore_callee_saved_regs ctxt
+> > +     // We assume \ctxt is not x18-x28
+>
+> Probably worth s/assume/require/ here.
 
-Fixes: 5a52a7acf7e2 ("IB/hfi1: NULL pointer dereference when freeing rhashtable")
-Link: https://lore.kernel.org/r/20190925144543.10141-1-navid.emamdoost@gmail.com
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/hw/hfi1/sdma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Agreed, I'll change this in v5.
 
-diff --git a/drivers/infiniband/hw/hfi1/sdma.c b/drivers/infiniband/hw/hfi1/sdma.c
-index 6781bcdb10b31..741938409f8e3 100644
---- a/drivers/infiniband/hw/hfi1/sdma.c
-+++ b/drivers/infiniband/hw/hfi1/sdma.c
-@@ -1529,8 +1529,11 @@ int sdma_init(struct hfi1_devdata *dd, u8 port)
- 	}
- 
- 	ret = rhashtable_init(tmp_sdma_rht, &sdma_rht_params);
--	if (ret < 0)
-+	if (ret < 0) {
-+		kfree(tmp_sdma_rht);
- 		goto bail;
-+	}
-+
- 	dd->sdma_rht = tmp_sdma_rht;
- 
- 	dd_dev_info(dd, "SDMA num_sdma: %u\n", dd->num_sdma);
--- 
-2.20.1
-
-
-
+Sami
