@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC26EF04B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C00B3EEF0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388166AbfKDW1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42918 "EHLO mail.kernel.org"
+        id S2389538AbfKDWS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:18:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387747AbfKDVug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:36 -0500
+        id S2389012AbfKDWBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:18 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D33F21744;
-        Mon,  4 Nov 2019 21:50:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFDDB21744;
+        Mon,  4 Nov 2019 22:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904235;
-        bh=SXcSjgXnzq2qZEbZ8jHOMYmVNKMe1iY72MSH9XLcWpQ=;
+        s=default; t=1572904877;
+        bh=yyDxAlgn41+7DL22CfifjWjYAq8KV40/xCcwkHyz6u8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NIfHfRUx/Yl20OEZd+/NYonGHBw+cJ0+JNAOMTRv21/W88SjkP8LhPfHovYF84V4a
-         A1rc72XqB04Ca8WWicWVK06zR7A1tN2k8abS5D+/bvBy4++fWw8ji5hWSv3HiCk79e
-         duyCCn2rRalqYMv3l3lFskNwuP3x5XSqtmBCodSY=
+        b=mVUfgZ5BQfwDc4db/TJNUNfvb24oIDMLbqkhimBglnNs9SECoNN+GbCq6XEXQK73o
+         wy2COsBe2N6Hbzb11+5UbY3kkyTeywQ6LJUtSkQ2QLKjOFX3VS0Y8SjlHSlhhtlbaT
+         sdoLxatrrawL6K6XnBfjECedy0a/dL7OjJzWylwI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
+        stable@vger.kernel.org, afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 32/62] thunderbolt: Use 32-bit writes when writing ring producer/consumer
-Date:   Mon,  4 Nov 2019 22:44:54 +0100
-Message-Id: <20191104211931.746648300@linuxfoundation.org>
+Subject: [PATCH 4.19 102/149] ARM: 8914/1: NOMMU: Fix exc_ret for XIP
+Date:   Mon,  4 Nov 2019 22:44:55 +0100
+Message-Id: <20191104212143.637154910@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Vladimir Murzin <vladimir.murzin@arm.com>
 
-[ Upstream commit 943795219d3cb9f8ce6ce51cad3ffe1f61e95c6b ]
+[ Upstream commit 4c0742f65b4ee466546fd24b71b56516cacd4613 ]
 
-The register access should be using 32-bit reads/writes according to the
-datasheet. With the previous generation hardware 16-bit writes have been
-working but starting with ICL this is not the case anymore so fix
-producer/consumer register update to use correct width register address.
+It was reported that 72cd4064fcca "NOMMU: Toggle only bits in
+EXC_RETURN we are really care of" breaks NOMMU+XIP combination.
+It happens because saved EXC_RETURN gets overwritten when data
+section is relocated.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Yehezkel Bernat <YehezkelShB@gmail.com>
-Tested-by: Mario Limonciello <mario.limonciello@dell.com>
+The fix is to propagate EXC_RETURN via register and let relocation
+code to commit that value into memory.
+
+Fixes: 72cd4064fcca ("ARM: 8830/1: NOMMU: Toggle only bits in EXC_RETURN we are really care of")
+Reported-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Tested-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/nhi.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ arch/arm/kernel/head-common.S | 5 +++--
+ arch/arm/kernel/head-nommu.S  | 2 ++
+ arch/arm/mm/proc-v7m.S        | 5 ++---
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index cba6bc6ab9ed7..c963593eedbe7 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -95,9 +95,20 @@ static void __iomem *ring_options_base(struct tb_ring *ring)
- 	return io;
- }
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 997b02302c314..9328f2010bc19 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -72,7 +72,7 @@ ENDPROC(__vet_atags)
+  * The following fragment of code is executed with the MMU on in MMU mode,
+  * and uses absolute addresses; this is not position independent.
+  *
+- *  r0  = cp#15 control register
++ *  r0  = cp#15 control register (exc_ret for M-class)
+  *  r1  = machine ID
+  *  r2  = atags/dtb pointer
+  *  r9  = processor ID
+@@ -141,7 +141,8 @@ __mmap_switched_data:
+ #ifdef CONFIG_CPU_CP15
+ 	.long	cr_alignment			@ r3
+ #else
+-	.long	0				@ r3
++M_CLASS(.long	exc_ret)			@ r3
++AR_CLASS(.long	0)				@ r3
+ #endif
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
  
--static void ring_iowrite16desc(struct tb_ring *ring, u32 value, u32 offset)
-+static void ring_iowrite_cons(struct tb_ring *ring, u16 cons)
- {
--	iowrite16(value, ring_desc_base(ring) + offset);
-+	/*
-+	 * The other 16-bits in the register is read-only and writes to it
-+	 * are ignored by the hardware so we can save one ioread32() by
-+	 * filling the read-only bits with zeroes.
-+	 */
-+	iowrite32(cons, ring_desc_base(ring) + 8);
-+}
-+
-+static void ring_iowrite_prod(struct tb_ring *ring, u16 prod)
-+{
-+	/* See ring_iowrite_cons() above for explanation */
-+	iowrite32(prod << 16, ring_desc_base(ring) + 8);
- }
- 
- static void ring_iowrite32desc(struct tb_ring *ring, u32 value, u32 offset)
-@@ -149,7 +160,10 @@ static void ring_write_descriptors(struct tb_ring *ring)
- 			descriptor->sof = frame->sof;
- 		}
- 		ring->head = (ring->head + 1) % ring->size;
--		ring_iowrite16desc(ring, ring->head, ring->is_tx ? 10 : 8);
-+		if (ring->is_tx)
-+			ring_iowrite_prod(ring, ring->head);
-+		else
-+			ring_iowrite_cons(ring, ring->head);
- 	}
- }
- 
-@@ -369,7 +383,7 @@ void ring_stop(struct tb_ring *ring)
- 
- 	ring_iowrite32options(ring, 0, 0);
- 	ring_iowrite64desc(ring, 0, 0);
--	ring_iowrite16desc(ring, 0, ring->is_tx ? 10 : 8);
-+	ring_iowrite32desc(ring, 0, 8);
- 	ring_iowrite32desc(ring, 0, 12);
- 	ring->head = 0;
- 	ring->tail = 0;
+diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
+index cab89479d15ef..326a97aa3ea0c 100644
+--- a/arch/arm/kernel/head-nommu.S
++++ b/arch/arm/kernel/head-nommu.S
+@@ -205,6 +205,8 @@ M_CLASS(streq	r3, [r12, #PMSAv8_MAIR1])
+ 	bic	r0, r0, #V7M_SCB_CCR_IC
+ #endif
+ 	str	r0, [r12, V7M_SCB_CCR]
++	/* Pass exc_ret to __mmap_switched */
++	mov	r0, r10
+ #endif /* CONFIG_CPU_CP15 elif CONFIG_CPU_V7M */
+ 	ret	lr
+ ENDPROC(__after_proc_init)
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index 92e84181933ad..59d82864c134b 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -139,9 +139,8 @@ __v7m_setup_cont:
+ 	cpsie	i
+ 	svc	#0
+ 1:	cpsid	i
+-	ldr	r0, =exc_ret
+-	orr	lr, lr, #EXC_RET_THREADMODE_PROCESSSTACK
+-	str	lr, [r0]
++	/* Calculate exc_ret */
++	orr	r10, lr, #EXC_RET_THREADMODE_PROCESSSTACK
+ 	ldmia	sp, {r0-r3, r12}
+ 	str	r5, [r12, #11 * 4]	@ restore the original SVC vector entry
+ 	mov	lr, r6			@ restore LR
 -- 
 2.20.1
 
