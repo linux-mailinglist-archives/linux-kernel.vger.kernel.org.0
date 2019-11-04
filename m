@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4ADEEBF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4415EECAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbfKDVw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45840 "EHLO mail.kernel.org"
+        id S2388054AbfKDV71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:59:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730741AbfKDVwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:24 -0500
+        id S1731089AbfKDV7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:59:20 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 244BD217F5;
-        Mon,  4 Nov 2019 21:52:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BB2520659;
+        Mon,  4 Nov 2019 21:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904343;
-        bh=lcRJMau4MilgjA1G5AsVvBldze0ky+F5z1BAy1+tpLc=;
+        s=default; t=1572904759;
+        bh=zR7PEpWo1SHxfPoogzU2Cy0kOuipPdgvp9JuFhSZZqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NkhzSQ+v+RfONMThdAEVYoDwd8l2aOKBnVrE9MjyhAfT/jkIeoDm59AQpo+7XkDEA
-         mkDEx+BFtGR9iTUBQgcxk6ri7aCvwxguEKMl57geibACJ5eAlMeWWQzwr7bKGLraiF
-         djG2JiVdx0UekD0EkKjbDY1296OTVKTsMbLg59p4=
+        b=Jy9uumJgMAbiQfa7pafR54nnsFJUaOM9LJ6jMGuxxMbCzqco4hpAJ4tGDNP0vUVBU
+         /UiV/Vmm74NI6mNXqR2owEEPh7F3Nmfq5mi+jX/l/m2NYjk8jfhlufVu8ALlGUO3Pq
+         OmE8+htznrs/z2dzl7GQJXYLAQQKO866t7H2WrRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Kujau <lists@nerdbynature.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Genki Sky <sky@genki.is>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 14/95] scripts/setlocalversion: Improve -dirty check with git-status --no-optional-locks
-Date:   Mon,  4 Nov 2019 22:44:12 +0100
-Message-Id: <20191104212044.523480055@linuxfoundation.org>
+Subject: [PATCH 4.19 060/149] libsubcmd: Make _FORTIFY_SOURCE defines dependent on the feature
+Date:   Mon,  4 Nov 2019 22:44:13 +0100
+Message-Id: <20191104212140.899265038@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Ian Rogers <irogers@google.com>
 
-[ Upstream commit ff64dd4857303dd5550faed9fd598ac90f0f2238 ]
+[ Upstream commit 4b0b2b096da9d296e0e5668cdfba8613bd6f5bc8 ]
 
-git-diff-index does not refresh the index for you, so using it for a
-"-dirty" check can give misleading results. Commit 6147b1cf19651
-("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-fix this by switching to git-status, but it overlooked the fact that
-git-status also writes to the .git directory of the source tree, which
-is definitely not kosher for an out-of-tree (O=) build. That is getting
-reverted.
+Unconditionally defining _FORTIFY_SOURCE can break tools that don't work
+with it, such as memory sanitizers:
 
-Fortunately, git-status now supports avoiding writing to the index via
-the --no-optional-locks flag, as of git 2.14. It still calculates an
-up-to-date index, but it avoids writing it out to the .git directory.
+  https://github.com/google/sanitizers/wiki/AddressSanitizer#faq
 
-So, let's retry the solution from commit 6147b1cf19651 using this new
-flag first, and if it fails, we assume this is an older version of git
-and just use the old git-diff-index method.
-
-It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-the output of git-status (you have to be careful about the difference
-betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-directly to grep and use a regex that's good enough for both the
-git-status and git-diff-index version.
-
-Cc: Christian Kujau <lists@nerdbynature.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Genki Sky <sky@genki.is>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20190925195924.152834-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/setlocalversion | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ tools/lib/subcmd/Makefile | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 71f39410691b6..365b3c2b8f431 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -73,8 +73,16 @@ scm_version()
- 			printf -- '-svn%s' "`git svn find-rev $head`"
- 		fi
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index ed61fb3a46c08..5b2cd5e58df09 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -20,7 +20,13 @@ MAKEFLAGS += --no-print-directory
+ LIBFILE = $(OUTPUT)libsubcmd.a
  
--		# Check for uncommitted changes
--		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-+		# Check for uncommitted changes.
-+		# First, with git-status, but --no-optional-locks is only
-+		# supported in git >= 2.14, so fall back to git-diff-index if
-+		# it fails. Note that git-diff-index does not refresh the
-+		# index, so it may give misleading results. See
-+		# git-update-index(1), git-diff-index(1), and git-status(1).
-+		if {
-+			git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-+			git diff-index --name-only HEAD
-+		} | grep -qvE '^(.. )?scripts/package'; then
- 			printf '%s' -dirty
- 		fi
+ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+-CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC
++CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -fPIC
++
++ifeq ($(DEBUG),0)
++  ifeq ($(feature-fortify-source), 1)
++    CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
++  endif
++endif
  
+ ifeq ($(CC_NO_CLANG), 0)
+   CFLAGS += -O3
 -- 
 2.20.1
 
