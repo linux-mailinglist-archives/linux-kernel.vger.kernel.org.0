@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA40EF069
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C802EEE5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388400AbfKDW1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:27:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42668 "EHLO mail.kernel.org"
+        id S2390249AbfKDWIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:08:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387712AbfKDVu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:29 -0500
+        id S2390229AbfKDWIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:08:30 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B0A2190F;
-        Mon,  4 Nov 2019 21:50:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D3E2084D;
+        Mon,  4 Nov 2019 22:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904228;
-        bh=JRJyAaXRNWqpl26dWw+2me9hgFmc8J7yvtbT0XQ5nbo=;
+        s=default; t=1572905309;
+        bh=4TiYdvVxUzCNJ4QExnV8+tw17p0jkR3fYFgZLjCIeBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UyrK2ote6XD/KLy/ayxC+cSt6XRVZjSr5xg1BzyxMhOMxwtqLKkNK1jRYNu1LFpM9
-         CQNs3M5DE+n4B6k+KQWPbGGPkLcAMMjI6iuB6T0LWK3Zlhm68lWTGBoXS6SGwM3SEZ
-         XanGWlitc2PbQAkRa9n6Umc7IkO/eXRCO9Z2g5oc=
+        b=UeSCYyJaT8x1sCIHbFnGbdeQr8BhOHHSE6/SIAGcLl1pf3xUs35TOkldNY4TLLO+M
+         10KpRkfzgPCm+BLnfsnIeFsQ3BjJPXGwz5noTl7q7hn5ysgDPhTXtUaZJtVpql9yGr
+         fopllGgeGLnaGYTonUy7vFnaA59Jp9/RelXG0Ru0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 29/62] s390/uaccess: avoid (false positive) compiler warnings
-Date:   Mon,  4 Nov 2019 22:44:51 +0100
-Message-Id: <20191104211928.509792270@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.3 102/163] UAS: Revert commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
+Date:   Mon,  4 Nov 2019 22:44:52 +0100
+Message-Id: <20191104212147.452249094@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit 062795fcdcb2d22822fb42644b1d76a8ad8439b3 ]
+commit 1186f86a71130a7635a20843e355bb880c7349b2 upstream.
 
-Depending on inlining decisions by the compiler, __get/put_user_fn
-might become out of line. Then the compiler is no longer able to tell
-that size can only be 1,2,4 or 8 due to the check in __get/put_user
-resulting in false positives like
+Commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments"),
+copying a similar commit for usb-storage, attempted to solve a problem
+involving scatter-gather I/O and USB/IP by setting the
+virt_boundary_mask for mass-storage devices.
 
-./arch/s390/include/asm/uaccess.h: In function ‘__put_user_fn’:
-./arch/s390/include/asm/uaccess.h:113:9: warning: ‘rc’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  113 |  return rc;
-      |         ^~
-./arch/s390/include/asm/uaccess.h: In function ‘__get_user_fn’:
-./arch/s390/include/asm/uaccess.h:143:9: warning: ‘rc’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  143 |  return rc;
-      |         ^~
+However, it now turns out that the analogous change in usb-storage
+interacted badly with commit 09324d32d2a0 ("block: force an unlimited
+segment size on queues with a virt boundary"), which was added later.
+A typical error message is:
 
-These functions are supposed to be always inlined. Mark it as such.
+	ehci-pci 0000:00:13.2: swiotlb buffer is full (sz: 327680 bytes),
+	total 32768 (slots), used 97 (slots)
 
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+There is no longer any reason to keep the virt_boundary_mask setting
+in the uas driver.  It was needed in the first place only for
+handling devices with a block size smaller than the maxpacket size and
+where the host controller was not capable of fully general
+scatter-gather operation (that is, able to merge two SG segments into
+a single USB packet).  But:
+
+	High-speed or slower connections never use a bulk maxpacket
+	value larger than 512;
+
+	The SCSI layer does not handle block devices with a block size
+	smaller than 512 bytes;
+
+	All the host controllers capable of SuperSpeed operation can
+	handle fully general SG;
+
+	Since commit ea44d190764b ("usbip: Implement SG support to
+	vhci-hcd and stub driver") was merged, the USB/IP driver can
+	also handle SG.
+
+Therefore all supported device/controller combinations should be okay
+with no need for any special virt_boundary_mask.  So in order to head
+off potential problems similar to those affecting usb-storage, this
+patch reverts commit 3ae62a42090f.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Oliver Neukum <oneukum@suse.com>
+CC: <stable@vger.kernel.org>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Fixes: 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910231132470.1878-100000@iolanthe.rowland.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/s390/include/asm/uaccess.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/storage/uas.c |   20 --------------------
+ 1 file changed, 20 deletions(-)
 
-diff --git a/arch/s390/include/asm/uaccess.h b/arch/s390/include/asm/uaccess.h
-index a7ef702201260..31b2913372b56 100644
---- a/arch/s390/include/asm/uaccess.h
-+++ b/arch/s390/include/asm/uaccess.h
-@@ -151,7 +151,7 @@ unsigned long __must_check __copy_to_user(void __user *to, const void *from,
- 	__rc;							\
- })
- 
--static inline int __put_user_fn(void *x, void __user *ptr, unsigned long size)
-+static __always_inline int __put_user_fn(void *x, void __user *ptr, unsigned long size)
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -789,30 +789,10 @@ static int uas_slave_alloc(struct scsi_d
  {
- 	unsigned long spec = 0x810000UL;
- 	int rc;
-@@ -181,7 +181,7 @@ static inline int __put_user_fn(void *x, void __user *ptr, unsigned long size)
- 	return rc;
- }
+ 	struct uas_dev_info *devinfo =
+ 		(struct uas_dev_info *)sdev->host->hostdata;
+-	int maxp;
  
--static inline int __get_user_fn(void *x, const void __user *ptr, unsigned long size)
-+static __always_inline int __get_user_fn(void *x, const void __user *ptr, unsigned long size)
- {
- 	unsigned long spec = 0x81UL;
- 	int rc;
--- 
-2.20.1
-
+ 	sdev->hostdata = devinfo;
+ 
+ 	/*
+-	 * We have two requirements here. We must satisfy the requirements
+-	 * of the physical HC and the demands of the protocol, as we
+-	 * definitely want no additional memory allocation in this path
+-	 * ruling out using bounce buffers.
+-	 *
+-	 * For a transmission on USB to continue we must never send
+-	 * a package that is smaller than maxpacket. Hence the length of each
+-         * scatterlist element except the last must be divisible by the
+-         * Bulk maxpacket value.
+-	 * If the HC does not ensure that through SG,
+-	 * the upper layer must do that. We must assume nothing
+-	 * about the capabilities off the HC, so we use the most
+-	 * pessimistic requirement.
+-	 */
+-
+-	maxp = usb_maxpacket(devinfo->udev, devinfo->data_in_pipe, 0);
+-	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
+-
+-	/*
+ 	 * The protocol has no requirements on alignment in the strict sense.
+ 	 * Controllers may or may not have alignment restrictions.
+ 	 * As this is not exported, we use an extremely conservative guess.
 
 
