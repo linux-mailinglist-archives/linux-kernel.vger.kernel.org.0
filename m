@@ -2,128 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3DAEE64F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E06EE643
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbfKDRmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:42:02 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38831 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728188AbfKDRmC (ORCPT
+        id S1729475AbfKDRkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:40:14 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35043 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728778AbfKDRkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:42:02 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w8so7891852plq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:42:01 -0800 (PST)
+        Mon, 4 Nov 2019 12:40:13 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l10so18119339wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:40:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bhTEQnP8RxA0q/YUDgp2LWFOIs06F90qLkFMbfArLJ4=;
-        b=NOLeErTWRsJ7mN747WHY9/xb1Kg1Hmm4WyT9ASnpWW0NeBwlmbQZ3Z+5xAi5VUE9Sb
-         4gM4OzKFJ/4Nb/zH2q6oy+JO+AFbAHT8SIm8kVgxoEaXVGXBEuG1GrZguZrwDAMINdBt
-         kHKvu96X6R+599zqtFFa25k/ltlNyAaIkFbARSN1ZQhuDALuQoc9ITIRtP5ov1HBO4Mt
-         1WspukrqvBEEd5PWvqO+ze040GR/D7uAg+xaMI1A26AMqmF4V02bqwvsz0lvMR2khAjG
-         FtkE3BCZl1+/6HEqGysTfHFdTTJnpOGsYsikqtBLrsOrGg7rkCFeIUxRC2dxigKxNmT4
-         fezA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qFzvOj2kIekmlBTNitL0550GXXjfDa5dHZ2hXfb84nE=;
+        b=gdP/u/Z2502qMOMIX5Abj0e+tGILbSh4sD07/PoMKUAftazcuxy2XTGaZjYj+8Y19c
+         jl5h1aJYvLfqDcB8eqkoKVzhyat5T/4msDgTalhzxCq2SVhe9oHqkxd/+PjOAxGwl3Ed
+         qpZOsqJ65cSsHMYFmVqVPi64e8qn3nq44jM5o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bhTEQnP8RxA0q/YUDgp2LWFOIs06F90qLkFMbfArLJ4=;
-        b=iITGub1FkJOuEnWZkXRAqKdhmJBOp4yKM9e4C0oTHMmKhfNXe+sC6ULxguTDGmTjqO
-         znxmS2pLpfLniPrdz85JBpKRBO1SelIO4CplLrm+KkkFuGSAnd+RpDaqgHdXPQpwNnMW
-         egw+fXA+UU7Xg5rAbpFnxRn7228syHJANWL84RXgEMj8uGCU6oGxoSEsn/XdxpkZwo3J
-         iWYr4DLkL7pqNn0iXMUK3BjQXX0CJ92qhw1CkmXbJBi6luwmDhjbFV3zF81GbIE6XF4h
-         vNzbhK1dSLSGqMXScHvANJ2tMCTmR5wrlLV1Oto9vVa9Sg+J75s+vNuIcqBCx/GlRXJK
-         jYYA==
-X-Gm-Message-State: APjAAAUNM0E3PJyaHCQDpZGLONXDJ6OG7NQmZ/xPYAMnT8V0j2BDH3k4
-        kKNEDL3zvJ6ifwrlwQnSDik=
-X-Google-Smtp-Source: APXvYqxj7NUxsNzZ5uvdnA8/Jr0AxmR8ai/BmIlz7poN4i1CbMzixfFCPpxTjgrC3DYB9I08CU03WA==
-X-Received: by 2002:a17:902:27:: with SMTP id 36mr28813529pla.28.1572889321382;
-        Mon, 04 Nov 2019 09:42:01 -0800 (PST)
-Received: from localhost ([100.118.89.215])
-        by smtp.gmail.com with ESMTPSA id b17sm18758746pfr.17.2019.11.04.09.42.00
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=qFzvOj2kIekmlBTNitL0550GXXjfDa5dHZ2hXfb84nE=;
+        b=PWEvrCYh+Dmr4IE6/fCuzykJY9HYdkKQ1bgWnDZrh+tLID6atawnZ7rA5Lrjut02qT
+         AKWIMdHO/CsiFJG7cEwvd5cO5oWXXRVbdwBptWzinaPPy6bC/F+jWMZvYoQzOsK5I4/B
+         mSCwTN14ajeUF9cJxf7wSsYVtxdxq73aYg4HEciAwrQcobg1UhRGf9ba2vO0+jWBf/rM
+         TquMh0yjzTK3Jf1Wuw2/hqLFDrlHcJS8LkdAfCOrKdbh0JVAB0zkydP40UffyyJxvHRQ
+         9AqHTboFF1ZAmpk1ZM228hySqw0nj0TOgRSbdgsKy9wv2QQHbr2/0a5/2G0Fo+tAGL30
+         /9Dg==
+X-Gm-Message-State: APjAAAXDkHyRqLnllJhjhxrimUtsF/PW5nWUdbY608hX3nJuKqYydRyS
+        INT96OPeAlFOhjKK8Ay04hajhQ==
+X-Google-Smtp-Source: APXvYqw29YqfrGgjpwh0uFd5WKrqiAbjecSm6tcDlvpk+V7LLi/5MabZh6lMzWqoH8T6/X2qsoJ4jQ==
+X-Received: by 2002:adf:e747:: with SMTP id c7mr24315449wrn.384.1572889211910;
+        Mon, 04 Nov 2019 09:40:11 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id b17sm8647949wru.36.2019.11.04.09.40.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 09:42:00 -0800 (PST)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2 v2] drm/atomic: clear new_state pointers at hw_done
-Date:   Mon,  4 Nov 2019 09:37:37 -0800
-Message-Id: <20191104173737.142558-2-robdclark@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104173737.142558-1-robdclark@gmail.com>
-References: <20191104173737.142558-1-robdclark@gmail.com>
+        Mon, 04 Nov 2019 09:40:10 -0800 (PST)
+Date:   Mon, 4 Nov 2019 18:40:08 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, manasi.d.navare@intel.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        daniel@ffwll.ch, airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH] drm/vkms: Update VKMS documentation
+Message-ID: <20191104174008.GK10326@phenom.ffwll.local>
+Mail-Followup-To: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
+        outreachy-kernel@googlegroups.com, manasi.d.navare@intel.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+References: <20191101223735.2425-1-gabrielabittencourt00@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101223735.2425-1-gabrielabittencourt00@gmail.com>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Fri, Nov 01, 2019 at 07:37:35PM -0300, Gabriela Bittencourt wrote:
+> Small changes in the driver documentation, clarifing the description.
+> 
+> Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
 
-The new state should not be accessed after this point.  Clear the
-pointers to make that explicit.
+lgtm, applied.
+-Daniel
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/drm_atomic_helper.c | 30 +++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> 
+> ---
+> 
+> Tested using: make htmldocs
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index 80524a22412a..52e761bd6c2d 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -3,10 +3,10 @@
+>  /**
+>   * DOC: vkms (Virtual Kernel Modesetting)
+>   *
+> - * vkms is a software-only model of a kms driver that is useful for testing,
+> - * or for running X (or similar) on headless machines and be able to still
+> - * use the GPU. vkms aims to enable a virtual display without the need for
+> - * a hardware display capability.
+> + * VKMS is a software-only model of a KMS driver that is useful for testing
+> + * and for running X (or similar) on headless machines. VKMS aims to enable
+> + * a virtual display with no need of a hardware display capability, releasing
+> + * the GPU in DRM API tests.
+>   */
+>  
+>  #include <linux/module.h>
+> -- 
+> 2.20.1
+> 
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 648494c813e5..aec9759d9df2 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2246,12 +2246,42 @@ EXPORT_SYMBOL(drm_atomic_helper_fake_vblank);
-  */
- void drm_atomic_helper_commit_hw_done(struct drm_atomic_state *old_state)
- {
-+	struct drm_connector *connector;
-+	struct drm_connector_state *old_conn_state, *new_conn_state;
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-+	struct drm_plane *plane;
-+	struct drm_plane_state *old_plane_state, *new_plane_state;
- 	struct drm_crtc_commit *commit;
-+	struct drm_private_obj *obj;
-+	struct drm_private_state *old_obj_state, *new_obj_state;
- 	int i;
- 
-+	/*
-+	 * After this point, drivers should not access the permanent modeset
-+	 * state, so we also clear the new_state pointers to make this
-+	 * restriction explicit.
-+	 *
-+	 * For the CRTC state, we do this in the same loop where we signal
-+	 * hw_done, since we still need to new_crtc_state to fish out the
-+	 * commit.
-+	 */
-+
-+	for_each_oldnew_connector_in_state(old_state, connector, old_conn_state, new_conn_state, i) {
-+		old_state->connectors[i].new_state = NULL;
-+	}
-+
-+	for_each_oldnew_plane_in_state(old_state, plane, old_plane_state, new_plane_state, i) {
-+		old_state->planes[i].new_state = NULL;
-+	}
-+
-+	for_each_oldnew_private_obj_in_state(old_state, obj, old_obj_state, new_obj_state, i) {
-+		old_state->private_objs[i].new_state = NULL;
-+	}
-+
- 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
-+		old_state->crtcs[i].new_state = NULL;
-+
- 		commit = new_crtc_state->commit;
- 		if (!commit)
- 			continue;
 -- 
-2.23.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
