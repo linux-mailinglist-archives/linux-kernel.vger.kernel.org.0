@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E6DEEF03
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB1EEEDBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389861AbfKDWSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:18:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
+        id S2390409AbfKDWJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388613AbfKDWCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:02:01 -0500
+        id S2390397AbfKDWJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:09:23 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E5C620650;
-        Mon,  4 Nov 2019 22:02:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77456214E0;
+        Mon,  4 Nov 2019 22:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904920;
-        bh=dbfnmF4MTitvESuoiUp5eiYv2w4XZsqdp7uk+45n8Lk=;
+        s=default; t=1572905363;
+        bh=HsjLLNLxmIouDxnqA72L8QoEOFGWsul04f9vi88c2XQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n2bs2C6tL5g5Z2tdCRHTSaMSEgD2MsIsVTmPnRZXL6q8RHFg0wsAnzvyoxtVo8WR4
-         egnAbKJsQe2/edfluTH1Y8SqdRiPAWhGvWqYVHjN0tBD4YcIpIz2MK6O+G/XSuIT6N
-         a/U0ZZ5Ir4FqEqKSBDGlvc4WRUElKAaVz7u3WR/8=
+        b=KplFXULk2n0JhAAmKZkIs4rbLpF54lwcfuec6WrtuPpDkfqGZTR7T4yV5OlANRlmn
+         V7cck/a43vpfHJkGkISo4AfZWWyrNlB6JLlTn7BQF8udyf5scekDoDPMHMif3E+Je6
+         KnsT5rqgz+eozTBGlw5O1WpD6GqZ/HBvb6Vk8q84=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Seth Bollinger <Seth.Bollinger@digi.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
-Subject: [PATCH 4.19 116/149] usb-storage: Revert commit 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
-Date:   Mon,  4 Nov 2019 22:45:09 +0100
-Message-Id: <20191104212144.459583669@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Austin Palmer <austinp@valvesoftware.com>,
+        linux-input@vger.kernel.org
+Subject: [PATCH 5.3 120/163] HID: logitech-hidpp: do all FF cleanup in hidpp_ff_destroy()
+Date:   Mon,  4 Nov 2019 22:45:10 +0100
+Message-Id: <20191104212148.906389283@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,84 +49,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-commit 9a976949613132977098fc49510b46fa8678d864 upstream.
+commit 08c453f6d073f069cf8e30e03cd3c16262c9b953 upstream.
 
-Commit 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG
-overflows") attempted to solve a problem involving scatter-gather I/O
-and USB/IP by setting the virt_boundary_mask for mass-storage devices.
+All of the FF-related resources belong to corresponding FF device, so
+they should be freed as a part of hidpp_ff_destroy() to avoid
+potential race condidions.
 
-However, it now turns out that this interacts badly with commit
-09324d32d2a0 ("block: force an unlimited segment size on queues with a
-virt boundary"), which was added later.  A typical error message is:
-
-	ehci-pci 0000:00:13.2: swiotlb buffer is full (sz: 327680 bytes),
-	total 32768 (slots), used 97 (slots)
-
-There is no longer any reason to keep the virt_boundary_mask setting
-for usb-storage.  It was needed in the first place only for handling
-devices with a block size smaller than the maxpacket size and where
-the host controller was not capable of fully general scatter-gather
-operation (that is, able to merge two SG segments into a single USB
-packet).  But:
-
-	High-speed or slower connections never use a bulk maxpacket
-	value larger than 512;
-
-	The SCSI layer does not handle block devices with a block size
-	smaller than 512 bytes;
-
-	All the host controllers capable of SuperSpeed operation can
-	handle fully general SG;
-
-	Since commit ea44d190764b ("usbip: Implement SG support to
-	vhci-hcd and stub driver") was merged, the USB/IP driver can
-	also handle SG.
-
-Therefore all supported device/controller combinations should be okay
-with no need for any special virt_boundary_mask.  So in order to fix
-the swiotlb problem, this patch reverts commit 747668dbc061.
-
-Reported-and-tested-by: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
-Link: https://marc.info/?l=linux-usb&m=157134199501202&w=2
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Seth Bollinger <Seth.Bollinger@digi.com>
-CC: <stable@vger.kernel.org>
-Fixes: 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
-Acked-by: Christoph Hellwig <hch@lst.de>
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910211145520.1673-100000@iolanthe.rowland.org
+Fixes: ff21a635dd1a ("HID: logitech-hidpp: Force feedback support for the Logitech G920")
+Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Henrik Rydberg <rydberg@bitmath.org>
+Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+Cc: Austin Palmer <austinp@valvesoftware.com>
+Cc: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # 5.2+
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/scsiglue.c |   10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/hid/hid-logitech-hidpp.c |   33 +++++----------------------------
+ 1 file changed, 5 insertions(+), 28 deletions(-)
 
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -65,7 +65,6 @@ static const char* host_info(struct Scsi
- static int slave_alloc (struct scsi_device *sdev)
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -2078,7 +2078,12 @@ static DEVICE_ATTR(range, S_IRUSR | S_IW
+ static void hidpp_ff_destroy(struct ff_device *ff)
  {
- 	struct us_data *us = host_to_us(sdev->host);
--	int maxp;
+ 	struct hidpp_ff_private_data *data = ff->private;
++	struct hid_device *hid = data->hidpp->hid_dev;
  
- 	/*
- 	 * Set the INQUIRY transfer length to 36.  We don't use any of
-@@ -75,15 +74,6 @@ static int slave_alloc (struct scsi_devi
- 	sdev->inquiry_len = 36;
++	hid_info(hid, "Unloading HID++ force feedback.\n");
++
++	device_remove_file(&hid->dev, &dev_attr_range);
++	destroy_workqueue(data->wq);
+ 	kfree(data->effect_ids);
+ }
  
- 	/*
--	 * USB has unusual scatter-gather requirements: the length of each
--	 * scatterlist element except the last must be divisible by the
--	 * Bulk maxpacket value.  Fortunately this value is always a
--	 * power of 2.  Inform the block layer about this requirement.
--	 */
--	maxp = usb_maxpacket(us->pusb_dev, us->recv_bulk_pipe, 0);
--	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
+@@ -2170,31 +2175,6 @@ static int hidpp_ff_init(struct hidpp_de
+ 	return 0;
+ }
+ 
+-static int hidpp_ff_deinit(struct hid_device *hid)
+-{
+-	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
+-	struct hidpp_ff_private_data *data;
 -
--	/*
- 	 * Some host controllers may have alignment requirements.
- 	 * We'll play it safe by requiring 512-byte alignment always.
- 	 */
+-	if (!dev) {
+-		hid_err(hid, "Struct input_dev not found!\n");
+-		return -EINVAL;
+-	}
+-
+-	hid_info(hid, "Unloading HID++ force feedback.\n");
+-	data = dev->ff->private;
+-	if (!data) {
+-		hid_err(hid, "Private data not found!\n");
+-		return -EINVAL;
+-	}
+-
+-	destroy_workqueue(data->wq);
+-	device_remove_file(&hid->dev, &dev_attr_range);
+-
+-	return 0;
+-}
+-
+-
+ /* ************************************************************************** */
+ /*                                                                            */
+ /* Device Support                                                             */
+@@ -3713,9 +3693,6 @@ static void hidpp_remove(struct hid_devi
+ 
+ 	sysfs_remove_group(&hdev->dev.kobj, &ps_attribute_group);
+ 
+-	if (hidpp->quirks & HIDPP_QUIRK_CLASS_G920)
+-		hidpp_ff_deinit(hdev);
+-
+ 	hid_hw_stop(hdev);
+ 	cancel_work_sync(&hidpp->work);
+ 	mutex_destroy(&hidpp->send_mutex);
 
 
