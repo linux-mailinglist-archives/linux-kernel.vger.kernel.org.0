@@ -2,76 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE4B2EE6CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62921EE6E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 19:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfKDR7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:59:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfKDR7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:59:15 -0500
-Received: from localhost.localdomain (unknown [194.230.155.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E7C02184C;
-        Mon,  4 Nov 2019 17:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572890354;
-        bh=7ghGrmoiEIxN4IpLB8JEUAW5aI+a94fxk1XNN5k5Y9Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cOZ2pWZA0y4VDkNtlai4dc6Nq9LOmCdV/DcOiR1N/0WcdNsF/8p2ySJPWeDEVKL9A
-         Ph29g1ciVxTQJ1RupdWgogkr8PqdgCnGMIN2AeYweO7xsMNS9UPLKKTD2dQnJR0RjJ
-         DypJkGVPfiHpfw5U8/MGYHG5mpnUR+WWwLwSMwlU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 2/2] ARM: samsung: S3C/Exynos for v5.5
-Date:   Mon,  4 Nov 2019 18:59:02 +0100
-Message-Id: <20191104175902.12224-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191104175902.12224-1-krzk@kernel.org>
-References: <20191104175902.12224-1-krzk@kernel.org>
+        id S1728392AbfKDSE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 13:04:28 -0500
+Received: from smtprelay0202.hostedemail.com ([216.40.44.202]:34474 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728174AbfKDSE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 13:04:28 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 35FEA8384368;
+        Mon,  4 Nov 2019 18:04:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3872:3873:3874:4321:4362:4605:5007:6117:6119:9010:10004:10400:10848:11026:11232:11473:11658:11914:12048:12296:12297:12679:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30012:30054:30070:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: hour56_60b9b720d6924
+X-Filterd-Recvd-Size: 1844
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  4 Nov 2019 18:04:24 +0000 (UTC)
+Message-ID: <d3626d96b7fb9e0b1b25159a85d337f8882ceca1.camel@perches.com>
+Subject: Re: [PATCH v5 1/3] clk: qcom: Allow constant ratio freq tables for
+ rcg
+From:   Joe Perches <joe@perches.com>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     agross@kernel.org, marc.w.gonzalez@free.fr,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 04 Nov 2019 10:04:14 -0800
+In-Reply-To: <20191031185715.15504-1-jeffrey.l.hugo@gmail.com>
+References: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
+         <20191031185715.15504-1-jeffrey.l.hugo@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+On Thu, 2019-10-31 at 11:57 -0700, Jeffrey Hugo wrote:
+> Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
+> some constant ratio from the input across the entire frequency range.  It
+> would be great if we could specify the frequency table as a single entry
+> constant ratio instead of a long list, ie:
+> 
+> 	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
+>         { }
+> 
+> So, lets support that.
+[]
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+[]
+> @@ -29,6 +29,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+>  	if (!f)
+>  		return NULL;
+>  
+> +	if(!f->freq)
+> +		return f;
+> +
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+trivia:
 
-are available in the Git repository at:
+Space after if before open parenthesis please.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.5
+Can you please make sure to style check your
+code with checkpatch before submission?
 
-for you to fetch changes up to 4134b762eb133787273500101223e10728c154cd:
+Thanks.
 
-  ARM: exynos: Enable exynos-asv driver for ARCH_EXYNOS (2019-10-28 18:22:33 +0100)
 
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.5
-
-1. Minor cleanups in S3C platforms,
-2. Enable newly added EXYNOS_ASV (Adaptive Supply Voltage) driver.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: s3c: Rename s3c64xx_spi_setname() function
-      ARM: s3c: Rename s5p_usb_phy functions
-
-Sylwester Nawrocki (1):
-      ARM: exynos: Enable exynos-asv driver for ARCH_EXYNOS
-
- arch/arm/mach-exynos/Kconfig                 | 1 +
- arch/arm/mach-s3c24xx/s3c2416.c              | 2 +-
- arch/arm/mach-s3c24xx/s3c2443.c              | 2 +-
- arch/arm/mach-s3c24xx/spi-core.h             | 2 +-
- arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
- arch/arm/plat-samsung/devs.c                 | 4 ++--
- arch/arm/plat-samsung/include/plat/usb-phy.h | 4 ++--
- 7 files changed, 10 insertions(+), 9 deletions(-)
