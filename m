@@ -2,51 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DCCEEB75
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6ECAEEC47
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfKDVsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37970 "EHLO mail.kernel.org"
+        id S2388172AbfKDVzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:55:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729899AbfKDVsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:05 -0500
+        id S2388143AbfKDVz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:55:29 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45489214D9;
-        Mon,  4 Nov 2019 21:48:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80CE52053B;
+        Mon,  4 Nov 2019 21:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904084;
-        bh=vhLLu4Q3ANV96K9R9BBwMJ7SfEgIHXx42oFIcggazeo=;
+        s=default; t=1572904528;
+        bh=hPBs8wEL15WhpBtdpduXLOmv9HsrP8W5sGpi4Xp2Jtc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NRxnY0LL4IDflnDs0rVIa8/efdBnqA+5ZxXnM/xZRTZH1FeESsdjwn7uIV82IcywI
-         TdJl8gVHdVjR3ZodlNby2Zj1Cmy60m4+L36GqcO0VfBv6nwlbRbeoum4JpQMbryeWd
-         qFARw2xSaV9nrTrw2Qa5YxXpoavr39RzRGfDfNU4=
+        b=GcwJaLAHWut4GLt02KwYVF4tyz9B8XovRgOcMOxngibP4m2S1Cq5YeOst09EgbLDl
+         EsOd7ZxRcmjnawf01TqmsKynh49yRjenGGeeQ4Y75U2NOEBzObLdEc4qz1B8lYfSqC
+         Cwlq6JtK4PGgjXM6sx3Tz5h8BvXJRKGjYsJDs4/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Scott Talbert <swt@techie.net>,
+        Namhyung Kim <namhyung@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/46] efi/x86: Do not clean dummy variable in kexec path
-Date:   Mon,  4 Nov 2019 22:44:47 +0100
-Message-Id: <20191104211844.811293602@linuxfoundation.org>
+Subject: [PATCH 4.14 50/95] perf/x86/amd: Change/fix NMI latency mitigation to use a timestamp
+Date:   Mon,  4 Nov 2019 22:44:48 +0100
+Message-Id: <20191104212104.021638843@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,59 +52,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Young <dyoung@redhat.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-[ Upstream commit 2ecb7402cfc7f22764e7bbc80790e66eadb20560 ]
+[ Upstream commit df4d29732fdad43a51284f826bec3e6ded177540 ]
 
-kexec reboot fails randomly in UEFI based KVM guest.  The firmware
-just resets while calling efi_delete_dummy_variable();  Unfortunately
-I don't know how to debug the firmware, it is also possible a potential
-problem on real hardware as well although nobody reproduced it.
+It turns out that the NMI latency workaround from commit:
 
-The intention of the efi_delete_dummy_variable is to trigger garbage collection
-when entering virtual mode.  But SetVirtualAddressMap can only run once
-for each physical reboot, thus kexec_enter_virtual_mode() is not necessarily
-a good place to clean a dummy object.
+  6d3edaae16c6 ("x86/perf/amd: Resolve NMI latency issues for active PMCs")
 
-Drop the efi_delete_dummy_variable so that kexec reboot can work.
+ends up being too conservative and results in the perf NMI handler claiming
+NMIs too easily on AMD hardware when the NMI watchdog is active.
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Matthew Garrett <mjg59@google.com>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+This has an impact, for example, on the hpwdt (HPE watchdog timer) module.
+This module can produce an NMI that is used to reset the system. It
+registers an NMI handler for the NMI_UNKNOWN type and relies on the fact
+that nothing has claimed an NMI so that its handler will be invoked when
+the watchdog device produces an NMI. After the referenced commit, the
+hpwdt module is unable to process its generated NMI if the NMI watchdog is
+active, because the current NMI latency mitigation results in the NMI
+being claimed by the perf NMI handler.
+
+Update the AMD perf NMI latency mitigation workaround to, instead, use a
+window of time. Whenever a PMC is handled in the perf NMI handler, set a
+timestamp which will act as a perf NMI window. Any NMIs arriving within
+that window will be claimed by perf. Anything outside that window will
+not be claimed by perf. The value for the NMI window is set to 100 msecs.
+This is a conservative value that easily covers any NMI latency in the
+hardware. While this still results in a window in which the hpwdt module
+will not receive its NMI, the window is now much, much smaller.
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Peter Jones <pjones@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Scott Talbert <swt@techie.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191002165904.8819-8-ard.biesheuvel@linaro.org
+Fixes: 6d3edaae16c6 ("x86/perf/amd: Resolve NMI latency issues for active PMCs")
+Link: https://lkml.kernel.org/r/Message-ID:
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/efi.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/x86/events/amd/core.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index ad285404ea7f5..4bc352fc08f19 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -859,9 +859,6 @@ static void __init kexec_enter_virtual_mode(void)
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 27ade3cb6482c..defb536aebce2 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -4,12 +4,14 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
++#include <linux/jiffies.h>
+ #include <asm/apicdef.h>
+ #include <asm/nmi.h>
  
- 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
- 		runtime_code_page_mkexec();
+ #include "../perf_event.h"
+ 
+-static DEFINE_PER_CPU(unsigned int, perf_nmi_counter);
++static DEFINE_PER_CPU(unsigned long, perf_nmi_tstamp);
++static unsigned long perf_nmi_window;
+ 
+ static __initconst const u64 amd_hw_cache_event_ids
+ 				[PERF_COUNT_HW_CACHE_MAX]
+@@ -640,11 +642,12 @@ static void amd_pmu_disable_event(struct perf_event *event)
+  * handler when multiple PMCs are active or PMC overflow while handling some
+  * other source of an NMI.
+  *
+- * Attempt to mitigate this by using the number of active PMCs to determine
+- * whether to return NMI_HANDLED if the perf NMI handler did not handle/reset
+- * any PMCs. The per-CPU perf_nmi_counter variable is set to a minimum of the
+- * number of active PMCs or 2. The value of 2 is used in case an NMI does not
+- * arrive at the LAPIC in time to be collapsed into an already pending NMI.
++ * Attempt to mitigate this by creating an NMI window in which un-handled NMIs
++ * received during this window will be claimed. This prevents extending the
++ * window past when it is possible that latent NMIs should be received. The
++ * per-CPU perf_nmi_tstamp will be set to the window end time whenever perf has
++ * handled a counter. When an un-handled NMI is received, it will be claimed
++ * only if arriving within that window.
+  */
+ static int amd_pmu_handle_irq(struct pt_regs *regs)
+ {
+@@ -662,21 +665,19 @@ static int amd_pmu_handle_irq(struct pt_regs *regs)
+ 	handled = x86_pmu_handle_irq(regs);
+ 
+ 	/*
+-	 * If a counter was handled, record the number of possible remaining
+-	 * NMIs that can occur.
++	 * If a counter was handled, record a timestamp such that un-handled
++	 * NMIs will be claimed if arriving within that window.
+ 	 */
+ 	if (handled) {
+-		this_cpu_write(perf_nmi_counter,
+-			       min_t(unsigned int, 2, active));
++		this_cpu_write(perf_nmi_tstamp,
++			       jiffies + perf_nmi_window);
+ 
+ 		return handled;
+ 	}
+ 
+-	if (!this_cpu_read(perf_nmi_counter))
++	if (time_after(jiffies, this_cpu_read(perf_nmi_tstamp)))
+ 		return NMI_DONE;
+ 
+-	this_cpu_dec(perf_nmi_counter);
 -
--	/* clean DUMMY object */
--	efi_delete_dummy_variable();
- #endif
+ 	return NMI_HANDLED;
  }
  
+@@ -908,6 +909,9 @@ static int __init amd_core_pmu_init(void)
+ 	if (!boot_cpu_has(X86_FEATURE_PERFCTR_CORE))
+ 		return 0;
+ 
++	/* Avoid calulating the value each time in the NMI handler */
++	perf_nmi_window = msecs_to_jiffies(100);
++
+ 	switch (boot_cpu_data.x86) {
+ 	case 0x15:
+ 		pr_cont("Fam15h ");
 -- 
 2.20.1
 
