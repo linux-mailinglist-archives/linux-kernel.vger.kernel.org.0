@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3100AEEBFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02281EECA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387441AbfKDVwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
+        id S1730959AbfKDV7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:59:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730830AbfKDVws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:48 -0500
+        id S1729804AbfKDV6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:58:53 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52A5F2184C;
-        Mon,  4 Nov 2019 21:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE4D214E0;
+        Mon,  4 Nov 2019 21:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904366;
-        bh=tDrUm+qwbUyXKsPEjhJF9Vdx2TT6I+dx62GC67rx3Gs=;
+        s=default; t=1572904732;
+        bh=5lwm5aHSV+vFhzsKNzTGTuGddmHkxCu6wDISBI82sz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Ozy4BHEwWRmmne+ApxTMFOZghHAY8H5fjT3XmQym0tXoousN7IjGjXA9wB7ty7gV
-         QYIxmb0HyIYa4bHQBmuE9S347dt5kVi6cMlWg0nlkUmAnq6PU9S8ExSqBIo7GICs2/
-         r+zTDk+zk0lDrmHw4+7y3H0VVIOW34O06OcJfc90=
+        b=RaLjA9LgM17A9MDJ7alr52p3Q0AtU0LMWZWv6w98r9RKGvvtVGvs7UDakH4WE5Qs6
+         nR9l/8QvPqSDVhWBf7U9DSCf2klq9Vvj+lPpV5cQjI+wGshJnp4+sej6DYGWYpQluT
+         74mUsi1fnmPSmpc2+J+B6hCmMUIJm/HRChVinGHo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/95] dm: Use kzalloc for all structs with embedded biosets/mempools
-Date:   Mon,  4 Nov 2019 22:44:03 +0100
-Message-Id: <20191104212040.275218135@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Lucas=20A . =20M . =20Magalh=C3=A3es?=" 
+        <lucmaga@gmail.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 051/149] media: vimc: Remove unused but set variables
+Date:   Mon,  4 Nov 2019 22:44:04 +0100
+Message-Id: <20191104212139.695013724@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,121 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kent Overstreet <kent.overstreet@gmail.com>
+From: Lucas A. M. Magalhães <lucmaga@gmail.com>
 
-[ Upstream commit d377535405686f735b90a8ad4ba269484cd7c96e ]
+[ Upstream commit 5515e414f42bf2769caae15b634004d456658284 ]
 
-mempool_init()/bioset_init() require that the mempools/biosets be zeroed
-first; they probably should not _require_ this, but not allocating those
-structs with kzalloc is a fairly nonsensical thing to do (calling
-mempool_exit()/bioset_exit() on an uninitialized mempool/bioset is legal
-and safe, but only works if said memory was zeroed.)
+Remove unused but set variables to clean up the code and avoid
+warning.
 
-Acked-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-bio-prison-v1.c | 2 +-
- drivers/md/dm-bio-prison-v2.c | 2 +-
- drivers/md/dm-io.c            | 2 +-
- drivers/md/dm-kcopyd.c        | 2 +-
- drivers/md/dm-region-hash.c   | 2 +-
- drivers/md/dm-snap.c          | 2 +-
- drivers/md/dm-thin.c          | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/platform/vimc/vimc-sensor.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/md/dm-bio-prison-v1.c b/drivers/md/dm-bio-prison-v1.c
-index 874841f0fc837..10532a76688ea 100644
---- a/drivers/md/dm-bio-prison-v1.c
-+++ b/drivers/md/dm-bio-prison-v1.c
-@@ -33,7 +33,7 @@ static struct kmem_cache *_cell_cache;
-  */
- struct dm_bio_prison *dm_bio_prison_create(void)
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 9e0d70e9f119c..3f0ffd4915cd2 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -204,13 +204,6 @@ static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
  {
--	struct dm_bio_prison *prison = kmalloc(sizeof(*prison), GFP_KERNEL);
-+	struct dm_bio_prison *prison = kzalloc(sizeof(*prison), GFP_KERNEL);
+ 	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
+ 						    ved);
+-	const struct vimc_pix_map *vpix;
+-	unsigned int frame_size;
+-
+-	/* Calculate the frame size */
+-	vpix = vimc_pix_map_by_code(vsen->mbus_format.code);
+-	frame_size = vsen->mbus_format.width * vpix->bpp *
+-		     vsen->mbus_format.height;
  
- 	if (!prison)
- 		return NULL;
-diff --git a/drivers/md/dm-bio-prison-v2.c b/drivers/md/dm-bio-prison-v2.c
-index 8ce3a1a588cfd..c34ec615420f2 100644
---- a/drivers/md/dm-bio-prison-v2.c
-+++ b/drivers/md/dm-bio-prison-v2.c
-@@ -35,7 +35,7 @@ static struct kmem_cache *_cell_cache;
-  */
- struct dm_bio_prison_v2 *dm_bio_prison_create_v2(struct workqueue_struct *wq)
- {
--	struct dm_bio_prison_v2 *prison = kmalloc(sizeof(*prison), GFP_KERNEL);
-+	struct dm_bio_prison_v2 *prison = kzalloc(sizeof(*prison), GFP_KERNEL);
- 
- 	if (!prison)
- 		return NULL;
-diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
-index b4357ed4d5416..56e2c0e079d78 100644
---- a/drivers/md/dm-io.c
-+++ b/drivers/md/dm-io.c
-@@ -50,7 +50,7 @@ struct dm_io_client *dm_io_client_create(void)
- 	struct dm_io_client *client;
- 	unsigned min_ios = dm_get_reserved_bio_based_ios();
- 
--	client = kmalloc(sizeof(*client), GFP_KERNEL);
-+	client = kzalloc(sizeof(*client), GFP_KERNEL);
- 	if (!client)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
-index bd9a45b94b552..7ca2b1aaa79d4 100644
---- a/drivers/md/dm-kcopyd.c
-+++ b/drivers/md/dm-kcopyd.c
-@@ -892,7 +892,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
- 	int r = -ENOMEM;
- 	struct dm_kcopyd_client *kc;
- 
--	kc = kmalloc(sizeof(*kc), GFP_KERNEL);
-+	kc = kzalloc(sizeof(*kc), GFP_KERNEL);
- 	if (!kc)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
-index 85c32b22a420a..91c6f6d72eeec 100644
---- a/drivers/md/dm-region-hash.c
-+++ b/drivers/md/dm-region-hash.c
-@@ -179,7 +179,7 @@ struct dm_region_hash *dm_region_hash_create(
- 		;
- 	nr_buckets >>= 1;
- 
--	rh = kmalloc(sizeof(*rh), GFP_KERNEL);
-+	rh = kzalloc(sizeof(*rh), GFP_KERNEL);
- 	if (!rh) {
- 		DMERR("unable to allocate region hash memory");
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 95c564b60d79a..2170f6c118b89 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -1136,7 +1136,7 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		origin_mode = FMODE_WRITE;
- 	}
- 
--	s = kmalloc(sizeof(*s), GFP_KERNEL);
-+	s = kzalloc(sizeof(*s), GFP_KERNEL);
- 	if (!s) {
- 		ti->error = "Cannot allocate private snapshot structure";
- 		r = -ENOMEM;
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index aa77959909894..0ee5eae716909 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -2962,7 +2962,7 @@ static struct pool *pool_create(struct mapped_device *pool_md,
- 		return (struct pool *)pmd;
- 	}
- 
--	pool = kmalloc(sizeof(*pool), GFP_KERNEL);
-+	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
- 	if (!pool) {
- 		*error = "Error allocating memory for pool";
- 		err_p = ERR_PTR(-ENOMEM);
+ 	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
+ 	return vsen->frame;
 -- 
 2.20.1
 
