@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7812EEDAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A538EF070
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389084AbfKDWJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:09:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
+        id S2387403AbfKDVt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:49:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390341AbfKDWJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:05 -0500
+        id S1730353AbfKDVtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:49:21 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10D652084D;
-        Mon,  4 Nov 2019 22:09:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF8D1214D8;
+        Mon,  4 Nov 2019 21:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905344;
-        bh=U+Zx5FXqnEKDqG9cbcGZr0ucvhiaP2b+eeL9ag+Gn0w=;
+        s=default; t=1572904161;
+        bh=taHtxd+ytwMIQ/xVfUB+ba14QxmtBFsEvaK2BHFPEc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WDJcA6j+TASaN3ZjXN6CworFpborFs5k8GJxlWhaO5IbUeo2n5DzVgKul0+2ovLQq
-         zGyXLVHJMABibxlZ0QBBXjc8iKSkxtvDnLalmVV1RzWGh1dC26EjJEd+WIGRXA0cgU
-         RR7/tMmkhKUFKOmgLLSXgJksX7BnV8yueJsUNqRw=
+        b=v9c6CdM1EYqrfZBTECpOFzF/I4IaP9HAhruqs/zfM6yYsPnkjua2Yr6Km38YcAAKz
+         y5xqa55+sRrgckCLRIuex/pTXBxmJ6+67oRkR36Sp/YfjP67+g6EUWeaICRvmIWfP0
+         oYuwLo4yMfbXgRbhYXFZ3NPjFMWlxMY98g+h/iqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Girish Basrur <gbasrur@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.3 113/163] scsi: qla2xxx: Fix partial flash write of MBI
-Date:   Mon,  4 Nov 2019 22:45:03 +0100
-Message-Id: <20191104212148.426992883@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 33/46] USB: serial: whiteheat: fix line-speed endianness
+Date:   Mon,  4 Nov 2019 22:45:04 +0100
+Message-Id: <20191104211906.971842926@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +42,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 8d8b83f5be2a3bdac3695a94e6cb5e50bd114869 upstream.
+commit 84968291d7924261c6a0624b9a72f952398e258b upstream.
 
-For new adapters with multiple flash regions to write to, current code
-allows FW & Boot regions to be written, while other regions are blocked via
-sysfs. The fix is to block all flash read/write through sysfs interface.
+Add missing endianness conversion when setting the line speed so that
+this driver might work also on big-endian machines.
 
-Fixes: e81d1bcbde06 ("scsi: qla2xxx: Further limit FLASH region write access from SysFS")
-Cc: stable@vger.kernel.org # 5.2
-Link: https://lore.kernel.org/r/20191022193643.7076-3-hmadhani@marvell.com
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Girish Basrur <gbasrur@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Also use an unsigned format specifier in the corresponding debug
+message.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191029102354.2733-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_attr.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/usb/serial/whiteheat.c |    9 ++++++---
+ drivers/usb/serial/whiteheat.h |    2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -441,9 +441,6 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		valid = 0;
- 		if (ha->optrom_size == OPTROM_SIZE_2300 && start == 0)
- 			valid = 1;
--		else if (start == (ha->flt_region_boot * 4) ||
--		    start == (ha->flt_region_fw * 4))
--			valid = 1;
- 		else if (IS_QLA24XX_TYPE(ha) || IS_QLA25XX(ha))
- 			valid = 1;
- 		if (!valid) {
-@@ -491,8 +488,10 @@ qla2x00_sysfs_write_optrom_ctl(struct fi
- 		    "Writing flash region -- 0x%x/0x%x.\n",
- 		    ha->optrom_region_start, ha->optrom_region_size);
+--- a/drivers/usb/serial/whiteheat.c
++++ b/drivers/usb/serial/whiteheat.c
+@@ -681,6 +681,7 @@ static void firm_setup_port(struct tty_s
+ 	struct device *dev = &port->dev;
+ 	struct whiteheat_port_settings port_settings;
+ 	unsigned int cflag = tty->termios.c_cflag;
++	speed_t baud;
  
--		ha->isp_ops->write_optrom(vha, ha->optrom_buffer,
-+		rval = ha->isp_ops->write_optrom(vha, ha->optrom_buffer,
- 		    ha->optrom_region_start, ha->optrom_region_size);
-+		if (rval)
-+			rval = -EIO;
- 		break;
- 	default:
- 		rval = -EINVAL;
+ 	port_settings.port = port->port_number + 1;
+ 
+@@ -741,11 +742,13 @@ static void firm_setup_port(struct tty_s
+ 	dev_dbg(dev, "%s - XON = %2x, XOFF = %2x\n", __func__, port_settings.xon, port_settings.xoff);
+ 
+ 	/* get the baud rate wanted */
+-	port_settings.baud = tty_get_baud_rate(tty);
+-	dev_dbg(dev, "%s - baud rate = %d\n", __func__, port_settings.baud);
++	baud = tty_get_baud_rate(tty);
++	port_settings.baud = cpu_to_le32(baud);
++	dev_dbg(dev, "%s - baud rate = %u\n", __func__, baud);
+ 
+ 	/* fixme: should set validated settings */
+-	tty_encode_baud_rate(tty, port_settings.baud, port_settings.baud);
++	tty_encode_baud_rate(tty, baud, baud);
++
+ 	/* handle any settings that aren't specified in the tty structure */
+ 	port_settings.lloop = 0;
+ 
+--- a/drivers/usb/serial/whiteheat.h
++++ b/drivers/usb/serial/whiteheat.h
+@@ -91,7 +91,7 @@ struct whiteheat_simple {
+ 
+ struct whiteheat_port_settings {
+ 	__u8	port;		/* port number (1 to N) */
+-	__u32	baud;		/* any value 7 - 460800, firmware calculates
++	__le32	baud;		/* any value 7 - 460800, firmware calculates
+ 				   best fit; arrives little endian */
+ 	__u8	bits;		/* 5, 6, 7, or 8 */
+ 	__u8	stop;		/* 1 or 2, default 1 (2 = 1.5 if bits = 5) */
 
 
