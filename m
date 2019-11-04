@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF8CEEDCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E415EF008
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390507AbfKDWKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:10:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43300 "EHLO mail.kernel.org"
+        id S2388701AbfKDWZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:25:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390131AbfKDWKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:08 -0500
+        id S1730624AbfKDVv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:56 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A497F2084D;
-        Mon,  4 Nov 2019 22:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A8A82053B;
+        Mon,  4 Nov 2019 21:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905407;
-        bh=lQk2dCPShHPcrBF0qs2qgGMBx+xyTRvvjgf+a08rBDo=;
+        s=default; t=1572904315;
+        bh=nk4O2gxrkdy69/8sNMd0ZPESLXqQN5sMW0ezN6AV+RQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MZvrTpNygJ1WqqwAO1emjMsY0u3m6mXRGknOEsZLoVEGIAznMNV3rIC8YaRc4k73Z
-         dx2hoByfk22IMN4Sm9q8Ek4kIa8dqCgj7Cqp2WPS7pnpLhwCnN/Fbb+ZaVnaYMEeoh
-         M3h68hTBCFbGnUasY5E9d4zsxMHFqzP+zks8R9c4=
+        b=WCu6LgkYmQTIJlAJDy0sASikxb5YKr33No+tZ9Lz6UThcnp9kgeW8af7S+D9OvZZc
+         o5qe4WAXPbhCGumoYM5GHDjKKZ+ATCWRUKwpmcZbgGqgniqTyYLuHeBhawjQ5cMZYi
+         09nhhUFpZvpikatrDkbhU6JOB+eAjy56O+c3nVH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 5.3 133/163] dmaengine: qcom: bam_dma: Fix resource leak
-Date:   Mon,  4 Nov 2019 22:45:23 +0100
-Message-Id: <20191104212149.973116290@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 4.9 62/62] ALSA: timer: Fix mutex deadlock at releasing card
+Date:   Mon,  4 Nov 2019 22:45:24 +0100
+Message-Id: <20191104212001.419204692@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,57 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 7667819385457b4aeb5fac94f67f52ab52cc10d5 upstream.
+[ Upstream commit a39331867335d4a94b6165e306265c9e24aca073 ]
 
-bam_dma_terminate_all() will leak resources if any of the transactions are
-committed to the hardware (present in the desc fifo), and not complete.
-Since bam_dma_terminate_all() does not cause the hardware to be updated,
-the hardware will still operate on any previously committed transactions.
-This can cause memory corruption if the memory for the transaction has been
-reassigned, and will cause a sync issue between the BAM and its client(s).
+When a card is disconnected while in use, the system waits until all
+opened files are closed then releases the card.  This is done via
+put_device() of the card device in each device release code.
 
-Fix this by properly updating the hardware in bam_dma_terminate_all().
+The recently reported mutex deadlock bug happens in this code path;
+snd_timer_close() for the timer device deals with the global
+register_mutex and it calls put_device() there.  When this timer
+device is the last one, the card gets freed and it eventually calls
+snd_timer_free(), which has again the protection with the global
+register_mutex -- boom.
 
-Fixes: e7c0fe2a5c84 ("dmaengine: add Qualcomm BAM dma driver")
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191017152606.34120-1-jeffrey.l.hugo@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Basically put_device() call itself is race-free, so a relative simple
+workaround is to move this put_device() call out of the mutex.  For
+achieving that, in this patch, snd_timer_close_locked() got a new
+argument to store the card device pointer in return, and each caller
+invokes put_device() with the returned object after the mutex unlock.
 
+Reported-and-tested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/qcom/bam_dma.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ sound/core/timer.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -694,6 +694,25 @@ static int bam_dma_terminate_all(struct
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 6eb4e97662d9c..19d90aa082184 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -239,7 +239,8 @@ static int snd_timer_check_master(struct snd_timer_instance *master)
+ 	return 0;
+ }
  
- 	/* remove all transactions, including active transaction */
- 	spin_lock_irqsave(&bchan->vc.lock, flag);
-+	/*
-+	 * If we have transactions queued, then some might be committed to the
-+	 * hardware in the desc fifo.  The only way to reset the desc fifo is
-+	 * to do a hardware reset (either by pipe or the entire block).
-+	 * bam_chan_init_hw() will trigger a pipe reset, and also reinit the
-+	 * pipe.  If the pipe is left disabled (default state after pipe reset)
-+	 * and is accessed by a connected hardware engine, a fatal error in
-+	 * the BAM will occur.  There is a small window where this could happen
-+	 * with bam_chan_init_hw(), but it is assumed that the caller has
-+	 * stopped activity on any attached hardware engine.  Make sure to do
-+	 * this first so that the BAM hardware doesn't cause memory corruption
-+	 * by accessing freed resources.
-+	 */
-+	if (!list_empty(&bchan->desc_list)) {
-+		async_desc = list_first_entry(&bchan->desc_list,
-+					      struct bam_async_desc, desc_node);
-+		bam_chan_init_hw(bchan, async_desc->dir);
-+	}
-+
- 	list_for_each_entry_safe(async_desc, tmp,
- 				 &bchan->desc_list, desc_node) {
- 		list_add(&async_desc->vd.node, &bchan->vc.desc_issued);
+-static int snd_timer_close_locked(struct snd_timer_instance *timeri);
++static int snd_timer_close_locked(struct snd_timer_instance *timeri,
++				  struct device **card_devp_to_put);
+ 
+ /*
+  * open a timer instance
+@@ -251,6 +252,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ {
+ 	struct snd_timer *timer;
+ 	struct snd_timer_instance *timeri = NULL;
++	struct device *card_dev_to_put = NULL;
+ 	int err;
+ 
+ 	mutex_lock(&register_mutex);
+@@ -274,7 +276,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 		list_add_tail(&timeri->open_list, &snd_timer_slave_list);
+ 		err = snd_timer_check_slave(timeri);
+ 		if (err < 0) {
+-			snd_timer_close_locked(timeri);
++			snd_timer_close_locked(timeri, &card_dev_to_put);
+ 			timeri = NULL;
+ 		}
+ 		goto unlock;
+@@ -326,7 +328,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 			timeri = NULL;
+ 
+ 			if (timer->card)
+-				put_device(&timer->card->card_dev);
++				card_dev_to_put = &timer->card->card_dev;
+ 			module_put(timer->module);
+ 			goto unlock;
+ 		}
+@@ -336,12 +338,15 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	timer->num_instances++;
+ 	err = snd_timer_check_master(timeri);
+ 	if (err < 0) {
+-		snd_timer_close_locked(timeri);
++		snd_timer_close_locked(timeri, &card_dev_to_put);
+ 		timeri = NULL;
+ 	}
+ 
+  unlock:
+ 	mutex_unlock(&register_mutex);
++	/* put_device() is called after unlock for avoiding deadlock */
++	if (card_dev_to_put)
++		put_device(card_dev_to_put);
+ 	*ti = timeri;
+ 	return err;
+ }
+@@ -351,7 +356,8 @@ EXPORT_SYMBOL(snd_timer_open);
+  * close a timer instance
+  * call this with register_mutex down.
+  */
+-static int snd_timer_close_locked(struct snd_timer_instance *timeri)
++static int snd_timer_close_locked(struct snd_timer_instance *timeri,
++				  struct device **card_devp_to_put)
+ {
+ 	struct snd_timer *timer = NULL;
+ 	struct snd_timer_instance *slave, *tmp;
+@@ -403,7 +409,7 @@ static int snd_timer_close_locked(struct snd_timer_instance *timeri)
+ 			timer->hw.close(timer);
+ 		/* release a card refcount for safe disconnection */
+ 		if (timer->card)
+-			put_device(&timer->card->card_dev);
++			*card_devp_to_put = &timer->card->card_dev;
+ 		module_put(timer->module);
+ 	}
+ 
+@@ -415,14 +421,18 @@ static int snd_timer_close_locked(struct snd_timer_instance *timeri)
+  */
+ int snd_timer_close(struct snd_timer_instance *timeri)
+ {
++	struct device *card_dev_to_put = NULL;
+ 	int err;
+ 
+ 	if (snd_BUG_ON(!timeri))
+ 		return -ENXIO;
+ 
+ 	mutex_lock(&register_mutex);
+-	err = snd_timer_close_locked(timeri);
++	err = snd_timer_close_locked(timeri, &card_dev_to_put);
+ 	mutex_unlock(&register_mutex);
++	/* put_device() is called after unlock for avoiding deadlock */
++	if (card_dev_to_put)
++		put_device(card_dev_to_put);
+ 	return err;
+ }
+ EXPORT_SYMBOL(snd_timer_close);
+-- 
+2.20.1
+
 
 
