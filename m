@@ -2,73 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83090EDDA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 677BDEDD9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbfKDLV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 06:21:58 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48072 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726364AbfKDLV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:21:57 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9FE3BD46CE388845323F;
-        Mon,  4 Nov 2019 19:21:55 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 4 Nov 2019 19:21:47 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <felipe.balbi@linux.intel.com>, <gregkh@linuxfoundation.org>,
-        <treding@nvidia.com>, <nkristam@nvidia.com>, <arnd@arndb.de>,
-        <johan@kernel.org>, <maowenan@huawei.com>, <krzk@kernel.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH v2 -next] usb: gadget: Add dependency for USB_TEGRA_XUDC
-Date:   Mon, 4 Nov 2019 19:21:04 +0800
-Message-ID: <20191104112104.195329-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <51315499-99d0-eca3-a7df-b8dd84628bbd@huawei.com>
-References: <51315499-99d0-eca3-a7df-b8dd84628bbd@huawei.com>
+        id S1728064AbfKDLVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:21:38 -0500
+Received: from mail-io1-f46.google.com ([209.85.166.46]:41752 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfKDLVi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:21:38 -0500
+Received: by mail-io1-f46.google.com with SMTP id r144so17954382iod.8
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 03:21:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=iA3Ghh4jpvXSSERa2jOGmbp3jAalwStrBFig3xIOZ8Q=;
+        b=LCUlJDAuatfSFAsRlhdxeWl3QtSamE4hc8n9dJ+nmgoW0PSGXgFbF/ydxGMNjphwMG
+         hnroxzGM/qodPjlzPrWZr0CpSLhJxt+U19NQfdCeoEAkgaW9rsMUYgNDrUNJgxK5cnWl
+         obnh7W52U9nm2LM+uNOVkNztSpM+y6JrmsjrEhNis5b6vlBQYyGCBcxo1ShHcEqHUuQQ
+         HcW4LrRzMluXq9FgoxUCk+mtPsAKLyS4eqixwFJ1kt1eDNtxoiBv59i3niKXmmWLHwbs
+         8cda3iJI5htoNV/OBh9UToSexj67czV59ljIsv0wUc+/LLEEqta7bnoerMqzHn14B7fc
+         5awQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=iA3Ghh4jpvXSSERa2jOGmbp3jAalwStrBFig3xIOZ8Q=;
+        b=rQICaS5mZk4L9oOjbOW9TRy9Bn1FwBO6vGFD3OBbzbLs5FqKHgyXregdgLBamuXGsS
+         MACcZlHCWfEhM9nflTWH2clOD9oVeLEsQby2YXHgaAri8zIdsgyQAW78EICbF8Z5bEcH
+         9PjaT3Pb23q0+zcNGsH3dbPj2DS9inSiLpywDnQ+Pdt6a9UWwHUtQ2IuKpqbOGtIu4zF
+         a9dMxgNOWRC2vbF3jgH9RuZH/AQJl7w/cI91aw3QCnU3pxENAtXs5VCjgZWIIx8OevrM
+         YTRLvQ+929CRiL4v9DDk+72FR8tP8N9tNXbqgbJx86LAtfdHyLNHERM2jJNl9PFVnXMZ
+         fJAA==
+X-Gm-Message-State: APjAAAXBS17S4G/Hg9LgTD0sh7l2GmLXN+kkjQXyK+8ygAP9/1BSqsA8
+        7CDNXfWYBFxes3oIWDLS4xxSILfusLXNYEzS/keB8rwo
+X-Google-Smtp-Source: APXvYqy/kRAKleYcs8DOOpqCxLbzM5UCoYYkc+UHZNcyNt4+LloxILm+f8QD3/pogXhcxsFwGYNTRpF9b2Hpn55SXbg=
+X-Received: by 2002:a5e:9b13:: with SMTP id j19mr10487061iok.169.1572866495915;
+ Mon, 04 Nov 2019 03:21:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+From:   Tom Cook <tom.k.cook@gmail.com>
+Date:   Mon, 4 Nov 2019 11:21:24 +0000
+Message-ID: <CAFSh4UxSx7SYT=Ja6TbwFwCJm_yn6VtMapXGv3B=+g2rQcALSA@mail.gmail.com>
+Subject: Power management - HP 15-ds0502na
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_USB_TEGRA_XUDC=y and CONFIG_USB_ROLE_SWITCH=m,
-below erros can be seen:
-drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_remove':
-tegra-xudc.c:(.text+0x6b0): undefined reference to `usb_role_switch_unregister'
-drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_probe':
-tegra-xudc.c:(.text+0x1b88): undefined reference to `usb_role_switch_register'
-drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_usb_role_sw_work':
-tegra-xudc.c:(.text+0x5ecc): undefined reference to `usb_role_switch_get_role'
+Hi all,
 
-It should select USB_ROLE_SWITCH for UDC driver.
+I've recently purchased an HP 2-in-1 laptop, model 15-ds0502na.  This
+is a Ryzen 7 3700U processor.  There seems to be some difficulty
+between HP's firmware ACPI tables and the kernel.  It's not clear (to
+me, at least) whether this is poor ACPI implementation from HP or poor
+handling of valid ACPI tables by the kernel.  The most obvious
+symptoms are:
 
-Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v2: change 'depends on' to 'select'.
- drivers/usb/gadget/udc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+* Pre-5.3 kernels don't boot at all.  This appears to be because the
+FADT table declares the hardware_reduced flag and this was not very
+well supported.  5.3 kernels boot okay (I'm using the one that comes
+with Ubuntu 15.10).
+* Power management doesn't work very well.  The most obvious symptom
+of this is that /sys/power/mem_sleep contains only "[s2idle]" and so
+there is no suspend-to-RAM available.  Setting
+"mem_sleep_default=deep" on the command line doesn't change this.
+* There are a few devices that appear to be on I2C buses and declared
+in the ACPI tables (eg the fingerprint sensor) which don't show up
+under Linux.  They did under Windows, until I blew the Windows
+installation away to install Linux, and I'm assuming that Windows
+found them through the ACPI DSDT.  Now thinking it may have been handy
+to keep Windows around for debugging, but that's regrets for you.
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index acaec3a..d103154 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -445,6 +445,7 @@ config USB_TEGRA_XUDC
- 	tristate "NVIDIA Tegra Superspeed USB 3.0 Device Controller"
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on PHY_TEGRA_XUSB
-+	select USB_ROLE_SWITCH
- 	help
- 	 Enables NVIDIA Tegra USB 3.0 device mode controller driver.
- 
--- 
-2.7.4
+Is this the right place to raise this?  If there's some other place
+that Linux ACPI issues are dealt with, please point me there as I've
+not had any luck googling.
 
+What are my next steps debugging this?  I've decompiled the firmware
+ACPi tables but I don't have much idea what I'm looking at.
+
+Thanks,
+Tom Cook
