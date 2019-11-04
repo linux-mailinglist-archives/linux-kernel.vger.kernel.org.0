@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3080EECA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C82EEC24
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731064AbfKDV7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56154 "EHLO mail.kernel.org"
+        id S2387900AbfKDVyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730912AbfKDV7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:01 -0500
+        id S2387883AbfKDVyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:54:13 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 943FC20650;
-        Mon,  4 Nov 2019 21:59:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADDE8217F5;
+        Mon,  4 Nov 2019 21:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904741;
-        bh=S+UP34fBgco5qEy2lVaj8NvPWE1I+JMG2cDvjgizkSY=;
+        s=default; t=1572904453;
+        bh=NwcaHzqZ1lU4FzfoWU8IZZNT9FuebeODGEm+5dugqd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBFq4uj4CHJAWB4oiJFrzo7wBpcA5xGBS/hx1G8EG/eO4poIsQlRz4xPj6cVWwip1
-         BXTGkG4R2RYBBOOlbGOxEIlMyoYxretsiD/Az3OU4jpSK/kw+SJauNflZIsICABux8
-         Zl9LxXSIHc3un36hb1Cl1wQt9BmgnF6WeHbYMWps=
+        b=xXahjCZ00TS5eFbRhPA93y3f9ZQ6M650LWBvxyW1Mp0uTQkzy5k6gRchEUHru0FIA
+         AFfXsNj8fhYYJJ1YkWQiSh6VXdbIha9moGSKcQKEufo1TKh1xhs5cYRzKVoNyxvXf+
+         N3sG/gVkq7gfQ5fu6eq6mJJmunrvvKiji7mklhHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tim Aldridge <taldridge@mac.com>,
+        Julian Sax <jsbc@gmx.de>, Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/149] net: dsa: mv88e6xxx: Release lock while requesting IRQ
-Date:   Mon,  4 Nov 2019 22:44:07 +0100
-Message-Id: <20191104212140.069744322@linuxfoundation.org>
+Subject: [PATCH 4.14 10/95] HID: i2c-hid: add Direkt-Tek DTLAPY133-1 to descriptor override
+Date:   Mon,  4 Nov 2019 22:44:08 +0100
+Message-Id: <20191104212042.995305786@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Julian Sax <jsbc@gmx.de>
 
-[ Upstream commit 342a0ee70acbee97fdeb91349420f8744eb291fb ]
+[ Upstream commit 399474e4c1100bca264ed14fa3ad0d68fab484d8 ]
 
-There is no need to hold the register lock while requesting the GPIO
-interrupt. By not holding it we can also avoid a false positive
-lockdep splat.
+This device uses the SIPODEV SP1064 touchpad, which does not
+supply descriptors, so it has to be added to the override list.
 
-Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Tim Aldridge <taldridge@mac.com>
+Signed-off-by: Julian Sax <jsbc@gmx.de>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6xxx/chip.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 703e6bdaf0e1f..d075f0f7a3de8 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -456,10 +456,12 @@ static int mv88e6xxx_g1_irq_setup(struct mv88e6xxx_chip *chip)
- 	 */
- 	irq_set_lockdep_class(chip->irq, &lock_key, &request_key);
- 
-+	mutex_unlock(&chip->reg_lock);
- 	err = request_threaded_irq(chip->irq, NULL,
- 				   mv88e6xxx_g1_irq_thread_fn,
- 				   IRQF_ONESHOT,
- 				   dev_name(chip->dev), chip);
-+	mutex_lock(&chip->reg_lock);
- 	if (err)
- 		mv88e6xxx_g1_irq_free_common(chip);
- 
+diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+index cac262a912c12..89f2976f9c534 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -330,6 +330,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
+ 		},
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
++	{
++		.ident = "Direkt-Tek DTLAPY133-1",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Direkt-Tek"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "DTLAPY133-1"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
+ 	{
+ 		.ident = "Mediacom Flexbook Edge 11",
+ 		.matches = {
 -- 
 2.20.1
 
