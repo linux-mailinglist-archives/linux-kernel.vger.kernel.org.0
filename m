@@ -2,39 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E967EEBB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC952EEC17
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:54:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387697AbfKDVuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:50:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42446 "EHLO mail.kernel.org"
+        id S2387728AbfKDVxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbfKDVuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:21 -0500
+        id S2387588AbfKDVxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:50 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D80972190F;
-        Mon,  4 Nov 2019 21:50:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADE0321D81;
+        Mon,  4 Nov 2019 21:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904221;
-        bh=/tDzpcVlYPUykGvZzZFMA0ytYIsAYipqOHOn2ds+2O4=;
+        s=default; t=1572904429;
+        bh=BQznuFgVQfqp84u8/GPWmIUgThSN1012WBeQa99r7uE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NmChmMhgeqBivVG0un8lHn2aRH7csQKxx27HBWLGX/nN1RZAH9UezREHwn3ZbKLo2
-         /0+9/RUkd8V/fNAFv7kKCWZFISR1TJjjzdeU6+u8yvLz5qwv71xNHIbsGhRG93TPXE
-         CWOS8efdnGPlcC15slpDSAbuKyWgdA4AWqxN/FL0=
+        b=U1yKKV1YC6Gfe2u1DPFZIokSkBsXcVf3lFEhAdwcAgG1EwXAdbRX8O62HtY1pXKHo
+         /x4/h8+EeCzzG+eeoKd2R6FYx3P+jwpgSZ/kUYXnkU5fVqqNI+m30q43/mk88epzks
+         7GqG2T7wy8zP3TEoN9Z28V+UcIzDvak1KAHO9WZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/62] gpio: max77620: Use correct unit for debounce times
+        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Scott Talbert <swt@techie.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 42/95] efi/x86: Do not clean dummy variable in kexec path
 Date:   Mon,  4 Nov 2019 22:44:40 +0100
-Message-Id: <20191104211918.560035886@linuxfoundation.org>
+Message-Id: <20191104212101.999539577@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +56,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Dave Young <dyoung@redhat.com>
 
-[ Upstream commit fffa6af94894126994a7600c6f6f09b892e89fa9 ]
+[ Upstream commit 2ecb7402cfc7f22764e7bbc80790e66eadb20560 ]
 
-The gpiod_set_debounce() function takes the debounce time in
-microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
-the correct unit.
+kexec reboot fails randomly in UEFI based KVM guest.  The firmware
+just resets while calling efi_delete_dummy_variable();  Unfortunately
+I don't know how to debug the firmware, it is also possible a potential
+problem on real hardware as well although nobody reproduced it.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20191002122825.3948322-1-thierry.reding@gmail.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The intention of the efi_delete_dummy_variable is to trigger garbage collection
+when entering virtual mode.  But SetVirtualAddressMap can only run once
+for each physical reboot, thus kexec_enter_virtual_mode() is not necessarily
+a good place to clean a dummy object.
+
+Drop the efi_delete_dummy_variable so that kexec reboot can work.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Matthew Garrett <mjg59@google.com>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Talbert <swt@techie.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-8-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/platform/efi/efi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index b46b436cb97fe..4fe0be5aa2945 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -167,13 +167,13 @@ static int max77620_gpio_set_debounce(struct gpio_chip *gc,
- 	case 0:
- 		val = MAX77620_CNFG_GPIO_DBNC_None;
- 		break;
--	case 1 ... 8:
-+	case 1000 ... 8000:
- 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
- 		break;
--	case 9 ... 16:
-+	case 9000 ... 16000:
- 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
- 		break;
--	case 17 ... 32:
-+	case 17000 ... 32000:
- 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
- 		break;
- 	default:
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 9061babfbc83d..335a62e74a2e9 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
+ 
+ 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
+ 		runtime_code_page_mkexec();
+-
+-	/* clean DUMMY object */
+-	efi_delete_dummy_variable();
+ #endif
+ }
+ 
 -- 
 2.20.1
 
