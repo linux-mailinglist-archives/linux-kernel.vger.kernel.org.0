@@ -2,90 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE2EEDDA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D63EDDAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfKDLVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 06:21:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfKDLVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:21:53 -0500
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61EB217F4;
-        Mon,  4 Nov 2019 11:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572866513;
-        bh=96Xpoc/uVtwx5sks7uBs9fZALQDX0cp/me08MYObkJM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2EULUqB+KxT0HyLmrdPk/Fh6pSP/c44XKkaKgR3i1HcrMFqYqqRkWAo1d0yTty1Qp
-         m/woenT/dbIA/s4RzQMqPyVOUFzaUglk0m0a86SDM4FNWt2iJm5qDr/Z8PQk+QHDU7
-         pzvZqrFAGD93PIY8ZR18CNJ5q4PxBPfisSP8QCbI=
-Received: by mail-lj1-f176.google.com with SMTP id t5so17170369ljk.0;
-        Mon, 04 Nov 2019 03:21:52 -0800 (PST)
-X-Gm-Message-State: APjAAAWMVL0s+TzjUV3EBkX3zViU4NoWsqPzY6KiHgn5g5/SQmdA59B8
-        ZnVHQC7A9ZTLMCqeSoeZg3ZX4waJLqE0WE8gmhQ=
-X-Google-Smtp-Source: APXvYqwrByhfSz1Og4orpYlVbmqQ7yQvvFLxd2RumxXWW7lAgaRhOaTIdoH5HsDhLj5+/kJI93Ld4rWw6nXcBaH06Nc=
-X-Received: by 2002:a2e:9a95:: with SMTP id p21mr14516275lji.175.1572866511030;
- Mon, 04 Nov 2019 03:21:51 -0800 (PST)
+        id S1728432AbfKDL1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:27:09 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:55273 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfKDL1J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:27:09 -0500
+Received: by mail-il1-f199.google.com with SMTP id t67so6137946ill.21
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 03:27:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qF9HR4qzS9jnBK+P00Rhbp1bfWzTAJEf2Ve1RRYuzX4=;
+        b=L0HsIOB94/iNACiJOGp1wqf3IolM8e6HxC1SZfgHMmtShiyCV4Q85W1me9ppMF3kny
+         50C3WhTnazR/a6yMSl0CG0Bp5wmWqWO0R99n7TSC8Z3Prqr3mZaXs10t1hkvPVXlwZV6
+         39ZU+bcpwdbq6cS319c/z/6f1JpvYOx9ZLqPEU6ZHVA6SbrY+kmcIpIcYkfPTEKHZpSV
+         FO1S4uRuH585lyrpojEGv51UeV2Ws+76CjX5lzToVk+dXK3l5xz5yqUwW/w83Ahq85/3
+         YubK5HHDhdWMzUsXRQx54mm/STOGjCT/CmCjpBg4PKcDYtf59c0plfjAXfBwWZo0B1Se
+         1RoQ==
+X-Gm-Message-State: APjAAAVKz28y69Esj3AOXUcPdfzC60RcMul/HmTpHBifmjB5BZqrekoU
+        9nh4gC2i5k7mScdD6NVxDupmQkbFdpq5KELDULjc0I6a97T1
+X-Google-Smtp-Source: APXvYqw8Ad//aE67c6FaVCE42SnBm/lXPgXLQ09URqePH9Tj+lqgsbdFJJhIjdUkshVKcnjmmf7XG67UIzdUEYO8HqkrLTZIIK8f
 MIME-Version: 1.0
-References: <20191101112509.29723-1-ribalda@kernel.org> <20191101112509.29723-4-ribalda@kernel.org>
- <31815641-550c-88ab-c037-2e743cea59b3@xs4all.nl>
-In-Reply-To: <31815641-550c-88ab-c037-2e743cea59b3@xs4all.nl>
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date:   Mon, 4 Nov 2019 12:21:33 +0100
-X-Gmail-Original-Message-ID: <CAPybu_3DQbmuamHmTXWnF15B1tzPzf1Sh_YJe6VS-Uk8z81q1Q@mail.gmail.com>
-Message-ID: <CAPybu_3DQbmuamHmTXWnF15B1tzPzf1Sh_YJe6VS-Uk8z81q1Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] v4l2-ctl: Support setting V4L2_CTRL_TYPE_AREA controls
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a5d:8789:: with SMTP id f9mr1078590ion.237.1572866828188;
+ Mon, 04 Nov 2019 03:27:08 -0800 (PST)
+Date:   Mon, 04 Nov 2019 03:27:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000092c2f10596839808@google.com>
+Subject: KCSAN: data-race in mem_cgroup_select_victim_node / mem_cgroup_select_victim_node
+From:   syzbot <syzbot+234d50ad314ef67bcd16@syzkaller.appspotmail.com>
+To:     cgroups@vger.kernel.org, elver@google.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mhocko@kernel.org, syzkaller-bugs@googlegroups.com,
+        vdavydov.dev@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans
+Hello,
 
-Sure I will fix this. Shall I resend it once you have updated the
-headers on v4l-utils?
+syzbot found the following crash on:
 
-Best regards
+HEAD commit:    05f22368 x86, kcsan: Enable KCSAN for x86
+git tree:       https://github.com/google/ktsan.git kcsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=1774c6c0e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87d111955f40591f
+dashboard link: https://syzkaller.appspot.com/bug?extid=234d50ad314ef67bcd16
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-On Mon, Nov 4, 2019 at 10:41 AM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> On 11/1/19 12:25 PM, Ricardo Ribalda Delgado wrote:
-> > $ v4l2-ctl  -d /dev/video1  -c area=123123x233
-> >
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
-> >  utils/v4l2-ctl/v4l2-ctl-common.cpp | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/utils/v4l2-ctl/v4l2-ctl-common.cpp b/utils/v4l2-ctl/v4l2-ctl-common.cpp
-> > index 95339561..676b05e0 100644
-> > --- a/utils/v4l2-ctl/v4l2-ctl-common.cpp
-> > +++ b/utils/v4l2-ctl/v4l2-ctl-common.cpp
-> > @@ -973,6 +973,10 @@ void common_set(cv4l_fd &_fd)
-> >                                       strncpy(ctrl.string, iter->second.c_str(), qc.maximum);
-> >                                       ctrl.string[qc.maximum] = 0;
-> >                                       break;
-> > +                             case V4L2_CTRL_TYPE_AREA:
-> > +                                     sscanf(iter->second.c_str(), "%dx%d",
->
-> Use %ux%u since these are unsigned values.
->
-> Regards,
->
->         Hans
->
-> > +                                            &ctrl.p_area->width, &ctrl.p_area->height);
-> > +                                     break;
-> >                               default:
-> >                                       fprintf(stderr, "%s: unsupported payload type\n",
-> >                                                       qc.name);
-> >
->
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+234d50ad314ef67bcd16@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in mem_cgroup_select_victim_node /  
+mem_cgroup_select_victim_node
+
+write to 0xffff88809fade9b0 of 4 bytes by task 8603 on cpu 0:
+  mem_cgroup_select_victim_node+0xb5/0x3d0 mm/memcontrol.c:1686
+  try_to_free_mem_cgroup_pages+0x175/0x4c0 mm/vmscan.c:3376
+  reclaim_high.constprop.0+0xf7/0x140 mm/memcontrol.c:2349
+  mem_cgroup_handle_over_high+0x96/0x180 mm/memcontrol.c:2430
+  tracehook_notify_resume include/linux/tracehook.h:197 [inline]
+  exit_to_usermode_loop+0x20c/0x2c0 arch/x86/entry/common.c:163
+  prepare_exit_to_usermode+0x180/0x1a0 arch/x86/entry/common.c:194
+  swapgs_restore_regs_and_return_to_usermode+0x0/0x40
+
+read to 0xffff88809fade9b0 of 4 bytes by task 7290 on cpu 1:
+  mem_cgroup_select_victim_node+0x92/0x3d0 mm/memcontrol.c:1675
+  try_to_free_mem_cgroup_pages+0x175/0x4c0 mm/vmscan.c:3376
+  reclaim_high.constprop.0+0xf7/0x140 mm/memcontrol.c:2349
+  mem_cgroup_handle_over_high+0x96/0x180 mm/memcontrol.c:2430
+  tracehook_notify_resume include/linux/tracehook.h:197 [inline]
+  exit_to_usermode_loop+0x20c/0x2c0 arch/x86/entry/common.c:163
+  prepare_exit_to_usermode+0x180/0x1a0 arch/x86/entry/common.c:194
+  swapgs_restore_regs_and_return_to_usermode+0x0/0x40
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 7290 Comm: syz-executor.1 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 7290 Comm: syz-executor.1 Not tainted 5.4.0-rc3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xf5/0x159 lib/dump_stack.c:113
+  panic+0x210/0x640 kernel/panic.c:221
+  kcsan_report.cold+0xc/0x10 kernel/kcsan/report.c:302
+  __kcsan_setup_watchpoint+0x32e/0x4a0 kernel/kcsan/core.c:411
+  __tsan_read4 kernel/kcsan/kcsan.c:35 [inline]
+  __tsan_read4+0x2c/0x30 kernel/kcsan/kcsan.c:35
+  mem_cgroup_select_victim_node+0x92/0x3d0 mm/memcontrol.c:1675
+  try_to_free_mem_cgroup_pages+0x175/0x4c0 mm/vmscan.c:3376
+  reclaim_high.constprop.0+0xf7/0x140 mm/memcontrol.c:2349
+  mem_cgroup_handle_over_high+0x96/0x180 mm/memcontrol.c:2430
+  tracehook_notify_resume include/linux/tracehook.h:197 [inline]
+  exit_to_usermode_loop+0x20c/0x2c0 arch/x86/entry/common.c:163
+  prepare_exit_to_usermode+0x180/0x1a0 arch/x86/entry/common.c:194
+  retint_user+0x8/0x8
+RIP: 0033:0x45862a
+Code: 48 85 db 74 b6 41 bc ca 00 00 00 eb 0c 0f 1f 00 48 8b 5b 08 48 85 db  
+74 a2 48 8b 3b 48 8b 47 10 48 85 c0 74 05 ff d0 48 8b 3b <f0> ff 4f 28 0f  
+94 c0 84 c0 74 db 8b 47 2c 85 c0 74 d4 45 31 d2 ba
+RSP: 002b:00007ffec3569600 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00007ffec3569600 RCX: 00000000004584ca
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000a76d48
+RBP: 00007ffec3569640 R08: 0000000000000001 R09: 000000000269f940
+R10: 000000000269fc10 R11: 0000000000000246 R12: 00000000000000ca
+R13: 0000000000000079 R14: 0000000000000000 R15: 00007ffec3569690
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
