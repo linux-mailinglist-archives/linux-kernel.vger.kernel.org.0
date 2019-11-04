@@ -2,56 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CACEE85F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:30:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19646EE869
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:31:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbfKDTaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 14:30:46 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:50482 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfKDTap (ORCPT
+        id S1729551AbfKDTbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 14:31:52 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47506 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728321AbfKDTbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 14:30:45 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D55BE151D4FBA;
-        Mon,  4 Nov 2019 11:30:44 -0800 (PST)
-Date:   Mon, 04 Nov 2019 11:30:44 -0800 (PST)
-Message-Id: <20191104.113044.1639305550623277715.davem@davemloft.net>
-To:     tbogendoerfer@suse.de
-Cc:     ralf@linux-mips.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de
-Subject: Re: [net v3 1/5] net: sgi: ioc3-eth: don't abuse dma_direct_* calls
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191104104515.7066-1-tbogendoerfer@suse.de>
-References: <20191104104515.7066-1-tbogendoerfer@suse.de>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 04 Nov 2019 11:30:45 -0800 (PST)
+        Mon, 4 Nov 2019 14:31:52 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA4JVnbQ000700;
+        Mon, 4 Nov 2019 13:31:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572895909;
+        bh=B1a44FWRzGdFEtSOw+s4sREX4iLbJx4ypX3MqMP9wg8=;
+        h=From:To:CC:Subject:Date;
+        b=B+ikx3jcGac6mOaMI//+TDWo0HAtS1F/voWCudOK1yr+zfbuSkhyD1QA1Qc5rpJkl
+         uAOAXN7w7xpr/jzCBwE8eFwwfJyb9mRxt7u1VaUgwsm/a83vkmO/7NEMeLhf0BExxD
+         bOK/40lXgrkfd3MwtIzHksNqtR5thyjvFiAuYTC4=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA4JVnW9126124
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Nov 2019 13:31:49 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 4 Nov
+ 2019 13:31:35 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 4 Nov 2019 13:31:34 -0600
+Received: from ula0869644.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA4JVmcx096934;
+        Mon, 4 Nov 2019 13:31:48 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v2 00/20] media: ti-vpe: cal: maintenance
+Date:   Mon, 4 Nov 2019 13:31:20 -0600
+Message-ID: <20191104193140.31145-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Date: Mon,  4 Nov 2019 11:45:11 +0100
+This a collection of backlog patches I have been carrying for the CAL
+driver.
 
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> dma_direct_ is a low-level API that must never be used by drivers
-> directly.  Switch to use the proper DMA API instead.
-> 
-> Fixes: ed870f6a7aa2 ("net: sgi: ioc3-eth: use dma-direct for dma allocations")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+- Add support for SoC variants.
 
-Series applied to net-next.
+- Switches to syscon/regmap to access a system controller register for
+the DPHY configuration. This register has different bit layout depending
+on the SoC version.
 
-Please provide a proper "[PATCH v3 0/5] ..." header posting next time when you
-post a patch series.
+- It adds supports for pre ES2.0 silicon errata.
 
-Thank you.
+- Reworked the DPHY initialization sequence to match the technical
+reference manual and provide a more robust restartability.
+
+- Adds the missing ability to power subdevice.
+
+- Update the devicetree binding and then converts it to dt-schema 
+
+Changes since v1:
+- Removed unneeded "items/max/min".
+- Add a ref for ti,camerrx-control type
+- Move compatible description as comment in the schemas
+- Simplify 'endpoint' syntax
+- Removed clocks description
+- Added ti,cal.yaml to MAINTAINERS as a separate patch.
+- Added Rob's ack
+- Remove 'inline' from cal_runtime_get()
+- Switch to use of_device_get_match_data
+- Reworked the syscon_regmap_lookup_by_phandle() section
+- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
+- Updated the binding to use ti,camerrx-control instead of sycon_camerrx
+
+Benoit Parrot (19):
+  dt-bindings: media: cal: update binding to use syscon
+  dt-bindings: media: cal: update binding example
+  media: ti-vpe: cal: Add per platform data support
+  media: ti-vpe: cal: Enable DMABUF export
+  dt-bindings: media: cal: update binding to add PHY LDO errata support
+  media: ti-vpe: cal: add CSI2 PHY LDO errata support
+  media: ti-vpe: cal: Fix ths_term/ths_settle parameters
+  media: ti-vpe: cal: Fix pixel processing parameters
+  media: ti-vpe: cal: Align DPHY init sequence with docs
+  dt-bindings: media: cal: update binding to add DRA76x support
+  media: ti-vpe: cal: Add DRA76x support
+  dt-bindings: media: cal: update binding to add AM654 support
+  media: ti-vpe: cal: Add AM654 support
+  media: ti-vpe: cal: Add subdev s_power hooks
+  media: ti-vpe: cal: Properly calculate max resolution boundary
+  media: ti-vpe: cal: Fix a WARN issued when start streaming fails
+  media: ti-vpe: cal: fix enum_mbus_code/frame_size subdev arguments
+  dt-bindings: media: cal: convert binding to yaml
+  MAINTAINERS: Add ti,cal.yaml
+
+Nikhil Devshatwar (1):
+  media: ti-vpe: cal: Restrict DMA to avoid memory corruption
+
+ .../devicetree/bindings/media/ti,cal.yaml     | 172 ++++
+ .../devicetree/bindings/media/ti-cal.txt      |  72 --
+ MAINTAINERS                                   |   1 +
+ drivers/media/platform/Kconfig                |   2 +-
+ drivers/media/platform/ti-vpe/cal.c           | 767 ++++++++++++++----
+ drivers/media/platform/ti-vpe/cal_regs.h      |  27 +
+ 6 files changed, 808 insertions(+), 233 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/ti,cal.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/ti-cal.txt
+
+-- 
+2.17.1
+
