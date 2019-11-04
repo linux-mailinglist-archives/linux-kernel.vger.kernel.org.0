@@ -2,127 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A86EDBAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75037EDBB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfKDJ3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 04:29:35 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40639 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfKDJ3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 04:29:35 -0500
-Received: by mail-io1-f65.google.com with SMTP id p6so17616289iod.7
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 01:29:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7LA3aPxO7flmHbs1Fp65T1MxGgeqEVjRl7gRB0nIklg=;
-        b=pIs+r8BGTrZcFZ6o2F9aOev8qXPFSl5BzVzuK8uXfPkmFJ5u78WHAgn7yWhZRgcRF2
-         TQ/fmRIthC7HH1oKRPL+rsIY0xayE+DEbHqMYT/+zihcmnMjln1lQzQBPFD2FkN0gO/R
-         4HhWzrpt1w/0TzsiJgb7btUET/PM7PlsdezH2ASb9obFcGp5X0gZk6uMEwODYssD9ndO
-         EYQFYyql2atk36OPSGopZnAzTs9D12s8ZFpQDSQVqqmYAE3KT9QtIxIc7PjjNvtUIn0I
-         tmEld6xM7W3U54vrFxxBUKCK7vOk3TguwljwVy7KB1EDh9+/aKgSTzCeUR8CWUSEYWZd
-         InJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7LA3aPxO7flmHbs1Fp65T1MxGgeqEVjRl7gRB0nIklg=;
-        b=WGH8kI/hG4dNJEm7vOQANupX/jtrn3/K6sYQuffFTiyNWGpYwZoqA1cdrG9OuMkANv
-         l/JifdZ0iSdDU6mkDIUr8l/822wNXevgI4QRM33iYG6QrzpaHyKlNE6Mhx3EUClUK7AJ
-         h00Ga3F8I2qj373zWg8OuNUqNbXpKZuYR0QiUfvB1jj0JjtzrNVk783XzuQbk4uJ1wwk
-         9WPIlqsw11WvwN0m/fhXwUV86HFPuUZObMXopROusSrsmmcUX5EGYvs9qC3A02ThF9Ev
-         eapgZI4JQtWvYhP83/ZUR9XcMFdOorcFCFWTIrUhqMrURIdamC4oqoVahVjf1sLPyRRP
-         GItQ==
-X-Gm-Message-State: APjAAAVJ1Wvu6pHSrq/qKEs5Ipyma1TMgb9fWCQ+TriW3C9U+yDSLSg0
-        i7fUGHfqbrmJnG+hSnFngN5BP61j8imNUJ1qQgmXEQ==
-X-Google-Smtp-Source: APXvYqyGh8w7aoaD8Ly+KkL+MHjewrNRjU9gjfaUC4B+HarLQYhFCDkzx2C/y4W4+ApkqrVUgvpjDgWLY+BUbVoDQq4=
-X-Received: by 2002:a6b:c705:: with SMTP id x5mr199971iof.189.1572859774524;
- Mon, 04 Nov 2019 01:29:34 -0800 (PST)
+        id S1728001AbfKDJe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 04:34:59 -0500
+Received: from mga02.intel.com ([134.134.136.20]:24894 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbfKDJe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 04:34:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 01:34:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,266,1569308400"; 
+   d="scan'208";a="352771367"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 04 Nov 2019 01:34:58 -0800
+Received: from [10.226.39.46] (unknown [10.226.39.46])
+        by linux.intel.com (Postfix) with ESMTP id 4C9A4580332;
+        Mon,  4 Nov 2019 01:34:55 -0800 (PST)
+Subject: Re: [PATCH v4 2/3] dwc: PCI: intel: PCIe RC controller driver
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org,
+        martin.blumenstingl@googlemail.com, linux-pci@vger.kernel.org,
+        hch@infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+References: <cover.1571638827.git.eswara.kota@linux.intel.com>
+ <c46ba3f4187fe53807948b4f10996b89a75c492c.1571638827.git.eswara.kota@linux.intel.com>
+ <20191021130339.GP47056@e119886-lin.cambridge.arm.com>
+ <661f7e9c-a79f-bea6-08d8-4df54f500019@linux.intel.com>
+ <20191025090926.GX47056@e119886-lin.cambridge.arm.com>
+ <6f8b2e72-caa3-30b8-4c76-8ad7bb321ce2@linux.intel.com>
+ <20191101105902.GB9723@e119886-lin.cambridge.arm.com>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <ecab7cc2-f4c2-ecc0-7f97-92686db1fd1b@linux.intel.com>
+Date:   Mon, 4 Nov 2019 17:34:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191022084318.22256-1-brgl@bgdev.pl>
-In-Reply-To: <20191022084318.22256-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 4 Nov 2019 10:29:23 +0100
-Message-ID: <CAMRc=MdqDv7FYCEKoK52G5zacNfLTDErrOGZAG5KDOsKh2pfUw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 0/8] drivers: add new variants of devm_platform_ioremap_resource()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-doc <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191101105902.GB9723@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 22 pa=C5=BA 2019 o 10:43 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=
-=82(a):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Note: resending with Arnd's review tags and rebased on top of char-misc-n=
-ext
->
-> The new devm_platform_ioremap_resource() helper has now been widely
-> adopted and used in many drivers. Users of the write-combined ioremap()
-> variants could benefit from the same code shrinkage. This series provides
-> a write-combined version of devm_platform_ioremap_resource() and uses it =
-in a
-> relevant driver with the assumption that - just like was the case
-> previously - a coccinelle script will be developed to ease the transition
-> for others.
->
-> There are also users of platform_get_resource_byname() who call
-> devm_ioremap_resource() next, so provide another variant that they can us=
-e
-> together with two examples.
->
-> v1 -> v2:
-> - dropped everything related to nocache ioremap as this is going away
->
-> v2 -> v3:
-> - don't call platform_get_resource() as an argument of devm_ioremap_resou=
-rce(),
->   it actually decreases readability
-> - add devm_platform_ioremap_resource_byname() as another variant
->
-> Bartosz Golaszewski (8):
->   Documentation: devres: add missing entry for
->     devm_platform_ioremap_resource()
->   lib: devres: prepare devm_ioremap_resource() for more variants
->   lib: devres: provide devm_ioremap_resource_wc()
->   drivers: platform: provide devm_platform_ioremap_resource_wc()
->   misc: sram: use devm_platform_ioremap_resource_wc()
->   drivers: provide devm_platform_ioremap_resource_byname()
->   gpio: mvebu: use devm_platform_ioremap_resource_byname()
->   gpio: tegra186: use devm_platform_ioremap_resource_byname()
->
->  .../driver-api/driver-model/devres.rst        |  4 ++
->  drivers/base/platform.c                       | 39 +++++++++++-
->  drivers/gpio/gpio-mvebu.c                     | 19 +++---
->  drivers/gpio/gpio-tegra186.c                  |  4 +-
->  drivers/misc/sram.c                           | 28 +++------
->  include/linux/device.h                        |  2 +
->  include/linux/platform_device.h               |  6 ++
->  lib/devres.c                                  | 62 +++++++++++++------
->  8 files changed, 108 insertions(+), 56 deletions(-)
->
-> --
-> 2.23.0
->
 
-Hi Greg,
+On 11/1/2019 6:59 PM, Andrew Murray wrote:
+> On Tue, Oct 29, 2019 at 04:59:17PM +0800, Dilip Kota wrote:
+>> On 10/25/2019 5:09 PM, Andrew Murray wrote:
+>>> On Tue, Oct 22, 2019 at 05:04:21PM +0800, Dilip Kota wrote:
+>>>> Hi Andrew Murray,
+>>>>
+>>>> On 10/21/2019 9:03 PM, Andrew Murray wrote:
+>>>>> On Mon, Oct 21, 2019 at 02:39:19PM +0800, Dilip Kota wrote:
+>>>>>> +
+>>>>>> +void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts)
+>>>>>> +{
+>>>>>> +	u32 val;
+>>>>>> +
+>>>>>> +	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+>>>>>> +	val &= ~PORT_LOGIC_N_FTS;
+>>>>>> +	val |= n_fts;
+>>>>>> +	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+>>>>>> +}
+>>>>> I notice that pcie-artpec6.c (artpec6_pcie_set_nfts) also writes the FTS
+>>>>> and defines a bunch of macros to support this. It doesn't make sense to
+>>>>> duplicate this there. Therefore I think we need to update pcie-artpec6.c
+>>>>> to use this new function.
+>>>> I think we can do in a separate patch after these changes get merged and
+>>>> keep this patch series for intel PCIe driver and required changes in PCIe
+>>>> DesignWare framework.
+>>> The pcie-artpec6.c is a DWC driver as well. So I think we can do all this
+>>> together. This helps reduce the technical debt that will otherwise build up
+>>> in duplicated code.
+>> I agree with you to remove duplicated code, but at this point not sure what
+>> all drivers has defined FTS configuration.
+>> Reviewing all other DWC drivers and removing them can be done in one single
+>> separate patch.
+> I'm not asking to set up an FTS configuration for all DWC drivers, but instead
+> to move this helper function you've created to somewhere like pcie-designware.c
+> and call it from this driver and pcie-artpec6.c.
+What i mean is, we need to check how many of the current DWC drivers are 
+configuring the FTS
+and call the helper function.
+Today i have grep all the DWC based drivers and i see pcie-artpec6.c is 
+the only driver doing FTS configuration.
 
-can you pick it up for char-misc for v5.5? This was reviewed by Arnd.
+I will add the helper function call in pcie-artpec6.c in the next patch 
+version.
 
-Best regards,
-Bartosz Golaszewski
+
+Regards,
+Dilip
+
+
+>
+> Thanks,
+>
+> Andrew Murray
+>
+>> Regards,
+>> Dilip
