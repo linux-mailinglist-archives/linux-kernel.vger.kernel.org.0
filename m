@@ -2,93 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB21EEB48
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:38:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A58EEB4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfKDVin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:38:43 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:44487 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728634AbfKDVin (ORCPT
+        id S1729737AbfKDVjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:39:21 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46765 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728766AbfKDVjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:38:43 -0500
-Received: by mail-vk1-f193.google.com with SMTP id o198so4162214vko.11
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:38:42 -0800 (PST)
+        Mon, 4 Nov 2019 16:39:21 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 19so8252819lft.13;
+        Mon, 04 Nov 2019 13:39:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=erA0+CgO32nkALAW/U97P1GwaRL1ou+VA5YnrGmuWIY=;
-        b=AMgSst2hoIv0GZSG/6Hv3sj7G4QTMHoXZaK+uecCN92VkYk2ZpXGLlGKNE7LaQkMOV
-         GALbiSTH4QXZuxCs4vXVQ+PvBEvuBmB7k5aqf+G9gnmvHWB5/Y+uNebLr8WkNd+bS+Ov
-         /XXES1wI9li/uMeZkpl2e89se5snh4JkYGrWHWMFeboxhZVboLE1Ab4qQKsBrgjgaJ0Z
-         TPALZl6SFGfHwCWeRXmzVYpIwJ+aRCFQbHaYCGtjIRAIEY7ObGDK19pVPN3DP2bzseFq
-         kO3Sq+THrsVH8U3L8DmX49sKk84SksyJMDaTiPQHmYPUwA9Od1QsJS2NmYqwVYjSpzCB
-         i+5Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=iurp4sakzOCEdz++tzDZDRAOZsuv2t30XmhXJuaXI1U=;
+        b=V7oKkHMo48znnhlUeslmupwVBtoFfTzrKpmJKOZ7+GR8cB5HkK5v7gRCY8oOU98ePO
+         n6e4wnKhJBsl5lq/L2WafrwV1Dfir0Ya8UxYui1wSenHVF4Wvswm5YvfENhtwu+RUtWQ
+         IKTFQquTERbrqyqDxEkhSPnQJDtG/ZhOPAfy/xTDPIVJO+pnoSSc8E8JSkUqij7J6aHy
+         KDnRObG46BIz9gmsa3NS94PECc7oiZLEW2u/yjVNceqnymlaxu2m9iUX4eWU/yXg+iJg
+         ZUKfDwzmbftjmPSBipp9q3rs5GU7ZVEF7HNQZ9c/0mwove38GXBDwXQA7AC7GYDm+I31
+         BcXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=erA0+CgO32nkALAW/U97P1GwaRL1ou+VA5YnrGmuWIY=;
-        b=m7+UgB7d4QreXovQvMQoyfhQmEXPx79SdsdHwmiELN6hfcsYKhYPLeG/Wg+Z2B0mw8
-         Ml+W+vSMdlwt7JHOZsbKOmcdKAuvDQIl+QklLv76R7uC5DVspG1V7VhGphSqg8PGZ4Ew
-         Zc2bkZVdPKIuZ/8xcea4UOBxNFz0Lr/hrCnGReqfsPnw2TY5l05JkuyxjysNiDR+SpNT
-         tGOMCRpZTJ6RZ7Jur/oOP7S4bEOZqs4ddkFTPSb+PlX3LIIotrX93KuyCsUBrULO2nEl
-         2/2be1522xr+FB7pY/WEb45xxinL7q1w45ijAVtX6pCN92tGkOfdwo6qZpHn/FmKVjj+
-         vIIw==
-X-Gm-Message-State: APjAAAXZzFxUu1ds231j5DBvzKltHNyZvPH4dYNzuOfM2EPB3ItVj04M
-        XUXQZGJ6hzX66sv5dCiB27Cp8OhcBGI8H9Cp56cQeg==
-X-Google-Smtp-Source: APXvYqwHIA8tjMB/idsGTHUTWfDb2R4/Q6AYLqiE/ovPTmnmanOsh2FI1AtdGkwKNIfH3EsSyXxnypTSqw/H2MHfj8Y=
-X-Received: by 2002:a1f:7d88:: with SMTP id y130mr12696794vkc.71.1572903521740;
- Mon, 04 Nov 2019 13:38:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iurp4sakzOCEdz++tzDZDRAOZsuv2t30XmhXJuaXI1U=;
+        b=IfR9TniLPVV9KEFpGGTeRWBAuY85XG1u3R4CzKQO3Je1r+rRqwc5Pn+sGK1SsJ93Hk
+         RsPVK5O6bywVBLDbVD6lBzmMx/aiqR5h92pzasqndqbcsZpeJrLtJqVwOpd3eh/xrxvE
+         lUpDxtp4hFxv4AwXho/d4bZ+WfTkuI+Sugf0bfD6sI/jnbN5jjNqAE3AcnTZKhQLUbd+
+         g5f0c2KjeyD13ndl/VVsZnInNOi1bPhSGmX/1RjOBpbMcWWOVCXZLwTC6e5aJ1xez2KA
+         uMe9Koql8qT0BLAvcCVXThMzCw6mI8SAVq/WT738ICPE55JLe4tcLYcAu7qewxyKgnBn
+         7h7g==
+X-Gm-Message-State: APjAAAUkNY2Gbf++x3UyilkR2h5aMcBFB9n8eUJe2d8TvAM9mldyNG9a
+        D4Dbg3/tmDx7YPSPPmnDc61ySEiCgX4=
+X-Google-Smtp-Source: APXvYqxy28+hFisUWybxv0Nvg95SfKtpcWfQve3kAeZQRS4e79YxeloNW8IjF2DPFEAtpBsPzPETvg==
+X-Received: by 2002:ac2:48af:: with SMTP id u15mr17754498lfg.151.1572903558796;
+        Mon, 04 Nov 2019 13:39:18 -0800 (PST)
+Received: from localhost.localdomain ([91.237.107.85])
+        by smtp.googlemail.com with ESMTPSA id v21sm5708728ljh.53.2019.11.04.13.39.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 13:39:18 -0800 (PST)
+From:   Leonid Maksymchuk <leonmaxx@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, chiu@endlessm.com,
+        yurii.pavlovskyi@gmail.com, kristian@klausen.dk,
+        andy@infradead.org, dvhart@infradead.org, corentin.chary@gmail.com,
+        Leonid Maksymchuk <leonmaxx@gmail.com>
+Subject: [PATCH v2 3/3] platform/x86: asus_wmi: Set default fan boost mode to normal
+Date:   Mon,  4 Nov 2019 23:39:07 +0200
+Message-Id: <20191104213907.18413-1-leonmaxx@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191104213417.18036-1-leonmaxx@gmail.com>
+References: <20191104213417.18036-1-leonmaxx@gmail.com>
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191101221150.116536-1-samitolvanen@google.com> <20191101221150.116536-14-samitolvanen@google.com>
- <02c56a5273f94e9d832182f1b3cb5097@www.loen.fr>
-In-Reply-To: <02c56a5273f94e9d832182f1b3cb5097@www.loen.fr>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Mon, 4 Nov 2019 13:38:30 -0800
-Message-ID: <CABCJKucVON6uUMH6hVP7RODqH8u63AP3SgTCBWirrS30yDOmdA@mail.gmail.com>
-Subject: Re: [PATCH v4 13/17] arm64: preserve x18 when CPU is suspended
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <dave.martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 5:20 AM Marc Zyngier <maz@kernel.org> wrote:
-> >  ENTRY(cpu_do_suspend)
-> >       mrs     x2, tpidr_el0
-> > @@ -73,6 +75,9 @@ alternative_endif
-> >       stp     x8, x9, [x0, #48]
-> >       stp     x10, x11, [x0, #64]
-> >       stp     x12, x13, [x0, #80]
-> > +#ifdef CONFIG_SHADOW_CALL_STACK
-> > +     str     x18, [x0, #96]
-> > +#endif
->
-> Do we need the #ifdefery here? We didn't add that to the KVM path,
-> and I'd feel better having a single behaviour, specially when
-> NR_CTX_REGS is unconditionally sized to hold 13 regs.
+Set default fan boost mode to normal for multiple reasons:
 
-I'm fine with dropping the ifdefs here in v5 unless someone objects to this.
+1) existing code assumes that laptop started in normal mode and that is
+   not always correct.
+2) FX705DY/FX505DY starts in silent mode and under heavy CPU load it
+   overheats and drops CPU frequency to 399MHz [1]. Setting fan mode to
+   normal avoids overheating.
 
-Sami
+[1] Link: https://bugzilla.kernel.org/show_bug.cgi?id=203733
+
+Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
+---
+ drivers/platform/x86/asus-wmi.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index f4e5840..70c5fbb 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1674,6 +1674,18 @@ static int fan_boost_mode_write(struct asus_wmi *asus)
+ 	return 0;
+ }
+ 
++static int fan_boost_mode_set_default(struct asus_wmi *asus)
++{
++	int result = 0;
++
++	if (asus->fan_boost_mode_available) {
++		asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
++		result = fan_boost_mode_write(asus);
++	}
++
++	return result;
++}
++
+ static int fan_boost_mode_switch_next(struct asus_wmi *asus)
+ {
+ 	u8 mask = asus->fan_boost_mode_mask;
+@@ -2450,6 +2462,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 	err = fan_boost_mode_check_present(asus);
+ 	if (err)
+ 		goto fail_fan_boost_mode;
++	fan_boost_mode_set_default(asus);
+ 
+ 	err = asus_wmi_sysfs_init(asus->platform_device);
+ 	if (err)
+-- 
+1.8.3.1
+
