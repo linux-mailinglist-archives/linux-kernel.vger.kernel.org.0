@@ -2,140 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D9AEECBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E2CFEEB56
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388383AbfKDWAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:00:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388362AbfKDV77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:59 -0500
-Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA3C214E0;
-        Mon,  4 Nov 2019 21:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904798;
-        bh=RKoO/50WWCrVLJkafaQkr4EOtCU9gOnnE+awNfgmwaM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FCiHyt+N1isHd3qCTzIMP4w2ZSHkUdo3OHz56dwhN1gEfy04QduVcT8Y3y/Tgu2pa
-         uY88f0yV4+FSK35mfcNeexFwHI2B13o0GDqxpXU8/AvQiChu5gBcTbBT02fu3d4XWy
-         81lBjilYmSlXUCEuRpIw+R/3DvMOUQUbUk7BPRfs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 073/149] HID: hyperv: Use in-place iterator API in the channel callback
-Date:   Mon,  4 Nov 2019 22:44:26 +0100
-Message-Id: <20191104212141.806741875@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729636AbfKDVo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:44:29 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33819 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbfKDVo3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:44:29 -0500
+Received: by mail-pg1-f196.google.com with SMTP id e4so12399314pgs.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:from:to:user-agent:date;
+        bh=oDBr9/oFH4uj0TcWt5+hNxdLZNFzTGYbiWx7cDw1BXk=;
+        b=KQcEZHNmmz0KcwFTyLZr214Hyq78kr87VR/k9odOVNnbzAJL+GLXRuxzL4jRfJ8fAb
+         8NDz/wkG7qrmwBW89xK3lrqy7czNP39gNhn5TP44WRi2UhnE916/a8s/Uzu505IjIono
+         NdyE0yEXI5SUoDpRq6j3bN9m4KTjeYxyJrmUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:from:to
+         :user-agent:date;
+        bh=oDBr9/oFH4uj0TcWt5+hNxdLZNFzTGYbiWx7cDw1BXk=;
+        b=o2XuFb+n6oV6FXYAFY7UCFqARt2rIuBZmRVMYR52SoeRevk7xwNaGDgb9HO+teZhXL
+         5ku2/LTIezPNWXCNGsXO91/8RPeS9LbN40vmQbJEiA0lkw5jB1l5DUxi7dZmBmQi3fVs
+         WLtCVJebNaS83w1hIc9BiwHNZkb1x7FRIAldz2ma9NBSu04lyBTjLQYOETmHpVVfoomx
+         xOJAXWlsMhovJd13e78bTD+WYSdDuyhHp2egryQ/pBqfAYAMzRRbf3vfYh5Sohug1ozQ
+         Ndlz1/sPPBZq60DMte02CeJ7Ipr9V5VTqauSuQ5pZVcNjguoDk5NkREBGi2HA14QfdpK
+         UWxQ==
+X-Gm-Message-State: APjAAAWpI0O+gmC9+08eYUXkgX3tnjksL6+n2BzDmR8J/BUPddxVDsqZ
+        aLvfKvcBeIAoxcHrOxG/R/zyXQ==
+X-Google-Smtp-Source: APXvYqxULdu2yok9osG2dgC/wKOKO0AYP4xnZcw5ULrVYfDMRd3mLMzhSqWhO9gPC7VRZ3QfMrhwrA==
+X-Received: by 2002:a65:49c7:: with SMTP id t7mr5242177pgs.431.1572903868384;
+        Mon, 04 Nov 2019 13:44:28 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id w26sm27836645pfj.123.2019.11.04.13.44.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 13:44:27 -0800 (PST)
+Message-ID: <5dc09bbb.1c69fb81.196e5.9770@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1572610108-1363-2-git-send-email-rkambl@codeaurora.org>
+References: <1572610108-1363-1-git-send-email-rkambl@codeaurora.org> <1572610108-1363-2-git-send-email-rkambl@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sivaa@codeaurora.org,
+        sanm@codeaurora.org, Rajeshwari <rkambl@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 1/1] arm64: dts: qcom: sc7180:  Add device node support for TSENS in SC7180
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajeshwari <rkambl@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 04 Nov 2019 13:44:27 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+Quoting Rajeshwari (2019-11-01 05:08:28)
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/q=
+com/sc7180.dtsi
+> index 07ea393..06ded1d 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -449,6 +465,508 @@
+>                 };
+>         };
+> =20
+> +       thermal-zones {
+> +               aoss-0-usr {
+> +                       polling-delay-passive =3D <0>;
+> +                       polling-delay =3D <0>;
 
-[ Upstream commit 6a297c90efa68b2864483193b8bfb0d19478600c ]
+Can we get real polling delays instead of 0?
 
-Simplify the ring buffer handling with the in-place API.
+> +                       thermal-governor =3D "user_space";
+> +                       thermal-sensors =3D <&tsens0 0>;
+> +                       wake-capable-sensor;
 
-Also avoid the dynamic allocation and the memory leak in the channel
-callback function.
+What is this property?
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-hyperv.c | 56 +++++++---------------------------------
- 1 file changed, 10 insertions(+), 46 deletions(-)
+> +                       trips {
+> +                               active-config0 {
+> +                                       temperature =3D <125000>;
+> +                                       hysteresis =3D <1000>;
+> +                                       type =3D "passive";
+> +                               };
+> +                               reset-mon-cfg {
+> +                                       temperature =3D <115000>;
+> +                                       hysteresis =3D <5000>;
+> +                                       type =3D "passive";
+> +                               };
+> +                       };
+> +               };
+> +
+> +               cpu-0-0-usr {
+> +                       polling-delay-passive =3D <0>;
+> +                       polling-delay =3D <0>;
+> +                       thermal-governor =3D "user_space";
 
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index 704049e62d58a..4d1496f60071f 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -322,60 +322,24 @@ static void mousevsc_on_receive(struct hv_device *device,
- 
- static void mousevsc_on_channel_callback(void *context)
- {
--	const int packet_size = 0x100;
--	int ret;
- 	struct hv_device *device = context;
--	u32 bytes_recvd;
--	u64 req_id;
- 	struct vmpacket_descriptor *desc;
--	unsigned char	*buffer;
--	int	bufferlen = packet_size;
--
--	buffer = kmalloc(bufferlen, GFP_ATOMIC);
--	if (!buffer)
--		return;
--
--	do {
--		ret = vmbus_recvpacket_raw(device->channel, buffer,
--					bufferlen, &bytes_recvd, &req_id);
--
--		switch (ret) {
--		case 0:
--			if (bytes_recvd <= 0) {
--				kfree(buffer);
--				return;
--			}
--			desc = (struct vmpacket_descriptor *)buffer;
--
--			switch (desc->type) {
--			case VM_PKT_COMP:
--				break;
--
--			case VM_PKT_DATA_INBAND:
--				mousevsc_on_receive(device, desc);
--				break;
--
--			default:
--				pr_err("unhandled packet type %d, tid %llx len %d\n",
--					desc->type, req_id, bytes_recvd);
--				break;
--			}
- 
-+	foreach_vmbus_pkt(desc, device->channel) {
-+		switch (desc->type) {
-+		case VM_PKT_COMP:
- 			break;
- 
--		case -ENOBUFS:
--			kfree(buffer);
--			/* Handle large packet */
--			bufferlen = bytes_recvd;
--			buffer = kmalloc(bytes_recvd, GFP_ATOMIC);
--
--			if (!buffer)
--				return;
-+		case VM_PKT_DATA_INBAND:
-+			mousevsc_on_receive(device, desc);
-+			break;
- 
-+		default:
-+			pr_err("Unhandled packet type %d, tid %llx len %d\n",
-+			       desc->type, desc->trans_id, desc->len8 * 8);
- 			break;
- 		}
--	} while (1);
--
-+	}
- }
- 
- static int mousevsc_connect_to_vsp(struct hv_device *device)
--- 
-2.20.1
-
-
+What is this property?
 
