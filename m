@@ -2,170 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5C2EEB25
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:32:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB58EEEC57
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387400AbfKDVbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:31:45 -0500
-Received: from retiisi.org.uk ([95.216.213.190]:35740 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728741AbfKDVbp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:31:45 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 03C84634C87;
-        Mon,  4 Nov 2019 23:30:33 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1iRjvl-0002Ko-04; Mon, 04 Nov 2019 23:30:33 +0200
-Date:   Mon, 4 Nov 2019 23:30:32 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        mchehab@kernel.org, robh+dt@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com, peter.griffin@linaro.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
- binding
-Message-ID: <20191104213032.GT6253@valkosipuli.retiisi.org.uk>
-References: <20191030094902.32582-1-manivannan.sadhasivam@linaro.org>
- <20191030094902.32582-2-manivannan.sadhasivam@linaro.org>
- <20191031131538.GA9170@pendragon.ideasonboard.com>
- <20191031134512.GB24273@mani>
- <20191031141141.GD5018@pendragon.ideasonboard.com>
- <20191031142817.GK6253@valkosipuli.retiisi.org.uk>
- <20191031165444.GE5018@pendragon.ideasonboard.com>
- <20191031170837.GN6253@valkosipuli.retiisi.org.uk>
- <20191104190201.GF4913@pendragon.ideasonboard.com>
+        id S2388320AbfKDV4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:56:16 -0500
+Received: from mga05.intel.com ([192.55.52.43]:13965 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388302AbfKDV4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 13:56:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
+   d="scan'208";a="226888820"
+Received: from trowland-mobl.amr.corp.intel.com (HELO [10.254.97.182]) ([10.254.97.182])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Nov 2019 13:56:08 -0800
+Subject: Re: [PATCH 10/14] soundwire: intel: add prepare support in sdw dai
+ driver
+To:     Cezary Rojewski <cezary.rojewski@intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
+ <20191023212823.608-11-pierre-louis.bossart@linux.intel.com>
+ <7a49fcce-5b36-81c1-6041-dda263ebb200@intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <02ef59ba-66da-3ba9-1fe7-0b7e256e3ac1@linux.intel.com>
+Date:   Mon, 4 Nov 2019 15:31:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104190201.GF4913@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7a49fcce-5b36-81c1-6041-dda263ebb200@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
 
-On Mon, Nov 04, 2019 at 09:02:01PM +0200, Laurent Pinchart wrote:
-> Hi Sakari,
+
+On 11/4/19 1:45 PM, Cezary Rojewski wrote:
+> On 2019-10-23 23:28, Pierre-Louis Bossart wrote:
+>> From: Rander Wang <rander.wang@linux.intel.com>
+>>
+>> It gets sdw runtime information from dai to prepare stream.
+>>
+>> Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
+>> Signed-off-by: Pierre-Louis Bossart 
+>> <pierre-louis.bossart@linux.intel.com>
 > 
-> On Thu, Oct 31, 2019 at 07:08:37PM +0200, Sakari Ailus wrote:
-> > On Thu, Oct 31, 2019 at 06:54:44PM +0200, Laurent Pinchart wrote:
-> > > On Thu, Oct 31, 2019 at 04:28:17PM +0200, Sakari Ailus wrote:
-> > >> On Thu, Oct 31, 2019 at 04:11:41PM +0200, Laurent Pinchart wrote:
-> > >>> On Thu, Oct 31, 2019 at 07:15:12PM +0530, Manivannan Sadhasivam wrote:
-> > >>>> On Thu, Oct 31, 2019 at 03:15:38PM +0200, Laurent Pinchart wrote:
-> > >>>>> On Wed, Oct 30, 2019 at 03:19:01PM +0530, Manivannan Sadhasivam wrote:
-> > >>>>>> Add YAML devicetree binding for IMX296 CMOS image sensor. Let's also
-> > >>>>>> add MAINTAINERS entry for the binding and driver.
-> > >>>>>> 
-> > >>>>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > >>>>>> ---
-> > >>>>>>  .../devicetree/bindings/media/i2c/imx296.yaml | 94 +++++++++++++++++++
-> > >>>>>>  MAINTAINERS                                   |  8 ++
-> > >>>>>>  2 files changed, 102 insertions(+)
-> > >>>>>>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > >>>>>> 
-> > >>>>>> diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.yaml b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > >>>>>> new file mode 100644
-> > >>>>>> index 000000000000..c04ec2203268
-> > >>>>>> --- /dev/null
-> > >>>>>> +++ b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > >>>>>> @@ -0,0 +1,94 @@
-> > >>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > >>>>>> +%YAML 1.2
-> > >>>>>> +---
-> > >>>>>> +$id: http://devicetree.org/schemas/media/i2c/imx296.yaml#
-> > >>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >>>>>> +
-> > >>>>>> +title: Sony IMX296 1/2.8-Inch CMOS Image Sensor
-> > >>>>>> +
-> > >>>>>> +maintainers:
-> > >>>>>> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > >>>>>> +
-> > >>>>>> +description: |-
-> > >>>>>> +  The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
-> > >>>>>> +  sensor with square pixel array and 1.58 M effective pixels. This chip
-> > >>>>>> +  features a global shutter with variable charge-integration time. It is
-> > >>>>>> +  programmable through I2C and 4-wire interfaces. The sensor output is
-> > >>>>>> +  available via CSI-2 serial data output (1 Lane).
-> > >>>>>> +
-> > >>>>>> +properties:
-> > >>>>>> +  compatible:
-> > >>>>>> +    const: sony,imx296
-> > >>>>>> +
-> > >>>>>> +  reg:
-> > >>>>>> +    maxItems: 1
-> > >>>>>> +
-> > >>>>>> +  clocks:
-> > >>>>>> +    maxItems: 1
-> > >>>>>> +
-> > >>>>>> +  clock-names:
-> > >>>>>> +    description:
-> > >>>>>> +      Input clock for the sensor.
-> > >>>>>> +    items:
-> > >>>>>> +      - const: mclk
-> > >>>>> 
-> > >>>>> The pin is named INCK, let's name the clock accordingly.
-> > >>>> 
-> > >>>> Okay, I thought generic names are preferred here!
-> > >>>>  
-> > >>>>>> +  clock-frequency:
-> > >>>>>> +    description:
-> > >>>>>> +      Frequency of the mclk clock in Hertz.
-> > >>>>> 
-> > >>>>> This shouldn't be needed, you can retrieve the clock frequency at
-> > >>>>> runtime from the clock source.
-> > >>>> 
-> > >>>> Unless the clock source is a fixed one! What if the clock source comes from
-> > >>>> SoC? We need to set the rate, right?
-> > >>> 
-> > >>> In that case, if you want to hardcode the clock in DT, the preferred way
-> > >>> is to use the assigned-clock-rates property. Otherwise, if the driver
-> > >>> requires a specific clock frequency, it's better to hardcode it in the
-> > >>> driver itself. In this specific case, I think assigned-clock-rates is
-> > >>> best as the device can support three different clock frequencies.
-> > >> 
-> > >> Just note that if ACPI support is added to the sensor driver, you'll need
-> > >> the clock-frequency property again, for that's the only way how the driver
-> > >> will get the clock frequency.
-> > > 
-> > > Why is so ? Why can't we implement of assigned-clock-rates for ACPI ?
-> > 
-> > ACPI doesn't deal with clocks as such. So there's also no ACPI defined way
-> > to access clocks specifically, including the frequency --- instead the
-> > clock is controlled by an AML methods which implement power on and off
-> > sequences for the device.
-> 
-> It's a shortcoming of ACPI, which should be addressed at the ACPI level.
-> We shouldn't polute the DT bindings with a clock-frequency property for
-> this reason.
+> While the patch looks good, the commit message is questionable. You may 
+> simply state why it is added only just now. Judging from the commit 
+> title, it has been added to make the sdw dai driver interface complete.
 
-It's really not a shortcoming but a design decision: what belongs to the
-scope of the firmware? And in this case system and device power management
-implementation is included. I do not believe this will be revisited in any
-foreseeable future, i.e. there will be no clock control interface for ACPI.
-
-Explicitly stating the frequency also has an added benefit: the driver
-can be certain that the given frequency is intended to be used on the
-board. Otherwise the frequency could have been changed by e.g. another
-driver. This does matter, as the frequency determines which link
-frequencies can be achieved, and as the two effectively have to be
-compliant, an unintended external clock frequency also means there will be
-no match between possible link frequencies and configured link frequencies.
-
-I.e. no images to capture either.
-
-That said, I don't know if this has been a practical issue in the past.
-
--- 
-Regards,
-
-Sakari Ailus
+The commit message is not great but it's not wrong either...
