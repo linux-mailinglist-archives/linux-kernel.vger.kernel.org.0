@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76066EEDDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9AE2EEEBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390595AbfKDWKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:10:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44062 "EHLO mail.kernel.org"
+        id S2389534AbfKDWDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389445AbfKDWKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:48 -0500
+        id S2389511AbfKDWDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:33 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45D9F2084D;
-        Mon,  4 Nov 2019 22:10:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD7B4205C9;
+        Mon,  4 Nov 2019 22:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905447;
-        bh=H5yZze1um2DcFh8WKRdM4zHAKbDGFDEHhYWEA6paFsM=;
+        s=default; t=1572905012;
+        bh=w10z4BnNFxIKOoHBSU/um72KEKRxvbcdUrJHuT2gbBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FBTcvc3BvD0KDEDPcwJJqIpZiTecGeGNMl+Iuz8XQ9bxyJHcd9TooLuV/LzNl+hJk
-         ZDngru9Dg5cj0Yxi34tqDUXHGvtnJ1emYvqkEK7lSQ/MI29KlfHHGOp7feFWltny2y
-         IQbgYWRh7Ev16ZWWyhr80mK84ZYr0JGpqVxOqgSg=
+        b=jGMSI4wxYxvK6nQ7ao/yDbuu1g4sm93w3BsFn52QMg0CLe8tWX/eenTXqK6xg2S6t
+         QYbSU5qY8H+dLRrj+tPXcWsioYLKPJodPAfDAwK15u31pGMb2ZrzVBjGURrrJKJt/Y
+         fMDwFTKn29hvqmcbF46Z9XEcgXMwi2mulPBwVJl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH 5.3 150/163] rxrpc: Fix trace-after-put looking at the put peer record
-Date:   Mon,  4 Nov 2019 22:45:40 +0100
-Message-Id: <20191104212151.170983217@linuxfoundation.org>
+        stable@vger.kernel.org, Jussi Laako <jussi@sonarnerd.net>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 148/149] ALSA: usb-audio: Update DSD support quirks for Oppo and Rotel
+Date:   Mon,  4 Nov 2019 22:45:41 +0100
+Message-Id: <20191104212147.055177578@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Jussi Laako <jussi@sonarnerd.net>
 
-commit 55f6c98e3674ce16038a1949c3f9ca5a9a99f289 upstream.
+[ Upstream commit 0067e154b11e236d62a7a8205f321b097c21a35b ]
 
-rxrpc_put_peer() calls trace_rxrpc_peer() after it has done the decrement
-of the refcount - which looks at the debug_id in the peer record.  But
-unless the refcount was reduced to zero, we no longer have the right to
-look in the record and, indeed, it may be deleted by some other thread.
+Oppo has issued firmware updates that change alt setting used for DSD
+support. However, these devices seem to support auto-detection, so
+support is moved from explicit whitelisting to auto-detection.
 
-Fix this by getting the debug_id out before decrementing the refcount and
-then passing that into the tracepoint.
+Also Rotel devices have USB interfaces that support DSD with
+auto-detection.
 
-This can cause the following symptoms:
-
-    BUG: KASAN: use-after-free in __rxrpc_put_peer net/rxrpc/peer_object.c:411
-    [inline]
-    BUG: KASAN: use-after-free in rxrpc_put_peer+0x685/0x6a0
-    net/rxrpc/peer_object.c:435
-    Read of size 8 at addr ffff888097ec0058 by task syz-executor823/24216
-
-Fixes: 1159d4b496f5 ("rxrpc: Add a tracepoint to track rxrpc_peer refcounting")
-Reported-by: syzbot+b9be979c55f2bea8ed30@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jussi Laako <jussi@sonarnerd.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/trace/events/rxrpc.h |    6 +++---
- net/rxrpc/peer_object.c      |   11 +++++++----
- 2 files changed, 10 insertions(+), 7 deletions(-)
+ sound/usb/quirks.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -519,10 +519,10 @@ TRACE_EVENT(rxrpc_local,
- 	    );
- 
- TRACE_EVENT(rxrpc_peer,
--	    TP_PROTO(struct rxrpc_peer *peer, enum rxrpc_peer_trace op,
-+	    TP_PROTO(unsigned int peer_debug_id, enum rxrpc_peer_trace op,
- 		     int usage, const void *where),
- 
--	    TP_ARGS(peer, op, usage, where),
-+	    TP_ARGS(peer_debug_id, op, usage, where),
- 
- 	    TP_STRUCT__entry(
- 		    __field(unsigned int,	peer		)
-@@ -532,7 +532,7 @@ TRACE_EVENT(rxrpc_peer,
- 			     ),
- 
- 	    TP_fast_assign(
--		    __entry->peer = peer->debug_id;
-+		    __entry->peer = peer_debug_id;
- 		    __entry->op = op;
- 		    __entry->usage = usage;
- 		    __entry->where = where;
---- a/net/rxrpc/peer_object.c
-+++ b/net/rxrpc/peer_object.c
-@@ -381,7 +381,7 @@ struct rxrpc_peer *rxrpc_get_peer(struct
- 	int n;
- 
- 	n = atomic_inc_return(&peer->usage);
--	trace_rxrpc_peer(peer, rxrpc_peer_got, n, here);
-+	trace_rxrpc_peer(peer->debug_id, rxrpc_peer_got, n, here);
- 	return peer;
- }
- 
-@@ -395,7 +395,7 @@ struct rxrpc_peer *rxrpc_get_peer_maybe(
- 	if (peer) {
- 		int n = atomic_fetch_add_unless(&peer->usage, 1, 0);
- 		if (n > 0)
--			trace_rxrpc_peer(peer, rxrpc_peer_got, n + 1, here);
-+			trace_rxrpc_peer(peer->debug_id, rxrpc_peer_got, n + 1, here);
- 		else
- 			peer = NULL;
- 	}
-@@ -426,11 +426,13 @@ static void __rxrpc_put_peer(struct rxrp
- void rxrpc_put_peer(struct rxrpc_peer *peer)
- {
- 	const void *here = __builtin_return_address(0);
-+	unsigned int debug_id;
- 	int n;
- 
- 	if (peer) {
-+		debug_id = peer->debug_id;
- 		n = atomic_dec_return(&peer->usage);
--		trace_rxrpc_peer(peer, rxrpc_peer_put, n, here);
-+		trace_rxrpc_peer(debug_id, rxrpc_peer_put, n, here);
- 		if (n == 0)
- 			__rxrpc_put_peer(peer);
- 	}
-@@ -443,10 +445,11 @@ void rxrpc_put_peer(struct rxrpc_peer *p
- void rxrpc_put_peer_locked(struct rxrpc_peer *peer)
- {
- 	const void *here = __builtin_return_address(0);
-+	unsigned int debug_id = peer->debug_id;
- 	int n;
- 
- 	n = atomic_dec_return(&peer->usage);
--	trace_rxrpc_peer(peer, rxrpc_peer_put, n, here);
-+	trace_rxrpc_peer(debug_id, rxrpc_peer_put, n, here);
- 	if (n == 0) {
- 		hash_del_rcu(&peer->hash_link);
- 		list_del_init(&peer->keepalive_link);
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 0a8a0978a2dba..28035c59cb37c 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1361,9 +1361,6 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	/* XMOS based USB DACs */
+ 	switch (chip->usb_id) {
+ 	case USB_ID(0x1511, 0x0037): /* AURALiC VEGA */
+-	case USB_ID(0x22d9, 0x0416): /* OPPO HA-1 */
+-	case USB_ID(0x22d9, 0x0436): /* OPPO Sonica */
+-	case USB_ID(0x22d9, 0x0461): /* OPPO UDP-205 */
+ 	case USB_ID(0x2522, 0x0012): /* LH Labs VI DAC Infinity */
+ 	case USB_ID(0x2772, 0x0230): /* Pro-Ject Pre Box S2 Digital */
+ 		if (fp->altsetting == 2)
+@@ -1377,7 +1374,6 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	case USB_ID(0x16d0, 0x0733): /* Furutech ADL Stratos */
+ 	case USB_ID(0x16d0, 0x09db): /* NuPrime Audio DAC-9 */
+ 	case USB_ID(0x1db5, 0x0003): /* Bryston BDA3 */
+-	case USB_ID(0x22d9, 0x0426): /* OPPO HA-2 */
+ 	case USB_ID(0x22e1, 0xca01): /* HDTA Serenade DSD */
+ 	case USB_ID(0x249c, 0x9326): /* M2Tech Young MkIII */
+ 	case USB_ID(0x2616, 0x0106): /* PS Audio NuWave DAC */
+@@ -1434,8 +1430,10 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	switch (USB_ID_VENDOR(chip->usb_id)) {
+ 	case 0x152a:  /* Thesycon devices */
+ 	case 0x20b1:  /* XMOS based devices */
++	case 0x22d9:  /* Oppo */
+ 	case 0x23ba:  /* Playback Designs */
+ 	case 0x25ce:  /* Mytek devices */
++	case 0x278b:  /* Rotel? */
+ 	case 0x2ab6:  /* T+A devices */
+ 	case 0x3842:  /* EVGA */
+ 	case 0xc502:  /* HiBy devices */
+-- 
+2.20.1
+
 
 
