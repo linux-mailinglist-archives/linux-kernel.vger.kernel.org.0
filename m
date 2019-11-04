@@ -2,102 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022A0EE516
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A01E7EE517
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:49:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfKDQtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:49:11 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41634 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfKDQtK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:49:10 -0500
-Received: by mail-qk1-f193.google.com with SMTP id m125so18224326qkd.8;
-        Mon, 04 Nov 2019 08:49:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Tolm0KjoKvfRTvG4VjDhlcLgC6/zdCu4XmFbBPjTkwY=;
-        b=QDb28cZajsvYgqeWWWhRnDIReogocXA/kxJfrHS6albWdfSNMVrp+8MS/zWWV5k5+T
-         rNv853PHTXdFaUyuxjCXFUyIRcT4ZvKLScrh0pCo04OU5kBwlAITLvKP0d1iTcxYJE5a
-         qYIUCczhmyFKKcc2Sf3hIhNvHcN0fcrf7e+f3ZLWrccNxGJN7imun8WvZrw6VF+9OWBX
-         41opJ+xmjK2J1Nu+/iVZoCce5+jor1RKkjrOQ/bez2sFnLjFRPr9yM9pLYWx2bjPNNBz
-         +3lzIOElaS/CRtT7q/u4sXn9CX/MB357yZYyb1r718eM6SUk+k9Wr/oaYgKxq7kY+svp
-         Wrew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Tolm0KjoKvfRTvG4VjDhlcLgC6/zdCu4XmFbBPjTkwY=;
-        b=abp8Q0j4mmeuQNNW1JlGoBGx2fwZeuLi/P1+v97PervuC7HFA3sTHfLBENYha18TUs
-         8ATW3kIb/xwkay0jwsYAtbNfdIDMlBokhXBVO+BJoZCYMwEbiIDQjwTBfpiVczb/8H/3
-         15lBfcMbGIRsCk1rSFyOoduVelyocnLAAuHXu1kxD+nuHO8mGGcl8rzxa3Ijh83v6ikX
-         /eG8x5gn2V693VRQxgMnPx1CFEbFI9OF9pk6ivsBIGJ5of+6V33bAawIWiLFfPa/FkRr
-         xquDLNTQrST7L64UPIaP4Qbv0V6QYXsjb6VOlyiaFEuIoJQeYdJaQa3yPNmXMQ0sDb0D
-         vJSA==
-X-Gm-Message-State: APjAAAVmLRgEoOVxhkU2we9QgLkjXZ2eXRRdeIwJ59EO4bGqyK3PbYKu
-        0Z23aH7ObQGZjXgMnQtnUP4=
-X-Google-Smtp-Source: APXvYqw4k9V3X/BYQ3OocJr+kPDbvPDB7i3FPeL5D/TOiY0T67m3Q5y4DCjF9Sg77/M3iEa91YcomQ==
-X-Received: by 2002:a37:4cd5:: with SMTP id z204mr9625854qka.153.1572886147428;
-        Mon, 04 Nov 2019 08:49:07 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::3:51f8])
-        by smtp.gmail.com with ESMTPSA id d189sm8514447qkf.67.2019.11.04.08.49.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 08:49:06 -0800 (PST)
-Date:   Mon, 4 Nov 2019 08:49:03 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Song Liu <liu.song.a23@gmail.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] cgroup: Sync cgroup id and inode number
-Message-ID: <20191104164903.GQ3622521@devbig004.ftw2.facebook.com>
-References: <20191104084520.398584-1-namhyung@kernel.org>
+        id S1729122AbfKDQtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:49:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727989AbfKDQtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:49:22 -0500
+Received: from localhost (host6-102.lan-isdn.imaginet.fr [195.68.6.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ADE22084D;
+        Mon,  4 Nov 2019 16:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572886161;
+        bh=XDStLaB9lk66yP2fHyiSK2C5nhHNkuFFN93WRiHDWxU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dqmh+eJhR1MbFlFInIjpw0/+T7Vu1RrFei0iezF3KF89WyEkRTtBEjqpc9wZLRPUT
+         NGjhD5uP7MkNtPvb7gb39HqIcCbAy5yt72zlo57gbIbjCZVfPdsc5zxq6Msd/lh2og
+         nlEJHzLk2P+u2J+x2C1qfd+GeSZ3M2TGgHwXtZsY=
+Date:   Mon, 4 Nov 2019 17:49:19 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jiri Slaby <jslaby@suse.com>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tty:n_gsm.c: destroy port by tty_port_destroy()
+Message-ID: <20191104164919.GA2282079@kroah.com>
+References: <1569317156-45850-1-git-send-email-nixiaoming@huawei.com>
+ <1fd7d2eb-7497-254b-b40f-84bc4114f8a3@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191104084520.398584-1-namhyung@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1fd7d2eb-7497-254b-b40f-84bc4114f8a3@suse.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 05:45:18PM +0900, Namhyung Kim wrote:
-> Hello,
+On Thu, Oct 31, 2019 at 11:11:24AM +0100, Jiri Slaby wrote:
+> On 24. 09. 19, 11:25, Xiaoming Ni wrote:
+> > According to the comment of tty_port_destroy():
+> >     When a port was initialized using tty_port_init, one has to destroy
+> >     the port by tty_port_destroy();
 > 
-> This patchset changes cgroup inode number and id management to be in
-> sync with kernfs.  The cgroup inode number is managed by kernfs but
-> cgroup id is allocated by a separate idr.  The idea is to have a
-> single id for internal usage, inode number and file handle which can
-> be accessed from userspace.  Actually this work is from Tejun who also
-> provided the idea.  I just took over the work and fixed some errors
-> and finally was able to run perf for testing.
+> It continues with a part saying:
+>    Either indirectly by using tty_port refcounting
+>    (tty_port_put) or directly if refcounting is not used.
 > 
-> The background of this work is that I want to add cgroup sampling
-> feature in the perf event subsystem.  As Tejun mentioned that using
-> cgroup id is not enough and it'd better using file handle instead.
-> But getting file handle in perf NMI handler is not possible so I want
-> to get the info from a cgroup node.
+> > tty_port_init() is called in gsm_dlci_alloc()
+> > so tty_port_destroy() needs to be called in gsm_dlci_free()
+> > 
+> > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+> > ---
+> >  drivers/tty/n_gsm.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+> > index 36a3eb4..3f5bcc9 100644
+> > --- a/drivers/tty/n_gsm.c
+> > +++ b/drivers/tty/n_gsm.c
+> > @@ -1681,6 +1681,7 @@ static void gsm_dlci_free(struct tty_port *port)
+> >  
+> >  	del_timer_sync(&dlci->t1);
+> >  	dlci->gsm->dlci[dlci->addr] = NULL;
+> > +	tty_port_destroy(&dlci->port);
 > 
-> The first patch converted kernfs id into a single 64bit number and in
-> the second patch cgroup uses the kernfs id as cgroup id.
+> This is wrong. gsm_dlci_free is tty_port_operations->destruct, i.e.
+> n_gsm uses tty_port refcounting and tty_port_destroy was called on this
+> port in tty_port_destructor already.
 > 
-> The patches are based on the for-next branch in Tejun's cgroup tree.
-> Tested with tools/testing/selftests/cgroup/test_stress.sh.
+> Greg, please revert.
 
-Sorry about the delay.  I'm still working on the patch series and the
-draft patches currently posted aren't quite correct (e.g. netprio is
-now trying to allocate arrays which use u64 values as index and that
-u64 value can start with 33rd bit set from the get-go).
+Now reverted.
 
-So, please hold on w/ this series for now.
+sorry about that.
 
-Thanks.
-
--- 
-tejun
+greg k-h
