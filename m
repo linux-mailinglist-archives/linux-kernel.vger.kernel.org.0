@@ -2,78 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 268ADEDAEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 09:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DCB2EDB2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfKDI70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 03:59:26 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:48792 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfKDI70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 03:59:26 -0500
-Received: from zn.tnic (p200300EC2F0AFA00A5208D92F28E6777.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:fa00:a520:8d92:f28e:6777])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ACC701EC090E;
-        Mon,  4 Nov 2019 09:59:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1572857963;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=3Gglep10uhUlKdGt/9F9KI4CEHNO3URUde1zRbFYs6c=;
-        b=mZ979Q+RwEfYln6X7+2rMbzRQnkLl+SkKWMqTuum8Tfx9zcfxzhHK1nSgWY4G/USMPwuyj
-        TAvt+OQ42PFam14XDo4uiLhSRHIQatiruA2gvrK8hu1adymNxCtv2b2SHOWgjrd8YbtKXZ
-        N++brJBjeqC7MRe0dmxwetGoUBIRqC8=
-Date:   Mon, 4 Nov 2019 09:59:18 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-arch@vger.kernel.org,
-        linux-s390@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        x86@kernel.org, linux-ia64@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-xtensa@linux-xtensa.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-parisc@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org
-Subject: Re: [PATCH v2 01/29] powerpc: Rename "notes" PT_NOTE to "note"
-Message-ID: <20191104085918.GA7862@zn.tnic>
-References: <20191011000609.29728-1-keescook@chromium.org>
- <20191011000609.29728-2-keescook@chromium.org>
- <20191011082519.GI9749@gate.crashing.org>
- <201910110910.48270FC97@keescook>
- <20191011162552.GK9749@gate.crashing.org>
- <20191015165412.GD596@zn.tnic>
- <201910291414.F29F738B7@keescook>
- <20191030010117.GJ28442@gate.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191030010117.GJ28442@gate.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728459AbfKDJDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 04:03:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726633AbfKDJDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 04:03:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E0C8AB4CD;
+        Mon,  4 Nov 2019 09:03:36 +0000 (UTC)
+Date:   Mon, 04 Nov 2019 10:03:34 +0100
+Message-ID: <s5hbltsc8t5.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Greg Kroah-Hartman <gregkh@google.com>
+Cc:     youling 257 <youling257@gmail.com>, Takashi Iwai <tiwai@suse.de>,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Helge Deller <deller@gmx.de>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org, hch@lst.de
+Subject: Re: ALSA: pcm: use dma_can_mmap() to check if a device supports dma_mmap_*
+In-Reply-To: <19c3f0ca-9b21-0c5e-894d-976594f38a86@google.com>
+References: <CAOzgRdYSaaF6OkXGME2=fn1dfTbpyt_GqEs=10oXH=V6SudfyA@mail.gmail.com>
+        <s5himo0cbmm.wl-tiwai@suse.de>
+        <CAOzgRdYTa-nAa7QV6c2aZs910BACg91vAjcjw4V-Oy8KCZVmmQ@mail.gmail.com>
+        <60ee349a-1fe7-46f0-5161-1dcfcb6fbee9@google.com>
+        <19c3f0ca-9b21-0c5e-894d-976594f38a86@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 08:01:17PM -0500, Segher Boessenkool wrote:
-> I am still not convinced the worse name is a better name, no :-)  But if
-> you don't want to do the work, and instead prefer the much smaller change,
-> that is of course a fine decision.  Thank you!
->
-> (I would be happy with such a 30/29 as well, of course.)
+On Mon, 04 Nov 2019 09:49:43 +0100,
+Greg Kroah-Hartman wrote:
+> 
+> On 11/4/19 9:32 AM, Greg Kroah-Hartman wrote:
+> > On 11/4/19 9:27 AM, youling 257 wrote:
+> >  > This driver
+> > 
+> https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/usb/gadget/function/f_audio_source.c 
+> 
+> >
+> >  >
+> >
+> > The driver is broken and needs to be fixed.  Please feel free to submit
+> > patches to AOSP to do so as you can trigger this easily.
+> 
+> Hm, maybe the driver isn't broken...
 
-Ok, thanks.
+It is :)
 
-I'll start picking up the pile and the renaming patch can then go ontop.
+> snd_pcm_lib_preallocate_pages_for_all() is called with
+> SNDRV_DMA_TYPE_DEV set, so that should be fine,
 
--- 
-Regards/Gruss,
-    Boris.
+That's the cause.  It passes NULL to the device object, which is
+incorrect in anyway.  I guess this used to work casually just because
+x86 accepts the NULL device object as if an ISA device.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> and the only other
+> buffer I can see allocate here is with a call to
+> snd_pcm_lib_alloc_vmalloc_buffer() which _should_ be ok, right?
+
+If the driver allocates the buffer via vmalloc (and the snd_* helper),
+it shouldn't do preallocate in that way.  That is, the correct fix
+would  be simply to drop snd_pcm_lib_preallocate_pages_for_all() call
+from the driver code.
+
+Also, a quick skimming showed that the driver needs to set
+snd_pcm_lib_get_vmalloc_page to the snd_pcm_ops.page ops.
+
+> I don't see any buffers coming off the stack here, unless the gadget
+> controller is the one creating them?
+
+That's the code before actually allocating the buffer itself.  It
+checks the availability of mmap support on the architecture, and the
+helper code assumed a proper device object passed there via the
+preallocation helper.
+
+
+thanks,
+
+Takashi
