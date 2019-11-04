@@ -2,39 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1EF1EED8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 830B7EECD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389787AbfKDWHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40470 "EHLO mail.kernel.org"
+        id S2388583AbfKDWAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:00:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390030AbfKDWHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:07:48 -0500
+        id S2388905AbfKDWAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:00:41 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5D5221D7D;
-        Mon,  4 Nov 2019 22:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C36E22473;
+        Mon,  4 Nov 2019 22:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905266;
-        bh=5VyfATjDRZ/d61SscXopb+AgGGmd7/YaQZLg5GFAo3w=;
+        s=default; t=1572904840;
+        bh=BQznuFgVQfqp84u8/GPWmIUgThSN1012WBeQa99r7uE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rYg9TqzQYjeZzq1WycnALZxQj6zqVkj2jt3NITVSpBdgHF6WLnwl/s0Z5t+s2+vRC
-         zGj//kv88koNMDSJN4QgMYgSyiaJwABsEZhpdOXZxEeaNhAjMAn8UYsv/apizdUB7d
-         XXZgjhynKXxXGujlnivCCZttCcDMmScatsivbarY=
+        b=mJHqgmsat+Gr916hLzfU8/cxAZjsyhIJtEY2B/0eGAqDhRoQfwTU1v63r9F8qIuxr
+         HVkmjein6OtnTrNiGL+x0XPhhZWHvHPP2JW7jme2UDmv2qkBDC4IRpFzZP/vEIcHZ7
+         1mbG/FpSiKAi8zATezmttAtlfJ1pnFoh7MXPdML4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 085/163] USB: legousbtower: fix a signedness bug in tower_probe()
+        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Scott Talbert <swt@techie.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 082/149] efi/x86: Do not clean dummy variable in kexec path
 Date:   Mon,  4 Nov 2019 22:44:35 +0100
-Message-Id: <20191104212146.412986855@linuxfoundation.org>
+Message-Id: <20191104212142.341008793@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +56,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Dave Young <dyoung@redhat.com>
 
-[ Upstream commit fd47a417e75e2506eb3672ae569b1c87e3774155 ]
+[ Upstream commit 2ecb7402cfc7f22764e7bbc80790e66eadb20560 ]
 
-The problem is that sizeof() is unsigned long so negative error codes
-are type promoted to high positive values and the condition becomes
-false.
+kexec reboot fails randomly in UEFI based KVM guest.  The firmware
+just resets while calling efi_delete_dummy_variable();  Unfortunately
+I don't know how to debug the firmware, it is also possible a potential
+problem on real hardware as well although nobody reproduced it.
 
-Fixes: 1d427be4a39d ("USB: legousbtower: fix slab info leak at probe")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191011141115.GA4521@mwanda
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The intention of the efi_delete_dummy_variable is to trigger garbage collection
+when entering virtual mode.  But SetVirtualAddressMap can only run once
+for each physical reboot, thus kexec_enter_virtual_mode() is not necessarily
+a good place to clean a dummy object.
+
+Drop the efi_delete_dummy_variable so that kexec reboot can work.
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Matthew Garrett <mjg59@google.com>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Talbert <swt@techie.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-8-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/legousbtower.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/platform/efi/efi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/usb/misc/legousbtower.c b/drivers/usb/misc/legousbtower.c
-index 62dab2441ec4f..23061f1526b4e 100644
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -878,7 +878,7 @@ static int tower_probe (struct usb_interface *interface, const struct usb_device
- 				  get_version_reply,
- 				  sizeof(*get_version_reply),
- 				  1000);
--	if (result < sizeof(*get_version_reply)) {
-+	if (result != sizeof(*get_version_reply)) {
- 		if (result >= 0)
- 			result = -EIO;
- 		dev_err(idev, "get version request failed: %d\n", result);
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 9061babfbc83d..335a62e74a2e9 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
+ 
+ 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
+ 		runtime_code_page_mkexec();
+-
+-	/* clean DUMMY object */
+-	efi_delete_dummy_variable();
+ #endif
+ }
+ 
 -- 
 2.20.1
 
