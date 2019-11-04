@@ -2,138 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 016C1ED934
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2171ED94B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfKDG4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:56:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51482 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbfKDG4p (ORCPT
+        id S1728356AbfKDG5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:57:14 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:54832 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728223AbfKDG5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:56:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2881E60DAF; Mon,  4 Nov 2019 06:56:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572850604;
-        bh=AhKc5wWa30wa/WEEpKjo85dpiL/PXLkjhkK4VBEnxWg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XyxBdQ1NLS+LAGi1NKtYYmihmAhNvIVUX+82A3BNEQEq3VNoUE0SG0nK24twwwzVx
-         mb7X7wQ1lExFdySDfXNzSh8KNy8Mnq1wX0/GrBfE1/prwMobWA3tP4YKmdBhpGRPWo
-         Ghp3S75HF+58K1EV95vjxS+36EUMyShDIsOuNuaw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.136.17] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8E3A160DAF;
-        Mon,  4 Nov 2019 06:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572850603;
-        bh=AhKc5wWa30wa/WEEpKjo85dpiL/PXLkjhkK4VBEnxWg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RL01cePnSeK1p8UZDWKH1KsinywU/JXZjQI9c0w23nvtKGyN0MMcWtLxpcoSvu+R5
-         XJWpLQmNKoW5I0z8IDdLZU2EE3QsskYyry3JVxLPLpDxlPHtBjbqn76XtjCv++wJ9/
-         IdcBHFudOnJdz0gALRcyrvxhnD1yV/T/ar2zpbAk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E3A160DAF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v3 11/11] arm64: dts: qcom: sc7180: Add pdc interrupt
- controller
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>, agross@kernel.org,
-        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maulik Shah <mkshah@codeaurora.org>
-References: <20191023090219.15603-1-rnayak@codeaurora.org>
- <20191023090219.15603-12-rnayak@codeaurora.org>
- <5db86de0.1c69fb81.9e27d.0f47@mx.google.com>
- <20191030195021.GC27773@google.com>
- <6610d7fe-5a4d-5a43-5c4f-9ae61e7e53ee@codeaurora.org>
- <20191104063348.GA2464@tuxbook-pro>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <c214110f-7620-8771-ef83-8a4fb1f8724f@codeaurora.org>
-Date:   Mon, 4 Nov 2019 12:26:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 4 Nov 2019 01:57:13 -0500
+X-AuditID: c0a8fbf4-199ff70000001fa6-74-5dbfcbc69d05
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id AD.CB.08102.6CBCFBD5; Mon,  4 Nov 2019 07:57:11 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Mon, 4 Nov 2019 07:57:00 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
+Thread-Topic: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
+Thread-Index: AQHVkKp+hdqKw9vEbUql9O/haZZyiad5+mgAgACNpoA=
+Date:   Mon, 4 Nov 2019 06:57:00 +0000
+Message-ID: <c06725c3dd34118a324907137758d8b85b3d4043.camel@fi.rohmeurope.com>
+References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+         <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+         <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
+In-Reply-To: <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <419502E125313145ACFAD76CDE83E291@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191104063348.GA2464@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0wUVxjNnZmduayOGRcoV2qNTnwE26IkNlyFGBNpMjSmEeWXcYODO2UJ
+        7C6dWQzQxPJHLIi6TSHIymOD8pQo4BtFyPKSoaHdgoLtKl2htD6iaRQMldruMCr8uiffOec7
+        58d3IWkK0JEw3e6UZLuYydNGqqvhdeun/YOd5s0F9SQ+67vD4KPP6hj8slKlcGlgksbVPUMG
+        fGzwkgH/drmFwuPTvQDPjHxH4JK5egL/XfzAgC9WzwE83F5B48tPzwPcd26ExrWjPgJX1N6m
+        sE/9HN9Xe2l8pKOHwW/utlI7woXmqmYgPB87wghVzd8I1933GaGtqZAW/Hdv0kL/2FVCKKua
+        JYSGc68Y4UXbqt3GfUviU0Xnob3pafZN2w8ssT7sOw6yipflBBpuMPnAzxaBEIi4LehXVQVF
+        wAhN3B2AWvwFhEaYuH6AOmbyigCENBePiu4x2jiM24q6b1dQmp7kKiBqfDBk0IhQLhF1zqlv
+        RV+gEk8XqeNtSO1W5zUUtxaNuM5QGma5L1Hd8BWDHvwEoN7ph/PmEC4JNf7unS8BuI9QYf6z
+        eUxyEaht6pVBb82hszd/InUcjh5NvHk751HHbIDSSpNcFLrQvkm37kCnu0cpHa9BJccCjN5h
+        ORoon6Rc4AP3ogT3gtu9yO1e5HYvcnuAoQkgm5iemSY6pZhoWcqOlh1WW/A56LC1Af1kXl4D
+        /3kTvYCAwAtWQIIPZ2tGb5lNy1IdllyrqFhT5OxMSfECBEk+jPWd6jCbWIuYmyfJjnfUh5Di
+        I9gNge/NJk7LypCkLEl+x66EkEesonaaTctlKU3K+So907lAEzBEW26MDFMku0WSxWynNUW7
+        jxQleCAatTSYS2h2VskSbcGpblXBx9D1qLKGhD2VtTWkibI77FJkBBs3EJRymtSabX8f9BhE
+        QMCHsp9oi5YG/837PY+DEUQwYtfELS3CKS5QkflgZ3npIeu4ZW7gQOEPSY1xM4lI2fPLOOWr
+        N/4VW7AqZ7jYE1s2W12+cd3zg56xPKl0d/lqT8LACcG/5h/zU//s0YQ/YpJ2Ev/GJmecOvlZ
+        wuHkqKZd0/u76n5+zZ+I3uJyRZ3+er1turjvR/XP8bLDGXHb/K6ShikiVUz+drUSZ1kbz1OK
+        VYzZSMqK+D9zqzqy9AMAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/4/2019 12:03 PM, Bjorn Andersson wrote:
-> On Sun 03 Nov 22:17 PST 2019, Rajendra Nayak wrote:
-> 
->>
->>
->> On 10/31/2019 1:20 AM, Matthias Kaehlcke wrote:
->>> On Tue, Oct 29, 2019 at 09:50:40AM -0700, Stephen Boyd wrote:
->>>> Quoting Rajendra Nayak (2019-10-23 02:02:19)
->>>>> From: Maulik Shah <mkshah@codeaurora.org>
->>>>>
->>>>> Add pdc interrupt controller for sc7180
->>>>>
->>>>> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
->>>>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->>>>> ---
->>>>> v3:
->>>>> Used the qcom,sdm845-pdc compatible for pdc node
->>>>
->>>> Everything else isn't doing the weird old compatible thing. Why not just
->>>> add the new compatible and update the driver? I guess I'll have to go
->>>> read the history.
->>>
->>> Marc Zyngier complained  on v2 about the churn from adding compatible
->>> strings for identical components, and I kinda see his point.
->>>
->>> I agree that using the 'sdm845' compatible string for sc7180 is odd too.
->>> Maybe we should introduce SoC independent compatible strings for IP blocks
->>> that are shared across multiple SoCs? If differentiation is needed SoC
->>> specific strings can be added.
->>
->> Sure, I will perhaps add a qcom,pdc SoC independent compatible to avoid
->> confusion.
->>
-> 
-> I agree,
-> 
-> compatible = "qcom,sc7180-pdc", "qcom,pdc";
-> 
-> is the way to go.
-
-I wasn't planning on adding a qcom,sc7180-pdc, but instead just use the
-qcom,pdc one for sc7180.
-
-> 
-> Reusing qcom,sdm845-pdc would prevent us from tackling any unforeseen
-> issues/variations/erratas with one or the other platform in the future.
-
-That was the intention of adding qcom,sc7180-pdc in the first place,
-but Marc Zyngier was not happy with the churn, given there aren't really
-any variations or erratas that we know of.
-
-> 
-> Regards,
-> Bjorn
-> 
->>
->> -- 
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
->> of Code Aurora Forum, hosted by The Linux Foundation
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+SGVsbG8gTGludXMsDQoNCk9uIFN1biwgMjAxOS0xMS0wMyBhdCAyMzozMCArMDEwMCwgTGludXMg
+V2FsbGVpaiB3cm90ZToNCj4gSGkgTWF0dGkhDQo+IA0KPiBHb29kIGluaXRpYXRpdmUgKGFuZCBJ
+IHdpbGwgc2VlIGEgdG9uIG9mIGphbml0b3JpYWwgcGF0Y2hlcyBhcyBhDQo+IHJlc3VsdCBvZiB0
+aGlzLi4uKQ0KDQpZZXAuIEkgdGhpbmsgSSBtaWdodCBwdWxsIHRoaXMgY2hhbmdlIG91dCBvZiB0
+aGUgUkZDIGFuZCBzZW5kIGl0DQpzZXBhcmF0ZWx5LiBJIGNhbiBhbHNvIGRvIHNvbWUgY29udmVy
+c2lvbnMgZm9yIGV4aXN0aW5nIGRyaXZlcnMgLSBidXQgSQ0Kd29uJ3QgcHJvYmFibHkgYmUgYWJs
+ZSB0byBkbyBhbGwgb2YgdGhlIGRyaXZlcnMuIEkgc2VlIG5vIHdheSBvZiBkb2luZw0KYW55IHNl
+YXJjaCBhbmQgcmVwbGFjZSBzY3JpcHRpbmcgaGVyZSAtIHRoaXMgY29udmVyc2lvbiBpcyBnb2lu
+ZyB0byBiZQ0KbWFudWFsIHdvcmsgOi8NCg0KPiANCj4gT24gRnJpLCBOb3YgMSwgMjAxOSBhdCAx
+Mjo1MCBQTSBNYXR0aSBWYWl0dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3Bl
+LmNvbT4gd3JvdGU6DQo+IA0KPiA+IEF0IGxlYXN0IGZvciBtZSBpdCBpcyBkaWZmaWN1bHQgdG8g
+cmVtZW1iZXIgdGhlIG1lYW5pbmcgb2YgR1BJTw0KPiA+IGRpcmVjdGlvbiB2YWx1ZXMuIERlZmlu
+ZSBHUElPX0lOIGFuZCBHUElPX09VVCBzbyB0aGF0IG9jY2FzaW9uYWwNCj4gPiBHUElPIGNvbnRy
+aWJ1dG9ycyB3b3VsZCBub3QgbmVlZCB0byBhbHdheXMgY2hlY2sgdGhlIG1lYW5pbmcgb2YNCj4g
+PiBoYXJkIGNvZGVkIHZhbHVlcyAxIGFuZCAwLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1h
+dHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiAoLi4u
+KQ0KPiA+ICsjZGVmaW5lIEdQSU9fSU4gICAgICAgICAgICAgICAgMQ0KPiA+ICsjZGVmaW5lIEdQ
+SU9fT1VUICAgICAgIDANCj4gDQo+IFBsZWFzZSBzcGVsbCBpdCBvdXQgb3IgcGVvcGxlIHdpbGwg
+YmUgY29uZnVzZWQ6DQo+IA0KPiBHUElPX0xJTkVfRElSRUNUSU9OX0lODQo+IEdQSU9fTElORV9E
+SVJFQ1RJT05fT1VUDQoNClJpZ2h0LiBCZXNpZGVzIHRoZSAwRGF5IHRlc3Qgc3VpdGUgZGlkIGFs
+cmVhZHkgc3BvdCBhIGZldyByZWRlZmluaXRpb24NCnByb2JsZW1zIHdoZW4gc29tZSBkcml2ZXJz
+IGRvIGRlZmluZSBHUElPX0lOIGFuZC9vciBHUElPX09VVC4uLiBTbyBJJ2xsDQpjaGFuZ2UgdGhl
+IGRlZmluZXMgdG8gd2hhdCB5b3Ugc3VnZ2VzdCBoZXJlLg0KDQpCciwNCglNYXR0aSBWYWl0dGlu
+ZW4NCg==
