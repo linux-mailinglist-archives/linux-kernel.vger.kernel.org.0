@@ -2,440 +2,358 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505F1EE357
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4785DEE34C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbfKDPPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:15:51 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:54502 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfKDPPu (ORCPT
+        id S1728646AbfKDPOz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:14:55 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40602 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbfKDPOy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:15:50 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4FCP0v032260;
-        Mon, 4 Nov 2019 15:14:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=85K7fC2AblLC2FOwgaSUFn+yoZ4NbAzwtxs7nqvsiEU=;
- b=pHnvkMlHIICf/ZFx5eq2Ya8tvOJZGaUne/n2aLj/2SkIj0yYG4TVVg5Az2Wjw6TTz4Rt
- 48f5ClSW+FIjxnh/DjMAVKfRFqInqksN9QDBFCeGhYnWHASGbjYqTv5YsmBdFB8ZFail
- L1RK3ZrNDGdHcTWgqBpDMAiSFPDDeJ8MLKh0LFELSwGUTgIS1hlIbz6ZgsXhLnW09MCY
- N62KOTtecuzzyiuNR1oIrSlJMHNe4zXY/Z25ueeU4FnHI1eUANRKnF2BjQPktn3AKwcX
- SQ6OAMtRuQ3GlQjkidUW4cyo92ZyTQUk1Sj8V6RVPjVrb++m3R2HiWx4V8CIj3HJpUXi 7w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2w11rpr13u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 15:14:32 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4FABIi020092;
-        Mon, 4 Nov 2019 15:14:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2w1kxmhhg0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 15:14:31 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA4FEUfo018320;
-        Mon, 4 Nov 2019 15:14:30 GMT
-Received: from tomti.i.net-space.pl (/10.175.168.29)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Nov 2019 07:14:29 -0800
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, xen-devel@lists.xenproject.org
-Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
-        hpa@zytor.com, jgross@suse.com, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, mingo@redhat.com, rdunlap@infradead.org,
-        ross.philipson@oracle.com, tglx@linutronix.de
-Subject: [PATCH v5 3/3] x86/boot: Introduce the setup_indirect
-Date:   Mon,  4 Nov 2019 16:13:54 +0100
-Message-Id: <20191104151354.28145-4-daniel.kiper@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191104151354.28145-1-daniel.kiper@oracle.com>
-References: <20191104151354.28145-1-daniel.kiper@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911040151
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911040151
+        Mon, 4 Nov 2019 10:14:54 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA4FEWtW082531;
+        Mon, 4 Nov 2019 09:14:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572880472;
+        bh=h0Sfsp9psoHlAH0L5ZhvIbodfIi+1/unXj3Z6iImMNY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kejZajiSHQD5G0Eg97zB9t5UnX8SCrVoZvk1wQN+X5yYInIQEFa6yPNBY2rZ+H6Vt
+         ausOZCdQKnRmJPRCTg7kZJxyXq9RnSARE9VBM/fKnkR0Pui6bz+wWNwrmyxskw7z0v
+         6FjLNNohfuiv8DOSnvKyBUQ1Sny87axJ/iLIG8e8=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA4FEWLk101598
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Nov 2019 09:14:32 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 4 Nov
+ 2019 09:14:17 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 4 Nov 2019 09:14:17 -0600
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA4FESFC069153;
+        Mon, 4 Nov 2019 09:14:29 -0600
+Subject: Re: [PATCH v4 2/2] usb: cdns3: Add TI specific wrapper driver
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        <felipe.balbi@linux.intel.com>
+CC:     <pawell@cadence.com>, <peter.chen@nxp.com>, <nsekhar@ti.com>,
+        <kurahul@cadence.com>, <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20191028093249.22822-1-rogerq@ti.com>
+ <20191028093249.22822-3-rogerq@ti.com> <20191104144752.GB2183570@kroah.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <2bd9cf7a-d48c-3975-ec46-b663d11359f6@ti.com>
+Date:   Mon, 4 Nov 2019 17:14:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191104144752.GB2183570@kroah.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The setup_data is a bit awkward to use for extremely large data objects,
-both because the setup_data header has to be adjacent to the data object
-and because it has a 32-bit length field. However, it is important that
-intermediate stages of the boot process have a way to identify which
-chunks of memory are occupied by kernel data. Thus we introduce an uniform
-way to specify such indirect data as setup_indirect struct and
-SETUP_INDIRECT type.
 
-And finally bump setup_header version in arch/x86/boot/header.S.
 
-Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
-Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Ross Philipson <ross.philipson@oracle.com>
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
----
-v5 - suggestions/fixes:
-   - bump setup_header version in arch/x86/boot/header.S
-     (suggested by H. Peter Anvin).
+On 04/11/2019 16:47, Greg KH wrote:
+> On Mon, Oct 28, 2019 at 11:32:49AM +0200, Roger Quadros wrote:
+>> The J721e platform comes with 2 Cadence USB3 controller
+>> instances. This driver supports the TI specific wrapper
+>> on this platform.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+>> Reviewed-by: Pawel Laszczak <pawell@cadence.com>
+>> ---
+>>   drivers/usb/cdns3/Kconfig    |  10 ++
+>>   drivers/usb/cdns3/Makefile   |   1 +
+>>   drivers/usb/cdns3/cdns3-ti.c | 236 +++++++++++++++++++++++++++++++++++
+>>   3 files changed, 247 insertions(+)
+>>   create mode 100644 drivers/usb/cdns3/cdns3-ti.c
+>>
+>> diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
+>> index d0331613a355..2a1e89d12ed9 100644
+>> --- a/drivers/usb/cdns3/Kconfig
+>> +++ b/drivers/usb/cdns3/Kconfig
+>> @@ -43,4 +43,14 @@ config USB_CDNS3_PCI_WRAP
+>>   	  If you choose to build this driver as module it will
+>>   	  be dynamically linked and module will be called cdns3-pci.ko
+>>   
+>> +config USB_CDNS3_TI
+>> +	tristate "Cadence USB3 support on TI platforms"
+>> +	depends on ARCH_K3 || COMPILE_TEST
+>> +	default USB_CDNS3
+>> +	help
+>> +	  Say 'Y' or 'M' here if you are building for Texas Instruments
+>> +	  platforms that contain Cadence USB3 controller core.
+>> +
+>> +	  e.g. J721e.
+>> +
+>>   endif
+>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+>> index a703547350bb..948e6b88d1a9 100644
+>> --- a/drivers/usb/cdns3/Makefile
+>> +++ b/drivers/usb/cdns3/Makefile
+>> @@ -14,3 +14,4 @@ endif
+>>   cdns3-$(CONFIG_USB_CDNS3_HOST)		+= host.o
+>>   
+>>   obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci-wrap.o
+>> +obj-$(CONFIG_USB_CDNS3_TI)		+= cdns3-ti.o
+>> diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+>> new file mode 100644
+>> index 000000000000..c6a79ca15858
+>> --- /dev/null
+>> +++ b/drivers/usb/cdns3/cdns3-ti.c
+>> @@ -0,0 +1,236 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/**
+>> + * cdns3-ti.c - TI specific Glue layer for Cadence USB Controller
+>> + *
+>> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com
+>> + */
+>> +
+>> +#include <linux/bits.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/module.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +/* USB Wrapper register offsets */
+>> +#define USBSS_PID		0x0
+>> +#define	USBSS_W1		0x4
+>> +#define USBSS_STATIC_CONFIG	0x8
+>> +#define USBSS_PHY_TEST		0xc
+>> +#define	USBSS_DEBUG_CTRL	0x10
+>> +#define	USBSS_DEBUG_INFO	0x14
+>> +#define	USBSS_DEBUG_LINK_STATE	0x18
+>> +#define	USBSS_DEVICE_CTRL	0x1c
+>> +
+>> +/* Wrapper 1 register bits */
+>> +#define USBSS_W1_PWRUP_RST		BIT(0)
+>> +#define USBSS_W1_OVERCURRENT_SEL	BIT(8)
+>> +#define USBSS_W1_MODESTRAP_SEL		BIT(9)
+>> +#define USBSS_W1_OVERCURRENT		BIT(16)
+>> +#define USBSS_W1_MODESTRAP_MASK		GENMASK(18, 17)
+>> +#define USBSS_W1_MODESTRAP_SHIFT	17
+>> +#define USBSS_W1_USB2_ONLY		BIT(19)
+>> +
+>> +/* Static config register bits */
+>> +#define USBSS1_STATIC_PLL_REF_SEL_MASK	GENMASK(8, 5)
+>> +#define USBSS1_STATIC_PLL_REF_SEL_SHIFT	5
+>> +#define USBSS1_STATIC_LOOPBACK_MODE_MASK	GENMASK(4, 3)
+>> +#define USBSS1_STATIC_LOOPBACK_MODE_SHIFT	3
+>> +#define USBSS1_STATIC_VBUS_SEL_MASK	GENMASK(2, 1)
+>> +#define USBSS1_STATIC_VBUS_SEL_SHIFT	1
+>> +#define USBSS1_STATIC_LANE_REVERSE	BIT(0)
+>> +
+>> +/* Modestrap modes */
+>> +enum modestrap_mode { USBSS_MODESTRAP_MODE_NONE,
+>> +		      USBSS_MODESTRAP_MODE_HOST,
+>> +		      USBSS_MODESTRAP_MODE_PERIPHERAL};
+>> +
+>> +struct cdns_ti {
+>> +	struct device *dev;
+>> +	void __iomem *usbss;
+>> +	int usb2_only:1;
+>> +	int vbus_divider:1;
+> 
+> 'bool' instead of bitfields?  Makes it more obvious, right?
+> 
 
-v4 - suggestions/fixes:
-   - change "Note:" to ".. note::".
+right.
 
-v3 - suggestions/fixes:
-   - add setup_indirect mapping/KASLR avoidance/etc. code
-     (suggested by H. Peter Anvin),
-   - the SETUP_INDIRECT sets most significant bit right now;
-     this way it is possible to differentiate regular setup_data
-     and setup_indirect objects in the debugfs filesystem.
+>> +	struct clk *usb2_refclk;
+>> +	struct clk *lpm_clk;
+>> +};
+>> +
+>> +static const int cdns_ti_rate_table[] = {	/* in KHZ */
+>> +	9600,
+>> +	10000,
+>> +	12000,
+>> +	19200,
+>> +	20000,
+>> +	24000,
+>> +	25000,
+>> +	26000,
+>> +	38400,
+>> +	40000,
+>> +	58000,
+>> +	50000,
+>> +	52000,
+>> +};
+>> +
+>> +static inline u32 cdns_ti_readl(struct cdns_ti *data, u32 offset)
+>> +{
+>> +	return readl(data->usbss + offset);
+>> +}
+> 
+> Does sparse like this function?
+> 
 
-v2 - suggestions/fixes:
-   - add setup_indirect usage example
-     (suggested by Eric Snowberg and Ross Philipson).
----
- Documentation/x86/boot.rst             | 43 +++++++++++++++++++++++++++++++++-
- arch/x86/boot/compressed/kaslr.c       | 12 ++++++++++
- arch/x86/boot/compressed/kernel_info.S |  2 +-
- arch/x86/boot/header.S                 |  2 +-
- arch/x86/include/uapi/asm/bootparam.h  | 16 ++++++++++---
- arch/x86/kernel/e820.c                 | 11 +++++++++
- arch/x86/kernel/kdebugfs.c             | 20 ++++++++++++----
- arch/x86/kernel/ksysfs.c               | 30 ++++++++++++++++++------
- arch/x86/kernel/setup.c                |  4 ++++
- arch/x86/mm/ioremap.c                  | 11 +++++++++
- 10 files changed, 134 insertions(+), 17 deletions(-)
+It doesn't complain.
 
-diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
-index 1dad6eee8a5c..38155ba8740f 100644
---- a/Documentation/x86/boot.rst
-+++ b/Documentation/x86/boot.rst
-@@ -827,6 +827,47 @@ Protocol:	2.09+
-   sure to consider the case where the linked list already contains
-   entries.
- 
-+  The setup_data is a bit awkward to use for extremely large data objects,
-+  both because the setup_data header has to be adjacent to the data object
-+  and because it has a 32-bit length field. However, it is important that
-+  intermediate stages of the boot process have a way to identify which
-+  chunks of memory are occupied by kernel data.
-+
-+  Thus setup_indirect struct and SETUP_INDIRECT type were introduced in
-+  protocol 2.15.
-+
-+  struct setup_indirect {
-+    __u32 type;
-+    __u32 reserved;  /* Reserved, must be set to zero. */
-+    __u64 len;
-+    __u64 addr;
-+  };
-+
-+  The type member is a SETUP_INDIRECT | SETUP_* type. However, it cannot be
-+  SETUP_INDIRECT itself since making the setup_indirect a tree structure
-+  could require a lot of stack space in something that needs to parse it
-+  and stack space can be limited in boot contexts.
-+
-+  Let's give an example how to point to SETUP_E820_EXT data using setup_indirect.
-+  In this case setup_data and setup_indirect will look like this:
-+
-+  struct setup_data {
-+    __u64 next = 0 or <addr_of_next_setup_data_struct>;
-+    __u32 type = SETUP_INDIRECT;
-+    __u32 len = sizeof(setup_data);
-+    __u8 data[sizeof(setup_indirect)] = struct setup_indirect {
-+      __u32 type = SETUP_INDIRECT | SETUP_E820_EXT;
-+      __u32 reserved = 0;
-+      __u64 len = <len_of_SETUP_E820_EXT_data>;
-+      __u64 addr = <addr_of_SETUP_E820_EXT_data>;
-+    }
-+  }
-+
-+.. note::
-+     SETUP_INDIRECT | SETUP_NONE objects cannot be properly distinguished
-+     from SETUP_INDIRECT itself. So, this kind of objects cannot be provided
-+     by the bootloaders.
-+
- ============	============
- Field name:	pref_address
- Type:		read (reloc)
-@@ -986,7 +1027,7 @@ Field name:	setup_type_max
- Offset/size:	0x0008/4
- ============	==============
- 
--  This field contains maximal allowed type for setup_data.
-+  This field contains maximal allowed type for setup_data and setup_indirect structs.
- 
- 
- The Image Checksum
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 2e53c056ba20..bb9bfef174ae 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -459,6 +459,18 @@ static bool mem_avoid_overlap(struct mem_vector *img,
- 			is_overlapping = true;
- 		}
- 
-+		if (ptr->type == SETUP_INDIRECT &&
-+		    ((struct setup_indirect *)ptr->data)->type != SETUP_INDIRECT) {
-+			avoid.start = ((struct setup_indirect *)ptr->data)->addr;
-+			avoid.size = ((struct setup_indirect *)ptr->data)->len;
-+
-+			if (mem_overlaps(img, &avoid) && (avoid.start < earliest)) {
-+				*overlap = avoid;
-+				earliest = overlap->start;
-+				is_overlapping = true;
-+			}
-+		}
-+
- 		ptr = (struct setup_data *)(unsigned long)ptr->next;
- 	}
- 
-diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
-index 018dacbd753e..f818ee8fba38 100644
---- a/arch/x86/boot/compressed/kernel_info.S
-+++ b/arch/x86/boot/compressed/kernel_info.S
-@@ -14,7 +14,7 @@ kernel_info:
- 	/* Size total. */
- 	.long	kernel_info_end - kernel_info
- 
--	/* Maximal allowed type for setup_data. */
-+	/* Maximal allowed type for setup_data and setup_indirect structs. */
- 	.long	SETUP_TYPE_MAX
- 
- kernel_info_var_len_data:
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 22dcecaaa898..97d9b6d6c1af 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -300,7 +300,7 @@ _start:
- 	# Part 2 of the header, from the old setup.S
- 
- 		.ascii	"HdrS"		# header signature
--		.word	0x020d		# header version number (>= 0x0105)
-+		.word	0x020f		# header version number (>= 0x0105)
- 					# or else old loadlin-1.5 will fail)
- 		.globl realmode_swtch
- realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index dbb41128e5a0..949066b5398a 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -2,7 +2,7 @@
- #ifndef _ASM_X86_BOOTPARAM_H
- #define _ASM_X86_BOOTPARAM_H
- 
--/* setup_data types */
-+/* setup_data/setup_indirect types */
- #define SETUP_NONE			0
- #define SETUP_E820_EXT			1
- #define SETUP_DTB			2
-@@ -11,8 +11,10 @@
- #define SETUP_APPLE_PROPERTIES		5
- #define SETUP_JAILHOUSE			6
- 
--/* max(SETUP_*) */
--#define SETUP_TYPE_MAX			SETUP_JAILHOUSE
-+#define SETUP_INDIRECT			(1<<31)
-+
-+/* SETUP_INDIRECT | max(SETUP_*) */
-+#define SETUP_TYPE_MAX			(SETUP_INDIRECT | SETUP_JAILHOUSE)
- 
- /* ram_size flags */
- #define RAMDISK_IMAGE_START_MASK	0x07FF
-@@ -52,6 +54,14 @@ struct setup_data {
- 	__u8 data[0];
- };
- 
-+/* extensible setup indirect data node */
-+struct setup_indirect {
-+	__u32 type;
-+	__u32 reserved;  /* Reserved, must be set to zero. */
-+	__u64 len;
-+	__u64 addr;
-+};
-+
- struct setup_header {
- 	__u8	setup_sects;
- 	__u16	root_flags;
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 7da2bcd2b8eb..0bfe9a685b3b 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -999,6 +999,17 @@ void __init e820__reserve_setup_data(void)
- 		data = early_memremap(pa_data, sizeof(*data));
- 		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
- 		e820__range_update_kexec(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+
-+		if (data->type == SETUP_INDIRECT &&
-+		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+			e820__range_update(((struct setup_indirect *)data->data)->addr,
-+					   ((struct setup_indirect *)data->data)->len,
-+					   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+			e820__range_update_kexec(((struct setup_indirect *)data->data)->addr,
-+						 ((struct setup_indirect *)data->data)->len,
-+						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+		}
-+
- 		pa_data = data->next;
- 		early_memunmap(data, sizeof(*data));
- 	}
-diff --git a/arch/x86/kernel/kdebugfs.c b/arch/x86/kernel/kdebugfs.c
-index edaa30b20841..701a98300f86 100644
---- a/arch/x86/kernel/kdebugfs.c
-+++ b/arch/x86/kernel/kdebugfs.c
-@@ -44,7 +44,11 @@ static ssize_t setup_data_read(struct file *file, char __user *user_buf,
- 	if (count > node->len - pos)
- 		count = node->len - pos;
- 
--	pa = node->paddr + sizeof(struct setup_data) + pos;
-+	pa = node->paddr + pos;
-+
-+	if (!(node->type & SETUP_INDIRECT) || node->type == SETUP_INDIRECT)
-+		pa += sizeof(struct setup_data);
-+
- 	p = memremap(pa, count, MEMREMAP_WB);
- 	if (!p)
- 		return -ENOMEM;
-@@ -108,9 +112,17 @@ static int __init create_setup_data_nodes(struct dentry *parent)
- 			goto err_dir;
- 		}
- 
--		node->paddr = pa_data;
--		node->type = data->type;
--		node->len = data->len;
-+		if (data->type == SETUP_INDIRECT &&
-+		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+			node->paddr = ((struct setup_indirect *)data->data)->addr;
-+			node->type = ((struct setup_indirect *)data->data)->type;
-+			node->len = ((struct setup_indirect *)data->data)->len;
-+		} else {
-+			node->paddr = pa_data;
-+			node->type = data->type;
-+			node->len = data->len;
-+		}
-+
- 		create_setup_data_node(d, no, node);
- 		pa_data = data->next;
- 
-diff --git a/arch/x86/kernel/ksysfs.c b/arch/x86/kernel/ksysfs.c
-index 7969da939213..14ef8121aa53 100644
---- a/arch/x86/kernel/ksysfs.c
-+++ b/arch/x86/kernel/ksysfs.c
-@@ -100,7 +100,11 @@ static int __init get_setup_data_size(int nr, size_t *size)
- 		if (!data)
- 			return -ENOMEM;
- 		if (nr == i) {
--			*size = data->len;
-+			if (data->type == SETUP_INDIRECT &&
-+			    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
-+				*size = ((struct setup_indirect *)data->data)->len;
-+			else
-+				*size = data->len;
- 			memunmap(data);
- 			return 0;
- 		}
-@@ -130,7 +134,10 @@ static ssize_t type_show(struct kobject *kobj,
- 	if (!data)
- 		return -ENOMEM;
- 
--	ret = sprintf(buf, "0x%x\n", data->type);
-+	if (data->type == SETUP_INDIRECT)
-+		ret = sprintf(buf, "0x%x\n", ((struct setup_indirect *)data->data)->type);
-+	else
-+		ret = sprintf(buf, "0x%x\n", data->type);
- 	memunmap(data);
- 	return ret;
- }
-@@ -142,7 +149,7 @@ static ssize_t setup_data_data_read(struct file *fp,
- 				    loff_t off, size_t count)
- {
- 	int nr, ret = 0;
--	u64 paddr;
-+	u64 paddr, len;
- 	struct setup_data *data;
- 	void *p;
- 
-@@ -157,19 +164,28 @@ static ssize_t setup_data_data_read(struct file *fp,
- 	if (!data)
- 		return -ENOMEM;
- 
--	if (off > data->len) {
-+	if (data->type == SETUP_INDIRECT &&
-+	    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+		paddr = ((struct setup_indirect *)data->data)->addr;
-+		len = ((struct setup_indirect *)data->data)->len;
-+	} else {
-+		paddr += sizeof(*data);
-+		len = data->len;
-+	}
-+
-+	if (off > len) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	if (count > data->len - off)
--		count = data->len - off;
-+	if (count > len - off)
-+		count = len - off;
- 
- 	if (!count)
- 		goto out;
- 
- 	ret = count;
--	p = memremap(paddr + sizeof(*data), data->len, MEMREMAP_WB);
-+	p = memremap(paddr, len, MEMREMAP_WB);
- 	if (!p) {
- 		ret = -ENOMEM;
- 		goto out;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 77ea96b794bd..4603702dbfc1 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -438,6 +438,10 @@ static void __init memblock_x86_reserve_range_setup_data(void)
- 	while (pa_data) {
- 		data = early_memremap(pa_data, sizeof(*data));
- 		memblock_reserve(pa_data, sizeof(*data) + data->len);
-+		if (data->type == SETUP_INDIRECT &&
-+		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
-+			memblock_reserve(((struct setup_indirect *)data->data)->addr,
-+					 ((struct setup_indirect *)data->data)->len);
- 		pa_data = data->next;
- 		early_memunmap(data, sizeof(*data));
- 	}
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index a39dcdb5ae34..1ff9c2030b4f 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -626,6 +626,17 @@ static bool memremap_is_setup_data(resource_size_t phys_addr,
- 		paddr_next = data->next;
- 		len = data->len;
- 
-+		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-+			memunmap(data);
-+			return true;
-+		}
-+
-+		if (data->type == SETUP_INDIRECT &&
-+		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+			paddr = ((struct setup_indirect *)data->data)->addr;
-+			len = ((struct setup_indirect *)data->data)->len;
-+		}
-+
- 		memunmap(data);
- 
- 		if ((phys_addr > paddr) && (phys_addr < (paddr + len)))
+>> +
+>> +static inline void cdns_ti_writel(struct cdns_ti *data, u32 offset, u32 value)
+>> +{
+>> +	writel(value, data->usbss + offset);
+> 
+> Same here, have you run sparse on this code?
+
+I hadn't but now that I run i only see these errors.
+
+   CHECK   drivers/usb/cdns3/cdns3-ti.c
+drivers/usb/cdns3/cdns3-ti.c:55:24: error: dubious one-bit signed bitfield
+drivers/usb/cdns3/cdns3-ti.c:56:27: error: dubious one-bit signed bitfield
+
+> 
+>> +}
+>> +
+>> +static int cdns_ti_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *node = pdev->dev.of_node;
+>> +	struct cdns_ti *data;
+>> +	int error;
+>> +	u32 reg;
+>> +	int rate_code, i;
+>> +	unsigned long rate;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	platform_set_drvdata(pdev, data);
+>> +
+>> +	data->dev = dev;
+>> +
+>> +	data->usbss = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(data->usbss)) {
+>> +		dev_err(dev, "can't map IOMEM resource\n");
+> 
+> Doesn't the function print an error?
+
+It does.
+> 
+>> +		return PTR_ERR(data->usbss);
+>> +	}
+>> +
+>> +	data->usb2_refclk = devm_clk_get(dev, "ref");
+>> +	if (IS_ERR(data->usb2_refclk)) {
+>> +		dev_err(dev, "can't get usb2_refclk\n");
+> 
+> Again, doesn't the function print an error?
+
+No.
+
+> 
+>> +		return PTR_ERR(data->usb2_refclk);
+>> +	}
+>> +
+>> +	data->lpm_clk = devm_clk_get(dev, "lpm");
+>> +	if (IS_ERR(data->lpm_clk)) {
+>> +		dev_err(dev, "can't get lpm_clk\n");
+> 
+> Same?
+> 
+>> +		return PTR_ERR(data->lpm_clk);
+>> +	}
+>> +
+>> +	rate = clk_get_rate(data->usb2_refclk);
+>> +	rate /= 1000;	/* To KHz */
+>> +	for (i = 0; i < ARRAY_SIZE(cdns_ti_rate_table); i++) {
+>> +		if (cdns_ti_rate_table[i] == rate)
+>> +			break;
+>> +	}
+>> +
+>> +	if (i == ARRAY_SIZE(cdns_ti_rate_table)) {
+>> +		dev_err(dev, "unsupported usb2_refclk rate: %lu KHz\n", rate);
+> 
+> What can userspace do about this?
+
+Nothing, but it would help us identify the issue on customer boards.
+
+> 
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	rate_code = i;
+>> +
+>> +	pm_runtime_enable(dev);
+>> +	error = pm_runtime_get_sync(dev);
+>> +	if (error < 0) {
+>> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", error);
+> 
+> Again, the call should print the error, right?
+
+It doesn't.
+> 
+>> +		goto err_get;
+>> +	}
+>> +
+>> +	/* assert RESET */
+>> +	reg = cdns_ti_readl(data, USBSS_W1);
+>> +	reg &= ~USBSS_W1_PWRUP_RST;
+>> +	cdns_ti_writel(data, USBSS_W1, reg);
+>> +
+>> +	/* set static config */
+>> +	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
+>> +	reg &= ~USBSS1_STATIC_PLL_REF_SEL_MASK;
+>> +	reg |= rate_code << USBSS1_STATIC_PLL_REF_SEL_SHIFT;
+>> +
+>> +	reg &= ~USBSS1_STATIC_VBUS_SEL_MASK;
+>> +	data->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
+>> +	if (data->vbus_divider)
+>> +		reg |= 1 << USBSS1_STATIC_VBUS_SEL_SHIFT;
+>> +
+>> +	cdns_ti_writel(data, USBSS_STATIC_CONFIG, reg);
+>> +	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
+>> +
+>> +	/* set USB2_ONLY mode if requested */
+>> +	reg = cdns_ti_readl(data, USBSS_W1);
+>> +	data->usb2_only = device_property_read_bool(dev, "ti,usb2-only");
+>> +	if (data->usb2_only)
+>> +		reg |= USBSS_W1_USB2_ONLY;
+>> +
+>> +	/* set default modestrap */
+>> +	reg |= USBSS_W1_MODESTRAP_SEL;
+>> +	reg &= ~USBSS_W1_MODESTRAP_MASK;
+>> +	reg |= USBSS_MODESTRAP_MODE_NONE << USBSS_W1_MODESTRAP_SHIFT;
+>> +	cdns_ti_writel(data, USBSS_W1, reg);
+>> +
+>> +	/* de-assert RESET */
+>> +	reg |= USBSS_W1_PWRUP_RST;
+>> +	cdns_ti_writel(data, USBSS_W1, reg);
+>> +
+>> +	error = of_platform_populate(node, NULL, NULL, dev);
+>> +	if (error) {
+>> +		dev_err(dev, "failed to create children: %d\n", error);
+> 
+> Again, error in the caller?
+
+doesn't seem like so.
+
+
+Felipe,
+
+Do you want me to send a diff with the changes or a revised patch?
+
 -- 
-2.11.0
+cheers,
+-roger
 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
