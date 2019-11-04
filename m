@@ -2,111 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D9BEE1BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21289EE1C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbfKDN7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:59:11 -0500
-Received: from smtprelay0034.hostedemail.com ([216.40.44.34]:50073 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727891AbfKDN7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:59:11 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id A5FAF18223251;
-        Mon,  4 Nov 2019 13:59:09 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:69:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:4605:5007:6261:6742:7576:7875:8603:8957:10004:10400:10848:10967:11026:11232:11658:11914:12043:12296:12297:12438:12683:12740:12760:12895:13439:14096:14097:14181:14659:14721:21080:21451:21627:30054:30064:30080:30090:30091,0,RBL:146.247.46.6:@goodmis.org:.lbl8.mailshell.net-62.8.41.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: pot84_899e0f45ebd55
-X-Filterd-Recvd-Size: 3574
-Received: from grimm.local.home (unknown [146.247.46.6])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 Nov 2019 13:59:05 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 08:59:01 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Song Liu <liu.song.a23@gmail.com>, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-block@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] kernfs: Convert to u64 id
-Message-ID: <20191104085901.06035a26@grimm.local.home>
-In-Reply-To: <20191104084520.398584-2-namhyung@kernel.org>
-References: <20191104084520.398584-1-namhyung@kernel.org>
-        <20191104084520.398584-2-namhyung@kernel.org>
-X-Mailer: Claws Mail 3.17.4git49 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729252AbfKDOA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 09:00:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727891AbfKDOA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 09:00:26 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54E3221D71;
+        Mon,  4 Nov 2019 14:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572876026;
+        bh=OWbKtK0i0fpZ7HMq4IWDZ/zHR1wQIHsCjhclNVqI7cs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=L3F9qVpuKwq2k4DJhdeBUeaZDrY5/2BO9ZEILgx1UqbvBX47zpfteH8Riw33D90lY
+         FK87rhNlLQL0Nv0Ze8GAJR2IUvzOLk8xM1+a22zySFweu+8rNFlQSXWknbwA5WDoLd
+         N8cMt0+CaX99DaLgV9Pq4rTimFFfmAXLCuvpqk+U=
+Received: by mail-qt1-f181.google.com with SMTP id y39so24071571qty.0;
+        Mon, 04 Nov 2019 06:00:26 -0800 (PST)
+X-Gm-Message-State: APjAAAXyY79jdMZNLGgwAN5YLOGXvC/3iRYDS3yUZGRmo8eDNWpal/a9
+        3xzmLx70uEE1aBYvsKG7EKSapHdsLAz2R7wOeA==
+X-Google-Smtp-Source: APXvYqwC/UsXG1zJ1xc8CR86GG8c20fgOKNAVt0QWyGvdkTztw6vTdeoGSWn0GfCtBbRQCyxI47fJxmWk+2G9rlJau8=
+X-Received: by 2002:a0c:d2b4:: with SMTP id q49mr21523114qvh.135.1572876025475;
+ Mon, 04 Nov 2019 06:00:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191101061411.16988-1-yamada.masahiro@socionext.com> <20191101061411.16988-2-yamada.masahiro@socionext.com>
+In-Reply-To: <20191101061411.16988-2-yamada.masahiro@socionext.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 4 Nov 2019 08:00:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJbmFd5wZ0RCP2baqv-bjWwzaJ+hLqtGeYjK5LPJ54dXA@mail.gmail.com>
+Message-ID: <CAL_JsqJbmFd5wZ0RCP2baqv-bjWwzaJ+hLqtGeYjK5LPJ54dXA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] libfdt: add SPDX-License-Identifier to libfdt wrappers
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  4 Nov 2019 17:45:19 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
+On Fri, Nov 1, 2019 at 1:19 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> These are kernel source code even though they are just two-line wrappers.
+>
+> Files without explicit license information fall back to GPL-2.0-only,
+> which is the project default.
 
-> From: Tejun Heo <tj@kernel.org>
-> 
-> The kernfs_id was an union type sharing a 64bit id with 32bit ino +
-> gen.  But it resulted in using 32bit inode even on 64bit systems.
-> Also dealing with an union is annoying especially if you just want to
-> use a single id.
-> 
-> Thus let's get rid of the kernfs_node_id type and use u64 directly.
-> The upper 32bit is used for gen and lower is for ino on 32bit systems.
-> The kernfs_id_ino() and kernfs_id_gen() helpers will take care of the
-> bit handling depends on the system word size.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Martin KaFai Lau <kafai@fb.com>
-> Cc: Song Liu <songliubraving@fb.com>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: linux-block@vger.kernel.org
-> Cc: bpf@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> [namhyung: fix build error in bpf_get_current_cgroup_id()]
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  fs/kernfs/dir.c                  | 36 ++++++++-----
->  fs/kernfs/file.c                 |  4 +-
->  fs/kernfs/inode.c                |  4 +-
->  fs/kernfs/kernfs-internal.h      |  2 -
->  fs/kernfs/mount.c                | 92 +++++++++++++++++++-------------
->  include/linux/cgroup.h           | 17 +++---
->  include/linux/exportfs.h         |  5 ++
->  include/linux/kernfs.h           | 47 +++++++++-------
+That is true and these are kernel only files, but given they are just
+a wrapper around the .c files, maybe they should have the same
+license?
 
->  include/trace/events/writeback.h | 92 ++++++++++++++++----------------
-
-I only looked at the above file, and didn't see anything bad about it.
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
->  kernel/bpf/helpers.c             |  2 +-
->  kernel/cgroup/cgroup.c           |  5 +-
->  kernel/trace/blktrace.c          | 66 +++++++++++------------
->  net/core/filter.c                |  4 +-
->  13 files changed, 207 insertions(+), 169 deletions(-)
-
+Rob
