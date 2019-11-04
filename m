@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91CB6EEBE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A17EEC50
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbfKDVvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:51:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44906 "EHLO mail.kernel.org"
+        id S2388250AbfKDVzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:55:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730616AbfKDVvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:49 -0500
+        id S2388234AbfKDVzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:55:51 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6166217F5;
-        Mon,  4 Nov 2019 21:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44BDD217F4;
+        Mon,  4 Nov 2019 21:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904308;
-        bh=3jd1QXiIJq7pwdxdFPxZxL35hTozreZSrHTnwM13H/Y=;
+        s=default; t=1572904550;
+        bh=3bV3DEaz/uJkFBictvzAfD7nh/T5TXDGZpPRx0Nw44g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pjtlbtxU9YfMjUoYoq4d91Xn5oByg13R4vssd7cmbYehFSbfauwWJ39DTAHXSLu8K
-         RziDHMsKHFxtyzDXxE1dWkaFyOEMU4eQAZpyJD0U86hZ0xKEeBYDyrmdcUGQ5tnTTM
-         shC7YWU5jtFHAh6DYjEfeCdPcrHVNp/DIns85GSU=
+        b=TLP0X6jpRQB8JSyx2a7PRMENp2P1wNJws+niyR60gNo+6wWzB8WixEP7gGd2gfsIv
+         ++qEeINNZJGCAjl3MD3Y9IEfX5V1/6Eyi6ohSMDZy79n2UNVvaHJ1v/Namfcrp2Lm0
+         iN9vHkXTsBW+C4mMVjpzldfCCpChI0rjym/+ABBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 59/62] ALSA: timer: Follow standard EXPORT_SYMBOL() declarations
-Date:   Mon,  4 Nov 2019 22:45:21 +0100
-Message-Id: <20191104211959.358824279@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com,
+        syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.14 84/95] llc: fix sk_buff leak in llc_sap_state_process()
+Date:   Mon,  4 Nov 2019 22:45:22 +0100
+Message-Id: <20191104212122.927653214@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,147 +46,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 988563929d5b65c021439880ac6bd1b207722f26 ]
+commit c6ee11c39fcc1fb55130748990a8f199e76263b4 upstream.
 
-Just a tidy up to follow the standard EXPORT_SYMBOL*() declarations
-in order to improve grep-ability.
+syzbot reported:
 
-- Move EXPORT_SYMBOL*() to the position right after its definition
+    BUG: memory leak
+    unreferenced object 0xffff888116270800 (size 224):
+       comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
+       hex dump (first 32 bytes):
+         00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+         00 20 e1 2a 81 88 ff ff 00 40 3d 2a 81 88 ff ff  . .*.....@=*....
+       backtrace:
+         [<000000004d41b4cc>] kmemleak_alloc_recursive  include/linux/kmemleak.h:55 [inline]
+         [<000000004d41b4cc>] slab_post_alloc_hook mm/slab.h:439 [inline]
+         [<000000004d41b4cc>] slab_alloc_node mm/slab.c:3269 [inline]
+         [<000000004d41b4cc>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
+         [<00000000506a5965>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
+         [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
+         [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  net/core/skbuff.c:5327
+         [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  net/core/sock.c:2225
+         [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
+         [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
+         [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
+         [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
+         [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
+	 [...]
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The bug is that llc_sap_state_process() always takes an extra reference
+to the skb, but sometimes neither llc_sap_next_state() nor
+llc_sap_state_process() itself drops this reference.
+
+Fix it by changing llc_sap_next_state() to never consume a reference to
+the skb, rather than sometimes do so and sometimes not.  Then remove the
+extra skb_get() and kfree_skb() from llc_sap_state_process().
+
+Reported-by: syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com
+Reported-by: syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- sound/core/timer.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ net/llc/llc_s_ac.c |   12 +++++++++---
+ net/llc/llc_sap.c  |   23 ++++++++---------------
+ 2 files changed, 17 insertions(+), 18 deletions(-)
 
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index 152254193c697..cfcc6718aafce 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -318,6 +318,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 	*ti = timeri;
- 	return 0;
+--- a/net/llc/llc_s_ac.c
++++ b/net/llc/llc_s_ac.c
+@@ -58,8 +58,10 @@ int llc_sap_action_send_ui(struct llc_sa
+ 			    ev->daddr.lsap, LLC_PDU_CMD);
+ 	llc_pdu_init_as_ui_cmd(skb);
+ 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
+-	if (likely(!rc))
++	if (likely(!rc)) {
++		skb_get(skb);
+ 		rc = dev_queue_xmit(skb);
++	}
+ 	return rc;
  }
-+EXPORT_SYMBOL(snd_timer_open);
  
- /*
-  * close a timer instance
-@@ -383,6 +384,7 @@ int snd_timer_close(struct snd_timer_instance *timeri)
- 	mutex_unlock(&register_mutex);
- 	return 0;
+@@ -81,8 +83,10 @@ int llc_sap_action_send_xid_c(struct llc
+ 			    ev->daddr.lsap, LLC_PDU_CMD);
+ 	llc_pdu_init_as_xid_cmd(skb, LLC_XID_NULL_CLASS_2, 0);
+ 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
+-	if (likely(!rc))
++	if (likely(!rc)) {
++		skb_get(skb);
+ 		rc = dev_queue_xmit(skb);
++	}
+ 	return rc;
  }
-+EXPORT_SYMBOL(snd_timer_close);
  
- unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
+@@ -135,8 +139,10 @@ int llc_sap_action_send_test_c(struct ll
+ 			    ev->daddr.lsap, LLC_PDU_CMD);
+ 	llc_pdu_init_as_test_cmd(skb);
+ 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
+-	if (likely(!rc))
++	if (likely(!rc)) {
++		skb_get(skb);
+ 		rc = dev_queue_xmit(skb);
++	}
+ 	return rc;
+ }
+ 
+--- a/net/llc/llc_sap.c
++++ b/net/llc/llc_sap.c
+@@ -197,29 +197,22 @@ out:
+  *	After executing actions of the event, upper layer will be indicated
+  *	if needed(on receiving an UI frame). sk can be null for the
+  *	datalink_proto case.
++ *
++ *	This function always consumes a reference to the skb.
+  */
+ static void llc_sap_state_process(struct llc_sap *sap, struct sk_buff *skb)
  {
-@@ -397,6 +399,7 @@ unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
+ 	struct llc_sap_state_ev *ev = llc_sap_ev(skb);
+ 
+-	/*
+-	 * We have to hold the skb, because llc_sap_next_state
+-	 * will kfree it in the sending path and we need to
+-	 * look at the skb->cb, where we encode llc_sap_state_ev.
+-	 */
+-	skb_get(skb);
+ 	ev->ind_cfm_flag = 0;
+ 	llc_sap_next_state(sap, skb);
+-	if (ev->ind_cfm_flag == LLC_IND) {
+-		if (skb->sk->sk_state == TCP_LISTEN)
+-			kfree_skb(skb);
+-		else {
+-			llc_save_primitive(skb->sk, skb, ev->prim);
+ 
+-			/* queue skb to the user. */
+-			if (sock_queue_rcv_skb(skb->sk, skb))
+-				kfree_skb(skb);
+-		}
++	if (ev->ind_cfm_flag == LLC_IND && skb->sk->sk_state != TCP_LISTEN) {
++		llc_save_primitive(skb->sk, skb, ev->prim);
++
++		/* queue skb to the user. */
++		if (sock_queue_rcv_skb(skb->sk, skb) == 0)
++			return;
  	}
- 	return 0;
+ 	kfree_skb(skb);
  }
-+EXPORT_SYMBOL(snd_timer_resolution);
- 
- static void snd_timer_notify1(struct snd_timer_instance *ti, int event)
- {
-@@ -588,6 +591,7 @@ int snd_timer_start(struct snd_timer_instance *timeri, unsigned int ticks)
- 	else
- 		return snd_timer_start1(timeri, true, ticks);
- }
-+EXPORT_SYMBOL(snd_timer_start);
- 
- /*
-  * stop the timer instance.
-@@ -601,6 +605,7 @@ int snd_timer_stop(struct snd_timer_instance *timeri)
- 	else
- 		return snd_timer_stop1(timeri, true);
- }
-+EXPORT_SYMBOL(snd_timer_stop);
- 
- /*
-  * start again..  the tick is kept.
-@@ -616,6 +621,7 @@ int snd_timer_continue(struct snd_timer_instance *timeri)
- 	else
- 		return snd_timer_start1(timeri, false, 0);
- }
-+EXPORT_SYMBOL(snd_timer_continue);
- 
- /*
-  * pause.. remember the ticks left
-@@ -627,6 +633,7 @@ int snd_timer_pause(struct snd_timer_instance * timeri)
- 	else
- 		return snd_timer_stop1(timeri, false);
- }
-+EXPORT_SYMBOL(snd_timer_pause);
- 
- /*
-  * reschedule the timer
-@@ -808,6 +815,7 @@ void snd_timer_interrupt(struct snd_timer * timer, unsigned long ticks_left)
- 	if (use_tasklet)
- 		tasklet_schedule(&timer->task_queue);
- }
-+EXPORT_SYMBOL(snd_timer_interrupt);
- 
- /*
- 
-@@ -858,6 +866,7 @@ int snd_timer_new(struct snd_card *card, char *id, struct snd_timer_id *tid,
- 		*rtimer = timer;
- 	return 0;
- }
-+EXPORT_SYMBOL(snd_timer_new);
- 
- static int snd_timer_free(struct snd_timer *timer)
- {
-@@ -977,6 +986,7 @@ void snd_timer_notify(struct snd_timer *timer, int event, struct timespec *tstam
- 	}
- 	spin_unlock_irqrestore(&timer->lock, flags);
- }
-+EXPORT_SYMBOL(snd_timer_notify);
- 
- /*
-  * exported functions for global timers
-@@ -992,11 +1002,13 @@ int snd_timer_global_new(char *id, int device, struct snd_timer **rtimer)
- 	tid.subdevice = 0;
- 	return snd_timer_new(NULL, id, &tid, rtimer);
- }
-+EXPORT_SYMBOL(snd_timer_global_new);
- 
- int snd_timer_global_free(struct snd_timer *timer)
- {
- 	return snd_timer_free(timer);
- }
-+EXPORT_SYMBOL(snd_timer_global_free);
- 
- int snd_timer_global_register(struct snd_timer *timer)
- {
-@@ -1006,6 +1018,7 @@ int snd_timer_global_register(struct snd_timer *timer)
- 	dev.device_data = timer;
- 	return snd_timer_dev_register(&dev);
- }
-+EXPORT_SYMBOL(snd_timer_global_register);
- 
- /*
-  *  System timer
-@@ -2121,17 +2134,3 @@ static void __exit alsa_timer_exit(void)
- 
- module_init(alsa_timer_init)
- module_exit(alsa_timer_exit)
--
--EXPORT_SYMBOL(snd_timer_open);
--EXPORT_SYMBOL(snd_timer_close);
--EXPORT_SYMBOL(snd_timer_resolution);
--EXPORT_SYMBOL(snd_timer_start);
--EXPORT_SYMBOL(snd_timer_stop);
--EXPORT_SYMBOL(snd_timer_continue);
--EXPORT_SYMBOL(snd_timer_pause);
--EXPORT_SYMBOL(snd_timer_new);
--EXPORT_SYMBOL(snd_timer_notify);
--EXPORT_SYMBOL(snd_timer_global_new);
--EXPORT_SYMBOL(snd_timer_global_free);
--EXPORT_SYMBOL(snd_timer_global_register);
--EXPORT_SYMBOL(snd_timer_interrupt);
--- 
-2.20.1
-
 
 
