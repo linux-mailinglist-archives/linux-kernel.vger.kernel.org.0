@@ -2,80 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E226ED6B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4CFED6BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbfKDAvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 19:51:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728276AbfKDAvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 19:51:37 -0500
-Received: from dragon (li1038-30.members.linode.com [45.33.96.30])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA170222CA;
-        Mon,  4 Nov 2019 00:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572828697;
-        bh=0cPXrS85ZFNq0IkzMuelys/+Yk/AanMHiImMkP3vTHk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a3fcrd5RjNk9WJIl1Kea4MTeMZiT4hoj6uZT561YIM3GlTk4L7qfgmg3wuE+tPP+q
-         X8co1KYv/PjnTvUgn2VaSwmcQpANSmp+qPg4UXaVci9e4A77T2sS9gEKKTr91FlY/k
-         +ifsMR1p3pkJ/2yfSDMz6OVuegJIP/F96NwuS/c4=
-Date:   Mon, 4 Nov 2019 08:51:10 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Duan <fugang.duan@nxp.com>
-Subject: Re: [PATCH V2 1/2] arm64: dts: imx8mm-evk: add phy-reset-gpios for
- fec1
-Message-ID: <20191104005108.GB24620@dragon>
-References: <1571652977-4754-1-git-send-email-peng.fan@nxp.com>
- <VI1PR04MB70239911C3C71E0503808F85EE630@VI1PR04MB7023.eurprd04.prod.outlook.com>
+        id S1728663AbfKDA7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 19:59:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56710 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfKDA7N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 19:59:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8B13A60DA5; Mon,  4 Nov 2019 00:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572829152;
+        bh=3OZKugvU5r90IVw10fKacd+KlmfjYAe93AmL/gppu84=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aC5BlMVTLRtQNv4OM+sWSF+w1oYc7TNHtKU7LhR2Bum8Osm+7Hd0yynRyqEDR2Mrx
+         gbLqmfXPlq3nxL9Mmy5tlymPD+Tp5usnrEuxashkql0b2WtLqTwvWvPn/ozw09zwXc
+         FVsnnpqqLb/8SICk6UoOTlefY8nRpGVOHb7xJuWc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 7671560DA5;
+        Mon,  4 Nov 2019 00:59:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572829151;
+        bh=3OZKugvU5r90IVw10fKacd+KlmfjYAe93AmL/gppu84=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DK0BjRtqjPexLP0drlJkQb0K9BEt2CQll6sS5Nva6u/FSXCUG1MeORtEQHX1tXtbS
+         De724GQOgf/zEhj40OzfgwQ082wr3BWkBu90sWd7WQz8fEh99qck5rFzrrRZ8ScyYL
+         Nk99h5f7W73ese4G8wVr8yAmFlIPFxluWJmgzGZw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB70239911C3C71E0503808F85EE630@VI1PR04MB7023.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 04 Nov 2019 08:59:11 +0800
+From:   cang@codeaurora.org
+To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] [PATCH v1 1/6] scsi: ufs: Add device reset in link recovery
+ path
+In-Reply-To: <BN7PR08MB56845B4A5F206A319CAFD3B1DB7C0@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <1572671016-883-1-git-send-email-cang@codeaurora.org>
+ <1572671016-883-2-git-send-email-cang@codeaurora.org>
+ <BN7PR08MB56845B4A5F206A319CAFD3B1DB7C0@BN7PR08MB5684.namprd08.prod.outlook.com>
+Message-ID: <d46aa74f8623cc0b61b94bd4fcc25ce4@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 06:59:51PM +0000, Leonard Crestez wrote:
-> On 21.10.2019 13:19, Peng Fan wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > We should not rely on bootloader to configure the phy reset.
-> > So introduce phy-reset-gpios property to let Linux handle phy reset
-> > itself.
-> > 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+On 2019-11-04 05:48, Bean Huo (beanhuo) wrote:
+> Hi, Can Guo
 > 
-> This broke NFS boot for me in next-20191031: board now hangs on DHCP.
-
-I dropped both patches for now.
-
-Shawn
-
+>> In order to recover from hibern8 exit failure, perform a reset in link 
+>> recovery
+>> path before issuing link start-up.
+>> 
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> ---
+>>  drivers/scsi/ufs/ufshcd.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>> 
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
+>> index
+>> c28c144..525f8e6 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -3859,6 +3859,9 @@ static int ufshcd_link_recovery(struct ufs_hba 
+>> *hba)
+>>  	ufshcd_set_eh_in_progress(hba);
+>>  	spin_unlock_irqrestore(hba->host->host_lock, flags);
+>> 
+>> +	/* Reset the attached device */
+>> +	ufshcd_vops_device_reset(hba);
+>> +
+>>  	ret = ufshcd_host_reset_and_restore(hba);
+>> 
+> There is time consumption in reset,  It is true that reset can
+> hide/solve some issues.
+> I don't know if you experienced issue resulting from an absent reset
+> in this case mentioned in
+> Patch commit comment.
 > 
-> It can be fixed by reverting this DT patch or by setting 
-> CONFIG_AT803X_PHY to y instead of m.
-> 
-> Needing a phy module is not a bug but everybody will need to either 
-> adjust .config or build modules into an initramfs somehow.
+
+Hi Bean,
+
+Yes, we did see some issues without this device reset here. For example,
+link start-up failure and/or NOP-IN timeout during probe stage.
+
+Best regards,
+Can Guo.
+
+>>  	spin_lock_irqsave(hba->host->host_lock, flags);
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
