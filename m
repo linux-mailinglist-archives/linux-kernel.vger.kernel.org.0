@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01951EEB80
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA85AEEBBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfKDVsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
+        id S1728602AbfKDVup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:50:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730050AbfKDVsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:31 -0500
+        id S2387784AbfKDVun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:50:43 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91A6A20B7C;
-        Mon,  4 Nov 2019 21:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 811FC214D9;
+        Mon,  4 Nov 2019 21:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904111;
-        bh=AyFqGUoXh6s5I7sdo/tb/0ayBl0NfBQWuYu8UjpaQ80=;
+        s=default; t=1572904243;
+        bh=hnk8VfwAow7cYuRhDBroNSThsGc48+kAJd2FwB4YOvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mgfhaczboml1arNycT4S4rBbqx5g0sn9XFnQZNnOXatrrPqv4fHd4Am6rZkXWUufG
-         GUCFULmOFNvELe+zRZqopqupRZARZQQnoYwNRazi7eRk/GtNJPdNk6bjF8P9cSwgzC
-         qUKiaZS/DdgBHBfh4z54Ok7lGFYQgFiYN4orovH8=
+        b=shCHRitI9Q11/sTdXbgc89qGUG/leYU1jnn25gJwqeTk6Gx3jIJRUVPMb8CZpEb94
+         hJp5wbg8igC0Lu+YjI4krPQoLxo+nZAiM69Lj9yqW0h7jrhO72gIV2PiIcUvCkmbJ+
+         Jd47rssqYVfTnu3YFlNiAAVeG90EHw0vP/uSR2vc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 26/46] fuse: truncate pending writes on O_TRUNC
+Subject: [PATCH 4.9 35/62] fuse: truncate pending writes on O_TRUNC
 Date:   Mon,  4 Nov 2019 22:44:57 +0100
-Message-Id: <20191104211859.052628308@linuxfoundation.org>
+Message-Id: <20191104211938.908549395@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -75,7 +75,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
 -	if (lock_inode)
 +	if (is_wb_truncate) {
- 		mutex_lock(&inode->i_mutex);
+ 		inode_lock(inode);
 +		fuse_set_nowrite(inode);
 +	}
  
@@ -87,7 +87,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 -	if (lock_inode)
 +	if (is_wb_truncate) {
 +		fuse_release_nowrite(inode);
- 		mutex_unlock(&inode->i_mutex);
+ 		inode_unlock(inode);
 +	}
  
  	return err;
