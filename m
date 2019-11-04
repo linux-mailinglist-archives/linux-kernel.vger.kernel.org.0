@@ -2,125 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A3BEE05B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D27FBEE062
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:47:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbfKDMqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:46:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbfKDMqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:46:24 -0500
-Received: from dragon (li1038-30.members.linode.com [45.33.96.30])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11BD8218BA;
-        Mon,  4 Nov 2019 12:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572871583;
-        bh=uu6hMcwvil/xb9dqy8jjyGW+1kTfPIrio1g2NerX6OE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Dxf2qdCcOkPEg/SW5EDL+yx9RaRwjiVhtnRit11I3Y0pAfi0DJ5GvvIuch+W02iXF
-         1c/lS5US48HKzpmbDWvTmti++TWT0jI3XG/Vlkf6AM5BYboyPPtELDCYqzZRZKfO3O
-         kbzIXvY/7wzA+S6xm9qMwBXQAHY3NXdT7iNrG4iI=
-Date:   Mon, 4 Nov 2019 20:45:55 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] ARM: dts: imx6ul-kontron-n6x1x-s: Disable the
- snvs-poweroff driver
-Message-ID: <20191104124553.GY24620@dragon>
-References: <20191031142112.12431-1-frieder.schrempf@kontron.de>
- <20191031142112.12431-10-frieder.schrempf@kontron.de>
- <20191104074346.GT24620@dragon>
- <626ad87a-eb1d-4dca-7cd3-8c5f38025aec@kontron.de>
- <7da30a17-d16c-3cde-12a8-430ff3eec692@kontron.de>
+        id S1728972AbfKDMrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 07:47:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46862 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728396AbfKDMrX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 07:47:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nQW/bkzEewczaxT+3uYr2EI926apxCfUzfvK6W9flNM=; b=eX9YNLdaHWXApFC5WH3YUJSoz
+        duye5V5aJxyEa0X2sRrWdWgQsDTo4uhgIwg2UK8SaMVGp11RGSodOlIl07eRtejb2BzATT5SOEPtv
+        lq9Hkne174NX0ErvZCPnbeJU5n9yGScoQnxfQfhkJYoxb2ct+DWNG8cLD4lKkgleLNPE4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iRblP-0002Yo-Ij; Mon, 04 Nov 2019 12:47:19 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id F2AE1274301E; Mon,  4 Nov 2019 12:47:18 +0000 (GMT)
+Date:   Mon, 4 Nov 2019 12:47:18 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     hslester96@gmail.com, Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-spi@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: sifive: disable clk when probe fails and remove
+Message-ID: <20191104124718.GC5238@sirena.co.uk>
+References: <20191101121745.13413-1-hslester96@gmail.com>
+ <mhng-3be3dc4e-15f2-4ad2-b156-ea5439e729bd@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="96YOpH+ONegL0A3E"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7da30a17-d16c-3cde-12a8-430ff3eec692@kontron.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <mhng-3be3dc4e-15f2-4ad2-b156-ea5439e729bd@palmer-si-x1c4>
+X-Cookie: This page intentionally left blank.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 11:18:19AM +0000, Schrempf Frieder wrote:
-> On 04.11.19 09:06, Frieder Schrempf wrote:
-> > Hi Shawn,
-> > 
-> > On 04.11.19 08:43, Shawn Guo wrote:
-> >> On Thu, Oct 31, 2019 at 02:24:27PM +0000, Schrempf Frieder wrote:
-> >>> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >>>
-> >>> The snvs-poweroff driver can power off the system by pulling the
-> >>> PMIC_ON_REQ signal low, to let the PMIC disable the power.
-> >>> The Kontron SoMs do not have this signal connected, so let's remove
-> >>> the node.
-> >>>
-> >>> This seems to fix a real issue when the signal is asserted at
-> >>> poweroff, but not actually causing the power to turn off. It was
-> >>> observed, that in this case the system would not shut down properly.
-> >>
-> >> I do not quite follow on this.  How does disabling snvs_poweroff fix the
-> >> issue?  The root cause of system not shut down properly seems to be that
-> >> PMIC doesn't shut down power.  This looks like a clean-up rather than
-> >> bug fix.
-> > 
-> > I don't know the exact reasons, but we had issues on these boards when 
-> > doing a "poweroff". The kernel would print something like the log below.
-> > Disabling the snvs-poweroff solved this.
-> > 
-> > But note that this has last been reproduced on v4.14. So I'm not sure if 
-> > this is still a problem with the current kernel.
-> > 
-> > #######
-> > reboot: Power down
-> > Unable to poweroff system
-> > 
-> > ====================================
-> > WARNING: halt/675 still has locks held!
-> > 4.14.104-exceet #1 Not tainted
-> > ------------------------------------
-> > 1 lock held by halt/675:
-> >   #0:  (reboot_mutex){+.+.}, at: [<c0145a98>] SyS_reboot+0x14c/0x1dc
-> > #######
-> > 
-> >>
-> >>>
-> >>> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >>> Fixes: 1ea4b76cdfde ("ARM: dts: imx6ul-kontron-n6310: Add Kontron 
-> >>> i.MX6UL N6310 SoM and boards")
-> >>
-> >> If you think this is really a bug fix, it should be applied to the file
-> >> before renaming rather than the one after renaming.
-> > 
-> > I will try to reproduce the issue with the current kernel and depending 
-> > on the results either drop the Fixes tag or move the patch before the 
-> > renaming.
-> 
-> I just tried this with 5.4-rc5 and the issue persists. When 
-> snvs-poweroff is enabled without the hardware actually being able to 
-> power down via PMIC I get a locking WARNING from the kernel. Probably 
-> because the system is still running, when it's already supposed to be 
-> shut down by the PMIC.
 
-I still do not get it.  Are you saying that with snvs-poweroff being
-disabled, your system is now able to be shut down properly by PMIC?
+--96YOpH+ONegL0A3E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Shawn
+On Fri, Nov 01, 2019 at 04:07:29PM -0700, Palmer Dabbelt wrote:
+> On Fri, 01 Nov 2019 05:17:45 PDT (-0700), hslester96@gmail.com wrote:
+> > The driver forgets to disable and unprepare clk when probe fails and
+> > remove.
+> > Add the calls to fix the problem.
 
-> 
-> So this fixes a real problem and therefore I will keep the Fixes tag and 
-> move the patch to the proper place in this series.
+> Reviewed-by: Palmer Dabbelt <palmer@dabbelt.com>
+
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+--96YOpH+ONegL0A3E
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3AHdYACgkQJNaLcl1U
+h9Bxbwf+PS/3tt1r3nRdDUeTgiw12asFTlFdosGPaCdJ0zCp0XBMPgFZBia9R16z
+QBrOHOQ5BL+W7FEEOh9hfPpvdVPzgygwAip2n2uHEWrOZ7pt7PWoGj2ybu0JDXTu
+rPhwWNvY36hCVKElOiixQeR43pU7yKJZzPoWVTxJgGarWaE03ngE0jEvQUqtsVMB
+aI0LNK076Dt9geC7wg5FFSppQTVv6c9PvpTehaS5hKvY00hfUS3i9uFgYsXjuggz
+TYsKknIrHD0gm0Q1bCfGK7u6C3YkbyPs6uj1j2xZLh5isMgVokBkrlpkbpMtKl+i
+PPxqmUKox9ymgSDfmnZ1yGneuS3qVg==
+=2j2y
+-----END PGP SIGNATURE-----
+
+--96YOpH+ONegL0A3E--
