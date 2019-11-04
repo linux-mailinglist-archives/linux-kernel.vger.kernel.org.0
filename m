@@ -2,100 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FB2ED992
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1326BED9A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 08:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfKDG7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:59:01 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45195 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbfKDG7A (ORCPT
+        id S1727870AbfKDHB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 02:01:27 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62334 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726441AbfKDHB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:59:00 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n21so2667459ljg.12
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 22:58:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
-        b=vvdCJc1RINMcL5JoJz312DaAniIDfMzCcnwAI/nzlhioj8GGGYgW5khIKfb5WKPoih
-         qMp+vCbDbemdWq8i0Mf58v3uh/mu8EhKBMgRhulZLShXtK+MNVeAUm7PQ2aQiAtYd/+j
-         Jg6nmlI9XTaqFYG/d/qIJDVf1ikfm6/i0iK1k912esWDVF1151DSFoBkdr1dAOlWvfmC
-         jsn+40LPewRJA3SIUnwPlyony4u564JLgwa29HfMy3fBdaUY2d1amOC0D3N4Y4FXSyEs
-         uXfrP9qkdne00KhZwEYKvXolsJ2gV5a0/Mi5PvdRJEwJ90Nr/tnHijeE3ql/YqVMQM1K
-         AvmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
-        b=CRAEb+nMqBeFxGcil9N5t4gqW7YtJGwLLLEBpk5xDT12JL6OufKvyDXNeQmKMs0jp9
-         lyrEdjsaTso1g0NznJHK0u8uBMMfVwqFxF/cMTio3SWr2sfrfxeg+5hxRJj6AN+1I+0k
-         jVDRuf4ApbBDKRlG5FfqR4ci9E9EW5Q3s6F2FSySUq2nsv/p5inx7VwHDMA8Ig9t7e/b
-         B/aDPP4/wlOBojHHG1Mgj7zS/WHiGctPYWpT8P2LOMX69W0iZrO9UidHauiY1ZdUBPwi
-         wB4HtxMfNLdlyk3uCQs8UZQ41Fhhq9HBrudY9kAY+HWs9lTyEIw76L3OItlYssRdIXst
-         LBHQ==
-X-Gm-Message-State: APjAAAWw+HeZW4Dd8vn5vRs/VmTVGYBMmm1B5HMPmDYpyYiybNmCySGb
-        EjCoQ9csLJL8dZekUEOHnj/tNJS0gZwpo7GnYVMApA==
-X-Google-Smtp-Source: APXvYqwDEcaV1wOC5X14ad1vPw2VW4B5zXbZYrai12akzfGxkCIeR+UrJYYWYChUz2q1aw4cIzuU9bUsn4PO7ZkCq3g=
-X-Received: by 2002:a2e:9a12:: with SMTP id o18mr9966567lji.191.1572850738786;
- Sun, 03 Nov 2019 22:58:58 -0800 (PST)
+        Mon, 4 Nov 2019 02:01:27 -0500
+X-UUID: d24b734281444918b8fb31d13f0c5550-20191104
+X-UUID: d24b734281444918b8fb31d13f0c5550-20191104
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 870836612; Mon, 04 Nov 2019 15:01:18 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 4 Nov 2019 15:01:15 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 4 Nov 2019 15:01:14 +0800
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will.deacon@arm.com>
+CC:     Evan Green <evgreen@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
+        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
+        <anan.sun@mediatek.com>, <cui.zhang@mediatek.com>,
+        <chao.hao@mediatek.com>, <edison.hsieh@mediatek.com>
+Subject: [PATCH v5 0/7] Improve tlb range flush
+Date:   Mon, 4 Nov 2019 15:01:01 +0800
+Message-ID: <1572850868-22315-1-git-send-email-yong.wu@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
- <1572530323-14802-7-git-send-email-sumit.garg@linaro.org> <20191031214745.GG10507@linux.intel.com>
- <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com> <20191101201957.GA8369@linux.intel.com>
-In-Reply-To: <20191101201957.GA8369@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 4 Nov 2019 12:28:47 +0530
-Message-ID: <CAFA6WYNwSSaZv5OM=q+LCyn0mEdpg7K+W_v2_NBHhtktg1BFXw@mail.gmail.com>
-Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted Keys
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Stuart Yoder <stuart.yoder@arm.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Nov 2019 at 01:50, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
->
-> > Isn't this statement contradicting with your earlier statement
-> > regarding the right order would be to complete TEE patches review
-> > first and then come up with documentation here [2]?
-> >
-> > [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
-> > [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
->
-> With the intersecting issues, namely key generation and conflicting
-> keyctl parameters, that was not a well considered statement.
+This patchset mainly fixes a tlb flush timeout issue and use the new
+iommu_gather to re-implement the tlb flush flow. and several clean up
+patches about the tlb_flush.
 
-Okay, let me work on documentation first, but I think resending whole
-patch-set just for documentation review and rework would be an
-overkill. Would minor revisions of this patch only like v3.1, v3.2
-etc. work for you? And later I could send next version of this
-patch-set once we agree on documentation.
+change note:
 
--Sumit
+v5: No code change. Only update the commit message of the last patch[7/7]
+    suggested from Tomasz in the internal review.
 
->
-> /Jarkko
+v4: https://lore.kernel.org/linux-iommu/1571196792-12382-1-git-send-email-yong.wu@mediatek.com/#t
+    1. Add a new tlb_lock for tlb operations.
+    2. Delete the pgtlock.
+    3. Remove the "writel" patch.
+
+v3: https://lore.kernel.org/linux-iommu/1571035101-4213-1-git-send-email-yong.wu@mediatek.com/T/#t
+   1. Use the gather to implement the tlb_flush suggested from Tomasz.
+   2. add some clean up patches.
+
+v2:
+https://lore.kernel.org/linux-iommu/1570627143-29441-1-git-send-email-yong.wu@mediatek.com/T/#t
+   1. rebase on v5.4-rc1
+   2. only split to several patches.
+
+v1:
+https://lore.kernel.org/linux-iommu/CAAFQd5C3U7pZo4SSUJ52Q7E+0FaUoORQFbQC5RhCHBhi=NFYTw@mail.gmail.com/T/#t
+
+Yong Wu (7):
+  iommu/mediatek: Correct the flush_iotlb_all callback
+  iommu/mediatek: Add a new tlb_lock for tlb_flush
+  iommu/mediatek: Use gather to achieve the tlb range flush
+  iommu/mediatek: Delete the leaf in the tlb_flush
+  iommu/mediatek: Move the tlb_sync into tlb_flush
+  iommu/mediatek: Get rid of the pgtlock
+  iommu/mediatek: Reduce the tlb flush timeout value
+
+ drivers/iommu/mtk_iommu.c | 88 +++++++++++++++--------------------------------
+ drivers/iommu/mtk_iommu.h |  2 +-
+ 2 files changed, 29 insertions(+), 61 deletions(-)
+
+-- 
+1.9.1 
+
