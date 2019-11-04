@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D1DEEC44
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF641EEB93
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:49:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388160AbfKDVz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50624 "EHLO mail.kernel.org"
+        id S1730267AbfKDVtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:49:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387652AbfKDVzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:23 -0500
+        id S1730253AbfKDVtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:49:07 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D82EC217F4;
-        Mon,  4 Nov 2019 21:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48E7A214E0;
+        Mon,  4 Nov 2019 21:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904522;
-        bh=d11sopKfzpOkYe5kN+ObEO6qxaUWsS4eeR8/fg6kiik=;
+        s=default; t=1572904146;
+        bh=AEX36XsO5lXsy2UodCcGI6ADsqU81+EXoRM9bAA0rL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VROMNf48cja6DKrppJoNJ6ea/SCsHWoJ3aCsSna5rzRKigK7u23XSe47hhHoGl93L
-         rLb8NTOZLyrWNmBMKWY8kTZyKPyXTLL56uKv9On3UDK+f/qAv2uRuyI6YfXqbqSWfl
-         eeZyAz+l1xWQjddDgFqbd6o3/C/rLQJ6NcwQqaUc=
+        b=RBnT+5a/zBqqoeHD9eI/D0qimdESwT5ExwTr9lHXWimODsiSxPVm1ETbM15y1gjFd
+         ufT02DJfZguxrv3gzygUWOVNVLyTCQeG6GFogRmQhkIRg/n4Ckt3HYgToI5oLqIMR2
+         vqKLLWj/cTwupgB4T4cf7uRqrVyJJTJ8Qa813Syo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.14 75/95] HID: i2c-hid: add Trekstor Primebook C11B to descriptor override
+        stable@vger.kernel.org,
+        syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 42/46] net: usb: sr9800: fix uninitialized local variable
 Date:   Mon,  4 Nov 2019 22:45:13 +0100
-Message-Id: <20191104212117.619929819@linuxfoundation.org>
+Message-Id: <20191104211914.396887035@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Valentin Vidic <vvidic@valentin-vidic.from.hr>
 
-commit 09f3dbe474735df13dd8a66d3d1231048d9b373f upstream.
+commit 77b6d09f4ae66d42cd63b121af67780ae3d1a5e9 upstream.
 
-The Primebook C11B uses the SIPODEV SP1064 touchpad. There are 2 versions
-of this 2-in-1 and the touchpad in the older version does not supply
-descriptors, so it has to be added to the override list.
+Make sure res does not contain random value if the call to
+sr_read_cmd fails for some reason.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Reported-by: syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com
+Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/net/usb/sr9800.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-@@ -323,6 +323,25 @@ static const struct dmi_system_id i2c_hi
- 		.driver_data = (void *)&sipodev_desc
- 	},
- 	{
-+		/*
-+		 * There are at least 2 Primebook C11B versions, the older
-+		 * version has a product-name of "Primebook C11B", and a
-+		 * bios version / release / firmware revision of:
-+		 * V2.1.2 / 05/03/2018 / 18.2
-+		 * The new version has "PRIMEBOOK C11B" as product-name and a
-+		 * bios version / release / firmware revision of:
-+		 * CFALKSW05_BIOS_V1.1.2 / 11/19/2018 / 19.2
-+		 * Only the older version needs this quirk, note the newer
-+		 * version will not match as it has a different product-name.
-+		 */
-+		.ident = "Trekstor Primebook C11B",
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TREKSTOR"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Primebook C11B"),
-+		},
-+		.driver_data = (void *)&sipodev_desc
-+	},
-+	{
- 		.ident = "Direkt-Tek DTLAPY116-2",
- 		.matches = {
- 			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Direkt-Tek"),
+--- a/drivers/net/usb/sr9800.c
++++ b/drivers/net/usb/sr9800.c
+@@ -336,7 +336,7 @@ static void sr_set_multicast(struct net_
+ static int sr_mdio_read(struct net_device *net, int phy_id, int loc)
+ {
+ 	struct usbnet *dev = netdev_priv(net);
+-	__le16 res;
++	__le16 res = 0;
+ 
+ 	mutex_lock(&dev->phy_mutex);
+ 	sr_set_sw_mii(dev);
 
 
