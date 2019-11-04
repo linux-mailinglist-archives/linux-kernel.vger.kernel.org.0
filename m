@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A538EF070
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA11FEEF05
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387403AbfKDVt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:49:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40640 "EHLO mail.kernel.org"
+        id S2389956AbfKDWSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:18:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730353AbfKDVtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:49:21 -0500
+        id S2389171AbfKDWBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:46 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF8D1214D8;
-        Mon,  4 Nov 2019 21:49:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8CA205C9;
+        Mon,  4 Nov 2019 22:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904161;
-        bh=taHtxd+ytwMIQ/xVfUB+ba14QxmtBFsEvaK2BHFPEc0=;
+        s=default; t=1572904906;
+        bh=v0IrQyRi9n+bfhh9+5Fe2BJGlZxsDr2cCWzbbt2oXfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v9c6CdM1EYqrfZBTECpOFzF/I4IaP9HAhruqs/zfM6yYsPnkjua2Yr6Km38YcAAKz
-         y5xqa55+sRrgckCLRIuex/pTXBxmJ6+67oRkR36Sp/YfjP67+g6EUWeaICRvmIWfP0
-         oYuwLo4yMfbXgRbhYXFZ3NPjFMWlxMY98g+h/iqU=
+        b=fy/ol/dtOK4uwYyfDjMsplgyO4GUkMLy+Ypym8tCn01tJip9iudQeyAL0B4iGz3D1
+         V+yYd+3ievpfJWm2DGI7fwBQP/sKfX312hswkHj/YJmtuQx0Agwp/AaIE5JT8FX8s4
+         S+SCxTxTDoISeoR5YuPnpBfbfE2A+0ZiWD9L/5nw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 33/46] USB: serial: whiteheat: fix line-speed endianness
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 111/149] ALSA: bebob: Fix prototype of helper function to return negative value
 Date:   Mon,  4 Nov 2019 22:45:04 +0100
-Message-Id: <20191104211906.971842926@linuxfoundation.org>
+Message-Id: <20191104212144.168753005@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,63 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 84968291d7924261c6a0624b9a72f952398e258b upstream.
+commit f2bbdbcb075f3977a53da3bdcb7cd460bc8ae5f2 upstream.
 
-Add missing endianness conversion when setting the line speed so that
-this driver might work also on big-endian machines.
+A helper function of ALSA bebob driver returns negative value in a
+function which has a prototype to return unsigned value.
 
-Also use an unsigned format specifier in the corresponding debug
-message.
+This commit fixes it by changing the prototype.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191029102354.2733-3-johan@kernel.org
+Fixes: eb7b3a056cd8 ("ALSA: bebob: Add commands and connections/streams management")
+Cc: <stable@vger.kernel.org> # v3.16+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20191026030620.12077-1-o-takashi@sakamocchi.jp
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/whiteheat.c |    9 ++++++---
- drivers/usb/serial/whiteheat.h |    2 +-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ sound/firewire/bebob/bebob_stream.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/serial/whiteheat.c
-+++ b/drivers/usb/serial/whiteheat.c
-@@ -681,6 +681,7 @@ static void firm_setup_port(struct tty_s
- 	struct device *dev = &port->dev;
- 	struct whiteheat_port_settings port_settings;
- 	unsigned int cflag = tty->termios.c_cflag;
-+	speed_t baud;
+--- a/sound/firewire/bebob/bebob_stream.c
++++ b/sound/firewire/bebob/bebob_stream.c
+@@ -253,8 +253,7 @@ end:
+ 	return err;
+ }
  
- 	port_settings.port = port->port_number + 1;
- 
-@@ -741,11 +742,13 @@ static void firm_setup_port(struct tty_s
- 	dev_dbg(dev, "%s - XON = %2x, XOFF = %2x\n", __func__, port_settings.xon, port_settings.xoff);
- 
- 	/* get the baud rate wanted */
--	port_settings.baud = tty_get_baud_rate(tty);
--	dev_dbg(dev, "%s - baud rate = %d\n", __func__, port_settings.baud);
-+	baud = tty_get_baud_rate(tty);
-+	port_settings.baud = cpu_to_le32(baud);
-+	dev_dbg(dev, "%s - baud rate = %u\n", __func__, baud);
- 
- 	/* fixme: should set validated settings */
--	tty_encode_baud_rate(tty, port_settings.baud, port_settings.baud);
-+	tty_encode_baud_rate(tty, baud, baud);
-+
- 	/* handle any settings that aren't specified in the tty structure */
- 	port_settings.lloop = 0;
- 
---- a/drivers/usb/serial/whiteheat.h
-+++ b/drivers/usb/serial/whiteheat.h
-@@ -91,7 +91,7 @@ struct whiteheat_simple {
- 
- struct whiteheat_port_settings {
- 	__u8	port;		/* port number (1 to N) */
--	__u32	baud;		/* any value 7 - 460800, firmware calculates
-+	__le32	baud;		/* any value 7 - 460800, firmware calculates
- 				   best fit; arrives little endian */
- 	__u8	bits;		/* 5, 6, 7, or 8 */
- 	__u8	stop;		/* 1 or 2, default 1 (2 = 1.5 if bits = 5) */
+-static unsigned int
+-map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
++static int map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
+ {
+ 	unsigned int sec, sections, ch, channels;
+ 	unsigned int pcm, midi, location;
 
 
