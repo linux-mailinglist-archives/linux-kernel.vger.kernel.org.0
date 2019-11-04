@@ -2,90 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B8AEEA0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF4DEEA16
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:48:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfKDUqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 15:46:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728392AbfKDUqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 15:46:39 -0500
-Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E88F020679;
-        Mon,  4 Nov 2019 20:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572900398;
-        bh=iId+7Mf9N878uMPp7QnhpaRhi2VZhgetrbRgL8S6wjc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0c3pb4MjyGgppSaUthsGGhz/HsDyOvxejGnjxLh0lmfgJKM8F4B1RDWenlNBmL01V
-         c2jOzeb3e/ko2ZLd59fGrzNyXO7IsZWYJWHD9lPQfXjmHZSA5yzmGf+K5pWe2g+TDP
-         jy3intsVPe2j9DXqSZTKPZg96odIi8vtrnaExJXU=
-Date:   Mon, 4 Nov 2019 21:46:36 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ian Abbott <abbotti@mev.co.uk>
-Cc:     Jules Irenge <jbi.octave@gmail.com>,
-        outreachy-kernel@googlegroups.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: comedi: rewrite macro function with GNU
- extension typeof
-Message-ID: <20191104204636.GA2359379@kroah.com>
-References: <20191104163331.68173-1-jbi.octave@gmail.com>
- <84a2d50f-a1ac-bdc5-989c-b0294e9dea22@mev.co.uk>
+        id S1729524AbfKDUsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 15:48:18 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7854 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfKDUsR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 15:48:17 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dc08e930000>; Mon, 04 Nov 2019 12:48:19 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 04 Nov 2019 12:48:14 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 04 Nov 2019 12:48:14 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
+ 2019 20:48:13 +0000
+Subject: Re: [PATCH v2 07/18] infiniband: set FOLL_PIN, FOLL_LONGTERM via
+ pin_longterm_pages*()
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-8-jhubbard@nvidia.com>
+ <20191104203346.GF30938@ziepe.ca>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <578c1760-7221-4961-9f7d-c07c22e5c259@nvidia.com>
+Date:   Mon, 4 Nov 2019 12:48:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84a2d50f-a1ac-bdc5-989c-b0294e9dea22@mev.co.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191104203346.GF30938@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572900499; bh=/CIgIUDm2203i17lURbkYa+rDusoBTvPAWSv4QBC930=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Yhst2fvnnBPG5D1itfKb9hWxMLjbVqSUWfqLvh0Fn/i71mLFE3e5+ptkQVEJi3MDe
+         qvaT1Tf+d7ek6vNTBSdtBp5CUQEtAg8UWqTgqXAGToNZygsVb5ro7FYsz0ILbTU2vU
+         CHYuf1412PLOn7MH7eTBhi57kffHLHkpA6icq7phiDnf8zBahThiB3Ps2f/yPxHzSq
+         q07AwvC3mSpeq/SRv5bYDV+8pVUTKGMpYVp0AVV6TI0S7zM3JQt7/R+ADu5r+VHpiq
+         Z5GWG1l9M6HD/AHMOed3MzO4wKmITLxC/eG+US5I7mvuRcIYO8agMI/4/XmcSLU9xl
+         +RKSvRaoFFIeg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 05:03:04PM +0000, Ian Abbott wrote:
-> On 04/11/2019 16:33, Jules Irenge wrote:
-> > Rewrite macro function with the GNU extension typeof
-> > to remove a possible side-effects of MACRO argument reuse "x".
-> >   - Problem could rise if arguments have different types
-> > and different use though.
-> > 
-> > Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> > ---
-> > v1 - had no full commit log message, with changes not intended to be in the patch
-> > v2 - remove some changes not intended to be in this driver
-> >       include note of a potential problem
-> >   drivers/staging/comedi/comedi.h | 6 ++++--
-> >   1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/staging/comedi/comedi.h b/drivers/staging/comedi/comedi.h
-> > index 09a940066c0e..a57691a2e8d8 100644
-> > --- a/drivers/staging/comedi/comedi.h
-> > +++ b/drivers/staging/comedi/comedi.h
-> > @@ -1103,8 +1103,10 @@ enum ni_common_signal_names {
-> >   /* *** END GLOBALLY-NAMED NI TERMINALS/SIGNALS *** */
-> > -#define NI_USUAL_PFI_SELECT(x)	(((x) < 10) ? (0x1 + (x)) : (0xb + (x)))
-> > -#define NI_USUAL_RTSI_SELECT(x)	(((x) < 7) ? (0xb + (x)) : 0x1b)
-> > +#define NI_USUAL_PFI_SELECT(x)\
-> > +	({typeof(x) x_ = (x); (x_ < 10) ? (0x1 + x_) : (0xb + x_); })
-> > +#define NI_USUAL_RTSI_SELECT(x)\
-> > +	({typeof(x) x_ = (x); (x_ < 7) ? (0xb + x_) : 0x1b; })
-> >   /*
-> >    * mode bits for NI general-purpose counters, set with
-> > 
+On 11/4/19 12:33 PM, Jason Gunthorpe wrote:
+...
+>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+>> index 24244a2f68cc..c5a78d3e674b 100644
+>> +++ b/drivers/infiniband/core/umem.c
+>> @@ -272,11 +272,10 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+>>  
+>>  	while (npages) {
+>>  		down_read(&mm->mmap_sem);
+>> -		ret = get_user_pages(cur_base,
+>> +		ret = pin_longterm_pages(cur_base,
+>>  				     min_t(unsigned long, npages,
+>>  					   PAGE_SIZE / sizeof (struct page *)),
+>> -				     gup_flags | FOLL_LONGTERM,
+>> -				     page_list, NULL);
+>> +				     gup_flags, page_list, NULL);
 > 
-> I wasn't sure about this the first time around due to the use of GNU
-> extensions in uapi header files, but I see there are a few, rare instances
-> of this GNU extension elsewhere in other uapi headers (mainly in netfilter
-> stuff), so I guess it's OK.  However, it  does mean that user code that uses
-> these macros will no longer compile unless GNU extensions are enabled.
+> FWIW, this one should be converted to fast as well, I think we finally
+> got rid of all the blockers for that?
 > 
-> Does anyone know any "best practices" regarding use of GNU extensions in
-> user header files under Linux?
 
-We try to never do it if at all possible :)
+I'm not aware of any blockers on the gup.c end, anyway. The only broken thing we
+have there is "gup remote + FOLL_LONGTERM". But we can do "gup fast + LONGTERM". 
+
+Unless I'm really missing something, in which case several other call sites
+would need changes.
+
+I'll change it to pin_longterm_pages_fast().
 
 thanks,
 
-greg k-h
+John Hubbard
+NVIDIA
