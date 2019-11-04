@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E90EDF2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E22EDF36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbfKDLx7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 06:53:59 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:47196 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfKDLx7 (ORCPT
+        id S1729147AbfKDLyI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 06:54:08 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:51732 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfKDLyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:53:59 -0500
+        Mon, 4 Nov 2019 06:54:06 -0500
 Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 2E24160CAF3;
-        Mon,  4 Nov 2019 12:53:57 +0100 (CET)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id E1E4160039A;
+        Mon,  4 Nov 2019 12:53:59 +0100 (CET)
 Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
  (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 4 Nov 2019
- 12:53:56 +0100
+ 12:53:59 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 4 Nov 2019 12:53:56 +0100
+ 15.01.1713.004; Mon, 4 Nov 2019 12:53:59 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
@@ -38,13 +38,15 @@ CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 0/9] Add support for more Kontron i.MX6UL/ULL SoMs and
- boards
-Thread-Topic: [PATCH v4 0/9] Add support for more Kontron i.MX6UL/ULL SoMs and
- boards
-Thread-Index: AQHVkwaJH746zF7YVkilpRPjJDiF5w==
-Date:   Mon, 4 Nov 2019 11:53:56 +0000
-Message-ID: <20191104115352.8728-1-frieder.schrempf@kontron.de>
+Subject: [PATCH v4 1/9] ARM: dts: imx6ul-kontron-n6310: Move common SoM nodes
+ to a separate file
+Thread-Topic: [PATCH v4 1/9] ARM: dts: imx6ul-kontron-n6310: Move common SoM
+ nodes to a separate file
+Thread-Index: AQHVkwaLozmp4mUWskywg6g6pJgdZQ==
+Date:   Mon, 4 Nov 2019 11:53:59 +0000
+Message-ID: <20191104115352.8728-2-frieder.schrempf@kontron.de>
+References: <20191104115352.8728-1-frieder.schrempf@kontron.de>
+In-Reply-To: <20191104115352.8728-1-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -56,7 +58,7 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 2E24160CAF3.A0C35
+X-SnT-MailScanner-ID: E1E4160039A.A0891
 X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
@@ -73,74 +75,244 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-In order to support more of the i.MX6UL/ULL-based SoMs and boards by
-Kontron Electronics GmbH, we restructure the devicetrees to share common
-parts and add new devicetrees for the missing boards.
+The Kontron N6311 and N6411 SoMs are very similar to N6310. In
+preparation to add support for them, we move the common nodes to a
+separate file imx6ul-kontron-n6x1x-som-common.dtsi.
 
-Currently there are the following SoM flavors:
-  * N6310: SoM with i.MX6UL-2, 256MB RAM, 256MB SPI NAND
-  * N6311: SoM with i.MX6UL-2, 512MB RAM, 512MB SPI NAND (new)
-  * N6411: SoM with i.MX6ULL, 512MB RAM, 512MB SPI NAND (new)
-
-Each of the SoMs also features 1MB SPI NOR and an Ethernet PHY. The carrier
-board for the evalkit is the same for all SoMs.
-
-This series also includes some small enhancements and fixes for the shared
-parts of the devicetrees.
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Changes for v4:
-===============
-* Move the patch that removes the snvs-poweroff node before the file is moved
-* Drop patch to specify bus-width as this is already set in imx6ul.dtsi
-* Drop patch to add an entry for the dts files in MAINTAINERS
-* Remove Fixes tags for patches that are not actually fixes
-
-Changes for v3:
-===============
-* Add a patch that removes the snvs-poweroff node as it is not used
-* Drop patch to add missing includes for gpio.h and irq.h as it is not needed
-* Add Fixes tags to those patches that fix an issue in the existing devicetrees
-* Add Reviewed-by tags from Krzysztof
-* Minor improvements to commit messages and cover letter
-
-Changes for v2:
-===============
-* Patch 1: Move the spi-flash node instead of duplicating it
-* Patch 3: Add a missing include for dt-bindings/gpio/gpio.h
-* Patch 11: Add patch to add missing includes for gpio.h and irq.h
-* Add Reviewed-by tags from Krzysztof and Rob
----
-Frieder Schrempf (9):
-  ARM: dts: imx6ul-kontron-n6310: Move common SoM nodes to a separate
-    file
-  ARM: dts: Add support for two more Kontron SoMs N6311 and N6411
-  ARM: dts: imx6ul-kontron-n6310-s: Disable the snvs-poweroff driver
-  ARM: dts: imx6ul-kontron-n6310-s: Move common nodes to a separate file
-  ARM: dts: Add support for two more Kontron evalkit boards 'N6311 S'
-    and 'N6411 S'
-  ARM: dts: imx6ul-kontron-n6x1x: Add 'chosen' node with 'stdout-path'
-  ARM: dts: imx6ul-kontron-n6x1x-s: Add vbus-supply and overcurrent
-    polarity to usb nodes
-  ARM: dts: imx6ul-kontron-n6x1x-s: Remove an obsolete comment and fix
-    indentation
-  dt-bindings: arm: fsl: Add more Kontron i.MX6UL/ULL compatibles
-
- .../devicetree/bindings/arm/fsl.yaml          |  14 +
- arch/arm/boot/dts/imx6ul-kontron-n6310-s.dts  | 405 +----------------
- .../boot/dts/imx6ul-kontron-n6310-som.dtsi    |  95 +---
- arch/arm/boot/dts/imx6ul-kontron-n6311-s.dts  |  16 +
- .../boot/dts/imx6ul-kontron-n6311-som.dtsi    |  40 ++
- arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi | 418 ++++++++++++++++++
- .../dts/imx6ul-kontron-n6x1x-som-common.dtsi  | 109 +++++
- arch/arm/boot/dts/imx6ull-kontron-n6411-s.dts |  16 +
- .../boot/dts/imx6ull-kontron-n6411-som.dtsi   |  40 ++
- 9 files changed, 655 insertions(+), 498 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6311-s.dts
- create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6311-som.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-s.dtsi
+ .../boot/dts/imx6ul-kontron-n6310-som.dtsi    |  95 +---------------
+ .../dts/imx6ul-kontron-n6x1x-som-common.dtsi  | 103 ++++++++++++++++++
+ 2 files changed, 104 insertions(+), 94 deletions(-)
  create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ull-kontron-n6411-s.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-kontron-n6411-som.dtsi
 
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
+index a896b2348dd2..47d3ce5d255f 100644
+--- a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include "imx6ul.dtsi"
+-#include <dt-bindings/gpio/gpio.h>
++#include "imx6ul-kontron-n6x1x-som-common.dtsi"
+ 
+ / {
+ 	model = "Kontron N6310 SOM";
+@@ -18,49 +18,7 @@
+ 	};
+ };
+ 
+-&ecspi2 {
+-	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi2>;
+-	status = "okay";
+-
+-	spi-flash@0 {
+-		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
+-		spi-max-frequency = <50000000>;
+-		reg = <0>;
+-	};
+-};
+-
+-&fec1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
+-	phy-mode = "rmii";
+-	phy-handle = <&ethphy1>;
+-	status = "okay";
+-
+-	mdio {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		ethphy1: ethernet-phy@1 {
+-			reg = <1>;
+-			micrel,led-mode = <0>;
+-			clocks = <&clks IMX6UL_CLK_ENET_REF>;
+-			clock-names = "rmii-ref";
+-		};
+-	};
+-};
+-
+-&fec2 {
+-	phy-mode = "rmii";
+-	status = "disabled";
+-};
+-
+ &qspi {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_qspi>;
+-	status = "okay";
+-
+ 	spi-flash@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -81,54 +39,3 @@
+ 		};
+ 	};
+ };
+-
+-&iomuxc {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_reset_out>;
+-
+-	pinctrl_ecspi2: ecspi2grp {
+-		fsl,pins = <
+-			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
+-			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
+-			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
+-			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
+-		>;
+-	};
+-
+-	pinctrl_enet1: enet1grp {
+-		fsl,pins = <
+-			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
+-			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
+-			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
+-			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
+-			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
+-			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
+-		>;
+-	};
+-
+-	pinctrl_enet1_mdio: enet1mdiogrp {
+-		fsl,pins = <
+-			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
+-			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
+-		>;
+-	};
+-
+-	pinctrl_qspi: qspigrp {
+-		fsl,pins = <
+-			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
+-			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
+-			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
+-			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
+-			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
+-			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
+-		>;
+-	};
+-
+-	pinctrl_reset_out: rstoutgrp {
+-		fsl,pins = <
+-			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
+-		>;
+-	};
+-};
+diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+new file mode 100644
+index 000000000000..a843e028bcde
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2017 exceet electronics GmbH
++ * Copyright (C) 2018 Kontron Electronics GmbH
++ * Copyright (c) 2019 Krzysztof Kozlowski <krzk@kernel.org>
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++
++&ecspi2 {
++	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ecspi2>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++	};
++};
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
++	phy-mode = "rmii";
++	phy-handle = <&ethphy1>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy1: ethernet-phy@1 {
++			reg = <1>;
++			micrel,led-mode = <0>;
++			clocks = <&clks IMX6UL_CLK_ENET_REF>;
++			clock-names = "rmii-ref";
++		};
++	};
++};
++
++&fec2 {
++	phy-mode = "rmii";
++	status = "disabled";
++};
++
++&qspi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_qspi>;
++	status = "okay";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_reset_out>;
++
++	pinctrl_ecspi2: ecspi2grp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
++			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
++			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
++			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
++		>;
++	};
++
++	pinctrl_enet1: enet1grp {
++		fsl,pins = <
++			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
++			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
++			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
++			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
++		>;
++	};
++
++	pinctrl_enet1_mdio: enet1mdiogrp {
++		fsl,pins = <
++			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
++			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
++		>;
++	};
++
++	pinctrl_qspi: qspigrp {
++		fsl,pins = <
++			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
++			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
++			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
++			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
++			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
++			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
++		>;
++	};
++
++	pinctrl_reset_out: rstoutgrp {
++		fsl,pins = <
++			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
++		>;
++	};
++};
 -- 
 2.17.1
