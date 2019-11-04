@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C2EEEB83
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B51BEEBC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbfKDVsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39244 "EHLO mail.kernel.org"
+        id S1729913AbfKDVuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:50:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbfKDVsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:38 -0500
+        id S1729672AbfKDVux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:50:53 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFF8C20B7C;
-        Mon,  4 Nov 2019 21:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2531D21D71;
+        Mon,  4 Nov 2019 21:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904118;
-        bh=r7I7Ejrdfpo/PUppM//zRRCS8J4yVK7fBNePuGo0bGo=;
+        s=default; t=1572904252;
+        bh=0RUSc03uHfSvyypp3INuX99FfiD3jlpxtsAtyT7UMR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVEZ0C3u2a39N2Bj9OcS99eEfUfhnXGgCG6EglaEP2OxXgd1LIgEryEBx/aRVUwnb
-         WMzyqNoO26f5pUMf6DyYh0pK0AChz+RVtcxHqQwywljVBIFV0iLUh3jrWiQvPV/quX
-         T/J7qOju5AcqApDLJRCKKWvJ3s70SoXp9L3rBVlU=
+        b=ETdyiv6Mr6D66n/nvah0oSvPzi4R5KGmlrLkWi48K0KTl9MNno9G4CfZpLN6cjbLl
+         96osaK6I9SWAugFqSo19mZP4QhjqQTjIHgVQVuz495De7gwBFSxEwedk5TiKAHKFT9
+         nLwdCkdZifOBDDaeltsvkWm0HcSksWMK5Hw6VqZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Felipe Balbi <balbi@kernel.org>,
         syzbot+8ab8bf161038a8768553@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 29/46] USB: gadget: Reject endpoints with 0 maxpacket value
+Subject: [PATCH 4.9 38/62] USB: gadget: Reject endpoints with 0 maxpacket value
 Date:   Mon,  4 Nov 2019 22:45:00 +0100
-Message-Id: <20191104211902.213280126@linuxfoundation.org>
+Message-Id: <20191104211941.314059122@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -72,14 +72,14 @@ Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910281052370.1485-100000@iolant
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/usb/gadget.h |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/usb/gadget/udc/core.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -270,6 +270,16 @@ static inline int usb_ep_enable(struct u
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -106,6 +106,17 @@ int usb_ep_enable(struct usb_ep *ep)
  	if (ep->enabled)
- 		return 0;
+ 		goto out;
  
 +	/* UDC drivers can't handle endpoints with maxpacket size 0 */
 +	if (usb_endpoint_maxp(ep->desc) == 0) {
@@ -88,11 +88,12 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +		 * dev_err() because there's no way to find the gadget
 +		 * given only ep.
 +		 */
-+		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
 +	}
 +
  	ret = ep->ops->enable(ep, ep->desc);
  	if (ret)
- 		return ret;
+ 		goto out;
 
 
