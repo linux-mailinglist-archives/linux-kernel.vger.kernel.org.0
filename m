@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA11FEEF05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB04EEEDB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389956AbfKDWSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:18:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
+        id S2389234AbfKDWJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:09:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389171AbfKDWBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:01:46 -0500
+        id S2389830AbfKDWJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:09:08 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC8CA205C9;
-        Mon,  4 Nov 2019 22:01:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E67202084D;
+        Mon,  4 Nov 2019 22:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904906;
-        bh=v0IrQyRi9n+bfhh9+5Fe2BJGlZxsDr2cCWzbbt2oXfA=;
+        s=default; t=1572905347;
+        bh=5yHE+GyYRcaWxFCAaeV4qiDkp7QVDSIGHk1tz3OWcW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fy/ol/dtOK4uwYyfDjMsplgyO4GUkMLy+Ypym8tCn01tJip9iudQeyAL0B4iGz3D1
-         V+yYd+3ievpfJWm2DGI7fwBQP/sKfX312hswkHj/YJmtuQx0Agwp/AaIE5JT8FX8s4
-         S+SCxTxTDoISeoR5YuPnpBfbfE2A+0ZiWD9L/5nw=
+        b=gXgEaeT+ZovX13ZGzFKAKPYySD35uS8cY5QqKSYIEY5qAX9GEi42VCAHwOXLMwu6q
+         OZ3U1xFYW4Bq3ANdHRTpQG9o7TvSr9Ufv0zvNwcLMhx6D3ChmZmUT5amAvvVLuhobU
+         mXPxh3NpV86Q+tLf/tY4hMQnZwUaOngboW07WdxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 111/149] ALSA: bebob: Fix prototype of helper function to return negative value
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.3 114/163] scsi: target: cxgbit: Fix cxgbit_fw4_ack()
 Date:   Mon,  4 Nov 2019 22:45:04 +0100
-Message-Id: <20191104212144.168753005@linuxfoundation.org>
+Message-Id: <20191104212148.495684749@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit f2bbdbcb075f3977a53da3bdcb7cd460bc8ae5f2 upstream.
+commit fc5b220b2dcf8b512d9bd46fd17f82257e49bf89 upstream.
 
-A helper function of ALSA bebob driver returns negative value in a
-function which has a prototype to return unsigned value.
+Use the pointer 'p' after having tested that pointer instead of before.
 
-This commit fixes it by changing the prototype.
-
-Fixes: eb7b3a056cd8 ("ALSA: bebob: Add commands and connections/streams management")
-Cc: <stable@vger.kernel.org> # v3.16+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Link: https://lore.kernel.org/r/20191026030620.12077-1-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 5cadafb236df ("target/cxgbit: Fix endianness annotations")
+Cc: Varun Prakash <varun@chelsio.com>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191023202150.22173-1-bvanassche@acm.org
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/bebob/bebob_stream.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/firewire/bebob/bebob_stream.c
-+++ b/sound/firewire/bebob/bebob_stream.c
-@@ -253,8 +253,7 @@ end:
- 	return err;
- }
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -1831,7 +1831,7 @@ static void cxgbit_fw4_ack(struct cxgbit
  
--static unsigned int
--map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
-+static int map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
- {
- 	unsigned int sec, sections, ch, channels;
- 	unsigned int pcm, midi, location;
+ 	while (credits) {
+ 		struct sk_buff *p = cxgbit_sock_peek_wr(csk);
+-		const u32 csum = (__force u32)p->csum;
++		u32 csum;
+ 
+ 		if (unlikely(!p)) {
+ 			pr_err("csk 0x%p,%u, cr %u,%u+%u, empty.\n",
+@@ -1840,6 +1840,7 @@ static void cxgbit_fw4_ack(struct cxgbit
+ 			break;
+ 		}
+ 
++		csum = (__force u32)p->csum;
+ 		if (unlikely(credits < csum)) {
+ 			pr_warn("csk 0x%p,%u, cr %u,%u+%u, < %u.\n",
+ 				csk,  csk->tid,
 
 
