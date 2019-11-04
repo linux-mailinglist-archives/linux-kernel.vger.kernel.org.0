@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF88CEEFB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0820EEDC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388184AbfKDVzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50806 "EHLO mail.kernel.org"
+        id S2390462AbfKDWJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:09:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387652AbfKDVzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:31 -0500
+        id S2390005AbfKDWJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:09:44 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 132CB217F4;
-        Mon,  4 Nov 2019 21:55:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 146E8205C9;
+        Mon,  4 Nov 2019 22:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904530;
-        bh=nG6VPbCohQi6fBlcsnH+qIJ+5t18M1eyrl6miwMHJpk=;
+        s=default; t=1572905383;
+        bh=4BXDrXI9xj1Zj4UQmnaTufcVaddUamXeSea8JUCcXZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eyYACyB1QMFWX8Sy+5AfcLOwZcwuMoV1uqRgeUnv6WXdUcPsH5DeuRaaM4WRTBjew
-         q96Zvh1hBWJqTFepP7aHlt6iecv7Ub9bhhshwThjxW1i6dQm7vuHNz0TKjGcdtQ66w
-         +Uchc/G0Q5K7gpyfrHwcajdOxHVbQHqa6VrMa1hw=
+        b=kahwR6lpVURSAd3f4MGOoKSkHjtVxlIhJ14xCt3jp9nrWQnOBpuOdxajXQ06tTekS
+         uCumUAyZy5ANzlmzMz60rTSVPRH4vUlQlr2bU5qfisO8O1tymA7wVobsYuLJrH6yeI
+         mNkHwr7G1wm+7OWKIi1IQ3mifhBLkMd8+DBxFMD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 77/95] HID: fix error message in hid_open_report()
-Date:   Mon,  4 Nov 2019 22:45:15 +0100
-Message-Id: <20191104212118.836009009@linuxfoundation.org>
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 5.3 126/163] IB/hfi1: Avoid excessive retry for TID RDMA READ request
+Date:   Mon,  4 Nov 2019 22:45:16 +0100
+Message-Id: <20191104212149.372726382@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Kaike Wan <kaike.wan@intel.com>
 
-commit b3a81c777dcb093020680490ab970d85e2f6f04f upstream.
+commit 9ed5bd7d22241ad232fd3a5be404e83eb6cadc04 upstream.
 
-On HID report descriptor parsing error the code displays bogus
-pointer instead of error offset (subtracts start=NULL from end).
-Make the message more useful by displaying correct error offset
-and include total buffer size for reference.
+A TID RDMA READ request could be retried under one of the following
+conditions:
+- The RC retry timer expires;
+- A later TID RDMA READ RESP packet is received before the next
+  expected one.
+For the latter, under normal conditions, the PSN in IB space is used
+for comparison. More specifically, the IB PSN in the incoming TID RDMA
+READ RESP packet is compared with the last IB PSN of a given TID RDMA
+READ request to determine if the request should be retried. This is
+similar to the retry logic for noraml RDMA READ request.
 
-This was carried over from ancient times - "Fixed" commit just
-promoted the message from DEBUG to ERROR.
+However, if a TID RDMA READ RESP packet is lost due to congestion,
+header suppresion will be disabled and each incoming packet will raise
+an interrupt until the hardware flow is reloaded. Under this condition,
+each packet KDETH PSN will be checked by software against r_next_psn
+and a retry will be requested if the packet KDETH PSN is later than
+r_next_psn. Since each TID RDMA READ segment could have up to 64
+packets and each TID RDMA READ request could have many segments, we
+could make far more retries under such conditions, and thus leading to
+RETRY_EXC_ERR status.
 
-Cc: stable@vger.kernel.org
-Fixes: 8c3d52fc393b ("HID: make parser more verbose about parsing errors by default")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+This patch fixes the issue by removing the retry when the incoming
+packet KDETH PSN is later than r_next_psn. Instead, it resorts to
+RC timer and normal IB PSN comparison for any request retry.
+
+Fixes: 9905bf06e890 ("IB/hfi1: Add functions to receive TID RDMA READ response")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Link: https://lore.kernel.org/r/20191004204035.26542.41684.stgit@awfm-01.aw.intel.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-core.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hfi1/tid_rdma.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -979,6 +979,7 @@ int hid_open_report(struct hid_device *d
- 	__u8 *start;
- 	__u8 *buf;
- 	__u8 *end;
-+	__u8 *next;
- 	int ret;
- 	static int (*dispatch_type[])(struct hid_parser *parser,
- 				      struct hid_item *item) = {
-@@ -1032,7 +1033,8 @@ int hid_open_report(struct hid_device *d
- 	device->collection_size = HID_DEFAULT_NUM_COLLECTIONS;
- 
- 	ret = -EINVAL;
--	while ((start = fetch_item(start, end, &item)) != NULL) {
-+	while ((next = fetch_item(start, end, &item)) != NULL) {
-+		start = next;
- 
- 		if (item.format != HID_ITEM_FORMAT_SHORT) {
- 			hid_err(device, "unexpected long global item\n");
-@@ -1061,7 +1063,8 @@ int hid_open_report(struct hid_device *d
- 		}
- 	}
- 
--	hid_err(device, "item fetching failed at offset %d\n", (int)(end - start));
-+	hid_err(device, "item fetching failed at offset %u/%u\n",
-+		size - (unsigned int)(end - start), size);
- err:
- 	vfree(parser);
- 	hid_close_report(device);
+--- a/drivers/infiniband/hw/hfi1/tid_rdma.c
++++ b/drivers/infiniband/hw/hfi1/tid_rdma.c
+@@ -2728,11 +2728,6 @@ static bool handle_read_kdeth_eflags(str
+ 				diff = cmp_psn(psn,
+ 					       flow->flow_state.r_next_psn);
+ 				if (diff > 0) {
+-					if (!(qp->r_flags & RVT_R_RDMAR_SEQ))
+-						restart_tid_rdma_read_req(rcd,
+-									  qp,
+-									  wqe);
+-
+ 					/* Drop the packet.*/
+ 					goto s_unlock;
+ 				} else if (diff < 0) {
 
 
