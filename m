@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 449A0EECB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6818EEC03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbfKDV7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
+        id S1730889AbfKDVxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387947AbfKDV7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:50 -0500
+        id S1730857AbfKDVw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:52:56 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E83DC20650;
-        Mon,  4 Nov 2019 21:59:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34441218BA;
+        Mon,  4 Nov 2019 21:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904789;
-        bh=fMBUQEOmoxly6xWm/iIwvO3nP3iN5L5jNyhwQBwg8xI=;
+        s=default; t=1572904375;
+        bh=gzJIr3oEpeI6UESWP5YHp1gXpssUBoR3tv0ZGUfuQ44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nEe6doKy8hPdBTAMNJqs6V9FVO5gq4ehKKcJF9LkRLvreJS8vAYRE/GWbzCZRpKf/
-         EB/rmhV2wtXHiH34e+2JAcsgTIJzsosPJif6vbENzzJySxRnyz9nsBvJcatoIkEBYV
-         TpEUupM5T+P2m64yJaxedcDvYS53OU17nfJfDjUQ=
+        b=o2kZUnfuvw+7LlNprxWbWotEnGgqHi8aFAEWMW3BOPyqUEH+xEBoP1UlODXgokV31
+         UZNxp38t9+u+DkQhfX+zpkmdiTy9tejKFcNRoSJXceh7bcy8kIJvvVNUFXClejE8TH
+         Vzst89gWR7JJKL9zck3GWjD7jA06YDfd3XD67FnI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Connor Kuehl <connor.kuehl@canonical.com>,
+        stable@vger.kernel.org, Pascal Bouwmann <bouwmann@tau-tec.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/149] staging: rtl8188eu: fix null dereference when kzalloc fails
+Subject: [PATCH 4.14 25/95] iio: fix center temperature of bmc150-accel-core
 Date:   Mon,  4 Nov 2019 22:44:23 +0100
-Message-Id: <20191104212141.615664544@linuxfoundation.org>
+Message-Id: <20191104212054.393098137@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Connor Kuehl <connor.kuehl@canonical.com>
+From: Pascal Bouwmann <bouwmann@tau-tec.de>
 
-[ Upstream commit 955c1532a34305f2f780b47f0c40cc7c65500810 ]
+[ Upstream commit 6c59a962e081df6d8fe43325bbfabec57e0d4751 ]
 
-If kzalloc() returns NULL, the error path doesn't stop the flow of
-control from entering rtw_hal_read_chip_version() which dereferences the
-null pointer. Fix this by adding a 'goto' to the error path to more
-gracefully handle the issue and avoid proceeding with initialization
-steps that we're no longer prepared to handle.
+The center temperature of the supported devices stored in the constant
+BMC150_ACCEL_TEMP_CENTER_VAL is not 24 degrees but 23 degrees.
 
-Also update the debug message to be more consistent with the other debug
-messages in this function.
+It seems that some datasheets were inconsistent on this value leading
+to the error.  For most usecases will only make minor difference so
+not queued for stable.
 
-Addresses-Coverity: ("Dereference after null check")
-
-Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-Link: https://lore.kernel.org/r/20190927214415.899-1-connor.kuehl@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Pascal Bouwmann <bouwmann@tau-tec.de>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/iio/accel/bmc150-accel-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-index dfee6985efa61..8ef7b44b6abc1 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -348,8 +348,10 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
- 	}
+diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+index 807299dd45ebf..7e86a5b7ec4e8 100644
+--- a/drivers/iio/accel/bmc150-accel-core.c
++++ b/drivers/iio/accel/bmc150-accel-core.c
+@@ -125,7 +125,7 @@
+ #define BMC150_ACCEL_SLEEP_1_SEC		0x0F
  
- 	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
--	if (!padapter->HalData)
--		DBG_88E("cant not alloc memory for HAL DATA\n");
-+	if (!padapter->HalData) {
-+		DBG_88E("Failed to allocate memory for HAL data\n");
-+		goto free_adapter;
-+	}
+ #define BMC150_ACCEL_REG_TEMP			0x08
+-#define BMC150_ACCEL_TEMP_CENTER_VAL		24
++#define BMC150_ACCEL_TEMP_CENTER_VAL		23
  
- 	/* step read_chip_version */
- 	rtw_hal_read_chip_version(padapter);
+ #define BMC150_ACCEL_AXIS_TO_REG(axis)	(BMC150_ACCEL_REG_XOUT_L + (axis * 2))
+ #define BMC150_AUTO_SUSPEND_DELAY_MS		2000
 -- 
 2.20.1
 
