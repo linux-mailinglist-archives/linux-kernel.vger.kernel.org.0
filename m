@@ -2,153 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2752BEEAE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B426EEAF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfKDVQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:16:00 -0500
-Received: from enpas.org ([46.38.239.100]:43240 "EHLO mail.enpas.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729450AbfKDVQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:16:00 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by mail.enpas.org (Postfix) with ESMTPSA id A7025FF8A9;
-        Mon,  4 Nov 2019 21:15:56 +0000 (UTC)
-Subject: Re: [PATCH] m68k: defconfig: Update defconfigs for v5.4-rc1
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ide@vger.kernel.org
-References: <20191001073539.4488-1-geert@linux-m68k.org>
- <7fa02d50-6092-5f59-5018-c5b425a30726@enpas.org>
- <CAMuHMdX3+-JO68LGE-NuT9axRUj3=bbtpDZ8E3v5UNoj5ctLHg@mail.gmail.com>
-From:   Max Staudt <max@enpas.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=max@enpas.org; prefer-encrypt=mutual; keydata=
- xsNNBFWfXgEBIADcbJMG2xuJBIVNlhj5AFBwKLZ6GPo3tGxHye+Bk3R3W5uIws3Sxbuj++7R
- PoWqUkvrdsxJAmnkFgMKx4euW/MCzXXgEQOM2nE0CWR7xmutpoXYc9BLZ2HHE2mSkpXVa1Ea
- UTm00jR+BUXgG/ZzCRkkLvN1W9Hkdb75qE/HIpkkVyDiSteJTIjGnpTnJrwiHbZVvXoR/Bx3
- IWFNpuG80xnsGv3X9ierbalXaI3ZrmFiezbPuGzG1kqV1q0gdV4DNuFVi1NjpQU1aTmBV8bv
- gDi2Wygs1pOSj+dlLPwUJ+9jGVzFXiM3xUkNaJc4UPRKxAGskh1nWDdg0odbs0OarQ0o+E+v
- d7WbKK7TR1jfYNcQ+Trr0ca0m72XNFk0hUxNyaEv3kkZEpAv0IDKqXFQD700kr3ftZ8ZKOxd
- CP4UqVYI+1d0nR9LnJYVjRpKI9QqIx492As6Vl1YPjUbmuKi4OT2JdvaT4czGq9EJkbhjC8E
- KQqc2mWeLnnwiMJwp8fMGTq+1TuBgNIbVSdTeyMnNr5w0UmJ4Y/TNFnTsOR0yytpJlHU4YiW
- HDQKaw6wzvdxql2DCjRvn+Hgm9ifMmtPn5RO3PGvq7XQJ0bNzJ/lXl9ts9QbeR62vQUuv63S
- P6WIU+uEUZVtaNJIjmsoEkziMX01Agi+5gCgKkY8mLakdXOAGX9CaUrVAH/ssM0SIwgxbmeH
- F0mwfbd7OuPYCKpmIiX1wqNfiLhcTgV3lJ12Gz7XeeIH3JW5gw6tFGN3pQQNsy6SqtThyFQN
- RlLNZWEHBh2RdE1Bh3HFFCgdbQ2CISV+nEGdTpP+wjlP17FaBUEREM/j4FT5Dn1y/XICJog/
- dymN4Srn8BZ0q1HQBVIJszdfpBa37Fj3gHQbUPinoDsNCCjNibOD06Xk4hvex307pcsXe/Gi
- qON0vCtTfbF9jUmao84LpOMjfnqMXQDl3bIi0GwvdXWTvTNM3gCllj1sygWYvPn405BHysbk
- xbuGCP1qwRRYxrkBpCOUxBz48fT+90CewfwvhuYjBc1dPu0x2io+TRex2rfpMLbjUhYWYeun
- Oo/w+7Ea8UoxqLkvQjNY7IDBtvtPQdW5NxPh1kYOOMCMTGPR7wKMo7O0clMQ3Gviu12nvt2X
- 2rKtI56oU9pEFpIY/moDM+nDNR3fIi1BjdBfhGhSi6uRWy1vgBHYdW0rItPqYtQ9R/AxMbFN
- Kv4axzus1+yAfqSAWyp1DCC8+PX+x4gYEh0rbh2Ii91jdhzONzoEjMy8VCfu9hgeE4XazsFD
- 234zaonkEh8Mpo/SyYH4x0iMO0UyKn1RbyC9zTmAtlIvYUsQdF8exWwF07vvqbzKWkHv8a+y
- RFT9nuZZtVN3ABEBAAHNGk1heCBTdGF1ZHQgPG1heEBlbnBhcy5vcmc+wsN9BBMBCgAnAhsD
- CAsJCAcNDAsKBRUKCQgLAh4BAheAAhkBBQJc3wOtBQkJkOisAAoJEGVYAQQ5PhMuk4AgAKdf
- EzQcishDKhBOBSlRzU1/G07DRT2izrYH4skCXNBXsfiIbp+5BKkAAyxPsa+pCFrJsHC5ZV8J
- UDmnQyocp0pTSSH2eZqGGf+XqLBXuhJTvBLPWaqjkez5LHQs0LFZtPR6DkVhxwLlwvyApkpe
- 2jatxkADZGhoAqxJjScGsiDuSvChqaMfuEEaEzwve+u7SeY59UvF6iLWZ9EpWoZg8EczuJ+h
- 0FftsRE+PprQXWu7lpFcL4eo540IkOzrAschIsNMPax5rPCUglCrdMiNEka43/yIksTuVM/x
- 8hOSXfaaE434R4w5+Kd5phL3fo35RM0p+AXd87UARDiSB4xtyfXZpYPKnJtL2r1KFQeEnMUV
- UCEbgI/B9+po4iJ1ToN30X2pJxnnTM30WiNC9o2rfG4C09+3hU+Hh3Wh6cvGaQ1qBrwsKtpb
- EXSM86f5gfqEoJeUQb6lrFqlIlfSBF2ZWl4w7evyCvYbJlnQWhF+8bnYn3Hm2Lydq9TSRrt5
- 7mlDjuJrmNnbld4Ur7N7cpZ/oM8Ms2hMjbECMkXsMuQ6mY9yHwacnmhhR4Q0ukTTKArenF3W
- 2zsoQJ+nI1JNEcJudX27lnEPWZdEckXiGQECTjiTzZ7eBtYSccP8lrIRkuMP1VlUJTOVlOI6
- GPmhxhbeyYG63dYq3zNFCLSJxynC1Eqmjm70zOYqZ7Rl2cRslycoEQe4YEa1K+mk3Kz+lq4P
- wE9SvAcfhG30peoPxRFBXVXkO8w6g2fSirdBggydB5zQJFkgVM6aG1dgtbFlwERh6ps3Spj6
- eCuqcFRFrDSQDcOj1lIwjwGzJnD4Wli1afG8swqjlm99oq2xteXyWXjXa3bmlGzCvrJLZtHd
- y3qlCgyGtZ2s0WMWo3wasUXJUrAR190ZHcYVAyAU3a3iNVxd+lRUemTMyn86aPmxC79T71Ne
- oZTXxP4srTaX3+qnasViNLntxKCWR/LbLOVWfVBTl+ikXgyn4lXj0qh/7g4dKuP2ZabrOV6V
- s3YUyIwbxlHzYGqDGW7/ae+DCI/mSNuNpN9XfDrERPW7wskucYY44kFFyLN5DQABDr6fHG0w
- zuT6hlxC58X5gW7igCaQCBE3FRY1yTENVMsyRJyfRnOGLwhAHQt2GBsBffPICYiZZuhEZtAk
- C3uOT5xNnYfT/pxEdYeYX+w/MHa0VfY8nYgMd83s0psqqQiA8vBw2xlJoGpnhEkb6sjfxYay
- OViHy2Z3Bi6TAjnNFmveg3Qs2lkTzUCvYonIDPIWBMT11QPcx8hwWjdylJHbEt6zWbH+0ScA
- /iDn5aQ16Zox3JNnQcH0AoDvozyiRihO0yTEd4tS+zCwucfqxL78yy0IgbGRUAFzZvbOwU0E
- VZ96mAEQAMPq/us9ZHl8E8+V6PdoOGvwNh0DwxjVF7kT/LEIwLu94jofUSwz8sgiQqz/AEJg
- HFysMbTxpUnq9sqVMr46kOMVavkRhwZWtjLGhr9iiIRJDnCSkjYuzEmLOfAgkKo+moxz4PZk
- DL0sluOCJeWWm3fFMs4y3YcMXC0DMNGOtK+l1Xno4ZZ2euAy2+XlOgBQQH3cOyPdMeJvpu7m
- nY8CXejH/aS40H4b/yaDu1RUa1+NajnmX+EwRoHsnJcXm62Qu8zjyhYdQjV8B2raMk5HcIzl
- jeVRpEQDlQMUGXESGF4CjYlMGlTidRy6d5GydhRLZXHOLdqG2HZKz1/cot7x5Qle2+P50I32
- iB0u4aPCyeKYJV6m/evBGWwYWYvCUJWnghbP5F2ouC/ytfyzXVNAJKJDkz//wqU27K26vWjy
- Bh0Jdg+G8HivgZLmyZP229sYH0ohrJBoc68ndh9ukw53jASNGkzQ6pONue8+NKF9NUNONkw4
- jjm7lqD/VWFe5duMgSoizu/DkoN+QJwOu/z10y3oN9X7EMImppCdEVS01hdJSyEcyUq90v/O
- kt8tWo906trE65NkIj+ZSaONYAhTK+Yp/jrG88W2WAZU54CwHtoMxhbMH9xRM0hB97rBvaLO
- JwGBAU0+HrxOp1Sqy2M1v91XBt4HeW8YxzNEexq1ZtNnABEBAAHCw2UEGAEKAA8CGwwFAlzf
- A9kFCQmQzEEACgkQZVgBBDk+Ey79byAAhnvJdqOqZ3PFJgb5vODVOL0KbJJ2A1zWYX69YGw2
- rjWDf+/VvXkppswMRUCttswiNbGq8GmvAuTjOk2nnDKatZrsVTDxN8erAzafMX77XdV0+j+h
- 0epk7vAsOCxvKX3fLyyeJccbbzA6RaMlg6ACtXYZbRjjYGLWPCUEF5XN8bsSjN7fIaIYUFJO
- +5DIr3CyyRAVpgR6Hu/n0MbRTzucMDvqp9J+JDh1GNbJstIz0r8L02I/ZZS1P9FFjXlQXyE/
- WEoU0U+GJA6z3e2fcCkhhj1cVgH0KpxssKSAvcakv3nJGgE33c5CzxcGw2pJOSETDOeR8F3d
- tqjUPR+AZ2V963cCbfh0o/klaorJq54k/tlSHpWC55oXj1A1Q1wHLtl8CYYYju8MinS1dJG/
- I/gE2rQeXmwAzc3MF8jmEzZfpwR1uzwT4vG7NKcoo0UGsSSuMzj1VJUd2QSqfy3BTtpRH4Ts
- znQevaqUzuxcpFlBYj4Y2aqpw2ErWCE1/2gEWiDKmfLZNsnvFbj54RF+e6ajv0EHmgDOOU6H
- ZPQe8U6qFRMfhgCA0v8HIxIn8HCpei9XiAZoILD9w0/Pp1SqMqtEYifImGPdGIFPhiccpA/g
- Wxncxb7TvCzyTieRLCnzn2sWzHeLLtsbnxmq0gXedWAwpIV8sMpKauvc/z0gkNkbySPPLzof
- /gBw5zuaaTU8nzXWoPbDl6EuWtyVrwo1S6sSoeEb+7KHJYig8mPeyJvA+1tSTzOjPZLlA56j
- L7B2x7Mf+vohJx6qS93MVqOLPZo3lvi3QH+ScUNmQNBcLe+sGd8EIJCIMJa9ab8Esx1I8AVr
- ZVP2hV0XjPJCw/bGp66yYq7dYvvT2wOMk9FUOKCTTBxHEgz5H4LjrA0gJONNrqjI9Hjo8IJU
- IHKdyyMuKDhs8FkGpx9UTEBMXYasF2J1V9wMJp+JWYEDKQ/ienhXzMpTKeTntPaF3EPcwdmo
- n6Ro70RlUvNcCNXlosS6KWgXLVZx0xy3cFsF6m4HL3GEXarDm2ub3EatN4nGbknQqzh+1gUG
- fN1OsIbabwgqrLEUO4tTTE5BKcccjti20S8+3Xn4LCyowrqMREfXDHDT2tStJmi4i8l1NDsf
- 0deMB5e+8oupffJn64n0qod8e535MEZ8UM244dTv1bR3w9GLWr1eLIF1hOeN6YkRgks7zD1O
- qowubYXvP+RW4E9h6/NwGzS3Sbw7dRC6HK7xeSjmnzgrbbdF3TbHa5WHGZ3MLFQqbMuSn1Gn
- a0dBnIpkQG5yGknQjCL7SGEun1siNzluV19nLu66YRJsZ1HE9RgbMhTe2Ca8bWH1985ra4GV
- urZIw0nz8zec+73Bv/qF4GHHftLYfA==
-Message-ID: <65699814-9260-643e-10e0-e1be9929b957@enpas.org>
-Date:   Mon, 4 Nov 2019 22:15:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729595AbfKDVTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:19:31 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:47099 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbfKDVTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:19:31 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n23so5477622otr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/8yU3O5k24h9e3PyFN4Dj6MFbBb6JVOj0JoMWY+S3AE=;
+        b=D9p5NchbwDhe9mp8NmRpUK2kC/a+iNk7mb4uEiZ8i732RHQD6+tLGJUqQxUtZVO/6E
+         cj1d8a4CJKXF8pG7Zq7JEeo0VUK3rLYbIqPfzCn9VAy0MLJ3rg/OY1kog7CQmyv2Amrc
+         JcgPRVvZUwSxwpa+ttmnJcoylJD3NkiLLnmjKjCHY/C1g4stQ8Ed1DyQrK1adfzuqzG0
+         UtqL7KFhK1ty8dRL3C+GxB04afBz9u4VTY09zYZBWWaqrssMfw3imLZpgVrl9CnzcqC5
+         01mxKNlxFe9J0MLshePp0EkD4m82n/DCA8btqZnttBF+d3W3jxDnTftdC5+8WtGvIWYe
+         1bqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/8yU3O5k24h9e3PyFN4Dj6MFbBb6JVOj0JoMWY+S3AE=;
+        b=IwgEZM5vnY9es/JTuN1MyGKLjWCYY1kyX8mMkWw75EH3hD+0/DNqmUKXSG1ou6sJim
+         CyTZZGRo41jrp8khypQKZIRelFSYbgsXLu/5Ll4Y7ZdgVYZRJbdI5f8xTWcn8qIh8jqc
+         QBgLozH8fJhgDM95+4tyeW+2cqFf2vYaCynqXMcMQzEkUND56AAdxdq5moRhq/o0GVcH
+         LTFg9IrSpJX5/tdKrEPb3TvMGXS9w57QqMkd6UAneen3+vqMvQym0ryOk7IBm0SUdnFB
+         TBmK//0Mr3iKqMuWAvOzGwWTJdsJSALZ0WjexhC+eIUMGzVKetUeYzJHWSvQHENW6ShW
+         0P0w==
+X-Gm-Message-State: APjAAAWQ5xugv2zv0n0ouq+Yp4TQ6rUoN4gt1NT+EHy1zT0mHvXPTk18
+        FEiRVLzOlrg7cCJFL1GKh08V9u1WDx4aPr07QzmFf5ZN
+X-Google-Smtp-Source: APXvYqwoI3V0DEHS32l9wQXVJE8EeGtjkg4VAjYe1lFrEIq00wE4DXN1gIePuof1MESKaL2zUS9xhTdMaCNp6fuM05o=
+X-Received: by 2002:a9d:1c8f:: with SMTP id l15mr16022901ota.313.1572902369377;
+ Mon, 04 Nov 2019 13:19:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX3+-JO68LGE-NuT9axRUj3=bbtpDZ8E3v5UNoj5ctLHg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191030013701.39647-1-almasrymina@google.com>
+ <20191030013701.39647-5-almasrymina@google.com> <1c060bde-8d44-146c-6d67-a7b145aa1b59@oracle.com>
+ <CAHS8izPTvybLq9Y9Fn6Z+hSc7gLP+goQ-ixzjxa1XJ-qhWM8ow@mail.gmail.com> <a5f991c8-3f74-6000-cbd3-09fb8626e3f5@oracle.com>
+In-Reply-To: <a5f991c8-3f74-6000-cbd3-09fb8626e3f5@oracle.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Mon, 4 Nov 2019 13:19:18 -0800
+Message-ID: <CAHS8izMYaHf-3zeVcM_73_KSMCpA5vds-NtRjNt0d8VsMfczQw@mail.gmail.com>
+Subject: Re: [PATCH v8 5/9] hugetlb: disable region_add file_region coalescing
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     shuah <shuah@kernel.org>, open list <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        cgroups@vger.kernel.org,
+        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/04/2019 12:06 PM, Geert Uytterhoeven wrote:
->> As for the Amiga defconfig, how about moving from IDE drivers to ATA?
->>
->> The old IDE stack is slated for removal in less than 2 years, and people should probably move over to libata instead.
->>
->> How about the following changes?
->> Is there any Amiga IDE controller left without a libata equivalent?
->>
->> CONFIG_IDE=n
->> CONFIG_IDE_GD_ATAPI=n
->> CONFIG_BLK_DEV_IDECD=n
->> CONFIG_BLK_DEV_GAYLE=n
->> CONFIG_BLK_DEV_BUDDHA=n
->>
->> CONFIG_ATA=y
->> CONFIG_ATA_VERBOSE_ERROR=y
->> CONFIG_PATA_GAYLE=y
->> CONFIG_PATA_BUDDHA=y
-> 
-> Amiga is fine.
-> 
-> Mac and Q40 are not, apparently.
+On Mon, Nov 4, 2019 at 1:15 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 11/4/19 1:04 PM, Mina Almasry wrote:
+> > On Fri, Nov 1, 2019 at 4:23 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+> >>
+> >> On 10/29/19 6:36 PM, Mina Almasry wrote:
+> >>>  static long add_reservation_in_range(struct resv_map *resv, long f, long t,
+> >>> -                                  bool count_only)
+> >>> +                                  long *regions_needed, bool count_only)
+> >>>  {
+> >>> -     long chg = 0;
+> >>> +     long add = 0;
+> >>>       struct list_head *head = &resv->regions;
+> >>> +     long last_accounted_offset = f;
+> >>>       struct file_region *rg = NULL, *trg = NULL, *nrg = NULL;
+> >>>
+> >>> -     /* Locate the region we are before or in. */
+> >>> -     list_for_each_entry (rg, head, link)
+> >>> -             if (f <= rg->to)
+> >>> -                     break;
+> >>> +     if (regions_needed)
+> >>> +             *regions_needed = 0;
+> >>>
+> >>> -     /* Round our left edge to the current segment if it encloses us. */
+> >>> -     if (f > rg->from)
+> >>> -             f = rg->from;
+> >>> -
+> >>> -     chg = t - f;
+> >>> +     /* In this loop, we essentially handle an entry for the range
+> >>> +      * [last_accounted_offset, rg->from), at every iteration, with some
+> >>> +      * bounds checking.
+> >>> +      */
+> >>> +     list_for_each_entry_safe(rg, trg, head, link) {
+> >>> +             /* Skip irrelevant regions that start before our range. */
+> >>> +             if (rg->from < f) {
+> >>> +                     /* If this region ends after the last accounted offset,
+> >>> +                      * then we need to update last_accounted_offset.
+> >>> +                      */
+> >>> +                     if (rg->to > last_accounted_offset)
+> >>> +                             last_accounted_offset = rg->to;
+> >>> +                     continue;
+> >>> +             }
+> >>>
+> >>> -     /* Check for and consume any regions we now overlap with. */
+> >>> -     nrg = rg;
+> >>> -     list_for_each_entry_safe (rg, trg, rg->link.prev, link) {
+> >>> -             if (&rg->link == head)
+> >>> -                     break;
+> >>> +             /* When we find a region that starts beyond our range, we've
+> >>> +              * finished.
+> >>> +              */
+> >>>               if (rg->from > t)
+> >>>                       break;
+> >>>
+> >>> -             /* We overlap with this area, if it extends further than
+> >>> -              * us then we must extend ourselves.  Account for its
+> >>> -              * existing reservation.
+> >>> +             /* Add an entry for last_accounted_offset -> rg->from, and
+> >>> +              * update last_accounted_offset.
+> >>>                */
+> >>> -             if (rg->to > t) {
+> >>> -                     chg += rg->to - t;
+> >>> -                     t = rg->to;
+> >>> +             if (rg->from > last_accounted_offset) {
+> >>> +                     add += rg->from - last_accounted_offset;
+> >>> +                     if (!count_only) {
+> >>> +                             nrg = get_file_region_entry_from_cache(
+> >>> +                                     resv, last_accounted_offset, rg->from);
+> >>> +                             list_add(&nrg->link, rg->link.prev);
+> >>> +                     } else if (regions_needed)
+> >>> +                             *regions_needed += 1;
+> >>>               }
+> >>> -             chg -= rg->to - rg->from;
+> >>>
+> >>> -             if (!count_only && rg != nrg) {
+> >>> -                     list_del(&rg->link);
+> >>> -                     kfree(rg);
+> >>> -             }
+> >>> +             last_accounted_offset = rg->to;
+> >>
+> >> That last assignment is unneeded.  Correct?
+> >>
+> >
+> > Not to make you nervous, but this assignment is needed.
+> >
+> > The basic idea is that there are 2 loop invariants here:
+> > 1. Everything before last_accounted_offset is filled in with file_regions.
+> > 2. rg points to the first region past last_account_offset.
+> >
+> > Each loop iteration compares rg->from to last_accounted_offset, and if
+> > there is a gap, it creates a new region to fill this gap. Then this
+> > assignment restores loop invariant #2 by assigning
+> > last_accounted_offset to rg->to, since now everything before rg->to is
+> > filled in with file_regions.
+> >
+>
+> My apologies!
+>
+> >>>       }
+> >>>
+> >>> -     if (!count_only) {
+> >>> -             nrg->from = f;
+> >>> -             nrg->to = t;
+> >>> +     /* Handle the case where our range extends beyond
+> >>> +      * last_accounted_offset.
+> >>> +      */
+> >>> +     if (last_accounted_offset < t) {
+> >>> +             add += t - last_accounted_offset;
+> >>> +             if (!count_only) {
+> >>> +                     nrg = get_file_region_entry_from_cache(
+> >>> +                             resv, last_accounted_offset, t);
+> >>> +                     list_add(&nrg->link, rg->link.prev);
+> >>> +             } else if (regions_needed)
+> >>> +                     *regions_needed += 1;
+> >>> +             last_accounted_offset = t;
+>
+> The question about an unnecessary assignment was supposed to be
+> directed at the above line.
+>
 
-Sigh. I guess we have to keep CONFIG_IDE then. Thank you for checking!
+Oh, yes. That assignment is completely unnecessary; the function just
+exits after pretty much. Will remove, thanks!
 
-How about:
-
-CONFIG_BLK_DEV_GAYLE=n
-CONFIG_BLK_DEV_BUDDHA=n
-
-CONFIG_ATA=y
-CONFIG_ATA_VERBOSE_ERROR=y
-CONFIG_PATA_GAYLE=y
-CONFIG_PATA_BUDDHA=y
-
-for the multi_defconfig, and the following *only* for amiga_defconfig (as it's useless without drivers on Amiga):
-
-CONFIG_IDE=n
-CONFIG_IDE_GD_ATAPI=n
-CONFIG_BLK_DEV_IDECD=n
-
-
-Max
+> --
+> Mike Kravetz
+>
+>
+> >>>       }
+> >>>
+> >>> -     return chg;
+> >>> +     return add;
+> >>>  }
