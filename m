@@ -2,66 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A4EEE119
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A46EE11E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbfKDN2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:28:19 -0500
-Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:58063 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727236AbfKDN2T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:28:19 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id C13FB182CED2A;
-        Mon,  4 Nov 2019 13:28:17 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2859:2895:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3743:3865:3867:3868:3870:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4362:5007:6248:6261:6742:7875:9025:9040:10004:10400:10848:10967:11232:11657:11658:11914:12043:12114:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:14777:21080:21433:21627:30054:30070:30090:30091,0,RBL:146.247.46.6:@goodmis.org:.lbl8.mailshell.net-62.8.41.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: rain90_db18710e4e53
-X-Filterd-Recvd-Size: 1789
-Received: from grimm.local.home (unknown [146.247.46.6])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 Nov 2019 13:28:13 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 08:28:10 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Torsten Duwe <duwe@suse.de>, linux-arm-kernel@lists.infradead.org,
-        Jessica Yu <jeyu@kernel.org>, Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org, amit.kachhap@arm.com,
-        catalin.marinas@arm.com, james.morse@arm.com, jpoimboe@redhat.com,
-        jthierry@redhat.com, linux-parisc@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 2/8] module/ftrace: handle patchable-function-entry
-Message-ID: <20191104082810.70f1b72a@grimm.local.home>
-In-Reply-To: <20191031130022.GB3477@blommer>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
-        <20191029165832.33606-3-mark.rutland@arm.com>
-        <20191030150302.GA965@suse.de>
-        <20191031090231.GA3340@blommer>
-        <20191031114223.GA11684@suse.de>
-        <20191031130022.GB3477@blommer>
-X-Mailer: Claws Mail 3.17.4git49 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729009AbfKDN3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:29:42 -0500
+Received: from foss.arm.com ([217.140.110.172]:42912 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727236AbfKDN3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 08:29:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4814E1FB;
+        Mon,  4 Nov 2019 05:29:41 -0800 (PST)
+Received: from [10.1.196.37] (unknown [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 562063F6C4;
+        Mon,  4 Nov 2019 05:29:40 -0800 (PST)
+Subject: Re: [PATCH 0/7] iommu: Permit modular builds of ARM SMMU[v3] drivers
+To:     John Garry <john.garry@huawei.com>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Will Deacon <will@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191030145112.19738-1-will@kernel.org>
+ <6e457227-ca06-2998-4ffa-a58ab171ce32@arm.com>
+ <20191030155444.GC19096@willie-the-truck>
+ <CAGETcx9ogWQC1ZtnS_4xC3ShqBpuRSKudWEEWC22UZUEhdEU4A@mail.gmail.com>
+ <20191031193758.GA2607492@lophozonia>
+ <CAGETcx-MuMVvj0O-MFdfmLADEq=cQY_=x+irvhgwHhG4VeeSdg@mail.gmail.com>
+ <6994ae35-2b89-2feb-2bcb-cffc5a01963c@huawei.com>
+ <CAGETcx-9M8vvHA2Lykcv0hHWoC2OAw5kfBrjcNJN2CYCwR4eWQ@mail.gmail.com>
+ <47418554-e7a7-f9f3-8852-60cecef3d5c7@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7e2429ed-6b25-a452-5e4d-51a5195b872f@arm.com>
+Date:   Mon, 4 Nov 2019 13:29:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <47418554-e7a7-f9f3-8852-60cecef3d5c7@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2019 13:00:22 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
-
-> Sure. I've folded the above into this patch, and pushed out an updated branch:
+On 04/11/2019 12:16, John Garry wrote:
+> On 01/11/2019 21:13, Saravana Kannan wrote:
+>> On Fri, Nov 1, 2019 at 3:28 AM John Garry <john.garry@huawei.com> wrote:
+>>>
+>>> On 31/10/2019 23:34, Saravana Kannan via iommu wrote:
+>>>> I looked into the iommu-map property and it shouldn't be too hard to
+>>>> add support for it. Looks like we can simply hold off on probing the
+>>>> root bridge device till all the iommus in its iommu-map are probed and
+>>>> we should be fine.
+>>>>
+>>>>> I'm also unsure about distro vendors agreeing to a mandatory kernel
+>>>>> parameter (of_devlink). Do you plan to eventually enable it by 
+>>>>> default?
+>>>>>
+>>>>>> static const struct supplier_bindings of_supplier_bindings[] = {
+>>>>>>           { .parse_prop = parse_clocks, },
+>>>>>>           { .parse_prop = parse_interconnects, },
+>>>>>>           { .parse_prop = parse_regulators, },
+>>>>>> +        { .parse_prop = parse_iommus, },
+>>>>>>           {},
+>>>>>> };
+>>>>>>
+>>>>>> I plan to upstream this pretty soon, but I have other patches in
+>>>>>> flight that touch the same file and I'm waiting for those to get
+>>>>>> accepted. I also want to clean up the code a bit to reduce some
+>>>>>> repetition before I add support for more bindings.
+>>>>> I'm also wondering about ACPI support.
+>>>> I'd love to add ACPI support too, but I have zero knowledge of ACPI.
+>>>> I'd be happy to help anyone who wants to add ACPI support that allows
+>>>> ACPI to add device links.
+>>>
+>>> If possible to add, that may be useful for remedying this:
+>>>
+>>> https://lore.kernel.org/linux-iommu/9625faf4-48ef-2dd3-d82f-931d9cf26976@huawei.com/ 
+>>>
+>>
+>> I'm happy that this change might fix that problem, but isn't the
+>> problem reported in that thread more to do with child devices getting
+>> added before the parent probes successfully? That doesn't make sense
+>> to me. 
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/ftrace-with-regs
+> So the pcieport device and then the child device are added in the PCI 
+> scan, but only some time later do the device drivers probe for these 
+> devices; so it's not that the that pcieport driver creates the child 
+> device.
+> 
+> The problem then occurs in that the ordering the of device driver probe 
+> is such that we have this: pcieport probe + defer (as no IOMMU group 
+> registered), SMMU probe (registers the IOMMU group), child device probe, 
+> pcieport really probe.
+> 
+> Can't the piceport driver not add its child devices before it
+>> probes successfully? Or more specifically, who adds the child devices
+>> of the pcieport before the pcieport itself probes?
+> 
+> The devices are actually added in order pcieport, child device, but not 
+> really probed in that same order, as above.
 
-Just to keep this change in lore, can you at a minimum reply to this
-patch's thread with the new update?
+Right, in short the fundamental problem is that of_iommu_configure() now 
+does the wrong thing. Deferring probe of the entire host bridge/root 
+complex based on "iommu-map" would indeed happen to solve the problem by 
+brute force, I think, but could lead to a dependency cycle for PCI-based 
+IOMMUs as Jean points out. I hope to have time this week to work a bit 
+more on pulling of_iommu_configure() apart to fix it properly, after 
+which of_devlink *should* only have to worry about the child devices 
+themselves...
 
-Thanks!
+Robin.
 
--- Steve
+> I'll add you to that thread if you want to discuss further.
+> 
+> Thanks,
+> John
+> 
