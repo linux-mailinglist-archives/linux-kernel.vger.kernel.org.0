@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3557CEEC36
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB6B8EEBC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388062AbfKDVy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:54:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49952 "EHLO mail.kernel.org"
+        id S1730434AbfKDVvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388050AbfKDVyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:54:55 -0500
+        id S1730411AbfKDVvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:05 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8583C217F4;
-        Mon,  4 Nov 2019 21:54:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31229217F5;
+        Mon,  4 Nov 2019 21:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904495;
-        bh=u9Z6lVC4xy0VgeB2bfaZPJz5Y1PJFKbw+LVpl3t3NfA=;
+        s=default; t=1572904264;
+        bh=taHtxd+ytwMIQ/xVfUB+ba14QxmtBFsEvaK2BHFPEc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EoBcEmOwv8K8X5SPRa4QJ1x0qsD497W9dFcKWnL2OrcoU0f4BGDRcDdJG0HAnVFGr
-         f5r5ymVU7tgtjW80V/LD3oYgzIXOciQtFSj6j4htlEocoHCOpXKhT1RRNdRZL4gGgc
-         PQC/GNFAaysfs2GKOKA4WyIGL0+jbdBko/gSrc0M=
+        b=hCeIyKxruYEw4QZmZXbjOlT09IdgOgvnVn3XFviiSyUzJYTAINo+j+YCCJdPQXly1
+         fPpysH6C6YKx1XZiTPkBL/T+2iGCFYTg30qu5qvgOorYoOkoa4BgYecUupxnWDusq6
+         K4WsDCIXn4uNk3JowNPJsmfuiyKG3fe9/FmKiE1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 66/95] ALSA: hda/realtek - Add support for ALC623
-Date:   Mon,  4 Nov 2019 22:45:04 +0100
-Message-Id: <20191104212110.711021892@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 43/62] USB: serial: whiteheat: fix line-speed endianness
+Date:   Mon,  4 Nov 2019 22:45:05 +0100
+Message-Id: <20191104211947.080300933@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +42,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit f0778871a13889b86a65d4ad34bef8340af9d082 upstream.
+commit 84968291d7924261c6a0624b9a72f952398e258b upstream.
 
-Support new codec ALC623.
+Add missing endianness conversion when setting the line speed so that
+this driver might work also on big-endian machines.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/ed97b6a8bd9445ecb48bc763d9aaba7a@realtek.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Also use an unsigned format specifier in the corresponding debug
+message.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191029102354.2733-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/usb/serial/whiteheat.c |    9 ++++++---
+ drivers/usb/serial/whiteheat.h |    2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -375,6 +375,9 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0672:
- 		alc_update_coef_idx(codec, 0xd, 0, 1<<14); /* EAPD Ctrl */
- 		break;
-+	case 0x10ec0623:
-+		alc_update_coef_idx(codec, 0x19, 1<<13, 0);
-+		break;
- 	case 0x10ec0668:
- 		alc_update_coef_idx(codec, 0x7, 3<<13, 0);
- 		break;
-@@ -2757,6 +2760,7 @@ enum {
- 	ALC269_TYPE_ALC225,
- 	ALC269_TYPE_ALC294,
- 	ALC269_TYPE_ALC300,
-+	ALC269_TYPE_ALC623,
- 	ALC269_TYPE_ALC700,
- };
+--- a/drivers/usb/serial/whiteheat.c
++++ b/drivers/usb/serial/whiteheat.c
+@@ -681,6 +681,7 @@ static void firm_setup_port(struct tty_s
+ 	struct device *dev = &port->dev;
+ 	struct whiteheat_port_settings port_settings;
+ 	unsigned int cflag = tty->termios.c_cflag;
++	speed_t baud;
  
-@@ -2792,6 +2796,7 @@ static int alc269_parse_auto_config(stru
- 	case ALC269_TYPE_ALC225:
- 	case ALC269_TYPE_ALC294:
- 	case ALC269_TYPE_ALC300:
-+	case ALC269_TYPE_ALC623:
- 	case ALC269_TYPE_ALC700:
- 		ssids = alc269_ssids;
- 		break;
-@@ -7274,6 +7279,9 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC300;
- 		spec->gen.mixer_nid = 0; /* no loopback on ALC300 */
- 		break;
-+	case 0x10ec0623:
-+		spec->codec_variant = ALC269_TYPE_ALC623;
-+		break;
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-@@ -8354,6 +8362,7 @@ static const struct hda_device_id snd_hd
- 	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
-+	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
- 	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660", patch_alc861),
- 	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
- 	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
+ 	port_settings.port = port->port_number + 1;
+ 
+@@ -741,11 +742,13 @@ static void firm_setup_port(struct tty_s
+ 	dev_dbg(dev, "%s - XON = %2x, XOFF = %2x\n", __func__, port_settings.xon, port_settings.xoff);
+ 
+ 	/* get the baud rate wanted */
+-	port_settings.baud = tty_get_baud_rate(tty);
+-	dev_dbg(dev, "%s - baud rate = %d\n", __func__, port_settings.baud);
++	baud = tty_get_baud_rate(tty);
++	port_settings.baud = cpu_to_le32(baud);
++	dev_dbg(dev, "%s - baud rate = %u\n", __func__, baud);
+ 
+ 	/* fixme: should set validated settings */
+-	tty_encode_baud_rate(tty, port_settings.baud, port_settings.baud);
++	tty_encode_baud_rate(tty, baud, baud);
++
+ 	/* handle any settings that aren't specified in the tty structure */
+ 	port_settings.lloop = 0;
+ 
+--- a/drivers/usb/serial/whiteheat.h
++++ b/drivers/usb/serial/whiteheat.h
+@@ -91,7 +91,7 @@ struct whiteheat_simple {
+ 
+ struct whiteheat_port_settings {
+ 	__u8	port;		/* port number (1 to N) */
+-	__u32	baud;		/* any value 7 - 460800, firmware calculates
++	__le32	baud;		/* any value 7 - 460800, firmware calculates
+ 				   best fit; arrives little endian */
+ 	__u8	bits;		/* 5, 6, 7, or 8 */
+ 	__u8	stop;		/* 1 or 2, default 1 (2 = 1.5 if bits = 5) */
 
 
