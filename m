@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FCEEEDBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 493B1EEEFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390429AbfKDWJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:09:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42670 "EHLO mail.kernel.org"
+        id S2390004AbfKDWSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:18:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390418AbfKDWJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:33 -0500
+        id S2389212AbfKDWCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:02:11 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CE6F20650;
-        Mon,  4 Nov 2019 22:09:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7326920650;
+        Mon,  4 Nov 2019 22:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905372;
-        bh=mY9b+i7LidgwnXe/Qx61bnZHFbA9frZCx9Me8Ze/Sm8=;
+        s=default; t=1572904930;
+        bh=o/Ex+1vv7SaDW4yyZ1WvsYR1s5YLNJ0IQxV7tuCOcYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dNDp+mcmL1zuYWBTxNAQLuu0C/CbAHV3KSZJ7oDyUZtuyv26uOcv86rY1xqHGKhu+
-         JnWXioVG94lrxitryGRF8Aqk29ZzUaraAq99Tmpbkdh62nOstTpt5tje93XrO5rv6i
-         nqyZbhJiVsTAGcrUfP1u6T2KgpPoPBjhwsYdc05A=
+        b=G0uUfCJS9Wa0z0/tmpg16O+XbK3IAw1+EwwN2A7nCrQ2se898xel49dDfEntWcnzX
+         glavUFd7ZJmOj/20rig0gwaWB7roT1LzQekuqNS9PVRy+lGbJMmU6DvbpuWXUW9Am2
+         0dRrC8YB7LTXbjLRN+MPGikDAV2R750FEOVtuRQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.3 122/163] s390/unwind: fix mixing regs and sp
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.19 119/149] usb: xhci: fix __le32/__le64 accessors in debugfs code
 Date:   Mon,  4 Nov 2019 22:45:12 +0100
-Message-Id: <20191104212149.057129464@linuxfoundation.org>
+Message-Id: <20191104212144.661697720@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 
-commit a1d863ac3e1085e1fea9caafd87252d08731de2e upstream.
+commit d5501d5c29a2e684640507cfee428178d6fd82ca upstream.
 
-unwind_for_each_frame stops after the first frame if regs->gprs[15] <=
-sp.
+It looks like some of the xhci debug code is passing u32 to functions
+directly from __le32/__le64 fields.
+Fix this by using le{32,64}_to_cpu() on these to fix the following
+sparse warnings;
 
-The reason is that in case regs are specified, the first frame should be
-regs->psw.addr and the second frame should be sp->gprs[8]. However,
-currently the second frame is regs->gprs[15], which confuses
-outside_of_stack().
+xhci-debugfs.c:205:62: warning: incorrect type in argument 1 (different base types)
+xhci-debugfs.c:205:62:    expected unsigned int [usertype] field0
+xhci-debugfs.c:205:62:    got restricted __le32
+xhci-debugfs.c:206:62: warning: incorrect type in argument 2 (different base types)
+xhci-debugfs.c:206:62:    expected unsigned int [usertype] field1
+xhci-debugfs.c:206:62:    got restricted __le32
+...
 
-Fix by introducing a flag to distinguish this special case from
-unwinding the interrupt handler, for which the current behavior is
-appropriate.
-
-Fixes: 78c98f907413 ("s390/unwind: introduce stack unwind API")
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: stable@vger.kernel.org # v5.2+
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+[Trim down commit message, sparse warnings were similar -Mathias]
+Cc: <stable@vger.kernel.org> # 4.15+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/1572013829-14044-4-git-send-email-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/unwind.h |    1 +
- arch/s390/kernel/unwind_bc.c   |   18 +++++++++++++-----
- 2 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/usb/host/xhci-debugfs.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/arch/s390/include/asm/unwind.h
-+++ b/arch/s390/include/asm/unwind.h
-@@ -35,6 +35,7 @@ struct unwind_state {
- 	struct task_struct *task;
- 	struct pt_regs *regs;
- 	unsigned long sp, ip;
-+	bool reuse_sp;
- 	int graph_idx;
- 	bool reliable;
- 	bool error;
---- a/arch/s390/kernel/unwind_bc.c
-+++ b/arch/s390/kernel/unwind_bc.c
-@@ -46,10 +46,15 @@ bool unwind_next_frame(struct unwind_sta
+--- a/drivers/usb/host/xhci-debugfs.c
++++ b/drivers/usb/host/xhci-debugfs.c
+@@ -202,10 +202,10 @@ static void xhci_ring_dump_segment(struc
+ 		trb = &seg->trbs[i];
+ 		dma = seg->dma + i * sizeof(*trb);
+ 		seq_printf(s, "%pad: %s\n", &dma,
+-			   xhci_decode_trb(trb->generic.field[0],
+-					   trb->generic.field[1],
+-					   trb->generic.field[2],
+-					   trb->generic.field[3]));
++			   xhci_decode_trb(le32_to_cpu(trb->generic.field[0]),
++					   le32_to_cpu(trb->generic.field[1]),
++					   le32_to_cpu(trb->generic.field[2]),
++					   le32_to_cpu(trb->generic.field[3])));
+ 	}
+ }
  
- 	regs = state->regs;
- 	if (unlikely(regs)) {
--		sp = READ_ONCE_NOCHECK(regs->gprs[15]);
--		if (unlikely(outside_of_stack(state, sp))) {
--			if (!update_stack_info(state, sp))
--				goto out_err;
-+		if (state->reuse_sp) {
-+			sp = state->sp;
-+			state->reuse_sp = false;
-+		} else {
-+			sp = READ_ONCE_NOCHECK(regs->gprs[15]);
-+			if (unlikely(outside_of_stack(state, sp))) {
-+				if (!update_stack_info(state, sp))
-+					goto out_err;
-+			}
- 		}
- 		sf = (struct stack_frame *) sp;
- 		ip = READ_ONCE_NOCHECK(sf->gprs[8]);
-@@ -107,9 +112,9 @@ void __unwind_start(struct unwind_state
- {
- 	struct stack_info *info = &state->stack_info;
- 	unsigned long *mask = &state->stack_mask;
-+	bool reliable, reuse_sp;
- 	struct stack_frame *sf;
- 	unsigned long ip;
--	bool reliable;
+@@ -263,10 +263,10 @@ static int xhci_slot_context_show(struct
+ 	xhci = hcd_to_xhci(bus_to_hcd(dev->udev->bus));
+ 	slot_ctx = xhci_get_slot_ctx(xhci, dev->out_ctx);
+ 	seq_printf(s, "%pad: %s\n", &dev->out_ctx->dma,
+-		   xhci_decode_slot_context(slot_ctx->dev_info,
+-					    slot_ctx->dev_info2,
+-					    slot_ctx->tt_info,
+-					    slot_ctx->dev_state));
++		   xhci_decode_slot_context(le32_to_cpu(slot_ctx->dev_info),
++					    le32_to_cpu(slot_ctx->dev_info2),
++					    le32_to_cpu(slot_ctx->tt_info),
++					    le32_to_cpu(slot_ctx->dev_state)));
  
- 	memset(state, 0, sizeof(*state));
- 	state->task = task;
-@@ -134,10 +139,12 @@ void __unwind_start(struct unwind_state
- 	if (regs) {
- 		ip = READ_ONCE_NOCHECK(regs->psw.addr);
- 		reliable = true;
-+		reuse_sp = true;
- 	} else {
- 		sf = (struct stack_frame *) sp;
- 		ip = READ_ONCE_NOCHECK(sf->gprs[8]);
- 		reliable = false;
-+		reuse_sp = false;
+ 	return 0;
+ }
+@@ -286,10 +286,10 @@ static int xhci_endpoint_context_show(st
+ 		ep_ctx = xhci_get_ep_ctx(xhci, dev->out_ctx, dci);
+ 		dma = dev->out_ctx->dma + dci * CTX_SIZE(xhci->hcc_params);
+ 		seq_printf(s, "%pad: %s\n", &dma,
+-			   xhci_decode_ep_context(ep_ctx->ep_info,
+-						  ep_ctx->ep_info2,
+-						  ep_ctx->deq,
+-						  ep_ctx->tx_info));
++			   xhci_decode_ep_context(le32_to_cpu(ep_ctx->ep_info),
++						  le32_to_cpu(ep_ctx->ep_info2),
++						  le64_to_cpu(ep_ctx->deq),
++						  le32_to_cpu(ep_ctx->tx_info)));
  	}
  
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-@@ -151,5 +158,6 @@ void __unwind_start(struct unwind_state
- 	state->sp = sp;
- 	state->ip = ip;
- 	state->reliable = reliable;
-+	state->reuse_sp = reuse_sp;
- }
- EXPORT_SYMBOL_GPL(__unwind_start);
+ 	return 0;
 
 
