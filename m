@@ -2,123 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC465EE9F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5827EEA11
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:47:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbfKDUkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 15:40:51 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:2725 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbfKDUku (ORCPT
+        id S1729216AbfKDUrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 15:47:42 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:47545 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728392AbfKDUrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 15:40:50 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc08cd80000>; Mon, 04 Nov 2019 12:40:56 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 04 Nov 2019 12:40:49 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 04 Nov 2019 12:40:49 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
- 2019 20:40:48 +0000
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191104173325.GD5134@redhat.com>
- <be9de35c-57e9-75c3-2e86-eae50904bbdf@nvidia.com>
- <20191104191811.GI5134@redhat.com>
- <e9656d47-b4a1-da8a-e8cc-ebcfb8cc06d6@nvidia.com>
- <20191104195248.GA7731@redhat.com>
- <25ec4bc0-caaa-2a01-2ae7-2d79663a40e1@nvidia.com>
- <20191104203117.GE30938@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <1c428985-6ede-ef75-62bd-26ccf99f6d38@nvidia.com>
-Date:   Mon, 4 Nov 2019 12:40:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 4 Nov 2019 15:47:42 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 81A4A21B4C;
+        Mon,  4 Nov 2019 15:47:40 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 04 Nov 2019 15:47:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=XmRwftF81yg852f+UvjXfdQjfz
+        O1tQWIo/qB1nRcCIM=; b=RCT4Y9KaK7JUgkB0GJjZKwT63HfUP8OSbRYq0dhFrB
+        XkJErq8NyARygfMeYWy3KGL3X176f6aps41+M2opU7N9DRgsnLDIg4RCeaF+av53
+        3F+sAxki+oRjbbQo9W/uDxR+QaRmU3V7y/g3gzXPyb6bLHeBONCv4Dd+KdzvO8ne
+        eaal/GNltBJJKI8yHImoNcSiPos5e7G+sl/2brX+rzyJJhD93UXT9icBAvcHL7aX
+        wxBjBGEcYOjofIrn2eX+wANDD4v3U67p81gphGS2eAWbap+0LF/SUp9fCwnCE8Hx
+        JfcxqFEqVwtylBuL0aFIbJqD8ibXxs8vROq35kWhADtg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=XmRwftF81yg852f+U
+        vjXfdQjfzO1tQWIo/qB1nRcCIM=; b=UtbmnlplIaNObTZGtWoQCXfoAFA0vDkQu
+        pVK8J94JkNfA0gZ5wnGWIBzLoNz9Yy4AVdhOzUwRjrYI5sZtnnkI/km31g+UpYV3
+        11nP1TaPgr63m1PjrSGUs/T0wI7Ll/3RjAXzAHRTo+oSoiCpGSLXn/i7qmXZpalE
+        E/q2hLZZSsBcd5Taf4o6pVeumxwNu32O2rSmD5DVoBF5fTadBjShRDCBoqm8mt0X
+        p1W0wDXwh44PULFz4ujtd6PrrL0WvW4GokJyRi3Mh2XMl+EBCqlXq6NbGT9gCAUO
+        xfqkQD8nPlxA/ukockdrGiQXQvN5NeLXqslwdtqWbfvoneEE82t2Q==
+X-ME-Sender: <xms:a47AXeT4srDBpkPPaBG_APvd0RZ58LMryC6fHhkiyISLqqk2vMwTvw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedruddufedgudegudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomheptehlhihsshgr
+    ucftohhsshcuoehhihesrghlhihsshgrrdhisheqnecukfhppeekgedrudekgedrvdefje
+    druddufeenucfrrghrrghmpehmrghilhhfrhhomhepqhihlhhishhsseigvddvtddrqhih
+    lhhishhsrdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:a47AXeFN2yHZt7auarc7NqlOxcsb_xwyP_cf-bRJDjYWCReypLRZJw>
+    <xmx:a47AXWE5JBnJC8Ax7DkDHXcMXu1yQbAJqeFygfZCWZt-mnQIskK17Q>
+    <xmx:a47AXQSJFynteyOeVPSOLd9wZECsDmfgHHcBHRE5XAf2qfqBpNRXhw>
+    <xmx:bI7AXQ2JYH0docpGusjS_K-wPBKnSOtjrjveueewWgCqTf6i68QkLw>
+Received: from x220.qyliss.net (p54b8ed71.dip0.t-ipconnect.de [84.184.237.113])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 013E63060060;
+        Mon,  4 Nov 2019 15:47:39 -0500 (EST)
+Received: by x220.qyliss.net (Postfix, from userid 1000)
+        id 24E841400EA; Mon,  4 Nov 2019 20:47:36 +0000 (UTC)
+From:   Alyssa Ross <hi@alyssa.is>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Alyssa Ross <hi@alyssa.is>
+Subject: [PATCH] kconfig: be more helpful if pkg-config is missing
+Date:   Mon,  4 Nov 2019 20:44:54 +0000
+Message-Id: <20191104204453.20115-1-hi@alyssa.is>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191104203117.GE30938@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572900056; bh=DgUGakiDqU+H/jvLHI+F9dgZlEqXtDj8YZcQ5jdUUnc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=NHQ1Q0iautz1x5eS1rpVt2XzAK+GdsKg4fHxuWzyx4M7tJpV+1UB6d5ZpY+LJM8ME
-         TR31xYhwAxi1K+5UUf+wF2rdwAdcBiJd7g9PZ9zQdxs0smNT0eXx/EK23GNTVWWsim
-         vmxoebMT8yRD8emjw4hl+mywMz6dGLzA9qU4y5rdocqaRh8e0dGYAC8/oxGzxQkYvT
-         MWkQm/cvgwbgyxMEdYQt09KoKCaZDdAw2q8ktAtZsrow9mFYWcec570DR/POlaG1aB
-         FjnA7v+FO5AVWFmkxPStSbC6bck0U4AV8Oy7tJVJh18dLUfTlW6x2kgIg6rLYkBdDJ
-         g//zR0Vfe3smA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/19 12:31 PM, Jason Gunthorpe wrote:
-> On Mon, Nov 04, 2019 at 12:09:05PM -0800, John Hubbard wrote:
-> 
->> Note for Jason: the (a) or (b) items are talking about the vfio case, which is
->> one of the two call sites that now use pin_longterm_pages_remote(), and the
->> other one is infiniband:
->>
->> drivers/infiniband/core/umem_odp.c:646:         npages = pin_longterm_pages_remote(owning_process, owning_mm,
-> 
-> This is a mistake, it is not a longterm pin and does not need FOLL_PIN
-> semantics
+If ncurses is installed, but at a non-default location, the previous
+error message was not helpful in resolving the situation.  Now, if
+ncurses can't be found, and pkg-config is not installed, it will
+suggest that pkg-config might need to be installed in addition to
+ncurses.
 
-OK! So it really just wants to be get_user_pages_remote() / put_page()? I'll
-change it back to that.
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+---
+ scripts/kconfig/mconf-cfg.sh | 14 ++++++++++++--
+ scripts/kconfig/nconf-cfg.sh | 14 ++++++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-> 
->> Jason should weigh in on how he wants this to go, with respect to branching
->> and merging, since it sounds like that will conflict with the hmm branch 
-> 
-> I think since you don't need to change this site things should be
-> fine?
-> 
+diff --git a/scripts/kconfig/mconf-cfg.sh b/scripts/kconfig/mconf-cfg.sh
+index c812872d7f9d..f547b13f77f6 100755
+--- a/scripts/kconfig/mconf-cfg.sh
++++ b/scripts/kconfig/mconf-cfg.sh
+@@ -41,7 +41,17 @@ fi
+ 
+ echo >&2 "*"
+ echo >&2 "* Unable to find the ncurses package."
+-echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+-echo >&2 "* depending on your distribution)."
++echo >&2 "*"
++if [ -n "$(command -v pkg-config)" ]; then
++	echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
++	echo >&2 "* depending on your distribution)."
++else
++	echo >&2 "* You may need to install ncurses"
++	echo >&2 "* (ncurses-devel or libncurses-dev"
++	echo >&2 "* depending on your distribution)."
++	echo >&2 "*"
++	echo >&2 "* If you have ncurses installed,"
++	echo >&2 "* you may also need to install pkg-config."
++fi
+ echo >&2 "*"
+ exit 1
+diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
+index 001559ef0a60..569226f1b497 100755
+--- a/scripts/kconfig/nconf-cfg.sh
++++ b/scripts/kconfig/nconf-cfg.sh
+@@ -41,7 +41,17 @@ fi
+ 
+ echo >&2 "*"
+ echo >&2 "* Unable to find the ncurses package."
+-echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+-echo >&2 "* depending on your distribution)."
++echo >&2 "*"
++if [ -n "$(command -v pkg-config)" ]; then
++	echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
++	echo >&2 "* depending on your distribution)."
++else
++	echo >&2 "* You may need to install ncurses"
++	echo >&2 "* (ncurses-devel or libncurses-dev"
++	echo >&2 "* depending on your distribution)."
++	echo >&2 "*"
++	echo >&2 "* If you have ncurses installed,"
++	echo >&2 "* you may also need to install pkg-config."
++fi
+ echo >&2 "*"
+ exit 1
+-- 
+2.23.0
 
-Right. 
-
-
-thanks,
-
-John Hubbard
-NVIDIA
