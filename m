@@ -2,172 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78189EEFE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F43AEECE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:01:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387824AbfKDVyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:54:02 -0500
-Received: from mail-eopbgr150098.outbound.protection.outlook.com ([40.107.15.98]:54151
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387718AbfKDVxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:53:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=l/WUwH/fAaJhEoyKAhCmFzTeiNCxJ00nWGdb+TV8PybhK0L14iyz8zLIw6JGelqcDHhOguxizGVFgRIciMdevd+CoaKa8U5gf7zGu4vxbxYs+ZKwSyjcU+VGMQlVwKSbex9qa9Y1nFnnFgJ0KingVUAUsene1nDQLh3QXnl6henGKImZK80AOGsLUn/D5P156mv5c0P3KEGWylryPEDiAs8HF6my1U5P7tIU9ZyJ8ZjSGdxLiTx17dVFtkaaF6LLp8N7ZErJcFWbI/W/F7MPD2sa1podHIp+QnVAnYyH+1z6yppMxevPG3YQ6z4UlVPXUcV7uKUeZCykvrf8zSGz1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zOgmPMTOntPI+NHA29S0OO4RHAPLHt2NIVjM0ZVmISE=;
- b=bBhMmEKbIkOCGnALeNdXSLGRFeSEGXvVHG77lVVsSXxFA0qXvq3n4Z3DcjL1Zw3ZbbPc0IbNH5wiPcbZaVNwka72DXPZEXyB3IQqMppXgbvNnbT1XCkWqMgJ2kcboTqQFELCKaPRjnGTzT/7JuUgKGJXIURI73A5AtGWJ+AZySKUFSCEAAGjuIT8re+V7RT0xsjCLXmMEDbCZ9NitLwmO6ykhc0H/r+4wO8lxe7PEv4qkdlThR3uOm2DEbx5n+knlKVv3jqHi1l4nHS9QybBUZHVmE64oA4t3FCBnkfdJfTkis7pQQNKUAgv5wWvZVvUQHAACSb0T3qLP3JaeQjUMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zOgmPMTOntPI+NHA29S0OO4RHAPLHt2NIVjM0ZVmISE=;
- b=OHu9RKPFpNGQIpncykGwHCg6IPFHQimWgqalIvY5Ylieat8XmDPmpfIXiaqVY8e7lvKJK4XduwHyhUBprB5d74ObD9EHECbSmm46AqKHRWl/oHqzjWjwbWIcree2knh6KJtEKPkdm3QEBEWYbe1egofyRUKSZRkGKi1gXqaOAeo=
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com (10.172.218.15) by
- AM4PR0802MB2145.eurprd08.prod.outlook.com (10.172.217.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Mon, 4 Nov 2019 21:53:52 +0000
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89]) by AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89%12]) with mapi id 15.20.2408.024; Mon, 4 Nov 2019
- 21:53:51 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "graf@amazon.com" <graf@amazon.com>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,
-        "karahmed@amazon.de" <karahmed@amazon.de>,
-        "rimasluk@amazon.com" <rimasluk@amazon.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-Subject: Re: [PATCH v4 07/17] svm: Add support for setup/destroy virutal APIC
- backing page for AVIC
-Thread-Topic: [PATCH v4 07/17] svm: Add support for setup/destroy virutal APIC
- backing page for AVIC
-Thread-Index: AQHVkQWEOJKDttGuEk67IxsHyiXMcqd7kqEA
-Date:   Mon, 4 Nov 2019 21:53:51 +0000
-Message-ID: <20191104215348.GA23545@rkaganb.lan>
-References: <1572648072-84536-1-git-send-email-suravee.suthikulpanit@amd.com>
- <1572648072-84536-8-git-send-email-suravee.suthikulpanit@amd.com>
-In-Reply-To: <1572648072-84536-8-git-send-email-suravee.suthikulpanit@amd.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.12.1 (2019-06-15)
-mail-followup-to: "rkagan@virtuozzo.com" <rkagan@virtuozzo.com>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,    "pbonzini@redhat.com"
- <pbonzini@redhat.com>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,    "vkuznets@redhat.com"
- <vkuznets@redhat.com>, "graf@amazon.com" <graf@amazon.com>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,      "karahmed@amazon.de"
- <karahmed@amazon.de>,  "rimasluk@amazon.com" <rimasluk@amazon.com>,    "Grimm,
- Jon" <Jon.Grimm@amd.com>
-x-originating-ip: [2a02:2168:9049:de00::659]
-x-clientproxiedby: HE1PR0701CA0056.eurprd07.prod.outlook.com
- (2603:10a6:3:9e::24) To AM4PR0802MB2242.eurprd08.prod.outlook.com
- (2603:10a6:200:5f::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 261a8482-e093-4903-ca7c-08d761717ad6
-x-ms-traffictypediagnostic: AM4PR0802MB2145:
-x-microsoft-antispam-prvs: <AM4PR0802MB2145D4F4F3741D832E51FFF2C97F0@AM4PR0802MB2145.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0211965D06
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39840400004)(376002)(396003)(136003)(366004)(189003)(199004)(14454004)(54906003)(8676002)(25786009)(99286004)(58126008)(6486002)(33656002)(229853002)(66556008)(66476007)(64756008)(6436002)(66446008)(316002)(81166006)(81156014)(7416002)(7736002)(478600001)(305945005)(2906002)(8936002)(36756003)(6916009)(6116002)(186003)(256004)(14444005)(1076003)(52116002)(76176011)(86362001)(4326008)(102836004)(66946007)(6506007)(386003)(446003)(11346002)(5660300002)(476003)(486006)(71190400001)(46003)(71200400001)(6246003)(9686003)(6512007);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0802MB2145;H:AM4PR0802MB2242.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Wf7XtEyfbg3z83qqozmo007DDzhPSzyJz6SlEynSmrVjOelICYoNWucTsZ3ym9vQ2xxqKjG1JH93JP/km40Q8Rp3rW2zjLk8AlIpFbgkro1MjL53P4GrywtD+r/jW9AzytZlTDUJK1mXdrOKRST1/I3GAQrsdQleY7blSaRvFP7JJpSAkY0KBciEvTAYy6gdIQXTvr9+hhjYZMIPh1Owk9DFF0l5XdNKFSTjHuwwlA2Xp6mRyJkvAd/r7Wa9QNLf/Jpa1wyjhpZhjP7W+wiaXjmEP3xQD+ol8e/qg3U+gYPYwHLN4VN8aw0FbWSOdxh71odCz/9tDjHdiJb8vHuGqEF0uULBPKD0GaY3D2mtBw3nJxPG+dFJR0d+l83IBeI4TI5wu/6KGBLiWX7amE4u0J8OpIQnxbOUrKV5sfVymXeFrUhHMrtDRHFLNsnX21m/
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A2D6CE5817CF9840B4D3F6B295E03E4A@eurprd08.prod.outlook.com>
+        id S2389016AbfKDWBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:01:18 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42646 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388930AbfKDWBB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:01 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n5so8385848ljc.9;
+        Mon, 04 Nov 2019 14:01:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2OVarVRSzUnGKJBGs4WVqx209k3vAN93HhD50Crdflo=;
+        b=FItVCF95NdUOBJ98LcQsyGSFt3+IkSslQcVt4h+O4Z+v6u1SJm9e11WKWPmjO+mFU0
+         kUePIWiecEv3/7Vng3UpDx5KO+W9pSERFHd1RxPC9j/Gw4MlRUNecxLAOZtwJFw0lcH4
+         2dGw4YaLuwHWqJaVbpuHAZJswSL35+v7zMBqrlmNKhdb1/LXcvMgujDgXRV6Mp+ghsFZ
+         wAZJ1yBkJ/EkJa0EvF2IGg8sWSsWL9Y02KpC9d+1dHMqWjpviqcVID9VPAU+Scg+yhRF
+         4s5kWDHyD+Aih99QVf7SBxt7cuHQdovFQePMIhME+ZdVg19T04VbTfK32FHts7vohj8Y
+         O9Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2OVarVRSzUnGKJBGs4WVqx209k3vAN93HhD50Crdflo=;
+        b=L5gsIwJOreGJ/wQa+BHAnHf7wfnPCBROkZTFnD9s2vouNudl2LBLyVh684l0lbpa55
+         11EWKKHOdhurJtKztjn96GEi0EuhVhckTU68CfnrTwxcrwADqI4NSLtlYOy12Z1x9U+D
+         vRMhw+LdsgaYwvi0ZFA37wGSDmgGhleJJ+D5LPU6NETAkdebC+3qJDCZ4Q2b11awVIP1
+         p6ERnCzGecO06LLJEqJBFSv0pbFiwTUc8hcdDjrSFHzduvwkTok5J+2+g87PptesRqPa
+         swxiYKvOYoi01elEfYkUo7qs+LCt3mykae8JOisLR6Z1ocAoSNogWKKibAcUAhvPCG5i
+         Yu4A==
+X-Gm-Message-State: APjAAAWh0Mi9CiQtP/nBzEYRn97j62rmJwpvmE0qktVMGhwABDL6ADYV
+        Lv9y5XqM2W5dLy7uegF76jkGKK4r
+X-Google-Smtp-Source: APXvYqzk15nMJmAJddmpYNAnjr74O4WsF/bMenxSa/rtCjlyR3fNunKnWeXZiMZ+GLJizZ88kgvbRw==
+X-Received: by 2002:a2e:b5a2:: with SMTP id f2mr19970135ljn.108.1572904859113;
+        Mon, 04 Nov 2019 14:00:59 -0800 (PST)
+Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.gmail.com with ESMTPSA id g3sm7454669ljj.59.2019.11.04.14.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 14:00:57 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 00/19] More improvements for Tegra30 devfreq driver
+Date:   Tue,  5 Nov 2019 00:55:58 +0300
+Message-Id: <20191104215617.25544-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 261a8482-e093-4903-ca7c-08d761717ad6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2019 21:53:51.7429
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V7U7OtzekfUor6D6Wgi7XIvuOIQGysHpaYna7bGpLn4lOc1iJc5QB7fQHXcDdEzN4TBMX90LPl4UGiByFSmv5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0802MB2145
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 10:41:30PM +0000, Suthikulpanit, Suravee wrote:
-> Re-factor avic_init_access_page() to avic_update_access_page() since
-> activate/deactivate AVIC requires setting/unsetting the memory region used
-> for virtual APIC backing page (APIC_ACCESS_PAGE_PRIVATE_MEMSLOT).
+Hello,
 
-AFAICT the patch actually touches the (de)allocation of the APIC access
-page rather than the APIC backing page (or I'm confused in the
-nomenclature).
+This series addresses some additional review comments that were made by
+Thierry Reding to [1], makes several important changes to the driver,
+reducing interrupts activity, and adds new features. In the end I'm
+proposing myself as a maintainer for the Tegra devfreq drivers.
 
-Thanks,
-Roman.
+[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  arch/x86/kvm/svm.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index b7d0adc..46842a2 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -1668,23 +1668,22 @@ static u64 *avic_get_physical_id_entry(struct kvm_vcpu *vcpu,
->   * field of the VMCB. Therefore, we set up the
->   * APIC_ACCESS_PAGE_PRIVATE_MEMSLOT (4KB) here.
->   */
-> -static int avic_init_access_page(struct kvm_vcpu *vcpu)
-> +static int avic_update_access_page(struct kvm *kvm, bool activate)
->  {
-> -	struct kvm *kvm = vcpu->kvm;
->  	int ret = 0;
->  
->  	mutex_lock(&kvm->slots_lock);
-> -	if (kvm->arch.apic_access_page_done)
-> +	if (kvm->arch.apic_access_page_done == activate)
->  		goto out;
->  
->  	ret = __x86_set_memory_region(kvm,
->  				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
->  				      APIC_DEFAULT_PHYS_BASE,
-> -				      PAGE_SIZE);
-> +				      activate ? PAGE_SIZE : 0);
->  	if (ret)
->  		goto out;
->  
-> -	kvm->arch.apic_access_page_done = true;
-> +	kvm->arch.apic_access_page_done = activate;
->  out:
->  	mutex_unlock(&kvm->slots_lock);
->  	return ret;
-> @@ -1697,7 +1696,7 @@ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
->  	int id = vcpu->vcpu_id;
->  	struct vcpu_svm *svm = to_svm(vcpu);
->  
-> -	ret = avic_init_access_page(vcpu);
-> +	ret = avic_update_access_page(vcpu->kvm, true);
->  	if (ret)
->  		return ret;
->  
-> -- 
-> 1.8.3.1
-> 
+Changelog:
+
+v9:  Addressed review comments that were made by Chanwoo Choi to v8 by:
+
+     1. Updating the "Add new interrupt_driven flag for governors" patch
+        in accordance to the comments.
+
+     2. Factoring out the change of the dependency threshold units into a
+        separate patch:
+
+          PM / devfreq: tegra30: Use kHz units for dependency threshold
+
+        In this patch I also corrected the new threshold value because it
+        was miscalculated in v8 using MCALL coefficient instead of MCCPU.
+
+     Patch "Support variable polling interval" now again handles properly
+     governor's enable-state while polling interval is changed, it won't
+     start polling if governor is stopped. The problem was introduced in v8
+     when switched away from using devfreq->stop_polling because using
+     tegra->cur_freq is not enough and the whole "stop_polling" logic needs
+     to be duplicated in the driver.
+
+v8:  Addressed review comments that were made by Chanwoo Choi to v7 by:
+
+     1. Taking into account suggestions that were made for the "Add new
+        interrupt_driven flag for governors".
+
+     2. Patch "Support variable polling interval" now doesn't use
+        devfreq->stop_polling and uses tegra->cur_freq instead. There is
+        now a comment for the 256ms max polling interval limitation as well.
+
+     The patch "Increase sampling period to 16ms" is dropped from the series
+     for now since we found out that it doesn't bring much benefit.
+
+     The cur_freq value is now refreshed after clk-notifier registration in
+     the "Move clk-notifier's registration to governor's start" patch, for
+     consistency. This also becomes useful for the "Support variable polling
+     interval" patch since it now uses the cur_freq for tracking of the
+     governor's enable-state.
+
+     The patch "Support variable polling interval" now has a proper scaling
+     of the dependency threshold value, which I missed to backport into
+     v7 after dropping some of the v6 patches. The do_percent() function
+     now doesn't suffer from integer overflow bug when freq, boosting and
+     polling interval values are too large.
+
+v7:  Addressed review comments that were made by Chanwoo Choi to v6 by:
+
+     1. Dropping patch "Ensure that target freq won't overflow".
+     2. Making "Use kHz units uniformly in the code" patch more easier
+        for review and improving its commit's message.
+     3. The "Support variable polling interval" patch is reworked, now it
+        doesn't touch things that should stay internal to devfreq core, like
+        devfreq->stop_polling and etc. In a result a new generic
+        interrupt_driven flag is available for devfreq governors (added in a
+        new patch "Add new interrupt_driven flag for governors").
+
+     Patch "Set up watermarks properly" and related to it patches are dropped
+     because I found a case where it doesn't work well. These patches need
+     some more thought and not ready for now, I'll continue working on them.
+     I extracted useful changes from the dropped patches and then tuned up
+     MCCPU boost-down coefficient to keep ACTMON silent when system is idling,
+     in a result there are these new patches:
+
+       1. Don't enable already enabled consecutive interrupts
+       2. Disable consecutive interrupts when appropriate
+       3. Tune up MCCPU boost-down coefficient
+
+v6:  Addressed review comment that was made by Chanwoo Choi to v5 by
+     squashing "Define ACTMON_DEV_CTRL_STOP" patch into the "Use CPUFreq
+     notifier" patch.
+
+v5:  Addressed review comments that were made by Chanwoo Choi to v4 by
+     squashing few patches, dropping some questionable patches, rewording
+     comments to the code, restructuring the code and etc.
+
+     These patches are now dropped from the series:
+
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Inline all one-line functions
+
+     The interrupt-optimization patches are squashed into a single patch:
+
+       PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+
+     because it's better to keep the optimizations as a separate change and
+     this also helps to reduce code churning, since the code changes depend
+     on a previous patch in order to stay cleaner.
+
+     Fixed a lockup bug that I spotted recently, which is caused by a
+     clk-notifier->cpufreq_get()->clk_set_rate() sequence. Now a non-blocking
+     variant of CPU's frequency retrieving is used, i.e. cpufreq_quick_get().
+
+     Further optimized the CPUFreq notifier by postponing the delayed
+     updating in accordance to the polling interval, this actually uncovered
+     the above lockup bug.
+
+     Implemented new minor driver feature in the new patch:
+
+       PM / devfreq: tegra30: Support variable polling interval
+
+v4:  Added two new patches to the series:
+
+       PM / devfreq: tegra30: Synchronize average count on target's update
+       PM / devfreq: tegra30: Increase sampling period to 16ms
+
+     The first patch addresses problem where governor could get stuck due
+     to outdated "average count" value which is snapshoted by ISR and there
+     are cases where manual update of the value is required.
+
+     The second patch is just a minor optimization.
+
+v3:  Added support for tracepoints, replacing the debug messages.
+     Fixed few more bugs with the help of tracepoints.
+
+     New patches in this version:
+
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Optimize CPUFreq notifier
+       PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+       PM / devfreq: tegra30: Optimize upper average watermark selection
+       PM / devfreq: tegra30: Include appropriate header
+
+     Some of older patches of this series also got some extra minor polish.
+
+v2:  Added more patches that are cleaning driver's code further and
+     squashing another kHz conversion bug.
+
+     The patch "Rework frequency management logic" of the v1 series is now
+     converted to "Set up watermarks properly" because I found some problems
+     in the original patch and then realized that there is no need to change
+     the logic much. So the logic mostly preserved and only got improvements.
+
+     The series is based on the today's linux-next (25 Jun) and takes into
+     account minor changes that MyungJoo Ham made to the already queued
+     patches from the first batch [1].
+
+Dmitry Osipenko (19):
+  PM / devfreq: tegra30: Change irq type to unsigned int
+  PM / devfreq: tegra30: Keep interrupt disabled while governor is
+    stopped
+  PM / devfreq: tegra30: Handle possible round-rate error
+  PM / devfreq: tegra30: Drop write-barrier
+  PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+  PM / devfreq: tegra30: Use kHz units uniformly in the code
+  PM / devfreq: tegra30: Use CPUFreq notifier
+  PM / devfreq: tegra30: Move clk-notifier's registration to governor's
+    start
+  PM / devfreq: tegra30: Reset boosting on startup
+  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+    startup
+  PM / devfreq: tegra30: Constify structs
+  PM / devfreq: tegra30: Include appropriate header
+  PM / devfreq: tegra30: Don't enable already enabled consecutive
+    interrupts
+  PM / devfreq: tegra30: Disable consecutive interrupts when appropriate
+  PM / devfreq: tegra30: Use kHz units for dependency threshold
+  PM / devfreq: Add new interrupt_driven flag for governors
+  PM / devfreq: tegra30: Support variable polling interval
+  PM / devfreq: tegra30: Tune up MCCPU boost-down coefficient
+  PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+
+ MAINTAINERS                       |   9 +
+ drivers/devfreq/devfreq.c         |  17 ++
+ drivers/devfreq/governor.h        |   3 +
+ drivers/devfreq/tegra30-devfreq.c | 417 ++++++++++++++++++++++--------
+ 4 files changed, 334 insertions(+), 112 deletions(-)
+
+-- 
+2.23.0
+
