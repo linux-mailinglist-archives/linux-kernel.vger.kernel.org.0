@@ -2,104 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B74AFEDA05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 08:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E0D4EDA0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 08:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfKDHlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 02:41:01 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:45378 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfKDHlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 02:41:01 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728269AbfKDHlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 02:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbfKDHlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 02:41:45 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 6FFD76FE12D;
-        Mon,  4 Nov 2019 08:40:56 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 4 Nov 2019
- 08:40:55 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 4 Nov 2019 08:40:55 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 06/11] ARM: dts: imx6ul-kontron-n6x1x-s: Specify
- bus-width for SD card and eMMC
-Thread-Topic: [PATCH v3 06/11] ARM: dts: imx6ul-kontron-n6x1x-s: Specify
- bus-width for SD card and eMMC
-Thread-Index: AQHVj/bhrI8+Sinp0EmCHJdFZK6p5Kd6koeAgAADKYA=
-Date:   Mon, 4 Nov 2019 07:40:55 +0000
-Message-ID: <23694e57-029a-d8aa-b900-ef608ab2370e@kontron.de>
-References: <20191031142112.12431-1-frieder.schrempf@kontron.de>
- <20191031142112.12431-7-frieder.schrempf@kontron.de>
- <20191104072936.GQ24620@dragon>
-In-Reply-To: <20191104072936.GQ24620@dragon>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E6E6C12BA347DF438E99A64D5025974A@snt-world.com>
-Content-Transfer-Encoding: base64
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CA07205C9;
+        Mon,  4 Nov 2019 07:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572853304;
+        bh=1u/OmclZYDmCL/AXUhElWHqwCkMQxKEiOIdFGBzeeaM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OGQ+HXc1XPAbXxyNoKzd3t8Id1dsgnwG4/s8qCIqz2DpPfXlfxPmP02VxzFg3/OOw
+         bweVXGzlnMwBmVeHmw/AAGjrngRMmITJM/ojpcxROENeysxLN041pW9RXjgZyJGCud
+         D3S35LviwwS/UO+6MerPdqN4ZPSIBUUcQ9FyZuUc=
+Date:   Mon, 4 Nov 2019 08:41:41 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] IB: mlx5: no need to check return value of debugfs_create
+ functions
+Message-ID: <20191104074141.GA1292396@kroah.com>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 6FFD76FE12D.A2056
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMDQuMTEuMTkgMDg6MjksIFNoYXduIEd1byB3cm90ZToNCj4gT24gVGh1LCBPY3QgMzEsIDIw
-MTkgYXQgMDI6MjQ6MThQTSArMDAwMCwgU2NocmVtcGYgRnJpZWRlciB3cm90ZToNCj4+IEZyb206
-IEZyaWVkZXIgU2NocmVtcGYgPGZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+DQo+PiBC
-b3RoLCB0aGUgU0QgY2FyZCBhbmQgdGhlIGVNTUMgYXJlIGNvbm5lY3RlZCB0byB0aGUgdXNkaGMg
-Y29udHJvbGxlcg0KPj4gYnkgZm91ciBkYXRhIGxpbmVzLiBUaGVyZWZvcmUgd2Ugc2V0ICdidXMt
-d2lkdGggPSA8ND4nIGZvciBib3RoDQo+PiBpbnRlcmZhY2VzLg0KPj4NCj4+IFNpZ25lZC1vZmYt
-Ynk6IEZyaWVkZXIgU2NocmVtcGYgPGZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+IEZp
-eGVzOiAxZWE0Yjc2Y2RmZGUgKCJBUk06IGR0czogaW14NnVsLWtvbnRyb24tbjYzMTA6IEFkZCBL
-b250cm9uIGkuTVg2VUwgTjYzMTAgU29NIGFuZCBib2FyZHMiKQ0KPj4gLS0tDQo+PiAgIGFyY2gv
-YXJtL2Jvb3QvZHRzL2lteDZ1bC1rb250cm9uLW42eDF4LXMuZHRzaSB8IDIgKysNCj4+ICAgMSBm
-aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL2Fy
-bS9ib290L2R0cy9pbXg2dWwta29udHJvbi1uNngxeC1zLmR0c2kgYi9hcmNoL2FybS9ib290L2R0
-cy9pbXg2dWwta29udHJvbi1uNngxeC1zLmR0c2kNCj4+IGluZGV4IDdjOThhMWE0NmZiMS4uMjI5
-OWNhZDkwMGFmIDEwMDY0NA0KPj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnVsLWtvbnRy
-b24tbjZ4MXgtcy5kdHNpDQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9pbXg2dWwta29udHJv
-bi1uNngxeC1zLmR0c2kNCj4+IEBAIC0yMDksNiArMjA5LDcgQEANCj4+ICAgCXdha2V1cC1zb3Vy
-Y2U7DQo+PiAgIAl2bW1jLXN1cHBseSA9IDwmcmVnXzN2Mz47DQo+PiAgIAl2b2x0YWdlLXJhbmdl
-cyA9IDwzMzAwIDMzMDA+Ow0KPj4gKwlidXMtd2lkdGggPSA8ND47DQo+IA0KPiBJc24ndCBpdCBh
-bHJlYWR5IHNldCBpbiBhcmNoL2FybS9ib290L2R0cy9pbXg2dWwuZHRzaSBhcyB0aGUgZGVmYXVs
-dD8NCg0KUmlnaHQsIEkgc29tZWhvdyBtaXNzZWQgdGhpcy4gU28gdGhpcyBwYXRjaCBjYW4gYmUg
-aWdub3JlZC4NCg0KPiANCj4gU2hhd24NCj4gDQo+PiAgIAluby0xLTgtdjsNCj4+ICAgCXN0YXR1
-cyA9ICJva2F5IjsNCj4+ICAgfTsNCj4+IEBAIC0yMjMsNiArMjI0LDcgQEANCj4+ICAgCXdha2V1
-cC1zb3VyY2U7DQo+PiAgIAl2bW1jLXN1cHBseSA9IDwmcmVnXzN2Mz47DQo+PiAgIAl2b2x0YWdl
-LXJhbmdlcyA9IDwzMzAwIDMzMDA+Ow0KPj4gKwlidXMtd2lkdGggPSA8ND47DQo+PiAgIAluby0x
-LTgtdjsNCj4+ICAgCXN0YXR1cyA9ICJva2F5IjsNCj4+ICAgfTsNCj4+IC0tIA0KPj4gMi4xNy4x
-DQo+IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K
-PiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdA0KPiBsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcNCj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9saW51eC1hcm0ta2VybmVsDQo+IA==
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
+
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/infiniband/hw/mlx5/main.c    | 62 +++++++---------------------
+ drivers/infiniband/hw/mlx5/mlx5_ib.h |  9 +---
+ 2 files changed, 16 insertions(+), 55 deletions(-)
+
+Note, I kind of need to take this through my tree now as I broke the
+build due to me changing the use of debugfs_create_atomic_t() in my
+tree and not noticing this being used here.  Sorry about that, any
+objections?
+
+And 0-day seems really broken to have missed this for the past months,
+ugh, I need to stop relying on it...
+
+
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 831539419c30..059db0610445 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -5710,11 +5710,10 @@ static int mlx5_ib_rn_get_params(struct ib_device *device, u8 port_num,
+ 
+ static void delay_drop_debugfs_cleanup(struct mlx5_ib_dev *dev)
+ {
+-	if (!dev->delay_drop.dbg)
++	if (!dev->delay_drop.dir_debugfs)
+ 		return;
+-	debugfs_remove_recursive(dev->delay_drop.dbg->dir_debugfs);
+-	kfree(dev->delay_drop.dbg);
+-	dev->delay_drop.dbg = NULL;
++	debugfs_remove_recursive(dev->delay_drop.dir_debugfs);
++	dev->delay_drop.dir_debugfs = NULL;
+ }
+ 
+ static void cancel_delay_drop(struct mlx5_ib_dev *dev)
+@@ -5765,52 +5764,22 @@ static const struct file_operations fops_delay_drop_timeout = {
+ 	.read	= delay_drop_timeout_read,
+ };
+ 
+-static int delay_drop_debugfs_init(struct mlx5_ib_dev *dev)
++static void delay_drop_debugfs_init(struct mlx5_ib_dev *dev)
+ {
+-	struct mlx5_ib_dbg_delay_drop *dbg;
++	struct dentry *root;
+ 
+ 	if (!mlx5_debugfs_root)
+-		return 0;
+-
+-	dbg = kzalloc(sizeof(*dbg), GFP_KERNEL);
+-	if (!dbg)
+-		return -ENOMEM;
+-
+-	dev->delay_drop.dbg = dbg;
+-
+-	dbg->dir_debugfs =
+-		debugfs_create_dir("delay_drop",
+-				   dev->mdev->priv.dbg_root);
+-	if (!dbg->dir_debugfs)
+-		goto out_debugfs;
+-
+-	dbg->events_cnt_debugfs =
+-		debugfs_create_atomic_t("num_timeout_events", 0400,
+-					dbg->dir_debugfs,
+-					&dev->delay_drop.events_cnt);
+-	if (!dbg->events_cnt_debugfs)
+-		goto out_debugfs;
+-
+-	dbg->rqs_cnt_debugfs =
+-		debugfs_create_atomic_t("num_rqs", 0400,
+-					dbg->dir_debugfs,
+-					&dev->delay_drop.rqs_cnt);
+-	if (!dbg->rqs_cnt_debugfs)
+-		goto out_debugfs;
+-
+-	dbg->timeout_debugfs =
+-		debugfs_create_file("timeout", 0600,
+-				    dbg->dir_debugfs,
+-				    &dev->delay_drop,
+-				    &fops_delay_drop_timeout);
+-	if (!dbg->timeout_debugfs)
+-		goto out_debugfs;
++		return;
+ 
+-	return 0;
++	root = debugfs_create_dir("delay_drop", dev->mdev->priv.dbg_root);
++	dev->delay_drop.dir_debugfs = root;
+ 
+-out_debugfs:
+-	delay_drop_debugfs_cleanup(dev);
+-	return -ENOMEM;
++	debugfs_create_atomic_t("num_timeout_events", 0400, root,
++				&dev->delay_drop.events_cnt);
++	debugfs_create_atomic_t("num_rqs", 0400, root,
++				&dev->delay_drop.rqs_cnt);
++	debugfs_create_file("timeout", 0600, root, &dev->delay_drop,
++			    &fops_delay_drop_timeout);
+ }
+ 
+ static void init_delay_drop(struct mlx5_ib_dev *dev)
+@@ -5826,8 +5795,7 @@ static void init_delay_drop(struct mlx5_ib_dev *dev)
+ 	atomic_set(&dev->delay_drop.rqs_cnt, 0);
+ 	atomic_set(&dev->delay_drop.events_cnt, 0);
+ 
+-	if (delay_drop_debugfs_init(dev))
+-		mlx5_ib_warn(dev, "Failed to init delay drop debugfs\n");
++	delay_drop_debugfs_init(dev);
+ }
+ 
+ static void mlx5_ib_unbind_slave_port(struct mlx5_ib_dev *ibdev,
+diff --git a/drivers/infiniband/hw/mlx5/mlx5_ib.h b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+index 1a98ee2e01c4..55ce599db803 100644
+--- a/drivers/infiniband/hw/mlx5/mlx5_ib.h
++++ b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+@@ -792,13 +792,6 @@ enum {
+ 	MLX5_MAX_DELAY_DROP_TIMEOUT_MS = 100,
+ };
+ 
+-struct mlx5_ib_dbg_delay_drop {
+-	struct dentry		*dir_debugfs;
+-	struct dentry		*rqs_cnt_debugfs;
+-	struct dentry		*events_cnt_debugfs;
+-	struct dentry		*timeout_debugfs;
+-};
+-
+ struct mlx5_ib_delay_drop {
+ 	struct mlx5_ib_dev     *dev;
+ 	struct work_struct	delay_drop_work;
+@@ -808,7 +801,7 @@ struct mlx5_ib_delay_drop {
+ 	bool			activate;
+ 	atomic_t		events_cnt;
+ 	atomic_t		rqs_cnt;
+-	struct mlx5_ib_dbg_delay_drop *dbg;
++	struct dentry		*dir_debugfs;
+ };
+ 
+ enum mlx5_ib_stages {
+-- 
+2.23.0
+
