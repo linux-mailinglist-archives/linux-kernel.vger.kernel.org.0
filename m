@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AF8EECA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F43EEC18
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:54:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbfKDV7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56032 "EHLO mail.kernel.org"
+        id S2387528AbfKDVxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730858AbfKDV65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:58:57 -0500
+        id S2387703AbfKDVxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:53 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0B5E21744;
-        Mon,  4 Nov 2019 21:58:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF08021D7D;
+        Mon,  4 Nov 2019 21:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904735;
-        bh=uub7qoWJO07kCGY9mnSTpLi4SKi0+yvY+LER2AED5r4=;
+        s=default; t=1572904432;
+        bh=3csVmTOHNGTB+c9xUv/fHEeweHnvr5OV6v+ydEEUMDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dHMh3Fqzv2CHqgMj8AEMjp+t6zK64VKBu6AOKvkYepMpjdfhm50U4OSD4o8Yg1lZd
-         hFCAgc3Yy5E/mA7MCxi6UtZqKFlTTCij1SEq15qQAm+8hYnA7F3jy2odPSmpmEoepC
-         d6aTJadOFx+/eqbaHgVOt57N7GQVuaSUVDGBGIrk=
+        b=OFFw9X9TRR7WG3WhWpHH4xN134/26T8ejAbJ/z27+TNWjC8lLtSTHm65m8HWUdH58
+         qhxbPPABeGIf6Sf0qVOwxwioRRwIxGRlf7XhCvq0w1vsh1PQrYJftkvSVyCzyUcrQh
+         Mf4GkpomPVyQHAT/jn1IwWeEgC7MDqBiLvBFgg2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/149] ext4: disallow files with EXT4_JOURNAL_DATA_FL from EXT4_IOC_SWAP_BOOT
+Subject: [PATCH 4.14 07/95] scsi: lpfc: Fix a duplicate 0711 log message number.
 Date:   Mon,  4 Nov 2019 22:44:05 +0100
-Message-Id: <20191104212139.867962840@linuxfoundation.org>
+Message-Id: <20191104212041.565874080@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 6e589291f4b1b700ca12baec5930592a0d51e63c ]
+[ Upstream commit 2c4c91415a05677acc5c8131a5eb472d4aa96ae1 ]
 
-A malicious/clueless root user can use EXT4_IOC_SWAP_BOOT to force a
-corner casew which can lead to the file system getting corrupted.
-There's no usefulness to allowing this, so just prohibit this case.
+Renumber one of the 0711 log messages so there isn't a duplication.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/ioctl.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/lpfc/lpfc_scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index abb6fcff0a1d3..783c54bb2ce75 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -132,6 +132,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 
- 	if (inode->i_nlink != 1 || !S_ISREG(inode->i_mode) ||
- 	    IS_SWAPFILE(inode) || IS_ENCRYPTED(inode) ||
-+	    (EXT4_I(inode)->i_flags & EXT4_JOURNAL_DATA_FL) ||
- 	    ext4_has_inline_data(inode)) {
- 		err = -EINVAL;
- 		goto journal_err_out;
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index 4ade13d72deb3..07cb671bb8550 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -4152,7 +4152,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
+ 	/* If pCmd was set to NULL from abort path, do not call scsi_done */
+ 	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
+ 		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
+-				 "0711 FCP cmd already NULL, sid: 0x%06x, "
++				 "5688 FCP cmd already NULL, sid: 0x%06x, "
+ 				 "did: 0x%06x, oxid: 0x%04x\n",
+ 				 vport->fc_myDID,
+ 				 (pnode) ? pnode->nlp_DID : 0,
 -- 
 2.20.1
 
