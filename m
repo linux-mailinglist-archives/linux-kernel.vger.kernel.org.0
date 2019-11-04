@@ -2,108 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A31DED8D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7D5ED8DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:11:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfKDGFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:05:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfKDGFF (ORCPT
+        id S1728138AbfKDGLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:11:32 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16496 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKDGLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:05:05 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 669F160931; Mon,  4 Nov 2019 06:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572847504;
-        bh=ObKudLAi9uqkjt2DeiRKuSbPAWi11wPeXW5aEddSJKg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mV3/u4OkERJfNwJKgNlOPbIXmtZpd0oyVa1Ji4pAqXEU38KxpJ3/mdST48nBMZ8rc
-         eJWHywAigFXKNYQix65WXgsff4bkVvxXxQc28VJwsXsnKEyCKXFYAbcv19wV7135jV
-         0OxdLDcv4b9CP0tYc0C8jDBkFDxDrvoCbfIb4FPM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.136.17] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCCAC60931;
-        Mon,  4 Nov 2019 06:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572847503;
-        bh=ObKudLAi9uqkjt2DeiRKuSbPAWi11wPeXW5aEddSJKg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WVzDJ8swpKQeJNFbOYyOSZ4V5Yvb/s8aE6dJwHs+Q33At0JgntTr3NEzH2GyEhTBp
-         KO5RiIPnMMe/KryFmuYTzxnp8TBYe6p5NEL2w2xq9QstMFLoUri3DV/jBkfb89z0C4
-         f/iCJep6i8oRmu14iltQv7ilxDvhACX+MDWvWh8g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCCAC60931
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v3 03/11] dt-bindings: arm-smmu: update binding for qcom
- sc7180 SoC
-To:     Rob Herring <robh@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20191023090219.15603-1-rnayak@codeaurora.org>
- <20191023090219.15603-4-rnayak@codeaurora.org> <20191025195143.GA31658@bogus>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <7007719e-c038-02b0-7729-b654e008f627@codeaurora.org>
-Date:   Mon, 4 Nov 2019 11:34:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 4 Nov 2019 01:11:31 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dbfc1190000>; Sun, 03 Nov 2019 22:11:37 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 03 Nov 2019 22:11:31 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 03 Nov 2019 22:11:31 -0800
+Received: from [10.2.168.52] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
+ 2019 06:11:30 +0000
+Subject: Re: [RFC] mm: gup: add helper page_try_gup_pin(page)
+To:     Hillf Danton <hdanton@sina.com>
+CC:     linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Jan Kara <jack@suse.cz>,
+        Mel Gorman <mgorman@suse.de>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20191103112113.8256-1-hdanton@sina.com>
+ <20191104043420.15648-1-hdanton@sina.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <8df14660-2ce3-eda8-dc33-c4d092915656@nvidia.com>
+Date:   Sun, 3 Nov 2019 22:09:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191025195143.GA31658@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191104043420.15648-1-hdanton@sina.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572847897; bh=zbw7Y554hllJtnv1eRsmfK6TOZZDrBBKwtgxjnu5HG4=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=LDs+Eg5qBfLCCAS7p6r+hey7cbtxeqn05DwLQxeYdAJSXzCqVcMi82fHuKzbnRBgK
+         z5ttg8ao83mNBKR2DouQ+cKzShskuNLr2hYFNvxIpUd00QzOSZtjfz3f97BrP3wqHM
+         Z1R4Qz+5kl1sxo1QeRqz5aRYaFXSifqtCkYoRA0rM3uc6O8Gr9hlbbkleJHgtAWemU
+         svjyebwumdZ+XVprOEUbtAL1ofj8LEp63cP1IxHxpMRZAL1ohSF/j8tJCaLQrxg4uE
+         O9+8+A6nXqDhOifCtMnCJx1xn7uYeJqCz1+F/9QEKr4KShlY4B18f9XD1+cE1iG2oC
+         1cnzxaBkEAL7Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/26/2019 1:21 AM, Rob Herring wrote:
-> On Wed, Oct 23, 2019 at 02:32:11PM +0530, Rajendra Nayak wrote:
->> Add the soc specific compatible for sc7180 smmu-500
+On 11/3/19 8:34 PM, Hillf Danton wrote:
+...
 >>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> Cc: Joerg Roedel <joro@8bytes.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> ---
->>   Documentation/devicetree/bindings/iommu/arm,smmu.txt | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> index 3133f3ba7567..347869807cf2 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> @@ -30,6 +30,7 @@ conditions.
->>                     Qcom SoCs implementing "arm,mmu-500" must also include,
->>                     as below, SoC-specific compatibles:
->>                     "qcom,sdm845-smmu-500", "arm,mmu-500"
->> +                  "qcom,sc7180-smmu-500", "arm,mmu-500"
+>> Well, as long as we're counting bits, I've taken 21 bits (!) to track
+>> "gupers". :)  More accurately, I'm sharing 31 bits with get_page()...please
 > 
-> This is now a schema file in my tree.
+> Would you please specify the reasoning of tracking multiple gupers
+> for a dirty page? Do you mean that it is all fine for guper-A to add
+> changes to guper-B's data without warning and vice versa?
 
-sure, will rebase on your for-next when I repost.
+It's generally OK to call get_user_pages() on a page more than once.
+And even though we are seeing some work to reduce the number of places
+in the kernel that call get_user_pages(), there are still lots of call sites.
+That means lots of combinations and situations that could result in more
+than one gup call per page.
 
-> 
->>   
->>   - reg           : Base address and size of the SMMU.
->>   
->> -- 
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
->> of Code Aurora Forum, hosted by The Linux Foundation
+Furthermore, there is no mechanism, convention, documentation, nor anything
+at all that attempts to enforce "for each page, get_user_pages() may only
+be called once."
+
+
+...
 >>
+>> I think you must have missed the many contentious debates about the
+>> tension between gup-pinned pages, and writeback. File systems can't
+>> just ignore writeback in all cases. This patch leads to either
+>> system hangs or filesystem corruption, in the presence of long-lasting
+>> gup pins.
+> 
+> The current risk of data corruption due to writeback with long-lived
+> gup references all ignored is zeroed out by detecting gup-pinned dirty
+> pages and skipping them; that may lead to problems you mention above.
+> 
 
+Here, I believe you're pointing out that the current situation in the
+kernel is already broken, with respect to fs interactions (especially
+writeback) with gup. Yes, you are correct, there is a problem.
+
+> Though I doubt anything helpful about it can be expected from fs in near
+
+Actually, fs and mm folks are working together to solve this.
+
+> future, we have options for instance that gupers periodically release
+> their references and re-pin pages after data sync the same way as the
+> current flusher does.
+> 
+
+That's one idea. I don't see it as viable, given the behavior of, say,
+a compute process running OpenCL jobs on a GPU that is connected via
+a network or Infiniband card--the idea of "pause" really looks more like
+"tear down the complicated multi-driver connection, writeback, then set it
+all up again", I suspect. (And if we could easily interrupt the job, we'd
+probably really be running with a page-fault-capable GPU plus and IB card
+that does ODP, plus HMM, and we wouldn't need to gup-pin anyway...)
+
+Anyway, this is not amenable to quick fixes, because the problem is
+a couple of missing design pieces. Which we're working on putting in.
+But meanwhile, smaller changes such as this one are just going to move
+the problems to different places, rather than solving them. So it's best
+not to do that.
+
+thanks,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+John Hubbard
+NVIDIA
