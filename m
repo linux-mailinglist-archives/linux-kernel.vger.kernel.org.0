@@ -2,130 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0686EED7F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 04:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FF5ED7F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 04:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729042AbfKDDJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 22:09:10 -0500
-Received: from mail-eopbgr30059.outbound.protection.outlook.com ([40.107.3.59]:59135
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728695AbfKDDJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 22:09:10 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YLZY500Pq0eeYYYOWoJy+SAXTz6zTcWUvMEwmCwdx0CBOD9o0B1SLX00JO1okpVQye6OjyTqTZE67OJdAkVFLkIPIObO8jxCKlF6w9YGNsrYlxGz+71ord4k1AjghxnUKj9UsD7JfRS/UybpfIpwYo7c1JokhOw8NRPJur2nK5ZB+bSkfqtNZKzPEKpdVOq5ae3mW9Eh4boeq0FdNyFRPydDQ9rsdWSO/kMDQIIicBjV8jDRFbFvu0LmzMuLC2MdBqmB+Xf3Y0lBDH8HnwVn5N7O7f5x9KhL5CWb/vcFw5Z8wQ6ON9s97hIVfSEEGeBCTE/3ZBjIk7OeV2FQHFu49A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5qE6K6hw7/BV7exmjQQyoJn5YoLE03mRJ7QQ0XpgKEk=;
- b=A8IjZt1QDkp0S2QZ7SadT4hJgJwbsQe/qh5YPbPOHu992ynzJCJjoRdHMh25H/q38QYmYhuezWROj/e+At1KPKeSHKODBruN305uTKHs5UFph4NK3WM7efp3GA3hHa4kZeUKnL7y7PfcQWFUEKRFzFZwLFxbXy/akINvIqXN8VaY00UTLei0xpV6QsZm1f7Wbrou4KUzCJ/rK5vlmSiJ5BeKqaQVNqwmVimI/S/PMp4RcDwSk7ODWc70kwrLZ9mnktRl/6ZTg39UcYWhzDsUzjr7XejU08u7hiHFj1JRU98fe6LSouBG3hrTMpyFM5IrmSCIprRvOWWL2d66YYjNFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5qE6K6hw7/BV7exmjQQyoJn5YoLE03mRJ7QQ0XpgKEk=;
- b=Om59Io5kPBCF3zsbUyPIOai4T1kjjecDf1wkSfR/bU7oqpOYrT45yH/vnGln/U2r5XeKkWmgZfD9yu2ka/J/4kCndGUXJEA2cmyIBxbuS6xYEmSry2TW7GEddLTN45Itk4nPRxTb4vvhXafQANnXb0xYzU5IEcI8rxYZ3tYQHWQ=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB4427.eurprd04.prod.outlook.com (52.135.135.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Mon, 4 Nov 2019 03:09:06 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::115f:1e4f:9ceb:2a2c]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::115f:1e4f:9ceb:2a2c%7]) with mapi id 15.20.2408.024; Mon, 4 Nov 2019
- 03:09:06 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: RE: [PATCH 0/3] clk: imx: imx8m[x]: switch to clk_hw API
-Thread-Topic: [PATCH 0/3] clk: imx: imx8m[x]: switch to clk_hw API
-Thread-Index: AQHVkrrrq3+6RnKlx0SgOHFznmoeb6d6VM2Q
-Date:   Mon, 4 Nov 2019 03:09:06 +0000
-Message-ID: <DB7PR04MB4490B09714772F9B7EF3F127887F0@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <1572835730-1625-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1572835730-1625-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 845364ad-ca34-427b-996f-08d760d45a91
-x-ms-traffictypediagnostic: DB7PR04MB4427:|DB7PR04MB4427:
-x-ms-exchange-purlcount: 2
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB442798988C6C10CCBA1E7B80887F0@DB7PR04MB4427.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
-x-forefront-prvs: 0211965D06
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(366004)(376002)(346002)(199004)(189003)(81166006)(99286004)(81156014)(486006)(476003)(33656002)(446003)(11346002)(8936002)(44832011)(8676002)(25786009)(74316002)(186003)(110136005)(76176011)(316002)(7696005)(102836004)(6506007)(305945005)(26005)(6116002)(3846002)(5660300002)(229853002)(7736002)(4744005)(52536014)(71200400001)(71190400001)(86362001)(966005)(76116006)(2201001)(66476007)(66556008)(66446008)(66946007)(256004)(2501003)(2906002)(6436002)(66066001)(55016002)(478600001)(6306002)(6636002)(6246003)(64756008)(4326008)(14454004)(9686003)(54906003)(32563001)(15585785002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4427;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: H/vx1cZeECTKz43BUlzBPJN92Ph51EQiB2gQREaN4dRhliUnwuiUYRV/ei3QrFltWb5icbFIm1Bg1zSwQrbp6+itAkGizMWmt60dJ8YwfmUAy8MjiDUJZUqIroeSej1MJKvUgTO6lI5J6e7xNaklD3kSR/GOgZnsRyQXP8xIny7JGv3XB1gCHuZyEvzwuW8evF19krH0qIYc4NUW1dZb13Hb/1946u59Hez5I613Bfx01J6S2X+8kKFZYkm3amSN0GzGDp3RQj9Ez8ap0MF3vv2KEfD8fMC5hobPe2mggQA5V2U6T8JgrTr9n0nWdHJ1nRsczhXMdsbt0y4nQ9fRm4JvCebSiEBvnVEu0fdgTSBFfwCN/gJWoyIqAXYMTDnny2fWHkqLzk2E/FfuvvaKwvQT9qMHRBsVakDspo39bD9M9/uqrJpKTE+otS8iTBNmn7jFwGVFQcBc1p8iWINNcA10j+o3RKscJJMt0qW8XP0=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729180AbfKDDLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 22:11:13 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43078 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728781AbfKDDLN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 22:11:13 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA439JE4046155;
+        Mon, 4 Nov 2019 03:10:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=PrR52E2oEk9F8UQ17/zP4kO3lqfsQqHG/6TYakme+WU=;
+ b=e6Jh1cSM3/hkO7xcFRrkVH9WWqsbyUg8bsB3G+BGqJnsc7xNnBL+dsQIM0hMp3H5ynut
+ Ikh1A/id0QXZOhfyqB9TspeUiRXZIXXEHodzRqsM+e5HvEy3a4LWjc19rMYC5iWTQW4f
+ G8JkB3VbpFneRMNKEUgegyPp+8Q3NaeXyxPfvGFshVvcG3Q6pn135BNX/fTuYI7JTjt2
+ yUoPqQdxaxPT3URmfY8jG3joQMr2WQhMnBN5Fs3C4NzrGWP1QXJ7Yppl4k+IjiZI7zdS
+ bg/7g23FeO0aOC1XZHX8bUSS3HZfP56Js3oJjJRT838Ny6oYEBkO0Txa9HHDeh0KU0F0 iA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2w11rpmhx5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 03:10:53 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4343Cr017272;
+        Mon, 4 Nov 2019 03:10:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2w1kxkjwn1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 03:10:53 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA43ApKq017345;
+        Mon, 4 Nov 2019 03:10:51 GMT
+Received: from [192.168.0.4] (/111.206.84.95)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Nov 2019 03:10:50 +0000
+Subject: Re: [PATCH 5/5] cpuidle-haltpoll: fix up the branch check
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        joao.m.martins@oracle.com, rafael.j.wysocki@intel.com,
+        rkrcmar@redhat.com, pbonzini@redhat.com
+References: <1572060239-17401-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1572060239-17401-6-git-send-email-zhenzhong.duan@oracle.com>
+ <20191101212613.GB20672@amt.cnet>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <bafc1688-02ea-77a4-fb1c-2fe6afa8a7cc@oracle.com>
+Date:   Mon, 4 Nov 2019 11:10:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 845364ad-ca34-427b-996f-08d760d45a91
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2019 03:09:06.4129
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KUd1PHZEd9iWBOroItSlDGsWHHDdQ4HVhCF3K8BzFpEqThn6tFNJMdIguKku2F+knmvhvWYCX4kHHHGi01YHWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4427
+In-Reply-To: <20191101212613.GB20672@amt.cnet>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911040031
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911040032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: [PATCH 0/3] clk: imx: imx8m[x]: switch to clk_hw API
 
-Please ignore this patchset, pushed button early.
+On 2019/11/2 5:26, Marcelo Tosatti wrote:
+> On Sat, Oct 26, 2019 at 11:23:59AM +0800, Zhenzhong Duan wrote:
+>> Ensure pool time is longer than block_ns, so there is a margin to
+>> avoid vCPU get into block state unnecessorily.
+>>
+>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+>> ---
+>>   drivers/cpuidle/governors/haltpoll.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
+>> index 4b00d7a..59eadaf 100644
+>> --- a/drivers/cpuidle/governors/haltpoll.c
+>> +++ b/drivers/cpuidle/governors/haltpoll.c
+>> @@ -81,9 +81,9 @@ static void adjust_poll_limit(struct cpuidle_device *dev, unsigned int block_us)
+>>   	u64 block_ns = block_us*NSEC_PER_USEC;
+>>   
+>>   	/* Grow cpu_halt_poll_us if
+>> -	 * cpu_halt_poll_us < block_ns < guest_halt_poll_us
+>> +	 * cpu_halt_poll_us <= block_ns < guest_halt_poll_us
+>>   	 */
+>> -	if (block_ns > dev->poll_limit_ns && block_ns <= guest_halt_poll_ns) {
+>> +	if (block_ns >= dev->poll_limit_ns && block_ns < guest_halt_poll_ns) {
+> 					      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+> If block_ns == guest_halt_poll_ns, you won't allow dev->poll_limit_ns to
+> grow. Why is that?
 
-Thanks,
-Peng.=20
+Maybe I'm too strict here. My understanding is: if block_ns = guest_halt_poll_ns,
+dev->poll_limit_ns will grow to guest_halt_poll_ns, then block_ns = dev->poll_limit_ns,
+there is not a margin to ensure poll time is enough to cover the equal block time.
+In this case, shrinking may be a better choice?
 
->=20
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> This patchset is to Switch i.MX8MN/M/Q clk driver to clk_hw based API.
->=20
-> Based on imx/next branch, with [1][2] applied.
->=20
-> [1]  clk: imx: switch to clk_hw based API
->      https://patchwork.kernel.org/cover/11217881/
-> [2]  clk: imx: imx8mq: fix sys3_pll_out_sels
->      https://patchwork.kernel.org/patch/11214551/
->=20
-> Peng Fan (3):
->   clk: imx: imx8mn: Switch to clk_hw based API
->   clk: imx: imx8mm: Switch to clk_hw based API
->   clk: imx: imx8mq: Switch to clk_hw based API
->=20
->  drivers/clk/imx/clk-imx8mm.c | 550
-> +++++++++++++++++++++--------------------
->  drivers/clk/imx/clk-imx8mn.c | 475 ++++++++++++++++++------------------
->  drivers/clk/imx/clk-imx8mq.c | 569
-> ++++++++++++++++++++++---------------------
->  3 files changed, 817 insertions(+), 777 deletions(-)
->=20
-> --
-> 2.16.4
+>
+>> @@ -101,7 +101,7 @@ static void adjust_poll_limit(struct cpuidle_device *dev, unsigned int block_us)
+>>   			val = guest_halt_poll_ns;
+>>   
+>>   		dev->poll_limit_ns = val;
+>> -	} else if (block_ns > guest_halt_poll_ns &&
+>> +	} else if (block_ns >= guest_halt_poll_ns &&
+>>   		   guest_halt_poll_allow_shrink) {
+>>   		unsigned int shrink = guest_halt_poll_shrink;
+> And here you shrink if block_ns == guest_halt_poll_ns. Not sure
+> why that makes sense either.
+
+See above explanation.
+
+Zhenzhong
 
