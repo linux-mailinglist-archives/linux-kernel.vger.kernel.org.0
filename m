@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5079ED8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:20:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4C7ED8F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbfKDGUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:20:45 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:35918 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfKDGUp (ORCPT
+        id S1728255AbfKDGVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:21:46 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43713 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKDGVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:20:45 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z9so851735uan.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 22:20:44 -0800 (PST)
+        Mon, 4 Nov 2019 01:21:46 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b16so4125455vso.10
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 22:21:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FqnI11jDeJSRHyM2MOO2KtRFnVVeWq77J5QgehQH3Yk=;
-        b=RQ77MhLt9LdQKzG8hK4rrW7/sLslhIyUun4obwjXSY8v+ddub1GYwP7mKrIytVSomD
-         AyBiXExGnjQazPg432Kk6TX5UPWdJYEyPT5BnUki2NoqwQrRr5MgD+vcop6+TrQfnVDk
-         FvZl1H5NEt2b+WN+pSK7UkjDEG/hJHD/eCzHUNPQM7qPscT8HVsW6tv4POQvAvA1Ly0C
-         6kZ9rTzyjlpYkodbaHgBNOJU3XSRji7HgTpK6N3qb0RTpONp3gBoVjVPC5JIBcZP1Sxz
-         pSPxik2Iq4tobtxHWAqsQtBiZCr9K2/Xuv8nCJsxeoy07Y4yE3o6RoBM5mlnJRJyYwmE
-         R94Q==
+        bh=7XR8aB5FAq9qkqAbv6gsdSxRJnXfyOytqENlU/Ne5DU=;
+        b=tChmpZXnDE+NZfUpbyo9vgercVEz57+g+KJ6PCCgO4+F9c9kwGAkmddksvV48bLCF9
+         p/FUK8tFwUmLyBblcmvupC7rnr4BmNQJUdkyZGCr8gfMZ80Ac3rXLTeUK68zqtgS6drH
+         jNuJGYGJ3zQr+A5C4Q/0QiOjNmAcQjr7myleAIRBlYesLUIlQQ7gpLfYLyaZ9ANUI7OF
+         ddCeyNTYE5/ciITcrSmpHyuDKyQQR/RQtsCIcPHuwbU9P6A2Hurlc6/1EHfji9GfaaNp
+         626+TXtHgKfR47I+1e+nOuRYIPol1W7fNOW0Trgc9eT4QvJt58zkzsV9XaNKhv79evHV
+         LUSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FqnI11jDeJSRHyM2MOO2KtRFnVVeWq77J5QgehQH3Yk=;
-        b=EVOMhlG8TpW1O8hz4rkwTHp/DxTqb/GN2D/WDFxgQfR4pUM2jB8qlwfj5IPx2Ldcad
-         OClYn0bS2jJy5fEWfa3IE4YAZwZNZ16n+zJ30BKvjT2bVTz0IW63+HCpuwaU7KJW+/Vu
-         8bJ2l22CGVDpDXrTn+Dh/TCEiCqJdddFPOQniPBGf7ghmBGzsaz69v5f2V8LKZ6s3p/7
-         voCUtIKuuRw8KkSPACyv+z2XMeMIa6A7d2yNA66S2gNfp5cGA/lOK6suh53Dc826SdA7
-         8VA4ds3xGAhozVDZO1K4/UxdtszVpNco496FqUbjMlYdytNVCXMelJZUuys1ZkrHvmjt
-         5EJA==
-X-Gm-Message-State: APjAAAVvFgZjb23vJdXBctL+uZEJP/fGFQT0wk9wiZfVP1l1SGEVV/WO
-        vhj51GsIP+vYdhVsA+DbkYwh6XWNphipga1HRpPkfg==
-X-Google-Smtp-Source: APXvYqxlZTvTRT9fl86YSwTGq/owe82EV9UaCl8rLTJBP4ewdVMeR8z4+fwiV/M1M3nj2QmOh2vFx8Uh/B5Tv2mRgVE=
-X-Received: by 2002:a9f:364c:: with SMTP id s12mr10774138uad.77.1572848444328;
- Sun, 03 Nov 2019 22:20:44 -0800 (PST)
+        bh=7XR8aB5FAq9qkqAbv6gsdSxRJnXfyOytqENlU/Ne5DU=;
+        b=CDWn1LSj3lwpyYur8KIwnA1/cDPLPUpA+PSO/M+4DvQMkQ9Ei0ty6y/zhuS6LhdJuu
+         QFntdlDmB7Wr3VlQ4tBLpXuq+qSShgsgdTIGfi+LkcldyJkYENpb7JPgYeslaatY3m18
+         OmRJ9sfcgpbA46w4PGBn3K8HX+UOooTcNKPlnn1DAQp38E/ObqvPvEwGQ7/htA1BSox0
+         F5iqZLaDyw/FT++ywfF7SSblh40rcYK8+SJYfSqgSm5TBuL5ughD09LtVv7b4L4XPSdH
+         Lr3S64HdB+U+ekTaleHBplLnarp+/osD/axvFezr79+RNF0xuI4jjlFjq4vaKtzmZjpA
+         WapQ==
+X-Gm-Message-State: APjAAAWCDIuoQqYJPaEFuODCigWMgm8YO4lca+dYtYupLQKyxF71lofR
+        Wbl/QuIJpeKj26pqcsH2jMk0ap3snn7Alw2U8vP92Q==
+X-Google-Smtp-Source: APXvYqyWHViqGHAgMlTc9BBuG9Nxtj3v53mAItQ8daEFU0o9x+TOGhJ1eiReK7K71hBJG16iXSGIYEcT6HWTxYKKOmA=
+X-Received: by 2002:a67:df0d:: with SMTP id s13mr10831700vsk.95.1572848504953;
+ Sun, 03 Nov 2019 22:21:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20191030091038.678-1-daniel.lezcano@linaro.org>
-In-Reply-To: <20191030091038.678-1-daniel.lezcano@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 4 Nov 2019 11:50:33 +0530
-Message-ID: <CAHLCerO+FRV1m73_TuAgMVgbe8PCyUZbO1Ym3LNS6S1dcCrafw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] thermal: cpu_cooling: Remove pointless dependency on CONFIG_OF
+References: <20191030091038.678-1-daniel.lezcano@linaro.org> <20191030091038.678-2-daniel.lezcano@linaro.org>
+In-Reply-To: <20191030091038.678-2-daniel.lezcano@linaro.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Mon, 4 Nov 2019 11:51:33 +0530
+Message-ID: <CAHLCerO6eN6qXRS9Mdz4TwVTH9_dF5eiWqqWkcW+5+PFF_WwzA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] thermal: cpu_cooling: Reorder the header file
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Amit Daniel Kachhap <amit.kachhap@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -65,40 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Oct 30, 2019 at 2:41 PM Daniel Lezcano
 <daniel.lezcano@linaro.org> wrote:
 >
-> The option CONFIG_CPU_THERMAL depends on CONFIG_OF in the Kconfig.
+> As the conditions are simplified and unified, it is useless to have
+> different blocks of definitions under the same compiler condition,
+> let's merge the blocks.
 >
-> It it pointless to check if CONFIG_OF is set in the header file as
-> this is always true if CONFIG_CPU_THERMAL is true. Remove it.
+> There is no functional change.
 >
 > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
 Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
 > ---
->  include/linux/cpu_cooling.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  include/linux/cpu_cooling.h | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
 >
 > diff --git a/include/linux/cpu_cooling.h b/include/linux/cpu_cooling.h
-> index bae54bb7c048..72d1c9c5e538 100644
+> index 72d1c9c5e538..b74732535e4b 100644
 > --- a/include/linux/cpu_cooling.h
 > +++ b/include/linux/cpu_cooling.h
-> @@ -47,7 +47,7 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
->  }
->  #endif /* CONFIG_CPU_THERMAL */
+> @@ -33,6 +33,13 @@ cpufreq_cooling_register(struct cpufreq_policy *policy);
+>   */
+>  void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev);
 >
-> -#if defined(CONFIG_THERMAL_OF) && defined(CONFIG_CPU_THERMAL)
-> +#ifdef CONFIG_CPU_THERMAL
->  /**
->   * of_cpufreq_cooling_register - create cpufreq cooling device based on DT.
->   * @policy: cpufreq policy.
-> @@ -60,6 +60,6 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
+> +/**
+> + * of_cpufreq_cooling_register - create cpufreq cooling device based on DT.
+> + * @policy: cpufreq policy.
+> + */
+> +struct thermal_cooling_device *
+> +of_cpufreq_cooling_register(struct cpufreq_policy *policy);
+> +
+>  #else /* !CONFIG_CPU_THERMAL */
+>  static inline struct thermal_cooling_device *
+>  cpufreq_cooling_register(struct cpufreq_policy *policy)
+> @@ -45,16 +52,7 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
 >  {
->         return NULL;
+>         return;
 >  }
-> -#endif /* defined(CONFIG_THERMAL_OF) && defined(CONFIG_CPU_THERMAL) */
-> +#endif /* CONFIG_CPU_THERMAL */
+> -#endif /* CONFIG_CPU_THERMAL */
 >
->  #endif /* __CPU_COOLING_H__ */
+> -#ifdef CONFIG_CPU_THERMAL
+> -/**
+> - * of_cpufreq_cooling_register - create cpufreq cooling device based on DT.
+> - * @policy: cpufreq policy.
+> - */
+> -struct thermal_cooling_device *
+> -of_cpufreq_cooling_register(struct cpufreq_policy *policy);
+> -#else
+>  static inline struct thermal_cooling_device *
+>  of_cpufreq_cooling_register(struct cpufreq_policy *policy)
+>  {
 > --
 > 2.17.1
 >
