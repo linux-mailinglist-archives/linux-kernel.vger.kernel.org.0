@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43B63EEF9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DFB9EEDD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfKDV4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:56:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
+        id S2390549AbfKDWKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388243AbfKDV4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:56:00 -0500
+        id S2389413AbfKDWK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:28 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 971B72053B;
-        Mon,  4 Nov 2019 21:55:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34E1C20650;
+        Mon,  4 Nov 2019 22:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904559;
-        bh=WEjXPYN/4z2tLd11WOkLYZH11e/S5V8qQlTCbEuf090=;
+        s=default; t=1572905427;
+        bh=o6m5wdvBf8Hlo/W18WHPX9x/MfhdODlXtIO+5vEOOEA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=opCVYteknBXJSKCnUKH+LYL9AKMJKjH2+5VbcZg0SwP+7w4JSmLP2ErQbEDLx8Yu9
-         xzNst+hu+dwYTi1Q5dsopUTw5T2ukSjqof3EpzdZoHBZQkRyjuipC5PSXy9ZWj4Y2h
-         c4VoyCwNHzUMdclOndauH368zfqSdfHGZJohY3gY=
+        b=P2t3FxMzePyzHocGAEQKKdjvTlnb/j3+i6gQ5sT+jnBjaKYtI+zThAwsrcr4fFN28
+         UL4FlMGhP+kDKA7/NfmwjijsKzIbH5g1MgkBFS3cUogPePoM9e7LSnNyxM21zCPicf
+         hG4QIZCLRwrnkMYjTMYQLCvj46w5nRwKmvHRHXto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 51/95] MIPS: include: Mark __xchg as __always_inline
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 099/163] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
 Date:   Mon,  4 Nov 2019 22:44:49 +0100
-Message-Id: <20191104212104.338498240@linuxfoundation.org>
+Message-Id: <20191104212147.257159833@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-[ Upstream commit 46f1619500d022501a4f0389f9f4c349ab46bb86 ]
+commit 8a6c55d0f883e9a7e7c91841434f3b6bbf932bb2 upstream.
 
-Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly") allows compiler to uninline functions marked as 'inline'.
-In cace of __xchg this would cause to reference function
-__xchg_called_with_bad_pointer, which is an error case
-for catching bugs and will not happen for correct code, if
-__xchg is inlined.
+These 2 ThinkCentres installed a new realtek codec ID 0x623,
+it has 2 front mics with the same location on pin 0x18 and 0x19.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic
+location to right, then pulseaudio can handle them.
+One "Front Mic" and one "Mic" will be shown, and audio output works
+fine.
+
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191024114439.31522-1-aaron.ma@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/mips/include/asm/cmpxchg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
-index 895f91b9e89c3..520ca166cbed5 100644
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -73,8 +73,8 @@ extern unsigned long __xchg_called_with_bad_pointer(void)
- extern unsigned long __xchg_small(volatile void *ptr, unsigned long val,
- 				  unsigned int size);
- 
--static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
--				   int size)
-+static __always_inline
-+unsigned long __xchg(volatile void *ptr, unsigned long x, int size)
- {
- 	switch (size) {
- 	case 1:
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7187,6 +7187,8 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
 
 
