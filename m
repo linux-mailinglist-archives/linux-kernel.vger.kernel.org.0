@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 159A5EEFA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207E9EED00
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbfKDVzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50090 "EHLO mail.kernel.org"
+        id S2389278AbfKDWCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388066AbfKDVzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:01 -0500
+        id S2389182AbfKDWBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:50 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B369217F4;
-        Mon,  4 Nov 2019 21:54:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC4122084D;
+        Mon,  4 Nov 2019 22:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904500;
-        bh=jMAEKlxyC3ermhSxITfVSGgBVe4mb/AT5OiGWW7wYCw=;
+        s=default; t=1572904909;
+        bh=3ldRPrwbBUvpX99a/EmyE/E4hfZ7R+ZnJSbfc/kcB8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZcIbRK7+SwZAgt1T6C69OYmHC3R/rv4OWlVOOgRCLW0iEDm07PsiXRip14CiFR6P
-         Gaw0qashHWgpUiGNadCWax9zdNP/kyyUEbtV1baLDl3ARZPd2x3QdBAsjyaoDGG7H9
-         D3//Jiaxr5MWXYBMKeutot+I/uXvOHQ/HzE4gtsY=
+        b=DjnuK5kkNFCdnkSPa8tFSd6WF+XJqby7eYaFPxwUiWYMR9dM8Qb8jRLNNuykCKoXP
+         aizhLhHnF1qZW4u3IPyTO7neYIevglVPlVA4J2CnM3hymbTwyWcZl4nhU934UJq03g
+         O4r21gcR5Bm565eab1mF1NNZvuatsC0Hpx7Mz9XM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.14 67/95] UAS: Revert commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 112/149] ALSA: hda/realtek - Fix 2 front mics of codec 0x623
 Date:   Mon,  4 Nov 2019 22:45:05 +0100
-Message-Id: <20191104212111.409017128@linuxfoundation.org>
+Message-Id: <20191104212144.231498741@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit 1186f86a71130a7635a20843e355bb880c7349b2 upstream.
+commit 8a6c55d0f883e9a7e7c91841434f3b6bbf932bb2 upstream.
 
-Commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments"),
-copying a similar commit for usb-storage, attempted to solve a problem
-involving scatter-gather I/O and USB/IP by setting the
-virt_boundary_mask for mass-storage devices.
+These 2 ThinkCentres installed a new realtek codec ID 0x623,
+it has 2 front mics with the same location on pin 0x18 and 0x19.
 
-However, it now turns out that the analogous change in usb-storage
-interacted badly with commit 09324d32d2a0 ("block: force an unlimited
-segment size on queues with a virt boundary"), which was added later.
-A typical error message is:
+Apply fixup ALC283_FIXUP_HEADSET_MIC to change 1 front mic
+location to right, then pulseaudio can handle them.
+One "Front Mic" and one "Mic" will be shown, and audio output works
+fine.
 
-	ehci-pci 0000:00:13.2: swiotlb buffer is full (sz: 327680 bytes),
-	total 32768 (slots), used 97 (slots)
-
-There is no longer any reason to keep the virt_boundary_mask setting
-in the uas driver.  It was needed in the first place only for
-handling devices with a block size smaller than the maxpacket size and
-where the host controller was not capable of fully general
-scatter-gather operation (that is, able to merge two SG segments into
-a single USB packet).  But:
-
-	High-speed or slower connections never use a bulk maxpacket
-	value larger than 512;
-
-	The SCSI layer does not handle block devices with a block size
-	smaller than 512 bytes;
-
-	All the host controllers capable of SuperSpeed operation can
-	handle fully general SG;
-
-	Since commit ea44d190764b ("usbip: Implement SG support to
-	vhci-hcd and stub driver") was merged, the USB/IP driver can
-	also handle SG.
-
-Therefore all supported device/controller combinations should be okay
-with no need for any special virt_boundary_mask.  So in order to head
-off potential problems similar to those affecting usb-storage, this
-patch reverts commit 3ae62a42090f.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Oliver Neukum <oneukum@suse.com>
-CC: <stable@vger.kernel.org>
-Acked-by: Christoph Hellwig <hch@lst.de>
-Fixes: 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910231132470.1878-100000@iolanthe.rowland.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191024114439.31522-1-aaron.ma@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |   20 --------------------
- 1 file changed, 20 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -796,30 +796,10 @@ static int uas_slave_alloc(struct scsi_d
- {
- 	struct uas_dev_info *devinfo =
- 		(struct uas_dev_info *)sdev->host->hostdata;
--	int maxp;
- 
- 	sdev->hostdata = devinfo;
- 
- 	/*
--	 * We have two requirements here. We must satisfy the requirements
--	 * of the physical HC and the demands of the protocol, as we
--	 * definitely want no additional memory allocation in this path
--	 * ruling out using bounce buffers.
--	 *
--	 * For a transmission on USB to continue we must never send
--	 * a package that is smaller than maxpacket. Hence the length of each
--         * scatterlist element except the last must be divisible by the
--         * Bulk maxpacket value.
--	 * If the HC does not ensure that through SG,
--	 * the upper layer must do that. We must assume nothing
--	 * about the capabilities off the HC, so we use the most
--	 * pessimistic requirement.
--	 */
--
--	maxp = usb_maxpacket(devinfo->udev, devinfo->data_in_pipe, 0);
--	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
--
--	/*
- 	 * The protocol has no requirements on alignment in the strict sense.
- 	 * Controllers may or may not have alignment restrictions.
- 	 * As this is not exported, we use an extremely conservative guess.
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6998,6 +6998,8 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3151, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x17aa, 0x3176, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x17aa, 0x3178, "ThinkCentre Station", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
 
 
