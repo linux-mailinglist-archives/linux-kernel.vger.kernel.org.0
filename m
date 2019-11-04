@@ -2,186 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD57ED7CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 03:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D625ED7D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 03:52:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfKDCrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 21:47:09 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49692 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728227AbfKDCrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 21:47:08 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DBFE7DE1AF02E49B7528;
-        Mon,  4 Nov 2019 10:47:06 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 4 Nov 2019
- 10:46:56 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <chao@kernel.org>, <linux-erofs@lists.ozlabs.org>
-CC:     Pratik Shinde <pratikshinde320@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v7] erofs: support superblock checksum
-Date:   Mon, 4 Nov 2019 10:49:37 +0800
-Message-ID: <20191104024937.113939-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191030050846.175623-1-gaoxiang25@huawei.com>
-References: <20191030050846.175623-1-gaoxiang25@huawei.com>
+        id S1729089AbfKDCwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 21:52:32 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34919 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728437AbfKDCwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Nov 2019 21:52:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572835951;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AXjYrGIsHqKdgGAtBr7HEpIjQtsm9UUKtuxj6Twt+UY=;
+        b=RVZRRJU4LWQme1tbNNbzKqlsFPVDGtYGVVV71VhCWd52Px6osGA8AOTDo6RNqO24G6Z7gr
+        EnOgLd2zADDjviY7mwnYsjjb56vxkWrPgjK0zbxgBIqkeF3FAcvNPxnVzJJF/cY55o2hje
+        lbwtc4d3CgwzCJnSvkYhEF617S2vgts=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-215--hfYGEOLOBaATEUH2p7Y3g-1; Sun, 03 Nov 2019 21:52:27 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 58B2B800A1A;
+        Mon,  4 Nov 2019 02:52:23 +0000 (UTC)
+Received: from [10.72.12.188] (ovpn-12-188.pek2.redhat.com [10.72.12.188])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CFF69600C4;
+        Mon,  4 Nov 2019 02:51:55 +0000 (UTC)
+Subject: Re: [PATCH V6 3/6] mdev: introduce device specific ops
+To:     Parav Pandit <parav@mellanox.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tiwei.bie@intel.com" <tiwei.bie@intel.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "cunming.liang@intel.com" <cunming.liang@intel.com>,
+        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
+        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
+        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "zhi.a.wang@intel.com" <zhi.a.wang@intel.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "farman@linux.ibm.com" <farman@linux.ibm.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "sebott@linux.ibm.com" <sebott@linux.ibm.com>,
+        "oberpar@linux.ibm.com" <oberpar@linux.ibm.com>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "gor@linux.ibm.com" <gor@linux.ibm.com>,
+        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
+        "akrowiak@linux.ibm.com" <akrowiak@linux.ibm.com>,
+        "freude@linux.ibm.com" <freude@linux.ibm.com>,
+        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
+        Ido Shamay <idos@mellanox.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        "christophe.de.dinechin@gmail.com" <christophe.de.dinechin@gmail.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "stefanha@redhat.com" <stefanha@redhat.com>
+References: <20191030064444.21166-1-jasowang@redhat.com>
+ <20191030064444.21166-4-jasowang@redhat.com>
+ <AM0PR05MB4866E91139617C9F2380BBAFD1620@AM0PR05MB4866.eurprd05.prod.outlook.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <495efacd-4898-fb89-2599-dce3a5a277f0@redhat.com>
+Date:   Mon, 4 Nov 2019 10:51:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <AM0PR05MB4866E91139617C9F2380BBAFD1620@AM0PR05MB4866.eurprd05.prod.outlook.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: -hfYGEOLOBaATEUH2p7Y3g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pratik Shinde <pratikshinde320@gmail.com>
 
-Introduce superblock checksum feature in order to
-check at mounting time.
+On 2019/11/2 =E4=B8=8A=E5=8D=884:11, Parav Pandit wrote:
+>
+>> -----Original Message-----
+>> From: Jason Wang <jasowang@redhat.com>
+>> Sent: Wednesday, October 30, 2019 1:45 AM
+>> To: kvm@vger.kernel.org; linux-s390@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; dri-devel@lists.freedesktop.org; intel-
+>> gfx@lists.freedesktop.org; intel-gvt-dev@lists.freedesktop.org;
+>> kwankhede@nvidia.com; alex.williamson@redhat.com; mst@redhat.com;
+>> tiwei.bie@intel.com
+>> Cc: virtualization@lists.linux-foundation.org; netdev@vger.kernel.org;
+>> cohuck@redhat.com; maxime.coquelin@redhat.com;
+>> cunming.liang@intel.com; zhihong.wang@intel.com;
+>> rob.miller@broadcom.com; xiao.w.wang@intel.com;
+>> haotian.wang@sifive.com; zhenyuw@linux.intel.com; zhi.a.wang@intel.com;
+>> jani.nikula@linux.intel.com; joonas.lahtinen@linux.intel.com;
+>> rodrigo.vivi@intel.com; airlied@linux.ie; daniel@ffwll.ch;
+>> farman@linux.ibm.com; pasic@linux.ibm.com; sebott@linux.ibm.com;
+>> oberpar@linux.ibm.com; heiko.carstens@de.ibm.com; gor@linux.ibm.com;
+>> borntraeger@de.ibm.com; akrowiak@linux.ibm.com; freude@linux.ibm.com;
+>> lingshan.zhu@intel.com; Ido Shamay <idos@mellanox.com>;
+>> eperezma@redhat.com; lulu@redhat.com; Parav Pandit
+>> <parav@mellanox.com>; christophe.de.dinechin@gmail.com;
+>> kevin.tian@intel.com; stefanha@redhat.com; Jason Wang
+>> <jasowang@redhat.com>
+>> Subject: [PATCH V6 3/6] mdev: introduce device specific ops
+>>
+>> Currently, except for the create and remove, the rest of mdev_parent_ops=
+ is
+>> designed for vfio-mdev driver only and may not help for kernel mdev driv=
+er.
+>> With the help of class id, this patch introduces device specific callbac=
+ks inside
+>> mdev_device structure. This allows different set of callback to be used =
+by vfio-
+>> mdev and virtio-mdev.
+>>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+> [ ..]
+>
+>> diff --git a/include/linux/vfio_mdev_ops.h b/include/linux/vfio_mdev_ops=
+.h
+>> new file mode 100644 index 000000000000..3907c5371c2b
+>> --- /dev/null
+>> +++ b/include/linux/vfio_mdev_ops.h
+>> @@ -0,0 +1,52 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * VFIO Mediated device definition
+>> + */
+>> +
+>> +#ifndef VFIO_MDEV_H
+>> +#define VFIO_MDEV_H
+>> +
+> I should have noticed this before. :-(
+> APIs exposed are by the mdev module and named with mdev_ prefix.
+> And file name is _ops.h,
+>
+> We should name this file as mdev_vfio_ops.h
+>
+> And #define should be MDEV_VFIO_OPS_H
+>
+>> +#include <linux/mdev.h>
+>> +
+>> +/**
+>> + * struct vfio_mdev_device_ops - Structure to be registered for each
+> s/vfio_mdev_device_ops/mdev_vfio_device_ops/
+>
+> Similarly for virtio in future patches.
+>
 
-Note that the first 1024 bytes are ignore for x86
-boot sectors and other oddities.
+Will fix in V7.
 
-Link: https://lore.kernel.org/r/20191030050846.175623-1-gaoxiang25@huawei.com
-Signed-off-by: Pratik Shinde <pratikshinde320@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-changes since v6:
- - fix kunmap(data) to kunmap(page) by mistake
-   reported by Dan Carpenter;
 
- fs/erofs/Kconfig    |  1 +
- fs/erofs/erofs_fs.h |  3 ++-
- fs/erofs/internal.h |  1 +
- fs/erofs/super.c    | 36 ++++++++++++++++++++++++++++++++++--
- 4 files changed, 38 insertions(+), 3 deletions(-)
+>   static void mtty_device_release(struct device *dev)
+> --
+> 2.19.1
+> With above small nit changes to rename the fields and file,
+>
+> Reviewed-by: Parav Pandit <parav@mellanox.com>
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 9d634d3a1845..74b0aaa7114c 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -3,6 +3,7 @@
- config EROFS_FS
- 	tristate "EROFS filesystem support"
- 	depends on BLOCK
-+	select LIBCRC32C
- 	help
- 	  EROFS (Enhanced Read-Only File System) is a lightweight
- 	  read-only file system with modern designs (eg. page-sized
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index b1ee5654750d..385fa49c7749 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -11,6 +11,8 @@
- 
- #define EROFS_SUPER_OFFSET      1024
- 
-+#define EROFS_FEATURE_COMPAT_SB_CHKSUM          0x00000001
-+
- /*
-  * Any bits that aren't in EROFS_ALL_FEATURE_INCOMPAT should
-  * be incompatible with this kernel version.
-@@ -37,7 +39,6 @@ struct erofs_super_block {
- 	__u8 uuid[16];          /* 128-bit uuid for volume */
- 	__u8 volume_name[16];   /* volume name */
- 	__le32 feature_incompat;
--
- 	__u8 reserved2[44];
- };
- 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 544a453f3076..96d97eab88e3 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -85,6 +85,7 @@ struct erofs_sb_info {
- 
- 	u8 uuid[16];                    /* 128-bit uuid for volume */
- 	u8 volume_name[16];             /* volume name */
-+	u32 feature_compat;
- 	u32 feature_incompat;
- 
- 	unsigned int mount_opt;
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 0e369494f2f2..849c0bdf49d9 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/statfs.h>
- #include <linux/parser.h>
- #include <linux/seq_file.h>
-+#include <linux/crc32c.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -46,6 +47,30 @@ void _erofs_info(struct super_block *sb, const char *function,
- 	va_end(args);
- }
- 
-+static int erofs_superblock_csum_verify(struct super_block *sb, void *sbdata)
-+{
-+	struct erofs_super_block *dsb;
-+	u32 expected_crc, crc;
-+
-+	dsb = kmemdup(sbdata + EROFS_SUPER_OFFSET,
-+		      EROFS_BLKSIZ - EROFS_SUPER_OFFSET, GFP_KERNEL);
-+	if (!dsb)
-+		return -ENOMEM;
-+
-+	expected_crc = le32_to_cpu(dsb->checksum);
-+	dsb->checksum = 0;
-+	/* to allow for x86 boot sectors and other oddities. */
-+	crc = crc32c(~0, dsb, EROFS_BLKSIZ - EROFS_SUPER_OFFSET);
-+	kfree(dsb);
-+
-+	if (crc != expected_crc) {
-+		erofs_err(sb, "invalid checksum 0x%08x, 0x%08x expected",
-+			  crc, expected_crc);
-+		return -EBADMSG;
-+	}
-+	return 0;
-+}
-+
- static void erofs_inode_init_once(void *ptr)
- {
- 	struct erofs_inode *vi = ptr;
-@@ -112,7 +137,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 
- 	sbi = EROFS_SB(sb);
- 
--	data = kmap_atomic(page);
-+	data = kmap(page);
- 	dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
- 
- 	ret = -EINVAL;
-@@ -121,6 +146,13 @@ static int erofs_read_superblock(struct super_block *sb)
- 		goto out;
- 	}
- 
-+	sbi->feature_compat = le32_to_cpu(dsb->feature_compat);
-+	if (sbi->feature_compat & EROFS_FEATURE_COMPAT_SB_CHKSUM) {
-+		ret = erofs_superblock_csum_verify(sb, data);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	blkszbits = dsb->blkszbits;
- 	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
- 	if (blkszbits != LOG_BLOCK_SIZE) {
-@@ -155,7 +187,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 	}
- 	ret = 0;
- out:
--	kunmap_atomic(data);
-+	kunmap(page);
- 	put_page(page);
- 	return ret;
- }
--- 
-2.17.1
+
+Appreciate that, thanks.
+
 
