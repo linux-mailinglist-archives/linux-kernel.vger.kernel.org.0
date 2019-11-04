@@ -2,166 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDB5EF027
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:26:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 476B1EEFC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfKDW0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:26:15 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46255 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730491AbfKDVvX (ORCPT
+        id S2387974AbfKDVyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:54:36 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38317 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387961AbfKDVyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:23 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 193so12120770pfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:51:22 -0800 (PST)
+        Mon, 4 Nov 2019 16:54:32 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w8so8284363plq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:54:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
-        b=Pp8aTcTc4J8HQHJfK7XYOvTKX+0OBvRsnX5l3y4u4g4MM3j86RHYT5E3CyfwGjTx4M
-         OY4am3V6P04tfgMJdWaiBA4U4MVXNNXBLNBBKKsjLvm6Py+danTKFeA58zni2EwrZJ4a
-         LNM/Y81H3MGNqRtK9pfeV0H03aM+7nND2Zei+zqEbD1s4PqBPprHUisrBeteBubsbwSy
-         TVQ544cT0wpbyLgolGEW1xWW2VpX+SzNMXEAx14Fcr5iUkFTIem+fgkabRMzppRp0uwa
-         f1TaCzq6xMl1AGXBK5nQcB2Aq9iUTjOhumPtO956o84HKT+keZUKHTeZ+X7Z6JqxV9xJ
-         DqlQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Wxkk5ut6+s0cNxryvChWsZmwhMRnXWdBGWPKhZvNzYg=;
+        b=Ta9OhILb7dafwoZE94wX59bg3IB8dDT9GlQC97tPh29z/3kSAXgrECiTfion0qsXcP
+         Gb/+wmlpd0zXzoJ66PmkqCXLZcFsKU0mNNQX3YSN96bJIR8B+ULtpE+QE5Y38N6G2Fuh
+         b3bfMG91+uQ/4ufFHpibcNlxYOE7zisRLzMjRKfTBzPIjfjcWXvtxEPpSqneDd9tBRYD
+         8QCPOx9AAr6lFRCvNcVwtbcLmft+KdqJm2nW+a/ocAWInbniD+baUnOJJOdR1TMDX2yS
+         DYcjutbwzqYc/2iK2IokKCFgaFBheyNKGzU0gk6d2seNa4PVR5jlQZHSqmGCvz8z4nZ8
+         VINQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
-        b=RWBEM7GGNZq0+/JC63bv3zIVeUxhWLsjDo4k76/AB5pKnNbhNSd0O0AqvJRkQTTkRZ
-         +vRkM4nfbXSwAm6rG7aHIrlFK8ReRYUiUW8PgIrwWGathiDOysfSv7uCLYqZD/Br7NMl
-         IYvOE5KGxSy9084CVn9he1gG7v6wklBs7sxvcPVn4z+sI5e2UN6wqs3iRU/ssou80UxC
-         FGPAYlKy2nmh8owFWZnrOl1yULxXPiFpv02W9eARtbyk2n1enWQRpmzVilA6cnJBoWf4
-         AuywtWT+FXtHrn7RGAsP/jjOAyOXxI8MkU9uH6dtW2QGXEij9+pV4H6B003XYKRlNa8H
-         7F9Q==
-X-Gm-Message-State: APjAAAW9NtDmLhajVXEurMneApr3EjbSfw0Nh6+o0Wtim3e/wQm3UuG/
-        rDJdJVxXsNJqGS03TqU2elzAZw==
-X-Google-Smtp-Source: APXvYqy8cbQrcNS2YZCm15LNXj84RCWobmcY3Yi0AKiVBFlHOjV+tLdHj1XjjIBLQcnlWN3fV+awgw==
-X-Received: by 2002:a63:dc45:: with SMTP id f5mr32464004pgj.250.1572904282035;
-        Mon, 04 Nov 2019 13:51:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Wxkk5ut6+s0cNxryvChWsZmwhMRnXWdBGWPKhZvNzYg=;
+        b=Dt8ig20xAfRWgLV5bMHY2qIoyopEqE1p2XQLKdMydJzQwOp1bZeiLXq2SAMaZC0XHc
+         iwZtt6Af2iB33A9P48jPcbwjR8fAlegUtl2xhEy7COX57/EoXbny4RF1H82qiBkdfB0G
+         Brbbbn2DjgjS/XLzpWatrPQdaghF1r+YbkBIhE2ulBzwfsT4bY+EL01TVyvA44hYlivm
+         BqtZsR7ihK1eWwYhl2xNbrbAhqLBHrKPjgvUNM+uWUL2pJHf7xOa+Qnv1n8lKAVp9GOq
+         UocBV7ZS4BtufOIXUZ36MAaA+rVJSDbHO7k21i7R9Yj45Jm2AqIIuQj7j/dTgCoXCCak
+         yzuA==
+X-Gm-Message-State: APjAAAXCTLqouaXcpiPnhDQTdzqaPlKKTSI9cxJChFQfrd4LFHf1VIEN
+        tawQ2zBknQVc+zqpzZgdzpy1KFtve79MYQ==
+X-Google-Smtp-Source: APXvYqzOlfhOuAcFE3PyPSu5cEFzLhnqc55aJlwnPcOx3PgwKCcUSt+zGdCYKQeCnDodouthnOblqw==
+X-Received: by 2002:a17:902:6b47:: with SMTP id g7mr25942305plt.160.1572904471170;
+        Mon, 04 Nov 2019 13:54:31 -0800 (PST)
 Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id z7sm10567610pgk.10.2019.11.04.13.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2019 13:51:21 -0800 (PST)
-Subject: Re: [PATCH v14 1/5] Add flags option to get xattr method paired to
- __vfs_getxattr
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
-        kernel-team@android.com, selinux@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        ecryptfs@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20191022204453.97058-1-salyzyn@android.com>
- <20191022204453.97058-2-salyzyn@android.com>
- <8CE5B6E8-DCB7-4F0B-91C1-48030947F585@dilger.ca>
- <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
+        by smtp.gmail.com with ESMTPSA id e198sm19231350pfh.83.2019.11.04.13.54.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 13:54:30 -0800 (PST)
 From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <7b5f2964-10ce-021b-01f7-6b662bf0c09a@android.com>
-Date:   Mon, 4 Nov 2019 13:51:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v15 2/4] overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+Date:   Mon,  4 Nov 2019 13:52:47 -0800
+Message-Id: <20191104215253.141818-3-salyzyn@android.com>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+In-Reply-To: <20191104215253.141818-1-salyzyn@android.com>
+References: <20191104215253.141818-1-salyzyn@android.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/19 9:57 PM, Amir Goldstein wrote:
-> [excessive CC list reduced]
->
-> On Wed, Oct 23, 2019 at 11:07 AM Andreas Dilger via samba-technical
-> <samba-technical@lists.samba.org> wrote:
->>
->> On Oct 22, 2019, at 2:44 PM, Mark Salyzyn <salyzyn@android.com> wrote:
->>> Replace arguments for get and set xattr methods, and __vfs_getxattr
->>> and __vfs_setaxtr functions with a reference to the following now
->>> common argument structure:
->>>
->>> struct xattr_gs_args {
->>>        struct dentry *dentry;
->>>        struct inode *inode;
->>>        const char *name;
->>>        union {
->>>                void *buffer;
->>>                const void *value;
->>>        };
->>>        size_t size;
->>>        int flags;
->>> };
->>> Mark,
->>>
->>> I do not see the first patch on fsdevel
->>> and I am confused from all the suggested APIs
->>> I recall Christoph's comment on v8 for not using xattr_gs_args
->>> and just adding flags to existing get() method.
->>> I agree to that comment.
->> As already responded, third (?) patch version was like that,
-> The problem is that because of the waaay too long CC list, most revisions
-> of the patch and discussion were bounced from fsdevel, most emails
-> I did not get and cannot find in archives, so the discussion around
-> them is not productive.
->
-> Please resend patch to fsdevel discarding the auto added CC list
-> of all fs maintainers.
+Because of the overlayfs getxattr recursion, the incoming inode fails
+to update the selinux sid resulting in avc denials being reported
+against a target context of u:object_r:unlabeled:s0.
 
-git send-email is not my friend :-(
+Solution is to respond to the XATTR_NOSECURITY flag in get xattr
+method that calls the __vfs_getxattr handler instead so that the
+context can be read in, rather than being denied with an -EACCES
+when vfs_getxattr handler is called.
 
->> gregkh@
->> said it passed the limit for number of arguments, is looking a bit silly
-> Well, you just matched get() to set() args list, so this is not a strong
-> argument IMO.
->
->> (my paraphrase), and that it should be passed as a structure. Two others
->> agreed. We gained because both set and get use the same structure after
->> this change (this allows a simplified read-modify-write cycle).
-> That sounds like a nice benefit if this was user API, but are there any
-> kernel users that intend to make use of that read-modify-write cycle?
-> I don't think so.
-(one user)
->
->> We will need a quorum on this, 3 (structure) to 2 (flag) now (but really
->> basically between Greg and Christoph?). Coding style issue: Add a flag,
->> or switch to a common xattr argument  structure?
->>
-> IIRC, Christoph was asking why the silly struct and not simply add flags
-> (as did I). He probably did not see Greg's comments due to the list bounce
-> issue. If I read your second hand description of Greg's reaction correctly,
-> it doesn't sound so strong opinionated as well.
-> Me, I can live with flags or struct - I don't care, but...
->
-> Be prepared that if you are going ahead with struct you are going to
-> suffer from bike shedding, which has already started and you will be
-> instructed (just now) to also fix all the relevant and missing Documentation.
-> If, on the other hand, you can get Greg and the rest to concede to adding
-> flags arg and match get() arg list to set() arg list, you will have a much
-> easier job and the patch line count, especially in fs code will be *much*
-> smaller - just saying.
+For the use case where access is to be blocked by the security layer.
 
-Respining back to the v4 version of the series incorporating some of the 
-fixes on the way.
+The path then would be security(dentry) ->
+__vfs_getxattr({dentry...XATTR_NOSECURITY}) ->
+handler->get({dentry...XATTR_NOSECURITY}) ->
+__vfs_getxattr({realdentry...XATTR_NOSECURITY}) ->
+lower_handler->get({realdentry...XATTR_NOSECURITY}) which
+would report back through the chain data and success as expected,
+the logging security layer at the top would have the data to
+determine the access permissions and report back to the logs and
+the caller that the target context was blocked.
 
-Automated testing in kernel not yet handled and will be noted in the 
-respin.
+For selinux this would solve the cosmetic issue of the selinux log
+and allow audit2allow to correctly report the rule needed to address
+the access problem.
 
-> Thanks,
-> Amir.
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: linux-security-module@vger.kernel.org
 
-Mark
+v15 - revert to v13 because xattr_gs_args rejected.
+
+v14 - rebase to use xattr_gs_args.
+
+v13 - rebase to use __vfs_getxattr flags option.
+
+v12 - Added back to patch series as get xattr with flag option.
+
+v11 - Squashed out of patch series and replaced with per-thread flag
+      solution.
+
+v10 - Added to patch series as __get xattr method.
+---
+ fs/overlayfs/inode.c     | 5 +++--
+ fs/overlayfs/overlayfs.h | 2 +-
+ fs/overlayfs/super.c     | 4 ++--
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index bc14781886bf..c057e51057f7 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -363,7 +363,7 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+ }
+ 
+ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+-		  void *value, size_t size)
++		  void *value, size_t size, int flags)
+ {
+ 	ssize_t res;
+ 	const struct cred *old_cred;
+@@ -371,7 +371,8 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+ 		ovl_i_dentry_upper(inode) ?: ovl_dentry_lower(dentry);
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+-	res = vfs_getxattr(realdentry, name, value, size);
++	res = __vfs_getxattr(realdentry, d_inode(realdentry), name,
++			     value, size, flags);
+ 	revert_creds(old_cred);
+ 	return res;
+ }
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 6934bcf030f0..ab3d031c422b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -356,7 +356,7 @@ int ovl_permission(struct inode *inode, int mask);
+ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+ 		  const void *value, size_t size, int flags);
+ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+-		  void *value, size_t size);
++		  void *value, size_t size, int flags);
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+ struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 57f5f948ae0a..c91e7b604631 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -857,7 +857,7 @@ ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
+ 			struct dentry *dentry, struct inode *inode,
+ 			const char *name, void *buffer, size_t size, int flags)
+ {
+-	return ovl_xattr_get(dentry, inode, handler->name, buffer, size);
++	return ovl_xattr_get(dentry, inode, handler->name, buffer, size, flags);
+ }
+ 
+ static int __maybe_unused
+@@ -939,7 +939,7 @@ static int ovl_other_xattr_get(const struct xattr_handler *handler,
+ 			       const char *name, void *buffer, size_t size,
+ 			       int flags)
+ {
+-	return ovl_xattr_get(dentry, inode, name, buffer, size);
++	return ovl_xattr_get(dentry, inode, name, buffer, size, flags);
+ }
+ 
+ static int ovl_other_xattr_set(const struct xattr_handler *handler,
+-- 
+2.24.0.rc1.363.gb1bccd3e3d-goog
 
