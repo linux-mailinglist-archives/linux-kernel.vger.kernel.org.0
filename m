@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B77F7EF03F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C07BEEEFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfKDVu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43396 "EHLO mail.kernel.org"
+        id S2389235AbfKDWCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729753AbfKDVuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:50:50 -0500
+        id S2389055AbfKDWB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:29 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A922E2184C;
-        Mon,  4 Nov 2019 21:50:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 904ED20650;
+        Mon,  4 Nov 2019 22:01:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904250;
-        bh=jMAEKlxyC3ermhSxITfVSGgBVe4mb/AT5OiGWW7wYCw=;
+        s=default; t=1572904889;
+        bh=5VyfATjDRZ/d61SscXopb+AgGGmd7/YaQZLg5GFAo3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pq43ueZq1POdMnwHcggZsjFOwxakEWASY6lch9ju1txMKbE5nGau1YCpAe0vIXSDq
-         vxCdSLEwW/RDwnPlTFy6J9iUH4BhpYaa2YJHh6zCmQOPdoDHbCuOyD5Rx5C0AEWbg7
-         9mRoUHTzD7vlNiy8/ILDciDZB7ivV6YLDcc3YURk=
+        b=TuzNLaIhYVIrJLhKPXgySqpeDiMHWuDvgZJp+t6iXh/4JQfO4MGs1Mz2u3AJ3Mwbs
+         li+53gkCJ6wzhktLpUpQegUVEvtSP12OsJiwA3/fbdzK4jIZLo8O6uU7CffjV3Acfi
+         qNPws35eDLDTp52r9yRiRA0FVceTqIp3NPiPu0e0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.9 37/62] UAS: Revert commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 106/149] USB: legousbtower: fix a signedness bug in tower_probe()
 Date:   Mon,  4 Nov 2019 22:44:59 +0100
-Message-Id: <20191104211940.713506931@linuxfoundation.org>
+Message-Id: <20191104212143.879043482@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 1186f86a71130a7635a20843e355bb880c7349b2 upstream.
+[ Upstream commit fd47a417e75e2506eb3672ae569b1c87e3774155 ]
 
-Commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments"),
-copying a similar commit for usb-storage, attempted to solve a problem
-involving scatter-gather I/O and USB/IP by setting the
-virt_boundary_mask for mass-storage devices.
+The problem is that sizeof() is unsigned long so negative error codes
+are type promoted to high positive values and the condition becomes
+false.
 
-However, it now turns out that the analogous change in usb-storage
-interacted badly with commit 09324d32d2a0 ("block: force an unlimited
-segment size on queues with a virt boundary"), which was added later.
-A typical error message is:
-
-	ehci-pci 0000:00:13.2: swiotlb buffer is full (sz: 327680 bytes),
-	total 32768 (slots), used 97 (slots)
-
-There is no longer any reason to keep the virt_boundary_mask setting
-in the uas driver.  It was needed in the first place only for
-handling devices with a block size smaller than the maxpacket size and
-where the host controller was not capable of fully general
-scatter-gather operation (that is, able to merge two SG segments into
-a single USB packet).  But:
-
-	High-speed or slower connections never use a bulk maxpacket
-	value larger than 512;
-
-	The SCSI layer does not handle block devices with a block size
-	smaller than 512 bytes;
-
-	All the host controllers capable of SuperSpeed operation can
-	handle fully general SG;
-
-	Since commit ea44d190764b ("usbip: Implement SG support to
-	vhci-hcd and stub driver") was merged, the USB/IP driver can
-	also handle SG.
-
-Therefore all supported device/controller combinations should be okay
-with no need for any special virt_boundary_mask.  So in order to head
-off potential problems similar to those affecting usb-storage, this
-patch reverts commit 3ae62a42090f.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Oliver Neukum <oneukum@suse.com>
-CC: <stable@vger.kernel.org>
-Acked-by: Christoph Hellwig <hch@lst.de>
-Fixes: 3ae62a42090f ("UAS: fix alignment of scatter/gather segments")
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910231132470.1878-100000@iolanthe.rowland.org
+Fixes: 1d427be4a39d ("USB: legousbtower: fix slab info leak at probe")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191011141115.GA4521@mwanda
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/storage/uas.c |   20 --------------------
- 1 file changed, 20 deletions(-)
+ drivers/usb/misc/legousbtower.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -796,30 +796,10 @@ static int uas_slave_alloc(struct scsi_d
- {
- 	struct uas_dev_info *devinfo =
- 		(struct uas_dev_info *)sdev->host->hostdata;
--	int maxp;
- 
- 	sdev->hostdata = devinfo;
- 
- 	/*
--	 * We have two requirements here. We must satisfy the requirements
--	 * of the physical HC and the demands of the protocol, as we
--	 * definitely want no additional memory allocation in this path
--	 * ruling out using bounce buffers.
--	 *
--	 * For a transmission on USB to continue we must never send
--	 * a package that is smaller than maxpacket. Hence the length of each
--         * scatterlist element except the last must be divisible by the
--         * Bulk maxpacket value.
--	 * If the HC does not ensure that through SG,
--	 * the upper layer must do that. We must assume nothing
--	 * about the capabilities off the HC, so we use the most
--	 * pessimistic requirement.
--	 */
--
--	maxp = usb_maxpacket(devinfo->udev, devinfo->data_in_pipe, 0);
--	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
--
--	/*
- 	 * The protocol has no requirements on alignment in the strict sense.
- 	 * Controllers may or may not have alignment restrictions.
- 	 * As this is not exported, we use an extremely conservative guess.
+diff --git a/drivers/usb/misc/legousbtower.c b/drivers/usb/misc/legousbtower.c
+index 62dab2441ec4f..23061f1526b4e 100644
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -878,7 +878,7 @@ static int tower_probe (struct usb_interface *interface, const struct usb_device
+ 				  get_version_reply,
+ 				  sizeof(*get_version_reply),
+ 				  1000);
+-	if (result < sizeof(*get_version_reply)) {
++	if (result != sizeof(*get_version_reply)) {
+ 		if (result >= 0)
+ 			result = -EIO;
+ 		dev_err(idev, "get version request failed: %d\n", result);
+-- 
+2.20.1
+
 
 
