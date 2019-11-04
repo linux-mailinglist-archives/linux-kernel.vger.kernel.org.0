@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5979CEEB79
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D327CEEC0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729971AbfKDVsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38378 "EHLO mail.kernel.org"
+        id S1731008AbfKDVxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729954AbfKDVsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:14 -0500
+        id S1730987AbfKDVx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:29 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89E28222CF;
-        Mon,  4 Nov 2019 21:48:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0409621850;
+        Mon,  4 Nov 2019 21:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904094;
-        bh=77sS3w03X92A9bu2jxWTB2qmu2JAV6Xtx2HzEp2RtYE=;
+        s=default; t=1572904408;
+        bh=XT+45AHELqelbvkdANKgn/zccoTA/gMFB6V49Z8j63s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G9FhLtyRMUdi/a7uE1UiLNSYML9R6EG0P5lMB5hgP0gIjcistYT2lCcUNWyoW/kfb
-         pjlrTbx2oA3sE9F7AQKJTAU1oczOlotWT4SbJGZNh2yKVWLNu958cbJdjPLwGsB/PK
-         1JrHXDfRDSshTkuRrcqkST1Ck3Nx+sbRkSQG/Y/E=
+        b=uyhmQf5eKwBgSOqOigg+ICvuudyPnsXmdnDm8sgu4r3rIr8csXIznunRxUOmAegz1
+         mLSy1YitOVhnu2HlOhDOfbBf6GxSQDiNj5aJSmzSNlMFwApPy/oxX0EDN/q+/RiCnv
+         b5GAZPJfm2tVNE9zjevbrd+Bu0tTmLOIwxkeXdDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Nikos Tsironis <ntsironis@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 02/46] dm snapshot: introduce account_start_copy() and account_end_copy()
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 35/95] arm64: ftrace: Ensure synchronisation in PLT setup for Neoverse-N1 #1542419
 Date:   Mon,  4 Nov 2019 22:44:33 +0100
-Message-Id: <20191104211833.227226439@linuxfoundation.org>
+Message-Id: <20191104212100.174262863@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: James Morse <james.morse@arm.com>
 
-[ Upstream commit a2f83e8b0c82c9500421a26c49eb198b25fcdea3 ]
+[ Upstream commit dd8a1f13488438c6c220b7cafa500baaf21a6e53 ]
 
-This simple refactoring moves code for modifying the semaphore cow_count
-into separate functions to prepare for changes that will extend these
-methods to provide for a more sophisticated mechanism for COW
-throttling.
+CPUs affected by Neoverse-N1 #1542419 may execute a stale instruction if
+it was recently modified. The affected sequence requires freshly written
+instructions to be executable before a branch to them is updated.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Reviewed-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+There are very few places in the kernel that modify executable text,
+all but one come with sufficient synchronisation:
+ * The module loader's flush_module_icache() calls flush_icache_range(),
+   which does a kick_all_cpus_sync()
+ * bpf_int_jit_compile() calls flush_icache_range().
+ * Kprobes calls aarch64_insn_patch_text(), which does its work in
+   stop_machine().
+ * static keys and ftrace both patch between nops and branches to
+   existing kernel code (not generated code).
+
+The affected sequence is the interaction between ftrace and modules.
+The module PLT is cleaned using __flush_icache_range() as the trampoline
+shouldn't be executable until we update the branch to it.
+
+Drop the double-underscore so that this path runs kick_all_cpus_sync()
+too.
+
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-snap.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/ftrace.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 7c8b5fdf4d4e5..2437ca7e43687 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -1400,6 +1400,16 @@ static void snapshot_dtr(struct dm_target *ti)
- 	kfree(s);
- }
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index fac79d75d1d9d..6eefd5873aef4 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -119,7 +119,13 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
  
-+static void account_start_copy(struct dm_snapshot *s)
-+{
-+	down(&s->cow_count);
-+}
-+
-+static void account_end_copy(struct dm_snapshot *s)
-+{
-+	up(&s->cow_count);
-+}
-+
- /*
-  * Flush a list of buffers.
-  */
-@@ -1584,7 +1594,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
- 		}
- 		list_add(&pe->out_of_order_entry, lh);
- 	}
--	up(&s->cow_count);
-+	account_end_copy(s);
- }
- 
- /*
-@@ -1608,7 +1618,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
- 	dest.count = src.count;
- 
- 	/* Hand over to kcopyd */
--	down(&s->cow_count);
-+	account_start_copy(s);
- 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
- }
- 
-@@ -1629,7 +1639,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
- 	pe->full_bio_end_io = bio->bi_end_io;
- 	pe->full_bio_private = bio->bi_private;
- 
--	down(&s->cow_count);
-+	account_start_copy(s);
- 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
- 						   copy_callback, pe);
- 
+ 			/*
+ 			 * Ensure updated trampoline is visible to instruction
+-			 * fetch before we patch in the branch.
++			 * fetch before we patch in the branch. Although the
++			 * architecture doesn't require an IPI in this case,
++			 * Neoverse-N1 erratum #1542419 does require one
++			 * if the TLB maintenance in module_enable_ro() is
++			 * skipped due to rodata_enabled. It doesn't seem worth
++			 * it to make it conditional given that this is
++			 * certainly not a fast-path.
+ 			 */
+ 			flush_icache_range((unsigned long)&dst[0],
+ 					   (unsigned long)&dst[1]);
 -- 
 2.20.1
 
