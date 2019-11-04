@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27FBEE062
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:47:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79290EE07F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfKDMrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:47:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46862 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbfKDMrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:47:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nQW/bkzEewczaxT+3uYr2EI926apxCfUzfvK6W9flNM=; b=eX9YNLdaHWXApFC5WH3YUJSoz
-        duye5V5aJxyEa0X2sRrWdWgQsDTo4uhgIwg2UK8SaMVGp11RGSodOlIl07eRtejb2BzATT5SOEPtv
-        lq9Hkne174NX0ErvZCPnbeJU5n9yGScoQnxfQfhkJYoxb2ct+DWNG8cLD4lKkgleLNPE4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iRblP-0002Yo-Ij; Mon, 04 Nov 2019 12:47:19 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id F2AE1274301E; Mon,  4 Nov 2019 12:47:18 +0000 (GMT)
-Date:   Mon, 4 Nov 2019 12:47:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     hslester96@gmail.com, Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-spi@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: sifive: disable clk when probe fails and remove
-Message-ID: <20191104124718.GC5238@sirena.co.uk>
-References: <20191101121745.13413-1-hslester96@gmail.com>
- <mhng-3be3dc4e-15f2-4ad2-b156-ea5439e729bd@palmer-si-x1c4>
+        id S1728924AbfKDM4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 07:56:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727236AbfKDM4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 07:56:46 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A3B220B7C;
+        Mon,  4 Nov 2019 12:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572872205;
+        bh=DahvUIlMUGAvXZNBwm3AJ9Zsp/qhwnO1waU2i3Z3O2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ANcqbdpcOD+qx5TOZbLJ26nPQKLLmJvFwfi6qYNY1tnbVf9ahc7PM7qVJY2Esv3Fa
+         9gBOFp9LjxnfpIs4mMsG3mL8NuMRmG9tcj5Wi2NB54GYcNm38JMAFisbqlEZDo7tPw
+         gLo+QIFKVZ/aMCithTya39NboeCucFgc79ZMq1bQ=
+Date:   Mon, 4 Nov 2019 12:56:39 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
+        James.Bottomley@HansenPartnership.com, james.morse@arm.com,
+        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
+        linux-parisc@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
+        takahiro.akashi@linaro.org
+Subject: Re: [PATCHv2 0/8] arm64: ftrace cleanup + FTRACE_WITH_REGS
+Message-ID: <20191104125637.GB24108@willie-the-truck>
+References: <20191029165832.33606-1-mark.rutland@arm.com>
+ <42c113ee-e7fc-3e94-cca0-f05f1c89fdb8@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="96YOpH+ONegL0A3E"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <mhng-3be3dc4e-15f2-4ad2-b156-ea5439e729bd@palmer-si-x1c4>
-X-Cookie: This page intentionally left blank.
+In-Reply-To: <42c113ee-e7fc-3e94-cca0-f05f1c89fdb8@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 02, 2019 at 05:42:25PM +0530, Amit Daniel Kachhap wrote:
+> On 10/29/19 10:28 PM, Mark Rutland wrote:
+> > This series is a reworked version of Torsten's FTRACE_WITH_REGS series
+> > [1]. I've tried to rework the existing code in preparatory patches so
+> > that the patchable-function-entry bits slot in with fewer surprises.
+> > This version is based on v5.4-rc3, and can be found in my
+> > arm64/ftrace-with-regs branch [2].
+> > 
+> > Patch 1 adds an (optional) ftrace_init_nop(), which the core code uses
+> > to initialize callsites. This allows us to avoid a synthetic MCOUNT_ADDR
+> > symbol, and more cleanly separates the one-time initialization of the
+> > callsite from dynamic NOP<->CALL modification. Architectures which don't
+> > implement this get the existing ftrace_make_nop() with MCOUNT_ADDR.
+> > 
+> > Recently parisc gained ftrace support using patchable-function-entry.
+> > Patch 2 makes the handling of module callsite locations common in
+> > kernel/module.c with a new FTRACE_CALLSITE_SECTION definition, and
+> > removed the newly redundant bits from arch/parisc.
+> > 
+> > Patches 3 and 4 move the module PLT initialization to module load time,
+> > which simplifies runtime callsite modification. This also means that we
+> > don't transitently mark the module text RW, and will allow for the
+> > removal of module_disable_ro().
+> > 
+> > Patches 5 and 6 add some trivial infrastructure, with patch 7 finally
+> > adding FTRACE_WITH_REGS support. Additional work will be required for
+> > livepatching (e.g. implementing reliable stack trace), which is
+> > commented as part of patch 7.
+> > 
+> > Patch 8 is a trivial cleanup atop of the rest of the series, making the
+> > code easier to read and less susceptible to config-specific breakage.
+> I tested the whole series with my latest in-kernel ptrauth patches [1]
+> and graph_tracer/function_graph_tracer works fine, So for the whole series,
+> Tested-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> 
+> Also I gave few minor comments in the individual patches. With those
+> comments,
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
 
---96YOpH+ONegL0A3E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don't think this means what you think it means. Please read:
 
-On Fri, Nov 01, 2019 at 04:07:29PM -0700, Palmer Dabbelt wrote:
-> On Fri, 01 Nov 2019 05:17:45 PDT (-0700), hslester96@gmail.com wrote:
-> > The driver forgets to disable and unprepare clk when probe fails and
-> > remove.
-> > Add the calls to fix the problem.
+Documentation/process/submitting-patches.rst
 
-> Reviewed-by: Palmer Dabbelt <palmer@dabbelt.com>
-
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
---96YOpH+ONegL0A3E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3AHdYACgkQJNaLcl1U
-h9Bxbwf+PS/3tt1r3nRdDUeTgiw12asFTlFdosGPaCdJ0zCp0XBMPgFZBia9R16z
-QBrOHOQ5BL+W7FEEOh9hfPpvdVPzgygwAip2n2uHEWrOZ7pt7PWoGj2ybu0JDXTu
-rPhwWNvY36hCVKElOiixQeR43pU7yKJZzPoWVTxJgGarWaE03ngE0jEvQUqtsVMB
-aI0LNK076Dt9geC7wg5FFSppQTVv6c9PvpTehaS5hKvY00hfUS3i9uFgYsXjuggz
-TYsKknIrHD0gm0Q1bCfGK7u6C3YkbyPs6uj1j2xZLh5isMgVokBkrlpkbpMtKl+i
-PPxqmUKox9ymgSDfmnZ1yGneuS3qVg==
-=2j2y
------END PGP SIGNATURE-----
-
---96YOpH+ONegL0A3E--
+Will
