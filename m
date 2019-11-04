@@ -2,290 +2,459 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45228EE5EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB90FEE5F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:27:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfKDRYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:24:43 -0500
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:36031 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfKDRYn (ORCPT
+        id S1729137AbfKDR1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:27:03 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44855 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbfKDR1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:24:43 -0500
-Received: by mail-wr1-f44.google.com with SMTP id w18so18077408wrt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:24:39 -0800 (PST)
+        Mon, 4 Nov 2019 12:27:02 -0500
+Received: by mail-qk1-f194.google.com with SMTP id m16so18029252qki.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:27:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9pszL8eDm49mTZV2/1Bqz/fRAti6r/IlBtJ/fxhua+I=;
-        b=aI/PNRQnk9qdxM4nIrcmViqV8A8LrEFyRdARCppACjh3URDxCaRHnfonKFogswweFY
-         B/0JbhI/OtES2PNVgNgyjORBrq5f1PShbFF/Ib5pjgd56dhGC/Xv2oKxVBGj5UQTIR43
-         OiA8GtDi87/zOrsPqTOkHtKtRZyZtHUjpLG/E=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=45/7adduVbfCybhpUSufsa5tEcGQJGPhKcvkvde1T+A=;
+        b=WkfCr6DdW8EJ5kdnEDP7stKjTReDaByqfFYa7D2qfg3mFgFidDPWRDoCMckHNN3zi1
+         xrLw1Eq2RnCR+Sr8XAE1ZjnsJUuql1kbShr1K5rYKke8mJhdV7lQkNLhb0xG0hTPm+q/
+         /DFxWsXRBC6DjligyEZuu8OMug9be/7dqnfql7OuJ+oJox3KGOln9KSwxV9Y1IkMQMI5
+         zqaFrm5y/erjIBAeOaLDSkliSjVfaYUhqEaykXC4E8EZm1md34WIfG7Z6gn1VS+ISXIY
+         tTSuIzate1akVObhkKvcCJ+LTBNwlh2OLWWVqnicpZDxF5nXVO1iwDnBa8pJGx1+1maB
+         R2EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=9pszL8eDm49mTZV2/1Bqz/fRAti6r/IlBtJ/fxhua+I=;
-        b=fDnWt1Bhn2HLbugUj28kdzCgJyNyGm7fF6cEWbGNLDR+QgEWfdv21m51CJNOCerq0z
-         dDfFTnbb9t9PHRYLjJqObQWDgjXUoBmp3YJ8v7m78Ngc4WMmt+S/Kw9mMmfbleYFSrcT
-         yTVi1wcdJELSsD0cAh1JU2FFAtW7ybwNmo2sIh844HwDrE5heiGtz/JSeGLPhDFNtz23
-         9CyYirzcYTc5AhIw+UM269TsK2XFLcn2C3diX6IqN507mpxboTHVRemlomcnfi0oQcAw
-         olTxOKs6XeGYC6s8Nz2XjyWt/ShStjGBPq/KTDno3VM+iz/37HQoUCg+vBI9FoaBjVLI
-         AlRg==
-X-Gm-Message-State: APjAAAVGbb92cDZXwqTAnBkoUO2pRl0zBwr+koIRy3FsArF1jGAzLpag
-        RreZzOyJp945KK/9k9+N+3WQU4y4h5Q=
-X-Google-Smtp-Source: APXvYqxa/Ivqn5KKJR4deEms/Pcfzim4xEaRh74HizYoK7WTZ1bGTKUfP+QphJfwPghFqr0EumAsrw==
-X-Received: by 2002:adf:eb87:: with SMTP id t7mr22285079wrn.294.1572888278607;
-        Mon, 04 Nov 2019 09:24:38 -0800 (PST)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id f143sm18906127wme.40.2019.11.04.09.24.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 09:24:36 -0800 (PST)
-Date:   Mon, 4 Nov 2019 18:24:34 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Harry Wentland <hwentlan@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-Subject: Re: drm/amd/display: Add HDCP module - static analysis bug report
-Message-ID: <20191104172434.GJ10326@phenom.ffwll.local>
-Mail-Followup-To: Alex Deucher <alexdeucher@gmail.com>,
-        Harry Wentland <hwentlan@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-References: <951eb7dc-bebe-5049-4998-f199e18b0bf3@canonical.com>
- <20191009163235.GT16989@phenom.ffwll.local>
- <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
- <CAKMK7uEtJRDhibWDv2TB2WrFzFooMWPSbveDD2N-rudAwvzVFA@mail.gmail.com>
- <c8f96b46-e81e-1e41-aafc-5f6ec236d66f@amd.com>
- <CAKMK7uHr3aeJRqJAscDDfsuBBnVXCeN9SS36-1UGuK84NyOD5Q@mail.gmail.com>
- <CAKMK7uH6EoY9MkzjSjU+Fe=E-XB4Tf9d2VsW=Tr=tFy1J-dJgg@mail.gmail.com>
- <53bf910b-5f9c-946b-17ee-602c24c0fa96@amd.com>
- <20191104165457.GH10326@phenom.ffwll.local>
- <CADnq5_PxMQ_AkBCHXU_YUAMWaPcH-nkOJNGNKnUOJWSTYV6X+A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=45/7adduVbfCybhpUSufsa5tEcGQJGPhKcvkvde1T+A=;
+        b=qowgPi2CkPKgNyXMSqMmVL3eNy/58LmPqo8ADAUgc37lIS1/skMl8jK81CIsasCIHK
+         +pRZ9dUOF0cV06PAJPIFkSDibLkfnUwp/iQYxQndEAbe3KULMVJIQie/deWYNIPUbD+9
+         pVdOH7UciSbtYiL0t+JyW/euVDmwPGUcDiVwBEbIng4aNoClOR9de2GTGCaKdKYygk3e
+         +oNhYItOGxXE7i/elDOhAyFj/C8aijc265pdieI84DJndYjVH+Qi/uzuDaesJxoWvZv2
+         TIx8QAxChoe9FmigdzTo5N1xsUTP8Clp3i9xI8/Y7HexqMqngH8GUN45LlxYznpuXW/3
+         Z94Q==
+X-Gm-Message-State: APjAAAXhWDZTeLnmk1GjnOjcHqaNQs+CToxDkhb9zA2VAEappIZiYH2G
+        bL0D6amumVl5xof9F8nNh1PbBey9+e4Hk6buZvY=
+X-Google-Smtp-Source: APXvYqzdTTpcsHI6p5KoQ1Upmj8w424Wf7YyKsfuAhROrqP0hh7ghRkoOMsJSGeI4zSkUnXSqitqck61MkK8d/V1woo=
+X-Received: by 2002:ae9:ed13:: with SMTP id c19mr11101534qkg.290.1572888421056;
+ Mon, 04 Nov 2019 09:27:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADnq5_PxMQ_AkBCHXU_YUAMWaPcH-nkOJNGNKnUOJWSTYV6X+A@mail.gmail.com>
-X-Operating-System: Linux phenom 5.2.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190918200734.149876-1-sean@poorly.run> <20190918200734.149876-2-sean@poorly.run>
+ <20190919141413.GU218215@art_vandelay> <CAFqH_53iQt0o9keRQLyqx-B=bni37bkTACF=wBKgSLOLz-hw4g@mail.gmail.com>
+In-Reply-To: <CAFqH_53iQt0o9keRQLyqx-B=bni37bkTACF=wBKgSLOLz-hw4g@mail.gmail.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 4 Nov 2019 18:26:49 +0100
+Message-ID: <CAFqH_53nZMk04+2rDOoWXEfq3Zw=i+gBjMSGb93WBjww9ercnw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] drm: Measure Self Refresh Entry/Exit times to
+ avoid thrashing
+To:     Sean Paul <sean@poorly.run>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Sean Paul <seanpaul@chromium.org>, jekarl@iki.fi,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 12:05:40PM -0500, Alex Deucher wrote:
-> On Mon, Nov 4, 2019 at 11:55 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Mon, Nov 04, 2019 at 03:23:09PM +0000, Harry Wentland wrote:
-> > > On 2019-11-04 5:53 a.m., Daniel Vetter wrote:
-> > > > On Wed, Oct 9, 2019 at 10:58 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > >> On Wed, Oct 9, 2019 at 10:46 PM Lakha, Bhawanpreet
-> > > >> <Bhawanpreet.Lakha@amd.com> wrote:
-> > > >>>
-> > > >>> I misunderstood and was talking about the ksv validation specifically
-> > > >>> (usage of drm_hdcp_check_ksvs_revoked()).
-> > > >>
-> > > >> Hm for that specifically I think you want to do both, i.e. both
-> > > >> consult your psp, but also check for revoked ksvs with the core
-> > > >> helper. At least on some platforms only the core helper might have the
-> > > >> updated revoke list.
-> > > >>
-> > >
-> > > I think it's an either/or. Either we use an HDCP implementation that's
-> > > fully running in x86 kernel space (still not sure how that's compliant)
-> > > or we fully rely on our PSP FW to do what it's designed to do. I don't
-> > > think it makes sense to mix and match here.
-> >
-> > Then you need to somehow tie the revoke list that's in the psp to the
-> > revoke list update logic we have. That's what we've done for hdcp2 (which
-> > is similarly to yours implemented in hw). The point is that on linux we
-> > now have a standard way to get these revoke lists updated/handled.
-> >
-> > I guess it wasn't clear how exactly I think you're supposed to combine
-> > them?
-> 
-> There's no driver sw required at all for our implementation and as far
-> as I know, HDCP 2.x requires that all of the key revoke handling be
-> handled in a secure processor rather than than on the host processor,
-> so I'm not sure how we make use if it.  All the driver sw is
-> responsible for doing is saving/restoring the potentially updated srm
-> at suspend/resume/etc.
+Missatge de Enric Balletbo Serra <eballetbo@gmail.com> del dia dc., 30
+d=E2=80=99oct. 2019 a les 17:59:
+>
+> Hi Sean,
+>
+> Since 5.4-rc1 my Samsung Chromebook Plus (kevin) doesn't
+> suspend/resume correctly, at least once every ten suspend/resume
+> cycles the display doesn't turn on, and when this happens the kernel
+> log message reports:
+>
+> [   60.420230] PM: suspend exit
+> [   60.463866] rockchip-dp ff970000.edp: AUX CH cmd reply timeout!
+> [   60.971653] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   61.478668] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   61.985661] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   62.492644] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   62.999617] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   63.506595] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   64.013678] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   64.522856] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   60.463866] rockchip-dp ff970000.edp: AUX CH cmd reply timeout!
+> [   60.971653] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   61.478668] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   61.985661] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> [   62.492644] rockchip-dp ff970000.edp: AUX CH enable timeout!
+> ...
+>
+> Today I bisected the problem and pointed me to this commit. Reverting
+> the commit fixes the issue, but from I quick look I don't see any
+> obvious problem. I'll spend more time tomorrow looking at this but any
+> idea will be welcome.
+>
 
-Uh, you don't have a permanent store on the chip? I thought another
-requirement is that you can't downgrade.
+Update for the record. After looking a bit more I don't think this
+patch is problematic. I think the problem was already there but after
+this patch is easier to reproduce just because the PSR entry code work
+is delayed a bit (before was called every 100ms). I think the problem
+is more related with the current enable/disable path when panel is in
+SR mode or not after a suspend/resume.
 
-And for hw solutions all you do with the updated revoke cert is stuff it
-into the hw, it's purely for updating it. And those updates need to come
-from somewhere else (usually in the media you play), the kernel can't
-fetch them over the internet itself. I thought we already had the function
-to give you the srm directly so you can stuff it into the hw, but looks
-like that part isn't there (yet).
--Daniel
+Anyway, I will continue the discussion on another thread when I find
+the root cause.
 
-> 
-> Alex
-> 
-> > -Daniel
+Thanks,
+ Enric
+
+> Thanks,
+>  Enric
+>
+> Missatge de Sean Paul <sean@poorly.run> del dia dj., 19 de set. 2019 a
+> les 16:14:
 > >
+> > On Wed, Sep 18, 2019 at 04:07:29PM -0400, Sean Paul wrote:
+> > > From: Sean Paul <seanpaul@chromium.org>
+> > >
+> > > Currently the self refresh idle timer is a const set by the crtc. Thi=
+s
+> > > is fine if the self refresh entry/exit times are well-known for all
+> > > panels used on that crtc. However panels and workloads can vary quite=
+ a
+> > > bit, and a timeout which works well for one doesn't work well for
+> > > another.
+> > >
+> > > In the extreme, if the timeout is too short we could get in a situati=
+on
+> > > where the self refresh exits are taking so long we queue up a self re=
+fresh
+> > > entry before the exit commit is even finished.
+> > >
+> > > This patch changes the idle timeout to a moving average of the entry
+> > > times + a moving average of exit times + the crtc constant.
+> > >
+> > > This patch was tested on rockchip, with a kevin CrOS panel the idle
+> > > delay averages out to about ~235ms (35 entry + 100 exit + 100 const).=
+ On
+> > > the same board, the bob panel idle delay lands around ~340ms (90 entr=
+y
+> > > + 150 exit + 100 const).
+> > >
+> > > WRT the dedicated mutex in self_refresh_data, it would be nice if we
+> > > could rely on drm_crtc.mutex to protect the average times, but there =
+are
+> > > a few reasons why a separate lock is a better choice:
+> > > - We can't rely on drm_crtc.mutex being held if we're doing a nonbloc=
+king
+> > >   commit
+> > > - We can't grab drm_crtc.mutex since drm_modeset_lock() doesn't tell =
+us
+> > >   whether the lock was already held in the acquire context (it eats
+> > >   -EALREADY), so we can't tell if we should drop it or not
+> > > - We don't need such a heavy-handed lock for what we're trying to do,
+> > >   commit ordering doesn't matter, so a point-of-use lock will be less
+> > >   contentious
+> > >
+> > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 > >
+> > Pushed the first 2 to drm-misc-next-fixes to fix the gru-bob regression=
+. I'll
+> > fix up the 3rd patch separately.
+> >
+> > Thank you for the reviews!
+> >
+> > Sean
+> >
+> > > Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> > > Link to v1: https://patchwork.freedesktop.org/patch/msgid/20190917200=
+443.64481-2-sean@poorly.run
 > > >
-> > > >>> For the defines I will create patches to use drm_hdcp where it is usable.
-> > > >>
-> > > >> Thanks a lot. Ime once we have shared definitions it's much easier to
-> > > >> also share some helpers, where it makes sense.
-> > > >>
-> > > >> Aside I think the hdcp code could also use a bit of demidlayering. At
-> > > >> least I'm not understanding why you add a 2nd abstraction layer for
-> > > >> i2c/dpcd, dm_helper already has that. That seems like one abstraction
-> > > >> layer too much.
-> > > >
-> > > > I haven't seen anything fly by or in the latest pull request ... you
-> > > > folks still working on this or more put on the "maybe, probably never"
-> > > > pile?
-> > > >
+> > > Changes in v2:
+> > > - Migrate locking explanation from comment to commit msg (Daniel)
+> > > - Turf constant entry delay and multiply the avg times by 2 (Daniel)
+> > > ---
+> > >  drivers/gpu/drm/drm_atomic_helper.c         | 20 ++++++
+> > >  drivers/gpu/drm/drm_self_refresh_helper.c   | 72 +++++++++++++++++++=
+--
+> > >  drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  5 +-
+> > >  include/drm/drm_self_refresh_helper.h       |  6 +-
+> > >  4 files changed, 90 insertions(+), 13 deletions(-)
 > > >
-> > > Following up with Bhawan.
+> > > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/dr=
+m_atomic_helper.c
+> > > index 9d7e4da6c292..3f13fa9a9e24 100644
+> > > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > > @@ -26,6 +26,7 @@
+> > >   */
 > > >
-> > > Harry
+> > >  #include <linux/dma-fence.h>
+> > > +#include <linux/ktime.h>
 > > >
-> > > > -Daniel
-> > > >
-> > > >
-> > > >> -Daniel
-> > > >>
-> > > >>>
-> > > >>>
-> > > >>> Bhawan
-> > > >>>
-> > > >>> On 2019-10-09 2:43 p.m., Daniel Vetter wrote:
-> > > >>>> On Wed, Oct 9, 2019 at 8:23 PM Lakha, Bhawanpreet
-> > > >>>> <Bhawanpreet.Lakha@amd.com> wrote:
-> > > >>>>> Hi,
-> > > >>>>>
-> > > >>>>> The reason we don't use drm_hdcp is because our policy is to do hdcp
-> > > >>>>> verification using PSP/HW (onboard secure processor).
-> > > >>>> i915 also uses hw to auth, we still use the parts from drm_hdcp ...
-> > > >>>> Did you actually look at what's in there? It's essentially just shared
-> > > >>>> defines and data structures from the standard, plus a few minimal
-> > > >>>> helpers to en/decode some bits. Just from a quick read the entire
-> > > >>>> patch very much looks like midlayer everywhere design that we
-> > > >>>> discussed back when DC landed ...
-> > > >>>> -Daniel
-> > > >>>>
-> > > >>>>> Bhawan
-> > > >>>>>
-> > > >>>>> On 2019-10-09 12:32 p.m., Daniel Vetter wrote:
-> > > >>>>>> On Thu, Oct 03, 2019 at 11:08:03PM +0100, Colin Ian King wrote:
-> > > >>>>>>> Hi,
-> > > >>>>>>>
-> > > >>>>>>> Static analysis with Coverity has detected a potential issue with
-> > > >>>>>>> function validate_bksv in
-> > > >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c with recent
-> > > >>>>>>> commit:
-> > > >>>>>>>
-> > > >>>>>>> commit ed9d8e2bcb003ec94658cafe9b1bb3960e2139ec
-> > > >>>>>>> Author: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-> > > >>>>>>> Date:   Tue Aug 6 17:52:01 2019 -0400
-> > > >>>>>>>
-> > > >>>>>>>       drm/amd/display: Add HDCP module
-> > > >>>>>> I think the real question here is ... why is this not using drm_hdcp?
-> > > >>>>>> -Daniel
-> > > >>>>>>
-> > > >>>>>>> The analysis is as follows:
-> > > >>>>>>>
-> > > >>>>>>>    28 static inline enum mod_hdcp_status validate_bksv(struct mod_hdcp *hdcp)
-> > > >>>>>>>    29 {
-> > > >>>>>>>
-> > > >>>>>>> CID 89852 (#1 of 1): Out-of-bounds read (OVERRUN)
-> > > >>>>>>>
-> > > >>>>>>> 1. overrun-local:
-> > > >>>>>>> Overrunning array of 5 bytes at byte offset 7 by dereferencing pointer
-> > > >>>>>>> (uint64_t *)hdcp->auth.msg.hdcp1.bksv.
-> > > >>>>>>>
-> > > >>>>>>>    30        uint64_t n = *(uint64_t *)hdcp->auth.msg.hdcp1.bksv;
-> > > >>>>>>>    31        uint8_t count = 0;
-> > > >>>>>>>    32
-> > > >>>>>>>    33        while (n) {
-> > > >>>>>>>    34                count++;
-> > > >>>>>>>    35                n &= (n - 1);
-> > > >>>>>>>    36        }
-> > > >>>>>>>
-> > > >>>>>>> hdcp->auth.msg.hdcp1.bksv is an array of 5 uint8_t as defined in
-> > > >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h as follows:
-> > > >>>>>>>
-> > > >>>>>>> struct mod_hdcp_message_hdcp1 {
-> > > >>>>>>>           uint8_t         an[8];
-> > > >>>>>>>           uint8_t         aksv[5];
-> > > >>>>>>>           uint8_t         ainfo;
-> > > >>>>>>>           uint8_t         bksv[5];
-> > > >>>>>>>           uint16_t        r0p;
-> > > >>>>>>>           uint8_t         bcaps;
-> > > >>>>>>>           uint16_t        bstatus;
-> > > >>>>>>>           uint8_t         ksvlist[635];
-> > > >>>>>>>           uint16_t        ksvlist_size;
-> > > >>>>>>>           uint8_t         vp[20];
-> > > >>>>>>>
-> > > >>>>>>>           uint16_t        binfo_dp;
-> > > >>>>>>> };
-> > > >>>>>>>
-> > > >>>>>>> variable n is going to contain the contains of r0p and bcaps. I'm not
-> > > >>>>>>> sure if that is intentional. If not, then the count is going to be
-> > > >>>>>>> incorrect if these are non-zero.
-> > > >>>>>>>
-> > > >>>>>>> Colin
-> > > >>>>> _______________________________________________
-> > > >>>>> dri-devel mailing list
-> > > >>>>> dri-devel@lists.freedesktop.org
-> > > >>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > >>>>
-> > > >>>>
-> > > >>
-> > > >>
-> > > >>
-> > > >> --
-> > > >> Daniel Vetter
-> > > >> Software Engineer, Intel Corporation
-> > > >> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Daniel Vetter
-> > > > Software Engineer, Intel Corporation
-> > > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > > >
+> > >  #include <drm/drm_atomic.h>
+> > >  #include <drm/drm_atomic_helper.h>
+> > > @@ -1570,9 +1571,23 @@ static void commit_tail(struct drm_atomic_stat=
+e *old_state)
+> > >  {
+> > >       struct drm_device *dev =3D old_state->dev;
+> > >       const struct drm_mode_config_helper_funcs *funcs;
+> > > +     ktime_t start;
+> > > +     s64 commit_time_ms;
+> > >
+> > >       funcs =3D dev->mode_config.helper_private;
+> > >
+> > > +     /*
+> > > +      * We're measuring the _entire_ commit, so the time will vary d=
+epending
+> > > +      * on how many fences and objects are involved. For the purpose=
+s of self
+> > > +      * refresh, this is desirable since it'll give us an idea of ho=
+w
+> > > +      * congested things are. This will inform our decision on how o=
+ften we
+> > > +      * should enter self refresh after idle.
+> > > +      *
+> > > +      * These times will be averaged out in the self refresh helpers=
+ to avoid
+> > > +      * overreacting over one outlier frame
+> > > +      */
+> > > +     start =3D ktime_get();
+> > > +
+> > >       drm_atomic_helper_wait_for_fences(dev, old_state, false);
+> > >
+> > >       drm_atomic_helper_wait_for_dependencies(old_state);
+> > > @@ -1582,6 +1597,11 @@ static void commit_tail(struct drm_atomic_stat=
+e *old_state)
+> > >       else
+> > >               drm_atomic_helper_commit_tail(old_state);
+> > >
+> > > +     commit_time_ms =3D ktime_ms_delta(ktime_get(), start);
+> > > +     if (commit_time_ms > 0)
+> > > +             drm_self_refresh_helper_update_avg_times(old_state,
+> > > +                                              (unsigned long)commit_=
+time_ms);
+> > > +
+> > >       drm_atomic_helper_commit_cleanup_done(old_state);
+> > >
+> > >       drm_atomic_state_put(old_state);
+> > > diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/=
+drm/drm_self_refresh_helper.c
+> > > index 9095cebf2147..68f4765a5896 100644
+> > > --- a/drivers/gpu/drm/drm_self_refresh_helper.c
+> > > +++ b/drivers/gpu/drm/drm_self_refresh_helper.c
+> > > @@ -5,6 +5,7 @@
+> > >   * Authors:
+> > >   * Sean Paul <seanpaul@chromium.org>
+> > >   */
+> > > +#include <linux/average.h>
+> > >  #include <linux/bitops.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/workqueue.h>
+> > > @@ -50,10 +51,17 @@
+> > >   * atomic_check when &drm_crtc_state.self_refresh_active is true.
+> > >   */
+> > >
+> > > +#define SELF_REFRESH_AVG_SEED_MS 200
+> > > +
+> > > +DECLARE_EWMA(psr_time, 4, 4)
+> > > +
+> > >  struct drm_self_refresh_data {
+> > >       struct drm_crtc *crtc;
+> > >       struct delayed_work entry_work;
+> > > -     unsigned int entry_delay_ms;
+> > > +
+> > > +     struct mutex avg_mutex;
+> > > +     struct ewma_psr_time entry_avg_ms;
+> > > +     struct ewma_psr_time exit_avg_ms;
+> > >  };
+> > >
+> > >  static void drm_self_refresh_helper_entry_work(struct work_struct *w=
+ork)
+> > > @@ -121,6 +129,44 @@ static void drm_self_refresh_helper_entry_work(s=
+truct work_struct *work)
+> > >       drm_modeset_acquire_fini(&ctx);
+> > >  }
+> > >
+> > > +/**
+> > > + * drm_self_refresh_helper_update_avg_times - Updates a crtc's SR ti=
+me averages
+> > > + * @state: the state which has just been applied to hardware
+> > > + * @commit_time_ms: the amount of time in ms that this commit took t=
+o complete
+> > > + *
+> > > + * Called after &drm_mode_config_funcs.atomic_commit_tail, this func=
+tion will
+> > > + * update the average entry/exit self refresh times on self refresh =
+transitions.
+> > > + * These averages will be used when calculating how long to delay be=
+fore
+> > > + * entering self refresh mode after activity.
+> > > + */
+> > > +void drm_self_refresh_helper_update_avg_times(struct drm_atomic_stat=
+e *state,
+> > > +                                           unsigned int commit_time_=
+ms)
+> > > +{
+> > > +     struct drm_crtc *crtc;
+> > > +     struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+> > > +     int i;
+> > > +
+> > > +     for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
+> > > +                                   new_crtc_state, i) {
+> > > +             struct drm_self_refresh_data *sr_data =3D crtc->self_re=
+fresh_data;
+> > > +             struct ewma_psr_time *time;
+> > > +
+> > > +             if (old_crtc_state->self_refresh_active =3D=3D
+> > > +                 new_crtc_state->self_refresh_active)
+> > > +                     continue;
+> > > +
+> > > +             if (new_crtc_state->self_refresh_active)
+> > > +                     time =3D &sr_data->entry_avg_ms;
+> > > +             else
+> > > +                     time =3D &sr_data->exit_avg_ms;
+> > > +
+> > > +             mutex_lock(&sr_data->avg_mutex);
+> > > +             ewma_psr_time_add(time, commit_time_ms);
+> > > +             mutex_unlock(&sr_data->avg_mutex);
+> > > +     }
+> > > +}
+> > > +EXPORT_SYMBOL(drm_self_refresh_helper_update_avg_times);
+> > > +
+> > >  /**
+> > >   * drm_self_refresh_helper_alter_state - Alters the atomic state for=
+ SR exit
+> > >   * @state: the state currently being checked
+> > > @@ -152,6 +198,7 @@ void drm_self_refresh_helper_alter_state(struct d=
+rm_atomic_state *state)
+> > >
+> > >       for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
+> > >               struct drm_self_refresh_data *sr_data;
+> > > +             unsigned int delay;
+> > >
+> > >               /* Don't trigger the entry timer when we're already in =
+SR */
+> > >               if (crtc_state->self_refresh_active)
+> > > @@ -161,8 +208,13 @@ void drm_self_refresh_helper_alter_state(struct =
+drm_atomic_state *state)
+> > >               if (!sr_data)
+> > >                       continue;
+> > >
+> > > +             mutex_lock(&sr_data->avg_mutex);
+> > > +             delay =3D (ewma_psr_time_read(&sr_data->entry_avg_ms) +
+> > > +                      ewma_psr_time_read(&sr_data->exit_avg_ms)) * 2=
+;
+> > > +             mutex_unlock(&sr_data->avg_mutex);
+> > > +
+> > >               mod_delayed_work(system_wq, &sr_data->entry_work,
+> > > -                              msecs_to_jiffies(sr_data->entry_delay_=
+ms));
+> > > +                              msecs_to_jiffies(delay));
+> > >       }
+> > >  }
+> > >  EXPORT_SYMBOL(drm_self_refresh_helper_alter_state);
+> > > @@ -170,12 +222,10 @@ EXPORT_SYMBOL(drm_self_refresh_helper_alter_sta=
+te);
+> > >  /**
+> > >   * drm_self_refresh_helper_init - Initializes self refresh helpers f=
+or a crtc
+> > >   * @crtc: the crtc which supports self refresh supported displays
+> > > - * @entry_delay_ms: amount of inactivity to wait before entering sel=
+f refresh
+> > >   *
+> > >   * Returns zero if successful or -errno on failure
+> > >   */
+> > > -int drm_self_refresh_helper_init(struct drm_crtc *crtc,
+> > > -                              unsigned int entry_delay_ms)
+> > > +int drm_self_refresh_helper_init(struct drm_crtc *crtc)
+> > >  {
+> > >       struct drm_self_refresh_data *sr_data =3D crtc->self_refresh_da=
+ta;
+> > >
+> > > @@ -189,8 +239,18 @@ int drm_self_refresh_helper_init(struct drm_crtc=
+ *crtc,
+> > >
+> > >       INIT_DELAYED_WORK(&sr_data->entry_work,
+> > >                         drm_self_refresh_helper_entry_work);
+> > > -     sr_data->entry_delay_ms =3D entry_delay_ms;
+> > >       sr_data->crtc =3D crtc;
+> > > +     mutex_init(&sr_data->avg_mutex);
+> > > +     ewma_psr_time_init(&sr_data->entry_avg_ms);
+> > > +     ewma_psr_time_init(&sr_data->exit_avg_ms);
+> > > +
+> > > +     /*
+> > > +      * Seed the averages so they're non-zero (and sufficiently larg=
+e
+> > > +      * for even poorly performing panels). As time goes on, this wi=
+ll be
+> > > +      * averaged out and the values will trend to their true value.
+> > > +      */
+> > > +     ewma_psr_time_add(&sr_data->entry_avg_ms, SELF_REFRESH_AVG_SEED=
+_MS);
+> > > +     ewma_psr_time_add(&sr_data->exit_avg_ms, SELF_REFRESH_AVG_SEED_=
+MS);
+> > >
+> > >       crtc->self_refresh_data =3D sr_data;
+> > >       return 0;
+> > > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gp=
+u/drm/rockchip/rockchip_drm_vop.c
+> > > index 2f821c58007c..613404f86668 100644
+> > > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> > > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> > > @@ -39,8 +39,6 @@
+> > >  #include "rockchip_drm_vop.h"
+> > >  #include "rockchip_rgb.h"
+> > >
+> > > -#define VOP_SELF_REFRESH_ENTRY_DELAY_MS 100
+> > > -
+> > >  #define VOP_WIN_SET(vop, win, name, v) \
+> > >               vop_reg_set(vop, &win->phy->name, win->base, ~0, v, #na=
+me)
+> > >  #define VOP_SCL_SET(vop, win, name, v) \
+> > > @@ -1563,8 +1561,7 @@ static int vop_create_crtc(struct vop *vop)
+> > >       init_completion(&vop->line_flag_completion);
+> > >       crtc->port =3D port;
+> > >
+> > > -     ret =3D drm_self_refresh_helper_init(crtc,
+> > > -                                        VOP_SELF_REFRESH_ENTRY_DELAY=
+_MS);
+> > > +     ret =3D drm_self_refresh_helper_init(crtc);
+> > >       if (ret)
+> > >               DRM_DEV_DEBUG_KMS(vop->dev,
+> > >                       "Failed to init %s with SR helpers %d, ignoring=
+\n",
+> > > diff --git a/include/drm/drm_self_refresh_helper.h b/include/drm/drm_=
+self_refresh_helper.h
+> > > index 397a583ccca7..5b79d253fb46 100644
+> > > --- a/include/drm/drm_self_refresh_helper.h
+> > > +++ b/include/drm/drm_self_refresh_helper.h
+> > > @@ -12,9 +12,9 @@ struct drm_atomic_state;
+> > >  struct drm_crtc;
+> > >
+> > >  void drm_self_refresh_helper_alter_state(struct drm_atomic_state *st=
+ate);
+> > > +void drm_self_refresh_helper_update_avg_times(struct drm_atomic_stat=
+e *state,
+> > > +                                           unsigned int commit_time_=
+ms);
+> > >
+> > > -int drm_self_refresh_helper_init(struct drm_crtc *crtc,
+> > > -                              unsigned int entry_delay_ms);
+> > > -
+> > > +int drm_self_refresh_helper_init(struct drm_crtc *crtc);
+> > >  void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc);
+> > >  #endif
+> > > --
+> > > Sean Paul, Software Engineer, Google / Chromium OS
+> > >
 > >
 > > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+> > Sean Paul, Software Engineer, Google / Chromium OS
 > > _______________________________________________
-> > amd-gfx mailing list
-> > amd-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/amd-gfx
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
