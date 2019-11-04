@@ -2,41 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5E4EEDAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DC7EF00B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390322AbfKDWI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41904 "EHLO mail.kernel.org"
+        id S1730185AbfKDVvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388158AbfKDWI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:08:56 -0500
+        id S1730586AbfKDVvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:42 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42DF3214E0;
-        Mon,  4 Nov 2019 22:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83966217F4;
+        Mon,  4 Nov 2019 21:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905335;
-        bh=LCcfkCOh2sKhl+CJURGrELfHhNY9DuqerqxwPCTQnJ4=;
+        s=default; t=1572904301;
+        bh=7SOk7tiTVGhBb6vH7JX2MPjaoKS77atUxG4Pvnesje8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kk3lZuLkpbxF0jhoC5YKVcNljSMivdw9xalQaX+G/gPBjHiNWejjLJUF9nuDC4T3q
-         Ai+vN0BnRjgTv2aTwhOzH15j3sY1l0cHvfhrN7loFNGP1JjkzcW3shtQD5Ltr703rd
-         Ytk7Gst+gesrnucEUUdmhEAJ/Lqq+4TTDbOwo9xg=
+        b=Yhsn17oKveR0alrrhaEivNSxqTyjDgd7CkVZs5Q8i2rAT0oKv2LOveBPgel/oGBpU
+         8+nWgG79agc0GhZPFJj34cp6syBol9eX5Vz+gjqlGYXDTrICDBuxcNE1DsceZ6qZSj
+         8lrljci4C2IAvd1OVnoaTaMFJ3JSxte6gaFUePrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 093/163] thunderbolt: Use 32-bit writes when writing ring producer/consumer
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Dave Young <dyoung@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Scott Talbert <swt@techie.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 21/62] efi/cper: Fix endianness of PCIe class code
 Date:   Mon,  4 Nov 2019 22:44:43 +0100
-Message-Id: <20191104212146.895567720@linuxfoundation.org>
+Message-Id: <20191104211921.182137135@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +57,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit 943795219d3cb9f8ce6ce51cad3ffe1f61e95c6b ]
+[ Upstream commit 6fb9367a15d1a126d222d738b2702c7958594a5f ]
 
-The register access should be using 32-bit reads/writes according to the
-datasheet. With the previous generation hardware 16-bit writes have been
-working but starting with ICL this is not the case anymore so fix
-producer/consumer register update to use correct width register address.
+The CPER parser assumes that the class code is big endian, but at least
+on this edk2-derived Intel Purley platform it's little endian:
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Yehezkel Bernat <YehezkelShB@gmail.com>
-Tested-by: Mario Limonciello <mario.limonciello@dell.com>
+    efi: EFI v2.50 by EDK II BIOS ID:PLYDCRB1.86B.0119.R05.1701181843
+    DMI: Intel Corporation PURLEY/PURLEY, BIOS PLYDCRB1.86B.0119.R05.1701181843 01/18/2017
+
+    {1}[Hardware Error]:   device_id: 0000:5d:00.0
+    {1}[Hardware Error]:   slot: 0
+    {1}[Hardware Error]:   secondary_bus: 0x5e
+    {1}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x2030
+    {1}[Hardware Error]:   class_code: 000406
+                                       ^^^^^^ (should be 060400)
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Matthew Garrett <mjg59@google.com>
+Cc: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Talbert <swt@techie.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/nhi.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ drivers/firmware/efi/cper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index 27fbe62c7ddd4..9c782706e652f 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -143,9 +143,20 @@ static void __iomem *ring_options_base(struct tb_ring *ring)
- 	return io;
- }
- 
--static void ring_iowrite16desc(struct tb_ring *ring, u32 value, u32 offset)
-+static void ring_iowrite_cons(struct tb_ring *ring, u16 cons)
- {
--	iowrite16(value, ring_desc_base(ring) + offset);
-+	/*
-+	 * The other 16-bits in the register is read-only and writes to it
-+	 * are ignored by the hardware so we can save one ioread32() by
-+	 * filling the read-only bits with zeroes.
-+	 */
-+	iowrite32(cons, ring_desc_base(ring) + 8);
-+}
-+
-+static void ring_iowrite_prod(struct tb_ring *ring, u16 prod)
-+{
-+	/* See ring_iowrite_cons() above for explanation */
-+	iowrite32(prod << 16, ring_desc_base(ring) + 8);
- }
- 
- static void ring_iowrite32desc(struct tb_ring *ring, u32 value, u32 offset)
-@@ -197,7 +208,10 @@ static void ring_write_descriptors(struct tb_ring *ring)
- 			descriptor->sof = frame->sof;
- 		}
- 		ring->head = (ring->head + 1) % ring->size;
--		ring_iowrite16desc(ring, ring->head, ring->is_tx ? 10 : 8);
-+		if (ring->is_tx)
-+			ring_iowrite_prod(ring, ring->head);
-+		else
-+			ring_iowrite_cons(ring, ring->head);
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index f40f7df4b7344..c0e54396f2502 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -375,7 +375,7 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
+ 		printk("%s""vendor_id: 0x%04x, device_id: 0x%04x\n", pfx,
+ 		       pcie->device_id.vendor_id, pcie->device_id.device_id);
+ 		p = pcie->device_id.class_code;
+-		printk("%s""class_code: %02x%02x%02x\n", pfx, p[0], p[1], p[2]);
++		printk("%s""class_code: %02x%02x%02x\n", pfx, p[2], p[1], p[0]);
  	}
- }
- 
-@@ -662,7 +676,7 @@ void tb_ring_stop(struct tb_ring *ring)
- 
- 	ring_iowrite32options(ring, 0, 0);
- 	ring_iowrite64desc(ring, 0, 0);
--	ring_iowrite16desc(ring, 0, ring->is_tx ? 10 : 8);
-+	ring_iowrite32desc(ring, 0, 8);
- 	ring_iowrite32desc(ring, 0, 12);
- 	ring->head = 0;
- 	ring->tail = 0;
+ 	if (pcie->validation_bits & CPER_PCIE_VALID_SERIAL_NUMBER)
+ 		printk("%s""serial number: 0x%04x, 0x%04x\n", pfx,
 -- 
 2.20.1
 
