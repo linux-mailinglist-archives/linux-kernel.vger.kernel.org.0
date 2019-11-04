@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0702FEEF1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C852EED8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbfKDWTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:19:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
+        id S2390163AbfKDWH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:07:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388981AbfKDWBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:01:12 -0500
+        id S2390032AbfKDWHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:07:52 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0517520650;
-        Mon,  4 Nov 2019 22:01:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F86A217F5;
+        Mon,  4 Nov 2019 22:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904871;
-        bh=9bqpOQ/HTpFfl9Zq2N2vZhaiabTgyqLrkdRiLClf/oc=;
+        s=default; t=1572905271;
+        bh=esvI05WfeJ8xMcPciXvLfqVogIyhb3CzOSX/UlFwCyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WiU2jPtHFryGb3TFTpWck2z+wG9SxUM4faQ7AG30G3p52emMeIVaUI8iRnN2SpCXw
-         MV47sep0PUggRgXfcq2Qe3maAD4y6y9o+/HwbuDJy5kBDR0EFy61dKpwH7HrjhYUib
-         LT4SGDApReGTr4DF0YLj6WboeSKIpsEjc23LYfL0=
+        b=YZB2DSzwAp8U/W4m71atfR1YOfHhlwXQxQk7UEgPGu7+A333N7Rey96fV1E/obn7A
+         Ax6ahl/ORsspTfUc0YM3/scgzil1Cq8nTdcT7UJwTNXnN66vIT29FsOX10jtF2BE4C
+         O605HtR34YmSoF4vrAlfFmUsrbRFUJuQGkl+sblU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 083/149] MIPS: include: Mark __cmpxchg as __always_inline
+        syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com,
+        "Richard W.M. Jones" <rjones@redhat.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 086/163] nbd: verify socket is supported during setup
 Date:   Mon,  4 Nov 2019 22:44:36 +0100
-Message-Id: <20191104212142.397201328@linuxfoundation.org>
+Message-Id: <20191104212146.474325178@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +46,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Mike Christie <mchristi@redhat.com>
 
-[ Upstream commit 88356d09904bc606182c625575237269aeece22e ]
+[ Upstream commit cf1b2326b734896734c6e167e41766f9cee7686a ]
 
-Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly") allows compiler to uninline functions marked as 'inline'.
-In cace of cmpxchg this would cause to reference function
-__cmpxchg_called_with_bad_pointer, which is a error case
-for catching bugs and will not happen for correct code, if
-__cmpxchg is inlined.
+nbd requires socket families to support the shutdown method so the nbd
+recv workqueue can be woken up from its sock_recvmsg call. If the socket
+does not support the callout we will leave recv works running or get hangs
+later when the device or module is removed.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-[paul.burton@mips.com: s/__cmpxchd/__cmpxchg in subject]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+This adds a check during socket connection/reconnection to make sure the
+socket being passed in supports the needed callout.
+
+Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
+Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
+Tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/cmpxchg.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/block/nbd.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
-index 89e9fb7976fe6..895f91b9e89c3 100644
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -146,8 +146,9 @@ static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
- extern unsigned long __cmpxchg_small(volatile void *ptr, unsigned long old,
- 				     unsigned long new, unsigned int size);
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index bd164192045b0..9650777d0aaf1 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -935,6 +935,25 @@ static blk_status_t nbd_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	return ret;
+ }
  
--static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
--				      unsigned long new, unsigned int size)
-+static __always_inline
-+unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
-+			unsigned long new, unsigned int size)
++static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
++				     int *err)
++{
++	struct socket *sock;
++
++	*err = 0;
++	sock = sockfd_lookup(fd, err);
++	if (!sock)
++		return NULL;
++
++	if (sock->ops->shutdown == sock_no_shutdown) {
++		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
++		*err = -EINVAL;
++		return NULL;
++	}
++
++	return sock;
++}
++
+ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+ 			  bool netlink)
  {
- 	switch (size) {
- 	case 1:
+@@ -944,7 +963,7 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+ 	struct nbd_sock *nsock;
+ 	int err;
+ 
+-	sock = sockfd_lookup(arg, &err);
++	sock = nbd_get_socket(nbd, arg, &err);
+ 	if (!sock)
+ 		return err;
+ 
+@@ -996,7 +1015,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
+ 	int i;
+ 	int err;
+ 
+-	sock = sockfd_lookup(arg, &err);
++	sock = nbd_get_socket(nbd, arg, &err);
+ 	if (!sock)
+ 		return err;
+ 
 -- 
 2.20.1
 
