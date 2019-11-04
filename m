@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4634AEEC2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D9BEEB7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbfKDVyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:54:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49258 "EHLO mail.kernel.org"
+        id S1729705AbfKDVsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:48:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387942AbfKDVy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:54:28 -0500
+        id S1730033AbfKDVs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:48:29 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63BE0217F4;
-        Mon,  4 Nov 2019 21:54:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25DF421655;
+        Mon,  4 Nov 2019 21:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904468;
-        bh=2IVWjNwRLLdOVwnOg0i7pBTAZwv/3UMSQUs8kXBuoWY=;
+        s=default; t=1572904108;
+        bh=SSzynxw9O6haz63D2CYnyk6dDHo2upxF+m8+6hpCyCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fXr02znag58EkQpjkvew7KlXcDfGe09tCRj3AyqLcH/4w7POdW5Puhqrovg/3+37p
-         KZTwZEHgWDlSZkrXfsAaDKnFmTcQmHcvaJ3gL+4Kv5h0J/cjdsVsoIwOkuNi89b46m
-         WRjh13Y+YD7/INjcoz5MZocjaI2RjOljc3DjflVo=
+        b=OgtzpTSDCTw23b57au8KchOvCCOoOhe5suoavZaxlIm9Cc1u+eZpWNCOA8FjdPxRn
+         rmzGL0xI6pcKYL/zjYYs+IzPOJRdGMfPJkaryoCnzlz1t7eRznHm7InLeQHwBxTUQu
+         MFJLKh+6A8bQDL1gBMqJZxTG3PS4yEJZ58G5mwSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com,
-        "Richard W.M. Jones" <rjones@redhat.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 57/95] nbd: verify socket is supported during setup
-Date:   Mon,  4 Nov 2019 22:44:55 +0100
-Message-Id: <20191104212106.300239492@linuxfoundation.org>
+        stable@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.4 25/46] fuse: flush dirty data/metadata before non-truncate setattr
+Date:   Mon,  4 Nov 2019 22:44:56 +0100
+Message-Id: <20191104211857.462527664@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,78 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Christie <mchristi@redhat.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit cf1b2326b734896734c6e167e41766f9cee7686a ]
+commit b24e7598db62386a95a3c8b9c75630c5d56fe077 upstream.
 
-nbd requires socket families to support the shutdown method so the nbd
-recv workqueue can be woken up from its sock_recvmsg call. If the socket
-does not support the callout we will leave recv works running or get hangs
-later when the device or module is removed.
+If writeback cache is enabled, then writes might get reordered with
+chmod/chown/utimes.  The problem with this is that performing the write in
+the fuse daemon might itself change some of these attributes.  In such case
+the following sequence of operations will result in file ending up with the
+wrong mode, for example:
 
-This adds a check during socket connection/reconnection to make sure the
-socket being passed in supports the needed callout.
+  int fd = open ("suid", O_WRONLY|O_CREAT|O_EXCL);
+  write (fd, "1", 1);
+  fchown (fd, 0, 0);
+  fchmod (fd, 04755);
+  close (fd);
 
-Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Tested-by: Richard W.M. Jones <rjones@redhat.com>
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This patch fixes this by flushing pending writes before performing
+chown/chmod/utimes.
+
+Reported-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Fixes: 4d99ff8f12eb ("fuse: Turn writeback cache on")
+Cc: <stable@vger.kernel.org> # v3.15+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/block/nbd.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ fs/fuse/dir.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 3e45004407963..f3d0bc9a99058 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -912,6 +912,25 @@ static blk_status_t nbd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1628,6 +1628,19 @@ int fuse_do_setattr(struct inode *inode,
+ 	if (attr->ia_valid & ATTR_SIZE)
+ 		is_truncate = true;
  
-+static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
-+				     int *err)
-+{
-+	struct socket *sock;
++	/* Flush dirty data/metadata before non-truncate SETATTR */
++	if (is_wb && S_ISREG(inode->i_mode) &&
++	    attr->ia_valid &
++			(ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_MTIME_SET |
++			 ATTR_TIMES_SET)) {
++		err = write_inode_now(inode, true);
++		if (err)
++			return err;
 +
-+	*err = 0;
-+	sock = sockfd_lookup(fd, err);
-+	if (!sock)
-+		return NULL;
-+
-+	if (sock->ops->shutdown == sock_no_shutdown) {
-+		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
-+		*err = -EINVAL;
-+		return NULL;
++		fuse_set_nowrite(inode);
++		fuse_release_nowrite(inode);
 +	}
 +
-+	return sock;
-+}
-+
- static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 			  bool netlink)
- {
-@@ -921,7 +940,7 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 	struct nbd_sock *nsock;
- 	int err;
- 
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
- 
-@@ -973,7 +992,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
- 	int i;
- 	int err;
- 
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
- 
--- 
-2.20.1
-
+ 	if (is_truncate) {
+ 		fuse_set_nowrite(inode);
+ 		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
 
 
