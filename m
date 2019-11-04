@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D04EEEEE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43B63EEF9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbfKDWBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:01:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58898 "EHLO mail.kernel.org"
+        id S1729670AbfKDV4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:56:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388351AbfKDWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:57 -0500
+        id S2388243AbfKDV4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:00 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 835E620650;
-        Mon,  4 Nov 2019 22:00:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 971B72053B;
+        Mon,  4 Nov 2019 21:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904857;
-        bh=IEy/Uf64WWx5r28Ky/7zeFyYJNzL1e4yhFukKOfLYi8=;
+        s=default; t=1572904559;
+        bh=WEjXPYN/4z2tLd11WOkLYZH11e/S5V8qQlTCbEuf090=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fPs2o/tUl4zp14y/su95q2/S1SjxxOhFOu/JvUE2QP8mID89UZVPwcTr3kDu0M8CL
-         Ko7McncsF6ffNpk68cafyjV3Bt8gkesbU+mHPr9OlwgZv7cfcbaCXbwPVheqhH5sLT
-         7kCcUb1ZzqXy85VD0IuGXxIxzHSNevPOzA2aBmFs=
+        b=opCVYteknBXJSKCnUKH+LYL9AKMJKjH2+5VbcZg0SwP+7w4JSmLP2ErQbEDLx8Yu9
+         xzNst+hu+dwYTi1Q5dsopUTw5T2ukSjqof3EpzdZoHBZQkRyjuipC5PSXy9ZWj4Y2h
+         c4VoyCwNHzUMdclOndauH368zfqSdfHGZJohY3gY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
         Paul Burton <paul.burton@mips.com>,
         Ralf Baechle <ralf@linux-mips.org>,
         James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 096/149] MIPS: fw: sni: Fix out of bounds init of o32 stack
+Subject: [PATCH 4.14 51/95] MIPS: include: Mark __xchg as __always_inline
 Date:   Mon,  4 Nov 2019 22:44:49 +0100
-Message-Id: <20191104212143.263763593@linuxfoundation.org>
+Message-Id: <20191104212104.338498240@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,11 +50,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit efcb529694c3b707dc0471b312944337ba16e4dd ]
+[ Upstream commit 46f1619500d022501a4f0389f9f4c349ab46bb86 ]
 
-Use ARRAY_SIZE to caluculate the top of the o32 stack.
+Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+forcibly") allows compiler to uninline functions marked as 'inline'.
+In cace of __xchg this would cause to reference function
+__xchg_called_with_bad_pointer, which is an error case
+for catching bugs and will not happen for correct code, if
+__xchg is inlined.
 
 Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: James Hogan <jhogan@kernel.org>
@@ -61,22 +68,24 @@ Cc: linux-mips@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/fw/sni/sniprom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/include/asm/cmpxchg.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/fw/sni/sniprom.c b/arch/mips/fw/sni/sniprom.c
-index 8772617b64cef..80112f2298b68 100644
---- a/arch/mips/fw/sni/sniprom.c
-+++ b/arch/mips/fw/sni/sniprom.c
-@@ -43,7 +43,7 @@
+diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
+index 895f91b9e89c3..520ca166cbed5 100644
+--- a/arch/mips/include/asm/cmpxchg.h
++++ b/arch/mips/include/asm/cmpxchg.h
+@@ -73,8 +73,8 @@ extern unsigned long __xchg_called_with_bad_pointer(void)
+ extern unsigned long __xchg_small(volatile void *ptr, unsigned long val,
+ 				  unsigned int size);
  
- /* O32 stack has to be 8-byte aligned. */
- static u64 o32_stk[4096];
--#define O32_STK	  &o32_stk[sizeof(o32_stk)]
-+#define O32_STK	  (&o32_stk[ARRAY_SIZE(o32_stk)])
- 
- #define __PROM_O32(fun, arg) fun arg __asm__(#fun); \
- 				     __asm__(#fun " = call_o32")
+-static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
+-				   int size)
++static __always_inline
++unsigned long __xchg(volatile void *ptr, unsigned long x, int size)
+ {
+ 	switch (size) {
+ 	case 1:
 -- 
 2.20.1
 
