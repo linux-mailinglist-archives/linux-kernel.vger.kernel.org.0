@@ -2,152 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB43ED9CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 08:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92892ED9DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 08:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfKDHKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 02:10:33 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35736 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfKDHKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 02:10:33 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q22so3058882pgk.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 23:10:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t4TV25A1uMzOUpxnPE9T6D69bjxp+CQFn1rWNaSp17E=;
-        b=rvIq103d5QvkQPhePPHFLq0nK/ACbSKZY7eteyZPRm6ZQLdn2P9/L9r/QTnrN6rUNP
-         jm/ua7SGVaxRhSR5Nl9cOL5W9VLF8VkSl68eghceC1CCxqeyfDFNFUNDf85yimIPPvY0
-         o1yfdXK5tO1vLx1FxzcPkmng+u9IkRYuIwq5EzIIzZ68U8SNrPlIZsU7d0qY1AO6zsuI
-         pS1eCuVH8jlep136XfWsjFnO9FVNrx6OLJT5MeeAZHVVLtbzerSB2XgwPwUxJ+miWDfv
-         02MGnva9fIZ+K8PsBCyhgUeisAMN55iFNb1AzWrJ037fxdbVJklLbH3Lgnji2xW2YZRp
-         2V9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t4TV25A1uMzOUpxnPE9T6D69bjxp+CQFn1rWNaSp17E=;
-        b=Y8FbCfNzALjbLMFVTPJfUa5mdt8o2zhoeVXO1s1uK98uevl80zz0kGN81u6agt33TF
-         Ct6pcLbKqjWcCY3OszwKbYaSGRS224S/uoELX/DpDHIYJdx8VZ0Msv8aPerrH2N2H2k+
-         KW5pS7WXeHdxj8dfDJk20ph5ATrppGBAa2pJ9v8pMzpkP38aIp0F4IHQbMmp3ehHeP8F
-         /fPuXrkQKdHU9aw/+agf0YVkCyyIY/MNDg+fZsyD6DZ4WDehCZo7pJkgnbkuUSU2Hsq2
-         yly+hD1dDoH8tY5JG1Nps7lgS8Z3fO+hwbgQfaiWSaxb7df5ZWx9oGjvEd/Yv9AHSFXL
-         HUsQ==
-X-Gm-Message-State: APjAAAXqWpaSjn8WcfOTEKZSopsM1S+u0jmUqdX82MQWqTOK0ooSRXCI
-        cPF1yiCcVJ5gsmYfVPBtD79kcQ==
-X-Google-Smtp-Source: APXvYqxHOP7JBpbRrN/9vm7qE7CKnT+oDstfysttIvzcmp2Ai7mrtOlTLr+klYFNg71UF1Ve/+0Xhg==
-X-Received: by 2002:a63:b62:: with SMTP id a34mr8305598pgl.123.1572851430833;
-        Sun, 03 Nov 2019 23:10:30 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l11sm16775340pgr.77.2019.11.03.23.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2019 23:10:30 -0800 (PST)
-Date:   Sun, 3 Nov 2019 23:10:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>, agross@kernel.org,
-        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: Re: [PATCH v3 11/11] arm64: dts: qcom: sc7180: Add pdc interrupt
- controller
-Message-ID: <20191104071027.GD585@tuxbook-pro>
-References: <20191023090219.15603-1-rnayak@codeaurora.org>
- <20191023090219.15603-12-rnayak@codeaurora.org>
- <5db86de0.1c69fb81.9e27d.0f47@mx.google.com>
- <20191030195021.GC27773@google.com>
- <6610d7fe-5a4d-5a43-5c4f-9ae61e7e53ee@codeaurora.org>
- <20191104063348.GA2464@tuxbook-pro>
- <c214110f-7620-8771-ef83-8a4fb1f8724f@codeaurora.org>
+        id S1727327AbfKDH0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 02:26:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726248AbfKDH0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 02:26:34 -0500
+Received: from dragon (li1038-30.members.linode.com [45.33.96.30])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3BF3204EC;
+        Mon,  4 Nov 2019 07:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572852393;
+        bh=AVoiLB6IVvsYuC6vQPF0aZMrx18lotS/wxMPFiWsvok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=x3C97sh/HCvE3dWBUhREoMCsTpKkvH8VdH1Kj7MQS7T3JWXvQv0XKDLV2x/47D2aH
+         x8Mrt4WjdlL8hbZ7Nb4l7gj9yVXtNkqWKFFfDkn/dd/FbHaMNaeRuOfvWTIJ+wKg82
+         U9NMb5jQvoeiOGAQamcC0oaTvsOZpPV8NKdOtlJQ=
+Date:   Mon, 4 Nov 2019 15:26:08 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_AT803X_PHY from m to y
+Message-ID: <20191104072607.GP24620@dragon>
+References: <1572848275-30941-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c214110f-7620-8771-ef83-8a4fb1f8724f@codeaurora.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1572848275-30941-1-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 03 Nov 22:56 PST 2019, Rajendra Nayak wrote:
+On Mon, Nov 04, 2019 at 06:19:30AM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> With phy-reset-gpios are enabled for i.MX8MM-EVK board, phy
+> will be reset. Without CONFIG_AT803X_PHY as y, board will stop
+> booting in NFS DHCP, because phy is not ready. So mark
+> CONFIG_AT803X_PHY from m to y to make board boot when using nfs rootfs.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-> 
-> 
-> On 11/4/2019 12:03 PM, Bjorn Andersson wrote:
-> > On Sun 03 Nov 22:17 PST 2019, Rajendra Nayak wrote:
-> > 
-> > > 
-> > > 
-> > > On 10/31/2019 1:20 AM, Matthias Kaehlcke wrote:
-> > > > On Tue, Oct 29, 2019 at 09:50:40AM -0700, Stephen Boyd wrote:
-> > > > > Quoting Rajendra Nayak (2019-10-23 02:02:19)
-> > > > > > From: Maulik Shah <mkshah@codeaurora.org>
-> > > > > > 
-> > > > > > Add pdc interrupt controller for sc7180
-> > > > > > 
-> > > > > > Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> > > > > > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> > > > > > ---
-> > > > > > v3:
-> > > > > > Used the qcom,sdm845-pdc compatible for pdc node
-> > > > > 
-> > > > > Everything else isn't doing the weird old compatible thing. Why not just
-> > > > > add the new compatible and update the driver? I guess I'll have to go
-> > > > > read the history.
-> > > > 
-> > > > Marc Zyngier complained  on v2 about the churn from adding compatible
-> > > > strings for identical components, and I kinda see his point.
-> > > > 
-> > > > I agree that using the 'sdm845' compatible string for sc7180 is odd too.
-> > > > Maybe we should introduce SoC independent compatible strings for IP blocks
-> > > > that are shared across multiple SoCs? If differentiation is needed SoC
-> > > > specific strings can be added.
-> > > 
-> > > Sure, I will perhaps add a qcom,pdc SoC independent compatible to avoid
-> > > confusion.
-> > > 
-> > 
-> > I agree,
-> > 
-> > compatible = "qcom,sc7180-pdc", "qcom,pdc";
-> > 
-> > is the way to go.
-> 
-> I wasn't planning on adding a qcom,sc7180-pdc, but instead just use the
-> qcom,pdc one for sc7180.
-> 
-> > 
-> > Reusing qcom,sdm845-pdc would prevent us from tackling any unforeseen
-> > issues/variations/erratas with one or the other platform in the future.
-> 
-> That was the intention of adding qcom,sc7180-pdc in the first place,
-> but Marc Zyngier was not happy with the churn, given there aren't really
-> any variations or erratas that we know of.
-> 
-
-Right, but by putting both compatibles in the dts and the generic one in
-the driver we avoid the driver churn and we're future compatible.
-
-And given that we haven't yet added the qcom,sdm845-pdc node to the
-sdm845.dtsi we don't need to maintain the qcom,sdm845-pdc in the driver.
-So switch qcom,sdm845-pdc to qcom,pdc in qcom-pdc.c.
-
-Regards,
-Bjorn
-
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > 
-> > > -- 
-> > > QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> > > of Code Aurora Forum, hosted by The Linux Foundation
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
+Applied, thanks.
