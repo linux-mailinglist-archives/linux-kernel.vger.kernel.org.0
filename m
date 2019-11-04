@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B445EECBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C0AEEBB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:50:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388793AbfKDWAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:00:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57468 "EHLO mail.kernel.org"
+        id S2387646AbfKDVuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388377AbfKDWAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:02 -0500
+        id S2387617AbfKDVuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:50:09 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A2B320650;
-        Mon,  4 Nov 2019 22:00:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F32432184C;
+        Mon,  4 Nov 2019 21:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904801;
-        bh=BYsbJjo25ob2w4vEbmdMvtR1SJRInPAA1UGSNr2lkXU=;
+        s=default; t=1572904209;
+        bh=NwcaHzqZ1lU4FzfoWU8IZZNT9FuebeODGEm+5dugqd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEyz9tq2L5/8/TXx3BXjMGDbadYS/bQ57orfzrncrvJ8aUvgyajL0aPq90Wy9HqTw
-         VzmTvO6fyfu/f8HxFI8FQecH4EO3TR4rJ0eu1NDT56TtbHiqdLfzWMmQGXsbfBCdgT
-         eLSrzbTa7KVaT/7SC715dbRTIlLfI+2Acqu8xAYE=
+        b=WEbbrvoQ67Y8bTuT5P5vK3y7jsFJKo3hEPAqEtxuFyLuDOeWoTnSa+se6cQqZCtoB
+         q3jisuOzFAwEXoTffw4aC8/mmY6LzeRzjxweSArgEaFkywNGDc19uLNQrWHD2I82sV
+         zQ5dHdPm6wpOmk0Jz4XFcp7VcgQPyWizG39rafq0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Tim Aldridge <taldridge@mac.com>,
+        Julian Sax <jsbc@gmx.de>, Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 074/149] nfs: Fix nfsi->nrequests count error on nfs_inode_remove_request
-Date:   Mon,  4 Nov 2019 22:44:27 +0100
-Message-Id: <20191104212141.859801797@linuxfoundation.org>
+Subject: [PATCH 4.9 06/62] HID: i2c-hid: add Direkt-Tek DTLAPY133-1 to descriptor override
+Date:   Mon,  4 Nov 2019 22:44:28 +0100
+Message-Id: <20191104211908.226542840@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,89 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Julian Sax <jsbc@gmx.de>
 
-[ Upstream commit 33ea5aaa87cdae0f9af4d6b7ee4f650a1a36fd1d ]
+[ Upstream commit 399474e4c1100bca264ed14fa3ad0d68fab484d8 ]
 
-When xfstests testing, there are some WARNING as below:
+This device uses the SIPODEV SP1064 touchpad, which does not
+supply descriptors, so it has to be added to the override list.
 
-WARNING: CPU: 0 PID: 6235 at fs/nfs/inode.c:122 nfs_clear_inode+0x9c/0xd8
-Modules linked in:
-CPU: 0 PID: 6235 Comm: umount.nfs
-Hardware name: linux,dummy-virt (DT)
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : nfs_clear_inode+0x9c/0xd8
-lr : nfs_evict_inode+0x60/0x78
-sp : fffffc000f68fc00
-x29: fffffc000f68fc00 x28: fffffe00c53155c0
-x27: fffffe00c5315000 x26: fffffc0009a63748
-x25: fffffc000f68fd18 x24: fffffc000bfaaf40
-x23: fffffc000936d3c0 x22: fffffe00c4ff5e20
-x21: fffffc000bfaaf40 x20: fffffe00c4ff5d10
-x19: fffffc000c056000 x18: 000000000000003c
-x17: 0000000000000000 x16: 0000000000000000
-x15: 0000000000000040 x14: 0000000000000228
-x13: fffffc000c3a2000 x12: 0000000000000045
-x11: 0000000000000000 x10: 0000000000000000
-x9 : 0000000000000000 x8 : 0000000000000000
-x7 : 0000000000000000 x6 : fffffc00084b027c
-x5 : fffffc0009a64000 x4 : fffffe00c0e77400
-x3 : fffffc000c0563a8 x2 : fffffffffffffffb
-x1 : 000000000000764e x0 : 0000000000000001
-Call trace:
- nfs_clear_inode+0x9c/0xd8
- nfs_evict_inode+0x60/0x78
- evict+0x108/0x380
- dispose_list+0x70/0xa0
- evict_inodes+0x194/0x210
- generic_shutdown_super+0xb0/0x220
- nfs_kill_super+0x40/0x88
- deactivate_locked_super+0xb4/0x120
- deactivate_super+0x144/0x160
- cleanup_mnt+0x98/0x148
- __cleanup_mnt+0x38/0x50
- task_work_run+0x114/0x160
- do_notify_resume+0x2f8/0x308
- work_pending+0x8/0x14
-
-The nrequest should be increased/decreased only if PG_INODE_REF flag
-was setted.
-
-But in the nfs_inode_remove_request function, it maybe decrease when
-no PG_INODE_REF flag, this maybe lead nrequests count error.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Reported-by: Tim Aldridge <taldridge@mac.com>
+Signed-off-by: Julian Sax <jsbc@gmx.de>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/write.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 5ab997912d8d5..117ffd90419e2 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -783,7 +783,6 @@ static void nfs_inode_remove_request(struct nfs_page *req)
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	struct nfs_page *head;
- 
--	atomic_long_dec(&nfsi->nrequests);
- 	if (nfs_page_group_sync_on_bit(req, PG_REMOVE)) {
- 		head = req->wb_head;
- 
-@@ -796,8 +795,10 @@ static void nfs_inode_remove_request(struct nfs_page *req)
- 		spin_unlock(&mapping->private_lock);
- 	}
- 
--	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags))
-+	if (test_and_clear_bit(PG_INODE_REF, &req->wb_flags)) {
- 		nfs_release_request(req);
-+		atomic_long_dec(&nfsi->nrequests);
-+	}
- }
- 
- static void
+diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+index cac262a912c12..89f2976f9c534 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
++++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+@@ -330,6 +330,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
+ 		},
+ 		.driver_data = (void *)&sipodev_desc
+ 	},
++	{
++		.ident = "Direkt-Tek DTLAPY133-1",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Direkt-Tek"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "DTLAPY133-1"),
++		},
++		.driver_data = (void *)&sipodev_desc
++	},
+ 	{
+ 		.ident = "Mediacom Flexbook Edge 11",
+ 		.matches = {
 -- 
 2.20.1
 
