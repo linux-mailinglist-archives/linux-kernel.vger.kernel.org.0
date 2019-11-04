@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7143EE70F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 19:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CE1EE702
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 19:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729687AbfKDSNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 13:13:42 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35745 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729546AbfKDSM7 (ORCPT
+        id S1729584AbfKDSNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 13:13:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44685 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729551AbfKDSNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 13:12:59 -0500
-Received: by mail-pf1-f194.google.com with SMTP id d13so12853950pfq.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 10:12:59 -0800 (PST)
+        Mon, 4 Nov 2019 13:13:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q26so12824108pfn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 10:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=my27JHtSw35YmWWmHWoHmAi4DXJc+0VoUXAKN5Q83qQ=;
-        b=z04j7Z2+8CJTt3LDDdW0VKHsNjM427ulg1Fso6sALQXW8v87GYdFumTZ7klLVibxEO
-         u3G+y2NH9jFQMLEt7KsjCEQA4m8ae69T56BnjtQLjDD6o24drb+6r7tkLlJcCvxPI6o8
-         VnUTGyZhug8t2LgkcTeeOZ+M1/3nFrEg0G7+1G2edZVz0UCTAWywDjC5fb79COINfgmo
-         qAoLnJx3CQxoKGvRs8t9dFVwThrdoa7bRgJ2rAoZzuqiYu7izvP0JuLduGhaDzKWWMzG
-         8swo521Or6HZH3IbMWHAfwHUsrf5P3Lj9OdeSbipMpLXruapJlUzqDlhg8qLeRWdY/l9
-         4jGA==
+        bh=y7fhR2xIT71DtVa1uCjsmuyALGEUbfwLZ/uWrAtc5Ds=;
+        b=ncL1xXHW8P5PY1KFS4fr2rCjeF2sMk7iCiCvP5ewN58vIqpf6Rk7KIPwWJ4UL8t5YD
+         YYnfOLoEGsFqg7qgmY4p8cERoL3Uj+k3kbnmUKhvlr9kQFM3wojFfN3ZM65dBok06MfV
+         wSXhWlJmSdmEquXZz/Ly5hdUm4ZKvCxsJrnfuM4hTXRBPA9aMaHGfUG9CCweujtLSB5D
+         Z0PyiIe36Z3vKEgKByN+KrWgLj4Fw1J2XjbHNts9//oUwu4rn8VpybUEkPpVVhRSAEsk
+         5V9EOoMUphNsDxdm2mQ0yF1JDGS6ULnV94+Qv8m7pCID4hQ9DBBNFeUoG2qB/siHWBdL
+         nKcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=my27JHtSw35YmWWmHWoHmAi4DXJc+0VoUXAKN5Q83qQ=;
-        b=D323UOt1ctWQVOzLzY7yGArA2rjcM4eS8EAJybNzSL8VBOePTdE914K/REv1WK+o23
-         UQMZS5ozQTnPOHp4Ij753zdp5Ncpzbr87OMEqQcPdIQDpwO0SLaaRlU0rlJ7DO4C4XZs
-         wKLnhIqzNqjmIxWuKNXKhac2CWmhZ2M9QKa1pq6m6m8i3WuU88rHNZkaMxg/NRKeF6gd
-         BiZ9x3pNE77JnNDs16mmz/mlY1sDbnwIS1tbHsudPoFLsBI12MGrKoUy4x0k3fgWgSfk
-         3DCOsT357nELT8xubl9lWZ2dJ6OLqIAwmjQPJ5e4v39Hs55dFimzfjl+So6hbDBdhZTu
-         fcFQ==
-X-Gm-Message-State: APjAAAUHG4jII0hQCSx2BP88UmttcLfyYq1oN3BmlwuwG+Fs3ol7UJzi
-        +gY//V6/5MIvVcUq0L+C7rsrHg==
-X-Google-Smtp-Source: APXvYqwo6ERMAn9zzRRE/QsRWRmEKPu9o64wDRqd4Qw4QjXDW1OS3VHmDK3JNfLpL1n1ZEaivL39Dg==
-X-Received: by 2002:a63:1e08:: with SMTP id e8mr10948373pge.336.1572891178635;
-        Mon, 04 Nov 2019 10:12:58 -0800 (PST)
+        bh=y7fhR2xIT71DtVa1uCjsmuyALGEUbfwLZ/uWrAtc5Ds=;
+        b=MCG935es5SkdSatzpNe16/6hGlvxBuDo2TnIgDsA1MvYI2dB3AqHtT5qugFWNQGNOu
+         DTGMSt8FM38T4Tdt97HC3LaJ6hAn5BVo+zW6mYBNHUWtH2UZAZ8A6Se7w1oF5xnW/kFK
+         4cM5eh9Lv+Z7gBVha3s89riy02LJr9VZX4aQyD0BFhvdDD6Y1frZSIcDKFYxgb+qqmZR
+         rC0DBXc6cclR7ojVezKEAsL/B3T1iVqPOu/n8e6L+7AqrQSMwCA8i5WXjicdFCy0qTiV
+         Wnoo3j4NhxhL2V5KYjLMD97W9LrIgVW/oyEF5Cu5l5vQKtdpE2zGXrPVm2MOwi53tOuH
+         GE/g==
+X-Gm-Message-State: APjAAAUxOVvr0UZDFISdk451QdiTCFGkFWfd5Rp/KTlV89sd51CfeHVQ
+        64Verw6mKj+Z1nAb7lzTkFgNKl5NpcI=
+X-Google-Smtp-Source: APXvYqwcjS8PQWDXoU04+7uYKJgaNIt5TMbPyiNLgdD8R3/8rHEJehtKvK3piISL7+DIS4jVvvUjwA==
+X-Received: by 2002:a63:2d81:: with SMTP id t123mr31539251pgt.306.1572891179732;
+        Mon, 04 Nov 2019 10:12:59 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o12sm16149520pgl.86.2019.11.04.10.12.57
+        by smtp.gmail.com with ESMTPSA id o12sm16149520pgl.86.2019.11.04.10.12.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 10:12:58 -0800 (PST)
+        Mon, 04 Nov 2019 10:12:59 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/14] coresight: etm4x: Fix input validation for sysfs.
-Date:   Mon,  4 Nov 2019 11:12:42 -0700
-Message-Id: <20191104181251.26732-6-mathieu.poirier@linaro.org>
+Subject: [PATCH 06/14] coresight: etm4x: Add missing API to set EL match on address filters
+Date:   Mon,  4 Nov 2019 11:12:43 -0700
+Message-Id: <20191104181251.26732-7-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191104181251.26732-1-mathieu.poirier@linaro.org>
 References: <20191104181251.26732-1-mathieu.poirier@linaro.org>
@@ -60,86 +60,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mike Leach <mike.leach@linaro.org>
 
-A number of issues are fixed relating to sysfs input validation:-
+TRCACATRn registers have match bits for secure and non-secure exception
+levels which are not accessible by the sysfs API.
+This adds a new sysfs parameter to enable this - addr_exlevel_s_ns.
 
-1) bb_ctrl_store() - incorrect compare of bit select field to absolute
-value. Reworked per ETMv4 specification.
-2) seq_event_store() - incorrect mask value - register has two
-event values.
-3) cyc_threshold_store() - must mask with max before checking min
-otherwise wrapped values can set illegal value below min.
-4) res_ctrl_store() - update to mask off all res0 bits.
-
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Mike Leach <mike.leach@linaro.org>
-Fixes: a77de2637c9eb ("coresight: etm4x: moving sysFS entries to a dedicated file")
-Cc: stable <stable@vger.kernel.org> # 4.9+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- .../coresight/coresight-etm4x-sysfs.c         | 21 ++++++++++++-------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ .../coresight/coresight-etm4x-sysfs.c         | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-index b6984be0c515..cc8156318018 100644
+index cc8156318018..97a33cf98797 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-@@ -652,10 +652,13 @@ static ssize_t cyc_threshold_store(struct device *dev,
+@@ -1233,6 +1233,47 @@ static ssize_t addr_context_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(addr_context);
  
- 	if (kstrtoul(buf, 16, &val))
- 		return -EINVAL;
++static ssize_t addr_exlevel_s_ns_show(struct device *dev,
++				      struct device_attribute *attr,
++				      char *buf)
++{
++	u8 idx;
++	unsigned long val;
++	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
++	struct etmv4_config *config = &drvdata->config;
 +
-+	/* mask off max threshold before checking min value */
-+	val &= ETM_CYC_THRESHOLD_MASK;
- 	if (val < drvdata->ccitmin)
- 		return -EINVAL;
- 
--	config->ccctlr = val & ETM_CYC_THRESHOLD_MASK;
-+	config->ccctlr = val;
- 	return size;
- }
- static DEVICE_ATTR_RW(cyc_threshold);
-@@ -686,14 +689,16 @@ static ssize_t bb_ctrl_store(struct device *dev,
- 		return -EINVAL;
- 	if (!drvdata->nr_addr_cmp)
- 		return -EINVAL;
++	spin_lock(&drvdata->spinlock);
++	idx = config->addr_idx;
++	val = BMVAL(config->addr_acc[idx], 14, 8);
++	spin_unlock(&drvdata->spinlock);
++	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++}
 +
- 	/*
--	 * Bit[7:0] selects which address range comparator is used for
--	 * branch broadcast control.
-+	 * Bit[8] controls include(1) / exclude(0), bits[0-7] select
-+	 * individual range comparators. If include then at least 1
-+	 * range must be selected.
- 	 */
--	if (BMVAL(val, 0, 7) > drvdata->nr_addr_cmp)
-+	if ((val & BIT(8)) && (BMVAL(val, 0, 7) == 0))
- 		return -EINVAL;
- 
--	config->bb_ctrl = val;
-+	config->bb_ctrl = val & GENMASK(8, 0);
- 	return size;
- }
- static DEVICE_ATTR_RW(bb_ctrl);
-@@ -1324,8 +1329,8 @@ static ssize_t seq_event_store(struct device *dev,
- 
- 	spin_lock(&drvdata->spinlock);
- 	idx = config->seq_idx;
--	/* RST, bits[7:0] */
--	config->seq_ctrl[idx] = val & 0xFF;
-+	/* Seq control has two masks B[15:8] F[7:0] */
-+	config->seq_ctrl[idx] = val & 0xFFFF;
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
-@@ -1580,7 +1585,7 @@ static ssize_t res_ctrl_store(struct device *dev,
- 	if (idx % 2 != 0)
- 		/* PAIRINV, bit[21] */
- 		val &= ~BIT(21);
--	config->res_ctrl[idx] = val;
-+	config->res_ctrl[idx] = val & GENMASK(21, 0);
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
++static ssize_t addr_exlevel_s_ns_store(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t size)
++{
++	u8 idx;
++	unsigned long val;
++	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
++	struct etmv4_config *config = &drvdata->config;
++
++	if (kstrtoul(buf, 0, &val))
++		return -EINVAL;
++
++	if (val & ~((GENMASK(14, 8) >> 8)))
++		return -EINVAL;
++
++	spin_lock(&drvdata->spinlock);
++	idx = config->addr_idx;
++	/* clear Exlevel_ns & Exlevel_s bits[14:12, 11:8], bit[15] is res0 */
++	config->addr_acc[idx] &= ~(GENMASK(14, 8));
++	config->addr_acc[idx] |= (val << 8);
++	spin_unlock(&drvdata->spinlock);
++	return size;
++}
++static DEVICE_ATTR_RW(addr_exlevel_s_ns);
++
+ static ssize_t seq_idx_show(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    char *buf)
+@@ -2038,6 +2079,7 @@ static struct attribute *coresight_etmv4_attrs[] = {
+ 	&dev_attr_addr_stop.attr,
+ 	&dev_attr_addr_ctxtype.attr,
+ 	&dev_attr_addr_context.attr,
++	&dev_attr_addr_exlevel_s_ns.attr,
+ 	&dev_attr_seq_idx.attr,
+ 	&dev_attr_seq_state.attr,
+ 	&dev_attr_seq_event.attr,
 -- 
 2.17.1
 
