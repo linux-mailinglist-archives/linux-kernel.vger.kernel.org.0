@@ -2,111 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F2BEDC6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:24:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3793EDC7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:27:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfKDKYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbfKDKYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:24:53 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F278021D7F;
-        Mon,  4 Nov 2019 10:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572863091;
-        bh=rH8hwXH0FtHi+uAht/YzU82eRlA9su1m3ek62QSRXZo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=viXH/GT48v+LgNLGJfktn2RMvrdadSig6yYI6V1q0Y13ZJXBOUrFchlkDEyTQxasz
-         mxv10bIBLULMNQyuJoDB2QJg2o3LpXV+UfYzLD8NJ2rhtKr7mGAw6HApRp1Qxzi0Lz
-         WlxoUm8IiLz3t+G3O5Pld1C3rXLkHTjklKTa/Rqc=
-Date:   Mon, 4 Nov 2019 11:24:49 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-doc <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [RESEND PATCH v3 0/8] drivers: add new variants of
- devm_platform_ioremap_resource()
-Message-ID: <20191104102449.GA1780310@kroah.com>
-References: <20191022084318.22256-1-brgl@bgdev.pl>
- <CAMRc=MdqDv7FYCEKoK52G5zacNfLTDErrOGZAG5KDOsKh2pfUw@mail.gmail.com>
+        id S1728351AbfKDK1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:27:24 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42120 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727499AbfKDK1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 05:27:23 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8E75C6DF7F8F51AADF68;
+        Mon,  4 Nov 2019 18:27:21 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 4 Nov 2019 18:27:14 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     yuqi jin <jinyuqi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [PATCH v2] lib: optimize cpumask_local_spread()
+Date:   Mon, 4 Nov 2019 18:27:48 +0800
+Message-ID: <1572863268-28585-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdqDv7FYCEKoK52G5zacNfLTDErrOGZAG5KDOsKh2pfUw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 10:29:23AM +0100, Bartosz Golaszewski wrote:
-> wt., 22 paź 2019 o 10:43 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
-> >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Note: resending with Arnd's review tags and rebased on top of char-misc-next
-> >
-> > The new devm_platform_ioremap_resource() helper has now been widely
-> > adopted and used in many drivers. Users of the write-combined ioremap()
-> > variants could benefit from the same code shrinkage. This series provides
-> > a write-combined version of devm_platform_ioremap_resource() and uses it in a
-> > relevant driver with the assumption that - just like was the case
-> > previously - a coccinelle script will be developed to ease the transition
-> > for others.
-> >
-> > There are also users of platform_get_resource_byname() who call
-> > devm_ioremap_resource() next, so provide another variant that they can use
-> > together with two examples.
-> >
-> > v1 -> v2:
-> > - dropped everything related to nocache ioremap as this is going away
-> >
-> > v2 -> v3:
-> > - don't call platform_get_resource() as an argument of devm_ioremap_resource(),
-> >   it actually decreases readability
-> > - add devm_platform_ioremap_resource_byname() as another variant
-> >
-> > Bartosz Golaszewski (8):
-> >   Documentation: devres: add missing entry for
-> >     devm_platform_ioremap_resource()
-> >   lib: devres: prepare devm_ioremap_resource() for more variants
-> >   lib: devres: provide devm_ioremap_resource_wc()
-> >   drivers: platform: provide devm_platform_ioremap_resource_wc()
-> >   misc: sram: use devm_platform_ioremap_resource_wc()
-> >   drivers: provide devm_platform_ioremap_resource_byname()
-> >   gpio: mvebu: use devm_platform_ioremap_resource_byname()
-> >   gpio: tegra186: use devm_platform_ioremap_resource_byname()
-> >
-> >  .../driver-api/driver-model/devres.rst        |  4 ++
-> >  drivers/base/platform.c                       | 39 +++++++++++-
-> >  drivers/gpio/gpio-mvebu.c                     | 19 +++---
-> >  drivers/gpio/gpio-tegra186.c                  |  4 +-
-> >  drivers/misc/sram.c                           | 28 +++------
-> >  include/linux/device.h                        |  2 +
-> >  include/linux/platform_device.h               |  6 ++
-> >  lib/devres.c                                  | 62 +++++++++++++------
-> >  8 files changed, 108 insertions(+), 56 deletions(-)
-> >
-> > --
-> > 2.23.0
-> >
-> 
-> Hi Greg,
-> 
-> can you pick it up for char-misc for v5.5? This was reviewed by Arnd.
+From: yuqi jin <jinyuqi@huawei.com>
 
-Yes, sorry, am backlogged on patches at the moment, will get to it this
-week...
+In the multi-processor and NUMA system, I/O device may have many numa
+nodes belonging to multiple cpus. When we get a local numa, it is
+better to find the node closest to the local numa node, instead
+of choosing any online cpu immediately.
 
-greg k-h
+For the current code, it only considers the local NUMA node and it
+doesn't compute the distances between different NUMA nodes for the
+non-local NUMA nodes. Let's optimize it and find the nearest node
+through NUMA distance. The performance will be better if it return
+the nearest node than the random node.
+
+When Parameter Server workload is tested using NIC device on Huawei
+Kunpeng 920 SoC:
+Without the patch, the performance is 22W QPS;
+Added this patch, the performance become better and it is 26W QPS.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: yuqi jin <jinyuqi@huawei.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+---
+ lib/cpumask.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 81 insertions(+), 12 deletions(-)
+
+diff --git a/lib/cpumask.c b/lib/cpumask.c
+index 0cb672eb107c..15d8940f32a8 100644
+--- a/lib/cpumask.c
++++ b/lib/cpumask.c
+@@ -192,18 +192,39 @@ void __init free_bootmem_cpumask_var(cpumask_var_t mask)
+ }
+ #endif
+ 
+-/**
+- * cpumask_local_spread - select the i'th cpu with local numa cpu's first
+- * @i: index number
+- * @node: local numa_node
+- *
+- * This function selects an online CPU according to a numa aware policy;
+- * local cpus are returned first, followed by non-local ones, then it
+- * wraps around.
+- *
+- * It's not very efficient, but useful for setup.
+- */
+-unsigned int cpumask_local_spread(unsigned int i, int node)
++static void calc_node_distance(int *node_dist, int node)
++{
++	int i;
++
++	for (i = 0; i < nr_node_ids; i++)
++		node_dist[i] = node_distance(node, i);
++}
++
++static int find_nearest_node(int *node_dist, bool *used)
++{
++	int i, min_dist = node_dist[0], node_id = -1;
++
++	/* Choose the first unused node to compare */
++	for (i = 0; i < nr_node_ids; i++) {
++		if (used[i] == 0) {
++			min_dist = node_dist[i];
++			node_id = i;
++			break;
++		}
++	}
++
++	/* Compare and return the nearest node */
++	for (i = 0; i < nr_node_ids; i++) {
++		if (node_dist[i] < min_dist && used[i] == 0) {
++			min_dist = node_dist[i];
++			node_id = i;
++		}
++	}
++
++	return node_id;
++}
++
++static unsigned int __cpumask_local_spread(unsigned int i, int node)
+ {
+ 	int cpu;
+ 
+@@ -231,4 +252,52 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
+ 	}
+ 	BUG();
+ }
++
++/**
++ * cpumask_local_spread - select the i'th cpu with local numa cpu's first
++ * @i: index number
++ * @node: local numa_node
++ *
++ * This function selects an online CPU according to a numa aware policy;
++ * local cpus are returned first, followed by the nearest non-local ones,
++ * then it wraps around.
++ *
++ * It's not very efficient, but useful for setup.
++ */
++unsigned int cpumask_local_spread(unsigned int i, int node)
++{
++	int node_dist[MAX_NUMNODES] = {0};
++	bool used[MAX_NUMNODES] = {0};
++	int cpu, j, id;
++
++	/* Wrap: we always want a cpu. */
++	i %= num_online_cpus();
++
++	if (node == NUMA_NO_NODE) {
++		for_each_cpu(cpu, cpu_online_mask)
++			if (i-- == 0)
++				return cpu;
++	} else {
++		if (nr_node_ids > MAX_NUMNODES)
++			return __cpumask_local_spread(i, node);
++
++		calc_node_distance(node_dist, node);
++		for (j = 0; j < nr_node_ids; j++) {
++			id = find_nearest_node(node_dist, used);
++			if (id < 0)
++				break;
++
++			for_each_cpu_and(cpu, cpumask_of_node(id),
++					 cpu_online_mask)
++				if (i-- == 0)
++					return cpu;
++			used[id] = 1;
++		}
++
++		for_each_cpu(cpu, cpu_online_mask)
++			if (i-- == 0)
++				return cpu;
++	}
++	BUG();
++}
+ EXPORT_SYMBOL(cpumask_local_spread);
+-- 
+2.7.4
+
