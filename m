@@ -2,177 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB6CEE355
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6004FEE37B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfKDPPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:15:43 -0500
-Received: from mga07.intel.com ([134.134.136.100]:54743 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbfKDPPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:15:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 07:15:41 -0800
-X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
-   d="scan'208";a="195481925"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 07:15:36 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Amol Grover <frextrite@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     rcu@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH] Documentation: RCU: whatisRCU: Fix formatting for section 2
-In-Reply-To: <20191104133315.GA14499@workstation-kernel-dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191104133315.GA14499@workstation-kernel-dev>
-Date:   Mon, 04 Nov 2019 17:15:34 +0200
-Message-ID: <87pni77jvt.fsf@intel.com>
+        id S1729332AbfKDPSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:18:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58018 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728646AbfKDPSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 10:18:47 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4FCPlL032257;
+        Mon, 4 Nov 2019 15:18:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=wI+MlQfXsMx0uWokWMoST+s/IjPegRzzQjCD9nh+Q+o=;
+ b=Y4QNrQVsbZ/BnO04dhmq9gO+33O7WD7A0vrMN69D194HaDfvhyveJxdhBvQRhwKLcNib
+ c4NM8JddRmjoeLcyY2S0nAW+ZLf70RNi1rhwnvCH4v8HByMiPEEuc/Iv6XefpjpcCgsM
+ HrU4gex/gSamGEpCKjgQtxGqaORbunYDONOCxp8fiPky4MlihpexRRQTnTa+A5rJd8m4
+ xcCdhAY8xazJR/xQlraufK2Gfk49rbwdnckKLu3/VX3xg8bBGfVGBLk5GIqCHzE6LU8G
+ M6wKMs1Lyf1ZZRcwP4Ao/BB1NdVlXuywgl9WzbfJdO7gY2NPAX3FZz41XpKnKryFvHM9 Ew== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2w11rpr20x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 15:18:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4FAASi019949;
+        Mon, 4 Nov 2019 15:16:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2w1kxmhnd4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 15:16:19 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA4FGGZo019676;
+        Mon, 4 Nov 2019 15:16:16 GMT
+Received: from tomti.i.net-space.pl (/10.175.168.29)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Nov 2019 07:16:15 -0800
+Date:   Mon, 4 Nov 2019 16:16:09 +0100
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
+        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v4 2/3] x86/boot: Introduce the kernel_info.setup_type_max
+Message-ID: <20191104151609.k4qxlw4sbqvld357@tomti.i.net-space.pl>
+References: <20191024114814.6488-1-daniel.kiper@oracle.com>
+ <20191024114814.6488-3-daniel.kiper@oracle.com>
+ <e094a1cf-6bf2-1e8a-94c7-47767d66138e@zytor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e094a1cf-6bf2-1e8a-94c7-47767d66138e@zytor.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=925
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911040151
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911040151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 04 Nov 2019, Amol Grover <frextrite@gmail.com> wrote:
-> Convert RCU API method text to sub-headings and
-> add hyperlink and superscript to 2 literary notes
-> under rcu_dereference() section
+On Fri, Nov 01, 2019 at 01:55:57PM -0700, H. Peter Anvin wrote:
+> On 2019-10-24 04:48, Daniel Kiper wrote:
+> > This field contains maximal allowed type for setup_data.
+> >
+> > Now bump the setup_header version in arch/x86/boot/header.S.
 >
-> Signed-off-by: Amol Grover <frextrite@gmail.com>
-> ---
->  Documentation/RCU/whatisRCU.rst | 34 +++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
+> Please don't bump the protocol revision here, otherwise we would create
+> a very odd pseudo-revision of the protocol: 2.15 without SETUP_INDIRECT
+> support, should patch 3/3 end up getting reverted.
 >
-> diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-> index ae40c8bcc56c..3cf6e17d0065 100644
-> --- a/Documentation/RCU/whatisRCU.rst
-> +++ b/Documentation/RCU/whatisRCU.rst
-> @@ -150,6 +150,7 @@ later.  See the kernel docbook documentation for more info, or look directly
->  at the function header comments.
->  
->  rcu_read_lock()
-> +^^^^^^^^^^^^^^^
->  
->  	void rcu_read_lock(void);
->  
-> @@ -164,6 +165,7 @@ rcu_read_lock()
->  	longer-term references to data structures.
->  
->  rcu_read_unlock()
-> +^^^^^^^^^^^^^^^^^
->  
->  	void rcu_read_unlock(void);
->  
-> @@ -172,6 +174,7 @@ rcu_read_unlock()
->  	read-side critical sections may be nested and/or overlapping.
->  
->  synchronize_rcu()
-> +^^^^^^^^^^^^^^^^^
->  
->  	void synchronize_rcu(void);
->  
-> @@ -225,6 +228,7 @@ synchronize_rcu()
->  	checklist.txt for some approaches to limiting the update rate.
->  
->  rcu_assign_pointer()
-> +^^^^^^^^^^^^^^^^^^^^
->  
->  	void rcu_assign_pointer(p, typeof(p) v);
->  
-> @@ -245,6 +249,7 @@ rcu_assign_pointer()
->  	the _rcu list-manipulation primitives such as list_add_rcu().
->  
->  rcu_dereference()
-> +^^^^^^^^^^^^^^^^^
->  
->  	typeof(p) rcu_dereference(p);
->  
-> @@ -279,8 +284,10 @@ rcu_dereference()
->  	if an update happened while in the critical section, and incur
->  	unnecessary overhead on Alpha CPUs.
->  
-> +.. _back_to_1:
-> +
->  	Note that the value returned by rcu_dereference() is valid
-> -	only within the enclosing RCU read-side critical section [1].
-> +	only within the enclosing RCU read-side critical section |cs_1|.
->  	For example, the following is -not- legal::
->  
->  		rcu_read_lock();
-> @@ -298,15 +305,27 @@ rcu_dereference()
->  	it was acquired is just as illegal as doing so with normal
->  	locking.
->  
-> +.. _back_to_2:
-> +
->  	As with rcu_assign_pointer(), an important function of
->  	rcu_dereference() is to document which pointers are protected by
->  	RCU, in particular, flagging a pointer that is subject to changing
->  	at any time, including immediately after the rcu_dereference().
->  	And, again like rcu_assign_pointer(), rcu_dereference() is
->  	typically used indirectly, via the _rcu list-manipulation
-> -	primitives, such as list_for_each_entry_rcu() [2].
-> +	primitives, such as list_for_each_entry_rcu() |entry_2|.
-> +
-> +.. |cs_1| raw:: html
+> (It is possible to detect, of course, but I feel pretty sure in saying
+> that bootloaders won't get it right.)
+>
+> Other than that:
+>
+> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 
-Please don't use raw. It's ugly and error prone. We have some raw output
-for latex, but this would be the first for html.
+I have just sent v5. Please take a look.
 
-What are you trying to achieve?
-
-BR,
-Jani.
-
-> +
-> +	<a href="#cs"><sup>[1]</sup></a>
-> +
-> +.. |entry_2| raw:: html
->  
-> -	[1] The variant rcu_dereference_protected() can be used outside
-> +	<a href="#entry"><sup>[2]</sup></a>
-> +
-> +.. _cs:
-> +
-> +	\ :sup:`[1]`\  The variant rcu_dereference_protected() can be used outside
->  	of an RCU read-side critical section as long as the usage is
->  	protected by locks acquired by the update-side code.  This variant
->  	avoids the lockdep warning that would happen when using (for
-> @@ -317,15 +336,18 @@ rcu_dereference()
->  	a lockdep expression to indicate which locks must be acquired
->  	by the caller. If the indicated protection is not provided,
->  	a lockdep splat is emitted.  See Documentation/RCU/Design/Requirements/Requirements.rst
-> -	and the API's code comments for more details and example usage.
-> +	and the API's code comments for more details and example usage. :ref:`back <back_to_1>`
-> +
-> +
-> +.. _entry:
->  
-> -	[2] If the list_for_each_entry_rcu() instance might be used by
-> +	\ :sup:`[2]`\  If the list_for_each_entry_rcu() instance might be used by
->  	update-side code as well as by RCU readers, then an additional
->  	lockdep expression can be added to its list of arguments.
->  	For example, given an additional "lock_is_held(&mylock)" argument,
->  	the RCU lockdep code would complain only if this instance was
->  	invoked outside of an RCU read-side critical section and without
-> -	the protection of mylock.
-> +	the protection of mylock. :ref:`back <back_to_2>`
->  
->  The following diagram shows how each API communicates among the
->  reader, updater, and reclaimer.
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Daniel
