@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D59EEDC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9B8EF019
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390443AbfKDWJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:09:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42790 "EHLO mail.kernel.org"
+        id S2388078AbfKDWZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:25:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390055AbfKDWJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:38 -0500
+        id S1730547AbfKDVvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:31 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EFBA214D8;
-        Mon,  4 Nov 2019 22:09:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFEEF217F4;
+        Mon,  4 Nov 2019 21:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905377;
-        bh=WUYtsEowu6tUKxR++J7FijFndFCjk6G0o2q2sXvWxvY=;
+        s=default; t=1572904291;
+        bh=amwiZazbFCzmGdcy7wJmN5hK9XOXC1IYu73p5ph2XXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SNLF9UQsZ2I8F1fWJmUIbA1skzUX8yGJR/HrGnTByGuOFquvqjpGYHBaRmIBNUWI6
-         BSsy0299Td4hQ0Vy99azXZJY0fZIaILcw+8oE3oJLm3vwB7yOnR/56UcHHSMBg38tp
-         3yUICoCvoSSneaH7W90kha54tW3oDRoJVF47vUFs=
+        b=dWZA8DGk4ZSr8LMNZqYRclFKAiaq6VFjghRxd23CaSbWUR4/S0Trzjw/qWYr2XhW0
+         8qvAAn/5ihHiN05/TF0uCOCsjpckhkfm9nXRAjSkZyn+9m+QYLeWgrjQy6GH/Hk6Gv
+         s0LPE+7UQ7QkGPn4TnWBibayZ5vqyvFjPC1tgi+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.3 124/163] s390/idle: fix cpu idle time calculation
-Date:   Mon,  4 Nov 2019 22:45:14 +0100
-Message-Id: <20191104212149.211530990@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.9 53/62] bonding: fix potential NULL deref in bond_update_slave_arr
+Date:   Mon,  4 Nov 2019 22:45:15 +0100
+Message-Id: <20191104211954.599976834@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,98 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 3d7efa4edd07be5c5c3ffa95ba63e97e070e1f3f upstream.
+commit a7137534b597b7c303203e6bc3ed87e87a273bb8 upstream.
 
-The idle time reported in /proc/stat sometimes incorrectly contains
-huge values on s390. This is caused by a bug in arch_cpu_idle_time().
+syzbot got a NULL dereference in bond_update_slave_arr() [1],
+happening after a failure to allocate bond->slave_arr
 
-The kernel tries to figure out when a different cpu entered idle by
-accessing its per-cpu data structure. There is an ordering problem: if
-the remote cpu has an idle_enter value which is not zero, and an
-idle_exit value which is zero, it is assumed it is idle since
-"now". The "now" timestamp however is taken before the idle_enter
-value is read.
+A workqueue (bond_slave_arr_handler) is supposed to retry
+the allocation later, but if the slave is removed before
+the workqueue had a chance to complete, bond->slave_arr
+can still be NULL.
 
-Which in turn means that "now" can be smaller than idle_enter of the
-remote cpu. Unconditionally subtracting idle_enter from "now" can thus
-lead to a negative value (aka large unsigned value).
+[1]
 
-Fix this by moving the get_tod_clock() invocation out of the
-loop. While at it also make the code a bit more readable.
+Failed to build slave-array.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN PTI
+Modules linked in:
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:bond_update_slave_arr.cold+0xc6/0x198 drivers/net/bonding/bond_main.c:4039
+RSP: 0018:ffff88018fe33678 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000290b000
+RDX: 0000000000000000 RSI: ffffffff82b63037 RDI: ffff88019745ea20
+RBP: ffff88018fe33760 R08: ffff880170754280 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88019745ea00 R14: 0000000000000000 R15: ffff88018fe338b0
+FS:  00007febd837d700(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004540a0 CR3: 00000001c242e005 CR4: 00000000001626f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ [<ffffffff82b5b45e>] __bond_release_one+0x43e/0x500 drivers/net/bonding/bond_main.c:1923
+ [<ffffffff82b5b966>] bond_release drivers/net/bonding/bond_main.c:2039 [inline]
+ [<ffffffff82b5b966>] bond_do_ioctl+0x416/0x870 drivers/net/bonding/bond_main.c:3562
+ [<ffffffff83ae25f4>] dev_ifsioc+0x6f4/0x940 net/core/dev_ioctl.c:328
+ [<ffffffff83ae2e58>] dev_ioctl+0x1b8/0xc70 net/core/dev_ioctl.c:495
+ [<ffffffff83995ffd>] sock_do_ioctl+0x1bd/0x300 net/socket.c:1088
+ [<ffffffff83996a80>] sock_ioctl+0x300/0x5d0 net/socket.c:1196
+ [<ffffffff81b124db>] vfs_ioctl fs/ioctl.c:47 [inline]
+ [<ffffffff81b124db>] file_ioctl fs/ioctl.c:501 [inline]
+ [<ffffffff81b124db>] do_vfs_ioctl+0xacb/0x1300 fs/ioctl.c:688
+ [<ffffffff81b12dc6>] SYSC_ioctl fs/ioctl.c:705 [inline]
+ [<ffffffff81b12dc6>] SyS_ioctl+0xb6/0xe0 fs/ioctl.c:696
+ [<ffffffff8101ccc8>] do_syscall_64+0x528/0x770 arch/x86/entry/common.c:305
+ [<ffffffff84400091>] entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-A similar bug also exists for show_idle_time(). Fix this is as well.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Fixes: ee6377147409 ("bonding: Simplify the xmit function for modes that use xmit_hash")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/idle.c |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ drivers/net/bonding/bond_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/kernel/idle.c
-+++ b/arch/s390/kernel/idle.c
-@@ -69,18 +69,26 @@ DEVICE_ATTR(idle_count, 0444, show_idle_
- static ssize_t show_idle_time(struct device *dev,
- 				struct device_attribute *attr, char *buf)
- {
-+	unsigned long long now, idle_time, idle_enter, idle_exit, in_idle;
- 	struct s390_idle_data *idle = &per_cpu(s390_idle, dev->id);
--	unsigned long long now, idle_time, idle_enter, idle_exit;
- 	unsigned int seq;
- 
- 	do {
--		now = get_tod_clock();
- 		seq = read_seqcount_begin(&idle->seqcount);
- 		idle_time = READ_ONCE(idle->idle_time);
- 		idle_enter = READ_ONCE(idle->clock_idle_enter);
- 		idle_exit = READ_ONCE(idle->clock_idle_exit);
- 	} while (read_seqcount_retry(&idle->seqcount, seq));
--	idle_time += idle_enter ? ((idle_exit ? : now) - idle_enter) : 0;
-+	in_idle = 0;
-+	now = get_tod_clock();
-+	if (idle_enter) {
-+		if (idle_exit) {
-+			in_idle = idle_exit - idle_enter;
-+		} else if (now > idle_enter) {
-+			in_idle = now - idle_enter;
-+		}
-+	}
-+	idle_time += in_idle;
- 	return sprintf(buf, "%llu\n", idle_time >> 12);
- }
- DEVICE_ATTR(idle_time_us, 0444, show_idle_time, NULL);
-@@ -88,17 +96,24 @@ DEVICE_ATTR(idle_time_us, 0444, show_idl
- u64 arch_cpu_idle_time(int cpu)
- {
- 	struct s390_idle_data *idle = &per_cpu(s390_idle, cpu);
--	unsigned long long now, idle_enter, idle_exit;
-+	unsigned long long now, idle_enter, idle_exit, in_idle;
- 	unsigned int seq;
- 
- 	do {
--		now = get_tod_clock();
- 		seq = read_seqcount_begin(&idle->seqcount);
- 		idle_enter = READ_ONCE(idle->clock_idle_enter);
- 		idle_exit = READ_ONCE(idle->clock_idle_exit);
- 	} while (read_seqcount_retry(&idle->seqcount, seq));
--
--	return cputime_to_nsecs(idle_enter ? ((idle_exit ?: now) - idle_enter) : 0);
-+	in_idle = 0;
-+	now = get_tod_clock();
-+	if (idle_enter) {
-+		if (idle_exit) {
-+			in_idle = idle_exit - idle_enter;
-+		} else if (now > idle_enter) {
-+			in_idle = now - idle_enter;
-+		}
-+	}
-+	return cputime_to_nsecs(in_idle);
- }
- 
- void arch_cpu_idle_enter(void)
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3963,7 +3963,7 @@ out:
+ 		 * this to-be-skipped slave to send a packet out.
+ 		 */
+ 		old_arr = rtnl_dereference(bond->slave_arr);
+-		for (idx = 0; idx < old_arr->count; idx++) {
++		for (idx = 0; old_arr != NULL && idx < old_arr->count; idx++) {
+ 			if (skipslave == old_arr->arr[idx]) {
+ 				old_arr->arr[idx] =
+ 				    old_arr->arr[old_arr->count-1];
 
 
