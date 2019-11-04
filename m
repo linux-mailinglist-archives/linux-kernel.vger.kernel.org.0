@@ -2,341 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22587EE538
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:53:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B0CEE549
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbfKDQxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:53:51 -0500
-Received: from mailoutvs43.siol.net ([185.57.226.234]:47153 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728392AbfKDQxu (ORCPT
+        id S1729418AbfKDQzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:55:04 -0500
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:32925 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729397AbfKDQzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:53:50 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 82E51525510;
-        Mon,  4 Nov 2019 17:53:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id h5r5Z-FvXCQO; Mon,  4 Nov 2019 17:53:44 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id DB135525512;
-        Mon,  4 Nov 2019 17:53:44 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-86-58-102-7.static.triera.net [86.58.102.7])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Zimbra) with ESMTPA id 2F7425254D2;
-        Mon,  4 Nov 2019 17:53:44 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     mripard@kernel.org, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/3] media: cedrus: Fix H264 4k support
-Date:   Mon, 04 Nov 2019 17:53:43 +0100
-Message-ID: <3046190.od5LHOKkzS@jernej-laptop>
-In-Reply-To: <20191104101319.GE502900@aptenodytes>
-References: <20191026074959.1073512-1-jernej.skrabec@siol.net> <20191026074959.1073512-3-jernej.skrabec@siol.net> <20191104101319.GE502900@aptenodytes>
+        Mon, 4 Nov 2019 11:55:02 -0500
+Received: by mail-wm1-f45.google.com with SMTP id 6so14502489wmf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:55:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qbydSBqseaw/lQj0nQ/gQN6CVr9wzBelvAaWVLCPwUc=;
+        b=aXylMG+y/bVQLTKpkPecMubi5xk8neo1TPugA58jbdUqDzUO5t+mCleDMf6m0aiXcc
+         bd1rkbzogwK7Ja/TtVsHcU1F9zp1DzrDSw3c7t4IWSNcfO5XJJH8higwdCL15KW8ubpZ
+         iDdcFEO7G4ECVLB2pdN8FjG2wQwn/hv1P+0Eg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=qbydSBqseaw/lQj0nQ/gQN6CVr9wzBelvAaWVLCPwUc=;
+        b=iRsgiTe6BI8iotgCBwFPr0TD7LxW9hbPQqORm1nQuK5ScMMp4W5toXZDK0VzqMUD6x
+         VMXK2w2L3/G9DYNlYmAnJPoWI2QvzVDLwmX2sA2TD3kBgJnWtg4vsiLK9Fgqa7FLn9Qg
+         dBobWXl+AunpdgVWVfBh5SANfWW9Dvqz5KcPPVzB47Lea2n5lsIrycVWxpI2jyH+sLmd
+         h4da1OWvyj+HGOq2ZjcdbPmP8FWloOnM5/c1/uXmwEGp9X+XbimIOoLX7uxiZcP3LyPN
+         8IWdOwsAc07A+O31dUUhhQnRpVaZRtLCqssKqPGSXehFD+oa1g2bsWeOzhB6FxreJf3W
+         RxkQ==
+X-Gm-Message-State: APjAAAVfvK/M6dfPog+zLNQGy8pqRpMBt5Cepb8whb1Md8PlvBUmIKx6
+        JqFtlpTDmgHlRQeZ7PyQ5p1cUA==
+X-Google-Smtp-Source: APXvYqz94I0pfBllsuYuxRIRg5mazNojaJ6pU1GUBJRxZPr5hP+NbTslnm9nyaVAmkAjo/sjHk6k8A==
+X-Received: by 2002:a1c:f011:: with SMTP id a17mr86381wmb.18.1572886500036;
+        Mon, 04 Nov 2019 08:55:00 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id r19sm20025253wrr.47.2019.11.04.08.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 08:54:59 -0800 (PST)
+Date:   Mon, 4 Nov 2019 17:54:57 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Harry Wentland <hwentlan@amd.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: drm/amd/display: Add HDCP module - static analysis bug report
+Message-ID: <20191104165457.GH10326@phenom.ffwll.local>
+Mail-Followup-To: Harry Wentland <hwentlan@amd.com>,
+        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <951eb7dc-bebe-5049-4998-f199e18b0bf3@canonical.com>
+ <20191009163235.GT16989@phenom.ffwll.local>
+ <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
+ <CAKMK7uEtJRDhibWDv2TB2WrFzFooMWPSbveDD2N-rudAwvzVFA@mail.gmail.com>
+ <c8f96b46-e81e-1e41-aafc-5f6ec236d66f@amd.com>
+ <CAKMK7uHr3aeJRqJAscDDfsuBBnVXCeN9SS36-1UGuK84NyOD5Q@mail.gmail.com>
+ <CAKMK7uH6EoY9MkzjSjU+Fe=E-XB4Tf9d2VsW=Tr=tFy1J-dJgg@mail.gmail.com>
+ <53bf910b-5f9c-946b-17ee-602c24c0fa96@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53bf910b-5f9c-946b-17ee-602c24c0fa96@amd.com>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 04. november 2019 ob 11:13:19 CET je Paul Kocialkowski 
-napisal(a):
-> Hi,
+On Mon, Nov 04, 2019 at 03:23:09PM +0000, Harry Wentland wrote:
+> On 2019-11-04 5:53 a.m., Daniel Vetter wrote:
+> > On Wed, Oct 9, 2019 at 10:58 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >> On Wed, Oct 9, 2019 at 10:46 PM Lakha, Bhawanpreet
+> >> <Bhawanpreet.Lakha@amd.com> wrote:
+> >>>
+> >>> I misunderstood and was talking about the ksv validation specifically
+> >>> (usage of drm_hdcp_check_ksvs_revoked()).
+> >>
+> >> Hm for that specifically I think you want to do both, i.e. both
+> >> consult your psp, but also check for revoked ksvs with the core
+> >> helper. At least on some platforms only the core helper might have the
+> >> updated revoke list.
+> >>
 > 
-> On Sat 26 Oct 19, 09:49, Jernej Skrabec wrote:
-> > H264 decoder needs additional or bigger buffers in order to decode 4k
-> > videos.
-> 
-> Thanks for the fixup, we hadn't looked into those bits at all during initial
-> bringup of H.264!
-> 
-> See a few minor comments below.
-> 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/staging/media/sunxi/cedrus/cedrus.h   |  7 ++
-> >  .../staging/media/sunxi/cedrus/cedrus_h264.c  | 83 +++++++++++++++++--
-> >  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 11 +++
-> >  3 files changed, 93 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus.h index
-> > c45fb9a7ad07..96765555ab8a 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > @@ -116,8 +116,15 @@ struct cedrus_ctx {
-> > 
-> >  			ssize_t		mv_col_buf_size;
-> >  			void		*pic_info_buf;
-> >  			dma_addr_t	pic_info_buf_dma;
-> > 
-> > +			ssize_t		pic_info_buf_size;
-> > 
-> >  			void		*neighbor_info_buf;
-> >  			dma_addr_t	neighbor_info_buf_dma;
-> > 
-> > +			void		*deblk_buf;
-> > +			dma_addr_t	deblk_buf_dma;
-> > +			ssize_t		deblk_buf_size;
-> > +			void		*intra_pred_buf;
-> > +			dma_addr_t	intra_pred_buf_dma;
-> > +			ssize_t		intra_pred_buf_size;
-> > 
-> >  		} h264;
-> >  		struct {
-> >  		
-> >  			void		*mv_col_buf;
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c index
-> > d2c854ecdf15..19962f4213d4 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > @@ -39,7 +39,6 @@ struct cedrus_h264_sram_ref_pic {
-> > 
-> >  #define CEDRUS_H264_FRAME_NUM		18
-> >  
-> >  #define CEDRUS_NEIGHBOR_INFO_BUF_SIZE	(16 * SZ_1K)
-> > 
-> > -#define CEDRUS_PIC_INFO_BUF_SIZE	(128 * SZ_1K)
-> 
-> Could we keep a define with the minimum size that you are using later
-> (increased to 130 * SZ_1K)?
+> I think it's an either/or. Either we use an HDCP implementation that's
+> fully running in x86 kernel space (still not sure how that's compliant)
+> or we fully rely on our PSP FW to do what it's designed to do. I don't
+> think it makes sense to mix and match here.
 
-Sure.
+Then you need to somehow tie the revoke list that's in the psp to the
+revoke list update logic we have. That's what we've done for hdcp2 (which
+is similarly to yours implemented in hw). The point is that on linux we
+now have a standard way to get these revoke lists updated/handled.
 
-> 
-> >  static void cedrus_h264_write_sram(struct cedrus_dev *dev,
-> >  
-> >  				   enum cedrus_h264_sram_off off,
-> > 
-> > @@ -342,6 +341,20 @@ static void cedrus_set_params(struct cedrus_ctx *ctx,
-> > 
-> >  		     VE_H264_VLD_ADDR_FIRST | VE_H264_VLD_ADDR_VALID |
-> >  		     VE_H264_VLD_ADDR_LAST);
-> > 
-> > +	if (ctx->src_fmt.width > 2048) {
-> > +		cedrus_write(dev, VE_BUF_CTRL,
-> > +			     VE_BUF_CTRL_INTRAPRED_MIXED_RAM |
-> > +			     VE_BUF_CTRL_DBLK_MIXED_RAM);
-> > +		cedrus_write(dev, VE_DBLK_DRAM_BUF_ADDR,
-> > +			     ctx->codec.h264.deblk_buf_dma);
-> > +		cedrus_write(dev, VE_INTRAPRED_DRAM_BUF_ADDR,
-> > +			     ctx->codec.h264.intra_pred_buf_dma);
-> > +	} else {
-> > +		cedrus_write(dev, VE_BUF_CTRL,
-> > +			     VE_BUF_CTRL_INTRAPRED_INT_SRAM |
-> > +			     VE_BUF_CTRL_DBLK_INT_SRAM);
-> > +	}
-> > +
-> > 
-> >  	/*
-> >  	
-> >  	 * FIXME: Since the bitstream parsing is done in software, and
-> >  	 * in userspace, this shouldn't be needed anymore. But it
-> > 
-> > @@ -502,18 +515,28 @@ static void cedrus_h264_setup(struct cedrus_ctx
-> > *ctx,
-> > 
-> >  static int cedrus_h264_start(struct cedrus_ctx *ctx)
-> >  {
-> >  
-> >  	struct cedrus_dev *dev = ctx->dev;
-> > 
-> > +	unsigned int pic_info_size;
-> > 
-> >  	unsigned int field_size;
-> >  	unsigned int mv_col_size;
-> >  	int ret;
-> 
-> Maybe add a comment here this is a half-magic sub-optimal formula?
-
-Well, I'm not sure how much suboptimal formulas this and those below are. They 
-are taken from CedarX source. I would imagine that they didn't waste too much 
-memory. What kind of comment would be ok for you? "Formula taken from CedarX 
-source"?
-
-Best regards,
-Jernej
-
-> 
-> > +	if (ctx->src_fmt.width > 2048)
-> > +		pic_info_size = CEDRUS_H264_FRAME_NUM * 0x4000;
-> > +	else
-> > +		pic_info_size = CEDRUS_H264_FRAME_NUM * 0x1000;
-> > +
-> > 
-> >  	/*
-> > 
-> > -	 * FIXME: It seems that the H6 cedarX code is using a formula
-> > -	 * here based on the size of the frame, while all the older
-> > -	 * code is using a fixed size, so that might need to be
-> > -	 * changed at some point.
-> > +	 * FIXME: If V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY is set,
-> > +	 * there is no need to multiply by 2.
-> > 
-> >  	 */
-> > 
-> > +	pic_info_size += ctx->src_fmt.height * 2 * 64;
-> > +
-> > +	if (pic_info_size < 130 * SZ_1K)
-> > +		pic_info_size = 130 * SZ_1K;
-> 
-> This is where I think we could have a "minimum pic info size" define.
-> 
-> > +
-> > +	ctx->codec.h264.pic_info_buf_size = pic_info_size;
-> > 
-> >  	ctx->codec.h264.pic_info_buf =
-> > 
-> > -		dma_alloc_coherent(dev->dev, CEDRUS_PIC_INFO_BUF_SIZE,
-> > +		dma_alloc_coherent(dev->dev, ctx-
->codec.h264.pic_info_buf_size,
-> > 
-> >  				   &ctx-
->codec.h264.pic_info_buf_dma,
-> >  				   GFP_KERNEL);
-> >  	
-> >  	if (!ctx->codec.h264.pic_info_buf)
-> > 
-> > @@ -566,15 +589,51 @@ static int cedrus_h264_start(struct cedrus_ctx *ctx)
-> > 
-> >  		goto err_neighbor_buf;
-> >  	
-> >  	}
-> > 
-> > +	if (ctx->src_fmt.width > 2048) {
-> 
-> Feel free to add a comment here to explain where the 12 below comes from if
-> you have some idea, or that it's a somewhat magical value that generally
-> works.
-> > +		ctx->codec.h264.deblk_buf_size =
-> > +			ALIGN(ctx->src_fmt.width, 32) * 12;
-> > +		ctx->codec.h264.deblk_buf =
-> > +			dma_alloc_coherent(dev->dev,
-> > +					   ctx-
->codec.h264.deblk_buf_size,
-> > +					   &ctx-
->codec.h264.deblk_buf_dma,
-> > +					   GFP_KERNEL);
-> > +		if (!ctx->codec.h264.deblk_buf) {
-> > +			ret = -ENOMEM;
-> > +			goto err_mv_col_buf;
-> > +		}
-> > +
-> 
-> Same here, a comment would be welcome about the 5 value below.
-> 
-> Cheers,
-> 
-> Paul
-> 
-> > +		ctx->codec.h264.intra_pred_buf_size =
-> > +			ALIGN(ctx->src_fmt.width, 64) * 5;
-> > +		ctx->codec.h264.intra_pred_buf =
-> > +			dma_alloc_coherent(dev->dev,
-> > +					   ctx-
->codec.h264.intra_pred_buf_size,
-> > +					   &ctx-
->codec.h264.intra_pred_buf_dma,
-> > +					   GFP_KERNEL);
-> > +		if (!ctx->codec.h264.intra_pred_buf) {
-> > +			ret = -ENOMEM;
-> > +			goto err_deblk_buf;
-> > +		}
-> > +	}
-> > +
-> > 
-> >  	return 0;
-> > 
-> > +err_deblk_buf:
-> > +	dma_free_coherent(dev->dev, ctx->codec.h264.deblk_buf_size,
-> > +			  ctx->codec.h264.deblk_buf,
-> > +			  ctx->codec.h264.deblk_buf_dma);
-> > +
-> > +err_mv_col_buf:
-> > +	dma_free_coherent(dev->dev, ctx->codec.h264.mv_col_buf_size,
-> > +			  ctx->codec.h264.mv_col_buf,
-> > +			  ctx->codec.h264.mv_col_buf_dma);
-> > +
-> > 
-> >  err_neighbor_buf:
-> >  	dma_free_coherent(dev->dev, CEDRUS_NEIGHBOR_INFO_BUF_SIZE,
-> >  	
-> >  			  ctx->codec.h264.neighbor_info_buf,
-> >  			  ctx->codec.h264.neighbor_info_buf_dma);
-> >  
-> >  err_pic_buf:
-> > -	dma_free_coherent(dev->dev, CEDRUS_PIC_INFO_BUF_SIZE,
-> > +	dma_free_coherent(dev->dev, ctx->codec.h264.pic_info_buf_size,
-> > 
-> >  			  ctx->codec.h264.pic_info_buf,
-> >  			  ctx->codec.h264.pic_info_buf_dma);
-> >  	
-> >  	return ret;
-> > 
-> > @@ -590,9 +649,17 @@ static void cedrus_h264_stop(struct cedrus_ctx *ctx)
-> > 
-> >  	dma_free_coherent(dev->dev, CEDRUS_NEIGHBOR_INFO_BUF_SIZE,
-> >  	
-> >  			  ctx->codec.h264.neighbor_info_buf,
-> >  			  ctx->codec.h264.neighbor_info_buf_dma);
-> > 
-> > -	dma_free_coherent(dev->dev, CEDRUS_PIC_INFO_BUF_SIZE,
-> > +	dma_free_coherent(dev->dev, ctx->codec.h264.pic_info_buf_size,
-> > 
-> >  			  ctx->codec.h264.pic_info_buf,
-> >  			  ctx->codec.h264.pic_info_buf_dma);
-> > 
-> > +	if (ctx->codec.h264.deblk_buf_size)
-> > +		dma_free_coherent(dev->dev, ctx-
->codec.h264.deblk_buf_size,
-> > +				  ctx->codec.h264.deblk_buf,
-> > +				  ctx->codec.h264.deblk_buf_dma);
-> > +	if (ctx->codec.h264.intra_pred_buf_size)
-> > +		dma_free_coherent(dev->dev, ctx-
->codec.h264.intra_pred_buf_size,
-> > +				  ctx->codec.h264.intra_pred_buf,
-> > +				  ctx-
->codec.h264.intra_pred_buf_dma);
-> > 
-> >  }
-> >  
-> >  static void cedrus_h264_trigger(struct cedrus_ctx *ctx)
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h index
-> > ace3d49fcd82..7beb03d3bb39 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > @@ -46,6 +46,17 @@
-> > 
-> >  #define VE_MODE_DEC_H264			(0x01 << 0)
-> >  #define VE_MODE_DEC_MPEG			(0x00 << 0)
-> > 
-> > +#define VE_BUF_CTRL				0x50
-> > +
-> > +#define VE_BUF_CTRL_INTRAPRED_EXT_RAM		(0x02 << 2)
-> > +#define VE_BUF_CTRL_INTRAPRED_MIXED_RAM		(0x01 << 2)
-> > +#define VE_BUF_CTRL_INTRAPRED_INT_SRAM		(0x00 << 2)
-> > +#define VE_BUF_CTRL_DBLK_EXT_RAM		(0x02 << 0)
-> > +#define VE_BUF_CTRL_DBLK_MIXED_RAM		(0x01 << 0)
-> > +#define VE_BUF_CTRL_DBLK_INT_SRAM		(0x00 << 0)
-> > +
-> > +#define VE_DBLK_DRAM_BUF_ADDR			0x54
-> > +#define VE_INTRAPRED_DRAM_BUF_ADDR		0x58
-> > 
-> >  #define VE_PRIMARY_CHROMA_BUF_LEN		0xc4
-> >  #define VE_PRIMARY_FB_LINE_STRIDE		0xc8
+I guess it wasn't clear how exactly I think you're supposed to combine
+them?
+-Daniel
 
 
+> 
+> >>> For the defines I will create patches to use drm_hdcp where it is usable.
+> >>
+> >> Thanks a lot. Ime once we have shared definitions it's much easier to
+> >> also share some helpers, where it makes sense.
+> >>
+> >> Aside I think the hdcp code could also use a bit of demidlayering. At
+> >> least I'm not understanding why you add a 2nd abstraction layer for
+> >> i2c/dpcd, dm_helper already has that. That seems like one abstraction
+> >> layer too much.
+> > 
+> > I haven't seen anything fly by or in the latest pull request ... you
+> > folks still working on this or more put on the "maybe, probably never"
+> > pile?
+> > 
+> 
+> Following up with Bhawan.
+> 
+> Harry
+> 
+> > -Daniel
+> > 
+> > 
+> >> -Daniel
+> >>
+> >>>
+> >>>
+> >>> Bhawan
+> >>>
+> >>> On 2019-10-09 2:43 p.m., Daniel Vetter wrote:
+> >>>> On Wed, Oct 9, 2019 at 8:23 PM Lakha, Bhawanpreet
+> >>>> <Bhawanpreet.Lakha@amd.com> wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> The reason we don't use drm_hdcp is because our policy is to do hdcp
+> >>>>> verification using PSP/HW (onboard secure processor).
+> >>>> i915 also uses hw to auth, we still use the parts from drm_hdcp ...
+> >>>> Did you actually look at what's in there? It's essentially just shared
+> >>>> defines and data structures from the standard, plus a few minimal
+> >>>> helpers to en/decode some bits. Just from a quick read the entire
+> >>>> patch very much looks like midlayer everywhere design that we
+> >>>> discussed back when DC landed ...
+> >>>> -Daniel
+> >>>>
+> >>>>> Bhawan
+> >>>>>
+> >>>>> On 2019-10-09 12:32 p.m., Daniel Vetter wrote:
+> >>>>>> On Thu, Oct 03, 2019 at 11:08:03PM +0100, Colin Ian King wrote:
+> >>>>>>> Hi,
+> >>>>>>>
+> >>>>>>> Static analysis with Coverity has detected a potential issue with
+> >>>>>>> function validate_bksv in
+> >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c with recent
+> >>>>>>> commit:
+> >>>>>>>
+> >>>>>>> commit ed9d8e2bcb003ec94658cafe9b1bb3960e2139ec
+> >>>>>>> Author: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+> >>>>>>> Date:   Tue Aug 6 17:52:01 2019 -0400
+> >>>>>>>
+> >>>>>>>       drm/amd/display: Add HDCP module
+> >>>>>> I think the real question here is ... why is this not using drm_hdcp?
+> >>>>>> -Daniel
+> >>>>>>
+> >>>>>>> The analysis is as follows:
+> >>>>>>>
+> >>>>>>>    28 static inline enum mod_hdcp_status validate_bksv(struct mod_hdcp *hdcp)
+> >>>>>>>    29 {
+> >>>>>>>
+> >>>>>>> CID 89852 (#1 of 1): Out-of-bounds read (OVERRUN)
+> >>>>>>>
+> >>>>>>> 1. overrun-local:
+> >>>>>>> Overrunning array of 5 bytes at byte offset 7 by dereferencing pointer
+> >>>>>>> (uint64_t *)hdcp->auth.msg.hdcp1.bksv.
+> >>>>>>>
+> >>>>>>>    30        uint64_t n = *(uint64_t *)hdcp->auth.msg.hdcp1.bksv;
+> >>>>>>>    31        uint8_t count = 0;
+> >>>>>>>    32
+> >>>>>>>    33        while (n) {
+> >>>>>>>    34                count++;
+> >>>>>>>    35                n &= (n - 1);
+> >>>>>>>    36        }
+> >>>>>>>
+> >>>>>>> hdcp->auth.msg.hdcp1.bksv is an array of 5 uint8_t as defined in
+> >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h as follows:
+> >>>>>>>
+> >>>>>>> struct mod_hdcp_message_hdcp1 {
+> >>>>>>>           uint8_t         an[8];
+> >>>>>>>           uint8_t         aksv[5];
+> >>>>>>>           uint8_t         ainfo;
+> >>>>>>>           uint8_t         bksv[5];
+> >>>>>>>           uint16_t        r0p;
+> >>>>>>>           uint8_t         bcaps;
+> >>>>>>>           uint16_t        bstatus;
+> >>>>>>>           uint8_t         ksvlist[635];
+> >>>>>>>           uint16_t        ksvlist_size;
+> >>>>>>>           uint8_t         vp[20];
+> >>>>>>>
+> >>>>>>>           uint16_t        binfo_dp;
+> >>>>>>> };
+> >>>>>>>
+> >>>>>>> variable n is going to contain the contains of r0p and bcaps. I'm not
+> >>>>>>> sure if that is intentional. If not, then the count is going to be
+> >>>>>>> incorrect if these are non-zero.
+> >>>>>>>
+> >>>>>>> Colin
+> >>>>> _______________________________________________
+> >>>>> dri-devel mailing list
+> >>>>> dri-devel@lists.freedesktop.org
+> >>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >>>>
+> >>>>
+> >>
+> >>
+> >>
+> >> --
+> >> Daniel Vetter
+> >> Software Engineer, Intel Corporation
+> >> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > 
+> > 
+> > 
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > 
 
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
