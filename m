@@ -2,130 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0943EEF14B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:41:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CCDEF136
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 00:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbfKDXlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 18:41:22 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39134 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729871AbfKDXlV (ORCPT
+        id S1729743AbfKDXf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 18:35:57 -0500
+Received: from one.firstfloor.org ([193.170.194.197]:32986 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbfKDXf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 18:41:21 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iRlg1-00012v-EZ; Tue, 05 Nov 2019 00:22:26 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A45E61C0105;
-        Tue,  5 Nov 2019 00:22:24 +0100 (CET)
-Date:   Mon, 04 Nov 2019 23:22:24 -0000
-From:   "tip-bot2 for Jan Beulich" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/apic/32: Avoid bogus LDR warnings
-Cc:     Jan Beulich <jbeulich@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com>
-References: <666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com>
+        Mon, 4 Nov 2019 18:35:56 -0500
+Received: by one.firstfloor.org (Postfix, from userid 503)
+        id 0A9598685B; Tue,  5 Nov 2019 00:35:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
+        s=mail; t=1572910554;
+        bh=T6WN/3CmGi87L/O4bOPUkr7RqKMi6e4Y71TMqMSUjGs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Gv07PrwEP8Bu2dcguFy0qJaw0tfu61iCyH0ODEWGE/472MXW7iU1wY7HxfEYFicOi
+         38n+lsenDzqx+y4j+AocaFfHQ3b0oCPYf+ltSHW2MikNK+v1U2zLjqFyENCIpceiTe
+         xc8qfyf22FZjDtdBdtsoqfoWYNRtRDO3a88T54wQ=
+Date:   Mon, 4 Nov 2019 15:35:53 -0800
+From:   Andi Kleen <andi@firstfloor.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Andi Kleen <andi@firstfloor.org>, acme@kernel.org,
+        jolsa@kernel.org, eranian@google.com, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v3 4/7] perf stat: Use affinity for closing file
+ descriptors
+Message-ID: <20191104233553.zcjw2u64pggixkka@two.firstfloor.org>
+References: <20191025181417.10670-1-andi@firstfloor.org>
+ <20191025181417.10670-5-andi@firstfloor.org>
+ <20191030100554.GE20826@krava>
 MIME-Version: 1.0
-Message-ID: <157290974421.29376.16287501451478726858.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030100554.GE20826@krava>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+> >  
+> > -	evlist__for_each_entry_reverse(evlist, evsel)
+> > -		evsel__close(evsel);
+> > +	if (affinity__setup(&affinity) < 0)
+> > +		return;
+> > +	cpus = evlist__cpu_iter_start(evlist);
+> > +	cpumap__for_each_cpu (cpus, i, cpu) {
+> > +		affinity__set(&affinity, cpu);
+> 
+> whats the point of affinity->changed flags when we call
+> affinity__set unconditionaly? I think we can do without
+> it, becase we'll always endup calling affinity__set
 
-Commit-ID:     fe6f85ca121e9c74e7490fe66b0c5aae38e332c3
-Gitweb:        https://git.kernel.org/tip/fe6f85ca121e9c74e7490fe66b0c5aae38e332c3
-Author:        Jan Beulich <jbeulich@suse.com>
-AuthorDate:    Tue, 29 Oct 2019 10:34:19 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 05 Nov 2019 00:11:00 +01:00
+No we don't in the per thread case (without -a) 
 
-x86/apic/32: Avoid bogus LDR warnings
+In this case affinity is never set because there is no cpu.
 
-The removal of the LDR initialization in the bigsmp_32 APIC code unearthed
-a problem in setup_local_APIC().
+I added it just to make the strace look nicer in this case.
 
-The code checks unconditionally for a mismatch of the logical APIC id by
-comparing the early APIC id which was initialized in get_smp_config() with
-the actual LDR value in the APIC.
+> 
+> however, it seems superfluous to always allocate those
+> bitmaps, while we need just the current cpus that we
+> run on and also that is probably questionable
+> 
+> could we put 'struct affinity' to 'struct evlist'
+> and get rid of all affinity__setup/cleanup calls?
+> (apart from those in evlist__init and evlist__delete)
 
-Due to the removal of the bogus LDR initialization the check now can
-trigger on bigsmp_32 APIC systems emitting a warning for every booting
-CPU. This is of course a false positive because the APIC is not using
-logical destination mode.
+affinity setup/cleanup is essentially push/pop for the affinity
+state. For setup while it could be in theory moved
+it would be a bad API because if someone sets up a evlist
+inside an affinity region it would save the wrong state.
 
-Restrict the check and the possibly resulting fixup to systems which are
-actually using the APIC in logical destination mode.
+For cleanup there's nothing that would call it to reset
+the affinity.
 
-[ tglx: Massaged changelog and added Cc stable ]
+They could be made global, but that's somewhat ugly
+and might also break with threading.
 
-Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/666d8f91-b5a8-1afd-7add-821e72a35f03@suse.com
----
- arch/x86/kernel/apic/apic.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 9e2dd2b..2b0faf8 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1586,9 +1586,6 @@ static void setup_local_APIC(void)
- {
- 	int cpu = smp_processor_id();
- 	unsigned int value;
--#ifdef CONFIG_X86_32
--	int logical_apicid, ldr_apicid;
--#endif
- 
- 	if (disable_apic) {
- 		disable_ioapic_support();
-@@ -1626,16 +1623,21 @@ static void setup_local_APIC(void)
- 	apic->init_apic_ldr();
- 
- #ifdef CONFIG_X86_32
--	/*
--	 * APIC LDR is initialized.  If logical_apicid mapping was
--	 * initialized during get_smp_config(), make sure it matches the
--	 * actual value.
--	 */
--	logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
--	ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
--	WARN_ON(logical_apicid != BAD_APICID && logical_apicid != ldr_apicid);
--	/* always use the value from LDR */
--	early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
-+	if (apic->dest_logical) {
-+		int logical_apicid, ldr_apicid;
-+
-+		/*
-+		 * APIC LDR is initialized.  If logical_apicid mapping was
-+		 * initialized during get_smp_config(), make sure it matches
-+		 * the actual value.
-+		 */
-+		logical_apicid = early_per_cpu(x86_cpu_to_logical_apicid, cpu);
-+		ldr_apicid = GET_APIC_LOGICAL_ID(apic_read(APIC_LDR));
-+		if (logical_apicid != BAD_APICID)
-+			WARN_ON(logical_apicid != ldr_apicid);
-+		/* Always use the value from LDR. */
-+		early_per_cpu(x86_cpu_to_logical_apicid, cpu) = ldr_apicid;
-+	}
- #endif
- 
- 	/*
+-Andi
