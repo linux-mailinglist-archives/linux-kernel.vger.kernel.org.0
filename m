@@ -2,49 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8879BEED35
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A1EDEEF8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389693AbfKDWEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:04:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35256 "EHLO mail.kernel.org"
+        id S2389328AbfKDWWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:22:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389683AbfKDWEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:04:31 -0500
+        id S2388538AbfKDV5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:57:17 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD1DF214D8;
-        Mon,  4 Nov 2019 22:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E5E2217F5;
+        Mon,  4 Nov 2019 21:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905070;
-        bh=oVOeKJXMi/4L8ddaH2Ou/ffyVHk8XoU2AZ/+BO6rhXA=;
+        s=default; t=1572904636;
+        bh=SdMDKzJ1hk6QRdsBvU2IGu5E+EuH4lEosEJzMyA5ovs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AbonSPmIrERasShx0EE7Cebx9QMLEVTpa3c2XuaGzOPWTxLiho4lA8koNswGZfK/d
-         ZZqZQ6ONTVCHV2h4E07P8b3iCsi0vI4Jiw80Pg9tKtrUshU/dcWmhd1vTebdaGBtGQ
-         EK1Iv484fdfOXwma9+tlucwd6SCmuGjv9Ekppz58=
+        b=Xx0OlU3wrJcYKzDGhFp/0JOLS+KR6zDd9kXSBCMPrKPMawpyPS+vnG3mfO6rubBmt
+         eWlDvg3Ewtnllj045kFXrJZf9bP4TJCbutUimvBHeywiHopjQP5ANqAboiZkgYpQKB
+         +OezJBGmlFeVn63sUJRP75NJvEJQIAF+PxfxADiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 5.3 019/163] perf annotate: Dont return -1 for error when doing BPF disassembly
-Date:   Mon,  4 Nov 2019 22:43:29 +0100
-Message-Id: <20191104212141.810505019@linuxfoundation.org>
+        stable@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 017/149] tools/power turbostat: fix goldmont C-state limit decoding
+Date:   Mon,  4 Nov 2019 22:43:30 +0100
+Message-Id: <20191104212135.963287914@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,105 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Len Brown <len.brown@intel.com>
 
-[ Upstream commit 11aad897f6d1a28eae3b7e5b293647c522d65819 ]
+[ Upstream commit 445640a563493f28d15f47e151e671281101e7dc ]
 
-Return errno when open_memstream() fails and add two new speciall error
-codes for when an invalid, non BPF file or one without BTF is passed to
-symbol__disassemble_bpf(), so that its callers can rely on
-symbol__strerror_disassemble() to convert that to a human readable error
-message that can help figure out what is wrong, with hints even.
+When the C-state limit is 8 on Goldmont, PC10 is enabled.
+Previously turbostat saw this as "undefined", and thus assumed
+it should not show some counters, such as pc3, pc6, pc7.
 
-Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-Cc: Will Deacon <will@kernel.org>
-Link: https://lkml.kernel.org/n/tip-usevw9r2gcipfcrbpaueurw0@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/annotate.c | 19 +++++++++++++++----
- tools/perf/util/annotate.h |  2 ++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ tools/power/x86/turbostat/turbostat.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index ab7851ec0ce53..fb8756026a805 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1631,6 +1631,13 @@ int symbol__strerror_disassemble(struct symbol *sym __maybe_unused, struct map *
- 	case SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING:
- 		scnprintf(buf, buflen, "Problems while parsing the CPUID in the arch specific initialization.");
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 71cf7e77291ad..823bbc741ad7a 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1953,11 +1953,12 @@ done:
+ #define PCL_7S 11 /* PC7 Shrink */
+ #define PCL__8 12 /* PC8 */
+ #define PCL__9 13 /* PC9 */
+-#define PCLUNL 14 /* Unlimited */
++#define PCL_10 14 /* PC10 */
++#define PCLUNL 15 /* Unlimited */
+ 
+ int pkg_cstate_limit = PCLUKN;
+ char *pkg_cstate_limit_strings[] = { "reserved", "unknown", "pc0", "pc1", "pc2",
+-	"pc3", "pc4", "pc6", "pc6n", "pc6r", "pc7", "pc7s", "pc8", "pc9", "unlimited"};
++	"pc3", "pc4", "pc6", "pc6n", "pc6r", "pc7", "pc7s", "pc8", "pc9", "pc10", "unlimited"};
+ 
+ int nhm_pkg_cstate_limits[16] = {PCL__0, PCL__1, PCL__3, PCL__6, PCL__7, PCLRSV, PCLRSV, PCLUNL, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+ int snb_pkg_cstate_limits[16] = {PCL__0, PCL__2, PCL_6N, PCL_6R, PCL__7, PCL_7S, PCLRSV, PCLUNL, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+@@ -1965,7 +1966,7 @@ int hsw_pkg_cstate_limits[16] = {PCL__0, PCL__2, PCL__3, PCL__6, PCL__7, PCL_7S,
+ int slv_pkg_cstate_limits[16] = {PCL__0, PCL__1, PCLRSV, PCLRSV, PCL__4, PCLRSV, PCL__6, PCL__7, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCL__6, PCL__7};
+ int amt_pkg_cstate_limits[16] = {PCLUNL, PCL__1, PCL__2, PCLRSV, PCLRSV, PCLRSV, PCL__6, PCL__7, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+ int phi_pkg_cstate_limits[16] = {PCL__0, PCL__2, PCL_6N, PCL_6R, PCLRSV, PCLRSV, PCLRSV, PCLUNL, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+-int bxt_pkg_cstate_limits[16] = {PCL__0, PCL__2, PCLUNL, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
++int glm_pkg_cstate_limits[16] = {PCLUNL, PCL__1, PCL__3, PCL__6, PCL__7, PCL_7S, PCL__8, PCL__9, PCL_10, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+ int skx_pkg_cstate_limits[16] = {PCL__0, PCL__2, PCL_6N, PCL_6R, PCLRSV, PCLRSV, PCLRSV, PCLUNL, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV, PCLRSV};
+ 
+ 
+@@ -3165,7 +3166,7 @@ int probe_nhm_msrs(unsigned int family, unsigned int model)
+ 	case INTEL_FAM6_ATOM_GOLDMONT:	/* BXT */
+ 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
+ 	case INTEL_FAM6_ATOM_GOLDMONT_X:	/* DNV */
+-		pkg_cstate_limits = bxt_pkg_cstate_limits;
++		pkg_cstate_limits = glm_pkg_cstate_limits;
  		break;
-+	case SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE:
-+		scnprintf(buf, buflen, "Invalid BPF file: %s.", dso->long_name);
-+		break;
-+	case SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF:
-+		scnprintf(buf, buflen, "The %s BPF file has no BTF section, compile with -g or use pahole -J.",
-+			  dso->long_name);
-+		break;
  	default:
- 		scnprintf(buf, buflen, "Internal error: Invalid %d error code\n", errnum);
- 		break;
-@@ -1713,13 +1720,13 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 	char tpath[PATH_MAX];
- 	size_t buf_size;
- 	int nr_skip = 0;
--	int ret = -1;
- 	char *buf;
- 	bfd *bfdf;
-+	int ret;
- 	FILE *s;
- 
- 	if (dso->binary_type != DSO_BINARY_TYPE__BPF_PROG_INFO)
--		return -1;
-+		return SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE;
- 
- 	pr_debug("%s: handling sym %s addr %" PRIx64 " len %" PRIx64 "\n", __func__,
- 		  sym->name, sym->start, sym->end - sym->start);
-@@ -1732,8 +1739,10 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 	assert(bfd_check_format(bfdf, bfd_object));
- 
- 	s = open_memstream(&buf, &buf_size);
--	if (!s)
-+	if (!s) {
-+		ret = errno;
- 		goto out;
-+	}
- 	init_disassemble_info(&info, s,
- 			      (fprintf_ftype) fprintf);
- 
-@@ -1742,8 +1751,10 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 
- 	info_node = perf_env__find_bpf_prog_info(dso->bpf_prog.env,
- 						 dso->bpf_prog.id);
--	if (!info_node)
-+	if (!info_node) {
-+		return SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF;
- 		goto out;
-+	}
- 	info_linear = info_node->info_linear;
- 	sub_id = dso->bpf_prog.sub_id;
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index a1191995fe77e..2004e2cf0211b 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -372,6 +372,8 @@ enum symbol_disassemble_errno {
- 	SYMBOL_ANNOTATE_ERRNO__NO_LIBOPCODES_FOR_BPF,
- 	SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING,
- 	SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_REGEXP,
-+	SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE,
-+	SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF,
- 
- 	__SYMBOL_ANNOTATE_ERRNO__END,
- };
+ 		return 0;
 -- 
 2.20.1
 
