@@ -2,182 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1686EEED49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5D6EEE03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388726AbfKDWFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:05:08 -0500
-Received: from mail-eopbgr20115.outbound.protection.outlook.com ([40.107.2.115]:49027
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389747AbfKDWFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:05:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cEjqPr3Wk8M/MDjGr2d5zsBiWWxDwcs5tDgq5PqzGSWk8FLOHwrcwt/o/6JmCjr8ULDD6LGjbXz2PnAPoY/gWxVZi2LLx7vGXzcXsTqyC0uzA/KlD2iTdhz9mlZjLpCbGFd5XhxZ1xwWd1JU52s5a86pOSYdZRZUsrdfSb6wwkSIQrvCxIs6Ypidae1QPArF/gDIzF1apWZZd5z/IZ2EK9m6DeiI2yZtCTuU1ysdxDvWCBQEy7XmLkpagZhp38g4JAcC4NhfXV3MD7VeDI/2w1jG0cU3jRMDN0NhQduVlWQB1WTmc8HUn4KkBxcwz4zML++cenVWIG8r8xFi/wH+tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CsxOnXwNhhZLnk3IZ4g039Luoz+fkeDHMCiISinkEAY=;
- b=YdxkNlOzYVtdrJgGVeIhxdM2gBCtimvD5zXXtFZfIPUYs+aI+p2W04LFIPtJ2xQ/78nsO/aIYzfGftoqWsSIuojuSKwERjckXogQer4rZk8reCCXBez7uY1/r3YxpzXVq6cJWaQYzqornQ14Bdu5UGU/ffNg6tnibzuz8K+GhSjnianrHfnQHoxiwFTBUPs6dI/fIRHFJmh6v5t2oau1CzXPeq3iPbPtIgDLmA1eyQvVJWdKa9uIZ9aeS48jbzNxCz/EqcSlh/PQ8+CUmKUdcUgoXTrJ3DiQ3D6SR334DF+/+liAqVXHW5vYqXX28MvZcz+TXzMjGlWNmGOBwdGEjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CsxOnXwNhhZLnk3IZ4g039Luoz+fkeDHMCiISinkEAY=;
- b=OrkqawgulOvf60DgmwIlARqDTrlqmkm5w49jB5VR88jP91qdpi/A1zq9H5BISpJ9KZsNQSMZ2a2AQL9cOwGf/l9HSWIKPnTrMzEU778dGtWzuSqW6Px7lEqLBXMQOOpmb3xFHSCQJ+AR00KrmGCgkE6ay86IeN9s9RhyHUQS+Kk=
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com (10.172.218.15) by
- AM4PR0802MB2130.eurprd08.prod.outlook.com (10.172.219.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Mon, 4 Nov 2019 22:05:01 +0000
-Received: from AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89]) by AM4PR0802MB2242.eurprd08.prod.outlook.com
- ([fe80::9c3e:dc5:e056:9f89%12]) with mapi id 15.20.2408.024; Mon, 4 Nov 2019
- 22:05:01 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "graf@amazon.com" <graf@amazon.com>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,
-        "karahmed@amazon.de" <karahmed@amazon.de>,
-        "rimasluk@amazon.com" <rimasluk@amazon.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-Subject: Re: [PATCH v4 08/17] kvm: x86: Introduce APICv pre-update hook
-Thread-Topic: [PATCH v4 08/17] kvm: x86: Introduce APICv pre-update hook
-Thread-Index: AQHVkQWF3SaRgLSvd0GUYdThH7zHx6d7lb6A
-Date:   Mon, 4 Nov 2019 22:05:01 +0000
-Message-ID: <20191104220457.GB23545@rkaganb.lan>
-References: <1572648072-84536-1-git-send-email-suravee.suthikulpanit@amd.com>
- <1572648072-84536-9-git-send-email-suravee.suthikulpanit@amd.com>
-In-Reply-To: <1572648072-84536-9-git-send-email-suravee.suthikulpanit@amd.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.12.1 (2019-06-15)
-mail-followup-to: "rkagan@virtuozzo.com" <rkagan@virtuozzo.com>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,    "pbonzini@redhat.com"
- <pbonzini@redhat.com>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,    "vkuznets@redhat.com"
- <vkuznets@redhat.com>, "graf@amazon.com" <graf@amazon.com>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,      "karahmed@amazon.de"
- <karahmed@amazon.de>,  "rimasluk@amazon.com" <rimasluk@amazon.com>,    "Grimm,
- Jon" <Jon.Grimm@amd.com>
-x-originating-ip: [2a02:2168:9049:de00::659]
-x-clientproxiedby: HE1PR0502CA0001.eurprd05.prod.outlook.com
- (2603:10a6:3:e3::11) To AM4PR0802MB2242.eurprd08.prod.outlook.com
- (2603:10a6:200:5f::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c8ce3686-02c3-46d5-f1d0-08d7617309df
-x-ms-traffictypediagnostic: AM4PR0802MB2130:
-x-microsoft-antispam-prvs: <AM4PR0802MB2130B78E0BC757BF8E7F7930C97F0@AM4PR0802MB2130.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0211965D06
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(376002)(39840400004)(136003)(346002)(396003)(189003)(199004)(4326008)(186003)(6916009)(2906002)(6116002)(229853002)(9686003)(6512007)(1076003)(25786009)(36756003)(66946007)(99286004)(446003)(11346002)(486006)(81156014)(102836004)(86362001)(386003)(7416002)(305945005)(46003)(5660300002)(33656002)(7736002)(54906003)(66446008)(316002)(58126008)(66556008)(64756008)(476003)(81166006)(6436002)(6486002)(71200400001)(71190400001)(6246003)(478600001)(256004)(14444005)(8936002)(8676002)(15650500001)(6506007)(52116002)(66476007)(76176011)(14454004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0802MB2130;H:AM4PR0802MB2242.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: vwKjLMcFQSRXY0PakzVBeITouWUJMpzmwDmUgfB85bbsDiOZ3Cw6ZRYsCxnWlc+Ktr39qxXZrrqSuc1zD1gfX9wWp/R1xJgc8jR4TP+oTnNYt27nJmfI77z4gBkCVtZ52Tg4vy0eErLQB8U1nsMv+Hs7sC6uE7jZU7XH6NWar0hXVxVLMkKqwaMNxhgkbDhUebZf1DtwLew7LrYE0En5ZQKGPKSggQ63ZDqBWUgEO8AxvZnJvCHhsvNWmKOOws19HBTmzEGMhKu0bVwdsioBGJ4ZWYq/688cw4x2oB/kbs5gecK/KYgGSXddSpwG6ytbAxhaYmwg6gSUhL7a3AcFQZMjdlA8+MLgjtT5yGoN7uvcsqmhK/swY0X2zTZFg++TuSMtRCwGmA0fn0R+tHp8z/6jqaFuc3LNwzUWDzxltbPC66EVYRLLzEak5OsCsSvg
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FF05B7F9A42AB94BA5C9A0BFF1A7231E@eurprd08.prod.outlook.com>
+        id S2390524AbfKDWKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:23 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39015 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390504AbfKDWKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:20 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iRkY0-0007oR-Jh; Mon, 04 Nov 2019 23:10:04 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DEDDE1C0017;
+        Mon,  4 Nov 2019 23:10:03 +0100 (CET)
+Date:   Mon, 04 Nov 2019 22:10:03 -0000
+From:   "tip-bot2 for Huacai Chen" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] timekeeping/vsyscall: Update VDSO data unconditionally
+Cc:     Huacai Chen <chenhc@lemote.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1571887709-11447-1-git-send-email-chenhc@lemote.com>
+References: <1571887709-11447-1-git-send-email-chenhc@lemote.com>
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8ce3686-02c3-46d5-f1d0-08d7617309df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2019 22:05:01.2578
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OmCL6GU0hkxRxQHtFbF3aTfnoqJ51zsFHFVpQQ6h2x8ugWcHLdaCgGfZr4BiLOVlgTZZ0XH3ce7XptZYGlIlxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0802MB2130
+Message-ID: <157290540350.29376.5969235863179895531.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 10:41:31PM +0000, Suthikulpanit, Suravee wrote:
-> AMD SVM AVIC needs to update APIC backing page mapping before changing
-> APICv mode. Introduce struct kvm_x86_ops.pre_update_apicv_exec_ctrl
-> function hook to be called prior KVM APICv update request to each vcpu.
+The following commit has been merged into the timers/urgent branch of tip:
 
-This again seems to mix up APIC backing page and APIC access page.
+Commit-ID:     52338415cf4d4064ae6b8dd972dadbda841da4fa
+Gitweb:        https://git.kernel.org/tip/52338415cf4d4064ae6b8dd972dadbda841da4fa
+Author:        Huacai Chen <chenhc@lemote.com>
+AuthorDate:    Thu, 24 Oct 2019 11:28:29 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 04 Nov 2019 23:02:53 +01:00
 
-And I must be missing something obvious, but why is it necessary to
-unmap the APIC access page while AVIC is disabled?  Does keeping it
-around stand in the way when working with AVIC disabled?
+timekeeping/vsyscall: Update VDSO data unconditionally
 
-Thanks,
-Roman.
+The update of the VDSO data is depending on __arch_use_vsyscall() returning
+True. This is a leftover from the attempt to map the features of various
+architectures 1:1 into generic code.
 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 1 +
->  arch/x86/kvm/svm.c              | 6 ++++++
->  arch/x86/kvm/x86.c              | 2 ++
->  3 files changed, 9 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 3b94f42..f93d347 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1094,6 +1094,7 @@ struct kvm_x86_ops {
->  	void (*enable_irq_window)(struct kvm_vcpu *vcpu);
->  	void (*update_cr8_intercept)(struct kvm_vcpu *vcpu, int tpr, int irr);
->  	bool (*get_enable_apicv)(struct kvm *kvm);
-> +	void (*pre_update_apicv_exec_ctrl)(struct kvm *kvm, bool activate);
->  	void (*refresh_apicv_exec_ctrl)(struct kvm_vcpu *vcpu);
->  	void (*hwapic_irr_update)(struct kvm_vcpu *vcpu, int max_irr);
->  	void (*hwapic_isr_update)(struct kvm_vcpu *vcpu, int isr);
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 46842a2..21203a6 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -7230,6 +7230,11 @@ static bool svm_need_emulation_on_page_fault(struct kvm_vcpu *vcpu)
->  	return false;
->  }
->  
-> +static void svm_pre_update_apicv_exec_ctrl(struct kvm *kvm, bool activate)
-> +{
-> +	avic_update_access_page(kvm, activate);
-> +}
-> +
->  static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
->  	.cpu_has_kvm_support = has_svm,
->  	.disabled_by_bios = is_disabled,
-> @@ -7307,6 +7312,7 @@ static bool svm_need_emulation_on_page_fault(struct kvm_vcpu *vcpu)
->  	.set_virtual_apic_mode = svm_set_virtual_apic_mode,
->  	.get_enable_apicv = svm_get_enable_apicv,
->  	.refresh_apicv_exec_ctrl = svm_refresh_apicv_exec_ctrl,
-> +	.pre_update_apicv_exec_ctrl = svm_pre_update_apicv_exec_ctrl,
->  	.load_eoi_exitmap = svm_load_eoi_exitmap,
->  	.hwapic_irr_update = svm_hwapic_irr_update,
->  	.hwapic_isr_update = svm_hwapic_isr_update,
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 4fab93e..c09ff78 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7755,6 +7755,8 @@ void kvm_request_apicv_update(struct kvm *kvm, bool activate, ulong bit)
->  	}
->  
->  	trace_kvm_apicv_update_request(activate, bit);
-> +	if (kvm_x86_ops->pre_update_apicv_exec_ctrl)
-> +		kvm_x86_ops->pre_update_apicv_exec_ctrl(kvm, activate);
->  	kvm_make_all_cpus_request(kvm, KVM_REQ_APICV_UPDATE);
->  }
->  EXPORT_SYMBOL_GPL(kvm_request_apicv_update);
-> -- 
-> 1.8.3.1
-> 
+The usage of __arch_use_vsyscall() in the actual vsyscall implementations
+got dropped and replaced by the requirement for the architecture code to
+return U64_MAX if the global clocksource is not usable in the VDSO.
+
+But the __arch_use_vsyscall() check in the update code stayed which causes
+the VDSO data to be stale or invalid when an architecture actually
+implements that function and returns False when the current clocksource is
+not usable in the VDSO.
+
+As a consequence the VDSO implementations of clock_getres(), time(),
+clock_gettime(CLOCK_.*_COARSE) operate on invalid data and return bogus
+information.
+
+Remove the __arch_use_vsyscall() check from the VDSO update function and
+update the VDSO data unconditionally.
+
+[ tglx: Massaged changelog and removed the now useless implementations in
+  	asm-generic/ARM64/MIPS ]
+
+Fixes: 44f57d788e7deecb50 ("timekeeping: Provide a generic update_vsyscall() implementation")
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1571887709-11447-1-git-send-email-chenhc@lemote.com
+---
+ arch/arm64/include/asm/vdso/vsyscall.h |  7 -------
+ arch/mips/include/asm/vdso/vsyscall.h  |  7 -------
+ include/asm-generic/vdso/vsyscall.h    |  7 -------
+ kernel/time/vsyscall.c                 |  9 +++------
+ 4 files changed, 3 insertions(+), 27 deletions(-)
+
+diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
+index 0c731bf..0c20a7c 100644
+--- a/arch/arm64/include/asm/vdso/vsyscall.h
++++ b/arch/arm64/include/asm/vdso/vsyscall.h
+@@ -31,13 +31,6 @@ int __arm64_get_clock_mode(struct timekeeper *tk)
+ #define __arch_get_clock_mode __arm64_get_clock_mode
+ 
+ static __always_inline
+-int __arm64_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return !vdata[CS_HRES_COARSE].clock_mode;
+-}
+-#define __arch_use_vsyscall __arm64_use_vsyscall
+-
+-static __always_inline
+ void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
+ {
+ 	vdata[CS_HRES_COARSE].mask	= VDSO_PRECISION_MASK;
+diff --git a/arch/mips/include/asm/vdso/vsyscall.h b/arch/mips/include/asm/vdso/vsyscall.h
+index 1953147..00d41b9 100644
+--- a/arch/mips/include/asm/vdso/vsyscall.h
++++ b/arch/mips/include/asm/vdso/vsyscall.h
+@@ -28,13 +28,6 @@ int __mips_get_clock_mode(struct timekeeper *tk)
+ }
+ #define __arch_get_clock_mode __mips_get_clock_mode
+ 
+-static __always_inline
+-int __mips_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return (vdata[CS_HRES_COARSE].clock_mode != VDSO_CLOCK_NONE);
+-}
+-#define __arch_use_vsyscall __mips_use_vsyscall
+-
+ /* The asm-generic header needs to be included after the definitions above */
+ #include <asm-generic/vdso/vsyscall.h>
+ 
+diff --git a/include/asm-generic/vdso/vsyscall.h b/include/asm-generic/vdso/vsyscall.h
+index e94b197..ce41032 100644
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -25,13 +25,6 @@ static __always_inline int __arch_get_clock_mode(struct timekeeper *tk)
+ }
+ #endif /* __arch_get_clock_mode */
+ 
+-#ifndef __arch_use_vsyscall
+-static __always_inline int __arch_use_vsyscall(struct vdso_data *vdata)
+-{
+-	return 1;
+-}
+-#endif /* __arch_use_vsyscall */
+-
+ #ifndef __arch_update_vsyscall
+ static __always_inline void __arch_update_vsyscall(struct vdso_data *vdata,
+ 						   struct timekeeper *tk)
+diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
+index 4bc37ac..5ee0f77 100644
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -110,8 +110,7 @@ void update_vsyscall(struct timekeeper *tk)
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+-	if (__arch_use_vsyscall(vdata))
+-		update_vdso_data(vdata, tk);
++	update_vdso_data(vdata, tk);
+ 
+ 	__arch_update_vsyscall(vdata, tk);
+ 
+@@ -124,10 +123,8 @@ void update_vsyscall_tz(void)
+ {
+ 	struct vdso_data *vdata = __arch_get_k_vdso_data();
+ 
+-	if (__arch_use_vsyscall(vdata)) {
+-		vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
+-		vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
+-	}
++	vdata[CS_HRES_COARSE].tz_minuteswest = sys_tz.tz_minuteswest;
++	vdata[CS_HRES_COARSE].tz_dsttime = sys_tz.tz_dsttime;
+ 
+ 	__arch_sync_vdso_data(vdata);
+ }
