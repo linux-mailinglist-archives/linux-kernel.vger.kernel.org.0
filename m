@@ -2,90 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C780DEE486
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8D4EE491
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbfKDQSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:18:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45944 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727838AbfKDQSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:18:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E80B7AB8F;
-        Mon,  4 Nov 2019 16:18:35 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen/events: remove event handling recursion
- detection
-To:     Jan Beulich <jbeulich@suse.com>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-References: <20191104135812.2314-1-jgross@suse.com>
- <40cba9d9-24b0-3141-4ba8-02e03049f1bf@suse.com>
- <acaf58cb-47f2-7e7e-f25d-ff83ae8a8066@suse.com>
- <b1171c0c-7928-d7a1-7bdc-e3f18f67eaac@suse.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <e6b8fcc2-2e2c-60f8-e68c-972cc7951e6b@suse.com>
-Date:   Mon, 4 Nov 2019 17:18:35 +0100
+        id S1729381AbfKDQWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:22:01 -0500
+Received: from david.siemens.de ([192.35.17.14]:47346 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727838AbfKDQWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:22:01 -0500
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id xA4GLSU1016106
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 4 Nov 2019 17:21:29 +0100
+Received: from [139.25.68.37] ([139.25.68.37])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id xA4GKI3G003009;
+        Mon, 4 Nov 2019 17:20:18 +0100
+Subject: Re: [PATCH v2] platform/x86: pmc_atom: Add Siemens SIMATIC IPC227E to
+ critclk_systems DMI table
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+To:     Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Henning Schild <henning.schild@siemens.com>
+References: <c090302a-da38-5764-2a84-399ed6b333f5@siemens.com>
+Message-ID: <16119dad-9597-ecdc-a0e7-e386030659ce@siemens.com>
+Date:   Mon, 4 Nov 2019 17:20:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <b1171c0c-7928-d7a1-7bdc-e3f18f67eaac@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <c090302a-da38-5764-2a84-399ed6b333f5@siemens.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.11.19 16:19, Jan Beulich wrote:
-> On 04.11.2019 16:09, Jürgen Groß wrote:
->> On 04.11.19 15:35, Jan Beulich wrote:
->>> On 04.11.2019 14:58, Juergen Gross wrote:
->>>> __xen_evtchn_do_upcall() contains guards against being called
->>>> recursively. This mechanism was introduced in the early pvops times
->>>> (kernel 2.6.26) when there were still Xen versions around not honoring
->>>> disabled interrupts for sending events to pv guests.
->>>>
->>>> This was changed in Xen 3.0, which is much older than any Xen version
->>>> supported by the kernel, so the recursion detection can be removed.
->>>
->>> Would you mind pointing out which exact change(s) this was(were)?
->>
->> Linux kernel: 229664bee6126e01f8662976a5fe2e79813b77c8
->> Xen: d8263e8dbaf5ef1445bee0662143a0fcb6d43466
+On 04.09.19 08:42, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> Are you sure about the latter, touching only header files underneath
-> xen/, and there mostly public interface ones?
+> The SIMATIC IPC227E uses the PMC clock for on-board components and gets
+> stuck during boot if the clock is disabled. Therefore, add this device
+> to the critical systems list.
+> 
+> Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+> 
+> Changes in v2:
+>  - fixed cut-off subject line (local tooling bug...)
+> 
+> Should go into stable as well, down to 4.19.
 
-No, you are right, this was a false interpretation of mine.
+This one is in 5.4-rc now (as ad0d315b4d4e). Is it also queued somewhere
+for stable kernels? IIRC, it's generally the privilege of the subsystem
+maintainer to propose formally to stable.
+
+I've received reports from users down at 4.14 with the need for it (4.9
+is unaffected). And the same applies to f110d252ae79 ("platform/x86:
+pmc_atom: Add Siemens SIMATIC IPC277E to critclk_systems DMI table").
+
+TIA!
+Jan
 
 > 
->>> It had always been my understanding that the recursion detection
->>> was mainly to guard against drivers re-enabling interrupts
->>> transiently in their handlers (which in turn may no longer be an
->>> issue in modern Linux kernels).
->>
->> This would have been doable with a simple bool. The more complex
->> xchg based logic was IMO for recursion detection at any point.
+>  drivers/platform/x86/pmc_atom.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Well, the respective XenoLinux c/s 13098 has no mention of this, i.e.
-> it simply leaves open what the actual reason was:
+> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+> index aa53648a2214..9aca5e7ce6d0 100644
+> --- a/drivers/platform/x86/pmc_atom.c
+> +++ b/drivers/platform/x86/pmc_atom.c
+> @@ -415,6 +415,13 @@ static const struct dmi_system_id critclk_systems[] = {
+>  			DMI_MATCH(DMI_BOARD_NAME, "CB6363"),
+>  		},
+>  	},
+> +	{
+> +		.ident = "SIMATIC IPC227E",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
+> +		},
+> +	},
+>  	{ /*sentinel*/ }
+>  };
+>  
 > 
-> "[LINUX] Disallow nested event delivery.
-> 
->   This eliminates the risk of overflowing the kernel stack and is a
->   reasonable policy given that we have no concept of priorities among
->   event sources."
 
-For XenoLinux it makes at least a little bit sense, as interrupts
-were enabled during calls of some handlers AFAIK. The complexity is
-rather strange, though, as the bool would have been much easier to
-understand.
-
-I'll adapt the commit message.
-
-
-Juergen
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
