@@ -2,103 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D877EE133
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E3DEE129
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbfKDNbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:31:03 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27212 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728783AbfKDNax (ORCPT
+        id S1728923AbfKDNan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:30:43 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:45383 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727236AbfKDNan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:30:53 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA4DHO6w008716;
-        Mon, 4 Nov 2019 14:30:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=HvQIh1/ibvktD1tZoDncL55wuWS1ZeX9ziVeLdmOO2Q=;
- b=G+0uRnUZXqEzuJC6YvVUy9xMCU77kKVy9DPCscoEZJ/uTQAp8Nuy4oE9GIieVN3PZ4x+
- tanqLkuqMwWFnva/v87XrD9QQ8PZo/UEWFKvrz65wRNpWb8d5PyeOsExwyRov/tuRQRQ
- Bq5cevaFHYrEZqTKObUd18OHCSKaRQlMZxWkJF/NKN+Amo34BFE/V3yG1HhVCbJ1svfl
- W1K6+DhlFiWbfDuNaOtuTAivIrAWv7ewfdRUeDsXaKtGkfQBE+G6n+XqWVlEuL/y3vJm
- YH6FPR+LB/ULMVDPio66uIktYsK97+ToLTytZQRH/KnYbdxE5VGd4wqZ7mEWKebxRy4F FA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2w1054hnty-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Nov 2019 14:30:27 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9044010003E;
-        Mon,  4 Nov 2019 14:30:26 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8221D2D379E;
-        Mon,  4 Nov 2019 14:30:26 +0100 (CET)
-Received: from localhost (10.75.127.51) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 4 Nov 2019 14:30:25
- +0100
-From:   Pascal Paillet <p.paillet@st.com>
-To:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
-        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <p.paillet@st.com>, <david.hernandezsanchez@st.com>,
-        <horms+renesas@verge.net.au>, <wsa+renesas@sang-engineering.com>,
-        <linux-pm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
+        Mon, 4 Nov 2019 08:30:43 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iRcQv-0005Lj-UU; Mon, 04 Nov 2019 14:30:13 +0100
+To:     Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: [PATCH v4 03/17] arm64: kvm: stop treating register x18 as  caller save
+X-PHP-Originating-Script: 0:main.inc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 04 Nov 2019 14:39:34 +0109
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <dave.martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <clang-built-linux@googlegroups.com>,
+        <kernel-hardening@lists.openwall.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 5/5] thermal: stm32: fix low threshold interrupt flood
-Date:   Mon, 4 Nov 2019 14:30:20 +0100
-Message-ID: <20191104133020.8820-6-p.paillet@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191104133020.8820-1-p.paillet@st.com>
-References: <20191104133020.8820-1-p.paillet@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-11-04_08:2019-11-04,2019-11-04 signatures=0
+In-Reply-To: <79e8f958cbde52a3d90aec24dd4638d9@www.loen.fr>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com>
+ <20191101221150.116536-4-samitolvanen@google.com>
+ <79e8f958cbde52a3d90aec24dd4638d9@www.loen.fr>
+Message-ID: <63921b46250e2eb8eb9fcf0f8ec93b0c@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: samitolvanen@google.com, will@kernel.org, catalin.marinas@arm.com, rostedt@goodmis.org, mhiramat@kernel.org, ard.biesheuvel@linaro.org, dave.martin@arm.com, keescook@chromium.org, labbott@redhat.com, mark.rutland@arm.com, ndesaulniers@google.com, jannh@google.com, miguel.ojeda.sandonis@gmail.com, yamada.masahiro@socionext.com, clang-built-linux@googlegroups.com, kernel-hardening@lists.openwall.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the STM32 thermal peripheral, it is not possible to dump the
-temperature that has caused the interrupt.
-When the temperature reaches the low threshold, we generally read
-a temperature that is a little bit higher than the low threshold.
-This maybe due to sampling precision, and also because the CPU becomes
-hotter when it quits WFI mode.
-In that case, the framework does not change the trip points. This leads
-to a lot of low threshold interrupts.
+On 2019-11-04 12:13, Marc Zyngier wrote:
+> Hi Sami,
+>
+> On 2019-11-01 23:20, Sami Tolvanen wrote:
+>> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>
+>> In preparation of reserving x18, stop treating it as caller save in
+>> the KVM guest entry/exit code. Currently, the code assumes there is
+>> no need to preserve it for the host, given that it would have been
+>> assumed clobbered anyway by the function call to __guest_enter().
+>> Instead, preserve its value and restore it upon return.
+>>
+>> Link: https://patchwork.kernel.org/patch/9836891/
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> [Sami: updated commit message, switched from x18 to x29 for the 
+>> guest
+>> context]
+>> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> If you intend for this to be merged via the arm64 tree, please add my
+>
+> Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
-The fix is to set the low threshold value 0.5 degrees Celsius
-below the actual request.
+Erm... Muscle memory strikes again. Please ignore the above and use the
+following instead:
 
-The problem is not so frequent with the high threshold and it would
-no be a good idea to set the threshold value higher than the request.
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-Signed-off-by: Pascal Paillet <p.paillet@st.com>
----
- drivers/thermal/st/stm_thermal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index 9986716b17c1..f7168762fbde 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -324,7 +324,8 @@ static int stm_thermal_set_trips(void *data, int low, int high)
- 
- 	if (low > -INT_MAX) {
- 		sensor->low_temp_enabled = 1;
--		ret = stm_thermal_calculate_threshold(sensor, low, &th);
-+		/* add 0.5 of hysteresis due to measurement error */
-+		ret = stm_thermal_calculate_threshold(sensor, low - 500, &th);
- 		if (ret)
- 			return ret;
- 
+         M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
