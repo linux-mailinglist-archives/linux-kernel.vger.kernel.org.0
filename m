@@ -2,66 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB82EE0BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D982EE0C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfKDNLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:11:45 -0500
-Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:49452 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727236AbfKDNLp (ORCPT
+        id S1729118AbfKDNMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:12:07 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:48491 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729025AbfKDNMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:11:45 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id AA5684DBD;
-        Mon,  4 Nov 2019 13:11:43 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2693:2895:3138:3139:3140:3141:3142:3352:3622:3743:3865:3866:3867:3870:3871:3872:3874:5007:6119:6261:6742:7875:9108:10004:10400:10848:10967:11026:11232:11658:11914:12043:12297:12663:12740:12760:12895:13069:13311:13357:13439:13618:14181:14659:14721:21080:21627:30054:30070:30090:30091,0,RBL:146.247.46.6:@goodmis.org:.lbl8.mailshell.net-62.14.41.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: bat51_e8cae9c64d2a
-X-Filterd-Recvd-Size: 1974
-Received: from grimm.local.home (unknown [146.247.46.6])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 Nov 2019 13:11:39 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 08:11:36 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
-        James.Bottomley@HansenPartnership.com, james.morse@arm.com,
-        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
-        linux-parisc@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 1/8] ftrace: add ftrace_init_nop()
-Message-ID: <20191104081136.645e9b1a@grimm.local.home>
-In-Reply-To: <daad0785-a33f-3cfb-cf0f-657b6c677257@arm.com>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
-        <20191029165832.33606-2-mark.rutland@arm.com>
-        <daad0785-a33f-3cfb-cf0f-657b6c677257@arm.com>
-X-Mailer: Claws Mail 3.17.4git49 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 4 Nov 2019 08:12:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572873123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=mEeFwMQ/ppa/j4TsLmopSIuCw8suIuDki26NbkIs/yI=;
+        b=YjWu5/BIaQJpbFNOrj+QtUOYfMaLAeGDFIon2L4mh6Lwg7H6Jl0v9z7EpyLNfNGd7igfwB
+        eVDYUx6zmDQ/GzLn1HgTWQbifPSz04EC1d2aCPyg8Z7xIZn9St8giW3Rtxa0yySI3mQX6h
+        eDV+B5wZCQ7vGoeVbwp+l6FGPCmp504=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-42-lGfyi6r-P_C3gnV3fPRSCQ-1; Mon, 04 Nov 2019 08:12:01 -0500
+Received: by mail-wr1-f69.google.com with SMTP id v6so1097241wrm.18
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 05:12:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w29442xfvO7j2EoGslKoTV7tRbFcx9AseEe7FfaZKW8=;
+        b=JS3WxRrCnRSMiIdwG6xZ+NCfnVx+IECIS21TtS4XIIMEQDkgHoq9ZMqoo4SgoqlbLH
+         TSbrRU0cJwuVu6wqvniIze/lQD70OvfR+FqWfxwi7DxPT1+M10xtbUFmRsOGbHRXBxRd
+         c65jlFpjRIDVadTEPvwWSorA6LkK2FM5dRkHLgUMSAB5bRE4li2CfTDq9QhKIU//KYQc
+         /KGBAnDgc/tmpqANCPu8k6QXcAZvAkufscgSddINcNWsRi1zfx8UWgIkGbMg3ZZ1yvxB
+         NvqBp3npXjIu84Hrd5+/mQAjACrmZGoORx2GXh6ZQXRbPWttLCWVcK3ryLk+gHMLqPMv
+         G8DQ==
+X-Gm-Message-State: APjAAAWeB2EXLtY9Pq0sCeVzVGP1bhxqdB7iAHbIXekphlKU3MgZzdVL
+        1PBAutWLflz5SV8OV8SRSNcR0ZfIncDhuO9IcfDTqn6jOJ75cr3YVPhhSkyMmvjz6SlIuqct9GD
+        GYRX4XejYGC9Q1Ao1zmkV5We+
+X-Received: by 2002:a7b:cae2:: with SMTP id t2mr5467098wml.161.1572873119559;
+        Mon, 04 Nov 2019 05:11:59 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxwizl7SZT7hN7psw0/wzgb6PYDjICq1xPSIvHIRgo+xuWpaqRzauG4APe//qiXTTIEVhAb5g==
+X-Received: by 2002:a7b:cae2:: with SMTP id t2mr5467078wml.161.1572873119326;
+        Mon, 04 Nov 2019 05:11:59 -0800 (PST)
+Received: from mcroce-redhat.mxp.redhat.com (nat-pool-mxp-t.redhat.com. [149.6.153.186])
+        by smtp.gmail.com with ESMTPSA id q2sm15309813wmq.30.2019.11.04.05.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 05:11:58 -0800 (PST)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kbuild: Add make dir-pkg build option
+Date:   Mon,  4 Nov 2019 14:11:44 +0100
+Message-Id: <20191104131144.14333-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MC-Unique: lGfyi6r-P_C3gnV3fPRSCQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Nov 2019 17:49:00 +0530
-Amit Daniel Kachhap <amit.kachhap@arm.com> wrote:
+Add a 'dir-pkg' target which just creates the same directory structures
+as in tar-pkg, but doesn't package anything.
+Useful when the user wants to copy the kernel tree on a machine using
+ssh, rsync or whatever.
 
-> Now that ftrace_init_nop is also an arch implemented function so it may 
-> be added in Documentation/trace/ftrace-design.rst along with 
-> ftrace_make_nop.
-> In general also, adding some description about patchable-function-entry
-> in kernel Documentation will be useful.
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ scripts/Makefile.package | 3 ++-
+ scripts/package/buildtar | 8 ++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-I think this part is outside the scope of this patch set. Honestly, I
-need to chisel out some time to rewrite the ftrace-design document, as
-that's been long needed. But that can come at a later time. I'm
-currently rewriting some of it now, so it will be best to not waste
-effort to update a document that will soon become stale. ;-)
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index 56eadcc48d46..36600ad1d5e6 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -103,7 +103,7 @@ snap-pkg:
+=20
+ # tarball targets
+ # ------------------------------------------------------------------------=
+---
+-tar-pkgs :=3D tar-pkg targz-pkg tarbz2-pkg tarxz-pkg
++tar-pkgs :=3D dir-pkg tar-pkg targz-pkg tarbz2-pkg tarxz-pkg
+ PHONY +=3D $(tar-pkgs)
+ $(tar-pkgs):
+ =09$(MAKE) -f $(srctree)/Makefile
+@@ -147,6 +147,7 @@ help:
+ =09@echo '  deb-pkg             - Build both source and binary deb kernel =
+packages'
+ =09@echo '  bindeb-pkg          - Build only the binary kernel deb package=
+'
+ =09@echo '  snap-pkg            - Build only the binary kernel snap packag=
+e (will connect to external hosts)'
++=09@echo '  dir-pkg             - Build the kernel as a plain directory st=
+ructure'
+ =09@echo '  tar-pkg             - Build the kernel as an uncompressed tarb=
+all'
+ =09@echo '  targz-pkg           - Build the kernel as a gzip compressed ta=
+rball'
+ =09@echo '  tarbz2-pkg          - Build the kernel as a bzip2 compressed t=
+arball'
+diff --git a/scripts/package/buildtar b/scripts/package/buildtar
+index 2f66c81e4021..77c7caefede1 100755
+--- a/scripts/package/buildtar
++++ b/scripts/package/buildtar
+@@ -2,7 +2,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+=20
+ #
+-# buildtar 0.0.4
++# buildtar 0.0.5
+ #
+ # (C) 2004-2006 by Jan-Benedict Glaw <jbglaw@lug-owl.de>
+ #
+@@ -24,7 +24,7 @@ tarball=3D"${objtree}/linux-${KERNELRELEASE}-${ARCH}.tar"
+ # Figure out how to compress, if requested at all
+ #
+ case "${1}" in
+-=09tar-pkg)
++=09dir-pkg|tar-pkg)
+ =09=09opts=3D
+ =09=09;;
+ =09targz-pkg)
+@@ -125,6 +125,10 @@ case "${ARCH}" in
+ =09=09;;
+ esac
+=20
++if [ "${1}" =3D dir-pkg ]; then
++=09echo "Kernel tree successfully created in $tmpdir"
++=09exit 0
++fi
+=20
+ #
+ # Create the tarball
+--=20
+2.23.0
 
--- Steve
