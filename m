@@ -2,105 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2171ED94B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC92ED969
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbfKDG5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:57:14 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:54832 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbfKDG5N (ORCPT
+        id S1728544AbfKDG54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:57:56 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46472 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKDG54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:57:13 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-74-5dbfcbc69d05
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id AD.CB.08102.6CBCFBD5; Mon,  4 Nov 2019 07:57:11 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Mon, 4 Nov 2019 07:57:00 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
-Thread-Topic: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
-Thread-Index: AQHVkKp+hdqKw9vEbUql9O/haZZyiad5+mgAgACNpoA=
-Date:   Mon, 4 Nov 2019 06:57:00 +0000
-Message-ID: <c06725c3dd34118a324907137758d8b85b3d4043.camel@fi.rohmeurope.com>
-References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-         <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-         <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
-In-Reply-To: <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <419502E125313145ACFAD76CDE83E291@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0wUVxjNnZmduayOGRcoV2qNTnwE26IkNlyFGBNpMjSmEeWXcYODO2UJ
-        7C6dWQzQxPJHLIi6TSHIymOD8pQo4BtFyPKSoaHdgoLtKl2htD6iaRQMldruMCr8uiffOec7
-        58d3IWkK0JEw3e6UZLuYydNGqqvhdeun/YOd5s0F9SQ+67vD4KPP6hj8slKlcGlgksbVPUMG
-        fGzwkgH/drmFwuPTvQDPjHxH4JK5egL/XfzAgC9WzwE83F5B48tPzwPcd26ExrWjPgJX1N6m
-        sE/9HN9Xe2l8pKOHwW/utlI7woXmqmYgPB87wghVzd8I1933GaGtqZAW/Hdv0kL/2FVCKKua
-        JYSGc68Y4UXbqt3GfUviU0Xnob3pafZN2w8ssT7sOw6yipflBBpuMPnAzxaBEIi4LehXVQVF
-        wAhN3B2AWvwFhEaYuH6AOmbyigCENBePiu4x2jiM24q6b1dQmp7kKiBqfDBk0IhQLhF1zqlv
-        RV+gEk8XqeNtSO1W5zUUtxaNuM5QGma5L1Hd8BWDHvwEoN7ph/PmEC4JNf7unS8BuI9QYf6z
-        eUxyEaht6pVBb82hszd/InUcjh5NvHk751HHbIDSSpNcFLrQvkm37kCnu0cpHa9BJccCjN5h
-        ORoon6Rc4AP3ogT3gtu9yO1e5HYvcnuAoQkgm5iemSY6pZhoWcqOlh1WW/A56LC1Af1kXl4D
-        /3kTvYCAwAtWQIIPZ2tGb5lNy1IdllyrqFhT5OxMSfECBEk+jPWd6jCbWIuYmyfJjnfUh5Di
-        I9gNge/NJk7LypCkLEl+x66EkEesonaaTctlKU3K+So907lAEzBEW26MDFMku0WSxWynNUW7
-        jxQleCAatTSYS2h2VskSbcGpblXBx9D1qLKGhD2VtTWkibI77FJkBBs3EJRymtSabX8f9BhE
-        QMCHsp9oi5YG/837PY+DEUQwYtfELS3CKS5QkflgZ3npIeu4ZW7gQOEPSY1xM4lI2fPLOOWr
-        N/4VW7AqZ7jYE1s2W12+cd3zg56xPKl0d/lqT8LACcG/5h/zU//s0YQ/YpJ2Ev/GJmecOvlZ
-        wuHkqKZd0/u76n5+zZ+I3uJyRZ3+er1turjvR/XP8bLDGXHb/K6ShikiVUz+drUSZ1kbz1OK
-        VYzZSMqK+D9zqzqy9AMAAA==
+        Mon, 4 Nov 2019 01:57:56 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 193so10221199pfc.13;
+        Sun, 03 Nov 2019 22:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5e303ed1MF4p7zVkraxYDUxrGD23hQsLGv9jCmd4szc=;
+        b=LNARHNUHLOP+RJTqasVXtMjn6XIvB9yyy445v5o5VpGuhGCOIxrcDD9oHRF4vQbWD5
+         OS6d0rgPERnaAK30Pd4WTdTu3J7qWtxHfFeosfzLSOyJP8FhWl9U7oI8HqTzvt0x6Bax
+         oJXeNi6gzv7uhY5k68AYKsjNmky3jiBmhk3FcffSHIoRLi9TWkOE3gGD7NDqupA3/3fe
+         WU/QCdn4qB5oFC3uu5UMXojl08lWKuVxVXP+6X/xjO/GzVWt4v1DTf6zVqDvTRcSYAWf
+         Hy3QOC609QswdAlhQ9w2LkEHv0Lca9q8qzeU+VOzgEplB/ZekO8h/OqWgka2kqculkMB
+         YzVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5e303ed1MF4p7zVkraxYDUxrGD23hQsLGv9jCmd4szc=;
+        b=gk2R7NEpgFDAVUp0Bu9lTCDjf604N4fdlanfJY0yhmZ12u4ia975b175MS3QVobyns
+         Ikz3mBLVTMfTri4vyicZqZBo702UxKCVSnUCOd63zH0yGjRhm/HejIYCN8JxxjCNhCkw
+         pz5BtjU9i6VRa0wnJArAECE1HXlei4NndqVJMkqShhugawVPb6AzbbF6sXVS37mKmzbs
+         +FskVl18+EiiTLKDYuTwgYhheoG3fmZ2+397lFRhBoEnTkG93LIVilGHzY4tb4IyI/fs
+         YPh8eFZN/ixstBhchYMxlDCE64zmy6T9b8CVOTA9/2584ALgUHDd7/me+ectArmBN5mE
+         2o+w==
+X-Gm-Message-State: APjAAAV68YDqZFBsn8zaUO4xb/ZNv6AruF3lUcgm1CQ3KjGuIfRuMkyl
+        bGu8vbQQH/tCXwrUydZHv4a5+/b0
+X-Google-Smtp-Source: APXvYqxKyigsdF6rPBjZQuLRna36jaAVhqAT5919gQ7ng0TPscOhYbvhrnxCplXPxVgsS6CkiJckow==
+X-Received: by 2002:a62:18d8:: with SMTP id 207mr19844761pfy.15.1572850675242;
+        Sun, 03 Nov 2019 22:57:55 -0800 (PST)
+Received: from hyd1358.marvell.com ([115.113.156.2])
+        by smtp.googlemail.com with ESMTPSA id x9sm19154497pje.27.2019.11.03.22.57.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 03 Nov 2019 22:57:54 -0800 (PST)
+From:   sundeep.lkml@gmail.com
+To:     helgaas@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, sgoutham@marvell.com,
+        Subbaraya Sundeep <sbhatta@marvell.com>
+Subject: [v2 PATCH] PCI: Do not use bus number zero from EA capability
+Date:   Mon,  4 Nov 2019 12:27:44 +0530
+Message-Id: <1572850664-9861-1-git-send-email-sundeep.lkml@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gTGludXMsDQoNCk9uIFN1biwgMjAxOS0xMS0wMyBhdCAyMzozMCArMDEwMCwgTGludXMg
-V2FsbGVpaiB3cm90ZToNCj4gSGkgTWF0dGkhDQo+IA0KPiBHb29kIGluaXRpYXRpdmUgKGFuZCBJ
-IHdpbGwgc2VlIGEgdG9uIG9mIGphbml0b3JpYWwgcGF0Y2hlcyBhcyBhDQo+IHJlc3VsdCBvZiB0
-aGlzLi4uKQ0KDQpZZXAuIEkgdGhpbmsgSSBtaWdodCBwdWxsIHRoaXMgY2hhbmdlIG91dCBvZiB0
-aGUgUkZDIGFuZCBzZW5kIGl0DQpzZXBhcmF0ZWx5LiBJIGNhbiBhbHNvIGRvIHNvbWUgY29udmVy
-c2lvbnMgZm9yIGV4aXN0aW5nIGRyaXZlcnMgLSBidXQgSQ0Kd29uJ3QgcHJvYmFibHkgYmUgYWJs
-ZSB0byBkbyBhbGwgb2YgdGhlIGRyaXZlcnMuIEkgc2VlIG5vIHdheSBvZiBkb2luZw0KYW55IHNl
-YXJjaCBhbmQgcmVwbGFjZSBzY3JpcHRpbmcgaGVyZSAtIHRoaXMgY29udmVyc2lvbiBpcyBnb2lu
-ZyB0byBiZQ0KbWFudWFsIHdvcmsgOi8NCg0KPiANCj4gT24gRnJpLCBOb3YgMSwgMjAxOSBhdCAx
-Mjo1MCBQTSBNYXR0aSBWYWl0dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3Bl
-LmNvbT4gd3JvdGU6DQo+IA0KPiA+IEF0IGxlYXN0IGZvciBtZSBpdCBpcyBkaWZmaWN1bHQgdG8g
-cmVtZW1iZXIgdGhlIG1lYW5pbmcgb2YgR1BJTw0KPiA+IGRpcmVjdGlvbiB2YWx1ZXMuIERlZmlu
-ZSBHUElPX0lOIGFuZCBHUElPX09VVCBzbyB0aGF0IG9jY2FzaW9uYWwNCj4gPiBHUElPIGNvbnRy
-aWJ1dG9ycyB3b3VsZCBub3QgbmVlZCB0byBhbHdheXMgY2hlY2sgdGhlIG1lYW5pbmcgb2YNCj4g
-PiBoYXJkIGNvZGVkIHZhbHVlcyAxIGFuZCAwLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1h
-dHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiAoLi4u
-KQ0KPiA+ICsjZGVmaW5lIEdQSU9fSU4gICAgICAgICAgICAgICAgMQ0KPiA+ICsjZGVmaW5lIEdQ
-SU9fT1VUICAgICAgIDANCj4gDQo+IFBsZWFzZSBzcGVsbCBpdCBvdXQgb3IgcGVvcGxlIHdpbGwg
-YmUgY29uZnVzZWQ6DQo+IA0KPiBHUElPX0xJTkVfRElSRUNUSU9OX0lODQo+IEdQSU9fTElORV9E
-SVJFQ1RJT05fT1VUDQoNClJpZ2h0LiBCZXNpZGVzIHRoZSAwRGF5IHRlc3Qgc3VpdGUgZGlkIGFs
-cmVhZHkgc3BvdCBhIGZldyByZWRlZmluaXRpb24NCnByb2JsZW1zIHdoZW4gc29tZSBkcml2ZXJz
-IGRvIGRlZmluZSBHUElPX0lOIGFuZC9vciBHUElPX09VVC4uLiBTbyBJJ2xsDQpjaGFuZ2UgdGhl
-IGRlZmluZXMgdG8gd2hhdCB5b3Ugc3VnZ2VzdCBoZXJlLg0KDQpCciwNCglNYXR0aSBWYWl0dGlu
-ZW4NCg==
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+
+As per the spec, "Enhanced Allocation (EA) for Memory
+and I/O Resources" ECN, approved 23 October 2014,
+sec 6.9.1.2, fixed bus numbers of a bridge must be zero
+when no function that uses EA is located behind it.
+Hence assign bus numbers normally instead of assigning
+zeroes from EA capability. Failing to do this and using
+zeroes from EA would make the bridges non-functional.
+
+Fixes: '2dbce5901179 ("PCI: Assign bus numbers present in
+EA capability for bridges")'
+Signed-off-by: Subbaraya Sundeep <sbhatta@marvell.com>
+Cc: stable@vger.kernel.org	# v5.2+
+---
+ drivers/pci/probe.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 3d5271a..116b276 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1090,27 +1090,28 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
+  * @sub: updated with subordinate bus number from EA
+  *
+  * If @dev is a bridge with EA capability, update @sec and @sub with
+- * fixed bus numbers from the capability and return true.  Otherwise,
+- * return false.
++ * fixed bus numbers from the capability. Otherwise @sec and @sub
++ * will be zeroed.
+  */
+-static bool pci_ea_fixed_busnrs(struct pci_dev *dev, u8 *sec, u8 *sub)
++static void pci_ea_fixed_busnrs(struct pci_dev *dev, u8 *sec, u8 *sub)
+ {
+ 	int ea, offset;
+ 	u32 dw;
+ 
++	*sec = *sub = 0;
++
+ 	if (dev->hdr_type != PCI_HEADER_TYPE_BRIDGE)
+-		return false;
++		return;
+ 
+ 	/* find PCI EA capability in list */
+ 	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
+ 	if (!ea)
+-		return false;
++		return;
+ 
+ 	offset = ea + PCI_EA_FIRST_ENT;
+ 	pci_read_config_dword(dev, offset, &dw);
+ 	*sec =  dw & PCI_EA_SEC_BUS_MASK;
+ 	*sub = (dw & PCI_EA_SUB_BUS_MASK) >> PCI_EA_SUB_BUS_SHIFT;
+-	return true;
+ }
+ 
+ /*
+@@ -1146,7 +1147,6 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
+ 	u16 bctl;
+ 	u8 primary, secondary, subordinate;
+ 	int broken = 0;
+-	bool fixed_buses;
+ 	u8 fixed_sec, fixed_sub;
+ 	int next_busnr;
+ 
+@@ -1249,11 +1249,12 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
+ 		pci_write_config_word(dev, PCI_STATUS, 0xffff);
+ 
+ 		/* Read bus numbers from EA Capability (if present) */
+-		fixed_buses = pci_ea_fixed_busnrs(dev, &fixed_sec, &fixed_sub);
+-		if (fixed_buses)
++		pci_ea_fixed_busnrs(dev, &fixed_sec, &fixed_sub);
++
++		next_busnr = max + 1;
++		/* Use secondary bus number in EA */
++		if (fixed_sec)
+ 			next_busnr = fixed_sec;
+-		else
+-			next_busnr = max + 1;
+ 
+ 		/*
+ 		 * Prevent assigning a bus number that already exists.
+@@ -1331,7 +1332,7 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
+ 		 * If fixed subordinate bus number exists from EA
+ 		 * capability then use it.
+ 		 */
+-		if (fixed_buses)
++		if (fixed_sub)
+ 			max = fixed_sub;
+ 		pci_bus_update_busn_res_end(child, max);
+ 		pci_write_config_byte(dev, PCI_SUBORDINATE_BUS, max);
+-- 
+2.7.4
+
