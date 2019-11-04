@@ -2,99 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 922D9EDB5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248E8EDBA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 10:24:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfKDJPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 04:15:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:48888 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfKDJPD (ORCPT
+        id S1728064AbfKDJYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 04:24:14 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:47573 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbfKDJYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 04:15:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA49EF8h131247;
-        Mon, 4 Nov 2019 09:14:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=hE/jxSBVe+1FqR4NlJp5P3S1KuZxeNyQgypPmuBvD4o=;
- b=WUeVPs72wtXFQ1HcHu3qy0rYFoCPaezVIe7bcgpuMZ0sDh+c9otoOCrZO22gd6vJ3KqC
- U7X6+lt8vRG24o0nexMr46cxs7WBHYuqvkp+sX8AreJwg2oEdgLnmrQtJuqDvIMYawpY
- DJrNqDW02f2f8qMSUbe48as1bKRRvtRlScfhzvmjoP5IqOTUa9YavScq9fPlFDZBAvmF
- roEoZPDH20kh4JKBpx5NkWOoTDdczNoFXdDlklv7tWECytFtfNYi+F4+hn6s2oui9vLX
- iMtIxqBlcYvZMdaA5FittRwSR5OR/Rkm04U7MeF0G9vMArgj4lZNT+nwniASI/ugOEv8 rw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2w117tnwxf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 09:14:27 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA49EGTK147171;
-        Mon, 4 Nov 2019 09:14:26 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2w1kxm1895-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Nov 2019 09:14:26 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA49CxRu010162;
-        Mon, 4 Nov 2019 09:13:07 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Nov 2019 01:12:58 -0800
-Date:   Mon, 4 Nov 2019 12:12:52 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] locking/lockdep: update the comment for __lock_release()
-Message-ID: <20191104091252.GA31509@mwanda>
+        Mon, 4 Nov 2019 04:24:14 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4766n63ZTJz1rfM7;
+        Mon,  4 Nov 2019 10:24:10 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4766n635jhz1qqkT;
+        Mon,  4 Nov 2019 10:24:10 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id lWokg1vpsxzD; Mon,  4 Nov 2019 10:24:09 +0100 (CET)
+X-Auth-Info: 6SEblH5duY4H5FnCc2Lxk/wUoobqaES8TSy+g3b5acc=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon,  4 Nov 2019 10:24:09 +0100 (CET)
+Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Adam Ford <aford173@gmail.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190302141704.32547-1-marex@denx.de>
+ <20191101204801.16328-1-TheSven73@gmail.com> <20191104070116.GM57214@dtor-ws>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <f4390226-055b-3667-e156-78695ae911e5@denx.de>
+Date:   Mon, 4 Nov 2019 10:13:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911040092
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911040092
+In-Reply-To: <20191104070116.GM57214@dtor-ws>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes "to the list" to "from the list" and also deletes the
-obsolete comment about the "@nested" argument.  The "nested" argument
-was removed in commit 5facae4f3549 ("locking/lockdep: Remove unused
-@nested argument from lock_release()").
+On 11/4/19 8:01 AM, Dmitry Torokhov wrote:
+> Hi Sven,
+> 
+> On Fri, Nov 01, 2019 at 04:48:01PM -0400, Sven Van Asbroeck wrote:
+>> Dmitry / Marek,
+>>
+>> There have been two attempts to add ILI2117 touch controller support.
+>> I was about to add a third, but luckily I checked the mailing list
+>> before writing any code :)
+>>
+>> Adding this support would clearly be beneficial for the common good.
+>> What can we do to get this in motion again?
+>>
+>> Last time I checked, Marek posted a patch which added the 2117, but Dmitry
+>> objected, because the code became too unwieldy. Dmitry then posted a cleanup
+>> patch, which did not work for Marek. So everything came to a halt.
+>> See:
+>> https://patchwork.kernel.org/patch/10836651/
+>> https://www.spinics.net/lists/linux-input/msg62670.html
+>>
+>> Dmitry, would you perhaps be willing to accept Marek's patch, and perform the
+>> cleanup later?
+>>
+>> Marek, would you perhaps be willing to invest some time to debug Dmitry's
+>> cleanup patch?
+>>
+>> On my end, I've reviewed Dmitry's patch and it looks mostly ok. I saw one
+>> difference with ILI210X which could explain Marek's results, but I can't be
+>> sure - because I could not locate the 210X's register layout on the web.
+>>
+>> In Dmitry's patch, we see:
+>>
+>> 	touch = ili210x_report_events(priv, touchdata);
+>> 	if (touch || chip->continue_polling(touchdata))
+>> 		schedule_delayed_work(&priv->dwork,
+>> 				      msecs_to_jiffies(priv->poll_period));
+>>
+>> but this is not exactly equivalent to the original. Because in the original,
+>> the 210X's decision to kick off delayed work is completely independent of
+>> the value of touch.
+> 
+> No, it is not independent really. Bits 0 and 1 in the first byte
+> correspond to touches with first and 2nd finger, so checking for touch
+> in addition to 0xf3 mask is not incorrect.
+> 
+> Can you please tell me what device you have? Do the patches work for
+> you?
+> 
+> Marek, sorry for letting the patches linger. Can you please tell me what
+> touch controller did you test with that failed for you?
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- kernel/locking/lockdep.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+See Message-ID <20190917032842.GL237523@dtor-ws> . I tested the ILI2117
+with these two patches and it works. With the additional two patches
+from you on top, it failed, unless I reverted:
+Input: ili210x - define and use chip operations structure
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 8123518f9045..32282e7112d3 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -4208,11 +4208,9 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- }
- 
- /*
-- * Remove the lock to the list of currently held locks - this gets
-+ * Remove the lock from the list of currently held locks - this gets
-  * called on mutex_unlock()/spin_unlock*() (or on a failed
-  * mutex_lock_interruptible()).
-- *
-- * @nested is an hysterical artifact, needs a tree wide cleanup.
-  */
- static int
- __lock_release(struct lockdep_map *lock, unsigned long ip)
--- 
-2.20.1
+> I think I see at
+> least one issue in ili251x_read_touch_data() - the check whether we
+> should read the second part of the packet should check if data[0] == 2,
+> not 0.
 
+But that's not a problem of this particular patch, so maybe this patch
+can finally be applied and then we can debug the subsequent patches ?
