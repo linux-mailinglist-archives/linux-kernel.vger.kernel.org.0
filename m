@@ -2,133 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27FB4EE494
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 918ACEE498
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfKDQXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:23:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728351AbfKDQXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:23:46 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BF922089C;
-        Mon,  4 Nov 2019 16:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572884625;
-        bh=P2/hAu6NNY+cjTFhjvZ4bPAmXxxRjGf1KyyYpDXKzSA=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=s/rTSMP7Roq4fVQZaSrLiaBxNurgYto8bR1HNyD6jophzl/s9U18Bbd+Bk9gA6aT4
-         /OQryltJXB8bd3HxxomMbpo7Tmab4aDQosybNQ3UKTvdAHBU9FQI6K/u3gkD9MryQN
-         KVPF6v9BrHMP4wDJqLlJYFiBNmnvwjmh4ByVoqqA=
-Date:   Mon, 4 Nov 2019 16:23:39 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        bjorn.andersson@linaro.org, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCHv7 0/3] QCOM smmu-500 wait-for-safe handling for sdm845
-Message-ID: <20191104162339.GD24909@willie-the-truck>
-References: <cover.1568966170.git.saiprakash.ranjan@codeaurora.org>
- <20191101163136.GC3603@willie-the-truck>
- <af7e9a14ae7512665f0cae32e08c8b06@codeaurora.org>
- <20191101172508.GB3983@willie-the-truck>
- <119d4bcf5989d1aa0686fd674c6a3370@codeaurora.org>
- <20191104051925.GC5299@hector.lan>
- <20191104151506.GB24909@willie-the-truck>
+        id S1729431AbfKDQY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:24:27 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52526 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729122AbfKDQY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:24:26 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA4GOJYc048603;
+        Mon, 4 Nov 2019 10:24:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572884659;
+        bh=h7fAAmgCYgA9BJLRQcWv51AQbcBIhG2REXp2EloKlLk=;
+        h=From:To:CC:Subject:Date;
+        b=of2Rqi1epxBgHInzi0tATDyTD5PG/Jj1KwpJH1g43fN6IpKV1pULiS5rs2n5VUwzl
+         bG2fiqgv4vaCt6JJ4YBjrw9uvZkYwMt+5FF2J4JiCIyAIa9bilBdRqMm52pMK1W63I
+         8mHnA2Pp9d6dkK07hcQavK/urawb/GKczlcGjNAo=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA4GOJK2055065
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Nov 2019 10:24:19 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 4 Nov
+ 2019 10:24:03 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 4 Nov 2019 10:24:03 -0600
+Received: from jadmar.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA4GOGOm011098;
+        Mon, 4 Nov 2019 10:24:16 -0600
+From:   Jyri Sarha <jsarha@ti.com>
+To:     <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>
+CC:     <tomi.valkeinen@ti.com>, <colin.king@canonical.com>,
+        <treding@nvidia.com>
+Subject: [PATCH] reset: Free struct reset_control_array in reset_control_array_put()
+Date:   Mon, 4 Nov 2019 18:24:15 +0200
+Message-ID: <9c8c5c337a9351a561a4bf18f2faa1e9a01b50e6.1572884515.git.jsarha@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104151506.GB24909@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 03:15:06PM +0000, Will Deacon wrote:
-> On Sun, Nov 03, 2019 at 11:19:25PM -0600, Andy Gross wrote:
-> > On Fri, Nov 01, 2019 at 11:01:59PM +0530, Sai Prakash Ranjan wrote:
-> > > >>> What's the plan for getting this merged? I'm not happy taking the
-> > > >>> firmware
-> > > >>> bits without Andy's ack, but I also think the SMMU changes should go via
-> > > >>> the IOMMU tree to avoid conflicts.
-> > > >>>
-> > > >>> Andy?
-> > > >>>
-> > > >>
-> > > >>Bjorn maintains QCOM stuff now if I am not wrong and he has already
-> > > >>reviewed
-> > > >>the firmware bits. So I'm hoping you could take all these through IOMMU
-> > > >>tree.
-> > > >
-> > > >Oh, I didn't realise that. Is there a MAINTAINERS update someplace? If I
-> > > >run:
-> > > >
-> > > >$ ./scripts/get_maintainer.pl -f drivers/firmware/qcom_scm-64.c
-> > > >
-> > > >in linux-next, I get:
-> > > >
-> > > >Andy Gross <agross@kernel.org> (maintainer:ARM/QUALCOMM SUPPORT)
-> > > >linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT)
-> > > >linux-kernel@vger.kernel.org (open list)
-> > > >
-> > > 
-> > > It hasn't been updated yet then. I will leave it to Bjorn or Andy to comment
-> > > on this.
-> > 
-> > The rumors of my demise have been greatly exaggerated.  All kidding aside, I
-> > ack'ed both.  Bjorn will indeed be coming on as a co-maintener at some point.
-> > He has already done a lot of yeomans work in helping me out the past 3 months.
-> 
-> Cheers Andy, and I'm pleased to hear that you're still with us! I've queued
-> this lot for 5.5 and I'll send to Joerg this week.
+Fix memory leak in devm_reset_control_array_get(). Free also the
+struct reset_control_array pointer in reset_control_array_put() not
+only the reset-controls stored in it.
 
-Bah, in doing so I spotted that the existing code doesn't handle error codes
-properly because 'a0' is unsigned. I'll queue the patch below at the start
-of the series.
-
-Will
-
---->8
-
-From a9a1047f08de0eff249fb65e2d5d6f6f8b2a87f0 Mon Sep 17 00:00:00 2001
-From: Will Deacon <will@kernel.org>
-Date: Mon, 4 Nov 2019 15:58:15 +0000
-Subject: [PATCH] firmware: qcom: scm: Ensure 'a0' status code is treated as
- signed
-
-The 'a0' member of 'struct arm_smccc_res' is declared as 'unsigned long',
-however the Qualcomm SCM firmware interface driver expects to receive
-negative error codes via this field, so ensure that it's cast to 'long'
-before comparing to see if it is less than 0.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
 ---
- drivers/firmware/qcom_scm-64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/reset/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
-index 91d5ad7cf58b..25e0f60c759a 100644
---- a/drivers/firmware/qcom_scm-64.c
-+++ b/drivers/firmware/qcom_scm-64.c
-@@ -150,7 +150,7 @@ static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
- 		kfree(args_virt);
- 	}
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 213ff40dda11..85d9676ee969 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -748,6 +748,8 @@ static void reset_control_array_put(struct reset_control_array *resets)
+ 	for (i = 0; i < resets->num_rstcs; i++)
+ 		__reset_control_put_internal(resets->rstc[i]);
+ 	mutex_unlock(&reset_list_mutex);
++
++	kfree(resets);
+ }
  
--	if (res->a0 < 0)
-+	if ((long)res->a0 < 0)
- 		return qcom_scm_remap_error(res->a0);
- 
- 	return 0;
+ /**
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
