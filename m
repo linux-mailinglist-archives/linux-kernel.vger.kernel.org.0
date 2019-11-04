@@ -2,128 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C38EEEB45
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:37:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5C2EEB25
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbfKDVhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:37:34 -0500
-Received: from canardo.mork.no ([148.122.252.1]:48009 "EHLO canardo.mork.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfKDVhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:37:33 -0500
-X-Greylist: delayed 887 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 16:37:33 EST
-Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
-        (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id xA4LMV2u006902
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 4 Nov 2019 22:22:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1572902556; bh=48oj23vht5x5+7JKYCCyMc5bdK+KmMf3l3mvdQ60FJQ=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=nsp4z2A0Ol0ZPMNtpvgXHP/QHASiVnZT0tLNU9H0xfszOUbrCOyeBClHdJHWz1/im
-         cy+MsmDRoekwPAsBW7OmzgqJ5K3fR6gi8KlZdBmLOf+ECqQ4CcehiszZpfY7TXfyQC
-         6umMwZjJVfImOgRcPXXfNRL2AoBoKQHDnJ8+5heQ=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
-        (envelope-from <bjorn@mork.no>)
-        id 1iRjnx-0003Uh-Se; Mon, 04 Nov 2019 22:22:29 +0100
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     syzbot <syzbot+0631d878823ce2411636@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, glider@google.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, oliver@neukum.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KMSAN: uninit-value in cdc_ncm_set_dgram_size
-Organization: m
-References: <00000000000013c4c1059625a655@google.com>
-Date:   Mon, 04 Nov 2019 22:22:29 +0100
-In-Reply-To: <00000000000013c4c1059625a655@google.com> (syzbot's message of
-        "Wed, 30 Oct 2019 12:22:07 -0700")
-Message-ID: <87ftj32v6y.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S2387400AbfKDVbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:31:45 -0500
+Received: from retiisi.org.uk ([95.216.213.190]:35740 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728741AbfKDVbp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:31:45 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 03C84634C87;
+        Mon,  4 Nov 2019 23:30:33 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iRjvl-0002Ko-04; Mon, 04 Nov 2019 23:30:33 +0200
+Date:   Mon, 4 Nov 2019 23:30:32 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com, peter.griffin@linaro.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
+ binding
+Message-ID: <20191104213032.GT6253@valkosipuli.retiisi.org.uk>
+References: <20191030094902.32582-1-manivannan.sadhasivam@linaro.org>
+ <20191030094902.32582-2-manivannan.sadhasivam@linaro.org>
+ <20191031131538.GA9170@pendragon.ideasonboard.com>
+ <20191031134512.GB24273@mani>
+ <20191031141141.GD5018@pendragon.ideasonboard.com>
+ <20191031142817.GK6253@valkosipuli.retiisi.org.uk>
+ <20191031165444.GE5018@pendragon.ideasonboard.com>
+ <20191031170837.GN6253@valkosipuli.retiisi.org.uk>
+ <20191104190201.GF4913@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.101.4 at canardo
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104190201.GF4913@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot <syzbot+0631d878823ce2411636@syzkaller.appspotmail.com> writes:
+Hi Laurent,
 
-> syzbot found the following crash on:
->
-> HEAD commit:    96c6c319 net: kasan: kmsan: support CONFIG_GENERIC_CSUM o=
-n..
-> git tree:       https://github.com/google/kmsan.git master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11f103bce00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9e324dfe9c7b0=
-360
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0631d878823ce24=
-11636
-> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10dd9774e00=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13651a24e00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in cdc_ncm_set_dgram_size+0x6ba/0xbc0
-> drivers/net/usb/cdc_ncm.c:587
-> CPU: 0 PID: 11865 Comm: kworker/0:3 Not tainted 5.4.0-rc5+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
->  kmsan_report+0x128/0x220 mm/kmsan/kmsan_report.c:108
->  __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:245
->  cdc_ncm_set_dgram_size+0x6ba/0xbc0 drivers/net/usb/cdc_ncm.c:587
+On Mon, Nov 04, 2019 at 09:02:01PM +0200, Laurent Pinchart wrote:
+> Hi Sakari,
+> 
+> On Thu, Oct 31, 2019 at 07:08:37PM +0200, Sakari Ailus wrote:
+> > On Thu, Oct 31, 2019 at 06:54:44PM +0200, Laurent Pinchart wrote:
+> > > On Thu, Oct 31, 2019 at 04:28:17PM +0200, Sakari Ailus wrote:
+> > >> On Thu, Oct 31, 2019 at 04:11:41PM +0200, Laurent Pinchart wrote:
+> > >>> On Thu, Oct 31, 2019 at 07:15:12PM +0530, Manivannan Sadhasivam wrote:
+> > >>>> On Thu, Oct 31, 2019 at 03:15:38PM +0200, Laurent Pinchart wrote:
+> > >>>>> On Wed, Oct 30, 2019 at 03:19:01PM +0530, Manivannan Sadhasivam wrote:
+> > >>>>>> Add YAML devicetree binding for IMX296 CMOS image sensor. Let's also
+> > >>>>>> add MAINTAINERS entry for the binding and driver.
+> > >>>>>> 
+> > >>>>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > >>>>>> ---
+> > >>>>>>  .../devicetree/bindings/media/i2c/imx296.yaml | 94 +++++++++++++++++++
+> > >>>>>>  MAINTAINERS                                   |  8 ++
+> > >>>>>>  2 files changed, 102 insertions(+)
+> > >>>>>>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.yaml
+> > >>>>>> 
+> > >>>>>> diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.yaml b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
+> > >>>>>> new file mode 100644
+> > >>>>>> index 000000000000..c04ec2203268
+> > >>>>>> --- /dev/null
+> > >>>>>> +++ b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
+> > >>>>>> @@ -0,0 +1,94 @@
+> > >>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > >>>>>> +%YAML 1.2
+> > >>>>>> +---
+> > >>>>>> +$id: http://devicetree.org/schemas/media/i2c/imx296.yaml#
+> > >>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >>>>>> +
+> > >>>>>> +title: Sony IMX296 1/2.8-Inch CMOS Image Sensor
+> > >>>>>> +
+> > >>>>>> +maintainers:
+> > >>>>>> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > >>>>>> +
+> > >>>>>> +description: |-
+> > >>>>>> +  The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
+> > >>>>>> +  sensor with square pixel array and 1.58 M effective pixels. This chip
+> > >>>>>> +  features a global shutter with variable charge-integration time. It is
+> > >>>>>> +  programmable through I2C and 4-wire interfaces. The sensor output is
+> > >>>>>> +  available via CSI-2 serial data output (1 Lane).
+> > >>>>>> +
+> > >>>>>> +properties:
+> > >>>>>> +  compatible:
+> > >>>>>> +    const: sony,imx296
+> > >>>>>> +
+> > >>>>>> +  reg:
+> > >>>>>> +    maxItems: 1
+> > >>>>>> +
+> > >>>>>> +  clocks:
+> > >>>>>> +    maxItems: 1
+> > >>>>>> +
+> > >>>>>> +  clock-names:
+> > >>>>>> +    description:
+> > >>>>>> +      Input clock for the sensor.
+> > >>>>>> +    items:
+> > >>>>>> +      - const: mclk
+> > >>>>> 
+> > >>>>> The pin is named INCK, let's name the clock accordingly.
+> > >>>> 
+> > >>>> Okay, I thought generic names are preferred here!
+> > >>>>  
+> > >>>>>> +  clock-frequency:
+> > >>>>>> +    description:
+> > >>>>>> +      Frequency of the mclk clock in Hertz.
+> > >>>>> 
+> > >>>>> This shouldn't be needed, you can retrieve the clock frequency at
+> > >>>>> runtime from the clock source.
+> > >>>> 
+> > >>>> Unless the clock source is a fixed one! What if the clock source comes from
+> > >>>> SoC? We need to set the rate, right?
+> > >>> 
+> > >>> In that case, if you want to hardcode the clock in DT, the preferred way
+> > >>> is to use the assigned-clock-rates property. Otherwise, if the driver
+> > >>> requires a specific clock frequency, it's better to hardcode it in the
+> > >>> driver itself. In this specific case, I think assigned-clock-rates is
+> > >>> best as the device can support three different clock frequencies.
+> > >> 
+> > >> Just note that if ACPI support is added to the sensor driver, you'll need
+> > >> the clock-frequency property again, for that's the only way how the driver
+> > >> will get the clock frequency.
+> > > 
+> > > Why is so ? Why can't we implement of assigned-clock-rates for ACPI ?
+> > 
+> > ACPI doesn't deal with clocks as such. So there's also no ACPI defined way
+> > to access clocks specifically, including the frequency --- instead the
+> > clock is controlled by an AML methods which implement power on and off
+> > sequences for the device.
+> 
+> It's a shortcoming of ACPI, which should be addressed at the ACPI level.
+> We shouldn't polute the DT bindings with a clock-frequency property for
+> this reason.
 
-..
-> Variable was created at:
->  cdc_ncm_set_dgram_size+0xf5/0xbc0 drivers/net/usb/cdc_ncm.c:564
->  cdc_ncm_set_dgram_size+0xf5/0xbc0 drivers/net/usb/cdc_ncm.c:564
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
+It's really not a shortcoming but a design decision: what belongs to the
+scope of the firmware? And in this case system and device power management
+implementation is included. I do not believe this will be revisited in any
+foreseeable future, i.e. there will be no clock control interface for ACPI.
 
-This looks like a false positive to me. max_datagram_size is two bytes
-declared as
+Explicitly stating the frequency also has an added benefit: the driver
+can be certain that the given frequency is intended to be used on the
+board. Otherwise the frequency could have been changed by e.g. another
+driver. This does matter, as the frequency determines which link
+frequencies can be achieved, and as the two effectively have to be
+compliant, an unintended external clock frequency also means there will be
+no match between possible link frequencies and configured link frequencies.
 
-	__le16 max_datagram_size;
+I.e. no images to capture either.
 
-and the code leading up to the access on drivers/net/usb/cdc_ncm.c:587
-is:
+That said, I don't know if this has been a practical issue in the past.
 
-	/* read current mtu value from device */
-	err =3D usbnet_read_cmd(dev, USB_CDC_GET_MAX_DATAGRAM_SIZE,
-			      USB_TYPE_CLASS | USB_DIR_IN | USB_RECIP_INTERFACE,
-			      0, iface_no, &max_datagram_size, 2);
-	if (err < 0) {
-		dev_dbg(&dev->intf->dev, "GET_MAX_DATAGRAM_SIZE failed\n");
-		goto out;
-	}
+-- 
+Regards,
 
-	if (le16_to_cpu(max_datagram_size) =3D=3D ctx->max_datagram_size)
-
-
-
-AFAICS, there is no way max_datagram_size can be uninitialized here.
-usbnet_read_cmd() either read 2 bytes into it or returned an error,
-causing the access to be skipped.  Or am I missing something?
-
-I tried to read the syzbot manual to figure out how to tell this to the
-bot, but couldn't find that either.  Not my day today it seems ;-)
-
-Please let me know what to do about this.
-
-
-Bj=C3=B8rn
+Sakari Ailus
