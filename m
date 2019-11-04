@@ -2,253 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B0CEE549
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A92EE55B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfKDQzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:55:04 -0500
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:32925 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729397AbfKDQzC (ORCPT
+        id S1728648AbfKDQ6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:58:33 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43488 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727861AbfKDQ6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:55:02 -0500
-Received: by mail-wm1-f45.google.com with SMTP id 6so14502489wmf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:55:00 -0800 (PST)
+        Mon, 4 Nov 2019 11:58:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y23so7532018ljh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:58:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qbydSBqseaw/lQj0nQ/gQN6CVr9wzBelvAaWVLCPwUc=;
-        b=aXylMG+y/bVQLTKpkPecMubi5xk8neo1TPugA58jbdUqDzUO5t+mCleDMf6m0aiXcc
-         bd1rkbzogwK7Ja/TtVsHcU1F9zp1DzrDSw3c7t4IWSNcfO5XJJH8higwdCL15KW8ubpZ
-         iDdcFEO7G4ECVLB2pdN8FjG2wQwn/hv1P+0Eg=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SGFVtZgIuY0pmc+VyfR5bHjFuWMXBLC+PFqq5aHuIEo=;
+        b=MxVs+IVXrO3laQhAsQiIIR5WTvzPZ/rDSAwIl8d3hD2isSoElvZb1eeIAUvCWShIGj
+         AL4ZMlA0W548j6VmQp2kjBSfhpSGjPyht0wnnlh12bsw9+yQuPVnVJu2RUMBwMhMVy5g
+         hf3tnhDhBsDGNej/dktnaLY/GEIKkwZDDnSwbI07qNU8QmHXmzL0m9QWkz5rihTll3OO
+         dWrkOIV4xzOE4za+k3VjKwpvasbbbT2u9vjClU1SCfeqC6mEFeaOSPTEGV+OY7x81Kmm
+         GQax7S04EG6zifGn7gE9BzmG99WYZsN0ZGnuxGgM8WhpeBE1fPVStd0rgl+YM8Y7CZGE
+         vjpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=qbydSBqseaw/lQj0nQ/gQN6CVr9wzBelvAaWVLCPwUc=;
-        b=iRsgiTe6BI8iotgCBwFPr0TD7LxW9hbPQqORm1nQuK5ScMMp4W5toXZDK0VzqMUD6x
-         VMXK2w2L3/G9DYNlYmAnJPoWI2QvzVDLwmX2sA2TD3kBgJnWtg4vsiLK9Fgqa7FLn9Qg
-         dBobWXl+AunpdgVWVfBh5SANfWW9Dvqz5KcPPVzB47Lea2n5lsIrycVWxpI2jyH+sLmd
-         h4da1OWvyj+HGOq2ZjcdbPmP8FWloOnM5/c1/uXmwEGp9X+XbimIOoLX7uxiZcP3LyPN
-         8IWdOwsAc07A+O31dUUhhQnRpVaZRtLCqssKqPGSXehFD+oa1g2bsWeOzhB6FxreJf3W
-         RxkQ==
-X-Gm-Message-State: APjAAAVfvK/M6dfPog+zLNQGy8pqRpMBt5Cepb8whb1Md8PlvBUmIKx6
-        JqFtlpTDmgHlRQeZ7PyQ5p1cUA==
-X-Google-Smtp-Source: APXvYqz94I0pfBllsuYuxRIRg5mazNojaJ6pU1GUBJRxZPr5hP+NbTslnm9nyaVAmkAjo/sjHk6k8A==
-X-Received: by 2002:a1c:f011:: with SMTP id a17mr86381wmb.18.1572886500036;
-        Mon, 04 Nov 2019 08:55:00 -0800 (PST)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id r19sm20025253wrr.47.2019.11.04.08.54.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 08:54:59 -0800 (PST)
-Date:   Mon, 4 Nov 2019 17:54:57 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Harry Wentland <hwentlan@amd.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: drm/amd/display: Add HDCP module - static analysis bug report
-Message-ID: <20191104165457.GH10326@phenom.ffwll.local>
-Mail-Followup-To: Harry Wentland <hwentlan@amd.com>,
-        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <951eb7dc-bebe-5049-4998-f199e18b0bf3@canonical.com>
- <20191009163235.GT16989@phenom.ffwll.local>
- <a0d5f3a3-a2b3-5367-42f9-bde514571e25@amd.com>
- <CAKMK7uEtJRDhibWDv2TB2WrFzFooMWPSbveDD2N-rudAwvzVFA@mail.gmail.com>
- <c8f96b46-e81e-1e41-aafc-5f6ec236d66f@amd.com>
- <CAKMK7uHr3aeJRqJAscDDfsuBBnVXCeN9SS36-1UGuK84NyOD5Q@mail.gmail.com>
- <CAKMK7uH6EoY9MkzjSjU+Fe=E-XB4Tf9d2VsW=Tr=tFy1J-dJgg@mail.gmail.com>
- <53bf910b-5f9c-946b-17ee-602c24c0fa96@amd.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SGFVtZgIuY0pmc+VyfR5bHjFuWMXBLC+PFqq5aHuIEo=;
+        b=HJiF8Z1aBTzEEtM2Uil/g/jGXhaU5S7HbwHP+UYLU9/TNx8kLwR81xo9C8UhtthFXc
+         BmIIfb249YvcRExKdim7qDyOeQ6bsbEs9ku6FQ4gNpSVPf3QgAMrdQCt8FmsNL2VSwyR
+         4gklBeLBfsgtSyPanAJyWKj5fDdgHNX0SRs9DRpA6PPAKsxcLUUka/Y2gxQmlwNhfiKi
+         ELPm1qj82KCl44ltkBhfib2Ash3E0nWN4H/FTK8+ikdM33aokle/DOY0TA3JWZJmncoL
+         lOhew5JJ0XKaxCgMQfEaN4Ph5J+X7vBV8x5XPRSF7DWnCWcNDtxLdqTlQofFGlOU0f0D
+         442Q==
+X-Gm-Message-State: APjAAAVlnCkAvwV42qhDRnIMXsaDXzMyrHJmley5K07FoigWGGnKelKT
+        q5pBH4vq2npuSA52o3DiOSqlatMrL+mYBOuEkxw=
+X-Google-Smtp-Source: APXvYqyBWwpRhXathfjT9hiPrrapwsHBwEDmHstXjiCXSgsgfip5FT8iGRYWufzdrTu4WxJtt0TXzz7d5co/N0t+/2w=
+X-Received: by 2002:a2e:7c12:: with SMTP id x18mr10417952ljc.130.1572886709180;
+ Mon, 04 Nov 2019 08:58:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53bf910b-5f9c-946b-17ee-602c24c0fa96@amd.com>
-X-Operating-System: Linux phenom 5.2.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191101214238.78015-1-john.stultz@linaro.org>
+ <20191101214238.78015-2-john.stultz@linaro.org> <20191104102410.66wlyoln5ahlgkem@DESKTOP-E1NTVVP.localdomain>
+In-Reply-To: <20191104102410.66wlyoln5ahlgkem@DESKTOP-E1NTVVP.localdomain>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Tue, 5 Nov 2019 02:58:17 +1000
+Message-ID: <CAPM=9tydXxV-6++HkkA+JX9GPWE1sN_8CGVCVn-Mwfgfzcn=hg@mail.gmail.com>
+Subject: Re: [PATCH v14 1/5] dma-buf: Add dma-buf heaps framework
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Hillf Danton <hdanton@sina.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 03:23:09PM +0000, Harry Wentland wrote:
-> On 2019-11-04 5:53 a.m., Daniel Vetter wrote:
-> > On Wed, Oct 9, 2019 at 10:58 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >> On Wed, Oct 9, 2019 at 10:46 PM Lakha, Bhawanpreet
-> >> <Bhawanpreet.Lakha@amd.com> wrote:
-> >>>
-> >>> I misunderstood and was talking about the ksv validation specifically
-> >>> (usage of drm_hdcp_check_ksvs_revoked()).
-> >>
-> >> Hm for that specifically I think you want to do both, i.e. both
-> >> consult your psp, but also check for revoked ksvs with the core
-> >> helper. At least on some platforms only the core helper might have the
-> >> updated revoke list.
-> >>
-> 
-> I think it's an either/or. Either we use an HDCP implementation that's
-> fully running in x86 kernel space (still not sure how that's compliant)
-> or we fully rely on our PSP FW to do what it's designed to do. I don't
-> think it makes sense to mix and match here.
+On Mon, 4 Nov 2019 at 20:24, Brian Starkey <Brian.Starkey@arm.com> wrote:
+>
+> Hi John,
+>
+> On Fri, Nov 01, 2019 at 09:42:34PM +0000, John Stultz wrote:
+> > From: "Andrew F. Davis" <afd@ti.com>
+> >
+> > This framework allows a unified userspace interface for dma-buf
+> > exporters, allowing userland to allocate specific types of memory
+> > for use in dma-buf sharing.
+> >
+> > Each heap is given its own device node, which a user can allocate
+> > a dma-buf fd from using the DMA_HEAP_IOC_ALLOC.
+> >
+> > Additionally should the interface grow in the future, we have a
+> > DMA_HEAP_IOC_GET_FEATURES ioctl which can return future feature
+> > flags.
+>
+> The userspace patch doesn't use this - and there's no indication of
+> what it's intended to allow in the future. I missed the discussion
+> about it, do you have a link?
+>
+> I thought the preferred approach was to add the new ioctl only when we
+> need it, and new userspace on old kernels will get "ENOSYS" to know
+> that the kernel doesn't support it.
 
-Then you need to somehow tie the revoke list that's in the psp to the
-revoke list update logic we have. That's what we've done for hdcp2 (which
-is similarly to yours implemented in hw). The point is that on linux we
-now have a standard way to get these revoke lists updated/handled.
+This works once, expand the interface 3 or 4 times with no features
+ioctl, and you start being hostile to userspace, which feature does
+ENOSYS mean isn't supported etc.
 
-I guess it wasn't clear how exactly I think you're supposed to combine
-them?
--Daniel
+Next userspace starts to rely on kernel version, but then someone
+backports a feature, down the rabbit hole we go.
 
+Be nice to userspace give them a features ioctl they can use to figure
+out in advance which of the 4 uapis the kernel supports.
 
-> 
-> >>> For the defines I will create patches to use drm_hdcp where it is usable.
-> >>
-> >> Thanks a lot. Ime once we have shared definitions it's much easier to
-> >> also share some helpers, where it makes sense.
-> >>
-> >> Aside I think the hdcp code could also use a bit of demidlayering. At
-> >> least I'm not understanding why you add a 2nd abstraction layer for
-> >> i2c/dpcd, dm_helper already has that. That seems like one abstraction
-> >> layer too much.
-> > 
-> > I haven't seen anything fly by or in the latest pull request ... you
-> > folks still working on this or more put on the "maybe, probably never"
-> > pile?
-> > 
-> 
-> Following up with Bhawan.
-> 
-> Harry
-> 
-> > -Daniel
-> > 
-> > 
-> >> -Daniel
-> >>
-> >>>
-> >>>
-> >>> Bhawan
-> >>>
-> >>> On 2019-10-09 2:43 p.m., Daniel Vetter wrote:
-> >>>> On Wed, Oct 9, 2019 at 8:23 PM Lakha, Bhawanpreet
-> >>>> <Bhawanpreet.Lakha@amd.com> wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> The reason we don't use drm_hdcp is because our policy is to do hdcp
-> >>>>> verification using PSP/HW (onboard secure processor).
-> >>>> i915 also uses hw to auth, we still use the parts from drm_hdcp ...
-> >>>> Did you actually look at what's in there? It's essentially just shared
-> >>>> defines and data structures from the standard, plus a few minimal
-> >>>> helpers to en/decode some bits. Just from a quick read the entire
-> >>>> patch very much looks like midlayer everywhere design that we
-> >>>> discussed back when DC landed ...
-> >>>> -Daniel
-> >>>>
-> >>>>> Bhawan
-> >>>>>
-> >>>>> On 2019-10-09 12:32 p.m., Daniel Vetter wrote:
-> >>>>>> On Thu, Oct 03, 2019 at 11:08:03PM +0100, Colin Ian King wrote:
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> Static analysis with Coverity has detected a potential issue with
-> >>>>>>> function validate_bksv in
-> >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c with recent
-> >>>>>>> commit:
-> >>>>>>>
-> >>>>>>> commit ed9d8e2bcb003ec94658cafe9b1bb3960e2139ec
-> >>>>>>> Author: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-> >>>>>>> Date:   Tue Aug 6 17:52:01 2019 -0400
-> >>>>>>>
-> >>>>>>>       drm/amd/display: Add HDCP module
-> >>>>>> I think the real question here is ... why is this not using drm_hdcp?
-> >>>>>> -Daniel
-> >>>>>>
-> >>>>>>> The analysis is as follows:
-> >>>>>>>
-> >>>>>>>    28 static inline enum mod_hdcp_status validate_bksv(struct mod_hdcp *hdcp)
-> >>>>>>>    29 {
-> >>>>>>>
-> >>>>>>> CID 89852 (#1 of 1): Out-of-bounds read (OVERRUN)
-> >>>>>>>
-> >>>>>>> 1. overrun-local:
-> >>>>>>> Overrunning array of 5 bytes at byte offset 7 by dereferencing pointer
-> >>>>>>> (uint64_t *)hdcp->auth.msg.hdcp1.bksv.
-> >>>>>>>
-> >>>>>>>    30        uint64_t n = *(uint64_t *)hdcp->auth.msg.hdcp1.bksv;
-> >>>>>>>    31        uint8_t count = 0;
-> >>>>>>>    32
-> >>>>>>>    33        while (n) {
-> >>>>>>>    34                count++;
-> >>>>>>>    35                n &= (n - 1);
-> >>>>>>>    36        }
-> >>>>>>>
-> >>>>>>> hdcp->auth.msg.hdcp1.bksv is an array of 5 uint8_t as defined in
-> >>>>>>> drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h as follows:
-> >>>>>>>
-> >>>>>>> struct mod_hdcp_message_hdcp1 {
-> >>>>>>>           uint8_t         an[8];
-> >>>>>>>           uint8_t         aksv[5];
-> >>>>>>>           uint8_t         ainfo;
-> >>>>>>>           uint8_t         bksv[5];
-> >>>>>>>           uint16_t        r0p;
-> >>>>>>>           uint8_t         bcaps;
-> >>>>>>>           uint16_t        bstatus;
-> >>>>>>>           uint8_t         ksvlist[635];
-> >>>>>>>           uint16_t        ksvlist_size;
-> >>>>>>>           uint8_t         vp[20];
-> >>>>>>>
-> >>>>>>>           uint16_t        binfo_dp;
-> >>>>>>> };
-> >>>>>>>
-> >>>>>>> variable n is going to contain the contains of r0p and bcaps. I'm not
-> >>>>>>> sure if that is intentional. If not, then the count is going to be
-> >>>>>>> incorrect if these are non-zero.
-> >>>>>>>
-> >>>>>>> Colin
-> >>>>> _______________________________________________
-> >>>>> dri-devel mailing list
-> >>>>> dri-devel@lists.freedesktop.org
-> >>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >>>>
-> >>>>
-> >>
-> >>
-> >>
-> >> --
-> >> Daniel Vetter
-> >> Software Engineer, Intel Corporation
-> >> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > 
-> > 
-> > 
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Dave.
