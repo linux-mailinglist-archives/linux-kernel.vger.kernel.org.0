@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF383EEF44
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E0BEEE75
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388721AbfKDV7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
+        id S2390077AbfKDWHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:07:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388308AbfKDV7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:39 -0500
+        id S2390046AbfKDWHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:07:01 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA04020650;
-        Mon,  4 Nov 2019 21:59:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01152214D8;
+        Mon,  4 Nov 2019 22:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904778;
-        bh=hSjRkGT17dgtKhT8LMQ6TAdF8ewyqXN8GSxpj1Z9EVA=;
+        s=default; t=1572905220;
+        bh=M2HzMP+l+Weo8FPbty/bQt2z8x2v4tAHox0FIemkwwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIejQO1dTtA8vB6EUV4ZiIrnBc3qNXfqIDmZHve8//L4am9PoMJwqxIJdj0jr9tZw
-         cEDOHLlc2JrPKw/BAyuwTB8g0tG3DTnsGYKTlggh8ObTFlzL1ihHwotjEQ/p/79U0M
-         JmXKZo9ae/uj7fpvXaBXeQbJPNHQ7HZTt3LXfIWE=
+        b=p9TIXF9a8Y28hMDVnVsvvOwNp1Gtne2+pPEIEYEROGWu6dyVMGYHDFDENzWbNMPyp
+         eoN0k5ainfVDdkl+G2wPhwWJda1rXoLDQi/vdqOx+vR5W6DXG6hV3/OlWfOO2+Wm29
+         cOackZTvjhkRwDR0EIi1njfZ29I/ETohj06YKgqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.19 066/149] perf annotate: Propagate perf_env__arch() error
-Date:   Mon,  4 Nov 2019 22:44:19 +0100
-Message-Id: <20191104212141.372085138@linuxfoundation.org>
+        stable@vger.kernel.org, Nirmoy Das <nirmoy.das@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 070/163] drm/amdgpu: fix memory leak
+Date:   Mon,  4 Nov 2019 22:44:20 +0100
+Message-Id: <20191104212144.991122922@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,43 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Nirmoy Das <nirmoy.das@amd.com>
 
-[ Upstream commit a66fa0619a0ae3585ef09e9c33ecfb5c7c6cb72b ]
+[ Upstream commit 083164dbdb17c5ea4ad92c1782b59c9d75567790 ]
 
-The callers of symbol__annotate2() use symbol__strerror_disassemble() to
-convert its failure returns into a human readable string, so
-propagate error values from functions it calls, starting with
-perf_env__arch() that when fails the right thing to do is to look at
-'errno' to see why its possible call to uname() failed.
+cleanup error handling code and make sure temporary info array
+with the handles are freed by amdgpu_bo_list_put() on
+idr_replace()'s failure.
 
-Reported-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-Cc: Will Deacon <will@kernel.org>
-Link: https://lkml.kernel.org/n/tip-it5d83kyusfhb1q1b0l4pxzs@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Nirmoy Das <nirmoy.das@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/annotate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index daea1fdf73856..4ef62bcdc80f0 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1871,7 +1871,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
- 	int err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+index 7bcf86c619995..61e38e43ad1d5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -270,7 +270,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
  
- 	if (!arch_name)
--		return -1;
-+		return errno;
+ 	r = amdgpu_bo_create_list_entry_array(&args->in, &info);
+ 	if (r)
+-		goto error_free;
++		return r;
  
- 	args.arch = arch = arch__find(arch_name);
- 	if (arch == NULL)
+ 	switch (args->in.operation) {
+ 	case AMDGPU_BO_LIST_OP_CREATE:
+@@ -283,8 +283,7 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 		r = idr_alloc(&fpriv->bo_list_handles, list, 1, 0, GFP_KERNEL);
+ 		mutex_unlock(&fpriv->bo_list_lock);
+ 		if (r < 0) {
+-			amdgpu_bo_list_put(list);
+-			return r;
++			goto error_put_list;
+ 		}
+ 
+ 		handle = r;
+@@ -306,9 +305,8 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 		mutex_unlock(&fpriv->bo_list_lock);
+ 
+ 		if (IS_ERR(old)) {
+-			amdgpu_bo_list_put(list);
+ 			r = PTR_ERR(old);
+-			goto error_free;
++			goto error_put_list;
+ 		}
+ 
+ 		amdgpu_bo_list_put(old);
+@@ -325,8 +323,10 @@ int amdgpu_bo_list_ioctl(struct drm_device *dev, void *data,
+ 
+ 	return 0;
+ 
++error_put_list:
++	amdgpu_bo_list_put(list);
++
+ error_free:
+-	if (info)
+-		kvfree(info);
++	kvfree(info);
+ 	return r;
+ }
 -- 
 2.20.1
 
