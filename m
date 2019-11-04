@@ -2,46 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6CEEE2C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA32EE2A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfKDOoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 09:44:11 -0500
-Received: from mga14.intel.com ([192.55.52.115]:29247 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728014AbfKDOoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 09:44:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 06:44:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
-   d="scan'208";a="402993324"
-Received: from cckuo1-mobl2.amr.corp.intel.com (HELO [10.251.130.8]) ([10.251.130.8])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Nov 2019 06:44:07 -0800
-Subject: Re: [alsa-devel] [PATCH 04/14] soundwire: bus_type: rename sdw_drv_
- to sdw_slave_drv
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
- <20191023212823.608-5-pierre-louis.bossart@linux.intel.com>
- <20191103053003.GH2695@vkoul-mobl.Dlink>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <27887179-cdf7-bd66-2870-a58017921108@linux.intel.com>
-Date:   Mon, 4 Nov 2019 08:34:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728873AbfKDOfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 09:35:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51992 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728416AbfKDOfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 09:35:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8DE98AD17;
+        Mon,  4 Nov 2019 14:35:04 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen/events: remove event handling recursion
+ detection
+To:     Juergen Gross <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20191104135812.2314-1-jgross@suse.com>
+From:   Jan Beulich <jbeulich@suse.com>
+Message-ID: <40cba9d9-24b0-3141-4ba8-02e03049f1bf@suse.com>
+Date:   Mon, 4 Nov 2019 15:35:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191103053003.GH2695@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191104135812.2314-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,74 +37,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/3/19 12:30 AM, Vinod Koul wrote:
-> On 23-10-19, 16:28, Pierre-Louis Bossart wrote:
->> Before we add master driver support, make sure there is no ambiguity
->> and no occirrences of sdw_drv_ functions.
->          ^^^^^^^^^^^
-> typo
-
-Ack, will fix.
-
+On 04.11.2019 14:58, Juergen Gross wrote:
+> __xen_evtchn_do_upcall() contains guards against being called
+> recursively. This mechanism was introduced in the early pvops times
+> (kernel 2.6.26) when there were still Xen versions around not honoring
+> disabled interrupts for sending events to pv guests.
 > 
->>
->> No functionality change.
->>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> ---
->>   drivers/soundwire/bus_type.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
->> index 2b2830b622fa..9a0fd3ee1014 100644
->> --- a/drivers/soundwire/bus_type.c
->> +++ b/drivers/soundwire/bus_type.c
->> @@ -67,7 +67,7 @@ struct bus_type sdw_bus_type = {
->>   };
->>   EXPORT_SYMBOL_GPL(sdw_bus_type);
->>   
->> -static int sdw_drv_probe(struct device *dev)
->> +static int sdw_slave_drv_probe(struct device *dev)
->>   {
->>   	struct sdw_slave *slave = to_sdw_slave_device(dev);
->>   	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
->> @@ -113,7 +113,7 @@ static int sdw_drv_probe(struct device *dev)
->>   	return 0;
->>   }
->>   
->> -static int sdw_drv_remove(struct device *dev)
->> +static int sdw_slave_drv_remove(struct device *dev)
->>   {
->>   	struct sdw_slave *slave = to_sdw_slave_device(dev);
->>   	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
->> @@ -127,7 +127,7 @@ static int sdw_drv_remove(struct device *dev)
->>   	return ret;
->>   }
->>   
->> -static void sdw_drv_shutdown(struct device *dev)
->> +static void sdw_slave_drv_shutdown(struct device *dev)
->>   {
->>   	struct sdw_slave *slave = to_sdw_slave_device(dev);
->>   	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
->> @@ -155,13 +155,13 @@ int __sdw_register_slave_driver(struct sdw_driver *drv,
->>   	}
->>   
->>   	drv->driver.owner = owner;
->> -	drv->driver.probe = sdw_drv_probe;
->> +	drv->driver.probe = sdw_slave_drv_probe;
->>   
->>   	if (drv->remove)
->> -		drv->driver.remove = sdw_drv_remove;
->> +		drv->driver.remove = sdw_slave_drv_remove;
->>   
->>   	if (drv->shutdown)
->> -		drv->driver.shutdown = sdw_drv_shutdown;
->> +		drv->driver.shutdown = sdw_slave_drv_shutdown;
->>   
->>   	return driver_register(&drv->driver);
->>   }
->> -- 
->> 2.20.1
-> 
+> This was changed in Xen 3.0, which is much older than any Xen version
+> supported by the kernel, so the recursion detection can be removed.
+
+Would you mind pointing out which exact change(s) this was(were)?
+It had always been my understanding that the recursion detection
+was mainly to guard against drivers re-enabling interrupts
+transiently in their handlers (which in turn may no longer be an
+issue in modern Linux kernels).
+
+Jan
