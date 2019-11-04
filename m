@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E707EEC29
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC799EEBF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387927AbfKDVyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:54:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49018 "EHLO mail.kernel.org"
+        id S1730772AbfKDVwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:52:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387904AbfKDVyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:54:20 -0500
+        id S1730364AbfKDVwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:52:21 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A07721929;
-        Mon,  4 Nov 2019 21:54:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA423217F4;
+        Mon,  4 Nov 2019 21:52:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904459;
-        bh=A+nXIhWOh/hn+hSxK3tP54icEmodpvMjam53PuBkrA4=;
+        s=default; t=1572904341;
+        bh=E1aoj9R79rabJbJBVwCZX4iH1w2YJ9tDbCCLe60+T58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nEsv9BQC9mIanRH7K2ximNhe4ldqBEQRbX8EGOrsLlAwBPWcnMDWun02WuHwcn9Ma
-         LLb8wPHdYc514l1QphysaiB1LwrQHV2GPL4uwunUJiYBEDV5gavn/zCw5IltCSpT6j
-         4LyuomNr4IsqQPyuWKYrCP9VpgxeQCVXtgHGX7Uk=
+        b=RQpEPQYz+eJ4dBxjqfXmruGAHKah6qPdxYwzeA9r1qcg3DmprMpzoObAgGIr5DAuN
+         RqisivGBCO6sSaqiu8OGzf72XLKqG4tpsnby2DZ8+tPZaNrFXbKPnTQ1tbMP3nPONI
+         9OwqOTytw14JNmIz94hNPbEWye+HsCac47tRQXUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rene Wagner <redhatbugzilla@callerid.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 12/95] HID: i2c-hid: Add Odys Winbook 13 to descriptor override
-Date:   Mon,  4 Nov 2019 22:44:10 +0100
-Message-Id: <20191104212043.711621264@linuxfoundation.org>
+        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 13/95] clk: boston: unregister clks on failure in clk_boston_setup()
+Date:   Mon,  4 Nov 2019 22:44:11 +0100
+Message-Id: <20191104212044.207446608@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
 References: <20191104212038.056365853@linuxfoundation.org>
@@ -44,41 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Yi Wang <wang.yi59@zte.com.cn>
 
-[ Upstream commit f8f807441eefddc3c6d8a378421f0ede6361d565 ]
+[ Upstream commit 8b627f616ed63dcaf922369fc14a5daf8ad03038 ]
 
-The Odys Winbook 13 uses a SIPODEV SP1064 touchpad, which does not
-supply descriptors, add this to the DMI descriptor override list, fixing
-the touchpad not working.
+The registered clks should unregister when something wrong happens
+before going out in function clk_boston_setup().
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1526312
-Reported-by: Rene Wagner <redhatbugzilla@callerid.de>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/imgtec/clk-boston.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-index 89f2976f9c534..fd1b6eea6d2fd 100644
---- a/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
-@@ -346,6 +346,14 @@ static const struct dmi_system_id i2c_hid_dmi_desc_override_table[] = {
- 		},
- 		.driver_data = (void *)&sipodev_desc
- 	},
-+	{
-+		.ident = "Odys Winbook 13",
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AXDIA International GmbH"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "WINBOOK 13"),
-+		},
-+		.driver_data = (void *)&sipodev_desc
-+	},
- 	{ }	/* Terminate list */
- };
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index f5d54a64d33c5..dddda45127a80 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,31 +73,39 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		goto error;
++		goto fail_input;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		goto error;
++		goto fail_sys;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		goto error;
++		goto fail_cpu;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+-	if (err)
++	if (err) {
+ 		pr_err("failed to add DT provider: %d\n", err);
++		goto fail_clk_add;
++	}
+ 
+ 	return;
+ 
+-error:
++fail_clk_add:
++	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_CPU]);
++fail_cpu:
++	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_SYS]);
++fail_sys:
++	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_INPUT]);
++fail_input:
+ 	kfree(onecell);
+ }
  
 -- 
 2.20.1
