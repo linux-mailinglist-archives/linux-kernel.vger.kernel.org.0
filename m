@@ -2,65 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCFFEE19C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7679EE19E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbfKDNxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:53:31 -0500
-Received: from smtprelay0245.hostedemail.com ([216.40.44.245]:40440 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728613AbfKDNxb (ORCPT
+        id S1729304AbfKDNxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:53:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32926 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728613AbfKDNxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:53:31 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 5DE2B181D304D;
-        Mon,  4 Nov 2019 13:53:29 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3350:3622:3865:3866:3867:3868:3870:3872:3873:3874:5007:6261:6742:7875:9040:10004:10400:10967:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30070:30090:30091,0,RBL:146.247.46.6:@goodmis.org:.lbl8.mailshell.net-62.8.41.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: air76_580e2771dcc23
-X-Filterd-Recvd-Size: 1758
-Received: from grimm.local.home (unknown [146.247.46.6])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 Nov 2019 13:53:24 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 08:53:21 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@arm.com, catalin.marinas@arm.com, deller@gmx.de,
-        duwe@suse.de, James.Bottomley@HansenPartnership.com,
-        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
-        jthierry@redhat.com, linux-parisc@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 1/8] ftrace: add ftrace_init_nop()
-Message-ID: <20191104085321.7636be56@grimm.local.home>
-In-Reply-To: <20191104133836.GF45140@lakrids.cambridge.arm.com>
-References: <20191029165832.33606-1-mark.rutland@arm.com>
-        <20191029165832.33606-2-mark.rutland@arm.com>
-        <20191104081620.732320a8@grimm.local.home>
-        <20191104133836.GF45140@lakrids.cambridge.arm.com>
-X-Mailer: Claws Mail 3.17.4git49 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 4 Nov 2019 08:53:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572875620;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QadV5tG6EB2e2xWmrLW6Mggt4QHFFL3zdZUu1G5fCIE=;
+        b=fSSw/e3bmqxlDJyaJ3znvLhIRQ9k0+MOyCQftqleu5B7XZ4iydXV9dgQx5gMdnJTVPFOsn
+        zEZhGhN/Ev2SJAmgCpoWbuuiLn32nrGoZAyYcD+y0S6+vf5YCieNpraEq3TWog6nVfp3Fb
+        Q1PX8lQHBHX/D7lj6K71sZan41AQUtg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-127-SNzsJspRNzW08-To_lsAkA-1; Mon, 04 Nov 2019 08:53:37 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD382800686;
+        Mon,  4 Nov 2019 13:53:35 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D09705D9E5;
+        Mon,  4 Nov 2019 13:53:33 +0000 (UTC)
+Date:   Mon, 4 Nov 2019 14:53:33 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v5 7/7] perf report: Sort by sampled cycles percent per
+ block for tui
+Message-ID: <20191104135333.GH8251@krava>
+References: <20191030060430.23558-1-yao.jin@linux.intel.com>
+ <20191030060430.23558-8-yao.jin@linux.intel.com>
+ <20191101083434.GD2172@krava>
+ <2bbc0a0d-639b-7a88-71d5-6c022f46134c@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2bbc0a0d-639b-7a88-71d5-6c022f46134c@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: SNzsJspRNzW08-To_lsAkA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Nov 2019 13:38:36 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
+On Fri, Nov 01, 2019 at 10:07:33PM +0800, Jin, Yao wrote:
+>=20
+>=20
+> On 11/1/2019 4:34 PM, Jiri Olsa wrote:
+> > On Wed, Oct 30, 2019 at 02:04:30PM +0800, Jin Yao wrote:
+> >=20
+> > SNIP
+> >=20
+> > > diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/=
+hists.h
+> > > index 91d3e18b50aa..078f2f2c7abd 100644
+> > > --- a/tools/perf/ui/browsers/hists.h
+> > > +++ b/tools/perf/ui/browsers/hists.h
+> > > @@ -5,6 +5,7 @@
+> > >   #include "ui/browser.h"
+> > >   struct annotation_options;
+> > > +struct evsel;
+> > >   struct hist_browser {
+> > >   =09struct ui_browser   b;
+> > > @@ -15,6 +16,7 @@ struct hist_browser {
+> > >   =09struct pstack=09    *pstack;
+> > >   =09struct perf_env=09    *env;
+> > >   =09struct annotation_options *annotation_opts;
+> > > +=09struct evsel=09    *block_evsel;
+> >=20
+> > you should be able to get the evsel from hists_to_evsel function
+> >=20
+> > jirka
+> >=20
+>=20
+> Maybe we can't. The hists in hist_browser is set to block_hists (not the
+> hists for evsel).
+>=20
+> See block_hists_tui_browse,
+>=20
+> int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
+>                           float min_percent)
+> {
+>        struct hists *hists =3D &bh->block_hists;
+>        struct hist_browser *browser;
+>        ......
+>        browser =3D hist_browser__new(hists);
+>        ......
+> }
+>=20
+> So I have to pass the evsel in.
 
-> > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>  
-> 
-> Thanks!
-> 
-> Just to check, are you happy if this were to go via the arm64 tree with
-> the rest of the patches?
+I see, ok
 
-Yes, if I wasn't I would have said something. But I guess I should have
-been explicit and stated that I'm fine with it going in your tree. My
-current updates should not conflict with this.
+jirka
 
--- Steve
