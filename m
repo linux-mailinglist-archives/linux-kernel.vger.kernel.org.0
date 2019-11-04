@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0029EEF49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96546EEE67
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388783AbfKDV76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:59:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57328 "EHLO mail.kernel.org"
+        id S2388775AbfKDWHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:07:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388775AbfKDV74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:59:56 -0500
+        id S2389454AbfKDWHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:07:21 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BF1320650;
-        Mon,  4 Nov 2019 21:59:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 265392084D;
+        Mon,  4 Nov 2019 22:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904795;
-        bh=X3v+SOQIpdYf6iNAzKXGy4IuE0/gqSJw5bT5h8guRU4=;
+        s=default; t=1572905240;
+        bh=ILWaVFAbM7pu+olaK2zDZOwCaPUffqfJMirgEEEL1/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FS9BplNUU4hFL0VQjo9D5hXaQtjxlV1MM3ThUOCz+VmiOLNSo5yLsBCuypsZzTzkJ
-         S1KRZQbPBd6UlAvM9a36UqLoY51dCVuZs8FZOZabL/v4oqXvaNIBqIvU3JNTNxMIBO
-         lqxWzaSwIkOi9M3cfoY4zn4EVp/WMMrtd6Rj7Pd0=
+        b=ckM8W2+7SteDDjgBu4QH6CYTPEpSxknOcrRZDv3Xe6IXIrkyfjbWwwmLHtUx+IWRc
+         AdtGm9ENiZZyhccS98DjLAGTfVqFj/RrOY+2mGPPBMpkuM0G3QmRyVWooNVt0uwR1h
+         89Jk8UN8/YSw90r33pDeyjgq1CNRDEJE5P9GgoUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
+        Marc Hartmayer <mhartmay@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/149] RDMA/iwcm: Fix a lock inversion issue
-Date:   Mon,  4 Nov 2019 22:44:25 +0100
-Message-Id: <20191104212141.742196520@linuxfoundation.org>
+Subject: [PATCH 5.3 076/163] s390/cio: fix virtio-ccw DMA without PV
+Date:   Mon,  4 Nov 2019 22:44:26 +0100
+Message-Id: <20191104212145.658884661@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +49,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-[ Upstream commit b66f31efbdad95ec274345721d99d1d835e6de01 ]
+[ Upstream commit 05668e1d74b84c53fbe0f28565e4c9502a6b8a67 ]
 
-This patch fixes the lock inversion complaint:
+Commit 37db8985b211 ("s390/cio: add basic protected virtualization
+support") breaks virtio-ccw devices with VIRTIO_F_IOMMU_PLATFORM for non
+Protected Virtualization (PV) guests. The problem is that the dma_mask
+of the ccw device, which is used by virtio core, gets changed from 64 to
+31 bit, because some of the DMA allocations do require 31 bit
+addressable memory. For PV the only drawback is that some of the virtio
+structures must end up in ZONE_DMA because we have the bounce the
+buffers mapped via DMA API anyway.
 
-============================================
-WARNING: possible recursive locking detected
-5.3.0-rc7-dbg+ #1 Not tainted
---------------------------------------------
-kworker/u16:6/171 is trying to acquire lock:
-00000000035c6e6c (&id_priv->handler_mutex){+.+.}, at: rdma_destroy_id+0x78/0x4a0 [rdma_cm]
+But for non PV guests we have a problem: because of the 31 bit mask
+guests bigger than 2G are likely to try bouncing buffers. The swiotlb
+however is only initialized for PV guests, because we don't want to
+bounce anything for non PV guests. The first such map kills the guest.
 
-but task is already holding lock:
-00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
+Since the DMA API won't allow us to specify for each allocation whether
+we need memory from ZONE_DMA (31 bit addressable) or any DMA capable
+memory will do, let us use coherent_dma_mask (which is used for
+allocations) to force allocating form ZONE_DMA while changing dma_mask
+to DMA_BIT_MASK(64) so that at least the streaming API will regard
+the whole memory DMA capable.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&id_priv->handler_mutex);
-  lock(&id_priv->handler_mutex);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by kworker/u16:6/171:
- #0: 00000000e2eaa773 ((wq_completion)iw_cm_wq){+.+.}, at: process_one_work+0x472/0xac0
- #1: 000000001efd357b ((work_completion)(&work->work)#3){+.+.}, at: process_one_work+0x476/0xac0
- #2: 00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
-
-stack backtrace:
-CPU: 3 PID: 171 Comm: kworker/u16:6 Not tainted 5.3.0-rc7-dbg+ #1
-Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-Workqueue: iw_cm_wq cm_work_handler [iw_cm]
-Call Trace:
- dump_stack+0x8a/0xd6
- __lock_acquire.cold+0xe1/0x24d
- lock_acquire+0x106/0x240
- __mutex_lock+0x12e/0xcb0
- mutex_lock_nested+0x1f/0x30
- rdma_destroy_id+0x78/0x4a0 [rdma_cm]
- iw_conn_req_handler+0x5c9/0x680 [rdma_cm]
- cm_work_handler+0xe62/0x1100 [iw_cm]
- process_one_work+0x56d/0xac0
- worker_thread+0x7a/0x5d0
- kthread+0x1bc/0x210
- ret_from_fork+0x24/0x30
-
-This is not a bug as there are actually two lock classes here.
-
-Link: https://lore.kernel.org/r/20190930231707.48259-3-bvanassche@acm.org
-Fixes: de910bd92137 ("RDMA/cma: Simplify locking needed for serialization of callbacks")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: 37db8985b211 ("s390/cio: add basic protected virtualization support")
+Link: https://lore.kernel.org/lkml/20190930153803.7958-1-pasic@linux.ibm.com
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/cio/cio.h    | 1 +
+ drivers/s390/cio/css.c    | 7 ++++++-
+ drivers/s390/cio/device.c | 2 +-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 6257be21cbedd..1f373ba573b6d 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -2270,9 +2270,10 @@ static int iw_conn_req_handler(struct iw_cm_id *cm_id,
- 		conn_id->cm_id.iw = NULL;
- 		cma_exch(conn_id, RDMA_CM_DESTROYING);
- 		mutex_unlock(&conn_id->handler_mutex);
-+		mutex_unlock(&listen_id->handler_mutex);
- 		cma_deref_id(conn_id);
- 		rdma_destroy_id(&conn_id->id);
--		goto out;
-+		return ret;
- 	}
+diff --git a/drivers/s390/cio/cio.h b/drivers/s390/cio/cio.h
+index ba7d2480613b9..dcdaba689b20c 100644
+--- a/drivers/s390/cio/cio.h
++++ b/drivers/s390/cio/cio.h
+@@ -113,6 +113,7 @@ struct subchannel {
+ 	enum sch_todo todo;
+ 	struct work_struct todo_work;
+ 	struct schib_config config;
++	u64 dma_mask;
+ 	char *driver_override; /* Driver name to force a match */
+ } __attribute__ ((aligned(8)));
  
- 	mutex_unlock(&conn_id->handler_mutex);
+diff --git a/drivers/s390/cio/css.c b/drivers/s390/cio/css.c
+index 1fbfb0a93f5f1..831850435c23b 100644
+--- a/drivers/s390/cio/css.c
++++ b/drivers/s390/cio/css.c
+@@ -232,7 +232,12 @@ struct subchannel *css_alloc_subchannel(struct subchannel_id schid,
+ 	 * belong to a subchannel need to fit 31 bit width (e.g. ccw).
+ 	 */
+ 	sch->dev.coherent_dma_mask = DMA_BIT_MASK(31);
+-	sch->dev.dma_mask = &sch->dev.coherent_dma_mask;
++	/*
++	 * But we don't have such restrictions imposed on the stuff that
++	 * is handled by the streaming API.
++	 */
++	sch->dma_mask = DMA_BIT_MASK(64);
++	sch->dev.dma_mask = &sch->dma_mask;
+ 	return sch;
+ 
+ err:
+diff --git a/drivers/s390/cio/device.c b/drivers/s390/cio/device.c
+index c421899be20f2..027ef1dde5a7a 100644
+--- a/drivers/s390/cio/device.c
++++ b/drivers/s390/cio/device.c
+@@ -710,7 +710,7 @@ static struct ccw_device * io_subchannel_allocate_dev(struct subchannel *sch)
+ 	if (!cdev->private)
+ 		goto err_priv;
+ 	cdev->dev.coherent_dma_mask = sch->dev.coherent_dma_mask;
+-	cdev->dev.dma_mask = &cdev->dev.coherent_dma_mask;
++	cdev->dev.dma_mask = sch->dev.dma_mask;
+ 	dma_pool = cio_gp_dma_create(&cdev->dev, 1);
+ 	if (!dma_pool)
+ 		goto err_dma_pool;
 -- 
 2.20.1
 
