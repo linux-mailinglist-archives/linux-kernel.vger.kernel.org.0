@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39905EEC89
+	by mail.lfdr.de (Postfix) with ESMTP id B3FF6EEC8A
 	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfKDV6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:58:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54926 "EHLO mail.kernel.org"
+        id S1730406AbfKDV6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:58:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbfKDV6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:58:08 -0500
+        id S1730348AbfKDV6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:58:11 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 734F2217F4;
-        Mon,  4 Nov 2019 21:58:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DB6C214D8;
+        Mon,  4 Nov 2019 21:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904687;
-        bh=kjo9ICuQPkhOav4Yl9dBwJDDgT/2AfUsxxAO5HKP1Sg=;
+        s=default; t=1572904690;
+        bh=MoM63U9fIL/AW03fDiyVHX9B4WUl0OJn03LJfTOOcXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbKw3EJCh2IF/CdtEUgV0AU6zGEiDnjfB6wy50RB1iFg6DxqTYnkb9Y2L1/+a57ue
-         bsP1ogjDMMOuibBjQzAzesU8aZez3Y99gDH/WiihS38tAoha87++K61rqQfF0ooKNW
-         1g6HQfXU7k2N6VN4sRLtq3WbMOfehUxILY8P9lIQ=
+        b=GLkgeCCuPnjOrBOMD5MIXJaVNmXuQ1Knqk5kcosPGnYVnZzJKFDiIa8ZVy42mpC9n
+         8r9+wqe8QagPfl+ElQmGKGXcsd9NkXQ3k3Q/JqpmagmJBqE9fijf5+MHSGwcyPFT62
+         kfoqZBblWuAbRaTBVmp8RULgT0NllvpT+BPKw9vM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NOGUCHI Hiroshi <drvlabo@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/149] HID: Add ASUS T100CHI keyboard dock battery quirks
-Date:   Mon,  4 Nov 2019 22:43:46 +0100
-Message-Id: <20191104212138.116388277@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 034/149] NFSv4: Ensure that the state manager exits the loop on SIGKILL
+Date:   Mon,  4 Nov 2019 22:43:47 +0100
+Message-Id: <20191104212138.173839330@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
 References: <20191104212126.090054740@linuxfoundation.org>
@@ -43,34 +44,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NOGUCHI Hiroshi <drvlabo@gmail.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit a767ffea05d2737f6542cd78458a84a157fa216d ]
+[ Upstream commit a1aa09be21fa344d1f5585aab8164bfae55f57e3 ]
 
-Add ASUS Transbook T100CHI/T90CHI keyboard dock into battery quirk list, in
-order to add specific implementation in hid-asus.
-
-Signed-off-by: NOGUCHI Hiroshi <drvlabo@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-input.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/nfs/nfs4state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index d988b92b20c82..01bed2f6862ee 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -328,6 +328,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
- 		USB_DEVICE_ID_SYMBOL_SCANNER_3),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ASUSTEK,
-+		USB_DEVICE_ID_ASUSTEK_T100CHI_KEYBOARD),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{}
- };
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index c36ef75f2054b..b3086e99420c7 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -2613,7 +2613,7 @@ static void nfs4_state_manager(struct nfs_client *clp)
+ 			return;
+ 		if (test_and_set_bit(NFS4CLNT_MANAGER_RUNNING, &clp->cl_state) != 0)
+ 			return;
+-	} while (refcount_read(&clp->cl_count) > 1);
++	} while (refcount_read(&clp->cl_count) > 1 && !signalled());
+ 	goto out_drain;
  
+ out_error:
 -- 
 2.20.1
 
