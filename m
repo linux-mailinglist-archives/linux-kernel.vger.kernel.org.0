@@ -2,221 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA2AEEB23
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:32:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C960EEB38
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbfKDVbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:31:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:31583 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfKDVbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:31:38 -0500
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 245FA59449
-        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 21:31:37 +0000 (UTC)
-Received: by mail-qt1-f199.google.com with SMTP id l5so20175771qtj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:31:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=odBYYPB2dwXjXn5RBPYq4Rzo0JDyXN/FBfk/mj5Z+EQ=;
-        b=NixJMt7+qajkQJ6er/gMaqZGNTpAVezp5a6xjEqbPxoOtCgPbfxt0KzxKR1TMXXIvU
-         PgWLgLTuagjxlmzux0EBd72zMODHDZMU0u0bFN3ExLUR/Tdtr0mqjKP2277tC5jINIlk
-         cSA+01bW+JRGEVtZwBx6Aep7xSMZUIVrC6PpN9YlQV0ysTh4hVInGhiOZloGc8Lq46cY
-         meXZ5qcTOL1r2KIIrYkthmxjYz/li407/fglfB1/+GCkH+luhol7a2sKTnyu7BSO2ujh
-         xS9bQ3Jzx5FotQdRvtph0yuRNoCqb6hDu/lJPaGEOt5sdCENJZdxEjqQHYkIXLjBFzKY
-         O27g==
-X-Gm-Message-State: APjAAAUe9t5I96L6TWp5pYkEBJcDnPpc2TQgG/OTtis7iEmTMUGDewg3
-        fPE9AGCTvtHeZLGNeRyeLqmS5dSCZvxt44OCpk6/h6cvjQCfP+SGgJ2DSJpWA2AAsqoSOdP7BfC
-        RPLJm2R2X/gkAl8gn7rG+mJmd
-X-Received: by 2002:a0c:94fb:: with SMTP id k56mr24684047qvk.127.1572903096308;
-        Mon, 04 Nov 2019 13:31:36 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxCaLFc7g2Jbkr2kxfKOHZxG4CVScikJchrj/BxFvo2Kw/4kx1PfGW0DIQYm2b/95qkX5y88g==
-X-Received: by 2002:a0c:94fb:: with SMTP id k56mr24684020qvk.127.1572903095923;
-        Mon, 04 Nov 2019 13:31:35 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id i75sm9718319qke.22.2019.11.04.13.31.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2019 13:31:35 -0800 (PST)
-Subject: Re: [RFC PATCH] kconfig: Add option to get the full help text with
- listnewconfig
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Cline <jcline@redhat.com>,
-        Don Zickus <dzickus@redhat.com>
-References: <20191029181702.21460-1-labbott@redhat.com>
- <CAK7LNAQV2X94rQP4exP8Kujjm-6FAt_pHoGF6dtHx5qZgAWDxg@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <070517f0-6394-ede5-f7c2-f0e4552f5088@redhat.com>
-Date:   Mon, 4 Nov 2019 16:31:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1729698AbfKDVeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:34:11 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10442 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728602AbfKDVeK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:34:10 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dc099520001>; Mon, 04 Nov 2019 13:34:10 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 04 Nov 2019 13:34:05 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 04 Nov 2019 13:34:05 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
+ 2019 21:34:05 +0000
+Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191103211813.213227-6-jhubbard@nvidia.com>
+ <20191104173325.GD5134@redhat.com>
+ <be9de35c-57e9-75c3-2e86-eae50904bbdf@nvidia.com>
+ <20191104191811.GI5134@redhat.com>
+ <e9656d47-b4a1-da8a-e8cc-ebcfb8cc06d6@nvidia.com>
+ <20191104195248.GA7731@redhat.com>
+ <25ec4bc0-caaa-2a01-2ae7-2d79663a40e1@nvidia.com>
+ <20191104203153.GB7731@redhat.com> <20191104203702.GG30938@ziepe.ca>
+ <d0890a8b-c349-0515-2570-10e83979836b@nvidia.com>
+ <20191104211525.GJ30938@ziepe.ca>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <caaaaf52-490b-6ce1-81d8-675013354c73@nvidia.com>
+Date:   Mon, 4 Nov 2019 13:34:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQV2X94rQP4exP8Kujjm-6FAt_pHoGF6dtHx5qZgAWDxg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191104211525.GJ30938@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572903250; bh=vbo/OzrYq7woOdeOQXzDRocZ8qkmDZ2GrWck8Ge0GIw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qKL2SABndBuE0IlTwGECBEmaXKNt9+NUVq+WFlqtOQFVTiU7nDI02BQTOx0obKarz
+         gpxOM5Y6JautiKfOu0FtwOKOgDIpCUi5YMn9VF5RbTl9cVhlQsO6c44+kqa1Gmkh8J
+         VEKyKNOG6Vqk5nkQbEsBguPgBI2Ja3iUp52oe4dwNevVkVV3ApvpTePgu21U23nzfu
+         yfLLAmDkD5PCoZMaxqbgr1s6DM7hOxhvmTI1aiChbyJF4tpKtWS0fJG0BnHlBMS2gJ
+         uFSIwTdydwTYYvW23EYrvHjEOYVqNSM3f00rEJ3//HPrJcaJAle1+bmyry6JSVv/h0
+         e3DYAyiBVB40w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/3/19 9:20 PM, Masahiro Yamada wrote:
-> On Wed, Oct 30, 2019 at 3:17 AM Laura Abbott <labbott@redhat.com> wrote:
->>
->> make listnewconfig will list the individual options that need to be set.
->> This is useful but there's no easy way to get the help text associated
->> with the options at the same time. Introduce a new targe
->> 'make extendedlistnewconfig' which lists the full help text of all the
->> new options as well. This makes it easier to automatically generate
->> changes that are easy for humans to review. This command also adds
->> markers between each option for easier parsing.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->> Red Hat has been relying on some external libraries that have a tendency
->> to break to get the help text for all new config options. I'd really
->> like an in tree way to get the help text so we can automatically
->> generate patches for people to reveiw new config options. I'm open to
->> other approaches that let us script getting the help text as well.
+On 11/4/19 1:15 PM, Jason Gunthorpe wrote:
+...
+>> Right, and I thought about this when converting, and realized that the above 
+>> code is working around the current gup.c limitations, which are "cannot support
+>> gup remote with FOLL_LONGTERM".
 > 
-> I am not familiar with the workflow in Red Hat.
-> I cannot propose another approach.
+> But AFAICT it doesn't have a problem, the protection test is just too
+> strict, and I guess the control flow needs a bit of fixing..
+> 
+> The issue is this:
+> 
+> static __always_inline long __get_user_pages_locked():
+> {
+>         if (locked) {
+>                 /* if VM_FAULT_RETRY can be returned, vmas become invalid */
+>                 BUG_ON(vmas);
+>                 /* check caller initialized locked */
+>                 BUG_ON(*locked != 1);
+>         }
 > 
 > 
-> I am not a big fan of the target name.
-> 'extendedlistnewconfig' is so long that it breaks the
-> alignment of 'make help'.
-> Maybe 'helpnewconfig' is understandable
-> although I am open to discussion for a better name.
+> so remote could be written as:
 > 
+> if (gup_flags & FOLL_LONGTERM) {
+>    if (WARN_ON_ONCE(locked))
+>         return -EINVAL;
+>    return __gup_longterm_locked(...)
+> }
 > 
+> return __get_user_pages_locked(...)
+> 
+> ??
 
-Yes, I agree the name is long. helpnewconfig is fine by me.
+Yes, that loosens it up just enough for the vfio case (which doesn't set 
+"locked") to get through, great! OK, I'll put that (the above plus 
+corresponding vfio fix) in a separate patch first. 
 
-> BTW, did you check how the newly-added 'choice' was displayed?
-> Its help message is displayed, but the choice has no name.
-> So, people might be confused what the help message is talking about.
-> 
-> 
+This should clear things up nicely.
 
-Thanks for pointing this out. For what we're looking to do I
-think we can work around it.
 
-Thanks,
-Laura
-
-> 
-> 
->> ---
->>   scripts/kconfig/Makefile |  5 ++++-
->>   scripts/kconfig/conf.c   | 13 ++++++++++++-
->>   2 files changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
->> index ef2f2336c469..aaaf1f62300c 100644
->> --- a/scripts/kconfig/Makefile
->> +++ b/scripts/kconfig/Makefile
->> @@ -66,7 +66,9 @@ localyesconfig localmodconfig: $(obj)/conf
->>   #  syncconfig has become an internal implementation detail and is now
->>   #  deprecated for external use
->>   simple-targets := oldconfig allnoconfig allyesconfig allmodconfig \
->> -       alldefconfig randconfig listnewconfig olddefconfig syncconfig
->> +       alldefconfig randconfig listnewconfig olddefconfig syncconfig \
->> +       extendedlistnewconfig
->> +
->>   PHONY += $(simple-targets)
->>
->>   $(simple-targets): $(obj)/conf
->> @@ -134,6 +136,7 @@ help:
->>          @echo  '  alldefconfig    - New config with all symbols set to default'
->>          @echo  '  randconfig      - New config with random answer to all options'
->>          @echo  '  listnewconfig   - List new options'
->> +       @echo  '  extendedlistnewconfig   - List new options'
->>          @echo  '  olddefconfig    - Same as oldconfig but sets new symbols to their'
->>          @echo  '                    default value without prompting'
->>          @echo  '  kvmconfig       - Enable additional options for kvm guest kernel support'
->> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
->> index 40e16e871ae2..7aeb77374d9a 100644
->> --- a/scripts/kconfig/conf.c
->> +++ b/scripts/kconfig/conf.c
->> @@ -32,6 +32,7 @@ enum input_mode {
->>          defconfig,
->>          savedefconfig,
->>          listnewconfig,
->> +       extendedlistnewconfig,
->>          olddefconfig,
->>   };
->>   static enum input_mode input_mode = oldaskconfig;
->> @@ -434,6 +435,11 @@ static void check_conf(struct menu *menu)
->>                                                  printf("%s%s=%s\n", CONFIG_, sym->name, str);
->>                                          }
->>                                  }
->> +                       } else if (input_mode == extendedlistnewconfig) {
->> +                               printf("-----\n");
->> +                               print_help(menu);
->> +                               printf("-----\n");
->> +
->>                          } else {
->>                                  if (!conf_cnt++)
->>                                          printf("*\n* Restart config...\n*\n");
->> @@ -459,6 +465,7 @@ static struct option long_opts[] = {
->>          {"alldefconfig",    no_argument,       NULL, alldefconfig},
->>          {"randconfig",      no_argument,       NULL, randconfig},
->>          {"listnewconfig",   no_argument,       NULL, listnewconfig},
->> +       {"extendedlistnewconfig",   no_argument,       NULL, extendedlistnewconfig},
->>          {"olddefconfig",    no_argument,       NULL, olddefconfig},
->>          {NULL, 0, NULL, 0}
->>   };
->> @@ -469,6 +476,7 @@ static void conf_usage(const char *progname)
->>          printf("Usage: %s [-s] [option] <kconfig-file>\n", progname);
->>          printf("[option] is _one_ of the following:\n");
->>          printf("  --listnewconfig         List new options\n");
->> +       printf("  --extendedlistnewconfig List new options and help text\n");
->>          printf("  --oldaskconfig          Start a new configuration using a line-oriented program\n");
->>          printf("  --oldconfig             Update a configuration using a provided .config as base\n");
->>          printf("  --syncconfig            Similar to oldconfig but generates configuration in\n"
->> @@ -543,6 +551,7 @@ int main(int ac, char **av)
->>                  case allmodconfig:
->>                  case alldefconfig:
->>                  case listnewconfig:
->> +               case extendedlistnewconfig:
->>                  case olddefconfig:
->>                          break;
->>                  case '?':
->> @@ -576,6 +585,7 @@ int main(int ac, char **av)
->>          case oldaskconfig:
->>          case oldconfig:
->>          case listnewconfig:
->> +       case extendedlistnewconfig:
->>          case olddefconfig:
->>                  conf_read(NULL);
->>                  break;
->> @@ -657,6 +667,7 @@ int main(int ac, char **av)
->>                  /* fall through */
->>          case oldconfig:
->>          case listnewconfig:
->> +       case extendedlistnewconfig:
->>          case syncconfig:
->>                  /* Update until a loop caused no more changes */
->>                  do {
->> @@ -675,7 +686,7 @@ int main(int ac, char **av)
->>                                  defconfig_file);
->>                          return 1;
->>                  }
->> -       } else if (input_mode != listnewconfig) {
->> +       } else if (input_mode != listnewconfig && input_mode != extendedlistnewconfig) {
->>                  if (!no_conf_write && conf_write(NULL)) {
->>                          fprintf(stderr, "\n*** Error during writing of the configuration.\n\n");
->>                          exit(1);
->> --
->> 2.21.0
->>
-> 
-> 
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
