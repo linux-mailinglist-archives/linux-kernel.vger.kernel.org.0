@@ -2,140 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A50EDF25
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4CBEDEFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:52:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfKDLxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 06:53:32 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61095 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728999AbfKDLxa (ORCPT
+        id S1728715AbfKDLwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:52:44 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:34911 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727782AbfKDLwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:53:30 -0500
-X-UUID: 22d856d238704efaa7245c14feded0da-20191104
-X-UUID: 22d856d238704efaa7245c14feded0da-20191104
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <chao.hao@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 340143234; Mon, 04 Nov 2019 19:53:26 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 4 Nov 2019 19:53:25 +0800
-Received: from localhost.localdomain (10.15.20.246) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 4 Nov 2019 19:53:14 +0800
-From:   Chao Hao <chao.hao@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Jun Yan <jun.yan@mediatek.com>,
-        Cui Zhang <cui.zhang@mediatek.com>,
-        Guangming Cao <guangming.cao@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Anan Sun <anan.sun@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Chao Hao <chao.hao@mediatek.com>
-Subject: [RESEND, PATCH 13/13] iommu/mediatek: Add multiple mtk_iommu_domain support for mt6779
-Date:   Mon, 4 Nov 2019 19:52:38 +0800
-Message-ID: <20191104115238.2394-14-chao.hao@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191104115238.2394-1-chao.hao@mediatek.com>
-References: <20191104115238.2394-1-chao.hao@mediatek.com>
+        Mon, 4 Nov 2019 06:52:43 -0500
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id RauUi817QTzKrRauXiltg7; Mon, 04 Nov 2019 12:52:41 +0100
+Subject: Re: [PATCH 4/4] v4l2-ctl: Support setting V4L2_CTRL_TYPE_AREA
+ controls
+To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191101112509.29723-1-ribalda@kernel.org>
+ <20191101112509.29723-4-ribalda@kernel.org>
+ <31815641-550c-88ab-c037-2e743cea59b3@xs4all.nl>
+ <CAPybu_3DQbmuamHmTXWnF15B1tzPzf1Sh_YJe6VS-Uk8z81q1Q@mail.gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <82bd9ce8-bf1e-7071-914e-f321a8467476@xs4all.nl>
+Date:   Mon, 4 Nov 2019 12:52:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: F8AD794D9FEF6333CE5BE9CFD73E711FCAB89F13FD72EC4B1E68F3848BF91BB72000:8
-X-MTK:  N
+In-Reply-To: <CAPybu_3DQbmuamHmTXWnF15B1tzPzf1Sh_YJe6VS-Uk8z81q1Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGrkqGV2Xg+2z6dntFkrabUjC190MQDxXDgUm2QiUL25QOkDz+O+drfg7ijgBwJ/kqmPHcMNcrPTa+qrQNppMdOFVKDygZ5vLzEejArpVXgj9tcM4Q01
+ pGnuMHaceaLStm7LfKKjmjVD7Ug6y2y1kSpNgoUFTN3BeYynavXX2b+WL+Qlb46Cs048riFWIBkfshlhnUJHgiPG2LnffOTAgeLfNchb+yP4ne0FE5dR91ac
+ O+TfZthAKVIOzMbjG80/LQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For mt6779, it need to support three mtk_iommu_domains, every
-mtk_iommu_domain's iova space is different.
-Three mtk_iommu_domains is as below:
-1. Normal mtk_iommu_domain exclude 0x4000_0000~0x47ff_ffff and
-   0x7da0_0000~7fbf_ffff.
-2. CCU mtk_iommu_domain include 0x4000_0000~0x47ff_ffff.
-3. VPU mtk_iommu_domain 0x7da0_0000~0x7fbf_ffff.
+On 11/4/19 12:21 PM, Ricardo Ribalda Delgado wrote:
+> Hi Hans
+> 
+> Sure I will fix this. Shall I resend it once you have updated the
+> headers on v4l-utils?
 
-Signed-off-by: Chao Hao <chao.hao@mediatek.com>
----
- drivers/iommu/mtk_iommu.c | 45 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
+Don't wait for that, just resend. I can merge this as soon as the new
+headers are in.
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index c33ea55a1841..882fe01ff770 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -140,6 +140,30 @@ const struct mtk_domain_data single_dom = {
- 	.max_iova = DMA_BIT_MASK(32)
- };
- 
-+/*
-+ * related file: mt6779-larb-port.h
-+ */
-+const struct mtk_domain_data mt6779_multi_dom[] = {
-+	/* normal domain */
-+	{
-+	 .min_iova = 0x0,
-+	 .max_iova = DMA_BIT_MASK(32),
-+	},
-+	/* ccu domain */
-+	{
-+	 .min_iova = 0x40000000,
-+	 .max_iova = 0x48000000 - 1,
-+	 .port_mask = {MTK_M4U_ID(9, 21), MTK_M4U_ID(9, 22),
-+		       MTK_M4U_ID(12, 0), MTK_M4U_ID(12, 1)}
-+	},
-+	/* vpu domain */
-+	{
-+	 .min_iova = 0x7da00000,
-+	 .max_iova = 0x7fc00000 - 1,
-+	 .port_mask = {MTK_M4U_ID(13, 0)}
-+	}
-+};
-+
- static struct mtk_iommu_pgtable *share_pgtable;
- static const struct iommu_ops mtk_iommu_ops;
- 
-@@ -1055,6 +1079,21 @@ static const struct dev_pm_ops mtk_iommu_pm_ops = {
- 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_iommu_suspend, mtk_iommu_resume)
- };
- 
-+static const struct mtk_iommu_resv_iova_region mt6779_iommu_rsv_list[] = {
-+	{
-+		.dom_id = 0,
-+		.iova_base = 0x40000000,	/* CCU */
-+		.iova_size = 0x8000000,
-+		.type = IOMMU_RESV_RESERVED,
-+	},
-+	{
-+		.dom_id = 0,
-+		.iova_base = 0x7da00000,	/* VPU/MDLA */
-+		.iova_size = 0x2700000,
-+		.type = IOMMU_RESV_RESERVED,
-+	},
-+};
-+
- static const struct mtk_iommu_plat_data mt2712_data = {
- 	.m4u_plat     = M4U_MT2712,
- 	.has_4gb_mode = true,
-@@ -1068,8 +1107,10 @@ static const struct mtk_iommu_plat_data mt2712_data = {
- 
- static const struct mtk_iommu_plat_data mt6779_data = {
- 	.m4u_plat = M4U_MT6779,
--	.dom_cnt = 1,
--	.dom_data = &single_dom,
-+	.resv_cnt     = ARRAY_SIZE(mt6779_iommu_rsv_list),
-+	.resv_region  = mt6779_iommu_rsv_list,
-+	.dom_cnt = ARRAY_SIZE(mt6779_multi_dom),
-+	.dom_data = mt6779_multi_dom,
- 	.larbid_remap[0] = {0, 1, 2, 3, 5, 7, 10, 9},
- 	/* vp6a, vp6b, mdla/core2, mdla/edmc*/
- 	.larbid_remap[1] = {2, 0, 3, 1},
--- 
-2.18.0
+Regards,
+
+	Hans
+
+> 
+> Best regards
+> 
+> On Mon, Nov 4, 2019 at 10:41 AM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>>
+>> On 11/1/19 12:25 PM, Ricardo Ribalda Delgado wrote:
+>>> $ v4l2-ctl  -d /dev/video1  -c area=123123x233
+>>>
+>>> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+>>> ---
+>>>  utils/v4l2-ctl/v4l2-ctl-common.cpp | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/utils/v4l2-ctl/v4l2-ctl-common.cpp b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+>>> index 95339561..676b05e0 100644
+>>> --- a/utils/v4l2-ctl/v4l2-ctl-common.cpp
+>>> +++ b/utils/v4l2-ctl/v4l2-ctl-common.cpp
+>>> @@ -973,6 +973,10 @@ void common_set(cv4l_fd &_fd)
+>>>                                       strncpy(ctrl.string, iter->second.c_str(), qc.maximum);
+>>>                                       ctrl.string[qc.maximum] = 0;
+>>>                                       break;
+>>> +                             case V4L2_CTRL_TYPE_AREA:
+>>> +                                     sscanf(iter->second.c_str(), "%dx%d",
+>>
+>> Use %ux%u since these are unsigned values.
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>>> +                                            &ctrl.p_area->width, &ctrl.p_area->height);
+>>> +                                     break;
+>>>                               default:
+>>>                                       fprintf(stderr, "%s: unsupported payload type\n",
+>>>                                                       qc.name);
+>>>
+>>
 
