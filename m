@@ -2,41 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE45AEEE70
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:14:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B671EEF51
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390087AbfKDWHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:07:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39358 "EHLO mail.kernel.org"
+        id S2389218AbfKDWUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:20:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390067AbfKDWHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:07:03 -0500
+        id S2388732AbfKDV7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:59:47 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94A88214D8;
-        Mon,  4 Nov 2019 22:07:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFDB6214E0;
+        Mon,  4 Nov 2019 21:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905223;
-        bh=uEND3GKoWK+g/JWo/oyDeh6QDH6dGdOrvIJh9bfh8S0=;
+        s=default; t=1572904786;
+        bh=sv3AcplPh/x/HJ/H3hvgJUOAaTDB7KXd0y7Ec48YC/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZH4nXtCE+dFEUjGeBo5rTGBsSt6Qw6xkjegAIMvLI6MJ2t4Cu70mOcZHJF/PnpWg
-         FLK8jnp9wF70Dt+/2rYfu1RaNilSgaPYRQE+YtYJisATRbvw9SoON1P5x1hsL476sr
-         2PYXSbcm9Nerc6sj90X8Te11xvjAcgeUyydEK4XU=
+        b=JmWco2UYYpvEN740KhddW5W/5ehxFWuoDvvtmVoerANUkrItqOK5AGkEYwmZTOMsF
+         v3UbqpEWRx3kkAX9AuZ9vEfByrXov9A+Xf9hpyCjzOu66XzXtYUFyxGp/64KpQshpY
+         juSBwZhRFiRu9dtfLlIAgakVU6LVo9BmiXGYrltw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 071/163] iio: imu: adis16400: release allocated memory on failure
-Date:   Mon,  4 Nov 2019 22:44:21 +0100
-Message-Id: <20191104212145.044132462@linuxfoundation.org>
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.19 069/149] perf annotate: Return appropriate error code for allocation failures
+Date:   Mon,  4 Nov 2019 22:44:22 +0100
+Message-Id: <20191104212141.555401467@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +51,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit ab612b1daf415b62c58e130cb3d0f30b255a14d0 ]
+[ Upstream commit 16ed3c1e91159e28b02f11f71ff4ce4cbc6f99e4 ]
 
-In adis_update_scan_mode, if allocation for adis->buffer fails,
-previously allocated adis->xfer needs to be released.
+We should return errno or the annotation extra range understood by
+symbol__strerror_disassemble() instead of -1, fix it, returning ENOMEM
+instead.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reported-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+Cc: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/n/tip-8of1cmj3rz0mppfcshc9bbqq@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/imu/adis_buffer.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/util/annotate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/imu/adis_buffer.c b/drivers/iio/imu/adis_buffer.c
-index 9ac8356d9a954..f446ff4978091 100644
---- a/drivers/iio/imu/adis_buffer.c
-+++ b/drivers/iio/imu/adis_buffer.c
-@@ -78,8 +78,11 @@ int adis_update_scan_mode(struct iio_dev *indio_dev,
- 		return -ENOMEM;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 83a3ad4256c5b..6958d7eed5bed 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1614,7 +1614,7 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
  
- 	adis->buffer = kcalloc(indio_dev->scan_bytes, 2, GFP_KERNEL);
--	if (!adis->buffer)
-+	if (!adis->buffer) {
-+		kfree(adis->xfer);
-+		adis->xfer = NULL;
- 		return -ENOMEM;
-+	}
+ 	build_id_path = strdup(filename);
+ 	if (!build_id_path)
+-		return -1;
++		return ENOMEM;
  
- 	rx = adis->buffer;
- 	tx = rx + scan_count;
+ 	/*
+ 	 * old style build-id cache has name of XX/XXXXXXX.. while
+@@ -2732,7 +2732,7 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
+ 
+ 	notes->offsets = zalloc(size * sizeof(struct annotation_line *));
+ 	if (notes->offsets == NULL)
+-		return -1;
++		return ENOMEM;
+ 
+ 	if (perf_evsel__is_group_event(evsel))
+ 		nr_pcnt = evsel->nr_members;
 -- 
 2.20.1
 
