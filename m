@@ -2,317 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E22EDF36
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FC93EDF2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 12:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfKDLyI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 06:54:08 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:51732 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfKDLyG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 06:54:06 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        id S1729103AbfKDLyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 06:54:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43440 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbfKDLyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 06:54:03 -0500
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id E1E4160039A;
-        Mon,  4 Nov 2019 12:53:59 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 4 Nov 2019
- 12:53:59 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 4 Nov 2019 12:53:59 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/9] ARM: dts: imx6ul-kontron-n6310: Move common SoM nodes
- to a separate file
-Thread-Topic: [PATCH v4 1/9] ARM: dts: imx6ul-kontron-n6310: Move common SoM
- nodes to a separate file
-Thread-Index: AQHVkwaLozmp4mUWskywg6g6pJgdZQ==
-Date:   Mon, 4 Nov 2019 11:53:59 +0000
-Message-ID: <20191104115352.8728-2-frieder.schrempf@kontron.de>
-References: <20191104115352.8728-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20191104115352.8728-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        by mx1.redhat.com (Postfix) with ESMTPS id 750FE83F40
+        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 11:54:03 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id y3so3416729wrm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 03:54:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K9ShbQwUl3JT1wY9fwM0LVfIdQxr/5VaXCx33ZJ5yec=;
+        b=WW9xjnd02e0P02Gpbgb3sDcq6+RK6x3fMBJKWlT7mR00NNub6hndt+d+6Cu+v5mVuk
+         bb5IYlzww1s8IiKAmTx/32mhi1z4zS4w75Skeg9oQXwElT9xT5InWqU7wZupZ/AC7DNd
+         Hvv4pekuUqvI1DgkS8PqPFGr6GwZ+BBH8p89v3Y66n1ZIj0TGo18kWlHX7gLT3TvAq/x
+         /gnwTscS8p9wbw946Ba7WCZg1SKd+3gLwq3H2lwIDCCZBrrF47EghRHpBlSFAGV+1C5L
+         4r6FD2O+6A3oN1PVDXZyYq/WAWQgd1bW6RWJIr0RGCb/tqoAOQhFHQN6HZ+nxK+OTXd0
+         GMrA==
+X-Gm-Message-State: APjAAAU2qgRai9IYV3IDmm3wzUgF9CDRpask/sbiueHT8Nshc+avN+Fp
+        0tNTNflJE2fgQSJwyrcAuPC9tA68L7fK74FXFJsBEzEhWDyOvIMwEhCTsKB92FlcGmyV7ElK9lH
+        hx9F8sB9RrOo5NUufnLElfXEB
+X-Received: by 2002:adf:e5cf:: with SMTP id a15mr24119467wrn.143.1572868442060;
+        Mon, 04 Nov 2019 03:54:02 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxFiK0uysITL0qyqhqzQe9IaQU3kN4T5tUMeyIETkHAy9fg1Ec1DQbcA/YXPxCfHYIp7okHUA==
+X-Received: by 2002:adf:e5cf:: with SMTP id a15mr24119450wrn.143.1572868441791;
+        Mon, 04 Nov 2019 03:54:01 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:4051:461:136e:3f74? ([2001:b07:6468:f312:4051:461:136e:3f74])
+        by smtp.gmail.com with ESMTPSA id i71sm22623611wri.68.2019.11.04.03.54.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2019 03:54:01 -0800 (PST)
+Subject: Re: [PATCH 2/4] kvm: svm: Enable UMIP feature on AMD
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <157262960837.2838.17520432516398899751.stgit@naples-babu.amd.com>
+ <157262962352.2838.15656190309312238595.stgit@naples-babu.amd.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <37c61050-e315-fc84-9699-bb92e5afacda@redhat.com>
+Date:   Mon, 4 Nov 2019 12:54:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: E1E4160039A.A0891
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-X-Spam-Status: No
+In-Reply-To: <157262962352.2838.15656190309312238595.stgit@naples-babu.amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On 01/11/19 18:33, Moger, Babu wrote:
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 4153ca8cddb7..79abbdeca148 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -2533,6 +2533,11 @@ static void svm_decache_cr4_guest_bits(struct kvm_vcpu *vcpu)
+>  {
+>  }
+>  
+> +static bool svm_umip_emulated(void)
+> +{
+> +	return boot_cpu_has(X86_FEATURE_UMIP);
+> +}
 
-The Kontron N6311 and N6411 SoMs are very similar to N6310. In
-preparation to add support for them, we move the common nodes to a
-separate file imx6ul-kontron-n6x1x-som-common.dtsi.
+For hardware that supports UMIP, this is only needed because of your
+patch 1.  Without it, X86_FEATURE_UMIP should already be enabled on
+processors that natively support UMIP.
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../boot/dts/imx6ul-kontron-n6310-som.dtsi    |  95 +---------------
- .../dts/imx6ul-kontron-n6x1x-som-common.dtsi  | 103 ++++++++++++++++++
- 2 files changed, 104 insertions(+), 94 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
+If you want UMIP *emulation* instead, this should become "return true".
 
-diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
-index a896b2348dd2..47d3ce5d255f 100644
---- a/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-kontron-n6310-som.dtsi
-@@ -6,7 +6,7 @@
-  */
- 
- #include "imx6ul.dtsi"
--#include <dt-bindings/gpio/gpio.h>
-+#include "imx6ul-kontron-n6x1x-som-common.dtsi"
- 
- / {
- 	model = "Kontron N6310 SOM";
-@@ -18,49 +18,7 @@
- 	};
- };
- 
--&ecspi2 {
--	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_ecspi2>;
--	status = "okay";
--
--	spi-flash@0 {
--		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
--		spi-max-frequency = <50000000>;
--		reg = <0>;
--	};
--};
--
--&fec1 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
--	phy-mode = "rmii";
--	phy-handle = <&ethphy1>;
--	status = "okay";
--
--	mdio {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		ethphy1: ethernet-phy@1 {
--			reg = <1>;
--			micrel,led-mode = <0>;
--			clocks = <&clks IMX6UL_CLK_ENET_REF>;
--			clock-names = "rmii-ref";
--		};
--	};
--};
--
--&fec2 {
--	phy-mode = "rmii";
--	status = "disabled";
--};
--
- &qspi {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_qspi>;
--	status = "okay";
--
- 	spi-flash@0 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -81,54 +39,3 @@
- 		};
- 	};
- };
--
--&iomuxc {
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_reset_out>;
--
--	pinctrl_ecspi2: ecspi2grp {
--		fsl,pins = <
--			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
--			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
--			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
--			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
--		>;
--	};
--
--	pinctrl_enet1: enet1grp {
--		fsl,pins = <
--			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
--			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
--			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
--			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
--			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
--			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
--			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
--			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
--		>;
--	};
--
--	pinctrl_enet1_mdio: enet1mdiogrp {
--		fsl,pins = <
--			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
--			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
--		>;
--	};
--
--	pinctrl_qspi: qspigrp {
--		fsl,pins = <
--			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
--			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
--			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
--			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
--			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
--			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
--		>;
--	};
--
--	pinctrl_reset_out: rstoutgrp {
--		fsl,pins = <
--			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
--		>;
--	};
--};
-diff --git a/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
-new file mode 100644
-index 000000000000..a843e028bcde
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-kontron-n6x1x-som-common.dtsi
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 exceet electronics GmbH
-+ * Copyright (C) 2018 Kontron Electronics GmbH
-+ * Copyright (c) 2019 Krzysztof Kozlowski <krzk@kernel.org>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+&ecspi2 {
-+	cs-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi2>;
-+	status = "okay";
-+
-+	spi-flash@0 {
-+		compatible = "mxicy,mx25v8035f", "jedec,spi-nor";
-+		spi-max-frequency = <50000000>;
-+		reg = <0>;
-+	};
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy1>;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy1: ethernet-phy@1 {
-+			reg = <1>;
-+			micrel,led-mode = <0>;
-+			clocks = <&clks IMX6UL_CLK_ENET_REF>;
-+			clock-names = "rmii-ref";
-+		};
-+	};
-+};
-+
-+&fec2 {
-+	phy-mode = "rmii";
-+	status = "disabled";
-+};
-+
-+&qspi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_qspi>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_reset_out>;
-+
-+	pinctrl_ecspi2: ecspi2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_DATA03__ECSPI2_MISO      0x100b1
-+			MX6UL_PAD_CSI_DATA02__ECSPI2_MOSI      0x100b1
-+			MX6UL_PAD_CSI_DATA00__ECSPI2_SCLK      0x100b1
-+			MX6UL_PAD_CSI_DATA01__GPIO4_IO22       0x100b1
-+		>;
-+	};
-+
-+	pinctrl_enet1: enet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN      0x1b0b0
-+			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER      0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00 0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01 0x1b0b0
-+			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN      0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00 0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01 0x1b0b0
-+			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1  0x4001b009
-+		>;
-+	};
-+
-+	pinctrl_enet1_mdio: enet1mdiogrp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO07__ENET1_MDC         0x1b0b0
-+			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO        0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_qspi: qspigrp {
-+		fsl,pins = <
-+			MX6UL_PAD_NAND_WP_B__QSPI_A_SCLK        0x70a1
-+			MX6UL_PAD_NAND_READY_B__QSPI_A_DATA00   0x70a1
-+			MX6UL_PAD_NAND_CE0_B__QSPI_A_DATA01     0x70a1
-+			MX6UL_PAD_NAND_CE1_B__QSPI_A_DATA02     0x70a1
-+			MX6UL_PAD_NAND_CLE__QSPI_A_DATA03       0x70a1
-+			MX6UL_PAD_NAND_DQS__QSPI_A_SS0_B        0x70a1
-+		>;
-+	};
-+
-+	pinctrl_reset_out: rstoutgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09      0x1b0b0
-+		>;
-+	};
-+};
--- 
-2.17.1
+>  static void update_cr0_intercept(struct vcpu_svm *svm)
+>  {
+>  	ulong gcr0 = svm->vcpu.arch.cr0;
+> @@ -4438,6 +4443,13 @@ static int interrupt_window_interception(struct vcpu_svm *svm)
+>  	return 1;
+>  }
+>  
+> +static int umip_interception(struct vcpu_svm *svm)
+> +{
+> +	struct kvm_vcpu *vcpu = &svm->vcpu;
+> +
+> +	return kvm_emulate_instruction(vcpu, 0);
+> +}
+> +
+>  static int pause_interception(struct vcpu_svm *svm)
+>  {
+>  	struct kvm_vcpu *vcpu = &svm->vcpu;
+> @@ -4775,6 +4787,10 @@ static int (*const svm_exit_handlers[])(struct vcpu_svm *svm) = {
+>  	[SVM_EXIT_SMI]				= nop_on_interception,
+>  	[SVM_EXIT_INIT]				= nop_on_interception,
+>  	[SVM_EXIT_VINTR]			= interrupt_window_interception,
+> +	[SVM_EXIT_IDTR_READ]			= umip_interception,
+> +	[SVM_EXIT_GDTR_READ]			= umip_interception,
+> +	[SVM_EXIT_LDTR_READ]			= umip_interception,
+> +	[SVM_EXIT_TR_READ]			= umip_interception,
+
+This is missing enabling the intercepts.  Also, this can be just
+emulate_on_interception instead of a new function.
+
+Paolo
+
+>  	[SVM_EXIT_RDPMC]			= rdpmc_interception,
+>  	[SVM_EXIT_CPUID]			= cpuid_interception,
+>  	[SVM_EXIT_IRET]                         = iret_interception,
+> @@ -5976,11 +5992,6 @@ static bool svm_xsaves_supported(void)
+>  	return boot_cpu_has(X86_FEATURE_XSAVES);
+>  }
+>  
+> -static bool svm_umip_emulated(void)
+> -{
+> -	return false;
+> -}
+> -
+>  static bool svm_pt_supported(void)
+>  {
+>  	return false;
+> 
+
