@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27FB7EF016
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4305AEEFAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfKDVve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:51:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44498 "EHLO mail.kernel.org"
+        id S1730188AbfKDVz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730528AbfKDVva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:30 -0500
+        id S1729946AbfKDVz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:55:26 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DE0C218BA;
-        Mon,  4 Nov 2019 21:51:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB9122053B;
+        Mon,  4 Nov 2019 21:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904289;
-        bh=ICY7z8h2C9Up1gekhmJEUUIkWA03qeNFTQkxkn+LRDA=;
+        s=default; t=1572904525;
+        bh=cvAy8I6nyODwm1A2BQhxiFPTaMrr05ZrUj2kImn6Abk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kvJ2RPFEpPHf3BZC/ZEr610ECkrIsm9DAsugtn0XpMW1RO6/drrvg8/jnJK1VME2
-         7IDaGgYuNrVo8k34Nzm3yOytYLacUjeNpXKs9NJ97yNAy8lBqsP0B56IVVqAOnN4l8
-         OPcCW7aLj/GDdAVJuXF0A3mBTzIaTzM91fsyy/9k=
+        b=ZyVVcwEJzIWlcFjdaYsoBp6PX4b3T5UlsOp6aqHQ0sm/R5KHw2kpC0J2MNC8Lwkt5
+         TL0RKSaIQqJCg7cTk1u50jPIjvcFl0Q2gfoBvFWK+ei94xpNTEX+L+h7F2Ajt4TGuR
+         AIy0OryX6FraUy/1Oa0FgvH6WNW1FpHKTSePZzrY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6b825a6494a04cc0e3f7@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.9 52/62] llc: fix sk_buff leak in llc_conn_service()
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        syzbot+403741a091bf41d4ae79@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 76/95] HID: Fix assumption that devices have inputs
 Date:   Mon,  4 Nov 2019 22:45:14 +0100
-Message-Id: <20191104211953.971052924@linuxfoundation.org>
+Message-Id: <20191104212118.741164206@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,187 +44,360 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit b74555de21acd791f12c4a1aeaf653dd7ac21133 upstream.
+commit d9d4b1e46d9543a82c23f6df03f4ad697dab361b upstream.
 
-syzbot reported:
+The syzbot fuzzer found a slab-out-of-bounds write bug in the hid-gaff
+driver.  The problem is caused by the driver's assumption that the
+device must have an input report.  While this will be true for all
+normal HID input devices, a suitably malicious device can violate the
+assumption.
 
-    BUG: memory leak
-    unreferenced object 0xffff88811eb3de00 (size 224):
-       comm "syz-executor559", pid 7315, jiffies 4294943019 (age 10.300s)
-       hex dump (first 32 bytes):
-         00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-         00 a0 38 24 81 88 ff ff 00 c0 f2 15 81 88 ff ff  ..8$............
-       backtrace:
-         [<000000008d1c66a1>] kmemleak_alloc_recursive  include/linux/kmemleak.h:55 [inline]
-         [<000000008d1c66a1>] slab_post_alloc_hook mm/slab.h:439 [inline]
-         [<000000008d1c66a1>] slab_alloc_node mm/slab.c:3269 [inline]
-         [<000000008d1c66a1>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
-         [<00000000447d9496>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
-         [<000000000cdbf82f>] alloc_skb include/linux/skbuff.h:1058 [inline]
-         [<000000000cdbf82f>] llc_alloc_frame+0x66/0x110 net/llc/llc_sap.c:54
-         [<000000002418b52e>] llc_conn_ac_send_sabme_cmd_p_set_x+0x2f/0x140  net/llc/llc_c_ac.c:777
-         [<000000001372ae17>] llc_exec_conn_trans_actions net/llc/llc_conn.c:475  [inline]
-         [<000000001372ae17>] llc_conn_service net/llc/llc_conn.c:400 [inline]
-         [<000000001372ae17>] llc_conn_state_process+0x1ac/0x640  net/llc/llc_conn.c:75
-         [<00000000f27e53c1>] llc_establish_connection+0x110/0x170  net/llc/llc_if.c:109
-         [<00000000291b2ca0>] llc_ui_connect+0x10e/0x370 net/llc/af_llc.c:477
-         [<000000000f9c740b>] __sys_connect+0x11d/0x170 net/socket.c:1840
-         [...]
+The same assumption is present in over a dozen other HID drivers.
+This patch fixes them by checking that the list of hid_inputs for the
+hid_device is nonempty before allowing it to be used.
 
-The bug is that most callers of llc_conn_send_pdu() assume it consumes a
-reference to the skb, when actually due to commit b85ab56c3f81 ("llc:
-properly handle dev_queue_xmit() return value") it doesn't.
-
-Revert most of that commit, and instead make the few places that need
-llc_conn_send_pdu() to *not* consume a reference call skb_get() before.
-
-Fixes: b85ab56c3f81 ("llc: properly handle dev_queue_xmit() return value")
-Reported-by: syzbot+6b825a6494a04cc0e3f7@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reported-and-tested-by: syzbot+403741a091bf41d4ae79@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/llc_conn.h |    2 +-
- net/llc/llc_c_ac.c     |    8 ++++++--
- net/llc/llc_conn.c     |   32 +++++++++-----------------------
- 3 files changed, 16 insertions(+), 26 deletions(-)
+ drivers/hid/hid-axff.c           |   11 +++++++++--
+ drivers/hid/hid-dr.c             |   12 +++++++++---
+ drivers/hid/hid-emsff.c          |   12 +++++++++---
+ drivers/hid/hid-gaff.c           |   12 +++++++++---
+ drivers/hid/hid-holtekff.c       |   12 +++++++++---
+ drivers/hid/hid-lg2ff.c          |   12 +++++++++---
+ drivers/hid/hid-lg3ff.c          |   11 +++++++++--
+ drivers/hid/hid-lg4ff.c          |   11 +++++++++--
+ drivers/hid/hid-lgff.c           |   11 +++++++++--
+ drivers/hid/hid-logitech-hidpp.c |   11 +++++++++--
+ drivers/hid/hid-sony.c           |   12 +++++++++---
+ drivers/hid/hid-tmff.c           |   12 +++++++++---
+ drivers/hid/hid-zpff.c           |   12 +++++++++---
+ 13 files changed, 117 insertions(+), 34 deletions(-)
 
---- a/include/net/llc_conn.h
-+++ b/include/net/llc_conn.h
-@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
- 
- /* Access to a connection */
- int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
--int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
-+void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
- void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
---- a/net/llc/llc_c_ac.c
-+++ b/net/llc/llc_c_ac.c
-@@ -372,6 +372,7 @@ int llc_conn_ac_send_i_cmd_p_set_1(struc
- 	llc_pdu_init_as_i_cmd(skb, 1, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
-+		skb_get(skb);
- 		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
-@@ -389,7 +390,8 @@ static int llc_conn_ac_send_i_cmd_p_set_
- 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		rc = llc_conn_send_pdu(sk, skb);
-+		skb_get(skb);
-+		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
-@@ -406,6 +408,7 @@ int llc_conn_ac_send_i_xxx_x_set_0(struc
- 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
-+		skb_get(skb);
- 		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
-@@ -916,7 +919,8 @@ static int llc_conn_ac_send_i_rsp_f_set_
- 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		rc = llc_conn_send_pdu(sk, skb);
-+		skb_get(skb);
-+		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -30,7 +30,7 @@
- #endif
- 
- static int llc_find_offset(int state, int ev_type);
--static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
-+static void llc_conn_send_pdus(struct sock *sk);
- static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
- static int llc_exec_conn_trans_actions(struct sock *sk,
- 				       struct llc_conn_state_trans *trans,
-@@ -193,11 +193,11 @@ out_skb_put:
- 	return rc;
- }
- 
--int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
-+void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
+--- a/drivers/hid/hid-axff.c
++++ b/drivers/hid/hid-axff.c
+@@ -75,13 +75,20 @@ static int axff_init(struct hid_device *
  {
- 	/* queue PDU to send to MAC layer */
- 	skb_queue_tail(&sk->sk_write_queue, skb);
--	return llc_conn_send_pdus(sk, skb);
-+	llc_conn_send_pdus(sk);
- }
+ 	struct axff_device *axff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_first_entry(&hid->inputs, struct hid_input, list);
++	struct hid_input *hidinput;
+ 	struct list_head *report_list =&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+-	struct input_dev *dev = hidinput->input;
++	struct input_dev *dev;
+ 	int field_count = 0;
+ 	int i, j;
+ 	int error;
  
- /**
-@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk, NULL);
-+	llc_conn_send_pdus(sk);
- out:;
- }
- 
-@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk, NULL);
-+	llc_conn_send_pdus(sk);
- out:;
- }
- 
-@@ -340,16 +340,12 @@ out:
- /**
-  *	llc_conn_send_pdus - Sends queued PDUs
-  *	@sk: active connection
-- *	@hold_skb: the skb held by caller, or NULL if does not care
-  *
-- *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
-- *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
-- *	successfully, or 1 for failure.
-+ *	Sends queued pdus to MAC layer for transmission.
-  */
--static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
-+static void llc_conn_send_pdus(struct sock *sk)
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_first_entry(&hid->inputs, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (list_empty(report_list)) {
+ 		hid_err(hid, "no output reports found\n");
+ 		return -ENODEV;
+--- a/drivers/hid/hid-dr.c
++++ b/drivers/hid/hid-dr.c
+@@ -87,13 +87,19 @@ static int drff_init(struct hid_device *
  {
- 	struct sk_buff *skb;
--	int ret = 0;
+ 	struct drff_device *drff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_first_entry(&hid->inputs,
+-						struct hid_input, list);
++	struct hid_input *hidinput;
+ 	struct list_head *report_list =
+ 			&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+-	struct input_dev *dev = hidinput->input;
++	struct input_dev *dev;
+ 	int error;
  
- 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
- 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
-@@ -361,20 +357,10 @@ static int llc_conn_send_pdus(struct soc
- 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
- 			if (!skb2)
- 				break;
--			dev_queue_xmit(skb2);
--		} else {
--			bool is_target = skb == hold_skb;
--			int rc;
--
--			if (is_target)
--				skb_get(skb);
--			rc = dev_queue_xmit(skb);
--			if (is_target)
--				ret = rc;
-+			skb = skb2;
- 		}
-+		dev_queue_xmit(skb);
- 	}
--
--	return ret;
- }
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_first_entry(&hid->inputs, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (list_empty(report_list)) {
+ 		hid_err(hid, "no output reports found\n");
+ 		return -ENODEV;
+--- a/drivers/hid/hid-emsff.c
++++ b/drivers/hid/hid-emsff.c
+@@ -59,13 +59,19 @@ static int emsff_init(struct hid_device
+ {
+ 	struct emsff_device *emsff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_first_entry(&hid->inputs,
+-						struct hid_input, list);
++	struct hid_input *hidinput;
+ 	struct list_head *report_list =
+ 			&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+-	struct input_dev *dev = hidinput->input;
++	struct input_dev *dev;
+ 	int error;
  
- /**
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_first_entry(&hid->inputs, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (list_empty(report_list)) {
+ 		hid_err(hid, "no output reports found\n");
+ 		return -ENODEV;
+--- a/drivers/hid/hid-gaff.c
++++ b/drivers/hid/hid-gaff.c
+@@ -77,14 +77,20 @@ static int gaff_init(struct hid_device *
+ {
+ 	struct gaff_device *gaff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next,
+-						struct hid_input, list);
++	struct hid_input *hidinput;
+ 	struct list_head *report_list =
+ 			&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+ 	struct list_head *report_ptr = report_list;
+-	struct input_dev *dev = hidinput->input;
++	struct input_dev *dev;
+ 	int error;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (list_empty(report_list)) {
+ 		hid_err(hid, "no output reports found\n");
+ 		return -ENODEV;
+--- a/drivers/hid/hid-holtekff.c
++++ b/drivers/hid/hid-holtekff.c
+@@ -140,13 +140,19 @@ static int holtekff_init(struct hid_devi
+ {
+ 	struct holtekff_device *holtekff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next,
+-						struct hid_input, list);
++	struct hid_input *hidinput;
+ 	struct list_head *report_list =
+ 			&hid->report_enum[HID_OUTPUT_REPORT].report_list;
+-	struct input_dev *dev = hidinput->input;
++	struct input_dev *dev;
+ 	int error;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (list_empty(report_list)) {
+ 		hid_err(hid, "no output report found\n");
+ 		return -ENODEV;
+--- a/drivers/hid/hid-lg2ff.c
++++ b/drivers/hid/hid-lg2ff.c
+@@ -62,11 +62,17 @@ int lg2ff_init(struct hid_device *hid)
+ {
+ 	struct lg2ff_device *lg2ff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next,
+-						struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	int error;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	/* Check that the report looks ok */
+ 	report = hid_validate_values(hid, HID_OUTPUT_REPORT, 0, 0, 7);
+ 	if (!report)
+--- a/drivers/hid/hid-lg3ff.c
++++ b/drivers/hid/hid-lg3ff.c
+@@ -129,12 +129,19 @@ static const signed short ff3_joystick_a
+ 
+ int lg3ff_init(struct hid_device *hid)
+ {
+-	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	const signed short *ff_bits = ff3_joystick_ac;
+ 	int error;
+ 	int i;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	/* Check that the report looks ok */
+ 	if (!hid_validate_values(hid, HID_OUTPUT_REPORT, 0, 0, 35))
+ 		return -ENODEV;
+--- a/drivers/hid/hid-lg4ff.c
++++ b/drivers/hid/hid-lg4ff.c
+@@ -1261,8 +1261,8 @@ static int lg4ff_handle_multimode_wheel(
+ 
+ int lg4ff_init(struct hid_device *hid)
+ {
+-	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
+ 	struct hid_report *report = list_entry(report_list->next, struct hid_report, list);
+ 	const struct usb_device_descriptor *udesc = &(hid_to_usb_dev(hid)->descriptor);
+@@ -1274,6 +1274,13 @@ int lg4ff_init(struct hid_device *hid)
+ 	int mmode_ret, mmode_idx = -1;
+ 	u16 real_product_id;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	/* Check that the report looks ok */
+ 	if (!hid_validate_values(hid, HID_OUTPUT_REPORT, 0, 0, 7))
+ 		return -1;
+--- a/drivers/hid/hid-lgff.c
++++ b/drivers/hid/hid-lgff.c
+@@ -127,12 +127,19 @@ static void hid_lgff_set_autocenter(stru
+ 
+ int lgff_init(struct hid_device* hid)
+ {
+-	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	const signed short *ff_bits = ff_joystick;
+ 	int error;
+ 	int i;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	/* Check that the report looks ok */
+ 	if (!hid_validate_values(hid, HID_OUTPUT_REPORT, 0, 0, 7))
+ 		return -ENODEV;
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -1867,8 +1867,8 @@ static void hidpp_ff_destroy(struct ff_d
+ static int hidpp_ff_init(struct hidpp_device *hidpp, u8 feature_index)
+ {
+ 	struct hid_device *hid = hidpp->hid_dev;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	const struct usb_device_descriptor *udesc = &(hid_to_usb_dev(hid)->descriptor);
+ 	const u16 bcdDevice = le16_to_cpu(udesc->bcdDevice);
+ 	struct ff_device *ff;
+@@ -1877,6 +1877,13 @@ static int hidpp_ff_init(struct hidpp_de
+ 	int error, j, num_slots;
+ 	u8 version;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	if (!dev) {
+ 		hid_err(hid, "Struct input_dev not set!\n");
+ 		return -EINVAL;
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -2163,9 +2163,15 @@ static int sony_play_effect(struct input
+ 
+ static int sony_init_ff(struct sony_sc *sc)
+ {
+-	struct hid_input *hidinput = list_entry(sc->hdev->inputs.next,
+-						struct hid_input, list);
+-	struct input_dev *input_dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *input_dev;
++
++	if (list_empty(&sc->hdev->inputs)) {
++		hid_err(sc->hdev, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(sc->hdev->inputs.next, struct hid_input, list);
++	input_dev = hidinput->input;
+ 
+ 	input_set_capability(input_dev, EV_FF, FF_RUMBLE);
+ 	return input_ff_create_memless(input_dev, NULL, sony_play_effect);
+--- a/drivers/hid/hid-tmff.c
++++ b/drivers/hid/hid-tmff.c
+@@ -136,12 +136,18 @@ static int tmff_init(struct hid_device *
+ 	struct tmff_device *tmff;
+ 	struct hid_report *report;
+ 	struct list_head *report_list;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next,
+-							struct hid_input, list);
+-	struct input_dev *input_dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *input_dev;
+ 	int error;
+ 	int i;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	input_dev = hidinput->input;
++
+ 	tmff = kzalloc(sizeof(struct tmff_device), GFP_KERNEL);
+ 	if (!tmff)
+ 		return -ENOMEM;
+--- a/drivers/hid/hid-zpff.c
++++ b/drivers/hid/hid-zpff.c
+@@ -66,11 +66,17 @@ static int zpff_init(struct hid_device *
+ {
+ 	struct zpff_device *zpff;
+ 	struct hid_report *report;
+-	struct hid_input *hidinput = list_entry(hid->inputs.next,
+-						struct hid_input, list);
+-	struct input_dev *dev = hidinput->input;
++	struct hid_input *hidinput;
++	struct input_dev *dev;
+ 	int i, error;
+ 
++	if (list_empty(&hid->inputs)) {
++		hid_err(hid, "no inputs found\n");
++		return -ENODEV;
++	}
++	hidinput = list_entry(hid->inputs.next, struct hid_input, list);
++	dev = hidinput->input;
++
+ 	for (i = 0; i < 4; i++) {
+ 		report = hid_validate_values(hid, HID_OUTPUT_REPORT, 0, i, 1);
+ 		if (!report)
 
 
