@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6399EED19
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD53EEECA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389514AbfKDWD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:03:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33704 "EHLO mail.kernel.org"
+        id S2390100AbfKDWQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:16:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388674AbfKDWDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:03:24 -0500
+        id S2389515AbfKDWDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:30 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2194205C9;
-        Mon,  4 Nov 2019 22:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5575214D8;
+        Mon,  4 Nov 2019 22:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905003;
-        bh=R8oem6kYBfXs8/8RMKhTDq7Q6vVq9CXFQzcsiBrmlOs=;
+        s=default; t=1572905009;
+        bh=EAMdQDt1Bh0/+ld61Uyi+Vl71YdSRzIHXTD9npB2VVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U9d7A4Sham83wIXf2Om4VdSzaZSTjhdYLpSZV7ObSeK7af8JzTgnizSbX2Jxb1PnQ
-         KBtPxQVOnfj7b5VxszQiA8t3zciSGrX06IsU72j58KQ4P7JZbhhFQPUe5nlT84NurH
-         8+3ij82GywpD+twU+ZyXQkyRkAheYfkLh3E8k+os=
+        b=jS11C8VrnMftlDcSY5Mt+Cod8iXpI9rMBi5QYe5nUlI1plmyeYs7Bk3buakEEBoDb
+         FFWGS9ercxNwABqchDIyB/C4nc1T7QThGBo88bDtQfYMVlaIhEX2ZMRI+AF9RQvUgI
+         FfHdL0Lbp4FpRwnrIoGOgNLOIxziipYUpnfuB968=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 4.19 146/149] ALSA: timer: Fix mutex deadlock at releasing card
-Date:   Mon,  4 Nov 2019 22:45:39 +0100
-Message-Id: <20191104212146.920774513@linuxfoundation.org>
+        stable@vger.kernel.org, Jussi Laako <jussi@sonarnerd.net>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 147/149] ALSA: usb-audio: DSD auto-detection for Playback Designs
+Date:   Mon,  4 Nov 2019 22:45:40 +0100
+Message-Id: <20191104212146.986443597@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
 References: <20191104212126.090054740@linuxfoundation.org>
@@ -44,131 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jussi Laako <jussi@sonarnerd.net>
 
-[ Upstream commit a39331867335d4a94b6165e306265c9e24aca073 ]
+[ Upstream commit eb7505d52a2f8b0cfc3fd7146d8cb2dab5a73f0d ]
 
-When a card is disconnected while in use, the system waits until all
-opened files are closed then releases the card.  This is done via
-put_device() of the card device in each device release code.
+Add DSD support auto-detection for newer Playback Designs devices. Older
+device generations have a different USB interface implementation.
 
-The recently reported mutex deadlock bug happens in this code path;
-snd_timer_close() for the timer device deals with the global
-register_mutex and it calls put_device() there.  When this timer
-device is the last one, the card gets freed and it eventually calls
-snd_timer_free(), which has again the protection with the global
-register_mutex -- boom.
+Keep the auto-detection VID whitelist sorted.
 
-Basically put_device() call itself is race-free, so a relative simple
-workaround is to move this put_device() call out of the mutex.  For
-achieving that, in this patch, snd_timer_close_locked() got a new
-argument to store the card device pointer in return, and each caller
-invokes put_device() with the returned object after the mutex unlock.
-
-Reported-and-tested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Jussi Laako <jussi@sonarnerd.net>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/timer.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ sound/usb/quirks.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index 316794eb44017..ec74705f003b8 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -240,7 +240,8 @@ static int snd_timer_check_master(struct snd_timer_instance *master)
- 	return 0;
- }
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index e5dde06c31a6f..0a8a0978a2dba 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1343,7 +1343,8 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	struct usb_interface *iface;
  
--static int snd_timer_close_locked(struct snd_timer_instance *timeri);
-+static int snd_timer_close_locked(struct snd_timer_instance *timeri,
-+				  struct device **card_devp_to_put);
- 
- /*
-  * open a timer instance
-@@ -252,6 +253,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
- {
- 	struct snd_timer *timer;
- 	struct snd_timer_instance *timeri = NULL;
-+	struct device *card_dev_to_put = NULL;
- 	int err;
- 
- 	mutex_lock(&register_mutex);
-@@ -275,7 +277,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 		list_add_tail(&timeri->open_list, &snd_timer_slave_list);
- 		err = snd_timer_check_slave(timeri);
- 		if (err < 0) {
--			snd_timer_close_locked(timeri);
-+			snd_timer_close_locked(timeri, &card_dev_to_put);
- 			timeri = NULL;
- 		}
- 		goto unlock;
-@@ -327,7 +329,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 			timeri = NULL;
- 
- 			if (timer->card)
--				put_device(&timer->card->card_dev);
-+				card_dev_to_put = &timer->card->card_dev;
- 			module_put(timer->module);
- 			goto unlock;
- 		}
-@@ -337,12 +339,15 @@ int snd_timer_open(struct snd_timer_instance **ti,
- 	timer->num_instances++;
- 	err = snd_timer_check_master(timeri);
- 	if (err < 0) {
--		snd_timer_close_locked(timeri);
-+		snd_timer_close_locked(timeri, &card_dev_to_put);
- 		timeri = NULL;
- 	}
- 
-  unlock:
- 	mutex_unlock(&register_mutex);
-+	/* put_device() is called after unlock for avoiding deadlock */
-+	if (card_dev_to_put)
-+		put_device(card_dev_to_put);
- 	*ti = timeri;
- 	return err;
- }
-@@ -352,7 +357,8 @@ EXPORT_SYMBOL(snd_timer_open);
-  * close a timer instance
-  * call this with register_mutex down.
-  */
--static int snd_timer_close_locked(struct snd_timer_instance *timeri)
-+static int snd_timer_close_locked(struct snd_timer_instance *timeri,
-+				  struct device **card_devp_to_put)
- {
- 	struct snd_timer *timer = NULL;
- 	struct snd_timer_instance *slave, *tmp;
-@@ -404,7 +410,7 @@ static int snd_timer_close_locked(struct snd_timer_instance *timeri)
- 			timer->hw.close(timer);
- 		/* release a card refcount for safe disconnection */
- 		if (timer->card)
--			put_device(&timer->card->card_dev);
-+			*card_devp_to_put = &timer->card->card_dev;
- 		module_put(timer->module);
- 	}
- 
-@@ -416,14 +422,18 @@ static int snd_timer_close_locked(struct snd_timer_instance *timeri)
-  */
- int snd_timer_close(struct snd_timer_instance *timeri)
- {
-+	struct device *card_dev_to_put = NULL;
- 	int err;
- 
- 	if (snd_BUG_ON(!timeri))
- 		return -ENXIO;
- 
- 	mutex_lock(&register_mutex);
--	err = snd_timer_close_locked(timeri);
-+	err = snd_timer_close_locked(timeri, &card_dev_to_put);
- 	mutex_unlock(&register_mutex);
-+	/* put_device() is called after unlock for avoiding deadlock */
-+	if (card_dev_to_put)
-+		put_device(card_dev_to_put);
- 	return err;
- }
- EXPORT_SYMBOL(snd_timer_close);
+ 	/* Playback Designs */
+-	if (USB_ID_VENDOR(chip->usb_id) == 0x23ba) {
++	if (USB_ID_VENDOR(chip->usb_id) == 0x23ba &&
++	    USB_ID_PRODUCT(chip->usb_id) < 0x0110) {
+ 		switch (fp->altsetting) {
+ 		case 1:
+ 			fp->dsd_dop = true;
+@@ -1431,8 +1432,9 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	 * from XMOS/Thesycon
+ 	 */
+ 	switch (USB_ID_VENDOR(chip->usb_id)) {
+-	case 0x20b1:  /* XMOS based devices */
+ 	case 0x152a:  /* Thesycon devices */
++	case 0x20b1:  /* XMOS based devices */
++	case 0x23ba:  /* Playback Designs */
+ 	case 0x25ce:  /* Mytek devices */
+ 	case 0x2ab6:  /* T+A devices */
+ 	case 0x3842:  /* EVGA */
 -- 
 2.20.1
 
