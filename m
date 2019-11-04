@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B01BEED83
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DDCEECC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390144AbfKDWHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:07:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40080 "EHLO mail.kernel.org"
+        id S2388821AbfKDWAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:00:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389306AbfKDWHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:07:33 -0500
+        id S2388794AbfKDWAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:00:13 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0270E2084D;
-        Mon,  4 Nov 2019 22:07:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C82217F4;
+        Mon,  4 Nov 2019 22:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905252;
-        bh=vk8+b7SiuqvG0ZON2WuQ93hgwJbDz+Km6Ck2/nY0Gbk=;
+        s=default; t=1572904812;
+        bh=b/ZixkpuVhOueuW0CeDByS/LFt+SqUvWTGbS8dfFALk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tYNd4knRHVwZIaNWgxZSaTXcZ1vZL9XCOcT5zaRCGA08pYE4Km4cti5NB18sy9joX
-         KKUZzg94TolUXGJHbjILkhBLRep0pFsr894IvkpSfdTOYc3bj59RgycEeAg/wjVzxL
-         xwR0I0QI6uo0AMLsJkh6r2B8XEu2CVs7OzSPvVoc=
+        b=TWR7wRFsoey3E/P4KMuge1MzHMQji2rD/aLjx76on7ahY0wrfig2mHdvQ1KDWc2cG
+         UwUYxpfqeaMeqT3QUwNgalWYgo7WirEZwyrvRZHOGIdcP6xHPKpwo2wMWyxdb/m5DI
+         TW3B/TvRJQ+RLcpj43YkUdG7K0WucmU388Wyzg1Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 080/163] SUNRPC: fix race to sk_err after xs_error_report
+Subject: [PATCH 4.19 077/149] tty: n_hdlc: fix build on SPARC
 Date:   Mon,  4 Nov 2019 22:44:30 +0100
-Message-Id: <20191104212146.103618988@linuxfoundation.org>
+Message-Id: <20191104212142.026305860@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +47,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit af84537dbd1b39505d1f3d8023029b4a59666513 ]
+[ Upstream commit 47a7e5e97d4edd7b14974d34f0e5a5560fad2915 ]
 
-Since commit 4f8943f80883 ("SUNRPC: Replace direct task wakeups from
-softirq context") there has been a race to the value of the sk_err if both
-XPRT_SOCK_WAKE_ERROR and XPRT_SOCK_WAKE_DISCONNECT are set.  In that case,
-we may end up losing the sk_err value that existed when xs_error_report was
-called.
+Fix tty driver build on SPARC by not using __exitdata.
+It appears that SPARC does not support section .exit.data.
 
-Fix this by reverting to the previous behavior: instead of using SO_ERROR
-to retrieve the value at a later time (which might also return sk_err_soft),
-copy the sk_err value onto struct sock_xprt, and use that value to wake
-pending tasks.
+Fixes these build errors:
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Fixes: 4f8943f80883 ("SUNRPC: Replace direct task wakeups from softirq context")
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+`.exit.data' referenced in section `.exit.text' of drivers/tty/n_hdlc.o: defined in discarded section `.exit.data' of drivers/tty/n_hdlc.o
+`.exit.data' referenced in section `.exit.text' of drivers/tty/n_hdlc.o: defined in discarded section `.exit.data' of drivers/tty/n_hdlc.o
+`.exit.data' referenced in section `.exit.text' of drivers/tty/n_hdlc.o: defined in discarded section `.exit.data' of drivers/tty/n_hdlc.o
+`.exit.data' referenced in section `.exit.text' of drivers/tty/n_hdlc.o: defined in discarded section `.exit.data' of drivers/tty/n_hdlc.o
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Fixes: 063246641d4a ("format-security: move static strings to const")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: https://lore.kernel.org/r/675e7bd9-955b-3ff3-1101-a973b58b5b75@infradead.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/sunrpc/xprtsock.h |  1 +
- net/sunrpc/xprtsock.c           | 17 ++++++++---------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/tty/n_hdlc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/sunrpc/xprtsock.h b/include/linux/sunrpc/xprtsock.h
-index 7638dbe7bc500..a940de03808dd 100644
---- a/include/linux/sunrpc/xprtsock.h
-+++ b/include/linux/sunrpc/xprtsock.h
-@@ -61,6 +61,7 @@ struct sock_xprt {
- 	struct mutex		recv_mutex;
- 	struct sockaddr_storage	srcaddr;
- 	unsigned short		srcport;
-+	int			xprt_err;
+diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+index bb63519db7ae4..c943716c019e4 100644
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -968,6 +968,11 @@ static int __init n_hdlc_init(void)
+ 	
+ }	/* end of init_module() */
  
- 	/*
- 	 * UDP socket buffer size parameters
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index e2176c167a579..4e0b5bed6c737 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -1243,19 +1243,21 @@ static void xs_error_report(struct sock *sk)
- {
- 	struct sock_xprt *transport;
- 	struct rpc_xprt *xprt;
--	int err;
- 
- 	read_lock_bh(&sk->sk_callback_lock);
- 	if (!(xprt = xprt_from_sock(sk)))
- 		goto out;
- 
- 	transport = container_of(xprt, struct sock_xprt, xprt);
--	err = -sk->sk_err;
--	if (err == 0)
-+	transport->xprt_err = -sk->sk_err;
-+	if (transport->xprt_err == 0)
- 		goto out;
- 	dprintk("RPC:       xs_error_report client %p, error=%d...\n",
--			xprt, -err);
--	trace_rpc_socket_error(xprt, sk->sk_socket, err);
-+			xprt, -transport->xprt_err);
-+	trace_rpc_socket_error(xprt, sk->sk_socket, transport->xprt_err);
++#ifdef CONFIG_SPARC
++#undef __exitdata
++#define __exitdata
++#endif
 +
-+	/* barrier ensures xprt_err is set before XPRT_SOCK_WAKE_ERROR */
-+	smp_mb__before_atomic();
- 	xs_run_error_worker(transport, XPRT_SOCK_WAKE_ERROR);
-  out:
- 	read_unlock_bh(&sk->sk_callback_lock);
-@@ -2470,7 +2472,6 @@ static void xs_wake_write(struct sock_xprt *transport)
- static void xs_wake_error(struct sock_xprt *transport)
- {
- 	int sockerr;
--	int sockerr_len = sizeof(sockerr);
- 
- 	if (!test_bit(XPRT_SOCK_WAKE_ERROR, &transport->sock_state))
- 		return;
-@@ -2479,9 +2480,7 @@ static void xs_wake_error(struct sock_xprt *transport)
- 		goto out;
- 	if (!test_and_clear_bit(XPRT_SOCK_WAKE_ERROR, &transport->sock_state))
- 		goto out;
--	if (kernel_getsockopt(transport->sock, SOL_SOCKET, SO_ERROR,
--				(char *)&sockerr, &sockerr_len) != 0)
--		goto out;
-+	sockerr = xchg(&transport->xprt_err, 0);
- 	if (sockerr < 0)
- 		xprt_wake_pending_tasks(&transport->xprt, sockerr);
- out:
+ static const char hdlc_unregister_ok[] __exitdata =
+ 	KERN_INFO "N_HDLC: line discipline unregistered\n";
+ static const char hdlc_unregister_fail[] __exitdata =
 -- 
 2.20.1
 
