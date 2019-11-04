@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78E3EF076
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0702FEEF1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbfKDVsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39392 "EHLO mail.kernel.org"
+        id S2388248AbfKDWTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:19:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730114AbfKDVso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:44 -0500
+        id S2388981AbfKDWBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:12 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F4FD21655;
-        Mon,  4 Nov 2019 21:48:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0517520650;
+        Mon,  4 Nov 2019 22:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904123;
-        bh=fUlzJ6SkT4/oN3tyB+l925n9kT9yk3a1WOh1+6ZEKuE=;
+        s=default; t=1572904871;
+        bh=9bqpOQ/HTpFfl9Zq2N2vZhaiabTgyqLrkdRiLClf/oc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2c/RCuIDOmO3EB1mu2lrVFtAGvxOCFrj9WSF1tz3otfeQC0CylWMDOm8QRdFp52xP
-         YHerJg2cafLrjeXVD+X9puhe8w7vaR4qlxnf2rjttmTcRRD8iaGEo8jJ6d9XdSP8Pr
-         eq8OVU8e9Ziw8REktba/f+bxG1+FUyekNOPHM0qM=
+        b=WiU2jPtHFryGb3TFTpWck2z+wG9SxUM4faQ7AG30G3p52emMeIVaUI8iRnN2SpCXw
+         MV47sep0PUggRgXfcq2Qe3maAD4y6y9o+/HwbuDJy5kBDR0EFy61dKpwH7HrjhYUib
+         LT4SGDApReGTr4DF0YLj6WboeSKIpsEjc23LYfL0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 04/46] dm: Use kzalloc for all structs with embedded biosets/mempools
-Date:   Mon,  4 Nov 2019 22:44:35 +0100
-Message-Id: <20191104211835.436442738@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 083/149] MIPS: include: Mark __cmpxchg as __always_inline
+Date:   Mon,  4 Nov 2019 22:44:36 +0100
+Message-Id: <20191104212142.397201328@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kent Overstreet <kent.overstreet@gmail.com>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit d377535405686f735b90a8ad4ba269484cd7c96e ]
+[ Upstream commit 88356d09904bc606182c625575237269aeece22e ]
 
-mempool_init()/bioset_init() require that the mempools/biosets be zeroed
-first; they probably should not _require_ this, but not allocating those
-structs with kzalloc is a fairly nonsensical thing to do (calling
-mempool_exit()/bioset_exit() on an uninitialized mempool/bioset is legal
-and safe, but only works if said memory was zeroed.)
+Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+forcibly") allows compiler to uninline functions marked as 'inline'.
+In cace of cmpxchg this would cause to reference function
+__cmpxchg_called_with_bad_pointer, which is a error case
+for catching bugs and will not happen for correct code, if
+__cmpxchg is inlined.
 
-Acked-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+[paul.burton@mips.com: s/__cmpxchd/__cmpxchg in subject]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-bio-prison.c  | 2 +-
- drivers/md/dm-io.c          | 2 +-
- drivers/md/dm-kcopyd.c      | 2 +-
- drivers/md/dm-region-hash.c | 2 +-
- drivers/md/dm-snap.c        | 2 +-
- drivers/md/dm-thin.c        | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ arch/mips/include/asm/cmpxchg.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-bio-prison.c b/drivers/md/dm-bio-prison.c
-index 03af174485d30..fa2432a89bace 100644
---- a/drivers/md/dm-bio-prison.c
-+++ b/drivers/md/dm-bio-prison.c
-@@ -32,7 +32,7 @@ static struct kmem_cache *_cell_cache;
-  */
- struct dm_bio_prison *dm_bio_prison_create(void)
+diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
+index 89e9fb7976fe6..895f91b9e89c3 100644
+--- a/arch/mips/include/asm/cmpxchg.h
++++ b/arch/mips/include/asm/cmpxchg.h
+@@ -146,8 +146,9 @@ static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
+ extern unsigned long __cmpxchg_small(volatile void *ptr, unsigned long old,
+ 				     unsigned long new, unsigned int size);
+ 
+-static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+-				      unsigned long new, unsigned int size)
++static __always_inline
++unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
++			unsigned long new, unsigned int size)
  {
--	struct dm_bio_prison *prison = kmalloc(sizeof(*prison), GFP_KERNEL);
-+	struct dm_bio_prison *prison = kzalloc(sizeof(*prison), GFP_KERNEL);
- 
- 	if (!prison)
- 		return NULL;
-diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
-index 1b84d2890fbf1..ad9a470e5382e 100644
---- a/drivers/md/dm-io.c
-+++ b/drivers/md/dm-io.c
-@@ -50,7 +50,7 @@ struct dm_io_client *dm_io_client_create(void)
- 	struct dm_io_client *client;
- 	unsigned min_ios = dm_get_reserved_bio_based_ios();
- 
--	client = kmalloc(sizeof(*client), GFP_KERNEL);
-+	client = kzalloc(sizeof(*client), GFP_KERNEL);
- 	if (!client)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
-index 04248394843e8..09df2c688ba9c 100644
---- a/drivers/md/dm-kcopyd.c
-+++ b/drivers/md/dm-kcopyd.c
-@@ -827,7 +827,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
- 	int r = -ENOMEM;
- 	struct dm_kcopyd_client *kc;
- 
--	kc = kmalloc(sizeof(*kc), GFP_KERNEL);
-+	kc = kzalloc(sizeof(*kc), GFP_KERNEL);
- 	if (!kc)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
-index 74cb7b991d41d..a93a4e6839999 100644
---- a/drivers/md/dm-region-hash.c
-+++ b/drivers/md/dm-region-hash.c
-@@ -179,7 +179,7 @@ struct dm_region_hash *dm_region_hash_create(
- 		;
- 	nr_buckets >>= 1;
- 
--	rh = kmalloc(sizeof(*rh), GFP_KERNEL);
-+	rh = kzalloc(sizeof(*rh), GFP_KERNEL);
- 	if (!rh) {
- 		DMERR("unable to allocate region hash memory");
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 98950c4bf939a..510b0cf430a8a 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -1137,7 +1137,7 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		origin_mode = FMODE_WRITE;
- 	}
- 
--	s = kmalloc(sizeof(*s), GFP_KERNEL);
-+	s = kzalloc(sizeof(*s), GFP_KERNEL);
- 	if (!s) {
- 		ti->error = "Cannot allocate private snapshot structure";
- 		r = -ENOMEM;
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index d52ea584e0bc1..4d7eae3d32b02 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -2882,7 +2882,7 @@ static struct pool *pool_create(struct mapped_device *pool_md,
- 		return (struct pool *)pmd;
- 	}
- 
--	pool = kmalloc(sizeof(*pool), GFP_KERNEL);
-+	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
- 	if (!pool) {
- 		*error = "Error allocating memory for pool";
- 		err_p = ERR_PTR(-ENOMEM);
+ 	switch (size) {
+ 	case 1:
 -- 
 2.20.1
 
