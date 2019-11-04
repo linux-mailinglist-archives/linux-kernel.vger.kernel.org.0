@@ -2,80 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB86FEEFF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A31DEF09F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:31:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbfKDWYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:24:43 -0500
-Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:48872 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729795AbfKDWYg (ORCPT
+        id S1729813AbfKDWbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:31:45 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43186 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729122AbfKDWbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:24:36 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id E4CF6182CF668;
-        Mon,  4 Nov 2019 22:24:34 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 10,1,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2553:2559:2562:2689:2692:2828:3138:3139:3140:3141:3142:3352:3622:3865:3868:3871:3872:4250:4321:4605:5007:7809:7904:10004:10400:10848:11232:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:13523:13524:14096:14097:14181:14659:14721:21080:21627:21796:30036:30054:30060:30080:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: end02_27dc66145ce01
-X-Filterd-Recvd-Size: 2071
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  4 Nov 2019 22:24:33 +0000 (UTC)
-Message-ID: <46615f063c973eee649e3fdb8261978102c89108.camel@perches.com>
-Subject: Re: spdxcheck.py complains about the second OR?
-From:   Joe Perches <joe@perches.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-spdx@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 04 Nov 2019 14:24:23 -0800
-In-Reply-To: <alpine.DEB.2.21.1911042310040.17054@nanos.tec.linutronix.de>
-References: <CAK7LNASwF9y+MkhkvCRATu0qXSJkxx8fZ-DUjQTfWOi9+1YrfQ@mail.gmail.com>
-         <alpine.DEB.2.21.1911042310040.17054@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 4 Nov 2019 17:31:44 -0500
+Received: by mail-oi1-f196.google.com with SMTP id l20so3610890oie.10;
+        Mon, 04 Nov 2019 14:31:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/geFBMEqf7twdLKHSVdVT6FyWVKwx2NVIgtA+twsQkE=;
+        b=a+MdlyvEiOU8aVaiBQk7eZ1yzA7XLzs5bUKhswBKAOj829P1WsrId1fjxcmSMHq8gj
+         NspcXXwicor7YnC+bnT8Xxk+tmbIiLz10bUdTlShG1kpID8r4HDiZQGeEbDUGE6LwMaU
+         dj9FsHVklDGCuQGMM3cJWuIeRBzXzY1LdoKQk6RtWq6FAoGwHuCDXcXU083BhStrehgo
+         44ejbg2Ezjdd82Ei9VCASuj382uI5TGCAnogkliUyv97kHZWOfQcNHDgXk8w4uGUQFi+
+         10StfI7b/HKvJ2jmqQjin2gdn4ehUBykG4EMkTjlhV+U9jrXVqeKQoCUsKuuXQXDcRIK
+         ZTpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/geFBMEqf7twdLKHSVdVT6FyWVKwx2NVIgtA+twsQkE=;
+        b=StVs7HG1dMoc8IM3MZ5tPLR6GX2mSOSCawAszsLN6X4zorBpQZEU6FTqOSZGD7i512
+         7q7x7UppOZkoctR3yMvE68vVM3BQp7FN4SgR2uxa2Ii9Xq3+JtsiV5HTiQN+0aHiFnSX
+         y4lceymmce4o6M3kfDXBRXoYQIoCVVIm0EG/mBKuJOfT/T7MbGyYYaAieMFzg8UCfiIq
+         sHrDVWIG2Rllr98xV7ddEuAk15B8eBzZ+pNjjQv75pjWUMsUo3+Wlm0evtaT5/GHWfpw
+         Z9Enn0O9pH1G5UMR8fmXkGwd70S1V8TogKSyGFEZhIKnXOAd9u0CRSc+zbLMPmE2SyjY
+         UTpw==
+X-Gm-Message-State: APjAAAUF+YWc0f0hujR6oy3wX56WyoHHN2UaVcRSAw/jSkwh356xbFqZ
+        c7bXqdERDCG52s9Rc90uYEjN1d+HUqEEWt5ZwQ4=
+X-Google-Smtp-Source: APXvYqybWUfbZG4teeG01ZGKiXx9fDn+U4FWS4zJB69jNiVVHd20K3CuTz1NkqytBEFVmmei8TQlnR7feaE38XUb+tk=
+X-Received: by 2002:aca:504d:: with SMTP id e74mr1229364oib.140.1572906703760;
+ Mon, 04 Nov 2019 14:31:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191027161805.1176321-1-martin.blumenstingl@googlemail.com>
+ <20191027161805.1176321-4-martin.blumenstingl@googlemail.com> <1jd0e83vyp.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jd0e83vyp.fsf@starbuckisacylon.baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 4 Nov 2019 23:31:32 +0100
+Message-ID: <CAFBinCC5RSkK_8Ww3LjAxG9tLL6Jik1uy3Y8CkEBqXRRKUsa4Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: meson: meson8b: change references to the XTAL
+ clock to use the name
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-04 at 23:11 +0100, Thomas Gleixner wrote:
-> On Fri, 1 Nov 2019, Masahiro Yamada wrote:
-> > scripts/spdxcheck.py warns the following two files.
-> > 
-> > $ ./scripts/spdxcheck.py
-> > drivers/net/ethernet/pensando/ionic/ionic_if.h: 1:52 Syntax error: OR
-> > drivers/net/ethernet/pensando/ionic/ionic_regs.h: 1:52 Syntax error: OR
-> > 
-> > I do not understand what is wrong with them.
-> > 
-> > I think "A OR B OR C" is sane.
-> 
-> Yes it is, but obviously we did not expect files with 3 possible
-> alternative licenses.
+Hi Jerome,
 
-Perhaps just this, but the generic logic
-obviously isn't complete.
----
- scripts/spdxcheck.py | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Nov 4, 2019 at 9:08 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>
+> On Sun 27 Oct 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>
+> > The XTAL clock is an actual crystal which is mounted on the PCB. Thus
+> > the meson8b clock controller driver should not provide the XTAL clock.
+> >
+> > The meson8b clock controller driver must not use references to
+> > the meson8b_xtal clock anymore before we can provide the XTAL clock
+> > via OF. Replace the references to the meson8b_xtal.hw by using
+> > clk_parent_data.name = "xtal" (along with index = -1) because this works
+> > regardless how the XTAL clock is registered (either as fixed-clock in
+> > the .dtb or - if missing - when registered in the meson8b clock
+> > controller driver).
+> >
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > ---
+> >  drivers/clk/meson/meson8b.c | 73 ++++++++++++++++++++-----------------
+> >  1 file changed, 39 insertions(+), 34 deletions(-)
+> >
+> > diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> > index d376f80e806d..b785b67baf2b 100644
+> > --- a/drivers/clk/meson/meson8b.c
+> > +++ b/drivers/clk/meson/meson8b.c
+> > @@ -97,8 +97,9 @@ static struct clk_regmap meson8b_fixed_pll_dco = {
+> >       .hw.init = &(struct clk_init_data){
+> >               .name = "fixed_pll_dco",
+> >               .ops = &meson_clk_pll_ro_ops,
+> > -             .parent_hws = (const struct clk_hw *[]) {
+> > -                     &meson8b_xtal.hw
+> > +             .parent_data = &(const struct clk_parent_data) {
+> > +                     .name = "xtal",
+> > +                     .index = -1,
+>
+> if I got correctly, when transitioning to DT, you can specify both
+> "fw_name" and "name". CCF should try to get the clock through DT and
+> fallback to global name matching if not available
+thank you for the hint - I may even get away with just setting fw_name
+if I understand clk_core_get() correctly.
+I'll try that during the weekend and report back
 
-diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-index 6374e0..00be34 100755
---- a/scripts/spdxcheck.py
-+++ b/scripts/spdxcheck.py
-@@ -150,6 +150,7 @@ class id_parser(object):
-                 | ID WITH EXC
-                 | expr AND expr
-                 | expr OR expr
-+                | expr OR expr OR expr
-                 | LPAR expr RPAR'''
-         pass
- 
 
-
+Martin
