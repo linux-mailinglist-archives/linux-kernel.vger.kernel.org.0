@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C852EED8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88FF0EEFDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390163AbfKDWH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:07:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40620 "EHLO mail.kernel.org"
+        id S1731053AbfKDVxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:53:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390032AbfKDWHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:07:52 -0500
+        id S1731037AbfKDVxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:41 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F86A217F5;
-        Mon,  4 Nov 2019 22:07:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 313162053B;
+        Mon,  4 Nov 2019 21:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905271;
-        bh=esvI05WfeJ8xMcPciXvLfqVogIyhb3CzOSX/UlFwCyE=;
+        s=default; t=1572904420;
+        bh=uhc6qrmgYf8tNuiZPGZcsbbrTbtSfMBBHflqUUXRHqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZB2DSzwAp8U/W4m71atfR1YOfHhlwXQxQk7UEgPGu7+A333N7Rey96fV1E/obn7A
-         Ax6ahl/ORsspTfUc0YM3/scgzil1Cq8nTdcT7UJwTNXnN66vIT29FsOX10jtF2BE4C
-         O605HtR34YmSoF4vrAlfFmUsrbRFUJuQGkl+sblU=
+        b=CaQ2FsyfmPbuyh12WjyEo7/4PteYITUG0HVHdK9f2BNa/rCn4+9SA56XwswG2fy6Y
+         bKu13IxXFj89XZNr1M/owOOTiGSRWfMNbkZmOR6udHr7DuYSQ4BvSs8Y/1qO0kIG7v
+         orblvCg1UZk/5z0+lonr+a0/8CgYe+UnEPH5QMck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com,
-        "Richard W.M. Jones" <rjones@redhat.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 086/163] nbd: verify socket is supported during setup
-Date:   Mon,  4 Nov 2019 22:44:36 +0100
-Message-Id: <20191104212146.474325178@linuxfoundation.org>
+        stable@vger.kernel.org, Austin Kim <austindh.kim@gmail.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 39/95] fs: cifs: mute -Wunused-const-variable message
+Date:   Mon,  4 Nov 2019 22:44:37 +0100
+Message-Id: <20191104212101.461313664@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,76 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Christie <mchristi@redhat.com>
+From: Austin Kim <austindh.kim@gmail.com>
 
-[ Upstream commit cf1b2326b734896734c6e167e41766f9cee7686a ]
+[ Upstream commit dd19c106a36690b47bb1acc68372f2b472b495b8 ]
 
-nbd requires socket families to support the shutdown method so the nbd
-recv workqueue can be woken up from its sock_recvmsg call. If the socket
-does not support the callout we will leave recv works running or get hangs
-later when the device or module is removed.
+After 'Initial git repository build' commit,
+'mapping_table_ERRHRD' variable has not been used.
 
-This adds a check during socket connection/reconnection to make sure the
-socket being passed in supports the needed callout.
+So 'mapping_table_ERRHRD' const variable could be removed
+to mute below warning message:
 
-Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Tested-by: Richard W.M. Jones <rjones@redhat.com>
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+   fs/cifs/netmisc.c:120:40: warning: unused variable 'mapping_table_ERRHRD' [-Wunused-const-variable]
+   static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
+                                           ^
+Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ fs/cifs/netmisc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index bd164192045b0..9650777d0aaf1 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -935,6 +935,25 @@ static blk_status_t nbd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index cc88f4f0325ef..bed9733302279 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -130,10 +130,6 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+ 	{0, 0}
+ };
  
-+static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
-+				     int *err)
-+{
-+	struct socket *sock;
-+
-+	*err = 0;
-+	sock = sockfd_lookup(fd, err);
-+	if (!sock)
-+		return NULL;
-+
-+	if (sock->ops->shutdown == sock_no_shutdown) {
-+		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
-+		*err = -EINVAL;
-+		return NULL;
-+	}
-+
-+	return sock;
-+}
-+
- static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 			  bool netlink)
- {
-@@ -944,7 +963,7 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
- 	struct nbd_sock *nsock;
- 	int err;
- 
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
- 
-@@ -996,7 +1015,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
- 	int i;
- 	int err;
- 
--	sock = sockfd_lookup(arg, &err);
-+	sock = nbd_get_socket(nbd, arg, &err);
- 	if (!sock)
- 		return err;
- 
+-static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
+-	{0, 0}
+-};
+-
+ /*
+  * Convert a string containing text IPv4 or IPv6 address to binary form.
+  *
 -- 
 2.20.1
 
