@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF415EEDDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A180EEEC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:17:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390583AbfKDWKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43888 "EHLO mail.kernel.org"
+        id S2389502AbfKDWD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390572AbfKDWKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:40 -0500
+        id S2388642AbfKDWDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:21 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CE5020650;
-        Mon,  4 Nov 2019 22:10:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A938E205C9;
+        Mon,  4 Nov 2019 22:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905439;
-        bh=ICY7z8h2C9Up1gekhmJEUUIkWA03qeNFTQkxkn+LRDA=;
+        s=default; t=1572905000;
+        bh=SCz0+aVLOMLFT1rkoSyqH/2iP8sVq0FfewMa5fdSFeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D3UtHImLKrum/e14TYnisKP1mpIOkngJysR1SbSLIopeBDPvSrg5G8mvKgnbeEQIJ
-         NoetT3CXJtfib4t8IkaqPg0Y3SV5JJVZJMVAllkuOcRfDIlFb9vy1iWATxj4I87XJB
-         B4TYyPDNK9rgzcfljmUSFYzi98NVDghgNW/PXyrA=
+        b=qPX3M2esQXqXXFZpbOQUPOGiV5O870oBv2vq5bmW83XwDujKZvBl1pXMC8i0taY2R
+         EwSSnV3LZ9XbtDfnHnAqhMYIU4WE/wcyhbYGhFUR11EYnIe9LY36RPlF7ZOGa015g9
+         YSeo/kjQf8ChsRmm67+z8o0ARDGB7gUiSgCPivko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6b825a6494a04cc0e3f7@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 5.3 147/163] llc: fix sk_buff leak in llc_conn_service()
-Date:   Mon,  4 Nov 2019 22:45:37 +0100
-Message-Id: <20191104212150.968968648@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 145/149] ALSA: timer: Simplify error path in snd_timer_open()
+Date:   Mon,  4 Nov 2019 22:45:38 +0100
+Message-Id: <20191104212146.866718521@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,187 +43,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b74555de21acd791f12c4a1aeaf653dd7ac21133 upstream.
+[ Upstream commit 41672c0c24a62699d20aab53b98d843b16483053 ]
 
-syzbot reported:
+Just a minor refactoring to use the standard goto for error paths in
+snd_timer_open() instead of open code.  The first mutex_lock() is
+moved to the beginning of the function to make the code clearer.
 
-    BUG: memory leak
-    unreferenced object 0xffff88811eb3de00 (size 224):
-       comm "syz-executor559", pid 7315, jiffies 4294943019 (age 10.300s)
-       hex dump (first 32 bytes):
-         00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-         00 a0 38 24 81 88 ff ff 00 c0 f2 15 81 88 ff ff  ..8$............
-       backtrace:
-         [<000000008d1c66a1>] kmemleak_alloc_recursive  include/linux/kmemleak.h:55 [inline]
-         [<000000008d1c66a1>] slab_post_alloc_hook mm/slab.h:439 [inline]
-         [<000000008d1c66a1>] slab_alloc_node mm/slab.c:3269 [inline]
-         [<000000008d1c66a1>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
-         [<00000000447d9496>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
-         [<000000000cdbf82f>] alloc_skb include/linux/skbuff.h:1058 [inline]
-         [<000000000cdbf82f>] llc_alloc_frame+0x66/0x110 net/llc/llc_sap.c:54
-         [<000000002418b52e>] llc_conn_ac_send_sabme_cmd_p_set_x+0x2f/0x140  net/llc/llc_c_ac.c:777
-         [<000000001372ae17>] llc_exec_conn_trans_actions net/llc/llc_conn.c:475  [inline]
-         [<000000001372ae17>] llc_conn_service net/llc/llc_conn.c:400 [inline]
-         [<000000001372ae17>] llc_conn_state_process+0x1ac/0x640  net/llc/llc_conn.c:75
-         [<00000000f27e53c1>] llc_establish_connection+0x110/0x170  net/llc/llc_if.c:109
-         [<00000000291b2ca0>] llc_ui_connect+0x10e/0x370 net/llc/af_llc.c:477
-         [<000000000f9c740b>] __sys_connect+0x11d/0x170 net/socket.c:1840
-         [...]
-
-The bug is that most callers of llc_conn_send_pdu() assume it consumes a
-reference to the skb, when actually due to commit b85ab56c3f81 ("llc:
-properly handle dev_queue_xmit() return value") it doesn't.
-
-Revert most of that commit, and instead make the few places that need
-llc_conn_send_pdu() to *not* consume a reference call skb_get() before.
-
-Fixes: b85ab56c3f81 ("llc: properly handle dev_queue_xmit() return value")
-Reported-by: syzbot+6b825a6494a04cc0e3f7@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/llc_conn.h |    2 +-
- net/llc/llc_c_ac.c     |    8 ++++++--
- net/llc/llc_conn.c     |   32 +++++++++-----------------------
- 3 files changed, 16 insertions(+), 26 deletions(-)
+ sound/core/timer.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
---- a/include/net/llc_conn.h
-+++ b/include/net/llc_conn.h
-@@ -104,7 +104,7 @@ void llc_sk_reset(struct sock *sk);
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 61a0cec6e1f66..316794eb44017 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -254,19 +254,20 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	struct snd_timer_instance *timeri = NULL;
+ 	int err;
  
- /* Access to a connection */
- int llc_conn_state_process(struct sock *sk, struct sk_buff *skb);
--int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
-+void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_rtn_pdu(struct sock *sk, struct sk_buff *skb);
- void llc_conn_resend_i_pdu_as_cmd(struct sock *sk, u8 nr, u8 first_p_bit);
- void llc_conn_resend_i_pdu_as_rsp(struct sock *sk, u8 nr, u8 first_f_bit);
---- a/net/llc/llc_c_ac.c
-+++ b/net/llc/llc_c_ac.c
-@@ -372,6 +372,7 @@ int llc_conn_ac_send_i_cmd_p_set_1(struc
- 	llc_pdu_init_as_i_cmd(skb, 1, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
-+		skb_get(skb);
- 		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
-@@ -389,7 +390,8 @@ static int llc_conn_ac_send_i_cmd_p_set_
- 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		rc = llc_conn_send_pdu(sk, skb);
-+		skb_get(skb);
-+		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
-@@ -406,6 +408,7 @@ int llc_conn_ac_send_i_xxx_x_set_0(struc
- 	llc_pdu_init_as_i_cmd(skb, 0, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
-+		skb_get(skb);
- 		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
-@@ -916,7 +919,8 @@ static int llc_conn_ac_send_i_rsp_f_set_
- 	llc_pdu_init_as_i_cmd(skb, llc->ack_pf, llc->vS, llc->vR);
- 	rc = llc_mac_hdr_init(skb, llc->dev->dev_addr, llc->daddr.mac);
- 	if (likely(!rc)) {
--		rc = llc_conn_send_pdu(sk, skb);
-+		skb_get(skb);
-+		llc_conn_send_pdu(sk, skb);
- 		llc_conn_ac_inc_vs_by_1(sk, skb);
- 	}
- 	return rc;
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -30,7 +30,7 @@
- #endif
- 
- static int llc_find_offset(int state, int ev_type);
--static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *skb);
-+static void llc_conn_send_pdus(struct sock *sk);
- static int llc_conn_service(struct sock *sk, struct sk_buff *skb);
- static int llc_exec_conn_trans_actions(struct sock *sk,
- 				       struct llc_conn_state_trans *trans,
-@@ -193,11 +193,11 @@ out_skb_put:
- 	return rc;
- }
- 
--int llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
-+void llc_conn_send_pdu(struct sock *sk, struct sk_buff *skb)
- {
- 	/* queue PDU to send to MAC layer */
- 	skb_queue_tail(&sk->sk_write_queue, skb);
--	return llc_conn_send_pdus(sk, skb);
-+	llc_conn_send_pdus(sk);
- }
- 
- /**
-@@ -255,7 +255,7 @@ void llc_conn_resend_i_pdu_as_cmd(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk, NULL);
-+	llc_conn_send_pdus(sk);
- out:;
- }
- 
-@@ -296,7 +296,7 @@ void llc_conn_resend_i_pdu_as_rsp(struct
- 	if (howmany_resend > 0)
- 		llc->vS = (llc->vS + 1) % LLC_2_SEQ_NBR_MODULO;
- 	/* any PDUs to re-send are queued up; start sending to MAC */
--	llc_conn_send_pdus(sk, NULL);
-+	llc_conn_send_pdus(sk);
- out:;
- }
- 
-@@ -340,16 +340,12 @@ out:
- /**
-  *	llc_conn_send_pdus - Sends queued PDUs
-  *	@sk: active connection
-- *	@hold_skb: the skb held by caller, or NULL if does not care
-  *
-- *	Sends queued pdus to MAC layer for transmission. When @hold_skb is
-- *	NULL, always return 0. Otherwise, return 0 if @hold_skb is sent
-- *	successfully, or 1 for failure.
-+ *	Sends queued pdus to MAC layer for transmission.
-  */
--static int llc_conn_send_pdus(struct sock *sk, struct sk_buff *hold_skb)
-+static void llc_conn_send_pdus(struct sock *sk)
- {
- 	struct sk_buff *skb;
--	int ret = 0;
- 
- 	while ((skb = skb_dequeue(&sk->sk_write_queue)) != NULL) {
- 		struct llc_pdu_sn *pdu = llc_pdu_sn_hdr(skb);
-@@ -361,20 +357,10 @@ static int llc_conn_send_pdus(struct soc
- 			skb_queue_tail(&llc_sk(sk)->pdu_unack_q, skb);
- 			if (!skb2)
- 				break;
--			dev_queue_xmit(skb2);
--		} else {
--			bool is_target = skb == hold_skb;
--			int rc;
--
--			if (is_target)
--				skb_get(skb);
--			rc = dev_queue_xmit(skb);
--			if (is_target)
--				ret = rc;
-+			skb = skb2;
++	mutex_lock(&register_mutex);
+ 	if (tid->dev_class == SNDRV_TIMER_CLASS_SLAVE) {
+ 		/* open a slave instance */
+ 		if (tid->dev_sclass <= SNDRV_TIMER_SCLASS_NONE ||
+ 		    tid->dev_sclass > SNDRV_TIMER_SCLASS_OSS_SEQUENCER) {
+ 			pr_debug("ALSA: timer: invalid slave class %i\n",
+ 				 tid->dev_sclass);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto unlock;
  		}
-+		dev_queue_xmit(skb);
+-		mutex_lock(&register_mutex);
+ 		timeri = snd_timer_instance_new(owner, NULL);
+ 		if (!timeri) {
+-			mutex_unlock(&register_mutex);
+-			return -ENOMEM;
++			err = -ENOMEM;
++			goto unlock;
+ 		}
+ 		timeri->slave_class = tid->dev_sclass;
+ 		timeri->slave_id = tid->device;
+@@ -277,13 +278,10 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 			snd_timer_close_locked(timeri);
+ 			timeri = NULL;
+ 		}
+-		mutex_unlock(&register_mutex);
+-		*ti = timeri;
+-		return err;
++		goto unlock;
  	}
--
--	return ret;
- }
  
- /**
+ 	/* open a master instance */
+-	mutex_lock(&register_mutex);
+ 	timer = snd_timer_find(tid);
+ #ifdef CONFIG_MODULES
+ 	if (!timer) {
+@@ -294,25 +292,26 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	}
+ #endif
+ 	if (!timer) {
+-		mutex_unlock(&register_mutex);
+-		return -ENODEV;
++		err = -ENODEV;
++		goto unlock;
+ 	}
+ 	if (!list_empty(&timer->open_list_head)) {
+ 		timeri = list_entry(timer->open_list_head.next,
+ 				    struct snd_timer_instance, open_list);
+ 		if (timeri->flags & SNDRV_TIMER_IFLG_EXCLUSIVE) {
+-			mutex_unlock(&register_mutex);
+-			return -EBUSY;
++			err = -EBUSY;
++			timeri = NULL;
++			goto unlock;
+ 		}
+ 	}
+ 	if (timer->num_instances >= timer->max_instances) {
+-		mutex_unlock(&register_mutex);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto unlock;
+ 	}
+ 	timeri = snd_timer_instance_new(owner, timer);
+ 	if (!timeri) {
+-		mutex_unlock(&register_mutex);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto unlock;
+ 	}
+ 	/* take a card refcount for safe disconnection */
+ 	if (timer->card)
+@@ -321,16 +320,16 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	timeri->slave_id = slave_id;
+ 
+ 	if (list_empty(&timer->open_list_head) && timer->hw.open) {
+-		int err = timer->hw.open(timer);
++		err = timer->hw.open(timer);
+ 		if (err) {
+ 			kfree(timeri->owner);
+ 			kfree(timeri);
++			timeri = NULL;
+ 
+ 			if (timer->card)
+ 				put_device(&timer->card->card_dev);
+ 			module_put(timer->module);
+-			mutex_unlock(&register_mutex);
+-			return err;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -341,6 +340,8 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 		snd_timer_close_locked(timeri);
+ 		timeri = NULL;
+ 	}
++
++ unlock:
+ 	mutex_unlock(&register_mutex);
+ 	*ti = timeri;
+ 	return err;
+-- 
+2.20.1
+
 
 
