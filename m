@@ -2,59 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B11CEE624
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:37:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54912EE640
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbfKDRhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:37:37 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50477 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728898AbfKDRhf (ORCPT
+        id S1729499AbfKDRjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:39:52 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44552 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728957AbfKDRjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:37:35 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 11so17674682wmk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:37:34 -0800 (PST)
+        Mon, 4 Nov 2019 12:39:51 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q26so12717288pfn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PXKWmt04LLOdOQwT4J7BpfWO3zbtkR+P8tnC3gpeEXQ=;
-        b=VAyQzyglRqNMJ3a4V+Jk2zst6aCR675sfvIjYWZoY/TUikK/EnbUf83SZsY6hQMvZ/
-         qpqrMTLp8w0fMoHxqmLb1x9cV4Jrfhnir+g7hTsKlxb8muPuiiTG+25XLfQkayp2UfU3
-         uqK791FxcspFJz55XB6wK9tl9Y/kCkD4f7HQs=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tqUgfD6J26IDGcrOaE5JALNx00ywjTuLlRjpqn3J8b8=;
+        b=soRjtNEeL4D7NTU6MKSNZmvW/YQMSUw4MivNuB+vacYLS9phcwkMDXoTsEql77XHMK
+         ku3/NC4+8vQatzqIQidHSwCdiPcYqozapjH2k6snddsCLVAM4EhHqRYgV4cDlm9664Ap
+         Mvby3qtJWHW9IsLS2LYYzqtNeegALeNPAfQNnrjsgmioA7CFQbkykCwD47aHseaRbGZU
+         0PkS7bjg7l/Y21Ia3E3pGc8zzNyKcBP0AnV3uB0lNXC5TIto5n2SmdgKubVXEShe/Hes
+         wJ/5Cpv0Bkrpq7Bnm/WcGgz4W5MKZOk7vl3Fo8cLtOtPh/xO1HSYX9xIQHikkfAGl3go
+         1Zxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PXKWmt04LLOdOQwT4J7BpfWO3zbtkR+P8tnC3gpeEXQ=;
-        b=OCsgoXMvq6nsiC5lO6nIWylPT0Z43TjXXt+ImMTLPtARXrTubabtyL+JWI7VK9gAtF
-         BPG3TfCUU9ez2OkBAKCumEoSccKQxhW20Jd9BdvtEvWMBFNFdMBQRDskt1gY4et6bdQ/
-         KA3cbRlX6Rkb3PNNjrevlPUovMeRLC65AQdrSR5K7u2yUNRAknOkxEpRbQ1WcqItx1YR
-         E+j5xrOj82npq8Z3UQKZmWJGSS+yGz4F248c9ONuYJyyoGU4MUagXU2cDuTPNy9fp/HZ
-         N5c6QS3qfudpSWoa2kBf+CkOiLs2VAF5gzN5UydaB8/Y1xhwldJ7QIaJRQ2TnAIChHv2
-         h7fg==
-X-Gm-Message-State: APjAAAUH0ixoTdFQQOcIwTFuMqpf3tzcCBcytU14xw94oOBa7r8K7GVe
-        /7dhSBX2G8oqD2zKcMA8bFAbsQ==
-X-Google-Smtp-Source: APXvYqwnBFrltg4BcDYvyP0LQfKr7LnFL2T1UPgzUktng1ER3WfNh2V8RcaPXqBQ9MI5hBomwShRrA==
-X-Received: by 2002:a05:600c:21c9:: with SMTP id x9mr252564wmj.54.1572889053413;
-        Mon, 04 Nov 2019 09:37:33 -0800 (PST)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id l22sm32408863wrb.45.2019.11.04.09.37.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tqUgfD6J26IDGcrOaE5JALNx00ywjTuLlRjpqn3J8b8=;
+        b=XPT8tW0LXsYwOihYj2lMPHi8eR0v+oQjTfdrmF+jA4oQ0SuwZ+y0imwFSYDdV24ZfL
+         hDGBd5bK8tAQwzUJfqPTehE6+lmJA1Gy0r0YkC8XevTKF8hxcHoywfxLxZK7uciMAeqA
+         6PBALKwaCedXbMfH4vGoK4uz+DW8ybnIS3bSVqFDgVHE4IwY/bbjuMfto7ewgMCXxYrG
+         bKDVcVAQxkGsppaDgfmfoWLEPbqoYTkr510hB4y5yF15PJxeqMnZQH6CinCCLaK0eAY+
+         IvN3BBNmOx9bHOyKE4R+zZjfeBTRWafndYs3mb6U4iK2kW/u1VTfgy7laq9q4B7yt7/8
+         gI4g==
+X-Gm-Message-State: APjAAAVeZvKkVziqWYY/iKy45lYRNRJQz8ZfMTgDxDAxd2N2UUiUeMxW
+        C7x9JTkUT3BLj+XAhNcrtl0=
+X-Google-Smtp-Source: APXvYqy6AGU4waE66mHIwcbc+qrL64JP3OkuPlxqz88KmxLF1+NAbjyWx1AraIIAjcF+WIJ3QQNayA==
+X-Received: by 2002:a63:151:: with SMTP id 78mr28973075pgb.95.1572889190458;
+        Mon, 04 Nov 2019 09:39:50 -0800 (PST)
+Received: from localhost ([100.118.89.215])
+        by smtp.gmail.com with ESMTPSA id y24sm20894808pfr.116.2019.11.04.09.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 09:37:32 -0800 (PST)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/i915: use might_lock_nested in get_pages annotation
-Date:   Mon,  4 Nov 2019 18:37:20 +0100
-Message-Id: <20191104173720.2696-3-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.24.0.rc2
-In-Reply-To: <20191104173720.2696-1-daniel.vetter@ffwll.ch>
-References: <20191104173720.2696-1-daniel.vetter@ffwll.ch>
+        Mon, 04 Nov 2019 09:39:49 -0800 (PST)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2 v2] drm/atomic: fix self-refresh helpers crtc state dereference
+Date:   Mon,  4 Nov 2019 09:37:36 -0800
+Message-Id: <20191104173737.142558-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,84 +65,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So strictly speaking the existing annotation is also ok, because we
-have a chain of
+From: Rob Clark <robdclark@chromium.org>
 
-obj->mm.lock#I915_MM_GET_PAGES -> fs_reclaim -> obj->mm.lock
+drm_self_refresh_helper_update_avg_times() was incorrectly accessing the
+new incoming state after drm_atomic_helper_commit_hw_done().  But this
+state might have already been superceeded by an !nonblock atomic update
+resulting in dereferencing an already free'd crtc_state.
 
-(the shrinker cannot get at an object while we're in get_pages, hence
-this is safe). But it's confusing, so try to take the right subclass
-of the lock.
+TODO I *think* this will more or less do the right thing.. althought I'm
+not 100% sure if, for example, we enter psr in a nonblock commit, and
+then leave psr in a !nonblock commit that overtakes the completion of
+the nonblock commit.  Not sure if this sort of scenario can happen in
+practice.  But not crashing is better than crashing, so I guess we
+should either take this patch or rever the self-refresh helpers until
+Sean can figure out a better solution.
 
-This does a bit reduce our lockdep based checking, but then it's also
-less fragile, in case we ever change the nesting around.
-
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
+Cc: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_object.h | 36 +++++++++++-----------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c       | 14 +++++++++++++-
+ drivers/gpu/drm/drm_self_refresh_helper.c | 15 +++++++++------
+ include/drm/drm_self_refresh_helper.h     |  3 ++-
+ 3 files changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-index edaf7126a84d..e5750d506cc9 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-@@ -271,10 +271,27 @@ void __i915_gem_object_set_pages(struct drm_i915_gem_object *obj,
- int ____i915_gem_object_get_pages(struct drm_i915_gem_object *obj);
- int __i915_gem_object_get_pages(struct drm_i915_gem_object *obj);
- 
-+enum i915_mm_subclass { /* lockdep subclass for obj->mm.lock/struct_mutex */
-+	I915_MM_NORMAL = 0,
-+	/*
-+	 * Only used by struct_mutex, when called "recursively" from
-+	 * direct-reclaim-esque. Safe because there is only every one
-+	 * struct_mutex in the entire system.
-+	 */
-+	I915_MM_SHRINKER = 1,
-+	/*
-+	 * Used for obj->mm.lock when allocating pages. Safe because the object
-+	 * isn't yet on any LRU, and therefore the shrinker can't deadlock on
-+	 * it. As soon as the object has pages, obj->mm.lock nests within
-+	 * fs_reclaim.
-+	 */
-+	I915_MM_GET_PAGES = 1,
-+};
-+
- static inline int __must_check
- i915_gem_object_pin_pages(struct drm_i915_gem_object *obj)
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 3ef2ac52ce94..648494c813e5 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1581,8 +1581,11 @@ static void commit_tail(struct drm_atomic_state *old_state)
  {
--	might_lock(&obj->mm.lock);
-+	might_lock_nested(&obj->mm.lock, I915_MM_GET_PAGES);
+ 	struct drm_device *dev = old_state->dev;
+ 	const struct drm_mode_config_helper_funcs *funcs;
++	struct drm_crtc_state *new_crtc_state;
++	struct drm_crtc *crtc;
+ 	ktime_t start;
+ 	s64 commit_time_ms;
++	unsigned i, new_self_refresh_mask = 0;
  
- 	if (atomic_inc_not_zero(&obj->mm.pages_pin_count))
- 		return 0;
-@@ -317,23 +334,6 @@ i915_gem_object_unpin_pages(struct drm_i915_gem_object *obj)
- 	__i915_gem_object_unpin_pages(obj);
- }
+ 	funcs = dev->mode_config.helper_private;
  
--enum i915_mm_subclass { /* lockdep subclass for obj->mm.lock/struct_mutex */
--	I915_MM_NORMAL = 0,
--	/*
--	 * Only used by struct_mutex, when called "recursively" from
--	 * direct-reclaim-esque. Safe because there is only every one
--	 * struct_mutex in the entire system.
--	 */
--	I915_MM_SHRINKER = 1,
--	/*
--	 * Used for obj->mm.lock when allocating pages. Safe because the object
--	 * isn't yet on any LRU, and therefore the shrinker can't deadlock on
--	 * it. As soon as the object has pages, obj->mm.lock nests within
--	 * fs_reclaim.
--	 */
--	I915_MM_GET_PAGES = 1,
--};
--
- int __i915_gem_object_put_pages(struct drm_i915_gem_object *obj);
- void i915_gem_object_truncate(struct drm_i915_gem_object *obj);
- void i915_gem_object_writeback(struct drm_i915_gem_object *obj);
+@@ -1602,6 +1605,14 @@ static void commit_tail(struct drm_atomic_state *old_state)
+ 
+ 	drm_atomic_helper_wait_for_dependencies(old_state);
+ 
++	/*
++	 * We cannot safely access new_crtc_state after drm_atomic_helper_commit_hw_done()
++	 * so figure out which crtc's have self-refresh active beforehand:
++	 */
++	for_each_new_crtc_in_state(old_state, crtc, new_crtc_state, i)
++		if (new_crtc_state->self_refresh_active)
++			new_self_refresh_mask |= BIT(i);
++
+ 	if (funcs && funcs->atomic_commit_tail)
+ 		funcs->atomic_commit_tail(old_state);
+ 	else
+@@ -1610,7 +1621,8 @@ static void commit_tail(struct drm_atomic_state *old_state)
+ 	commit_time_ms = ktime_ms_delta(ktime_get(), start);
+ 	if (commit_time_ms > 0)
+ 		drm_self_refresh_helper_update_avg_times(old_state,
+-						 (unsigned long)commit_time_ms);
++						 (unsigned long)commit_time_ms,
++						 new_self_refresh_mask);
+ 
+ 	drm_atomic_helper_commit_cleanup_done(old_state);
+ 
+diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
+index 68f4765a5896..011b8d5f7dd6 100644
+--- a/drivers/gpu/drm/drm_self_refresh_helper.c
++++ b/drivers/gpu/drm/drm_self_refresh_helper.c
+@@ -133,6 +133,8 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
+  * drm_self_refresh_helper_update_avg_times - Updates a crtc's SR time averages
+  * @state: the state which has just been applied to hardware
+  * @commit_time_ms: the amount of time in ms that this commit took to complete
++ * @new_self_refresh_mask: bitmask of crtc's that have self_refresh_active in
++ *    new state
+  *
+  * Called after &drm_mode_config_funcs.atomic_commit_tail, this function will
+  * update the average entry/exit self refresh times on self refresh transitions.
+@@ -140,22 +142,23 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
+  * entering self refresh mode after activity.
+  */
+ void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
+-					      unsigned int commit_time_ms)
++					      unsigned int commit_time_ms,
++					      unsigned int new_self_refresh_mask)
+ {
+ 	struct drm_crtc *crtc;
+-	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
++	struct drm_crtc_state *old_crtc_state;
+ 	int i;
+ 
+-	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
+-				      new_crtc_state, i) {
++	for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
++		bool new_self_refresh_active = new_self_refresh_mask & BIT(i);
+ 		struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
+ 		struct ewma_psr_time *time;
+ 
+ 		if (old_crtc_state->self_refresh_active ==
+-		    new_crtc_state->self_refresh_active)
++		    new_self_refresh_active)
+ 			continue;
+ 
+-		if (new_crtc_state->self_refresh_active)
++		if (new_self_refresh_active)
+ 			time = &sr_data->entry_avg_ms;
+ 		else
+ 			time = &sr_data->exit_avg_ms;
+diff --git a/include/drm/drm_self_refresh_helper.h b/include/drm/drm_self_refresh_helper.h
+index 5b79d253fb46..b2c08b328aa1 100644
+--- a/include/drm/drm_self_refresh_helper.h
++++ b/include/drm/drm_self_refresh_helper.h
+@@ -13,7 +13,8 @@ struct drm_crtc;
+ 
+ void drm_self_refresh_helper_alter_state(struct drm_atomic_state *state);
+ void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
+-					      unsigned int commit_time_ms);
++					      unsigned int commit_time_ms,
++					      unsigned int new_self_refresh_mask);
+ 
+ int drm_self_refresh_helper_init(struct drm_crtc *crtc);
+ void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc);
 -- 
-2.24.0.rc2
+2.23.0
 
