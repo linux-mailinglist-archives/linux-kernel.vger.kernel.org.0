@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F1DEF085
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 228BFEEEFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388955AbfKDW2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:28:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
+        id S2389225AbfKDWCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729968AbfKDVsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:33 -0500
+        id S2389048AbfKDWB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:01:26 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECDB020B7C;
-        Mon,  4 Nov 2019 21:48:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91B00217F4;
+        Mon,  4 Nov 2019 22:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904113;
-        bh=v0IrQyRi9n+bfhh9+5Fe2BJGlZxsDr2cCWzbbt2oXfA=;
+        s=default; t=1572904886;
+        bh=+Y9I/xKZF4NhCZQjieOGVWzHKoWzM6aburW0P4Ayg5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bi5lUsitl4EWPmRj9xYuadr0X1yueiJ8Sje8AH7w96q20cp9/Osrje2gv/aiTpx3M
-         YI9bwEmfI+Ze2ygzTTtLrQa2bveSwOUMPThtnYNzQiwjABmn+kWxEPxxTsS1SIzIFy
-         6d39lRR/JqvdoOHG3yMW9ZkHkqEK2cSX3O3MODnU=
+        b=Spvo7//yEzyToWPk5MtmxWUlL/NAjbHXLRLOdh3/cKoGV5WWIK+9Srtr0DProjNTn
+         0lHteHZOXblaXIQsZYQO9EJIv7jxllbPRRlDt/czcit6Y8PeEzzXPehAMNC5mGLEZg
+         UJGQEGDGVQ4PUGwZ8SntgjArihuwF9NMX8KBaBE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 27/46] ALSA: bebob: Fix prototype of helper function to return negative value
+        stable@vger.kernel.org,
+        syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com,
+        "Richard W.M. Jones" <rjones@redhat.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 105/149] nbd: verify socket is supported during setup
 Date:   Mon,  4 Nov 2019 22:44:58 +0100
-Message-Id: <20191104211859.776154553@linuxfoundation.org>
+Message-Id: <20191104212143.819122372@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Mike Christie <mchristi@redhat.com>
 
-commit f2bbdbcb075f3977a53da3bdcb7cd460bc8ae5f2 upstream.
+[ Upstream commit cf1b2326b734896734c6e167e41766f9cee7686a ]
 
-A helper function of ALSA bebob driver returns negative value in a
-function which has a prototype to return unsigned value.
+nbd requires socket families to support the shutdown method so the nbd
+recv workqueue can be woken up from its sock_recvmsg call. If the socket
+does not support the callout we will leave recv works running or get hangs
+later when the device or module is removed.
 
-This commit fixes it by changing the prototype.
+This adds a check during socket connection/reconnection to make sure the
+socket being passed in supports the needed callout.
 
-Fixes: eb7b3a056cd8 ("ALSA: bebob: Add commands and connections/streams management")
-Cc: <stable@vger.kernel.org> # v3.16+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Link: https://lore.kernel.org/r/20191026030620.12077-1-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: syzbot+24c12fa8d218ed26011a@syzkaller.appspotmail.com
+Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
+Tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/bebob/bebob_stream.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/block/nbd.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/bebob/bebob_stream.c
-+++ b/sound/firewire/bebob/bebob_stream.c
-@@ -253,8 +253,7 @@ end:
- 	return err;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index d445195945618..bd9aafe86c2fc 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -924,6 +924,25 @@ static blk_status_t nbd_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	return ret;
  }
  
--static unsigned int
--map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
-+static int map_data_channels(struct snd_bebob *bebob, struct amdtp_stream *s)
++static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
++				     int *err)
++{
++	struct socket *sock;
++
++	*err = 0;
++	sock = sockfd_lookup(fd, err);
++	if (!sock)
++		return NULL;
++
++	if (sock->ops->shutdown == sock_no_shutdown) {
++		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
++		*err = -EINVAL;
++		return NULL;
++	}
++
++	return sock;
++}
++
+ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+ 			  bool netlink)
  {
- 	unsigned int sec, sections, ch, channels;
- 	unsigned int pcm, midi, location;
+@@ -933,7 +952,7 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+ 	struct nbd_sock *nsock;
+ 	int err;
+ 
+-	sock = sockfd_lookup(arg, &err);
++	sock = nbd_get_socket(nbd, arg, &err);
+ 	if (!sock)
+ 		return err;
+ 
+@@ -985,7 +1004,7 @@ static int nbd_reconnect_socket(struct nbd_device *nbd, unsigned long arg)
+ 	int i;
+ 	int err;
+ 
+-	sock = sockfd_lookup(arg, &err);
++	sock = nbd_get_socket(nbd, arg, &err);
+ 	if (!sock)
+ 		return err;
+ 
+-- 
+2.20.1
+
 
 
