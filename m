@@ -2,103 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E9AEEB1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80BA5EEB15
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:28:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfKDV3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:29:53 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728377AbfKDV3w (ORCPT
+        id S1729563AbfKDV2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:28:46 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44596 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbfKDV2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:29:52 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA4LTPGM170456
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2019 16:29:51 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w15eu4mtc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 16:29:51 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
-        Mon, 4 Nov 2019 21:29:48 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Nov 2019 21:29:43 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA4LT7fY41943420
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Nov 2019 21:29:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1E36A405F;
-        Mon,  4 Nov 2019 21:29:42 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB1FFA4054;
-        Mon,  4 Nov 2019 21:29:38 +0000 (GMT)
-Received: from oc0525413822.ibm.com (unknown [9.85.192.56])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Nov 2019 21:29:38 +0000 (GMT)
-From:   Ram Pai <linuxram@us.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     benh@kernel.crashing.org, david@gibson.dropbear.id.au,
-        mpe@ellerman.id.au, paulus@ozlabs.org, mdroth@linux.vnet.ibm.com,
-        hch@lst.de, linuxram@us.ibm.com, andmike@us.ibm.com,
-        sukadev@linux.vnet.ibm.com, mst@redhat.com, ram.n.pai@gmail.com,
-        aik@ozlabs.ru, cai@lca.pw, tglx@linutronix.de,
-        bauerman@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [RFC v1 2/2] powerpc/pseries/iommu: Use dma_iommu_ops for Secure VMs aswell.
-Date:   Mon,  4 Nov 2019 13:28:43 -0800
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1572902923-8096-2-git-send-email-linuxram@us.ibm.com>
-References: <1572902923-8096-1-git-send-email-linuxram@us.ibm.com>
- <1572902923-8096-2-git-send-email-linuxram@us.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19110421-4275-0000-0000-0000037AC033
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110421-4276-0000-0000-0000388E0841
-Message-Id: <1572902923-8096-3-git-send-email-linuxram@us.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-04_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=644 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1911040205
+        Mon, 4 Nov 2019 16:28:46 -0500
+Received: by mail-oi1-f193.google.com with SMTP id s71so15518710oih.11;
+        Mon, 04 Nov 2019 13:28:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9acXWsdEFrkPA1Lgl9MMn5B4FiSOAYHswfR+JTN/Dic=;
+        b=i+azHwooPjktf+h/FiC2NVQc2v1Hs24+bXIDCnWUq7id+0x5nLpBfN+w8Vhdsmv+e4
+         j55vIaISx7xIgn4carqCzHwRZFfmZG5HiG5mxpxInx5wiU2VM8r3ftMbZOW34vr1YKbP
+         cN3LonrrI7sHDRDgz8PyejufT64qUfb9PsRnKWgDSujXUh7FYKjAXU+plb90BvL5I3Gg
+         rkPnHmCC1j3ECus+5NRXKb/6EbXQKiRQsbPuxH8qEbGKBC5H0+YgOaNm3XkNo4pcXenj
+         PmJ+nzo9+SOWNPfhnHV29VciUvm8WTpRZBa8fi1ve9G9oXbE/nf1OX0noqxPGAnLLAoj
+         EgwA==
+X-Gm-Message-State: APjAAAVRkUtDqCoAEznegmZpsa/aVEgJHqZ/hIFsZm0TJI2KaJEOzbHo
+        8WkpHxoo/oIplo8JrLYF6A==
+X-Google-Smtp-Source: APXvYqyaTn81E9AP4eQnyMQSgJxivr7c/dErrETeT11+u2IPdaQ5TAf8rw4iL5Ra03TJ+aegp2oFoQ==
+X-Received: by 2002:aca:578e:: with SMTP id l136mr1009252oib.132.1572902925405;
+        Mon, 04 Nov 2019 13:28:45 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m14sm5112256otl.26.2019.11.04.13.28.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 13:28:44 -0800 (PST)
+Date:   Mon, 4 Nov 2019 15:28:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     robh+dt@kernel.org, linux-pm@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        daidavid1@codeaurora.org, vincent.guittot@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, georgi.djakov@linaro.org
+Subject: Re: [PATCH v10 1/3] dt-bindings: interconnect: Add Qualcomm MSM8916
+ DT bindings
+Message-ID: <20191104212844.GA6884@bogus>
+References: <20191030153904.8715-1-georgi.djakov@linaro.org>
+ <20191030153904.8715-2-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030153904.8715-2-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables IOMMU support for pseries Secure VMs.
+On Wed, 30 Oct 2019 17:39:02 +0200, Georgi Djakov wrote:
+> The Qualcomm MSM8916 platform has several bus fabrics that could be
+> controlled and tuned dynamically according to the bandwidth demand.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  .../bindings/interconnect/qcom,msm8916.yaml   |  77 ++++++++++++++
+>  .../dt-bindings/interconnect/qcom,msm8916.h   | 100 ++++++++++++++++++
+>  2 files changed, 177 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8916.yaml
+>  create mode 100644 include/dt-bindings/interconnect/qcom,msm8916.h
+> 
 
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
----
- arch/powerpc/platforms/pseries/iommu.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 07f0847..189717b 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -1333,15 +1333,7 @@ void iommu_init_early_pSeries(void)
- 	of_reconfig_notifier_register(&iommu_reconfig_nb);
- 	register_memory_notifier(&iommu_mem_nb);
- 
--	/*
--	 * Secure guest memory is inacessible to devices so regular DMA isn't
--	 * possible.
--	 *
--	 * In that case keep devices' dma_map_ops as NULL so that the generic
--	 * DMA code path will use SWIOTLB to bounce buffers for DMA.
--	 */
--	if (!is_secure_guest())
--		set_pci_dma_ops(&dma_iommu_ops);
-+	set_pci_dma_ops(&dma_iommu_ops);
- }
- 
- static int __init disable_multitce(char *str)
--- 
-1.8.3.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
