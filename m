@@ -2,45 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB58EEEC57
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA2AEEB23
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:32:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbfKDV4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:56:16 -0500
-Received: from mga05.intel.com ([192.55.52.43]:13965 "EHLO mga05.intel.com"
+        id S1729481AbfKDVbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:31:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:31583 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388302AbfKDV4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:56:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 13:56:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
-   d="scan'208";a="226888820"
-Received: from trowland-mobl.amr.corp.intel.com (HELO [10.254.97.182]) ([10.254.97.182])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Nov 2019 13:56:08 -0800
-Subject: Re: [PATCH 10/14] soundwire: intel: add prepare support in sdw dai
- driver
-To:     Cezary Rojewski <cezary.rojewski@intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
- <20191023212823.608-11-pierre-louis.bossart@linux.intel.com>
- <7a49fcce-5b36-81c1-6041-dda263ebb200@intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <02ef59ba-66da-3ba9-1fe7-0b7e256e3ac1@linux.intel.com>
-Date:   Mon, 4 Nov 2019 15:31:16 -0600
+        id S1728377AbfKDVbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:31:38 -0500
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 245FA59449
+        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 21:31:37 +0000 (UTC)
+Received: by mail-qt1-f199.google.com with SMTP id l5so20175771qtj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:31:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=odBYYPB2dwXjXn5RBPYq4Rzo0JDyXN/FBfk/mj5Z+EQ=;
+        b=NixJMt7+qajkQJ6er/gMaqZGNTpAVezp5a6xjEqbPxoOtCgPbfxt0KzxKR1TMXXIvU
+         PgWLgLTuagjxlmzux0EBd72zMODHDZMU0u0bFN3ExLUR/Tdtr0mqjKP2277tC5jINIlk
+         cSA+01bW+JRGEVtZwBx6Aep7xSMZUIVrC6PpN9YlQV0ysTh4hVInGhiOZloGc8Lq46cY
+         meXZ5qcTOL1r2KIIrYkthmxjYz/li407/fglfB1/+GCkH+luhol7a2sKTnyu7BSO2ujh
+         xS9bQ3Jzx5FotQdRvtph0yuRNoCqb6hDu/lJPaGEOt5sdCENJZdxEjqQHYkIXLjBFzKY
+         O27g==
+X-Gm-Message-State: APjAAAUe9t5I96L6TWp5pYkEBJcDnPpc2TQgG/OTtis7iEmTMUGDewg3
+        fPE9AGCTvtHeZLGNeRyeLqmS5dSCZvxt44OCpk6/h6cvjQCfP+SGgJ2DSJpWA2AAsqoSOdP7BfC
+        RPLJm2R2X/gkAl8gn7rG+mJmd
+X-Received: by 2002:a0c:94fb:: with SMTP id k56mr24684047qvk.127.1572903096308;
+        Mon, 04 Nov 2019 13:31:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxCaLFc7g2Jbkr2kxfKOHZxG4CVScikJchrj/BxFvo2Kw/4kx1PfGW0DIQYm2b/95qkX5y88g==
+X-Received: by 2002:a0c:94fb:: with SMTP id k56mr24684020qvk.127.1572903095923;
+        Mon, 04 Nov 2019 13:31:35 -0800 (PST)
+Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id i75sm9718319qke.22.2019.11.04.13.31.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2019 13:31:35 -0800 (PST)
+Subject: Re: [RFC PATCH] kconfig: Add option to get the full help text with
+ listnewconfig
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Cline <jcline@redhat.com>,
+        Don Zickus <dzickus@redhat.com>
+References: <20191029181702.21460-1-labbott@redhat.com>
+ <CAK7LNAQV2X94rQP4exP8Kujjm-6FAt_pHoGF6dtHx5qZgAWDxg@mail.gmail.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <070517f0-6394-ede5-f7c2-f0e4552f5088@redhat.com>
+Date:   Mon, 4 Nov 2019 16:31:34 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <7a49fcce-5b36-81c1-6041-dda263ebb200@intel.com>
+In-Reply-To: <CAK7LNAQV2X94rQP4exP8Kujjm-6FAt_pHoGF6dtHx5qZgAWDxg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -49,20 +66,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/4/19 1:45 PM, Cezary Rojewski wrote:
-> On 2019-10-23 23:28, Pierre-Louis Bossart wrote:
->> From: Rander Wang <rander.wang@linux.intel.com>
+On 11/3/19 9:20 PM, Masahiro Yamada wrote:
+> On Wed, Oct 30, 2019 at 3:17 AM Laura Abbott <labbott@redhat.com> wrote:
 >>
->> It gets sdw runtime information from dai to prepare stream.
+>> make listnewconfig will list the individual options that need to be set.
+>> This is useful but there's no easy way to get the help text associated
+>> with the options at the same time. Introduce a new targe
+>> 'make extendedlistnewconfig' which lists the full help text of all the
+>> new options as well. This makes it easier to automatically generate
+>> changes that are easy for humans to review. This command also adds
+>> markers between each option for easier parsing.
 >>
->> Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
->> Signed-off-by: Pierre-Louis Bossart 
->> <pierre-louis.bossart@linux.intel.com>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> Red Hat has been relying on some external libraries that have a tendency
+>> to break to get the help text for all new config options. I'd really
+>> like an in tree way to get the help text so we can automatically
+>> generate patches for people to reveiw new config options. I'm open to
+>> other approaches that let us script getting the help text as well.
 > 
-> While the patch looks good, the commit message is questionable. You may 
-> simply state why it is added only just now. Judging from the commit 
-> title, it has been added to make the sdw dai driver interface complete.
+> I am not familiar with the workflow in Red Hat.
+> I cannot propose another approach.
+> 
+> 
+> I am not a big fan of the target name.
+> 'extendedlistnewconfig' is so long that it breaks the
+> alignment of 'make help'.
+> Maybe 'helpnewconfig' is understandable
+> although I am open to discussion for a better name.
+> 
+> 
 
-The commit message is not great but it's not wrong either...
+Yes, I agree the name is long. helpnewconfig is fine by me.
+
+> BTW, did you check how the newly-added 'choice' was displayed?
+> Its help message is displayed, but the choice has no name.
+> So, people might be confused what the help message is talking about.
+> 
+> 
+
+Thanks for pointing this out. For what we're looking to do I
+think we can work around it.
+
+Thanks,
+Laura
+
+> 
+> 
+>> ---
+>>   scripts/kconfig/Makefile |  5 ++++-
+>>   scripts/kconfig/conf.c   | 13 ++++++++++++-
+>>   2 files changed, 16 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+>> index ef2f2336c469..aaaf1f62300c 100644
+>> --- a/scripts/kconfig/Makefile
+>> +++ b/scripts/kconfig/Makefile
+>> @@ -66,7 +66,9 @@ localyesconfig localmodconfig: $(obj)/conf
+>>   #  syncconfig has become an internal implementation detail and is now
+>>   #  deprecated for external use
+>>   simple-targets := oldconfig allnoconfig allyesconfig allmodconfig \
+>> -       alldefconfig randconfig listnewconfig olddefconfig syncconfig
+>> +       alldefconfig randconfig listnewconfig olddefconfig syncconfig \
+>> +       extendedlistnewconfig
+>> +
+>>   PHONY += $(simple-targets)
+>>
+>>   $(simple-targets): $(obj)/conf
+>> @@ -134,6 +136,7 @@ help:
+>>          @echo  '  alldefconfig    - New config with all symbols set to default'
+>>          @echo  '  randconfig      - New config with random answer to all options'
+>>          @echo  '  listnewconfig   - List new options'
+>> +       @echo  '  extendedlistnewconfig   - List new options'
+>>          @echo  '  olddefconfig    - Same as oldconfig but sets new symbols to their'
+>>          @echo  '                    default value without prompting'
+>>          @echo  '  kvmconfig       - Enable additional options for kvm guest kernel support'
+>> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+>> index 40e16e871ae2..7aeb77374d9a 100644
+>> --- a/scripts/kconfig/conf.c
+>> +++ b/scripts/kconfig/conf.c
+>> @@ -32,6 +32,7 @@ enum input_mode {
+>>          defconfig,
+>>          savedefconfig,
+>>          listnewconfig,
+>> +       extendedlistnewconfig,
+>>          olddefconfig,
+>>   };
+>>   static enum input_mode input_mode = oldaskconfig;
+>> @@ -434,6 +435,11 @@ static void check_conf(struct menu *menu)
+>>                                                  printf("%s%s=%s\n", CONFIG_, sym->name, str);
+>>                                          }
+>>                                  }
+>> +                       } else if (input_mode == extendedlistnewconfig) {
+>> +                               printf("-----\n");
+>> +                               print_help(menu);
+>> +                               printf("-----\n");
+>> +
+>>                          } else {
+>>                                  if (!conf_cnt++)
+>>                                          printf("*\n* Restart config...\n*\n");
+>> @@ -459,6 +465,7 @@ static struct option long_opts[] = {
+>>          {"alldefconfig",    no_argument,       NULL, alldefconfig},
+>>          {"randconfig",      no_argument,       NULL, randconfig},
+>>          {"listnewconfig",   no_argument,       NULL, listnewconfig},
+>> +       {"extendedlistnewconfig",   no_argument,       NULL, extendedlistnewconfig},
+>>          {"olddefconfig",    no_argument,       NULL, olddefconfig},
+>>          {NULL, 0, NULL, 0}
+>>   };
+>> @@ -469,6 +476,7 @@ static void conf_usage(const char *progname)
+>>          printf("Usage: %s [-s] [option] <kconfig-file>\n", progname);
+>>          printf("[option] is _one_ of the following:\n");
+>>          printf("  --listnewconfig         List new options\n");
+>> +       printf("  --extendedlistnewconfig List new options and help text\n");
+>>          printf("  --oldaskconfig          Start a new configuration using a line-oriented program\n");
+>>          printf("  --oldconfig             Update a configuration using a provided .config as base\n");
+>>          printf("  --syncconfig            Similar to oldconfig but generates configuration in\n"
+>> @@ -543,6 +551,7 @@ int main(int ac, char **av)
+>>                  case allmodconfig:
+>>                  case alldefconfig:
+>>                  case listnewconfig:
+>> +               case extendedlistnewconfig:
+>>                  case olddefconfig:
+>>                          break;
+>>                  case '?':
+>> @@ -576,6 +585,7 @@ int main(int ac, char **av)
+>>          case oldaskconfig:
+>>          case oldconfig:
+>>          case listnewconfig:
+>> +       case extendedlistnewconfig:
+>>          case olddefconfig:
+>>                  conf_read(NULL);
+>>                  break;
+>> @@ -657,6 +667,7 @@ int main(int ac, char **av)
+>>                  /* fall through */
+>>          case oldconfig:
+>>          case listnewconfig:
+>> +       case extendedlistnewconfig:
+>>          case syncconfig:
+>>                  /* Update until a loop caused no more changes */
+>>                  do {
+>> @@ -675,7 +686,7 @@ int main(int ac, char **av)
+>>                                  defconfig_file);
+>>                          return 1;
+>>                  }
+>> -       } else if (input_mode != listnewconfig) {
+>> +       } else if (input_mode != listnewconfig && input_mode != extendedlistnewconfig) {
+>>                  if (!no_conf_write && conf_write(NULL)) {
+>>                          fprintf(stderr, "\n*** Error during writing of the configuration.\n\n");
+>>                          exit(1);
+>> --
+>> 2.21.0
+>>
+> 
+> 
+
