@@ -2,102 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B901ED68A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:16:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B33E5ED690
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 01:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfKDAQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 19:16:27 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:39882 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbfKDAQ1 (ORCPT
+        id S1728544AbfKDAS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 19:18:28 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43392 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728447AbfKDAS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 19:16:27 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 475td40s7Xz1rGRv;
-        Mon,  4 Nov 2019 01:16:24 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 475td40Dj4z1qqkH;
-        Mon,  4 Nov 2019 01:16:24 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id dcYjG6feI1ua; Mon,  4 Nov 2019 01:16:22 +0100 (CET)
-X-Auth-Info: I/L9RVBnAf0HtVe+VPMywJe3DswH5gvYMLM+kWyCQr4=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
+        Sun, 3 Nov 2019 19:18:27 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon,  4 Nov 2019 01:16:22 +0100 (CET)
-Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
-To:     Adam Ford <aford173@gmail.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190302141704.32547-1-marex@denx.de>
- <20191101204801.16328-1-TheSven73@gmail.com>
- <CAHCN7xL4aNDf+4TiStSp4PMiA_FKj9VOmCpe-o42WBhMdoj_Ew@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <af0b175c-ced0-1a01-9a19-7e49fdb3386d@denx.de>
-Date:   Mon, 4 Nov 2019 01:16:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A89738365A;
+        Mon,  4 Nov 2019 13:18:22 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1572826702;
+        bh=HiEdNYNi8oKqRVwMtkU4iyatNl5LZzujdzu2zDPjPIc=;
+        h=From:To:Cc:Subject:Date;
+        b=PnxPhNy4SsDGLht5Cy52+X6zSxg/blzoA8ivVURqj7leEM+4aqUIia1JlBHPs4cNS
+         1gqJYofHnPtf9YxpSZoTnS65EiK56Eav2fXm6tqE7+th3kxGOl7YwRKoXOIiErHCEW
+         yOsRXPzbXN3TilfUc6tSzQeFXuEWfzydkpo1N93hXAKAsCocOHsp0CuO14jLpV+cOr
+         bAvymnCfRnHcLd9cVtG8bIm5W6hwYpUsJZwbjKhAb5Y1jhOY+goA4v7GdrAdM8EEpC
+         BOmN759CRGY1PjrPiYGQk1AB96fuTSSfr+H62gbrmz3a2kV97WbsLKts01CqNczNRY
+         9qobjxascWe9A==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5dbf6e4a0000>; Mon, 04 Nov 2019 13:18:21 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 2E1FC13EED4;
+        Mon,  4 Nov 2019 13:18:18 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 51A1C28005D; Mon,  4 Nov 2019 13:18:19 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 0/2] pinctrl: bcm: nsp: gpio improvements 
+Date:   Mon,  4 Nov 2019 13:18:17 +1300
+Message-Id: <20191104001819.2300-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xL4aNDf+4TiStSp4PMiA_FKj9VOmCpe-o42WBhMdoj_Ew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/19 12:55 AM, Adam Ford wrote:
-> On Fri, Nov 1, 2019 at 3:48 PM Sven Van Asbroeck wrote:
->>
->> Dmitry / Marek,
->>
->> There have been two attempts to add ILI2117 touch controller support.
->> I was about to add a third, but luckily I checked the mailing list
->> before writing any code :)
->>
->> Adding this support would clearly be beneficial for the common good.
->> What can we do to get this in motion again?
->>
->> Last time I checked, Marek posted a patch which added the 2117, but Dmitry
->> objected, because the code became too unwieldy. Dmitry then posted a cleanup
->> patch, which did not work for Marek. So everything came to a halt.
->> See:
->> https://patchwork.kernel.org/patch/10836651/
->> https://www.spinics.net/lists/linux-input/msg62670.html
->>
->> Dmitry, would you perhaps be willing to accept Marek's patch, and perform the
->> cleanup later?
->>
->> Marek, would you perhaps be willing to invest some time to debug Dmitry's
->> cleanup patch?
->>
->> On my end, I've reviewed Dmitry's patch and it looks mostly ok. I saw one
->> difference with ILI210X which could explain Marek's results, but I can't be
->> sure - because I could not locate the 210X's register layout on the web.
->>
->> In Dmitry's patch, we see:
->>
->>         touch = ili210x_report_events(priv, touchdata);
->>         if (touch || chip->continue_polling(touchdata))
->>                 schedule_delayed_work(&priv->dwork,
->>                                       msecs_to_jiffies(priv->poll_period));
->>
->> but this is not exactly equivalent to the original. Because in the original,
->> the 210X's decision to kick off delayed work is completely independent of
->> the value of touch.
->>
-> 
-> If anyone is interested, I posted a patch to add ili2117A.
-> https://patchwork.kernel.org/patch/10849877/
-> 
-> I am not sure if it's compatible with the non-A version.
+I'm working on a platform using the BCM 58525 SoC. I noticed that some of
+the peripherals were being deferred (not that that's a problem) and debug=
+fs
+was complaining "File ':axi@18000000:gpio@20' in directory 'domains' alre=
+ady
+present!" which is more of a sign that things were not right.
 
-This patch could've gone in as-is, the rework was not necessary (and
-indeed, didn't work). I don't know why this patch wasn't applied in the
-end, maybe it was just missed.
+The debugfs error was because the manually created irq domain was not
+cleaned up on failure (or deferral).
+
+I've dropped the patch from this series that changes the order in the
+device tree. I can probably live with the deferrals.
+
+While I was debugging another issue I noticed my gpio-hogs weren't
+showing up correctly in /sys/kernel/debug/gpio. At first I thought I was
+missing commit d95da993383c ("gpiolib: Preserve desc->flags when setting
+state") but as it turns out pinctrl-nsp-gpio.c didn't provide a
+get_direction function so the generic code assumed they all started as
+inputs. I've added a new patch to address that.
+
+Chris Packham (2):
+  pinctrl: bcm: nsp: use gpiolib infrastructure for interrupts
+  pinctrl: bcm: nsp: implement get_direction
+
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 119 ++++++++++++-------------
+ 1 file changed, 56 insertions(+), 63 deletions(-)
+
+--=20
+2.23.0
+
