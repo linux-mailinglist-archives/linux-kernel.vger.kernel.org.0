@@ -2,204 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9214FEDC03
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075E3EDC11
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfKDKCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:02:32 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41617 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfKDKCc (ORCPT
+        id S1728356AbfKDKEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:04:24 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:8553 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfKDKEY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:02:32 -0500
-X-Originating-IP: 86.250.200.211
-Received: from aptenodytes (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 9B449E000F;
-        Mon,  4 Nov 2019 10:02:28 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 11:02:28 +0100
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     mripard@kernel.org, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] media: cedrus: Properly signal size in mode register
-Message-ID: <20191104100228.GD502900@aptenodytes>
-References: <20191026074959.1073512-1-jernej.skrabec@siol.net>
- <20191026074959.1073512-2-jernej.skrabec@siol.net>
+        Mon, 4 Nov 2019 05:04:24 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dbff7a30000>; Mon, 04 Nov 2019 02:04:19 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 04 Nov 2019 02:04:13 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 04 Nov 2019 02:04:13 -0800
+Received: from localhost (10.124.1.5) by HQMAIL107.nvidia.com (172.20.187.13)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov 2019 10:04:12
+ +0000
+Date:   Mon, 4 Nov 2019 11:04:10 +0100
+From:   Thierry Reding <treding@nvidia.com>
+To:     Mao Wenan <maowenan@huawei.com>
+CC:     <felipe.balbi@linux.intel.com>, <gregkh@linuxfoundation.org>,
+        <nkristam@nvidia.com>, <arnd@arndb.de>, <johan@kernel.org>,
+        <krzk@kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH -next] usb: gadget: Add dependency for USB_TEGRA_XUDC
+Message-ID: <20191104100410.GB996639@ulmo>
+References: <20191104025945.172620-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
-Content-Disposition: inline
-In-Reply-To: <20191026074959.1073512-2-jernej.skrabec@siol.net>
+In-Reply-To: <20191104025945.172620-1-maowenan@huawei.com>
+X-NVConfidentiality: public
 User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
+Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572861859; bh=pCb+z06L0ETuNYTJDOm+4rg79psSuPgK4MhE+W8WrEE=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:In-Reply-To:X-NVConfidentiality:User-Agent:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:
+         Content-Disposition;
+        b=ljq41sxtB1oQypuQA3YWd9sQ1Rq9QatqdydOfgWSZVfbjQlQD12696ANzadS5IWNa
+         wyFsmhpXPCgPUYWi92fBwUKfeZXhByL9FIMJuVw/Q8Rqe/TA0lyWiMQ/W7OiZnMKcb
+         SSiDU2MRlicblBz8J+jo7OPwdo1IyE6P30O5ovQA7KOmLrILHoQjMFCF2BB1btWJTU
+         NfJe8uEeQMwXfsQ9t79nZyFM4Pvomc8YN0kRu+GKqWLaswVjx9Xo/yYOkG3iLjFz8R
+         Ev03r50HBwhvC9y0n4waibelATTyHWXMCKJeOWengoUOmkXmnvOR7zwkZ2+74jP7Vk
+         Zbc5w/bx8mtgg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---o0ZfoUVt4BxPQnbU
-Content-Type: text/plain; charset=utf-8
+--oC1+HKm2/end4ao3
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jernej,
-
-On Sat 26 Oct 19, 09:49, Jernej Skrabec wrote:
-> Mode register also holds information if video width is bigger than 2048
-> and if it is equal to 4096.
+On Mon, Nov 04, 2019 at 10:59:45AM +0800, Mao Wenan wrote:
+> If CONFIG_USB_TEGRA_XUDC=3Dy and CONFIG_USB_ROLE_SWITCH=3Dm,
+> below erros can be seen:
+> drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_remove':
+> tegra-xudc.c:(.text+0x6b0): undefined reference to `usb_role_switch_unreg=
+ister'
+> drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_probe':
+> tegra-xudc.c:(.text+0x1b88): undefined reference to `usb_role_switch_regi=
+ster'
+> drivers/usb/gadget/udc/tegra-xudc.o: In function `tegra_xudc_usb_role_sw_=
+work':
+> tegra-xudc.c:(.text+0x5ecc): undefined reference to `usb_role_switch_get_=
+role'
 >=20
-> Rework cedrus_engine_enable() to properly signal this properties.
-
-Thanks for the patch, looks good to me!
-
-Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-One minor thing: maybe we should have a way to set the maximum dimensions
-depending on the generation of the engine in use and the actual maximum
-supported by the hardware.
-
-Maybe either as dedicated new fields in struct cedrus_variant or as
-capability flags.
-
-Anyway that can be done later since we were already hardcoding this.
-
-Cheers,
-
-Paul
-
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> This patch add dependency USB_ROLE_SWITCH for UDC driver.
+>=20
+> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device m=
+ode controller")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
 > ---
->  drivers/staging/media/sunxi/cedrus/cedrus_h264.c  | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus_h265.c  | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus_hw.c    | 9 +++++++--
->  drivers/staging/media/sunxi/cedrus/cedrus_hw.h    | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 2 +-
->  drivers/staging/media/sunxi/cedrus/cedrus_regs.h  | 2 ++
->  6 files changed, 13 insertions(+), 6 deletions(-)
+>  drivers/usb/gadget/udc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_h264.c
-> index 7487f6ab7576..d2c854ecdf15 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> @@ -485,7 +485,7 @@ static void cedrus_h264_setup(struct cedrus_ctx *ctx,
->  {
->  	struct cedrus_dev *dev =3D ctx->dev;
-> =20
-> -	cedrus_engine_enable(dev, CEDRUS_CODEC_H264);
-> +	cedrus_engine_enable(ctx, CEDRUS_CODEC_H264);
-> =20
->  	cedrus_write(dev, VE_H264_SDROT_CTRL, 0);
->  	cedrus_write(dev, VE_H264_EXTRA_BUFFER1,
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_h265.c
-> index 9bc921866f70..6945dc74e1d7 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-> @@ -276,7 +276,7 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
->  	}
-> =20
->  	/* Activate H265 engine. */
-> -	cedrus_engine_enable(dev, CEDRUS_CODEC_H265);
-> +	cedrus_engine_enable(ctx, CEDRUS_CODEC_H265);
-> =20
->  	/* Source offset and length in bits. */
-> =20
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/sta=
-ging/media/sunxi/cedrus/cedrus_hw.c
-> index 570a9165dd5d..3acfa21bc124 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> @@ -30,7 +30,7 @@
->  #include "cedrus_hw.h"
->  #include "cedrus_regs.h"
-> =20
-> -int cedrus_engine_enable(struct cedrus_dev *dev, enum cedrus_codec codec)
-> +int cedrus_engine_enable(struct cedrus_ctx *ctx, enum cedrus_codec codec)
->  {
->  	u32 reg =3D 0;
-> =20
-> @@ -58,7 +58,12 @@ int cedrus_engine_enable(struct cedrus_dev *dev, enum =
-cedrus_codec codec)
->  		return -EINVAL;
->  	}
-> =20
-> -	cedrus_write(dev, VE_MODE, reg);
-> +	if (ctx->src_fmt.width =3D=3D 4096)
-> +		reg |=3D VE_MODE_PIC_WIDTH_IS_4096;
-> +	if (ctx->src_fmt.width > 2048)
-> +		reg |=3D VE_MODE_PIC_WIDTH_MORE_2048;
-> +
-> +	cedrus_write(ctx->dev, VE_MODE, reg);
-> =20
->  	return 0;
->  }
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h b/drivers/sta=
-ging/media/sunxi/cedrus/cedrus_hw.h
-> index 27d0882397aa..604ff932fbf5 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> @@ -16,7 +16,7 @@
->  #ifndef _CEDRUS_HW_H_
->  #define _CEDRUS_HW_H_
-> =20
-> -int cedrus_engine_enable(struct cedrus_dev *dev, enum cedrus_codec codec=
-);
-> +int cedrus_engine_enable(struct cedrus_ctx *ctx, enum cedrus_codec codec=
-);
->  void cedrus_engine_disable(struct cedrus_dev *dev);
-> =20
->  void cedrus_dst_format_set(struct cedrus_dev *dev,
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/=
-staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> index 13c34927bad5..8bcd6b8f9e2d 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> @@ -96,7 +96,7 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, =
-struct cedrus_run *run)
->  	quantization =3D run->mpeg2.quantization;
-> =20
->  	/* Activate MPEG engine. */
-> -	cedrus_engine_enable(dev, CEDRUS_CODEC_MPEG2);
-> +	cedrus_engine_enable(ctx, CEDRUS_CODEC_MPEG2);
-> =20
->  	/* Set intra quantization matrix. */
-> =20
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_regs.h
-> index 4275a307d282..ace3d49fcd82 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> @@ -35,6 +35,8 @@
-> =20
->  #define VE_MODE					0x00
-> =20
-> +#define VE_MODE_PIC_WIDTH_IS_4096		BIT(22)
-> +#define VE_MODE_PIC_WIDTH_MORE_2048		BIT(21)
->  #define VE_MODE_REC_WR_MODE_2MB			(0x01 << 20)
->  #define VE_MODE_REC_WR_MODE_1MB			(0x00 << 20)
->  #define VE_MODE_DDR_MODE_BW_128			(0x03 << 16)
-> --=20
-> 2.23.0
->=20
+> diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kcon=
+fig
+> index acaec3a..d103154 100644
+> --- a/drivers/usb/gadget/udc/Kconfig
+> +++ b/drivers/usb/gadget/udc/Kconfig
+> @@ -445,6 +445,7 @@ config USB_TEGRA_XUDC
+>  	tristate "NVIDIA Tegra Superspeed USB 3.0 Device Controller"
+>  	depends on ARCH_TEGRA || COMPILE_TEST
+>  	depends on PHY_TEGRA_XUSB
+> +	depends on USB_ROLE_SWITCH
 
---o0ZfoUVt4BxPQnbU
+It looks like most other drivers that use the USB role switch class do
+"select" here. Now, that's suboptimal because USB_ROLE_SWITCH is a user-
+visible symbol, which can lead to conflicts, so it should be avoided. I
+think that in this case it might make sense to hide USB_ROLE_SWITCH and
+then convert all "depends on USB_ROLE_SWITCH" occurrences to "select
+USB_ROLE_SWITCH". The USB role switch class is, after all, not useful by
+itself. It always needs a host and/or gadget driver to make use of it.
+
+Thierry
+
+--oC1+HKm2/end4ao3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAl2/9zQACgkQ3cLmz3+f
-v9EubAgAmUIZeySh71s8rHkCSlkdX+UHT6XXaoe+hv3ONRwlmpfPCj+EV1Mrw45E
-Goi0n/i1MK9LemXtxLB0ZK1pC5rQX2MfF+6qtFHVHYKya1wq/V9Y1j0Pl+Pun2q8
-xCRg0HerWiI7KtQbNlZYXTVoPC8CQKIU1mq3t4aJfeUacygESgR1sHkS9d4XioEN
-yP8hfRdePwpkgel46F++Cl84z4qGS+GrKEtvKMtHLiPunkc7IBa2PqwfYkgdKJzW
-uOWAqrOx6MLqtuXjrERD6zvwIU7GV+0FR8YKVPIIdYAZgC1PuW3e8HRqhL1ZZ4T8
-ucGvXZ4OzlmoGUDghjbT+7HLXLXX0A==
-=HSxM
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2/95oACgkQ3SOs138+
+s6G6Hw/+MwXbPl4Nl23tpV771SIh5i78tZMTS7HWFmkz2bqKh2QCt+zZErVhAOFy
+Uzp/fshw7u2de/UTR8K6tVXTLCBcAaTVkhJavegV1JrP6kIRRlxY1eZFbm+xZNl2
+yggSDJ306dOO5MWft0+D7G0n44bQ9b8Lp8sqkmOzBdkWkMfXJ1AhZb8qmr4wHa+R
+oUImWgRQrR6l3hel8VPclnMA8iiNATOtO9MTpV4zpzfPYAVPr2KCg0eAjpy5WGrq
+KYoyBXJ6+TnpjXP1yw9LfyJe9cNrOK1Y1D7OHb6UEGEh4WPVtuoeaZZcmesJ4mAx
+e6/ihG69puadQ0GDeJl2G6BJQDlfv4cLyWHHjWgqaVxu6Ey+wFYJ/V/bBMJOoIoE
+sH8CUK3XmvtQ3o0sXdRZQnkn4c++VsLmNesQStUKpwBXHVASi6CJns+6TxkFbmeG
+JDYiPQ1Ehk5QmCFPUf3rsb3bUxxgKgmV84ZsRer+gecz+1zaYZu06XJWxVdhxNVK
+BmE2yZr6GFAXJfB5EJpN3xV1uhDW++3EQrFaM4GsGscZyEsO2v59YE3S9/9oWf/2
+rkpAPzMTIHbWX/reXoFIgMoN3G8kaO7JN8Pam+0xMmzKovTKrY1mvSow1NuUof9p
+LGVJjBVRG+cFPcDCpewSO99+cl7MENXYMnF08rE/G5gc53/62P8=
+=WqfB
 -----END PGP SIGNATURE-----
 
---o0ZfoUVt4BxPQnbU--
+--oC1+HKm2/end4ao3--
