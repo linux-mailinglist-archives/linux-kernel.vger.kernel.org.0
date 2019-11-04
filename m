@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF81EF082
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7530EF058
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbfKDW2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:28:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        id S2387578AbfKDVt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:49:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729589AbfKDVsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:51 -0500
+        id S2387561AbfKDVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:49:58 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A09F8214D9;
-        Mon,  4 Nov 2019 21:48:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFF4F20B7C;
+        Mon,  4 Nov 2019 21:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904130;
-        bh=NKZrH064zSWHbCkv4ldq9xtQnckfn8tIW6d4IdRtN2M=;
+        s=default; t=1572904197;
+        bh=oRp6FLuQ2dT5U3OHIfhPQWl85hmIQQJT7IQ+xrwJ9uo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UFBiie76ycV2G+1M4q8VqApoykxz4BztrTQuoaKjbI1S5jlOWCIaIBUXwqtWnGxbl
-         oJTg/1tPEvBL5LZmy7sphCw4iZtgSje8nPaSaWN8jYDf2CA3bGHalizytvcXqZ+iMW
-         6xoEXltsyq4r75pcgeg+K9N2dHLHvf6eXShWUQSg=
+        b=Us0dd2358sgwNfbX29hgdPoV8kYhREL7GApfFtuE5gTd2kJHBE/aDtdgTDCHJdaHY
+         EqI+1oZZay8kOCZ2CxeYylGGhfPYRx/ep3U/bBOmHwEHjFeDJphIFFYA0h6SuKRC7G
+         +e0HXUg8FA39M3StuMTG9sGuvZYyegj73zKigBAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Kujau <lists@nerdbynature.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Genki Sky <sky@genki.is>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Connor Kuehl <connor.kuehl@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 07/46] scripts/setlocalversion: Improve -dirty check with git-status --no-optional-locks
+Subject: [PATCH 4.9 16/62] staging: rtl8188eu: fix null dereference when kzalloc fails
 Date:   Mon,  4 Nov 2019 22:44:38 +0100
-Message-Id: <20191104211837.762505177@linuxfoundation.org>
+Message-Id: <20191104211917.339403959@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Connor Kuehl <connor.kuehl@canonical.com>
 
-[ Upstream commit ff64dd4857303dd5550faed9fd598ac90f0f2238 ]
+[ Upstream commit 955c1532a34305f2f780b47f0c40cc7c65500810 ]
 
-git-diff-index does not refresh the index for you, so using it for a
-"-dirty" check can give misleading results. Commit 6147b1cf19651
-("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-fix this by switching to git-status, but it overlooked the fact that
-git-status also writes to the .git directory of the source tree, which
-is definitely not kosher for an out-of-tree (O=) build. That is getting
-reverted.
+If kzalloc() returns NULL, the error path doesn't stop the flow of
+control from entering rtw_hal_read_chip_version() which dereferences the
+null pointer. Fix this by adding a 'goto' to the error path to more
+gracefully handle the issue and avoid proceeding with initialization
+steps that we're no longer prepared to handle.
 
-Fortunately, git-status now supports avoiding writing to the index via
-the --no-optional-locks flag, as of git 2.14. It still calculates an
-up-to-date index, but it avoids writing it out to the .git directory.
+Also update the debug message to be more consistent with the other debug
+messages in this function.
 
-So, let's retry the solution from commit 6147b1cf19651 using this new
-flag first, and if it fails, we assume this is an older version of git
-and just use the old git-diff-index method.
+Addresses-Coverity: ("Dereference after null check")
 
-It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-the output of git-status (you have to be careful about the difference
-betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-directly to grep and use a regex that's good enough for both the
-git-status and git-diff-index version.
-
-Cc: Christian Kujau <lists@nerdbynature.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Genki Sky <sky@genki.is>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+Link: https://lore.kernel.org/r/20190927214415.899-1-connor.kuehl@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/setlocalversion | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 966dd3924ea9c..aa28c3f298093 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -72,8 +72,16 @@ scm_version()
- 			printf -- '-svn%s' "`git svn find-rev $head`"
- 		fi
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index d22360849b883..d4a7d740fc620 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -366,8 +366,10 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
+ 	}
  
--		# Check for uncommitted changes
--		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-+		# Check for uncommitted changes.
-+		# First, with git-status, but --no-optional-locks is only
-+		# supported in git >= 2.14, so fall back to git-diff-index if
-+		# it fails. Note that git-diff-index does not refresh the
-+		# index, so it may give misleading results. See
-+		# git-update-index(1), git-diff-index(1), and git-status(1).
-+		if {
-+			git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-+			git diff-index --name-only HEAD
-+		} | grep -qvE '^(.. )?scripts/package'; then
- 			printf '%s' -dirty
- 		fi
+ 	padapter->HalData = kzalloc(sizeof(struct hal_data_8188e), GFP_KERNEL);
+-	if (!padapter->HalData)
+-		DBG_88E("cant not alloc memory for HAL DATA\n");
++	if (!padapter->HalData) {
++		DBG_88E("Failed to allocate memory for HAL data\n");
++		goto free_adapter;
++	}
  
+ 	padapter->intf_start = &usb_intf_start;
+ 	padapter->intf_stop = &usb_intf_stop;
 -- 
 2.20.1
 
