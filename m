@@ -2,220 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B996FEE4B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:33:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15565EE4BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:36:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfKDQd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:33:56 -0500
-Received: from mailoutvs4.siol.net ([185.57.226.195]:51750 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727838AbfKDQd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:33:56 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 94E61525106;
-        Mon,  4 Nov 2019 17:33:51 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id cL8U28b3yVhv; Mon,  4 Nov 2019 17:33:51 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id E8F185250EB;
-        Mon,  4 Nov 2019 17:33:50 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-86-58-102-7.static.triera.net [86.58.102.7])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id EA0315251A3;
-        Mon,  4 Nov 2019 17:33:46 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     mripard@kernel.org, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] media: cedrus: Properly signal size in mode register
-Date:   Mon, 04 Nov 2019 17:33:46 +0100
-Message-ID: <7309638.L6IRxaGt1L@jernej-laptop>
-In-Reply-To: <20191104100228.GD502900@aptenodytes>
-References: <20191026074959.1073512-1-jernej.skrabec@siol.net> <20191026074959.1073512-2-jernej.skrabec@siol.net> <20191104100228.GD502900@aptenodytes>
+        id S1728761AbfKDQgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:36:33 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38015 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbfKDQgd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:36:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v8so2713507ljh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=T1bx/DaPDC6OwApDRf773PArCGhjTMdLqdzsWIpne4I=;
+        b=hw0cwtZSChsco/dnelTqXZkBYy9t+LpaBwMCFbA3T4BmkjZqilTc7yu2BUVbyQzzA0
+         s0VDDnWEE2tJKTVymARFE7zvEpnfg/OS9q8XDCnHC5XwZ0Bn5lZ8yNquKmdnlZSEJHO9
+         eRxkx303BHSMCSVPG1Qs7jB7XYNENiibOPLwI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=T1bx/DaPDC6OwApDRf773PArCGhjTMdLqdzsWIpne4I=;
+        b=GSCyUCv+BvqHjPpxg+ASXmiRniwuF+zNTpOrm3Rt/Km1DTblGgg+QBX31xKibQy+Jg
+         uVB07v5FXRULKbaV8B4VjbjtlIMh8x2sZqqP9e4pOZXGadREO9/niyBC6WHC9kyHUINT
+         sgiEOwNlJ6nGFk47ZdpG5BqORRPMfNCpx+vAXxYeWT4bpgBB5ZXURZQS2NNfCHQpe+sS
+         Rg6myspQa1Os5nWoypZ7HQtSyMwR4w3OzUNl0pz1TAcOwtalr/qPayJTBGtgPzp8zbjA
+         2bp2eydesJ4XHWBEatVeJYg558wrGYQzA5XfRprIvFpS8nagJLUfVQ5I+5y5+/8SS9Ec
+         ZNyg==
+X-Gm-Message-State: APjAAAWWGHD79IgS95nGqr1D3OFNWe+f9XlAV27HgGvbHGYX+4cOR9pL
+        tVzOi49lyGPtalPGA6y47lNczOKXW7Y=
+X-Google-Smtp-Source: APXvYqx7uiKGuz0f6JDgvWFTK+5VFxyl60u0AguOO3WbhNHm8exn0uFaTriudD6HnEoni3qFEXWPBA==
+X-Received: by 2002:a2e:88c9:: with SMTP id a9mr7633730ljk.30.1572885388955;
+        Mon, 04 Nov 2019 08:36:28 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 81sm8005869lje.70.2019.11.04.08.36.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2019 08:36:27 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id q2so11806367ljg.7
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:36:27 -0800 (PST)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr19511439ljp.133.1572885387047;
+ Mon, 04 Nov 2019 08:36:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20191014132204.7721-1-thomas_os@shipmail.org> <a31f0d40-d8a5-faca-016b-0066f5ac31a2@shipmail.org>
+In-Reply-To: <a31f0d40-d8a5-faca-016b-0066f5ac31a2@shipmail.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 4 Nov 2019 08:36:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjPo0s+8NC+NKeYWeWbszVXHW+Dh3k9NG1DV0-cHoP0OA@mail.gmail.com>
+Message-ID: <CAHk-=wjPo0s+8NC+NKeYWeWbszVXHW+Dh3k9NG1DV0-cHoP0OA@mail.gmail.com>
+Subject: Re: -mm maintainer? WAS Re: [PATCH v6 0/8] Emulated coherent graphics
+ memory take 2
+To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 04. november 2019 ob 11:02:28 CET je Paul Kocialkowski 
-napisal(a):
-> Hi Jernej,
-> 
-> On Sat 26 Oct 19, 09:49, Jernej Skrabec wrote:
-> > Mode register also holds information if video width is bigger than 2048
-> > and if it is equal to 4096.
-> > 
-> > Rework cedrus_engine_enable() to properly signal this properties.
-> 
-> Thanks for the patch, looks good to me!
-> 
-> Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> 
-> One minor thing: maybe we should have a way to set the maximum dimensions
-> depending on the generation of the engine in use and the actual maximum
-> supported by the hardware.
-> 
-> Maybe either as dedicated new fields in struct cedrus_variant or as
-> capability flags.
+On Mon, Nov 4, 2019 at 1:21 AM Thomas Hellstr=C3=B6m (VMware)
+<thomas_os@shipmail.org> wrote:
+>
+> I'm a bit confused as how to get this merged? Is there an -mm maintainer
+> or who is supposed to ack -mm patches and get them into the kernel?
 
-I was thinking about first solution, but after going trough manuals, it was 
-unclear what are real limitations. For example, H3 manual states that it is 
-capable of decoding H264 1080p@60Hz. However, I know for a fact that it is 
-also capable of decoding 4k videos, but probably not at 60 Hz. I don't own 
-anything older that A83T, so I don't know what are capabilities of those SoCs. 
-Anyway, being slow is still ok for some tasks, like transcoding, so we can't 
-limit decoding to 1080p just because it's slow. It is probably still faster 
-than doing it in SW. Not to mention that it's still ok for some videos, a lot 
-of them uses 24 fps.
+I was assuming they'd go through Andrew Morton.. Andrew?
 
-Best regards,
-Jernej
-
-> 
-> Anyway that can be done later since we were already hardcoding this.
-> 
-> Cheers,
-> 
-> Paul
-> 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/staging/media/sunxi/cedrus/cedrus_h264.c  | 2 +-
-> >  drivers/staging/media/sunxi/cedrus/cedrus_h265.c  | 2 +-
-> >  drivers/staging/media/sunxi/cedrus/cedrus_hw.c    | 9 +++++++--
-> >  drivers/staging/media/sunxi/cedrus/cedrus_hw.h    | 2 +-
-> >  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 2 +-
-> >  drivers/staging/media/sunxi/cedrus/cedrus_regs.h  | 2 ++
-> >  6 files changed, 13 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c index
-> > 7487f6ab7576..d2c854ecdf15 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-> > @@ -485,7 +485,7 @@ static void cedrus_h264_setup(struct cedrus_ctx *ctx,
-> > 
-> >  {
-> >  
-> >  	struct cedrus_dev *dev = ctx->dev;
-> > 
-> > -	cedrus_engine_enable(dev, CEDRUS_CODEC_H264);
-> > +	cedrus_engine_enable(ctx, CEDRUS_CODEC_H264);
-> > 
-> >  	cedrus_write(dev, VE_H264_SDROT_CTRL, 0);
-> >  	cedrus_write(dev, VE_H264_EXTRA_BUFFER1,
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c index
-> > 9bc921866f70..6945dc74e1d7 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
-> > @@ -276,7 +276,7 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
-> > 
-> >  	}
-> >  	
-> >  	/* Activate H265 engine. */
-> > 
-> > -	cedrus_engine_enable(dev, CEDRUS_CODEC_H265);
-> > +	cedrus_engine_enable(ctx, CEDRUS_CODEC_H265);
-> > 
-> >  	/* Source offset and length in bits. */
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c index
-> > 570a9165dd5d..3acfa21bc124 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> > @@ -30,7 +30,7 @@
-> > 
-> >  #include "cedrus_hw.h"
-> >  #include "cedrus_regs.h"
-> > 
-> > -int cedrus_engine_enable(struct cedrus_dev *dev, enum cedrus_codec codec)
-> > +int cedrus_engine_enable(struct cedrus_ctx *ctx, enum cedrus_codec codec)
-> > 
-> >  {
-> >  
-> >  	u32 reg = 0;
-> > 
-> > @@ -58,7 +58,12 @@ int cedrus_engine_enable(struct cedrus_dev *dev, enum
-> > cedrus_codec codec)> 
-> >  		return -EINVAL;
-> >  	
-> >  	}
-> > 
-> > -	cedrus_write(dev, VE_MODE, reg);
-> > +	if (ctx->src_fmt.width == 4096)
-> > +		reg |= VE_MODE_PIC_WIDTH_IS_4096;
-> > +	if (ctx->src_fmt.width > 2048)
-> > +		reg |= VE_MODE_PIC_WIDTH_MORE_2048;
-> > +
-> > +	cedrus_write(ctx->dev, VE_MODE, reg);
-> > 
-> >  	return 0;
-> >  
-> >  }
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_hw.h index
-> > 27d0882397aa..604ff932fbf5 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> > @@ -16,7 +16,7 @@
-> > 
-> >  #ifndef _CEDRUS_HW_H_
-> >  #define _CEDRUS_HW_H_
-> > 
-> > -int cedrus_engine_enable(struct cedrus_dev *dev, enum cedrus_codec
-> > codec);
-> > +int cedrus_engine_enable(struct cedrus_ctx *ctx, enum cedrus_codec
-> > codec);
-> > 
-> >  void cedrus_engine_disable(struct cedrus_dev *dev);
-> >  
-> >  void cedrus_dst_format_set(struct cedrus_dev *dev,
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c index
-> > 13c34927bad5..8bcd6b8f9e2d 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> > @@ -96,7 +96,7 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx,
-> > struct cedrus_run *run)> 
-> >  	quantization = run->mpeg2.quantization;
-> >  	
-> >  	/* Activate MPEG engine. */
-> > 
-> > -	cedrus_engine_enable(dev, CEDRUS_CODEC_MPEG2);
-> > +	cedrus_engine_enable(ctx, CEDRUS_CODEC_MPEG2);
-> > 
-> >  	/* Set intra quantization matrix. */
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h index
-> > 4275a307d282..ace3d49fcd82 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> > @@ -35,6 +35,8 @@
-> > 
-> >  #define VE_MODE					0x00
-> > 
-> > +#define VE_MODE_PIC_WIDTH_IS_4096		BIT(22)
-> > +#define VE_MODE_PIC_WIDTH_MORE_2048		BIT(21)
-> > 
-> >  #define VE_MODE_REC_WR_MODE_2MB			(0x01 << 20)
-> >  #define VE_MODE_REC_WR_MODE_1MB			(0x00 << 20)
-> >  #define VE_MODE_DDR_MODE_BW_128			(0x03 << 16)
-
-
-
-
+            Linus
