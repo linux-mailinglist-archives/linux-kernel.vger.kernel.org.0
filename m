@@ -2,201 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F848EEAC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:12:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D6CDEEAF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:20:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbfKDVMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:12:00 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39709 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728377AbfKDVMA (ORCPT
+        id S1729617AbfKDVUY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 4 Nov 2019 16:20:24 -0500
+Received: from s81901.scsynergy.net ([93.95.133.68]:51676 "EHLO
+        s81901.scsynergy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbfKDVUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:12:00 -0500
-Received: by mail-ed1-f68.google.com with SMTP id l25so14330682edt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 13:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QJX38fPH4Wmm+NgS8n4DnoBmgQALP+GtwdgAD3lH8MI=;
-        b=F59FOw5EM0G/b4mEvS1yY4BDvYP7j8S7tBalF1rIUni4dl8Q8CQqso54n3xO9DKZ30
-         +PXvdbSv4VqiRSSbgq5bCFRCbX2+4N77CSpCXhhYJpOn1EeURCz7yKZAU9mzXGbI9QiF
-         USTGaD89RJTIW0TPqEdFyCErU+7KG1VWqF6IqNktxqloX1o0qb8VH5vD/7B9xxt+MF1t
-         ninKOgHxYsGFQYLAx+Fmh3kPes2u1JJ2JV4UJbOGGYgGLeP6ba8qABe28QZI6IP1nrH+
-         x7k33ZTE3LM2z2XaIkakFGud8Xlhw8andNAKKJx/by6TSVPwAb14DHrfhhEHDhBy4l+y
-         uIIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QJX38fPH4Wmm+NgS8n4DnoBmgQALP+GtwdgAD3lH8MI=;
-        b=Kf3szDr0uLqzXJulmyOC1B2qGlEzcAqjxwCFXDNvfAwqqwVnpRm7FTVA41ah/NorLc
-         GqL1wrzHT78oMvL0jae8Zx6dLhhjQU/J5X0fezOKa/rkD/E6GZufvuy5QM/fOduWLI5l
-         UTT/Y57HDm9I01SOcIuyvVnhHE9m3k8o/eiX7eEcO+lMR1A0mpGnsFhpft8A+1xZvZfE
-         4Fwt+o7UyDFUI4qQQLKUPdcVhFF2XFf9gkqQdndO4HUjCxKxX7uq71nhOdhMScLlBy91
-         B4F2TgU/4rQ1m6uHZo1pbk/WnY5dhUGQ228JmcjKTSqIJUS5/HvZNj/y+L8cO4mfE0oK
-         gmYQ==
-X-Gm-Message-State: APjAAAUEVQw13vC1it94p+Tput2xf4yEAhA3wCZ99ML82u1iQ0inOl02
-        x74QQwSfw6nX9naZf9gpLt8RBYfMDevsqL8PJKw=
-X-Google-Smtp-Source: APXvYqzMhHOg1RYQzZ/UzBp7P2MnDnTf91ciO2W51U6TAE5TVPjWc4em2tPR3TlDTBamoKwdGEWwxI7L6tDNph/D7eg=
-X-Received: by 2002:a17:906:a44:: with SMTP id x4mr25620544ejf.64.1572901917757;
- Mon, 04 Nov 2019 13:11:57 -0800 (PST)
+        Mon, 4 Nov 2019 16:20:24 -0500
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 16:20:24 EST
+Received: by s81901.scsynergy.net (Postfix, from userid 10013)
+        id 166351C1AE3; Mon,  4 Nov 2019 22:13:13 +0100 (CET)
+To:     linowak@twcny.rr.com, linoyu@yahoo.com, linpc1006@gmail.com,
+        linpeiwei135@126.com, linrigali@aol.com, linrosa@woosh.co.nz,
+        linsaydavenpost48@gmail.com, linsayrachel87@hotmail.com,
+        linska@aol.com, linsleo@bellsouth.net, linsmarket@aol.com,
+        linsouliere@gmail.com, linspace_shop@yahoo.com, linstoneh@aol.com,
+        linsudr@yahoo.com, lintanner@hotmail.com, linteng@hotmail.com,
+        linton@westbrook.co.nz, linton.office@gmail.com,
+        linton.principal@gmail.com, lintonchambers@gmail.com,
+        lintrish22@gmail.com, linus@maundumuli.org,
+        linusclark2016@gmail.com, linusfarias@sbcglobal.net,
+        linuslerner@gmail.com, linuswkw@msn.com,
+        linux-kernel@vger.kernel.org, linux.robob@gmail.com,
+        linux.usb.ids@gmail.com, linuxpembinavalley@gmail.com,
+        linuxuser586@yahoo.com, linville.ha@gmail.com,
+        linvillevfd@gmail.com, linwats@gmail.com,
+        linwaxhoneybees@yahoo.com, linweit@cuhk.edu.hk, linwill@live.com,
+        linwolfs2@aol.com, linwood.pendleton@icloud.com,
+        linwood.rhodes@yahoo.com, linwoodcomhouse@hotmail.com,
+        linwooddownsltd@gmail.com, linwoodholland@yahoo.com,
+        linwoodhuf@usa.net, linwoodparkstud2@gmail.com, linx@purdue.edu,
+        linxonline@hotmail.com, linyanee2@yahoo.com.cn,
+        linyards@actrix.co.nz, linyun98@yahoo.com, linz4asa@gmail.com,
+        linz7krebs@aol.com, linz_clark_nz@hotmail.com, linza@att.net,
+        linzeetay99@aol.com, linzey.davis@outlook.com, linzfoss@gmail.com,
+        linzhoumd@yahoo.com, linzo2@aol.com, linzsomers@aol.com
+Subject: Page recommendation from LOAN
+X-PHP-Originating-Script: 10013:SimpleMailInvoker.php
+Message-ID: <1572901992.5dc09468c8102@www.edfa.eu>
+Date:   Mon, 04 Nov 2019 22:13:12 +0100
+From:   LOAN <mgglob1@gmail.com>
 MIME-Version: 1.0
-References: <20191101180713.5470-1-robdclark@gmail.com> <20191101180713.5470-2-robdclark@gmail.com>
- <20191101192458.GI1208@intel.com> <CAJs_Fx7u6VNDarYqUuUSMSsWK0jpS5ybse0h1X4AmtXO9Mia_w@mail.gmail.com>
- <20191101214431.GJ1208@intel.com> <CAF6AEGsHQ-V9aVvxLE6VeV2Ld+1_QOh7LS6GBsd6Lsr4qPZNMw@mail.gmail.com>
- <20191104184156.GL1208@intel.com> <CAF6AEGuQ6WwwVYJvHSg=4NB3aafF6CEcUo2T4T+Cinz3X=DPFg@mail.gmail.com>
- <20191104205010.GM1208@intel.com>
-In-Reply-To: <20191104205010.GM1208@intel.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Mon, 4 Nov 2019 13:11:46 -0800
-Message-ID: <CAF6AEGv5k_kLkHezpemV-=md_YZbxFq3ENkaN88JSFzVeEnxuQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/atomic: clear new_state pointers at hw_done
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Rob Clark <robdclark@chromium.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>, Sean Paul <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-PPP-Message-ID: <20191104211312.26173.12576@s81901.scsynergy.net>
+X-PPP-Vhost: edfa.eu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 12:50 PM Ville Syrj=C3=A4l=C3=A4
-<ville.syrjala@linux.intel.com> wrote:
->
-> On Mon, Nov 04, 2019 at 11:13:59AM -0800, Rob Clark wrote:
-> > On Mon, Nov 4, 2019 at 10:42 AM Ville Syrj=C3=A4l=C3=A4
-> > <ville.syrjala@linux.intel.com> wrote:
-> > >
-> > > On Fri, Nov 01, 2019 at 03:14:09PM -0700, Rob Clark wrote:
-> > > > On Fri, Nov 1, 2019 at 2:44 PM Ville Syrj=C3=A4l=C3=A4
-> > > > <ville.syrjala@linux.intel.com> wrote:
-> > > > >
-> > > > > On Fri, Nov 01, 2019 at 12:49:02PM -0700, Rob Clark wrote:
-> > > > > > On Fri, Nov 1, 2019 at 12:25 PM Ville Syrj=C3=A4l=C3=A4
-> > > > > > <ville.syrjala@linux.intel.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Nov 01, 2019 at 11:07:13AM -0700, Rob Clark wrote:
-> > > > > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > > > > >
-> > > > > > > > The new state should not be accessed after this point.  Cle=
-ar the
-> > > > > > > > pointers to make that explicit.
-> > > > > > > >
-> > > > > > > > This makes the error corrected in the previous patch more o=
-bvious.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > > > > ---
-> > > > > > > >  drivers/gpu/drm/drm_atomic_helper.c | 29 +++++++++++++++++=
-++++++++++++
-> > > > > > > >  1 file changed, 29 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/=
-gpu/drm/drm_atomic_helper.c
-> > > > > > > > index 732bd0ce9241..176831df8163 100644
-> > > > > > > > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > > > > > > > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > > > > > > > @@ -2234,13 +2234,42 @@ EXPORT_SYMBOL(drm_atomic_helper_fak=
-e_vblank);
-> > > > > > > >   */
-> > > > > > > >  void drm_atomic_helper_commit_hw_done(struct drm_atomic_st=
-ate *old_state)
-> > > > > > > >  {
-> > > > > > > > +     struct drm_connector *connector;
-> > > > > > > > +     struct drm_connector_state *old_conn_state, *new_conn=
-_state;
-> > > > > > > >       struct drm_crtc *crtc;
-> > > > > > > >       struct drm_crtc_state *old_crtc_state, *new_crtc_stat=
-e;
-> > > > > > > > +     struct drm_plane *plane;
-> > > > > > > > +     struct drm_plane_state *old_plane_state, *new_plane_s=
-tate;
-> > > > > > > >       struct drm_crtc_commit *commit;
-> > > > > > > > +     struct drm_private_obj *obj;
-> > > > > > > > +     struct drm_private_state *old_obj_state, *new_obj_sta=
-te;
-> > > > > > > >       int i;
-> > > > > > > >
-> > > > > > > > +     /*
-> > > > > > > > +      * After this point, drivers should not access the pe=
-rmanent modeset
-> > > > > > > > +      * state, so we also clear the new_state pointers to =
-make this
-> > > > > > > > +      * restriction explicit.
-> > > > > > > > +      *
-> > > > > > > > +      * For the CRTC state, we do this in the same loop wh=
-ere we signal
-> > > > > > > > +      * hw_done, since we still need to new_crtc_state to =
-fish out the
-> > > > > > > > +      * commit.
-> > > > > > > > +      */
-> > > > > > > > +
-> > > > > > > > +     for_each_oldnew_connector_in_state(old_state, connect=
-or, old_conn_state, new_conn_state, i) {
-> > > > > > > > +             old_state->connectors[i].new_state =3D NULL;
-> > > > > > > > +     }
-> > > > > > > > +
-> > > > > > > > +     for_each_oldnew_plane_in_state(old_state, plane, old_=
-plane_state, new_plane_state, i) {
-> > > > > > > > +             old_state->planes[i].new_state =3D NULL;
-> > > > > > > > +     }
-> > > > > > > > +
-> > > > > > > > +     for_each_oldnew_private_obj_in_state(old_state, obj, =
-old_obj_state, new_obj_state, i) {
-> > > > > > > > +             old_state->private_objs[i].new_state =3D NULL=
-;
-> > > > > > > > +     }
-> > > > > > > > +
-> > > > > > > >       for_each_oldnew_crtc_in_state(old_state, crtc, old_cr=
-tc_state, new_crtc_state, i) {
-> > > > > > > >               old_state->crtcs[i].new_self_refresh_active =
-=3D new_crtc_state->self_refresh_active;
-> > > > > > > > +             old_state->crtcs[i].new_state =3D NULL;
-> > > > > > >
-> > > > > > > That's going to be a real PITA when doing programming after t=
-he fact from
-> > > > > > > a vblank worker. It's already a pain that the new_crtc_state-=
->state is
-> > > > > > > getting NULLed somewhere.
-> > > > > > >
-> > > > > >
-> > > > > > I think you already have that problem, this just makes it expli=
-cit.
-> > > > >
-> > > > > I don't yet. Except on a branch where I have my vblank workers.
-> > > > > And I think the only problem is having the helpers/core clobber
-> > > > > the pointers when it should not. I don't see why it can't just
-> > > > > leave them be and let me use them.
-> > > > >
-> > > >
-> > > > I guess it comes down to what assumptions you can make in driver
-> > > > backend.  But if you can, for example, move planes between crtcs, I
-> > > > think you can't make assumptions about the order in which things
-> > > > complete even if you don't have commits overtaking each other on a
-> > > > single crtc..
-> > >
-> > > IMO this whole notion of accessing new_crtc_state & co. being unsafe
-> > > for some reason is wrong. I think as long as I have the drm_atomic_st=
-ate
-> > > I should be able to look at the new/old states within.
-> > >
-> >
-> > accessing new state only works if you can guarantee the order in which
-> > commits complete, which I don't think you can do in the general sense.
->
-> Doesn't feel like it should take a lot of rocket science to guarantee
-> the states get freed in the right order.
->
+LOAN (mgglob1@gmail.com) wants you to take a look at this link:
 
-I agree, reference counting is not rocket science.  But that isn't the
-way drm core handles per-object state currently.  Refcnt'ing is
-probably the approach that I'd recommend if someone wanted to lift
-this restriction about accessing new-state later.
+https://www.edfa.eu/en/ueber-uns.html
 
-BR,
--R
+Message:
+
+Greetings to You,
+
+ 2% LOAN OFFER, We Are Certified To Offer The Following Kinds Of Loans * Personal Loan(Unsecured) * Business Loan (Unsecured) * Debt Consolidation Loan *Improve your home * Investment Loan  but once again i want to be sure you are very serious and trustworthy, We have been given the privilege to meet your financial needs. The issue of credit shouldn't stop you from getting the loan that you need.,Looking forward in doing a nice business with you.If interested, please contact us today with the following information below:
+
+1) Name            2) Country         3) Loan Amount            4) Loan Duration            5) Telephone number           6) Occupation.
+
+Yours In Service,
+MEGG Funding Management.
+Reply to Email: mgglob1@gmail.com
+
+
+Best regards
