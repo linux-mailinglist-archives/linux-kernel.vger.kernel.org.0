@@ -2,173 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D365EEE2BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:41:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F111DEE2C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfKDOlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 09:41:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:44420 "EHLO foss.arm.com"
+        id S1728709AbfKDOoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 09:44:13 -0500
+Received: from mga14.intel.com ([192.55.52.115]:29247 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbfKDOlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 09:41:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE6AE1FB;
-        Mon,  4 Nov 2019 06:41:50 -0800 (PST)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.199.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FB063F67D;
-        Mon,  4 Nov 2019 06:41:50 -0800 (PST)
-Date:   Mon, 4 Nov 2019 14:41:48 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Quentin Perret <qperret@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [Patch v4 5/6] thermal/cpu-cooling: Update thermal pressure in
- case of a maximum frequency capping
-Message-ID: <20191104142609.GA25197@e108754-lin>
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-6-git-send-email-thara.gopinath@linaro.org>
- <2b19d7da-412c-932f-7251-110eadbef3e3@arm.com>
- <CAKfTPtCpZq61gQVpATtTdg5hDA+tP4bF6xPMsvHYUMoY+H-6FQ@mail.gmail.com>
- <20191101154612.GA4884@e108754-lin>
- <5DBC9DEF.6030007@linaro.org>
+        id S1728607AbfKDOoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 09:44:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 06:44:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
+   d="scan'208";a="402993349"
+Received: from cckuo1-mobl2.amr.corp.intel.com (HELO [10.251.130.8]) ([10.251.130.8])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Nov 2019 06:44:10 -0800
+Subject: Re: [alsa-devel] [PATCH 07/14] soundwire: add initial definitions for
+ sdw_master_device
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20191023212823.608-1-pierre-louis.bossart@linux.intel.com>
+ <20191023212823.608-8-pierre-louis.bossart@linux.intel.com>
+ <20191103063051.GJ2695@vkoul-mobl.Dlink>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <9a8fb9ec-1ccb-4931-1ec6-bfae043e8c88@linux.intel.com>
+Date:   Mon, 4 Nov 2019 08:42:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5DBC9DEF.6030007@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191103063051.GJ2695@vkoul-mobl.Dlink>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thara,
 
-On Friday 01 Nov 2019 at 17:04:47 (-0400), Thara Gopinath wrote:
-> On 11/01/2019 11:47 AM, Ionela Voinescu wrote:
-> > Hi guys,
-> > 
-> > On Thursday 31 Oct 2019 at 17:38:25 (+0100), Vincent Guittot wrote:
-> >> On Thu, 31 Oct 2019 at 17:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> >>>
-> >>> On 22.10.19 22:34, Thara Gopinath wrote:
-> >>>> Thermal governors can request for a cpu's maximum supported frequency
-> >>>> to be capped in case of an overheat event. This in turn means that the
-> >>>> maximum capacity available for tasks to run on the particular cpu is
-> >>>> reduced. Delta between the original maximum capacity and capped
-> >>>> maximum capacity is known as thermal pressure. Enable cpufreq cooling
-> >>>> device to update the thermal pressure in event of a capped
-> >>>> maximum frequency.
-> >>>>
-> >>>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> >>>> ---
-> >>>>  drivers/thermal/cpu_cooling.c | 31 +++++++++++++++++++++++++++++--
-> >>>>  1 file changed, 29 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> >>>> index 391f397..2e6a979 100644
-> >>>> --- a/drivers/thermal/cpu_cooling.c
-> >>>> +++ b/drivers/thermal/cpu_cooling.c
-> >>>> @@ -218,6 +218,23 @@ static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
-> >>>>  }
-> >>>>
-> >>>>  /**
-> >>>> + * update_sched_max_capacity - update scheduler about change in cpu
-> >>>> + *                                   max frequency.
-> >>>> + * @policy - cpufreq policy whose max frequency is capped.
-> >>>> + */
-> >>>> +static void update_sched_max_capacity(struct cpumask *cpus,
-> >>>> +                                   unsigned int cur_max_freq,
-> >>>> +                                   unsigned int max_freq)
-> >>>> +{
-> >>>> +     int cpu;
-> >>>> +     unsigned long capacity = (cur_max_freq << SCHED_CAPACITY_SHIFT) /
-> >>>> +                               max_freq;
-> >>>> +
-> >>>> +     for_each_cpu(cpu, cpus)
-> >>>> +             update_thermal_pressure(cpu, capacity);
-> >>>> +}
-> >>>> +
-> >>>> +/**
-> >>>>   * get_load() - get load for a cpu since last updated
-> >>>>   * @cpufreq_cdev:    &struct cpufreq_cooling_device for this cpu
-> >>>>   * @cpu:     cpu number
-> >>>> @@ -320,6 +337,7 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
-> >>>>                                unsigned long state)
-> >>>>  {
-> >>>>       struct cpufreq_cooling_device *cpufreq_cdev = cdev->devdata;
-> >>>> +     int ret;
-> >>>>
-> >>>>       /* Request state should be less than max_level */
-> >>>>       if (WARN_ON(state > cpufreq_cdev->max_level))
-> >>>> @@ -331,8 +349,17 @@ static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
-> >>>>
-> >>>>       cpufreq_cdev->cpufreq_state = state;
-> >>>>
-> >>>> -     return dev_pm_qos_update_request(&cpufreq_cdev->qos_req,
-> >>>> -                             cpufreq_cdev->freq_table[state].frequency);
-> >>>> +     ret = dev_pm_qos_update_request
-> >>>> +                             (&cpufreq_cdev->qos_req,
-> >>>> +                              cpufreq_cdev->freq_table[state].frequency);
-> >>>> +
-> >>>> +     if (ret > 0)
-> >>>> +             update_sched_max_capacity
-> >>>> +                             (cpufreq_cdev->policy->cpus,
-> >>>> +                              cpufreq_cdev->freq_table[state].frequency,
-> >>>> +                              cpufreq_cdev->policy->cpuinfo.max_freq);
-> >>>> +
-> >>>> +     return ret;
-> >>>>  }
-> >>>>
-> >>>>  /**
-> >>>>
-> >>>
-> >>> Why not getting rid of update_sched_max_capacity() entirely and call
-> >>> update_thermal_pressure() in cpu_cooling.c directly? Saves one level in
-> >>> the call chain and would mean less code for this feature.
-> >>
-> >> But you add complexity in update_thermal_pressure which now has to
-> >> deal with a cpumask and to compute some frequency ratio
-> >> IMHO, it's cleaner to keep update_thermal_pressure simple as it is now
-> >>
-> > 
-> > How about removing update_thermal_pressure altogether and doing all the
-> > work in update_sched_max_capacity? That is, have
-> > update_sched_max_capacity compute the capped_freq_ratio, do the
-> > normalization, and set it per_cpu for all CPUs in the frequency domain.
-> > You'll save some calculations that you're now doing in
-> > update_thermal_pressure for each cpu and you avoid shifting back and
-> > forth.
+
+On 11/3/19 1:30 AM, Vinod Koul wrote:
+> On 23-10-19, 16:28, Pierre-Louis Bossart wrote:
+>> Since we want an explicit support for the SoundWire Master device, add
+>> the definitions, following the Grey Bus example.
+>>
+>> Open: do we need to set a variable when dealing with the master uevent?
 > 
-> Yes.  I can pass the delta to update_thermal_pressure. I will still want
-> to keep update_thermal_pressure and a per cpu variable in fair.c to
-> store this.
-> > 
+> I dont think we want that or we need that!
 
-Why do you want to keep the variable in fair.c? To me this thermal
-pressure delta seems more of a CPU thermal characteristic, not a
-CFS characteristic, so I would be tempted to define it and set it
-in cpu_cooling.c and let fair.c/pelt.c to be just the consumers of
-thermal pressure delta, either directly or through some interface.
+In GreyBus there are events and variables set, not sure what they were 
+used for. The code works without setting an event, but we'd need to make 
+a conscious design decision, and I am not too sure what usersace would 
+use the informatio for.
 
-What do you think?
-
-Thanks,
-Ionela.
-
-> > If you're doing so it would be worth renaming update_sched_max_capacity
-> > to something like update_sched_thermal_pressure.
-> Will do.
 > 
+> And to prevent that rather than adding a variable, can you please
+> modify the device_type and use separate ones for master_device and
+> slave_device
+
+sorry, I don't get the comment. There is only already a different device 
+type
+
+
+struct bus_type sdw_bus_type = {
+	.name = "soundwire",
+	.match = sdw_bus_match,
+	.uevent = sdw_uevent,
+};
+
+struct device_type sdw_slave_type = {
+	.name =		"sdw_slave",
+	.release =	sdw_slave_release,
+};
+
+struct device_type sdw_md_type = {
+	.name =		"soundwire_master",
+	.release =	sdw_md_release,
+};
+
 > 
-> -- 
-> Warm Regards
-> Thara
+>>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   drivers/soundwire/Makefile         |  2 +-
+>>   drivers/soundwire/bus_type.c       | 16 +++++---
+>>   drivers/soundwire/master.c         | 62 ++++++++++++++++++++++++++++++
+>>   include/linux/soundwire/sdw.h      | 35 +++++++++++++++++
+>>   include/linux/soundwire/sdw_type.h |  9 +++++
+>>   5 files changed, 117 insertions(+), 7 deletions(-)
+>>   create mode 100644 drivers/soundwire/master.c
+>>
+>> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+>> index 563894e5ecaf..89b29819dd3a 100644
+>> --- a/drivers/soundwire/Makefile
+>> +++ b/drivers/soundwire/Makefile
+>> @@ -4,7 +4,7 @@
+>>   #
+>>   
+>>   #Bus Objs
+>> -soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
+>> +soundwire-bus-objs := bus_type.o bus.o master.o slave.o mipi_disco.o stream.o
+>>   obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
+>>   
+>>   ifdef CONFIG_DEBUG_FS
+>> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
+>> index 5df095f4e12f..cf33f63773f0 100644
+>> --- a/drivers/soundwire/bus_type.c
+>> +++ b/drivers/soundwire/bus_type.c
+>> @@ -49,21 +49,25 @@ int sdw_slave_modalias(const struct sdw_slave *slave, char *buf, size_t size)
+>>   
+>>   static int sdw_uevent(struct device *dev, struct kobj_uevent_env *env)
+>>   {
+>> +	struct sdw_master_device *md;
+>>   	struct sdw_slave *slave;
+>>   	char modalias[32];
+>>   
+>> -	if (is_sdw_slave(dev)) {
+>> +	if (is_sdw_md(dev)) {
+>> +		md = to_sdw_master_device(dev);
+> 
+> md seems unused?
+
+well, yes, its use depends on whether we need to call add_event_var() as 
+asked below
+
+> 
+>> +		/* TODO: do we need to call add_uevent_var() ? */
+>> +	} else if (is_sdw_slave(dev)) {
+>>   		slave = to_sdw_slave_device(dev);
+>> +
+>> +		sdw_slave_modalias(slave, modalias, sizeof(modalias));
+>> +
+>> +		if (add_uevent_var(env, "MODALIAS=%s", modalias))
+>> +			return -ENOMEM;
+>>   	} else {
+>>   		dev_warn(dev, "uevent for unknown Soundwire type\n");
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	sdw_slave_modalias(slave, modalias, sizeof(modalias));
+>> -
+>> -	if (add_uevent_var(env, "MODALIAS=%s", modalias))
+>> -		return -ENOMEM;
+>> -
+>>   	return 0;
+>>   }
+>>   
+>> diff --git a/drivers/soundwire/master.c b/drivers/soundwire/master.c
+>> new file mode 100644
+>> index 000000000000..6210098c892b
+>> --- /dev/null
+>> +++ b/drivers/soundwire/master.c
+>> @@ -0,0 +1,62 @@
+>> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+>> +// Copyright(c) 2019 Intel Corporation.
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/acpi.h>
+>> +#include <linux/soundwire/sdw.h>
+>> +#include <linux/soundwire/sdw_type.h>
+>> +#include "bus.h"
+>> +
+>> +static void sdw_md_release(struct device *dev)
+>> +{
+>> +	struct sdw_master_device *md = to_sdw_master_device(dev);
+>> +
+>> +	kfree(md);
+>> +}
+>> +
+>> +struct device_type sdw_md_type = {
+>> +	.name =		"soundwire_master",
+>> +	.release =	sdw_md_release,
+>> +};
+>> +
+>> +struct sdw_master_device *sdw_md_add(struct sdw_md_driver *driver,
+>> +				     struct device *parent,
+>> +				     struct fwnode_handle *fwnode,
+>> +				     int link_id)
+>> +{
+>> +	struct sdw_master_device *md;
+>> +	int ret;
+>> +
+>> +	if (!driver->probe) {
+>> +		dev_err(parent, "mandatory probe callback missing\n");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	md = kzalloc(sizeof(*md), GFP_KERNEL);
+>> +	if (!md)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	md->link_id = link_id;
+>> +
+>> +	md->driver = driver;
+>> +
+>> +	md->dev.parent = parent;
+>> +	md->dev.fwnode = fwnode;
+>> +	md->dev.bus = &sdw_bus_type;
+>> +	md->dev.type = &sdw_md_type;
+>> +	md->dev.dma_mask = md->dev.parent->dma_mask;
+>> +	dev_set_name(&md->dev, "sdw-master-%d", md->link_id);
+>> +
+>> +	ret = device_register(&md->dev);
+>> +	if (ret) {
+>> +		dev_err(parent, "Failed to add master: ret %d\n", ret);
+>> +		/*
+>> +		 * On err, don't free but drop ref as this will be freed
+>> +		 * when release method is invoked.
+>> +		 */
+>> +		put_device(&md->dev);
+>> +	}
+>> +
+>> +	return md;
+>> +}
+>> +EXPORT_SYMBOL(sdw_md_add);
+>> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
+>> index d6e5a0e42819..6f8b6a0cbcb7 100644
+>> --- a/include/linux/soundwire/sdw.h
+>> +++ b/include/linux/soundwire/sdw.h
+>> @@ -573,6 +573,16 @@ struct sdw_slave {
+>>   #define to_sdw_slave_device(d) \
+>>   	container_of(d, struct sdw_slave, dev)
+>>   
+>> +struct sdw_master_device {
+>> +	struct device dev;
+>> +	int link_id;
+>> +	struct sdw_md_driver *driver;
+>> +	void *pdata; /* core does not touch */
+> 
+> what is the use for this, also please add kernel-doc style comments for
+> core structs
+> 
+>> +};
+>> +
+>> +#define to_sdw_master_device(d)	\
+>> +	container_of(d, struct sdw_master_device, dev)
+>> +
+>>   struct sdw_driver {
+>>   	const char *name;
+>>   
+>> @@ -587,6 +597,26 @@ struct sdw_driver {
+>>   	struct device_driver driver;
+>>   };
+>>   
+>> +struct sdw_md_driver {
+>> +	/* initializations and allocations */
+>> +	int (*probe)(struct sdw_master_device *md, void *link_ctx);
+>> +	/* hardware enablement, all clock/power dependencies are available */
+>> +	int (*startup)(struct sdw_master_device *md);
+>> +	/* hardware disabled */
+>> +	int (*shutdown)(struct sdw_master_device *md);
+>> +	/* free all resources */
+>> +	int (*remove)(struct sdw_master_device *md);
+>> +	/*
+>> +	 * enable/disable driver control while in clock-stop mode,
+>> +	 * typically in always-on/D0ix modes. When the driver yields
+>> +	 * control, another entity in the system (typically firmware
+>> +	 * running on an always-on microprocessor) is responsible to
+>> +	 * tracking Slave-initiated wakes
+>> +	 */
+>> +	int (*autonomous_clock_stop_enable)(struct sdw_master_device *md,
+>> +					    bool state);
+>> +};
+>> +
+>>   #define SDW_SLAVE_ENTRY(_mfg_id, _part_id, _drv_data) \
+>>   	{ .mfg_id = (_mfg_id), .part_id = (_part_id), \
+>>   	  .driver_data = (unsigned long)(_drv_data) }
+>> @@ -776,6 +806,11 @@ struct sdw_bus {
+>>   int sdw_add_bus_master(struct sdw_bus *bus);
+>>   void sdw_delete_bus_master(struct sdw_bus *bus);
+>>   
+>> +struct sdw_master_device *sdw_md_add(struct sdw_md_driver *driver,
+>> +				     struct device *parent,
+>> +				     struct fwnode_handle *fwnode,
+>> +				     int link_id);
+>> +
+>>   /**
+>>    * sdw_port_config: Master or Slave Port configuration
+>>    *
+>> diff --git a/include/linux/soundwire/sdw_type.h b/include/linux/soundwire/sdw_type.h
+>> index c681b3426478..463d6d018d56 100644
+>> --- a/include/linux/soundwire/sdw_type.h
+>> +++ b/include/linux/soundwire/sdw_type.h
+>> @@ -6,15 +6,24 @@
+>>   
+>>   extern struct bus_type sdw_bus_type;
+>>   extern struct device_type sdw_slave_type;
+>> +extern struct device_type sdw_md_type;
+>>   
+>>   static inline int is_sdw_slave(const struct device *dev)
+>>   {
+>>   	return dev->type == &sdw_slave_type;
+>>   }
+>>   
+>> +static inline int is_sdw_md(const struct device *dev)
+>> +{
+>> +	return dev->type == &sdw_md_type;
+>> +}
+>> +
+>>   #define to_sdw_slave_driver(_drv) \
+>>   	container_of(_drv, struct sdw_driver, driver)
+>>   
+>> +#define to_sdw_md_driver(_drv) \
+>> +	container_of(_drv, struct sdw_md_driver, driver)
+>> +
+>>   #define sdw_register_slave_driver(drv) \
+>>   	__sdw_register_slave_driver(drv, THIS_MODULE)
+>>   
+>> -- 
+>> 2.20.1
+> 
