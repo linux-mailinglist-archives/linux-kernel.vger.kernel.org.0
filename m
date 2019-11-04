@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62838EED96
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 876C1EEDD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390190AbfKDWIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:08:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40782 "EHLO mail.kernel.org"
+        id S2389005AbfKDWKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388489AbfKDWIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:08:04 -0500
+        id S2390552AbfKDWKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:34 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21E3B205C9;
-        Mon,  4 Nov 2019 22:08:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B62AB20650;
+        Mon,  4 Nov 2019 22:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905283;
-        bh=6lQVyhzOLL8aPXCH/uMZev8n5PhKZsk+ymbNmbvjk7g=;
+        s=default; t=1572905433;
+        bh=XRJhMZLFukaSWSE6KfLdlTZkNQnshra3dKvIQaYoG6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ez/FDe7bH1Dl3c0YheczbXVar7eAWP7ywVwYreHIaAmTxeV5vLIQAfXg5DF55rYK3
-         2Tgyde9swqv/lNOQN4Q7GVYF97fC3vJFCEmbJLw5Qqv+H0z/ehSy78OoxAYfpSaLeE
-         B22IMkuiqvFtwqhRCQ4/CZZjLxHx4jBnorlrRuG8=
+        b=Jv4tVeTQ0KO1kVKNeYWt2LUkpzigS3dnDtAqh6j0JfpMvR0XLhLGwRQxFUW1dp8E+
+         OEqxgOPiTH6Zp+ZvNQcBrqcD74rqcRmIpc17T9PgnqafyyMy+1Wm9lGC3GEIrBZD3R
+         iEPB9ofBxBdXnw9d83g9DrGvJzgqj8iilSi/zwzU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Yan-Hsuan Chuang <yhchuang@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 090/163] rtw88: Fix misuse of GENMASK macro
-Date:   Mon,  4 Nov 2019 22:44:40 +0100
-Message-Id: <20191104212146.723650192@linuxfoundation.org>
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Alexander Schmidt <alexs@linux.ibm.com>
+Subject: [PATCH 5.3 091/163] s390/pci: fix MSI message data
+Date:   Mon,  4 Nov 2019 22:44:41 +0100
+Message-Id: <20191104212146.786936467@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
 References: <20191104212140.046021995@linuxfoundation.org>
@@ -45,33 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
+From: Sebastian Ott <sebott@linux.ibm.com>
 
-[ Upstream commit 5ff29d836d1beb347080bd96e6321c811a8e3f62 ]
+[ Upstream commit cf2c4a3f35b75d38cebb4afbd578f1594f068d1e ]
 
-Arguments are supposed to be ordered high then low.
+After recent changes the MSI message data needs to specify the
+function-relative IRQ number.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Acked-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Reported-and-tested-by: Alexander Schmidt <alexs@linux.ibm.com>
+Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtw88/rtw8822b.c | 2 +-
+ arch/s390/pci/pci_irq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822b.c b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-index 1172f6c0605b3..d61d534396c73 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-@@ -997,7 +997,7 @@ static void rtw8822b_do_iqk(struct rtw_dev *rtwdev)
- 	rtw_write_rf(rtwdev, RF_PATH_A, RF_DTXLOK, RFREG_MASK, 0x0);
- 
- 	reload = !!rtw_read32_mask(rtwdev, REG_IQKFAILMSK, BIT(16));
--	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK, GENMASK(0, 7));
-+	iqk_fail_mask = rtw_read32_mask(rtwdev, REG_IQKFAILMSK, GENMASK(7, 0));
- 	rtw_dbg(rtwdev, RTW_DBG_PHY,
- 		"iqk counter=%d reload=%d do_iqk_cnt=%d n_iqk_fail(mask)=0x%02x\n",
- 		counter, reload, ++do_iqk_cnt, iqk_fail_mask);
+diff --git a/arch/s390/pci/pci_irq.c b/arch/s390/pci/pci_irq.c
+index d80616ae8dd8a..fbe97ab2e2286 100644
+--- a/arch/s390/pci/pci_irq.c
++++ b/arch/s390/pci/pci_irq.c
+@@ -284,7 +284,7 @@ int arch_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
+ 			return rc;
+ 		irq_set_chip_and_handler(irq, &zpci_irq_chip,
+ 					 handle_percpu_irq);
+-		msg.data = hwirq;
++		msg.data = hwirq - bit;
+ 		if (irq_delivery == DIRECTED) {
+ 			msg.address_lo = zdev->msi_addr & 0xff0000ff;
+ 			msg.address_lo |= msi->affinity ?
 -- 
 2.20.1
 
