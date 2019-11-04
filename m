@@ -2,116 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623D2EE093
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D6DEE0A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 14:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbfKDNEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 08:04:31 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35193 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfKDNEa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 08:04:30 -0500
-Received: by mail-lj1-f196.google.com with SMTP id r7so8820181ljg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 05:04:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JhQ7HFlU2UjuPowmnwPGHmD+EdJPReNvJPv4o/73DLw=;
-        b=B5FY1/XbL+HcLM8uSIu6+xWTIFQMhgGR0ZPc+1TqFaYNb1YQ36cPU6LCYvBlUYusqP
-         avFe3K1dEA5OAwuz0iPyfvQUmKLIDhsKl0k4ZLnULf/uordbSoPvhYCHckvMW/hTlUSS
-         yZI/RBp4yvR1rCdMD7t5ddJBuTgMn8WFIijWmaY8qSTlDu2WR+Sd8gkxHDkISxD5UEhj
-         QJl9FclTkuIOpCIAag+MkYWG97kQcyZiHNoweOVHDhYSTSf7PnynXwYEDbUTTXGLXiGN
-         qtP4vYFmNw0OHaTrGlgmMTjFc5DC8u70AsjW1rVABrOR9EUNFL8XRPd7z1Ch00QT6eo9
-         EAnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JhQ7HFlU2UjuPowmnwPGHmD+EdJPReNvJPv4o/73DLw=;
-        b=QuWMaDu7jKGdZ6OTlVF/D7XvF5Da8pum1b7S4M6A2ka3zcGxcu6s3gnbQyqGFlkL4M
-         KH9a0/umYrTCbjunMjl7+Y0flwCtDHdf8u1ocYNcUDMl6+hXpc0y0ptuImdF4iTJ9Iff
-         e03Q0fAvCxYE2RwRFxoCLKnsbf51HhDB1RSojkUxoOnT7BFDzJKEpn0wxrVYrlxP5Yct
-         q0s/4xFbZAB3xoJA2aybYzXTOz9HH+Z/D1cdK9TH9ExBwDsQEKBfhxiM7EshNqBSf5ZX
-         vdmP7H4GueR/C6vY+hDrcoPWiZNtq2lATFMJePQbfQ7AoitXLKTUNn2QX+dRUiGVFgAr
-         ODmA==
-X-Gm-Message-State: APjAAAXtizGeTttuV49dvtGKi2SLUXgrlULil/+09vu5aM3AfOqR0veV
-        d2ncba3EP7JzQPqpf/Bp3+R4WE0PUVbKTl/A7N8jpQ==
-X-Google-Smtp-Source: APXvYqz5yHtYXhLt1jqsbom3DmiNCD/Pl9JJmdKaVL59tf08VLPMTBtZfDVWp2YoogUmAUPkOXxwQTAYiXXb4t82d+U=
-X-Received: by 2002:a2e:9a5a:: with SMTP id k26mr8959112ljj.46.1572872665261;
- Mon, 04 Nov 2019 05:04:25 -0800 (PST)
+        id S1728974AbfKDNJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 08:09:09 -0500
+Received: from mga01.intel.com ([192.55.52.88]:6802 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728847AbfKDNJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 08:09:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 05:09:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
+   d="scan'208";a="212311895"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 04 Nov 2019 05:09:05 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 04 Nov 2019 15:09:04 +0200
+Date:   Mon, 4 Nov 2019 15:09:04 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] extcon: axp288: Move to swnodes
+Message-ID: <20191104130904.GC29493@kuha.fi.intel.com>
+References: <20191008122600.22340-1-heikki.krogerus@linux.intel.com>
+ <8120fbf2-08d3-6ee2-21bf-458a4e12b29c@redhat.com>
 MIME-Version: 1.0
-References: <0100016e3654527a-82a12a13-1ed1-448a-8c6d-58f7e85bc85c-000000@email.amazonses.com>
- <20191104122138.GA2127297@kroah.com>
-In-Reply-To: <20191104122138.GA2127297@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 4 Nov 2019 18:34:14 +0530
-Message-ID: <CA+G9fYshX87tu3FWjVH3-hga4SdwbwcXeBFTgmBbH_6tHDdpXQ@mail.gmail.com>
-Subject: stable-rc 4.19: net/ipv6/addrconf.c:6747:22: error:
- 'blackhole_netdev' undeclared
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     lkft-triage@lists.linaro.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8120fbf2-08d3-6ee2-21bf-458a4e12b29c@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two reasons for build failure on arm64, arm, x86_64 and i386.
+Hi Greg,
 
-For arm64 we have identified missing patch,
-Patch "efd00c7 arm64: Add MIDR encoding for HiSilicon Taishan CPUs" needs to
-be bacported as well,
+On Tue, Oct 08, 2019 at 03:59:23PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 08-10-2019 14:25, Heikki Krogerus wrote:
+> > Hi Hans,
+> > 
+> > Fixed the compiler warning in this version. No other changes.
+> > 
+> > The original cover letter:
+> > 
+> > That AXP288 extcon driver is the last that uses build-in connection
+> > description. I'm replacing it with a code that finds the role mux
+> > software node instead.
+> > 
+> > I'm proposing also here a little helper
+> > usb_role_switch_find_by_fwnode() that uses
+> > class_find_device_by_fwnode() to find the role switches.
+> 
+> Both patches look good to me and I can confirm that things still
+> work as they should on a CHT device with an AXP288 PMIC, so for both:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Tested-by: Hans de Goede <hdegoede@redhat.com>
 
-for arm, x86_64 and i386 build error log,
-------------------------------------
+These two patches in this series are basically about the usb role API,
+so can you take them?
 
-net/ipv6/addrconf.c: In function 'addrconf_init':
-net/ipv6/addrconf.c:6747:22: error: 'blackhole_netdev' undeclared
-(first use in this function); did you mean 'alloc_netdev'?
-  bdev = ipv6_add_dev(blackhole_netdev);
-                      ^~~~~~~~~~~~~~~~
-                      alloc_netdev
-net/ipv6/addrconf.c:6747:22: note: each undeclared identifier is
-reported only once for each function it appears in
-net/ipv6/addrconf.c: In function 'addrconf_cleanup':
-net/ipv6/addrconf.c:6839:18: error: 'blackhole_netdev' undeclared
-(first use in this function); did you mean 'alloc_netdev'?
-  addrconf_ifdown(blackhole_netdev, 2);
-                  ^~~~~~~~~~~~~~~~
-                  alloc_netdev
+thanks,
 
-
-For arm64 build error log,
----------------------------------------
-arch/arm64/kernel/cpufeature.c: In function 'unmap_kernel_at_el0':
-arch/arm64/kernel/cpufeature.c:909:21: error: 'MIDR_HISI_TSV110'
-undeclared (first use in this function); did you mean
-'GICR_ISACTIVER0'?
-   MIDR_ALL_VERSIONS(MIDR_HISI_TSV110),
-                     ^
-arch/arm64/include/asm/cputype.h:141:12: note: in definition of macro
-'MIDR_RANGE'
-   .model = m,     \
-            ^
-
-
-Meta data:
-------------------------------------------------------------------------
-kernel: 4.19.82-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.19.y
-git commit: 7d816e1d91b01911392b7f8f93a4a153b9af60d3
-git describe: v4.19.81-145-g7d816e1d91b0
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe-sanity/build/v4.19.81-145-g7d816e1d91b0
-
-
-- Naresh
+-- 
+heikki
