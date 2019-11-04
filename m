@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C521EED92
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 818CDEED03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390171AbfKDWIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:08:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
+        id S2388697AbfKDWCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390041AbfKDWH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:07:57 -0500
+        id S2389239AbfKDWCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:02:18 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38BC3214E0;
-        Mon,  4 Nov 2019 22:07:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1906920650;
+        Mon,  4 Nov 2019 22:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905274;
-        bh=W1ELdYJu5KbMQs/xn0bk1SdFi2yoGVZuLnEvK3Qqnuo=;
+        s=default; t=1572904936;
+        bh=J7DWm/MkD3ZkOtimVRVrecFAfLiQAyHECZtzD/l+wNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ugn7iKLZI8ZPaRimRd5vVILDN7+jnLwTFRVLetkjQAZOO5+1UFPX42ltv9I5qDWuj
-         srvBWZ+FhTk0oP2OtmZxr9a7mU3XxhHl7/+29DaCLMfcVkBt5TSWSVU3/fnIU20xDB
-         3HSZgJl6kFTgtq5AWsSa0J4CUL/jTnUCRycc8Eyg=
+        b=NYTB3t6X7n0Mv6yAxdLNnpX6bxOVKbUcmOVlGiJlCnQL6umhPSDh8MbZNJEXq5XGG
+         Xzepg8JUmvPFEZtnC4ZWcJo+dYti5uhjz49DC2OA6x2by1O6FHcDNKaDFuSvrH4uYm
+         uiubhc5J/d2SlmPQ9YU4Ae7KvaCMsNNJ0T+EES0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Jia Guo <guojia12@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <joseph.qi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 087/163] arm64: dts: qcom: Add Lenovo Miix 630
-Date:   Mon,  4 Nov 2019 22:44:37 +0100
-Message-Id: <20191104212146.530085811@linuxfoundation.org>
+Subject: [PATCH 4.19 085/149] ocfs2: clear zero in unaligned direct IO
+Date:   Mon,  4 Nov 2019 22:44:38 +0100
+Message-Id: <20191104212142.519464337@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,318 +50,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Jia Guo <guojia12@huawei.com>
 
-[ Upstream commit 2c6d2d3a580a852fe0a694e13af502a862293e0e ]
+[ Upstream commit 7a243c82ea527cd1da47381ad9cd646844f3b693 ]
 
-This adds the initial DT for the Lenovo Miix 630 laptop.  Supported
-functionality includes USB (host), microSD-card, keyboard, and trackpad.
+Unused portion of a part-written fs-block-sized block is not set to zero
+in unaligned append direct write.This can lead to serious data
+inconsistencies.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Ocfs2 manage disk with cluster size(for example, 1M), part-written in
+one cluster will change the cluster state from UN-WRITTEN to WRITTEN,
+VFS(function dio_zero_block) doesn't do the cleaning because bh's state
+is not set to NEW in function ocfs2_dio_wr_get_block when we write a
+WRITTEN cluster.  For example, the cluster size is 1M, file size is 8k
+and we direct write from 14k to 15k, then 12k~14k and 15k~16k will
+contain dirty data.
+
+We have to deal with two cases:
+ 1.The starting position of direct write is outside the file.
+ 2.The starting position of direct write is located in the file.
+
+We need set bh's state to NEW in the first case.  In the second case, we
+need mapped twice because bh's state of area out file should be set to
+NEW while area in file not.
+
+[akpm@linux-foundation.org: coding style fixes]
+Link: http://lkml.kernel.org/r/5292e287-8f1a-fd4a-1a14-661e555e0bed@huawei.com
+Signed-off-by: Jia Guo <guojia12@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <joseph.qi@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/msm8998-clamshell.dtsi      | 240 ++++++++++++++++++
- .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 +++
- 3 files changed, 271 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
+ fs/ocfs2/aops.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 0a7e5dfce6f79..c38ca859f2e02 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-lenovo-miix-630.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r2.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-new file mode 100644
-index 0000000000000..9682d4dd7496e
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2019, Jeffrey Hugo. All rights reserved. */
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 7578bd507c70b..dc773e163132c 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -2153,13 +2153,30 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
+ 	struct ocfs2_dio_write_ctxt *dwc = NULL;
+ 	struct buffer_head *di_bh = NULL;
+ 	u64 p_blkno;
+-	loff_t pos = iblock << inode->i_sb->s_blocksize_bits;
++	unsigned int i_blkbits = inode->i_sb->s_blocksize_bits;
++	loff_t pos = iblock << i_blkbits;
++	sector_t endblk = (i_size_read(inode) - 1) >> i_blkbits;
+ 	unsigned len, total_len = bh_result->b_size;
+ 	int ret = 0, first_get_block = 0;
+ 
+ 	len = osb->s_clustersize - (pos & (osb->s_clustersize - 1));
+ 	len = min(total_len, len);
+ 
++	/*
++	 * bh_result->b_size is count in get_more_blocks according to write
++	 * "pos" and "end", we need map twice to return different buffer state:
++	 * 1. area in file size, not set NEW;
++	 * 2. area out file size, set  NEW.
++	 *
++	 *		   iblock    endblk
++	 * |--------|---------|---------|---------
++	 * |<-------area in file------->|
++	 */
 +
-+/*
-+ * Common include for MSM8998 clamshell devices, ie the Lenovo Miix 630,
-+ * Asus NovaGo TP370QL, and HP Envy x2.  All three devices are basically the
-+ * same, with differences in peripherals.
-+ */
++	if ((iblock <= endblk) &&
++	    ((iblock + ((len - 1) >> i_blkbits)) > endblk))
++		len = (endblk - iblock + 1) << i_blkbits;
 +
-+#include "msm8998.dtsi"
-+#include "pm8998.dtsi"
-+#include "pm8005.dtsi"
+ 	mlog(0, "get block of %lu at %llu:%u req %u\n",
+ 			inode->i_ino, pos, len, total_len);
+ 
+@@ -2243,6 +2260,9 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
+ 	if (desc->c_needs_zero)
+ 		set_buffer_new(bh_result);
+ 
++	if (iblock > endblk)
++		set_buffer_new(bh_result);
 +
-+/ {
-+	chosen {
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&qusb2phy {
-+	status = "okay";
-+
-+	vdda-pll-supply = <&vreg_l12a_1p8>;
-+	vdda-phy-dpdm-supply = <&vreg_l24a_3p075>;
-+};
-+
-+&rpm_requests {
-+	pm8998-regulators {
-+		compatible = "qcom,rpm-pm8998-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+		vdd_s5-supply = <&vph_pwr>;
-+		vdd_s6-supply = <&vph_pwr>;
-+		vdd_s7-supply = <&vph_pwr>;
-+		vdd_s8-supply = <&vph_pwr>;
-+		vdd_s9-supply = <&vph_pwr>;
-+		vdd_s10-supply = <&vph_pwr>;
-+		vdd_s11-supply = <&vph_pwr>;
-+		vdd_s12-supply = <&vph_pwr>;
-+		vdd_s13-supply = <&vph_pwr>;
-+		vdd_l1_l27-supply = <&vreg_s7a_1p025>;
-+		vdd_l2_l8_l17-supply = <&vreg_s3a_1p35>;
-+		vdd_l3_l11-supply = <&vreg_s7a_1p025>;
-+		vdd_l4_l5-supply = <&vreg_s7a_1p025>;
-+		vdd_l6-supply = <&vreg_s5a_2p04>;
-+		vdd_l7_l12_l14_l15-supply = <&vreg_s5a_2p04>;
-+		vdd_l9-supply = <&vph_pwr>;
-+		vdd_l10_l23_l25-supply = <&vph_pwr>;
-+		vdd_l13_l19_l21-supply = <&vph_pwr>;
-+		vdd_l16_l28-supply = <&vph_pwr>;
-+		vdd_l18_l22-supply = <&vph_pwr>;
-+		vdd_l20_l24-supply = <&vph_pwr>;
-+		vdd_l26-supply = <&vreg_s3a_1p35>;
-+		vdd_lvs1_lvs2-supply = <&vreg_s4a_1p8>;
-+
-+		vreg_s3a_1p35: s3 {
-+			regulator-min-microvolt = <1352000>;
-+			regulator-max-microvolt = <1352000>;
-+		};
-+		vreg_s4a_1p8: s4 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-allow-set-load;
-+		};
-+		vreg_s5a_2p04: s5 {
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2040000>;
-+		};
-+		vreg_s7a_1p025: s7 {
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1028000>;
-+		};
-+		vreg_l1a_0p875: l1 {
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <880000>;
-+			regulator-allow-set-load;
-+		};
-+		vreg_l2a_1p2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-allow-set-load;
-+		};
-+		vreg_l3a_1p0: l3 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1000000>;
-+		};
-+		vreg_l5a_0p8: l5 {
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <800000>;
-+		};
-+		vreg_l6a_1p8: l6 {
-+			regulator-min-microvolt = <1808000>;
-+			regulator-max-microvolt = <1808000>;
-+		};
-+		vreg_l7a_1p8: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+		vreg_l8a_1p2: l8 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+		vreg_l9a_1p8: l9 {
-+			regulator-min-microvolt = <1808000>;
-+			regulator-max-microvolt = <2960000>;
-+		};
-+		vreg_l10a_1p8: l10 {
-+			regulator-min-microvolt = <1808000>;
-+			regulator-max-microvolt = <2960000>;
-+		};
-+		vreg_l11a_1p0: l11 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1000000>;
-+		};
-+		vreg_l12a_1p8: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+		vreg_l13a_2p95: l13 {
-+			regulator-min-microvolt = <1808000>;
-+			regulator-max-microvolt = <2960000>;
-+		};
-+		vreg_l14a_1p88: l14 {
-+			regulator-min-microvolt = <1880000>;
-+			regulator-max-microvolt = <1880000>;
-+		};
-+		vreg_15a_1p8: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+		vreg_l16a_2p7: l16 {
-+			regulator-min-microvolt = <2704000>;
-+			regulator-max-microvolt = <2704000>;
-+		};
-+		vreg_l17a_1p3: l17 {
-+			regulator-min-microvolt = <1304000>;
-+			regulator-max-microvolt = <1304000>;
-+		};
-+		vreg_l18a_2p7: l18 {
-+			regulator-min-microvolt = <2704000>;
-+			regulator-max-microvolt = <2704000>;
-+		};
-+		vreg_l19a_3p0: l19 {
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3008000>;
-+		};
-+		vreg_l20a_2p95: l20 {
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-allow-set-load;
-+		};
-+		vreg_l21a_2p95: l21 {
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-allow-set-load;
-+			regulator-system-load = <800000>;
-+		};
-+		vreg_l22a_2p85: l22 {
-+			regulator-min-microvolt = <2864000>;
-+			regulator-max-microvolt = <2864000>;
-+		};
-+		vreg_l23a_3p3: l23 {
-+			regulator-min-microvolt = <3312000>;
-+			regulator-max-microvolt = <3312000>;
-+		};
-+		vreg_l24a_3p075: l24 {
-+			regulator-min-microvolt = <3088000>;
-+			regulator-max-microvolt = <3088000>;
-+		};
-+		vreg_l25a_3p3: l25 {
-+			regulator-min-microvolt = <3104000>;
-+			regulator-max-microvolt = <3312000>;
-+		};
-+		vreg_l26a_1p2: l26 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+		vreg_l28_3p0: l28 {
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3008000>;
-+		};
-+
-+		vreg_lvs1a_1p8: lvs1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		vreg_lvs2a_1p8: lvs2 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+	};
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <81 4>;
-+
-+	touchpad: touchpad {
-+		config {
-+			pins = "gpio123";
-+			bias-pull-up;           /* pull up */
-+		};
-+	};
-+};
-+
-+&sdhc2 {
-+	status = "okay";
-+
-+	vmmc-supply = <&vreg_l21a_2p95>;
-+	vqmmc-supply = <&vreg_l13a_2p95>;
-+
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on  &sdc2_data_on  &sdc2_cd_on>;
-+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
-+};
-+
-+&usb3 {
-+	status = "okay";
-+};
-+
-+&usb3_dwc3 {
-+	dr_mode = "host"; /* Force to host until we have Type-C hooked up */
-+};
-+
-+&usb3phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l2a_1p2>;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
-new file mode 100644
-index 0000000000000..407c6a32911cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2019, Jeffrey Hugo. All rights reserved. */
-+
-+/dts-v1/;
-+
-+#include "msm8998-clamshell.dtsi"
-+
-+/ {
-+	model = "Lenovo Miix 630";
-+	compatible = "lenovo,miix-630", "qcom,msm8998";
-+};
-+
-+&blsp1_i2c6 {
-+	status = "okay";
-+
-+	keyboard@3a {
-+		compatible = "hid-over-i2c";
-+		interrupt-parent = <&tlmm>;
-+		interrupts = <0x79 IRQ_TYPE_LEVEL_LOW>;
-+		reg = <0x3a>;
-+		hid-descr-addr = <0x0001>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touchpad>;
-+	};
-+};
-+
-+&sdhc2 {
-+	cd-gpios = <&tlmm 95 GPIO_ACTIVE_HIGH>;
-+};
+ 	/* May sleep in end_io. It should not happen in a irq context. So defer
+ 	 * it to dio work queue. */
+ 	set_buffer_defer_completion(bh_result);
 -- 
 2.20.1
 
