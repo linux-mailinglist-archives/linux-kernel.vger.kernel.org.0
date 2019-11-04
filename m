@@ -2,85 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83270EE03A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95916EE044
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbfKDMlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:41:52 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36199 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727782AbfKDMlw (ORCPT
+        id S1728956AbfKDMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 07:43:44 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45618 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728504AbfKDMnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:41:52 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j22so11244962pgh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 04:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f5ml/8tDxj4v4KVNQHKkwoSqt5ZyjL0e+C11QKr4g6Q=;
-        b=t51LIKBQSy6DSnJbsbh8C6wkPSdOxEIgMyfLqvPfm0xKVy+HpmNCS7iBJVH8Mnjtem
-         Cmg8WhGm5lYPozuXPhaqBpDYIVChPFB17r729Rqj8bhPms/4WI9i7ZPu2FjbOLQ9wxuA
-         mkf4a8iGl+MH8EbNuTjOnyZ+6Pf/P41yV2t1XktLnfaz8VNdk3kUH8aNwMavEJ4k6OVV
-         IXTWgnDbkmblJccfqLAxTK2e08hKtU1OTri2VES+gDUN5vU8D3FixFDavrkmZXUe+5+B
-         xdurk+xKYJ50nFOFJPVuAzDY0GXLOCxN7L3UV73btCLujhw2Bp7rGb9ec2BX10WgKyC3
-         pnUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f5ml/8tDxj4v4KVNQHKkwoSqt5ZyjL0e+C11QKr4g6Q=;
-        b=MKd7PH2hfLTV+sfkl2SngDrcwX+ZSE5fr9CxAA7+rheXRLgPxARlaAXJk59SmB54pZ
-         rvwZtiU54TkClhdMaqeH5uwZ1Y+lujOoMGwTDlls110xRC9lGZEfNwMV5hss0pROHk0n
-         p7Zm1aqKoI8ccz09OOhWuKATOGdQ4mMA4HTFi+8oyB8pR1+EihdVX10V8kg3GH+sEo4r
-         Zy9OvWiNB+6A+yoL9uhjw2YGWaraeTXbI8szELfYGfI7yEPuKkZhYTMHtlQSmbF5mHx4
-         +uJS2nXyBxTUiekeF5dyaSKR3H9rJyj6KHbfWVz4hkHlvotuBGuJhgUhzttA2ZdAVbhZ
-         BWAw==
-X-Gm-Message-State: APjAAAX9MIkrDcjRpL1P28uJ/3M6K7mMdTrm3QcUoLyp8q4OwcjZgkYB
-        Pxm5H2wIz5Bwd/COor2am/KrFiiKREI=
-X-Google-Smtp-Source: APXvYqyaC/yXuT53FbCODSPTnspNPx8aFiIplmlErNU9+PiTZQFQUQB6sscZzQoMZk7X24mx8JdHyg==
-X-Received: by 2002:a17:90a:de0d:: with SMTP id m13mr35158675pjv.32.1572871310271;
-        Mon, 04 Nov 2019 04:41:50 -0800 (PST)
-Received: from localhost (221x242x255x113.ap221.ftth.ucom.ne.jp. [221.242.255.113])
-        by smtp.gmail.com with ESMTPSA id z1sm1578989pju.27.2019.11.04.04.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 04:41:49 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Mon, 4 Nov 2019 21:41:47 +0900
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        Joe Perches <joe@perches.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Add VSPRINTF
-Message-ID: <20191104124147.GA11977@tigerII.localdomain>
-References: <20191031133337.9306-1-pmladek@suse.com>
+        Mon, 4 Nov 2019 07:43:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572871423;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=by0LJRZGbj39K8dHeEoPBdx+Y6mM9EbKDWT2TWm0iZo=;
+        b=JisxScNlh0ra4gDMyzxLRczmS6q+lxU6Hjw334LN0v4rNpcNXFZt01kSQIdat6PXK3pwR9
+        kQQ04FvD52phfW4QPNbIDaaVHyc4TrbIjHbAWgtRJspoFlxG9MU/9YEKceHh0vWGVLxbJw
+        sA54Yc+OXy/X3ijbBFqEefXaljIg8/g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-90-U6HVbOMqNu-WA_nfEpHEwg-1; Mon, 04 Nov 2019 07:43:39 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A180D1005500;
+        Mon,  4 Nov 2019 12:43:38 +0000 (UTC)
+Received: from dhcp-128-227.nay.redhat.com (unknown [10.66.128.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 556275D6C8;
+        Mon,  4 Nov 2019 12:43:35 +0000 (UTC)
+From:   Honggang LI <honli@redhat.com>
+To:     jlbec@evilplan.org, hch@lst.de
+Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        bvanassche@acm.org, Honggang Li <honli@redhat.com>
+Subject: [PATCH] configfs: calculate the depth of parent item
+Date:   Mon,  4 Nov 2019 20:43:22 +0800
+Message-Id: <20191104124322.31226-1-honli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031133337.9306-1-pmladek@suse.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: U6HVbOMqNu-WA_nfEpHEwg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (19/10/31 14:33), Petr Mladek wrote:
-> printk maintainers have been reviewing patches against vsprintf code last
-> few years. Most changes have been committed via printk.git last two years.
-> 
-> New group is used because printk() is not the only vsprintf() user.
-> Also the group of interested people is not the same.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+From: Honggang Li <honli@redhat.com>
 
-Acked
+When create symbolic link, create_link should calculate the depth
+of the parent item. However, both the first and second parameters
+of configfs_get_target_path had been set to the target. Broken
+symbolic link created.
 
-	-ss
+$ targetcli ls /
+o- / ............................................................. [...]
+  o- backstores .................................................. [...]
+  | o- block ...................................... [Storage Objects: 0]
+  | o- fileio ..................................... [Storage Objects: 2]
+  | | o- vdev0 .......... [/dev/ramdisk1 (16.0MiB) write-thru activated]
+  | | | o- alua ....................................... [ALUA Groups: 1]
+  | | |   o- default_tg_pt_gp ........... [ALUA state: Active/optimized]
+  | | o- vdev1 .......... [/dev/ramdisk2 (16.0MiB) write-thru activated]
+  | |   o- alua ....................................... [ALUA Groups: 1]
+  | |     o- default_tg_pt_gp ........... [ALUA state: Active/optimized]
+  | o- pscsi ...................................... [Storage Objects: 0]
+  | o- ramdisk .................................... [Storage Objects: 0]
+  o- iscsi ................................................ [Targets: 0]
+  o- loopback ............................................. [Targets: 0]
+  o- srpt ................................................. [Targets: 2]
+  | o- ib.e89a8f91cb3200000000000000000000 ............... [no-gen-acls]
+  | | o- acls ................................................ [ACLs: 2]
+  | | | o- ib.e89a8f91cb3200000000000000000000 ........ [Mapped LUNs: 2]
+  | | | | o- mapped_lun0 ............................. [BROKEN LUN LINK]
+  | | | | o- mapped_lun1 ............................. [BROKEN LUN LINK]
+  | | | o- ib.e89a8f91cb3300000000000000000000 ........ [Mapped LUNs: 2]
+  | | |   o- mapped_lun0 ............................. [BROKEN LUN LINK]
+  | | |   o- mapped_lun1 ............................. [BROKEN LUN LINK]
+  | | o- luns ................................................ [LUNs: 2]
+  | |   o- lun0 ...... [fileio/vdev0 (/dev/ramdisk1) (default_tg_pt_gp)]
+  | |   o- lun1 ...... [fileio/vdev1 (/dev/ramdisk2) (default_tg_pt_gp)]
+  | o- ib.e89a8f91cb3300000000000000000000 ............... [no-gen-acls]
+  |   o- acls ................................................ [ACLs: 0]
+  |   o- luns ................................................ [LUNs: 0]
+  o- vhost ................................................ [Targets: 0]
+
+Fixes: e9c03af21cc7 ("configfs: calculate the symlink target only once")
+Signed-off-by: Honggang Li <honli@redhat.com>
+---
+ fs/configfs/symlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/configfs/symlink.c b/fs/configfs/symlink.c
+index dc5dbf6a81d7..cb61467478ca 100644
+--- a/fs/configfs/symlink.c
++++ b/fs/configfs/symlink.c
+@@ -101,7 +101,7 @@ static int create_link(struct config_item *parent_item,
+ =09}
+ =09target_sd->s_links++;
+ =09spin_unlock(&configfs_dirent_lock);
+-=09ret =3D configfs_get_target_path(item, item, body);
++=09ret =3D configfs_get_target_path(parent_item, item, body);
+ =09if (!ret)
+ =09=09ret =3D configfs_create_link(target_sd, parent_item->ci_dentry,
+ =09=09=09=09=09   dentry, body);
+--=20
+2.21.0
+
