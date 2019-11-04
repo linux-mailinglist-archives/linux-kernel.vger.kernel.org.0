@@ -2,136 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB78DEEDEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2259EEF077
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390696AbfKDWLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:11:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44890 "EHLO mail.kernel.org"
+        id S1730190AbfKDVs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:48:57 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20152 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389550AbfKDWLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:11:30 -0500
-Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44027214D9;
-        Mon,  4 Nov 2019 22:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905488;
-        bh=3QAZop3R1QovG2h91P6pO+vj40enEfMY+gb0f6zrkTg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJCo2woOhU75kwY6YlNNRwBytcklrEoXZKtMM8yMAk2ldpJrLtXQiuHqJJl3V5ouL
-         2enp/5gfcSMYCW7PN3OYZvCSCxb7PQVDM6gB793jDf0ZwvKUUEcIHZw9qVFWbr5ypL
-         IL0+r7Q2Si1wDpRSvRP71/hEXQyi4yNOAujtdDQU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ben Segall <bsegall@google.com>,
-        Dave Chiluk <chiluk+linux@indeed.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, pauld@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 163/163] sched/fair: Fix -Wunused-but-set-variable warnings
-Date:   Mon,  4 Nov 2019 22:45:53 +0100
-Message-Id: <20191104212152.121299339@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730159AbfKDVsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:48:53 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 13:48:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
+   d="scan'208";a="226887119"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Nov 2019 13:48:51 -0800
+Date:   Mon, 4 Nov 2019 13:48:51 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/Kconfig: Rename UMIP config parameter
+Message-ID: <20191104214851.GD5960@linux.intel.com>
+References: <157290058655.2477.5193340480187879024.stgit@naples-babu.amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157290058655.2477.5193340480187879024.stgit@naples-babu.amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+On Mon, Nov 04, 2019 at 08:50:51PM +0000, Moger, Babu wrote:
+> AMD 2nd generation EPYC processors support the UMIP (User-Mode
+> Instruction Prevention) feature. So, rename X86_INTEL_UMIP to
+> generic X86_UMIP and modify the text to cover both Intel and AMD.
 
-[ Upstream commit 763a9ec06c409dcde2a761aac4bb83ff3938e0b3 ]
+There's a similar comment in the umip.c documentation that needs to be
+updated, and a grammatical error that can be opportunistically fixed, i.e.
 
-Commit:
+ * The feature User-Mode Instruction Prevention present in recent Intel
+ * processor
 
-   de53fd7aedb1 ("sched/fair: Fix low cpu usage with high throttling by removing expiration of cpu-local slices")
+to 
 
-introduced a few compilation warnings:
-
-  kernel/sched/fair.c: In function '__refill_cfs_bandwidth_runtime':
-  kernel/sched/fair.c:4365:6: warning: variable 'now' set but not used [-Wunused-but-set-variable]
-  kernel/sched/fair.c: In function 'start_cfs_bandwidth':
-  kernel/sched/fair.c:4992:6: warning: variable 'overrun' set but not used [-Wunused-but-set-variable]
-
-Also, __refill_cfs_bandwidth_runtime() does no longer update the
-expiration time, so fix the comments accordingly.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Reviewed-by: Dave Chiluk <chiluk+linux@indeed.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pauld@redhat.com
-Fixes: de53fd7aedb1 ("sched/fair: Fix low cpu usage with high throttling by removing expiration of cpu-local slices")
-Link: https://lkml.kernel.org/r/1566326455-8038-1-git-send-email-cai@lca.pw
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sched/fair.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a11a9c2d7793e..649c6b60929e2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4355,21 +4355,16 @@ static inline u64 sched_cfs_bandwidth_slice(void)
- }
- 
- /*
-- * Replenish runtime according to assigned quota and update expiration time.
-- * We use sched_clock_cpu directly instead of rq->clock to avoid adding
-- * additional synchronization around rq->lock.
-+ * Replenish runtime according to assigned quota. We use sched_clock_cpu
-+ * directly instead of rq->clock to avoid adding additional synchronization
-+ * around rq->lock.
-  *
-  * requires cfs_b->lock
-  */
- void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
- {
--	u64 now;
--
--	if (cfs_b->quota == RUNTIME_INF)
--		return;
--
--	now = sched_clock_cpu(smp_processor_id());
--	cfs_b->runtime = cfs_b->quota;
-+	if (cfs_b->quota != RUNTIME_INF)
-+		cfs_b->runtime = cfs_b->quota;
- }
- 
- static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-@@ -4999,15 +4994,13 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- {
--	u64 overrun;
--
- 	lockdep_assert_held(&cfs_b->lock);
- 
- 	if (cfs_b->period_active)
- 		return;
- 
- 	cfs_b->period_active = 1;
--	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
-+	hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
- 	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
- }
- 
--- 
-2.20.1
+ * The feature User-Mode Instruction Prevention present in recent x86
+ * processors
 
 
+IMO, the whole opening paragraph of the umip.c docs is weirdly worded and
+could be rewritten to something similar to the Kconfig help text, e.g.
 
+ * User-Mode Instruction Prevention is a security feature present in recent x86
+ * processors that, when enabled, prevents a group of instructions (SGDT, SIDT,
+ * SLDT, SMSW and STR) from being run in user mode by issuing a general
+ * protection fault if the instruction is executed with CPL > 0.
+
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+> v2:
+>   Learned that for the hardware that support UMIP, we dont need to
+>   emulate. Removed the emulation related code and just submitting
+>   the config changes.
+> 
+>  arch/x86/Kconfig                         |    8 ++++----
+>  arch/x86/include/asm/disabled-features.h |    2 +-
+>  arch/x86/include/asm/umip.h              |    4 ++--
+>  arch/x86/kernel/Makefile                 |    2 +-
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d6e1faa28c58..821b7cebff31 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1880,13 +1880,13 @@ config X86_SMAP
+>  
+>  	  If unsure, say Y.
+>  
+> -config X86_INTEL_UMIP
+> +config X86_UMIP
+>  	def_bool y
+> -	depends on CPU_SUP_INTEL
+> -	prompt "Intel User Mode Instruction Prevention" if EXPERT
+> +	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+> +	prompt "User Mode Instruction Prevention" if EXPERT
+>  	---help---
+>  	  The User Mode Instruction Prevention (UMIP) is a security
+
+Maybe opportunistically drop "The"?
+
+> -	  feature in newer Intel processors. If enabled, a general
+> +	  feature in newer x86 processors. If enabled, a general
+>  	  protection fault is issued if the SGDT, SLDT, SIDT, SMSW
+>  	  or STR instructions are executed in user mode. These instructions
+>  	  unnecessarily expose information about the hardware state.
+> diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+> index a5ea841cc6d2..8e1d0bb46361 100644
+> --- a/arch/x86/include/asm/disabled-features.h
+> +++ b/arch/x86/include/asm/disabled-features.h
+> @@ -22,7 +22,7 @@
+>  # define DISABLE_SMAP	(1<<(X86_FEATURE_SMAP & 31))
+>  #endif
+>  
+> -#ifdef CONFIG_X86_INTEL_UMIP
+> +#ifdef CONFIG_X86_UMIP
+>  # define DISABLE_UMIP	0
+>  #else
+>  # define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
+> diff --git a/arch/x86/include/asm/umip.h b/arch/x86/include/asm/umip.h
+> index db43f2a0d92c..aeed98c3c9e1 100644
+> --- a/arch/x86/include/asm/umip.h
+> +++ b/arch/x86/include/asm/umip.h
+> @@ -4,9 +4,9 @@
+>  #include <linux/types.h>
+>  #include <asm/ptrace.h>
+>  
+> -#ifdef CONFIG_X86_INTEL_UMIP
+> +#ifdef CONFIG_X86_UMIP
+>  bool fixup_umip_exception(struct pt_regs *regs);
+>  #else
+>  static inline bool fixup_umip_exception(struct pt_regs *regs) { return false; }
+> -#endif  /* CONFIG_X86_INTEL_UMIP */
+> +#endif  /* CONFIG_X86_UMIP */
+>  #endif  /* _ASM_X86_UMIP_H */
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 3578ad248bc9..52ce1e239525 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -134,7 +134,7 @@ obj-$(CONFIG_EFI)			+= sysfb_efi.o
+>  obj-$(CONFIG_PERF_EVENTS)		+= perf_regs.o
+>  obj-$(CONFIG_TRACING)			+= tracepoint.o
+>  obj-$(CONFIG_SCHED_MC_PRIO)		+= itmt.o
+> -obj-$(CONFIG_X86_INTEL_UMIP)		+= umip.o
+> +obj-$(CONFIG_X86_UMIP)			+= umip.o
+>  
+>  obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
+>  obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
+> 
