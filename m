@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0792EED0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A7DEEFE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389399AbfKDWCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:02:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        id S2387835AbfKDWXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388532AbfKDWCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:02:45 -0500
+        id S2387814AbfKDVyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:54:00 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BCF520650;
-        Mon,  4 Nov 2019 22:02:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 374FD21D7D;
+        Mon,  4 Nov 2019 21:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904965;
-        bh=2wCmBqoCUtQczstuSu+E79NktzrLM54hbOybIdGj5sM=;
+        s=default; t=1572904438;
+        bh=CpmR5KCxaZdYZAuo/G9nFJCamGR7Fa+x8iD1T/oOxEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DrH/liCp+pYwYsY0inVkZspEPCgEEBXIbOy0FjtzT+Z6qAToJ4adq5xBuunp5zQYc
-         Gkqp7BmeBU6nRDIHXfvuAf2nMeo3AxU68lfwZQPktvqmqZdUVDtGjegWPSfycALleM
-         x93W+ZRc/XXJ2g9hke8wGU42VYWPoSh/dLZyTQUY=
+        b=DYQ/MSUyTbOXbE6Upu+tIpsfAlpbjy2QPhWONxAssNzI++OB5nlIGJ84xl0r91ICd
+         8xH/kCWhsNLgUrXbLYihCOGWrZvgd9qy7nXvassxdQEhk0Gq4QBN2sy8TZZI+Sm2I2
+         bax3NAlfmaGBRZie+MUTB5Micc9PZqPbwu86KNMM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 089/149] arm64: armv8_deprecated: Checking return value for memory allocation
+        stable@vger.kernel.org, James Dingwall <james@dingwall.me.uk>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 44/95] x86/xen: Return from panic notifier
 Date:   Mon,  4 Nov 2019 22:44:42 +0100
-Message-Id: <20191104212142.735331194@linuxfoundation.org>
+Message-Id: <20191104212102.348306265@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +45,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-[ Upstream commit 3e7c93bd04edfb0cae7dad1215544c9350254b8f ]
+[ Upstream commit c6875f3aacf2a5a913205accddabf0bfb75cac76 ]
 
-There are no return value checking when using kzalloc() and kcalloc() for
-memory allocation. so add it.
+Currently execution of panic() continues until Xen's panic notifier
+(xen_panic_event()) is called at which point we make a hypercall that
+never returns.
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+This means that any notifier that is supposed to be called later as
+well as significant part of panic() code (such as pstore writes from
+kmsg_dump()) is never executed.
+
+There is no reason for xen_panic_event() to be this last point in
+execution since panic()'s emergency_restart() will call into
+xen_emergency_restart() from where we can perform our hypercall.
+
+Nevertheless, we will provide xen_legacy_crash boot option that will
+preserve original behavior during crash. This option could be used,
+for example, if running kernel dumper (which happens after panic
+notifiers) is undesirable.
+
+Reported-by: James Dingwall <james@dingwall.me.uk>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/armv8_deprecated.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |  4 +++
+ arch/x86/xen/enlighten.c                      | 28 +++++++++++++++++--
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
-index 92be1d12d5908..39dc98dd78ebf 100644
---- a/arch/arm64/kernel/armv8_deprecated.c
-+++ b/arch/arm64/kernel/armv8_deprecated.c
-@@ -177,6 +177,9 @@ static void __init register_insn_emulation(struct insn_emulation_ops *ops)
- 	struct insn_emulation *insn;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b67a6cd08ca16..671f518b09eeb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4875,6 +4875,10 @@
+ 				the unplug protocol
+ 			never -- do not unplug even if version check succeeds
  
- 	insn = kzalloc(sizeof(*insn), GFP_KERNEL);
-+	if (!insn)
-+		return;
++	xen_legacy_crash	[X86,XEN]
++			Crash from Xen panic notifier, without executing late
++			panic() code such as dumping handler.
 +
- 	insn->ops = ops;
- 	insn->min = INSN_UNDEF;
+ 	xen_nopvspin	[X86,XEN]
+ 			Disables the ticketlock slowpath using Xen PV
+ 			optimizations.
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index 515d5e4414c29..00fc683a20110 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -259,19 +259,41 @@ void xen_reboot(int reason)
+ 		BUG();
+ }
  
-@@ -236,6 +239,8 @@ static void __init register_insn_emulation_sysctl(void)
++static int reboot_reason = SHUTDOWN_reboot;
++static bool xen_legacy_crash;
+ void xen_emergency_restart(void)
+ {
+-	xen_reboot(SHUTDOWN_reboot);
++	xen_reboot(reboot_reason);
+ }
  
- 	insns_sysctl = kcalloc(nr_insn_emulated + 1, sizeof(*sysctl),
- 			       GFP_KERNEL);
-+	if (!insns_sysctl)
-+		return;
+ static int
+ xen_panic_event(struct notifier_block *this, unsigned long event, void *ptr)
+ {
+-	if (!kexec_crash_loaded())
+-		xen_reboot(SHUTDOWN_crash);
++	if (!kexec_crash_loaded()) {
++		if (xen_legacy_crash)
++			xen_reboot(SHUTDOWN_crash);
++
++		reboot_reason = SHUTDOWN_crash;
++
++		/*
++		 * If panic_timeout==0 then we are supposed to wait forever.
++		 * However, to preserve original dom0 behavior we have to drop
++		 * into hypervisor. (domU behavior is controlled by its
++		 * config file)
++		 */
++		if (panic_timeout == 0)
++			panic_timeout = -1;
++	}
+ 	return NOTIFY_DONE;
+ }
  
- 	raw_spin_lock_irqsave(&insn_emulation_lock, flags);
- 	list_for_each_entry(insn, &insn_emulation, node) {
++static int __init parse_xen_legacy_crash(char *arg)
++{
++	xen_legacy_crash = true;
++	return 0;
++}
++early_param("xen_legacy_crash", parse_xen_legacy_crash);
++
+ static struct notifier_block xen_panic_block = {
+ 	.notifier_call = xen_panic_event,
+ 	.priority = INT_MIN
 -- 
 2.20.1
 
