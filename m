@@ -2,74 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CDCEE412
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:41:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1A30EE3C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfKDPly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:41:54 -0500
-Received: from mail-m974.mail.163.com ([123.126.97.4]:48190 "EHLO
-        mail-m974.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfKDPly (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:41:54 -0500
-X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 10:41:53 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=QSgtOXkbXuicNqiow0
-        3N2HCq4OKg8JvV2XV+/oS6MGY=; b=Yb3J0HOhJ/bCeLf8C4bjqTA2Gpu9yt0+KN
-        Lrz/Xk7s/MHO+9u+2jwRqAwZWSZ+D3GbqgoKvQcdbG5REtAw0or8muTWO2amiL9e
-        xVfwqtMu1x5b4Ok1xd+DFd8TQ6WNC2H+nvQPUohW2824loKckjhaZvjqt5EqWm7s
-        MId5r8yeI=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp4 (Coremail) with SMTP id HNxpCgAXyXInQ8BdlN5RBA--.46S3;
-        Mon, 04 Nov 2019 23:26:35 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Satish Kharat <satishkh@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH 1/1] scsi: fnic: fix use after free
-Date:   Mon,  4 Nov 2019 23:26:22 +0800
-Message-Id: <1572881182-37664-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: HNxpCgAXyXInQ8BdlN5RBA--.46S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF47tF4UAF4UXw17GrW7Arb_yoWDAwbE9r
-        WrtrZFkry5Krs3Gw12vw4rAFWS9aykXrn2kF10gw1ay3yUZrZrAwnFvrn5JryUWw47urZx
-        trsxJr1SkF1UJjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjCeHPUUUUU==
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiVB9jclUMK9ogvAABsv
+        id S1728641AbfKDP3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:29:20 -0500
+Received: from verein.lst.de ([213.95.11.211]:39585 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727796AbfKDP3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 10:29:20 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 396F668BFE; Mon,  4 Nov 2019 16:29:17 +0100 (CET)
+Date:   Mon, 4 Nov 2019 16:29:16 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Marta Rybczynska <mrybczyn@kalray.eu>,
+        Charles Machalow <csm10495@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] nvme: change nvme_passthru_cmd64's result field.
+Message-ID: <20191104152916.GB17050@lst.de>
+References: <20191031050338.12700-1-csm10495@gmail.com> <20191031133921.GA4763@lst.de> <1977598237.90293761.1572878080625.JavaMail.zimbra@kalray.eu> <CANSCoS-2k08Si3a4b+h-4QTR86EfZHZx_oaGAHWorsYkdp35Bg@mail.gmail.com> <871357470.90297451.1572879417091.JavaMail.zimbra@kalray.eu> <20191104150151.GA26808@redsun51.ssa.fujisawa.hgst.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104150151.GA26808@redsun51.ssa.fujisawa.hgst.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memory chunk io_req is released by mempool_free. Accessing
-io_req->start_time will result in a use after free bug. Thevariable
-start_time is a backup of the timestamp. So, use start_time here to
-avoid use after free.
+On Tue, Nov 05, 2019 at 12:01:51AM +0900, Keith Busch wrote:
+> On Mon, Nov 04, 2019 at 03:56:57PM +0100, Marta Rybczynska wrote:
+> > ----- On 4 Nov, 2019, at 15:51, Charles Machalow csm10495@gmail.com wrote:
+> > 
+> > > For this one yes, UAPI size changes. Though I believe this IOCTL
+> > > hasn't been in a released Kernel yet (just RC). Technically it may be
+> > > changeable as a fix until the next Kernel is released. I do think its
+> > > a useful enough
+> > > change to warrant a late fix.
+> > 
+> > The old one is in UAPI for years. The new one is not yet, right. I'm OK
+> > to change the new structure. To have compatibility you would have to use
+> > the new structure (at least its size) in the user space code. This is
+> > what you'd liek to do?
+> 
+> Charles is proposing only to modify the recently introduced 64-bit ioctl
+> struct without touching the existing 32 bit version. He just wanted the
+> lower 32-bits of the 64-bit result to occupy the same space as the 32-bit
+> ioctl's result. That space in the 64-bit version is currently occupied
+> by an implicit struct padding.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- drivers/scsi/fnic/fnic_scsi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
-index 80608b53897b..d3986a25d9c2 100644
---- a/drivers/scsi/fnic/fnic_scsi.c
-+++ b/drivers/scsi/fnic/fnic_scsi.c
-@@ -1024,7 +1024,8 @@ static void fnic_fcpio_icmnd_cmpl_handler(struct fnic *fnic,
- 		atomic64_inc(&fnic_stats->io_stats.io_completions);
- 
- 
--	io_duration_time = jiffies_to_msecs(jiffies) - jiffies_to_msecs(io_req->start_time);
-+	io_duration_time = jiffies_to_msecs(jiffies) -
-+						jiffies_to_msecs(start_time);
- 
- 	if(io_duration_time <= 10)
- 		atomic64_inc(&fnic_stats->io_stats.io_btw_0_to_10_msec);
--- 
-2.7.4
-
+Except on 32-bit x86, which does not have the padding.  Which is why
+the current layout is so bad, as it breaks 32-it x86 compat.
