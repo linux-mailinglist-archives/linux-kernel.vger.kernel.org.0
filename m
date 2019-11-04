@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A7F4EEF2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D3F6EED57
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388938AbfKDWBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:01:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58332 "EHLO mail.kernel.org"
+        id S2389863AbfKDWFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:05:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388890AbfKDWAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:38 -0500
+        id S2389855AbfKDWFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:05:38 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5E01222C6;
-        Mon,  4 Nov 2019 22:00:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 275202084D;
+        Mon,  4 Nov 2019 22:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904837;
-        bh=UVWN1IQsnHONNGn6shfGmJKv7yWKE5L+vnchf3/8s1I=;
+        s=default; t=1572905137;
+        bh=ZsYsQjET2eBXHpj8p6+4hCJCBPZ/9D9ILF5vWY4Tb/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MJxlGlEmVjrDSFV8cysDcqMaGwRTyn8b+WX2P0LSG7fvH0bNDcAKggKfrgMw9fsMT
-         fsmjiAs4JIpQLH7bmy1NcUXWwiZvVrPRSfliTDb3KdNUczzt/csb044Q287bLJNh0E
-         xf+iT2Db17b+NJ1oyBwig03W463/SPZveYWAjzoU=
+        b=X9OAwlNPp6tIZbR5D+cXiUTUqmdCsic4LPGruLKkLsmSU4aA4nFSJzF+NmHyq3n95
+         dyVvIhztNu6s+/bZOaTr15WYnRq2qxxhf+FQ3khkEhZ9C/wjl+3Qt+iNs2eZ9PS1Ba
+         tifMUKM1xqdQHCRJ0bEUu/hAWcS4ljBA6Z28v48k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Simon Gene Gottlieb <simon@gottliebtfreitag.de>,
-        Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/149] HID: steam: fix deadlock with input devices.
-Date:   Mon,  4 Nov 2019 22:43:49 +0100
-Message-Id: <20191104212138.296974518@linuxfoundation.org>
+        stable@vger.kernel.org, Artemy Kovalyov <artemyko@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 040/163] RDMA/mlx5: Do not allow rereg of a ODP MR
+Date:   Mon,  4 Nov 2019 22:43:50 +0100
+Message-Id: <20191104212143.191554020@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,102 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-[ Upstream commit 6b538cc21334b83f09b25dec4aa2d2726bf07ed0 ]
+[ Upstream commit 880505cfef1d086d18b59d2920eb2160429ffa1f ]
 
-When using this driver with the wireless dongle and some usermode
-program that monitors every input device (acpid, for example), while
-another usermode client opens and closes the low-level device
-repeadedly, the system eventually deadlocks.
+This code is completely broken, the umem of a ODP MR simply cannot be
+discarded without a lot more locking, nor can an ODP mkey be blithely
+destroyed via destroy_mkey().
 
-The reason is that steam_input_register_device() must not be called with
-the mutex held, because the input subsystem has its own synchronization
-that clashes with this one: it is possible that steam_input_open() is
-called before input_register_device() returns, and since
-steam_input_open() needs to lock the mutex, it deadlocks.
-
-However we must hold the mutex when calling any function that sends
-commands to the controller. If not, random commands end up falling fail.
-
-Reported-by: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
-Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Tested-by: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 6aec21f6a832 ("IB/mlx5: Page faults handling infrastructure")
+Link: https://lore.kernel.org/r/20191001153821.23621-2-jgg@ziepe.ca
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-steam.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index 8141cadfca0e3..8dae0f9b819e0 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -499,6 +499,7 @@ static void steam_battery_unregister(struct steam_device *steam)
- static int steam_register(struct steam_device *steam)
- {
- 	int ret;
-+	bool client_opened;
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index 3401f5f6792e6..c4ba8838d2c46 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1423,6 +1423,9 @@ int mlx5_ib_rereg_user_mr(struct ib_mr *ib_mr, int flags, u64 start,
+ 	if (!mr->umem)
+ 		return -EINVAL;
  
- 	/*
- 	 * This function can be called several times in a row with the
-@@ -511,9 +512,11 @@ static int steam_register(struct steam_device *steam)
- 		 * Unlikely, but getting the serial could fail, and it is not so
- 		 * important, so make up a serial number and go on.
- 		 */
-+		mutex_lock(&steam->mutex);
- 		if (steam_get_serial(steam) < 0)
- 			strlcpy(steam->serial_no, "XXXXXXXXXX",
- 					sizeof(steam->serial_no));
-+		mutex_unlock(&steam->mutex);
- 
- 		hid_info(steam->hdev, "Steam Controller '%s' connected",
- 				steam->serial_no);
-@@ -528,13 +531,15 @@ static int steam_register(struct steam_device *steam)
- 	}
- 
- 	mutex_lock(&steam->mutex);
--	if (!steam->client_opened) {
-+	client_opened = steam->client_opened;
-+	if (!client_opened)
- 		steam_set_lizard_mode(steam, lizard_mode);
-+	mutex_unlock(&steam->mutex);
++	if (is_odp_mr(mr))
++		return -EOPNOTSUPP;
 +
-+	if (!client_opened)
- 		ret = steam_input_register(steam);
--	} else {
-+	else
- 		ret = 0;
--	}
--	mutex_unlock(&steam->mutex);
+ 	if (flags & IB_MR_REREG_TRANS) {
+ 		addr = virt_addr;
+ 		len = length;
+@@ -1468,8 +1471,6 @@ int mlx5_ib_rereg_user_mr(struct ib_mr *ib_mr, int flags, u64 start,
+ 		}
  
- 	return ret;
- }
-@@ -630,14 +635,21 @@ static void steam_client_ll_close(struct hid_device *hdev)
- {
- 	struct steam_device *steam = hdev->driver_data;
+ 		mr->allocated_from_cache = 0;
+-		if (IS_ENABLED(CONFIG_INFINIBAND_ON_DEMAND_PAGING))
+-			mr->live = 1;
+ 	} else {
+ 		/*
+ 		 * Send a UMR WQE
+@@ -1498,7 +1499,6 @@ int mlx5_ib_rereg_user_mr(struct ib_mr *ib_mr, int flags, u64 start,
  
-+	unsigned long flags;
-+	bool connected;
-+
-+	spin_lock_irqsave(&steam->lock, flags);
-+	connected = steam->connected;
-+	spin_unlock_irqrestore(&steam->lock, flags);
-+
- 	mutex_lock(&steam->mutex);
- 	steam->client_opened = false;
-+	if (connected)
-+		steam_set_lizard_mode(steam, lizard_mode);
- 	mutex_unlock(&steam->mutex);
+ 	set_mr_fields(dev, mr, npages, len, access_flags);
  
--	if (steam->connected) {
--		steam_set_lizard_mode(steam, lizard_mode);
-+	if (connected)
- 		steam_input_register(steam);
--	}
- }
+-	update_odp_mr(mr);
+ 	return 0;
  
- static int steam_client_ll_raw_request(struct hid_device *hdev,
+ err:
 -- 
 2.20.1
 
