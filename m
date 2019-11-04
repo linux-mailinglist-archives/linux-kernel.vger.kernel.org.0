@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 522AFEEDF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A76EED16
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389505AbfKDWLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:11:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45094 "EHLO mail.kernel.org"
+        id S2389471AbfKDWDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390713AbfKDWLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:11:40 -0500
+        id S2388757AbfKDWDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:03:09 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E106E214D8;
-        Mon,  4 Nov 2019 22:11:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E62A205C9;
+        Mon,  4 Nov 2019 22:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905500;
-        bh=guiaCEQRulnqPPe4LKaYat2ZR/CL0oCOT0xWw2Mknns=;
+        s=default; t=1572904988;
+        bh=xxDDr/zM+xU3ky0bYYZKmJYCAwy45XockdaIYNTjliU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p5h0Y2pL3T6ta/CVvdsNVP6KE+hZgwjs6zyxJixxmV/3i9VUTXIbLevIzonEqCGj5
-         FB6H+gDB5N/nHEMyT8Ul3X/mUyzZPcAKKXnuFnywbGkW1Bgsd42/ZTHHzFeYWb4On4
-         XgBI+tNZXFK4rT1Q/t4GYi5BWjaMb2l2xwEfBwQs=
+        b=j7HNJ3YMhdQWJOO1Uupi+Jm3xZYHNnhCGFCN0EftzQt6ArLx/10bKgQp9QKu+xcIV
+         /mSkNtK5mNPDRgxMhCa3T20mNnEBa5THntppdtFhRElf+B1Qw0Ru75jKQbE7elmGP1
+         K2gaPNRBHVf4OkTkrtW4nuP+2qvMXQCFjb2NJL+g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.3 143/163] io_uring: ensure we clear io_kiocb->result before each issue
-Date:   Mon,  4 Nov 2019 22:45:33 +0100
-Message-Id: <20191104212150.683214210@linuxfoundation.org>
+        syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.19 141/149] NFC: pn533: fix use-after-free and memleaks
+Date:   Mon,  4 Nov 2019 22:45:34 +0100
+Message-Id: <20191104212146.601835991@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Johan Hovold <johan@kernel.org>
 
-commit 6873e0bd6a9cb14ecfadd89d9ed9698ff1761902 upstream.
+commit 6af3aa57a0984e061f61308fe181a9a12359fecc upstream.
 
-We use io_kiocb->result == -EAGAIN as a way to know if we need to
-re-submit a polled request, as -EAGAIN reporting happens out-of-line
-for IO submission failures. This field is cleared when we originally
-allocate the request, but it isn't reset when we retry the submission
-from async context. This can cause issues where we think something
-needs a re-issue, but we're really just reading stale data.
+The driver would fail to deregister and its class device and free
+related resources on late probe errors.
 
-Reset ->result whenever we re-prep a request for polled submission.
-
-Cc: stable@vger.kernel.org
-Fixes: 9e645e1105ca ("io_uring: add support for sqe links")
-Reported-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com
+Fixes: 32ecc75ded72 ("NFC: pn533: change order operations in dev registation")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/io_uring.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/nfc/pn533/usb.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1078,6 +1078,7 @@ static int io_prep_rw(struct io_kiocb *r
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -559,18 +559,25 @@ static int pn533_usb_probe(struct usb_in
  
- 		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
-+		req->result = 0;
- 	} else {
- 		if (kiocb->ki_flags & IOCB_HIPRI)
- 			return -EINVAL;
+ 	rc = pn533_finalize_setup(priv);
+ 	if (rc)
+-		goto error;
++		goto err_deregister;
+ 
+ 	usb_set_intfdata(interface, phy);
+ 
+ 	return 0;
+ 
++err_deregister:
++	pn533_unregister_device(phy->priv);
+ error:
++	usb_kill_urb(phy->in_urb);
++	usb_kill_urb(phy->out_urb);
++	usb_kill_urb(phy->ack_urb);
++
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
+ 	usb_free_urb(phy->ack_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
++	kfree(phy->ack_buffer);
+ 
+ 	return rc;
+ }
 
 
