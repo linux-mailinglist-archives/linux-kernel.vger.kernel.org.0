@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05929EECE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4307DEF099
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388199AbfKDWBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:01:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58822 "EHLO mail.kernel.org"
+        id S2389219AbfKDW3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:29:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388502AbfKDWAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:54 -0500
+        id S1729899AbfKDVsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:48:09 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7133D217F4;
-        Mon,  4 Nov 2019 22:00:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B347B21850;
+        Mon,  4 Nov 2019 21:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904854;
-        bh=WEjXPYN/4z2tLd11WOkLYZH11e/S5V8qQlTCbEuf090=;
+        s=default; t=1572904089;
+        bh=1FToogkIY8Hsa4SVq/KUItZyuhUtpk68aHUfQPLdhjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LAS1UnvOZxKRkV+YeS0F+DeAQsdKNaD8KCgQns/qMW1Q1VDWevRGLlu4cs26YGZiT
-         KKBHsZesVnIPqI2ei6VbeuCQQVwS8+KN5x8zYGdv5z6P3OBNWQCi0Ho+dYAMrbO2Lq
-         IIkD9xAl5cjF3oGZT8KHXPncPJVSelq03xfYUsHY=
+        b=DRaLP6Z5wV4Ddo0yxax2Ib3PlmP6+sy7TyqLD1YPP8afeiWSDLmWU2SywUiYr53b5
+         evyExS05SU8jO9VTJYCNN6HKASq3xnJfhMMLCmcdYkfH1pZmCtBWiAEDOdqVYHaETA
+         h/jSYR4Tg9lN/SFCGvJpdBTs2dUn8jTlNzJ5o6Kw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 095/149] MIPS: include: Mark __xchg as __always_inline
-Date:   Mon,  4 Nov 2019 22:44:48 +0100
-Message-Id: <20191104212143.197542345@linuxfoundation.org>
+Subject: [PATCH 4.4 18/46] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
+Date:   Mon,  4 Nov 2019 22:44:49 +0100
+Message-Id: <20191104211848.170365924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
+References: <20191104211830.912265604@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,44 +51,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 46f1619500d022501a4f0389f9f4c349ab46bb86 ]
+[ Upstream commit 2abb7d3b12d007c30193f48bebed781009bebdd2 ]
 
-Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly") allows compiler to uninline functions marked as 'inline'.
-In cace of __xchg this would cause to reference function
-__xchg_called_with_bad_pointer, which is an error case
-for catching bugs and will not happen for correct code, if
-__xchg is inlined.
+In ocfs2_info_scan_inode_alloc(), there is an if statement on line 283
+to check whether inode_alloc is NULL:
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+    if (inode_alloc)
+
+When inode_alloc is NULL, it is used on line 287:
+
+    ocfs2_inode_lock(inode_alloc, &bh, 0);
+        ocfs2_inode_lock_full_nested(inode, ...)
+            struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, inode_alloc is checked on line 286.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Link: http://lkml.kernel.org/r/20190726033717.32359-1-baijiaju1990@gmail.com
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/cmpxchg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
-index 895f91b9e89c3..520ca166cbed5 100644
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -73,8 +73,8 @@ extern unsigned long __xchg_called_with_bad_pointer(void)
- extern unsigned long __xchg_small(volatile void *ptr, unsigned long val,
- 				  unsigned int size);
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index 3cb097ccce607..79232296b7d2b 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -289,7 +289,7 @@ static int ocfs2_info_scan_inode_alloc(struct ocfs2_super *osb,
+ 	if (inode_alloc)
+ 		mutex_lock(&inode_alloc->i_mutex);
  
--static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
--				   int size)
-+static __always_inline
-+unsigned long __xchg(volatile void *ptr, unsigned long x, int size)
- {
- 	switch (size) {
- 	case 1:
+-	if (o2info_coherent(&fi->ifi_req)) {
++	if (inode_alloc && o2info_coherent(&fi->ifi_req)) {
+ 		status = ocfs2_inode_lock(inode_alloc, &bh, 0);
+ 		if (status < 0) {
+ 			mlog_errno(status);
 -- 
 2.20.1
 
