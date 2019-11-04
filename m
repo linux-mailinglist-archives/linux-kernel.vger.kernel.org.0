@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 876C1EEDD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE82EEED08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389005AbfKDWKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:10:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43782 "EHLO mail.kernel.org"
+        id S2389383AbfKDWCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390552AbfKDWKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:10:34 -0500
+        id S2388099AbfKDWCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:02:44 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B62AB20650;
-        Mon,  4 Nov 2019 22:10:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 931872190F;
+        Mon,  4 Nov 2019 22:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905433;
-        bh=XRJhMZLFukaSWSE6KfLdlTZkNQnshra3dKvIQaYoG6s=;
+        s=default; t=1572904962;
+        bh=BQp0w++lhY9GEWaiGtER2AyNgxNAU5C9XBcP8uy2qBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jv4tVeTQ0KO1kVKNeYWt2LUkpzigS3dnDtAqh6j0JfpMvR0XLhLGwRQxFUW1dp8E+
-         OEqxgOPiTH6Zp+ZvNQcBrqcD74rqcRmIpc17T9PgnqafyyMy+1Wm9lGC3GEIrBZD3R
-         iEPB9ofBxBdXnw9d83g9DrGvJzgqj8iilSi/zwzU=
+        b=yOpUVnUI1uXiifS7DjK2oI/5Gn8DQ8XuNycsl4FnINljgoPEiitCOmUo5pmCGrUbp
+         sjIe4bJbq5HCneO2ugXG1QLAbGnwjAS74wa4OyhV1659AK6R+GM7Er9VAYpAnFarLD
+         5Mctm/cRe6VbSSQymWORF8sgPZV4AQ+3JFxkx2WA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alexander Schmidt <alexs@linux.ibm.com>
-Subject: [PATCH 5.3 091/163] s390/pci: fix MSI message data
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 088/149] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
 Date:   Mon,  4 Nov 2019 22:44:41 +0100
-Message-Id: <20191104212146.786936467@linuxfoundation.org>
+Message-Id: <20191104212142.683306051@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +51,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Ott <sebott@linux.ibm.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit cf2c4a3f35b75d38cebb4afbd578f1594f068d1e ]
+[ Upstream commit 2abb7d3b12d007c30193f48bebed781009bebdd2 ]
 
-After recent changes the MSI message data needs to specify the
-function-relative IRQ number.
+In ocfs2_info_scan_inode_alloc(), there is an if statement on line 283
+to check whether inode_alloc is NULL:
 
-Reported-and-tested-by: Alexander Schmidt <alexs@linux.ibm.com>
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+    if (inode_alloc)
+
+When inode_alloc is NULL, it is used on line 287:
+
+    ocfs2_inode_lock(inode_alloc, &bh, 0);
+        ocfs2_inode_lock_full_nested(inode, ...)
+            struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, inode_alloc is checked on line 286.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Link: http://lkml.kernel.org/r/20190726033717.32359-1-baijiaju1990@gmail.com
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/pci/pci_irq.c | 2 +-
+ fs/ocfs2/ioctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/pci/pci_irq.c b/arch/s390/pci/pci_irq.c
-index d80616ae8dd8a..fbe97ab2e2286 100644
---- a/arch/s390/pci/pci_irq.c
-+++ b/arch/s390/pci/pci_irq.c
-@@ -284,7 +284,7 @@ int arch_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
- 			return rc;
- 		irq_set_chip_and_handler(irq, &zpci_irq_chip,
- 					 handle_percpu_irq);
--		msg.data = hwirq;
-+		msg.data = hwirq - bit;
- 		if (irq_delivery == DIRECTED) {
- 			msg.address_lo = zdev->msi_addr & 0xff0000ff;
- 			msg.address_lo |= msi->affinity ?
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index 994726ada857c..a6c328211dccd 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -290,7 +290,7 @@ static int ocfs2_info_scan_inode_alloc(struct ocfs2_super *osb,
+ 	if (inode_alloc)
+ 		inode_lock(inode_alloc);
+ 
+-	if (o2info_coherent(&fi->ifi_req)) {
++	if (inode_alloc && o2info_coherent(&fi->ifi_req)) {
+ 		status = ocfs2_inode_lock(inode_alloc, &bh, 0);
+ 		if (status < 0) {
+ 			mlog_errno(status);
 -- 
 2.20.1
 
