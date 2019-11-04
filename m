@@ -2,80 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918ACEE498
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C92EE46D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbfKDQY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:24:27 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52526 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729122AbfKDQY0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:24:26 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA4GOJYc048603;
-        Mon, 4 Nov 2019 10:24:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572884659;
-        bh=h7fAAmgCYgA9BJLRQcWv51AQbcBIhG2REXp2EloKlLk=;
-        h=From:To:CC:Subject:Date;
-        b=of2Rqi1epxBgHInzi0tATDyTD5PG/Jj1KwpJH1g43fN6IpKV1pULiS5rs2n5VUwzl
-         bG2fiqgv4vaCt6JJ4YBjrw9uvZkYwMt+5FF2J4JiCIyAIa9bilBdRqMm52pMK1W63I
-         8mHnA2Pp9d6dkK07hcQavK/urawb/GKczlcGjNAo=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA4GOJK2055065
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Nov 2019 10:24:19 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 4 Nov
- 2019 10:24:03 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 4 Nov 2019 10:24:03 -0600
-Received: from jadmar.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA4GOGOm011098;
-        Mon, 4 Nov 2019 10:24:16 -0600
-From:   Jyri Sarha <jsarha@ti.com>
-To:     <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>
-CC:     <tomi.valkeinen@ti.com>, <colin.king@canonical.com>,
-        <treding@nvidia.com>
-Subject: [PATCH] reset: Free struct reset_control_array in reset_control_array_put()
-Date:   Mon, 4 Nov 2019 18:24:15 +0200
-Message-ID: <9c8c5c337a9351a561a4bf18f2faa1e9a01b50e6.1572884515.git.jsarha@ti.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1728863AbfKDQLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:11:02 -0500
+Received: from mga14.intel.com ([192.55.52.115]:36385 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727838AbfKDQLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 11:11:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 08:11:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,267,1569308400"; 
+   d="scan'208";a="195496809"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by orsmga008.jf.intel.com with ESMTP; 04 Nov 2019 08:10:59 -0800
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, dinguyen@kernel.org,
+        richard.gong@intel.com
+Subject: [PATCHv3] firmware: Fix incompatible function behavior for RSU driver
+Date:   Mon,  4 Nov 2019 10:24:36 -0600
+Message-Id: <1572884676-1385-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix memory leak in devm_reset_control_array_get(). Free also the
-struct reset_control_array pointer in reset_control_array_put() not
-only the reset-controls stored in it.
+From: Richard Gong <richard.gong@intel.com>
 
-Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
+The older versions of remote system update (RSU) firmware don't support
+retry and notify features then the kernel module dies when it queries
+the RSU retry counter or performs notify operation.
+
+Update the Intel service layer and RSU drivers to be compatible with
+all versions of RSU firmware.
+
+Reported-by: Radu Barcau <radu.bacrau@intel.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Richard Gong <richard.gong@intel.com>
 ---
- drivers/reset/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2: update commit messages
+v3: fix 2 build warnings reported by test robot
+---
+ drivers/firmware/stratix10-rsu.c                   | 42 ++++++++++------------
+ drivers/firmware/stratix10-svc.c                   | 18 +++++++++-
+ .../linux/firmware/intel/stratix10-svc-client.h    |  8 +++++
+ 3 files changed, 43 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 213ff40dda11..85d9676ee969 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -748,6 +748,8 @@ static void reset_control_array_put(struct reset_control_array *resets)
- 	for (i = 0; i < resets->num_rstcs; i++)
- 		__reset_control_put_internal(resets->rstc[i]);
- 	mutex_unlock(&reset_list_mutex);
+diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
+index bb008c0..f853333 100644
+--- a/drivers/firmware/stratix10-rsu.c
++++ b/drivers/firmware/stratix10-rsu.c
+@@ -20,7 +20,6 @@
+ #define RSU_VERSION_MASK		GENMASK_ULL(63, 32)
+ #define RSU_ERROR_LOCATION_MASK		GENMASK_ULL(31, 0)
+ #define RSU_ERROR_DETAIL_MASK		GENMASK_ULL(63, 32)
+-#define RSU_FW_VERSION_MASK		GENMASK_ULL(15, 0)
+ 
+ #define RSU_TIMEOUT	(msecs_to_jiffies(SVC_RSU_REQUEST_TIMEOUT_MS))
+ 
+@@ -109,9 +108,12 @@ static void rsu_command_callback(struct stratix10_svc_client *client,
+ {
+ 	struct stratix10_rsu_priv *priv = client->priv;
+ 
+-	if (data->status != BIT(SVC_STATUS_RSU_OK))
+-		dev_err(client->dev, "RSU returned status is %i\n",
+-			data->status);
++	if (data->status == BIT(SVC_STATUS_RSU_NO_SUPPORT))
++		dev_warn(client->dev, "Secure FW doesn't support notify\n");
++	else if (data->status == BIT(SVC_STATUS_RSU_ERROR))
++		dev_err(client->dev, "Failure, returned status is %lu\n",
++			BIT(data->status));
 +
-+	kfree(resets);
+ 	complete(&priv->completion);
  }
  
+@@ -133,9 +135,11 @@ static void rsu_retry_callback(struct stratix10_svc_client *client,
+ 
+ 	if (data->status == BIT(SVC_STATUS_RSU_OK))
+ 		priv->retry_counter = *counter;
++	else if (data->status == BIT(SVC_STATUS_RSU_NO_SUPPORT))
++		dev_warn(client->dev, "Secure FW doesn't support retry\n");
+ 	else
+-		dev_err(client->dev, "Failed to get retry counter %i\n",
+-			data->status);
++		dev_err(client->dev, "Failed to get retry counter %lu\n",
++			BIT(data->status));
+ 
+ 	complete(&priv->completion);
+ }
+@@ -333,15 +337,10 @@ static ssize_t notify_store(struct device *dev,
+ 		return ret;
+ 	}
+ 
+-	/* only 19.3 or late version FW supports retry counter feature */
+-	if (FIELD_GET(RSU_FW_VERSION_MASK, priv->status.version)) {
+-		ret = rsu_send_msg(priv, COMMAND_RSU_RETRY,
+-				   0, rsu_retry_callback);
+-		if (ret) {
+-			dev_err(dev,
+-				"Error, getting RSU retry %i\n", ret);
+-			return ret;
+-		}
++	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
++	if (ret) {
++		dev_err(dev, "Error, getting RSU retry %i\n", ret);
++		return ret;
+ 	}
+ 
+ 	return count;
+@@ -413,15 +412,10 @@ static int stratix10_rsu_probe(struct platform_device *pdev)
+ 		stratix10_svc_free_channel(priv->chan);
+ 	}
+ 
+-	/* only 19.3 or late version FW supports retry counter feature */
+-	if (FIELD_GET(RSU_FW_VERSION_MASK, priv->status.version)) {
+-		ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0,
+-				   rsu_retry_callback);
+-		if (ret) {
+-			dev_err(dev,
+-				"Error, getting RSU retry %i\n", ret);
+-			stratix10_svc_free_channel(priv->chan);
+-		}
++	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
++	if (ret) {
++		dev_err(dev, "Error, getting RSU retry %i\n", ret);
++		stratix10_svc_free_channel(priv->chan);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index b4853211..c6c3140 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -493,8 +493,24 @@ static int svc_normal_to_secure_thread(void *data)
+ 			pdata->chan->scl->receive_cb(pdata->chan->scl, cbdata);
+ 			break;
+ 		default:
+-			pr_warn("it shouldn't happen\n");
++			pr_warn("Secure firmware doesn't support...\n");
++
++			/*
++			 * be compatible with older version firmware which
++			 * doesn't support RSU notify or retry
++			 */
++			if ((pdata->command == COMMAND_RSU_RETRY) ||
++				(pdata->command == COMMAND_RSU_NOTIFY)) {
++				cbdata->status =
++					BIT(SVC_STATUS_RSU_NO_SUPPORT);
++				cbdata->kaddr1 = NULL;
++				cbdata->kaddr2 = NULL;
++				cbdata->kaddr3 = NULL;
++				pdata->chan->scl->receive_cb(
++					pdata->chan->scl, cbdata);
++			}
+ 			break;
++
+ 		}
+ 	};
+ 
+diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
+index b6c4302..59bc6e2 100644
+--- a/include/linux/firmware/intel/stratix10-svc-client.h
++++ b/include/linux/firmware/intel/stratix10-svc-client.h
+@@ -41,6 +41,12 @@
+  *
+  * SVC_STATUS_RSU_OK:
+  * Secure firmware accepts the request of remote status update (RSU).
++ *
++ * SVC_STATUS_RSU_ERROR:
++ * Error encountered during remote system update.
++ *
++ * SVC_STATUS_RSU_NO_SUPPORT:
++ * Secure firmware doesn't support RSU retry or notify feature.
+  */
+ #define SVC_STATUS_RECONFIG_REQUEST_OK		0
+ #define SVC_STATUS_RECONFIG_BUFFER_SUBMITTED	1
+@@ -50,6 +56,8 @@
+ #define SVC_STATUS_RECONFIG_ERROR		5
+ #define SVC_STATUS_RSU_OK			6
+ #define SVC_STATUS_RSU_ERROR			7
++#define SVC_STATUS_RSU_NO_SUPPORT		8
++
  /**
+  * Flag bit for COMMAND_RECONFIG
+  *
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
 
