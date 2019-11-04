@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F2FEEEB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F75EEFB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389113AbfKDWDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:03:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34176 "EHLO mail.kernel.org"
+        id S2388738AbfKDWWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389562AbfKDWDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:03:45 -0500
+        id S2388268AbfKDV4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:56:02 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8F95205C9;
-        Mon,  4 Nov 2019 22:03:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A19D021929;
+        Mon,  4 Nov 2019 21:56:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905024;
-        bh=rEw6/0ngp8Wp6WGOhAm91Smw+MfbABi+s3SIPmYgjGY=;
+        s=default; t=1572904562;
+        bh=xxDDr/zM+xU3ky0bYYZKmJYCAwy45XockdaIYNTjliU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1fg5Z2VeGF+kxQJMIqKov6UqG4Sf06p+bii+cPBwOVIz+oH9S5fbGr8i1k+z+re8N
-         eH2Drdnh1EW1/oIMYGsjDZCPBrsjUHVfGW3SWw7RsLsHIVG+6CzNTfu4a90qThBMG+
-         SKHYhdiqY869hHRFVOnpb9pcIei6cOCB19NYqL+g=
+        b=WZzHWqMkcrmVNp/lUbftWpHG5X16g0XQ2uqe2giXSWbBKIEFHQ2Bc6mqeUT15LGhF
+         IjQbkbdl961pwt2MFrac2jTdhEYYvKktuUB3mTawIODb1ulmXh/eXTiwqjtm4KOD4A
+         1M6tdepD+ZX+sVmUCJCguPmPtXh98WNN9Qd9pSA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Tony Lindgren <tony@atomide.com>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.19 132/149] dmaengine: cppi41: Fix cppi41_dma_prep_slave_sg() when idle
+        syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com,
+        Johan Hovold <johan@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.14 87/95] NFC: pn533: fix use-after-free and memleaks
 Date:   Mon,  4 Nov 2019 22:45:25 +0100
-Message-Id: <20191104212146.038294606@linuxfoundation.org>
+Message-Id: <20191104212123.415352543@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit bacdcb6675e170bb2e8d3824da220e10274f42a7 upstream.
+commit 6af3aa57a0984e061f61308fe181a9a12359fecc upstream.
 
-Yegor Yefremov <yegorslists@googlemail.com> reported that musb and ftdi
-uart can fail for the first open of the uart unless connected using
-a hub.
+The driver would fail to deregister and its class device and free
+related resources on late probe errors.
 
-This is because the first dma call done by musb_ep_program() must wait
-if cppi41 is PM runtime suspended. Otherwise musb_ep_program() continues
-with other non-dma packets before the DMA transfer is started causing at
-least ftdi uarts to fail to receive data.
-
-Let's fix the issue by waking up cppi41 with PM runtime calls added to
-cppi41_dma_prep_slave_sg() and return NULL if still idled. This way we
-have musb_ep_program() continue with PIO until cppi41 is awake.
-
-Fixes: fdea2d09b997 ("dmaengine: cppi41: Add basic PM runtime support")
-Reported-by: Yegor Yefremov <yegorslists@googlemail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable@vger.kernel.org # v4.9+
-Link: https://lore.kernel.org/r/20191023153138.23442-1-tony@atomide.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported-by: syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com
+Fixes: 32ecc75ded72 ("NFC: pn533: change order operations in dev registation")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/ti/cppi41.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/nfc/pn533/usb.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/ti/cppi41.c
-+++ b/drivers/dma/ti/cppi41.c
-@@ -585,9 +585,22 @@ static struct dma_async_tx_descriptor *c
- 	enum dma_transfer_direction dir, unsigned long tx_flags, void *context)
- {
- 	struct cppi41_channel *c = to_cpp41_chan(chan);
-+	struct dma_async_tx_descriptor *txd = NULL;
-+	struct cppi41_dd *cdd = c->cdd;
- 	struct cppi41_desc *d;
- 	struct scatterlist *sg;
- 	unsigned int i;
-+	int error;
-+
-+	error = pm_runtime_get(cdd->ddev.dev);
-+	if (error < 0) {
-+		pm_runtime_put_noidle(cdd->ddev.dev);
-+
-+		return NULL;
-+	}
-+
-+	if (cdd->is_suspended)
-+		goto err_out_not_ready;
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -559,18 +559,25 @@ static int pn533_usb_probe(struct usb_in
  
- 	d = c->desc;
- 	for_each_sg(sgl, sg, sg_len, i) {
-@@ -610,7 +623,13 @@ static struct dma_async_tx_descriptor *c
- 		d++;
- 	}
+ 	rc = pn533_finalize_setup(priv);
+ 	if (rc)
+-		goto error;
++		goto err_deregister;
  
--	return &c->txd;
-+	txd = &c->txd;
+ 	usb_set_intfdata(interface, phy);
+ 
+ 	return 0;
+ 
++err_deregister:
++	pn533_unregister_device(phy->priv);
+ error:
++	usb_kill_urb(phy->in_urb);
++	usb_kill_urb(phy->out_urb);
++	usb_kill_urb(phy->ack_urb);
 +
-+err_out_not_ready:
-+	pm_runtime_mark_last_busy(cdd->ddev.dev);
-+	pm_runtime_put_autosuspend(cdd->ddev.dev);
-+
-+	return txd;
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
+ 	usb_free_urb(phy->ack_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
++	kfree(phy->ack_buffer);
+ 
+ 	return rc;
  }
- 
- static void cppi41_compute_td_desc(struct cppi41_desc *d)
 
 
