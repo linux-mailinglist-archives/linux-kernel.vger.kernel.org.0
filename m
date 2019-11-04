@@ -2,536 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00904ED7CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 03:47:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5FAAED7C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 03:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfKDCrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 3 Nov 2019 21:47:47 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36864 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbfKDCrq (ORCPT
+        id S1728991AbfKDCmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 3 Nov 2019 21:42:33 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:62601 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728850AbfKDCmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Nov 2019 21:47:46 -0500
-Received: by mail-wm1-f67.google.com with SMTP id q130so14413798wme.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2019 18:47:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=9cGr+26SuuP7VEqqq+GDz6d2bR5jxl9oMBAlWYPVZps=;
-        b=ppstoFT91rOslY1m9gVim95v5fAi6rqhPJqPWF8OXarce/jvFEerfVH8vdUbY42GaC
-         XAtMpecI/wW0qp9jheosmCdTZl7FeU0d3l++qJdHpLN7G0GEG7Uu+MxmHVyCIva9mOjD
-         a0EgLKPBwEVpuxrBhzR9WcGsKbvZOVjoRW5SH+nj+jnRTxWbr8nHTxaRaDG+0xMW46+m
-         dKlx4bK+WIeY1zH0Bm4l/2+XFHV4EXSAGzqmvk5uM4qNiqJq9PG2I5YLFy6DgYnHdsJf
-         jbMWN8oD8vPZrftwkDmy3cfXvcl6svYpcAj3jgRDiyfVk0AGA6L8koIv6YzKx1ueoADg
-         6RvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=9cGr+26SuuP7VEqqq+GDz6d2bR5jxl9oMBAlWYPVZps=;
-        b=rDNPHnBxX1cmVjp9bVN2yQ4JLv/iOi2rqfpMdG8NvRZwic4//rFkWouGLHrh7wEpWE
-         B3PrJ4HqY0zfcUiLXNTa0+qYtJ7ZeY0BzvkOr1H4ns/4QhhrpVc3sJMtHAv2UZRfMSpA
-         wasrzyEqIa7MNhx5atdB63MhkpHRiHTgtm8PMn7nyKHOiRBX8jA4V2VI6xEqQb77o465
-         M1top0MbLxNmph0Qb4QGuT4M1WB1mY1431NwF1upiuxI7sPedpSTxl6i0s6Yyl7vKX+N
-         tMUD5C53U6BqLW9iGLMXxwlbOlJGkMFmSXfS7FqkcxTeY7KPGLg7zhy9KOgvabQCDppC
-         LX9Q==
-X-Gm-Message-State: APjAAAU5k3S0IheFuDz3qqJj3UOrMAw3eoEJXnfyaMFz5Vf9LoOUMNjx
-        bfxMoOGWvNio3zRIiNq7aPB92Q==
-X-Google-Smtp-Source: APXvYqxo9IMxlb2DCJrk8NvdCBGdiSHkpMnWQekD07eER7eNSJ9jL8Z0dYuzXDXb9untToakOCehGA==
-X-Received: by 2002:a7b:c748:: with SMTP id w8mr17748710wmk.114.1572835661547;
-        Sun, 03 Nov 2019 18:47:41 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id j11sm11125108wrq.26.2019.11.03.18.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2019 18:47:40 -0800 (PST)
-Message-ID: <5dbf914c.1c69fb81.2e378.d927@mx.google.com>
-Date:   Sun, 03 Nov 2019 18:47:40 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 3 Nov 2019 21:42:32 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191104024230epoutp030c3c307732903fdae37ec6abc01a7aeb~T1WsVnQj30484804848epoutp03C
+        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 02:42:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191104024230epoutp030c3c307732903fdae37ec6abc01a7aeb~T1WsVnQj30484804848epoutp03C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572835350;
+        bh=Rs2gEr8eGJ5NgzXa3Z0pO2e5Rj3/ugs6+FpAD8JnSL8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=A367mhJllYVA47d955aMXaiWsl72lm9dwD3FcpNygbbdPA5GAWKn+A/VzTpIWV1XW
+         BURELkgvcYsS9OnC8VcehijtRCcv8uZHaIN8ByWe/hN/aireIL36lIoIevZ5lskd1d
+         wiov518ny4Y5p+L9UvfD+TtOTL5lWsC1y8nrx6kU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191104024230epcas1p4da07407c569c3a29abf3a6639ac27e44~T1Wr2XrJX0777807778epcas1p4N;
+        Mon,  4 Nov 2019 02:42:30 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 475xsc19kszMqYkb; Mon,  4 Nov
+        2019 02:42:28 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        81.94.04144.4109FBD5; Mon,  4 Nov 2019 11:42:28 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191104024227epcas1p3b97700a2c0993f70ac93b96c58520cd7~T1WpbadNn2000620006epcas1p3A;
+        Mon,  4 Nov 2019 02:42:27 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191104024227epsmtrp14ad00803c4709fc7224f4457988104a0~T1Wpamahp2085620856epsmtrp1k;
+        Mon,  4 Nov 2019 02:42:27 +0000 (GMT)
+X-AuditID: b6c32a35-2c7ff70000001030-65-5dbf90143a97
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3F.AD.25663.3109FBD5; Mon,  4 Nov 2019 11:42:27 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191104024227epsmtip28530c548515f2a0d7914e5256be9fdf4~T1WpJe-Lc0256902569epsmtip2v;
+        Mon,  4 Nov 2019 02:42:27 +0000 (GMT)
+Subject: Re: [PATCH v8 15/18] PM / devfreq: Add new interrupt_driven flag
+ for governors
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <f86d35dc-1749-ad29-2023-7d69366bd0d1@samsung.com>
+Date:   Mon, 4 Nov 2019 11:48:06 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: for-next
-X-Kernelci-Lab-Name: lab-baylibre
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: bisect
-X-Kernelci-Kernel: v5.4-rc4-34-gb0983a8bbfb4
-Subject: linusw/for-next boot bisection: v5.4-rc4-34-gb0983a8bbfb4 on
- r8a7795-salvator-x
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
-        mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org,
-        Scott Branden <scott.branden@broadcom.com>,
-        khilman@baylibre.com, enric.balletbo@collabora.com,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Scott Branden <sbranden@broadcom.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20191103204130.2172-16-digetx@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TeUzTcBTOry1dUae1gjyXqFjxD1BwFYeditGIOgMxJMZETQg00DDC1i3t
+        5hkTFcNhxAv/wHoj3lGMIgEMTMeCDkVR4i1eEBUv4gHxiNGVYuS/7733fe+973dQONNAmqg8
+        ySPKkuBgySFETVOsOT5ipy/DrF6n+DOfOxG/Ra0g+NbNHwx8e/1+kv9aGkB8yTeV5PvetCD+
+        yaaTJN/6OpX/UX+Q4LefvUvOHWqr7ahEtjq1w2ArLfhE2tTCRtK2vfo0sn29MC6dXJk/2y4K
+        OaIcLUrZrpw8KTeZTV2aOT/TkmTm4jkrP4ONlgSnmMympKXHL8xzhNZjo1cJDm8olS4oCjt1
+        zmzZ5fWI0XaX4klmRXeOw211JyiCU/FKuQnZLudMzmyeZgkRs/LtN2/VYO5Hk9b0bNqFb0Tf
+        xm5F4RTQ02G3vwXfioZQDF2L4Mb9soHgC4KKYBXSWAzdh6D+Z/w/RdufZwad1BAiNb/A9KAH
+        wfP7+8M01ih6Bbw/0k5ohQi6C4OGwBZCK+ChQlPdGUzDJB0HvrcPSQ2PoCfAve+d/eOM9Bw4
+        7g8aNEzQMXDx/NXQThQVSS+HG72CThkJwb1d/S3D6SRo6tyB6+2j4HHXIUzH46Hg0r5+O0CX
+        GaCjptigW0iBK52VYToeBe+uVQ/kTdC9o3AAr4dTwQCpi4sRVPvaBgSJ4DtWhmkL4XQsVNVP
+        1dMToO7XAaQPHg6fereFaRSgjVBcyOiUidD+ogPT8Rg4WlRC7kSsOsiOOsiCOsiC+n/YYUSc
+        RqNFt+LMFRXOzQ2+7Quo/+nGWWrRnltpfkRTiB1mfBvuy2DChFXKWqcfAYWzEcY75Q0ZjDFH
+        WLtOlF2ZstchKn5kCR32LtwUme0KfQTJk8lZpiUmJvLTuSQLx7FRxnknjmUwdK7gEfNF0S3K
+        /3QYFW7aiLJsZfaodglrvD0easZ2S09GPzet9sjD2SuLqj5mLZlVenLKocWXP/hbK4733UtY
+        c+d3FXk3Apt4rusmc76SWnD0u7c8ELthETHrQdG5Z3KR++WkZT2eyBWT38TMbLOCFSX3NgeW
+        BctjHqVNLmdqi0Zgh1NTFnYTJU+bXykFLY1WllDsAheHy4rwF5vwg23QAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCSvK7whP2xBg+/yFus/viY0aJl1iIW
+        i7NNb9gtLu+aw2bxufcIo0Xnl1lsFt+en2K0uN24gs3i7DNvi5+75rFY9K29xObA7bHj7hJG
+        j52z7rJ79Da/Y/OY1baPzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgyzpzbxlRwU7XifeNE
+        5gbGL7JdjJwcEgImEhf+32PvYuTiEBLYzSix6OhWNoiEpMS0i0eZuxg5gGxhicOHiyFq3jJK
+        nDn2lhWkRlggUuJz/0dGkISIwDMmiYV7dzKBJJiBEj1zt7BBdGxhlNi4fA/YVDYBLYn9L26A
+        2fwCihJXfzxmBLF5Bewklh06yQ5iswioSGzecJAZxBYViJB4vv0GVI2gxMmZT1hAbE4BM4nD
+        j/uZIZapS/yZdwnKFpe49WQ+1BHyEs1bZzNPYBSehaR9FpKWWUhaZiFpWcDIsopRMrWgODc9
+        t9iwwCgvtVyvODG3uDQvXS85P3cTIzgCtbR2MJ44EX+IUYCDUYmH9wXn/lgh1sSy4srcQ4wS
+        HMxKIrwXZ+yNFeJNSaysSi3Kjy8qzUktPsQozcGiJM4rn38sUkggPbEkNTs1tSC1CCbLxMEp
+        1cCo+kfLPu9mRdNCnVL5p99MdWzqJcvWJljk7m74PjVv6lR9l0mq+f8NlQ+/3bPXVS/DemWd
+        eGGDudKSWRsm1C++lDu5Lqzr4Zf/2zM2Sm2rEPorlXHunKZOKa/rVhaxc6aaZicnhW0JVshb
+        53D/4Fvmw0HlDfOdti1i2Wuif+C/fPH141Kye9KUWIozEg21mIuKEwG94ZJOvAIAAA==
+X-CMS-MailID: 20191104024227epcas1p3b97700a2c0993f70ac93b96c58520cd7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191103204257epcas1p4ce6f9ae729ed6cf6df1816237c80ee45
+References: <20191103204130.2172-1-digetx@gmail.com>
+        <CGME20191103204257epcas1p4ce6f9ae729ed6cf6df1816237c80ee45@epcas1p4.samsung.com>
+        <20191103204130.2172-16-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-*                                                               *
-* If you do send a fix, please include this trailer:            *
-*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-*                                                               *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Hi Dmitry,
 
-linusw/for-next boot bisection: v5.4-rc4-34-gb0983a8bbfb4 on r8a7795-salvat=
-or-x
+Sorry for the additional comment of this patch.
+I think that you better to change the 'interrupt_driven' checking
+style as following in order to keep the consistency of governor
+flag checking style.
 
-Summary:
-  Start:      b0983a8bbfb4 Merge branch 'devel' into for-next
-  Details:    https://kernelci.org/boot/id/5dbf677159b514c28c138dfe
-  Plain log:  https://storage.kernelci.org//linusw/for-next/v5.4-rc4-34-gb0=
-983a8bbfb4/arm64/defconfig/gcc-8/lab-baylibre/boot-r8a7795-salvator-x.txt
-  HTML log:   https://storage.kernelci.org//linusw/for-next/v5.4-rc4-34-gb0=
-983a8bbfb4/arm64/defconfig/gcc-8/lab-baylibre/boot-r8a7795-salvator-x.html
-  Result:     6a41b6c5fc20 gpio: Add xgs-iproc driver
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       linusw
-  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-=
-gpio.git/
-  Branch:     for-next
-  Target:     r8a7795-salvator-x
-  CPU arch:   arm64
-  Lab:        lab-baylibre
-  Compiler:   gcc-8
-  Config:     defconfig
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit 6a41b6c5fc20abced88fa0eed42ae5e5cb70b280
-Author: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Date:   Fri Oct 25 09:27:03 2019 +1300
-
-    gpio: Add xgs-iproc driver
-    =
-
-    This driver supports the Chip Common A GPIO controller present on a
-    number of Broadcom switch ASICs with integrated SoCs. The controller is
-    similar to the pinctrl-nsp-gpio and pinctrl-iproc-gpio blocks but
-    different enough that a separate driver is required.
-    =
-
-    This has been ported from Broadcom's XLDK 5.0.3 retaining only the CCA
-    support (pinctrl-iproc-gpio covers CCB).
-    =
-
-    Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-    Link: https://lore.kernel.org/r/20191024202703.8017-3-chris.packham@all=
-iedtelesis.co.nz
-    Acked-by: Scott Branden <scott.branden@broadcom.com>
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8ec1f041c98d..e9516393c971 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -155,6 +155,15 @@ config GPIO_BCM_KONA
- 	help
- 	  Turn on GPIO support for Broadcom "Kona" chips.
- =
-
-+config GPIO_BCM_XGS_IPROC
-+	tristate "BRCM XGS iProc GPIO support"
-+	depends on OF_GPIO && (ARCH_BCM_IPROC || COMPILE_TEST)
-+	select GPIO_GENERIC
-+	select GPIOLIB_IRQCHIP
-+	default ARCH_BCM_IPROC
-+	help
-+	  Say yes here to enable GPIO support for Broadcom XGS iProc SoCs.
-+
- config GPIO_BRCMSTB
- 	tristate "BRCMSTB GPIO support"
- 	default y if (ARCH_BRCMSTB || BMIPS_GENERIC)
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 84e05701f500..34eb8b2b12dd 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_GPIO_ASPEED)		+=3D gpio-aspeed.o
- obj-$(CONFIG_GPIO_ASPEED_SGPIO)		+=3D gpio-aspeed-sgpio.o
- obj-$(CONFIG_GPIO_ATH79)		+=3D gpio-ath79.o
- obj-$(CONFIG_GPIO_BCM_KONA)		+=3D gpio-bcm-kona.o
-+obj-$(CONFIG_GPIO_BCM_XGS_IPROC)	+=3D gpio-xgs-iproc.o
- obj-$(CONFIG_GPIO_BD70528)		+=3D gpio-bd70528.o
- obj-$(CONFIG_GPIO_BD9571MWV)		+=3D gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BRCMSTB)		+=3D gpio-brcmstb.o
-diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
-new file mode 100644
-index 000000000000..a3fdd95cc9e6
---- /dev/null
-+++ b/drivers/gpio/gpio-xgs-iproc.c
-@@ -0,0 +1,321 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 Broadcom
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+
-+#define IPROC_CCA_INT_F_GPIOINT		BIT(0)
-+#define IPROC_CCA_INT_STS		0x20
-+#define IPROC_CCA_INT_MASK		0x24
-+
-+#define IPROC_GPIO_CCA_DIN		0x0
-+#define IPROC_GPIO_CCA_DOUT		0x4
-+#define IPROC_GPIO_CCA_OUT_EN		0x8
-+#define IPROC_GPIO_CCA_INT_LEVEL	0x10
-+#define IPROC_GPIO_CCA_INT_LEVEL_MASK	0x14
-+#define IPROC_GPIO_CCA_INT_EVENT	0x18
-+#define IPROC_GPIO_CCA_INT_EVENT_MASK	0x1C
-+#define IPROC_GPIO_CCA_INT_EDGE		0x24
-+
-+struct iproc_gpio_chip {
-+	struct irq_chip irqchip;
-+	struct gpio_chip gc;
-+	spinlock_t lock;
-+	struct device *dev;
-+	void __iomem *base;
-+	void __iomem *intr;
-+};
-+
-+static inline struct iproc_gpio_chip *
-+to_iproc_gpio(struct gpio_chip *gc)
-+{
-+	return container_of(gc, struct iproc_gpio_chip, gc);
-+}
-+
-+static void iproc_gpio_irq_ack(struct irq_data *d)
-+{
-+	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-+	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
-+	int pin =3D d->hwirq;
-+	unsigned long flags;
-+	u32 irq =3D d->irq;
-+	u32 irq_type, event_status =3D 0;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	irq_type =3D irq_get_trigger_type(irq);
-+	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
-+		event_status |=3D BIT(pin);
-+		writel_relaxed(event_status,
-+			       chip->base + IPROC_GPIO_CCA_INT_EVENT);
-+	}
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+}
-+
-+static void iproc_gpio_irq_unmask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-+	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
-+	int pin =3D d->hwirq;
-+	unsigned long flags;
-+	u32 irq =3D d->irq;
-+	u32 int_mask, irq_type, event_mask;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	irq_type =3D irq_get_trigger_type(irq);
-+	event_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
-+	int_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
-+
-+	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
-+		event_mask |=3D 1 << pin;
-+		writel_relaxed(event_mask,
-+			       chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
-+	} else {
-+		int_mask |=3D 1 << pin;
-+		writel_relaxed(int_mask,
-+			       chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
-+	}
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+}
-+
-+static void iproc_gpio_irq_mask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-+	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
-+	int pin =3D d->hwirq;
-+	unsigned long flags;
-+	u32 irq =3D d->irq;
-+	u32 irq_type, int_mask, event_mask;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	irq_type =3D irq_get_trigger_type(irq);
-+	event_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
-+	int_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
-+
-+	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
-+		event_mask &=3D ~BIT(pin);
-+		writel_relaxed(event_mask,
-+			       chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
-+	} else {
-+		int_mask &=3D ~BIT(pin);
-+		writel_relaxed(int_mask,
-+			       chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
-+	}
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+}
-+
-+static int iproc_gpio_irq_set_type(struct irq_data *d, u32 type)
-+{
-+	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-+	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
-+	int pin =3D d->hwirq;
-+	unsigned long flags;
-+	u32 irq =3D d->irq;
-+	u32 event_pol, int_pol;
-+	int ret =3D 0;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		event_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EDGE);
-+		event_pol &=3D ~BIT(pin);
-+		writel_relaxed(event_pol, chip->base + IPROC_GPIO_CCA_INT_EDGE);
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		event_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EDGE);
-+		event_pol |=3D BIT(pin);
-+		writel_relaxed(event_pol, chip->base + IPROC_GPIO_CCA_INT_EDGE);
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		int_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
-+		int_pol &=3D ~BIT(pin);
-+		writel_relaxed(int_pol, chip->base + IPROC_GPIO_CCA_INT_LEVEL);
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		int_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
-+		int_pol |=3D BIT(pin);
-+		writel_relaxed(int_pol, chip->base + IPROC_GPIO_CCA_INT_LEVEL);
-+		break;
-+	default:
-+		/* should not come here */
-+		ret =3D -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	if (type & IRQ_TYPE_LEVEL_MASK)
-+		irq_set_handler_locked(irq_get_irq_data(irq), handle_level_irq);
-+	else if (type & IRQ_TYPE_EDGE_BOTH)
-+		irq_set_handler_locked(irq_get_irq_data(irq), handle_edge_irq);
-+
-+out_unlock:
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+
-+	return ret;
-+}
-+
-+static irqreturn_t iproc_gpio_irq_handler(int irq, void *data)
-+{
-+	struct gpio_chip *gc =3D (struct gpio_chip *)data;
-+	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
-+	int bit;
-+	unsigned long int_bits =3D 0;
-+	u32 int_status;
-+
-+	/* go through the entire GPIOs and handle all interrupts */
-+	int_status =3D readl_relaxed(chip->intr + IPROC_CCA_INT_STS);
-+	if (int_status & IPROC_CCA_INT_F_GPIOINT) {
-+		u32 event, level;
-+
-+		/* Get level and edge interrupts */
-+		event =3D
-+		    readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
-+		event &=3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT);
-+		level =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_DIN);
-+		level ^=3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
-+		level &=3D
-+		    readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
-+		int_bits =3D level | event;
-+
-+		for_each_set_bit(bit, &int_bits, gc->ngpio)
-+			generic_handle_irq(irq_linear_revmap(gc->irq.domain, bit));
-+	}
-+
-+	return int_bits ? IRQ_HANDLED : IRQ_NONE;
-+}
-+
-+static int iproc_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct device_node *dn =3D pdev->dev.of_node;
-+	struct iproc_gpio_chip *chip;
-+	u32 num_gpios;
-+	int irq, ret;
-+
-+	chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->dev =3D dev;
-+	platform_set_drvdata(pdev, chip);
-+	spin_lock_init(&chip->lock);
-+
-+	chip->base =3D devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(chip->base))
-+		return PTR_ERR(chip->base);
-+
-+	ret =3D bgpio_init(&chip->gc, dev, 4,
-+			 chip->base + IPROC_GPIO_CCA_DIN,
-+			 chip->base + IPROC_GPIO_CCA_DOUT,
-+			 NULL,
-+			 chip->base + IPROC_GPIO_CCA_OUT_EN,
-+			 NULL,
-+			 0);
-+	if (ret) {
-+		dev_err(dev, "unable to init GPIO chip\n");
-+		return ret;
-+	}
-+
-+	chip->gc.label =3D dev_name(dev);
-+	if (of_property_read_u32(dn, "ngpios", &num_gpios))
-+		chip->gc.ngpio =3D num_gpios;
-+
-+	irq =3D platform_get_irq(pdev, 0);
-+	if (irq > 0) {
-+		struct gpio_irq_chip *girq;
-+		struct irq_chip *irqc;
-+		u32 val;
-+
-+		irqc =3D &chip->irqchip;
-+		irqc->name =3D dev_name(dev);
-+		irqc->irq_ack =3D iproc_gpio_irq_ack;
-+		irqc->irq_mask =3D iproc_gpio_irq_mask;
-+		irqc->irq_unmask =3D iproc_gpio_irq_unmask;
-+		irqc->irq_set_type =3D iproc_gpio_irq_set_type;
-+
-+		chip->intr =3D devm_platform_ioremap_resource(pdev, 1);
-+		if (IS_ERR(chip->intr))
-+			return PTR_ERR(chip->intr);
-+
-+		/* Enable GPIO interrupts for CCA GPIO */
-+		val =3D readl_relaxed(chip->intr + IPROC_CCA_INT_MASK);
-+		val |=3D IPROC_CCA_INT_F_GPIOINT;
-+		writel_relaxed(val, chip->intr + IPROC_CCA_INT_MASK);
-+
-+		/*
-+		 * Directly request the irq here instead of passing
-+		 * a flow-handler to gpiochip_set_chained_irqchip,
-+		 * because the irq is shared.
-+		 */
-+		ret =3D devm_request_irq(dev, irq, iproc_gpio_irq_handler,
-+				       IRQF_SHARED, chip->gc.label, &chip->gc);
-+		if (ret) {
-+			dev_err(dev, "Fail to request IRQ%d: %d\n", irq, ret);
-+			return ret;
-+		}
-+
-+		girq =3D &chip->gc.irq;
-+		girq->chip =3D irqc;
-+		/* This will let us handle the parent IRQ in the driver */
-+		girq->parent_handler =3D NULL;
-+		girq->num_parents =3D 0;
-+		girq->parents =3D NULL;
-+		girq->default_type =3D IRQ_TYPE_NONE;
-+		girq->handler =3D handle_simple_irq;
-+	}
-+
-+	ret =3D devm_gpiochip_add_data(dev, &chip->gc, chip);
-+	if (ret) {
-+		dev_err(dev, "unable to add GPIO chip\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __exit iproc_gpio_remove(struct platform_device *pdev)
-+{
-+	struct iproc_gpio_chip *chip;
-+
-+	chip =3D platform_get_drvdata(pdev);
-+	if (!chip)
-+		return -ENODEV;
-+
-+	if (chip->intr) {
-+		u32 val;
-+
-+		val =3D readl_relaxed(chip->intr + IPROC_CCA_INT_MASK);
-+		val &=3D ~IPROC_CCA_INT_F_GPIOINT;
-+		writel_relaxed(val, chip->intr + IPROC_CCA_INT_MASK);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bcm_iproc_gpio_of_match[] __initconst =3D=
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 27de8ddeaaa8..fe409fc1bcc4 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -410,9 +410,11 @@ static void devfreq_monitor(struct work_struct *work)
+  */
+ void devfreq_monitor_start(struct devfreq *devfreq)
  {
-+	{ .compatible =3D "brcm,iproc-gpio-cca" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, bcm_iproc_gpio_of_match);
++       if (devfreq->governor->interrupt_driven)
++               return;
 +
-+static struct platform_driver bcm_iproc_gpio_driver =3D {
-+	.driver =3D {
-+		.name =3D "iproc-xgs-gpio",
-+		.owner =3D THIS_MODULE,
-+		.of_match_table =3D bcm_iproc_gpio_of_match,
-+	},
-+	.probe =3D iproc_gpio_probe,
-+	.remove =3D iproc_gpio_remove,
-+};
+        INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+        if (devfreq->profile->polling_ms &&
+-           !devfreq->governor->interrupt_driven)
+                queue_delayed_work(devfreq_wq, &devfreq->work,
+                        msecs_to_jiffies(devfreq->profile->polling_ms));
+ }
+@@ -475,12 +477,15 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+        if (!devfreq->stop_polling)
+                goto out;
+ 
++       if (devfreq->governor->interrupt_driven)
++               goto out_update;
 +
-+module_platform_driver(bcm_iproc_gpio_driver);
-+
-+MODULE_DESCRIPTION("XGS IPROC GPIO driver");
-+MODULE_LICENSE("GPL v2");
----------------------------------------------------------------------------=
-----
+        if (!delayed_work_pending(&devfreq->work) &&
+                        devfreq->profile->polling_ms &&
+-                       !devfreq->governor->interrupt_driven)
+                queue_delayed_work(devfreq_wq, &devfreq->work,
+                        msecs_to_jiffies(devfreq->profile->polling_ms));
+ 
++out_update:
+        devfreq->last_stat_updated = jiffies;
+        devfreq->stop_polling = false;
 
 
-Git bisection log:
+If you edit it as following, feel free to add my reviewed-by tag:
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [7d194c2100ad2a6dded545887d02754948ca5241] Linux 5.4-rc4
-git bisect good 7d194c2100ad2a6dded545887d02754948ca5241
-# bad: [b0983a8bbfb45d16760b34c23436a3d9b5834dbf] Merge branch 'devel' into=
- for-next
-git bisect bad b0983a8bbfb45d16760b34c23436a3d9b5834dbf
-# good: [698b8eeaed7287970fc2b6d322618850fd1b1e6c] gpio/mpc8xxx: change irq=
- handler from chained to normal
-git bisect good 698b8eeaed7287970fc2b6d322618850fd1b1e6c
-# good: [ac4062aa6c811db89ee3bbfd3101af931a50c1ba] gpio: 104-idi-48e: make =
-array register_offset static, makes object smaller
-git bisect good ac4062aa6c811db89ee3bbfd3101af931a50c1ba
-# good: [d57eb825e0dc6f0b5be78251d69cbf1bdd1db622] gpio: Add RDA Micro GPIO=
- controller support
-git bisect good d57eb825e0dc6f0b5be78251d69cbf1bdd1db622
-# bad: [6a41b6c5fc20abced88fa0eed42ae5e5cb70b280] gpio: Add xgs-iproc driver
-git bisect bad 6a41b6c5fc20abced88fa0eed42ae5e5cb70b280
-# good: [1dfc462a54386d8467ff427ef900f553e2e470e3] dt-bindings: gpio: brcm:=
- Add bindings for xgs-iproc
-git bisect good 1dfc462a54386d8467ff427ef900f553e2e470e3
-# first bad commit: [6a41b6c5fc20abced88fa0eed42ae5e5cb70b280] gpio: Add xg=
-s-iproc driver
----------------------------------------------------------------------------=
-----
+
+On 19. 11. 4. 오전 5:41, Dmitry Osipenko wrote:
+> Currently interrupt-driven governors (like NVIDIA Tegra30 ACTMON governor)
+> are used to set polling_ms=0 in order to avoid periodic polling of device
+> status by devfreq core. This means that polling interval can't be changed
+> by userspace for such governors.
+> 
+> The new governor flag allows interrupt-driven governors to convey that
+> devfreq core shouldn't perform polling of device status and thus generic
+> devfreq polling interval could be supported by these governors now.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/devfreq.c  | 9 +++++++--
+>  drivers/devfreq/governor.h | 3 +++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index b905963cea7d..a711a76d386e 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -410,7 +410,8 @@ static void devfreq_monitor(struct work_struct *work)
+>  void devfreq_monitor_start(struct devfreq *devfreq)
+>  {
+>  	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
+> -	if (devfreq->profile->polling_ms)
+> +	if (devfreq->profile->polling_ms &&
+> +	    !devfreq->governor->interrupt_driven)
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>  }
+> @@ -474,7 +475,8 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+>  		goto out;
+>  
+>  	if (!delayed_work_pending(&devfreq->work) &&
+> -			devfreq->profile->polling_ms)
+> +			devfreq->profile->polling_ms &&
+> +			!devfreq->governor->interrupt_driven)
+>  		queue_delayed_work(devfreq_wq, &devfreq->work,
+>  			msecs_to_jiffies(devfreq->profile->polling_ms));
+>  
+> @@ -509,6 +511,9 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
+>  	if (devfreq->stop_polling)
+>  		goto out;
+>  
+> +	if (devfreq->governor->interrupt_driven)
+> +		goto out;
+> +
+>  	/* if new delay is zero, stop polling */
+>  	if (!new_delay) {
+>  		mutex_unlock(&devfreq->lock);
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index bbe5ff9fcecf..dc7533ccc3db 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -31,6 +31,8 @@
+>   * @name:		Governor's name
+>   * @immutable:		Immutable flag for governor. If the value is 1,
+>   *			this govenror is never changeable to other governor.
+> + * @interrupt_driven:	Devfreq core won't schedule polling work for this
+> + *			governor if value is set to 1.
+>   * @get_target_freq:	Returns desired operating frequency for the device.
+>   *			Basically, get_target_freq will run
+>   *			devfreq_dev_profile.get_dev_status() to get the
+> @@ -49,6 +51,7 @@ struct devfreq_governor {
+>  
+>  	const char name[DEVFREQ_NAME_LEN];
+>  	const unsigned int immutable;
+> +	const unsigned int interrupt_driven;
+>  	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
+>  	int (*event_handler)(struct devfreq *devfreq,
+>  				unsigned int event, void *data);
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
