@@ -2,123 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D791AEE68B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 869B9EE68E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbfKDRsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:48:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:37999 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbfKDRsa (ORCPT
+        id S1729460AbfKDRsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:48:47 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45228 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728012AbfKDRsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:48:30 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iRgSm-0002TJ-D2; Mon, 04 Nov 2019 18:48:24 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B6CF71C0017;
-        Mon,  4 Nov 2019 18:48:23 +0100 (CET)
-Date:   Mon, 04 Nov 2019 17:48:23 -0000
-From:   "tip-bot2 for Geert Uytterhoeven" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] clocksource/drivers/sh_mtu2: Do not loop using
- platform_get_irq_by_name()
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191016143003.28561-1-geert+renesas@glider.be>
-References: <20191016143003.28561-1-geert+renesas@glider.be>
+        Mon, 4 Nov 2019 12:48:46 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v8so12878434lfa.12
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 09:48:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CerRZqVW5KD7h9g62jmCWoCx6bdHOPRVAdr0IAwl3q4=;
+        b=S1XZp68j+Ms0VaWxxXY2vQrcslic0wHP2t2PK+Wp3XqXu8dKiItgWxUNh9UYCWgJHW
+         WmHMEpApUaFgvTAr5rh35Ofvs4kqzS55jCAhlPCmb+rrceUlL3Dzj54dDH41fdA2uQrf
+         yGTHyWv5QlxJBnXQji5LhihyLNWQclUizI+8A9Zuu4XS15bFaYxMZC1FMYMCnwcZ3n7Q
+         iPZVo/dahHCXQK1OEz6H1ERxppSBbGh6e1kxNz0hEKnWOE42P24kXk4nbk1JE97iWPkY
+         v2bai5G9Y+MIrOzTOv7KVQYikbOUCJ3tOcism5JK/OekL8C6fnG2Q5Udo4ID9imcClin
+         8JIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CerRZqVW5KD7h9g62jmCWoCx6bdHOPRVAdr0IAwl3q4=;
+        b=IlNzhnCGQDJNrzHdSWxCvnKwokJTNSko42OdHIO9vdI/dDaSLE00YiqBe/6KK7Kk13
+         PSJdY4eL08WcE3ggOZpyLQ/xBFeeT6ve41EHEde9CaF4j0ITrXG+nG44L+08xhomqfaE
+         8la0mtKMFcRpI9QCz4d+1saA2jwK00H3uXm9Skx07ZtYEKW3EgjX8lTGuUTKovqi8CUO
+         nAsvlQ5eX0wnP0yVEW2I4g9CMDEIqzbvdKlx3JikKTmm2FzTd96PvyTdnU7Y2p5Xv1yd
+         6wK6V6UN6wrTKeJPJPqwrYWcGT/YuIXmm0KeYQBgx28WeW7TABLAH6kyiZn9QDZLwaWf
+         pVfA==
+X-Gm-Message-State: APjAAAXDmaDsBcbhPByiEz23YP52A7cPaIf/fQkz86kdrT3WOs9PP3tS
+        ss9VsImZmIt2T13l93Vy9f6n5lAyimMPK/UbneUi1w==
+X-Google-Smtp-Source: APXvYqwRT7xzZik+9WmXSwJ+LXqDAPfWrYHgtQVcA4NrPPlvJ0uY0GQDNdpubQws9aQunlKscwmfGYN38gKmc5l5C14=
+X-Received: by 2002:ac2:48af:: with SMTP id u15mr17204731lfg.151.1572889724743;
+ Mon, 04 Nov 2019 09:48:44 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157288970341.29376.4277271047838734036.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
+ <1571776465-29763-3-git-send-email-thara.gopinath@linaro.org>
+ <379d23e5-79a5-9d90-0fb6-125d9be85e99@arm.com> <5DBC9C57.3040504@linaro.org>
+ <dc30ed89-6581-d99d-03bb-58ea40b74a3d@arm.com> <CAKfTPtBQ1_7ApBkAQrEBy7twohSiM3WcYa-JiHekbedR8C3EKg@mail.gmail.com>
+ <d7c590b5-f415-ecad-0e81-def9f9bc1296@arm.com>
+In-Reply-To: <d7c590b5-f415-ecad-0e81-def9f9bc1296@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 4 Nov 2019 18:48:32 +0100
+Message-ID: <CAKfTPtBAsiVemcmB6VeS9MVrO4z0qY9H6+3mh5DS-7WOOy-fdw@mail.gmail.com>
+Subject: Re: [Patch v4 2/6] sched: Add infrastructure to store and update
+ instantaneous thermal pressure
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ionela Voinescu <ionela.voinescu@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Quentin Perret <qperret@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/urgent branch of tip:
+On Mon, 4 Nov 2019 at 18:42, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>
+> On 04/11/2019 18:34, Vincent Guittot wrote:
+> > On Mon, 4 Nov 2019 at 18:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> >>
+> >> On 01/11/2019 21:57, Thara Gopinath wrote:
+> >>> On 11/01/2019 08:17 AM, Dietmar Eggemann wrote:
+> >>>> On 22.10.19 22:34, Thara Gopinath wrote:
+>
+> [...]
+>
+> >>> You still need now.All the update_*_avg apis take now as a parameter.
+> >>
+> >> You do need it for the ___update_load_sum() call inside the
+> >> foo_load_avg() functions. But that doesn't mean you have to pass it into
+> >> foo_load_avg(). Look at update_irq_load_avg() for example. We don't pass
+> >> rq->clock as now in there.
+> >
+> > update_irq_load_avg is the exception but having now as a parameter is
+> > the default behavior that update_thermal_load_avg have to follow
+>
+> Why would this be? Just so the functions have the the same parameters?
 
-Commit-ID:     7693de9f7aa4e2993fbd7094863304be6a4bbe16
-Gitweb:        https://git.kernel.org/tip/7693de9f7aa4e2993fbd7094863304be6a4bbe16
-Author:        Geert Uytterhoeven <geert+renesas@glider.be>
-AuthorDate:    Wed, 16 Oct 2019 16:30:03 +02:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Fri, 18 Oct 2019 07:55:16 +02:00
+That's the default behavior to keep all pelt function to behave
+similarly and keep outside what is not strictly related to pelt so it
+will ease any further modification
+sched_thermal_decay_coeff is not a pelt parameter but a thermal one
+irq_avg is an exception not the default behavior to follow
 
-clocksource/drivers/sh_mtu2: Do not loop using platform_get_irq_by_name()
-
-As platform_get_irq_by_name() now prints an error when the interrupt
-does not exist, looping over possibly non-existing interrupts causes the
-printing of scary messages like:
-
-    sh_mtu2 fcff0000.timer: IRQ tgi1a not found
-    sh_mtu2 fcff0000.timer: IRQ tgi2a not found
-
-Fix this by using the platform_irq_count() helper, to avoid touching
-non-existent interrupts.  Limit the returned number of interrupts to the
-maximum number of channels currently supported by the driver in a
-future-proof way, i.e. using ARRAY_SIZE() instead of a hardcoded number.
-
-Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191016143003.28561-1-geert+renesas@glider.be
----
- drivers/clocksource/sh_mtu2.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clocksource/sh_mtu2.c b/drivers/clocksource/sh_mtu2.c
-index 354b27d..62812f8 100644
---- a/drivers/clocksource/sh_mtu2.c
-+++ b/drivers/clocksource/sh_mtu2.c
-@@ -328,12 +328,13 @@ static int sh_mtu2_register(struct sh_mtu2_channel *ch, const char *name)
- 	return 0;
- }
- 
-+static const unsigned int sh_mtu2_channel_offsets[] = {
-+	0x300, 0x380, 0x000,
-+};
-+
- static int sh_mtu2_setup_channel(struct sh_mtu2_channel *ch, unsigned int index,
- 				 struct sh_mtu2_device *mtu)
- {
--	static const unsigned int channel_offsets[] = {
--		0x300, 0x380, 0x000,
--	};
- 	char name[6];
- 	int irq;
- 	int ret;
-@@ -356,7 +357,7 @@ static int sh_mtu2_setup_channel(struct sh_mtu2_channel *ch, unsigned int index,
- 		return ret;
- 	}
- 
--	ch->base = mtu->mapbase + channel_offsets[index];
-+	ch->base = mtu->mapbase + sh_mtu2_channel_offsets[index];
- 	ch->index = index;
- 
- 	return sh_mtu2_register(ch, dev_name(&mtu->pdev->dev));
-@@ -408,7 +409,12 @@ static int sh_mtu2_setup(struct sh_mtu2_device *mtu,
- 	}
- 
- 	/* Allocate and setup the channels. */
--	mtu->num_channels = 3;
-+	ret = platform_irq_count(pdev);
-+	if (ret < 0)
-+		goto err_unmap;
-+
-+	mtu->num_channels = min_t(unsigned int, ret,
-+				  ARRAY_SIZE(sh_mtu2_channel_offsets));
- 
- 	mtu->channels = kcalloc(mtu->num_channels, sizeof(*mtu->channels),
- 				GFP_KERNEL);
+>
+> In this case you could argue that update_irq_load_avg() has to pass in
+> rq->clock as now.
+>
+> >> -int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
+> >> +extern int sched_thermal_decay_coeff;
+> >> +
+> >> +int update_thermal_load_avg(struct rq *rq, u64 capacity)
+> >>  {
+> >> +       u64 now = rq_clock_task(rq) >> sched_thermal_decay_coeff;
+> >> +
+> >>         if (___update_load_sum(now, &rq->avg_thermal,
+> >>                                capacity,
+> >>                                capacity,
