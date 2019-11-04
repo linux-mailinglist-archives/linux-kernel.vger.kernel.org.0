@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFE2EEF08
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA0FEEFA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:23:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390084AbfKDWSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:18:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59492 "EHLO mail.kernel.org"
+        id S2387985AbfKDVyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:54:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389040AbfKDWBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:01:24 -0500
+        id S2387971AbfKDVye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:54:34 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B779E20650;
-        Mon,  4 Nov 2019 22:01:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 878FD217F4;
+        Mon,  4 Nov 2019 21:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904883;
-        bh=+RXZgY1pNTGvQ+1526ck6j6FRsdHz9lJ0dRvajUZKyc=;
+        s=default; t=1572904474;
+        bh=vIY7s/sWc35wae5Q2HDnJ+V/vP5qanCNZjWVkgXUNS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1JGx/ZJh2uRWpTWn8xoRchMQ1jJnQ7l40mhwUCRgtjMyk7In55fTGBYzadBk9hsLe
-         fUrz0rYVTci9RlrDYzaN0YQ1W1odfKoQ7j35PY5WIEzTGxMHJX+vqKWjlXetZXCr2L
-         3VXPvQOp3mU3CoDnDUNMGCnKKjH7rLEYkvCH17DQ=
+        b=BBSSWHOxCsUtqnt57QZMo6/kS2CBAS/13/VBu6AXWxTfPRY19FyaMZ8tnP0Zz5bPP
+         6kK9fCqgiNyy1TAcV1HzNKLmcuROQw+2IydMD877iGgpWQMhK0UQExFKY30LeAEtqa
+         kRXEgM4uCyfA7phJquWh14Mae8KGi+S5iAdeJv2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org,
+        syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Zubin Mithra <zsm@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 104/149] iwlwifi: exclude GEO SAR support for 3168
+Subject: [PATCH 4.14 59/95] net_sched: check cops->tcf_block in tc_bind_tclass()
 Date:   Mon,  4 Nov 2019 22:44:57 +0100
-Message-Id: <20191104212143.753643439@linuxfoundation.org>
+Message-Id: <20191104212106.949412581@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +49,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 12e36d98d3e5acf5fc57774e0a15906d55f30cb9 ]
+commit 8b142a00edcf8422ca48b8de88d286efb500cb53 upstream
 
-We currently support two NICs in FW version 29, namely 7265D and 3168.
-Out of these, only 7265D supports GEO SAR, so adjust the function that
-checks for it accordingly.
+At least sch_red and sch_tbf don't implement ->tcf_block()
+while still have a non-zero tc "class".
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Fixes: f5a47fae6aa3 ("iwlwifi: mvm: fix version check for GEO_TX_POWER_LIMIT support")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Instead of adding nop implementations to each of such qdisc's,
+we can just relax the check of cops->tcf_block() in
+tc_bind_tclass(). They don't support TC filter anyway.
+
+Reported-by: syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ net/sched/sch_api.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index 9cb9f0544c9b1..2eba6d6f367f8 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -843,15 +843,17 @@ static bool iwl_mvm_sar_geo_support(struct iwl_mvm *mvm)
- 	 * firmware versions.  Unfortunately, we don't have a TLV API
- 	 * flag to rely on, so rely on the major version which is in
- 	 * the first byte of ucode_ver.  This was implemented
--	 * initially on version 38 and then backported to29 and 17.
--	 * The intention was to have it in 36 as well, but not all
--	 * 8000 family got this feature enabled.  The 8000 family is
--	 * the only one using version 36, so skip this version
--	 * entirely.
-+	 * initially on version 38 and then backported to 17.  It was
-+	 * also backported to 29, but only for 7265D devices.  The
-+	 * intention was to have it in 36 as well, but not all 8000
-+	 * family got this feature enabled.  The 8000 family is the
-+	 * only one using version 36, so skip this version entirely.
- 	 */
- 	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 38 ||
--	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 29 ||
--	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 17;
-+	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 17 ||
-+	       (IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 29 &&
-+		((mvm->trans->hw_rev & CSR_HW_REV_TYPE_MSK) ==
-+		 CSR_HW_REV_TYPE_7265D));
- }
- 
- int iwl_mvm_get_sar_geo_profile(struct iwl_mvm *mvm)
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 637949b576c63..296e95f72eb15 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1695,6 +1695,8 @@ static void tc_bind_tclass(struct Qdisc *q, u32 portid, u32 clid,
+ 	cl = cops->find(q, portid);
+ 	if (!cl)
+ 		return;
++	if (!cops->tcf_block)
++		return;
+ 	block = cops->tcf_block(q, cl);
+ 	if (!block)
+ 		return;
 -- 
 2.20.1
 
