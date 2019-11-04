@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F80EEC4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CB6EEBE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:51:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388238AbfKDVzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51202 "EHLO mail.kernel.org"
+        id S1730632AbfKDVvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388215AbfKDVzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:49 -0500
+        id S1730616AbfKDVvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:49 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B9902053B;
-        Mon,  4 Nov 2019 21:55:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6166217F5;
+        Mon,  4 Nov 2019 21:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904548;
-        bh=UB+jO0kUGFhi/BiijCjP0OhH5lnY2+/ZkICHS8zuWLk=;
+        s=default; t=1572904308;
+        bh=3jd1QXiIJq7pwdxdFPxZxL35hTozreZSrHTnwM13H/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I/qXQlQVf/RbvpktYeytJvUNzFzFXTS67XcRLp3vH/8LlyKy1JVLQ5Z2ww8h/SRYo
-         3sZZf5pGG2lk7G75ghWSUDWbjeo0lTtlAM+S9piXJFQFAjaDTm46KmTa6FZdCs+aO8
-         7XafasSY0bBgO855gP4Ohzj36TWDB6z1Rn8RFVqk=
+        b=pjtlbtxU9YfMjUoYoq4d91Xn5oByg13R4vssd7cmbYehFSbfauwWJ39DTAHXSLu8K
+         RziDHMsKHFxtyzDXxE1dWkaFyOEMU4eQAZpyJD0U86hZ0xKEeBYDyrmdcUGQ5tnTTM
+         shC7YWU5jtFHAh6DYjEfeCdPcrHVNp/DIns85GSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Tony Lindgren <tony@atomide.com>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.14 83/95] dmaengine: cppi41: Fix cppi41_dma_prep_slave_sg() when idle
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 59/62] ALSA: timer: Follow standard EXPORT_SYMBOL() declarations
 Date:   Mon,  4 Nov 2019 22:45:21 +0100
-Message-Id: <20191104212122.242388361@linuxfoundation.org>
+Message-Id: <20191104211959.358824279@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +43,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit bacdcb6675e170bb2e8d3824da220e10274f42a7 upstream.
+[ Upstream commit 988563929d5b65c021439880ac6bd1b207722f26 ]
 
-Yegor Yefremov <yegorslists@googlemail.com> reported that musb and ftdi
-uart can fail for the first open of the uart unless connected using
-a hub.
+Just a tidy up to follow the standard EXPORT_SYMBOL*() declarations
+in order to improve grep-ability.
 
-This is because the first dma call done by musb_ep_program() must wait
-if cppi41 is PM runtime suspended. Otherwise musb_ep_program() continues
-with other non-dma packets before the DMA transfer is started causing at
-least ftdi uarts to fail to receive data.
+- Move EXPORT_SYMBOL*() to the position right after its definition
 
-Let's fix the issue by waking up cppi41 with PM runtime calls added to
-cppi41_dma_prep_slave_sg() and return NULL if still idled. This way we
-have musb_ep_program() continue with PIO until cppi41 is awake.
-
-Fixes: fdea2d09b997 ("dmaengine: cppi41: Add basic PM runtime support")
-Reported-by: Yegor Yefremov <yegorslists@googlemail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable@vger.kernel.org # v4.9+
-Link: https://lore.kernel.org/r/20191023153138.23442-1-tony@atomide.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/cppi41.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ sound/core/timer.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
---- a/drivers/dma/cppi41.c
-+++ b/drivers/dma/cppi41.c
-@@ -585,9 +585,22 @@ static struct dma_async_tx_descriptor *c
- 	enum dma_transfer_direction dir, unsigned long tx_flags, void *context)
- {
- 	struct cppi41_channel *c = to_cpp41_chan(chan);
-+	struct dma_async_tx_descriptor *txd = NULL;
-+	struct cppi41_dd *cdd = c->cdd;
- 	struct cppi41_desc *d;
- 	struct scatterlist *sg;
- 	unsigned int i;
-+	int error;
-+
-+	error = pm_runtime_get(cdd->ddev.dev);
-+	if (error < 0) {
-+		pm_runtime_put_noidle(cdd->ddev.dev);
-+
-+		return NULL;
-+	}
-+
-+	if (cdd->is_suspended)
-+		goto err_out_not_ready;
- 
- 	d = c->desc;
- 	for_each_sg(sgl, sg, sg_len, i) {
-@@ -610,7 +623,13 @@ static struct dma_async_tx_descriptor *c
- 		d++;
- 	}
- 
--	return &c->txd;
-+	txd = &c->txd;
-+
-+err_out_not_ready:
-+	pm_runtime_mark_last_busy(cdd->ddev.dev);
-+	pm_runtime_put_autosuspend(cdd->ddev.dev);
-+
-+	return txd;
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 152254193c697..cfcc6718aafce 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -318,6 +318,7 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	*ti = timeri;
+ 	return 0;
  }
++EXPORT_SYMBOL(snd_timer_open);
  
- static void cppi41_compute_td_desc(struct cppi41_desc *d)
+ /*
+  * close a timer instance
+@@ -383,6 +384,7 @@ int snd_timer_close(struct snd_timer_instance *timeri)
+ 	mutex_unlock(&register_mutex);
+ 	return 0;
+ }
++EXPORT_SYMBOL(snd_timer_close);
+ 
+ unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
+ {
+@@ -397,6 +399,7 @@ unsigned long snd_timer_resolution(struct snd_timer_instance *timeri)
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL(snd_timer_resolution);
+ 
+ static void snd_timer_notify1(struct snd_timer_instance *ti, int event)
+ {
+@@ -588,6 +591,7 @@ int snd_timer_start(struct snd_timer_instance *timeri, unsigned int ticks)
+ 	else
+ 		return snd_timer_start1(timeri, true, ticks);
+ }
++EXPORT_SYMBOL(snd_timer_start);
+ 
+ /*
+  * stop the timer instance.
+@@ -601,6 +605,7 @@ int snd_timer_stop(struct snd_timer_instance *timeri)
+ 	else
+ 		return snd_timer_stop1(timeri, true);
+ }
++EXPORT_SYMBOL(snd_timer_stop);
+ 
+ /*
+  * start again..  the tick is kept.
+@@ -616,6 +621,7 @@ int snd_timer_continue(struct snd_timer_instance *timeri)
+ 	else
+ 		return snd_timer_start1(timeri, false, 0);
+ }
++EXPORT_SYMBOL(snd_timer_continue);
+ 
+ /*
+  * pause.. remember the ticks left
+@@ -627,6 +633,7 @@ int snd_timer_pause(struct snd_timer_instance * timeri)
+ 	else
+ 		return snd_timer_stop1(timeri, false);
+ }
++EXPORT_SYMBOL(snd_timer_pause);
+ 
+ /*
+  * reschedule the timer
+@@ -808,6 +815,7 @@ void snd_timer_interrupt(struct snd_timer * timer, unsigned long ticks_left)
+ 	if (use_tasklet)
+ 		tasklet_schedule(&timer->task_queue);
+ }
++EXPORT_SYMBOL(snd_timer_interrupt);
+ 
+ /*
+ 
+@@ -858,6 +866,7 @@ int snd_timer_new(struct snd_card *card, char *id, struct snd_timer_id *tid,
+ 		*rtimer = timer;
+ 	return 0;
+ }
++EXPORT_SYMBOL(snd_timer_new);
+ 
+ static int snd_timer_free(struct snd_timer *timer)
+ {
+@@ -977,6 +986,7 @@ void snd_timer_notify(struct snd_timer *timer, int event, struct timespec *tstam
+ 	}
+ 	spin_unlock_irqrestore(&timer->lock, flags);
+ }
++EXPORT_SYMBOL(snd_timer_notify);
+ 
+ /*
+  * exported functions for global timers
+@@ -992,11 +1002,13 @@ int snd_timer_global_new(char *id, int device, struct snd_timer **rtimer)
+ 	tid.subdevice = 0;
+ 	return snd_timer_new(NULL, id, &tid, rtimer);
+ }
++EXPORT_SYMBOL(snd_timer_global_new);
+ 
+ int snd_timer_global_free(struct snd_timer *timer)
+ {
+ 	return snd_timer_free(timer);
+ }
++EXPORT_SYMBOL(snd_timer_global_free);
+ 
+ int snd_timer_global_register(struct snd_timer *timer)
+ {
+@@ -1006,6 +1018,7 @@ int snd_timer_global_register(struct snd_timer *timer)
+ 	dev.device_data = timer;
+ 	return snd_timer_dev_register(&dev);
+ }
++EXPORT_SYMBOL(snd_timer_global_register);
+ 
+ /*
+  *  System timer
+@@ -2121,17 +2134,3 @@ static void __exit alsa_timer_exit(void)
+ 
+ module_init(alsa_timer_init)
+ module_exit(alsa_timer_exit)
+-
+-EXPORT_SYMBOL(snd_timer_open);
+-EXPORT_SYMBOL(snd_timer_close);
+-EXPORT_SYMBOL(snd_timer_resolution);
+-EXPORT_SYMBOL(snd_timer_start);
+-EXPORT_SYMBOL(snd_timer_stop);
+-EXPORT_SYMBOL(snd_timer_continue);
+-EXPORT_SYMBOL(snd_timer_pause);
+-EXPORT_SYMBOL(snd_timer_new);
+-EXPORT_SYMBOL(snd_timer_notify);
+-EXPORT_SYMBOL(snd_timer_global_new);
+-EXPORT_SYMBOL(snd_timer_global_free);
+-EXPORT_SYMBOL(snd_timer_global_register);
+-EXPORT_SYMBOL(snd_timer_interrupt);
+-- 
+2.20.1
+
 
 
