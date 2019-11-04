@@ -2,46 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2BBBEEFF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6710EEE06
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730334AbfKDVwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:52:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45392 "EHLO mail.kernel.org"
+        id S2389417AbfKDWKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbfKDVwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:52:07 -0500
+        id S2390535AbfKDWK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:26 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 860DB21E6F;
-        Mon,  4 Nov 2019 21:52:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CF712084D;
+        Mon,  4 Nov 2019 22:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904327;
-        bh=LtgV19MgtfFX69rc+LOivsTvlCGFkpIRKuEDQjfkHRQ=;
+        s=default; t=1572905424;
+        bh=dtedUUNYdKE+VVmQFQSzK9xIZLBlAcMYOmBLUMfQseY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fp0fgOUHP7k62LPhFqmxXIVvJO89biLRItFf8jD/uGyrhKj6lRFEMHTe/3ltH3xtH
-         qNMngdCADD2dCHABqx9GqJLqOU47+AoWH8pakKfDKHgmZ020O1jNOBnQJ2YQ+vJyE3
-         kKQSE+FM9G20HbBO17zDLqt6wBQW1CYKJB+oyCK4=
+        b=Z2J6hMHycPCWSa0WOzUfIu2M7mH5GTwRWxHpbo7g0juoOS0nzwoTZRf1vMq2ed+NW
+         PW8My3ugswfn4abmPxEXReJx61yJb403k+czefEYcR/eblDqDAjiqHXe8xlQRNLai6
+         bLRouRDV68MtQELS6HPZqRWWFZJRvsn4VkCAbdqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 26/62] fs: ocfs2: fix a possible null-pointer dereference in ocfs2_info_scan_inode_alloc()
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 5.3 098/163] ALSA: timer: Fix mutex deadlock at releasing card
 Date:   Mon,  4 Nov 2019 22:44:48 +0100
-Message-Id: <20191104211925.266199704@linuxfoundation.org>
+Message-Id: <20191104212147.192229503@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,58 +43,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 2abb7d3b12d007c30193f48bebed781009bebdd2 ]
+commit a39331867335d4a94b6165e306265c9e24aca073 upstream.
 
-In ocfs2_info_scan_inode_alloc(), there is an if statement on line 283
-to check whether inode_alloc is NULL:
+When a card is disconnected while in use, the system waits until all
+opened files are closed then releases the card.  This is done via
+put_device() of the card device in each device release code.
 
-    if (inode_alloc)
+The recently reported mutex deadlock bug happens in this code path;
+snd_timer_close() for the timer device deals with the global
+register_mutex and it calls put_device() there.  When this timer
+device is the last one, the card gets freed and it eventually calls
+snd_timer_free(), which has again the protection with the global
+register_mutex -- boom.
 
-When inode_alloc is NULL, it is used on line 287:
+Basically put_device() call itself is race-free, so a relative simple
+workaround is to move this put_device() call out of the mutex.  For
+achieving that, in this patch, snd_timer_close_locked() got a new
+argument to store the card device pointer in return, and each caller
+invokes put_device() with the returned object after the mutex unlock.
 
-    ocfs2_inode_lock(inode_alloc, &bh, 0);
-        ocfs2_inode_lock_full_nested(inode, ...)
-            struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+Reported-and-tested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, inode_alloc is checked on line 286.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Link: http://lkml.kernel.org/r/20190726033717.32359-1-baijiaju1990@gmail.com
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/timer.c |   24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
-index 4506ec5ec2ea6..bfc44644301ca 100644
---- a/fs/ocfs2/ioctl.c
-+++ b/fs/ocfs2/ioctl.c
-@@ -289,7 +289,7 @@ static int ocfs2_info_scan_inode_alloc(struct ocfs2_super *osb,
- 	if (inode_alloc)
- 		inode_lock(inode_alloc);
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -226,7 +226,8 @@ static int snd_timer_check_master(struct
+ 	return 0;
+ }
  
--	if (o2info_coherent(&fi->ifi_req)) {
-+	if (inode_alloc && o2info_coherent(&fi->ifi_req)) {
- 		status = ocfs2_inode_lock(inode_alloc, &bh, 0);
- 		if (status < 0) {
- 			mlog_errno(status);
--- 
-2.20.1
-
+-static int snd_timer_close_locked(struct snd_timer_instance *timeri);
++static int snd_timer_close_locked(struct snd_timer_instance *timeri,
++				  struct device **card_devp_to_put);
+ 
+ /*
+  * open a timer instance
+@@ -238,6 +239,7 @@ int snd_timer_open(struct snd_timer_inst
+ {
+ 	struct snd_timer *timer;
+ 	struct snd_timer_instance *timeri = NULL;
++	struct device *card_dev_to_put = NULL;
+ 	int err;
+ 
+ 	mutex_lock(&register_mutex);
+@@ -261,7 +263,7 @@ int snd_timer_open(struct snd_timer_inst
+ 		list_add_tail(&timeri->open_list, &snd_timer_slave_list);
+ 		err = snd_timer_check_slave(timeri);
+ 		if (err < 0) {
+-			snd_timer_close_locked(timeri);
++			snd_timer_close_locked(timeri, &card_dev_to_put);
+ 			timeri = NULL;
+ 		}
+ 		goto unlock;
+@@ -313,7 +315,7 @@ int snd_timer_open(struct snd_timer_inst
+ 			timeri = NULL;
+ 
+ 			if (timer->card)
+-				put_device(&timer->card->card_dev);
++				card_dev_to_put = &timer->card->card_dev;
+ 			module_put(timer->module);
+ 			goto unlock;
+ 		}
+@@ -323,12 +325,15 @@ int snd_timer_open(struct snd_timer_inst
+ 	timer->num_instances++;
+ 	err = snd_timer_check_master(timeri);
+ 	if (err < 0) {
+-		snd_timer_close_locked(timeri);
++		snd_timer_close_locked(timeri, &card_dev_to_put);
+ 		timeri = NULL;
+ 	}
+ 
+  unlock:
+ 	mutex_unlock(&register_mutex);
++	/* put_device() is called after unlock for avoiding deadlock */
++	if (card_dev_to_put)
++		put_device(card_dev_to_put);
+ 	*ti = timeri;
+ 	return err;
+ }
+@@ -338,7 +343,8 @@ EXPORT_SYMBOL(snd_timer_open);
+  * close a timer instance
+  * call this with register_mutex down.
+  */
+-static int snd_timer_close_locked(struct snd_timer_instance *timeri)
++static int snd_timer_close_locked(struct snd_timer_instance *timeri,
++				  struct device **card_devp_to_put)
+ {
+ 	struct snd_timer *timer = timeri->timer;
+ 	struct snd_timer_instance *slave, *tmp;
+@@ -395,7 +401,7 @@ static int snd_timer_close_locked(struct
+ 			timer->hw.close(timer);
+ 		/* release a card refcount for safe disconnection */
+ 		if (timer->card)
+-			put_device(&timer->card->card_dev);
++			*card_devp_to_put = &timer->card->card_dev;
+ 		module_put(timer->module);
+ 	}
+ 
+@@ -407,14 +413,18 @@ static int snd_timer_close_locked(struct
+  */
+ int snd_timer_close(struct snd_timer_instance *timeri)
+ {
++	struct device *card_dev_to_put = NULL;
+ 	int err;
+ 
+ 	if (snd_BUG_ON(!timeri))
+ 		return -ENXIO;
+ 
+ 	mutex_lock(&register_mutex);
+-	err = snd_timer_close_locked(timeri);
++	err = snd_timer_close_locked(timeri, &card_dev_to_put);
+ 	mutex_unlock(&register_mutex);
++	/* put_device() is called after unlock for avoiding deadlock */
++	if (card_dev_to_put)
++		put_device(card_dev_to_put);
+ 	return err;
+ }
+ EXPORT_SYMBOL(snd_timer_close);
 
 
