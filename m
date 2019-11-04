@@ -2,133 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D7D5ED8DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:11:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F315EED8D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 07:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfKDGLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 01:11:32 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16496 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfKDGLb (ORCPT
+        id S1727930AbfKDGK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 01:10:26 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39394 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKDGK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 01:11:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dbfc1190000>; Sun, 03 Nov 2019 22:11:37 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 03 Nov 2019 22:11:31 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 03 Nov 2019 22:11:31 -0800
-Received: from [10.2.168.52] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
- 2019 06:11:30 +0000
-Subject: Re: [RFC] mm: gup: add helper page_try_gup_pin(page)
-To:     Hillf Danton <hdanton@sina.com>
-CC:     linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Jan Kara <jack@suse.cz>,
-        Mel Gorman <mgorman@suse.de>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20191103112113.8256-1-hdanton@sina.com>
- <20191104043420.15648-1-hdanton@sina.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8df14660-2ce3-eda8-dc33-c4d092915656@nvidia.com>
-Date:   Sun, 3 Nov 2019 22:09:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 4 Nov 2019 01:10:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6F8B860DB2; Mon,  4 Nov 2019 06:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572847824;
+        bh=8tcOCKHQZRIcJjtP4P0n1Zbt/82iSgNJOJvKIHBc88M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=j+VsS3+p0Z72Vg9rMV7WxIUXLDiAhcOR+Z50UskGg7DaowwEJd/8nuoDeODaYW3MA
+         D2qKCh0pGjdjLloa5GuO6uGcLXWYaMVJRjim7s049vZ2GYOzt/8V/79YmmTuDKBCPT
+         MnDXOxpN8O3tHwg6nvF23XX/YwlZWzC3VEhD6tl8=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.136.17] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D865760DB1;
+        Mon,  4 Nov 2019 06:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572847823;
+        bh=8tcOCKHQZRIcJjtP4P0n1Zbt/82iSgNJOJvKIHBc88M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Hqr3aDFdURVqyEdj7QkUfbqV86NGo91ALjELqmtbJxes6vfws38wmxv0aO4xpTGd+
+         7wVeOw1fx2R7qBe8UzwfgOCxFMPuNKCUpnVcPz7ehg4CQkrwdkN8qQgqPPj/10cTWL
+         fWyZBKC36J4uUQfBmXDw9Gb5l9zdPZL4mT+QuBaI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D865760DB1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sc7180: Add SPMI PMIC arbiter
+ device
+To:     Stephen Boyd <swboyd@chromium.org>, kgunda@codeaurora.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org
+References: <20191023090219.15603-1-rnayak@codeaurora.org>
+ <20191023090219.15603-8-rnayak@codeaurora.org>
+ <5db86bb1.1c69fb81.dc254.ec0b@mx.google.com>
+ <78809ef8464c46018f3803454c1165ab@codeaurora.org>
+ <5db9a00d.1c69fb81.c3df6.04eb@mx.google.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <4a8801c0-97a3-69f9-abf7-4a74c90d40a3@codeaurora.org>
+Date:   Mon, 4 Nov 2019 11:40:18 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191104043420.15648-1-hdanton@sina.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <5db9a00d.1c69fb81.c3df6.04eb@mx.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572847897; bh=zbw7Y554hllJtnv1eRsmfK6TOZZDrBBKwtgxjnu5HG4=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=LDs+Eg5qBfLCCAS7p6r+hey7cbtxeqn05DwLQxeYdAJSXzCqVcMi82fHuKzbnRBgK
-         z5ttg8ao83mNBKR2DouQ+cKzShskuNLr2hYFNvxIpUd00QzOSZtjfz3f97BrP3wqHM
-         Z1R4Qz+5kl1sxo1QeRqz5aRYaFXSifqtCkYoRA0rM3uc6O8Gr9hlbbkleJHgtAWemU
-         svjyebwumdZ+XVprOEUbtAL1ofj8LEp63cP1IxHxpMRZAL1ohSF/j8tJCaLQrxg4uE
-         O9+8+A6nXqDhOifCtMnCJx1xn7uYeJqCz1+F/9QEKr4KShlY4B18f9XD1+cE1iG2oC
-         1cnzxaBkEAL7Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/3/19 8:34 PM, Hillf Danton wrote:
-...
+
+On 10/30/2019 8:07 PM, Stephen Boyd wrote:
+> Quoting kgunda@codeaurora.org (2019-10-29 23:06:43)
+>> On 2019-10-29 22:11, Stephen Boyd wrote:
+>>> Quoting Rajendra Nayak (2019-10-23 02:02:15)
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> index 04808a07d7da..6584ac6e6c7b 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> @@ -224,6 +224,25 @@
+>>>>                          };
+>>>>                  };
+>>>>
+>>>> +               spmi_bus: spmi@c440000 {
+>>>> +                       compatible = "qcom,spmi-pmic-arb";
+>>>> +                       reg = <0 0xc440000 0 0x1100>,
+>>>
+>>> Please pad out the registers to 8 numbers. See sdm845.
+>> Ok.. Will address it in the next series.
+>>>
+>>>> +                             <0 0xc600000 0 0x2000000>,
+>>>> +                             <0 0xe600000 0 0x100000>,
+>>>> +                             <0 0xe700000 0 0xa0000>,
+>>>> +                             <0 0xc40a000 0 0x26000>;
+>>>> +                       reg-names = "core", "chnls", "obsrvr", "intr",
+>>>> "cnfg";
+>>>> +                       interrupt-names = "periph_irq";
+>>>> +                       interrupts-extended = <&pdc 1
+>>>> IRQ_TYPE_LEVEL_HIGH>;
+>>>
+>>> This is different than sdm845. I guess pdc is working?
+>>>
+>> Yes. For SDM845 pdc controller support was not yet added. That's why
+>> still the GIC interrupt is used.
+>> Where as for SC7180 the same is added with
+>> https://lore.kernel.org/patchwork/patch/1143335/.
 >>
->> Well, as long as we're counting bits, I've taken 21 bits (!) to track
->> "gupers". :)  More accurately, I'm sharing 31 bits with get_page()...please
+>> Yes. pdc is working.
 > 
-> Would you please specify the reasoning of tracking multiple gupers
-> for a dirty page? Do you mean that it is all fine for guper-A to add
-> changes to guper-B's data without warning and vice versa?
+> Cool. The patch that adds pdc to the DT should come before this one
+> then. In reality, it would be better if it was all squashed down into
+> one big commit that just introduces the SoC file and one commit for
+> PMICs and then one commit for the idp board. Then we don't have this
+> ordering problem.
 
-It's generally OK to call get_user_pages() on a page more than once.
-And even though we are seeing some work to reduce the number of places
-in the kernel that call get_user_pages(), there are still lots of call sites.
-That means lots of combinations and situations that could result in more
-than one gup call per page.
+I'll fix the ordering issues when I respin.
+I could squash all of the patches touching the SoC dtsi, but given the
+authorship for each varies, I will keep it as is perhaps.
 
-Furthermore, there is no mechanism, convention, documentation, nor anything
-at all that attempts to enforce "for each page, get_user_pages() may only
-be called once."
-
-
-...
->>
->> I think you must have missed the many contentious debates about the
->> tension between gup-pinned pages, and writeback. File systems can't
->> just ignore writeback in all cases. This patch leads to either
->> system hangs or filesystem corruption, in the presence of long-lasting
->> gup pins.
-> 
-> The current risk of data corruption due to writeback with long-lived
-> gup references all ignored is zeroed out by detecting gup-pinned dirty
-> pages and skipping them; that may lead to problems you mention above.
-> 
-
-Here, I believe you're pointing out that the current situation in the
-kernel is already broken, with respect to fs interactions (especially
-writeback) with gup. Yes, you are correct, there is a problem.
-
-> Though I doubt anything helpful about it can be expected from fs in near
-
-Actually, fs and mm folks are working together to solve this.
-
-> future, we have options for instance that gupers periodically release
-> their references and re-pin pages after data sync the same way as the
-> current flusher does.
-> 
-
-That's one idea. I don't see it as viable, given the behavior of, say,
-a compute process running OpenCL jobs on a GPU that is connected via
-a network or Infiniband card--the idea of "pause" really looks more like
-"tear down the complicated multi-driver connection, writeback, then set it
-all up again", I suspect. (And if we could easily interrupt the job, we'd
-probably really be running with a page-fault-capable GPU plus and IB card
-that does ODP, plus HMM, and we wouldn't need to gup-pin anyway...)
-
-Anyway, this is not amenable to quick fixes, because the problem is
-a couple of missing design pieces. Which we're working on putting in.
-But meanwhile, smaller changes such as this one are just going to move
-the problems to different places, rather than solving them. So it's best
-not to do that.
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
