@@ -2,74 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0D5EE560
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68A3FEE569
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 18:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfKDRAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 12:00:09 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:49465 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727998AbfKDRAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:00:08 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iRfhR-0008Lz-89; Mon, 04 Nov 2019 17:59:29 +0100
-To:     Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: [PATCH v4 06/17] scs: add accounting
-X-PHP-Originating-Script: 0:main.inc
+        id S1728761AbfKDRBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 12:01:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727989AbfKDRBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 12:01:30 -0500
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B38D0214B2;
+        Mon,  4 Nov 2019 17:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572886888;
+        bh=+MtZPHtXKdsSw7Bm/k8kkH1yNhktHmkA+OzqMTB1qsw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TpQQFTR2EFY00egCJK1oAzh9DT7POr/CTY0WnCUAB/2BeMaio38vdV1yPDdJ7LNmt
+         NJt/IMhJUhKdGJG7+aCn1qhhoFeAnvuKXgFCt9QkUW34dqfkPqMX3Az0KdbZttCrG0
+         3Q/ZdoRCleOKx/JLAhfQoZedoB1dFhC/6hLxYWsE=
+Received: by mail-qk1-f180.google.com with SMTP id m125so18267399qkd.8;
+        Mon, 04 Nov 2019 09:01:28 -0800 (PST)
+X-Gm-Message-State: APjAAAXhazfkjG9F8cx8ZCJKXjBWP9hSwnypZw8+w67wjXD4QB2xq3WG
+        ETqWxS5Nq7F5I+A5K999YnC2RhWe2CHw1dP2jA==
+X-Google-Smtp-Source: APXvYqwgsKbRtBwlM6IP+7Jb7jCD2qb6TrBglXZcYJiaKjk035Dt56BQa7exM3fo+NyU11adG6CGbyTwxp/LndrfMFY=
+X-Received: by 2002:a37:4904:: with SMTP id w4mr17253854qka.119.1572886887790;
+ Mon, 04 Nov 2019 09:01:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 04 Nov 2019 18:08:50 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <dave.martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <CABCJKuegREpQiJCY01B_=nsNJFFCkyxxp63tQOPT=h+yAPifyA@mail.gmail.com>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191101221150.116536-1-samitolvanen@google.com>
- <20191101221150.116536-7-samitolvanen@google.com>
- <791fc70f7bcaf13a89abaee9aae52dfe@www.loen.fr>
- <CABCJKuegREpQiJCY01B_=nsNJFFCkyxxp63tQOPT=h+yAPifyA@mail.gmail.com>
-Message-ID: <5aaee4e0339daef7deadf29db9ea1747@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: samitolvanen@google.com, will@kernel.org, catalin.marinas@arm.com, rostedt@goodmis.org, mhiramat@kernel.org, ard.biesheuvel@linaro.org, dave.martin@arm.com, keescook@chromium.org, labbott@redhat.com, mark.rutland@arm.com, ndesaulniers@google.com, jannh@google.com, miguel.ojeda.sandonis@gmail.com, yamada.masahiro@socionext.com, clang-built-linux@googlegroups.com, kernel-hardening@lists.openwall.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+References: <20191028220027.251605-1-saravanak@google.com> <20191028220027.251605-5-saravanak@google.com>
+In-Reply-To: <20191028220027.251605-5-saravanak@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 4 Nov 2019 11:01:16 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJQ9siUGgmGqZnF_Wk3mVau29yVZRL_3LxFKgD8=mccQQ@mail.gmail.com>
+Message-ID: <CAL_JsqJQ9siUGgmGqZnF_Wk3mVau29yVZRL_3LxFKgD8=mccQQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] of: property: Make sure child dependencies don't
+ block probing of parent
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Len Brown <lenb@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-04 17:52, Sami Tolvanen wrote:
-> On Mon, Nov 4, 2019 at 5:13 AM Marc Zyngier <maz@kernel.org> wrote:
->> Is there any reason why you're not consistently using only one of
->> "#if IS_ENABLED(...)" or "#ifdef ...", but instead a mix of both?
+On Mon, Oct 28, 2019 at 5:00 PM Saravana Kannan <saravanak@google.com> wrote:
 >
-> This is to match the style already used in each file. For example,
-> fs/proc/meminfo.c uses #ifdef for other configs in the same function,
-> and include/linux/mmzone.h uses #if IS_ENABLED(...).
+> When creating device links to proxy the sync_state() needs of child
+> dependencies, create SYNC_STATE_ONLY device links so that children
+> dependencies don't block probing of the parent.
+>
+> Also, differentiate between missing suppliers of parent device vs
+> missing suppliers of child devices so that driver core doesn't block
+> parent device probing when only child supplier dependencies are missing.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/of/property.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 
-Ah, fair enough.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+One nit below:
+
+>
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 2808832b2e86..f16f85597ccc 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1032,10 +1032,10 @@ static bool of_is_ancestor_of(struct device_node *test_ancestor,
+>   * - -EINVAL if the supplier link is invalid and should not be created
+>   * - -ENODEV if there is no device that corresponds to the supplier phandle
+>   */
+> -static int of_link_to_phandle(struct device *dev, struct device_node *sup_np)
+> +static int of_link_to_phandle(struct device *dev, struct device_node *sup_np,
+> +                             u32 dl_flags)
+>  {
+>         struct device *sup_dev;
+> -       u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+>         int ret = 0;
+>         struct device_node *tmp_np = sup_np;
+>
+> @@ -1195,13 +1195,20 @@ static int of_link_property(struct device *dev, struct device_node *con_np,
+>         unsigned int i = 0;
+>         bool matched = false;
+>         int ret = 0;
+> +       u32 dl_flags;
+> +
+> +       if (dev->of_node == con_np)
+> +               dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+> +       else
+> +               dl_flags = DL_FLAG_SYNC_STATE_ONLY;
+>
+>         /* Do not stop at first failed link, link all available suppliers. */
+>         while (!matched && s->parse_prop) {
+>                 while ((phandle = s->parse_prop(con_np, prop_name, i))) {
+>                         matched = true;
+>                         i++;
+> -                       if (of_link_to_phandle(dev, phandle) == -EAGAIN)
+> +                       if (of_link_to_phandle(dev, phandle, dl_flags)
+> +                                                               == -EAGAIN)
+
+nit: I'd just keep this one line or at least move '==' up.
+
+>                                 ret = -EAGAIN;
+>                         of_node_put(phandle);
+>                 }
+> @@ -1219,10 +1226,10 @@ static int of_link_to_suppliers(struct device *dev,
+>
+>         for_each_property_of_node(con_np, p)
+>                 if (of_link_property(dev, con_np, p->name))
+> -                       ret = -EAGAIN;
+> +                       ret = -ENODEV;
+>
+>         for_each_child_of_node(con_np, child)
+> -               if (of_link_to_suppliers(dev, child))
+> +               if (of_link_to_suppliers(dev, child) && !ret)
+>                         ret = -EAGAIN;
+>
+>         return ret;
+> --
+> 2.24.0.rc0.303.g954a862665-goog
+>
