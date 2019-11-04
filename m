@@ -2,106 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31EB8EDD16
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36708EDD29
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfKDKz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:55:59 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44784 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728663AbfKDKz5 (ORCPT
+        id S1728558AbfKDK62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:58:28 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36732 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbfKDK61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:55:57 -0500
-Received: by mail-qt1-f194.google.com with SMTP id o11so18150681qtr.11;
-        Mon, 04 Nov 2019 02:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=rvo1SHxB9nVYQAjRXc27dF5Hg8RmRrQzx7MdaM7VmNk=;
-        b=dXKI99YzHJ7cWkZ1hQUuEdTfaXZk3kat6uEDvhwPD2N/VlwI2UQ3sKAOIdf9qiBcMg
-         k9VB6gsJ6VAE3AytNwdOQsiWAMB5DdQLECd+WxBntCp+DgW/Cfe7y85m0/RG7DwYGym8
-         r+FSwc1ame1Yi5RWV+mHOyrv0cie3RRmdR1YEoC4qOHQSdKlIhmgpPsFg8fRpC/F40Sx
-         5lNnEn9I37pYzOKr+Sicerj7F2oWnK1nQLMbNNTQ7MVcz+52fb2wKt8BJ4yf7arot2GO
-         Ptqombc87PyDNOZkDRGRXwh1w6CZb3yLl9MfK883ERE+aX6atclJVojBr6MgPEP18EY6
-         5yUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=rvo1SHxB9nVYQAjRXc27dF5Hg8RmRrQzx7MdaM7VmNk=;
-        b=oZAGDphXl8JdFfy82aEODNcPbcHM5YUItowCOu40czoLPcTjWcEmkEmzXxlu0tjS6X
-         q3UiAgGSbUC9sraFsIbTkF9ROthclxrNCsRqnfsGJQUfJ9kX1WTYFh1NLhz5xfCcc4kY
-         Z4HGFDF/j7NahSnVPHYLwsNt5yw7mJPKtAgsw0JQBRLTY9VIrei2rbvYApDj7/jBieTi
-         IEqdfQjGkpBr7c48fvLr0bIHHfpT8azKJzmRaaqqXuTB68RdiCNYLY62VVDjcgTbFe8I
-         Zzlwrx9tKOJxxHHSyj41QjdENlKUn2SFSBYsi9uuNiU6aSYJFnRtaDqHja59i0cCz2S5
-         Nyeg==
-X-Gm-Message-State: APjAAAXz40v/oHFsaeBFmaoRSKBScBujw6HKkzrnbtzfR7Qb6BhT/hxb
-        L9V7Z+pexSosnTwnPB/9cTnrRAAh0MaYKWwyN+lF9Fg885I=
-X-Google-Smtp-Source: APXvYqygXMl4HsPWL+b5uxs86pmRyBHmjRYiwkZDhTm8Pg+KmODCvvi3F+xSQaJ5/4Ihk1T7mz8m3DcVaUj1jA5EIX0=
-X-Received: by 2002:ac8:23d3:: with SMTP id r19mr12004769qtr.297.1572864955304;
- Mon, 04 Nov 2019 02:55:55 -0800 (PST)
+        Mon, 4 Nov 2019 05:58:27 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4AtrM6192477;
+        Mon, 4 Nov 2019 10:58:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=4Huoh6wIugbFZjm22QuBBMKrcUJPLMn8KTchxHNOYUs=;
+ b=Us4rdO0EZAqnQE6q0ebNjGiLk/WCjwlneykewTNpgc7fSmdinOhKH/ZQeXpBmQOxxi7J
+ 51gnEg3dU75yEIGmH5ni4BnLMp5p2dNq0oyY6eqSyLUrBL7gc4XXdT3eKg65IQqgiNsl
+ 98ahwAuAyY8CqGaT4c+ITllsOKkqByJrJNr0yMTFTW4vGIBM+ezl/9Jl+ss9SwIIv7Ca
+ 30D6y0HsjcePt7sGVfu1Sv+TMS7GTmGSXFsqNW2ZfZDJQQFZx4Gu7/HX6tXyl7g6lIwZ
+ H1GmnuusRDTQa4uRFSAiWkAzNBYYVClL7XOv2VD8KodLu/ZSPyWg3smrrldWf8AKcdiU uQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2w12eqxa8e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 10:58:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4AssUd142627;
+        Mon, 4 Nov 2019 10:56:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2w1kxd1qcm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 10:56:20 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA4AuJ7s000754;
+        Mon, 4 Nov 2019 10:56:19 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Nov 2019 02:56:19 -0800
+Date:   Mon, 4 Nov 2019 13:56:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/10] staging: exfat: Clean up return codes -
+ FFS_SUCCESS
+Message-ID: <20191104105612.GG21796@kadam>
+References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
+ <20191104014510.102356-8-Valdis.Kletnieks@vt.edu>
+ <20191104100413.GC10409@kadam>
+ <128761.1572864835@turing-police>
 MIME-Version: 1.0
-References: <CAPW-Pu0KuxqbKSQ2JQaxh5AHbdZdNQZJfOgxoe_XZSxow+9e3A@mail.gmail.com>
-In-Reply-To: <CAPW-Pu0KuxqbKSQ2JQaxh5AHbdZdNQZJfOgxoe_XZSxow+9e3A@mail.gmail.com>
-From:   Leon Maxx <leonmaxx@gmail.com>
-Date:   Mon, 4 Nov 2019 12:55:44 +0200
-Message-ID: <CAPW-Pu3a7UjhW3wZ7jMLMEwj5goabqgHp2Vf7tQyzT3XwZr8cg@mail.gmail.com>
-Subject: [RFC PATCH 3/3] platform/x86: asus_wmi: Set default fan boost mode to normal
-To:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, andy@infradead.org,
-        dvhart@infradead.org, corentin.chary@gmail.com,
-        Daniel Drake <drake@endlessm.com>, yurii.pavlovskyi@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <128761.1572864835@turing-police>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911040109
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911040109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set default fan boost mode to normal for multiple reasons:
+On Mon, Nov 04, 2019 at 05:53:55AM -0500, Valdis Klētnieks wrote:
+> On Mon, 04 Nov 2019 13:04:14 +0300, Dan Carpenter said:
+> > On Sun, Nov 03, 2019 at 08:45:03PM -0500, Valdis Kletnieks wrote:
+> > > -	if (sector_read(sb, sec, &bp->buf_bh, 1) != FFS_SUCCESS) {
+> > > +	if (sector_read(sb, sec, &bp->buf_bh, 1) != 0) {
+> >
+> > It's better to just remove the "!= 0" double negative.  != 0 should be
+> > used when we are talking about the number zero as in "cnt != 0" and for
+> > "strcmp(foo, bar) != 0" where it means that "foo != bar".
+> 
+> "Fix up ==0 and !=0" is indeed on the to-do list.
+> 
+> This patch converted 82 uses of FFS_SUCCESS, of which 33 had the != idiom in
+> use.  Meanwhile, overall there's 53 '!= 0' and 95 '== 0' uses.
+> 
+> In other words, even if I fixed all of those that were involved in this patch,
+> there would *still* be more patching to do.
 
-1) existing code assumes that laptop started in normal mode and that is
-not always true.
-2) FX705DY/FX505DY starts in silent mode and under heavy CPU load it
-overheats and drops CPU frequency to 399MHz [1]. Setting fan mode to
-normal avoids overheating.
+Very good.  Sounds like the plan.
 
-[1] Link: https://bugzilla.kernel.org/show_bug.cgi?id=203733
+regards,
+dan carpenter
 
-Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
----
- drivers/platform/x86/asus-wmi.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index f4e5840..70c5fbb 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1674,6 +1674,18 @@ static int fan_boost_mode_write(struct asus_wmi *asus)
-  return 0;
- }
-
-+static int fan_boost_mode_set_default(struct asus_wmi *asus)
-+{
-+ int result = 0;
-+
-+ if (asus->fan_boost_mode_available) {
-+ asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
-+ result = fan_boost_mode_write(asus);
-+ }
-+
-+ return result;
-+}
-+
- static int fan_boost_mode_switch_next(struct asus_wmi *asus)
- {
-  u8 mask = asus->fan_boost_mode_mask;
-@@ -2450,6 +2462,7 @@ static int asus_wmi_add(struct platform_device *pdev)
-  err = fan_boost_mode_check_present(asus);
-  if (err)
-  goto fail_fan_boost_mode;
-+ fan_boost_mode_set_default(asus);
-
-  err = asus_wmi_sysfs_init(asus->platform_device);
-  if (err)
--- 
-1.8.3.1
