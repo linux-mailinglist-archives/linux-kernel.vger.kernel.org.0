@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70886EECE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA08EEE08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389000AbfKDWBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:01:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58970 "EHLO mail.kernel.org"
+        id S2390562AbfKDWKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388932AbfKDWBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:01:00 -0500
+        id S2390535AbfKDWKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:10:31 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632DE2084D;
-        Mon,  4 Nov 2019 22:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8BC620650;
+        Mon,  4 Nov 2019 22:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904859;
-        bh=OxJUN0GrULCx4YrxlFaDCHBM54iQLptJdAzFRmA69q8=;
+        s=default; t=1572905430;
+        bh=+bOn5BpQyjay3VhCnIJDG7dAzmW2EedPioKRNMyG1gI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n5luihu3BtKeibnOp7ZUVuc+SgE+nvLIymsZ0rZH088P2jQVqELoLgsLQrzqcUM+8
-         JQGiuqdIT9UocDC8AKvBLHC/RMtbQlPWrmtWvbGQgLb//VjJkqH6egXkLW4v3Y9HPg
-         /acyUV00lvGztvyttVHc/C5v/yUG1H92NpTn27I8=
+        b=K7uVJcJDq9ZiiIfcOnLV5uD3XugaJSRKTsNfuFc0L1DWezgOjwOcRoPQwBgaBMfpN
+         Slmbes+3A8gAkgDmzFzeT3GtSZyrJMp1uD1RK7+W6sXOGH0uDCN1ImRe097W/JRwZ0
+         VUElVZxu2NJCZJg4GWGa2x3+gDf/6DW+sCpd1RcY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 097/149] virt: vbox: fix memory leak in hgcm_call_preprocess_linaddr
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 100/163] ALSA: hda/realtek - Add support for ALC623
 Date:   Mon,  4 Nov 2019 22:44:50 +0100
-Message-Id: <20191104212143.328568824@linuxfoundation.org>
+Message-Id: <20191104212147.314982865@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Kailang Yang <kailang@realtek.com>
 
-[ Upstream commit e0b0cb9388642c104838fac100a4af32745621e2 ]
+commit f0778871a13889b86a65d4ad34bef8340af9d082 upstream.
 
-In hgcm_call_preprocess_linaddr memory is allocated for bounce_buf but
-is not released if copy_form_user fails. In order to prevent memory leak
-in case of failure, the assignment to bounce_buf_ret is moved before the
-error check. This way the allocated bounce_buf will be released by the
-caller.
+Support new codec ALC623.
 
-Fixes: 579db9d45cb4 ("virt: Add vboxguest VMMDEV communication code")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20190930204223.3660-1-navid.emamdoost@gmail.com
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/ed97b6a8bd9445ecb48bc763d9aaba7a@realtek.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/virt/vboxguest/vboxguest_utils.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
-index bf4474214b4d3..92091006589a9 100644
---- a/drivers/virt/vboxguest/vboxguest_utils.c
-+++ b/drivers/virt/vboxguest/vboxguest_utils.c
-@@ -217,6 +217,8 @@ static int hgcm_call_preprocess_linaddr(
- 	if (!bounce_buf)
- 		return -ENOMEM;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -409,6 +409,9 @@ static void alc_fill_eapd_coef(struct hd
+ 	case 0x10ec0672:
+ 		alc_update_coef_idx(codec, 0xd, 0, 1<<14); /* EAPD Ctrl */
+ 		break;
++	case 0x10ec0623:
++		alc_update_coef_idx(codec, 0x19, 1<<13, 0);
++		break;
+ 	case 0x10ec0668:
+ 		alc_update_coef_idx(codec, 0x7, 3<<13, 0);
+ 		break;
+@@ -2919,6 +2922,7 @@ enum {
+ 	ALC269_TYPE_ALC225,
+ 	ALC269_TYPE_ALC294,
+ 	ALC269_TYPE_ALC300,
++	ALC269_TYPE_ALC623,
+ 	ALC269_TYPE_ALC700,
+ };
  
-+	*bounce_buf_ret = bounce_buf;
-+
- 	if (copy_in) {
- 		ret = copy_from_user(bounce_buf, (void __user *)buf, len);
- 		if (ret)
-@@ -225,7 +227,6 @@ static int hgcm_call_preprocess_linaddr(
- 		memset(bounce_buf, 0, len);
- 	}
- 
--	*bounce_buf_ret = bounce_buf;
- 	hgcm_call_add_pagelist_size(bounce_buf, len, extra);
- 	return 0;
- }
--- 
-2.20.1
-
+@@ -2954,6 +2958,7 @@ static int alc269_parse_auto_config(stru
+ 	case ALC269_TYPE_ALC225:
+ 	case ALC269_TYPE_ALC294:
+ 	case ALC269_TYPE_ALC300:
++	case ALC269_TYPE_ALC623:
+ 	case ALC269_TYPE_ALC700:
+ 		ssids = alc269_ssids;
+ 		break;
+@@ -7976,6 +7981,9 @@ static int patch_alc269(struct hda_codec
+ 		spec->codec_variant = ALC269_TYPE_ALC300;
+ 		spec->gen.mixer_nid = 0; /* no loopback on ALC300 */
+ 		break;
++	case 0x10ec0623:
++		spec->codec_variant = ALC269_TYPE_ALC623;
++		break;
+ 	case 0x10ec0700:
+ 	case 0x10ec0701:
+ 	case 0x10ec0703:
+@@ -9103,6 +9111,7 @@ static const struct hda_device_id snd_hd
+ 	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
+ 	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
+ 	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
++	HDA_CODEC_ENTRY(0x10ec0623, "ALC623", patch_alc269),
+ 	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660", patch_alc861),
+ 	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
+ 	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
 
 
