@@ -2,132 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED94EEA39
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:49:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A90EEA72
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbfKDUtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 15:49:19 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:58751 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729710AbfKDUtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 15:49:17 -0500
-Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CCF993A0A9C;
-        Tue,  5 Nov 2019 07:49:10 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iRjHh-0006Hb-FZ; Tue, 05 Nov 2019 07:49:09 +1100
-Date:   Tue, 5 Nov 2019 07:49:09 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH] xfs: optimise xfs_mod_icount/ifree when delta < 0
-Message-ID: <20191104204909.GB4614@dread.disaster.area>
-References: <1572866980-13001-1-git-send-email-zhangshaokun@hisilicon.com>
+        id S1729909AbfKDUuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 15:50:20 -0500
+Received: from mga17.intel.com ([192.55.52.151]:52436 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729074AbfKDUuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 15:50:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 12:50:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
+   d="scan'208";a="219571189"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by FMSMGA003.fm.intel.com with SMTP; 04 Nov 2019 12:50:11 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Mon, 04 Nov 2019 22:50:10 +0200
+Date:   Mon, 4 Nov 2019 22:50:10 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH 2/2] drm/atomic: clear new_state pointers at hw_done
+Message-ID: <20191104205010.GM1208@intel.com>
+References: <20191101180713.5470-1-robdclark@gmail.com>
+ <20191101180713.5470-2-robdclark@gmail.com>
+ <20191101192458.GI1208@intel.com>
+ <CAJs_Fx7u6VNDarYqUuUSMSsWK0jpS5ybse0h1X4AmtXO9Mia_w@mail.gmail.com>
+ <20191101214431.GJ1208@intel.com>
+ <CAF6AEGsHQ-V9aVvxLE6VeV2Ld+1_QOh7LS6GBsd6Lsr4qPZNMw@mail.gmail.com>
+ <20191104184156.GL1208@intel.com>
+ <CAF6AEGuQ6WwwVYJvHSg=4NB3aafF6CEcUo2T4T+Cinz3X=DPFg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1572866980-13001-1-git-send-email-zhangshaokun@hisilicon.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGuQ6WwwVYJvHSg=4NB3aafF6CEcUo2T4T+Cinz3X=DPFg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=i0EeH86SAAAA:8 a=yPCof4ZbAAAA:8 a=BTeA3XvPAAAA:8 a=7-415B0cAAAA:8
-        a=9rK2l8cHGEVl0CmEovAA:9 a=OCCxXlEOGsAPRoHQ:21 a=EEn7Qb-6C_fkYYwB:21
-        a=CjuIK1q_8ugA:10 a=tafbbOV3vt1XuEhzTjGK:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 07:29:40PM +0800, Shaokun Zhang wrote:
-> From: Yang Guo <guoyang2@huawei.com>
+On Mon, Nov 04, 2019 at 11:13:59AM -0800, Rob Clark wrote:
+> On Mon, Nov 4, 2019 at 10:42 AM Ville Syrjälä
+> <ville.syrjala@linux.intel.com> wrote:
+> >
+> > On Fri, Nov 01, 2019 at 03:14:09PM -0700, Rob Clark wrote:
+> > > On Fri, Nov 1, 2019 at 2:44 PM Ville Syrjälä
+> > > <ville.syrjala@linux.intel.com> wrote:
+> > > >
+> > > > On Fri, Nov 01, 2019 at 12:49:02PM -0700, Rob Clark wrote:
+> > > > > On Fri, Nov 1, 2019 at 12:25 PM Ville Syrjälä
+> > > > > <ville.syrjala@linux.intel.com> wrote:
+> > > > > >
+> > > > > > On Fri, Nov 01, 2019 at 11:07:13AM -0700, Rob Clark wrote:
+> > > > > > > From: Rob Clark <robdclark@chromium.org>
+> > > > > > >
+> > > > > > > The new state should not be accessed after this point.  Clear the
+> > > > > > > pointers to make that explicit.
+> > > > > > >
+> > > > > > > This makes the error corrected in the previous patch more obvious.
+> > > > > > >
+> > > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/drm_atomic_helper.c | 29 +++++++++++++++++++++++++++++
+> > > > > > >  1 file changed, 29 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> > > > > > > index 732bd0ce9241..176831df8163 100644
+> > > > > > > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > > > > > > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > > > > > > @@ -2234,13 +2234,42 @@ EXPORT_SYMBOL(drm_atomic_helper_fake_vblank);
+> > > > > > >   */
+> > > > > > >  void drm_atomic_helper_commit_hw_done(struct drm_atomic_state *old_state)
+> > > > > > >  {
+> > > > > > > +     struct drm_connector *connector;
+> > > > > > > +     struct drm_connector_state *old_conn_state, *new_conn_state;
+> > > > > > >       struct drm_crtc *crtc;
+> > > > > > >       struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+> > > > > > > +     struct drm_plane *plane;
+> > > > > > > +     struct drm_plane_state *old_plane_state, *new_plane_state;
+> > > > > > >       struct drm_crtc_commit *commit;
+> > > > > > > +     struct drm_private_obj *obj;
+> > > > > > > +     struct drm_private_state *old_obj_state, *new_obj_state;
+> > > > > > >       int i;
+> > > > > > >
+> > > > > > > +     /*
+> > > > > > > +      * After this point, drivers should not access the permanent modeset
+> > > > > > > +      * state, so we also clear the new_state pointers to make this
+> > > > > > > +      * restriction explicit.
+> > > > > > > +      *
+> > > > > > > +      * For the CRTC state, we do this in the same loop where we signal
+> > > > > > > +      * hw_done, since we still need to new_crtc_state to fish out the
+> > > > > > > +      * commit.
+> > > > > > > +      */
+> > > > > > > +
+> > > > > > > +     for_each_oldnew_connector_in_state(old_state, connector, old_conn_state, new_conn_state, i) {
+> > > > > > > +             old_state->connectors[i].new_state = NULL;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > > +     for_each_oldnew_plane_in_state(old_state, plane, old_plane_state, new_plane_state, i) {
+> > > > > > > +             old_state->planes[i].new_state = NULL;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > > +     for_each_oldnew_private_obj_in_state(old_state, obj, old_obj_state, new_obj_state, i) {
+> > > > > > > +             old_state->private_objs[i].new_state = NULL;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > >       for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+> > > > > > >               old_state->crtcs[i].new_self_refresh_active = new_crtc_state->self_refresh_active;
+> > > > > > > +             old_state->crtcs[i].new_state = NULL;
+> > > > > >
+> > > > > > That's going to be a real PITA when doing programming after the fact from
+> > > > > > a vblank worker. It's already a pain that the new_crtc_state->state is
+> > > > > > getting NULLed somewhere.
+> > > > > >
+> > > > >
+> > > > > I think you already have that problem, this just makes it explicit.
+> > > >
+> > > > I don't yet. Except on a branch where I have my vblank workers.
+> > > > And I think the only problem is having the helpers/core clobber
+> > > > the pointers when it should not. I don't see why it can't just
+> > > > leave them be and let me use them.
+> > > >
+> > >
+> > > I guess it comes down to what assumptions you can make in driver
+> > > backend.  But if you can, for example, move planes between crtcs, I
+> > > think you can't make assumptions about the order in which things
+> > > complete even if you don't have commits overtaking each other on a
+> > > single crtc..
+> >
+> > IMO this whole notion of accessing new_crtc_state & co. being unsafe
+> > for some reason is wrong. I think as long as I have the drm_atomic_state
+> > I should be able to look at the new/old states within.
+> >
 > 
-> percpu_counter_compare will be called by xfs_mod_icount/ifree to check
-> whether the counter less than 0 and it is a expensive function.
-> let's check it only when delta < 0, it will be good for xfs's performance.
+> accessing new state only works if you can guarantee the order in which
+> commits complete, which I don't think you can do in the general sense.
 
-Hmmm. I don't recall this as being expensive.
-
-How did you find this? Can you please always document how you found
-the problem being addressed in the commit message so that we don't
-then have to ask how the problem being fixed is reproduced.
-
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Signed-off-by: Yang Guo <guoyang2@huawei.com>
-> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-> ---
->  fs/xfs/xfs_mount.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index ba5b6f3b2b88..5e8314e6565e 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -1174,6 +1174,9 @@ xfs_mod_icount(
->  	int64_t			delta)
->  {
->  	percpu_counter_add_batch(&mp->m_icount, delta, XFS_ICOUNT_BATCH);
-> +	if (delta > 0)
-> +		return 0;
-> +
->  	if (__percpu_counter_compare(&mp->m_icount, 0, XFS_ICOUNT_BATCH) < 0) {
->  		ASSERT(0);
->  		percpu_counter_add(&mp->m_icount, -delta);
-
-I struggle to see how this is expensive when you have more than
-num_online_cpus() * XFS_ICOUNT_BATCH inodes allocated.
-__percpu_counter_compare() will always take the fast path so ends up
-being very little code at all.
-
-> @@ -1188,6 +1191,9 @@ xfs_mod_ifree(
->  	int64_t			delta)
->  {
->  	percpu_counter_add(&mp->m_ifree, delta);
-> +	if (delta > 0)
-> +		return 0;
-> +
->  	if (percpu_counter_compare(&mp->m_ifree, 0) < 0) {
->  		ASSERT(0);
->  		percpu_counter_add(&mp->m_ifree, -delta);
-
-This one might have some overhead because the count is often at or
-around zero, but I haven't noticed it being expensive in kernel
-profiles when creating/freeing hundreds of thousands of inodes every
-second.
-
-IOWs, we typically measure the overhead of such functions by kernel
-profile.  Creating ~200,000 inodes a second, so hammering the icount
-and ifree counters, I see:
-
-      0.16%  [kernel]  [k] percpu_counter_add_batch
-      0.03%  [kernel]  [k] __percpu_counter_compare
-
-Almost nothing - it's way down the long tail of noise in the
-profile.
-
-IOWs, the CPU consumed by percpu_counter_compare() is low that
-optimisation isn't going to produce any measurable performance
-improvement. Hence it's not really something we've concerned
-ourselves about.  The profile is pretty much identical for removing
-hundreds of thousands of files a second, too, so there really isn't
-any performance gain to be had here.
-
-If you want to optimise code to make it faster and show a noticable
-performance improvement, start by running kernel profiles while your
-performance critical workload is running. Then look at what the
-functions and call chains that consume the most CPU and work out how
-to do them better. Those are the places that optimisation will
-result in measurable performance gains....
-
-Cheers,
-
-Dave.
+Doesn't feel like it should take a lot of rocket science to guarantee
+the states get freed in the right order.
 
 -- 
-Dave Chinner
-david@fromorbit.com
+Ville Syrjälä
+Intel
