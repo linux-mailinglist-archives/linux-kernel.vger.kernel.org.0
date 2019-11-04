@@ -2,283 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E287FEE27A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D73AAEE242
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 15:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfKDO30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 09:29:26 -0500
-Received: from mail-wr1-f73.google.com ([209.85.221.73]:52268 "EHLO
-        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729156AbfKDO3W (ORCPT
+        id S1728561AbfKDO2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 09:28:18 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:50108 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727861AbfKDO2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 09:29:22 -0500
-Received: by mail-wr1-f73.google.com with SMTP id 4so10466766wrf.19
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 06:29:19 -0800 (PST)
+        Mon, 4 Nov 2019 09:28:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1572877698; x=1604413698;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=4ePJuGTEnSrCP5e/TpRKSH58LDheLCb2m1vAnSTjr+I=;
+  b=PsRGarmxp+ajd+mlw+ATsF//LZwRsTNnP658yVWAne62KDUUzV5RVaWC
+   Y4tSr0uNqRy5A0O6ft4oAn6tHfgW/y/r8U1bu2KE2/FjqahDSBtjH7naM
+   Ija/0wL5xE96+RCgVcs16Lln/lNQHAMMMi8RjaJ274+ReXsqfjTh0Gx1V
+   iCp7c1MeghQ87dJaArcDznRPZHQxB97CIPLa5n5bGeqMpBdapMW6uVtKO
+   xQTRxr+dyF4kftxjjQ+KhkQlIhJyjxitstTSbxcOjPPRnqkdvevn4OmBj
+   11ddoCryxWkVkncsVcmQ03MvY92JCdgtQGpO3NP8BAAYm6Jtv9+Orj0Em
+   g==;
+IronPort-SDR: BYlkHa7IFegNY8K3oULLgI52p/XLCyVSrk9YMF56Ndm001VqIiKyDmY9aU3T2O13fGLB+19SlT
+ LQEy4WxdPAZuDr/ON82lXkQDK45tB/TCiyPZQOrUArxxBD92i4Q1WVCLej5az7xqVPsxiPwjXK
+ b7NfD58OO7g34IGA99cKmDUUn9d7GhoVoH2wRLPJR5uDF1RSmdXrEczeqpH6J53PAXgv9lAwuC
+ tonC6Iw8fIeqi/uNZpzvj4ROYg77Ak9xCRRATmnx3HO8PJ6ebNe7o0IE9mIAQ6vfQDBAMMtB3C
+ o2I=
+X-IronPort-AV: E=Sophos;i="5.68,267,1569254400"; 
+   d="scan'208";a="126481471"
+Received: from mail-dm3nam03lp2055.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.55])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Nov 2019 22:28:16 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RmJ5Kta6493BWvAXwnuMMjHR1AKfS7u9BlHSuHIy7rgYw/MV/JDdxkg6V0DCYgqV6Rw/NMh4moRLULHQq9udNHPfSDCaSdjZc7kwNEHZYNvWaCi4CSpqZMxTQPi9/Ww2OJX8CRcelAMUQjVGckfaFMRHd4zNMojJbbl5Z6Daj7DrxzV2hfRiRx779S1rt3ecwKK4efWr7jnvkbnEt/8FV6aknZ29+nE8TpWsujzvgIauhRSbq9DM7pcCXvMHkxrU2tY7bZ7ADkKFn9IQo5dSUQyEFHuOVT/bZCxt0YHqFwB7vX3F8T7ZNBqfe/FOj24rMpl/RXyLBViHA/oeF/Zgbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ePJuGTEnSrCP5e/TpRKSH58LDheLCb2m1vAnSTjr+I=;
+ b=WaUZ9/aM5xh9WXXiJpxxyanOR3/Vx4xloQZqRk2b8L85O05Ihiyjs9fstHuizdjHd8z75rt8LDsUdJfteOYX8MLWYYIM081Uy7E385LjSIPY7+96347wyzMAy7QFecQeXueUK07/E3IjTtSUIy77sVJZOlJfyQIkk9ch/ZWjjYhlIkPMIME95L+848hFKJKTg1UyrZ9bKaVFz2IOgJm/pKpnakKhNW1DlqgQnDX9coRxpeiF4cnsOdZqOJ41TnoGImfoQsZkWGcYczZ5aQOTmjQpEiE8vj7HtaC778eWKbEWMcPHlWexy1AcgOVK9MRGVf2aFiV9im2h+rWSw1V1tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=v/fBCawgbNr9z8sHoDyBwn+JenP5278dLuCFcze5nO4=;
-        b=RwMp4ufZMoAcy8AGYLyDxOiK52Y41IM5Omu5uyT1UQikQpowYCEdcb8GrcK71T8g5n
-         C72pggEFwJnmMPerjWv2sTnaV6/S5Yd6Y6O00gERNelbkaBI9N2T1+v4C2nXgYBwo5Rj
-         QaDlbklupShqTrgcnZ2WP6nCfyuM5+zjFaSApzBrMx6qoIMrnUFWntuH2puHKq0HJJhx
-         ofz5Vh2ubSbi72M1x6K6RQiUV4mBMZQYHRvQ7sYWm7ATdo4nulInqcTv+r6ITZ0cQblc
-         IS7EkLHNU3eGauKI/Rostf6g8IXwbewQSkxEDH52jftz5DpxyD+oojQLDNB7m8TR3EAK
-         A/EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=v/fBCawgbNr9z8sHoDyBwn+JenP5278dLuCFcze5nO4=;
-        b=S+7xo6qZzGyE8HzqX1UNohVwFYn7vpgMCjPbmPqiplAVdLr5YxkRDegOp/q73BZjnv
-         OFhyQ9QUH69YEiHbcHkEDl0GMwYxQENHW2UOJkIeQN+Tu+NUlJiBKzvQ1QX169sCihvZ
-         kRmxy8faxFN8wFxc3P4fSj9I3OZ0npnO+4I4EMA7LFId+q3NFgOOiY7TVwJKHdbaG744
-         iTDKrorQA6dABZ57iutrsM4DMxD5oXnVWryv4waRZ/Lj8e1yl0jFMhdPmwU9RCRJQAMt
-         COtNwF5STpYna3HAIrbU6kYQo+l/UDhFFhR1fOnaZ4pM+sxUKCxh5TLmctRmea0SH8IM
-         fr3w==
-X-Gm-Message-State: APjAAAWQ66XwQcm4RtVd7r+QBk0Mt84u9CIPUgMhLEJswFzaM/YY6VWK
-        3lJzhXKY8W5klkk6df8fIRxcjbbkpA==
-X-Google-Smtp-Source: APXvYqztjJN/esR+L3OUI4QZ+K5dhvl1Dd08UL4fO1/9xBiWuMOU3zCx1yGn64DkSaz9eoQ3fDi32RAqJw==
-X-Received: by 2002:a5d:4808:: with SMTP id l8mr23085087wrq.118.1572877758478;
- Mon, 04 Nov 2019 06:29:18 -0800 (PST)
-Date:   Mon,  4 Nov 2019 15:27:45 +0100
-In-Reply-To: <20191104142745.14722-1-elver@google.com>
-Message-Id: <20191104142745.14722-10-elver@google.com>
-Mime-Version: 1.0
-References: <20191104142745.14722-1-elver@google.com>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-Subject: [PATCH v3 9/9] x86, kcsan: Enable KCSAN for x86
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     akiyks@gmail.com, stern@rowland.harvard.edu, glider@google.com,
-        parri.andrea@gmail.com, andreyknvl@google.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, arnd@arndb.de, boqun.feng@gmail.com,
-        bp@alien8.de, dja@axtens.net, dlustig@nvidia.com,
-        dave.hansen@linux.intel.com, dhowells@redhat.com,
-        dvyukov@google.com, hpa@zytor.com, mingo@redhat.com,
-        j.alglave@ucl.ac.uk, joel@joelfernandes.org, corbet@lwn.net,
-        jpoimboe@redhat.com, luc.maranget@inria.fr, mark.rutland@arm.com,
-        npiggin@gmail.com, paulmck@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, will@kernel.org, kasan-dev@googlegroups.com,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ePJuGTEnSrCP5e/TpRKSH58LDheLCb2m1vAnSTjr+I=;
+ b=gXEZF5PU/05+PQkFiRGWGImFvhWeBykt+pmsHAEAC6eFEFxCyPzMPDNqYXWlMNrVMRluuomLTmu8LsXdBY6jrjV4+lRxhha3nudbVDlWtLLnh0iWmaXULm2vZ/Hlm81xJ2gvS9b9z/EZ5oEzGcCTFOnQ7pm8zz3UcE0MGbgTdvg=
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com (10.186.144.209) by
+ MN2PR04MB6189.namprd04.prod.outlook.com (20.178.246.80) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Mon, 4 Nov 2019 14:28:14 +0000
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::5852:6199:7952:c2ce]) by MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::5852:6199:7952:c2ce%7]) with mapi id 15.20.2408.024; Mon, 4 Nov 2019
+ 14:28:14 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Can Guo <cang@codeaurora.org>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "nguyenb@codeaurora.org" <nguyenb@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        "saravanak@google.com" <saravanak@google.com>,
+        "salyzyn@google.com" <salyzyn@google.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1 1/2] scsi: ufs: Introduce a vops for resetting host
+ controller
+Thread-Topic: [PATCH v1 1/2] scsi: ufs: Introduce a vops for resetting host
+ controller
+Thread-Index: AQHViVhK3N4s/twt9EelChx5eY/COKd7IyHQ
+Date:   Mon, 4 Nov 2019 14:28:13 +0000
+Message-ID: <MN2PR04MB69911784473463D0926AE3B5FC7F0@MN2PR04MB6991.namprd04.prod.outlook.com>
+References: <1571804009-29787-1-git-send-email-cang@codeaurora.org>
+ <1571804009-29787-2-git-send-email-cang@codeaurora.org>
+In-Reply-To: <1571804009-29787-2-git-send-email-cang@codeaurora.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: fac78512-0550-41d2-e39a-08d7613339ff
+x-ms-traffictypediagnostic: MN2PR04MB6189:
+x-microsoft-antispam-prvs: <MN2PR04MB6189C99551CF173BA08C5F04FC7F0@MN2PR04MB6189.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0211965D06
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(39860400002)(366004)(396003)(376002)(189003)(199004)(81156014)(486006)(99286004)(81166006)(14454004)(8936002)(476003)(446003)(11346002)(7416002)(8676002)(33656002)(25786009)(74316002)(186003)(6116002)(305945005)(110136005)(76176011)(316002)(7696005)(6506007)(102836004)(26005)(5660300002)(229853002)(7736002)(4744005)(3846002)(52536014)(71200400001)(71190400001)(86362001)(66476007)(66556008)(2201001)(66446008)(76116006)(256004)(2906002)(478600001)(6436002)(2501003)(66066001)(55016002)(6246003)(64756008)(54906003)(4326008)(9686003)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6189;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2ov0RNLxZI4/3Vaa17cORttmZX1V3u1xSF3XUCMvZIbZ5pkBE5GwMm5NEKq2wRH/rd7HNaECx39vU9v4NXQvIuM3VP/C9dKjnTDp3X9hK959RQeiIeIoD3xd+XECO7KjJBuavCUaEdiWWQLBM0q3gpN8WTK+DVroHs0KB0Fz+Zp83chhu9uRecBetNnL3RyHqECB0e0ULBz7h6z3DHLdRzZId5HCEZz1l6rpNMyxZqmpkioX3J36BuNH5L30KZ6G5orWA4INb0ct2aE014SI4X/obB+yDEeqjv6q5r2BNm5LTnJyvNq2v/PcAjq+9r749z66vdmBQ4FEa9ido6hn8wUSYVRdSRa33bB2gO6cAaogqrgIZSnsuxQjhmOl5l5astt+PYj8BdwByEn/E0zF4GZwsNYZ2NBGTz19bffdZr1ucb7PTXlf1HTuv+8qLrqC
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fac78512-0550-41d2-e39a-08d7613339ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2019 14:28:13.8575
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: S2SPKTe6AXX/ptbHxBxEwRwaosIwgtEUBmzWrrv1Mr3+p8AJR7m6ChxVfdxpb01JRF53AaWw5iK+XoT+q65IPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables KCSAN for x86, with updates to build rules to not use
-KCSAN for several incompatible compilation units.
+Hi,=20
+>=20
+> Some UFS host controllers need their specific implementations of resettin=
+g to
+> get them into a good state. Provide a new vops to allow the platform driv=
+er to
+> implement this own reset operation.
+>=20
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+Did you withdraw from this patches and insert them to one of your fix bundl=
+e?
+I couldn't tell.
+As this is a vop, in what way its functionality can't be included in the de=
+vice reset that was recently added?
 
-Signed-off-by: Marco Elver <elver@google.com>
----
-v3:
-* Moved EFI stub build exception hunk to generic build exception patch,
-  since it's not x86-specific.
-
-v2:
-* Document build exceptions where no previous above comment explained
-  why we cannot instrument.
----
- arch/x86/Kconfig                  | 1 +
- arch/x86/boot/Makefile            | 2 ++
- arch/x86/boot/compressed/Makefile | 2 ++
- arch/x86/entry/vdso/Makefile      | 3 +++
- arch/x86/include/asm/bitops.h     | 6 +++++-
- arch/x86/kernel/Makefile          | 7 +++++++
- arch/x86/kernel/cpu/Makefile      | 3 +++
- arch/x86/lib/Makefile             | 4 ++++
- arch/x86/mm/Makefile              | 3 +++
- arch/x86/purgatory/Makefile       | 2 ++
- arch/x86/realmode/Makefile        | 3 +++
- arch/x86/realmode/rm/Makefile     | 3 +++
- 12 files changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d6e1faa28c58..81859be4a005 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -226,6 +226,7 @@ config X86
- 	select VIRT_TO_BUS
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
-+	select HAVE_ARCH_KCSAN if X86_64
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index e2839b5c246c..9c7942794164 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -9,7 +9,9 @@
- # Changed by many, many contributors over the years.
- #
- 
-+# Sanitizer runtimes are unavailable and cannot be linked for early boot code.
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Kernel does not boot with kcov instrumentation here.
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 6b84afdd7538..a1c248b8439f 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -17,7 +17,9 @@
- #	(see scripts/Makefile.lib size_append)
- #	compressed vmlinux.bin.all + u32 size of vmlinux.bin.all
- 
-+# Sanitizer runtimes are unavailable and cannot be linked for early boot code.
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 0f2154106d01..a23debaad5b9 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -10,8 +10,11 @@ ARCH_REL_TYPE_ABS += R_386_GLOB_DAT|R_386_JMP_SLOT|R_386_RELATIVE
- include $(srctree)/lib/vdso/Makefile
- 
- KBUILD_CFLAGS += $(DISABLE_LTO)
-+
-+# Sanitizer runtimes are unavailable and cannot be linked here.
- KASAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index 7d1f6a49bfae..ee08917d3d92 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -201,8 +201,12 @@ arch_test_and_change_bit(long nr, volatile unsigned long *addr)
- 	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(btc), *addr, c, "Ir", nr);
- }
- 
--static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-+static __no_kcsan_or_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
- {
-+	/*
-+	 * Because this is a plain access, we need to disable KCSAN here to
-+	 * avoid double instrumentation via bitops-instrumented.h.
-+	 */
- 	return ((1UL << (nr & (BITS_PER_LONG-1))) &
- 		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
- }
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3578ad248bc9..2aa122d94956 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -28,6 +28,13 @@ KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
- KASAN_SANITIZE_stacktrace.o				:= n
- KASAN_SANITIZE_paravirt.o				:= n
- 
-+# Do not instrument early boot code.
-+KCSAN_SANITIZE_head$(BITS).o				:= n
-+# Do not instrument debug code to avoid corrupting bug reporting.
-+KCSAN_SANITIZE_dumpstack.o				:= n
-+KCSAN_SANITIZE_dumpstack_$(BITS).o			:= n
-+KCSAN_SANITIZE_stacktrace.o				:= n
-+
- OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
- OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
- OBJECT_FILES_NON_STANDARD_paravirt_patch.o		:= y
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index d7a1e5a9331c..1f1b0edc0187 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -13,6 +13,9 @@ endif
- KCOV_INSTRUMENT_common.o := n
- KCOV_INSTRUMENT_perf_event.o := n
- 
-+# As above, instrumenting secondary CPU boot code causes boot hangs.
-+KCSAN_SANITIZE_common.o := n
-+
- # Make sure load_percpu_segment has no stackprotector
- nostackp := $(call cc-option, -fno-stack-protector)
- CFLAGS_common.o		:= $(nostackp)
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 5246db42de45..432a07705677 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -6,10 +6,14 @@
- # Produces uninteresting flaky coverage.
- KCOV_INSTRUMENT_delay.o	:= n
- 
-+# KCSAN uses udelay for introducing watchpoint delay; avoid recursion.
-+KCSAN_SANITIZE_delay.o := n
-+
- # Early boot use of cmdline; don't instrument it
- ifdef CONFIG_AMD_MEM_ENCRYPT
- KCOV_INSTRUMENT_cmdline.o := n
- KASAN_SANITIZE_cmdline.o  := n
-+KCSAN_SANITIZE_cmdline.o  := n
- 
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_cmdline.o = -pg
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 84373dc9b341..ee871602f96a 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -7,6 +7,9 @@ KCOV_INSTRUMENT_mem_encrypt_identity.o	:= n
- KASAN_SANITIZE_mem_encrypt.o		:= n
- KASAN_SANITIZE_mem_encrypt_identity.o	:= n
- 
-+KCSAN_SANITIZE_mem_encrypt.o		:= n
-+KCSAN_SANITIZE_mem_encrypt_identity.o	:= n
-+
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_mem_encrypt.o		= -pg
- CFLAGS_REMOVE_mem_encrypt_identity.o	= -pg
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index fb4ee5444379..69379bce9574 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -17,7 +17,9 @@ CFLAGS_sha256.o := -D__DISABLE_EXPORTS
- LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
- targets += purgatory.ro
- 
-+# Sanitizer runtimes are unavailable and cannot be linked here.
- KASAN_SANITIZE	:= n
-+KCSAN_SANITIZE	:= n
- KCOV_INSTRUMENT := n
- 
- # These are adjustments to the compiler flags used for objects that
-diff --git a/arch/x86/realmode/Makefile b/arch/x86/realmode/Makefile
-index 682c895753d9..6b1f3a4eeb44 100644
---- a/arch/x86/realmode/Makefile
-+++ b/arch/x86/realmode/Makefile
-@@ -6,7 +6,10 @@
- # for more details.
- #
- #
-+
-+# Sanitizer runtimes are unavailable and cannot be linked here.
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- subdir- := rm
-diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
-index f60501a384f9..fdbbb945c216 100644
---- a/arch/x86/realmode/rm/Makefile
-+++ b/arch/x86/realmode/rm/Makefile
-@@ -6,7 +6,10 @@
- # for more details.
- #
- #
-+
-+# Sanitizer runtimes are unavailable and cannot be linked here.
- KASAN_SANITIZE			:= n
-+KCSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
--- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+Thanks,
+Avri
