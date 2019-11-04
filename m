@@ -2,80 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12ACDEE3B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:25:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5061EE3BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbfKDPZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:25:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45949 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728336AbfKDPZF (ORCPT
+        id S1729327AbfKDPZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:25:49 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:59733 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727861AbfKDPZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:25:05 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n21so4444089ljg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 07:25:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vaEPIoS2t8hUZV5j+rbrQAWA68wAJcFqrHD13iQZNVQ=;
-        b=s1TIVkFrUgUqgiD/eCRPacD4FbkSkrQplNYQ/fhkXZtJHcKc0SOQG/Uqx1uWBOWTIk
-         wGjwq+fupT6LcupwghxWtbONfk4yQpKCtZexO2I/4c1nESvOL6MUcxGXqA20Y9hZjAsj
-         yKavZOz+rt+j7ocQUbzsnqU9SoPZb/b0kojChjUxJ1nJaOfzn+9ssmC9a8WlEP9L6c/u
-         ossTO6WbRm6o4ZbJSRi+E+g+Q2oh4wyvy2uzYOMCmT2xcIhm9Nft9IAUjWzNRpXTtI7Z
-         NGguI0b+9fDPYA8DPF17kXRvQG3BfLAT9xYJnRA+IAdq+pfwkg9FE0tmVObk8z98ptkd
-         NfiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vaEPIoS2t8hUZV5j+rbrQAWA68wAJcFqrHD13iQZNVQ=;
-        b=t3uZ0LAuHGxzxn54HjRmDIUMQcDin4Wt8uDMxnJyt/bLgc25iRsYTq5jg0yFnYyBPl
-         dWSBNhkJ9dcMqj+F8A/K8EhTeIuWPJbCgRKpM7j/BkxlY41yXggJ02Ug1dUwFQ7hNdEq
-         QO00NO0zCYFPWKG994yT6+IUDFW77etTZ6/gRB1igI/K3b8heqNTXPSF4g1vTofhiO9r
-         Byg32Ugzn/knOH/Z2ZPjgIzkewWmQaAC2xCIkbzbGtQztvTLMzdzXAHthzZrvw2pvs7V
-         XrqLtI3gB6H/SLeAzQRwOmrRJGW7A0m7Mg0nCVWl+np6NGdGTz6yRwaiv9ga09QDudcD
-         EnQA==
-X-Gm-Message-State: APjAAAXvw1cVc9neeLfiNBr2P5SVaKfwQ+R3rJ2mfo6d5s8ajfzijaGP
-        jd8FAxuMiLIyDgjI9jVd9B0GAWG1JIXaRozaDR6Sfw==
-X-Google-Smtp-Source: APXvYqxzvhxQEC2lVXS9XLU/+X6UlgEVhaZM82+Iw9teO/FERLxOvAN0X//SI7N3tlH1MqOFaHplMyQGcIb96hV7Nrw=
-X-Received: by 2002:a05:651c:1202:: with SMTP id i2mr19270245lja.218.1572881103566;
- Mon, 04 Nov 2019 07:25:03 -0800 (PST)
+        Mon, 4 Nov 2019 10:25:49 -0500
+Received: from mail-qk1-f173.google.com ([209.85.222.173]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1M1qfu-1iTr9w0XV2-002DXs for <linux-kernel@vger.kernel.org>; Mon, 04 Nov
+ 2019 16:25:48 +0100
+Received: by mail-qk1-f173.google.com with SMTP id m4so17944808qke.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 07:25:47 -0800 (PST)
+X-Gm-Message-State: APjAAAUF6AcLSY5esuNIODOC9Fkqv/bgY/zqjCjb9QKFlXOUmssVeVcU
+        ZzteYR80a/vtwcv7TtRKLhChA8MNyRaEOW99bl0=
+X-Google-Smtp-Source: APXvYqzFZt8fB9folG/dB9+o4OKV18odAQAK5Xk5C+z1pe04hR7xC3ih594ii6t+6rsPIHnw1KOyYjwhv3nQwrhHlNQ=
+X-Received: by 2002:a37:4f0a:: with SMTP id d10mr17070233qkb.286.1572881146989;
+ Mon, 04 Nov 2019 07:25:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20191104001819.2300-1-chris.packham@alliedtelesis.co.nz> <20191104001819.2300-3-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20191104001819.2300-3-chris.packham@alliedtelesis.co.nz>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Nov 2019 16:24:52 +0100
-Message-ID: <CACRpkdb530Do3BnVBA6Q7TWOQ0_QfytqaPHPXCPoZP_742Rvzw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] pinctrl: bcm: nsp: implement get_direction
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191018163047.1284736-1-arnd@arndb.de> <20191104151310.GA1872@bogus>
+In-Reply-To: <20191104151310.GA1872@bogus>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 4 Nov 2019 16:25:13 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1B5v_3p0XhddoeWu7wChr6BndfqVVjPUvWYC6=aRfLXg@mail.gmail.com>
+Message-ID: <CAK8P3a1B5v_3p0XhddoeWu7wChr6BndfqVVjPUvWYC6=aRfLXg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] ARM: versatile: move integrator/realview/vexpress to versatile
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rkGric0hkDlNNPHR8C+OVaVO7FBtbwOuIebMPNdvoK29ptSlyRt
+ SNb6o4nfsrzxoB53NxTYJ2M110YhGhiWR1w4n2uSupEV6RYgqRkTc12LQKokuXAA9LKMsHx
+ s8kzlzvYb5RGRgyv3SYbvOt6cbeLcLRirMQL/lKPWHN+ktyywiBaDIZWcXl0EbUsjxs2I7w
+ I7GBsM3Xr7w7ejJ3CQk6Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:J4FXPkG1CMg=:Z/Aez3k4lpKcPaPmNkMm0r
+ 7RAAj32kMoUe0Bxv3fv9U0X/0skIT1uZ9vSnrX8VIjgy+HWA5aw5Lo49/n4XJIwOihjfSonMS
+ BcsmnXEDUlHGfwSTTDTHALOUSIn56NqsjcBNqUJqosijNduKGjyKJYezei9++mvn0/9Q73hS8
+ sd0eQbddY24m0fETQsvqWHpQsulzAPfoELl7V0Q7DoFuj5llSIPHCmPoRhfgO2MjFQrqFb69s
+ Mmya9fc8M9Xk3HtffSUXcUcre3qIUH20AhfLe1zMamwX7b0eACeneDngr5zJcOO0TuzsfbwnK
+ bOsXxnq5xHXAS4iMY6yoHhIk3GGsq5luCtyoFwqEJ/p63bNi7uT/+buQ3KYZqIYMXm1KYENQ3
+ vA2j7ZIAEOa1BTispeoYL6I4GQqH+q15O/wVcQbC+5QCbEOj+RGoW7sthv6gLxOzOK0wt9mXm
+ UK9aFdH+vBUYgupU0W6YRMzUpijDaETZURZOfRnGC+kup+j4/S904GbBuCXg+pmVv3FbCtpnQ
+ scGV1vDiQaJHiD2Iwu9Fi633H7jMraxVZFkOrAyaDHZ2AAZuI64e7+qtTHqZ0fi065/sfdAG9
+ 4VOQIRb4HNBZL0MhG6lcd3PebHQmTCzhzFTq+2n0DzWVvfSyvl3LZ8u+lBuJMsWFXAn0miCZ4
+ u9Yq7OisGToOPohy5sVkiSztgwG9jCCRepRjQdxLSD4jYAl1WDhSsq7CCKxpEZvjRJeceV9TA
+ Sdakz1iJScehvmuyJ/9alTtptqa5wv/w0xfaHXBmGTNGt7TX9Q9EdvnJWUBeOfK+92CePoCBb
+ aEL1EelDLA+ZXGzba1RgIf4raODudmiKJ98Kk4+18gbJAc7ZAKh1kR9QQywh5tz/SBowMxcI1
+ 0HpfDfC+LOQzpBlWQVEg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 1:18 AM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
-
-> The get_direction api is strongly recommended to be implemented. In fact
-> if it is not implemented gpio-hogs will not get the correct direction.
-> Add an implementation of get_direction for the nsp-gpio driver.
+On Mon, Nov 4, 2019 at 4:13 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
 >
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> On Fri, Oct 18, 2019 at 06:29:14PM +0200, Arnd Bergmann wrote:
+> > These are all fairly small platforms by now, and they are
+> > closely related. Just move them all into a single directory.
+> >
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Liviu Dudau <liviu.dudau@arm.com>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+>
+> Looks good to me, so for vexpress part:
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> As Linus W requested, if you share a branch, I can give it a go on
+> Vexpress TC2.
 
-BTW I think it looks like this the GPIO part of this driver can be
-converted to use GPIO_GENERIC. Compare to other
-drivers such as drivers/gpio/gpio-ftgpio010.c.
+You are of course both right, I should have split this out into a separate
+branch, rather than sticking it on the end of the completely unrelated
+pxa-multiplatform branch.
 
-It's a fun way to cut down lines if you have time to check
-and test!
+For testing the changes, this should be fine in the meantime:
 
-Yours,
-Linus Walleij
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=pxa-multiplatform
+
+
+
+     Arnd
