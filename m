@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDEFEF087
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C11EF047
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:27:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730035AbfKDVs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38856 "EHLO mail.kernel.org"
+        id S2387898AbfKDW1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:27:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729968AbfKDVs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:48:26 -0500
+        id S2387755AbfKDVuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:50:39 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2DE520B7C;
-        Mon,  4 Nov 2019 21:48:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3E7721744;
+        Mon,  4 Nov 2019 21:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904106;
-        bh=5YfsL84lW/rNJVkUOyhps8l0wKXGrBYJqxZNQ+RK7Qw=;
+        s=default; t=1572904238;
+        bh=QTCPxfOHcDMqsT3sNLrtpzZwxWq4ArbqZGS79lePllI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObRKM8K8ql9X8RhzfGvcsoMdJhWnsNugbsbZYyQkPoilyqhK5gIZwevDZ7gZyGoZS
-         YEQzZcVyX62XAgVvUZ7yQ3pzCRiEmlmEBL4nfjawRGrc781xmUNwWEEhaxpembh9nb
-         kYPAVEgkS58hwPpgyOdc+2Ogy21bybSTOGBGKN2Q=
+        b=imnYyeUthywFw1iPOXp2euVQIkP6xuUAEuLlPF36/H+k7zxjkM7ccMJYHC8Uw1Q9V
+         pdwryFVCsMs5EBESPhJu6elyZhKOkd17ijpaCZu5ejkrhNPJbr9Qjo1sw82+93yRSI
+         4XUvP1xHh7yWT2N9mfxfcU8XKMlR4RJ9qE5tgPFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mathias Payer <mathias.payer@nebelwelt.net>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 24/46] ath6kl: fix a NULL-ptr-deref bug in ath6kl_usb_alloc_urb_from_pipe()
+Subject: [PATCH 4.9 33/62] ath6kl: fix a NULL-ptr-deref bug in ath6kl_usb_alloc_urb_from_pipe()
 Date:   Mon,  4 Nov 2019 22:44:55 +0100
-Message-Id: <20191104211855.943825731@linuxfoundation.org>
+Message-Id: <20191104211933.014977706@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -85,12 +85,14 @@ Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath6kl/usb.c |    8 ++++++++
+ drivers/net/wireless/ath/ath6kl/usb.c | 8 ++++++++
  1 file changed, 8 insertions(+)
 
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 9da3594fd010d..fc22c5f479276 100644
 --- a/drivers/net/wireless/ath/ath6kl/usb.c
 +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -132,6 +132,10 @@ ath6kl_usb_alloc_urb_from_pipe(struct at
+@@ -132,6 +132,10 @@ ath6kl_usb_alloc_urb_from_pipe(struct ath6kl_usb_pipe *pipe)
  	struct ath6kl_urb_context *urb_context = NULL;
  	unsigned long flags;
  
@@ -101,7 +103,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  	spin_lock_irqsave(&pipe->ar_usb->cs_lock, flags);
  	if (!list_empty(&pipe->urb_list_head)) {
  		urb_context =
-@@ -150,6 +154,10 @@ static void ath6kl_usb_free_urb_to_pipe(
+@@ -150,6 +154,10 @@ static void ath6kl_usb_free_urb_to_pipe(struct ath6kl_usb_pipe *pipe,
  {
  	unsigned long flags;
  
@@ -112,5 +114,8 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  	spin_lock_irqsave(&pipe->ar_usb->cs_lock, flags);
  	pipe->urb_cnt++;
  
+-- 
+2.20.1
+
 
 
