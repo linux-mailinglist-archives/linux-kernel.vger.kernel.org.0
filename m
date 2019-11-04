@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A17EEC50
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85FFBEEBE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:52:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388250AbfKDVzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:55:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
+        id S1730203AbfKDVv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:51:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388234AbfKDVzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:55:51 -0500
+        id S1730629AbfKDVvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:51:54 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44BDD217F4;
-        Mon,  4 Nov 2019 21:55:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC77217F5;
+        Mon,  4 Nov 2019 21:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904550;
-        bh=3bV3DEaz/uJkFBictvzAfD7nh/T5TXDGZpPRx0Nw44g=;
+        s=default; t=1572904313;
+        bh=QDtYiaW8pMVAcjR4z3UvlNtLXCVqNgx0gLg082M8GG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TLP0X6jpRQB8JSyx2a7PRMENp2P1wNJws+niyR60gNo+6wWzB8WixEP7gGd2gfsIv
-         ++qEeINNZJGCAjl3MD3Y9IEfX5V1/6Eyi6ohSMDZy79n2UNVvaHJ1v/Namfcrp2Lm0
-         iN9vHkXTsBW+C4mMVjpzldfCCpChI0rjym/+ABBA=
+        b=LtKmPmHRHIuQnyeykdwFcESVD7OnoMCJNFoafIz/aRVVxd4D4MHn4QKPBOasozn10
+         kJVctfFwdA2IBZS//waQLNbOkj0XbWZAP7zfU1X1y5v9qgnRTR5zAMnXCX8qBfJz8Z
+         Dkk3lNVvv2nOXRKbBSuO6Tq9XGrHagBTjMb7yNSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com,
-        syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.14 84/95] llc: fix sk_buff leak in llc_sap_state_process()
-Date:   Mon,  4 Nov 2019 22:45:22 +0100
-Message-Id: <20191104212122.927653214@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 61/62] ALSA: timer: Simplify error path in snd_timer_open()
+Date:   Mon,  4 Nov 2019 22:45:23 +0100
+Message-Id: <20191104212000.884979037@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
-References: <20191104212038.056365853@linuxfoundation.org>
+In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
+References: <20191104211901.387893698@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,131 +43,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit c6ee11c39fcc1fb55130748990a8f199e76263b4 upstream.
+[ Upstream commit 41672c0c24a62699d20aab53b98d843b16483053 ]
 
-syzbot reported:
+Just a minor refactoring to use the standard goto for error paths in
+snd_timer_open() instead of open code.  The first mutex_lock() is
+moved to the beginning of the function to make the code clearer.
 
-    BUG: memory leak
-    unreferenced object 0xffff888116270800 (size 224):
-       comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
-       hex dump (first 32 bytes):
-         00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-         00 20 e1 2a 81 88 ff ff 00 40 3d 2a 81 88 ff ff  . .*.....@=*....
-       backtrace:
-         [<000000004d41b4cc>] kmemleak_alloc_recursive  include/linux/kmemleak.h:55 [inline]
-         [<000000004d41b4cc>] slab_post_alloc_hook mm/slab.h:439 [inline]
-         [<000000004d41b4cc>] slab_alloc_node mm/slab.c:3269 [inline]
-         [<000000004d41b4cc>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
-         [<00000000506a5965>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
-         [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
-         [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  net/core/skbuff.c:5327
-         [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  net/core/sock.c:2225
-         [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
-         [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
-         [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
-         [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
-         [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
-	 [...]
-
-The bug is that llc_sap_state_process() always takes an extra reference
-to the skb, but sometimes neither llc_sap_next_state() nor
-llc_sap_state_process() itself drops this reference.
-
-Fix it by changing llc_sap_next_state() to never consume a reference to
-the skb, rather than sometimes do so and sometimes not.  Then remove the
-extra skb_get() and kfree_skb() from llc_sap_state_process().
-
-Reported-by: syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com
-Reported-by: syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/llc/llc_s_ac.c |   12 +++++++++---
- net/llc/llc_sap.c  |   23 ++++++++---------------
- 2 files changed, 17 insertions(+), 18 deletions(-)
+ sound/core/timer.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
---- a/net/llc/llc_s_ac.c
-+++ b/net/llc/llc_s_ac.c
-@@ -58,8 +58,10 @@ int llc_sap_action_send_ui(struct llc_sa
- 			    ev->daddr.lsap, LLC_PDU_CMD);
- 	llc_pdu_init_as_ui_cmd(skb);
- 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
--	if (likely(!rc))
-+	if (likely(!rc)) {
-+		skb_get(skb);
- 		rc = dev_queue_xmit(skb);
-+	}
- 	return rc;
- }
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index 95c5838747754..6eb4e97662d9c 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -253,19 +253,20 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	struct snd_timer_instance *timeri = NULL;
+ 	int err;
  
-@@ -81,8 +83,10 @@ int llc_sap_action_send_xid_c(struct llc
- 			    ev->daddr.lsap, LLC_PDU_CMD);
- 	llc_pdu_init_as_xid_cmd(skb, LLC_XID_NULL_CLASS_2, 0);
- 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
--	if (likely(!rc))
-+	if (likely(!rc)) {
-+		skb_get(skb);
- 		rc = dev_queue_xmit(skb);
-+	}
- 	return rc;
- }
- 
-@@ -135,8 +139,10 @@ int llc_sap_action_send_test_c(struct ll
- 			    ev->daddr.lsap, LLC_PDU_CMD);
- 	llc_pdu_init_as_test_cmd(skb);
- 	rc = llc_mac_hdr_init(skb, ev->saddr.mac, ev->daddr.mac);
--	if (likely(!rc))
-+	if (likely(!rc)) {
-+		skb_get(skb);
- 		rc = dev_queue_xmit(skb);
-+	}
- 	return rc;
- }
- 
---- a/net/llc/llc_sap.c
-+++ b/net/llc/llc_sap.c
-@@ -197,29 +197,22 @@ out:
-  *	After executing actions of the event, upper layer will be indicated
-  *	if needed(on receiving an UI frame). sk can be null for the
-  *	datalink_proto case.
-+ *
-+ *	This function always consumes a reference to the skb.
-  */
- static void llc_sap_state_process(struct llc_sap *sap, struct sk_buff *skb)
- {
- 	struct llc_sap_state_ev *ev = llc_sap_ev(skb);
- 
--	/*
--	 * We have to hold the skb, because llc_sap_next_state
--	 * will kfree it in the sending path and we need to
--	 * look at the skb->cb, where we encode llc_sap_state_ev.
--	 */
--	skb_get(skb);
- 	ev->ind_cfm_flag = 0;
- 	llc_sap_next_state(sap, skb);
--	if (ev->ind_cfm_flag == LLC_IND) {
--		if (skb->sk->sk_state == TCP_LISTEN)
--			kfree_skb(skb);
--		else {
--			llc_save_primitive(skb->sk, skb, ev->prim);
- 
--			/* queue skb to the user. */
--			if (sock_queue_rcv_skb(skb->sk, skb))
--				kfree_skb(skb);
--		}
-+	if (ev->ind_cfm_flag == LLC_IND && skb->sk->sk_state != TCP_LISTEN) {
-+		llc_save_primitive(skb->sk, skb, ev->prim);
-+
-+		/* queue skb to the user. */
-+		if (sock_queue_rcv_skb(skb->sk, skb) == 0)
-+			return;
++	mutex_lock(&register_mutex);
+ 	if (tid->dev_class == SNDRV_TIMER_CLASS_SLAVE) {
+ 		/* open a slave instance */
+ 		if (tid->dev_sclass <= SNDRV_TIMER_SCLASS_NONE ||
+ 		    tid->dev_sclass > SNDRV_TIMER_SCLASS_OSS_SEQUENCER) {
+ 			pr_debug("ALSA: timer: invalid slave class %i\n",
+ 				 tid->dev_sclass);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto unlock;
+ 		}
+-		mutex_lock(&register_mutex);
+ 		timeri = snd_timer_instance_new(owner, NULL);
+ 		if (!timeri) {
+-			mutex_unlock(&register_mutex);
+-			return -ENOMEM;
++			err = -ENOMEM;
++			goto unlock;
+ 		}
+ 		timeri->slave_class = tid->dev_sclass;
+ 		timeri->slave_id = tid->device;
+@@ -276,13 +277,10 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 			snd_timer_close_locked(timeri);
+ 			timeri = NULL;
+ 		}
+-		mutex_unlock(&register_mutex);
+-		*ti = timeri;
+-		return err;
++		goto unlock;
  	}
- 	kfree_skb(skb);
- }
+ 
+ 	/* open a master instance */
+-	mutex_lock(&register_mutex);
+ 	timer = snd_timer_find(tid);
+ #ifdef CONFIG_MODULES
+ 	if (!timer) {
+@@ -293,25 +291,26 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	}
+ #endif
+ 	if (!timer) {
+-		mutex_unlock(&register_mutex);
+-		return -ENODEV;
++		err = -ENODEV;
++		goto unlock;
+ 	}
+ 	if (!list_empty(&timer->open_list_head)) {
+ 		timeri = list_entry(timer->open_list_head.next,
+ 				    struct snd_timer_instance, open_list);
+ 		if (timeri->flags & SNDRV_TIMER_IFLG_EXCLUSIVE) {
+-			mutex_unlock(&register_mutex);
+-			return -EBUSY;
++			err = -EBUSY;
++			timeri = NULL;
++			goto unlock;
+ 		}
+ 	}
+ 	if (timer->num_instances >= timer->max_instances) {
+-		mutex_unlock(&register_mutex);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto unlock;
+ 	}
+ 	timeri = snd_timer_instance_new(owner, timer);
+ 	if (!timeri) {
+-		mutex_unlock(&register_mutex);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto unlock;
+ 	}
+ 	/* take a card refcount for safe disconnection */
+ 	if (timer->card)
+@@ -320,16 +319,16 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 	timeri->slave_id = slave_id;
+ 
+ 	if (list_empty(&timer->open_list_head) && timer->hw.open) {
+-		int err = timer->hw.open(timer);
++		err = timer->hw.open(timer);
+ 		if (err) {
+ 			kfree(timeri->owner);
+ 			kfree(timeri);
++			timeri = NULL;
+ 
+ 			if (timer->card)
+ 				put_device(&timer->card->card_dev);
+ 			module_put(timer->module);
+-			mutex_unlock(&register_mutex);
+-			return err;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -340,6 +339,8 @@ int snd_timer_open(struct snd_timer_instance **ti,
+ 		snd_timer_close_locked(timeri);
+ 		timeri = NULL;
+ 	}
++
++ unlock:
+ 	mutex_unlock(&register_mutex);
+ 	*ti = timeri;
+ 	return err;
+-- 
+2.20.1
+
 
 
