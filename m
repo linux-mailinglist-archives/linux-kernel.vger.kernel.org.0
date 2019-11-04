@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B978EF09B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1550EECD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389353AbfKDW3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37738 "EHLO mail.kernel.org"
+        id S2388917AbfKDWAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:00:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729846AbfKDVr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:47:58 -0500
+        id S2388906AbfKDWAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:00:44 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B1AD21655;
-        Mon,  4 Nov 2019 21:47:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5853E20650;
+        Mon,  4 Nov 2019 22:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904077;
-        bh=uhc6qrmgYf8tNuiZPGZcsbbrTbtSfMBBHflqUUXRHqw=;
+        s=default; t=1572904842;
+        bh=vftKeGfZD1oTHtGExan21UU6YoxR31kKt1v/Sey+J10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eCdgP2ft/qDLy4WH5/4x07HmEbskmrqd8c2NGm0tIa5+8haHP2SlqnrHr0ZQZ6CS3
-         ERk3ejQdkb2U7jSHljPRSA4+Zzh8sVTfymik9K3e0Vd+zz8s4BL2mK9Cb6/gjhVYPS
-         xKsLdI/e2IkO4B/04TNKcdAFPy56/QW+mh053+cM=
+        b=CON++YFbVscXG9JX77TQnJp9vtODTOC3XJU5sI3qftRdWMfUeTg7wdoSZDvmD0wjJ
+         C1xkg0C/Uj6VacJj7qRbvMwqNf7V341/J1QAdT9GQbKXJ0Qhf5yi3MP2Vy1pcAIfJ9
+         gh3D+nwg7TtNG8/W8/hmVfne+KJ5vbP/viRVUwBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Austin Kim <austindh.kim@gmail.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 13/46] fs: cifs: mute -Wunused-const-variable message
+        stable@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 091/149] sched/vtime: Fix guest/system mis-accounting on task switch
 Date:   Mon,  4 Nov 2019 22:44:44 +0100
-Message-Id: <20191104211842.614962923@linuxfoundation.org>
+Message-Id: <20191104212142.854834719@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +48,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Austin Kim <austindh.kim@gmail.com>
+From: Frederic Weisbecker <frederic@kernel.org>
 
-[ Upstream commit dd19c106a36690b47bb1acc68372f2b472b495b8 ]
+[ Upstream commit 68e7a4d66b0ce04bf18ff2ffded5596ab3618585 ]
 
-After 'Initial git repository build' commit,
-'mapping_table_ERRHRD' variable has not been used.
+vtime_account_system() assumes that the target task to account cputime
+to is always the current task. This is most often true indeed except on
+task switch where we call:
 
-So 'mapping_table_ERRHRD' const variable could be removed
-to mute below warning message:
+	vtime_common_task_switch(prev)
+		vtime_account_system(prev)
 
-   fs/cifs/netmisc.c:120:40: warning: unused variable 'mapping_table_ERRHRD' [-Wunused-const-variable]
-   static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
-                                           ^
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Here prev is the scheduling-out task where we account the cputime to. It
+doesn't match current that is already the scheduling-in task at this
+stage of the context switch.
+
+So we end up checking the wrong task flags to determine if we are
+accounting guest or system time to the previous task.
+
+As a result the wrong task is used to check if the target is running in
+guest mode. We may then spuriously account or leak either system or
+guest time on task switch.
+
+Fix this assumption and also turn vtime_guest_enter/exit() to use the
+task passed in parameter as well to avoid future similar issues.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Fixes: 2a42eb9594a1 ("sched/cputime: Accumulate vtime on top of nsec clocksource")
+Link: https://lkml.kernel.org/r/20190925214242.21873-1-frederic@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/netmisc.c | 4 ----
- 1 file changed, 4 deletions(-)
+ kernel/sched/cputime.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index cc88f4f0325ef..bed9733302279 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -130,10 +130,6 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
- 	{0, 0}
- };
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 0796f938c4f0d..54eb9457b21d3 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -739,7 +739,7 @@ void vtime_account_system(struct task_struct *tsk)
  
--static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
--	{0, 0}
--};
--
- /*
-  * Convert a string containing text IPv4 or IPv6 address to binary form.
-  *
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	/* We might have scheduled out from guest path */
+-	if (current->flags & PF_VCPU)
++	if (tsk->flags & PF_VCPU)
+ 		vtime_account_guest(tsk, vtime);
+ 	else
+ 		__vtime_account_system(tsk, vtime);
+@@ -782,7 +782,7 @@ void vtime_guest_enter(struct task_struct *tsk)
+ 	 */
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	__vtime_account_system(tsk, vtime);
+-	current->flags |= PF_VCPU;
++	tsk->flags |= PF_VCPU;
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+ EXPORT_SYMBOL_GPL(vtime_guest_enter);
+@@ -793,7 +793,7 @@ void vtime_guest_exit(struct task_struct *tsk)
+ 
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	vtime_account_guest(tsk, vtime);
+-	current->flags &= ~PF_VCPU;
++	tsk->flags &= ~PF_VCPU;
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+ EXPORT_SYMBOL_GPL(vtime_guest_exit);
 -- 
 2.20.1
 
