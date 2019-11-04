@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF641EEB93
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:49:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA25EEB95
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:49:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfKDVtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:49:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40186 "EHLO mail.kernel.org"
+        id S1730306AbfKDVtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:49:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730253AbfKDVtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:49:07 -0500
+        id S1730284AbfKDVtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:49:12 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48E7A214E0;
-        Mon,  4 Nov 2019 21:49:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D182214D9;
+        Mon,  4 Nov 2019 21:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904146;
-        bh=AEX36XsO5lXsy2UodCcGI6ADsqU81+EXoRM9bAA0rL0=;
+        s=default; t=1572904151;
+        bh=2JeVpBGBpuB9kY/89Z7MGJXKzxexWziOwHy9anNKFw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBnT+5a/zBqqoeHD9eI/D0qimdESwT5ExwTr9lHXWimODsiSxPVm1ETbM15y1gjFd
-         ufT02DJfZguxrv3gzygUWOVNVLyTCQeG6GFogRmQhkIRg/n4Ckt3HYgToI5oLqIMR2
-         vqKLLWj/cTwupgB4T4cf7uRqrVyJJTJ8Qa813Syo=
+        b=oKDUI5D/GTpOWdvckmcsY/0W+cmoWPdbJElQ9hx2jhojxqF/CHhfz1qcblD32PGxx
+         6TZ8mMC2CFJwr8m8Gt+vJX0/MOJ+k0UTabyhrHjhv3k+ROLn7KVKLB1DauJYibNEpC
+         okUPOdERXCmDTynsIDSmoBL4/vMkumQtk5NXraP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 42/46] net: usb: sr9800: fix uninitialized local variable
-Date:   Mon,  4 Nov 2019 22:45:13 +0100
-Message-Id: <20191104211914.396887035@linuxfoundation.org>
+Subject: [PATCH 4.4 44/46] sctp: fix the issue that flags are ignored when using kernel_connect
+Date:   Mon,  4 Nov 2019 22:45:15 +0100
+Message-Id: <20191104211917.271944973@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
 References: <20191104211830.912265604@linuxfoundation.org>
@@ -45,32 +47,214 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 77b6d09f4ae66d42cd63b121af67780ae3d1a5e9 upstream.
+commit 644fbdeacf1d3edd366e44b8ba214de9d1dd66a9 upstream.
 
-Make sure res does not contain random value if the call to
-sr_read_cmd fails for some reason.
+Now sctp uses inet_dgram_connect as its proto_ops .connect, and the flags
+param can't be passed into its proto .connect where this flags is really
+needed.
 
-Reported-by: syzbot+f1842130bbcfb335bac1@syzkaller.appspotmail.com
-Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+sctp works around it by getting flags from socket file in __sctp_connect.
+It works for connecting from userspace, as inherently the user sock has
+socket file and it passes f_flags as the flags param into the proto_ops
+.connect.
+
+However, the sock created by sock_create_kern doesn't have a socket file,
+and it passes the flags (like O_NONBLOCK) by using the flags param in
+kernel_connect, which calls proto_ops .connect later.
+
+So to fix it, this patch defines a new proto_ops .connect for sctp,
+sctp_inet_connect, which calls __sctp_connect() directly with this
+flags param. After this, the sctp's proto .connect can be removed.
+
+Note that sctp_inet_connect doesn't need to do some checks that are not
+needed for sctp, which makes thing better than with inet_dgram_connect.
+
+Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/sr9800.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/sctp/sctp.h |    2 +
+ net/sctp/ipv6.c         |    2 -
+ net/sctp/protocol.c     |    2 -
+ net/sctp/socket.c       |   56 ++++++++++++++++++++++++++++++++----------------
+ 4 files changed, 42 insertions(+), 20 deletions(-)
 
---- a/drivers/net/usb/sr9800.c
-+++ b/drivers/net/usb/sr9800.c
-@@ -336,7 +336,7 @@ static void sr_set_multicast(struct net_
- static int sr_mdio_read(struct net_device *net, int phy_id, int loc)
+--- a/include/net/sctp/sctp.h
++++ b/include/net/sctp/sctp.h
+@@ -98,6 +98,8 @@ void sctp_addr_wq_mgmt(struct net *, str
+ /*
+  * sctp/socket.c
+  */
++int sctp_inet_connect(struct socket *sock, struct sockaddr *uaddr,
++		      int addr_len, int flags);
+ int sctp_backlog_rcv(struct sock *sk, struct sk_buff *skb);
+ int sctp_inet_listen(struct socket *sock, int backlog);
+ void sctp_write_space(struct sock *sk);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -970,7 +970,7 @@ static const struct proto_ops inet6_seqp
+ 	.owner		   = THIS_MODULE,
+ 	.release	   = inet6_release,
+ 	.bind		   = inet6_bind,
+-	.connect	   = inet_dgram_connect,
++	.connect	   = sctp_inet_connect,
+ 	.socketpair	   = sock_no_socketpair,
+ 	.accept		   = inet_accept,
+ 	.getname	   = sctp_getname,
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1012,7 +1012,7 @@ static const struct proto_ops inet_seqpa
+ 	.owner		   = THIS_MODULE,
+ 	.release	   = inet_release,	/* Needs to be wrapped... */
+ 	.bind		   = inet_bind,
+-	.connect	   = inet_dgram_connect,
++	.connect	   = sctp_inet_connect,
+ 	.socketpair	   = sock_no_socketpair,
+ 	.accept		   = inet_accept,
+ 	.getname	   = inet_getname,	/* Semantics are different.  */
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -1072,7 +1072,7 @@ out:
+  */
+ static int __sctp_connect(struct sock *sk,
+ 			  struct sockaddr *kaddrs,
+-			  int addrs_size,
++			  int addrs_size, int flags,
+ 			  sctp_assoc_t *assoc_id)
  {
- 	struct usbnet *dev = netdev_priv(net);
--	__le16 res;
-+	__le16 res = 0;
+ 	struct net *net = sock_net(sk);
+@@ -1090,7 +1090,6 @@ static int __sctp_connect(struct sock *s
+ 	union sctp_addr *sa_addr = NULL;
+ 	void *addr_buf;
+ 	unsigned short port;
+-	unsigned int f_flags = 0;
  
- 	mutex_lock(&dev->phy_mutex);
- 	sr_set_sw_mii(dev);
+ 	sp = sctp_sk(sk);
+ 	ep = sp->ep;
+@@ -1238,13 +1237,7 @@ static int __sctp_connect(struct sock *s
+ 	sp->pf->to_sk_daddr(sa_addr, sk);
+ 	sk->sk_err = 0;
+ 
+-	/* in-kernel sockets don't generally have a file allocated to them
+-	 * if all they do is call sock_create_kern().
+-	 */
+-	if (sk->sk_socket->file)
+-		f_flags = sk->sk_socket->file->f_flags;
+-
+-	timeo = sock_sndtimeo(sk, f_flags & O_NONBLOCK);
++	timeo = sock_sndtimeo(sk, flags & O_NONBLOCK);
+ 
+ 	if (assoc_id)
+ 		*assoc_id = asoc->assoc_id;
+@@ -1340,7 +1333,7 @@ static int __sctp_setsockopt_connectx(st
+ {
+ 	struct sockaddr *kaddrs;
+ 	gfp_t gfp = GFP_KERNEL;
+-	int err = 0;
++	int err = 0, flags = 0;
+ 
+ 	pr_debug("%s: sk:%p addrs:%p addrs_size:%d\n",
+ 		 __func__, sk, addrs, addrs_size);
+@@ -1360,11 +1353,18 @@ static int __sctp_setsockopt_connectx(st
+ 		return -ENOMEM;
+ 
+ 	if (__copy_from_user(kaddrs, addrs, addrs_size)) {
+-		err = -EFAULT;
+-	} else {
+-		err = __sctp_connect(sk, kaddrs, addrs_size, assoc_id);
++		kfree(kaddrs);
++		return -EFAULT;
+ 	}
+ 
++	/* in-kernel sockets don't generally have a file allocated to them
++	 * if all they do is call sock_create_kern().
++	 */
++	if (sk->sk_socket->file)
++		flags = sk->sk_socket->file->f_flags;
++
++	err = __sctp_connect(sk, kaddrs, addrs_size, flags, assoc_id);
++
+ 	kfree(kaddrs);
+ 
+ 	return err;
+@@ -3895,16 +3895,26 @@ out_nounlock:
+  * len: the size of the address.
+  */
+ static int sctp_connect(struct sock *sk, struct sockaddr *addr,
+-			int addr_len)
++			int addr_len, int flags)
+ {
+-	int err = 0;
++	struct inet_sock *inet = inet_sk(sk);
+ 	struct sctp_af *af;
++	int err = 0;
+ 
+ 	lock_sock(sk);
+ 
+ 	pr_debug("%s: sk:%p, sockaddr:%p, addr_len:%d\n", __func__, sk,
+ 		 addr, addr_len);
+ 
++	/* We may need to bind the socket. */
++	if (!inet->inet_num) {
++		if (sk->sk_prot->get_port(sk, 0)) {
++			release_sock(sk);
++			return -EAGAIN;
++		}
++		inet->inet_sport = htons(inet->inet_num);
++	}
++
+ 	/* Validate addr_len before calling common connect/connectx routine. */
+ 	af = sctp_get_af_specific(addr->sa_family);
+ 	if (!af || addr_len < af->sockaddr_len) {
+@@ -3913,13 +3923,25 @@ static int sctp_connect(struct sock *sk,
+ 		/* Pass correct addr len to common routine (so it knows there
+ 		 * is only one address being passed.
+ 		 */
+-		err = __sctp_connect(sk, addr, af->sockaddr_len, NULL);
++		err = __sctp_connect(sk, addr, af->sockaddr_len, flags, NULL);
+ 	}
+ 
+ 	release_sock(sk);
+ 	return err;
+ }
+ 
++int sctp_inet_connect(struct socket *sock, struct sockaddr *uaddr,
++		      int addr_len, int flags)
++{
++	if (addr_len < sizeof(uaddr->sa_family))
++		return -EINVAL;
++
++	if (uaddr->sa_family == AF_UNSPEC)
++		return -EOPNOTSUPP;
++
++	return sctp_connect(sock->sk, uaddr, addr_len, flags);
++}
++
+ /* FIXME: Write comments. */
+ static int sctp_disconnect(struct sock *sk, int flags)
+ {
+@@ -7428,7 +7450,6 @@ struct proto sctp_prot = {
+ 	.name        =	"SCTP",
+ 	.owner       =	THIS_MODULE,
+ 	.close       =	sctp_close,
+-	.connect     =	sctp_connect,
+ 	.disconnect  =	sctp_disconnect,
+ 	.accept      =	sctp_accept,
+ 	.ioctl       =	sctp_ioctl,
+@@ -7467,7 +7488,6 @@ struct proto sctpv6_prot = {
+ 	.name		= "SCTPv6",
+ 	.owner		= THIS_MODULE,
+ 	.close		= sctp_close,
+-	.connect	= sctp_connect,
+ 	.disconnect	= sctp_disconnect,
+ 	.accept		= sctp_accept,
+ 	.ioctl		= sctp_ioctl,
 
 
