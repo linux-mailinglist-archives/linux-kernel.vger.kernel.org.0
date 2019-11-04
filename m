@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF32EEF5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1555EEEE87
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbfKDV6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:58:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55508 "EHLO mail.kernel.org"
+        id S2390081AbfKDWP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387589AbfKDV6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:58:31 -0500
+        id S2389904AbfKDWGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:06:04 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B68120650;
-        Mon,  4 Nov 2019 21:58:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A10B21744;
+        Mon,  4 Nov 2019 22:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904710;
-        bh=KhLp5dFr/z8ZsXzQbKR2uEHvcQB5nTWQwa601RrePeg=;
+        s=default; t=1572905164;
+        bh=9+ICddfZi98XsuN/HkDELNh3ybAfa/RqmjvYrgcKWMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQOIol9jUgdW7OslxNgpzQiN33h8pFJ+ZZ433IrHTq23/OC9EQ0s7BNpeO+ARRqD5
-         HCfUImnGOftXkxij0yU20C0w92b9r5mR0s08cZloTCsGMdICrOirgDUCYE5htwqVEZ
-         E6DTNPJmNuXHpTcyexdKQZBvhDtDTI4Xa/moynmg=
+        b=Sc3G1hzwm/Y7xM5SQRXicCoSrI0H8yv2AnOR4+CYJmno18ociCEZzvkpN3zAuwd8t
+         EcaCqd31zt2+bR4rE1JZt2LVQcMbRrVjt8K35eC34ig8Ayyn362XIi0TrJIf3UH8pt
+         Z+w2AO6MAgoQeFj/LvQXSujjEoNkHOQpD8KYYcyM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/149] f2fs: flush quota blocks after turnning it off
+Subject: [PATCH 5.3 012/163] perf jevents: Fix period for Intel fixed counters
 Date:   Mon,  4 Nov 2019 22:43:22 +0100
-Message-Id: <20191104212130.837568625@linuxfoundation.org>
+Message-Id: <20191104212141.364499073@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 0e0667b625cf64243df83171bff61f9d350b9ca5 ]
+[ Upstream commit 6bdfd9f118bd59cf0f85d3bf4b72b586adea17c1 ]
 
-After quota_off, we'll get some dirty blocks. If put_super don't have a chance
-to flush them by checkpoint, it causes NULL pointer exception in end_io after
-iput(node_inode). (e.g., by checkpoint=disable)
+The Intel fixed counters use a special table to override the JSON
+information.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+During this override the period information from the JSON file got
+dropped, which results in inst_retired.any and similar running with
+frequency mode instead of a period.
+
+Just specify the expected period in the table.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lore.kernel.org/lkml/20190927233546.11533-2-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/pmu-events/jevents.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6851afc3bf805..d9106bbe7df63 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1886,6 +1886,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
- 		}
- 	}
-+	/*
-+	 * In case of checkpoint=disable, we must flush quota blocks.
-+	 * This can cause NULL exception for node_inode in end_io, since
-+	 * put_super already dropped it.
-+	 */
-+	sync_filesystem(sb);
- }
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index d413761621b09..fa85e33762f72 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -449,12 +449,12 @@ static struct fixed {
+ 	const char *name;
+ 	const char *event;
+ } fixed[] = {
+-	{ "inst_retired.any", "event=0xc0" },
+-	{ "inst_retired.any_p", "event=0xc0" },
+-	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
+-	{ "cpu_clk_unhalted.thread", "event=0x3c" },
+-	{ "cpu_clk_unhalted.core", "event=0x3c" },
+-	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1" },
++	{ "inst_retired.any", "event=0xc0,period=2000003" },
++	{ "inst_retired.any_p", "event=0xc0,period=2000003" },
++	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03,period=2000003" },
++	{ "cpu_clk_unhalted.thread", "event=0x3c,period=2000003" },
++	{ "cpu_clk_unhalted.core", "event=0x3c,period=2000003" },
++	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1,period=2000003" },
+ 	{ NULL, NULL},
+ };
  
- static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
 -- 
 2.20.1
 
