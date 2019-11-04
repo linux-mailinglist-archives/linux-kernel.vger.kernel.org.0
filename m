@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3194DEEB71
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0609EEC1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbfKDVr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 16:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37654 "EHLO mail.kernel.org"
+        id S2387828AbfKDVyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:54:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729829AbfKDVr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:47:56 -0500
+        id S2387821AbfKDVyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:54:02 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8E45214D9;
-        Mon,  4 Nov 2019 21:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1929217F4;
+        Mon,  4 Nov 2019 21:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904075;
-        bh=WO055rew6vXiNWAIz24yB6BtLbtJIvjJYo9zKPqhmYY=;
+        s=default; t=1572904441;
+        bh=xYkyonlbbCi3GuGegpMQfZcWMAhNVgBaZPtUflwvvUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ERm8bkWN+r/BlV2eYk1ahD9GoQa/yhzp/YJuJTvbsBSjfTzH5qwOonQdDySEHJ0yM
-         cUP8OXWZpt73quxWSjCsaaiJckhQ1I5YWl39CXMU3KVmHREeXN1W486En/RIbc/Fyp
-         gcbPpdUhQkdbnK4GCJRJ/z3TTR+5Ku3ym+4MH7dk=
+        b=tkCSFk1hEhQzPsNXwqeIJEToMTWjlcJugZRCEeNx9Fwkm5swjKMFH4R0zcFdhXkPD
+         X0/FLD2M7eGAFOlI+MSomuL3o7bkSq8j/HV8j2iO7vDYJYY/hpQXH36/fk48TadRIT
+         kkii3f5KKYH3989aR/XR6fmYBT2rkqf1EHCWwWrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Jia Guo <guojia12@huawei.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <joseph.qi@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 12/46] RDMA/iwcm: Fix a lock inversion issue
+Subject: [PATCH 4.14 45/95] ocfs2: clear zero in unaligned direct IO
 Date:   Mon,  4 Nov 2019 22:44:43 +0100
-Message-Id: <20191104211841.834198931@linuxfoundation.org>
+Message-Id: <20191104212102.418267076@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104211830.912265604@linuxfoundation.org>
-References: <20191104211830.912265604@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +50,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Jia Guo <guojia12@huawei.com>
 
-[ Upstream commit b66f31efbdad95ec274345721d99d1d835e6de01 ]
+[ Upstream commit 7a243c82ea527cd1da47381ad9cd646844f3b693 ]
 
-This patch fixes the lock inversion complaint:
+Unused portion of a part-written fs-block-sized block is not set to zero
+in unaligned append direct write.This can lead to serious data
+inconsistencies.
 
-============================================
-WARNING: possible recursive locking detected
-5.3.0-rc7-dbg+ #1 Not tainted
---------------------------------------------
-kworker/u16:6/171 is trying to acquire lock:
-00000000035c6e6c (&id_priv->handler_mutex){+.+.}, at: rdma_destroy_id+0x78/0x4a0 [rdma_cm]
+Ocfs2 manage disk with cluster size(for example, 1M), part-written in
+one cluster will change the cluster state from UN-WRITTEN to WRITTEN,
+VFS(function dio_zero_block) doesn't do the cleaning because bh's state
+is not set to NEW in function ocfs2_dio_wr_get_block when we write a
+WRITTEN cluster.  For example, the cluster size is 1M, file size is 8k
+and we direct write from 14k to 15k, then 12k~14k and 15k~16k will
+contain dirty data.
 
-but task is already holding lock:
-00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
+We have to deal with two cases:
+ 1.The starting position of direct write is outside the file.
+ 2.The starting position of direct write is located in the file.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+We need set bh's state to NEW in the first case.  In the second case, we
+need mapped twice because bh's state of area out file should be set to
+NEW while area in file not.
 
-       CPU0
-       ----
-  lock(&id_priv->handler_mutex);
-  lock(&id_priv->handler_mutex);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by kworker/u16:6/171:
- #0: 00000000e2eaa773 ((wq_completion)iw_cm_wq){+.+.}, at: process_one_work+0x472/0xac0
- #1: 000000001efd357b ((work_completion)(&work->work)#3){+.+.}, at: process_one_work+0x476/0xac0
- #2: 00000000bc7c307d (&id_priv->handler_mutex){+.+.}, at: iw_conn_req_handler+0x151/0x680 [rdma_cm]
-
-stack backtrace:
-CPU: 3 PID: 171 Comm: kworker/u16:6 Not tainted 5.3.0-rc7-dbg+ #1
-Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-Workqueue: iw_cm_wq cm_work_handler [iw_cm]
-Call Trace:
- dump_stack+0x8a/0xd6
- __lock_acquire.cold+0xe1/0x24d
- lock_acquire+0x106/0x240
- __mutex_lock+0x12e/0xcb0
- mutex_lock_nested+0x1f/0x30
- rdma_destroy_id+0x78/0x4a0 [rdma_cm]
- iw_conn_req_handler+0x5c9/0x680 [rdma_cm]
- cm_work_handler+0xe62/0x1100 [iw_cm]
- process_one_work+0x56d/0xac0
- worker_thread+0x7a/0x5d0
- kthread+0x1bc/0x210
- ret_from_fork+0x24/0x30
-
-This is not a bug as there are actually two lock classes here.
-
-Link: https://lore.kernel.org/r/20190930231707.48259-3-bvanassche@acm.org
-Fixes: de910bd92137 ("RDMA/cma: Simplify locking needed for serialization of callbacks")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+[akpm@linux-foundation.org: coding style fixes]
+Link: http://lkml.kernel.org/r/5292e287-8f1a-fd4a-1a14-661e555e0bed@huawei.com
+Signed-off-by: Jia Guo <guojia12@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <joseph.qi@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ocfs2/aops.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 1454290078def..8ad9c6b04769d 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -1976,9 +1976,10 @@ static int iw_conn_req_handler(struct iw_cm_id *cm_id,
- 		conn_id->cm_id.iw = NULL;
- 		cma_exch(conn_id, RDMA_CM_DESTROYING);
- 		mutex_unlock(&conn_id->handler_mutex);
-+		mutex_unlock(&listen_id->handler_mutex);
- 		cma_deref_id(conn_id);
- 		rdma_destroy_id(&conn_id->id);
--		goto out;
-+		return ret;
- 	}
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 99550f4bd159a..ebeec7530cb60 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -2151,13 +2151,30 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
+ 	struct ocfs2_dio_write_ctxt *dwc = NULL;
+ 	struct buffer_head *di_bh = NULL;
+ 	u64 p_blkno;
+-	loff_t pos = iblock << inode->i_sb->s_blocksize_bits;
++	unsigned int i_blkbits = inode->i_sb->s_blocksize_bits;
++	loff_t pos = iblock << i_blkbits;
++	sector_t endblk = (i_size_read(inode) - 1) >> i_blkbits;
+ 	unsigned len, total_len = bh_result->b_size;
+ 	int ret = 0, first_get_block = 0;
  
- 	mutex_unlock(&conn_id->handler_mutex);
+ 	len = osb->s_clustersize - (pos & (osb->s_clustersize - 1));
+ 	len = min(total_len, len);
+ 
++	/*
++	 * bh_result->b_size is count in get_more_blocks according to write
++	 * "pos" and "end", we need map twice to return different buffer state:
++	 * 1. area in file size, not set NEW;
++	 * 2. area out file size, set  NEW.
++	 *
++	 *		   iblock    endblk
++	 * |--------|---------|---------|---------
++	 * |<-------area in file------->|
++	 */
++
++	if ((iblock <= endblk) &&
++	    ((iblock + ((len - 1) >> i_blkbits)) > endblk))
++		len = (endblk - iblock + 1) << i_blkbits;
++
+ 	mlog(0, "get block of %lu at %llu:%u req %u\n",
+ 			inode->i_ino, pos, len, total_len);
+ 
+@@ -2241,6 +2258,9 @@ static int ocfs2_dio_wr_get_block(struct inode *inode, sector_t iblock,
+ 	if (desc->c_needs_zero)
+ 		set_buffer_new(bh_result);
+ 
++	if (iblock > endblk)
++		set_buffer_new(bh_result);
++
+ 	/* May sleep in end_io. It should not happen in a irq context. So defer
+ 	 * it to dio work queue. */
+ 	set_buffer_defer_completion(bh_result);
 -- 
 2.20.1
 
