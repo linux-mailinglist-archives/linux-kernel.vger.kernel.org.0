@@ -2,97 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B0FEEAA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 21:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4973EEEAB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 22:01:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729549AbfKDU7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 15:59:17 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35734 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbfKDU7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 15:59:17 -0500
-Received: by mail-qk1-f195.google.com with SMTP id i19so9940885qki.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 12:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N+vMMxPE1zexTcBhTUQBjEnFM7QQdjaq1YW9R4l5ACA=;
-        b=nvMSvlw7biiZ1pfK6nWpGeRxjb/qLlEauXWsgVsLny68w5JLO2+t2ewQPQN3UIteT1
-         9AVnanYTlL/rrDlez5ywA1Kaa/mczmwuDWP12nBYhMuz7Nmm8w6lnnyd300GrRTqIAo1
-         7nDV1Iqkm3knt5ctGYIZhW9CAXLKCduL7zDzAZ7iF27wNUkRDUQpN5PLka1RQqkU7+sp
-         T6p9nUtq3wLGv9ktG6iWDlFLOz+2/STeW7loSzMyFrYmNCxmyP+D5bE7mw10kLZ5shg+
-         1SeWkIvK8IIyrBK6CSyqaSXqhcumwxZw764yIfljS491asYLDOKsdG5XP4jEnrf91XN7
-         aCEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N+vMMxPE1zexTcBhTUQBjEnFM7QQdjaq1YW9R4l5ACA=;
-        b=dIdQeTDzXdxUStrRbgVsw05kLuSPZe0j6+Z9DOGoAEws+YOyzF4Z/4X/KiizyLteQT
-         peGkusPRFYM3mHIoGmV40nOLSW5wTCEnK5/ZF4ZCchzQcTau5qlqYs2tOW9ZfoQMImGq
-         f2VBTpNiQ4XkzHW1RofniynZ3E35g5sU82rmdvg+BYkc49npQaOb/Ij26Pc/DgU9UDBl
-         is34xnDVPZnzperRIaRph99Q9skxSA+H2pgdMqb82ZNOWYvB5jjaOiUtmyFqLIUT9l66
-         8nDrZi4pBVFM+LvRtem1jXK3t8dpWrrZBPHdPc1BW99QasrBa/sqd0ZhzIfE+z+kKYAK
-         njqw==
-X-Gm-Message-State: APjAAAXy1sxTPlgvNoe4SkSaO9iRvBupfxLIgo7IUfCp71lMiuoVgiLu
-        P3tmh6fulSKbSglvRfPvsRH3Gn+Z9vw=
-X-Google-Smtp-Source: APXvYqw06wJFhqmxOjr9eue9Dc9+rxRZAZhQ7+cOKahyrSjjB8BXMcXir5KPt1owPT+levPxyNpcow==
-X-Received: by 2002:a05:620a:5e3:: with SMTP id z3mr1237806qkg.160.1572901155408;
-        Mon, 04 Nov 2019 12:59:15 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id q1sm6435433qti.46.2019.11.04.12.59.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Nov 2019 12:59:14 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iRjRS-0000aI-FF; Mon, 04 Nov 2019 16:59:14 -0400
-Date:   Mon, 4 Nov 2019 16:59:14 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB: mlx5: no need to check return value of
- debugfs_create functions
-Message-ID: <20191104205914.GI30938@ziepe.ca>
-References: <20191104074141.GA1292396@kroah.com>
+        id S1729521AbfKDVBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 16:01:39 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:40351 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726417AbfKDVBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:01:38 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 476QFq6vnYz9sP4;
+        Tue,  5 Nov 2019 08:01:35 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1572901296;
+        bh=brx9ehP4FCaic0vmXRQ06+f8+KlGVKbOLJleBD7faYg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=psHy4bvAIm0FYQ07rJGiqy1/GKaW7Jc7m/+Ps7bMISdZboZcqWaaZxXT5O8ItoHPo
+         uXxJQbhfWv57ZgSCUkMEpVlTlt4BzLlMU9oh8wsvGsfDwJhp1EsGULZTk3gOx8jAmO
+         G1PSOkhFbEH1JpAeQehlLbheSh1nW+P/e7FCei3aNQvAaOAQsCBDGJG3Rz6AovRHza
+         a7VfWtyRpYU0QUBRdXezsOaDv/iURklYX+oKX4VYsnOaplrUS+c8uo3/umaElpD4wY
+         QaJ7A/mjfMOMhtEn4LnQaZflB+3PkQswzGCwMHoOi9LlS6AIGyL8WpD2oqripVWdYQ
+         4q0VK5XAjWoEQ==
+Date:   Tue, 5 Nov 2019 08:01:34 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Subject: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20191105080134.33aab6a1@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104074141.GA1292396@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="Sig_/avb18f9WLh=P4yYwbKJ6AmW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 08:41:41AM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Leon Romanovsky <leon@kernel.org>
-> Cc: Doug Ledford <dledford@redhat.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->  drivers/infiniband/hw/mlx5/main.c    | 62 +++++++---------------------
->  drivers/infiniband/hw/mlx5/mlx5_ib.h |  9 +---
->  2 files changed, 16 insertions(+), 55 deletions(-)
-> 
-> Note, I kind of need to take this through my tree now as I broke the
-> build due to me changing the use of debugfs_create_atomic_t() in my
-> tree and not noticing this being used here.  Sorry about that, any
-> objections?
+--Sig_/avb18f9WLh=P4yYwbKJ6AmW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think it is fine, I don't forsee conflicts here at this point.
+Hi all,
 
-To be clear, the build is broken in your tree and in linux-next?
+In commit
 
-> And 0-day seems really broken to have missed this for the past months,
-> ugh, I need to stop relying on it...
+  4c76bf696a60 ("net: openvswitch: don't unlock mutex when changing the use=
+r_features fails")
 
-Yes, I've noticed it missing a lot of stuff now too. Not sure why
+Fixes tag
 
-Jason
+  Fixes: 95a7233c4 ("net: openvswitch: Set OvS recirc_id from tc chain inde=
+x")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/avb18f9WLh=P4yYwbKJ6AmW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3Aka4ACgkQAVBC80lX
+0Gxh1Qf/VPbOCMjnC53qoYQ/sjCHnkCid+CZjpDd658pC5jjnnGjFsG/80tAu20F
+Vq9Pn1wsh0bnb6Ws1W3AP52VYsTlPmsdUqD/OySA/FgqUCGS5wj4BT1F4HFlDmGT
+nqiiPsoK7YJ5GwFry+GX8CgfmN4agQ6UQUIz4NQ5x1XEO0y6xPj43tM4VyjRLJHy
+HAWn1XAfLBhUYl0KKIZYt22eIR1KNchx4bsD473fem11wQ7Wus/9Aqf6s+3oD+oW
+2IbDhTh1U8opcUDoVBtVOEYDug/YvNRUgFgdiWUG8MschX/1wCXbXGBJg6Fh/FM/
+wU1vtxVibJK+HyN3nepEfuQu7uQsdA==
+=YSCu
+-----END PGP SIGNATURE-----
+
+--Sig_/avb18f9WLh=P4yYwbKJ6AmW--
