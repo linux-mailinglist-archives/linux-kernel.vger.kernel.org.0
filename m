@@ -2,138 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB64DEE032
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:40:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83270EE03A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 13:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfKDMkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 07:40:23 -0500
-Received: from foss.arm.com ([217.140.110.172]:41974 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfKDMkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 07:40:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EE251FB;
-        Mon,  4 Nov 2019 04:40:22 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 433CB3F6C4;
-        Mon,  4 Nov 2019 04:40:20 -0800 (PST)
-Date:   Mon, 4 Nov 2019 12:40:18 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        id S1728947AbfKDMlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 07:41:52 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36199 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbfKDMlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 07:41:52 -0500
+Received: by mail-pg1-f195.google.com with SMTP id j22so11244962pgh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 04:41:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f5ml/8tDxj4v4KVNQHKkwoSqt5ZyjL0e+C11QKr4g6Q=;
+        b=t51LIKBQSy6DSnJbsbh8C6wkPSdOxEIgMyfLqvPfm0xKVy+HpmNCS7iBJVH8Mnjtem
+         Cmg8WhGm5lYPozuXPhaqBpDYIVChPFB17r729Rqj8bhPms/4WI9i7ZPu2FjbOLQ9wxuA
+         mkf4a8iGl+MH8EbNuTjOnyZ+6Pf/P41yV2t1XktLnfaz8VNdk3kUH8aNwMavEJ4k6OVV
+         IXTWgnDbkmblJccfqLAxTK2e08hKtU1OTri2VES+gDUN5vU8D3FixFDavrkmZXUe+5+B
+         xdurk+xKYJ50nFOFJPVuAzDY0GXLOCxN7L3UV73btCLujhw2Bp7rGb9ec2BX10WgKyC3
+         pnUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f5ml/8tDxj4v4KVNQHKkwoSqt5ZyjL0e+C11QKr4g6Q=;
+        b=MKd7PH2hfLTV+sfkl2SngDrcwX+ZSE5fr9CxAA7+rheXRLgPxARlaAXJk59SmB54pZ
+         rvwZtiU54TkClhdMaqeH5uwZ1Y+lujOoMGwTDlls110xRC9lGZEfNwMV5hss0pROHk0n
+         p7Zm1aqKoI8ccz09OOhWuKATOGdQ4mMA4HTFi+8oyB8pR1+EihdVX10V8kg3GH+sEo4r
+         Zy9OvWiNB+6A+yoL9uhjw2YGWaraeTXbI8szELfYGfI7yEPuKkZhYTMHtlQSmbF5mHx4
+         +uJS2nXyBxTUiekeF5dyaSKR3H9rJyj6KHbfWVz4hkHlvotuBGuJhgUhzttA2ZdAVbhZ
+         BWAw==
+X-Gm-Message-State: APjAAAX9MIkrDcjRpL1P28uJ/3M6K7mMdTrm3QcUoLyp8q4OwcjZgkYB
+        Pxm5H2wIz5Bwd/COor2am/KrFiiKREI=
+X-Google-Smtp-Source: APXvYqyaC/yXuT53FbCODSPTnspNPx8aFiIplmlErNU9+PiTZQFQUQB6sscZzQoMZk7X24mx8JdHyg==
+X-Received: by 2002:a17:90a:de0d:: with SMTP id m13mr35158675pjv.32.1572871310271;
+        Mon, 04 Nov 2019 04:41:50 -0800 (PST)
+Received: from localhost (221x242x255x113.ap221.ftth.ucom.ne.jp. [221.242.255.113])
+        by smtp.gmail.com with ESMTPSA id z1sm1578989pju.27.2019.11.04.04.41.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 04:41:49 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Mon, 4 Nov 2019 21:41:47 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/17] scs: add support for stack usage debugging
-Message-ID: <20191104124017.GD45140@lakrids.cambridge.arm.com>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191101221150.116536-1-samitolvanen@google.com>
- <20191101221150.116536-8-samitolvanen@google.com>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Joe Perches <joe@perches.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH] MAINTAINERS: Add VSPRINTF
+Message-ID: <20191104124147.GA11977@tigerII.localdomain>
+References: <20191031133337.9306-1-pmladek@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191101221150.116536-8-samitolvanen@google.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20191031133337.9306-1-pmladek@suse.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 03:11:40PM -0700, Sami Tolvanen wrote:
-> Implements CONFIG_DEBUG_STACK_USAGE for shadow stacks. When enabled,
-> also prints out the highest shadow stack usage per process.
+On (19/10/31 14:33), Petr Mladek wrote:
+> printk maintainers have been reviewing patches against vsprintf code last
+> few years. Most changes have been committed via printk.git last two years.
 > 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  kernel/scs.c | 39 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> New group is used because printk() is not the only vsprintf() user.
+> Also the group of interested people is not the same.
 > 
-> diff --git a/kernel/scs.c b/kernel/scs.c
-> index 7780fc4e29ac..67c43af627d1 100644
-> --- a/kernel/scs.c
-> +++ b/kernel/scs.c
-> @@ -167,6 +167,44 @@ int scs_prepare(struct task_struct *tsk, int node)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_DEBUG_STACK_USAGE
-> +static inline unsigned long scs_used(struct task_struct *tsk)
-> +{
-> +	unsigned long *p = __scs_base(tsk);
-> +	unsigned long *end = scs_magic(tsk);
-> +	uintptr_t s = (uintptr_t)p;
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-As previously, please use unsigned long for consistency.
+Acked
 
-> +
-> +	while (p < end && *p)
-> +		p++;
-
-I think this is the only place where we legtimately access the shadow
-call stack directly. When using SCS and KASAN, are the
-compiler-generated accesses to the SCS instrumented?
-
-If not, it might make sense to make this:
-
-	while (p < end && READ_ONCE_NOCKECK(*p))
-
-... and poison the allocation from KASAN's PoV, so that we can find
-unintentional accesses more easily. 
-
-Mark.
-
-> +
-> +	return (uintptr_t)p - s;
-> +}
-> +
-> +static void scs_check_usage(struct task_struct *tsk)
-> +{
-> +	static DEFINE_SPINLOCK(lock);
-> +	static unsigned long highest;
-> +	unsigned long used = scs_used(tsk);
-> +
-> +	if (used <= highest)
-> +		return;
-> +
-> +	spin_lock(&lock);
-> +
-> +	if (used > highest) {
-> +		pr_info("%s: highest shadow stack usage %lu bytes\n",
-> +			__func__, used);
-> +		highest = used;
-> +	}
-> +
-> +	spin_unlock(&lock);
-> +}
-> +#else
-> +static inline void scs_check_usage(struct task_struct *tsk)
-> +{
-> +}
-> +#endif
-> +
->  bool scs_corrupted(struct task_struct *tsk)
->  {
->  	return *scs_magic(tsk) != SCS_END_MAGIC;
-> @@ -181,6 +219,7 @@ void scs_release(struct task_struct *tsk)
->  		return;
->  
->  	WARN_ON(scs_corrupted(tsk));
-> +	scs_check_usage(tsk);
->  
->  	scs_account(tsk, -1);
->  	task_set_scs(tsk, NULL);
-> -- 
-> 2.24.0.rc1.363.gb1bccd3e3d-goog
-> 
+	-ss
