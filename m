@@ -2,91 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE5AEDD0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31EB8EDD16
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 11:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfKDKzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 05:55:48 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10480 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727771AbfKDKzr (ORCPT
+        id S1728812AbfKDKz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 05:55:59 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44784 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728663AbfKDKz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:55:47 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA4AtJ63011818;
-        Mon, 4 Nov 2019 11:55:38 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=b8YspRAaoetqeQ0AOmzT0Wn61T1GntjuB/aZCDQVJfI=;
- b=BjdLQQ1ihUa4pmNq3LHS8oiHwfXRF2/ZE6/Veoeie1mBMskvtdsjEI+99eXuRVlcGaKX
- QJ3Vu+LAygF7ceIHCQKAvZwl1QOxfVt1L+jkSwmZzxCS8DePWTy5Os97TrEUEkMwGMNC
- 4GzM8Q1mSQksmnFh595qcdZ4DYN5RNMwGJsOFfA9KBZiuXLrAq+nnePMQ7LkD0odDnVA
- u8TmAD8aAOrC1LgQkDQX3pLGaxqxfbUm42OelwYRtlfSzjzBWIx3MpAs9hcoQ3f1QqD7
- y2256RTRTTVblicJRl0rXUR73l1Wtnq2J/ZANSqSIEcL6o4Y2tWhWZyf3rNTuSJIo/Ol bg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2w0ytchn2h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Nov 2019 11:55:38 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D762010002A;
-        Mon,  4 Nov 2019 11:55:37 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C5ED72BDA96;
-        Mon,  4 Nov 2019 11:55:37 +0100 (CET)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 4 Nov 2019
- 11:55:37 +0100
-Received: from localhost (10.201.22.141) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 4 Nov 2019 11:55:36
- +0100
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 2/2] ARM: dts: stm32: change joystick pinctrl definition on stm32mp157c-ev1
-Date:   Mon, 4 Nov 2019 11:55:29 +0100
-Message-ID: <20191104105529.8049-3-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191104105529.8049-1-amelie.delaunay@st.com>
-References: <20191104105529.8049-1-amelie.delaunay@st.com>
+        Mon, 4 Nov 2019 05:55:57 -0500
+Received: by mail-qt1-f194.google.com with SMTP id o11so18150681qtr.11;
+        Mon, 04 Nov 2019 02:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=rvo1SHxB9nVYQAjRXc27dF5Hg8RmRrQzx7MdaM7VmNk=;
+        b=dXKI99YzHJ7cWkZ1hQUuEdTfaXZk3kat6uEDvhwPD2N/VlwI2UQ3sKAOIdf9qiBcMg
+         k9VB6gsJ6VAE3AytNwdOQsiWAMB5DdQLECd+WxBntCp+DgW/Cfe7y85m0/RG7DwYGym8
+         r+FSwc1ame1Yi5RWV+mHOyrv0cie3RRmdR1YEoC4qOHQSdKlIhmgpPsFg8fRpC/F40Sx
+         5lNnEn9I37pYzOKr+Sicerj7F2oWnK1nQLMbNNTQ7MVcz+52fb2wKt8BJ4yf7arot2GO
+         Ptqombc87PyDNOZkDRGRXwh1w6CZb3yLl9MfK883ERE+aX6atclJVojBr6MgPEP18EY6
+         5yUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=rvo1SHxB9nVYQAjRXc27dF5Hg8RmRrQzx7MdaM7VmNk=;
+        b=oZAGDphXl8JdFfy82aEODNcPbcHM5YUItowCOu40czoLPcTjWcEmkEmzXxlu0tjS6X
+         q3UiAgGSbUC9sraFsIbTkF9ROthclxrNCsRqnfsGJQUfJ9kX1WTYFh1NLhz5xfCcc4kY
+         Z4HGFDF/j7NahSnVPHYLwsNt5yw7mJPKtAgsw0JQBRLTY9VIrei2rbvYApDj7/jBieTi
+         IEqdfQjGkpBr7c48fvLr0bIHHfpT8azKJzmRaaqqXuTB68RdiCNYLY62VVDjcgTbFe8I
+         Zzlwrx9tKOJxxHHSyj41QjdENlKUn2SFSBYsi9uuNiU6aSYJFnRtaDqHja59i0cCz2S5
+         Nyeg==
+X-Gm-Message-State: APjAAAXz40v/oHFsaeBFmaoRSKBScBujw6HKkzrnbtzfR7Qb6BhT/hxb
+        L9V7Z+pexSosnTwnPB/9cTnrRAAh0MaYKWwyN+lF9Fg885I=
+X-Google-Smtp-Source: APXvYqygXMl4HsPWL+b5uxs86pmRyBHmjRYiwkZDhTm8Pg+KmODCvvi3F+xSQaJ5/4Ihk1T7mz8m3DcVaUj1jA5EIX0=
+X-Received: by 2002:ac8:23d3:: with SMTP id r19mr12004769qtr.297.1572864955304;
+ Mon, 04 Nov 2019 02:55:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.22.141]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-11-04_08:2019-11-04,2019-11-04 signatures=0
+References: <CAPW-Pu0KuxqbKSQ2JQaxh5AHbdZdNQZJfOgxoe_XZSxow+9e3A@mail.gmail.com>
+In-Reply-To: <CAPW-Pu0KuxqbKSQ2JQaxh5AHbdZdNQZJfOgxoe_XZSxow+9e3A@mail.gmail.com>
+From:   Leon Maxx <leonmaxx@gmail.com>
+Date:   Mon, 4 Nov 2019 12:55:44 +0200
+Message-ID: <CAPW-Pu3a7UjhW3wZ7jMLMEwj5goabqgHp2Vf7tQyzT3XwZr8cg@mail.gmail.com>
+Subject: [RFC PATCH 3/3] platform/x86: asus_wmi: Set default fan boost mode to normal
+To:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, andy@infradead.org,
+        dvhart@infradead.org, corentin.chary@gmail.com,
+        Daniel Drake <drake@endlessm.com>, yurii.pavlovskyi@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pins used for joystick are all configured as input. "push-pull" is not a
-valid setting for an input pin.
+Set default fan boost mode to normal for multiple reasons:
 
-Fixes: a502b343ebd0 ("pinctrl: stmfx: update pinconf settings")
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+1) existing code assumes that laptop started in normal mode and that is
+not always true.
+2) FX705DY/FX505DY starts in silent mode and under heavy CPU load it
+overheats and drops CPU frequency to 399MHz [1]. Setting fan mode to
+normal avoids overheating.
+
+[1] Link: https://bugzilla.kernel.org/show_bug.cgi?id=203733
+
+Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
 ---
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index 3f7fcba3a516..3789312c8539 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -220,7 +220,6 @@
- 
- 			joystick_pins: joystick {
- 				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
--				drive-push-pull;
- 				bias-pull-down;
- 			};
- 		};
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index f4e5840..70c5fbb 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1674,6 +1674,18 @@ static int fan_boost_mode_write(struct asus_wmi *asus)
+  return 0;
+ }
+
++static int fan_boost_mode_set_default(struct asus_wmi *asus)
++{
++ int result = 0;
++
++ if (asus->fan_boost_mode_available) {
++ asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
++ result = fan_boost_mode_write(asus);
++ }
++
++ return result;
++}
++
+ static int fan_boost_mode_switch_next(struct asus_wmi *asus)
+ {
+  u8 mask = asus->fan_boost_mode_mask;
+@@ -2450,6 +2462,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+  err = fan_boost_mode_check_present(asus);
+  if (err)
+  goto fail_fan_boost_mode;
++ fan_boost_mode_set_default(asus);
+
+  err = asus_wmi_sysfs_init(asus->platform_device);
+  if (err)
 -- 
-2.17.1
-
+1.8.3.1
