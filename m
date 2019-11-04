@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1550EECD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A46CBEEDCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388917AbfKDWAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:00:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
+        id S2390497AbfKDWKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388906AbfKDWAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:00:44 -0500
+        id S2389262AbfKDWJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:09:59 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5853E20650;
-        Mon,  4 Nov 2019 22:00:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 219DE2084D;
+        Mon,  4 Nov 2019 22:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572904842;
-        bh=vftKeGfZD1oTHtGExan21UU6YoxR31kKt1v/Sey+J10=;
+        s=default; t=1572905398;
+        bh=hMZ+6uzgHEr/dMaKBuhF6e8kLt6gB4N3Cpnqs0zwZ5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CON++YFbVscXG9JX77TQnJp9vtODTOC3XJU5sI3qftRdWMfUeTg7wdoSZDvmD0wjJ
-         C1xkg0C/Uj6VacJj7qRbvMwqNf7V341/J1QAdT9GQbKXJ0Qhf5yi3MP2Vy1pcAIfJ9
-         gh3D+nwg7TtNG8/W8/hmVfne+KJ5vbP/viRVUwBk=
+        b=cWZqDtQK8uiiMCQ6Hp28KhIYb8VlYqjF0YjJGUvxc2w9v+rtoiJorS7RODzakZ+fh
+         Gm/VC22xXWWQyEouqrzjX0idHmorSdQ6PY40cTYbketp/EzYxaZSV/i8R1RYtcjakI
+         iG3iUWPsrDuQQsdby5O116tIx9MlIZ1bL7MLiBD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/149] sched/vtime: Fix guest/system mis-accounting on task switch
-Date:   Mon,  4 Nov 2019 22:44:44 +0100
-Message-Id: <20191104212142.854834719@linuxfoundation.org>
+        stable@vger.kernel.org, Giuseppe Scrivano <gscrivan@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.3 095/163] fuse: flush dirty data/metadata before non-truncate setattr
+Date:   Mon,  4 Nov 2019 22:44:45 +0100
+Message-Id: <20191104212147.014034079@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
-References: <20191104212126.090054740@linuxfoundation.org>
+In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
+References: <20191104212140.046021995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,79 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frederic Weisbecker <frederic@kernel.org>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit 68e7a4d66b0ce04bf18ff2ffded5596ab3618585 ]
+commit b24e7598db62386a95a3c8b9c75630c5d56fe077 upstream.
 
-vtime_account_system() assumes that the target task to account cputime
-to is always the current task. This is most often true indeed except on
-task switch where we call:
+If writeback cache is enabled, then writes might get reordered with
+chmod/chown/utimes.  The problem with this is that performing the write in
+the fuse daemon might itself change some of these attributes.  In such case
+the following sequence of operations will result in file ending up with the
+wrong mode, for example:
 
-	vtime_common_task_switch(prev)
-		vtime_account_system(prev)
+  int fd = open ("suid", O_WRONLY|O_CREAT|O_EXCL);
+  write (fd, "1", 1);
+  fchown (fd, 0, 0);
+  fchmod (fd, 04755);
+  close (fd);
 
-Here prev is the scheduling-out task where we account the cputime to. It
-doesn't match current that is already the scheduling-in task at this
-stage of the context switch.
+This patch fixes this by flushing pending writes before performing
+chown/chmod/utimes.
 
-So we end up checking the wrong task flags to determine if we are
-accounting guest or system time to the previous task.
+Reported-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Fixes: 4d99ff8f12eb ("fuse: Turn writeback cache on")
+Cc: <stable@vger.kernel.org> # v3.15+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-As a result the wrong task is used to check if the target is running in
-guest mode. We may then spuriously account or leak either system or
-guest time on task switch.
-
-Fix this assumption and also turn vtime_guest_enter/exit() to use the
-task passed in parameter as well to avoid future similar issues.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Fixes: 2a42eb9594a1 ("sched/cputime: Accumulate vtime on top of nsec clocksource")
-Link: https://lkml.kernel.org/r/20190925214242.21873-1-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/cputime.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/fuse/dir.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 0796f938c4f0d..54eb9457b21d3 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -739,7 +739,7 @@ void vtime_account_system(struct task_struct *tsk)
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1476,6 +1476,19 @@ int fuse_do_setattr(struct dentry *dentr
+ 		is_truncate = true;
+ 	}
  
- 	write_seqcount_begin(&vtime->seqcount);
- 	/* We might have scheduled out from guest path */
--	if (current->flags & PF_VCPU)
-+	if (tsk->flags & PF_VCPU)
- 		vtime_account_guest(tsk, vtime);
- 	else
- 		__vtime_account_system(tsk, vtime);
-@@ -782,7 +782,7 @@ void vtime_guest_enter(struct task_struct *tsk)
- 	 */
- 	write_seqcount_begin(&vtime->seqcount);
- 	__vtime_account_system(tsk, vtime);
--	current->flags |= PF_VCPU;
-+	tsk->flags |= PF_VCPU;
- 	write_seqcount_end(&vtime->seqcount);
- }
- EXPORT_SYMBOL_GPL(vtime_guest_enter);
-@@ -793,7 +793,7 @@ void vtime_guest_exit(struct task_struct *tsk)
- 
- 	write_seqcount_begin(&vtime->seqcount);
- 	vtime_account_guest(tsk, vtime);
--	current->flags &= ~PF_VCPU;
-+	tsk->flags &= ~PF_VCPU;
- 	write_seqcount_end(&vtime->seqcount);
- }
- EXPORT_SYMBOL_GPL(vtime_guest_exit);
--- 
-2.20.1
-
++	/* Flush dirty data/metadata before non-truncate SETATTR */
++	if (is_wb && S_ISREG(inode->i_mode) &&
++	    attr->ia_valid &
++			(ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_MTIME_SET |
++			 ATTR_TIMES_SET)) {
++		err = write_inode_now(inode, true);
++		if (err)
++			return err;
++
++		fuse_set_nowrite(inode);
++		fuse_release_nowrite(inode);
++	}
++
+ 	if (is_truncate) {
+ 		fuse_set_nowrite(inode);
+ 		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
 
 
