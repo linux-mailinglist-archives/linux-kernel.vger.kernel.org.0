@@ -2,72 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD5CEE4AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2777EE4B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 17:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbfKDQap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 11:30:45 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43191 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfKDQap (ORCPT
+        id S1728392AbfKDQeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 11:34:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32782 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbfKDQeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:30:45 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iRfFc-0005AX-Co; Mon, 04 Nov 2019 17:30:44 +0100
-Message-ID: <3a970f3f3518485f58e86f2523e5085f47ec4b15.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: Free struct reset_control_array in
- reset_control_array_put()
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jyri Sarha <jsarha@ti.com>, linux-kernel@vger.kernel.org
-Cc:     tomi.valkeinen@ti.com, colin.king@canonical.com, treding@nvidia.com
-Date:   Mon, 04 Nov 2019 17:30:44 +0100
-In-Reply-To: <9c8c5c337a9351a561a4bf18f2faa1e9a01b50e6.1572884515.git.jsarha@ti.com>
-References: <9c8c5c337a9351a561a4bf18f2faa1e9a01b50e6.1572884515.git.jsarha@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Mon, 4 Nov 2019 11:34:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id s1so17895527wro.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 08:34:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JFkDbKsSeI6+K0jBeMW0GZTEnXuZ3ZSW0WVBKac1tL0=;
+        b=fHz/KuqTSjH1izmh/ecYcpUWqeTHp/VgGOXvyKCgSKmsswFECT92U4eKMGjaGAy+OT
+         /tc9SGYjnxdtRNm2HJWQRlncZ1OC6fiIgewfXPUui7RtjX7JdHFlyAD49OXwpUZpHQOk
+         oKzQl6uS7XOdjODe5L1F5F9IHfev2jx7af3Vk2RLk9GwAz8NpLOBOvT5cU/FFdGPDXRX
+         JXxx1+3IFgsEbv0SddcXvfxU9PQVT1dNWZvjPUXMZ4c79QFCTVmYA8Zj13B0EZHSgDd9
+         i+TUaElLH7kHRSALqMTdd8huDBv6X6bZvajsUFWdxsdpD+qhETk3e8xofis9JSLksRoG
+         bQsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JFkDbKsSeI6+K0jBeMW0GZTEnXuZ3ZSW0WVBKac1tL0=;
+        b=eODpNaDvCw2og6OHzeASpDUzBQpIq3EaTyZFAy+PG1nwUyWkFEk1x9H2SZbA1olAWN
+         5Zwe/aBkAXfIhLJ7VrEb/o+A34jS4MDdgSpIMR7hEnPMJuUstAOTwH1CpL/oKNjioHTF
+         NyTfkGaT8yboc22BZg6BTGgh/zIUG6BZJzK0ET69MVNp+vnbXREOeDsnZA55MIDpEFDc
+         Z01+gm4kt7XmqHNJQPspIlbNZa7Gj1c55LCTVFUWuAmf/rtmAFjD8U3O+7fXMbexKjnd
+         3RMLBLQTEG/E0aFP+r/JouHNr+W4gkBVr7IkeCJensiCTx5GhYmcN6J2XfyU7GLzOdJU
+         xl3Q==
+X-Gm-Message-State: APjAAAUFU+pZPP6Gz+Ul+MSYvzCR4KXcIDmMsqDgmXBEq+a50DRbX+87
+        PUMKRZzAju8cyOTIvHNQX/kW1ZSVmOSng7A=
+X-Google-Smtp-Source: APXvYqwER7eASKzqK/tmsjOMIJJXcnS/K0BnACQLnfZ/F7fsD/zr+ZXQ8+brh4pdwMcZEMoVpzdIBQ==
+X-Received: by 2002:adf:f4c9:: with SMTP id h9mr19343427wrp.354.1572885262526;
+        Mon, 04 Nov 2019 08:34:22 -0800 (PST)
+Received: from ninjahub.lan (79-73-36-243.dynamic.dsl.as9105.com. [79.73.36.243])
+        by smtp.googlemail.com with ESMTPSA id h124sm18573509wmf.30.2019.11.04.08.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 08:34:22 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     outreachy-kernel@googlegroups.com
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, hsweeten@visionengravers.com,
+        abbotti@mev.co.uk, Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH v2] staging: comedi: rewrite macro function with GNU extension typeof
+Date:   Mon,  4 Nov 2019 16:33:31 +0000
+Message-Id: <20191104163331.68173-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jyri,
+Rewrite macro function with the GNU extension typeof
+to remove a possible side-effects of MACRO argument reuse "x".
+ - Problem could rise if arguments have different types
+and different use though.
 
-On Mon, 2019-11-04 at 18:24 +0200, Jyri Sarha wrote:
-> Fix memory leak in devm_reset_control_array_get(). Free also the
-> struct reset_control_array pointer in reset_control_array_put() not
-> only the reset-controls stored in it.
-> 
-> Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Jyri Sarha <jsarha@ti.com>
-> ---
->  drivers/reset/core.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 213ff40dda11..85d9676ee969 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -748,6 +748,8 @@ static void reset_control_array_put(struct reset_control_array *resets)
->  	for (i = 0; i < resets->num_rstcs; i++)
->  		__reset_control_put_internal(resets->rstc[i]);
->  	mutex_unlock(&reset_list_mutex);
-> +
-> +	kfree(resets);
->  }
->  
->  /**
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+v1 - had no full commit log message, with changes not intended to be in the patch 
+v2 - remove some changes not intended to be in this driver
+     include note of a potential problem
+ drivers/staging/comedi/comedi.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thank you, this just got fixed in 532f9cd6ee99 ("reset: Fix memory leak
-in reset_control_array_put()").
-
-regards
-Philipp
+diff --git a/drivers/staging/comedi/comedi.h b/drivers/staging/comedi/comedi.h
+index 09a940066c0e..a57691a2e8d8 100644
+--- a/drivers/staging/comedi/comedi.h
++++ b/drivers/staging/comedi/comedi.h
+@@ -1103,8 +1103,10 @@ enum ni_common_signal_names {
+ 
+ /* *** END GLOBALLY-NAMED NI TERMINALS/SIGNALS *** */
+ 
+-#define NI_USUAL_PFI_SELECT(x)	(((x) < 10) ? (0x1 + (x)) : (0xb + (x)))
+-#define NI_USUAL_RTSI_SELECT(x)	(((x) < 7) ? (0xb + (x)) : 0x1b)
++#define NI_USUAL_PFI_SELECT(x)\
++	({typeof(x) x_ = (x); (x_ < 10) ? (0x1 + x_) : (0xb + x_); })
++#define NI_USUAL_RTSI_SELECT(x)\
++	({typeof(x) x_ = (x); (x_ < 7) ? (0xb + x_) : 0x1b; })
+ 
+ /*
+  * mode bits for NI general-purpose counters, set with
+-- 
+2.23.0
 
