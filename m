@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1708EEDB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E6DEEF03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390399AbfKDWJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:09:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42394 "EHLO mail.kernel.org"
+        id S2389861AbfKDWSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:18:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390047AbfKDWJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:21 -0500
+        id S2388613AbfKDWCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:02:01 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F38FD217F5;
-        Mon,  4 Nov 2019 22:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E5C620650;
+        Mon,  4 Nov 2019 22:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905360;
-        bh=F11OIyybmXWTD+0HmLsrSH+TXw7EJfZ/N53pkdzMMPM=;
+        s=default; t=1572904920;
+        bh=dbfnmF4MTitvESuoiUp5eiYv2w4XZsqdp7uk+45n8Lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sX7j5M2N9+i8laADpYSeqVnipO/ZKe8Tzev8bS08kkm/mLtpGJCfOfz1blJo5wMWk
-         uElWEBwXSvC1+QyzwtnNDjKSZjUIltTGx21hkAOlqJilTEBR4P9BFElETSwBvlF8ig
-         16z3/BbMnMuUYYtSEYfPniu6N8E6E1p3rmNDIhcQ=
+        b=n2bs2C6tL5g5Z2tdCRHTSaMSEgD2MsIsVTmPnRZXL6q8RHFg0wsAnzvyoxtVo8WR4
+         egnAbKJsQe2/edfluTH1Y8SqdRiPAWhGvWqYVHjN0tBD4YcIpIz2MK6O+G/XSuIT6N
+         a/U0ZZ5Ir4FqEqKSBDGlvc4WRUElKAaVz7u3WR/8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bazely <sambazley@fastmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        Austin Palmer <austinp@valvesoftware.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH 5.3 119/163] HID: logitech-hidpp: rework device validation
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Seth Bollinger <Seth.Bollinger@digi.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Subject: [PATCH 4.19 116/149] usb-storage: Revert commit 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
 Date:   Mon,  4 Nov 2019 22:45:09 +0100
-Message-Id: <20191104212148.837477552@linuxfoundation.org>
+Message-Id: <20191104212144.459583669@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,134 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 905d754c53a522aacf806ea1d3e7c929148c1910 upstream.
+commit 9a976949613132977098fc49510b46fa8678d864 upstream.
 
-G920 device only advertises REPORT_ID_HIDPP_LONG and
-REPORT_ID_HIDPP_VERY_LONG in its HID report descriptor, so querying
-for REPORT_ID_HIDPP_SHORT with optional=false will always fail and
-prevent G920 to be recognized as a valid HID++ device.
+Commit 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG
+overflows") attempted to solve a problem involving scatter-gather I/O
+and USB/IP by setting the virt_boundary_mask for mass-storage devices.
 
-To fix this and improve some other aspects, modify
-hidpp_validate_device() as follows:
+However, it now turns out that this interacts badly with commit
+09324d32d2a0 ("block: force an unlimited segment size on queues with a
+virt boundary"), which was added later.  A typical error message is:
 
-  - Inline the code of hidpp_validate_report() to simplify
-    distingushing between non-present and invalid report descriptors
+	ehci-pci 0000:00:13.2: swiotlb buffer is full (sz: 327680 bytes),
+	total 32768 (slots), used 97 (slots)
 
-  - Drop the check for id >= HID_MAX_IDS || id < 0 since all of our
-    IDs are static and known to satisfy that at compile time
+There is no longer any reason to keep the virt_boundary_mask setting
+for usb-storage.  It was needed in the first place only for handling
+devices with a block size smaller than the maxpacket size and where
+the host controller was not capable of fully general scatter-gather
+operation (that is, able to merge two SG segments into a single USB
+packet).  But:
 
-  - Change the algorithms to check all possible report
-    types (including very long report) and deem the device as a valid
-    HID++ device if it supports at least one
+	High-speed or slower connections never use a bulk maxpacket
+	value larger than 512;
 
-  - Treat invalid report length as a hard stop for the validation
-    algorithm, meaning that if any of the supported reports has
-    invalid length we assume the worst and treat the device as a
-    generic HID device.
+	The SCSI layer does not handle block devices with a block size
+	smaller than 512 bytes;
 
-  - Fold initialization of hidpp->very_long_report_length into
-    hidpp_validate_device() since it already fetches very long report
-    length and validates its value
+	All the host controllers capable of SuperSpeed operation can
+	handle fully general SG;
 
-Fixes: fe3ee1ec007b ("HID: logitech-hidpp: allow non HID++ devices to be handled by this module")
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204191
-Reported-by: Sam Bazely <sambazley@fastmail.com>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>
-Cc: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
-Cc: Austin Palmer <austinp@valvesoftware.com>
-Cc: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # 5.2+
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+	Since commit ea44d190764b ("usbip: Implement SG support to
+	vhci-hcd and stub driver") was merged, the USB/IP driver can
+	also handle SG.
+
+Therefore all supported device/controller combinations should be okay
+with no need for any special virt_boundary_mask.  So in order to fix
+the swiotlb problem, this patch reverts commit 747668dbc061.
+
+Reported-and-tested-by: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Link: https://marc.info/?l=linux-usb&m=157134199501202&w=2
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Seth Bollinger <Seth.Bollinger@digi.com>
+CC: <stable@vger.kernel.org>
+Fixes: 747668dbc061 ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
+Acked-by: Christoph Hellwig <hch@lst.de>
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1910211145520.1673-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-logitech-hidpp.c |   54 +++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
+ drivers/usb/storage/scsiglue.c |   10 ----------
+ 1 file changed, 10 deletions(-)
 
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -3498,34 +3498,45 @@ static int hidpp_get_report_length(struc
- 	return report->field[0]->report_count + 1;
- }
- 
--static bool hidpp_validate_report(struct hid_device *hdev, int id,
--				  int expected_length, bool optional)
-+static bool hidpp_validate_device(struct hid_device *hdev)
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -65,7 +65,6 @@ static const char* host_info(struct Scsi
+ static int slave_alloc (struct scsi_device *sdev)
  {
--	int report_length;
-+	struct hidpp_device *hidpp = hid_get_drvdata(hdev);
-+	int id, report_length, supported_reports = 0;
-+
-+	id = REPORT_ID_HIDPP_SHORT;
-+	report_length = hidpp_get_report_length(hdev, id);
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_SHORT_LENGTH)
-+			goto bad_device;
+ 	struct us_data *us = host_to_us(sdev->host);
+-	int maxp;
  
--	if (id >= HID_MAX_IDS || id < 0) {
--		hid_err(hdev, "invalid HID report id %u\n", id);
--		return false;
-+		supported_reports++;
- 	}
+ 	/*
+ 	 * Set the INQUIRY transfer length to 36.  We don't use any of
+@@ -75,15 +74,6 @@ static int slave_alloc (struct scsi_devi
+ 	sdev->inquiry_len = 36;
  
-+	id = REPORT_ID_HIDPP_LONG;
- 	report_length = hidpp_get_report_length(hdev, id);
--	if (!report_length)
--		return optional;
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_LONG_LENGTH)
-+			goto bad_device;
- 
--	if (report_length < expected_length) {
--		hid_warn(hdev, "not enough values in hidpp report %d\n", id);
--		return false;
-+		supported_reports++;
- 	}
- 
--	return true;
--}
-+	id = REPORT_ID_HIDPP_VERY_LONG;
-+	report_length = hidpp_get_report_length(hdev, id);
-+	if (report_length) {
-+		if (report_length < HIDPP_REPORT_LONG_LENGTH ||
-+		    report_length > HIDPP_REPORT_VERY_LONG_MAX_LENGTH)
-+			goto bad_device;
- 
--static bool hidpp_validate_device(struct hid_device *hdev)
--{
--	return hidpp_validate_report(hdev, REPORT_ID_HIDPP_SHORT,
--				     HIDPP_REPORT_SHORT_LENGTH, false) &&
--	       hidpp_validate_report(hdev, REPORT_ID_HIDPP_LONG,
--				     HIDPP_REPORT_LONG_LENGTH, true);
-+		supported_reports++;
-+		hidpp->very_long_report_length = report_length;
-+	}
-+
-+	return supported_reports;
-+
-+bad_device:
-+	hid_warn(hdev, "not enough values in hidpp report %d\n", id);
-+	return false;
- }
- 
- static bool hidpp_application_equals(struct hid_device *hdev,
-@@ -3572,11 +3583,6 @@ static int hidpp_probe(struct hid_device
- 		return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
- 	}
- 
--	hidpp->very_long_report_length =
--		hidpp_get_report_length(hdev, REPORT_ID_HIDPP_VERY_LONG);
--	if (hidpp->very_long_report_length > HIDPP_REPORT_VERY_LONG_MAX_LENGTH)
--		hidpp->very_long_report_length = HIDPP_REPORT_VERY_LONG_MAX_LENGTH;
+ 	/*
+-	 * USB has unusual scatter-gather requirements: the length of each
+-	 * scatterlist element except the last must be divisible by the
+-	 * Bulk maxpacket value.  Fortunately this value is always a
+-	 * power of 2.  Inform the block layer about this requirement.
+-	 */
+-	maxp = usb_maxpacket(us->pusb_dev, us->recv_bulk_pipe, 0);
+-	blk_queue_virt_boundary(sdev->request_queue, maxp - 1);
 -
- 	if (id->group == HID_GROUP_LOGITECH_DJ_DEVICE)
- 		hidpp->quirks |= HIDPP_QUIRK_UNIFYING;
- 
+-	/*
+ 	 * Some host controllers may have alignment requirements.
+ 	 * We'll play it safe by requiring 512-byte alignment always.
+ 	 */
 
 
