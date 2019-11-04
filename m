@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BA5EE313
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C01EE31A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 16:06:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbfKDPFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 10:05:47 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40115 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbfKDPFr (ORCPT
+        id S1729101AbfKDPGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 10:06:18 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35386 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729062AbfKDPGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:05:47 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q2so11439295ljg.7
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 07:05:46 -0800 (PST)
+        Mon, 4 Nov 2019 10:06:17 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y6so12515320lfj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 07:06:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2UzsxUZvtQAv5yTZNCgAIyZvTbfcvOElCqD9Y1x8Cds=;
-        b=vCzyNRN4s73hE44j//vz084Ojhi0V3RfoCm+wWuyesMKCgYTVcNIMm1zmzl/AVoMUG
-         1u4+4Qeca5bRWcLRT+8xYc17wEHqVKkKignoqGjWL4d9getfO+0L9gDGrZLvUzAfT0jb
-         F+f6wFtgwmTMhtJ8w8/GBF0zx8p/xVdyqpnhCAQTrUImUPKQujUPEWGx0HTMuMo55qQJ
-         oFSzRjeeDhuf+lE65xn2fJ3KmEC0dDd9o7dghkqhoPzFfVLrRSJ44hPyacflpqsXTVxe
-         Axu6mW+HA6ADnjQgtxSoN4lDE5ieQf3qhL/ZGNu+8kmqQPKA1K5WWRuOonjsEzoHMUhm
-         E7Gg==
+        bh=DNloHCnEtBbwd/RLhQCPuff9G3+A7zTymGTqgW0cFJs=;
+        b=wj/ZMbi4O0qnIyehYcaBvYcnUc8q6yX0RA44xm+nXzL9BvAABB1c2AhmRkYBw1Qg7I
+         mN5UCUUddY9HGRWlzT/6p2B200iREj8F/dF1hqApp7eUvhZx6Dd3ghEhcQ0VFLaL7Kl5
+         Pgpy54adYlSA5tTEDRwDoFSXkUK4urF1D4wKL2deeefCfdS89LoQ6pCuo0xbgn/xopvR
+         ul4n33zi6AgKbYGxO0TfRJkj6etOCS9z83C0N9mEFEKxcpb9bchw5ReBmmDS6V8AsoZH
+         CxHhMEOqRM3aPdqCYKgl5ZIUF9bK5ZNtCsc70kKYSxQGZBBZJThi8FckONgrisLeQMIa
+         5JOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2UzsxUZvtQAv5yTZNCgAIyZvTbfcvOElCqD9Y1x8Cds=;
-        b=BjdLUN51/4U6C0wxj4iBkDjCFgKwNh2tc2YGG/loA7ThaTRu2FBy/XXmqg/1zHl9+9
-         AKPLhwvj4A4xnm3AwYbHCgO+NK/zaTkfthqSvRz6dt0W/u5lOgUJTd9KsonusH1lLUtC
-         79mG2R/In6mdnfjjZ73jC078DaEPMXyc5w+6u0eug4quCmVgDFVNTzAPOKUyXniuaT8q
-         G/b5mmrjxkQd9nAs9vsxSeamrnN6Lj8F4MKpHulCEKtdmlVJXp69MjLj+D8SLWgf/HBI
-         1blGibkUCFywZKPUv6YoC6Qgb5KSIpyxXE2av2Sz22Fk5TaHr74IDvryYQYx8dDRJaS1
-         tGzA==
-X-Gm-Message-State: APjAAAVHf42Ked/O0OmR4A3fuQiYFBRG0g9zQWY9LlMyQEk00yut8bvp
-        xj/2xcN0kHbrVKGdOp/BydnqIApvrIzEEXXCQ1MQoQ==
-X-Google-Smtp-Source: APXvYqws3TDQMt4oTHuaGCbLTVZBn1NqJZhtfLhI39uuuxwoVtmfNQM+7OO7GNGby5LOgL7nOpmlHxorL0t5iDxclEc=
-X-Received: by 2002:a2e:9a55:: with SMTP id k21mr5737529ljj.251.1572879945553;
- Mon, 04 Nov 2019 07:05:45 -0800 (PST)
+        bh=DNloHCnEtBbwd/RLhQCPuff9G3+A7zTymGTqgW0cFJs=;
+        b=jcBK5a2FxKJmYoSNuUcw/RQL5Qr8cKzmm8Ljb/8bVdpVeKdzJbyYo6XmioyYCrlfX4
+         q+gnwYNVeHCGT0yd7O35ymbupPigVnNV6n9muF9knMTDL2sCwWydNL2kAbvM+UnzqQjF
+         dqKDvvVZIF1ahuv+xMdDkqhQ6QI/amsMAeNFi8qP8RxsCOoyCAUztu7w7vd+PDYrk/VQ
+         Mj1LAZgpPtWMyePS2Zus/o9g5lb7Wzm1LBMzQtbUZ7ar9anzHzbd92w+aOup9a7VcAra
+         v+cyYEoUhQpMTaehEVtOY9z7zYuux2yfp+pJeBElUg9v90HZoQhSW2prX60OC5rjh7JC
+         Qapw==
+X-Gm-Message-State: APjAAAXNbUAt6Uh3tw0FDWpCOI9X1g7pEWItvGeKgs8uXmk4swZKeLnv
+        dCDYhzUwz/j21LgGWK2BwZptrltWp9i7Y5TOYf/TTg==
+X-Google-Smtp-Source: APXvYqxi25NXW+aVZ57onKX4CL5r0tUcHO+MYQcB/SWeVCchxkGa9OP810BuCSYMvWujYm7jnic6OJLm6w/D7qjiHVU=
+X-Received: by 2002:a19:6a0d:: with SMTP id u13mr8410452lfu.86.1572879975573;
+ Mon, 04 Nov 2019 07:06:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20191022084318.22256-1-brgl@bgdev.pl> <20191022084318.22256-8-brgl@bgdev.pl>
-In-Reply-To: <20191022084318.22256-8-brgl@bgdev.pl>
+References: <20191022084318.22256-1-brgl@bgdev.pl> <20191022084318.22256-9-brgl@bgdev.pl>
+In-Reply-To: <20191022084318.22256-9-brgl@bgdev.pl>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Nov 2019 16:05:34 +0100
-Message-ID: <CACRpkdbGP6H=5R03Fi2LQzvYazke9Fye8bWNqoKs-4bEQroctQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 7/8] gpio: mvebu: use devm_platform_ioremap_resource_byname()
+Date:   Mon, 4 Nov 2019 16:06:04 +0100
+Message-ID: <CACRpkdZXDwN_z9pFzbHfn78u+51tWUa0OZdrBSSrtmZPoco3EQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3 8/8] gpio: tegra186: use devm_platform_ioremap_resource_byname()
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -67,8 +67,9 @@ On Tue, Oct 22, 2019 at 10:43 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Use devm_platform_ioremap_resource_byname() instead of calling
-> platform_get_resource_byname() and devm_ioremap_resource() separately.
+> Use the devm_platform_ioremap_resource_byname() helper instead of
+> calling platform_get_resource_byname() and devm_ioremap_resource()
+> separately.
 >
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
