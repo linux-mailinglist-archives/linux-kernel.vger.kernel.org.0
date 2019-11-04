@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715FFEEDCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34254EED0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 23:03:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390485AbfKDWKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 17:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43102 "EHLO mail.kernel.org"
+        id S2389426AbfKDWC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 17:02:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387458AbfKDWJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:09:56 -0500
+        id S2389416AbfKDWCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 17:02:54 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25A4E205C9;
-        Mon,  4 Nov 2019 22:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ACCC205C9;
+        Mon,  4 Nov 2019 22:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905395;
-        bh=H86na4SwTHD42al8jI4omt8W7BwlKnekQUgfHXUlBbY=;
+        s=default; t=1572904973;
+        bh=WUYtsEowu6tUKxR++J7FijFndFCjk6G0o2q2sXvWxvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oUwjBCH62r0R7VGir0w/jXWNCi++GL7oRYHhY+Vrh9PfEcZUq/jvZIhnSe/TuAKxo
-         Rr0XVWg8tlFIAyi6wCpYT0gusL7J69zbiinMA9gUWQxbLMqEkM9KU5jbRTV6PcOafy
-         1huo47QnVmm8Gz0oGS8y5MA73H5zHtsf7D2e4BLk=
+        b=Qp2yz9aMcYn2IoImbPC1u8pEwqNLCwi9Tscdo/7O/CyKxSr22uy/U9RELyu9lHR7I
+         VLUvqO8Kvzek6c1iy1ASQ66GEsJPb6UIPpkFm4nUyFoGKwIUBnvC+07OIqsZ+QwSj1
+         0z5CS3d5WWgMlg7/S/f/KmLB5ZD5VDDzioDM8kew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.3 130/163] rtlwifi: rtl_pci: Fix problem of too small skb->len
-Date:   Mon,  4 Nov 2019 22:45:20 +0100
-Message-Id: <20191104212149.737476048@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 4.19 128/149] s390/idle: fix cpu idle time calculation
+Date:   Mon,  4 Nov 2019 22:45:21 +0100
+Message-Id: <20191104212145.431494357@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212126.090054740@linuxfoundation.org>
+References: <20191104212126.090054740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +43,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit b43f4a169f220e459edf3ea8f8cd3ec4ae7fa82d upstream.
+commit 3d7efa4edd07be5c5c3ffa95ba63e97e070e1f3f upstream.
 
-In commit 8020919a9b99 ("mac80211: Properly handle SKB with radiotap
-only"), buffers whose length is too short cause a WARN_ON(1) to be
-executed. This change exposed a fault in rtlwifi drivers, which is fixed
-by regarding packets with skb->len <= FCS_LEN as though they are in error
-and dropping them. The test is now annotated as likely.
+The idle time reported in /proc/stat sometimes incorrectly contains
+huge values on s390. This is caused by a bug in arch_cpu_idle_time().
 
-Cc: Stable <stable@vger.kernel.org> # v5.0+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The kernel tries to figure out when a different cpu entered idle by
+accessing its per-cpu data structure. There is an ordering problem: if
+the remote cpu has an idle_enter value which is not zero, and an
+idle_exit value which is zero, it is assumed it is idle since
+"now". The "now" timestamp however is taken before the idle_enter
+value is read.
+
+Which in turn means that "now" can be smaller than idle_enter of the
+remote cpu. Unconditionally subtracting idle_enter from "now" can thus
+lead to a negative value (aka large unsigned value).
+
+Fix this by moving the get_tod_clock() invocation out of the
+loop. While at it also make the code a bit more readable.
+
+A similar bug also exists for show_idle_time(). Fix this is as well.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/pci.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/kernel/idle.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -822,7 +822,7 @@ static void _rtl_pci_rx_interrupt(struct
- 		hdr = rtl_get_hdr(skb);
- 		fc = rtl_get_fc(skb);
+--- a/arch/s390/kernel/idle.c
++++ b/arch/s390/kernel/idle.c
+@@ -69,18 +69,26 @@ DEVICE_ATTR(idle_count, 0444, show_idle_
+ static ssize_t show_idle_time(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
++	unsigned long long now, idle_time, idle_enter, idle_exit, in_idle;
+ 	struct s390_idle_data *idle = &per_cpu(s390_idle, dev->id);
+-	unsigned long long now, idle_time, idle_enter, idle_exit;
+ 	unsigned int seq;
  
--		if (!stats.crc && !stats.hwerror) {
-+		if (!stats.crc && !stats.hwerror && (skb->len > FCS_LEN)) {
- 			memcpy(IEEE80211_SKB_RXCB(skb), &rx_status,
- 			       sizeof(rx_status));
+ 	do {
+-		now = get_tod_clock();
+ 		seq = read_seqcount_begin(&idle->seqcount);
+ 		idle_time = READ_ONCE(idle->idle_time);
+ 		idle_enter = READ_ONCE(idle->clock_idle_enter);
+ 		idle_exit = READ_ONCE(idle->clock_idle_exit);
+ 	} while (read_seqcount_retry(&idle->seqcount, seq));
+-	idle_time += idle_enter ? ((idle_exit ? : now) - idle_enter) : 0;
++	in_idle = 0;
++	now = get_tod_clock();
++	if (idle_enter) {
++		if (idle_exit) {
++			in_idle = idle_exit - idle_enter;
++		} else if (now > idle_enter) {
++			in_idle = now - idle_enter;
++		}
++	}
++	idle_time += in_idle;
+ 	return sprintf(buf, "%llu\n", idle_time >> 12);
+ }
+ DEVICE_ATTR(idle_time_us, 0444, show_idle_time, NULL);
+@@ -88,17 +96,24 @@ DEVICE_ATTR(idle_time_us, 0444, show_idl
+ u64 arch_cpu_idle_time(int cpu)
+ {
+ 	struct s390_idle_data *idle = &per_cpu(s390_idle, cpu);
+-	unsigned long long now, idle_enter, idle_exit;
++	unsigned long long now, idle_enter, idle_exit, in_idle;
+ 	unsigned int seq;
  
-@@ -859,6 +859,7 @@ static void _rtl_pci_rx_interrupt(struct
- 				_rtl_pci_rx_to_mac80211(hw, skb, rx_status);
- 			}
- 		} else {
-+			/* drop packets with errors or those too short */
- 			dev_kfree_skb_any(skb);
- 		}
- new_trx_end:
+ 	do {
+-		now = get_tod_clock();
+ 		seq = read_seqcount_begin(&idle->seqcount);
+ 		idle_enter = READ_ONCE(idle->clock_idle_enter);
+ 		idle_exit = READ_ONCE(idle->clock_idle_exit);
+ 	} while (read_seqcount_retry(&idle->seqcount, seq));
+-
+-	return cputime_to_nsecs(idle_enter ? ((idle_exit ?: now) - idle_enter) : 0);
++	in_idle = 0;
++	now = get_tod_clock();
++	if (idle_enter) {
++		if (idle_exit) {
++			in_idle = idle_exit - idle_enter;
++		} else if (now > idle_enter) {
++			in_idle = now - idle_enter;
++		}
++	}
++	return cputime_to_nsecs(in_idle);
+ }
+ 
+ void arch_cpu_idle_enter(void)
 
 
