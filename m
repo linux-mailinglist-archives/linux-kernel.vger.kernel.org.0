@@ -2,86 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA5DEE7D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A5BEE7D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2019 20:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfKDTAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 14:00:22 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43152 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbfKDTAV (ORCPT
+        id S1729137AbfKDTCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 14:02:22 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35638 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728898AbfKDTCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 14:00:21 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l20so3032796oie.10
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 11:00:21 -0800 (PST)
+        Mon, 4 Nov 2019 14:02:21 -0500
+Received: by mail-oi1-f196.google.com with SMTP id n16so15133311oig.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 11:02:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ksr/h9CCVfqZZQjRKQaKSNEP4lA439YVqkZQJ3uCxu4=;
-        b=CkMQKmnOy6i1xFV6dMi8Bspp2+SiqjFCPxIRLAHuZecPhMXOwhJ0ejY623f5E2L3n8
-         BjP9BeUUlCqWt2o6uBCqmUg2OQ38lNyqN7+o7tRZbrWJDjzFnfedi5+KAsRIakiIYnxS
-         MFP+ZnbOqfvvJhOCHS8mHURidBYca+h47mZLk0d/OQVIGJk9dPEc8ryZ6XWdeVXza8bw
-         W/gF61xyTqrCzN4Nnr6/QQDt2PqWxlGtnCImJjErygRstjnpOeT0/y8S1KCkvMYKejoP
-         ErUpYl/s8Fwd7vKYzpdkexc+TxgX1fMlNd2vs7wICk2khqMalQuMN7qYcNgsYQZzfH4s
-         sSoA==
+        bh=VHvMybYCPvLOcRHqCBZyxUzdSqz4vFyRg5UuR2Ahyew=;
+        b=Yp07K186DuxwZHZLbvAqheApB9VC785SKUV264EeioFCjyGfcjLdY6R/3zrMgomkf6
+         iAZvA//p0ACWZZZ3ru+YoQPAaSdy/Xlgq54DG1DBJstqJwrKEytiSDPVksn0ov45SfdD
+         BCFimiCInTI1x7cgvt5ZjyaN1j8gS0PElAUlt0ZdXktta6B1w1k9aWa0G//JRs4OPz/w
+         uFfV+z0dtmAsPluS3BtHOHYUih5RlVD/Iye9TuroC7Idm1Sf9+t+oXEiqGh9H42x39OC
+         Yn/yxRPTZP0PZnBKSsF3rABozZBCYGOdtbSQvyphlHyFlPtmDv33p5yAYOiS4SBY7HAV
+         1vAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ksr/h9CCVfqZZQjRKQaKSNEP4lA439YVqkZQJ3uCxu4=;
-        b=cR+KZorzjSshjvEfem5VfSqczd4/grdMHRHQ1FOu/r3PZOLHFpQ2eJGIYyrHO+qrv9
-         w4jFD0Wkp4Bd1y6AeqwWJ2kzhz/Av0nHzeojWcfm3lGfanLeGqelVn8wLmpDlmuV1YsX
-         yVp1fL268ifS3jM9XYW81yHjld0TS7g2nbSgy78HpzhaMqH8L1/mXk5zXXGzb6d2cFlS
-         aEwdk6Dbxmua0F/OxSJfnxAbTBraEtyDKzw+0uD7yOXKBnknaXcuzWOiK5Kf/qEjf55+
-         O4WnAtdZwR8hHMOiUX3LK8XkdQK/WWaQfqN2ddSro+HUnUon7hLIEACyRfsWKPxKgKqr
-         vxEA==
-X-Gm-Message-State: APjAAAUG3YPyq6WpvN+tttwERfDnUIltLKvMGVbZ34WmbaZglI2ouLZ+
-        NSlAXaK0bMZkPE8mXB+DcDw6xhykAulbL/YPQoHVzWav
-X-Google-Smtp-Source: APXvYqx9RH4q18tPgDzGIegAC/ekwamy9juTr/AzqXzj083HVVgnfDpFlteVk7Iw0sWNnT/Cj5W81rCPE1MlbyKHkRE=
-X-Received: by 2002:aca:1210:: with SMTP id 16mr489352ois.128.1572894020603;
- Mon, 04 Nov 2019 11:00:20 -0800 (PST)
+        bh=VHvMybYCPvLOcRHqCBZyxUzdSqz4vFyRg5UuR2Ahyew=;
+        b=auQaVQ+jwKeGLXIWr2X9wG0O5NtsKU+yzxwTrCjGXWmqUTNXC2sOsgWyHP4ZG/0sen
+         PeSSdeJ18bOZEBJK8EIwgdBQAhCH9l8ZVUhc/jS2pPBEiG9Ffl2EKX6GW1K8RbHIwyK5
+         ytRxYGntPlt+Y72hE+UQ4DCYON0o4fyQ7EUFZ+/TSBzgNCgKVbtKt9IgDToZMUmV85WM
+         sKo6TkiRA4hH5TNIodiUljhVcR2mo5eLdnd16xMbMA02ZCKEYakxpJ6yuxPK6OZsJrQO
+         pOD3SB0V4HRLPEfLlS/XK08uvBm/+DOkpIruQjIvp0HASdPRFm6nT1xlunMyL8uNBEr0
+         bP1Q==
+X-Gm-Message-State: APjAAAVKSEVapU9b64FazaGYarRo4aZ6SH4JHvTMBegEzD/hyjm7XVd+
+        4RXj6OcVIVMslDeLvUszqtpBZLLvl/JDjbtB/wJAlQ==
+X-Google-Smtp-Source: APXvYqxvMsCRsWBIDZ0SqDKRbA2a2jcPrtgP2JA+jl0La2OLtVPkdITmiBc0BO/x8fRSa547Hk9FSYYdLVC57gQLkRs=
+X-Received: by 2002:aca:f408:: with SMTP id s8mr482330oih.69.1572894140243;
+ Mon, 04 Nov 2019 11:02:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20191025234834.28214-1-john.stultz@linaro.org>
- <20191025234834.28214-3-john.stultz@linaro.org> <20191104102445.GE10326@phenom.ffwll.local>
-In-Reply-To: <20191104102445.GE10326@phenom.ffwll.local>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 4 Nov 2019 11:00:08 -0800
-Message-ID: <CALAqxLXq=4dw=WfJZhXh=Ft3SHK1QUJZRt+rwy4ZuKTbjZUEpQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 2/2] dma-buf: heaps: Allow system & cma heaps to be
- configured as a modules
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Sandeep Patil <sspatil@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Liam Mark <lmark@codeaurora.org>, Yue Hu <huyue2@yulong.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pratik Patel <pratikp@codeaurora.org>
+References: <20191028220027.251605-1-saravanak@google.com> <20191028220027.251605-6-saravanak@google.com>
+ <CAL_Jsq+obCEeaNjpvJ6VvO6b2F6A5oHcRD8PYAifUvBQHbQ_Og@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+obCEeaNjpvJ6VvO6b2F6A5oHcRD8PYAifUvBQHbQ_Og@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 4 Nov 2019 11:01:44 -0800
+Message-ID: <CAGETcx_CL9P3svctyDuGpavG4Ykd+o2G-rxDAE5OUvxL+sj6xA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] of: property: Skip adding device links to
+ suppliers that aren't devices
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Len Brown <lenb@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 2:24 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Fri, Oct 25, 2019 at 11:48:34PM +0000, John Stultz wrote:
-> > Allow loading system and cma heap as a module instead of just as
-> > a statically built in heap.
-> >
-> > Since there isn't a good mechanism for dmabuf lifetime tracking
-> > it isn't safe to allow the heap drivers to be unloaded, so these
-> > drivers do not implement any module unloading functionality and
-> > will show up in lsmod as "[permanent]".
+On Mon, Nov 4, 2019 at 7:18 AM Rob Herring <robh+dt@kernel.org> wrote:
 >
-> dma-buf itself has all the try_module_get we'll need ... why is this not
-> possible?
+> On Mon, Oct 28, 2019 at 5:00 PM Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > Some devices need to be initialized really early and can't wait for
+> > driver core or drivers to be functional.  These devices are typically
+> > initialized without creating a struct device for their device nodes.
+> >
+> > If a supplier ends up being one of these devices, skip trying to add
+> > device links to them.
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >  drivers/of/property.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/of/property.c b/drivers/of/property.c
+> > index f16f85597ccc..21c9d251318a 100644
+> > --- a/drivers/of/property.c
+> > +++ b/drivers/of/property.c
+> > @@ -1038,6 +1038,7 @@ static int of_link_to_phandle(struct device *dev, struct device_node *sup_np,
+> >         struct device *sup_dev;
+> >         int ret = 0;
+> >         struct device_node *tmp_np = sup_np;
+> > +       int is_populated;
+> >
+> >         of_node_get(sup_np);
+> >         /*
+> > @@ -1062,9 +1063,10 @@ static int of_link_to_phandle(struct device *dev, struct device_node *sup_np,
+> >                 return -EINVAL;
+> >         }
+> >         sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
+> > +       is_populated = of_node_check_flag(sup_np, OF_POPULATED);
+> >         of_node_put(sup_np);
+> >         if (!sup_dev)
+> > -               return -EAGAIN;
+> > +               return is_populated ? 0 : -EAGAIN;
+>
+> You're only using the flag in one spot and a comment would be good
+> here, so I'd just do:
+>
+> if (of_node_check_flag(sup_np, OF_POPULATED))
+>         return 0; /* Early device without a struct device */
 
-Let me look into that.  Thanks for the pointer.
+Hi Rob,
 
-thanks
--john
+Thanks for the review.
+
+I'm using the flag to keep the error handling code simple/cleaner. I
+can't do the check like that after I do a put on the sup_np.
+
+Yeah, I was actually planning to add a dev_dbg() message when this
+happens and returning a -EINVAL (that'll be ignored by the caller)
+instead of -EAGAIN (that's NOT ignored by the caller).
+
+Looks like these changes go pulled into driver-core-next. So I'll send
+a delta patch to add the dbg message and also address you nit on the
+other patch.
+
+Thanks,
+Saravana
