@@ -2,124 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF4AEF37A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D1A3EF37F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbfKECb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 21:31:29 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:41530 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729760AbfKECb3 (ORCPT
+        id S1730442AbfKECcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 21:32:39 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39103 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729760AbfKECci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:31:29 -0500
-X-UUID: 7fffc5ef7400452bb4f7ddf0176366e7-20191105
-X-UUID: 7fffc5ef7400452bb4f7ddf0176366e7-20191105
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1067987505; Tue, 05 Nov 2019 10:31:21 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
- (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Nov
- 2019 10:31:16 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 5 Nov 2019 10:31:16 +0800
-Message-ID: <1572921077.18464.55.camel@mhfsdcap03>
-Subject: Re: [RFC PATCH] usb: common: change usb_debug_root as static
- variable
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 5 Nov 2019 10:31:17 +0800
-In-Reply-To: <20191101090221.GC2671695@kroah.com>
-References: <1572575349-5596-1-git-send-email-chunfeng.yun@mediatek.com>
-         <20191101090221.GC2671695@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 4 Nov 2019 21:32:38 -0500
+Received: by mail-qt1-f195.google.com with SMTP id t8so27235309qtc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 18:32:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4urm9i82HUz7ctZoqeaJ+eDwbY+Le9I8/NmP0pY1rnA=;
+        b=RrEUUprScGGCs1P3lOuGj4a5RoiWbVbfDZ4+HpgRvyTXCYVlJAXQB+MYamRZtedVHY
+         f5+sxNxk2K5wkp7PjMMeD8HJWFAJHo3RtLYXlCrUl00LuH1GNIO+43+qB9VoRPGoMtd2
+         MhxxJSrVmcyNdw2dcAOft+ieDHmjkqcbx3xo51HlgztpG3sVxpkHZVlG9m+fgORfqdhb
+         XySrfwIPRDIjnSUQNZ9F7DSfvHrKSEQZxN/D+pZKoiFoN1H+0mMnDQ/zYc1NegbKO5Qw
+         fR/889wgnwS9AagFL4h4X1w9N0H+8w+Cg8HTo2zBy3ABWuxHxMoo0KJgJWvcNzShW5B1
+         QLlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4urm9i82HUz7ctZoqeaJ+eDwbY+Le9I8/NmP0pY1rnA=;
+        b=qfMkUSNuamIBNl5egcsazeXOb4to5KUr4uHZ+KEJcCgX7U2LiJAOWmPwNyd+BnYvtA
+         0K4KFYgsHhWA1oJZm3ICYusNcJ/99DR2JEcCaYtfR+K3KUecb36aEn/P0vMNMl4j2Aeh
+         j8HHETymdI5fcnFRPoYxHhzuZDuTeMpcTL99RUhbGKQ7Is6wTtP5huzvmmND9EbjBC9j
+         voSHSu/cy1m25zCXjJVaDW+WUbqM4AKpF2R+oGKQqtxnb1INRc4kMuZzZI2YvJfRc4In
+         zSg7GNvDKLsHnGsyb0e0r+of/2LxFe/wb5E71tW7nEoBxjjloUB0CyBr7lhtrN8rnTlk
+         +ijA==
+X-Gm-Message-State: APjAAAWLrRKE3/HBMD/0TAx7nRy0bhjjnnnwdBkFV68Q3c2nM4zCAOxX
+        nNNJoDYKfZtAkLhW5VDQbrsNlA==
+X-Google-Smtp-Source: APXvYqzymmufBg1PiSWGxkk4f7LXgsvyOrzTuuRBB+uFmwh9UO+iQP682ubsI0h94l7eDVroneUqZg==
+X-Received: by 2002:a0c:9838:: with SMTP id c53mr25556531qvd.250.1572921156814;
+        Mon, 04 Nov 2019 18:32:36 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id t65sm8907102qkh.23.2019.11.04.18.32.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Nov 2019 18:32:36 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iRoe3-0002uH-K9; Mon, 04 Nov 2019 22:32:35 -0400
+Date:   Mon, 4 Nov 2019 22:32:35 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/18] infiniband: set FOLL_PIN, FOLL_LONGTERM via
+ pin_longterm_pages*()
+Message-ID: <20191105023235.GA11093@ziepe.ca>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-8-jhubbard@nvidia.com>
+ <20191104203346.GF30938@ziepe.ca>
+ <578c1760-7221-4961-9f7d-c07c22e5c259@nvidia.com>
+ <20191104205738.GH30938@ziepe.ca>
+ <1560fa00-0c2b-0f3b-091c-d628f021ce09@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 2BCAD82B0D71AB466DCD90ED35262FF773AEF73C748AB309528833C8BCB79ED62000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560fa00-0c2b-0f3b-091c-d628f021ce09@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-11-01 at 10:02 +0100, Greg Kroah-Hartman wrote:
-> On Fri, Nov 01, 2019 at 10:29:09AM +0800, Chunfeng Yun wrote:
-> > Try to avoid using extern global variable, and provide two
-> > functions for the usage cases
-> 
-> That is 3 different things all in one patch, not generally considered a
-> good thing at all.
-
-> 
-> Also, who is going to use these new functions?  Why are they needed?
-After remove global variable usb_debug_root, the drivers using
-usb_debug_root to create directory or files will use these new APIs
-instead.
-
-> 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > ---
-> > NOTE:
-> >     Prepared but not send out patches for drivers using usb_debug_root,
-> > because I'm not sure whether this patch is needed, and many drivers
-> > will be modified.
-> > ---
-> >  drivers/usb/common/common.c | 16 ++++++++++++++--
-> >  include/linux/usb.h         |  5 ++++-
-> >  2 files changed, 18 insertions(+), 3 deletions(-)
+On Mon, Nov 04, 2019 at 02:03:43PM -0800, John Hubbard wrote:
+> On 11/4/19 12:57 PM, Jason Gunthorpe wrote:
+> > On Mon, Nov 04, 2019 at 12:48:13PM -0800, John Hubbard wrote:
+> >> On 11/4/19 12:33 PM, Jason Gunthorpe wrote:
+> >> ...
+> >>>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+> >>>> index 24244a2f68cc..c5a78d3e674b 100644
+> >>>> +++ b/drivers/infiniband/core/umem.c
+> >>>> @@ -272,11 +272,10 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+> >>>>  
+> >>>>  	while (npages) {
+> >>>>  		down_read(&mm->mmap_sem);
+> >>>> -		ret = get_user_pages(cur_base,
+> >>>> +		ret = pin_longterm_pages(cur_base,
+> >>>>  				     min_t(unsigned long, npages,
+> >>>>  					   PAGE_SIZE / sizeof (struct page *)),
+> >>>> -				     gup_flags | FOLL_LONGTERM,
+> >>>> -				     page_list, NULL);
+> >>>> +				     gup_flags, page_list, NULL);
+> >>>
+> >>> FWIW, this one should be converted to fast as well, I think we finally
+> >>> got rid of all the blockers for that?
+> >>>
+> >>
+> >> I'm not aware of any blockers on the gup.c end, anyway. The only broken thing we
+> >> have there is "gup remote + FOLL_LONGTERM". But we can do "gup fast + LONGTERM". 
 > > 
-> > diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
-> > index 1433260d99b4..639ee6d243a2 100644
-> > --- a/drivers/usb/common/common.c
-> > +++ b/drivers/usb/common/common.c
-> > @@ -293,8 +293,20 @@ struct device *usb_of_get_companion_dev(struct device *dev)
-> >  EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
-> >  #endif
+> > I mean the use of the mmap_sem here is finally in a way where we can
+> > just delete the mmap_sem and use _fast
 > >  
-> > -struct dentry *usb_debug_root;
-> > -EXPORT_SYMBOL_GPL(usb_debug_root);
-> > +static struct dentry *usb_debug_root;
+> > ie, AFAIK there is no need for the mmap_sem to be held during
+> > ib_umem_add_sg_table()
+> > 
+> > This should probably be a standalone patch however
+> > 
 > 
-> Doesn't this break things as-is? 
-Yes, it will, I didn't send out other patches for the drivers using
-usb_debug_root.
-
->  You can't do that in a single patch
-> either :(
-When I make usb_debug_root as static variable, two APIs need be added
-due to other driver use it to create directory or file.
-
+> Yes. Oh, actually I guess the patch flow should be: change to 
+> get_user_pages_fast() and remove the mmap_sem calls, as one patch. And then change 
+> to pin_longterm_pages_fast() as the next patch. Otherwise, the internal fallback
+> from _fast to slow gup would attempt to take the mmap_sem (again) in the same
+> thread, which is not good. :)
 > 
-> > +
-> > +struct dentry *usb_debugfs_create_dir(const char *name)
-> > +{
-> > +	return debugfs_create_dir(name, usb_debug_root);
-> > +}
-> > +EXPORT_SYMBOL_GPL(usb_debugfs_create_dir);
-> > +
-> > +struct dentry *usb_debugfs_create_file(const char *name, umode_t mode,
-> > +			void *data, const struct file_operations *fops)
-> > +{
-> > +	return debugfs_create_file(name, mode, usb_debug_root, data, fops);
+> Or just defer the change until after this series. Either way is fine, let me
+> know if you prefer one over the other.
 > 
-> I doubt many people want to create a file in the usb "root" debugfs
-> directory, right?  They _should_ be just creating a new subdirectory in
-> there instead.
-Currently only three .c files creates a file under usb 'root' debugfs
-directory.
+> The patch itself is trivial, but runtime testing to gain confidence that
+> it's solid is much harder. Is there a stress test you would recommend for that?
+> (I'm not promising I can quickly run it yet--my local IB setup is still nascent 
+> at best.)
 
-> 
-> thanks,
-> 
-> greg k-h
+If you make a patch we can probably get it tested, it is something
+we should do I keep forgetting about.
 
-
+Jason
