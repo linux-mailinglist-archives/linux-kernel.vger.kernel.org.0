@@ -2,136 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A729EEF473
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B2ABEF47E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:30:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfKEEWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 23:22:12 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41320 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730318AbfKEEWL (ORCPT
+        id S1730302AbfKEE3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 23:29:53 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:50627 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728064AbfKEE3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 23:22:11 -0500
-Received: by mail-io1-f70.google.com with SMTP id v5so8002276iot.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 20:22:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=X9lW8ii3GGZ4Cig/UC9Hwb9iVEyqtiyLpsfWPVzv+AU=;
-        b=h/8H8+M43ucMOB2FE562u4zca1FUkMj/97xnSEEAsXCN4BItokkQJPv5gAtgZqC2f3
-         yUNdfZF7PpjLPYdAAirUGiKpv9jk7a/YmXxF7xIUl3pSKnPcoRE6i1j/gesa8AdD/TWm
-         LkUhh71bFQfiLDgLRwdYpx4/b4FjlxfE9udOJVb7mNSRnwxvxM8yF2vyiBIGSD6f2E+8
-         fc2HUl9l7k3NhKKpZfwaXDrXkOsmVRtI6tXKkOojx1BTl81ACrPri55ngZA/ovn+h068
-         72GQ6SgBuhBlQMmNIi0ByltC+U+6g6bstetQy9ZHrWPEm0xLWjou7c/KqyNaNEuJsaap
-         XCbA==
-X-Gm-Message-State: APjAAAUNU9uLYhBd7FxywqAOkA5imVCjPQqpEGGrkZyuMmowjQX5ypmr
-        bzjYHFImD/7sUYYsdkZY+fUVQHFGjDz+qqqqGrk3ciaDfY3o
-X-Google-Smtp-Source: APXvYqxN5W1l5tyGdgaW+GmFjSDeL5UI9n+R9bdebBqjvYKj96bA0+NJN7OVDS7UtkpUkfqSJduFphaddA7Pm10TgnhgvBEJvIy3
+        Mon, 4 Nov 2019 23:29:53 -0500
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xA54TYv4022085;
+        Tue, 5 Nov 2019 13:29:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xA54TYv4022085
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572928175;
+        bh=HpBjnXtycyuUBqoDiy6HTDKw/kyjuph34USJqx070OQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gV4cBQswy31P/08Qno3Jf1ZhAmTi0BoaDBGaFAbZ8ZGPGJvwj2v/VEIIcGtjqwna1
+         BZveN8iZYSEgiJRnwC8dzGAgPYviDo2vFlVGRIvo4NzMcfAdPqbPUiPZSWmdTLwzNc
+         ciUwFdYxC21XkEgQYaJoiiCoFxXGSQuxFyvJ8/W4yGKYDgYr0Z7w3KlKBvfJKSIsvY
+         dNazAGHSJ5whgPdhrxD1kUFsBo/xKMfW0blZ8+i5YqboJQSGco22fh3RmFLZ91CKif
+         ObtVJCHO9EKR9tkK1ub/mra1mQX+2H+P0mJ0WwmKkpqju8ai5C5TKhPhEW3az1HZHH
+         7d5FSgVuV52Jw==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id r22so3160206uam.11;
+        Mon, 04 Nov 2019 20:29:35 -0800 (PST)
+X-Gm-Message-State: APjAAAXfptWuUVCmdp1exZTwFqYJU611GKweeNBp6/lYPODEEuNx+xR4
+        mVPlozqjZuNFmQcweSwmcONZVWwUKj0zCh8LcwQ=
+X-Google-Smtp-Source: APXvYqzE9ATABV32hIOGbqh3ZJ8JHmXjnIBuTb9GFtVGeAAZ7TX/lX/fNTrhKO3xTUHHLKMyrF+dBDKgZ8F9oBjLcik=
+X-Received: by 2002:ab0:3395:: with SMTP id y21mr6122191uap.25.1572928173771;
+ Mon, 04 Nov 2019 20:29:33 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:38c5:: with SMTP id f188mr26602776ioa.235.1572927730568;
- Mon, 04 Nov 2019 20:22:10 -0800 (PST)
-Date:   Mon, 04 Nov 2019 20:22:10 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a367e3059691c6b4@google.com>
-Subject: general protection fault in j1939_sk_bind
-From:   syzbot <syzbot+4857323ec1bb236f6a45@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kernel@pengutronix.de,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
-        robin@protonic.nl, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191104204453.20115-1-hi@alyssa.is>
+In-Reply-To: <20191104204453.20115-1-hi@alyssa.is>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 5 Nov 2019 13:28:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATEUcoB8u-AYU6=hfS+NFbGEOV_9noCwGHWHNsqOK2e+g@mail.gmail.com>
+Message-ID: <CAK7LNATEUcoB8u-AYU6=hfS+NFbGEOV_9noCwGHWHNsqOK2e+g@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: be more helpful if pkg-config is missing
+To:     Alyssa Ross <hi@alyssa.is>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    a99d8080 Linux 5.4-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a6b844e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=896c87b73c6fcda6
-dashboard link: https://syzkaller.appspot.com/bug?extid=4857323ec1bb236f6a45
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110a8b8ae00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4857323ec1bb236f6a45@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8341 Comm: syz-executor.0 Not tainted 5.4.0-rc6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__lock_acquire+0x86/0x1be0 kernel/locking/lockdep.c:3828
-Code: 8a 04 30 84 c0 0f 85 66 12 00 00 83 3d 92 24 66 07 00 0f 84 91 12 00  
-00 83 3d 35 a6 34 07 00 74 34 48 8b 44 24 10 48 c1 e8 03 <80> 3c 30 00 74  
-14 48 8b 7c 24 10 e8 fa 13 54 00 48 be 00 00 00 00
-RSP: 0018:ffff88809865fb80 EFLAGS: 00010006
-RAX: 0000000000000218 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 00000000000010c0
-RBP: ffff88809865fcd8 R08: 0000000000000001 R09: 0000000000000000
-R10: fffffbfff117cc5d R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888098654700
-FS:  00007f68f3c1c700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000075c000 CR3: 00000000a96a2000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  lock_acquire+0x158/0x250 kernel/locking/lockdep.c:4487
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-  _raw_spin_lock_bh+0x34/0x50 kernel/locking/spinlock.c:175
-  spin_lock_bh include/linux/spinlock.h:343 [inline]
-  j1939_jsk_del net/can/j1939/socket.c:90 [inline]
-  j1939_sk_bind+0x387/0xac0 net/can/j1939/socket.c:421
-  __sys_bind+0x2c2/0x3a0 net/socket.c:1647
-  __do_sys_bind net/socket.c:1658 [inline]
-  __se_sys_bind net/socket.c:1656 [inline]
-  __x64_sys_bind+0x7a/0x90 net/socket.c:1656
-  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a219
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f68f3c1bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a219
-RDX: 0000000000000018 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f68f3c1c6d4
-R13: 00000000004c057e R14: 00000000004d2c50 R15: 00000000ffffffff
-Modules linked in:
----[ end trace bc0dd162dace32c7 ]---
-RIP: 0010:__lock_acquire+0x86/0x1be0 kernel/locking/lockdep.c:3828
-Code: 8a 04 30 84 c0 0f 85 66 12 00 00 83 3d 92 24 66 07 00 0f 84 91 12 00  
-00 83 3d 35 a6 34 07 00 74 34 48 8b 44 24 10 48 c1 e8 03 <80> 3c 30 00 74  
-14 48 8b 7c 24 10 e8 fa 13 54 00 48 be 00 00 00 00
-RSP: 0018:ffff88809865fb80 EFLAGS: 00010006
-RAX: 0000000000000218 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 00000000000010c0
-RBP: ffff88809865fcd8 R08: 0000000000000001 R09: 0000000000000000
-R10: fffffbfff117cc5d R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888098654700
-FS:  00007f68f3c1c700(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000075c000 CR3: 00000000a96a2000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+On Tue, Nov 5, 2019 at 5:47 AM Alyssa Ross <hi@alyssa.is> wrote:
+>
+> If ncurses is installed, but at a non-default location, the previous
+> error message was not helpful in resolving the situation.  Now, if
+> ncurses can't be found, and pkg-config is not installed, it will
+> suggest that pkg-config might need to be installed in addition to
+> ncurses.
+>
+> Signed-off-by: Alyssa Ross <hi@alyssa.is>
+> ---
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I do not like to complicate the error message.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+How about appending a little more info, like this?
+
+*
+* Unable to find the ncurses package.
+* Install ncurses (ncurses-devel or libncurses-dev
+* depending on your distribution).
+*
+* You may also need to install pkg-config to find the
+* ncurses installed in a non-default location.
+*
+
+
+Thanks.
+
+
+
+
+>  scripts/kconfig/mconf-cfg.sh | 14 ++++++++++++--
+>  scripts/kconfig/nconf-cfg.sh | 14 ++++++++++++--
+>  2 files changed, 24 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/kconfig/mconf-cfg.sh b/scripts/kconfig/mconf-cfg.sh
+> index c812872d7f9d..f547b13f77f6 100755
+> --- a/scripts/kconfig/mconf-cfg.sh
+> +++ b/scripts/kconfig/mconf-cfg.sh
+> @@ -41,7 +41,17 @@ fi
+>
+>  echo >&2 "*"
+>  echo >&2 "* Unable to find the ncurses package."
+> -echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+> -echo >&2 "* depending on your distribution)."
+> +echo >&2 "*"
+> +if [ -n "$(command -v pkg-config)" ]; then
+> +       echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+> +       echo >&2 "* depending on your distribution)."
+> +else
+> +       echo >&2 "* You may need to install ncurses"
+> +       echo >&2 "* (ncurses-devel or libncurses-dev"
+> +       echo >&2 "* depending on your distribution)."
+> +       echo >&2 "*"
+> +       echo >&2 "* If you have ncurses installed,"
+> +       echo >&2 "* you may also need to install pkg-config."
+> +fi
+>  echo >&2 "*"
+>  exit 1
+> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
+> index 001559ef0a60..569226f1b497 100755
+> --- a/scripts/kconfig/nconf-cfg.sh
+> +++ b/scripts/kconfig/nconf-cfg.sh
+> @@ -41,7 +41,17 @@ fi
+>
+>  echo >&2 "*"
+>  echo >&2 "* Unable to find the ncurses package."
+> -echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+> -echo >&2 "* depending on your distribution)."
+> +echo >&2 "*"
+> +if [ -n "$(command -v pkg-config)" ]; then
+> +       echo >&2 "* Install ncurses (ncurses-devel or libncurses-dev"
+> +       echo >&2 "* depending on your distribution)."
+> +else
+> +       echo >&2 "* You may need to install ncurses"
+> +       echo >&2 "* (ncurses-devel or libncurses-dev"
+> +       echo >&2 "* depending on your distribution)."
+> +       echo >&2 "*"
+> +       echo >&2 "* If you have ncurses installed,"
+> +       echo >&2 "* you may also need to install pkg-config."
+> +fi
+>  echo >&2 "*"
+>  exit 1
+> --
+> 2.23.0
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
