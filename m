@@ -2,339 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E325F0036
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B010DF002B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389668AbfKEOpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:45:33 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45418 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387584AbfKEOpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:45:32 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1FFFC6162C; Tue,  5 Nov 2019 14:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572965131;
-        bh=f2RpBpxXpUQ0Z5mleXc1WIYnAGw0r+wMHkY1QTysd+M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0hv0UUr+Lc1ygMUAXHW0McrBAYBBlIZLwMTjwk8I7bQ0td57SwQzGXTCPrEcuZey
-         vccA2FO7izSfTimzlHMsAaEAiMoQrB6HNlimF+l/fF8udjFCThLYANxQ6O+fpOW3Gd
-         TW6IC2+hO71/HYKgzrOO3G5CZipVuFb36J31A7/0=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S2389579AbfKEOpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:45:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389096AbfKEOpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 09:45:19 -0500
+Received: from paulmck-ThinkPad-P72.home (unknown [109.144.209.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6E9BB6161C;
-        Tue,  5 Nov 2019 14:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572965128;
-        bh=f2RpBpxXpUQ0Z5mleXc1WIYnAGw0r+wMHkY1QTysd+M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RrXlHKXxn6xt7Vo9HwCQnZgOi9TJyDrnB44Jht6qiZB6k/u/6w7Guhk1XB4cP3z+h
-         wJQvrw6hSXy1LuIjlKTI7+qgwrM/VVk+dk5ivTvs5lN0FoZUloRhDYiRrtVLIkUCVB
-         d9qBvCb0HAQY9VMj/LZlciQ9/TJ6QkPRa6qW+gD0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E9BB6161C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
-        tientzu@chromium.org, seanpaul@chromium.org
-Subject: [PATCH v1 2/2] Bluetooth: hci_qca: Add support for Qualcomm Bluetooth SoC WCN3991
-Date:   Tue,  5 Nov 2019 20:15:08 +0530
-Message-Id: <20191105144508.22989-3-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191105144508.22989-1-bgodavar@codeaurora.org>
-References: <20191105144508.22989-1-bgodavar@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id F1CD021928;
+        Tue,  5 Nov 2019 14:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572965118;
+        bh=elOS7oU3Uzrb0QZSBMDZbfYxkkCXyUh94uhwmyx7M/g=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=XzfnifJ1w4IykFYiIWw3NoffGHdAJp4Ueu7+d9l8GqEMW0wConA1yGSNUl/vkcYtS
+         4elSIWs90DgoT7IHE2xM2akDouK91kTIHDJ5CWURxdxkJHg50Y+NZkdVCRtVWoVMqj
+         ycC429SHfhQZbBRxe6l7vgTAPTq5KLoOYi8ivtTo=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id F35B335227C0; Tue,  5 Nov 2019 06:45:15 -0800 (PST)
+Date:   Tue, 5 Nov 2019 06:45:15 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     Phong Tran <tranmanphong@gmail.com>, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rcu@vger.kernel.org, joel@joelfernandes.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        madhuparnabhowmik04@gmail.com
+Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: RCU: arrayRCU:
+ Converted arrayRCU.txt to arrayRCU.rst
+Message-ID: <20191105144515.GS20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191028202417.13095-1-madhuparnabhowmik04@gmail.com>
+ <ac8da2f5-4cda-8985-ff90-061478a4e2c9@gmail.com>
+ <20191105140411.GO20975@paulmck-ThinkPad-P72>
+ <20191105143344.GA9069@workstation>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105143344.GA9069@workstation>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support for WCN3991 i.e. current values and fw download
-support.
+On Tue, Nov 05, 2019 at 08:03:44PM +0530, Amol Grover wrote:
+> On Tue, Nov 05, 2019 at 06:04:11AM -0800, Paul E. McKenney wrote:
+> > On Tue, Nov 05, 2019 at 08:49:47PM +0700, Phong Tran wrote:
+> > > On 10/29/19 3:24 AM, madhuparnabhowmik04@gmail.com wrote:
+> > > > From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> > > > 
+> > > > This patch converts arrayRCU from txt to rst format.
+> > > > arrayRCU.rst is also added in the index.rst file.
+> > > > 
+> > > > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> > > > ---
+> > > >   .../RCU/{arrayRCU.txt => arrayRCU.rst}         | 18 +++++++++++++-----
+> > > >   Documentation/RCU/index.rst                    |  1 +
+> > > >   2 files changed, 14 insertions(+), 5 deletions(-)
+> > > >   rename Documentation/RCU/{arrayRCU.txt => arrayRCU.rst} (91%)
+> > > > 
+> > > > diff --git a/Documentation/RCU/arrayRCU.txt b/Documentation/RCU/arrayRCU.rst
+> > > > similarity index 91%
+> > > > rename from Documentation/RCU/arrayRCU.txt
+> > > > rename to Documentation/RCU/arrayRCU.rst
+> > > > index f05a9afb2c39..ed5ae24b196e 100644
+> > > > --- a/Documentation/RCU/arrayRCU.txt
+> > > > +++ b/Documentation/RCU/arrayRCU.rst
+> > > > @@ -1,5 +1,7 @@
+> > > > -Using RCU to Protect Read-Mostly Arrays
+> > > > +.. _array_rcu_doc:
+> > > > +Using RCU to Protect Read-Mostly Arrays
+> > > > +=======================================
+> > > >   Although RCU is more commonly used to protect linked lists, it can
+> > > >   also be used to protect arrays.  Three situations are as follows:
+> > > > @@ -26,6 +28,7 @@ described in the following sections.
+> > > 
+> > > It will be better to have the cross reference for each situation.
+> > > 
+> > > Hash Tables
+> > > Static Arrays
+> > > Resizeable Arrays
+> > 
+> > Madhuparna, could you please put a patch together creating these
+> > cross-references and handling Phong's comments below (probably
+> > by getting rid of the "." so that the resulting ":" doesn't look
+> > strange)?
+> > 
+> > Then I will fold that patch into your original commit in -rcu and
+> > add Phong's Tested-by.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > >   Situation 1: Hash Tables
+> > > > +------------------------
+> > > >   Hash tables are often implemented as an array, where each array entry
+> > > >   has a linked-list hash chain.  Each hash chain can be protected by RCU
+> > > > @@ -34,6 +37,7 @@ to other array-of-list situations, such as radix trees.
+> > > >   Situation 2: Static Arrays
+> > > > +--------------------------
+> > > >   Static arrays, where the data (rather than a pointer to the data) is
+> > > >   located in each array element, and where the array is never resized,
+> > > > @@ -41,11 +45,13 @@ have not been used with RCU.  Rik van Riel recommends using seqlock in
+> > > >   this situation, which would also have minimal read-side overhead as long
+> > > >   as updates are rare.
+> > > > -Quick Quiz:  Why is it so important that updates be rare when
+> > > > -	     using seqlock?
+> > > > +Quick Quiz:
+> > > > +		Why is it so important that updates be rare when using seqlock?
+> > > > +:ref:`Answer to Quick Quiz <answer_quick_quiz_seqlock>`
+> > > >   Situation 3: Resizeable Arrays
+> > > > +------------------------------
+> > > >   Use of RCU for resizeable arrays is demonstrated by the grow_ary()
+> > > >   function formerly used by the System V IPC code.  The array is used
+> > > > @@ -60,7 +66,7 @@ the remainder of the new, updates the ids->entries pointer to point to
+> > > >   the new array, and invokes ipc_rcu_putref() to free up the old array.
+> > > >   Note that rcu_assign_pointer() is used to update the ids->entries pointer,
+> > > >   which includes any memory barriers required on whatever architecture
+> > > > -you are running on.
+> > > > +you are running on.::
+> > > 
+> > > a redundant ":" in here with html page.
+> > > 
+> > > 
+> > > 
+> > > 
+> > > >   	static int grow_ary(struct ipc_ids* ids, int newsize)
+> > > >   	{
+> > > > @@ -112,7 +118,7 @@ a simple check suffices.  The pointer to the structure corresponding
+> > > >   to the desired IPC object is placed in "out", with NULL indicating
+> > > >   a non-existent entry.  After acquiring "out->lock", the "out->deleted"
+> > > >   flag indicates whether the IPC object is in the process of being
+> > > > -deleted, and, if not, the pointer is returned.
+> > > > +deleted, and, if not, the pointer is returned.::
+> > > 
+> > > same as above
+> > > 
+> > > 
+> > > Tested-by: Phong Tran <tranmanphong@gmail.com>
+> > > 
+> > > Regards,
+> > > Phong.
+> > > 
+> > > >   	struct kern_ipc_perm* ipc_lock(struct ipc_ids* ids, int id)
+> > > >   	{
+> > > > @@ -144,8 +150,10 @@ deleted, and, if not, the pointer is returned.
+> > > >   		return out;
+> > > >   	}
+> > > > +.. _answer_quick_quiz_seqlock:
+> > > >   Answer to Quick Quiz:
+> > > > +	Why is it so important that updates be rare when using seqlock?
+> > > >   	The reason that it is important that updates be rare when
+> > > >   	using seqlock is that frequent updates can livelock readers.
+> > > > diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+> > > > index 5c99185710fa..8d20d44f8fd4 100644
+> > > > --- a/Documentation/RCU/index.rst
+> > > > +++ b/Documentation/RCU/index.rst
+> > > > @@ -7,6 +7,7 @@ RCU concepts
+> > > >   .. toctree::
+> > > >      :maxdepth: 3
+> > > > +   arrayRCU
+> > > >      rcu
+> > > >      listRCU
+> > > >      UP
+> > > > 
+> > _______________________________________________
+> > Linux-kernel-mentees mailing list
+> > Linux-kernel-mentees@lists.linuxfoundation.org
+> > https://lists.linuxfoundation.org/mailman/listinfo/linux-kernel-mentees
+> 
+> Hey,
+> There are a few instances in the document where words are
+> emphasized. Example, -not- in the first paragraph. The 
+> previous emphasis was correct wrt txt format, but this
+> could be converted to italicize/bold to keep up with the
+> reST format. Other than this and what Phong suggested,
+> everything looks good!
+> 
+> Tested-by: Amol Grover <frextrite@gmail.com>
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
- drivers/bluetooth/btqca.c   | 68 +++++++++++++++++++++++++++++--------
- drivers/bluetooth/btqca.h   | 10 ++++--
- drivers/bluetooth/hci_qca.c | 16 +++++++--
- 3 files changed, 74 insertions(+), 20 deletions(-)
+Thank you, Amol!
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 1a0f630515a6..79bca2e2ec13 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -14,19 +14,33 @@
- 
- #define VERSION "0.1"
- 
--int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
-+int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version,
-+			 enum qca_btsoc_type soc_type)
- {
- 	struct sk_buff *skb;
- 	struct edl_event_hdr *edl;
- 	struct qca_btsoc_version *ver;
- 	char cmd;
- 	int err = 0;
-+	u8 event_type = HCI_EV_VENDOR;
-+	u8 rlen = sizeof(*edl) + sizeof(*ver);
-+	u8 rtype = EDL_APP_VER_RES_EVT;
- 
- 	bt_dev_dbg(hdev, "QCA Version Request");
- 
-+	/* Unlike other SoC's sending version command response as payload to
-+	 * VSE event. WCN3991 sends version command response as a payload to
-+	 * command complete event.
-+	 */
-+	if (soc_type == QCA_WCN3991) {
-+		event_type = 0;
-+		rlen += 1;
-+		rtype = EDL_PATCH_VER_REQ_CMD;
-+	}
-+
- 	cmd = EDL_PATCH_VER_REQ_CMD;
- 	skb = __hci_cmd_sync_ev(hdev, EDL_PATCH_CMD_OPCODE, EDL_PATCH_CMD_LEN,
--				&cmd, HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
-+				&cmd, event_type, HCI_INIT_TIMEOUT);
- 	if (IS_ERR(skb)) {
- 		err = PTR_ERR(skb);
- 		bt_dev_err(hdev, "Reading QCA version information failed (%d)",
-@@ -34,7 +48,7 @@ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
- 		return err;
- 	}
- 
--	if (skb->len != sizeof(*edl) + sizeof(*ver)) {
-+	if (skb->len != rlen) {
- 		bt_dev_err(hdev, "QCA Version size mismatch len %d", skb->len);
- 		err = -EILSEQ;
- 		goto out;
-@@ -48,13 +62,16 @@ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
- 	}
- 
- 	if (edl->cresp != EDL_CMD_REQ_RES_EVT ||
--	    edl->rtype != EDL_APP_VER_RES_EVT) {
-+	    edl->rtype != rtype) {
- 		bt_dev_err(hdev, "QCA Wrong packet received %d %d", edl->cresp,
- 			   edl->rtype);
- 		err = -EIO;
- 		goto out;
- 	}
- 
-+	if (soc_type == QCA_WCN3991)
-+		memcpy(&edl->data, &edl->data[1], sizeof(*ver));
-+
- 	ver = (struct qca_btsoc_version *)(edl->data);
- 
- 	BT_DBG("%s: Product:0x%08x", hdev->name, le32_to_cpu(ver->product_id));
-@@ -223,13 +240,17 @@ static void qca_tlv_check_data(struct qca_fw_config *config,
- }
- 
- static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
--				 const u8 *data, enum qca_tlv_dnld_mode mode)
-+				const u8 *data, enum qca_tlv_dnld_mode mode,
-+				enum qca_btsoc_type soc_type)
- {
- 	struct sk_buff *skb;
- 	struct edl_event_hdr *edl;
- 	struct tlv_seg_resp *tlv_resp;
- 	u8 cmd[MAX_SIZE_PER_TLV_SEGMENT + 2];
- 	int err = 0;
-+	u8 event_type = HCI_EV_VENDOR;
-+	u8 rlen = (sizeof(*edl) + sizeof(*tlv_resp));
-+	u8 rtype = EDL_TVL_DNLD_RES_EVT;
- 
- 	cmd[0] = EDL_PATCH_TLV_REQ_CMD;
- 	cmd[1] = seg_size;
-@@ -239,15 +260,25 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
- 		return __hci_cmd_send(hdev, EDL_PATCH_CMD_OPCODE, seg_size + 2,
- 				      cmd);
- 
-+	/* Unlike other SoC's sending version command response as payload to
-+	 * VSE event. WCN3991 sends version command response as a payload to
-+	 * command complete event.
-+	 */
-+	if (soc_type == QCA_WCN3991) {
-+		event_type = 0;
-+		rlen = sizeof(*edl);
-+		rtype = EDL_PATCH_TLV_REQ_CMD;
-+	}
-+
- 	skb = __hci_cmd_sync_ev(hdev, EDL_PATCH_CMD_OPCODE, seg_size + 2, cmd,
--				HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
-+				event_type, HCI_INIT_TIMEOUT);
- 	if (IS_ERR(skb)) {
- 		err = PTR_ERR(skb);
- 		bt_dev_err(hdev, "QCA Failed to send TLV segment (%d)", err);
- 		return err;
- 	}
- 
--	if (skb->len != sizeof(*edl) + sizeof(*tlv_resp)) {
-+	if (skb->len != rlen) {
- 		bt_dev_err(hdev, "QCA TLV response size mismatch");
- 		err = -EILSEQ;
- 		goto out;
-@@ -260,13 +291,19 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
- 		goto out;
- 	}
- 
--	tlv_resp = (struct tlv_seg_resp *)(edl->data);
-+	if (edl->cresp != EDL_CMD_REQ_RES_EVT || edl->rtype != rtype) {
-+		bt_dev_err(hdev, "QCA TLV with error stat 0x%x rtype 0x%x",
-+			   edl->cresp, edl->rtype);
-+		err = -EIO;
-+	}
- 
--	if (edl->cresp != EDL_CMD_REQ_RES_EVT ||
--	    edl->rtype != EDL_TVL_DNLD_RES_EVT || tlv_resp->result != 0x00) {
-+	if (soc_type == QCA_WCN3991)
-+		goto out;
-+
-+	tlv_resp = (struct tlv_seg_resp *)(edl->data);
-+	if (tlv_resp->result) {
- 		bt_dev_err(hdev, "QCA TLV with error stat 0x%x rtype 0x%x (0x%x)",
- 			   edl->cresp, edl->rtype, tlv_resp->result);
--		err = -EIO;
- 	}
- 
- out:
-@@ -301,7 +338,8 @@ static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
- }
- 
- static int qca_download_firmware(struct hci_dev *hdev,
--				  struct qca_fw_config *config)
-+				 struct qca_fw_config *config,
-+				 enum qca_btsoc_type soc_type)
- {
- 	const struct firmware *fw;
- 	const u8 *segment;
-@@ -331,7 +369,7 @@ static int qca_download_firmware(struct hci_dev *hdev,
- 			config->dnld_mode = QCA_SKIP_EVT_NONE;
- 
- 		ret = qca_tlv_send_segment(hdev, segsize, segment,
--					    config->dnld_mode);
-+					   config->dnld_mode, soc_type);
- 		if (ret)
- 			goto out;
- 
-@@ -405,7 +443,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 			 "qca/rampatch_%08x.bin", soc_ver);
- 	}
- 
--	err = qca_download_firmware(hdev, &config);
-+	err = qca_download_firmware(hdev, &config, soc_type);
- 	if (err < 0) {
- 		bt_dev_err(hdev, "QCA Failed to download patch (%d)", err);
- 		return err;
-@@ -426,7 +464,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		snprintf(config.fwname, sizeof(config.fwname),
- 			 "qca/nvm_%08x.bin", soc_ver);
- 
--	err = qca_download_firmware(hdev, &config);
-+	err = qca_download_firmware(hdev, &config, soc_type);
- 	if (err < 0) {
- 		bt_dev_err(hdev, "QCA Failed to download NVM (%d)", err);
- 		return err;
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 7f7a2b2c0df6..309a720ff216 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -126,6 +126,7 @@ enum qca_btsoc_type {
- 	QCA_ROME,
- 	QCA_WCN3990,
- 	QCA_WCN3998,
-+	QCA_WCN3991,
- };
- 
- #if IS_ENABLED(CONFIG_BT_QCA)
-@@ -134,12 +135,14 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		   enum qca_btsoc_type soc_type, u32 soc_ver,
- 		   const char *firmware_name);
--int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
-+int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version,
-+			 enum qca_btsoc_type);
- int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- int qca_send_pre_shutdown_cmd(struct hci_dev *hdev);
- static inline bool qca_is_wcn399x(enum qca_btsoc_type soc_type)
- {
--	return soc_type == QCA_WCN3990 || soc_type == QCA_WCN3998;
-+	return soc_type == QCA_WCN3990 || soc_type == QCA_WCN3998 ||
-+	       soc_type == QCA_WCN3991;
- }
- #else
- 
-@@ -155,7 +158,8 @@ static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 	return -EOPNOTSUPP;
- }
- 
--static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
-+static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version,
-+				       enum qca_btsoc_type)
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index c2062087b46b..a655cb714147 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1288,7 +1288,7 @@ static int qca_setup(struct hci_uart *hu)
- 		if (ret)
- 			return ret;
- 
--		ret = qca_read_soc_version(hdev, &soc_ver);
-+		ret = qca_read_soc_version(hdev, &soc_ver, soc_type);
- 		if (ret)
- 			return ret;
- 	} else {
-@@ -1308,7 +1308,7 @@ static int qca_setup(struct hci_uart *hu)
- 
- 	if (!qca_is_wcn399x(soc_type)) {
- 		/* Get QCA version information */
--		ret = qca_read_soc_version(hdev, &soc_ver);
-+		ret = qca_read_soc_version(hdev, &soc_ver, soc_type);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1377,6 +1377,17 @@ static const struct qca_vreg_data qca_soc_data_wcn3998 = {
- 	.num_vregs = 4,
- };
- 
-+static const struct qca_vreg_data qca_soc_data_wcn3991 = {
-+	.soc_type = QCA_WCN3991,
-+	.vregs = (struct qca_vreg []) {
-+		{ "vddio", 15000  },
-+		{ "vddxo", 80000  },
-+		{ "vddrf", 300000 },
-+		{ "vddch0", 450000 },
-+	},
-+	.num_vregs = 4,
-+};
-+
- static void qca_power_shutdown(struct hci_uart *hu)
- {
- 	struct qca_serdev *qcadev;
-@@ -1663,6 +1674,7 @@ static const struct of_device_id qca_bluetooth_of_match[] = {
- 	{ .compatible = "qcom,qca6174-bt" },
- 	{ .compatible = "qcom,wcn3990-bt", .data = &qca_soc_data_wcn3990},
- 	{ .compatible = "qcom,wcn3998-bt", .data = &qca_soc_data_wcn3998},
-+	{ .compatible = "qcom,wcn3991-bt", .data = &qca_soc_data_wcn3991},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, qca_bluetooth_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Madhuparna, could you please also include a fix to the "-not-"
+text-emphasis issue (and any other occurrences) that Amol located?
 
+I can then add both Phong's and Amol's Tested-by.
+
+							Thanx, Paul
