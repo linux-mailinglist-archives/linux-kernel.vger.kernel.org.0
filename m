@@ -2,292 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D487EF703
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 09:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1B4EF6FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 09:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387656AbfKEIM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 03:12:57 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56448 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387442AbfKEIM5 (ORCPT
+        id S2388322AbfKEIMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 03:12:07 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41959 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387950AbfKEIMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 03:12:57 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA58CkSf009351;
-        Tue, 5 Nov 2019 02:12:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572941566;
-        bh=rss6Mp4quh2S4WzB5MeQQKUNTQjYLZd5GvvycvppoCc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EYMk7elOvlowniBg4gjffNRye3GSvxF/SC9gel8D9l0AeFj1HFwa4PHszW3/KlpJ7
-         BK2E62xGnItiUg4dwH7mFZivTtHIjppPOYfDuLfEAGoZSt0inM8CeNxh1OvOqSS1e5
-         fyfIX8E+UGzd6lVpdTLguU3DuMgNhf2uRGonae3I=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA58CkMN053421
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Nov 2019 02:12:46 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 5 Nov
- 2019 02:12:24 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 5 Nov 2019 02:12:24 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA58CaiX047486;
-        Tue, 5 Nov 2019 02:12:36 -0600
-Subject: Re: [PATCH v4 07/15] dmaengine: ti: k3 PSI-L remote endpoint
- configuration
-To:     Tero Kristo <t-kristo@ti.com>, <vkoul@kernel.org>,
-        <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20191101084135.14811-1-peter.ujfalusi@ti.com>
- <20191101084135.14811-8-peter.ujfalusi@ti.com>
- <e23316e7-1913-d0a7-79c6-4af2084e5176@ti.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <c3f95799-e211-7740-8c20-d79416965dc2@ti.com>
-Date:   Tue, 5 Nov 2019 10:13:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 03:12:06 -0500
+Received: by mail-lf1-f68.google.com with SMTP id j14so14371916lfb.8;
+        Tue, 05 Nov 2019 00:12:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I97oI86lnkyHn0k2SlVpiWM20+aIPOoBHQv5XpJrU54=;
+        b=b6LXscyMhr/dhGiIH34IvVoc2yhNm5O44wXcBgBZGieMxfSHG08/cobvcdTvdj+df8
+         fvWV//48u/UrQYaxyD3sukPRhMeyyjgsj8Uc+baKZOqe44C+TOuGp0SXjlukms/mHjVl
+         NzzXhZNUOK55TLwcqqx0zPn/hS+WU8A0XO/H1GFskjG9ManNqaBAEXaqDBnYy0WHW1hm
+         Ev77AB0REbCmYFHCfgEnCW1T33GKy5XPXokxwSsYSVVphidWkFa66a7N7Kf1SQqdLMI1
+         G1dU905ITEJovgwPmGl02Ek0uPNwAGM9l+AMrAhkay8kXxcsPQQ3Kz0nZLaZrkyPI09P
+         SkUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I97oI86lnkyHn0k2SlVpiWM20+aIPOoBHQv5XpJrU54=;
+        b=l/y9k1BPYTWF2BwfDQjTSKfhUyjoOoWGopbfBMyaWBFbA1DuY59yLmbKYVAQ/0l7Hi
+         lQtoOM4GyO7dCMo5BV7fGBJGUvmc1IerH94klZSQ3ni3IBCVxYoGjIFgr9W5JG2ikbEe
+         Nmf4sq+cm7a3XNSITuvMvao5QYmBivs787zAeeFyNdhVrItfYFNPQxDyXfMpUAYosaK4
+         s/+y4h40HrTh4jTnoscKSASHM//ddM39UOdoi2EhhXDWkJyf5c2ZIKBhijfWj3I2Nm+b
+         7DVVAWKB8HxcfFYCkQ3JMvV/GqGdWLWE0daZk/Kq5pdDQCyv9m9Mqdme0Xv5jyo0zQMJ
+         cB7w==
+X-Gm-Message-State: APjAAAVehM+KSHAk3SaEgYTOm056Ekl5eKrwgaFeBlV0dipL71d9n+/V
+        9echaQ62mSC4YyW2hTEj6yU=
+X-Google-Smtp-Source: APXvYqwJGyDgq31CoYd7HCgMz84XKy3YL46i9DshXvLeT/SBFby9VSv2+7GkezDP01qi8hjIYbIPqQ==
+X-Received: by 2002:ac2:5bca:: with SMTP id u10mr19879208lfn.134.1572941522707;
+        Tue, 05 Nov 2019 00:12:02 -0800 (PST)
+Received: from gmail.com (c-2ec20990-74736162.cust.telenor.se. [46.194.9.144])
+        by smtp.gmail.com with ESMTPSA id 27sm9094503ljv.82.2019.11.05.00.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 00:12:01 -0800 (PST)
+Date:   Tue, 5 Nov 2019 09:14:41 +0100
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "kent@minoris.se" <kent@minoris.se>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: iio: dac: Migrate LTC1660 documentation to
+ yaml
+Message-ID: <20191105081441.GA16130@gmail.com>
+References: <20191104174036.3535-1-marcus.folkesson@gmail.com>
+ <00785b238251ad5b2eb3268693bae357a0a94c1b.camel@analog.com>
 MIME-Version: 1.0
-In-Reply-To: <e23316e7-1913-d0a7-79c6-4af2084e5176@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Content-Disposition: inline
+In-Reply-To: <00785b238251ad5b2eb3268693bae357a0a94c1b.camel@analog.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 05/11/2019 9.49, Tero Kristo wrote:
-> On 01/11/2019 10:41, Peter Ujfalusi wrote:
->> In K3 architecture the DMA operates within threads. One end of the thread
->> is UDMAP, the other is on the peripheral side.
->>
->> The UDMAP channel configuration depends on the needs of the remote
->> endpoint and it can be differ from peripheral to peripheral.
->>
->> This patch adds database for am654 and j721e and small API to fetch the
->> PSI-L endpoint configuration from the database which should only used by
->> the DMA driver(s).
->>
->> Another API is added for native peripherals to give possibility to
->> pass new
->> configuration for the threads they are using, which is needed to be
->> able to
->> handle changes caused by different firmware loaded for the peripheral for
->> example.
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>   drivers/dma/ti/Kconfig         |   3 +
->>   drivers/dma/ti/Makefile        |   1 +
->>   drivers/dma/ti/k3-psil-am654.c | 172 ++++++++++++++++++++++++++
->>   drivers/dma/ti/k3-psil-j721e.c | 219 +++++++++++++++++++++++++++++++++
->>   drivers/dma/ti/k3-psil-priv.h  |  39 ++++++
->>   drivers/dma/ti/k3-psil.c       |  97 +++++++++++++++
->>   include/linux/dma/k3-psil.h    |  47 +++++++
->>   7 files changed, 578 insertions(+)
->>   create mode 100644 drivers/dma/ti/k3-psil-am654.c
->>   create mode 100644 drivers/dma/ti/k3-psil-j721e.c
->>   create mode 100644 drivers/dma/ti/k3-psil-priv.h
->>   create mode 100644 drivers/dma/ti/k3-psil.c
->>   create mode 100644 include/linux/dma/k3-psil.h
+Hi Alexandru,
 
-...
+See comments below.
 
->> diff --git a/drivers/dma/ti/k3-psil.c b/drivers/dma/ti/k3-psil.c
->> new file mode 100644
->> index 000000000000..e610022f09f4
->> --- /dev/null
->> +++ b/drivers/dma/ti/k3-psil.c
->> @@ -0,0 +1,97 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + *  Copyright (C) 2019 Texas Instruments Incorporated -
->> http://www.ti.com
->> + *  Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/device.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/of.h>
->> +
->> +#include "k3-psil-priv.h"
->> +
->> +extern struct psil_ep_map am654_ep_map;
->> +extern struct psil_ep_map j721e_ep_map;
->> +
->> +static DEFINE_MUTEX(ep_map_mutex);
->> +static struct psil_ep_map *soc_ep_map;
-> 
-> So, you are only protecting the high level soc_ep_map pointer only. You
-> don't need to protect the database itself via some usecounting or
-> something, or are you doing it within the DMA driver?
+On Tue, Nov 05, 2019 at 06:42:06AM +0000, Ardelean, Alexandru wrote:
+> On Mon, 2019-11-04 at 18:40 +0100, Marcus Folkesson wrote:
+> > [External]
+> >=20
+> > Rewrite bindings to use json-schema vocabulary.
+>=20
+> Hey,
+>=20
+> Overall looks good.
+>=20
+> A few comments inline.
+> Rob may add more.
 
-That's correct, I protect only the soc_ep_map.
-The DMA drivers can look up threads concurrently I just need to make
-sure that the soc_ep_map is configured when the first
-psil_get_ep_config() comes.
-After this the DMA drivers are free to look up things.
+Thank you for looking into this!
+>=20
+> >=20
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > ---
+> >  .../bindings/iio/dac/lltc,ltc1660.yaml        | 54 +++++++++++++++++++
+> >  .../devicetree/bindings/iio/dac/ltc1660.txt   | 21 --------
+> >  MAINTAINERS                                   |  2 +-
+> >  3 files changed, 55 insertions(+), 22 deletions(-)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/iio/dac/ltc1660.t=
+xt
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> > b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> > new file mode 100644
+> > index 000000000000..1f3136bfffcd
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> > @@ -0,0 +1,54 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
+> > +%YAML 1.2
+> > +---
+> > +$id: "http://devicetree.org/schemas/bindings/iio/dac/lltc,ltc1660.yaml=
+#"
+> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > +
+> > +title: Linear Technology Micropower octal 8-Bit and 10-Bit DACs
+> > +
+> > +maintainers:
+> > +  - Marcus Folkesson <marcus.folkesson@gmail.com>
+> > +
+> > +description: |
+> > +  Bindings for the Linear Technology Micropower octal 8-Bit and 10-Bit
+> > DAC.
+> > +  Datasheet can be found here:=20
+> > https://www.analog.com/media/en/technical-documentation/data-sheets/166=
+560fa.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - lltc,ltc1660
+> > +      - lltc,ltc1665
+> > +
+> > +  reg:
+> > +    description: SPI chip select number for the device
+>=20
+> You can remove description.
+> It's a standard property.
+>=20
 
-The ep_config update will be coming from the DMA client driver(s) and
-not from the DMA driver. The clinet driver knows how thier PSI-L
-endpoint if configured so they could update the default configuration
-_before_ they would request a DMA channel.
+Ok, I will remove it.
 
-> 
-> -Tero
-> 
->> +
->> +struct psil_endpoint_config *psil_get_ep_config(u32 thread_id)
->> +{
->> +    int i;
->> +
->> +    mutex_lock(&ep_map_mutex);
->> +    if (!soc_ep_map) {
->> +        if (of_machine_is_compatible("ti,am654")) {
->> +            soc_ep_map = &am654_ep_map;
->> +        } else if (of_machine_is_compatible("ti,j721e")) {
->> +            soc_ep_map = &j721e_ep_map;
->> +        } else {
->> +            pr_err("PSIL: No compatible machine found for map\n");
->> +            return ERR_PTR(-ENOTSUPP);
->> +        }
->> +        pr_debug("%s: Using map for %s\n", __func__, soc_ep_map->name);
->> +    }
->> +    mutex_unlock(&ep_map_mutex);
->> +
->> +    if (thread_id & K3_PSIL_DST_THREAD_ID_OFFSET && soc_ep_map->dst) {
->> +        /* check in destination thread map */
->> +        for (i = 0; i < soc_ep_map->dst_count; i++) {
->> +            if (soc_ep_map->dst[i].thread_id == thread_id)
->> +                return &soc_ep_map->dst[i].ep_config;
->> +        }
->> +    }
->> +
->> +    thread_id &= ~K3_PSIL_DST_THREAD_ID_OFFSET;
->> +    if (soc_ep_map->src) {
->> +        for (i = 0; i < soc_ep_map->src_count; i++) {
->> +            if (soc_ep_map->src[i].thread_id == thread_id)
->> +                return &soc_ep_map->src[i].ep_config;
->> +        }
->> +    }
->> +
->> +    return ERR_PTR(-ENOENT);
->> +}
->> +EXPORT_SYMBOL(psil_get_ep_config);
->> +
->> +int psil_set_new_ep_config(struct device *dev, const char *name,
->> +               struct psil_endpoint_config *ep_config)
->> +{
->> +    struct psil_endpoint_config *dst_ep_config;
->> +    struct of_phandle_args dma_spec;
->> +    u32 thread_id;
->> +    int index;
->> +
->> +    if (!dev || !dev->of_node)
->> +        return -EINVAL;
->> +
->> +    index = of_property_match_string(dev->of_node, "dma-names", name);
->> +    if (index < 0)
->> +        return index;
->> +
->> +    if (of_parse_phandle_with_args(dev->of_node, "dmas", "#dma-cells",
->> +                       index, &dma_spec))
->> +        return -ENOENT;
->> +
->> +    thread_id = dma_spec.args[0];
->> +
->> +    dst_ep_config = psil_get_ep_config(thread_id);
->> +    if (IS_ERR(dst_ep_config)) {
->> +        pr_err("PSIL: thread ID 0x%04x not defined in map\n",
->> +               thread_id);
->> +        of_node_put(dma_spec.np);
->> +        return PTR_ERR(dst_ep_config);
->> +    }
->> +
->> +    memcpy(dst_ep_config, ep_config, sizeof(*dst_ep_config));
->> +
->> +    of_node_put(dma_spec.np);
->> +    return 0;
->> +}
->> +EXPORT_SYMBOL(psil_set_new_ep_config);
->> +
->> +MODULE_DESCRIPTION("TI K3 PSI-L endpoint database");
->> +MODULE_AUTHOR("Peter Ujfalusi <peter.ujfalusi@ti.com>");
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/include/linux/dma/k3-psil.h b/include/linux/dma/k3-psil.h
->> new file mode 100644
->> index 000000000000..16e9c8c6f839
->> --- /dev/null
->> +++ b/include/linux/dma/k3-psil.h
->> @@ -0,0 +1,47 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + *  Copyright (C) 2019 Texas Instruments Incorporated -
->> http://www.ti.com
->> + */
->> +
->> +#ifndef K3_PSIL_H_
->> +#define K3_PSIL_H_
->> +
->> +#include <linux/types.h>
->> +
->> +#define K3_PSIL_DST_THREAD_ID_OFFSET 0x8000
->> +
->> +struct device;
->> +
->> +/* Channel Throughput Levels */
->> +enum udma_tp_level {
->> +    UDMA_TP_NORMAL = 0,
->> +    UDMA_TP_HIGH = 1,
->> +    UDMA_TP_ULTRAHIGH = 2,
->> +    UDMA_TP_LAST,
->> +};
->> +
->> +enum psil_endpoint_type {
->> +    PSIL_EP_NATIVE = 0,
->> +    PSIL_EP_PDMA_XY,
->> +    PSIL_EP_PDMA_MCAN,
->> +    PSIL_EP_PDMA_AASRC,
->> +};
->> +
->> +struct psil_endpoint_config {
->> +    enum psil_endpoint_type ep_type;
->> +
->> +    unsigned pkt_mode:1;
->> +    unsigned notdpkt:1;
->> +    unsigned needs_epib:1;
->> +    u32 psd_size;
->> +    enum udma_tp_level channel_tpl;
->> +
->> +    /* PDMA properties, valid for PSIL_EP_PDMA_* */
->> +    unsigned pdma_acc32:1;
->> +    unsigned pdma_burst:1;
->> +};
->> +
->> +int psil_set_new_ep_config(struct device *dev, const char *name,
->> +               struct psil_endpoint_config *ep_config);
->> +
->> +#endif /* K3_PSIL_H_ */
->>
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> > +    maxItems: 1
+> > +
+> > +  spi-max-frequency:
+> > +    description: |
+> > +      Definition as per Documentation/devicetree/bindings/spi/spi-
+> > bus.txt.
+> > +    maximum: 5000000
+> > +    maxItems: 1
+>=20
+> I think you can probably remove `spi-max-frequency` from here.
+> It's documented in the base SPI schema.
+>=20
 
-- Péter
+Yes it is, and I was not really sure if I should include that property, but
+I wanted to somehow document the maximum frequency that the chip can handle=
+ as it could be useful information.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> > +
+> > +  vref-supply:
+> > +    description: Phandle to the external reference voltage supply.
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - vref-supply
+> > +
+> > +examples:
+> > +  - |
+> > +    spi {
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <0>;
+> > + =20
+> > +      dac@0 {
+> > +        compatible =3D "lltc,ltc1660";
+> > +        reg =3D <0>;
+> > +        spi-max-frequency =3D <5000000>;
+> > +        vref-supply =3D <&vref_reg>;
+> > +      };
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/iio/dac/ltc1660.txt
+> > b/Documentation/devicetree/bindings/iio/dac/ltc1660.txt
+> > deleted file mode 100644
+> > index c5b5f22d6c64..000000000000
+> > --- a/Documentation/devicetree/bindings/iio/dac/ltc1660.txt
+> > +++ /dev/null
+> > @@ -1,21 +0,0 @@
+> > -* Linear Technology Micropower octal 8-Bit and 10-Bit DACs
+> > -
+> > -Required properties:
+> > - - compatible: Must be one of the following:
+> > -		"lltc,ltc1660"
+> > -		"lltc,ltc1665"
+> > - - reg: SPI chip select number for the device
+> > - - vref-supply: Phandle to the voltage reference supply
+> > -
+> > -Recommended properties:
+> > - - spi-max-frequency: Definition as per
+> > -	 Documentation/devicetree/bindings/spi/spi-bus.txt.
+> > -	 Max frequency for this chip is 5 MHz.
+> > -
+> > -Example:
+> > -dac@0 {
+> > -	compatible =3D "lltc,ltc1660";
+> > -	reg =3D <0>;
+> > -	spi-max-frequency =3D <5000000>;
+> > -	vref-supply =3D <&vref_reg>;
+> > -};
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index fbccc9d450ff..23497d713298 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -9619,7 +9619,7 @@ LTC1660 DAC DRIVER
+> >  M:	Marcus Folkesson <marcus.folkesson@gmail.com>
+> >  L:	linux-iio@vger.kernel.org
+> >  S:	Maintained
+> > -F:	Documentation/devicetree/bindings/iio/dac/ltc1660.txt
+> > +F:	Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> >  F:	drivers/iio/dac/ltc1660.c
+> > =20
+> >  LTC4261 HARDWARE MONITOR DRIVER
+
+I guess I wait for Robs review until I post a v2.
+
+Thanks,
+Marcus Folkesson
+
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAl3BL2oACgkQiIBOb1ld
+UjJS4Q/+PCrmp2ItraO5ELiTwcQhN4/sfTai01iLTh8OEgq7kwMsMDZlOVbNfITE
+Ug4xFQnwQlf7OzSsTVk2VbBDi3QJ1f49Z5N3C0zp0ZwSZSnvWgv8/JMCr+euxpEz
+YMZWhwJG21SdY68xYw9g7hk2v2sS93F9g47dE5ONKhW6MB6A2XtYgEI0Bz9hf3iB
+dxh6opCAhNamD1XfWlrlocIL5IulKUYBedKoUxw/0hIgJDuyFtwtCXT52y0jLR04
+VspjQoTIdIi3bNlUdHaOo2X43xH3+I7cGix3PZMiylhNqg8kqN+bd0g+QHVqo9XG
+fgLxEq0QueYXFb8NO/bQ7aAGZrIaU98Qt2j5ZwqgjmPfKrPUjtoSarHaPkVdzxZm
+b54Igguy0dc3VKH4vrAWml1noTLAZPGpDFF/Ne0d/5quXArSi7hJF7rvknx/LUYS
+P9I8FTkVRA6Mrc57cpADmfd+/Za7YN/ErFR0pf3Nl27FiqI/7ej3y1xe1hwbZ2S+
+vFSGnats1C6+qd1WQG65YBKROD7W1BtNtVTJxEI7rp3dMQAKfQmtyIRWS5wo3Fjw
+i50r7a5rTtLEM8evy7rPuEXuJoXKaYqEz6C0Z0Zm43/xX4cB/anEt5KPlt61vWQZ
+5Q4nLDF2DBWP+9wcBnULQsVcSoVFR8//SysNErYKjGiwu5CK9EU=
+=tTdR
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
