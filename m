@@ -2,120 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13785F0151
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FEFFF0159
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbfKEP02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:26:28 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31556 "EHLO mga07.intel.com"
+        id S1731083AbfKEP06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:26:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727889AbfKEP02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:26:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 07:26:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="212559537"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 05 Nov 2019 07:26:24 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 05 Nov 2019 17:26:24 +0200
-Date:   Tue, 5 Nov 2019 17:26:24 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Mao Wenan <maowenan@huawei.com>, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] usb: roles: Hide option USB_ROLE_SWITCH
-Message-ID: <20191105152624.GC12204@kuha.fi.intel.com>
-References: <20191104135312.GD996639@ulmo>
- <20191104144850.91305-1-maowenan@huawei.com>
- <20191105124218.GB12204@kuha.fi.intel.com>
- <20191105131605.GF10409@kadam>
+        id S1727889AbfKEP06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:26:58 -0500
+Received: from redsun51.ssa.fujisawa.hgst.com (unknown [199.255.47.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F06D92053B;
+        Tue,  5 Nov 2019 15:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572967617;
+        bh=Y49i5hhOPhJugkrF4npAozYxT0zBE624ImjMcDKVD1U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S2w0B03Z3nwij7CLRx7gMlKWgGttnNnXAzBn1oUwsVRmqRs4TQg78leSvtraaFWD2
+         tfFJNBhLGpVenI/rE1J15IbdDe8S4SSbb+DL3dOa2WEStmckDBW0d8C40qhfyecyr5
+         fp0jHKRLU61DXfZykkUwrwJebdWs8Lk7ULCmM3cE=
+Date:   Wed, 6 Nov 2019 00:26:54 +0900
+From:   Keith Busch <kbusch@kernel.org>
+To:     Charles Machalow <csm10495@gmail.com>
+Cc:     linux-nvme@lists.infradead.org, marta.rybczynska@kalray.eu,
+        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: change nvme_passthru_cmd64 to explicitly mark rsvd
+Message-ID: <20191105152654.GC22559@redsun51.ssa.fujisawa.hgst.com>
+References: <20191105061510.22233-1-csm10495@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191105131605.GF10409@kadam>
+In-Reply-To: <20191105061510.22233-1-csm10495@gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Mon, Nov 04, 2019 at 10:15:10PM -0800, Charles Machalow wrote:
+> Changing nvme_passthru_cmd64 to add a field: rsvd2. This field is an explicit
+> marker for the padding space added on certain platforms as a result of the
+> enlargement of the result field from 32 bit to 64 bits in size.
 
-On Tue, Nov 05, 2019 at 04:16:05PM +0300, Dan Carpenter wrote:
-> On Tue, Nov 05, 2019 at 02:42:18PM +0200, Heikki Krogerus wrote:
-> > On Mon, Nov 04, 2019 at 10:48:50PM +0800, Mao Wenan wrote:
-> > > The USB role switch class is, after all,
-> > > not useful by itself. Hiding USB_ROLE_SWITCH
-> > > so we can avoid any of the pitfalls associated
-> > > with user-visible symbols and "select".
-> > > 
-> > > Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> > > ---
-> > >  drivers/usb/roles/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
-> > > index f8b31aa..1da58d4 100644
-> > > --- a/drivers/usb/roles/Kconfig
-> > > +++ b/drivers/usb/roles/Kconfig
-> > > @@ -1,7 +1,7 @@
-> > >  # SPDX-License-Identifier: GPL-2.0
-> > >  
-> > >  config USB_ROLE_SWITCH
-> > > -	tristate "USB Role Switch Support"
-> > > +	tristate
-> > >  	help
-> > >  	  USB Role Switch is a device that can select the USB role - host or
-> > >  	  device - for a USB port (connector). In most cases dual-role capable
-> > 
-> > You didn't actually convert the "depends on USB_ROLE_SWTICH" to
-> > "select USB_ROLE_SWITCH" before this. You also left the help text that
-> > is now useless.
-> > 
-> > I really think that instead of this, we should just convert all
-> > "select USB_ROLE_SWTICH" to "depends on USB_ROLE_SWITCH".
-> 
-> The you have to find USB_ROLE_SWITCH first when you want to enable your
-> hardware...  It's feels really confusing when you want to create a
-> .config file...
-
-Unfortunately selecting the class alone is not enough. The USB role
-switch on the system may be a dual-role capable USB controller, but it
-may also be a mux that has its own separate driver.
-
-It's equally or even more confusing for the user if the USB drivers
-are enabled, including the dual-role mode, but the connector still
-works only in one role, or in worst case not at all (if there is no
-mux driver and the mux is left in "safe mode" so that the pins on the
-connector are not connected to anything).
-
-I still think that we should make these drivers depend on the class
-instead of just selecting it. That way we at least give the user a
-hint that there are also separate USB role switch drivers that may be
-needed.
-
-> I sometimes think maybe I'm too stupid to configure a kernel these days
-> and that's sort of sad because how is Aunt Tillie supposed to manage?
-
-We can always use something like conditional comments in the
-Kconfig files to make sure that the user is told that in order to
-select the driver, a dependency must be satisfied:
-
-        config MY_AWESOME_DRIVER
-                tristate "My awesome driver!"
-                depends on USB_ROLE_SWITCH
-                help
-                  That's right! IT REALLY IS AWESOME!
-
-        comment "My awesome driver depends on USB_ROLE_SWITCH..."
-                depends on USB_ROLE_SWITCH=n
-
-thanks,
-
--- 
-heikki
+Charles,
+Could you reply with your "Signed-off-by" so I can apply this patch?
+Thanks.
