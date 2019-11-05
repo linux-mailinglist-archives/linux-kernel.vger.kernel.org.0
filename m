@@ -2,118 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 579E6F01DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9347EF01E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389987AbfKEPtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:49:08 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36338 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389506AbfKEPtH (ORCPT
+        id S2390027AbfKEPtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:49:36 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41055 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389571AbfKEPtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:49:07 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k13so3193780pgh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 07:49:05 -0800 (PST)
+        Tue, 5 Nov 2019 10:49:36 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so21956180wrm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 07:49:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=6wind.com; s=google;
+        h=reply-to:subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Da4uiaQj7qVMKa9oAKwCKH6uxJg0bHesNrE0BWHWXgs=;
-        b=hfnreEuHEVOOB4GYxQpvcNt/tzK2jHW/3WicKvVvnoECbhjeTfvJ/jRVCXoVfoFwBD
-         gh3UoJbBuR7BW388M6JzkvjPJo2P5gMEmdXXbL+SX8wCS5HtPQrU/DpxQE9Zdy1IwEIE
-         1W5uG/KdoyUy7Fi5vrMI7VVqu6PlqCGu3nFAWomVbU1FMzmiEHTzyHi22EsDOKKw5+SF
-         Qa5pv5rX9fsLm2x6BIIKMypZFT1b+/p8/K7NeOe0eH67JQqWtbbNe206u4qYMuQmI+bT
-         S+Qrk8fyhuiVjq25M8dNkPU4DSGtRkZC2HIhmgERALnPAzLclCK6Xs4xtXg4zi8e/Oos
-         QU9w==
+        bh=Omqe6S/pyFxJI7C1o2eETHJWbUrn/qTQRRvTn+QMfyg=;
+        b=RzkorrMjvOIWN4UkPK8Y7Znou9DRHdIJJdzqduj9U84TzYPrjarP5nbfB2T3swqAB5
+         9Y4y4+jLERhtnMbGydLfoIP7oKOq9Lbt+z/x4iM2zB/1jh9RKh+7UAwC3b6hkptTaK2S
+         0N1gWFkaqSOVwEhcdWVR2NnZua3pPeXC2ao/eiRZ/Pq28qVBUTUMoUtBEcfx9mturcua
+         W57o+fVlOrvvBoaR5/BlNfZfePVlIW5lUUKkURAkP8b1muUDkgcEssXTw3OJn1YCI4v3
+         BKm7gm6qrGLbL5bqO/X0FxUAnuf16r3yC+mPOMIyLxnFewmNSlIiA2LRv/rwARn2Ij9o
+         Jhhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Da4uiaQj7qVMKa9oAKwCKH6uxJg0bHesNrE0BWHWXgs=;
-        b=GmuUhalIXm+iPgGntlb7nUs/cXawg+naW70hKpmUWUObPcEwjQUANeCb8GRMGkhQO9
-         a9BvCmuUIPxevazVdgQxqqL/NakDBhwQDOPNSQC+b71FZPxj+GKR75CIGp2wxp3hERH2
-         VKVReP3QtkjgXJQUMa7K/jzW1PxmdvuL711TU7QgvNLNGfIuNe0FRkAq1aVUMDiL1MNx
-         w/+cZ5K2c1ynZt6J5jddiXqd6ztk/ASDArWbamLxlsQB0z/+bF08VWJ5kr4U7ZMgejDG
-         ThNiCvYzF3e0EwphQqPJ9nejTj6d3x5U3rwBb7PdtQC2VHffOJqfEGU0S04C/zsxFpeq
-         cJVQ==
-X-Gm-Message-State: APjAAAXf71IHtAogt7SUqoF2poCFwN1fMSXRb+efqWspH9w7HkJUbWtt
-        9UQqRBtpMfmVL08OchrTKFyT3s3JloK0fA==
-X-Google-Smtp-Source: APXvYqw6TT6h4xdMnSvvaN4taYhNyZSJ66DjuT/Lvx+weHFctd/pnh6xoc71B6HDMJiRTUZW/XU+Sw==
-X-Received: by 2002:a63:5966:: with SMTP id j38mr36959501pgm.304.1572968945118;
-        Tue, 05 Nov 2019 07:49:05 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.gmail.com with ESMTPSA id f189sm29671326pgc.94.2019.11.05.07.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 07:49:04 -0800 (PST)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-afs@lists.infradead.org, Jan Kara <jack@suse.cz>
-Subject: [PATCH] afs: xattr: use scnprintf
-Date:   Tue,  5 Nov 2019 07:48:44 -0800
-Message-Id: <20191105154850.187723-1-salyzyn@android.com>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Omqe6S/pyFxJI7C1o2eETHJWbUrn/qTQRRvTn+QMfyg=;
+        b=J1Vz2bDieCz8VilGgGI918GIRf2kz/UbYS3HhLEI0SDl5ArIrj1lGNvNP+SoHAIyh3
+         5omEAXE6IAw13fUBYPn9r2umBcpSIRQlmXyliNAxoctVsHKZyHVcGudXdWoDGqAYGrbm
+         rW9oEsL0zlEX1zalg0VTtbxaL/FC2xogEvVBd15N4j8/RvCNg8Bxjob8xlY/sxBEmikh
+         dW8ZxJbR+2AfgXddtxupYesHovlhaGcvnb5PKC+ZnUEcpjSgBvDqpj8kosJXZZobyeeY
+         4S/KxnFsvFzSZKaOro2MJM8nqldp901UAKi1FAtSh0TCG7ILyLmBbisNqefmpItxZBLJ
+         sadg==
+X-Gm-Message-State: APjAAAVE47Ga/XQpiJupyAHEoEkDnH3q/mDLZZmPx3hxJvxqeXx/BK28
+        1fB+0gUVgb8uJYbpq7kNhMZZ1Q==
+X-Google-Smtp-Source: APXvYqwfdUO6eajK1OfvTLlh5zvD1jlHgPwHU9A53yqddwlElP4rSVoRkaamvkSt3D41UleMCuvALA==
+X-Received: by 2002:a5d:5444:: with SMTP id w4mr26585867wrv.164.1572968973724;
+        Tue, 05 Nov 2019 07:49:33 -0800 (PST)
+Received: from ?IPv6:2a01:e35:8b63:dc30:f096:9925:304a:fd2a? ([2a01:e35:8b63:dc30:f096:9925:304a:fd2a])
+        by smtp.gmail.com with ESMTPSA id g184sm26057395wma.8.2019.11.05.07.49.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 07:49:33 -0800 (PST)
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH 5/5] net: namespace: allow setting NSIDs outside current
+ namespace
+To:     Jonas Bonn <jonas@norrbonn.se>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     davem@davemloft.net
+References: <20191105081112.16656-1-jonas@norrbonn.se>
+ <20191105081112.16656-6-jonas@norrbonn.se>
+From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Organization: 6WIND
+Message-ID: <739c409a-bfbf-99c0-9624-38264d52087a@6wind.com>
+Date:   Tue, 5 Nov 2019 16:49:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191105081112.16656-6-jonas@norrbonn.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sprintf and snprintf are fragile in future maintenance, switch to
-using scnprintf to ensure no accidental Use After Free conditions
-are introduced.
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org
-Cc: Jan Kara <jack@suse.cz>
----
- fs/afs/xattr.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
-index 5552d034090a..7af41fd5f3ee 100644
---- a/fs/afs/xattr.c
-+++ b/fs/afs/xattr.c
-@@ -228,11 +228,11 @@ static int afs_xattr_get_yfs(const struct xattr_handler *handler,
- 		break;
- 	case 1:
- 		data = buf;
--		dsize = snprintf(buf, sizeof(buf), "%u", yacl->inherit_flag);
-+		dsize = scnprintf(buf, sizeof(buf), "%u", yacl->inherit_flag);
- 		break;
- 	case 2:
- 		data = buf;
--		dsize = snprintf(buf, sizeof(buf), "%u", yacl->num_cleaned);
-+		dsize = scnprintf(buf, sizeof(buf), "%u", yacl->num_cleaned);
- 		break;
- 	case 3:
- 		data = yacl->vol_acl->data;
-@@ -370,13 +370,15 @@ static int afs_xattr_get_fid(const struct xattr_handler *handler,
- 	/* The volume ID is 64-bit, the vnode ID is 96-bit and the
- 	 * uniquifier is 32-bit.
- 	 */
--	len = sprintf(text, "%llx:", vnode->fid.vid);
-+	len = scnprintf(text, sizeof(text), "%llx:", vnode->fid.vid);
- 	if (vnode->fid.vnode_hi)
--		len += sprintf(text + len, "%x%016llx",
--			       vnode->fid.vnode_hi, vnode->fid.vnode);
-+		len += scnprintf(text + len, sizeof(text) - len, "%x%016llx",
-+				vnode->fid.vnode_hi, vnode->fid.vnode);
- 	else
--		len += sprintf(text + len, "%llx", vnode->fid.vnode);
--	len += sprintf(text + len, ":%x", vnode->fid.unique);
-+		len += scnprintf(text + len, sizeof(text) - len, "%llx",
-+				 vnode->fid.vnode);
-+	len += scnprintf(text + len, sizeof(text) - len, ":%x",
-+			 vnode->fid.unique);
- 
- 	if (size == 0)
- 		return len;
--- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+Le 05/11/2019 à 09:11, Jonas Bonn a écrit :
+> Currently it is only possible to move an interface to a new namespace if
+> the destination namespace has an ID in the interface's current namespace.
+> If the interface already resides outside of the current namespace, then
+> we may need to assign the destination namespace an ID in the interface's
+> namespace in order to effect the move.
+> 
+> This patch allows namespace ID's to be created outside of the current
+> namespace.  With this, the following is possible:
+> 
+> i)    Our namespace is 'A'.
+> ii)   The interface resides in namespace 'B'
+> iii)  We can assign an ID for NS 'A' in NS 'B'
+> iv)   We can then move the interface into our own namespace.
+> 
+> and
+> 
+> i)   Our namespace is 'A'; namespaces 'B' and 'C' also exist
+> ii)  We can assign an ID for namespace 'C' in namespace 'B'
+> iii) We can then create a VETH interface directly in namespace 'B' with
+> the other end in 'C', all without ever leaving namespace 'A'
+> 
+> Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
+Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
