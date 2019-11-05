@@ -2,98 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0EFAEF54F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28FE8EF555
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbfKEGDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:03:17 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4876 "EHLO mga03.intel.com"
+        id S2387517AbfKEGEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:04:06 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:32010 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730152AbfKEGDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:03:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 22:03:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,270,1569308400"; 
-   d="scan'208";a="200702984"
-Received: from kmsmsx157.gar.corp.intel.com ([172.21.138.134])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Nov 2019 22:03:14 -0800
-Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.51]) by
- kmsmsx157.gar.corp.intel.com ([169.254.5.204]) with mapi id 14.03.0439.000;
- Tue, 5 Nov 2019 14:03:08 +0800
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        "Zavras, Alexios" <alexios.zavras@intel.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [alsa-devel] [PATCH] ASoC: bdw-rt5677: enable runtime channel
- merge
-Thread-Topic: [alsa-devel] [PATCH] ASoC: bdw-rt5677: enable runtime channel
- merge
-Thread-Index: AQHVeQDQJxSKmeHo60W0FoozADL3CqdkfMRQgAADboCAF8XX4A==
-Date:   Tue, 5 Nov 2019 06:03:07 +0000
-Message-ID: <CF33C36214C39B4496568E5578BE70C74032F8BA@PGSMSX108.gar.corp.intel.com>
-References: <1570007072-23049-1-git-send-email-brent.lu@intel.com>
- <CF33C36214C39B4496568E5578BE70C74031B9FD@PGSMSX108.gar.corp.intel.com>
- <63da3995-b807-f9e6-6f09-a90e6b8e8e53@linux.intel.com>
-In-Reply-To: <63da3995-b807-f9e6-6f09-a90e6b8e8e53@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmEwZTU0MjEtYWI3NS00MTc3LWE1NGItMjA0M2RiZmRhZGZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVXFLMjJZZFd4WURZVTJsS2daTHZvNUVtclwvRzZhekNtWVNrRmE2d2ozQlMyMWplMDA3UWtDa1JMSjFFazNcL0FiIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730152AbfKEGEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 01:04:06 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 476fHm3bMCz9vBhW;
+        Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=KyEn44Cv; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id bejW4i8ArN-f; Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 476fHm0pfBz9vBhF;
+        Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1572933844; bh=PeaCk2RM7ni/Qntm+XOM7dRGcnogK0Sbq44rYc/HpuU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KyEn44CvaCa8j0axto9vX0/fxpQkhypUIXYb4isqyYXIJ2G0IE6HS26IzquBC5WO+
+         tzdya5ntaMhkh5qMI/o1gjvODTjcK/dVhqbcWGmQp3QJVK+pnmOrKEQHkkApnFCvEV
+         DE+lfFywsNr7DDcwdwq7hfwnwQPqnrguP/LZA/bY=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D98818B787;
+        Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id z_R164XR8XJY; Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C1AD8B752;
+        Tue,  5 Nov 2019 07:04:04 +0100 (CET)
+Subject: Re: [PATCH v5 1/6] powerpc: Allow flush_icache_range to work across
+ ranges >4GB
+To:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>, alastair@d-silva.org,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+References: <20191104023305.9581-1-alastair@au1.ibm.com>
+ <20191104023305.9581-2-alastair@au1.ibm.com>
+ <20191104194357.GE16031@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <74435ba6-51dc-1dff-b55b-cdcf85e2e302@c-s.fr>
+Date:   Tue, 5 Nov 2019 07:04:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191104194357.GE16031@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+PiBJbiB0aGUgREFJIGxpbmsgIkNhcHR1cmUgUENNIiwgdGhlIEZFIERBSSAiQ2FwdHVyZSBQ
-aW4iIHN1cHBvcnRzDQo+ID4+IDQtY2hhbm5lbCBjYXB0dXJlIGJ1dCB0aGUgQkUgREFJIHN1cHBv
-cnRzIG9ubHkgMi1jaGFubmVsIGNhcHR1cmUuIFRvDQo+ID4+IGZpeCB0aGUgY2hhbm5lbCBtaXNt
-YXRjaCwgd2UgbmVlZCB0byBlbmFibGUgdGhlIHJ1bnRpbWUgY2hhbm5lbCBtZXJnZQ0KPiBmb3Ig
-dGhpcyBEQUkgbGluay4NCj4gPj4NCj4gPg0KPiA+IEhpIFBpZXJyZSwNCj4gPg0KPiA+IFRoaXMg
-cGF0Y2ggaXMgZm9yIHRoZSBzYW1lIGlzc3VlIGRpc2N1c3NlZCBpbiB0aGUgZm9sbG93aW5nIHRo
-cmVhZDoNCj4gPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzExMTM0MTY3Lw0K
-PiA+DQo+ID4gV2UgZW5hYmxlIHRoZSBydW50aW1lIGNoYW5uZWwgbWVyZ2UgZm9yIHRoZSBETUlD
-IERBSSBpbnN0ZWFkIG9mIGFkZGluZw0KPiA+IGEgbWFjaGluZSBkcml2ZXIgY29uc3RyYWludC4g
-SXQncyB3b3JraW5nIGdvb2Qgb24gY2hyb21lJ3MgMy4xNCBicmFuY2gNCj4gPiAod2hpY2ggcmVx
-dWlyZXMgc29tZSBiYWNrcG9ydCBmb3IgdGhlIHJ1bnRpbWUgY2hhbm5lbCBtZXJnZSBmZWF0dXJl
-KS4NCj4gPiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyBpbXBsZW1lbnRhdGlvbiBpcyBjb3Jy
-ZWN0IGZvciB0aGUgRkUvQkUgbWlzbWF0Y2gNCj4gcHJvYmxlbS4NCj4gDQo+IFNvcnJ5LCBJIGRv
-bid0IGZ1bGx5IHVuZGVyc3RhbmQgeW91ciBwb2ludHMsIGFuZCBpdCdzIHRoZSBmaXJzdCB0aW1l
-IEkgc2VlIGFueW9uZQ0KPiB1c2UgdGhpcyAuZHBjbV9tZXJnZWRfY2hhbiBmaWVsZCBmb3IgYW4g
-SW50ZWwgcGxhdGZvcm0uDQo+IA0KPiBJZiBJIGxvb2sgYXQgdGhlIGNvZGUgSSBzZWUgdGhhdCB0
-aGUgY29yZSB3b3VsZCBsaW1pdCB0aGUgbnVtYmVyIG9mIGNoYW5uZWxzIHRvDQo+IHR3by4gQnV0
-IHRoYXQgY29kZSBuZWVkcyB0aGUgQ1BVX0RBSSB0byB1c2UgMiBjaGFubmVscywgd2hpY2ggSSBk
-b24ndCBzZWUuDQo+IFNvIGlzIHRoaXMgcGF0Y2ggc2VsZi1jb250YWluZWQgb3IgZG8gd2UgbmVl
-ZCBhbiBhZGRpdGlvbmFsIGNvbnN0cmFpbnQgb24gdGhlDQo+IEZFPw0KPiANCj4gVGhhbmtzDQo+
-IC1QaWVycmUNCg0KSGkgUGllcnJlLA0KDQpXZSBkb24ndCBuZWVkIGNvbnN0cmFpbnQgb24gRkUg
-YmVjYXVzZSBkcGNtX3J1bnRpbWVfbWVyZ2VfY2hhbigpIG1vZGlmaWVzDQp0aGUgY2hhbm5lbCBu
-dW1iZXIgb2Ygc25kX3BjbV9oYXJkd2FyZSBzdHJ1Y3R1cmUgZGlyZWN0bHkuIFRoZSBzdHJ1Y3R1
-cmUgd2lsbA0KYmUgdXNlZCB0byBpbml0aWFsaXplIHRoZSBzbmRfcGNtX2h3X2NvbnN0cmFpbnRz
-IHN0cnVjdHVyZSBsYXRlciBpbiB0aGUNCnNuZF9wY21faHdfY29uc3RyYWludHNfY29tcGxldGUo
-KSBmdW5jdGlvbi4gU2luY2UgdGhlIGNoYW5uZWwgbnVtYmVyIGlzIGFscmVhZHkNCm1vZGlmaWVk
-LCB3ZSBkb24ndCBuZWVkIGEgY29uc3RyYWludCB0byBpbnN0YWxsIGFuIGV4dHJhIHJ1bGUgZm9y
-IGl0Lg0KDQpUaGUgcmVzdWx0IG9mIHVzaW5nIGRwY21fbWVyZ2VkX2NoYW4gZmxhZyBhbmQgbWFj
-aGluZSBkcml2ZXIgY29uc3RyYWludCBzaG91bGQNCmJlIHRoZSBzYW1lIHdoZW4gdXNlciBzcGFj
-ZSBwcm9ncmFtcyBjYWxsaW5nIEhXX1JFRklORSBpb2N0bCBjYWxsIGJ1dCBJIHRoaW5rIHRoZQ0K
-ZmxhZyBpcyBtb3JlIGVsZWdhbnQgZm9yIG1hY2hpbmUgZHJpdmVyIGNvZGUuDQoNCg0KUmVnYXJk
-cywNCkJyZW50DQo=
+
+
+Le 04/11/2019 à 20:43, Segher Boessenkool a écrit :
+> On Mon, Nov 04, 2019 at 01:32:53PM +1100, Alastair D'Silva wrote:
+>> When calling flush_icache_range with a size >4GB, we were masking
+>> off the upper 32 bits, so we would incorrectly flush a range smaller
+>> than intended.
+>>
+>> This patch replaces the 32 bit shifts with 64 bit ones, so that
+>> the full size is accounted for.
+> 
+> Please send this separately, to be committed right now?  It is a bug fix,
+> independent of the rest of the series.
+> 
+
+Patch 4/6 needs it, as it drops the function.
+
+Or do you mean that the series should drop the assembly at once, and 
+this patch should only go into stable ?
+
+But I guess mpe can take this patch alone if he wants to ?
+
+By the way, Patch 2/6 is also a bugfix.
+
+Christophe
