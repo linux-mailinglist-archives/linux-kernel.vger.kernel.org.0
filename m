@@ -2,219 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727FCEFA72
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D6EEFA78
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:07:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388209AbfKEKH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 05:07:29 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33819 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730571AbfKEKH3 (ORCPT
+        id S2388260AbfKEKHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 05:07:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27653 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388228AbfKEKHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 05:07:29 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 205so19240813qkk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 02:07:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CNinsozng4H5Ktf3rvHjg3jRh9c0NmbS8rmNz478Pe8=;
-        b=VEO755CMkWYZ+HZKjDSD2H8hkfHFILjBODJuUT7dyLJ2VacVXn30QPaKiB2aJr3dFj
-         UUfvdFj6N0LnOAXPpkBIo09s0N5k2JqZAjoxblyCjvylpwFmN2gB0t7J2CGgbJNVhTmU
-         Xcr/1pKIJxSCw64FjFq0CtKjgFgTUfNVSSd9U2EvGxP5Nf0q3JVy0Cb5eF45Tr0S+WOE
-         0zKyddIay8ulBTDwkAa9yHfkd+eUs/9amxlaNsSWxZ5fur+Ya/bxWYGvrXrX0FWTo8vt
-         H4Dh97ZxjUuuKm7+8LrgGpf1cTXIb42yHnSZIPyQugGcQMUmFsLEOAZC5E/3rGykiu40
-         5mcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CNinsozng4H5Ktf3rvHjg3jRh9c0NmbS8rmNz478Pe8=;
-        b=IpGsUvZ2SSFY4w1ztzcdQQ01Cm1fU4Z2rA8DBgfmw8FXzVFSbuZk7Kwkl9o7zKqAf8
-         RlTtBNsnXVdyP27QzA4QJ4L44mhAeMXZ9HQTf70/Kdq0IllJHFjh4WJYzMUvJUai/ufS
-         84c4BSEgANotQggINk1MWtd9/WgLbOGgRZkUBSqxxrwfXxjQaVHt5T3DlBsU3I4n9zBT
-         fxBmiQXwcYD3A/dktSBoNVBUVGCjHlCR8Q+cN9WCK6oDW4V5104UKtsXWBQnbFBQ11e9
-         KUN1lktHTKK3GTHQmi/iwi83y8cLwiUuqjVcqq1gPEcEKOCddtqX0JVQp9VEu14pKuhO
-         Loyw==
-X-Gm-Message-State: APjAAAW51XM3hIaYoEM+qOA0/XBAwZYu0VacwD/0uHne6XkD7j2vhNJD
-        Z4hLmIMMfGRlpOXNCRfjioYl0gU92Mvir9g/f8WWEw==
-X-Google-Smtp-Source: APXvYqw9bNDchC8BBBpEdelYeypgmRQMVHiuZm+RJGKYBw6ulBdYAA7iNafLNDZB2gz23179UM0YXlSw8t9Sm2JcFdA=
-X-Received: by 2002:ae9:eb07:: with SMTP id b7mr7705763qkg.104.1572948447803;
- Tue, 05 Nov 2019 02:07:27 -0800 (PST)
+        Tue, 5 Nov 2019 05:07:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572948465;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+p6MzjaCDgcAgk98VJBsyJP1N813kTt9VSOvi9TO8ZM=;
+        b=AtEtacNhCGs/V+NferlO1/shjJfbhz2PbMW6OdFt8ZF9drWYGHwBGtr9zaYdudIravRdGn
+        i8tpp6F/5e6KgedG7vOwU/acScGDolB0nPn1SBy0RoJPR5EThKoreLJWr6MZiza4EaA18h
+        EK6AidkZu3RIUft47VL+97ULBvDiEKw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-26-M3qGGrxpM7GVcLI_o98zVQ-1; Tue, 05 Nov 2019 05:07:41 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F4EE800C73;
+        Tue,  5 Nov 2019 10:07:39 +0000 (UTC)
+Received: from [10.36.117.253] (ovpn-117-253.ams2.redhat.com [10.36.117.253])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A429561069;
+        Tue,  5 Nov 2019 10:07:35 +0000 (UTC)
+Subject: Re: [PATCH v3] mm/memory_hotplug: Fix try_offline_node()
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Tang Chen <tangchen@cn.fujitsu.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>
+References: <20191102120221.7553-1-david@redhat.com>
+ <20191105012049.x2k4v2xizd2tim5b@gabell>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <495a43af-befb-91f9-0097-9f0b449ff632@redhat.com>
+Date:   Tue, 5 Nov 2019 11:07:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20191031123040.26316-1-benjamin.gaignard@st.com>
- <20191031123040.26316-3-benjamin.gaignard@st.com> <20191103110841.3ad3ecfb@archlinux>
-In-Reply-To: <20191103110841.3ad3ecfb@archlinux>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 5 Nov 2019 11:07:16 +0100
-Message-ID: <CA+M3ks5sZ6wwV-V+HCLC8OLdeLqrxK0Ga-pXTsdktQErbMOk4g@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: iio: timer: Convert stm32 IIO trigger
- bindings to json-schema
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-iio@vger.kernel.org, u.kleine-koenig@pengutronix.de,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191105012049.x2k4v2xizd2tim5b@gabell>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: M3qGGrxpM7GVcLI_o98zVQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le dim. 3 nov. 2019 =C3=A0 12:08, Jonathan Cameron <jic23@kernel.org> a =C3=
-=A9crit :
->
-> On Thu, 31 Oct 2019 13:30:38 +0100
-> Benjamin Gaignard <benjamin.gaignard@st.com> wrote:
->
-> > Convert the STM32 IIO trigger binding to DT schema format using json-sc=
-hema
-> >
-> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> I'm far from great on these as still haven't taken the time I should to l=
-earn
-> the yaml syntax properly.  A few comments inline however based mostly on =
-this
-> doesn't quite look like other ones I've seen recently.
->
-> Thanks,
->
-> Jonathan
->
-> > ---
-> >  .../bindings/iio/timer/st,stm32-timer-trigger.yaml | 44 ++++++++++++++=
-++++++++
-> >  .../bindings/iio/timer/stm32-timer-trigger.txt     | 25 ------------
-> >  2 files changed, 44 insertions(+), 25 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/timer/st,stm3=
-2-timer-trigger.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/iio/timer/stm32-t=
-imer-trigger.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/timer/st,stm32-timer=
--trigger.yaml b/Documentation/devicetree/bindings/iio/timer/st,stm32-timer-=
-trigger.yaml
-> > new file mode 100644
-> > index 000000000000..1c8c8b55e8cd
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/timer/st,stm32-timer-trigge=
-r.yaml
-> > @@ -0,0 +1,44 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/timer/st,stm32-timer-trigger.ya=
-ml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: STMicroelectronics STM32 Timers IIO timer bindings
-> > +
-> > +maintainers:
-> > +  - Benjamin Gaignard <benjamin.gaignard@st.com>
-> > +  - Fabrice Gasnier <fabrice.gasnier@st.com>
-> > +
-> > +properties:
-> > +  $nodemane:
->
-> nodename?
+On 05.11.19 02:20, Masayoshi Mizuma wrote:
+> 5.4-rc5 with this patch works for memory-hotadd and remove, thanks!
+> Please feel free to add:
+>=20
+>      Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+>=20
+> Without this patch, memory hotplug fails as panic:
+>=20
+>   BUG: kernel NULL pointer dereference, address: 0000000000000000
+>   ...
+>   Call Trace:
+>    remove_memory_block_devices+0x81/0xc0
+>    try_remove_memory+0xb4/0x130
+>    ? walk_memory_blocks+0x75/0xa0
+>    __remove_memory+0xa/0x20
+>    acpi_memory_device_remove+0x84/0x100
+>    acpi_bus_trim+0x57/0x90
+>    acpi_bus_trim+0x2e/0x90
+>    acpi_device_hotplug+0x2b2/0x4d0
+>    acpi_hotplug_work_fn+0x1a/0x30
+>    process_one_work+0x171/0x380
+>    worker_thread+0x49/0x3f0
+>    kthread+0xf8/0x130
+>    ? max_active_store+0x80/0x80
+>    ? kthread_bind+0x10/0x10
+>    ret_from_fork+0x35/0x40
+>=20
+> - Masa
 
-That will be in v2
+Thanks a lot for testing!
 
->
-> > +    pattern: "^timer@[0-9]+$"
-> > +    type: object
-> > +
-> > +    description:
-> > +      must be a sub-node of an STM32 Timer device tree node
-> > +
-> > +    properties:
-> > +      compatible:
-> > +        oneOf:
->
-> enum is I think preferred for these.
+--=20
 
-as you like it will be in v2
+Thanks,
 
->
-> > +          - const: st,stm32-timer-trigger
-> > +          - const: st,stm32h7-timer-trigger
-> > +
-> > +      reg: true
->
-> Normally some info for what the reg value is..
-I can't put "description" on this field because the syntax doesn't allow it=
-.
-I will add a comment in v2 to explain what reg is.
+David / dhildenb
 
-Thanks for your review.
-Benjamin
->
-> > +
-> > +    required:
-> > +      - compatible
-> > +      - reg
-> > +
-> > +examples:
-> > +  - |
-> > +    timers2: timer@40000000 {
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <0>;
-> > +      timer@0 {
-> > +        compatible =3D "st,stm32-timer-trigger";
-> > +        reg =3D <0>;
-> > +      };
-> > +    };
-> > +
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/iio/timer/stm32-timer-tr=
-igger.txt b/Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger=
-.txt
-> > deleted file mode 100644
-> > index b8e8c769d434..000000000000
-> > --- a/Documentation/devicetree/bindings/iio/timer/stm32-timer-trigger.t=
-xt
-> > +++ /dev/null
-> > @@ -1,25 +0,0 @@
-> > -STMicroelectronics STM32 Timers IIO timer bindings
-> > -
-> > -Must be a sub-node of an STM32 Timers device tree node.
-> > -See ../mfd/stm32-timers.txt for details about the parent node.
-> > -
-> > -Required parameters:
-> > -- compatible:        Must be one of:
-> > -             "st,stm32-timer-trigger"
-> > -             "st,stm32h7-timer-trigger"
-> > -- reg:               Identify trigger hardware block.
-> > -
-> > -Example:
-> > -     timers@40010000 {
-> > -             #address-cells =3D <1>;
-> > -             #size-cells =3D <0>;
-> > -             compatible =3D "st,stm32-timers";
-> > -             reg =3D <0x40010000 0x400>;
-> > -             clocks =3D <&rcc 0 160>;
-> > -             clock-names =3D "int";
-> > -
-> > -             timer@0 {
-> > -                     compatible =3D "st,stm32-timer-trigger";
-> > -                     reg =3D <0>;
-> > -             };
-> > -     };
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
