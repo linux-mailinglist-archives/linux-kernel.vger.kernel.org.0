@@ -2,205 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8952CEFD2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B6EEFD3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388513AbfKEMev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 07:34:51 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54262 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387744AbfKEMev (ORCPT
+        id S2388889AbfKEMfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 07:35:30 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33038 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388632AbfKEMfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 07:34:51 -0500
-Received: by mail-wm1-f68.google.com with SMTP id x4so9556905wmi.3;
-        Tue, 05 Nov 2019 04:34:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uXDWMsp5qvVlHIVMxPVb2fsrIl1aloFJ+doxLS5hVLU=;
-        b=XWLAY/tT9UADwTl92xmE3tOUHaT4sD3761TLXhMGIk74SGtCX8Hy6pfaiZiCsNnSfM
-         kyecKhsvFggXdcfzTFcq8MnDlzOwDZ6u2WFeKaSD9kexaCcYEPayqcvkgEsxZtd+DGZ+
-         dSc67hY54a5/yjv8WFht9F6gO/9gj8WbJ62dcM9TByXAPxPDsS3ymi92JOXtl1+rjBvj
-         Ep/DAnTg53X4oJXJKuvvWG/+DZcInFCfHhZtfaUnlMpFifqeoEi9m+r+4yew5jUxWOXW
-         Vcv98KvzLv5Y0NqX19D5zaEUtajaNW5G+GgLLJKbfNflvbHaiBaKKUUQTKVy9ATYrDWN
-         UfEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uXDWMsp5qvVlHIVMxPVb2fsrIl1aloFJ+doxLS5hVLU=;
-        b=g+1oyk/Vb7lsr9hu5sYAMBu8w1vwr9AIzES6Cop3fBfvuAtgVT+BDL9X88hNvObT3G
-         PMuTN1hjPJm9R4IZj/JUT1s4wqQzRl4rgt8+0EE2TrPK8sdT+B6ogzEmxKBIpAkbtMPa
-         emcymNizMBIxNq5M/8UKd3QKQUROKba4q1sGjLKd7kaHud8AOBOAYifP9bI25hKzi5PD
-         fnxOtsGMLLpqY4u3rCIZPJh7eWf1CXNFuuUr2I0w64K160AV8/j+n56Tw9sRXBOp3ROy
-         Bie4Dhn2oKDPlFrFKliNGTyvbvk8fz1yin0rIySIqBi/1l9/cDTWoTaXPZPsrVVKLNvm
-         HNJA==
-X-Gm-Message-State: APjAAAWtTi814NZRuAFyoMyHuj/EbmjgC+vmk1O9V9AemBOb0ItsN7kg
-        y33cyWBNbPEXA8Qri+pYFUTgA1SdqhgC/5py9H4=
-X-Google-Smtp-Source: APXvYqx2VTjX7SpCQ9bFbyLIvq0HI/5gSO9syMahnkO6f1EAMR8g0VgtqPCSwcYkRvXnLfPvgMsRFdEEsyBOBDbtRhQ=
-X-Received: by 2002:a05:600c:228e:: with SMTP id 14mr3817629wmf.119.1572957288363;
- Tue, 05 Nov 2019 04:34:48 -0800 (PST)
+        Tue, 5 Nov 2019 07:35:25 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA5CZ4mY048608;
+        Tue, 5 Nov 2019 06:35:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572957304;
+        bh=JFqD4xlPPBVIe6T8bJmxDxuuyi6a4xzlFFgXzj5VySI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Uq+FfCJZWDgBRXGHLYn6mplk0wiwFlnpPXTOcG//QicnJPGeBosAYfHXf0aqGrQ7t
+         n5SJMdTameR97IZ89zYcUeHeSAhW3zZg6yytHwsI6lEBi4skDn0iAnVoWbwPxBAD/Q
+         w2NtzB4kw+mRfHCVY32rk6izZzjPyoXaln0DEaVw=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA5CZ3EX083033
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Nov 2019 06:35:04 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 5 Nov
+ 2019 06:34:49 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 5 Nov 2019 06:34:49 -0600
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA5CZ1U7011246;
+        Tue, 5 Nov 2019 06:35:02 -0600
+Subject: Re: [PATCH v4 09/20] mtd: spi-nor: Drop spansion_quad_enable()
+To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
+CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
+ <20191102112316.20715-10-tudor.ambarus@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <1547a4b2-b279-ab4c-0b2c-cd88df219b4a@ti.com>
+Date:   Tue, 5 Nov 2019 18:05:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191103203334.10539-1-peron.clem@gmail.com> <20191103203334.10539-2-peron.clem@gmail.com>
- <20191104080359.6kjugbt3yi63ywhb@pengutronix.de> <20191105111134.GG3876@gilmour.lan>
-In-Reply-To: <20191105111134.GG3876@gilmour.lan>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Tue, 5 Nov 2019 13:34:37 +0100
-Message-ID: <CAJiuCcc7sQvuPX+FTErXS+_RzUDvbDrB3Z5EX9wE_2EZaex0qw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: pwm: allwinner: Add H6 PWM description
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-pwm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191102112316.20715-10-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
 
-On Tue, 5 Nov 2019 at 12:11, Maxime Ripard <mripard@kernel.org> wrote:
->
-> Hi Clement, Uwe,
->
-> On Mon, Nov 04, 2019 at 09:03:59AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > On Sun, Nov 03, 2019 at 09:33:28PM +0100, Cl=C3=A9ment P=C3=A9ron wrote=
-:
-> > > From: Jernej Skrabec <jernej.skrabec@siol.net>
-> > >
-> > > H6 PWM block is basically the same as A20 PWM, except that it also ha=
-s
-> > > bus clock and reset line which needs to be handled accordingly.
-> > >
-> > > Expand Allwinner PWM binding with H6 PWM specifics.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > > ---
-> > >  .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml | 45 +++++++++++++++++=
-+-
-> > >  1 file changed, 44 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a1=
-0-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.=
-yaml
-> > > index 0ac52f83a58c..bf36ea509f31 100644
-> > > --- a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.y=
-aml
-> > > +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.y=
-aml
-> > > @@ -30,13 +30,46 @@ properties:
-> > >        - items:
-> > >            - const: allwinner,sun50i-h5-pwm
-> > >            - const: allwinner,sun5i-a13-pwm
-> > > +      - const: allwinner,sun50i-h6-pwm
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > >
-> > > -  clocks:
-> > > +  # Even though it only applies to subschemas under the conditionals=
-,
-> > > +  # not listing them here will trigger a warning because of the
-> > > +  # additionalsProperties set to false.
-> > > +  clocks: true
-> > > +  clock-names: true
-> > > +  resets:
-> > >      maxItems: 1
-> > >
-> > > +  if:
-> > > +    properties:
-> > > +      compatible:
-> > > +        contains:
-> > > +          const: allwinner,sun50i-h6-pwm
-> > > +
-> > > +  then:
-> > > +    properties:
-> > > +      clocks:
-> > > +        items:
-> > > +          - description: Module Clock
-> > > +          - description: Bus Clock
-> > > +
-> > > +      clock-names:
-> > > +        items:
-> > > +          - const: mod
-> > > +          - const: bus
-> > > +
-> > > +    required:
-> > > +      - clock-names
-> > > +      - resets
-> > > +
-> > > +  else:
-> > > +    properties:
-> > > +      clocks:
-> > > +        maxItems: 1
-> > > +
-> >
-> > I guess this hunk says "If this is a allwinner,sun50i-h6-pwm, a mod and
-> > bus clock is required.", right?
-> >
-> > I wonder if it is sensible to require a clock-names property in the els=
-e
-> > branch, too. This would make it obvious if the clock there corresponds
-> > to the "mod" or the "bus" clock on H6. (I guess it's "mod".)
->
-> This can be done a bit differently and could address your concerns
->
-> Something like
->
-> properties:
->   ...
->
->   clocks:
->     minItems: 1
->     maxItems: 2
->     items:
->       - description: Bus Clock
->       - description: Module Clock
->
-> required:
->   - clocks
->
-> if:
->   ...
->
-> then:
->   properties:
->     clocks:
->       maxItems: 2
 
-Here we should set minItems to 2 right ?
-so Max =3D Min =3D 2
+On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> Drop the default spansion_quad_enable() method and replace it with
+> spansion_read_cr_quad_enable().
+> 
+> The function was buggy, it didn't care about the previous values
+> of the Status and Configuration Registers. spansion_read_cr_quad_enable()
+> is a Read-Modify-Write-Check function that keeps track of what were
+> the previous values of the Status and Configuration Registers.
+> 
+> In terms of instruction types sent to the flash, the only difference
+> between the spansion_quad_enable() and spansion_read_cr_quad_enable()
+> is that the later calls spi_nor_read_sr(). We can safely assume that all
+> flashes support spi_nor_read_sr(), because all flashes call it in
+> spi_nor_sr_ready(). The transition from spansion_quad_enable() to
+> spansion_read_cr_quad_enable() will not affect anybody, drop the buggy
+> code.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Regards,
-Cl=C3=A9ment
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
 
->
->     clocks-names:
->       items:
->         - const: mod
->         - const: bus
->
->     required:
->       - clock-names
->
-> else:
->   properties:
->     clocks:
->       maxItems: 1
->
-> That way, the definition of the order and which clock is which is
-> pretty obvious in both cases, and we don't get any weird warnings.
->
-> Maxime
+Regards
+Vignesh
+
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 58 ++++---------------------------------------
+>  1 file changed, 5 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 99a9a6aba41d..f5193733a0f6 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1971,54 +1971,6 @@ static int macronix_quad_enable(struct spi_nor *nor)
+>  }
+>  
+>  /**
+> - * spansion_quad_enable() - set QE bit in Configuraiton Register.
+> - * @nor:	pointer to a 'struct spi_nor'
+> - *
+> - * Set the Quad Enable (QE) bit in the Configuration Register.
+> - * This function is kept for legacy purpose because it has been used for a
+> - * long time without anybody complaining but it should be considered as
+> - * deprecated and maybe buggy.
+> - * First, this function doesn't care about the previous values of the Status
+> - * and Configuration Registers when it sets the QE bit (bit 1) in the
+> - * Configuration Register: all other bits are cleared, which may have unwanted
+> - * side effects like removing some block protections.
+> - * Secondly, it uses the Read Configuration Register (35h) instruction though
+> - * some very old and few memories don't support this instruction. If a pull-up
+> - * resistor is present on the MISO/IO1 line, we might still be able to pass the
+> - * "read back" test because the QSPI memory doesn't recognize the command,
+> - * so leaves the MISO/IO1 line state unchanged, hence spi_nor_read_cr() returns
+> - * 0xFF.
+> - *
+> - * bit 1 of the Configuration Register is the QE bit for Spansion like QSPI
+> - * memories.
+> - *
+> - * Return: 0 on success, -errno otherwise.
+> - */
+> -static int spansion_quad_enable(struct spi_nor *nor)
+> -{
+> -	u8 *sr_cr = nor->bouncebuf;
+> -	int ret;
+> -
+> -	sr_cr[0] = 0;
+> -	sr_cr[1] = CR_QUAD_EN_SPAN;
+> -	ret = spi_nor_write_sr(nor, sr_cr, 2);
+> -	if (ret)
+> -		return ret;
+> -
+> -	/* read back and check it */
+> -	ret = spi_nor_read_cr(nor, nor->bouncebuf);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (!(nor->bouncebuf[0] & CR_QUAD_EN_SPAN)) {
+> -		dev_dbg(nor->dev, "Spansion Quad bit not set\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -/**
+>   * spansion_no_read_cr_quad_enable() - set QE bit in Configuration Register.
+>   * @nor:	pointer to a 'struct spi_nor'
+>   *
+> @@ -2170,9 +2122,9 @@ static int spi_nor_clear_sr_bp(struct spi_nor *nor)
+>   *
+>   * Read-modify-write function that clears the Block Protection bits from the
+>   * Status Register without affecting other bits. The function is tightly
+> - * coupled with the spansion_quad_enable() function. Both assume that the Write
+> - * Register with 16 bits, together with the Read Configuration Register (35h)
+> - * instructions are supported.
+> + * coupled with the spansion_read_cr_quad_enable() function. Both assume that
+> + * the Write Register with 16 bits, together with the Read Configuration
+> + * Register (35h) instructions are supported.
+>   *
+>   * Return: 0 on success, -errno otherwise.
+>   */
+> @@ -4654,7 +4606,7 @@ static void spi_nor_info_init_params(struct spi_nor *nor)
+>  	u8 i, erase_mask;
+>  
+>  	/* Initialize legacy flash parameters and settings. */
+> -	params->quad_enable = spansion_quad_enable;
+> +	params->quad_enable = spansion_read_cr_quad_enable;
+>  	params->set_4byte = spansion_set_4byte;
+>  	params->setup = spi_nor_default_setup;
+>  
+> @@ -4869,7 +4821,7 @@ static int spi_nor_init(struct spi_nor *nor)
+>  	int err;
+>  
+>  	if (nor->clear_sr_bp) {
+> -		if (nor->params.quad_enable == spansion_quad_enable)
+> +		if (nor->params.quad_enable == spansion_read_cr_quad_enable)
+>  			nor->clear_sr_bp = spi_nor_spansion_clear_sr_bp;
+>  
+>  		err = nor->clear_sr_bp(nor);
+> 
+
+-- 
+Regards
+Vignesh
