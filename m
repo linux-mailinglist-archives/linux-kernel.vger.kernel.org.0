@@ -2,93 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E99F0215
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9BDF0222
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:03:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390093AbfKEQBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:01:34 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40979 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389571AbfKEQBe (ORCPT
+        id S2390097AbfKEQDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:03:11 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23276 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389571AbfKEQDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:01:34 -0500
-Received: by mail-il1-f194.google.com with SMTP id z10so18674751ilo.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 08:01:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Un5Ke0Ru3iTFXv9DrHEizflVlYGBaDhARoB+8+C5nXM=;
-        b=uycWeCC5qlBopx38v01LV4DFyxp956ks6uapl+xJk9tCq8gP8W/UPxhoKQ5v2mRM9O
-         UdVEMSsvqQjpGb2soF7LuoHxVHC+1kvGJHFuvZ+uREovm1B39c9hNlYNsw9/++V+B3AD
-         Y1xXvzEiejit6JINUlKua2kvCokuDExMpFW7OqysgBCBdL7wNkZLGFT8yr+w3HjtG4rm
-         OfJmeQurpYnBst14QSL0dy07KhphZsq0rOqGRoBj7yXE1JmqoYvbhgsD1fiaTbOvyMBG
-         O5iLNhOULakBU+3vh1dqz7Uf0E2wQZ2bRgDnBRdqjBOxTsjkW8GgFx4o0UI7XXGn3+jw
-         ufJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Un5Ke0Ru3iTFXv9DrHEizflVlYGBaDhARoB+8+C5nXM=;
-        b=Uj0Trum2PDDaIWePuCvj1Cbe/9T3F3Q28VUiqeIqd7VAVs1SeU5JMcpIZHjyZ2gnIu
-         VPWiT3qlPMf6Lj8sDAE3KrFfgExM07wiv8aehZD2ocP1lkcErJkCGW4VfZy9pjxo+S5c
-         TWuIVD630/+UCr1oeSC9A8EPpsMYoNu4Uai5uufs+x2Y3GprzmcTm+q89w7dnIrhGO2m
-         PAeGpsgWnbuMKZT3stptpeQ/bj9YNNOnv+2tDL55tCuxU8BzCnuO6wDv/FLY3n+ZK51G
-         wb8qDYhGQaxwbWqNgiVt/JU2A30egTMOvJM3Y7TU3k67ePOeINbQXkddrf23MbnzBlb+
-         Dosg==
-X-Gm-Message-State: APjAAAVpuNQ9oIpg6MaxHjFOOmQhCGqp32BItwIv5lXdb2GOM0HpgBHn
-        YBUB7CqOCcJwFA7yOfM/VvWRRtROdAUsO0NvKIU=
-X-Google-Smtp-Source: APXvYqyKjsVA2VGqZAdiWYXi50MRDX893JvyvM2+RaPceGSBCEjkfGBIODwGuK/nphwRyed1nGKd3Ud2oYhVn/MgsL8=
-X-Received: by 2002:a92:b60e:: with SMTP id s14mr18997247ili.178.1572969692943;
- Tue, 05 Nov 2019 08:01:32 -0800 (PST)
+        Tue, 5 Nov 2019 11:03:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572969790;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pLj9LlV805f/L7J5FbyPXxXB07oTibsiCCSGb45ogQg=;
+        b=huQ4BTTFXb/XWqlHIg+jIBYH/TofOixBnwy/w6FOiDn1tHhJcjkMvAVpjAJrqCgR2biCBJ
+        92dXr8Mt+SfDSoFnCIbwg+ZXFXJIR20f3crBNAYii+nbEvnyi0EjMKROCY8jEOy40eXBfO
+        o7xuC058695mOChgSfCc/emlTedocko=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-9SUU8LceOXeOLaVGd4SGTA-1; Tue, 05 Nov 2019 11:03:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B43698017DD;
+        Tue,  5 Nov 2019 16:03:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 980C81FA;
+        Tue,  5 Nov 2019 16:03:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Details on the UAPI of implementing notifications on pipes
 MIME-Version: 1.0
-Received: by 2002:ac0:a7a9:0:0:0:0:0 with HTTP; Tue, 5 Nov 2019 08:01:32 -0800 (PST)
-Reply-To: miss.fatimayusuf11@gmail.com
-From:   "Miss.Fatima Yusuf" <fatimayusuf505@gmail.com>
-Date:   Tue, 5 Nov 2019 16:01:32 +0000
-Message-ID: <CAKT-Kb7FxAgJa+dQ5M0wbXyXxyYaNzZd4OH4gpumAOCN_ObZNQ@mail.gmail.com>
-Subject: From:Miss: Fatima Yusuf.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-ID: <18579.1572969779.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Nov 2019 16:02:59 +0000
+Message-ID: <18580.1572969779@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: 9SUU8LceOXeOLaVGd4SGTA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From:Miss: Fatima Yusuf.
+So to implement notifications on top of pipes, I've hacked it together a bi=
+t
+in the following ways:
 
-For sure this mail would definitely come to you as a surprise, but do
-take your good time to go through it, My name is Ms. Fatima Yusuf,i am
-from Ivory Coast.
+ (1) I'm passing O_TMPFILE to the pipe2() system call to indicate that you
+     want a notifications pipe.  This prohibits splice and co. from being
+     called on it as I don't want to have to try to fix iov_iter_revert() t=
+o
+     handle kernel notifications being intermixed with splices.
 
-I lost my parents a year and couple of months ago. My father was a
-serving director of the Agro-exporting board until his death. He was
-assassinated by his business partners.Before his death, he made a
-deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for
-the purchase of cocoa processing machine and development of another
-factory before his untimely death.
+     The choice of O_TMPFILE was just for convenience, but it needs to be
+     something different.  I could, for instance, add a constant,
+     O_NOTIFICATION_PIPE with the same *value* as O_TMPFILE.  I don't think
+     it's likely that it will make sense to use O_TMPFILE with a pipe, but =
+I
+     also don't want to eat up another O_* constant just for this.
 
-Being that this part of the world experiences political and crises
-time without number, there is no guarantee of lives and properties. I
-cannot invest this money here any long, despite the fact it had been
-my late father's industrial plans.
+     Unfortunately, pipe2() doesn't have any other arguments into from whic=
+h I
+     can steal a bit.
 
-I want you to do me a favor to receive this funds into your country or
-any safer place as the beneficiary, I have plans to invest this money
-in continuation with the investment vision of my late father, but not
-in this place again rather in your country. I have the vision of going
-into real estate and industrial production or any profitable business
-venture.
+ (2) I've added a pair of ioctls to configure the notifications bits.  They=
+'re
+     ioctls as I just reused the ioctl code from my devmisc driver.  Should=
+ I
+     use fcntl() instead, such as is done for F_SETPIPE_SZ?
 
-I will be ready to compensate you with 20% of the total Amount, now
-all my hope is banked on you and i really wants to invest this money
-in your country, where there is stability of Government, political and
-economic welfare.
+     The ioctls do two things: set the ring size to a number of slots (so
+     similarish to F_SETPIPE_SZ) and set filters.
 
-My greatest worry now is how to move out of this country because my
-uncle is threatening to kill me as he killed my father,Please do not
-let anybody hear about this, it is between me and you alone because of
-my security reason.
+Any thoughts on how better to represent these bits?
 
-I am waiting to hear from you.
-Yours Sincerely,
-Miss.Fatima Yusuf.
+Thanks,
+David
+
