@@ -2,159 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F33EF2F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 02:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DED7EF2F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 02:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbfKEBn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 20:43:57 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45850 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728987AbfKEBnz (ORCPT
+        id S1730323AbfKEBpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 20:45:11 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:48836 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbfKEBpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 20:43:55 -0500
-Received: by mail-oi1-f193.google.com with SMTP id k2so16029591oij.12;
-        Mon, 04 Nov 2019 17:43:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CUXJwWe90bW8v3xaQ2VIEMTd+WY4inmX6uoXpP0UKrU=;
-        b=r5EuhHg6f8V5uZJsgCvYIpRsKkdlXHyeuAFsuMFTXx/AMza2vM7tmvMv8IDNCxjPAH
-         my+FM0252BjXcRtI+LiYkkclhgbWHxVS3e0/kLKmdzQBfh2+if8BjwM21K1rJcjEurBf
-         NPBfTzfX5ijXxFXZqYO3qGAqQ3W3ohygPxLbv/6aGKlhRj/MyoyNxHhgI+j35UxeDyET
-         3M66xVEUyP5nt13PNOP34RUchIJMRFrjSNcylc7AXPZUHwHzzbQVAOb0bEEI+BuLBAqO
-         ffpUW+/Fc4x65T0krdgN+S7eLND6DfCGgVHJVHNudKAKZ9KQ9stxFTu37+Fybmmty9Cz
-         Hzgg==
-X-Gm-Message-State: APjAAAW5QpqcYp3dJlhnSR7JFcyHbaRyZ83JlojNYKyG+3Pn6dgnrhwQ
-        65j7Pad4L2WFnMwfTxfR9Q==
-X-Google-Smtp-Source: APXvYqzyj/IhgIcosg+V9eSDk1T7UbLbJYKj67K43VeYokAtGtiA5geqXFgLTpyjlQIlyARe5+gqiA==
-X-Received: by 2002:aca:da06:: with SMTP id r6mr1699237oig.82.1572918234843;
-        Mon, 04 Nov 2019 17:43:54 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l18sm1216351oti.11.2019.11.04.17.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 17:43:54 -0800 (PST)
-Date:   Mon, 4 Nov 2019 19:43:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com, peter.griffin@linaro.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: Add IMX296 CMOS sensor
- binding
-Message-ID: <20191105014353.GA841@bogus>
-References: <20191030094902.32582-1-manivannan.sadhasivam@linaro.org>
- <20191030094902.32582-2-manivannan.sadhasivam@linaro.org>
- <20191030115328.GA6253@valkosipuli.retiisi.org.uk>
- <20191030120105.GA11432@Mani-XPS-13-9360>
+        Mon, 4 Nov 2019 20:45:10 -0500
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xA51io3R031758;
+        Tue, 5 Nov 2019 10:44:51 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xA51io3R031758
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1572918291;
+        bh=US7HnlfbUATMZewUXcHUmKQ8vx87uqsdcAQJeWxPmP8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sqK+qum0s/ofCdio6VkD6ITJtwUT7fjxl1ZAhXzvq4PcS3Imp5mJO5moUHJ0njMw6
+         2cDWiWKm5mQf6pO1Y5LyzrUIscWWiO+D5JbBITc3ApVvi37LdY4t8iUkt5mC8Z6upN
+         31AmvCcO3U5b9uk7NIAtYSAtunMDnmGyM6AljC6eHyn5gCS3GESYovlu0syXuNAFHI
+         lJVhMjZ2X/mnyO7Y9clvM8f+3iKNNrJirc0Z29vM34Sp/RbkWj1ww2YzY57byMe+Yi
+         +SZFUaiqOaHHuHhtTzPXS8DVzWfDQSSMsq/0mMa5DP1/+TfoOfK9gEdqhCpMEsT1Eo
+         gvqqH3NaN3V6A==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id s25so1259149uap.1;
+        Mon, 04 Nov 2019 17:44:51 -0800 (PST)
+X-Gm-Message-State: APjAAAWG2jJVZz6155TrG00fBQNZULcSgW2ZcsT1eptPmN9UXatM5URj
+        VPjSPoYiYYLWOIjmpVJIiH3+4E2S52i64jpDlCg=
+X-Google-Smtp-Source: APXvYqyAJwLfrsdrDuFC5DkDPl6kKaEgQE1dM2uxxz+hFwYzm6LlI63Y2XVEPHBoyeEM8Nncmazv6eanPEcWgTNMMWA=
+X-Received: by 2002:a9f:3e81:: with SMTP id x1mr13534695uai.121.1572918290038;
+ Mon, 04 Nov 2019 17:44:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030120105.GA11432@Mani-XPS-13-9360>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191101061411.16988-1-yamada.masahiro@socionext.com>
+ <20191101061411.16988-2-yamada.masahiro@socionext.com> <CAL_JsqJbmFd5wZ0RCP2baqv-bjWwzaJ+hLqtGeYjK5LPJ54dXA@mail.gmail.com>
+In-Reply-To: <CAL_JsqJbmFd5wZ0RCP2baqv-bjWwzaJ+hLqtGeYjK5LPJ54dXA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 5 Nov 2019 10:44:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAThTaHpCWgGyx=qh6v7CsL6DAWfvE1g_jsNcGe-K5e_gA@mail.gmail.com>
+Message-ID: <CAK7LNAThTaHpCWgGyx=qh6v7CsL6DAWfvE1g_jsNcGe-K5e_gA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] libfdt: add SPDX-License-Identifier to libfdt wrappers
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Daney <david.daney@cavium.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 05:31:05PM +0530, Manivannan Sadhasivam wrote:
-> Hi Sakari,
-> 
-> On Wed, Oct 30, 2019 at 01:53:28PM +0200, Sakari Ailus wrote:
-> > Hi Nabuvannan,
-> > 
-> > On Wed, Oct 30, 2019 at 03:19:01PM +0530, Manivannan Sadhasivam wrote:
-> > > Add YAML devicetree binding for IMX296 CMOS image sensor. Let's also
-> > > add MAINTAINERS entry for the binding and driver.
-> > > 
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/media/i2c/imx296.yaml | 94 +++++++++++++++++++
-> > >  MAINTAINERS                                   |  8 ++
-> > >  2 files changed, 102 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx296.yaml b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > new file mode 100644
-> > > index 000000000000..c04ec2203268
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/imx296.yaml
-> > > @@ -0,0 +1,94 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/media/i2c/imx296.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Sony IMX296 1/2.8-Inch CMOS Image Sensor
-> > > +
-> > > +maintainers:
-> > > +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > +
-> > > +description: |-
-> > > +  The Sony IMX296 is a 1/2.9-Inch active pixel type CMOS Solid-state image
-> > > +  sensor with square pixel array and 1.58 M effective pixels. This chip
-> > > +  features a global shutter with variable charge-integration time. It is
-> > > +  programmable through I2C and 4-wire interfaces. The sensor output is
-> > > +  available via CSI-2 serial data output (1 Lane).
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: sony,imx296
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  clock-names:
-> > > +    description:
-> > > +      Input clock for the sensor.
-> > > +    items:
-> > > +      - const: mclk
-> > > +
-> > > +  clock-frequency:
-> > > +    description:
-> > > +      Frequency of the mclk clock in Hertz.
-> > > +
-> > > +  vddo-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as interface power supply.
-> > > +
-> > > +  vdda-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as analog power supply.
-> > > +
-> > > +  vddd-supply:
-> > > +    description:
-> > > +      Definition of the regulator used as digital power supply.
-> > > +
-> > > +  reset-gpios:
-> > > +    description:
-> > > +      The phandle and specifier for the GPIO that controls sensor reset.
-> > > +    maxItems: 1
-> > > +
-> > > +  port: true
-> > 
-> > You're missing "type: object" under port.
-> > 
-> 
-> I did that intentionally, since there are other places where I can see the
-> "type" field not specified. So, I was not sure about that. Most of the
-> display bindings don't specify "type" and they are most available ones.
-> I don't think the "port" property differs between cameras and displays.
-> So I went with that.
+Hi Rob,
+(+CC: David Daney)
 
-The difference is the panel bindings have a common schema included 
-which defines 'port' at least as a node. I don't think an include would 
-help too much here, so probably best to add 'type: object' for now. 
-Either way, this may change once video-interfaces.txt is converted if 
-any of those properties apply here.
+On Mon, Nov 4, 2019 at 11:00 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Fri, Nov 1, 2019 at 1:19 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > These are kernel source code even though they are just two-line wrappers.
+> >
+> > Files without explicit license information fall back to GPL-2.0-only,
+> > which is the project default.
+>
+> That is true and these are kernel only files, but given they are just
+> a wrapper around the .c files, maybe they should have the same
+> license?
 
-Either way:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I just thought it at first
+but this wraps two files, with different license.
 
-Rob
+include/linux/libfdt_env.h:  GPLv2 only
+scripts/dtc/libfdt/fdt*.c :  GPLv2+ or BSD-2-Clause
+
+
+Looking at the include/linux/libfdt_env.h,
+I thought GPLv2 only would be preferred for
+the kernel-specific code.
+
+If you prefer to align with scripts/dtc/libfdt/fdt*.c
+I can change it, but I would also respect
+the opinion from David Daney, the author of the
+following commit:
+
+
+commit ab25383983fb8d7786696f5371e75e79c3e9a405
+Author: David Daney <david.daney@cavium.com>
+Date:   Thu Jul 5 18:12:38 2012 +0200
+
+    of/lib: Allow scripts/dtc/libfdt to be used from kernel code
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
