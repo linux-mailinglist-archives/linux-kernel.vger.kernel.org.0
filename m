@@ -2,151 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF211F04A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFB1F04AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:04:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390590AbfKESB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 13:01:57 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:45371 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389356AbfKESB5 (ORCPT
+        id S2390651AbfKESE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 13:04:27 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:36426 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389356AbfKESE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 13:01:57 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iS39J-000357-0h; Tue, 05 Nov 2019 19:01:49 +0100
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH 01/12] riscv: abstract out CSR names for supervisor vs  machine mode
-X-PHP-Originating-Script: 0:main.inc
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+        Tue, 5 Nov 2019 13:04:27 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A45AC1502450B;
+        Tue,  5 Nov 2019 10:04:26 -0800 (PST)
+Date:   Tue, 05 Nov 2019 10:04:23 -0800 (PST)
+Message-Id: <20191105.100423.1742603284030008698.davem@davemloft.net>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux@armlinux.org.uk, linus.walleij@linaro.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com
+Subject: Re: [PATCH v2 0/3] net: phy: switch to using fwnode_gpiod_get_index
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAKdAkRQNWXjMdJ9F1Lu=8+rHWFJwoyWu6Lcc+LFesaSTz3wspg@mail.gmail.com>
+References: <20191105004016.GT57214@dtor-ws>
+        <20191105005541.GP25745@shell.armlinux.org.uk>
+        <CAKdAkRQNWXjMdJ9F1Lu=8+rHWFJwoyWu6Lcc+LFesaSTz3wspg@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 05 Nov 2019 19:11:09 +0109
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.21.9999.1911050956230.20606@viisi.sifive.com>
-References: <20191028121043.22934-1-hch@lst.de>
- <20191028121043.22934-2-hch@lst.de>
- <alpine.DEB.2.21.9999.1911050956230.20606@viisi.sifive.com>
-Message-ID: <b1e60fb42bc057e9901187bb866b7077@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: paul.walmsley@sifive.com, tglx@linutronix.de, jason@lakedaemon.net, hch@lst.de, palmer@sifive.com, damien.lemoal@wdc.com, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 05 Nov 2019 10:04:27 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Tue, 5 Nov 2019 09:27:51 -0800
 
-On 2019-11-05 19:06, Paul Walmsley wrote:
-> Jason, Marc, Thomas,
->
-> On Mon, 28 Oct 2019, Christoph Hellwig wrote:
->
->> Many of the privileged CSRs exist in a supervisor and machine 
->> version
->> that are used very similarly.  Provide versions of the CSR names and
->> fields that map to either the S-mode or M-mode variant depending on
->> a new CONFIG_RISCV_M_MODE kconfig symbol.
+> On Mon, Nov 4, 2019 at 4:55 PM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
 >>
->> Contains contributions from Damien Le Moal <Damien.LeMoal@wdc.com>
->> and Paul Walmsley <paul.walmsley@sifive.com>.
+>> On Mon, Nov 04, 2019 at 04:40:16PM -0800, Dmitry Torokhov wrote:
+>> > Hi Linus,
+>> >
+>> > On Mon, Oct 14, 2019 at 10:40:19AM -0700, Dmitry Torokhov wrote:
+>> > > This series switches phy drivers form using fwnode_get_named_gpiod() and
+>> > > gpiod_get_from_of_node() that are scheduled to be removed in favor
+>> > > of fwnode_gpiod_get_index() that behaves more like standard
+>> > > gpiod_get_index() and will potentially handle secondary software
+>> > > nodes in cases we need to augment platform firmware.
+>> > >
+>> > > Linus, as David would prefer not to pull in the immutable branch but
+>> > > rather route the patches through the tree that has the new API, could
+>> > > you please take them with his ACKs?
+>> >
+>> > Gentle ping on the series...
 >>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->
-> Care to give a quick ack to the drivers/irqchip changes?
+>> Given that kbuild found a build issue with patch 1, aren't we waiting
+>> for you to produce an updated patch 1?
+> 
+> No: kbuild is unable to parse instructions such as "please pull an
+> immutable branch" before applying the series. Linus' tree already has
+> needed changes.
 
-Sure, see below.
+This is targetting the networking tree so it doesn't matter what is in
+Linus's tree, it has to build against MY tree and that's what Kbuild
+tests against.
 
->
->
-> thanks,
->
-> - Paul
->
->
->> ---
->>  arch/riscv/Kconfig                 |  4 ++
->>  arch/riscv/include/asm/csr.h       | 72 
->> +++++++++++++++++++++++++----
->>  arch/riscv/include/asm/irqflags.h  | 12 ++---
->>  arch/riscv/include/asm/processor.h |  2 +-
->>  arch/riscv/include/asm/ptrace.h    | 16 +++----
->>  arch/riscv/include/asm/switch_to.h | 10 ++--
->>  arch/riscv/kernel/asm-offsets.c    |  8 ++--
->>  arch/riscv/kernel/entry.S          | 74 
->> +++++++++++++++++-------------
->>  arch/riscv/kernel/fpu.S            |  8 ++--
->>  arch/riscv/kernel/head.S           | 12 ++---
->>  arch/riscv/kernel/irq.c            | 17 ++-----
->>  arch/riscv/kernel/perf_callchain.c |  2 +-
->>  arch/riscv/kernel/process.c        | 17 +++----
->>  arch/riscv/kernel/signal.c         | 21 ++++-----
->>  arch/riscv/kernel/smp.c            |  2 +-
->>  arch/riscv/kernel/traps.c          | 16 +++----
->>  arch/riscv/lib/uaccess.S           | 12 ++---
->>  arch/riscv/mm/extable.c            |  4 +-
->>  arch/riscv/mm/fault.c              |  6 +--
->>  drivers/clocksource/timer-riscv.c  |  8 ++--
->>  drivers/irqchip/irq-sifive-plic.c  | 11 +++--
->>  21 files changed, 199 insertions(+), 135 deletions(-)
-
-[...]
-
->> diff --git a/drivers/irqchip/irq-sifive-plic.c 
->> b/drivers/irqchip/irq-sifive-plic.c
->> index 7d0a12fe2714..8df547d2d935 100644
->> --- a/drivers/irqchip/irq-sifive-plic.c
->> +++ b/drivers/irqchip/irq-sifive-plic.c
->> @@ -181,7 +181,7 @@ static void plic_handle_irq(struct pt_regs 
->> *regs)
->>
->>  	WARN_ON_ONCE(!handler->present);
->>
->> -	csr_clear(sie, SIE_SEIE);
->> +	csr_clear(CSR_IE, IE_EIE);
->>  	while ((hwirq = readl(claim))) {
->>  		int irq = irq_find_mapping(plic_irqdomain, hwirq);
->>
->> @@ -191,7 +191,7 @@ static void plic_handle_irq(struct pt_regs 
->> *regs)
->>  		else
->>  			generic_handle_irq(irq);
->>  	}
->> -	csr_set(sie, SIE_SEIE);
->> +	csr_set(CSR_IE, IE_EIE);
->>  }
->>
->>  /*
->> @@ -252,8 +252,11 @@ static int __init plic_init(struct device_node 
->> *node,
->>  			continue;
->>  		}
->>
->> -		/* skip contexts other than supervisor external interrupt */
->> -		if (parent.args[0] != IRQ_S_EXT)
->> +		/*
->> +		 * Skip contexts other than external interrupts for our
->> +		 * privilege level.
->> +		 */
->> +		if (parent.args[0] != IRQ_EXT)
->>  			continue;
->>
->>  		hartid = plic_find_hart_id(parent.np);
-
-For changes to this file:
-
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Resubmit if it builds against my tree, and no sooner.
