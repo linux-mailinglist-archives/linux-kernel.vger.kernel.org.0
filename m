@@ -2,172 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 751FBF06AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E488F0696
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:05:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbfKEUJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:09:58 -0500
-Received: from foss.arm.com ([217.140.110.172]:58970 "EHLO foss.arm.com"
+        id S1728410AbfKEUE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:04:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:58682 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfKEUJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:09:58 -0500
+        id S1726208AbfKEUE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:04:57 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB28C64F;
-        Tue,  5 Nov 2019 12:09:56 -0800 (PST)
-Received: from [10.162.40.121] (a075563-lin.blr.arm.com [10.162.40.121])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02C4E3FB2A;
-        Mon,  4 Nov 2019 22:50:36 -0800 (PST)
-Subject: Re: [PATCHv2 1/8] ftrace: add ftrace_init_nop()
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        deller@gmx.de, duwe@suse.de, James.Bottomley@HansenPartnership.com,
-        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
-        jthierry@redhat.com, linux-parisc@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-References: <20191029165832.33606-1-mark.rutland@arm.com>
- <20191029165832.33606-2-mark.rutland@arm.com>
- <daad0785-a33f-3cfb-cf0f-657b6c677257@arm.com>
- <20191104133657.GE45140@lakrids.cambridge.arm.com>
-From:   Amit Kachhap <amit.kachhap@arm.com>
-Message-ID: <8e68de1f-f961-752d-9c07-ce41ce624d35@arm.com>
-Date:   Tue, 5 Nov 2019 12:17:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47F387AD;
+        Tue,  5 Nov 2019 12:04:56 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3D0B3FBD2;
+        Tue,  5 Nov 2019 01:27:03 -0800 (PST)
+Date:   Tue, 5 Nov 2019 09:27:01 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     linux-arm-kernel@lists.infradead.org, bhupesh.linux@gmail.com,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Steve Capper <steve.capper@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH] arm64: mm: Remove MAX_USER_VA_BITS definition
+Message-ID: <20191105092701.GD4743@lakrids.cambridge.arm.com>
+References: <1572904606-27961-1-git-send-email-bhsharma@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191104133657.GE45140@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572904606-27961-1-git-send-email-bhsharma@redhat.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Tue, Nov 05, 2019 at 03:26:46AM +0530, Bhupesh Sharma wrote:
+> commit 9b31cf493ffa ("arm64: mm: Introduce MAX_USER_VA_BITS definition")
+> introduced the MAX_USER_VA_BITS definition, which was used to support
+> the arm64 mm use-cases where the user-space could use 52-bit virtual
+> addresses whereas the kernel-space would still could a maximum of 48-bit
+> virtual addressing.
+> 
+> But, now with commit b6d00d47e81a ("arm64: mm: Introduce 52-bit Kernel
+> VAs"), we removed the 52-bit user/48-bit kernel kconfig option and hence
+> there is no longer any scenario where user VA != kernel VA size
+> (even with CONFIG_ARM64_FORCE_52BIT enabled, the same is true).
+> 
+> Hence we can do away with the MAX_USER_VA_BITS macro as it is equal to
+> VA_BITS (maximum VA space size) in all possible use-cases. Note that
+> even though the 'vabits_actual' value would be 48 for arm64 hardware
+> which don't support LVA-8.2 extension (even when CONFIG_ARM64_VA_BITS_52
+> is enabled), VA_BITS would still be set to a value 52. Hence this change
+> would be safe in all possible VA address space combinations.
+> 
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Steve Capper <steve.capper@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kexec@lists.infradead.org
+> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
 
-On 11/4/19 7:06 PM, Mark Rutland wrote:
-> On Sat, Nov 02, 2019 at 05:49:00PM +0530, Amit Daniel Kachhap wrote:
->> Hi Mark,
-> 
-> Hi Amit,
-> 
-> Thanks for the review!
->   
->> On 10/29/19 10:28 PM, Mark Rutland wrote:
->>> Architectures may need to perform special initialization of ftrace
->>> callsites, and today they do so by special-casing ftrace_make_nop() when
->>> the expected branch address is MCOUNT_ADDR. In some cases (e.g. for
->>> patchable-function-entry), we don't have an mcount-like symbol and don't
->> s/an mcount/a mcount.
->>> want a synthetic MCOUNT_ADDR, but we may need to perform some
->>> initialization of callsites.
->>>
->>> To make it possible to separate initialization from runtime
->>> modification, and to handle cases without an mcount-like symbol, this
->> Same as above.
-> 
-> Using 'an' in both of these cases is correct, even though 'mcount'
-> starts with a consonant, since it's pronounced as-if it were 'emcount'.
-> I will leave this as-is.
-Ok sure. It makes sense.
-> 
->>> patch adds an optional ftrace_init_nop() function that architectures can
->>> implement, which does not pass a branch address.
->>>
->>> Where an architecture does not provide ftrace_init_nop(), we will fall
->>> back to the existing behaviour of calling ftrace_make_nop() with
->>> MCOUNT_ADDR.
->>>
->>> At the same time, ftrace_code_disable() is renamed to
->>> ftrace_nop_initialize() to make it clearer that it is intended to
->>> intialize a callsite into a disabled state, and is not for disabling a
->>> callsite that has been runtime enabled. The kerneldoc description of rec
->>> arguments is updated to cover non-mcount callsites.
->>>
->>> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
->>> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>> Cc: Torsten Duwe <duwe@suse.de>
->>> ---
->>>    include/linux/ftrace.h | 35 ++++++++++++++++++++++++++++++++---
->>>    kernel/trace/ftrace.c  |  6 +++---
->>>    2 files changed, 35 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
->>> index 8a8cb3c401b2..9867d90d635e 100644
->>> --- a/include/linux/ftrace.h
->>> +++ b/include/linux/ftrace.h
->>> @@ -499,7 +499,7 @@ static inline int ftrace_disable_ftrace_graph_caller(void) { return 0; }
->>>    /**
->>>     * ftrace_make_nop - convert code into nop
->>>     * @mod: module structure if called by module load initialization
->>> - * @rec: the mcount call site record
->>> + * @rec: the call site record (e.g. mcount/fentry)
->>>     * @addr: the address that the call site should be calling
->>>     *
->>>     * This is a very sensitive operation and great care needs
->>> @@ -520,9 +520,38 @@ static inline int ftrace_disable_ftrace_graph_caller(void) { return 0; }
->>>    extern int ftrace_make_nop(struct module *mod,
->>>    			   struct dyn_ftrace *rec, unsigned long addr);
->>> +
->>> +/**
->>> + * ftrace_init_nop - initialize a nop call site
->>> + * @mod: module structure if called by module load initialization
->>> + * @rec: the call site record (e.g. mcount/fentry)
->>> + *
->>> + * This is a very sensitive operation and great care needs
->>> + * to be taken by the arch.  The operation should carefully
->>> + * read the location, check to see if what is read is indeed
->>> + * what we expect it to be, and then on success of the compare,
->>> + * it should write to the location.
->>> + *
->>> + * The code segment at @rec->ip should contain the contents created by
->>> + * the compiler
->> Nit: Will it be better to write it as "@rec->ip should store the adjusted
->> ftrace entry address of the call site" or something like that.
-> 
-> This was the specific wording requested by Steve, and it's trying to
-> describe the instructions at rec->ip, rather than the value of rec->ip,
-> so I think it's better to leave this as-is.
-ok Its fine this way too. Actually from the comment, I could not 
-understand which one of the compiler contents this points to as in this 
-case there are 2 nops.
-> 
->>> + *
->>> + * Return must be:
->>> + *  0 on success
->>> + *  -EFAULT on error reading the location
->>> + *  -EINVAL on a failed compare of the contents
->>> + *  -EPERM  on error writing to the location
->>> + * Any other value will be considered a failure.
->>> + */
->>> +#ifndef ftrace_init_nop
->>> +static inline int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
->>> +{
->>> +	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
->>> +}
->>> +#endif
->>> +
->> Now that ftrace_init_nop is also an arch implemented function so it may be
->> added in Documentation/trace/ftrace-design.rst along with ftrace_make_nop.
->> In general also, adding some description about patchable-function-entry
->> in kernel Documentation will be useful.
-> 
-> I agree that would be a good thing, but as Steve suggests I will leave
-> this for subsequent rework, as I think that also implies more
-> rework/renaming in the core code (e.g. to more cleanly separate the
-> notion of a callsite from mcount specifically).
-ok.
+As the commit message says, there should be no functional change as a
+result of this patch, and it looks like a nice cleanup to me:
 
-Thanks,
-Amit
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> ---
+>  arch/arm64/include/asm/memory.h        | 6 ------
+>  arch/arm64/include/asm/pgtable-hwdef.h | 2 +-
+>  arch/arm64/include/asm/processor.h     | 2 +-
+>  3 files changed, 2 insertions(+), 8 deletions(-)
 > 
-> Steve, if you'd like help with that (or review), I'd be happy to help.
-> 
-> Thanks,
-> Mark.
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index c23c47360664..a4f9ca5479b0 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -69,12 +69,6 @@
+>  #define KERNEL_START		_text
+>  #define KERNEL_END		_end
+>  
+> -#ifdef CONFIG_ARM64_VA_BITS_52
+> -#define MAX_USER_VA_BITS	52
+> -#else
+> -#define MAX_USER_VA_BITS	VA_BITS
+> -#endif
+> -
+>  /*
+>   * Generic and tag-based KASAN require 1/8th and 1/16th of the kernel virtual
+>   * address space for the shadow region respectively. They can bloat the stack
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index 3df60f97da1f..d9fbd433cc17 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -69,7 +69,7 @@
+>  #define PGDIR_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(4 - CONFIG_PGTABLE_LEVELS)
+>  #define PGDIR_SIZE		(_AC(1, UL) << PGDIR_SHIFT)
+>  #define PGDIR_MASK		(~(PGDIR_SIZE-1))
+> -#define PTRS_PER_PGD		(1 << (MAX_USER_VA_BITS - PGDIR_SHIFT))
+> +#define PTRS_PER_PGD		(1 << (VA_BITS - PGDIR_SHIFT))
+>  
+>  /*
+>   * Section address mask and size definitions.
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index 5623685c7d13..586fcd4b1965 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -9,7 +9,7 @@
+>  #define __ASM_PROCESSOR_H
+>  
+>  #define KERNEL_DS		UL(-1)
+> -#define USER_DS			((UL(1) << MAX_USER_VA_BITS) - 1)
+> +#define USER_DS			((UL(1) << VA_BITS) - 1)
+>  
+>  /*
+>   * On arm64 systems, unaligned accesses by the CPU are cheap, and so there is
+> -- 
+> 2.7.4
 > 
