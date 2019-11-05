@@ -2,122 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D3ADEF84D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3C7EF7A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbfKEJNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:13:05 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:27790 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfKEJNF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:13:05 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191105091302epoutp04b17064effff4231a262819185be32256~UOU864WS52378023780epoutp04r
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 09:13:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191105091302epoutp04b17064effff4231a262819185be32256~UOU864WS52378023780epoutp04r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572945182;
-        bh=CzrLhLMfiUzAG7RmdPIH+UlbVTImdtVhtEnWRgE/ibk=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=b+NWHmUJi8xZasCodeW40UL1h0GgsjFUZG3Id31iOvQaodG2siIgtR5udCN3Lj4n3
-         I0kRpb/ZjJcV9M0m8iEpAN7jnwaPHnH1RS+t5cPaWkqo/7TKykOe+0W9psLmJZuD4r
-         7TWccYPpprokNbGIpysXItA/P4mi6pjiPrTh9+v4=
-Received: from epcpadp2 (unknown [182.195.40.12]) by epcas1p3.samsung.com
-        (KnoxPortal) with ESMTP id
-        20191105091301epcas1p3f03cf7a861f1f2f60a1461a013073bf6~UOU8Mn7bf0930209302epcas1p3m;
-        Tue,  5 Nov 2019 09:13:01 +0000 (GMT)
-Mime-Version: 1.0
-Subject: RE: [PATCH] MAINTAINERS: Update myself as maintainer for DEVFREQ
- subsystem support
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "chanwoo@kernel.org" <chanwoo@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        CPGS <cpgs@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <1019298652.01572945181528.JavaMail.epsvc@epcpadp2>
-Date:   Tue, 05 Nov 2019 16:35:05 +0900
-X-CMS-MailID: 20191105073505epcms1p243aa08867cb813b6329a3ba89b832a8a
+        id S1730615AbfKEJAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:00:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727925AbfKEJAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 04:00:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 92FF0B24C;
+        Tue,  5 Nov 2019 09:00:40 +0000 (UTC)
+Subject: Re: Double free of struct sk_buff reported by SLAB_CONSISTENCY_CHECKS
+ with init_on_free
+To:     Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        netdev@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, clipos@ssi.gouv.fr
+References: <20191104170303.GA50361@gandi.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <23c73a23-8fd9-c462-902b-eec2a0c04d36@suse.cz>
+Date:   Tue, 5 Nov 2019 10:00:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
+MIME-Version: 1.0
+In-Reply-To: <20191104170303.GA50361@gandi.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
-References: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
-        <CGME20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5@epcms1p2>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->Update myself to the DEVFREQ entry as maintainer from reviewer and
->the git repository information to manage the devfreq patches. I've been
->reviewing and tesing the devfreq support for the couple of years as reviewer.
->From now, I'll help and reiview the devfreq as maintainer.
->
->Suggested-by: MyungJoo Ham <myungjoo.ham@samsung.com>
->Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+On 11/4/19 6:03 PM, Thibaut Sautereau wrote:
+> The BUG only happens when using `slub_debug=F` on the command-line (to
+> enable SLAB_CONSISTENCY_CHECKS), otherwise the double free is not
+> reported and the system keeps running.
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+You could change slub_debug parameter to:
+slub_debug=FU,skbuff_head_cache
 
+That will also print out who previously allocated and freed the double
+freed object. And limit all the tracking just to the affected cache.
 
-Thanks a lot, Chanwoo!
+> The code path is:
+> 	net_rx_action
+> 	  __kfree_skb_flush
+> 		kmem_cache_free_bulk()  # skbuff_head_cache
+> 		  slab_free()
+> 			do_slab_free()
+> 			  __slab_free()
+> 				free_debug_processing()
+> 				  free_consistency_check()
+> 					object_err()    # "Object already free"
+> 					  print_trailer()
+> 						print_tracking()    # !(s->flags & SLAB_STORE_USER) => return;
+> 						print_page_info()   # "INFO: Slab ..."
+> 						pr_err("INFO: Object ...", ..., get_freepointer(s, p))
+> 						  get_freepointer()
+> 						    freelist_dereference() # NULL pointer dereference
+> 
+> Enabling KASAN shows less info because the NULL pointer dereference then
+> apparently happens before reaching free_debug_processing().
+> 
+> Bisection points to the following commit: 1b7e816fc80e ("mm: slub: Fix
+> slab walking for init_on_free"), and indeed the BUG is not triggered
+> when init_on_free is disabled.
 
->---
-> MAINTAINERS | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/MAINTAINERS b/MAINTAINERS
->index cba1095547fd..ebc1078c1ecb 100644
->--- a/MAINTAINERS
->+++ b/MAINTAINERS
->@@ -3532,7 +3532,7 @@ BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
-> M:	Chanwoo Choi <cw00.choi@samsung.com>
-> L:	linux-pm@vger.kernel.org
-> L:	linux-samsung-soc@vger.kernel.org
->-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
->+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-> S:	Maintained
-> F:	drivers/devfreq/exynos-bus.c
-> F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->@@ -4762,9 +4762,9 @@ F:	include/linux/devcoredump.h
-> DEVICE FREQUENCY (DEVFREQ)
-> M:	MyungJoo Ham <myungjoo.ham@samsung.com>
-> M:	Kyungmin Park <kyungmin.park@samsung.com>
->-R:	Chanwoo Choi <cw00.choi@samsung.com>
->+M:	Chanwoo Choi <cw00.choi@samsung.com>
-> L:	linux-pm@vger.kernel.org
->-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
->+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-> S:	Maintained
-> F:	drivers/devfreq/
-> F:	include/linux/devfreq.h
->@@ -4774,7 +4774,7 @@ F:	include/trace/events/devfreq.h
-> DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
-> M:	Chanwoo Choi <cw00.choi@samsung.com>
-> L:	linux-pm@vger.kernel.org
->-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
->+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
-> S:	Supported
-> F:	drivers/devfreq/event/
-> F:	drivers/devfreq/devfreq-event.c
->-- 
->2.17.1
->
-
+That could be either buggy SLUB code, or the commit somehow exposed a
+real bug in skbuff users.
