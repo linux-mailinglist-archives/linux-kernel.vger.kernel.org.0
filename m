@@ -2,101 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04159F0231
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B45C5F023D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390132AbfKEQER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:04:17 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2072 "EHLO huawei.com"
+        id S2390137AbfKEQF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:05:57 -0500
+Received: from mail12.gandi.net ([217.70.182.73]:48463 "EHLO gandi.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390116AbfKEQEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:04:16 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B003DAE6B949189B4146;
-        Tue,  5 Nov 2019 16:04:10 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML711-CAH.china.huawei.com (10.201.108.34) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 5 Nov 2019 16:04:10 +0000
-Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Tue, 5 Nov 2019
- 16:04:09 +0000
-Subject: Re: [PATCH 2/3] spi: Add HiSilicon v3xx SPI NOR flash controller
- driver
-To:     Mark Brown <broonie@kernel.org>
-CC:     <marek.vasut@gmail.com>, <tudor.ambarus@microchip.com>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-        <xuejiancheng@hisilicon.com>, <fengsheng5@huawei.com>
-References: <1572886297-45400-1-git-send-email-john.garry@huawei.com>
- <1572886297-45400-3-git-send-email-john.garry@huawei.com>
- <20191104192406.GH5238@sirena.co.uk>
- <855a67dc-1356-a763-e374-540f6ac400ab@huawei.com>
- <20191105110504.GA4500@sirena.co.uk>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <da389dda-ab38-1e68-557e-ac8c83f4ecd8@huawei.com>
-Date:   Tue, 5 Nov 2019 16:04:09 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2390011AbfKEQF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 11:05:56 -0500
+Received: from khany.gandi.net (unknown [10.231.1.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by gandi.net (Postfix) with ESMTPSA id 076811604EC;
+        Tue,  5 Nov 2019 16:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gandi.net; s=20190808;
+        t=1572969955;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=t6saG2bge6fB4OT/ZiIwFe0H0AmxMfR+BkgEGdWxza0=;
+        b=STARqt7TQsO1av9JWizmQTYs6hEt85jtJUkEqNAgf5ny3/mRiJl57kIDn+jW5KbXzCxbw9
+        8BvB0BukpvKumfDECEglJAofntzKC0peKOFz3mWOQF3LtCu/w1iYWo6QUZtNoRbT96BYn9
+        Hexe+Di4YhZ4062YOcFFY465ElzP7BO6t0nkSZYixGk6nOEADUvGPvy/b7yYkxjIDC7iL3
+        paZ7p5kmSVXAoAZ3+S4WLVNvr8lwp1L1NttCd0iLDyzCGj14JqrUukSVSS/C23TullGbUY
+        ZkbNj1BxldkUCSdrF/FaFNpi20da/vNijCfaAfhSL6F3zyc9HpjVfytj8N+ozQ==
+Received: by khany.gandi.net (Postfix, from userid 1000)
+        id 6A4D5DC009B; Tue,  5 Nov 2019 16:05:30 +0000 (GMT)
+Date:   Tue, 5 Nov 2019 16:05:30 +0000
+From:   Arthur Gautier <baloo@gandi.net>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
+Message-ID: <20191105160530.vdaii44gckfo45rw@khany>
+References: <20190216234702.GP2217@ZenIV.linux.org.uk>
+ <20190217034121.bs3q3sgevexmdt3d@khany>
+ <20190217042201.GU2217@ZenIV.linux.org.uk>
+ <alpine.DEB.2.21.1902181347500.1549@nanos.tec.linutronix.de>
+ <CALCETrXyard2OXmOafiLks3YuyO=ObbjDXB6NJo_08rL4M6azw@mail.gmail.com>
+ <20190218215150.xklqbfckwmbtdm3t@khany>
+ <20190926095825.zkdpya55yjusvv4g@khany>
+ <20190926140939.GD18383@zn.tnic>
+ <20191010164951.kr2epy5lyywgngt6@khany>
+ <20191105141112.GB28418@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20191105110504.GA4500@sirena.co.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-ClientProxiedBy: lhreml703-chm.china.huawei.com (10.201.108.52) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105141112.GB28418@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2019 11:05, Mark Brown wrote:
-> On Tue, Nov 05, 2019 at 10:58:39AM +0000, John Garry wrote:
->> On 04/11/2019 19:24, Mark Brown wrote:
->>> On Tue, Nov 05, 2019 at 12:51:36AM +0800, John Garry wrote:
+On Tue, Nov 05, 2019 at 03:11:12PM +0100, Borislav Petkov wrote:
+> On Thu, Oct 10, 2019 at 04:49:51PM +0000, Arthur Gautier wrote:
+> > I did not receive neither the patch Andy provided, nor the comments made
+> > on it. But I'd be happy to help and/or take over to fix those if someone could
+> > send me both.
 > 
->>>> +		if (len) {
->>>> +			u32 val;
->>>> +
->>>> +			val = __raw_readl(host->regbase + CMD_DATABUF(words));
->>>> +
->>>> +			to += words * 4;
->>>> +			for (i = 0; i < len; i++, val >>= 8, to++)
->>>> +				*to = (u8)val;
->>>> +		}
->>>> +	} else {
->>>> +		for (i = 0; i < DIV_ROUND_UP(len, 4); i++) {
->>>> +			u32 val = __raw_readl(host->regbase + CMD_DATABUF(i));
->>>> +			int j;
+> Yes, please do, it seems Andy's busy. You can find the whole thread here:
 > 
->>> The more usual pattern for these would be to do some unaligned accesses
->>> for the start/end of the buffer to get to alignment and then transfer
->>> the rest as aligned data.
+> https://lore.kernel.org/lkml/20190215235901.23541-1-baloo@gandi.net/
 > 
->> Yeah, I understand you, but for that I would need to generate multiple
->> transactions in the driver, and I wanted to keep 1x transaction per
->> spi_controller_mem_ops.exec_op call.
+> and you can download it in mbox format.
+> 
+> Care to take Andy's patch, work in the comments I made to it, test it,
+> write a commit message, i.e., productize it?
+> 
+> So that we get this thing moving...
+> 
+> Thx.
 > 
 
-Hi Mark,
+Hello Boris,
 
->> So maybe I can do some trickery in my adjust_op_size method to generate
->> these multiple transactions: a. any unaligned start data b. the 32b-aligned
->> data b. unaligned end. I think that the HW should be able to handle that.
-> 
-> Right, that's what I was expecting.
-> 
+Thank you! But I believe this is the patch I sent, I know Andy sent a
+patchset with two patches, I believe privately (not copied to a public
+ML) to some of the recepients here. I got a copy of the second patch
+but not the first one.
 
-So that should work for xfer data commands, but generally the read/write 
-reg commands in the SPI NOR layer would not use 
-spi_mem_adjust_op_size(), like spi-nor.c:spi_nor_read_id(), as an example.
+I believe from discussions here, that comments have been made on those
+patchset and because I was not Cc-ed on those patches, I do not have
+neither the full patchset nor the comments.
 
-For these, I should be able to guarantee start alignment (since the 
-buffer is kmalloc'ed), but not end alignment, so would still require 
-4-byte + single byte copies for these.
+I cannot take over the work, nor finish the patchset.
 
-Thanks,
-John
+Would anyone have a copy of the thread and could send them my way?
 
+Thank you so much!
+
+-- 
+\o/ Arthur
+ G  Gandi.net
