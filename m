@@ -2,69 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F19EFFAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349EDEFFB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389559AbfKEO2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:28:00 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41505 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbfKEO2A (ORCPT
+        id S1730997AbfKEO2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:28:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57432 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfKEO2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:28:00 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iRzoJ-0005W7-92; Tue, 05 Nov 2019 15:27:55 +0100
-Date:   Tue, 5 Nov 2019 15:27:54 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Carlos O'Donell <carlos@redhat.com>
-cc:     Florian Weimer <fweimer@redhat.com>, Shawn Landden <shawn@git.icu>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Keith Packard <keithp@keithp.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC v2 PATCH] futex: extend set_robust_list to allow 2 locking
- ABIs at the same time.
-In-Reply-To: <f11d82f1-1e81-e344-3ad2-76e4cb488a3d@redhat.com>
-Message-ID: <alpine.DEB.2.21.1911051520090.17054@nanos.tec.linutronix.de>
-References: <20191104002909.25783-1-shawn@git.icu> <87woceslfs.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051053470.17054@nanos.tec.linutronix.de> <87sgn2skm6.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051253430.17054@nanos.tec.linutronix.de>
- <f11d82f1-1e81-e344-3ad2-76e4cb488a3d@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 5 Nov 2019 09:28:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FnhbKv1NJWSMCBD9NX+uY4kUOFWd6In8uzNN/UHbTD4=; b=MNZ4kIS/8Bvkb8ZCtGO3gowcQ
+        ftaA1mskE3sQPwENKvafKux18o+Nr2830mtdd8GBHYngWj+vGvNmZkdr3nL/rgPhwpK63aBvvsFah
+        8ZjsHj2jUtMU/hnEwkLr2s76HlCyVppxssFvi+P14BzhBw6KGqK8LprLWX0qn0/v8+eREfzErGgQN
+        Gx87YCQDfzMEZk0n6Y8S4R5jjgxRdIF0cVJ+zUy83zTJ9lGYSNoEhjxwvaR2K5UN0ps0VdRRBns/R
+        v+dPOP3TayC0ITcFDbPEwAzQJAbLE04GIZRpETUH0CX+2mpZHs9Fusen7YIzaxpcQ5yE/nwSOc22B
+        rZFGu/nFg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iRzoQ-0000Ds-Lx; Tue, 05 Nov 2019 14:28:02 +0000
+Date:   Tue, 5 Nov 2019 06:28:02 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-spdx@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: spdxcheck.py complains about the second OR?
+Message-ID: <20191105142802.GA30779@infradead.org>
+References: <CAK7LNASwF9y+MkhkvCRATu0qXSJkxx8fZ-DUjQTfWOi9+1YrfQ@mail.gmail.com>
+ <alpine.DEB.2.21.1911042310040.17054@nanos.tec.linutronix.de>
+ <20191104235340.GA13961@infradead.org>
+ <CAG_66ZQ3f39bv=0Yw=Eum0vcxbf94mmXE9jdJUpi6+gEEqkS8A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG_66ZQ3f39bv=0Yw=Eum0vcxbf94mmXE9jdJUpi6+gEEqkS8A@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Nov 2019, Carlos O'Donell wrote:
-> On 11/5/19 6:56 AM, Thomas Gleixner wrote:
-> The other issue is this:
-> 
-> "Robust mutexes do not take ROBUST_LIST_LIMIT into account"
-> https://sourceware.org/bugzilla/show_bug.cgi?id=19089
+On Tue, Nov 05, 2019 at 01:39:39AM -0600, Kate Stewart wrote:
+> Unfortunately those copy and paste errors introduced new legal terms which
+> made it,  its own license.
 
-  "The kernel limits the length of the robust mutex list to 2048 entries.
-   This constant does not seem to be exported to user space."
-
-FWIW, the constant is defined in the UAPI futex header.
-
-The main concern here is not the actual number of futexes held by a task.
-
-The real issue is that the robust list could be circular by incident or
-malice and there is no way for the kernel to figure that out. That would
-prevent the task from exiting and make it iterate over the list until
-doomsday, i.e. a nice unpriviledged DoS.
-
-So I fear the kernel cannot really help with this one.
-
-Thanks,
-
-	tglx
+FYI, I meant there is no reason for this brand new driver to tripple license
+2 files under BSD2 clause and OpenIB.  (Or using the OpenIB license for
+anything new for that matter).
