@@ -2,62 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 245ADF06C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF8FF06D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbfKEUUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:20:23 -0500
-Received: from mga18.intel.com ([134.134.136.126]:64357 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfKEUUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:20:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:20:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="376815162"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2019 12:20:18 -0800
-From:   thor.thayer@linux.intel.com
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH] spi: dw: Fix Designware SPI loopback
-Date:   Tue,  5 Nov 2019 14:22:10 -0600
-Message-Id: <1572985330-5525-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729661AbfKEUYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:24:02 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35713 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEUYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:24:02 -0500
+Received: by mail-ed1-f65.google.com with SMTP id r16so2619864edq.2;
+        Tue, 05 Nov 2019 12:24:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=XKfktDI409ME+qQztoRq4fg8/cQgqVINMQeKrpPMrnc=;
+        b=FQKhwj3k4hKbZA1mrgQOZLHnG+4W8hT3gVbMNpxkDDWnJ2olouxPxA449IeeEHRJYT
+         P1f8iRwRwBSD+7vT7Bg+BvPYQER+y0EpSPe9hl6KCVicdzr/JLDBAjxKZjlw4fz6D5hU
+         khrMkxo1eencvHL6sjxwhajH1Qcqnb3L/y8zVMbLptdsTexTv7hIZ3gvFLdrBryIetua
+         Nz5GDrwNXbaN79YDs1kL7f/LmD0HZ3c2Mr/nhX3tZQekmVTDiciczeY3N2b19HgQ7YbF
+         pQl2cVGL9JF309FEcva032/QN5KeMKyU3ejYLzjVvewaF2RAFjQHHcIp41nh5V1Zu+Qb
+         78yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=XKfktDI409ME+qQztoRq4fg8/cQgqVINMQeKrpPMrnc=;
+        b=Q/lFm/094DAstkgymjnBcfOg72FygALK+H2V27Rq8wry9o5LXqjeJ+3xwmFfSzusSB
+         jzNBIQhLBN56ZP/5lLu6aiSIjOE71CwZQrB4U/ZRlC3QljR1OAAKoVPqxDPJBuUcCnO4
+         ewIRl3hT8FfP5yXoP3kGg9KPfQcH5x6jcr1YoiWO9OrmcRZTN72xCFDgUrYry6fLtHJg
+         wbSNur2ak3Yf0b4dXDHhOinZ4x9ATg0PIP6BtdD682TF/9RqS5Z9ADaPq2Abs3eCofK9
+         NCv6UbrjhrcTl1DZRlZchl2q7jz+rVKsBLO5/dgztJn783F264UrydIMajGRdOynKhVR
+         xRHQ==
+X-Gm-Message-State: APjAAAUQaO5yYnOicosK/EggI41kQe0APrhu9JUbdAIVa6XZS0gI6dr6
+        TD6dR4UaPd6Gg+FhvXIg0gfno8A1SnSTXpazW6s=
+X-Google-Smtp-Source: APXvYqyt1yWEaDynXsJl7oXqRJwW/uh9HMzobH6OzyDWDWqiHW4VwEYvJvizt0rX9uETjDeHjqmbXEhJOpwuif2Jnbw=
+X-Received: by 2002:a17:906:8319:: with SMTP id j25mr10228438ejx.170.1572985440565;
+ Tue, 05 Nov 2019 12:24:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20191031113608.20713-1-christian.brauner@ubuntu.com> <CAK8P3a2P0djkhfHhQUGdO3YX7QGtLeF2OH1HaJmbmRq5Nuojbg@mail.gmail.com>
+In-Reply-To: <CAK8P3a2P0djkhfHhQUGdO3YX7QGtLeF2OH1HaJmbmRq5Nuojbg@mail.gmail.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Tue, 5 Nov 2019 21:23:49 +0100
+Message-ID: <CAKgNAkg4aktVXU1m0_MKt6zitqVOgqF_LJjEnGVa-5Mtb5pkdA@mail.gmail.com>
+Subject: Re: [PATCH] clone3: validate stack arguments
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Tue, 5 Nov 2019 at 15:25, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Oct 31, 2019 at 12:36 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > Validate the stack arguments and setup the stack depening on whether or not
+> > it is growing down or up.
+> >
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-The SPI_LOOP is set in spi->mode but not propagated to the register.
-A previous patch removed the bit during a cleanup.
+and
+Acked-by: Michael Kerrisk <mtk.manpages@gmail.com>
 
-Fixes: e1bc204894ea ("spi: dw: fix potential variable assignment error")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
- drivers/spi/spi-dw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 9a49e073e8b7..076652d3d051 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -308,7 +308,8 @@ static int dw_spi_transfer_one(struct spi_controller *master,
- 	cr0 = (transfer->bits_per_word - 1)
- 		| (chip->type << SPI_FRF_OFFSET)
- 		| ((((spi->mode & SPI_CPOL) ? 1 : 0) << SPI_SCOL_OFFSET) |
--			(((spi->mode & SPI_CPHA) ? 1 : 0) << SPI_SCPH_OFFSET))
-+			(((spi->mode & SPI_CPHA) ? 1 : 0) << SPI_SCPH_OFFSET) |
-+			(((spi->mode & SPI_LOOP) ? 1 : 0) << SPI_SRL_OFFSET))
- 		| (chip->tmode << SPI_TMOD_OFFSET);
- 
- 	/*
 -- 
-2.7.4
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
