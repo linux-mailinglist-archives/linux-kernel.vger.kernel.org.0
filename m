@@ -2,135 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E476F03E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 18:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DECF03FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 18:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390347AbfKERRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 12:17:08 -0500
-Received: from mail-eopbgr700080.outbound.protection.outlook.com ([40.107.70.80]:56513
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390284AbfKERRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 12:17:06 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f0g4G2YTrky2fuoXdgafGvU+a3i7mOtYYiogOVz1qMorOPSBPCc4RRW34n2KMtZwsFHDg0nV059bu6vgREyL/yeYCeQFXqVOqN2++Vbphb46uJSuR3loIrDr1Vb6ZIE0hxmk3JXFjRxPFWCZOW0CQsMt5MJOiUgvL5l1R+TCFUfOxyufuMOhKJWfhj74TGYKfeVzD4YUyH3WSWiJBpo4KCp8O/HJWLgg8rLqNvTJGR2TcUlieN1MS9V2JDlHgTjEONJp/fS2FpPOCMgJS5i6GMQA2Cr+QsbJoiBzbDb209fg/f6Kw47YJcchlTsW0TxSrxUetBlrOJKSKZHXM1Gf+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6eswBfVLGOqCu5lrUEtE1wjugqlM/4ej6ShQtln606s=;
- b=a902ni0/UiCJzAYSM1SrM1h8O73mR6kEjrpOxKeZyu4rdt1TqUzZow3AvjfCX41syKyCwKjBhmLyl95z4IpXvv67ubJj2+gbgP1yR1anhe2Vpnats76MITMX9CtaUW4oZH9uGxWgbE9s6yRmFKh+T4zpf27ZyHQSaKDlqJvW9u/mKO+2HZ8n8YuTzwxHN6asVHi5iXNhB7n15+eIVRZfvhBLhd07Tv6++ut0WVBkbLbrx0bgPb1+znRoX1z//FAYU4Qlw3w5ta9KXukBnzqxEQgBVxCV3ABd0doUBK58pVSlnEIR0MNkDLRADoZTrDrOiJxvTGxRShsL56+51F9diQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6eswBfVLGOqCu5lrUEtE1wjugqlM/4ej6ShQtln606s=;
- b=fDBrzKogLRthdHbURFZ/B1muPmoyra5F2PwwU489iGLGcVOfyUZ+/GLA7jsj1xCgZ+cvOEhXwRSiRMUa/sPpL/TLTu9qSB/3NOy9UPeUpA2zd+MnU2FZ8sri9aTy3ijCFCBdJt/J/ttHOJTHQiGUQQaNg8jj7LJol03B8KcfDUQ=
-Received: from BN7PR12MB2723.namprd12.prod.outlook.com (20.176.177.94) by
- BN7PR12MB2786.namprd12.prod.outlook.com (20.176.178.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Tue, 5 Nov 2019 17:16:58 +0000
-Received: from BN7PR12MB2723.namprd12.prod.outlook.com
- ([fe80::20d2:c1ff:3fa9:4df2]) by BN7PR12MB2723.namprd12.prod.outlook.com
- ([fe80::20d2:c1ff:3fa9:4df2%4]) with mapi id 15.20.2408.024; Tue, 5 Nov 2019
- 17:16:57 +0000
-From:   "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>
-To:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-        Pu Wen <puwen@hygon.com>, Borislav Petkov <bp@suse.de>,
-        Allison Randal <allison@lohutok.net>,
+        id S2390515AbfKERSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 12:18:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58584 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389333AbfKERSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 12:18:54 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5HE6wA125363;
+        Tue, 5 Nov 2019 17:17:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=+U1s98qJlU/Uq+WU6qyR/B5uW6KyTUhuIMLHNhB269Q=;
+ b=MjtBGIgTYsXDr86Oz5fpajy5tM8sceyCm6ttV76ua2LfewSsXKCio0wForTKzAvdMWDc
+ AsWu48XXcAFE2qhyY4Kl5ZFivi0z3U0W6YgTVjpwQoaQoCdBW32416nP8lScb0pbgCQc
+ JrqXGGRGkmeuNu5ZL+UR7oSKfP4hZZNG3nqFP7WtxqlYX74X1K4G/7QjwWL+EnApnECi
+ Acf64+TbJWAXhMtruP5LdnS2GYxSEl768JQ/2x+/3lOlGdjUor2HEQIlFhcH4HfxB6DR
+ fcR19VhVWosLXu7bMF+/j/ur9R5Yzoe9GdPhWZSUHVXh725wPa19wu4zd2bcmArXcdaM pA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2w12er7xgm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 17:17:56 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5HDdrU045634;
+        Tue, 5 Nov 2019 17:17:56 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2w333vk4nj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 17:17:55 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA5HHsil023459;
+        Tue, 5 Nov 2019 17:17:54 GMT
+Received: from [192.168.14.112] (/79.180.234.250)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Nov 2019 09:17:53 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH RFC] KVM: x86: tell guests if the exposed SMT topology is
+ trustworthy
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20191105161737.21395-1-vkuznets@redhat.com>
+Date:   Tue, 5 Nov 2019 19:17:48 +0200
+Cc:     kvm list <kvm@vger.kernel.org>, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>
-Subject: [PATCHv3 4/4] cpupower: ToDo: Update ToDo with ideas for
- per_cpu_schedule handling
-Thread-Topic: [PATCHv3 4/4] cpupower: ToDo: Update ToDo with ideas for
- per_cpu_schedule handling
-Thread-Index: AQHVk/zT/E4eW+y3B0G/7bUbBjUCmA==
-Date:   Tue, 5 Nov 2019 17:16:57 +0000
-Message-ID: <8994b7701058a590cfe718efe408a10d6c3e8217.1572972259.git.Janakarajan.Natarajan@amd.com>
-References: <cover.1572972259.git.Janakarajan.Natarajan@amd.com>
-In-Reply-To: <cover.1572972259.git.Janakarajan.Natarajan@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM6PR18CA0019.namprd18.prod.outlook.com
- (2603:10b6:5:15b::32) To BN7PR12MB2723.namprd12.prod.outlook.com
- (2603:10b6:408:2d::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Janakarajan.Natarajan@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [165.204.78.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cfac7ce4-6c98-48e8-8cc4-08d76213f61a
-x-ms-traffictypediagnostic: BN7PR12MB2786:|BN7PR12MB2786:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN7PR12MB2786E37E11F1517984E20601E77E0@BN7PR12MB2786.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0212BDE3BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(4636009)(39860400002)(136003)(376002)(396003)(366004)(346002)(199004)(189003)(305945005)(66476007)(8676002)(486006)(186003)(64756008)(110136005)(8936002)(2616005)(4326008)(2501003)(76176011)(102836004)(14454004)(52116002)(25786009)(6506007)(66446008)(256004)(86362001)(5660300002)(386003)(99286004)(36756003)(316002)(50226002)(54906003)(26005)(81156014)(81166006)(11346002)(446003)(476003)(478600001)(6436002)(71200400001)(71190400001)(6486002)(118296001)(6512007)(66946007)(66066001)(7736002)(3846002)(2906002)(66556008)(6116002)(7416002)(15650500001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2786;H:BN7PR12MB2723.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: HNweVXMtyJzP+xM1FYlGspSHuvGHU6Io+AFwOWmJir4L+IfqqYFaSfiUm3vnyu8AMTGwK3G5DhsWyONMg03LEiGUWETt01CLDRyiWbmqUP6m7FOQFfQS9ZTpMceqS/iM6MCy1HyujJd64zT8XbMZFMYxtOKD+ig4hlAROaTthY0PZgtSDqUM767o2weGKp6x45XckXMj+GlEa+SpL7hiknScUgpBc0DeK28EcM1FHlJA6T/vhATaVgUyLKM02gCO1+EyHTBsHAY3PcRLdN9fKUmmxoZtL1Ikcqp6YQBr7LRmwUFvcWNNSEpieY809PAwC811gA4co+9MDG34+ZU+exnTuKi7cN4bsoY2WO4Pilv03aaz2clmCbce7bAl7GIkDYcHmwKzsP+m1oIh4CW+2O+aZvysSZmTHKrbriw1kVrdf/0T2o/FmSBLQJTxzleC
-Content-Type: text/plain; charset="iso-8859-1"
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfac7ce4-6c98-48e8-8cc4-08d76213f61a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 17:16:57.1785
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3RfUhTZA1VXuiro+wmJOk8RNJzxYDRoTv7dVkIl9HK9vmRk33MYQkjPB4aFmz5t/4YWMyKa5HN4P3uMAUKMXcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2786
+Message-Id: <83B55424-13A9-4395-98E8-466FFF4C698E@oracle.com>
+References: <20191105161737.21395-1-vkuznets@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911050143
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911050143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 
-Based on Thomas Renninger's feedback/ideas. Re-structure the code
-to better handle the per_cpu_schedule mechanism which was introduced
-when adding support for AMD Zen based processors.
 
-Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
----
- tools/power/cpupower/ToDo | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> On 5 Nov 2019, at 18:17, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>=20
+> Virtualized guests may pick a different strategy to mitigate hardware
+> vulnerabilities when it comes to hyper-threading: disable SMT =
+completely,
+> use core scheduling, or, for example, opt in for STIBP. Making the
+> decision, however, requires an extra bit of information which is =
+currently
+> missing: does the topology the guest see match hardware or if it is =
+'fake'
+> and two vCPUs which look like different cores from guest's perspective =
+can
+> actually be scheduled on the same physical core. Disabling SMT or =
+doing
+> core scheduling only makes sense when the topology is trustworthy.
 
-diff --git a/tools/power/cpupower/ToDo b/tools/power/cpupower/ToDo
-index 6e8b89f282e6..b196a139a3e4 100644
---- a/tools/power/cpupower/ToDo
-+++ b/tools/power/cpupower/ToDo
-@@ -8,3 +8,17 @@ ToDos sorted by priority:
- - Add another c1e debug idle monitor
-   -> Is by design racy with BIOS, but could be added
-      with a --force option and some "be careful" messages
-+- Add cpu_start()/cpu_stop() callbacks for monitor
-+  -> This is to move the per_cpu logic from inside the
-+     monitor to outside it. This can be given higher
-+     priority in fork_it.
-+- Fork as many processes as there are CPUs in case the
-+  per_cpu_schedule flag is set.
-+  -> Bind forked process to each cpu.
-+  -> Execute start measures via the forked processes on
-+     each cpu.
-+  -> Run test executable in a forked process.
-+  -> Execute stop measures via the forked processes on
-+     each cpu.
-+  This would be ideal as it will not introduce noise in the
-+  tested executable.
---=20
-2.17.1
+This is not only related to vulnerability mitigations.
+It=E2=80=99s also important for guest to know if it=E2=80=99s SMT =
+topology is trustworthy for various optimisation algorithms.
+E.g. Should it attempt to run tasks that share memory on same NUMA node?
+
+>=20
+> Add two feature bits to KVM: KVM_FEATURE_TRUSTWORTHY_SMT with the =
+meaning
+> that KVM_HINTS_TRUSTWORTHY_SMT bit answers the question if the exposed =
+SMT
+> topology is actually trustworthy. It would, of course, be possible to =
+get
+> away with a single bit (e.g. 'KVM_FEATURE_FAKE_SMT') and not lose =
+backwards
+> compatibility but the current approach looks more straightforward.
+
+Agree.
+
+>=20
+> There were some offline discussions on whether this new feature bit =
+should
+> be complemented with a 're-enlightenment' mechanism for live migration =
+(so
+> it can change in guest's lifetime) but it doesn't seem to be very
+> practical: what a sane guest is supposed to do if it's told that SMT
+> topology is about to become fake other than kill itself? Also, it =
+seems to
+> make little sense to do e.g. CPU pinning on the source but not on the
+> destination.
+
+Agree.
+
+>=20
+> There is also one additional piece of the information missing. A VM =
+can be
+> sharing physical cores with other VMs (or other userspace tasks on the
+> host) so does KVM_FEATURE_TRUSTWORTHY_SMT imply that it's not the case =
+or
+> not? It is unclear if this changes anything and can probably be left =
+out
+> of scope (just don't do that).
+
+I don=E2=80=99t think KVM_FEATURE_TRUSTWORTHY_SMT should indicate to =
+guest whether it=E2=80=99s vCPU shares a CPU core with another guest.
+It should only expose to guest the fact that he can rely on it=E2=80=99s =
+virtual SMT topology. i.e. That there is a relation between virtual SMT =
+topology
+to which physical logical processors run which vCPUs.
+
+Guest have nothing to do with the fact that he is now aware host =
+doesn=E2=80=99t guarantee to him that one of it=E2=80=99s vCPU shares a =
+CPU core with another guest vCPU.
+I don=E2=80=99t think we should have a CPUID bit that expose this =
+information to guest.
+
+>=20
+> Similar to the already existent 'NoNonArchitecturalCoreSharing' =
+Hyper-V
+> enlightenment, the default value of KVM_HINTS_TRUSTWORTHY_SMT is set =
+to
+> !cpu_smt_possible(). KVM userspace is thus supposed to pass it to =
+guest's
+> CPUIDs in case it is '1' (meaning no SMT on the host at all) or do =
+some
+> extra work (like CPU pinning and exposing the correct topology) before
+> passing '1' to the guest.
+
+Hmm=E2=80=A6 I=E2=80=99m not sure this is correct.
+For example, it is possible to expose in virtual SMT topology that guest =
+have 2 vCPUs running on single NUMA node,
+while in reality each vCPU task can be scheduled to run on different =
+NUMA nodes. Therefore, making virtual SMT topology not trustworthy.
+i.e. Disabling SMT on host doesn=E2=80=99t mean that virtual SMT =
+topology is reliable.
+
+I think this CPUID bit should just be set from userspace when admin have =
+guaranteed to guest that it have set vCPU task affinity properly.
+Without KVM attempting to set this bit by itself.
+
+Note that we defined above KVM_HINTS_TRUSTWORTHY_SMT bit differently =
+than =E2=80=9CNoNonArchitecturalCoreSharing=E2=80=9D.
+=E2=80=9CNoNonArchitecturalCoreSharing=E2=80=9D guarantees to guest that =
+vCPUs of guest won=E2=80=99t share a physical CPU core unless they are =
+defined as virtual SMT siblings.
+In contrast, KVM_HINTS_TRUSTWORTHY_SMT bit attempts to state that =
+virtual SMT topology is a subset of how vCPUs are scheduled on physical =
+SMT topology.
+i.e. It seems that Hyper-V bit is indeed only attempting to provide =
+guest information related to security mitigations. While newly proposed =
+KVM bit attempts to also
+assist guest to determine how to perform it=E2=80=99s internal =
+scheduling decisions.
+
+-Liran
+
+>=20
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> Documentation/virt/kvm/cpuid.rst     | 27 +++++++++++++++++++--------
+> arch/x86/include/uapi/asm/kvm_para.h |  2 ++
+> arch/x86/kvm/cpuid.c                 |  7 ++++++-
+> 3 files changed, 27 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/Documentation/virt/kvm/cpuid.rst =
+b/Documentation/virt/kvm/cpuid.rst
+> index 01b081f6e7ea..64b94103fc90 100644
+> --- a/Documentation/virt/kvm/cpuid.rst
+> +++ b/Documentation/virt/kvm/cpuid.rst
+> @@ -86,6 +86,10 @@ KVM_FEATURE_PV_SCHED_YIELD        13          guest =
+checks this feature bit
+>                                               before using =
+paravirtualized
+>                                               sched yield.
+>=20
+> +KVM_FEATURE_TRUSTWORTHY_SMT       14          set when host supports =
+'SMT
+> +                                              topology is =
+trustworthy' hint
+> +                                              =
+(KVM_HINTS_TRUSTWORTHY_SMT).
+> +
+> KVM_FEATURE_CLOCSOURCE_STABLE_BIT 24          host will warn if no =
+guest-side
+>                                               per-cpu warps are =
+expeced in
+>                                               kvmclock
+> @@ -97,11 +101,18 @@ KVM_FEATURE_CLOCSOURCE_STABLE_BIT 24          =
+host will warn if no guest-side
+>=20
+> Where ``flag`` here is defined as below:
+>=20
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -flag               value        meaning
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> -KVM_HINTS_REALTIME 0            guest checks this feature bit to
+> -                                determine that vCPUs are never
+> -                                preempted for an unlimited time
+> -                                allowing optimizations
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> +flag                              value       meaning
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> +KVM_HINTS_REALTIME                0           guest checks this =
+feature bit to
+> +                                              determine that vCPUs =
+are never
+> +                                              preempted for an =
+unlimited time
+> +                                              allowing optimizations
+> +
+> +KVM_HINTS_TRUSTWORTHY_SMT         1           the bit is set when the =
+exposed
+> +                                              SMT topology is =
+trustworthy, this
+> +                                              means that two guest =
+vCPUs will
+> +                                              never share a physical =
+core
+> +                                              unless they are exposed =
+as SMT
+> +                                              threads.
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> diff --git a/arch/x86/include/uapi/asm/kvm_para.h =
+b/arch/x86/include/uapi/asm/kvm_para.h
+> index 2a8e0b6b9805..183239d5dfad 100644
+> --- a/arch/x86/include/uapi/asm/kvm_para.h
+> +++ b/arch/x86/include/uapi/asm/kvm_para.h
+> @@ -31,8 +31,10 @@
+> #define KVM_FEATURE_PV_SEND_IPI	11
+> #define KVM_FEATURE_POLL_CONTROL	12
+> #define KVM_FEATURE_PV_SCHED_YIELD	13
+> +#define KVM_FEATURE_TRUSTWORTHY_SMT	14
+>=20
+> #define KVM_HINTS_REALTIME      0
+> +#define KVM_HINTS_TRUSTWORTHY_SMT	1
+>=20
+> /* The last 8 bits are used to indicate how to interpret the flags =
+field
+>  * in pvclock structure. If no bits are set, all flags are ignored.
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index f68c0c753c38..dab527a7081f 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -712,7 +712,8 @@ static inline int __do_cpuid_func(struct =
+kvm_cpuid_entry2 *entry, u32 function,
+> 			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
+> 			     (1 << KVM_FEATURE_PV_SEND_IPI) |
+> 			     (1 << KVM_FEATURE_POLL_CONTROL) |
+> -			     (1 << KVM_FEATURE_PV_SCHED_YIELD);
+> +			     (1 << KVM_FEATURE_PV_SCHED_YIELD) |
+> +			     (1 << KVM_FEATURE_TRUSTWORTHY_SMT);
+>=20
+> 		if (sched_info_on())
+> 			entry->eax |=3D (1 << KVM_FEATURE_STEAL_TIME);
+> @@ -720,6 +721,10 @@ static inline int __do_cpuid_func(struct =
+kvm_cpuid_entry2 *entry, u32 function,
+> 		entry->ebx =3D 0;
+> 		entry->ecx =3D 0;
+> 		entry->edx =3D 0;
+> +
+> +		if (!cpu_smt_possible())
+> +			entry->edx |=3D (1 << =
+KVM_HINTS_TRUSTWORTHY_SMT);
+> +
+> 		break;
+> 	case 0x80000000:
+> 		entry->eax =3D min(entry->eax, 0x8000001f);
+> --=20
+> 2.20.1
+>=20
 
