@@ -2,133 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6BEFEFD0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76971EFD16
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbfKEMRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 07:17:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41264 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfKEMRr (ORCPT
+        id S1730985AbfKEMVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 07:21:32 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60704 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730812AbfKEMVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 07:17:47 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so21079701wrm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 04:17:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=5WjUuFi1lzsZ0jYBoaXwxIPUs2nhOsZLPkdWBs2AKLE=;
-        b=P417idu8xkSOp83bucE6v/1E1W1RvIuAVTDiRCXs18VWSccTtXfC2aJ4GJu5jds6ZH
-         uBJCgJE3ExZ52WKimdaza0yOBUaXRuh7bdWeQ2I3ynlSEB+YpwPjeRqXCVtdrmi8vAap
-         DI9GyZy5yMsGuTYmT0V+qqaQFq59NGpnVxLHW1uDAifGPTIJHyV2FFqi0Glf9/WLyDY7
-         2AHiPKVrhqw0mqhBfVmq46u5888cPcLrea00kDAAgQ5jy0GlP5wZBchsJhnQ05B7F0gv
-         NAnylj9LeqvqQqCHWMLLUu5pOWkckz9FzpzgQEcbufw1DoXqiMfamjxJHFyOPwrLEGub
-         4zQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=5WjUuFi1lzsZ0jYBoaXwxIPUs2nhOsZLPkdWBs2AKLE=;
-        b=UcB5kqLVcaRfHTuQfHvA+0gXi6+Zn4k9LX6pPDraV6pfZ1QqUWVwlS4wEaAbMl6WZf
-         tgaXLtva8IiC7vS+udUmRRMh0SysKNaNclGNzhht7ljJ8p/d5I2VJJCrpPYywHLvv8mV
-         /8FDdVkKz3S8ZzVDwx+2BFDaNf+JSP12k1/g+myAJiJoNSYybG1AwBUvLoFtlNeEoFjn
-         /xn1v3hp/2z7UH1BR1XMsiDDPUJAcpHPWXP90llY1xfjY6/udK6UYfQKt0YsbqUcgU7b
-         vV6SmR5Su+GTSlndip0xiyTu0fW83N5UOhcWF3GXOgM7v4i4K1ocatkesFbFedBU5D5/
-         QCbw==
-X-Gm-Message-State: APjAAAWflTBb3wbeoS+DWGsdMG9mKT6cU1DNOsEp0Hjv+W8xU+B5+28J
-        GMIvzxEp2qnH31f7XZ7KudVmew==
-X-Google-Smtp-Source: APXvYqwErB67f7DBD+wdgWRB8DG4qf1Fxi2tzJbIRlf8rBiYnT674amq+eMXIK0jGQf3/caWICJLYw==
-X-Received: by 2002:adf:f452:: with SMTP id f18mr29422850wrp.264.1572956263645;
-        Tue, 05 Nov 2019 04:17:43 -0800 (PST)
-Received: from [10.83.36.220] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id b62sm18477866wmc.13.2019.11.05.04.17.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Nov 2019 04:17:43 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] Ensure pci transactions coming from PLX NTB are handled
- when  IOMMU is turned on
-From:   James Sewart <jamessewart@arista.com>
-In-Reply-To: <A3FA9DE1-2EEF-41D8-9AC2-B1F760E7F5D5@arista.com>
-Date:   Tue, 5 Nov 2019 12:17:42 +0000
-Cc:     linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0B8FAD0D-B598-4CEA-A614-67F4C7C5B9CA@arista.com>
-References: <A3FA9DE1-2EEF-41D8-9AC2-B1F760E7F5D5@arista.com>
-To:     iommu@lists.linux-foundation.org
-X-Mailer: Apple Mail (2.3445.102.3)
+        Tue, 5 Nov 2019 07:21:31 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA5CLBP0017462;
+        Tue, 5 Nov 2019 06:21:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572956471;
+        bh=XdarqqgV7CHO0J2b+o2EUifq7q1n3LIXgOfSWZleKzs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=C4H9JKTA2iE5k236NiEEMmGP9j7dDeyU6c93yRxvFIMME+Tcf+XQMHzfdFcCKjQ8n
+         33mwcBJDVBvDeeBHwGTsu6IP1uDrvRrxnHHmFK4q4gyxkb4WdYPbS6CGOhvpobeIN4
+         +nF7pDmW7WS8QVJrAOYaPmafaSN/i8emD07SYVLc=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA5CLBiW050932
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Nov 2019 06:21:11 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 5 Nov
+ 2019 06:21:10 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 5 Nov 2019 06:20:56 -0600
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA5CL8X5070778;
+        Tue, 5 Nov 2019 06:21:09 -0600
+Subject: Re: [PATCH v4 11/20] mtd: spi-nor: Check all the bits written, not
+ just the BP ones
+To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
+CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
+ <20191102112316.20715-12-tudor.ambarus@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <037932b0-329f-f974-25b5-ac584ad69262@ti.com>
+Date:   Tue, 5 Nov 2019 17:51:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191102112316.20715-12-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any comments on this?
 
-Cheers,
-James.
 
-> On 24 Oct 2019, at 13:52, James Sewart <jamessewart@arista.com> wrote:
->=20
-> The PLX PEX NTB forwards DMA transactions using Requester ID's that =
-don't exist as
-> PCI devices. The devfn for a transaction is used as an index into a =
-lookup table
-> storing the origin of a transaction on the other side of the bridge.
->=20
-> This patch aliases all possible devfn's to the NTB device so that any =
-transaction
-> coming in is governed by the mappings for the NTB.
->=20
-> Signed-Off-By: James Sewart <jamessewart@arista.com>
+On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> Check that all the bits written in the write_sr_and_check() method
+> match the status_new received value. Failing to write the other bits
+> is dangerous too, extend the check.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 > ---
-> drivers/pci/quirks.c | 22 ++++++++++++++++++++++
-> 1 file changed, 22 insertions(+)
->=20
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 320255e5e8f8..647f546e427f 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -5315,6 +5315,28 @@ SWITCHTEC_QUIRK(0x8574);  /* PFXI 64XG3 */
-> SWITCHTEC_QUIRK(0x8575);  /* PFXI 80XG3 */
-> SWITCHTEC_QUIRK(0x8576);  /* PFXI 96XG3 */
->=20
-> +/*
-> + * PLX NTB uses devfn proxy IDs to move TLPs between NT endpoints. =
-These IDs
-> + * are used to forward responses to the originator on the other side =
-of the
-> + * NTB. Alias all possible IDs to the NTB to permit access when the =
-IOMMU is
-> + * turned on.
-> + */
-> +static void quirk_PLX_NTB_dma_alias(struct pci_dev *pdev)
-> +{
-> +	if (!pdev->dma_alias_mask)
-> +		pdev->dma_alias_mask =3D kcalloc(BITS_TO_LONGS(U8_MAX),
-> +					      sizeof(long), GFP_KERNEL);
-> +	if (!pdev->dma_alias_mask) {
-> +		dev_warn(&pdev->dev, "Unable to allocate DMA alias =
-mask\n");
-> +		return;
-> +	}
-> +
-> +	// PLX NTB may use all 256 devfns
-> +	memset(pdev->dma_alias_mask, U8_MAX, (U8_MAX+1)/BITS_PER_BYTE);
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_PLX, 0x87b0, =
-quirk_PLX_NTB_dma_alias);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_PLX, 0x87b1, =
-quirk_PLX_NTB_dma_alias);
-> +
-> /*
->  * On Lenovo Thinkpad P50 SKUs with a Nvidia Quadro M1000M, the BIOS =
-does
->  * not always reset the secondary Nvidia GPU between reboots if the =
-system
-> --=20
-> 2.19.1
->=20
->=20
 
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+Regards
+Vignesh
+
+>  drivers/mtd/spi-nor/spi-nor.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 14146619bf19..8f5e9833081b 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -960,8 +960,7 @@ static int spi_nor_write_sr(struct spi_nor *nor, const u8 *sr, size_t len)
+>  }
+>  
+>  /* Write status register and ensure bits in mask match written values */
+> -static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new,
+> -				      u8 mask)
+> +static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new)
+>  {
+>  	int ret;
+>  
+> @@ -975,7 +974,7 @@ static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new,
+>  	if (ret)
+>  		return ret;
+>  
+> -	return ((nor->bouncebuf[0] & mask) != (status_new & mask)) ? -EIO : 0;
+> +	return (nor->bouncebuf[0] != status_new) ? -EIO : 0;
+>  }
+>  
+>  /**
+> @@ -1774,7 +1773,7 @@ static int stm_lock(struct spi_nor *nor, loff_t ofs, uint64_t len)
+>  	if ((status_new & mask) < (status_old & mask))
+>  		return -EINVAL;
+>  
+> -	return spi_nor_write_sr_and_check(nor, status_new, mask);
+> +	return spi_nor_write_sr_and_check(nor, status_new);
+>  }
+>  
+>  /*
+> @@ -1859,7 +1858,7 @@ static int stm_unlock(struct spi_nor *nor, loff_t ofs, uint64_t len)
+>  	if ((status_new & mask) > (status_old & mask))
+>  		return -EINVAL;
+>  
+> -	return spi_nor_write_sr_and_check(nor, status_new, mask);
+> +	return spi_nor_write_sr_and_check(nor, status_new);
+>  }
+>  
+>  /*
+> 
+
+-- 
+Regards
+Vignesh
