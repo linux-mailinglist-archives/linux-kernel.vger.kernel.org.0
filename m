@@ -2,165 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EAA3EF36D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:29:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B89FEF375
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbfKEC3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 21:29:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33618 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729760AbfKEC3S (ORCPT
+        id S1730353AbfKEC36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 21:29:58 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37644 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729760AbfKEC36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:29:18 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F273860D7C; Tue,  5 Nov 2019 02:29:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572920958;
-        bh=Yz5Pb8QULVWB/wXiv94o8i3LmKowXMZZDYSjNSX+YYE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KMrEoYr7M6bHTfQlUE95lDjwsoTzyLiP5R3gkcrVa1m4egtX/F0oemWDJVsxvY/hK
-         55B4UwnHgdG6cI8cHTOsd44mnaHy47UJRf3X79lQF5/H8POiJjFl5Q9ll4Go7gM45g
-         oO+gY50kDBXYlaUr4EkVgjxco1XG90Y7bWA9rWXg=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D7C0A60A50;
-        Tue,  5 Nov 2019 02:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572920956;
-        bh=Yz5Pb8QULVWB/wXiv94o8i3LmKowXMZZDYSjNSX+YYE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nOZWF/RoEvUPPAGGW4QIZHLAQSS4OIBQOQLn7EYM2wnXbIbZKtcSskHUMqdzsXoQA
-         yydh3m/fcShh8F6O9tE18yXu/3en+U+vhsoNEvU+v8+h1q0yMoaY/pIBhTIcHGR+bw
-         ICPY3t+Qoie730Vb298af7ROBz0NB3l1zniDWxUw=
+        Mon, 4 Nov 2019 21:29:58 -0500
+Received: by mail-qk1-f195.google.com with SMTP id e187so7050738qkf.4;
+        Mon, 04 Nov 2019 18:29:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7h16af0jNCFKGEIf5mIDG7Kt6FCGs2sNKPQ6KLf4+Qg=;
+        b=VWP1tAe9P76PFpAfBgjVkwMa1D4oY3N78Yt4Ea7ef5OS0o5jUBUTBT0NhUVgSzOI1M
+         1oaolSrOGXrTTLLoeLkxEKEjJ03zBgRsaIsBqAvk3x2HPllXeoYqUqM6RLgD+gINCC/4
+         pD1I3rykpGgY9eFGSOJosUN/hy5j0KWEkacRmFKEGgMHdcGdvHpfheo4CddxCKS4EBf5
+         ie6vZrnCjp+JBVdjBGlGR5OtPAWvDiigXc9WPlZzdeRNQCL3fceNr3g/h7hwr0k/n2gM
+         Bz/ZzkEyUJ0mvkWVzO7UhVAs9ZA+zvBK1XKZ+QCKxd+Yyr9dDnbRp4887AQCpCLJT+6a
+         FGew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7h16af0jNCFKGEIf5mIDG7Kt6FCGs2sNKPQ6KLf4+Qg=;
+        b=K5mH7A9CIpiSQj5j8Rh+KGMdAFZTyW4jwDc8lR37s8oJCTm4AIj4WyUmqjhapubpkO
+         FOXvce4BT/hyepdI+hwq6RJ13erJvsz/7uiVaSYsCSvdNP4XJvwTCFsemtYfsYc1ne0/
+         +DKT43CRx9/BMEfcuRBsbnFgfhE4DtKZOAoHP6QhwHsxrwTVsfwdHBbdOm3eis/2qB5X
+         RUOMrAKW+9arNAy/OHGAs8Le1qUoohofjUdcKed0IJk3G5S2c8Xe8+xKu+ECnc9QKWtf
+         RlkFy7bF+gA4ZkJSrkWagoTDTMlHWv/ljw9b9PoKTK6q/uQgD9FhSJJO5aJvj2scNQaP
+         mG6A==
+X-Gm-Message-State: APjAAAX5owG2BX51GsuRDGNPvSoB/i9/UF2tav7+qi4qTCg0eK3MCfGh
+        b5wlS17mVpLSHtBMU9INBQE=
+X-Google-Smtp-Source: APXvYqxeIqWvnleHr9vw/ZojTKoSW30pOuidURAHeMlqsGtsUeDBdPrXah4akZEpoypQaLxy72fTjg==
+X-Received: by 2002:ae9:e8c5:: with SMTP id a188mr3035483qkg.17.1572920995179;
+        Mon, 04 Nov 2019 18:29:55 -0800 (PST)
+Received: from colonelthink.syslab.sandbox (sb-gw13.cs.toronto.edu. [128.100.3.13])
+        by smtp.gmail.com with ESMTPSA id e17sm10845817qtk.65.2019.11.04.18.29.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 18:29:54 -0800 (PST)
+From:   Mohammad Nasirifar <far.nasiri.m@gmail.com>
+X-Google-Original-From: Mohammad Nasirifar <farnasirim@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mohammad Nasirifar <farnasirim@gmail.com>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Subject: [PATCH 1/1] syscalls: Fix references to filenames containing syscall defs
+Date:   Mon,  4 Nov 2019 21:29:28 -0500
+Message-Id: <20191105022928.517526-1-farnasirim@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 05 Nov 2019 07:59:16 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     bjorn.andersson@linaro.org, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm-owner@vger.kernel.org, Andy Gross <agross@kernel.org>
-Subject: Re: [PATCHv7 0/3] QCOM smmu-500 wait-for-safe handling for sdm845
-In-Reply-To: <20191104162339.GD24909@willie-the-truck>
-References: <cover.1568966170.git.saiprakash.ranjan@codeaurora.org>
- <20191101163136.GC3603@willie-the-truck>
- <af7e9a14ae7512665f0cae32e08c8b06@codeaurora.org>
- <20191101172508.GB3983@willie-the-truck>
- <119d4bcf5989d1aa0686fd674c6a3370@codeaurora.org>
- <20191104051925.GC5299@hector.lan> <20191104151506.GB24909@willie-the-truck>
- <20191104162339.GD24909@willie-the-truck>
-Message-ID: <8d20a6af33b80191d44db97b757d0dfa@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-04 21:53, Will Deacon wrote:
-> On Mon, Nov 04, 2019 at 03:15:06PM +0000, Will Deacon wrote:
->> On Sun, Nov 03, 2019 at 11:19:25PM -0600, Andy Gross wrote:
->> > On Fri, Nov 01, 2019 at 11:01:59PM +0530, Sai Prakash Ranjan wrote:
->> > > >>> What's the plan for getting this merged? I'm not happy taking the
->> > > >>> firmware
->> > > >>> bits without Andy's ack, but I also think the SMMU changes should go via
->> > > >>> the IOMMU tree to avoid conflicts.
->> > > >>>
->> > > >>> Andy?
->> > > >>>
->> > > >>
->> > > >>Bjorn maintains QCOM stuff now if I am not wrong and he has already
->> > > >>reviewed
->> > > >>the firmware bits. So I'm hoping you could take all these through IOMMU
->> > > >>tree.
->> > > >
->> > > >Oh, I didn't realise that. Is there a MAINTAINERS update someplace? If I
->> > > >run:
->> > > >
->> > > >$ ./scripts/get_maintainer.pl -f drivers/firmware/qcom_scm-64.c
->> > > >
->> > > >in linux-next, I get:
->> > > >
->> > > >Andy Gross <agross@kernel.org> (maintainer:ARM/QUALCOMM SUPPORT)
->> > > >linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT)
->> > > >linux-kernel@vger.kernel.org (open list)
->> > > >
->> > >
->> > > It hasn't been updated yet then. I will leave it to Bjorn or Andy to comment
->> > > on this.
->> >
->> > The rumors of my demise have been greatly exaggerated.  All kidding aside, I
->> > ack'ed both.  Bjorn will indeed be coming on as a co-maintener at some point.
->> > He has already done a lot of yeomans work in helping me out the past 3 months.
->> 
->> Cheers Andy, and I'm pleased to hear that you're still with us! I've 
->> queued
->> this lot for 5.5 and I'll send to Joerg this week.
-> 
-> Bah, in doing so I spotted that the existing code doesn't handle error 
-> codes
-> properly because 'a0' is unsigned. I'll queue the patch below at the 
-> start
-> of the series.
-> 
-> Will
-> 
-> --->8
-> 
-> From a9a1047f08de0eff249fb65e2d5d6f6f8b2a87f0 Mon Sep 17 00:00:00 2001
-> From: Will Deacon <will@kernel.org>
-> Date: Mon, 4 Nov 2019 15:58:15 +0000
-> Subject: [PATCH] firmware: qcom: scm: Ensure 'a0' status code is 
-> treated as
->  signed
-> 
-> The 'a0' member of 'struct arm_smccc_res' is declared as 'unsigned 
-> long',
-> however the Qualcomm SCM firmware interface driver expects to receive
-> negative error codes via this field, so ensure that it's cast to 'long'
-> before comparing to see if it is less than 0.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  drivers/firmware/qcom_scm-64.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/qcom_scm-64.c 
-> b/drivers/firmware/qcom_scm-64.c
-> index 91d5ad7cf58b..25e0f60c759a 100644
-> --- a/drivers/firmware/qcom_scm-64.c
-> +++ b/drivers/firmware/qcom_scm-64.c
-> @@ -150,7 +150,7 @@ static int qcom_scm_call(struct device *dev, u32
-> svc_id, u32 cmd_id,
->  		kfree(args_virt);
->  	}
-> 
-> -	if (res->a0 < 0)
-> +	if ((long)res->a0 < 0)
->  		return qcom_scm_remap_error(res->a0);
-> 
->  	return 0;
+Fix stale references to files containing syscall definitions in
+'include/linux/syscalls.h' and 'include/uapi/asm-generic/unistd.h',
+pointing to 'kernel/itimer.c', 'kernel/hrtimer.c', and 'kernel/time.c'.
+They are now under 'kernel/time'.
 
-Fixes: 6b1751a86ce2 ("firmware: qcom: scm: Add support for ARM64 SoCs") 
-?
+Also definitions of 'getpid', 'getppid', 'getuid', 'geteuid', 'getgid',
+'getegid', 'gettid', and 'sysinfo' are now in 'kernel/sys.c'.
 
-FWIW, Reviewed-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To: arnd@arndb.de
+To: akpm@linux-foundation.org
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Mohammad Nasirifar <farnasirim@gmail.com>
+---
+ include/linux/syscalls.h          | 8 ++++----
+ include/uapi/asm-generic/unistd.h | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
--Sai
-
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index f7c561c4dcdd..1dbefa5e00e5 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -584,13 +584,13 @@ asmlinkage long sys_get_robust_list(int pid,
+ asmlinkage long sys_set_robust_list(struct robust_list_head __user *head,
+ 				    size_t len);
+ 
+-/* kernel/hrtimer.c */
++/* kernel/time/hrtimer.c */
+ asmlinkage long sys_nanosleep(struct __kernel_timespec __user *rqtp,
+ 			      struct __kernel_timespec __user *rmtp);
+ asmlinkage long sys_nanosleep_time32(struct old_timespec32 __user *rqtp,
+ 				     struct old_timespec32 __user *rmtp);
+ 
+-/* kernel/itimer.c */
++/* kernel/time/itimer.c */
+ asmlinkage long sys_getitimer(int which, struct itimerval __user *value);
+ asmlinkage long sys_setitimer(int which,
+ 				struct itimerval __user *value,
+@@ -731,7 +731,7 @@ asmlinkage long sys_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+ asmlinkage long sys_getcpu(unsigned __user *cpu, unsigned __user *node, struct getcpu_cache __user *cache);
+ 
+-/* kernel/time.c */
++/* kernel/time/time.c */
+ asmlinkage long sys_gettimeofday(struct timeval __user *tv,
+ 				struct timezone __user *tz);
+ asmlinkage long sys_settimeofday(struct timeval __user *tv,
+@@ -739,7 +739,7 @@ asmlinkage long sys_settimeofday(struct timeval __user *tv,
+ asmlinkage long sys_adjtimex(struct __kernel_timex __user *txc_p);
+ asmlinkage long sys_adjtimex_time32(struct old_timex32 __user *txc_p);
+ 
+-/* kernel/timer.c */
++/* kernel/sys.c */
+ asmlinkage long sys_getpid(void);
+ asmlinkage long sys_getppid(void);
+ asmlinkage long sys_getuid(void);
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 1fc8faa6e973..6423f5fa4b8e 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -328,13 +328,13 @@ __SC_COMP(__NR_set_robust_list, sys_set_robust_list, \
+ __SC_COMP(__NR_get_robust_list, sys_get_robust_list, \
+ 	  compat_sys_get_robust_list)
+ 
+-/* kernel/hrtimer.c */
++/* kernel/time/hrtimer.c */
+ #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
+ #define __NR_nanosleep 101
+ __SC_3264(__NR_nanosleep, sys_nanosleep_time32, sys_nanosleep)
+ #endif
+ 
+-/* kernel/itimer.c */
++/* kernel/time/itimer.c */
+ #define __NR_getitimer 102
+ __SC_COMP(__NR_getitimer, sys_getitimer, compat_sys_getitimer)
+ #define __NR_setitimer 103
+@@ -507,7 +507,7 @@ __SYSCALL(__NR_prctl, sys_prctl)
+ #define __NR_getcpu 168
+ __SYSCALL(__NR_getcpu, sys_getcpu)
+ 
+-/* kernel/time.c */
++/* kernel/time/time.c */
+ #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
+ #define __NR_gettimeofday 169
+ __SC_COMP(__NR_gettimeofday, sys_gettimeofday, compat_sys_gettimeofday)
+@@ -517,7 +517,7 @@ __SC_COMP(__NR_settimeofday, sys_settimeofday, compat_sys_settimeofday)
+ __SC_3264(__NR_adjtimex, sys_adjtimex_time32, sys_adjtimex)
+ #endif
+ 
+-/* kernel/timer.c */
++/* kernel/sys.c */
+ #define __NR_getpid 172
+ __SYSCALL(__NR_getpid, sys_getpid)
+ #define __NR_getppid 173
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.23.0
+
