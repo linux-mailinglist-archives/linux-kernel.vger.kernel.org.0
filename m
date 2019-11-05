@@ -2,78 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52BFBEFCB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0675DEFCBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730972AbfKELwe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 5 Nov 2019 06:52:34 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:46145 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730704AbfKELwe (ORCPT
+        id S1731006AbfKELxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 06:53:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41004 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730667AbfKELxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 06:52:34 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xA5BqJ5B025801, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xA5BqJ5B025801
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 5 Nov 2019 19:52:19 +0800
-Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
- RTITCASV02.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Tue, 5 Nov
- 2019 19:52:18 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "oliver@neukum.org" <oliver@neukum.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] r8152: Add macpassthru support for ThinkPad Thunderbolt 3 Dock Gen 2
-Thread-Topic: [PATCH v3] r8152: Add macpassthru support for ThinkPad
- Thunderbolt 3 Dock Gen 2
-Thread-Index: AQHVk8up3tLg++9LrkuOAqEJxsNBoqd8cdxA
-Date:   Tue, 5 Nov 2019 11:52:17 +0000
-Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18F4FA0@RTITMBSVM03.realtek.com.tw>
-References: <20191105112452.13905-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20191105112452.13905-1-kai.heng.feng@canonical.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.177.214]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 5 Nov 2019 06:53:01 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iRxOE-00030G-Vz; Tue, 05 Nov 2019 12:52:51 +0100
+Date:   Tue, 5 Nov 2019 12:52:50 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+cc:     Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jan Beulich <jbeulich@suse.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: Fixes tags need some work in the tip tree
+In-Reply-To: <20191105221830.69ec8bcc@canb.auug.org.au>
+Message-ID: <alpine.DEB.2.21.1911051250510.17054@nanos.tec.linutronix.de>
+References: <20191105221830.69ec8bcc@canb.auug.org.au>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kai-Heng Feng [mailto:kai.heng.feng@canonical.com]
-> Sent: Tuesday, November 05, 2019 7:25 PM
-> To: davem@davemloft.net; oliver@neukum.org
-> Cc: Hayes Wang; linux-usb@vger.kernel.org; netdev@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Kai-Heng Feng
-> Subject: [PATCH v3] r8152: Add macpassthru support for ThinkPad Thunderbolt
-> 3 Dock Gen 2
+On Tue, 5 Nov 2019, Stephen Rothwell wrote:
+> In commit
 > 
-> ThinkPad Thunderbolt 3 Dock Gen 2 is another docking station that uses
-> RTL8153 based USB ethernet.
+>   fe6f85ca121e ("x86/apic/32: Avoid bogus LDR warnings")
 > 
-> The device supports macpassthru, but it failed to pass the test of -AD,
-> -BND and -BD. Simply bypass these tests since the device supports this
-> feature just fine.
+> Fixes tag
 > 
-> Also the ACPI objects have some differences between Dell's and Lenovo's,
-> so make those ACPI infos no longer hardcoded.
+>   Fixes: bae3a8d3308 ("x86/apic: Do not initialize LDR and DFR for bigsmp")
 > 
-> BugLink: https://bugs.launchpad.net/bugs/1827961
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
-Acked-by: Hayes Wang <hayeswang@realtek.com>
+Yes. I missed that one when applying the patch which had the fixes tag
+already inside. Will add a check for that to catch future ones.
 
-Best Regards,
-Hayes
+Jan, please adjust your git settings.
 
+Thanks,
 
+	tglx
