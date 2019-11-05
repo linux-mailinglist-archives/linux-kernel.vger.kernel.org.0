@@ -2,88 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71B3EFEB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A497EFEC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389104AbfKENgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:36:32 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45207 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388313AbfKENgc (ORCPT
+        id S2389220AbfKENiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:38:17 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46074 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387880AbfKENiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:36:32 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1iRz0S-0008DC-Vu; Tue, 05 Nov 2019 14:36:24 +0100
-Message-ID: <a8908f1157e862164fb1bea07f8d5e1812325858.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/7] pwm: sun4i: Add an optional probe for reset line
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     =?ISO-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        'Uwe =?ISO-8859-1?Q?Kleine-K=F6nig=27?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Date:   Tue, 05 Nov 2019 14:36:23 +0100
-In-Reply-To: <20191105131456.32400-3-peron.clem@gmail.com>
-References: <20191105131456.32400-1-peron.clem@gmail.com>
-         <20191105131456.32400-3-peron.clem@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 5 Nov 2019 08:38:16 -0500
+Received: from callcc.thunk.org (ip-12-2-52-196.nyc.us.northamericancoax.com [196.52.2.12])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xA5DbnOx019876
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 5 Nov 2019 08:37:50 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id EF97E420311; Tue,  5 Nov 2019 08:37:46 -0500 (EST)
+Date:   Tue, 5 Nov 2019 08:37:46 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-arch@vger.kernel.org
+Subject: Re: [PATCH 1/1] errno.h: Provide EFSBADCRC for everybody
+Message-ID: <20191105133746.GJ28764@mit.edu>
+References: <20191105024618.194134-1-Valdis.Kletnieks@vt.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105024618.194134-1-Valdis.Kletnieks@vt.edu>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-11-05 at 14:14 +0100, Clément Péron wrote:
-> From: Jernej Skrabec <jernej.skrabec@siol.net>
+On Mon, Nov 04, 2019 at 09:46:14PM -0500, Valdis Kletnieks wrote:
+> Four filesystems have their own defines for this. Move it
+> into errno.h so it's defined in just one place.
 > 
-> H6 PWM core needs deasserted reset line in order to work.
-> 
-> Add an optional probe for it.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-> ---
->  drivers/pwm/pwm-sun4i.c | 33 +++++++++++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> index 6f5840a1a82d..9ba83769a478 100644
-> --- a/drivers/pwm/pwm-sun4i.c
-> +++ b/drivers/pwm/pwm-sun4i.c
-[...]
-> @@ -365,6 +367,21 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
->  	if (IS_ERR(pwm->clk))
->  		return PTR_ERR(pwm->clk);
->  
-> +	pwm->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
-> +	if (IS_ERR(pwm->rst)) {
-> +		if (PTR_ERR(pwm->rst) != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "get reset failed %ld\n",
-> +				PTR_ERR(pwm->rst));
-> +		return PTR_ERR(pwm->rst);
-> +	}
-> +
-> +	/* Deassert reset */
-
-Nitpick: isn't the API function name explanatory enough?
-
-regards
-Philipp
-
+					- Ted
