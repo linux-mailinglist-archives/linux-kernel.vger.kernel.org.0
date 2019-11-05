@@ -2,132 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1B1F020B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6E5F0208
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390064AbfKEQAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:00:12 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:37196 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389843AbfKEQAL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:00:11 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 476vWY3wLrzKmTQ;
-        Tue,  5 Nov 2019 17:00:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id 4Qo0IpOlKh2j; Tue,  5 Nov 2019 17:00:05 +0100 (CET)
-Date:   Wed, 6 Nov 2019 02:59:53 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Tim Murray <timmurray@google.com>, linux-api@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 1/1] userfaultfd: require CAP_SYS_PTRACE for
- UFFD_FEATURE_EVENT_FORK
-Message-ID: <20191105155953.3i7fvzm76aublkbi@yavin.dot.cyphar.com>
-References: <1572967777-8812-1-git-send-email-rppt@linux.ibm.com>
- <1572967777-8812-2-git-send-email-rppt@linux.ibm.com>
+        id S2390013AbfKEQAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:00:02 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:49982 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389843AbfKEQAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 11:00:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=M6wh6jqbqRIdXmd1bC6JTsPk8LafWc1uYKqnOR4Fy6w=; b=td+Wxj2iB7RRCP2UQiQYGq7A1c
+        bLgegAl+A9wVz1p4HProK0kUYgUOjXga0p2LWvgYRFh1zvj1ELRlUd/Fb6+5xyqnLlMRstLAm3MaK
+        C40gV1/wsZdUw6wQhPGda/PD0CHAR8JlUSKweWNkcqGNK+OmSGSopZ2r3lTCohXy+9Do=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iS1FK-0002fM-Fe; Tue, 05 Nov 2019 16:59:54 +0100
+Date:   Tue, 5 Nov 2019 16:59:54 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>
+Subject: Re: [PATCH 06/12] staging: dpaa2-ethsw: add ACL entry to redirect
+ STP to CPU
+Message-ID: <20191105155954.GE17620@lunn.ch>
+References: <1572957275-23383-1-git-send-email-ioana.ciornei@nxp.com>
+ <1572957275-23383-7-git-send-email-ioana.ciornei@nxp.com>
+ <20191105142202.GC7189@lunn.ch>
+ <VI1PR0402MB28007254BB7614477CED4DBCE07E0@VI1PR0402MB2800.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j7e2vn3qawbuf4kk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1572967777-8812-2-git-send-email-rppt@linux.ibm.com>
+In-Reply-To: <VI1PR0402MB28007254BB7614477CED4DBCE07E0@VI1PR0402MB2800.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> The control queues do not form an actual interface in the sense that
+> the CPU does not receive unknown unicast, broadcast and multicast
+> frames by default.  For each frame that we want to direct to the CPU
+> we must add an ACL entry.
 
---j7e2vn3qawbuf4kk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So this appears to be one of the dumbest switches so far :-(
 
-On 2019-11-05, Mike Rapoport <rppt@linux.ibm.com> wrote:
-> Current implementation of UFFD_FEATURE_EVENT_FORK modifies the file
-> descriptor table from the read() implementation of uffd, which may have
-> security implications for unprivileged use of the userfaultfd.
->=20
-> Limit availability of UFFD_FEATURE_EVENT_FORK only for callers that have
-> CAP_SYS_PTRACE.
->=20
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->  fs/userfaultfd.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->=20
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index f9fd18670e22..d99d166fd892 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1834,13 +1834,12 @@ static int userfaultfd_api(struct userfaultfd_ctx=
- *ctx,
->  	if (copy_from_user(&uffdio_api, buf, sizeof(uffdio_api)))
->  		goto out;
->  	features =3D uffdio_api.features;
-> -	if (uffdio_api.api !=3D UFFD_API || (features & ~UFFD_API_FEATURES)) {
-> -		memset(&uffdio_api, 0, sizeof(uffdio_api));
-> -		if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
-> -			goto out;
-> -		ret =3D -EINVAL;
-> -		goto out;
-> -	}
-> +	ret =3D -EINVAL;
-> +	if (uffdio_api.api !=3D UFFD_API || (features & ~UFFD_API_FEATURES))
-> +		goto err_out;
-> +	ret =3D -EPERM;
-> +	if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRACE))
-> +		goto err_out;
->  	/* report all available features and ioctls to userland */
->  	uffdio_api.features =3D UFFD_API_FEATURES;
->  	uffdio_api.ioctls =3D UFFD_API_IOCTLS;
-> @@ -1853,6 +1852,11 @@ static int userfaultfd_api(struct userfaultfd_ctx =
-*ctx,
->  	ret =3D 0;
->  out:
->  	return ret;
-> +err_out:
-> +	memset(&uffdio_api, 0, sizeof(uffdio_api));
-> +	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
+Can you add an ACL which is all L2 broadcast/multicast?  That would be
+a good first step.
 
-Wouldn't it be simpler to do clear_user()?
+Does the ACL stop further processing of the frame? Ideally you want
+the switch to also flood broadcast/multicast out other ports, if they
+are in a bridge. If it cannot, you end up with the software bridge
+doing the flooding.
 
-> +		ret =3D -EFAULT;
-> +	goto out;
->  }
-> =20
->  static long userfaultfd_ioctl(struct file *file, unsigned cmd,
+So i also assume it does not perform learning on CPU frames? That
+probably means you need to connect up the fdb add/remove calls to add
+in ACLs. And you will need to implement ndo_set_rx_mode. Each unicast
+and multicast address needs to be turned into an ACL. What i don't
+know is if the network stack will automatically add the interfaces own
+MAC address. You might have to handle that special case.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---j7e2vn3qawbuf4kk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXcGcdgAKCRCdlLljIbnQ
-EtmWAP0U2MY1jEsu7TOdY/A7q911zdaus5bq2247WlYAOn4eWAEAlHxHE9/GMIb9
-2Uajs/uTqNYLhx1hpZCCzmPJS/v5YwA=
-=BEI+
------END PGP SIGNATURE-----
-
---j7e2vn3qawbuf4kk--
+    Andrew
