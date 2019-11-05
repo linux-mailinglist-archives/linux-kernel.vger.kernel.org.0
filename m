@@ -2,114 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9812F0753
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0088F0714
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:36:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbfKEUy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:54:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:53458 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfKEUy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:54:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36D7C30E;
-        Tue,  5 Nov 2019 12:54:56 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A0CB4014A;
-        Tue,  5 Nov 2019 04:37:41 -0800 (PST)
-Date:   Tue, 5 Nov 2019 12:37:39 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.co" <lorenzo.pieralisi@arm.co>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the
- doorbell way
-Message-ID: <20191105123739.GB26960@e121166-lin.cambridge.arm.com>
-References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
- <20190822112242.16309-7-xiaowei.bao@nxp.com>
- <20190823135816.GH14582@e119886-lin.cambridge.arm.com>
- <AM5PR04MB3299E50BA5D7579D41B8B4F9F5A70@AM5PR04MB3299.eurprd04.prod.outlook.com>
- <20190827132504.GL14582@e119886-lin.cambridge.arm.com>
- <e64a484c-7cf5-5f65-400c-47128ab45e52@ti.com>
+        id S1729792AbfKEUg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:36:28 -0500
+Received: from cynthia.allandria.com ([50.242.82.17]:51581 "EHLO
+        cynthia.allandria.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfKEUg1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:36:27 -0500
+Received: from flar by cynthia.allandria.com with local (Exim 4.84_2)
+        (envelope-from <flar@allandria.com>)
+        id 1iS5Yr-0003WE-2t; Tue, 05 Nov 2019 12:36:21 -0800
+Date:   Tue, 5 Nov 2019 12:36:21 -0800
+From:   Brad Boyer <flar@allandria.com>
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Max Staudt <max@enpas.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: Re: [PATCH] m68k: defconfig: Update defconfigs for v5.4-rc1
+Message-ID: <20191105203620.GA12862@allandria.com>
+References: <20191001073539.4488-1-geert@linux-m68k.org>
+ <7fa02d50-6092-5f59-5018-c5b425a30726@enpas.org>
+ <CAMuHMdX3+-JO68LGE-NuT9axRUj3=bbtpDZ8E3v5UNoj5ctLHg@mail.gmail.com>
+ <640d4fd8-b879-3cfd-e522-1acc3cbd323a@physik.fu-berlin.de>
+ <20191105005318.GA29558@allandria.com>
+ <alpine.LNX.2.21.1.1911051318590.160@nippy.intranet>
+ <20191105031946.GA31507@allandria.com>
+ <alpine.LNX.2.21.1.1911051444570.160@nippy.intranet>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e64a484c-7cf5-5f65-400c-47128ab45e52@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.LNX.2.21.1.1911051444570.160@nippy.intranet>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 10:43:18AM +0530, Kishon Vijay Abraham I wrote:
-> Gustavo,
+On Tue, Nov 05, 2019 at 03:13:31PM +1100, Finn Thain wrote:
+> On Mon, 4 Nov 2019, Brad Boyer wrote:
+> > I'll try the PB190 first anyway. It should be easier due to not needing 
+> > to setup a monitor. 
 > 
-> On 27/08/19 6:55 PM, Andrew Murray wrote:
-> > On Sat, Aug 24, 2019 at 12:08:40AM +0000, Xiaowei Bao wrote:
-> >>
-> >>
-> >>> -----Original Message-----
-> >>> From: Andrew Murray <andrew.murray@arm.com>
-> >>> Sent: 2019年8月23日 21:58
-> >>> To: Xiaowei Bao <xiaowei.bao@nxp.com>
-> >>> Cc: bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> >>> shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; kishon@ti.com;
-> >>> lorenzo.pieralisi@arm.co; arnd@arndb.de; gregkh@linuxfoundation.org; M.h.
-> >>> Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy
-> >>> Zang <roy.zang@nxp.com>; jingoohan1@gmail.com;
-> >>> gustavo.pimentel@synopsys.com; linux-pci@vger.kernel.org;
-> >>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >>> linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
-> >>> Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the
-> >>> doorbell way
-> >>>
-> >>> On Thu, Aug 22, 2019 at 07:22:39PM +0800, Xiaowei Bao wrote:
-> >>>> The layerscape platform use the doorbell way to trigger MSIX interrupt
-> >>>> in EP mode.
-> >>>>
-> >>>
-> >>> I have no problems with this patch, however...
-> >>>
-> >>> Are you able to add to this message a reason for why you are making this
-> >>> change? Did dw_pcie_ep_raise_msix_irq not work when func_no != 0? Or did
-> >>> it work yet dw_pcie_ep_raise_msix_irq_doorbell is more efficient?
-> >>
-> >> The fact is that, this driver is verified in ls1046a platform of NXP before, and ls1046a don't
-> >> support MSIX feature, so I set the msix_capable of pci_epc_features struct is false,
-> >> but in other platform, e.g. ls1088a, it support the MSIX feature, I verified the MSIX
-> >> feature in ls1088a, it is not OK, so I changed to another way. Thanks.
+> I think you can put the 630 into a standard VESA video mode (with MacOS or 
+> Linux) given the right adapter/cable. I have a pin-out somewhere.
+
+I have an adapter. I also own several official Apple monitors of various
+styles and capabilities. The problem is desk space. I need to clean before
+I have enough room to setup anything bigger than a laptop.
+
+> > I just took a look at the macide driver, and it appears to do basically
+> > nothing other than pass a list of addresses into the core ide code. It's
+> > one of the smallest drivers I've ever seen.
 > > 
-> > Right, so the existing pci-layerscape-ep.c driver never supported MSIX yet it
-> > erroneously had a switch case statement to call dw_pcie_ep_raise_msix_irq which
-> > would never get used.
-> > 
-> > Now that we're adding a platform with MSIX support the existing
-> > dw_pcie_ep_raise_msix_irq doesn't work (for this platform) so we are adding a
-> > different method.
 > 
-> Gustavo, can you confirm dw_pcie_ep_raise_msix_irq() works for
-> designware as it didn't work for both me and Xiaowei?
+> The fly in the ointment is interrupt handling. There is a theoretical bug. 
+> (Though it doesn't seem to hurt in practice.)
+> 
+> AFAIK the hardware is publicly undocumented and so we need to do 
+> experiments like this:
+> https://github.com/fthain/linux/commit/01405199e8d05500bf458df690027655f526a7fd
+> 
+> My suspicion is that macide_clear_irq() does nothing useful. It's not 
+> called on a Powerbook 190. Maybe it is needed on a PowerBook 150 and 
+> Performa 630, maybe not...
 
-This question needs an answer.
+My understanding has always been that Apple was really sloppy with how
+the hardware handled interrupts. On many models, you can't actually
+block interrupts in a sane fashion. Because of that, you usually have
+to shut up the interrupts by talking to the actual device.
 
-Thanks,
-Lorenzo
+I would not be surprised in the slightest to see that register write
+do absolutely nothing. It might be more interesting to just disable
+the clear function for all models and see if it still works. I don't
+have a PB 150 to test that style, but I do have the other two.
+
+> > > But watch out for leaking capacitors and batteries...
+> > 
+> > I should pull out every machine in my collection and look for those 
+> > sorts of issues. None of them have been checked in at least 5 or 6 
+> > years.
+> > 
+> 
+> None of the machines in my collection have any batteries now. Desoldering 
+> the Ni-Cd PRAM battery from a Powerbook 14x/16x/170/180 is difficult but 
+> necessary. Powerbook 150 and 190 are easier (no desoldering needed).
+
+That makes sense. I need to do the same. It's just a pain since a few
+models won't boot without a battery.
+
+	Brad Boyer
+	flar@allandria.com
+
