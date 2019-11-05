@@ -2,111 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42624F0A88
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 00:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43708F0AAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 00:57:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbfKEX4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 18:56:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44036 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730531AbfKEX4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 18:56:21 -0500
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A0079368E6
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 23:56:20 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id j17so12972513wru.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 15:56:20 -0800 (PST)
+        id S1730734AbfKEX5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 18:57:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39785 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730704AbfKEX5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 18:57:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id x28so14132428pfo.6;
+        Tue, 05 Nov 2019 15:56:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Lyd/uQwCMyHvu0EwXvw/80bYdPYYHY4g1rXnVpIYvtQ=;
+        b=QUBzc0rQ+6OSXZ6QoHFh7qoNgThIJgzdzc+UcxyU3G/RUF4bLMI8JGxLftWHgt2X7H
+         nmHUOLAxFBgQFQgeu/QJoC3WRDETTCsdRAB5L89zXLZGvUqwy5AJZYzQWMb5uEDY1hVC
+         ncY/51LRWT+JvGoOqhJqo896nyMeRsDLO/QQaU2MbluuwnchgsOijC6iB6WnL+VNtt2I
+         xVcnV7j4QY86iD4aEZJ1cWcUlo3ZcgHwDRKfe4toB1OSf6Eu+uXgLzdSmTpAFZAmHNg1
+         QivA+SZSuL29lwcneC10YMMvbvpLTXPn9km3/HrkOa08C1rXu0puE5rmtQ8xOZXF8tUc
+         h4RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=06M8EIegAgG0v07Clyq4kGwN0RVfmrVZoqQU2t3v1Zs=;
-        b=m/IMlBYq6+JTDrmqWEGaWFqO2M7yYQfp9jFlET+GTGPcyuz5ykZrbLWlpXN5t2gemH
-         Hyscj/R/NHO28d9TKAKifyLBv948D4eQYhdis2aj+XzLHAi6402EPEhI2j0tMaINVc4C
-         dNsDfkKCy/APfWf8o2e/yuqF5nSl247aU5c5NQzcD/KU3cRuQEBER2NKhcOpS/7BNzbP
-         ZzAL+jT6V0MkxXOgpj224Vd4k/a7C5o6re/ZbDi0jdI9ttPdpWvJw1eVdIlYiGvPMNWf
-         oxvqFDTNMSar4iZrJMwvfoxhrQqWKPq7h9NczmKMmTF9F/xI9uOLS6HyuqC2o6ThDU07
-         10vA==
-X-Gm-Message-State: APjAAAWN0epQjmoXBmSPIgJQTiDI07aPWFzj85Sd8LEXfDaqi0ec0STX
-        HVv/ZO+emKpt54dWxVhMnHua0L+mjBals9mv4RMo7pjElBldlY/qH/6vCMNwgCrw1FVDSiCQL2m
-        TqVcbCk6u68135XKT2MnnCZda
-X-Received: by 2002:a1c:4606:: with SMTP id t6mr1208608wma.73.1572998179160;
-        Tue, 05 Nov 2019 15:56:19 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzo4uEw1UA97/7uwCK1BrInQ2RF0IfORXDnQy0cW0ZN2MjlHjscwGDB2jkOL9nU2PO9JMXwbg==
-X-Received: by 2002:a1c:4606:: with SMTP id t6mr1208582wma.73.1572998178811;
-        Tue, 05 Nov 2019 15:56:18 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id 4sm1154288wmd.33.2019.11.05.15.56.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 15:56:18 -0800 (PST)
-Subject: Re: [PATCH RFC] KVM: x86: tell guests if the exposed SMT topology is
- trustworthy
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-References: <20191105161737.21395-1-vkuznets@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <de3cade3-c069-dc6b-1d2d-aa10abe365b8@redhat.com>
-Date:   Wed, 6 Nov 2019 00:56:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lyd/uQwCMyHvu0EwXvw/80bYdPYYHY4g1rXnVpIYvtQ=;
+        b=ZANrDJl5eC6fW3M8tvzTv/FxYeuknppAWmyD1Fb0q33GIMCIAgAJ+q1Ov2qF/jjL67
+         XS1s9P7zASTXVo0YKzu60oAeUD9NQe6E4rDlGoVQnzP8gODn6reTX92CsMRjsEU2F01G
+         oGbQZEKti7XQKrEVscbIj6fUqiKp4PvGM5EgEKhm41EIAvp5zELIR/ZkbkgTA/S+VQhQ
+         mWUZp45yuj44Mm3RDYbxV8z1J1ru17Frszm3/AX1OXCYk2TgSuBIuDC/By00RClXkwVu
+         Pz0kbjK3/EOqxjutTdIh+PHpSV7Qb5xMjtSWDXWK8Q8aeS0L438AVP1yq26yrXg6IMIZ
+         4PNA==
+X-Gm-Message-State: APjAAAVgCIjHGzRPrgVFHv8ch9rt9pXkIxPbdE2rvDo1UiesM16k1s5I
+        /EDgeaIjsZgZs18Y4Hvh2dl5fBj8
+X-Google-Smtp-Source: APXvYqw1tZlGJpnft6JBqkIg80ds5OGJJXsVz3MvtryZMlCAINilHgvNVbjSVNUMeenci+2YHQO2CQ==
+X-Received: by 2002:a65:404b:: with SMTP id h11mr39237598pgp.28.1572998218903;
+        Tue, 05 Nov 2019 15:56:58 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id q34sm564387pjb.15.2019.11.05.15.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 15:56:58 -0800 (PST)
+Date:   Tue, 5 Nov 2019 15:56:56 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v6 11/15] software node: move small properties inline
+ when copying
+Message-ID: <20191105235656.GW57214@dtor-ws>
+References: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
+ <20191023200233.86616-12-dmitry.torokhov@gmail.com>
+ <47671501.dVG71sAca0@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <20191105161737.21395-1-vkuznets@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47671501.dVG71sAca0@kreacher>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/19 17:17, Vitaly Kuznetsov wrote:
-> There is also one additional piece of the information missing. A VM can be
-> sharing physical cores with other VMs (or other userspace tasks on the
-> host) so does KVM_FEATURE_TRUSTWORTHY_SMT imply that it's not the case or
-> not? It is unclear if this changes anything and can probably be left out
-> of scope (just don't do that).
+Hi Rafael,
+
+On Wed, Nov 06, 2019 at 12:42:02AM +0100, Rafael J. Wysocki wrote:
+> On Wednesday, October 23, 2019 10:02:29 PM CET Dmitry Torokhov wrote:
+> > When copying/duplicating set of properties, move smaller properties that
+> > were stored separately directly inside property entry structures. We can
+> > move:
+> > 
+> > - up to 8 bytes from U8 arrays
+> > - up to 4 words
+> > - up to 2 double words
+> > - one U64 value
+> > - one or 2 strings.
 > 
-> Similar to the already existent 'NoNonArchitecturalCoreSharing' Hyper-V
-> enlightenment, the default value of KVM_HINTS_TRUSTWORTHY_SMT is set to
-> !cpu_smt_possible(). KVM userspace is thus supposed to pass it to guest's
-> CPUIDs in case it is '1' (meaning no SMT on the host at all) or do some
-> extra work (like CPU pinning and exposing the correct topology) before
-> passing '1' to the guest.
+> Yes, we can do that, but how much of a difference does this really make?
+
+Arguably not much I think, but it was pretty cheap to do.
+
 > 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  Documentation/virt/kvm/cpuid.rst     | 27 +++++++++++++++++++--------
->  arch/x86/include/uapi/asm/kvm_para.h |  2 ++
->  arch/x86/kvm/cpuid.c                 |  7 ++++++-
->  3 files changed, 27 insertions(+), 9 deletions(-)
+> Also, how can one distinguish between a single-value property and an inline
+> array which this change?  By looking at the length?
+
+We do not really need to distinguish between the 2. The device
+properties API is typically wrap single values around arrays (i.e. it is
+perfectly fine to use scalar API to fetch first element of array and use
+array API to fetch a scalar). So we have property of certain type with
+certain number of elements, and it can either be stored inside
+property_entry structure, or outside of it. They are 2 orthogonal
+concepts.
+
 > 
-> diff --git a/Documentation/virt/kvm/cpuid.rst b/Documentation/virt/kvm/cpuid.rst
-> index 01b081f6e7ea..64b94103fc90 100644
-> --- a/Documentation/virt/kvm/cpuid.rst
-> +++ b/Documentation/virt/kvm/cpuid.rst
-> @@ -86,6 +86,10 @@ KVM_FEATURE_PV_SCHED_YIELD        13          guest checks this feature bit
->                                                before using paravirtualized
->                                                sched yield.
->  
-> +KVM_FEATURE_TRUSTWORTHY_SMT       14          set when host supports 'SMT
-> +                                              topology is trustworthy' hint
-> +                                              (KVM_HINTS_TRUSTWORTHY_SMT).
-> +
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/base/swnode.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> > index 18a30fb3cc58..49e1108aa4b7 100644
+> > --- a/drivers/base/swnode.c
+> > +++ b/drivers/base/swnode.c
+> > @@ -280,6 +280,16 @@ static int property_entry_copy_data(struct property_entry *dst,
+> >  	if (!dst->name)
+> >  		goto out_free_data;
+> >  
+> > +	if (!dst->is_inline && dst->length <= sizeof(dst->value)) {
+> > +		/* We have an opportunity to move the data inline */
+> > +		const void *tmp = dst->pointer;
+> > +
+> > +		memcpy(&dst->value, tmp, dst->length);
+> > +		dst->is_inline = true;
+> > +
+> > +		kfree(tmp);
+> 
+> This would have been more useful if we had been able to avoid making the
+> allocation altogether.
 
-Instead of defining a one-off bit, can we make:
+OK, I can do that and re-send this patch and the one with the tests. In
+the mean time, can you please consider patches 12-14? They can be
+applied even if you temporarily drop this one (#11).
 
-ecx = the set of known "hints" (defaults to edx if zero)
+Thanks.
 
-edx = the set of hints that apply to the virtual machine
-
-Paolo
+-- 
+Dmitry
