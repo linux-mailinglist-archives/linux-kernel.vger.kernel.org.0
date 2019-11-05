@@ -2,103 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AFDEF9A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:39:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51948EF999
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:37:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730901AbfKEJjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:39:06 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60730 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730769AbfKEJjG (ORCPT
+        id S1730862AbfKEJhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:37:23 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40825 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730846AbfKEJhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:39:06 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA59crKN105088;
-        Tue, 5 Nov 2019 09:38:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=co+w0k79G3ndnVT1tw2oC6b5nHyZtabUCQzvllnx4dg=;
- b=Vl8wn86Z7TBfVgmOyWLrsHJVhFqfpWZA68lrnLDuEW4JBiN/O9rCX+UPVZPg4JGHwx7/
- ASYCraCunqDPyfllA5+UbogKpN/WF3P9tno3BAzmzDcA+g9RgCZdUwr0pev0kySL8+YV
- 5h1g0CCWiSHxQlInsE+di4F5JqXarlWoxQLFMQ+qCDDF5ulVLBH31PBX+1vm5EmUb6/W
- p06lXZOUSeWf4ZVhm8JxSFumyI1QEooQz0bVMiQjSZYTocDZllRJaHnVj65sYK+aDN3q
- To8SUomhvgChIlJOqnw8Wxi8NXoRWRs1qAEt144F4wFaSpsrAqjCA8gAxiSF1cCuiV8H jw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2w12er4t9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 09:38:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA59XTs4052977;
-        Tue, 5 Nov 2019 09:36:53 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2w3160yr75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 09:36:52 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA59apol018864;
-        Tue, 5 Nov 2019 09:36:51 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 Nov 2019 01:36:50 -0800
-Date:   Tue, 5 Nov 2019 12:36:41 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sumit Saxena <sumit.saxena@broadcom.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
-        "James E. J. Bottomley" <jejb@linux.ibm.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Chandrakanth Patil <chandrakanth.patil@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH] scsi: megaraid_sas: Use common error handling code in
- megasas_mgmt_ioctl_fw()
-Message-ID: <20191105093641.GE10409@kadam>
-References: <d5c12f05-5a07-b698-ae60-2728330dd378@web.de>
- <CAL2rwxrdOVeO3RT_Y3mk3p-076eMMWm6VVF0C4yiYEWJ0TO5DQ@mail.gmail.com>
+        Tue, 5 Nov 2019 04:37:22 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 15so13682785pgt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:37:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jDulaD8yGPSw9RKsvK4+mof/PDtVuO9RYsvVXQwxzXM=;
+        b=o27oGeaQFxD86u8gIGPhrzIR6SfI9fMQiBcCgp5sHCQPiaD27PrDoNQBJWtB0QX+dP
+         qzXuOric5LOnQdEqqsdBrNIrsOh6QfgTwdZqm8w+5Bbo7Aqbc1nQr+Z2iKKg2xNmpSdW
+         XBp/BuUmEQddIvttxGZhA/tCgUFUvbqjcFk/iOpIDzFyrlKHe+nOzDET9BacRvs9g3AQ
+         /Z7xa0vBzFtlr1TRIsIb3T8BpEzi5Alw/tFY56gRnfYNBVsRaHVVTnHprjy2VeynAt1u
+         HVe3f6kmQpXlYTtVHFnMAEw897EAarckuA+gTg39J3OAKNz5oqgDex9R818HEacqL0TP
+         74jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jDulaD8yGPSw9RKsvK4+mof/PDtVuO9RYsvVXQwxzXM=;
+        b=E1BdWn8Trp8/DZriBp1yWkOO+xPXkxkCa/lqam4YVePS1LFY8kMWWZPKnUPq4uY/M9
+         YZ0mOqWxzVv+XfzVu8eOWarbvQa7eZeXoVSnbuTioSH6PdtgxmYFg5s+uMK9Ko0xE9Hp
+         plYqSnAa6UExtWEJa7dMVrmcPuIBSyx5jIlS0k6d6eeF70aG97exBvadB5oZ5bGiZF4Z
+         yXKhixzhyvjdCLenf0KzMBq/BVyQaLPLxNnwvY4Uj9lsUlr6KSl3C3xNOW1FJERMkHoV
+         1bM/3bOk67rS3s0Ro3TKRS/7yUiUuDrK8mSx+ecOuydtJwJAAnDq9uMvILLvqALvm7yd
+         0tSQ==
+X-Gm-Message-State: APjAAAV+1cMxZwq3CKPSaAVxZjJeIvGD+IJoLL5ZPfJKD387QBE5bjdQ
+        DhilmWMD7I3U0u3Pj19p1iBZ5w==
+X-Google-Smtp-Source: APXvYqyzuRVgyvTXTyQjC8xtu0nRUNtH/fWQGOgOhCgO04UFjuK/wTl+n0U3uw5++iupsawbMVoZEA==
+X-Received: by 2002:a17:90a:ab83:: with SMTP id n3mr5259220pjq.21.1572946641205;
+        Tue, 05 Nov 2019 01:37:21 -0800 (PST)
+Received: from localhost ([122.171.110.253])
+        by smtp.gmail.com with ESMTPSA id 135sm17540908pgh.89.2019.11.05.01.37.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 01:37:20 -0800 (PST)
+Date:   Tue, 5 Nov 2019 15:07:17 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Ondrej Jirman <megous@megous.com>, linux-sunxi@googlegroups.com,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:ALLWINNER CPUFREQ DRIVER" <linux-pm@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cpufreq: sun50i: Fix CPU speed bin detection
+Message-ID: <20191105093717.q5ixjjsnb3aqzxql@vireshk-i7>
+References: <20191101164152.445067-1-megous@megous.com>
+ <20191103155901.GC7001@gilmour>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL2rwxrdOVeO3RT_Y3mk3p-076eMMWm6VVF0C4yiYEWJ0TO5DQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911050082
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911050083
+In-Reply-To: <20191103155901.GC7001@gilmour>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 02:58:35PM +0530, Sumit Saxena wrote:
-> On Fri, Nov 1, 2019 at 3:06 AM Markus Elfring <Markus.Elfring@web.de> wrote:
+On 03-11-19, 16:59, Maxime Ripard wrote:
+> On Fri, Nov 01, 2019 at 05:41:51PM +0100, Ondrej Jirman wrote:
+> > I have observed failures to boot on Orange Pi 3, because this driver
+> > determined that my SoC is from the normal bin, but my SoC only works
+> > reliably with the OPP values for the slowest bin.
 > >
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Thu, 31 Oct 2019 22:23:02 +0100
+> > By querying H6 owners, it was found that e-fuse values found in the wild
+> > are in the range of 1-3, value of 7 was not reported, yet. From this and
+> > from unused defines in BSP code, it can be assumed that meaning of efuse
+> > values on H6 actually is:
 > >
-> > Move the same error code assignments so that such exception handling
-> > can be better reused at the end of this function.
+> > - 1 = slowest bin
+> > - 2 = normal bin
+> > - 3 = fastest bin
 > >
-> > This issue was detected by using the Coccinelle software.
+> > Vendor code actually treats 0 and 2 as invalid efuse values, but later
+> > treats all invalid values as a normal bin. This looks like a mistake in
+> > bin detection code, that was plastered over by a hack in cpufreq code,
+> > so let's not repeat it here. It probably only works because there are no
+> > SoCs in the wild with efuse value of 0, and fast bin SoCs are made to
+> > use normal bin OPP tables, which is also safe.
 > >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > Let's play it safe and interpret 0 as the slowest bin, but fix detection
+> > of other bins to match this research. More research will be done before
+> > actual OPP tables are merged.
+> >
+> > Fixes: f328584f7bff ("cpufreq: Add sun50i nvmem based CPU scaling driver")
+> > Signed-off-by: Ondrej Jirman <megous@megous.com>
 > 
-> Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-> 
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
-The code was a lot better originally...  :(
+Applied. Thanks.
 
-regards,
-dan carpenter
-
+-- 
+viresh
