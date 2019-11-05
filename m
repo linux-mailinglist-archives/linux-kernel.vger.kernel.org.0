@@ -2,138 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D16EFAEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:23:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E21EFADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388567AbfKEKXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 05:23:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56794 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388517AbfKEKXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 05:23:21 -0500
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2265C81F01
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 10:23:21 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id l184so7483520wmf.6
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 02:23:21 -0800 (PST)
+        id S2388255AbfKEKWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 05:22:13 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39990 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730633AbfKEKWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 05:22:12 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f4so14676478lfk.7;
+        Tue, 05 Nov 2019 02:22:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L2DCL6AJUoTx12g/nBt+5+g+jRrLNYmCpns9Ml6NzII=;
-        b=CvlJf/bJHRl2YxmuWVlIBUXLESAfJsbVJyur16nvMgskJOh+dPa6nD9fUzy/Dv9Qmm
-         tno1U33gRaivlwpWaG42xnqoRkOujWUxdtBAY+BzpcWOvWtItm1VhY3WeFs7bMzmjpYV
-         TsyTNPvY4hbAtT6ZkRCgO2EdUdDM/wDxn/jiHFLxUAvitXu8o1rlngpyv1AgcylrZusE
-         TcOHbgk9wHsQnQ/F6Euee5J1R0QW1CJaEOmnXsxmdrHinZRZgMGgAJRMJIoWCL7cZqKW
-         YiTqCzGRUt+bsmIbL2lrwX9Z9FCLPZpNVzQGZQ+RaJZSXiC8lm/zujfkWz/Uli/yiz1h
-         tiNg==
-X-Gm-Message-State: APjAAAUAJWuKpGT5tJkJ74QKd81zKqrJho07Wr8wavHQoctsQbnqUeYQ
-        30mlakYCCw3ycOYeyEjs6lKTpsaAMQymstfpEull6NxQUAgydmivsXuYzsTa/GCCCZCqa7IZvdc
-        vfiEFuWkQjIUnlnhnmtP3/2yO
-X-Received: by 2002:a05:600c:214b:: with SMTP id v11mr3615910wml.149.1572949399789;
-        Tue, 05 Nov 2019 02:23:19 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzBZkub82r+YaidAWnAVsPcUzN7WWqgOtKY4bu/OLSPh9FFpp+MoOYAmoKCvjjxybqwhQOC/A==
-X-Received: by 2002:a05:600c:214b:: with SMTP id v11mr3615883wml.149.1572949399478;
-        Tue, 05 Nov 2019 02:23:19 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id w9sm21506531wrt.85.2019.11.05.02.23.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 02:23:18 -0800 (PST)
-Subject: Re: [PATCH 13/13] x86: retpolines: eliminate retpoline from msr event
- handlers
-To:     Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20191104230001.27774-1-aarcange@redhat.com>
- <20191104230001.27774-14-aarcange@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <306784c2-25b0-9f25-c9e0-c23aaee11e4f@redhat.com>
-Date:   Tue, 5 Nov 2019 11:21:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9L58EzSLKcE9GwGbak6npuCDvAm3eZwiaRLQzP4rKQQ=;
+        b=JtXtX2SE3ok6jO/+qKEMvLToLZJVvHH7in+EBgEoo90KTuFQ1m4Ao1m7JLFdxvJ/TL
+         mcysL9MIiXxyOMbhiZ9+Urv7sG5OFXxMqjdjbD0gnr43OXQLL6Z0WIUqvYp5c1tcL3wO
+         0KHkPaHPrpwWpeHQtM+XCOIFClE0SkY82sSisxUsQqhMF0RmEmhzMJUkvF6U15fM4sE7
+         hMRPlRqtSeimPIfr2ErZxE5T67RW66NnsOpbxeJQJwV89Oy533pVGrxy7c8kg4Py4aOQ
+         EGCRTi0UfiNeMSiFVMcOAOCYG+Ii7g3jIu/DOeEF1A762jmBKnO9WKb8qwZdgh+ai7Jo
+         mLkA==
+X-Gm-Message-State: APjAAAXBSGHOTmnqcFbaDa4bS43gN1u65O+fo/voNTY5BZ1Nbv7q1u7h
+        XyyFiPjMGjVPvLbWAhuaCOw=
+X-Google-Smtp-Source: APXvYqz2ZgcNJ4MCoGF8keVV4rB112hF71Xe9R9O8z7TzTWd6Yo0BErmrgMLUFAHk9Twa8zkPhyYiw==
+X-Received: by 2002:ac2:44af:: with SMTP id c15mr20247815lfm.39.1572949330293;
+        Tue, 05 Nov 2019 02:22:10 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id u67sm11689034lja.78.2019.11.05.02.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 02:22:09 -0800 (PST)
+Date:   Tue, 5 Nov 2019 12:21:58 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 22/62] gpio: gpio-mmio: Use new GPIO_LINE_DIRECTION
+Message-ID: <196d96a4cf8bee0189269e4df86965a0ec1a7daf.1572945799.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1572945799.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20191104230001.27774-14-aarcange@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1572945799.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/19 00:00, Andrea Arcangeli wrote:
-> It's enough to check the value and issue the direct call.
-> 
-> After this commit is applied, here the most common retpolines executed
-> under a high resolution timer workload in the guest on a VMX host:
-> 
-> [..]
-> @[
->     trace_retpoline+1
->     __trace_retpoline+30
->     __x86_indirect_thunk_rax+33
->     do_syscall_64+89
->     entry_SYSCALL_64_after_hwframe+68
-> ]: 267
-> @[]: 2256
-> @[
->     trace_retpoline+1
->     __trace_retpoline+30
->     __x86_indirect_thunk_rax+33
->     __kvm_wait_lapic_expire+284
->     vmx_vcpu_run.part.97+1091
->     vcpu_enter_guest+377
->     kvm_arch_vcpu_ioctl_run+261
->     kvm_vcpu_ioctl+559
->     do_vfs_ioctl+164
->     ksys_ioctl+96
->     __x64_sys_ioctl+22
->     do_syscall_64+89
->     entry_SYSCALL_64_after_hwframe+68
-> ]: 2390
-> @[]: 33410
-> 
-> @total: 315707
-> 
-> Note the highest hit above is __delay so probably not worth optimizing
-> even if it would be more frequent than 2k hits per sec.
-> 
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> ---
->  arch/x86/events/intel/core.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index fcef678c3423..937363b803c1 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -3323,8 +3323,19 @@ static int intel_pmu_hw_config(struct perf_event *event)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_RETPOLINE
-> +static struct perf_guest_switch_msr *core_guest_get_msrs(int *nr);
-> +static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr);
-> +#endif
-> +
->  struct perf_guest_switch_msr *perf_guest_get_msrs(int *nr)
->  {
-> +#ifdef CONFIG_RETPOLINE
-> +	if (x86_pmu.guest_get_msrs == intel_guest_get_msrs)
-> +		return intel_guest_get_msrs(nr);
-> +	else if (x86_pmu.guest_get_msrs == core_guest_get_msrs)
-> +		return core_guest_get_msrs(nr);
-> +#endif
->  	if (x86_pmu.guest_get_msrs)
->  		return x86_pmu.guest_get_msrs(nr);
->  	*nr = 0;
-> 
+It's hard for occasional GPIO code reader/writer to know if values 0/1
+equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
+GPIO_LINE_DIRECTION_OUT to help them out.
 
-Queued, thanks.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/gpio/gpio-mmio.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-Paolo
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 6f904c874678..cd07c948649f 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -370,15 +370,24 @@ static int bgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ static int bgpio_get_dir(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	/* Return 0 if output, 1 if input */
+-	if (gc->bgpio_dir_unreadable)
+-		return !(gc->bgpio_dir & bgpio_line2mask(gc, gpio));
+-	if (gc->reg_dir_out)
+-		return !(gc->read_reg(gc->reg_dir_out) & bgpio_line2mask(gc, gpio));
++	if (gc->bgpio_dir_unreadable) {
++		if (gc->bgpio_dir & bgpio_line2mask(gc, gpio))
++			return GPIO_LINE_DIRECTION_OUT;
++		return GPIO_LINE_DIRECTION_IN;
++	}
++
++	if (gc->reg_dir_out) {
++		if (gc->read_reg(gc->reg_dir_out) & bgpio_line2mask(gc, gpio))
++			return GPIO_LINE_DIRECTION_OUT;
++		return GPIO_LINE_DIRECTION_IN;
++	}
++
+ 	if (gc->reg_dir_in)
+-		return !!(gc->read_reg(gc->reg_dir_in) & bgpio_line2mask(gc, gpio));
++		if (!(gc->read_reg(gc->reg_dir_in) & bgpio_line2mask(gc, gpio)))
++			return GPIO_LINE_DIRECTION_OUT;
+ 
+ 	/* This should not happen */
+-	return 1;
++	return GPIO_LINE_DIRECTION_IN;
+ }
+ 
+ static int bgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
