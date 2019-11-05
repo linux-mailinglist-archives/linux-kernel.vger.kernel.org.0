@@ -2,285 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7E4EF496
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E09D1EF492
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:48:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387454AbfKEEw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 23:52:57 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44669 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfKEEw5 (ORCPT
+        id S1730374AbfKEErk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 23:47:40 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:27618 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfKEErk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 23:52:57 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q26so14200957pfn.11;
-        Mon, 04 Nov 2019 20:52:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9hz3ZJLeDYhMxlLYKAjz4UifvSceyUYABWQabkx7Keo=;
-        b=PiPay+D8tMp5lmliTJE0WH/XzeZA0+1iD2uYelwfQ6+h3VTTvPLiUBQAruRC7dXUOu
-         Mnu64Uq6pL4fNEm0nAXThyP3H20yVwTC9BtId8oVYUwGr+Puasx9JOsPLTKI8qdlXFNX
-         LKTir9TY5Q52Za30dJi77bA5nSpropAa2T5GTRSKASroj7blwNjyffE+0Pg+t9LT2A6M
-         cPFfcJ2l3EdPxDIYZNKnwwp9KKz52nyAgM5u9rbkGMoGiNJQjM41Jw5SorGazegk+QAE
-         xYyXX3oLufyLWz4vl5yrB1sSHeFjBE/xjgYHqfAB7N/gNwyTynwyisOoyQANaXwslUIp
-         fSQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9hz3ZJLeDYhMxlLYKAjz4UifvSceyUYABWQabkx7Keo=;
-        b=avEK3ez/hydvRezejnA6vzbZdR+iEWlfroRb6G2Wsynmz3KsXk3gBDoFefOpuMrThl
-         WuWczrf4P8XcpHHwCqGgpk3Qk1lAf/LjM7dbgM0ktRadgdUR7jzVnZ3/jPLTvC/Mifxv
-         RaWQLi9wMSqZ4c+Hu0bXaKv9I0VYV/5aArd2lofW5G0mJrTN/LVnoU/cwlU3l90DKoFI
-         IxRMPghaESmRH2XUUjp3TnqryRoGB+HWURq7WqfMvh8GLeeM/soLRzTtHSPv3tW7dzaC
-         LcCUiGBVVUKCtREUD8TDwnSp72FS+nJ2oTBeXr9qiTJmVA1fZ+rfKmlZqLBVytftQ+6/
-         3lOg==
-X-Gm-Message-State: APjAAAXUohtVe83LH6OM1xrbfxYAVCyrBalFEO1O8HtmGF3fowkxwpH6
-        gIxdkQCEywUFse5irQhc6Ns=
-X-Google-Smtp-Source: APXvYqwT0ceOhFGdOopEPevOBzYGjIzCy0RHeiV0XGmNMICpOz4RRv1ZFaBIj6M5PVygvy4Wy1GDaQ==
-X-Received: by 2002:a63:e006:: with SMTP id e6mr26728550pgh.7.1572929575948;
-        Mon, 04 Nov 2019 20:52:55 -0800 (PST)
-Received: from Gentoo ([103.231.91.66])
-        by smtp.gmail.com with ESMTPSA id 22sm17895209pfo.131.2019.11.04.20.52.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 20:52:55 -0800 (PST)
-Date:   Tue, 5 Nov 2019 10:22:42 +0530
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts:prune-kernel:remove old kernels and modules dir
- from system
-Message-ID: <20191105045239.GC27350@Gentoo>
-References: <20191102063036.28601-1-unixbhaskar@gmail.com>
- <50680c37-9e85-0050-c1e1-700260a0471c@infradead.org>
- <20191105023243.GA16635@fieldses.org>
- <20191105043918.GB27350@Gentoo>
+        Mon, 4 Nov 2019 23:47:40 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191105044737epoutp0466b00cb78a2597c06c4c61577186c259~UKtNcKjtK0727007270epoutp04I
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 04:47:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191105044737epoutp0466b00cb78a2597c06c4c61577186c259~UKtNcKjtK0727007270epoutp04I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572929257;
+        bh=S7GszCat8t/vAG5IxSAad5wseTjeEI6qkoAfBu7k5j8=;
+        h=To:Cc:From:Date:References:From;
+        b=XWPoK3uAYUS1u7L7DNBel+3y4KFvsf0iMjVy1c9WjKxPcWxt6gkZRuHTuvv3MyV5W
+         ARaB/SrKx683LOPkSIjStZHBhQebx02Vf0qlbaaMUIZSoHdwNWfVGYKyxjKzxTp4Kj
+         GTj0NDw03AhaIUYaTCLhL9ovqqY928A4K2nPeN8U=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191105044736epcas1p4d4ce4d6de8e439628309d9ca3759e0ec~UKtMuIABr0481404814epcas1p4k;
+        Tue,  5 Nov 2019 04:47:36 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 476cbV1BQ9zMqYkf; Tue,  5 Nov
+        2019 04:47:34 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        71.40.04144.ADEF0CD5; Tue,  5 Nov 2019 13:47:22 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191105044721epcas1p39e8005d2ce341355cc1005c99565a766~UKs-AIAJq1495114951epcas1p3O;
+        Tue,  5 Nov 2019 04:47:21 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191105044721epsmtrp1d4caed0ba3b598746c08c335d3e08e71~UKs_-dYjD1652916529epsmtrp1H;
+        Tue,  5 Nov 2019 04:47:21 +0000 (GMT)
+X-AuditID: b6c32a35-2dfff70000001030-3a-5dc0feda50fd
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FC.C1.25663.9DEF0CD5; Tue,  5 Nov 2019 13:47:21 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191105044721epsmtip1da04a5e78ede5f62709355d7c6576c33~UKs_2g11S1653816538epsmtip1G;
+        Tue,  5 Nov 2019 04:47:21 +0000 (GMT)
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <f618ed4d-05ce-75cd-8cd9-24d8fe5a2551@samsung.com>
+Date:   Tue, 5 Nov 2019 13:52:59 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w7PDEPdKQumQfZlR"
-Content-Disposition: inline
-In-Reply-To: <20191105043918.GB27350@Gentoo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt3u9TnN1m1qnETpv/pHi1KuuVqgZhazyD6EHEQ276EXFvdrd
+        RDPEiPJBllqYLsXKpBJRk+WrZPOmqAS9o1IsKSktX2SaFD22XSP/+853zvc73zm/I8akZYRM
+        nKk3syY9o6UIb7z9QYhCMfzboYnk23FV+esXuOp0fQuhet5dQ6hGTt0iEnB1W2MxobbXNnmq
+        z9sakXq+LSAZP5IVm8EyaaxJzupTDWmZ+vQ4at/+lF0pyi2RtILeptpKyfWMjo2jdiclKxIz
+        tc6WlDyb0VqcVDLDcVREfKzJYDGz8gwDZ46jWGOa1rjNGM4xOs6iTw9PNei205GRUUpn4bGs
+        jOtnuj2NEz457Y5ZogDd8y5BYjGQMTDEm0qQt1hKdiJY+sh7CsFXBDf6y0RCsIhgsuYPVoK8
+        3IqXp37gQqIHwYj997JkFsGzxV8iV5UfuRkm+4fdVRhpQ/BlqhN3JQgyFOwTrwkXXkMGwcul
+        D8hlRELGw4TNrcXJYBhv+iRy0f7kYXi4wLhoCbkWhqrH3a9g5HoYHq8TCTgQOqZrMFcrIFsJ
+        uHL1rofgdDc0V04vY1/4PGDzFLAMJi+cXcZ5cHuojxDERQhs9ifLgmiwN1x0m8DIEGjpjhDo
+        IOj6WYuExqthZuGch7BHCRSdlQolm+D52KhIwBugvrCYELAa+I4K9xKlpAbuzbeKypDcumI0
+        64rRrCtGs/43cRXhjWgda+R06SxHG+mVn92G3NcYquxElx4l8YgUI8pHMlfo0Eg9mGwuV8cj
+        EGOUn+RpVY9GKkljck+wJkOKyaJlOR4pnYsvx2T+qQbnbevNKbQyKjo6WhVDb1HSNLVesvNm
+        g0ZKpjNmNotljazpn04k9pIVoC6ZcjAmbO6k6kCEb21OcWJBol/eM//v72b6a/zyDzruhPUM
+        8FXlXRG1R68pQnziRlvKPz+eCigteWWoG8tzJA9s7PuEHwrpTeiPTXrfXLrUev/bvlUz+S/e
+        BNrwp9WV3m0VeYkdd2cGx3rDh+zD1h17jndbgkez+LLVE5c9NMzetxTOZTB0KGbimL8nMWxe
+        owMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsWy7bCSnO7NfwdiDY7+VbaYeOMKi0Xz4vVs
+        Fpd3zWGzuN24gs2BxWPTqk42j/1z17B79G1ZxejxeZNcAEsUl01Kak5mWWqRvl0CV8ai1l3s
+        BS94KrYdeM/WwLibq4uRk0NCwETiauMvli5GLg4hgd2MEl/3X2OHSEhKTLt4lLmLkQPIFpY4
+        fLgYouYto8SKhh+MIDUiAhoSL4/eAmtmFtjCKNE2aSYTSIJNQEti/4sbbCA2v4CixNUfjxlB
+        BvEK2Em82AJWwiKgIvFkzXMwW1QgQuL59htgM3kFBCVOznzCAmIzC6hL/Jl3iRnCFpe49WQ+
+        E4QtL7H97RzmCYwCs5C0zELSMgtJyywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl
+        5+duYgQHt5bWDsYTJ+IPMQpwMCrx8H5oPxArxJpYVlyZe4hRgoNZSYT34oy9sUK8KYmVValF
+        +fFFpTmpxYcYpTlYlMR55fOPRQoJpCeWpGanphakFsFkmTg4pRoYhf9L3kyUmSW8WXTLBqZ7
+        abc6CkwLvFy86h12q1xiMnrQZ6scErsu6a6mSfI8f4uF/r7zP/d27p///eHlhLroehF/V0lb
+        cUbO2OscE7mP3rwXo5S8vWr1U4M7TTGZVeWtsub5N5WOHb205gubbYddevCO9ve/RHmMP99L
+        W6TKdrbcse1g4iMlluKMREMt5qLiRADrMM8PagIAAA==
+X-CMS-MailID: 20191105044721epcas1p39e8005d2ce341355cc1005c99565a766
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191105044721epcas1p39e8005d2ce341355cc1005c99565a766
+References: <CGME20191105044721epcas1p39e8005d2ce341355cc1005c99565a766@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Greg,
 
---w7PDEPdKQumQfZlR
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is extcon-next pull request for v5.5. I add detailed description of
+this pull request on below. Please pull extcon with following updates.
 
-On 10:09 Tue 05 Nov 2019, Bhaskar Chowdhury wrote:
->On 21:32 Mon 04 Nov 2019, J. Bruce Fields wrote:
->>On Mon, Nov 04, 2019 at 06:03:13PM -0800, Randy Dunlap wrote:
->>> On 11/1/19 11:30 PM, Bhaskar Chowdhury wrote:
->>> > This patch allow you to remove old kernels and associated modules
->>> > directory from the system.You can do it at once with the -r flag
->>> > and interactively with the -i flag.
->>> >=20
->>> > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
->>> > ---
->>> >  scripts/prune-kernel | 82 +++++++++++++++++++++++++++++++++++-------=
---
->>> >  1 file changed, 65 insertions(+), 17 deletions(-)
->>>=20
->>> Hi,
->>> I believe that this script now does what the patch author intends it to=
- do.
->>> It does have a few whitespace issues, but no big deals.  (see below)
->>
->>My original comment stands: looks like it prompts for full module path
->>and kernel versions which means it's no more convenient than just doing
->>an "ls" and then removing the ones you want to.  (In fact, with "rm"
->>you'd also get the benefit of tab completion....)
+Detailed description for this pull request:
+1. Clean up the and fix the minor issue of extcon provider driver
+- extcon-intel-cht-wc don't reset the USB data connection at probe time
+  in order to prevent the removing all devices from bus.
+- extcon-sm5502 reset the registers at proble time in order to
+  prevent the some stuck state. And remove the redundant variable
+  initialization.
 
-Bruce,
+Best Regards,
+Chanwoo Choi
 
-There is -r or --remove option , with that you can pass the kernel
-version and modules directory name , and the script will remove those
-without prompting you for those.
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-For instance you need to pass the options like this :
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-=2E/scripts/prune-kernel -r kernel_version modules_directory_name
-OR
-=2E/scripts/prune-kernel --remove kernel_version modules_directory_name
+are available in the Git repository at:
 
-Which I certainly believe is not just "ls and rm" stuff...could you
-please give it a shot ,and let me know the shortcoming please??
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-5.5
 
-So , I can fix the damn thing.
->
->Hi Bruce,
->I am forcing user to put full modules directory name,kinda engagement=20
->to the process.It is not a trivial operation, so the users should be=20
->aware.
->OHT Could you please state what else you would like to be inducted in
->the so it can be useful?? So sorry for my weak memory if you already=20
->explicitly stated something like that before.
->
->Thanks,
->Bhaskar
->>
->>It's quite different from the original script and I don't really see the
->>advantage.
->>
->>--b.
->>
->>>=20
->>> Tested-by: Randy Dunlap <rdunlap@infradead.org>
->>>=20
->>>=20
->>> > diff --git a/scripts/prune-kernel b/scripts/prune-kernel
->>> > index e8aa940bc0a9..01d0778db71f 100755
->>> > --- a/scripts/prune-kernel
->>> > +++ b/scripts/prune-kernel
->>> > @@ -1,21 +1,69 @@
->>> >  #!/bin/bash
->>> >  # SPDX-License-Identifier: GPL-2.0
->>> > +#This script will remove old kernels and modules directory related t=
-o it.
->>> > +#"-r" or "--remove" show how to silently remove old kernel and modul=
-es dir.
->>> > +# "-h" or "--help" show how to use this script or show without param=
-eter.
->>> > +#"-i" or "--interactive" show how to remove interactively.
->>> > +
->>> > +flag=3D$1
->>> > +kernel_version=3D$2
->>> > +modules_version=3D$3
->>> > +boot_dir=3D/boot
->>> > +modules_dir=3D/lib/modules
->>> > +
->>> > +remove_old_kernel() {
->>> > +	cd $boot_dir
->>> > +	rm -If vmlinuz-$kernel_version System.map-$kernel_version config-$k=
-ernel_version
->>> > +	return 0
->>> > +}
->>> > +
->>> > +remove_old_modules_dir() {
->>> > +	cd $modules_dir
->>> > +	rm -rf $modules_version
->>> > +	return 0
->>> > +}
->>> > +
->>> > +usage() {
->>> > +	printf "Usage: $(basename $0) [-ri]\n"
->>> > +	printf "\n -r or --remove  kernel_version modules_version\n"
->>> > +	printf "\n -i or --interactive do as interactive way\n"
->>> > +	return 0
->>> > +}
->>> > +
->>> > +case "$flag" in
->>> > +	-i | --interactive)
->>> > +		printf "\nEnter kernel version to remove or blank/empty to exit:"
->>> > +		read kernel_version
->>> > +		if [[ $kernel_version !=3D "" ]]; then
->>> > +			remove_old_kernel
->>> > +			printf "\nRemoved kernel version:$kernel_version from the system.=
-\n\n"
->>>=20
->>> space after ':'
->>>=20
->>> drop one \n above.
->>>=20
->>> > +			printf "Please give the full modules directory name to remove:"
->>> > +			read modules_version
->>> > +			if [[ $modules_version !=3D "" ]]; then
->>> > +				remove_old_modules_dir
->>> > +				printf "\n\nRemoved modules directory:$modules_version from the =
-system.\n\n"
->>>=20
->>> space after ':'
->>>=20
->>> drop one \n above.
->>>=20
->>> > +			else
->>> > +				exit 1
->>> > +			fi
->>> > +		fi
->>> > +		;;
->>> > +	-h | --help)
->>> > +		usage
->>> > +		exit 0
->>> > +		;;
->>> > +	-r | --remove)
->>> > +		if [[ $# -ne 3 ]]; then
->>> > +			 printf "You need to provide kernel version and modules directory=
- name.\n"
->>> > +			 exit 1
->>> > +		 else
->>> > +			 remove_old_kernel
->>> > +			 remove_old_modules_dir
->>> > +		fi
->>> > +		;;
->>> > +	*)
->>> > +		usage
->>> > +		exit 1
->>> > +		;;
->>> > +esac
->>> >=20
->>> > -# because I use CONFIG_LOCALVERSION_AUTO, not the same version again=
- and
->>> > -# again, /boot and /lib/modules/ eventually fill up.
->>> > -# Dumb script to purge that stuff:
->>> >=20
->>>=20
->>> OK, the former script's loop is removed.. good.
->>> But the 2 preceding blank lines are not removed, so the script
->>> now ends with 2 unnecessary blank lines.
->>>=20
->>> > -for f in "$@"
->>> > -do
->>> > -        if rpm -qf "/lib/modules/$f" >/dev/null; then
->>> > -                echo "keeping $f (installed from rpm)"
->>> > -        elif [ $(uname -r) =3D "$f" ]; then
->>> > -                echo "keeping $f (running kernel) "
->>> > -        else
->>> > -                echo "removing $f"
->>> > -                rm -f "/boot/initramfs-$f.img" "/boot/System.map-$f"
->>> > -                rm -f "/boot/vmlinuz-$f"   "/boot/config-$f"
->>> > -                rm -rf "/lib/modules/$f"
->>> > -                new-kernel-pkg --remove $f
->>> > -        fi
->>> > -done
->>> > --
->>>=20
->>>=20
->>> --=20
->>> ~Randy
+for you to fetch changes up to ddd1bbbae486ff5913c8fc72c853dcea60713236:
 
->-----BEGIN PGP SIGNATURE-----
->
->iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl3A/PMACgkQsjqdtxFL
->KRUyqQgAya3BYL2iEMk0N3b1/Ji3TVzjrhaMrYM1bc6MDs7UA83ikBBG7C/dSmZ9
->3l9ANXfEnjaF64FpuLTNE2pT/tVxEj+xQz5iWw3JXV9TR7P2rq6814LH4b3hXX54
->A9r0sIRz0xwCMq7ihtNtgXziyviLp8UkUjIK+1C4vQ0h9/CvP0YETq8fgRWASMrS
->2+VErRPd06DryAAnapz9CnZz2Fju6S4mA2aaTJ3hiDLNmbj++6IoNQw+r5MZrWde
->yUqPQcfAzxs6/GIuUPK3uStudgofQjCKbHbPho9jjmwXrNSFH6/0/pjz5R91oMu9
->AWpkl0vkvAvzLsjRIeMG/MmClx0c3w=3D=3D
->=3DVReA
->-----END PGP SIGNATURE-----
+  extcon: sm5502: remove redundant assignment to variable cable_type (2019-10-31 13:47:42 +0900)
 
---w7PDEPdKQumQfZlR
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+Colin Ian King (1):
+      extcon: sm5502: remove redundant assignment to variable cable_type
 
------BEGIN PGP SIGNATURE-----
+Stephan Gerhold (1):
+      extcon: sm5502: Reset registers during initialization
 
-iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl3BABMACgkQsjqdtxFL
-KRXGAAgAk9Kzh1JY6jpwGMleBn7hGbS53q8EmPa0bNeH5u8/tsvBOxamZYKKmvS3
-0O2kOk0nvhxFbBtShI77N8uOx05lBrHJpmzMbn4DpH4tiiG1yZnwJP/qpDqHhGWA
-lqlYfdKo2Jae9kt/dMBgDiOJ5OUgk2XStfKEW9Gwf0iBCeFpOkPnm3Rgnjtp0k11
-+U8gPvUoEMFyhnxKy6K5VHEiVTDxn8FxVMFp9ZE+BgVfLRZKattvIsPGwoeV0+TW
-uEmS7eXNY0zXHcmA2aAZ35YAEw54E8ERmjXmDID+NSsMEyFDZBm+BOidWpEas5cN
-0OcZiWKdGKzEprawQEDRLO+J4+L2Dg==
-=2PV7
------END PGP SIGNATURE-----
+Yauhen Kharuzhy (1):
+      extcon-intel-cht-wc: Don't reset USB data connection at probe
 
---w7PDEPdKQumQfZlR--
+ drivers/extcon/extcon-intel-cht-wc.c | 16 ++++++++++++++--
+ drivers/extcon/extcon-sm5502.c       |  6 +++++-
+ drivers/extcon/extcon-sm5502.h       |  2 ++
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
