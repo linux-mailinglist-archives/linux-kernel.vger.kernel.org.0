@@ -2,88 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD6CEF3C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 04:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D79EF3CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 04:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfKEDEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 22:04:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727861AbfKEDEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 22:04:53 -0500
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF300206B8;
-        Tue,  5 Nov 2019 03:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572923092;
-        bh=ayQqU8Qbemc32/HIUooa1m/XuTOUikPJAAUvS/qaxjU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M4fbfC66Tih/uZITmA1N9W/HcX5rt9+ugMU/5Z3rcTE3omxFQXy4jw67GFv8tbBg9
-         tACLhT3w+YOkMDSBb9ubrP70uZKwt5Wva5IeHIprFRpTdoXop48AZfklA245kBm7C6
-         3XQ8sPBdy+FZrB11Cbde8HdqVp896Z/3h0f9SFKg=
-Date:   Mon, 4 Nov 2019 19:04:51 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 3/3] Revert "f2fs: use kvmalloc, if kmalloc is failed"
-Message-ID: <20191105030451.GA55090@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191101095324.9902-1-yuchao0@huawei.com>
- <20191101095324.9902-3-yuchao0@huawei.com>
- <20191105000249.GA46956@jaegeuk-macbookpro.roam.corp.google.com>
- <40d0df3f-cc55-d31a-474b-76f57d96bd89@huawei.com>
- <20191105023835.GD692@sol.localdomain>
- <00ade77c-5451-4953-0232-89342a029f33@huawei.com>
+        id S1729855AbfKEDIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 22:08:14 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6149 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727861AbfKEDIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 22:08:14 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E69B818E32CC7FF4FE48;
+        Tue,  5 Nov 2019 11:08:11 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 5 Nov 2019
+ 11:08:01 +0800
+Subject: Re: [PATCH] xfs: optimise xfs_mod_icount/ifree when delta < 0
+To:     Christoph Hellwig <hch@infradead.org>
+References: <1572866980-13001-1-git-send-email-zhangshaokun@hisilicon.com>
+ <20191104152517.GD10485@infradead.org>
+CC:     <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yang Guo <guoyang2@huawei.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+Message-ID: <c2c0ccb7-64c9-4549-6683-0984073ccd0b@hisilicon.com>
+Date:   Tue, 5 Nov 2019 11:08:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00ade77c-5451-4953-0232-89342a029f33@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20191104152517.GD10485@infradead.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/05, Chao Yu wrote:
-> On 2019/11/5 10:38, Eric Biggers wrote:
-> > On Tue, Nov 05, 2019 at 10:17:41AM +0800, Chao Yu wrote:
-> >> On 2019/11/5 8:02, Jaegeuk Kim wrote:
-> >>> On 11/01, Chao Yu wrote:
-> >>>> This reverts commit 5222595d093ebe80329d38d255d14316257afb3e.
-> >>>>
-> >>>> As discussed with Eric, as kvmalloc() will try kmalloc() first, so
-> >>>> when we need allocate large size memory, it'd better to use
-> >>>> f2fs_kvmalloc() directly rather than adding additional fallback
-> >>>> logic to call kvmalloc() after we failed in f2fs_kmalloc().
-> >>>>
-> >>>> In order to avoid allocation failure described in original commit,
-> >>>> I change to use f2fs_kvmalloc() for .free_nid_bitmap bitmap memory.
-> >>>
-> >>> Is there any problem in the previous flow?
-> >>
-> >> No existing problem, however, it's redundant to introduce fallback flow in
-> >> f2fs_kmalloc() like vmalloc() did, since we can call f2fs_vmalloc() directly in
-> >> places where we need large memory.
-> >>
-> >> Thanks,
-> >>
-> > 
-> > f2fs_kmalloc() also violated the naming convention used everywhere else in the
-> > kernel since it could return both kmalloc and vmalloc memory, not just kmalloc
-> > memory.  That's really error-prone since people would naturally assume it's safe
-> > to free the *_kmalloc()-ed memory with kfree().
+Hi Christoph,
+
+On 2019/11/4 23:25, Christoph Hellwig wrote:
+> On Mon, Nov 04, 2019 at 07:29:40PM +0800, Shaokun Zhang wrote:
+>> From: Yang Guo <guoyang2@huawei.com>
+>>
+>> percpu_counter_compare will be called by xfs_mod_icount/ifree to check
+>> whether the counter less than 0 and it is a expensive function.
+>> let's check it only when delta < 0, it will be good for xfs's performance.
 > 
-> Agreed.
+> How much overhead do you see?  In the end the compare is just a debug
 
-Then, why not just keeping f2fs_kvmalloc() and replace all f2fs_kmalloc() with
-f2fs_kvmalloc()?
+Thanks your reply, sorry for my not clear description.
+__percpu_counter_compare itself is not expensive, but __percpu_counter_sum
+called by __percpu_counter_compare is high load, I will list it in next thread.
 
-f2fs_kvmalloc()
-- call kmalloc()
-- vmalloc(), if failed
+> check, so if it actually shows up we should remove it entirely.
+> 
 
-I'd like to keep the allocation behavior first.
+I'm not sure about it, so I check the delta to do less modification.
 
 Thanks,
+Shaokun
+
+> 
+
