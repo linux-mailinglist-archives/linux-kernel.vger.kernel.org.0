@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4D5F0684
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 032CDF065F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfKET75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 14:59:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:58398 "EHLO foss.arm.com"
+        id S1727252AbfKETy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 14:54:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:58000 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfKET75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 14:59:57 -0500
+        id S1726141AbfKETy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 14:54:57 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFEB14F2;
-        Tue,  5 Nov 2019 11:59:56 -0800 (PST)
-Received: from [10.162.40.121] (a075563-lin.blr.arm.com [10.162.40.121])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33DFF3FB40;
-        Mon,  4 Nov 2019 23:02:20 -0800 (PST)
-Subject: Re: [PATCHv2 1/8] ftrace: add ftrace_init_nop()
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, deller@gmx.de, duwe@suse.de,
-        James.Bottomley@HansenPartnership.com, james.morse@arm.com,
-        jeyu@kernel.org, jpoimboe@redhat.com, jthierry@redhat.com,
-        linux-parisc@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-References: <20191029165832.33606-1-mark.rutland@arm.com>
- <20191029165832.33606-2-mark.rutland@arm.com>
- <daad0785-a33f-3cfb-cf0f-657b6c677257@arm.com>
- <20191104081136.645e9b1a@grimm.local.home>
-From:   Amit Kachhap <amit.kachhap@arm.com>
-Message-ID: <ca7dd81e-5d98-c0f6-3d84-4f2cc20f4676@arm.com>
-Date:   Tue, 5 Nov 2019 12:29:23 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E02A7B9;
+        Tue,  5 Nov 2019 11:54:56 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E4523FBA1;
+        Tue,  5 Nov 2019 01:15:53 -0800 (PST)
+Date:   Tue, 5 Nov 2019 09:15:51 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 11/17] arm64: disable function graph tracing with SCS
+Message-ID: <20191105091301.GB4743@lakrids.cambridge.arm.com>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com>
+ <20191101221150.116536-12-samitolvanen@google.com>
+ <20191104171132.GB2024@lakrids.cambridge.arm.com>
+ <CABCJKufDnLjP9vA-wSW0gSY05Cbr=NOpJ-WCh-bdj2ZNq7VNXw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191104081136.645e9b1a@grimm.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABCJKufDnLjP9vA-wSW0gSY05Cbr=NOpJ-WCh-bdj2ZNq7VNXw@mail.gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/4/19 6:41 PM, Steven Rostedt wrote:
-> On Sat, 2 Nov 2019 17:49:00 +0530
-> Amit Daniel Kachhap <amit.kachhap@arm.com> wrote:
+On Mon, Nov 04, 2019 at 03:44:39PM -0800, Sami Tolvanen wrote:
+> On Mon, Nov 4, 2019 at 9:11 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > Can you please elaborate on _how_ this is incompatible in the commit
+> > message?
+> >
+> > For example, it's not clear to me if you mean that's functionally
+> > incompatible, or if you're trying to remove return-altering gadgets.
+> >
+> > If there's a functional incompatibility, please spell that out a bit
+> > more clearly. Likewise if this is about minimizing the set of places
+> > that can mess with control-flow outside of usual function conventions.
 > 
->> Now that ftrace_init_nop is also an arch implemented function so it may
->> be added in Documentation/trace/ftrace-design.rst along with
->> ftrace_make_nop.
->> In general also, adding some description about patchable-function-entry
->> in kernel Documentation will be useful.
-> 
-> I think this part is outside the scope of this patch set. Honestly, I
-> need to chisel out some time to rewrite the ftrace-design document, as
-> that's been long needed. But that can come at a later time. I'm
-> currently rewriting some of it now, so it will be best to not waste
-> effort to update a document that will soon become stale. ;-)
-Yes it makes sense.
+> Sure, I'll add a better description in v5. In this case, the return
+> address is modified in the kernel stack, which means the changes are
+> ignored with SCS.
+
+Ok, that makes sense to me. I'd suggest something like:
+
+| The graph tracer hooks returns by modifying frame records on the
+| (regular) stack, but with SCS the return address is taken from the
+| shadow stack, and the value in the frame record has no effect. As we
+| don't currently have a mechanism to determine the corresponding slot
+| on the shadow stack (and to pass this through the ftrace
+| infrastructure), for now let's disable the graph tracer when SCS is
+| enabled.
+
+... as I suspect with some rework of the trampoline and common ftrace
+code we'd be able to correctly manipulate the shadow stack for this.
+Similarly, if clang gained -fpatchable-funciton-etnry, we'd get that for
+free.
 
 Thanks,
-Amit
-> 
-> -- Steve
-> 
+Mark.
