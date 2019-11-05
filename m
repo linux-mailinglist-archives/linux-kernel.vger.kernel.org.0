@@ -2,122 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372ABEFB42
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C11EFB33
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388697AbfKEKc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 05:32:26 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44247 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388583AbfKEKcY (ORCPT
+        id S2388543AbfKEKbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 05:31:11 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44250 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388093AbfKEKbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 05:32:24 -0500
-Received: from 79.184.254.83.ipv4.supernova.orange.pl (79.184.254.83) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 31dc8ebde46860d1; Tue, 5 Nov 2019 11:32:21 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx@lists.freedesktop.org
-Subject: [PATCH 4/5] PCI: PM: Avoid exporting __pci_complete_power_transition()
-Date:   Tue, 05 Nov 2019 11:30:36 +0100
-Message-ID: <1731661.ykamz2Tiuf@kreacher>
-In-Reply-To: <2771503.n70vfTtcVb@kreacher>
-References: <2771503.n70vfTtcVb@kreacher>
+        Tue, 5 Nov 2019 05:31:10 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g3so15056548ljl.11;
+        Tue, 05 Nov 2019 02:31:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ggSCNAhKWDAQfnI1StH0nU3POuONxOaNf53ZjEk0tRo=;
+        b=kXA47VE1jn35t7REZkc4DfgsBLUShx5soMmHRDa2ywLDOQJ9LY7pLoj10S9OVHeAOO
+         uPm+OV9QxpJ20f8TFaHwrmyXa5JjxzAg5fckC/6mwZpaITIjmCJ/Br4TwPWdK3jpc7ip
+         13liA0mLqcpp5JEnktahH9Dix9M8qZ22G/w5IeYqxe7wyAPrBRlPJl6nOxz9vaYQX0RW
+         8RFs6+ZwNHAWg17ymvVoYhGnBL+sY2475lHoMV5WoVkeZAQQbKSAFEdB1CPAPdB2zkzN
+         uP2GI8rSTUuWKTZD78vIn3DFs88cluXxd4nUJLv9BCALNo6GOZQuLlCYuJ2s4TN35WOe
+         k9Fg==
+X-Gm-Message-State: APjAAAXdUptCPQiicshlSZYyLjiiz5ZtE9LjhjmhmFDwh5H4vVzxoq1O
+        9K6R1xxU+tBzFD/8SSkH0FE=
+X-Google-Smtp-Source: APXvYqz0UZmZK1gDDAdaOfCCRbxurzlfXmRgO3ZpZ9vcag4bLsqt98u9MkIOWp/ylNFSuRY4eaGaIA==
+X-Received: by 2002:a2e:9016:: with SMTP id h22mr14151346ljg.137.1572949868198;
+        Tue, 05 Nov 2019 02:31:08 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id k19sm8781244ljg.18.2019.11.05.02.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 02:31:07 -0800 (PST)
+Date:   Tue, 5 Nov 2019 12:30:58 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Thorsten Scherer <t.scherer@eckelmann.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 40/62] gpio: gpio-siox: Use new GPIO_LINE_DIRECTION
+Message-ID: <91a796dd2811b58f4be30875f5ef644f0e43f241.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1572945896.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+It's hard for occasional GPIO code reader/writer to know if values 0/1
+equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
+GPIO_LINE_DIRECTION_OUT to help them out.
 
-Notice that radeon_set_suspend(), which is the only caller of
-__pci_complete_power_transition() outside of pci.c, really only
-cares about the pci_platform_power_transition() invoked by it,
-so export the latter instead of it, update the radeon driver to
-call pci_platform_power_transition() directly and make
-__pci_complete_power_transition() static.
-
-Code rearrangement, no intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/pci/pci.c                   |    6 +++---
- drivers/video/fbdev/aty/radeon_pm.c |    2 +-
- include/linux/pci.h                 |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-siox.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: linux-pm/drivers/pci/pci.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci.c
-+++ linux-pm/drivers/pci/pci.c
-@@ -963,7 +963,7 @@ void pci_refresh_power_state(struct pci_
-  * @dev: PCI device to handle.
-  * @state: State to put the device into.
-  */
--static int pci_platform_power_transition(struct pci_dev *dev, pci_power_t state)
-+int pci_platform_power_transition(struct pci_dev *dev, pci_power_t state)
+diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
+index 006a7e6a75f2..311f66757b92 100644
+--- a/drivers/gpio/gpio-siox.c
++++ b/drivers/gpio/gpio-siox.c
+@@ -203,9 +203,9 @@ static int gpio_siox_direction_output(struct gpio_chip *chip,
+ static int gpio_siox_get_direction(struct gpio_chip *chip, unsigned int offset)
  {
- 	int error;
- 
-@@ -979,6 +979,7 @@ static int pci_platform_power_transition
- 
- 	return error;
+ 	if (offset < 12)
+-		return 1; /* input */
++		return GPIO_LINE_DIRECTION_IN;
+ 	else
+-		return 0; /* output */
++		return GPIO_LINE_DIRECTION_OUT;
  }
-+EXPORT_SYMBOL_GPL(pci_platform_power_transition);
  
- /**
-  * pci_wakeup - Wake up a PCI device
-@@ -1061,7 +1062,7 @@ void pci_bus_set_current_state(struct pc
-  *
-  * This function should not be called directly by device drivers.
-  */
--int __pci_complete_power_transition(struct pci_dev *dev, pci_power_t state)
-+static int __pci_complete_power_transition(struct pci_dev *dev, pci_power_t state)
- {
- 	int ret;
- 
-@@ -1073,7 +1074,6 @@ int __pci_complete_power_transition(stru
- 		pci_bus_set_current_state(dev->subordinate, PCI_D3cold);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(__pci_complete_power_transition);
- 
- /**
-  * pci_set_power_state - Set the power state of a PCI device
-Index: linux-pm/drivers/video/fbdev/aty/radeon_pm.c
-===================================================================
---- linux-pm.orig/drivers/video/fbdev/aty/radeon_pm.c
-+++ linux-pm/drivers/video/fbdev/aty/radeon_pm.c
-@@ -2593,7 +2593,7 @@ static void radeon_set_suspend(struct ra
- 		 * calling pci_set_power_state()
- 		 */
- 		radeonfb_whack_power_state(rinfo, PCI_D2);
--		__pci_complete_power_transition(rinfo->pdev, PCI_D2);
-+		pci_platform_power_transition(rinfo->pdev, PCI_D2);
- 	} else {
- 		printk(KERN_DEBUG "radeonfb (%s): switching to D0 state...\n",
- 		       pci_name(rinfo->pdev));
-Index: linux-pm/include/linux/pci.h
-===================================================================
---- linux-pm.orig/include/linux/pci.h
-+++ linux-pm/include/linux/pci.h
-@@ -1232,7 +1232,7 @@ struct pci_cap_saved_state *pci_find_sav
- int pci_add_cap_save_buffer(struct pci_dev *dev, char cap, unsigned int size);
- int pci_add_ext_cap_save_buffer(struct pci_dev *dev,
- 				u16 cap, unsigned int size);
--int __pci_complete_power_transition(struct pci_dev *dev, pci_power_t state);
-+int pci_platform_power_transition(struct pci_dev *dev, pci_power_t state);
- int pci_set_power_state(struct pci_dev *dev, pci_power_t state);
- pci_power_t pci_choose_state(struct pci_dev *dev, pm_message_t state);
- bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
+ static int gpio_siox_probe(struct siox_device *sdevice)
+-- 
+2.21.0
 
 
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
