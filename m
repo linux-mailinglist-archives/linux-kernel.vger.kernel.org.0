@@ -2,57 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A65EF4A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6802AEF49F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:56:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387484AbfKEE75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 23:59:57 -0500
-Received: from smtprelay0122.hostedemail.com ([216.40.44.122]:57286 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387399AbfKEE75 (ORCPT
+        id S2387499AbfKEE4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 23:56:04 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:35713 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfKEE4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 23:59:57 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 412FF1801A991;
-        Tue,  5 Nov 2019 04:59:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:152:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3622:3867:3872:3874:4043:4321:5007:7903:10004:10400:10848:11232:11658:11914:12297:12740:12895:13069:13311:13357:13894:14659:21080:21451:21627:21939:30012:30054:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: tiger32_90babfc2ae605
-X-Filterd-Recvd-Size: 1412
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  5 Nov 2019 04:59:54 +0000 (UTC)
-Message-ID: <4df246124153bcece639fdd026c4eee629b4bb7a.camel@perches.com>
-Subject: Re: [PATCH 0/3] drm/tegra: Remove space after parenthesis
-From:   Joe Perches <joe@perches.com>
-To:     =?UTF-8?Q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jamal Shareef <jamal.k.shareef@gmail.com>
-Cc:     outreachy-kernel@googlegroups.com, thierry.reding@gmail.com,
-        airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 04 Nov 2019 20:59:43 -0800
-In-Reply-To: <20191105045337.GB1764@qmqm.qmqm.pl>
-References: <cover.1572920482.git.jamal.k.shareef@gmail.com>
-         <20191105045337.GB1764@qmqm.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        Mon, 4 Nov 2019 23:56:04 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191105045559epoutp01c000093561afebdfb89cfe83546946f7~UK0hApMaN3218332183epoutp01V
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 04:55:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191105045559epoutp01c000093561afebdfb89cfe83546946f7~UK0hApMaN3218332183epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572929759;
+        bh=Ytjp7wk0UhlcXLv1udNAWJDob+wMlvoJ1O86UtYOlYM=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=UJgROrTF0VT4NC57Mz9vGpLpZfTyW4wwQbGxfQrKYHopwmzEvnQA+3heFazTMVV5t
+         feyIpG/r/PhiEpcXzIGYoj6+WMhsaclDWfdii7NH8mMrtjWhXt+83ZfJ/3a1IUTiSi
+         RQS0hRxC6NyO5eFkr5CsSx5OiUd7riSw7vbprPx0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191105045558epcas1p4bca547e7d03b44fdabb802313e48e958~UK0gg2BuP1859818598epcas1p4B;
+        Tue,  5 Nov 2019 04:55:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 476cn73KW8zMqYkm; Tue,  5 Nov
+        2019 04:55:55 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D6.D1.04224.AD001CD5; Tue,  5 Nov 2019 13:55:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1~UK0bYsViC1338813388epcas1p3C;
+        Tue,  5 Nov 2019 04:55:53 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191105045553epsmtrp26c9ede3a644a5120d18d11c43779bd06~UK0bX3-tH2539125391epsmtrp2L;
+        Tue,  5 Nov 2019 04:55:53 +0000 (GMT)
+X-AuditID: b6c32a38-d5bff70000001080-b3-5dc100da0de0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        60.72.25663.9D001CD5; Tue,  5 Nov 2019 13:55:53 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191105045552epsmtip10f519e0f560466763330aa804a1ee756~UK0bP2Oib2329523295epsmtip1X;
+        Tue,  5 Nov 2019 04:55:52 +0000 (GMT)
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [GIT PULL v2] extcon-next for v5.5
+Organization: Samsung Electronics
+Message-ID: <ff758fcb-8ff9-4e87-9ee8-0247dcf686c1@samsung.com>
+Date:   Tue, 5 Nov 2019 14:01:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTut3u9XsXZdZYdh6Reo9LQdtXpDLWiklX+IYQQ4bDrdtnEvdid
+        0irIYeUrwh5EStLTR/ZQlqhpMp1FWFGZSekIBjXoaaVYUlBtu0r+951zvu/3nXN+h8Qkpwkp
+        WWq0chYjq6eJULxnJFGWPLVsWCWbPR2iOPX6Ja6outpJKMb7LxAKt72d2IIrHR21hNLZfDNY
+        ebK7AylnHasL8H1l2TqO1XCWOM6oNmlKjdocevee4m3F8gwZk8xkKTLpOCNr4HLo7fkFyXml
+        ep8lHVfB6st9qQKW5+mNudkWU7mVi9OZeGsOzZk1enOWOYVnDXy5UZuiNhk2MTJZqtxH3F+m
+        83jacLNdfODR/AxWicZC61AICVQ63Om5FVyHQkkJ1Ydg+mwnLgQzCCobry0EPxAcP/oKLUqc
+        33uDhMIgApf9p0gIviI4NtAq8rNWUOvhw4OpgByjuhF8+tyH+wsElQTO968JP46kNsDk32+Y
+        Hy+n4mFi/m3AQkzlgnPCG+Dg1BroGGv15UlyJbUXHs+xAiUCRhvfBZ7EqFUw9e6iSMCx0Pvl
+        Aub3BeoeASMDzYTQ9nZw1DUECTgSPj7sDhawFGanBxc4h+D66H1CENcg6HY+XxCkgbPljMjf
+        BEYlQmf/RiEdD3d/NyPBOBym504E+SlAiaHmuESgJMC4541IwNFwtbp2wUoJbu9d1IDim5aM
+        07RknKYl4zT9N76E8A4UxZl5g5bjGXP60u92oMA9Jin60L2n+S5EkYgOE3+rHlJJgtgK3mZw
+        ISAxeoV47PygSiLWsLaDnMVUbCnXc7wLyX3LPoVJV6pNvus2WosZeWpaWpoincmQMwy9Sry1
+        rUUlobSslSvjODNnWdSJyBBpJWKG6q3znWZ2c2yqTe0eTSl5MRj+uMz+KFjraGkvqjqiczfa
+        7TFtRV2H147V10XueNLq+NNeTRSqUL36oe1GjLeQaz6WZbt96Lc3I2/4ctcV19tz0aHumoJ1
+        k1FPLw8PV4T1T8zUi0pUA65dmTs941J+iz4+4ddow7OISJVnXkPjvI5lkjALz/4DKvedLqUD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSnO5NhoOxBrsOs1pMvHGFxaJ58Xo2
+        i8u75rBZ3G5cwebA4rFpVSebx/65a9g9+rasYvT4vEkugCWKyyYlNSezLLVI3y6BK+PBg+Us
+        BY28Fad+fGJuYLzI1cXIySEhYCKx/+N21i5GLg4hgd2MElcunWGDSEhKTLt4lLmLkQPIFpY4
+        fLgYouYto8T2zyfBakQENCReHr3FApJgFtjCKNE2aSYTSIJNQEti/4sbYEXCAtoSN/9/YAax
+        +QUUJa7+eMwIYvMK2Ensv/oUrIZFQEVi1cVlYHFRgQiJ59tvQNUISpyc+YQFxGYWUJf4M+8S
+        M4QtLnHryXwmCFteYvvbOcwTGAVnIWmZhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcr
+        TswtLs1L10vOz93ECA57La0djCdOxB9iFOBgVOLh/dB+IFaINbGsuDL3EKMEB7OSCO/FGXtj
+        hXhTEiurUovy44tKc1KLDzFKc7AoifPK5x+LFBJITyxJzU5NLUgtgskycXBKNTCmvpipflCz
+        vDnR/tQJSe5w6/64uj61ojzdRfZBik1H66rW8dRXG54OZFc76m411bL/5FfOu0+lX+qsVSx8
+        q9vyREmT9WHA+ffXu9OS5+9uSL808RQ705bbE9qqX8lH3Nu26ce8M4Ktdm9ubq6481I1nV30
+        OeOSG3WSlvLVm9cqlblkH8tgmqfEUpyRaKjFXFScCAB4FiZPdwIAAA==
+X-CMS-MailID: 20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1
+References: <CGME20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-11-05 at 05:53 +0100, Michał Mirosław wrote:
-> On Mon, Nov 04, 2019 at 06:23:19PM -0800, Jamal Shareef wrote:
-> > This patchset removes spaces after left open parenthesis.
-> > Issue found by checkpatch.
-> 
-> I'd say that those spaces make code easier to look at, so it would
-> be better to teach checkpatch to ignore cases like these.
+Dear Greg,
 
-Good luck with that.
+This is extcon-next pull request for v5.5. I add detailed description of
+this pull request on below. Please pull extcon with following updates.
 
+Detailed description for this pull request:
+1. Clean up the and fix the minor issue of extcon provider driver
+- extcon-intel-cht-wc don't reset the USB data connection at probe time
+  in order to prevent the removing all devices from bus.
+- extcon-sm5502 reset the registers at proble time in order to
+  prevent the some stuck state. And remove the redundant variable
+  initialization.
 
+Changes from v2 as following:
+- add the missed patch title of this pull request
+
+Best Regards,
+Chanwoo Choi
+
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-5.5
+
+for you to fetch changes up to ddd1bbbae486ff5913c8fc72c853dcea60713236:
+
+  extcon: sm5502: remove redundant assignment to variable cable_type (2019-10-31 13:47:42 +0900)
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      extcon: sm5502: remove redundant assignment to variable cable_type
+
+Stephan Gerhold (1):
+      extcon: sm5502: Reset registers during initialization
+
+Yauhen Kharuzhy (1):
+      extcon-intel-cht-wc: Don't reset USB data connection at probe
+
+ drivers/extcon/extcon-intel-cht-wc.c | 16 ++++++++++++++--
+ drivers/extcon/extcon-sm5502.c       |  6 +++++-
+ drivers/extcon/extcon-sm5502.h       |  2 ++
+ 3 files changed, 21 insertions(+), 3 deletions(-)
