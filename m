@@ -2,138 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB4FF02BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A48CF02BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:32:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbfKEQbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:31:50 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:51919 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390116AbfKEQbu (ORCPT
+        id S2390256AbfKEQcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:32:12 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63686 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390116AbfKEQcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:31:50 -0500
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iS1bv-0001q9-H4; Tue, 05 Nov 2019 17:23:15 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, lorenzo.pieralisi@arm.com,
-        Andrew.Murray@arm.com, yuzenghui@huawei.com,
-        Heyi Guo <guoheyi@huawei.com>
-Subject: [PATCH 11/11] irqchip/gic-v3-its: Make vlpi_lock a spinlock
-Date:   Tue,  5 Nov 2019 16:22:58 +0000
-Message-Id: <20191105162258.22214-12-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191105162258.22214-1-maz@kernel.org>
-References: <20191105162258.22214-1-maz@kernel.org>
+        Tue, 5 Nov 2019 11:32:11 -0500
+Received: from 79.184.254.83.ipv4.supernova.orange.pl (79.184.254.83) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
+ id 69623c2a3a0f6c70; Tue, 5 Nov 2019 17:32:08 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH update 5/5] PCI: PM: Fold __pci_complete_power_transition() into its caller
+Date:   Tue, 05 Nov 2019 17:32:08 +0100
+Message-ID: <15576968.k611qn3UU0@kreacher>
+In-Reply-To: <2771503.n70vfTtcVb@kreacher>
+References: <2771503.n70vfTtcVb@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, Andrew.Murray@arm.com, yuzenghui@huawei.com, guoheyi@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VLPI map is currently a mutex, and that's a bad idea as
-this lock can be taken in non-preemptible contexts. Convert
-it to a raw spinlock, and turn the memory allocation of the
-VLPI map to be atomic.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reported-by: Heyi Guo <guoheyi@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Because pci_set_power_state() has become the only caller of
+__pci_complete_power_transition(), there is no need for the latter to
+be a separate function any more, so fold it into the former, drop a
+redundant check and reduce the number of lines of code somewhat.
+
+Code rearrangement, no intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 58ce231d5ade..93a39fcc2c96 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -132,7 +132,7 @@ struct event_lpi_map {
- 	u16			*col_map;
- 	irq_hw_number_t		lpi_base;
- 	int			nr_lpis;
--	struct mutex		vlpi_lock;
-+	raw_spinlock_t		vlpi_lock;
- 	struct its_vm		*vm;
- 	struct its_vlpi_map	*vlpi_maps;
- 	int			nr_vlpis;
-@@ -1433,13 +1433,13 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
- 	if (!info->map)
- 		return -EINVAL;
- 
--	mutex_lock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_lock(&its_dev->event_map.vlpi_lock);
- 
- 	if (!its_dev->event_map.vm) {
- 		struct its_vlpi_map *maps;
- 
- 		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
--			       GFP_KERNEL);
-+			       GFP_ATOMIC);
- 		if (!maps) {
- 			ret = -ENOMEM;
- 			goto out;
-@@ -1482,7 +1482,7 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
- 	}
- 
- out:
--	mutex_unlock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
- 	return ret;
+Changes from the original:
+ - Avoid using the extra local var in pci_set_power_state() (Christoph).
+
+---
+ drivers/pci/pci.c |   30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
+
+Index: linux-pm/drivers/pci/pci.c
+===================================================================
+--- linux-pm.orig/drivers/pci/pci.c
++++ linux-pm/drivers/pci/pci.c
+@@ -1056,26 +1056,6 @@ void pci_bus_set_current_state(struct pc
  }
  
-@@ -1492,7 +1492,7 @@ static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
- 	struct its_vlpi_map *map;
- 	int ret = 0;
+ /**
+- * __pci_complete_power_transition - Complete power transition of a PCI device
+- * @dev: PCI device to handle.
+- * @state: State to put the device into.
+- *
+- * This function should not be called directly by device drivers.
+- */
+-static int __pci_complete_power_transition(struct pci_dev *dev, pci_power_t state)
+-{
+-	int ret;
+-
+-	if (state <= PCI_D0)
+-		return -EINVAL;
+-	ret = pci_platform_power_transition(dev, state);
+-	/* Power off the bridge may power off the whole hierarchy */
+-	if (!ret && state == PCI_D3cold)
+-		pci_bus_set_current_state(dev->subordinate, PCI_D3cold);
+-	return ret;
+-}
+-
+-/**
+  * pci_set_power_state - Set the power state of a PCI device
+  * @dev: PCI device to handle.
+  * @state: PCI power state (D0, D1, D2, D3hot) to put the device into.
+@@ -1132,10 +1112,14 @@ int pci_set_power_state(struct pci_dev *
+ 	error = pci_raw_set_power_state(dev, state > PCI_D3hot ?
+ 					PCI_D3hot : state);
  
--	mutex_lock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_lock(&its_dev->event_map.vlpi_lock);
+-	if (!__pci_complete_power_transition(dev, state))
+-		error = 0;
++	if (pci_platform_power_transition(dev, state))
++		return error;
++
++	/* Powering off a bridge may power off the whole hierarchy */
++	if (state == PCI_D3cold)
++		pci_bus_set_current_state(dev->subordinate, PCI_D3cold);
  
- 	map = get_vlpi_map(d);
- 
-@@ -1505,7 +1505,7 @@ static int its_vlpi_get(struct irq_data *d, struct its_cmd_info *info)
- 	*info->map = *map;
- 
- out:
--	mutex_unlock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
- 	return ret;
+-	return error;
++	return 0;
  }
+ EXPORT_SYMBOL(pci_set_power_state);
  
-@@ -1515,7 +1515,7 @@ static int its_vlpi_unmap(struct irq_data *d)
- 	u32 event = its_get_event_id(d);
- 	int ret = 0;
- 
--	mutex_lock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_lock(&its_dev->event_map.vlpi_lock);
- 
- 	if (!its_dev->event_map.vm || !irqd_is_forwarded_to_vcpu(d)) {
- 		ret = -EINVAL;
-@@ -1545,7 +1545,7 @@ static int its_vlpi_unmap(struct irq_data *d)
- 	}
- 
- out:
--	mutex_unlock(&its_dev->event_map.vlpi_lock);
-+	raw_spin_unlock(&its_dev->event_map.vlpi_lock);
- 	return ret;
- }
- 
-@@ -2605,7 +2605,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	dev->event_map.col_map = col_map;
- 	dev->event_map.lpi_base = lpi_base;
- 	dev->event_map.nr_lpis = nr_lpis;
--	mutex_init(&dev->event_map.vlpi_lock);
-+	raw_spin_lock_init(&dev->event_map.vlpi_lock);
- 	dev->device_id = dev_id;
- 	INIT_LIST_HEAD(&dev->entry);
- 
--- 
-2.20.1
+
+
 
