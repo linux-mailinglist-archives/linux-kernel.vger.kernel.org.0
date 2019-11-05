@@ -2,99 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB6CF008E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD87F0167
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbfKEPAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730833AbfKEPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:00:15 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAC0521929;
-        Tue,  5 Nov 2019 15:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572966015;
-        bh=FOHqMxJfsqatCaBk5cjmzjcWwDv6YlqidixM8TSm1sw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=rPr4oAtsDMazf4gNUTAq7OoXfOY7x5pgPzLVoEBrlo6KTlcZDdQP6qJZa/1OyIVG4
-         7sjzCJzxTGjE4mX3MYmjDU2jAMT0KNjoknSMVJ8xoQHxvZ4GvxdVrJtYUumiFz+DB9
-         OF9qiA537sHjVxU7daZKQuqhIYnvpr5ix4gNdRVU=
-Date:   Tue, 5 Nov 2019 09:00:13 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PCI: Add missing link delays required by the PCIe
- spec
-Message-ID: <20191105150013.GA202873@google.com>
+        id S2389936AbfKEP3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:29:01 -0500
+Received: from hn.kd.ny.adsl ([42.231.162.229]:2508 "HELO zoosbook.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S2389399AbfKEP3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:29:01 -0500
+Received: from [107.25.125.81] by group21.345mail.com with QMQP; Tue, 05 Nov 2019 21:10:04 +0600
+Received: from [65.90.58.193] by mxs.perenter.com with SMTP; Tue, 05 Nov 2019 21:02:07 +0600
+Received: from unknown (HELO snmp.otwaloow.com) (Tue, 05 Nov 2019 20:47:27 +0600)
+        by asx121.turbo-inline.com with LOCAL; Tue, 05 Nov 2019 20:47:27 +0600
+Message-ID: <772E3D98.69FA1D09@zoosbook.com>
+Date:   Tue, 05 Nov 2019 20:39:54 +0600
+Reply-To: "zoosbook.com" <admin@zoosbook.com>
+From:   "zoosbook.com" <admin@zoosbook.com>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080421 Thunderbird/2.0.0.14
+X-Accept-Language: en-us
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105095428.GR2552@lahna.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     <linux-assembly@vger.kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-msdos@vger.kernel.org>
+Subject: FREE Bestiality Social Network
+Content-Type: text/plain;
+        charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:54:28AM +0200, Mika Westerberg wrote:
-> On Mon, Nov 04, 2019 at 06:00:00PM -0600, Bjorn Helgaas wrote:
+Hello, 
 
-> > > If you think it is fine to do the delay before we have restored
-> > > everything I can move it inside pci_power_up() or call it after
-> > > pci_pm_default_resume_early() as above. I think at least we should make
-> > > sure all the saved registers are restored before so that the link
-> > > activation check actually works.
-> > 
-> > What needs to be restored to make pcie_wait_for_link_delay() work?
-> 
-> I'm not entirely sure. I think that pci_restore_state() at least should
-> be called so that the PCIe capability gets restored. Maybe not even
-> that because Data Link Layer Layer Active always reflects the DL_Active
-> or not and it does not need to be enabled separately.
-> 
-> > And what event does the restore need to be ordered with?
-> 
-> Not sure I follow you here.
+Bestiality Social Networking Platform. With pictures, videos and friend
+about bestiality and zoophilia porn. 
+Here you can meet and talk with people that love zoo sex.
 
-You're suggesting that we should restore saved registers first so
-pcie_wait_for_link_delay() works.  If the link activation depends on
-something being restored and we don't enforce an ordering, the
-activation might succeed or fail depending on whether it happens
-before or after the restore.  So if there is a dependency, we should
-make it explicit to avoid a race like that.
+Register for a free account with us today
+https://www.zoosbook.com/register
 
-But I'm not saying we *shouldn't* do the restore before the wait; only
-that any dependency should be explicit.  Even if there is no actual
-dependency it probably makes sense to do the restore first so it can
-overlap with the hardware link training, which may reduce the time
-pcie_wait_for_link_delay() has to wait when we do call it, e.g.,
+Let your animalic thoughts get alive.
 
-  |-----------------|          link activation
-     |-----|                   restore state
-           |--------|          pcie_wait_for_link_delay()
+After you`ll get a feeling of the things inside, please give us a nice
+review here
+https://www.scamadviser.com/check-website/zoosbook.com
 
-whereas if we do the restore after waiting for the link to come up, it
-probably takes longer:
 
-  |-----------------|          link activation
-     |--------------|          pcie_wait_for_link_delay()
-                    |-----|    restore state
+See you inside
 
-I actually suspect there *is* a dependency -- we should respect the
-Target Link Speed and and width so the link resumes in the same
-configuration it was before suspend.  And I suspect that may require
-an explicit retrain after restoring PCI_EXP_LNKCTL2.
 
-Bjorn
