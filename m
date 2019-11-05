@@ -2,80 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C03EEFEB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 917BFEFEE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389044AbfKENfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:35:52 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55870 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388313AbfKENfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:35:52 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id ACF784E9D9F9149A606F;
-        Tue,  5 Nov 2019 21:35:42 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 5 Nov 2019 21:35:36 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <perex@perex.cz>, <gregkh@linuxfoundation.org>,
-        <davem@davemloft.net>, <rfontana@redhat.com>,
-        <kstewart@linuxfoundation.org>, <joe@perches.com>,
-        <tglx@linutronix.d>
-CC:     Chenwandun <chenwandun@huawei.com>
-Subject: [PATCH] hp100: remove set but not used variable val
-Date:   Tue, 5 Nov 2019 21:42:40 +0800
-Message-ID: <1572961360-67523-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+        id S2389127AbfKENnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:43:02 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:35865 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388615AbfKENnB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 08:43:01 -0500
+Received: by mail-yw1-f68.google.com with SMTP id y64so5426618ywe.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 05:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=njeGNBuVFQ43NI4DdNgIJL31gMijUvEBHfE4Xmmetwc=;
+        b=BvXGUDs9nIxDhMeJUhdvT5Mrkk2WJyzK542AKZFQUaW/ATM//VfL8Iq7pR9VcpInrH
+         nMZXU3awfM6KLv7i2Uwrbxo0Od9JNV55xhQGK2p0SqX7bVoaXRWACVTBRwroflPvKvbA
+         TSMnUaTfzakRXNgz5z2iPZV/GqxRbkjgogUPz+XSr0GHX5YzAVgPGoraW7JmHlCkfvEu
+         RybalO/nMyZ9qLjIZxFCYOUIZP/7HczjKYDtYqspSOKY6zSSF3PyDWFLi3zUSX6idmus
+         PoZVXbf82wTBtdTUHhOZN3EEBK7H6SP98iNkAcm5QfObC6OKLJlJn8GcW6emah+DFHZ4
+         Uv+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=njeGNBuVFQ43NI4DdNgIJL31gMijUvEBHfE4Xmmetwc=;
+        b=bEgUilBWL/0s4WlZh/mFGBfwkNGtnzoRN0HyxS6ibRnEuHWj+fwJOfGaqN/yJHuGZQ
+         8Au+KavjCrXteMCkz96n6l9zHUjvzrxtC+adlOskvgsFALQ/7Q04xqSAvmeiO4T4o4rr
+         DnEu/6eXbE+jzromuBqFiKd+7hew1+Ycw7g4yStx3IoWEkCOQkZc4OXuIRvWVhMsca+4
+         SXQLExTgqQnhlnz2arUgAD/wK1tx2Dl0DufpRMjI2jZLPyX7hSPKMqFVTe+1BZkoz1y+
+         6OwrFzDjD0xl4cX5LUvEqe9q8aUfz/YF6bEmFzZs42qq2sA4KaOovHXSshM6ZstS6xHA
+         vyUg==
+X-Gm-Message-State: APjAAAXhpg82zVga2yDQR7FPSePR4EMCyfqrtJgjtgORlnUl/tgm+i6p
+        7hDDjOXZLzbUb3mBHGJgGhQ=
+X-Google-Smtp-Source: APXvYqwAZps/+Nk40M2NKxBJ1i+2bdSbJSSirVXkegeUiIlBNzUhi+OGLaa5kFersS+OrE2WTQf3LQ==
+X-Received: by 2002:a81:1ac4:: with SMTP id a187mr1397999ywa.5.1572961380383;
+        Tue, 05 Nov 2019 05:43:00 -0800 (PST)
+Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
+        by smtp.gmail.com with ESMTPSA id g71sm5088366ywe.90.2019.11.05.05.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 05:42:55 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     adam.ford@logicpd.com, Adam Ford <aford173@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: imx_v6_v7_defconfig: Enable TOUCHSCREEN_ILI210X
+Date:   Tue,  5 Nov 2019 07:42:45 -0600
+Message-Id: <20191105134245.22568-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chenwandun <chenwandun@huawei.com>
+The imx6q-logicpd board supports an LCD with an ili2117
+touchscreen controller.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+This patch enables the TOUCHSCREEN_ILI210X which will support
+the ili2117.
 
-drivers/staging/hp/hp100.c: In function hp100_start_xmit:
-drivers/staging/hp/hp100.c:1629:10: warning: variable val set but not used [-Wunused-but-set-variable]
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Chenwandun <chenwandun@huawei.com>
----
- drivers/staging/hp/hp100.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/staging/hp/hp100.c b/drivers/staging/hp/hp100.c
-index 6ec78f5..7e91737 100644
---- a/drivers/staging/hp/hp100.c
-+++ b/drivers/staging/hp/hp100.c
-@@ -1626,7 +1626,6 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
- 	unsigned long flags;
- 	int i, ok_flag;
- 	int ioaddr = dev->base_addr;
--	u_short val;
- 	struct hp100_private *lp = netdev_priv(dev);
- 
- #ifdef HP100_DEBUG_B
-@@ -1695,13 +1694,12 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
- 
- 	spin_lock_irqsave(&lp->lock, flags);
- 	hp100_ints_off();
--	val = hp100_inw(IRQ_STATUS);
- 	/* Ack / clear the interrupt TX_COMPLETE interrupt - this interrupt is set
- 	 * when the current packet being transmitted on the wire is completed. */
- 	hp100_outw(HP100_TX_COMPLETE, IRQ_STATUS);
- #ifdef HP100_DEBUG_TX
- 	printk("hp100: %s: start_xmit: irq_status=0x%.4x, irqmask=0x%.4x, len=%d\n",
--			dev->name, val, hp100_inw(IRQ_MASK), (int) skb->len);
-+			dev->name, hp100_inw(IRQ_STATUS), hp100_inw(IRQ_MASK), (int) skb->len);
- #endif
- 
- 	ok_flag = skb->len >= HP100_MIN_PACKET_SIZE;
+diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+index 0f7381ee0c37..d1ec6afe4aee 100644
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -181,6 +181,7 @@ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ADS7846=y
+ CONFIG_TOUCHSCREEN_EGALAX=y
+ CONFIG_TOUCHSCREEN_GOODIX=y
++CONFIG_TOUCHSCREEN_ILI210X=y
+ CONFIG_TOUCHSCREEN_MAX11801=y
+ CONFIG_TOUCHSCREEN_IMX6UL_TSC=y
+ CONFIG_TOUCHSCREEN_EDT_FT5X06=y
 -- 
-2.7.4
+2.17.1
 
