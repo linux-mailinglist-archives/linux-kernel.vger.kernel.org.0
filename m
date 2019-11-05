@@ -2,130 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DF0EF576
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 244F2EF553
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbfKEGSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:18:04 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:32710 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfKEGSE (ORCPT
+        id S1730576AbfKEGDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:03:37 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.182]:36064 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730152AbfKEGDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:18:04 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191105061801epoutp031e0085d5843d3f80fee85bdea80dac7b~UL8JbqFKX0041400414epoutp03L
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 06:18:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191105061801epoutp031e0085d5843d3f80fee85bdea80dac7b~UL8JbqFKX0041400414epoutp03L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572934681;
-        bh=zvDyle6bohL117tTJ/UWB7iQOUwEqSjQ/Ez1zyRaSUo=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=VZWxh9YaMbPlq6wRBH/gf46rbkfgWTQgAR3Oj4EDTH6OdktNk1TQW+wBej3PU1ubk
-         WHa+KdrlOyyR2aQ2PVS/DFNHhGV3lxSCSISuYvaC05CLrbTXXAxDSV7V2Q26WaMZKn
-         VIOSBvKOwGgJPZVq7EP9ILcDrV3txt1JwXWWqBYI=
-Received: from epcpadp2 (unknown [182.195.40.12]) by epcas1p1.samsung.com
-        (KnoxPortal) with ESMTP id
-        20191105061801epcas1p13ce51b09e567ec4f7caa80fe4659a18f~UL8I_dX6j3234732347epcas1p1f;
-        Tue,  5 Nov 2019 06:18:01 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5~ULXRItVvL0066700667epcas1p2t;
-        Tue,  5 Nov 2019 05:35:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191105053547epsmtrp1943b7305a5721d8062454f9f08564899~ULXRHwUwu0859808598epsmtrp1Z;
-        Tue,  5 Nov 2019 05:35:47 +0000 (GMT)
-X-AuditID: b6c32a29-973ff700000060b4-89-5dc10a33c077
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.D8.24756.33A01CD5; Tue,  5 Nov 2019 14:35:47 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191105053546epsmtip21649b16049b13f96e965b4a83c0dc9ac~ULXQm3R1k0405604056epsmtip2B;
-        Tue,  5 Nov 2019 05:35:46 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-kernel@vger.kernel.org, myungjoo.ham@samsung.com,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org
-Cc:     chanwoo@kernel.org, mchehab+samsung@kernel.org,
-        davem@davemloft.net, robh@kernel.org, paulmck@linux.ibm.com,
-        cpgs@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] MAINTAINERS: Update myself as maintainer for DEVFREQ
- subsystem support
-Date:   Tue,  5 Nov 2019 14:41:19 +0900
-Message-Id: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSvK4x18FYg/42fouJN66wWLw8pGlx
-        /ctzVos551tYLJoXr2ezuLxrDpvF+0+dTBa3G1ewWcy4NZXJ4szpS6wW//fsYHfg9tiy8iaT
-        x6ZVnWweExYdYPTYP3cNu8eWq+0sHn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJVxbpZfQQ9/
-        xZxNK9kaGKfwdjFyckgImEgsm/efuYuRi0NIYDejxLT1R9ghEpIS0y4eBUpwANnCEocPF0PU
-        fGKUuNF/mQWkhk1AS2L/ixtsILaIQL7E8q6FLCBFzAKbGSXW3d8IlhAWCJf4tfgAWAOLgKrE
-        7cNvwWxeASuJpfM3MEEsk5dYveEA8wRGngWMDKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS
-        83M3MYLDT0tzB+PlJfGHGAU4GJV4eD+0H4gVYk0sK67MPcQowcGsJMJ7ccbeWCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoYZ6RYSO6ZzMajPa3++b1/
-        YQxm3ncM7TfOXPsn0CDIXShoq9u6ZRNcjpdfFH7f81FcoJqzYpJVug3H5Mjpix9yeuebOVRG
-        NK84H7yU3zHmfbTjLcEFJxat79YMeqnKEvjkcJn4kmu3e6fP/RRqvOJv4ZsnTqq6X+5dY13N
-        2rd+46WSvhUpqv96lFiKMxINtZiLihMBf7fP9jsCAAA=
-X-CMS-MailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-X-Hop-Count: 3
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Nov 2019 01:03:37 -0500
+X-Greylist: delayed 1271 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Nov 2019 01:03:36 EST
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id BEAE1EC14
+        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 23:42:24 -0600 (CST)
+Received: from br164.hostgator.com.br ([192.185.176.180])
+        by cmsmtp with SMTP
+        id Rrbki3v1JHunhRrbkiVsFC; Mon, 04 Nov 2019 23:42:24 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XzVcb7tGAONUw/MGZuqDTvZTFYKEVcjqC7bTyT+W++E=; b=J6ALkRzpiRDm5X9ZdaST4cneod
+        BrjezjeL/IrdYUoMKUVlYMNuP3yDUwfkH3lhXZd97t8danEYqui1HSN1GYwqIko52jLrgTO04i4bM
+        +9y7CDKzppKukf24XpImCOswMRdNNbktbD4545x5v5sjfwLTtZi5hJtyil9TcvpqJRMFZtcTIi5gF
+        eWCEpKoQSOK2yIjECxrDdmROxabYDX2Rh93c483uyH0dS899jDOkoTqzF1oDWBLYee7HpDGAhaeuC
+        NCTwFdELZMbVXIVB+vAq2Gr8KokAQXwdHSee5nIB4Upey+dziCWUjua07gtNgV83YIvL9v6NuEWAD
+        qUmpIZgQ==;
+Received: from [191.31.196.28] (port=37450 helo=castello.castello)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1iRrbj-002sjK-SJ; Tue, 05 Nov 2019 02:42:24 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
+Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, lee.jones@linaro.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v5 0/5] power: supply: MAX17040: Add IRQ for low level and alert SOC changes
+Date:   Tue,  5 Nov 2019 02:42:13 -0300
+Message-Id: <20191105054218.29826-1-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.24.0.rc2
+In-Reply-To: <20191105015827.GA332@bogus>
+References: <20191105015827.GA332@bogus>
 MIME-Version: 1.0
-X-CMS-RootMailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
-References: <CGME20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5@epcas1p2.samsung.com>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.31.196.28
+X-Source-L: No
+X-Exim-ID: 1iRrbj-002sjK-SJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (castello.castello) [191.31.196.28]:37450
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 16
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update myself to the DEVFREQ entry as maintainer from reviewer and
-the git repository information to manage the devfreq patches. I've been
-reviewing and tesing the devfreq support for the couple of years as reviewer.
-From now, I'll help and reiview the devfreq as maintainer.
+This series add IRQ handler for low level SOC alert, define a devicetree
+binding attribute to configure the alert level threshold and check for
+changes in SOC and power supply status for send uevents.
 
-Suggested-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- MAINTAINERS | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Max17043/17044 have a pin for alert host about low level state of charge and
+this alert can be configured in a threshold from 1% up to 32% of SOC.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cba1095547fd..ebc1078c1ecb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3532,7 +3532,7 @@ BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- L:	linux-pm@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
- S:	Maintained
- F:	drivers/devfreq/exynos-bus.c
- F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -4762,9 +4762,9 @@ F:	include/linux/devcoredump.h
- DEVICE FREQUENCY (DEVFREQ)
- M:	MyungJoo Ham <myungjoo.ham@samsung.com>
- M:	Kyungmin Park <kyungmin.park@samsung.com>
--R:	Chanwoo Choi <cw00.choi@samsung.com>
-+M:	Chanwoo Choi <cw00.choi@samsung.com>
- L:	linux-pm@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
- S:	Maintained
- F:	drivers/devfreq/
- F:	include/linux/devfreq.h
-@@ -4774,7 +4774,7 @@ F:	include/trace/events/devfreq.h
- DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- L:	linux-pm@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
- S:	Supported
- F:	drivers/devfreq/event/
- F:	drivers/devfreq/devfreq-event.c
--- 
-2.17.1
+Tested on Toradex Colibri iMX7D, with a SparkFun Lipo Fuel Gauge module
+based on MAXIM MAX17043.
 
+Thanks Krzysztof for your time reviewing it. Let me know what you think about
+the fixes.
+
+Changes since v4:
+(Suggested by Krzysztof Kozlowski)
+- Fix code style and alignment issues
+- Keep IRQF_TRIGGER_FALLING | IRQF_ONESHOT instead client->flags
+
+(Suggested by Rob Herring)
+- Add reference to the MFD description
+- Fix the dt-bindings commit description
+
+Matheus Castello (5):
+  power: supply: max17040: Add IRQ handler for low SOC alert
+  dt-bindings: power: supply: Max17040: Add DT bindings for max17040
+    fuel gauge
+  devicetree: mfd: max14577: Add reference to max14040_battery.txt
+    descriptions
+  power: supply: max17040: Config alert SOC low level threshold from FDT
+  power: supply: max17040: Send uevent in SOC and status change
+
+ .../devicetree/bindings/mfd/max14577.txt      |   2 +
+ .../power/supply/max17040_battery.txt         |  33 ++++
+ drivers/power/supply/max17040_battery.c       | 142 +++++++++++++++++-
+ 3 files changed, 172 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+
+--
+2.24.0.rc2
 
