@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917B3F0AA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 00:57:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B64EF0AA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 00:57:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387641AbfKEX4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 18:56:54 -0500
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:38941 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387601AbfKEX4t (ORCPT
+        id S1730696AbfKEX46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 18:56:58 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:40505 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387632AbfKEX4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 18:56:49 -0500
-Received: by mail-qk1-f202.google.com with SMTP id s3so22994756qkd.6
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 15:56:49 -0800 (PST)
+        Tue, 5 Nov 2019 18:56:53 -0500
+Received: by mail-pf1-f202.google.com with SMTP id h67so8202651pfb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 15:56:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=oB4lIvjzdBiHgRAUphuiQVPgI+jp2K5bMoUCGUiH4hk=;
-        b=QfiPTkylKak2JP/fA92kLS2kHYHGvI0ROKKMGBuahal4YLtzvGBJN27XjNyiQH8HG6
-         yGlyTyrU/unO2GWm0Nv4aMpTNLKbJN+tCvpwionJjZcpDaxtYqxpVnIYWW0enJwD9cGu
-         H3LPc6bHWpLSwRsuEbG1JVtUql2ni5CS0AKG2Gtvj/sOGcnFyVzwIGABxUDq4hnShW0d
-         YrnkM62CleNkLuir4Rfyub+T9Qd7Ss628T/1ROy/StYjkO1JBGOTm6WgyQ7LRFXQEEsm
-         JL468RJSiozD/j2M3Vi+OnMGSwmwEQH4MedG0ZFkg+53Rwgl2MeC2pLijfEUHj7jkGJ/
-         9N/w==
+        bh=SBPjjox/K0nQBp9p/UReaX06mOCKZA5VG5oKrHSRp3U=;
+        b=p/+qormWzpAk/hn6fTIAq1GD6e0WQRag5NF7NjqAhGo5V+9tCeqWxMigwtXWt/lGNp
+         q9buszXWKYVWoziPQLZS51iBSuLA1nUdgVLAfYt05cUtAWebiilSqti+DjDN8Q0UKshx
+         57MAdb8441Kh4kMQAc47B2g6uSc/jktWoSENQoAO1SfBArC0JfH71OE1ZC9X88wFzf7D
+         1zKwIMNiGpyq7Ox2PdBV9bj7qpbfLeuEOQjRxH+b5fzmSdlQBlgmJqQb6wUCW+t/kkJd
+         W22heVjnv5z8zfiAr2e8BVc/Krx9f9PGp3snmyjgH+VW1d5sU1rFDMtHZ42LB6knm6uR
+         i+NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=oB4lIvjzdBiHgRAUphuiQVPgI+jp2K5bMoUCGUiH4hk=;
-        b=aWdSA4bBnIxObWUPueebOcM/c3yN36wZRYeE7vp1ldJymhD/MkUTRa3+W2YYTrLk7E
-         c7D5mYBvN3BKu9vJd/PxXkUH6rjx9o1LsZJh0k12XrLChs+FQXUY62RjsgW5UFHpp0mB
-         aIFhFrujw02OJqaygPvHZ8LUOBJZN7nBkprrdwqetjw4IYffg9ReHOLPYDJNcPFWlQQF
-         O9PnaNJ8wVlG9jqkePHEuEw3cn47So2x/ng++C1FZmOYLdJGSpzEWFcQEzM31tDH1EuK
-         PrPqEy0mQsA8cFHXAq9mJ0pKe0PGeNlSwNjghdSNWdIVBBlEo/+sVEG37KnyR1ESbHXh
-         Sa0A==
-X-Gm-Message-State: APjAAAXreAC1oIVw2A6NVv6doCvuE9G34UJBgILlIe+GUJ1m4OVVLBD3
-        3mZlh2BeT+qyTkpYkCi3cHXZppP4EoSunfzkMg8=
-X-Google-Smtp-Source: APXvYqzD4X/kPtbk+w3gExO5Bezjz7X/3F/Tl84XtD5Pt1TYYSMyOibW/2GJGTtsQO1axnooT5H2E3H7HeWsFEsu76A=
-X-Received: by 2002:ac8:4543:: with SMTP id z3mr20376230qtn.41.1572998208364;
- Tue, 05 Nov 2019 15:56:48 -0800 (PST)
-Date:   Tue,  5 Nov 2019 15:56:06 -0800
+        bh=SBPjjox/K0nQBp9p/UReaX06mOCKZA5VG5oKrHSRp3U=;
+        b=HqTT0+ynIKw6E4V0b5+iwDDqZ7QUquJBPmXYeHB9sChD54q5da/4DmcyF7kiieqGbP
+         A+rDlyoijypPpyO/yKSOJJ3uo8zZra0SuS4pYuzULtd5pes7PDKQfuVUXnN6J6OqpZwj
+         FcE+989C4aNRt0T7FmMWb4LGQoJvBvUONtOfyDIqALRJBmFwTXNSBPY70VR9EPA3/TEx
+         VGkoS1E1BLayVoVWq8wdKtlIYoOBIkqYGAcYpifZf26v2vfzzXvE8soL6tnSKfTL0QMH
+         QFvXLPPLnmOKqySO/9XcxLrdDqM35x4f3DEhJ6P4JTv0ZnkDNojlNvCTw8lUzzq3w0LH
+         qArw==
+X-Gm-Message-State: APjAAAV3ZoLwnfUP9ALqf401Lq57ToMCe34K44r0Eef2V7Q0Jw/vqKVE
+        /47bg0UdWpoE9XP7XHoFUEpJONagdQSkJjRtznc=
+X-Google-Smtp-Source: APXvYqwMtHOZMoB23ssF7JNCZzaMw12LgXJO1Cx/fyHqurm8wqZn755XqIGbFFeB1mv3cEwMcIBCpgy6byzfZbrNKqg=
+X-Received: by 2002:a63:6483:: with SMTP id y125mr5619534pgb.444.1572998212169;
+ Tue, 05 Nov 2019 15:56:52 -0800 (PST)
+Date:   Tue,  5 Nov 2019 15:56:07 -0800
 In-Reply-To: <20191105235608.107702-1-samitolvanen@google.com>
-Message-Id: <20191105235608.107702-13-samitolvanen@google.com>
+Message-Id: <20191105235608.107702-14-samitolvanen@google.com>
 Mime-Version: 1.0
 References: <20191018161033.261971-1-samitolvanen@google.com> <20191105235608.107702-1-samitolvanen@google.com>
 X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-Subject: [PATCH v5 12/14] arm64: vdso: disable Shadow Call Stack
+Subject: [PATCH v5 13/14] arm64: disable SCS for hypervisor code
 From:   Sami Tolvanen <samitolvanen@google.com>
 To:     Will Deacon <will@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -73,29 +73,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shadow stacks are only available in the kernel, so disable SCS
-instrumentation for the vDSO.
+Filter out CC_FLAGS_SCS for code that runs at a different exception
+level.
 
+Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/arm64/kernel/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kvm/hyp/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-index dd2514bb1511..a87a4f11724e 100644
---- a/arch/arm64/kernel/vdso/Makefile
-+++ b/arch/arm64/kernel/vdso/Makefile
-@@ -25,7 +25,7 @@ ccflags-y += -DDISABLE_BRANCH_PROFILING
- 
- VDSO_LDFLAGS := -Bsymbolic
- 
--CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os
-+CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS)
- KBUILD_CFLAGS			+= $(DISABLE_LTO)
- KASAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
+diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+index ea710f674cb6..17ea3da325e9 100644
+--- a/arch/arm64/kvm/hyp/Makefile
++++ b/arch/arm64/kvm/hyp/Makefile
+@@ -28,3 +28,6 @@ GCOV_PROFILE	:= n
+ KASAN_SANITIZE	:= n
+ UBSAN_SANITIZE	:= n
+ KCOV_INSTRUMENT	:= n
++
++# remove the SCS flags from all objects in this directory
++KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
 -- 
 2.24.0.rc1.363.gb1bccd3e3d-goog
 
