@@ -2,146 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1DADEF452
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B81A7EF459
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:03:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730547AbfKEEAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 23:00:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35040 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730017AbfKEEAj (ORCPT
+        id S2387435AbfKEEDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 23:03:32 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35444 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729711AbfKEEDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 23:00:39 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 19EED61015; Tue,  5 Nov 2019 04:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572926438;
-        bh=CfQKWzPAIBBRWL1m6nlO3ABW3eoRsUcJysSGhIsU7XU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hburbf1QsD1tAm9SyqTqJGCDvPxdEYcL8UOBiGc+dqtcLMSrd5cOrPWJ+gCRrBs1j
-         mjPc3pyJzADI9vYgrbM7ptIZh7/kmMxDkS9+98u6wqF4SSx6A0ZYwV93NUJ8NLrpDU
-         tpSMZedTBFsAF7gEML8WV7lppQjsDKVF5vhqOWTY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9EE860D61;
-        Tue,  5 Nov 2019 04:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572926436;
-        bh=CfQKWzPAIBBRWL1m6nlO3ABW3eoRsUcJysSGhIsU7XU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nSpi0ROvFBgEkZZoZrhC2OLoVVD3EnS17vtbYh224EsL0x2XuWvT9dY8Hstv8tSNf
-         25wyT7WsoTzVouCWARkn2qj8gkNK3P9YGDAsPI73FA0hNhXhFBwX5NhRRNnIqeqp0t
-         Qo8Xhxf0OmiVci6pjU67RLVxUic1h342eoqzTPxA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9EE860D61
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 7/7] scsi: ufs: Fix error handing during hibern8 enter
-Date:   Mon,  4 Nov 2019 19:57:15 -0800
-Message-Id: <1572926236-720-8-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1572926236-720-1-git-send-email-cang@codeaurora.org>
-References: <1572926236-720-1-git-send-email-cang@codeaurora.org>
+        Mon, 4 Nov 2019 23:03:32 -0500
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D6E4C3A1784;
+        Tue,  5 Nov 2019 15:03:27 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iRq3x-0000dP-7q; Tue, 05 Nov 2019 15:03:25 +1100
+Date:   Tue, 5 Nov 2019 15:03:25 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yang Guo <guoyang2@huawei.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH] xfs: optimise xfs_mod_icount/ifree when delta < 0
+Message-ID: <20191105040325.GC4614@dread.disaster.area>
+References: <1572866980-13001-1-git-send-email-zhangshaokun@hisilicon.com>
+ <20191104204909.GB4614@dread.disaster.area>
+ <dc7456d6-616d-78c5-0ac6-c5ffaf721e41@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc7456d6-616d-78c5-0ac6-c5ffaf721e41@hisilicon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=i0EeH86SAAAA:8 a=7-415B0cAAAA:8 a=w1VptvuhYDPMJX4mGNAA:9
+        a=ggN-k8jfiSgHKobi:21 a=dRI7x4IBfIF0c0dP:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+On Tue, Nov 05, 2019 at 11:26:32AM +0800, Shaokun Zhang wrote:
+> Hi Dave,
+> 
+> On 2019/11/5 4:49, Dave Chinner wrote:
+> > On Mon, Nov 04, 2019 at 07:29:40PM +0800, Shaokun Zhang wrote:
+> >> From: Yang Guo <guoyang2@huawei.com>
+> >>
+> >> percpu_counter_compare will be called by xfs_mod_icount/ifree to check
+> >> whether the counter less than 0 and it is a expensive function.
+> >> let's check it only when delta < 0, it will be good for xfs's performance.
+> > 
+> > Hmmm. I don't recall this as being expensive.
+> > 
+> 
+> Sorry about the misunderstanding information in commit message.
+> 
+> > How did you find this? Can you please always document how you found
+> 
+> If user creates million of files and the delete them, We found that the
+> __percpu_counter_compare costed 5.78% CPU usage, you are right that itself
+> is not expensive, but it calls __percpu_counter_sum which will use
+> spin_lock and read other cpu's count. perf record -g is used to profile it:
+> 
+> - 5.88%     0.02%  rm  [kernel.vmlinux]  [k] xfs_mod_ifree
+>    - 5.86% xfs_mod_ifree
+>       - 5.78% __percpu_counter_compare
+>            5.61% __percpu_counter_sum
 
-During clock gating (ufshcd_gate_work()), we first put the link hibern8 by
-calling ufshcd_uic_hibern8_enter() and if ufshcd_uic_hibern8_enter()
-returns success (0) then we gate all the clocks.
-Now let’s zoom in to what ufshcd_uic_hibern8_enter() does internally:
-It calls __ufshcd_uic_hibern8_enter() which on detecting the LINERESET,
-initiates the full recovery and puts the link back to highest HS gear and
-returns success (0) to ufshcd_uic_hibern8_enter() which is the issue as
-link is still in active state due to recovery!
-Now ufshcd_uic_hibern8_enter() returns success to ufshcd_gate_work() and
-hence it goes ahead with gating the UFS clock while link is still in active
-state hence I believe controller would raise UIC error interrupts. But when
-we service the interrupt, clocks might have already been disabled!
+Interesting. Your workload is hitting the slow path, which I most
+certainly do no see when creating lots of files. What's your
+workload?
 
-This change fixes for this by returning failure from
-__ufshcd_uic_hibern8_enter() if recovery succeeds as link is still not in
-hibern8, upon receiving the error ufshcd_hibern8_enter() would initiate
-retry to put the link state back into hibern8.
+> > IOWs, we typically measure the overhead of such functions by kernel
+> > profile.  Creating ~200,000 inodes a second, so hammering the icount
+> > and ifree counters, I see:
+> > 
+> >       0.16%  [kernel]  [k] percpu_counter_add_batch
+> >       0.03%  [kernel]  [k] __percpu_counter_compare
+> > 
+> 
+> 0.03% is just __percpu_counter_compare's usage.
 
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+No, that's the total of _all_ the percpu counter functions captured
+by the profile - it was the list of all samples filtered by
+"percpu". I just re-ran the profile again, and got:
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 7a5a904..934c27a 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3891,15 +3891,24 @@ static int __ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 			     ktime_to_us(ktime_sub(ktime_get(), start)), ret);
- 
- 	if (ret) {
-+		int err;
-+
- 		dev_err(hba->dev, "%s: hibern8 enter failed. ret = %d\n",
- 			__func__, ret);
- 
- 		/*
--		 * If link recovery fails then return error so that caller
--		 * don't retry the hibern8 enter again.
-+		 * If link recovery fails then return error code (-ENOLINK)
-+		 * returned ufshcd_link_recovery().
-+		 * If link recovery succeeds then return -EAGAIN to attempt
-+		 * hibern8 enter retry again.
- 		 */
--		if (ufshcd_link_recovery(hba))
--			ret = -ENOLINK;
-+		err = ufshcd_link_recovery(hba);
-+		if (err) {
-+			dev_err(hba->dev, "%s: link recovery failed", __func__);
-+			ret = err;
-+		} else {
-+			ret = -EAGAIN;
-+		}
- 	} else
- 		ufshcd_vops_hibern8_notify(hba, UIC_CMD_DME_HIBER_ENTER,
- 								POST_CHANGE);
-@@ -3913,7 +3922,7 @@ static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba)
- 
- 	for (retries = UIC_HIBERN8_ENTER_RETRIES; retries > 0; retries--) {
- 		ret = __ufshcd_uic_hibern8_enter(hba);
--		if (!ret || ret == -ENOLINK)
-+		if (!ret)
- 			goto out;
- 	}
- out:
+
+   0.23%  [kernel]  [k] percpu_counter_add_batch
+   0.04%  [kernel]  [k] __percpu_counter_compare
+   0.00%  [kernel]  [k] collect_percpu_times
+   0.00%  [kernel]  [k] __handle_irq_event_percpu
+   0.00%  [kernel]  [k] __percpu_counter_sum
+   0.00%  [kernel]  [k] handle_irq_event_percpu
+   0.00%  [kernel]  [k] fprop_reflect_period_percpu.isra.0
+   0.00%  [kernel]  [k] percpu_ref_switch_to_atomic_rcu
+   0.00%  [kernel]  [k] free_percpu
+   0.00%  [kernel]  [k] percpu_ref_exit
+
+So you can see that this essentially no samples in
+__percpu_counter_sum at all - my tests are not hitting the slow path
+at all, despite allocating inodes continuously.
+
+IOWs, your workload is hitting the slow path repeatedly, and so the
+question that needs to be answered is "why is the slow path actually
+being exercised?". IOWs, we need to know what your workload is, what
+the filesystem config is, what hardware (cpus, storage, etc) you are
+running on, etc. There must be some reason for the slow path being
+used, and that's what we need to understand first before deciding
+what the best fix might be...
+
+I suspect that you are only running one or two threads creating
+files and you have lots of idle CPU and hence the inode allocation
+is not clearing the fast path batch threshold on the ifree counter.
+And because you have lots of CPUs, the cost of a sum is very
+expensive compared to running single threaded creates. That's my
+current hypothesis based what I see on my workloads that
+xfs_mod_ifree overhead goes down as concurrency goes up....
+
+FWIW, the profiles I took came from running this on 16 and 32p
+machines:
+
+--
+dirs=""
+for i in `seq 1 $THREADS`; do
+        dirs="$dirs -d /mnt/scratch/$i"
+done
+
+cycles=$((512 / $THREADS))
+
+time ./fs_mark $XATTR -D 10000 -S0 -n $NFILES -s 0 -L $cycles $dirs
+--
+
+With THREADS=16 or 32 and NFILES=100000 on a big sparse filesystem
+image:
+
+meta-data=/dev/vdc               isize=512    agcount=500, agsize=268435455 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1
+data     =                       bsize=4096   blocks=134217727500, imaxpct=1
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=521728, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+That's allocating enough inodes to keep the free inode counter
+entirely out of the slow path...
+
+Cheers,
+
+Dave.
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Dave Chinner
+david@fromorbit.com
