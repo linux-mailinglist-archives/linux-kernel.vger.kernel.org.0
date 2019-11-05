@@ -2,108 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3912EEFE40
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC29DEFE44
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:24:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389042AbfKENXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:23:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388753AbfKENXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:23:43 -0500
-Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B95A521D71;
-        Tue,  5 Nov 2019 13:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572960222;
-        bh=XbzlcvI5LJBDVvpa0TOvEURACkPGy5z2DvHVu1Vz5aQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=htO1b+UhfuOvM7xzNC9LG3W+x3Oz9GgdkpTdSwIDdXYwIPxptJWIYA/fSYNIerUJF
-         4fsVRC0wf/3TAhdi+DvxvkLeJBAIgADuthFt4w1GsYl24b+KjirOsaffmp3UHFHhQv
-         XdXi8BLvjkcoDhQG7ui3Vcdj5Y2T2ty4s2Gsasvg=
-Date:   Tue, 5 Nov 2019 15:23:37 +0200
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] MAINTAINERS: update information for "MEMORY MANAGEMENT"
-Message-ID: <20191105132335.GH25005@rapoport-lnx>
-References: <20191030202217.3498133-1-songliubraving@fb.com>
- <20191030182104.13847e8563105be6cd0a9dfe@linux-foundation.org>
+        id S2389106AbfKENYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:24:30 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35523 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388992AbfKENY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 08:24:29 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y6so15126664lfj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 05:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OriTvqKjGZz26vq3sX+0nz0hNVWCQx915SM+y16L4zI=;
+        b=mmSF+IAUX1udzNA10gxQDs4IVguwwokEurVOW3StfXUANAJNYQv4/+zWORcXWFMJz6
+         m8BMOmIIg6IdlyXqx/JOil3Nbe1GQJOjv3TKF4sU9Y8IhkaCAxvvuN9OIs6XmIOXlhaV
+         3yDCu8ShhTKAlUTHth4u2KT53qkmJ5SC02XPDZHD1F7NmyWDtGHSU+gmVOKet8p9J0tg
+         tOUcealyAZisw9u0YxSTwLwJi9mNZL5v3AiyePab1IAJp9k9ulTtGJUtUmXfCzS/M3vK
+         ttjdpKUqRtjmkL88v5AmTh1EY7ErppJQbMgbmt1rENGRy7NzGgSd1ie29VbCA1Ll9hDA
+         riGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OriTvqKjGZz26vq3sX+0nz0hNVWCQx915SM+y16L4zI=;
+        b=LNL+1JlyvR4mV/vdFszq0Xi+ZS8KIBF32MTUatQ28Z9JQPdGraraJHwln7bv5LpOHK
+         VHHmzBR3FYi318hXk4D9uCTshwZ8GdYtlmw/YEzuxb9bkjbRib4fPp/TmnTLQ/XY2scH
+         HAqNCG9aE3pNl9Zom+bXemVUxtp+npQcFZZLd9SIrRvKVGvqHA+TV+2GMA6fxcZMrFJ5
+         MvA/CSbJlZAmhbEnaHKKB2ihQLJO1GXNmFhbhg2lWpA3zg2KQHpNo2esjM3UjwDOeyEt
+         bV00wfUb4Jwl7ujwjj2sTkShl5NHToc9dYbO5LfqqiW8j2nz9zzQahUrO5SS0Y30iuFF
+         5/Lw==
+X-Gm-Message-State: APjAAAVFNOVwnIzz6k6s835smVkwNErnIJsSbPEl9oU+oU07SghE7UgM
+        AQsa5QoFOg5nf9NWPDAsG7e+iXoEHz7tnfAxjhGSlw==
+X-Google-Smtp-Source: APXvYqzoypaV1FwIebV/f2TxtU2nRgrE/Ebq2efFlxTgxI/d4F0Qe39na0QD1eDLDWhk898Dgs+NBvY32AC34gSuqMc=
+X-Received: by 2002:ac2:5295:: with SMTP id q21mr20306882lfm.93.1572960267714;
+ Tue, 05 Nov 2019 05:24:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030182104.13847e8563105be6cd0a9dfe@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+ <2a8fa03308b08b2a15019d9b457d9bff7aafce94.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdZYw3QQcQ4h5y_C0UD6+4Wz9AdmQ0qSrrjfUweuJj8hyQ@mail.gmail.com> <1550472ac1e105bd38da25803358cfbc0404bf38.camel@fi.rohmeurope.com>
+In-Reply-To: <1550472ac1e105bd38da25803358cfbc0404bf38.camel@fi.rohmeurope.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 Nov 2019 14:24:15 +0100
+Message-ID: <CACRpkdYkgEg=4H9tQQrVcvx1xtETYD_cHxhqd-BW6g67jpEeEg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 10/15] regulator: bd71828: Add GPIO based run-level
+ control for regulators
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 06:21:04PM -0700, Andrew Morton wrote:
-> On Wed, 30 Oct 2019 13:22:17 -0700 Song Liu <songliubraving@fb.com> wrote:
-> 
-> > I was trying to find the mm tree in MAINTAINERS by searching "Morton".
-> > Unfortunately, I didn't find one. And I didn't even locate the MEMORY
-> > MANAGEMENT section quickly, because Andrew's name was not listed there.
-> > 
-> > Thanks to Johannes who helped me find the mm tree.
-> 
-> Oh all right ;)
-> 
-> If I listed everything I "maintain" in MAINTAINERS, I'd double the size
-> of the dang thing.
-> 
-> q:/usr/src/25> grep "^#NEXT_PATCHES_START" series | wc -l
-> 364
-> 
-> (Those are the identifiable "trees" which I do (or did) "maintain").
-> 
-> But mm/ is special.
-> 
-> > Let save other's time searching around by adding:
-> > 
-> > M:	Andrew Morton <akpm@linux-foundation.org>
-> > T:	git git://github.com/hnaz/linux-mm.git
-> 
-> Also:
-> 
-> --- a/MAINTAINERS~maintainers-update-information-for-memory-management-fix
-> +++ a/MAINTAINERS
-> @@ -10523,6 +10523,8 @@ M:	Andrew Morton <akpm@linux-foundation.
->  L:	linux-mm@kvack.org
->  W:	http://www.linux-mm.org
->  T:	git git://github.com/hnaz/linux-mm.git
-> +T:	quilt https://ozlabs.org/~akpm/mmotm/
-> +T:	quilt https://ozlabs.org/~akpm/mmots/
->  S:	Maintained
->  F:	include/linux/mm.h
->  F:	include/linux/gfp.h
+On Mon, Nov 4, 2019 at 8:05 AM Vaittinen, Matti
+<Matti.Vaittinen@fi.rohmeurope.com> wrote:
+> On Sun, 2019-11-03 at 23:27 +0100, Linus Walleij wrote:
 
-The F: section here is also seems too sparse, at the very least we could
-add include/linux/mm_types.h and include/linux/page*h:
+> > I do not understand the regulator parts of the patch.
+>
+> I'm sorry. The patch is not clearest one what comes to the regulator
+> stuff. I can try splitting it to smaller and more logical changes if
+> you, Mark or other interested people hope to get it splitted. Or
+> perhaps it would be simplest to review if it was all in one patch?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c6c34d04ce95..5e4ed4bc2372 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10526,6 +10526,8 @@ F:      include/linux/mm.h
- F:     include/linux/gfp.h
- F:     include/linux/mmzone.h
- F:     include/linux/memory_hotplug.h
-+F:     include/linux/mm_types.h
-+F:     include/linux/page*h
- F:     include/linux/vmalloc.h
- F:     mm/
+As long as the regulator experts are happy with the format,
+stay with that. I am just a drive-by coder when it comes to regulators.
 
-
-> _
-> 
-> 
-
--- 
-Sincerely yours,
-Mike.
+Yours,
+Linus Walleij
