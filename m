@@ -2,116 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45441EF402
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 04:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F88EF40E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 04:26:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfKEDVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 22:21:43 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51704 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728910AbfKEDVn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 22:21:43 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q70so19070579wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 19:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bAiMHQsOuI6hnngn6+5CXNDYY+Zdldt5dUW/4rLN07w=;
-        b=tO/w9J5+r4DEJmrnMm3ifg3uO8ptXHzrnI6zja/xK4eHep7B+AAjX+LZAEQ1b7e9Rj
-         PlvGJ+8LHgZc7RzsKDGJsu7aCHWeNzVKMuyDvMLR4Csz8sXaeMsujCSW8wb3rJuflg/F
-         9pSp9tz1VeQQorsBT31aOi7DdqviWdTUGL/WMGFhaAsxl34SgqSBOHO2HKSkkiK3YM69
-         VWi6JT4IWGyCxOObusEIvQcwzTDC3hjaBy9TFBNkcd6cDpYp/TgMvIlUzgpYaYciLXng
-         yilVpU4ig1m41sqRHfGExoZJIjzSk3RZYQoD8E1+kY732qewJ8ntGf2ZX/lefqpCGiDi
-         E8lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bAiMHQsOuI6hnngn6+5CXNDYY+Zdldt5dUW/4rLN07w=;
-        b=D2wy2/llfPOvbBmdb2K4uV7uGyQefmXFs9wqVchK5aeIWTQZcaiZ+OVlerqHEnU+m3
-         r4exU6UPB7NHDdwRl8yfpVM2vXx3+I+d9RCxrQOdpLRjStg1Z4TUJrHeF1PPGmlVU8T4
-         jXp2GpbPKklZwtQ06mCb7mlg/dcXPBmtcHviYMD7XaV9jeRrXpc04WZNp5vV3A97cppo
-         CPTFZoo2U9sTZlQZcHnri11oR0XXvOqC5eRB7ZpJo8IL6I+x7K5xOdhs6gVDJ6C57CUA
-         wLZAamp3a5VOCO626EEwJnKy0n4YwJz0S/9lVdb7vkQZfFgxux6Xqqi5/t36T8p8H+zy
-         PfDw==
-X-Gm-Message-State: APjAAAXXoef/hyWqDzMdY6ZtQWrckNNHPDBlTGJqzgVmd5tQHP9LacRV
-        EuqsVDgSqpctFW9ySN9VpEfpF3kJFu6KQ3oxnOBpkWTw
-X-Google-Smtp-Source: APXvYqz8SNF/4Hb4TkDt7a0lWTBr/B5XYCNv1Hg9vWdWC5a3G9WlPoJUaOOfv0Mhu8kB+wQtLGzerp13KfwzRHQAvps=
-X-Received: by 2002:a1c:4c10:: with SMTP id z16mr1833021wmf.24.1572924100474;
- Mon, 04 Nov 2019 19:21:40 -0800 (PST)
+        id S1730416AbfKED0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 22:26:00 -0500
+Received: from mail-eopbgr70083.outbound.protection.outlook.com ([40.107.7.83]:18142
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729836AbfKED0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 22:26:00 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EvZf6bGYw6ulHvs8p1WfHyPRsGcmNGh2D7oq6omOGAy6Hsyv/omEJd09ir7zZY6oJ9W8VgioxNVqrYU9sFnosDco5IQsvqK58N3ovYhScwQMs7c6LKeGt22803lQHafqsWAlJkcMtTTMR2EkoTJMg1icwQrcXdftOq2Mu3znZloJpMdL7TWS4o+E6HsqDujKLIhZuKVpozISstI05GykPehVeY6xr66hb4oHFB/gQ2kfNVmBpDk6wvWDHN8eIv86urEIFinfP0/orUfm/hv5TZZZBAQWi7W1kXctowuOnpSUX58TXS5fktxeQjcg96t1RmNHOY18F6c3a13619+cBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1cE/9ZX6doIXfJknt8eLoV2lxEYLAvKzrh6gsZ4vS5U=;
+ b=OxC7VqNaI0a/gIZAldQBMredHNMwa8VxMH6pijcJK2qIPUi46m1hYc8OBLQ4hoicD5u/a+WfthG9XkTdJ/1hvpirm13YJeQ4b3+KPT1uYv7bIWmCoo2hMeIvNt6Fnw8FSvh8xN/R52S7fsEA2gX6CwnWLErDBF5RUxYvRFm4f7kJSeAfQL9kaijYjKYBS8Rar5VWtReJAy6CYOrJsVxgs+BfIh0z4R2ZFx5H/GvX7Gh1PV8+eTyLgNdksfZ1JGdMC0Vmc9HG5b4n3pmC+r5QwR02PPDyH48zmqBtQInYluouz7U0Q4UhxLq0b+2Qamvizqw2uJbpPopxvmDUqUE5Yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1cE/9ZX6doIXfJknt8eLoV2lxEYLAvKzrh6gsZ4vS5U=;
+ b=cgafbbDR/1+IP/ocBL7OmGwsJAWTt0X3p8HhFCvJ+OLCquFfoCDS7e1kvEhVBBybXV9iGOZsuuACyG57i/Cm7xtG88Lkt0hyicEXyY0WWhgWfTlwEFZL0oOSfDkEt+fAF1MpbYmN5IY+oUdtZF4yCrhoPqLMOLNpAakHmmB4Ktg=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.232.225) by
+ VE1PR04MB6656.eurprd04.prod.outlook.com (20.179.235.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Tue, 5 Nov 2019 03:25:56 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::9c38:e113:f0b4:f9]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::9c38:e113:f0b4:f9%7]) with mapi id 15.20.2408.024; Tue, 5 Nov 2019
+ 03:25:56 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "info@metux.net" <info@metux.net>,
+        "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm8524: Add support S32_LE
+Thread-Topic: [PATCH] ASoC: wm8524: Add support S32_LE
+Thread-Index: AdWTh/O/b1+PZUkZSV2ZVOBuQ71qsg==
+Date:   Tue, 5 Nov 2019 03:25:55 +0000
+Message-ID: <VE1PR04MB64790EF282B41CB04EA6707DE37E0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bf241ae6-5e7c-45f2-dd23-08d7619fdec4
+x-ms-traffictypediagnostic: VE1PR04MB6656:
+x-microsoft-antispam-prvs: <VE1PR04MB66560503D3D814CB286AB995E37E0@VE1PR04MB6656.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1388;
+x-forefront-prvs: 0212BDE3BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(189003)(199004)(81166006)(66066001)(2906002)(26005)(6436002)(478600001)(7696005)(6916009)(102836004)(55016002)(316002)(54906003)(14454004)(229853002)(71190400001)(71200400001)(6246003)(52536014)(8676002)(256004)(5660300002)(486006)(305945005)(81156014)(6506007)(7416002)(3846002)(186003)(25786009)(86362001)(7736002)(74316002)(8936002)(9686003)(64756008)(76116006)(476003)(66476007)(66556008)(33656002)(66446008)(6116002)(99286004)(66946007)(14444005)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6656;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9RswhFnNOYcIKjBMlpB+E/XCKq+ykOvt7Qbze/Q49PTTe1JJunrSfpq2pjYNjwseKMseBWcdIuNZEvouGedRdvUAAvdu3aA8rNulUZ4IOoqLgS1DOUinEYjD+/e6+05PEGFEQ0nwI5nw5+Xb6rknS8s2uEGUnLrmjqqTjHyiAsenW5aUYuiFHhLAz5tFMH2bvT6k8KuY029jRSOn5Sm+fzOTGCpPmme3ZpfK0v7UxPXW0Bi9/YWT2AFbUAl0wKUuCV/Txe+h8j1yoljG8Jwq+NzjlGgulPv+hYHf5uC08DZuBbweJ3Fx3rmZhXId8IHyhRIO3Kjf234W42szurwCad4uRujUvcIq1Vq4F278Q620Xwewd4vBq2FFPiCj/tEW5to7gKrQYWan0+DVdRW7mauXARi3N3xw00tQuLVHwJLsQtIoGvK6t4mkpNo79BNz
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1572920412-15661-1-git-send-email-zong.li@sifive.com>
-In-Reply-To: <1572920412-15661-1-git-send-email-zong.li@sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 5 Nov 2019 08:51:29 +0530
-Message-ID: <CAAhSdy2FkTqbYzP9naeUeOR+pW5-GphCR118D63Oy5C8UyQwhA@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: Use PMD_SIZE to repalce PTE_PARENT_SIZE
-To:     Zong Li <zong.li@sifive.com>
-Cc:     "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Anup Patel <Anup.Patel@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf241ae6-5e7c-45f2-dd23-08d7619fdec4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 03:25:55.9893
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fneqdZ5AeIGwTzCz+f43f4oPX+YFQX/u2SPHYzgIhnZ94IwlHURtmY9UxQ6MtheEjD5IC+Y5IPlIAZYFRd83WA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6656
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 5, 2019 at 7:50 AM Zong Li <zong.li@sifive.com> wrote:
->
-> The PMD_SIZE is equal to PGDIR_SIZE when __PAGETABLE_PMD_FOLDED is
-> defined.
->
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> ---
->  arch/riscv/mm/init.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 573463d..642b330 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -273,7 +273,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
->  #define get_pgd_next_virt(__pa)        get_pmd_virt(__pa)
->  #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)     \
->         create_pmd_mapping(__nextp, __va, __pa, __sz, __prot)
-> -#define PTE_PARENT_SIZE                PMD_SIZE
->  #define fixmap_pgd_next                fixmap_pmd
->  #else
->  #define pgd_next_t             pte_t
-> @@ -281,7 +280,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
->  #define get_pgd_next_virt(__pa)        get_pte_virt(__pa)
->  #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)     \
->         create_pte_mapping(__nextp, __va, __pa, __sz, __prot)
-> -#define PTE_PARENT_SIZE                PGDIR_SIZE
->  #define fixmap_pgd_next                fixmap_pte
->  #endif
->
-> @@ -316,10 +314,10 @@ static uintptr_t __init best_map_size(phys_addr_t base, phys_addr_t size)
->  {
->         uintptr_t map_size = PAGE_SIZE;
->
-> -       /* Upgrade to PMD/PGDIR mappings whenever possible */
-> -       if (!(base & (PTE_PARENT_SIZE - 1)) &&
-> -           !(size & (PTE_PARENT_SIZE - 1)))
-> -               map_size = PTE_PARENT_SIZE;
-> +       /* Upgrade to PMD_SIZE mappings whenever possible */
-> +       if (!(base & (PMD_SIZE - 1)) &&
-> +           !(size & (PMD_SIZE - 1)))
-> +               map_size = PMD_SIZE;
->
->         return map_size;
->  }
-> --
-> 2.7.4
->
+Hi
 
-LGTM.
+> On Fri, Nov 01, 2019 at 06:34:54AM +0000, S.j. Wang wrote:
+> > Allow 32bit sample with this codec.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  sound/soc/codecs/wm8524.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/sound/soc/codecs/wm8524.c b/sound/soc/codecs/wm8524.c
+> > index 91e3d1570c45..4e9ab542f648 100644
+> > --- a/sound/soc/codecs/wm8524.c
+> > +++ b/sound/soc/codecs/wm8524.c
+> > @@ -159,7 +159,9 @@ static int wm8524_mute_stream(struct
+> snd_soc_dai
+> > *dai, int mute, int stream)
+> >
+> >  #define WM8524_RATES SNDRV_PCM_RATE_8000_192000
+> >
+> > -#define WM8524_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |
+> > SNDRV_PCM_FMTBIT_S24_LE)
+> > +#define WM8524_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |\
+> > +                     SNDRV_PCM_FMTBIT_S24_LE |\
+> > +                     SNDRV_PCM_FMTBIT_S32_LE)
+> >
+>=20
+> The device doesn't actually support 32bit though, I guess it will ignore =
+the
+> extra LSBs so it should work. But is that really supporting 32 bit?
+>=20
+I also think it may ignore the extra LSBs just as you said, but don't reall=
+y
+Support 32bit.  This change is to make driver accept S32_LE format.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+Best regards
+Wang shengjiu
 
-Regards,
-Anup
