@@ -2,80 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C10EF2C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 02:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D79FEF2D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 02:31:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387695AbfKEB2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 20:28:49 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41954 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387639AbfKEB2s (ORCPT
+        id S1729823AbfKEBbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 20:31:45 -0500
+Received: from cynthia.allandria.com ([50.242.82.17]:50898 "EHLO
+        cynthia.allandria.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbfKEBbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 20:28:48 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 94so16192845oty.8;
-        Mon, 04 Nov 2019 17:28:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M9gg0kIoyQA/b2vVqI7fyQwNx3s6WAOJLTNDodsUmLA=;
-        b=NPs5uhDIFNxURteRD/4ErU1UHnjwiLX5n1PM5vtbf0tqVE9fdLfQTHvgA6rOvhQFvg
-         vb8ELi8DIa/x+QXyvxfmtCi3Yd5XyBhmUDkgPAiYNZDwtCRr0lrZqBClWsu0Q35oyFEs
-         V2O6DUglgrBs7/ZBdACCpVr5i8JZD4IGuXT7ESWNCxLCqqcToUMy2wOuIRfzSfIN9qwv
-         4WU2X1BI5mGhGoQhyUpZ2h8LF0iZ32ua7QZfRRYyt+NsEAUGEowJB7sm1YVWbdDhz0Dp
-         yT5UHJAB3e/gZxc6ZqVI7LqhvoEAyv5QyTyXY2AVJ4NvYqlH1jCNo8jzVZfhVvT2lgww
-         Kvmg==
-X-Gm-Message-State: APjAAAXshb6UDpk+xWjVwIqvE/YQp+hQDFyuRaLcewNhr1oAW47ljXun
-        DjmVotakbIcyq5wGDoB8Eg==
-X-Google-Smtp-Source: APXvYqzcV9ZpMmc/ONyrKnyJvmZg7cRevWB+ivgNxAo/R2LxP++vJQrEsF8NHCoVtWBf91eVXonwCw==
-X-Received: by 2002:a9d:6253:: with SMTP id i19mr9512571otk.201.1572917327353;
-        Mon, 04 Nov 2019 17:28:47 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y14sm5617491otk.20.2019.11.04.17.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 17:28:46 -0800 (PST)
-Date:   Mon, 4 Nov 2019 19:28:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     kishon@ti.com, aniljoy@cadence.com, adouglas@cadence.com,
-        nsekhar@ti.com, jsarha@ti.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 2/3] dt-bindings: phy: ti,phy-j721e-wiz: Add Type-C
- dir GPIO
-Message-ID: <20191105012845.GA32522@bogus>
-References: <20191028102153.24866-1-rogerq@ti.com>
- <20191028102153.24866-3-rogerq@ti.com>
+        Mon, 4 Nov 2019 20:31:45 -0500
+X-Greylist: delayed 2300 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 20:31:45 EST
+Received: from flar by cynthia.allandria.com with local (Exim 4.84_2)
+        (envelope-from <flar@allandria.com>)
+        id 1iRn5y-0007nh-Q1; Mon, 04 Nov 2019 16:53:18 -0800
+Date:   Mon, 4 Nov 2019 16:53:18 -0800
+From:   Brad Boyer <flar@allandria.com>
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Max Staudt <max@enpas.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: Re: [PATCH] m68k: defconfig: Update defconfigs for v5.4-rc1
+Message-ID: <20191105005318.GA29558@allandria.com>
+References: <20191001073539.4488-1-geert@linux-m68k.org>
+ <7fa02d50-6092-5f59-5018-c5b425a30726@enpas.org>
+ <CAMuHMdX3+-JO68LGE-NuT9axRUj3=bbtpDZ8E3v5UNoj5ctLHg@mail.gmail.com>
+ <640d4fd8-b879-3cfd-e522-1acc3cbd323a@physik.fu-berlin.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028102153.24866-3-rogerq@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <640d4fd8-b879-3cfd-e522-1acc3cbd323a@physik.fu-berlin.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Oct 2019 12:21:52 +0200, Roger Quadros wrote:
-> This is an optional GPIO, if specified will be used to
-> swap lane 0 and lane 1 based on GPIO status. This is required
-> to achieve plug flip support for USB Type-C.
+On Tue, Nov 05, 2019 at 01:14:04AM +0100, John Paul Adrian Glaubitz wrote:
+> On 11/4/19 12:06 PM, Geert Uytterhoeven wrote:
+> > Amiga is fine.
+> > 
+> > Mac and Q40 are not, apparently.
 > 
-> Type-C companions typically need some time after the cable is
-> plugged before and before they reflect the correct status of
-> Type-C plug orientation on the DIR line.
+> I have not been able to come by a Q40 or 68k-Mac with an
+> IDE controller, unfortunately.
 > 
-> Type-C Spec specifies CC attachment debounce time (tCCDebounce)
-> of 100 ms (min) to 200 ms (max).
-> 
-> Allow the DT node to specify the time (in ms) that we need
-> to wait before sampling the DIR line.
-> 
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> Cc: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/phy/ti,phy-j721e-wiz.yaml          | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
+> If the Mac IDE controller is the same as on the PowerBook
+> 3400c, I would be able to test a converted driver as I have
+> that PowerBook.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I have a couple old macs with IDE. I have a PowerBook 190 and a
+Performa (a 636? - it's buried away so I'm not 100% sure) both with
+IDE drives. I'll try to find time to pull one of them out and see if
+they still run. Can Linux run on a system with a 68LC040 these days?
+I know there were issues with FPU emulation at various points. Both
+of those would lack FPU due to using a 68LC040 chip.
+
+The 3400c is PCI based and so probably isn't at all compatible. It
+should be using the same driver as the other PCI models. There is
+already a PATA_MACIO configuration option for that style. The 5300
+is the one that's basically an upgraded 68k model (it's nearly
+identical to the 190 internally).
+
+	Brad Boyer
+	flar@allandria.com
+
