@@ -2,83 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651FDEFE4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E7BEFE54
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389138AbfKENZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:25:49 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40192 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388982AbfKENZt (ORCPT
+        id S2389079AbfKEN12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:27:28 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42478 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387784AbfKEN12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:25:49 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2so15264422ljg.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 05:25:47 -0800 (PST)
+        Tue, 5 Nov 2019 08:27:28 -0500
+Received: by mail-io1-f68.google.com with SMTP id g15so1171894iob.9;
+        Tue, 05 Nov 2019 05:27:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oP2Qg5DulasBMIF938P1Bp5KL5tW1M0zdz+2GVaj+Uk=;
-        b=htgooDkyaSv71Ti+556eAKWXlqMjpxkAkSOki+vleaBb6Av+WzlFduwJhyDFzZZxOZ
-         0RyJiO0Z7zhxnuLxk6elZgul0SSMAmNWjfH8yz3iCC9YaQFHYrL/y/xQp8RdE+vT9e2E
-         PngH+tXC+ktbnz7hEgGDXmhwX43XFwEqyzK+mv2tBGLw38RDkA/zJAVke51imLothgPi
-         1GtM7Sxz+UvM5Iw2d9/g4J9unmhAExVIZ9sIALS8Yi0mhIp2PydULQBs7JnM1j0ZTzOi
-         uPwTifHGSQadVDNDCxtIoQNt23BlJTEfXTi9ZSDdZmNio9+GMRgThfeecurQ1kgrdiFb
-         J06w==
+        bh=jX4jX2W6i3k9/KOC23QBwkTtx9VcQVu8C6L8SnDZRqw=;
+        b=jTMMLgfkVnBPSeUJQ71tgTsoCo4o4YN1CptDSMFclU8DBIlW12Ty45UjiagKL5c+qL
+         XVomoETpYMsmrJODUaxcJaEptSFbg6XxIn4+4jRAkqfUbJ45uVHWxoXtU8Ct+E666Yxn
+         WnXDOEy/b6s8GKdBcCyoN4GjqB7QDFuQs7jiaLF+0awAty55TLy91HXi+0AX8FMovLgI
+         CwuD4Q9k3rdNpYs/YWS7KmcPDDOekoSnnOeuxa8hViG8oes3GUYkbpSKM5zdRgBD51cS
+         i7gDBRTPnDzMEK94Bi280/OEAKGGI51swoP/xkjuUvfp7YDQt5iEXHttGent5KEsdzYk
+         QWJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oP2Qg5DulasBMIF938P1Bp5KL5tW1M0zdz+2GVaj+Uk=;
-        b=W8zvbVzVe55X9kfhWmFHIpzgU2h0OVh5TJ0uAi7EkDW12yB6hzpuMtWxz1XQjecIV/
-         N/ab4l4cfjPyB7ETAZC1HhOvCJHd9Eqvfrr7TABMbSmIxBYoo0IT+WNErj6AS/dzJ7nF
-         Vwhtr4qhoXzgQciNUrAcPOZxdSsKLctG+/v7upCZBMvoFGCr1sm8yPqrhBXxk2ZPrYrj
-         ZlbJaRrvC+E0t9wboYpFAaDMqr4jAcVdllZq6tKKInZwqcbxgvnboQWUnkrG0Six7LOg
-         wPrmTITGsmJgMlQT904WKsFjL43S34sU0V3bAXCAckVv1mJtUa+74nMkdc68q6Pl4skW
-         g9vQ==
-X-Gm-Message-State: APjAAAVlqCWJNSkKQ+UBp8yyfP2hvZj3eJKNkeBOnXEC5Uz4q7gYaJXV
-        3/4uW02IFgU8r677wRyF0efQcO9qgmUl853iOdMKOA==
-X-Google-Smtp-Source: APXvYqwGVvtw2JLHo5RcIlsIMDfC4bj7A1mhDFHbnNes729TrLIAwbe19y/dMBfnRaFx7NDuYWTABRX2z5TR4cfVNKY=
-X-Received: by 2002:a2e:a0c9:: with SMTP id f9mr23474840ljm.77.1572960346944;
- Tue, 05 Nov 2019 05:25:46 -0800 (PST)
+        bh=jX4jX2W6i3k9/KOC23QBwkTtx9VcQVu8C6L8SnDZRqw=;
+        b=gNjQNZOzn+iMCII8+NQVDQE0UuGSHMzYZ9kAD3P9XuG0skNcPt3tJ9NEaJTWMFBYL5
+         12y/WpOMHV27LOBR0ExtKZfxgLErfaragrbrkb2Adz+SdextglEF3mRkOmUQnUFTRhdg
+         aemY/DEDdujsagNYbDDBdS/N7Z2AuL22gcSHd0I1b5DrBcbZCqZpTHfNErwHmN3ckCDB
+         CSRtOFIMhTNAtMd05Gqwoaf16ZXFt0rtYvPDRJu8Aekdn6wrzkNsDYVQqQ7B0o8W1zYj
+         JfN01kkUPsqYnyOsI+xNQkDpalLcKB3jRofh7U+OvN1ZHFT8SaCVC1u7HlnA1Af0zE4C
+         yd5w==
+X-Gm-Message-State: APjAAAXqLJbfST7trQiQ6kWEsX0xfGbZAuxqDd4IB2iI5+mFbXm2vMgd
+        JX7C/hrVw+3jdEu2lA8N1z9ILk5fm57nwN41zEk=
+X-Google-Smtp-Source: APXvYqwd+rrCQZ+m8JTRHbAGCc6LLI8WMSbho0o8PAroiVlxjxb3uKt++eYqFQbO6mC6Ekx5mw+iKj9H4ovx4jW2jrI=
+X-Received: by 2002:a6b:2c89:: with SMTP id s131mr27329413ios.276.1572960447143;
+ Tue, 05 Nov 2019 05:27:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
- <20191029112700.14548-9-srinivas.kandagatla@linaro.org> <CACRpkdYc-3Nk7VGj8mAjaM4C0dc_X7ZOK0cptW2Sr+kKwvyFVg@mail.gmail.com>
- <4f0e22ab-6aa1-2ed1-a85b-fb66531e0b2a@linaro.org>
-In-Reply-To: <4f0e22ab-6aa1-2ed1-a85b-fb66531e0b2a@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 14:25:35 +0100
-Message-ID: <CACRpkda2CdbPe7jsomZSxdJ1wE65OmNYDsZNj1OmfzdvG4kWng@mail.gmail.com>
-Subject: Re: [PATCH v3 08/11] dt-bindings: pinctrl: qcom-wcd934x: Add bindings
- for gpio
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20191104070116.GM57214@dtor-ws> <20191104183702.8894-1-TheSven73@gmail.com>
+ <CAHCN7xJc6DeyQV27OVjD14a8hZT+_Fo9qo-iHgLO414t3y6hVQ@mail.gmail.com>
+ <CAGngYiXp52g7X=KLVqxTAhK0AJ9mpgGyaptbkYvhwWfRkQCaXQ@mail.gmail.com>
+ <CAHCN7xLhqHzcHro7HYUdNAi8K3ToeruOtLw=0SZNAgNqUpxvHQ@mail.gmail.com>
+ <20191104233621.GP57214@dtor-ws> <CAHCN7x+=_FM32JTEKAb=5pPJNvim88cUFuEXgdGhMG9gdr0Emg@mail.gmail.com>
+ <CAGngYiX1JP8NZBU+wRzdsLBMN7hhsbmfaD5o4PGPX27Q-6J4xw@mail.gmail.com>
+In-Reply-To: <CAGngYiX1JP8NZBU+wRzdsLBMN7hhsbmfaD5o4PGPX27Q-6J4xw@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 5 Nov 2019 07:27:15 -0600
+Message-ID: <CAHCN7xJ501UHTRRi-fdi7cFH_Bhz07hpa9wRaP1D0MGWrDmbkQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Input: ili210x - add ILI2117 support
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Marek Vasut <marex@denx.de>, linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 10:35 AM Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
-
-> This controller just has Output enable bits, No pin control properties.
+On Mon, Nov 4, 2019 at 8:04 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
 >
-> As you suggested I can move this to drivers/gpio in next version.
+> On Mon, Nov 4, 2019 at 6:40 PM Adam Ford <aford173@gmail.com> wrote:
+> >
+> > I will test it tomorrow on a 2117a and reply with results.  I am very
+> > excited to see this integrated.
 
-OK perfect, thanks!
+For the series:  Tested-by: Adam Ford <aford173@gmail.com> #imx6q-logicpd
 
-NB: this probably also affects the compatible-string which contains
-"pinctrl*" right?
-
-Yours,
-Linus Walleij
+adam
+> >
+>
+> I will do the same. That should give us confidence that 211x works
+> ok.
+>
+> Dmitry, should someone retest 251x and 210x after such a significant
+> change? Unfortunately I don't have access to these chips.
