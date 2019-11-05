@@ -2,60 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B65F0388
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A2DF0390
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388983AbfKEQ50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:57:26 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:33771 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388831AbfKEQ50 (ORCPT
+        id S2389378AbfKEQ57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:57:59 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23654 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388836AbfKEQ57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:57:26 -0500
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id CE4AB60005;
-        Tue,  5 Nov 2019 16:57:23 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 17:57:23 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtc: bd70528: Fix hour register mask
-Message-ID: <20191105165723.GD8309@piout.net>
-References: <20191023114751.GA14100@localhost.localdomain>
- <20191105165317.GC8309@piout.net>
+        Tue, 5 Nov 2019 11:57:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572973078;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=W8k8y0xwvZYiGfN3jpSGfUUS3E/00qqxgsKSLEHx8lY=;
+        b=RTQW5G3KOrrzZtSw9vbJSVLkERgITFuNN+oFLA5iaVZau7f74ElKe/Bmohy3jO9A5kcxLY
+        Z99fJhKEBbxebevDGIEWz3xQr//hG4aNmyiOAgiFn4/ZznUERMB9ekOvF0W22tvbRaFKHD
+        xtz48AH/8tHO2m1tWor7Yan2I3TpEyM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-236-Qp3HxU0YNEujQ2UorNEKXw-1; Tue, 05 Nov 2019 11:57:56 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7A7608017DE;
+        Tue,  5 Nov 2019 16:57:52 +0000 (UTC)
+Received: from gondolin (unknown [10.36.118.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3A9B5C1D8;
+        Tue,  5 Nov 2019 16:57:26 +0000 (UTC)
+Date:   Tue, 5 Nov 2019 17:57:24 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        alex.williamson@redhat.com, mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+Subject: Re: [PATCH V8 4/6] mdev: introduce virtio device and its device ops
+Message-ID: <20191105175724.0c52784e.cohuck@redhat.com>
+In-Reply-To: <20191105093240.5135-5-jasowang@redhat.com>
+References: <20191105093240.5135-1-jasowang@redhat.com>
+        <20191105093240.5135-5-jasowang@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105165317.GC8309@piout.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: Qp3HxU0YNEujQ2UorNEKXw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2019 17:53:18+0100, Alexandre Belloni wrote:
-> On 23/10/2019 14:47:51+0300, Matti Vaittinen wrote:
-> > When RTC is used in 24H mode (and it is by this driver) the maximum
-> > hour value is 24 in BCD. This occupies bits [5:0] - which means
-> > correct mask for HOUR register is 0x3f not 0x1f. Fix the mask
-> > 
-> > Fixes: 32a4a4ebf768 ("rtc: bd70528: Initial support for ROHM bd70528 RTC")
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  include/linux/mfd/rohm-bd70528.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> Applied, thanks.
-> 
+On Tue,  5 Nov 2019 17:32:38 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-Actually, is there any point in doing that since "rtc: bd70528 add
-BD71828 support" will conflict with it and correct the issue anyway?
+> This patch implements basic support for mdev driver that supports
+> virtio transport for kernel virtio driver.
+>=20
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/vfio/mdev/mdev_core.c    |  21 +++++
+>  drivers/vfio/mdev/mdev_private.h |   2 +
+>  include/linux/mdev.h             |   6 ++
+>  include/linux/mdev_virtio_ops.h  | 149 +++++++++++++++++++++++++++++++
+>  4 files changed, 178 insertions(+)
+>  create mode 100644 include/linux/mdev_virtio_ops.h
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+
