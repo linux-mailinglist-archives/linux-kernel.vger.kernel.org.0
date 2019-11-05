@@ -2,69 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682CFF0982
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 23:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC03F0989
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 23:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbfKEW3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 17:29:49 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36606 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387510AbfKEW3s (ORCPT
+        id S2387560AbfKEWbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 17:31:10 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35818 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbfKEWbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 17:29:48 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j7so19155100oib.3;
-        Tue, 05 Nov 2019 14:29:47 -0800 (PST)
+        Tue, 5 Nov 2019 17:31:09 -0500
+Received: by mail-oi1-f194.google.com with SMTP id n16so19143986oig.2;
+        Tue, 05 Nov 2019 14:31:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z7tp25VndUU2SQvLj+7Afh5KthhkxtDUjWXwp7kRqgE=;
-        b=ZW+UQn74UW1fU94FmrQmhg9cbkcdPK/XjT8HI2z5vL+LxsD9rVVl5JG1owNJ27BHIW
-         wHfwHrOQ8HXgV6Gjmcm/J78A7Z3u2WVQ/2ebNGTbImR/qzMT+ft0gCRaKGKJONWEzeMr
-         xgeYiMA3IUJ1I3MeXthcq5SUHd3Nn6kYIrahBu/t8ir3eFNOxeeV6c0LWzs4Eyc8dp7W
-         F3T975Of+iZ2sfEyDqkl7z3FuoUN5Fng4FUMpJdI33Aq6EwKsW4alhVGM0A6AsrWV8+I
-         YE6Lcov94mykykHIS/+dOkh8Lb1H343rHolhnL9WSgaE2MWThKkKU5cgJOF8r8ZXAfYe
-         FCkA==
-X-Gm-Message-State: APjAAAWJWeN4G19MTJYcOxNcOzNYIcJYCqbaqtITamT2Zl4DvOqzTTlx
-        1hSNqHFT9Mkkab9HrCa5hA==
-X-Google-Smtp-Source: APXvYqyhK7AUSPwmqZbNmejWamAemZ+axvCS4LAN4H8GYf1OJoK/53IfPKiJNk401p7XudennKRngQ==
-X-Received: by 2002:a05:6808:6d8:: with SMTP id m24mr1154604oih.73.1572992987349;
-        Tue, 05 Nov 2019 14:29:47 -0800 (PST)
+        bh=P7DS8UNeHFmRF9Ai42oFGqJ59k+5UylJEgaKrw08XWM=;
+        b=Cfbw30q8KU/mGUpS2WendGh0eF7LRluyRstghVZAnNwFrHLJ/x9yheBMff6/F+/7t2
+         K5K9rAjVCUjWLLMmXcYCGnDBOW2z1h0+Cb5LThEG82JZBBdboQON/V6fs39f1XDFK8qm
+         VSN8YDq6Dwkg/FfaoyCwR02Ds+GIUfMT71ZrMqSExw+0j3Jh6Q4r3lOwsxDbfEv+kuNB
+         O7xws/uPd/IWhgMdKOJ8x0wvZchil3aq2199b0C9R0+WVtGJB7cbDfDzbPY06+BwUyPG
+         EBTIWi87vSQvGC8lOpAIO4l7AC0CrdVV11AfJeUsfpMXwBDzc6n9Z79OYrbDxmBtPDK5
+         H67A==
+X-Gm-Message-State: APjAAAXtjeYeJHp5LTjQAYCsttf2XarAe3nel3SvW9r0aA9fq2H1msUA
+        vo2a5IjYtdS0PNFvwcZb5g==
+X-Google-Smtp-Source: APXvYqwjhmMiPRy7nJVXI6Asqm9ZybIl+fIpC8DPgsMZgHWYu7TXGKfBgJrTq0u5lMK6YlasMsrn/Q==
+X-Received: by 2002:aca:c4d3:: with SMTP id u202mr1198832oif.59.1572993068836;
+        Tue, 05 Nov 2019 14:31:08 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r14sm5862799oij.6.2019.11.05.14.29.46
+        by smtp.gmail.com with ESMTPSA id u130sm6315754oib.56.2019.11.05.14.31.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 14:29:46 -0800 (PST)
-Date:   Tue, 5 Nov 2019 16:29:46 -0600
+        Tue, 05 Nov 2019 14:31:08 -0800 (PST)
+Date:   Tue, 5 Nov 2019 16:31:07 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
-        baolin.wang@linaro.org, baolin.wang7@gmail.com,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com
-Subject: Re: [PATCH v2 4/5] dt-bindings: power: sc27xx: Add a new property to
- describe the real resistance of coulomb counter chip
-Message-ID: <20191105222946.GA14320@bogus>
-References: <cover.1572523415.git.baolin.wang@linaro.org>
- <b7c373b4329fe7a506890dd4c4c53e73cc64ff8d.1572523415.git.baolin.wang@linaro.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH v2] dt-bindings: phy: renesas: usb2-phy: convert bindings
+ to json-schema
+Message-ID: <20191105223107.GA16214@bogus>
+References: <1572592763-12396-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b7c373b4329fe7a506890dd4c4c53e73cc64ff8d.1572523415.git.baolin.wang@linaro.org>
+In-Reply-To: <1572592763-12396-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2019 20:22:43 +0800, Baolin Wang wrote:
-> Add a new property to describe the real resistance of coulomb counter chip,
-> which is used to calibrate the accuracy of the coulomb counter chip.
+On Fri,  1 Nov 2019 16:19:23 +0900, Yoshihiro Shimoda wrote:
+> Convert Renesas R-Car generation 3 USB 2.0 PHY bindings documentation
+> to json-schema.
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
->  .../devicetree/bindings/power/supply/sc27xx-fg.txt |    3 +++
->  1 file changed, 3 insertions(+)
+>  Changes from v1:
+>  - Use const for RZ/G1C's compatible.
+>  - Add resets' descriptions.
+>  - Remove dr_mode descrption. 
+>  https://patchwork.kernel.org/patch/11197805/
+> 
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  70 --------------
+>  .../devicetree/bindings/phy/renesas,usb2-phy.yaml  | 103 +++++++++++++++++++++
+>  2 files changed, 103 insertions(+), 70 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>  create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
