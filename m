@@ -2,154 +2,314 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4617AF088F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EA1F0898
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:43:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbfKEVm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 16:42:27 -0500
-Received: from mout.web.de ([212.227.15.3]:56159 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbfKEVm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:42:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1572990136;
-        bh=eTKu9EhCet3dmCm5fMl3kzNcurmyEyUCoyJuLDVwWj4=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=UXZ+gIvrdgGTyGNrYsRuKAGrS3T1ztQ49s9NW8BbKMEr4sw7pNXCGAAPdWY6WTdEa
-         ubRG5jfcdm9NqVXllqFhDokWcIICNXARCw/uh9rvKlW7JkCNwo17l1n4TbBF+P8M0U
-         N2IXqB63JetNsyOgaJv+wcat1xf+SzSgrrF29BjQ=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.164.204]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MFcDF-1ig6o90KBx-00EaJb; Tue, 05
- Nov 2019 22:42:16 +0100
-Subject: [PATCH 1/2] CIFS: Use memdup_user() rather than duplicating its
- implementation
-From:   Markus Elfring <Markus.Elfring@web.de>
-To:     linux-cifs@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>
-References: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <df3d1da0-a907-80f3-b8f1-6ec7615086d9@web.de>
-Date:   Tue, 5 Nov 2019 22:42:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1730210AbfKEVn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 16:43:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44902 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729747AbfKEVn3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 16:43:29 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q26so16939793pfn.11;
+        Tue, 05 Nov 2019 13:43:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=PzgUCHmX4SKtXHoHzT3qESrsCOYBynwOpztbmGqg0O0=;
+        b=JLZGt4VBlvn/7SRVm30hukJ/2OU401CXRI3XTJ61J3zbU4ssJnUO+4xrJ8sN/DwYCT
+         x5wn2/2MYlKgORmDMnwlhUEMCVAsDM4/1tdkkozSRr37vW8XKFh6UyNDnwEureqLvjpE
+         76W3UkaFhT7K42bsMGh44ExnE3mEOHPdYEs3/54hhQ8tcQ3RjZtm2a559+C44TELGW5n
+         GOzNUVWoFadfAb9rNOv5hMSFE4s59D/keKeFuov20FSUM+VaWBE9/imO1GyA3GOeh4ZF
+         kGZj2Xd+a6QPyX4vqN+nfIL3j3jqzvF1yKG+a8IOmvad1A5/2PIRaWftWwNrR52ehMgP
+         /4Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PzgUCHmX4SKtXHoHzT3qESrsCOYBynwOpztbmGqg0O0=;
+        b=j8hcIs2sfMI4vF2IJukLLQzVimQvQ1SAoiVTGbaLn6+Kom85ho1uCDczHUkqfEtcbV
+         sivI5cNsFmkhmbKD+PtbOg0nBIJ9zUxLPbtFoWnc7RMZws+ejbnF6gueI1WzgTC65JOR
+         ec+49R38iMUY//J6Jo6Qla1/6s9+wFDEH3XhWPYMhzZGr7+F081ZHw2OQgrodtaT35MH
+         KiPRQJ0h5bnPMpsbxpTB2uVlR26/kF2++9KBXW4ahNMJ0TgE8dn2Aw4idvFRbSFr1N3g
+         KV8OxgbfFt5ykADIKb2ZtWwUVy/TIvauW1MuK2ewiEcnaXIVxd0rz/WAKiCclM+humHZ
+         9PkQ==
+X-Gm-Message-State: APjAAAUpnkYPRzRsr724aDzbCuuDWlZ1zCElFWzNo7fV8VpE4jspZ2Y1
+        HvJSTinlmZVPfGCKqcDpGBg=
+X-Google-Smtp-Source: APXvYqzh7qCItQmbwlGWFB35LJmpSi0Zx9nz8WPKkZC+a4Y2dKLaZ7uhpWoO6DnwyRQS4JGyI7QgvA==
+X-Received: by 2002:a63:cf4d:: with SMTP id b13mr38055347pgj.396.1572990206533;
+        Tue, 05 Nov 2019 13:43:26 -0800 (PST)
+Received: from debian.net.fpt ([2405:4800:58f7:3f8f:27cb:abb4:d0bd:49cb])
+        by smtp.gmail.com with ESMTPSA id c12sm25428790pfp.67.2019.11.05.13.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 13:43:25 -0800 (PST)
+From:   Phong Tran <tranmanphong@gmail.com>
+To:     frextrite@gmail.com, paulmck@kernel.org
+Cc:     corbet@lwn.net, linux-doc@vger.kernel.org, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+        mathieu.desnoyers@efficios.com, joel@joelfernandes.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Phong Tran <tranmanphong@gmail.com>
+Subject: [PATCH] Doc: whatisRCU: Add more Markup
+Date:   Wed,  6 Nov 2019 04:42:34 +0700
+Message-Id: <20191105214234.17116-1-tranmanphong@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191105165938.GA10903@workstation>
+References: <20191105165938.GA10903@workstation>
 MIME-Version: 1.0
-In-Reply-To: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zVgHY/tLl0DgTUrHlaIsTs+ghIDoq/nAsyESs+m2Vvv6afj9lXY
- D8pEyCanIRHZkgoI9ZiGjmgl/tc2aHo+ZQtP3DwvsNrjr7OKiUV3+NNBIC9l7eeN9Ynsvjy
- R6J9RCzyRhpsMIRN7tb1EJ8ckx4KZy9v7sXv74RrKNAV3l0bzNL1DH7T8Hn9Qw24F4za4di
- FrfouKqwPyzdYR5bv9OiA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zmxHj2FgTwg=:WavkJNZsT5CIYITR1Am806
- qd76cDAfyzfuGRSwM9Xn7fLH97qgSZoUR4hNyGVtubpt8eAucb48N+DX8XkG8E9Xt2x09O5l5
- dfoWRLpPS07fcfGzbR2P7wvPYNdwRrchQIXkuHtNNl3jfFPjHHyZqGAzHlcyBVmVRpkkVCEct
- pXBCixMVdcri1lx+ecQUHDh1CS5IaOSlD8qxkhXSl9M5+zCh/XiftD+H9qr6EyBox8aUsiU8V
- tmichAyJ3QEvPROUSN5WYbmWNd9oiiYor5KHX+AhUJjZt06U+jh9tqlYLxPpkembegiwgbpNN
- BN72vTyrR+ilTramaL1k26YyLFuljYjpLPjCKn8+H8/IOyhTa5B2yhm5xtRLpU4zDB2zrdcIo
- IW6eHftD6hQtPF+qfGTcy6trd9rVJOg2ojhcStBUD1/8zyo+GlQ1S+uPftDaDj+NTbbwqzqQW
- r4z9N2tLGNVdSQY8oM9s/BH/+awRI5LdIpAlt+7pkh4jSi8TsoGe0dwyKsftkJ6qVSqJMXst4
- NCeQ/S7CNTQn3gBw538KMEisE8JvXCAxhf0PIXNaduTxGWKkB1oIaoTocI+RkGyF2h6RuIqLG
- C2g4je0cVz6AZUE5uia3pmdpQKmSr9ewgE2b3xP0jq0Yx5Sx2Icu4r2PZ+RZaQ1bkGm4eIxjm
- 5qD9Wr4/0PPWzTGTJYU+54v8XgA+uYK3b5dbeC6FmPcp7IQbWO3IUW9NfNMIVjob28jpqzttz
- 5nlwBeUwzhjZJKVhMlW46EXk5fp6hq4+s+5G5affEnGFhg3XxcxaCjj/uTfr+CDnZWgpwR1zh
- s5CPpCF6X6hk2JYZHPMZ75ERfWIa7xmgPgM/SJykh8FrKsGuf8a1j8K2ANEWf2YGZDk4Atls5
- 8ER1tqJAOhyHwuxP6GHfz+JEzGkWJwrVeL2MZypVQLiMs2YqF6rqFaSQxgGsqmp8PwHjJnxHs
- eDfkm79CjqfxQjw4VmAInFgjowoWv6f2fKyDD/vmnZWx1f3yWMN9J96Q/j9CWjd8X56oZNOUv
- MN/Z7T685XrEcdV9cD7slwXkFOvak4V487uy9l6QJpNoFBLSMRUV55HsMNB/2CWcnz+8N4dpI
- LGsObt1+isxA5FTgysQ8NQ6FLPSUhfz3kUZwRcUFWkheP5P6q4hinwbe15e/0lQpXYJDEa+Ec
- S5X7Aeu1eoeDYwGX6BoeBlkSz7Y7C0i+gWcEHp+FtHZv/bXGosxc0IvM5fXUcwqud12SOn7Xr
- 2Rpw33Dirrd74dImqnrWGRY/HIdtH7kZwfxMH1G0UmL7qM9dn6+dP20D7TLo=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Nov 2019 21:30:25 +0100
+o Adding more crossrefs.
+o Bold some words.
+o Add header levels.
 
-Reuse existing functionality from memdup_user() instead of keeping
-duplicate source code.
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+---
+ Documentation/RCU/whatisRCU.rst | 67 ++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 26 deletions(-)
 
-Generated by: scripts/coccinelle/api/memdup_user.cocci
-
-Fixes: f5b05d622a3e99e6a97a189fe500414be802a05c ("cifs: add IOCTL for QUER=
-Y_INFO passthrough to userspace")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/cifs/smb2ops.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 9cbb0ae0e53e..fde2e6d241a8 100644
-=2D-- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1413,15 +1413,10 @@ smb2_ioctl_query_info(const unsigned int xid,
- 	if (smb3_encryption_required(tcon))
- 		flags |=3D CIFS_TRANSFORM_REQ;
-
--	buffer =3D kmalloc(qi.output_buffer_length, GFP_KERNEL);
--	if (buffer =3D=3D NULL)
--		return -ENOMEM;
+diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
+index ae40c8bcc56c..3e24e0155a91 100644
+--- a/Documentation/RCU/whatisRCU.rst
++++ b/Documentation/RCU/whatisRCU.rst
+@@ -150,7 +150,7 @@ later.  See the kernel docbook documentation for more info, or look directly
+ at the function header comments.
+ 
+ rcu_read_lock()
 -
--	if (copy_from_user(buffer, arg + sizeof(struct smb_query_info),
--			   qi.output_buffer_length)) {
--		rc =3D -EFAULT;
--		goto iqinf_exit;
--	}
-+	buffer =3D memdup_user(arg + sizeof(struct smb_query_info),
-+			     qi.output_buffer_length);
-+	if (IS_ERR(buffer))
-+		return PTR_ERR(buffer);
-
- 	/* Open */
- 	memset(&open_iov, 0, sizeof(open_iov));
-=2D-
-2.24.0
++^^^^^^^^^^^^^^^
+ 	void rcu_read_lock(void);
+ 
+ 	Used by a reader to inform the reclaimer that the reader is
+@@ -164,7 +164,7 @@ rcu_read_lock()
+ 	longer-term references to data structures.
+ 
+ rcu_read_unlock()
+-
++^^^^^^^^^^^^^^^^^
+ 	void rcu_read_unlock(void);
+ 
+ 	Used by a reader to inform the reclaimer that the reader is
+@@ -172,13 +172,13 @@ rcu_read_unlock()
+ 	read-side critical sections may be nested and/or overlapping.
+ 
+ synchronize_rcu()
+-
++^^^^^^^^^^^^^^^^^
+ 	void synchronize_rcu(void);
+ 
+ 	Marks the end of updater code and the beginning of reclaimer
+ 	code.  It does this by blocking until all pre-existing RCU
+ 	read-side critical sections on all CPUs have completed.
+-	Note that synchronize_rcu() will -not- necessarily wait for
++	Note that synchronize_rcu() will **not** necessarily wait for
+ 	any subsequent RCU read-side critical sections to complete.
+ 	For example, consider the following sequence of events::
+ 
+@@ -196,7 +196,7 @@ synchronize_rcu()
+ 	any that begin after synchronize_rcu() is invoked.
+ 
+ 	Of course, synchronize_rcu() does not necessarily return
+-	-immediately- after the last pre-existing RCU read-side critical
++	**immediately** after the last pre-existing RCU read-side critical
+ 	section completes.  For one thing, there might well be scheduling
+ 	delays.  For another thing, many RCU implementations process
+ 	requests in batches in order to improve efficiencies, which can
+@@ -225,10 +225,10 @@ synchronize_rcu()
+ 	checklist.txt for some approaches to limiting the update rate.
+ 
+ rcu_assign_pointer()
+-
++^^^^^^^^^^^^^^^^^^^^
+ 	void rcu_assign_pointer(p, typeof(p) v);
+ 
+-	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
++	Yes, rcu_assign_pointer() **is** implemented as a macro, though it
+ 	would be cool to be able to declare a function in this manner.
+ 	(Compiler experts will no doubt disagree.)
+ 
+@@ -245,7 +245,7 @@ rcu_assign_pointer()
+ 	the _rcu list-manipulation primitives such as list_add_rcu().
+ 
+ rcu_dereference()
+-
++^^^^^^^^^^^^^^^^^
+ 	typeof(p) rcu_dereference(p);
+ 
+ 	Like rcu_assign_pointer(), rcu_dereference() must be implemented
+@@ -280,8 +280,8 @@ rcu_dereference()
+ 	unnecessary overhead on Alpha CPUs.
+ 
+ 	Note that the value returned by rcu_dereference() is valid
+-	only within the enclosing RCU read-side critical section [1].
+-	For example, the following is -not- legal::
++	only within the enclosing RCU read-side critical section [1]_.
++	For example, the following is **not** legal::
+ 
+ 		rcu_read_lock();
+ 		p = rcu_dereference(head.next);
+@@ -304,9 +304,11 @@ rcu_dereference()
+ 	at any time, including immediately after the rcu_dereference().
+ 	And, again like rcu_assign_pointer(), rcu_dereference() is
+ 	typically used indirectly, via the _rcu list-manipulation
+-	primitives, such as list_for_each_entry_rcu() [2].
++	primitives, such as list_for_each_entry_rcu() [2]_.
++
++	.. [1]
+ 
+-	[1] The variant rcu_dereference_protected() can be used outside
++	The variant rcu_dereference_protected() can be used outside
+ 	of an RCU read-side critical section as long as the usage is
+ 	protected by locks acquired by the update-side code.  This variant
+ 	avoids the lockdep warning that would happen when using (for
+@@ -319,7 +321,9 @@ rcu_dereference()
+ 	a lockdep splat is emitted.  See Documentation/RCU/Design/Requirements/Requirements.rst
+ 	and the API's code comments for more details and example usage.
+ 
+-	[2] If the list_for_each_entry_rcu() instance might be used by
++	.. [2]
++
++	If the list_for_each_entry_rcu() instance might be used by
+ 	update-side code as well as by RCU readers, then an additional
+ 	lockdep expression can be added to its list of arguments.
+ 	For example, given an additional "lock_is_held(&mylock)" argument,
+@@ -459,22 +463,22 @@ uses of RCU may be found in :ref:`listRCU.rst <list_rcu_doc>`,
+ 
+ So, to sum up:
+ 
+-o	Use rcu_read_lock() and rcu_read_unlock() to guard RCU
++-	Use rcu_read_lock() and rcu_read_unlock() to guard RCU
+ 	read-side critical sections.
+ 
+-o	Within an RCU read-side critical section, use rcu_dereference()
++-	Within an RCU read-side critical section, use rcu_dereference()
+ 	to dereference RCU-protected pointers.
+ 
+-o	Use some solid scheme (such as locks or semaphores) to
++-	Use some solid scheme (such as locks or semaphores) to
+ 	keep concurrent updates from interfering with each other.
+ 
+-o	Use rcu_assign_pointer() to update an RCU-protected pointer.
++-	Use rcu_assign_pointer() to update an RCU-protected pointer.
+ 	This primitive protects concurrent readers from the updater,
+-	-not- concurrent updates from each other!  You therefore still
++	**not** concurrent updates from each other!  You therefore still
+ 	need to use locking (or something similar) to keep concurrent
+ 	rcu_assign_pointer() primitives from interfering with each other.
+ 
+-o	Use synchronize_rcu() -after- removing a data element from an
++-	Use synchronize_rcu() **after** removing a data element from an
+ 	RCU-protected data structure, but -before- reclaiming/freeing
+ 	the data element, in order to wait for the completion of all
+ 	RCU read-side critical sections that might be referencing that
+@@ -566,7 +570,7 @@ namely foo_reclaim().
+ The summary of advice is the same as for the previous section, except
+ that we are now using call_rcu() rather than synchronize_rcu():
+ 
+-o	Use call_rcu() -after- removing a data element from an
++-	Use call_rcu() **after** removing a data element from an
+ 	RCU-protected data structure in order to register a callback
+ 	function that will be invoked after the completion of all RCU
+ 	read-side critical sections that might be referencing that
+@@ -603,7 +607,7 @@ more details on the current implementation as of early 2004.
+ 
+ 
+ 5A.  "TOY" IMPLEMENTATION #1: LOCKING
+-
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ This section presents a "toy" RCU implementation that is based on
+ familiar locking primitives.  Its overhead makes it a non-starter for
+ real-life use, as does its lack of scalability.  It is also unsuitable
+@@ -671,6 +675,8 @@ that the only thing that can block rcu_read_lock() is a synchronize_rcu().
+ But synchronize_rcu() does not acquire any locks while holding rcu_gp_mutex,
+ so there can be no deadlock cycle.
+ 
++.. _quiz_1:
++
+ Quick Quiz #1:
+ 		Why is this argument naive?  How could a deadlock
+ 		occur when using this algorithm in a real-world Linux
+@@ -679,7 +685,7 @@ Quick Quiz #1:
+ :ref:`Answers to Quick Quiz <8_whatisRCU>`
+ 
+ 5B.  "TOY" EXAMPLE #2: CLASSIC RCU
+-
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ This section presents a "toy" RCU implementation that is based on
+ "classic RCU".  It is also short on performance (but only for updates) and
+ on features such as hotplug CPU and the ability to run in CONFIG_PREEMPT
+@@ -710,14 +716,14 @@ CPU in turn.  The run_on() primitive can be implemented straightforwardly
+ in terms of the sched_setaffinity() primitive.  Of course, a somewhat less
+ "toy" implementation would restore the affinity upon completion rather
+ than just leaving all tasks running on the last CPU, but when I said
+-"toy", I meant -toy-!
++"toy", I meant **toy**!
+ 
+ So how the heck is this supposed to work???
+ 
+ Remember that it is illegal to block while in an RCU read-side critical
+ section.  Therefore, if a given CPU executes a context switch, we know
+ that it must have completed all preceding RCU read-side critical sections.
+-Once -all- CPUs have executed a context switch, then -all- preceding
++Once **all** CPUs have executed a context switch, then **all** preceding
+ RCU read-side critical sections will have completed.
+ 
+ So, suppose that we remove a data item from its structure and then invoke
+@@ -725,12 +731,16 @@ synchronize_rcu().  Once synchronize_rcu() returns, we are guaranteed
+ that there are no RCU read-side critical sections holding a reference
+ to that data item, so we can safely reclaim it.
+ 
++.. _quiz_2:
++
+ Quick Quiz #2:
+ 		Give an example where Classic RCU's read-side
+-		overhead is -negative-.
++		overhead is **negative**.
+ 
+ :ref:`Answers to Quick Quiz <8_whatisRCU>`
+ 
++.. _quiz_3:
++
+ Quick Quiz #3:
+ 		If it is illegal to block in an RCU read-side
+ 		critical section, what the heck do you do in
+@@ -1076,9 +1086,11 @@ Answer:
+ 		approach where tasks in RCU read-side critical sections
+ 		cannot be blocked by tasks executing synchronize_rcu().
+ 
++:ref:`Back to Quick Quiz #1 <quiz_1>`
++
+ Quick Quiz #2:
+ 		Give an example where Classic RCU's read-side
+-		overhead is -negative-.
++		overhead is **negative**.
+ 
+ Answer:
+ 		Imagine a single-CPU system with a non-CONFIG_PREEMPT
+@@ -1103,6 +1115,8 @@ Answer:
+ 		even the theoretical possibility of negative overhead for
+ 		a synchronization primitive is a bit unexpected.  ;-)
+ 
++:ref:`Back to Quick Quiz #2 <quiz_2>`
++
+ Quick Quiz #3:
+ 		If it is illegal to block in an RCU read-side
+ 		critical section, what the heck do you do in
+@@ -1128,6 +1142,7 @@ Answer:
+ 		Besides, how does the computer know what pizza parlor
+ 		the human being went to???
+ 
++:ref:`Back to Quick Quiz #3 <quiz_3>`
+ 
+ ACKNOWLEDGEMENTS
+ 
+-- 
+2.20.1
 
