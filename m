@@ -2,68 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A13DF0055
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 587DDF0058
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:54:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbfKEOxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:53:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41600 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbfKEOxr (ORCPT
+        id S2389100AbfKEOyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:54:21 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49716 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728180AbfKEOyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:53:47 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iS0DH-00062U-Nf; Tue, 05 Nov 2019 15:53:43 +0100
-Date:   Tue, 5 Nov 2019 15:53:43 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     Carlos O'Donell <carlos@redhat.com>, Shawn Landden <shawn@git.icu>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Keith Packard <keithp@keithp.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC v2 PATCH] futex: extend set_robust_list to allow 2 locking
- ABIs at the same time.
-In-Reply-To: <87o8xqqty3.fsf@oldenburg2.str.redhat.com>
-Message-ID: <alpine.DEB.2.21.1911051550350.17054@nanos.tec.linutronix.de>
-References: <20191104002909.25783-1-shawn@git.icu> <87woceslfs.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051053470.17054@nanos.tec.linutronix.de> <87sgn2skm6.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051253430.17054@nanos.tec.linutronix.de>
- <f11d82f1-1e81-e344-3ad2-76e4cb488a3d@redhat.com> <87o8xqqty3.fsf@oldenburg2.str.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 5 Nov 2019 09:54:21 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iS0Do-0002VU-Gw; Tue, 05 Nov 2019 14:54:16 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net/mlx5: fix spelling mistake "metdata" -> "metadata"
+Date:   Tue,  5 Nov 2019 14:54:16 +0000
+Message-Id: <20191105145416.60451-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Nov 2019, Florian Weimer wrote:
-> * Carlos O'Donell:
-> > "Robust mutexes do not take ROBUST_LIST_LIMIT into account"
-> > https://sourceware.org/bugzilla/show_bug.cgi?id=19089
-> 
-> That's just a missing check in our implementation and something that few
-> applications will encounter, if any.  There is this one here:
-> 
->   <https://sourceware.org/bugzilla/show_bug.cgi?id=19004>
-> 
-> It contains a kernel patch.
-> 
-> I thought that there were more issues in the current implementation, but
-> I can't a record of them. 8-(
+From: Colin Ian King <colin.king@canonical.com>
 
-There is a nasty one in my inbox with a kernel patch fixing it, which I
-still need to review with all futex brain cells activated:
+There is a spelling mistake in a esw_warn warning message. Fix it.
 
-  https://lore.kernel.org/r/1572573789-16557-1-git-send-email-wang.yi59@zte.com.cn
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+index bd9fd59d8233..1c3fdee87588 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@ -1877,7 +1877,7 @@ static int esw_vport_create_ingress_acl_group(struct mlx5_eswitch *esw,
+ 	if (IS_ERR(g)) {
+ 		ret = PTR_ERR(g);
+ 		esw_warn(esw->dev,
+-			 "Failed to create vport[%d] ingress metdata group, err(%d)\n",
++			 "Failed to create vport[%d] ingress metadata group, err(%d)\n",
+ 			 vport->vport, ret);
+ 		goto grp_err;
+ 	}
+-- 
+2.20.1
 
-	tglx
