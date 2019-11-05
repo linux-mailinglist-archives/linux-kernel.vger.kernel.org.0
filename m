@@ -2,106 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E406F0164
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F47F0174
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:30:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389922AbfKEP2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:28:38 -0500
-Received: from mga12.intel.com ([192.55.52.136]:20980 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389546AbfKEP2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:28:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 07:28:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="212559786"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 05 Nov 2019 07:28:33 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 05 Nov 2019 17:28:32 +0200
-Date:   Tue, 5 Nov 2019 17:28:32 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PCI: Add missing link delays required by the PCIe
- spec
-Message-ID: <20191105152832.GC2552@lahna.fi.intel.com>
-References: <20191105095428.GR2552@lahna.fi.intel.com>
- <20191105150013.GA202873@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105150013.GA202873@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2389950AbfKEP3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:29:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44774 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389919AbfKEP3v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:29:51 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA5FRhed042778
+        for <linux-kernel@vger.kernel.org>; Tue, 5 Nov 2019 10:29:49 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w3apstdrd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 10:29:49 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 5 Nov 2019 15:29:47 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Nov 2019 15:29:41 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA5FTeZZ55640148
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 Nov 2019 15:29:40 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE50AA4051;
+        Tue,  5 Nov 2019 15:29:40 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BAB3CA404D;
+        Tue,  5 Nov 2019 15:29:38 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.59])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  5 Nov 2019 15:29:38 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 05 Nov 2019 17:29:38 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Tim Murray <timmurray@google.com>, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH 0/1] userfaultfd: require CAP_SYS_PTRACE for UFFD_FEATURE_EVENT_FORK
+Date:   Tue,  5 Nov 2019 17:29:36 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19110515-0008-0000-0000-0000032AEF58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110515-0009-0000-0000-00004A4A4A16
+Message-Id: <1572967777-8812-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=811 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1911050127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 09:00:13AM -0600, Bjorn Helgaas wrote:
-> On Tue, Nov 05, 2019 at 11:54:28AM +0200, Mika Westerberg wrote:
-> > On Mon, Nov 04, 2019 at 06:00:00PM -0600, Bjorn Helgaas wrote:
-> 
-> > > > If you think it is fine to do the delay before we have restored
-> > > > everything I can move it inside pci_power_up() or call it after
-> > > > pci_pm_default_resume_early() as above. I think at least we should make
-> > > > sure all the saved registers are restored before so that the link
-> > > > activation check actually works.
-> > > 
-> > > What needs to be restored to make pcie_wait_for_link_delay() work?
-> > 
-> > I'm not entirely sure. I think that pci_restore_state() at least should
-> > be called so that the PCIe capability gets restored. Maybe not even
-> > that because Data Link Layer Layer Active always reflects the DL_Active
-> > or not and it does not need to be enabled separately.
-> > 
-> > > And what event does the restore need to be ordered with?
-> > 
-> > Not sure I follow you here.
-> 
-> You're suggesting that we should restore saved registers first so
-> pcie_wait_for_link_delay() works.  If the link activation depends on
-> something being restored and we don't enforce an ordering, the
-> activation might succeed or fail depending on whether it happens
-> before or after the restore.  So if there is a dependency, we should
-> make it explicit to avoid a race like that.
+Hi,
 
-OK thanks. By explicit you mean document it in the code, right?
+A while ago Andy noticed [1] that UFFD_FEATURE_EVENT_FORK used by an
+unprivileged user may have security implications.
 
-> But I'm not saying we *shouldn't* do the restore before the wait; only
-> that any dependency should be explicit.  Even if there is no actual
-> dependency it probably makes sense to do the restore first so it can
-> overlap with the hardware link training, which may reduce the time
-> pcie_wait_for_link_delay() has to wait when we do call it, e.g.,
-> 
->   |-----------------|          link activation
->      |-----|                   restore state
->            |--------|          pcie_wait_for_link_delay()
-> 
-> whereas if we do the restore after waiting for the link to come up, it
-> probably takes longer:
-> 
->   |-----------------|          link activation
->      |--------------|          pcie_wait_for_link_delay()
->                     |-----|    restore state
-> 
-> I actually suspect there *is* a dependency -- we should respect the
-> Target Link Speed and and width so the link resumes in the same
-> configuration it was before suspend.  And I suspect that may require
-> an explicit retrain after restoring PCI_EXP_LNKCTL2.
+As the first step of the solution the following patch limits the
+availably of UFFD_FEATURE_EVENT_FORK only for those having CAP_SYS_PTRACE.
 
-According the PCIe spec the PCI_EXP_LNKCTL2 Target Link Speed is marked
-as RWS (S for sticky) so I suspect its value is retained after reset in
-the same way as PME bits. Assuming I understood it correctly.
+The usage of CAP_SYS_PTRACE ensures compatibility with CRIU.
+
+Yet, if there are other users of non-cooperative userfaultfd that run
+without CAP_SYS_PTRACE, they would be broken :(
+
+[1] https://lore.kernel.org/lkml/CALCETrWY+5ynDct7eU_nDUqx=okQvjm=Y5wJvA4ahBja=CQXGw@mail.gmail.com
+
+Mike Rapoport (1):
+  userfaultfd: require CAP_SYS_PTRACE for UFFD_FEATURE_EVENT_FORK
+
+ fs/userfaultfd.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
+
