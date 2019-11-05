@@ -2,73 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 184EBEF7A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 09:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3ADEF84D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfKEI7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 03:59:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727925AbfKEI7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 03:59:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E33FB1EE;
-        Tue,  5 Nov 2019 08:59:19 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 09:59:16 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Mark Rutland <mark.rutland@arm.com>
-cc:     linux-arm-kernel@lists.infradead.org, Jessica Yu <jeyu@kernel.org>,
-        Helge Deller <deller@gmx.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org, amit.kachhap@arm.com,
-        catalin.marinas@arm.com, duwe@suse.de, james.morse@arm.com,
-        jpoimboe@redhat.com, jthierry@redhat.com,
-        linux-parisc@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org, svens@stackframe.org,
-        takahiro.akashi@linaro.org, will@kernel.org
-Subject: Re: [PATCHv2 2/8] module/ftrace: handle patchable-function-entry
-In-Reply-To: <20191029165832.33606-3-mark.rutland@arm.com>
-Message-ID: <alpine.LSU.2.21.1911050958390.11007@pobox.suse.cz>
-References: <20191029165832.33606-1-mark.rutland@arm.com> <20191029165832.33606-3-mark.rutland@arm.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1730657AbfKEJNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:13:05 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:27790 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbfKEJNF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 04:13:05 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191105091302epoutp04b17064effff4231a262819185be32256~UOU864WS52378023780epoutp04r
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 09:13:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191105091302epoutp04b17064effff4231a262819185be32256~UOU864WS52378023780epoutp04r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572945182;
+        bh=CzrLhLMfiUzAG7RmdPIH+UlbVTImdtVhtEnWRgE/ibk=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=b+NWHmUJi8xZasCodeW40UL1h0GgsjFUZG3Id31iOvQaodG2siIgtR5udCN3Lj4n3
+         I0kRpb/ZjJcV9M0m8iEpAN7jnwaPHnH1RS+t5cPaWkqo/7TKykOe+0W9psLmJZuD4r
+         7TWccYPpprokNbGIpysXItA/P4mi6pjiPrTh9+v4=
+Received: from epcpadp2 (unknown [182.195.40.12]) by epcas1p3.samsung.com
+        (KnoxPortal) with ESMTP id
+        20191105091301epcas1p3f03cf7a861f1f2f60a1461a013073bf6~UOU8Mn7bf0930209302epcas1p3m;
+        Tue,  5 Nov 2019 09:13:01 +0000 (GMT)
+Mime-Version: 1.0
+Subject: RE: [PATCH] MAINTAINERS: Update myself as maintainer for DEVFREQ
+ subsystem support
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "chanwoo@kernel.org" <chanwoo@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        CPGS <cpgs@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <1019298652.01572945181528.JavaMail.epsvc@epcpadp2>
+Date:   Tue, 05 Nov 2019 16:35:05 +0900
+X-CMS-MailID: 20191105073505epcms1p243aa08867cb813b6329a3ba89b832a8a
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
+References: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
+        <CGME20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5@epcms1p2>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Oct 2019, Mark Rutland wrote:
+>Update myself to the DEVFREQ entry as maintainer from reviewer and
+>the git repository information to manage the devfreq patches. I've been
+>reviewing and tesing the devfreq support for the couple of years as reviewer.
+>From now, I'll help and reiview the devfreq as maintainer.
+>
+>Suggested-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-> When using patchable-function-entry, the compiler will record the
-> callsites into a section named "__patchable_function_entries" rather
-> than "__mcount_loc". Let's abstract this difference behind a new
-> FTRACE_CALLSITE_SECTION, so that architectures don't have to handle this
-> explicitly (e.g. with custom module linker scripts).
-> 
-> As parisc currently handles this explicitly, it is fixed up accordingly,
-> with its custom linker script removed. Since FTRACE_CALLSITE_SECTION is
-> only defined when DYNAMIC_FTRACE is selected, the parisc module loading
-> code is updated to only use the definition in that case. When
-> DYNAMIC_FTRACE is not selected, modules shouldn't have this section, so
-> this removes some redundant work in that case.
-> 
-> I built parisc generic-{32,64}bit_defconfig with DYNAMIC_FTRACE enabled,
-> and verified that the section made it into the .ko files for modules.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Sven Schnelle <svens@stackframe.org>
-> Cc: linux-parisc@vger.kernel.org
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-For the updated patch
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Thanks a lot, Chanwoo!
 
-M
+>---
+> MAINTAINERS | 8 ++++----
+> 1 file changed, 4 insertions(+), 4 deletions(-)
+>
+>diff --git a/MAINTAINERS b/MAINTAINERS
+>index cba1095547fd..ebc1078c1ecb 100644
+>--- a/MAINTAINERS
+>+++ b/MAINTAINERS
+>@@ -3532,7 +3532,7 @@ BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
+> M:	Chanwoo Choi <cw00.choi@samsung.com>
+> L:	linux-pm@vger.kernel.org
+> L:	linux-samsung-soc@vger.kernel.org
+>-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+>+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+> S:	Maintained
+> F:	drivers/devfreq/exynos-bus.c
+> F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+>@@ -4762,9 +4762,9 @@ F:	include/linux/devcoredump.h
+> DEVICE FREQUENCY (DEVFREQ)
+> M:	MyungJoo Ham <myungjoo.ham@samsung.com>
+> M:	Kyungmin Park <kyungmin.park@samsung.com>
+>-R:	Chanwoo Choi <cw00.choi@samsung.com>
+>+M:	Chanwoo Choi <cw00.choi@samsung.com>
+> L:	linux-pm@vger.kernel.org
+>-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+>+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+> S:	Maintained
+> F:	drivers/devfreq/
+> F:	include/linux/devfreq.h
+>@@ -4774,7 +4774,7 @@ F:	include/trace/events/devfreq.h
+> DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
+> M:	Chanwoo Choi <cw00.choi@samsung.com>
+> L:	linux-pm@vger.kernel.org
+>-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+>+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+> S:	Supported
+> F:	drivers/devfreq/event/
+> F:	drivers/devfreq/devfreq-event.c
+>-- 
+>2.17.1
+>
+
