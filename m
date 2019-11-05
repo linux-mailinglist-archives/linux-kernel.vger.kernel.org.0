@@ -2,52 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0120EFA57
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE37EFA60
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbfKEKBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 05:01:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40774 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388108AbfKEKBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 05:01:38 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iRveW-0000FL-L6; Tue, 05 Nov 2019 11:01:33 +0100
-Date:   Tue, 5 Nov 2019 11:01:32 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arul Jeniston <arul.jeniston@gmail.com>
-cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
- function.
-In-Reply-To: <CACAVd4grhGVVSYpwjof5YiS1duZ2_SFjvXtctP+cmR5Actkjyg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1911051100471.17054@nanos.tec.linutronix.de>
-References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com> <alpine.DEB.2.21.1908191646350.2147@nanos.tec.linutronix.de> <CACAVd4j60pn=td5hh485SJOcoYZ_jWQDQg2DVasSodPtsaupkw@mail.gmail.com>
- <alpine.DEB.2.21.1908191752580.2147@nanos.tec.linutronix.de> <CACAVd4iRN7=eq_B1+Yb-xcspU-Sg1dmMo_=VtLXXVPkjN1hY5Q@mail.gmail.com> <alpine.DEB.2.21.1908191943280.1796@nanos.tec.linutronix.de> <CACAVd4jAJ5QcOH=q=Q9kAz20X4_nAc7=vVU_gPWTS1UuiGK-fg@mail.gmail.com>
- <alpine.DEB.2.21.1908201036200.2223@nanos.tec.linutronix.de> <CACAVd4jT4Ke7giPmKSzt+Wo3Ro-g9zWDRz_GHaRcs0Nb3_rkBw@mail.gmail.com> <CACAVd4gRoQih6f_K7kMzr=AwA_DvP0OksxBKj1bGPsP2F_9sFg@mail.gmail.com> <alpine.DEB.2.21.1909051707150.1902@nanos.tec.linutronix.de>
- <CACAVd4hS1i--fxWaarXP2psagW-JmBoLAJRrfu9gkRc49Ja4pg@mail.gmail.com> <alpine.DEB.2.21.1909071630000.1902@nanos.tec.linutronix.de> <CACAVd4grhGVVSYpwjof5YiS1duZ2_SFjvXtctP+cmR5Actkjyg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2387985AbfKEKEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 05:04:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730573AbfKEKET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 05:04:19 -0500
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CF6CC054C58
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 10:04:19 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id f2so7451198wmf.8
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 02:04:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lrDn3WRTg+rwGOnenXl0j0b2dvVQo5Nmi58gDUT8LNE=;
+        b=MvBadvBXOoeN1TXzuEHho+dcuPi6wtjrmrFngRgvSeOiwVrGzyH6cqwAfefQV+zv8S
+         6EANWcntVeqoPbdOQw6vf/o1xFMxgnBnkS+gVi+YWUaHlq79h1MNKOEUnR/jGsDBc+WM
+         WZ4BknANclcfWF4ridIEtfSpmQrakMIhqVwXcO0yFmAq15cwawwRMvX6xwNgwyV5hEG2
+         eHu2Zkf5WM+GV0KleVOi8EjIbe6Ahvs7Bw98qfwJBfmjEZE4ov5Xff4OOAOcHJkT3bu6
+         7Mc2edXLjPRH3ETLVLcK68nWt19NpsdLwUYAP4gsuGMg7Pfz2YABHMJ6gZuQBUIKuCpP
+         MQow==
+X-Gm-Message-State: APjAAAVBKfiIO4+BxfZfKCttZw1r8h1SloWYpdIvcMwTFJqNI5dIFmpn
+        qXMw0GLoy3EghrY4RKm2yKPZEs5ajDzkvrUSmiWQCfI4cmtgeGOkK4sWHnMp5svuD04Lf5qRDfd
+        nP0vAeqgo0dM22tRhRQIQa9ef
+X-Received: by 2002:a05:6000:12d1:: with SMTP id l17mr13486384wrx.261.1572948258200;
+        Tue, 05 Nov 2019 02:04:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyjNhFV5qF8IUjCi16O1NoaQu8sSVoDIfgxCmNd9O29UA3q2m/52eCf5DqgEb0rGOHyGFqzUg==
+X-Received: by 2002:a05:6000:12d1:: with SMTP id l17mr13486352wrx.261.1572948257905;
+        Tue, 05 Nov 2019 02:04:17 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:4051:461:136e:3f74? ([2001:b07:6468:f312:4051:461:136e:3f74])
+        by smtp.gmail.com with ESMTPSA id t24sm30988243wra.55.2019.11.05.02.04.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2019 02:04:17 -0800 (PST)
+Subject: Re: [PATCH 03/13] kvm: monolithic: fixup x86-32 build
+To:     Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+References: <20191104230001.27774-1-aarcange@redhat.com>
+ <20191104230001.27774-4-aarcange@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <6ed4a5cd-38b1-04f8-e3d5-3327a1bd5d87@redhat.com>
+Date:   Tue, 5 Nov 2019 11:04:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191104230001.27774-4-aarcange@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arul,
-
-On Tue, 5 Nov 2019, Arul Jeniston wrote:
-> >  So I'm going to send a patch to document that in the manpage.
+On 04/11/19 23:59, Andrea Arcangeli wrote:
+> kvm_x86_set_hv_timer and kvm_x86_cancel_hv_timer needs to be defined
+> to succeed the 32bit kernel build, but they can't be called.
 > 
-> Did you get a chance to make the manpage patch? if yes, please help us
-> by sharing the link where we can find the patch.
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index bd17ad61f7e3..1a58ae38c8f2 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7195,6 +7195,17 @@ void kvm_x86_cancel_hv_timer(struct kvm_vcpu *vcpu)
+>  {
+>  	to_vmx(vcpu)->hv_deadline_tsc = -1;
+>  }
+> +#else
+> +int kvm_x86_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc,
+> +			 bool *expired)
+> +{
+> +	BUG();
+> +}
+> +
+> +void kvm_x86_cancel_hv_timer(struct kvm_vcpu *vcpu)
+> +{
+> +	BUG();
+> +}
+>  #endif
+>  
+>  void kvm_x86_sched_in(struct kvm_vcpu *vcpu, int cpu)
+> 
 
-No. I would have Cc'ed you when posting. It's somewhere on my todo list.
+I'll check for how long this has been broken.  It may be the proof that
+we can actually drop 32-bit KVM support.
 
-Thanks,
-
-	tglx
+Paolo
