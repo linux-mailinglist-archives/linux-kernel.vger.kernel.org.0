@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6962F0303
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6840F0322
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390562AbfKEQd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:33:26 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34191 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390543AbfKEQdY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:33:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572971603;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Skg5arqhiojkrhAvFDjH124AuiwjgoDeP66mJMAYWGM=;
-        b=aaXIS5cPcR2h6HOzCu9vY7K8DyPeKuUiqBvl2dLkBE606kNXn41QqKVJ7JRyQ7Urxl6ibN
-        /Ev9pQwmxgq6n2UXyDtNhtxYrOacNndFukWxFKnpFMs0XDY1OC3/6TodRFDORdz5PuYU1T
-        Mv/UHRFnrMFGBGZuPGyhDI2a51Ku6Cs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-351-fdhOjGE1OwGmEEn4AJbycQ-1; Tue, 05 Nov 2019 11:33:20 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2390270AbfKEQhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:37:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390060AbfKEQhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 11:37:22 -0500
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D34D01800D4A;
-        Tue,  5 Nov 2019 16:33:17 +0000 (UTC)
-Received: from mail (ovpn-121-157.rdu2.redhat.com [10.10.121.157])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9CC2160C88;
-        Tue,  5 Nov 2019 16:33:17 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 11:33:16 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Tim Murray <timmurray@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/1] userfaultfd: require CAP_SYS_PTRACE for
- UFFD_FEATURE_EVENT_FORK
-Message-ID: <20191105163316.GI30717@redhat.com>
-References: <1572967777-8812-1-git-send-email-rppt@linux.ibm.com>
- <1572967777-8812-2-git-send-email-rppt@linux.ibm.com>
- <CAKOZuev93zDGNPX+ySg_jeUg4Z3zKMcpABekUQvHA01kTVn4=A@mail.gmail.com>
- <CALCETrX=VmSjD6kLT6tuZQ4Efhc_13vZrw1mo4Z2iKqZTT-bzg@mail.gmail.com>
- <CAKOZuetu0QWUDAycTOFzC4HEbjH99EtOhb4gJnHAuovT_StpzA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id E7E2821882;
+        Tue,  5 Nov 2019 16:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572971841;
+        bh=8bkawGF6C92Iume03tUUw5DghOb0maAehRtJjgYaORA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sv/k6UgWUKg/E3W749a7PNJ5UDZIL1C4k1dXz0ZA3VRlhvwXAii9xvkYFgY03pUuh
+         ag4kltqP8p55WAc1WkjJLe8MpW8PxX9sCC/7Ht2jgyc4AR1tzrLA2zuGr2zgbDC3/h
+         Y2r3+05TX5WtX8H1RhHT1bvLlQPCpsCLUI86gG98=
+Date:   Tue, 5 Nov 2019 17:37:12 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.3 000/163] 5.3.9-stable review
+Message-ID: <20191105163712.GA2760793@kroah.com>
+References: <20191104212140.046021995@linuxfoundation.org>
+ <22e9066f-b2e9-552e-70d8-b6aaf3a01cd4@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <CAKOZuetu0QWUDAycTOFzC4HEbjH99EtOhb4gJnHAuovT_StpzA@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: fdhOjGE1OwGmEEn4AJbycQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <22e9066f-b2e9-552e-70d8-b6aaf3a01cd4@roeck-us.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 08:06:49AM -0800, Daniel Colascione wrote:
-> Sure, but the same argument applies to all the other permission checks
-> that we do at open time, not at ioctl time. For better or for worse,
-> the DAC-ish model used in most places is that access checks happen at
-> file object creation time and anyone who has the FD can perform those
-> operations later. Confusing the model by doing *some* permission
-> checks at open time and *some* permission checks at usage time makes
-> the system harder to understand.
+On Tue, Nov 05, 2019 at 06:26:27AM -0800, Guenter Roeck wrote:
+> On 11/4/19 1:43 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.3.9 release.
+> > There are 163 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed 06 Nov 2019 09:14:04 PM UTC.
+> > Anything received after that time might be too late.
+> > 
+> 
+> Build results:
+> 	total: 158 pass: 158 fail: 0
+> Qemu test results:
+> 	total: 391 pass: 391 fail: 0
 
-The only case that requires change is if userland requested the
-UFFD_FEATURE_EVENT_FORK feature (which AFIK only CRIU does) and that
-request is done in the UFFDIO_API call not during the syscall.
+THanks for testing all of these and letting me know.
 
-Doing the check in the syscall would then break all non privileged
-users like if we'd set /proc/sys/vm/unprivileged_userfaultfd to
-zero. Qemu for example rightfully never runs with privilege (with a
-few exceptions like Kata which should be fixed in fact) and it never
-asks for the UFFD_FEATURE_EVENT_FORK feature either.
-
+greg k-h
