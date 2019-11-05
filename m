@@ -2,69 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 694E3F06CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 245ADF06C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:20:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbfKEUV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:21:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:59566 "EHLO foss.arm.com"
+        id S1729588AbfKEUUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:20:23 -0500
+Received: from mga18.intel.com ([134.134.136.126]:64357 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfKEUV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:21:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D778311;
-        Tue,  5 Nov 2019 12:21:56 -0800 (PST)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.199.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D00C83F719;
-        Tue,  5 Nov 2019 12:21:55 -0800 (PST)
-Date:   Tue, 5 Nov 2019 20:21:54 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [Patch v5 2/6] sched/fair: Add infrastructure to store and
- update  instantaneous thermal pressure
-Message-ID: <20191105202037.GA17494@e108754-lin>
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-3-git-send-email-thara.gopinath@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572979786-20361-3-git-send-email-thara.gopinath@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726368AbfKEUUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:20:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:20:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
+   d="scan'208";a="376815162"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2019 12:20:18 -0800
+From:   thor.thayer@linux.intel.com
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH] spi: dw: Fix Designware SPI loopback
+Date:   Tue,  5 Nov 2019 14:22:10 -0600
+Message-Id: <1572985330-5525-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thara,
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-On Tuesday 05 Nov 2019 at 13:49:42 (-0500), Thara Gopinath wrote:
-[...]
-> +static void trigger_thermal_pressure_average(struct rq *rq)
-> +{
-> +#ifdef CONFIG_SMP
-> +	update_thermal_load_avg(rq_clock_task(rq), rq,
-> +				per_cpu(thermal_pressure, cpu_of(rq)));
-> +#endif
-> +}
+The SPI_LOOP is set in spi->mode but not propagated to the register.
+A previous patch removed the bit during a cleanup.
 
-Why did you decide to keep trigger_thermal_pressure_average and not
-call update_thermal_load_avg directly?
+Fixes: e1bc204894ea ("spi: dw: fix potential variable assignment error")
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+ drivers/spi/spi-dw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-For !CONFIG_SMP you already have an update_thermal_load_avg function
-that does nothing, in kernel/sched/pelt.h, so you don't need that
-ifdef. 
+diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
+index 9a49e073e8b7..076652d3d051 100644
+--- a/drivers/spi/spi-dw.c
++++ b/drivers/spi/spi-dw.c
+@@ -308,7 +308,8 @@ static int dw_spi_transfer_one(struct spi_controller *master,
+ 	cr0 = (transfer->bits_per_word - 1)
+ 		| (chip->type << SPI_FRF_OFFSET)
+ 		| ((((spi->mode & SPI_CPOL) ? 1 : 0) << SPI_SCOL_OFFSET) |
+-			(((spi->mode & SPI_CPHA) ? 1 : 0) << SPI_SCPH_OFFSET))
++			(((spi->mode & SPI_CPHA) ? 1 : 0) << SPI_SCPH_OFFSET) |
++			(((spi->mode & SPI_LOOP) ? 1 : 0) << SPI_SRL_OFFSET))
+ 		| (chip->tmode << SPI_TMOD_OFFSET);
+ 
+ 	/*
+-- 
+2.7.4
 
-Thanks,
-Ionela.
-
-> +
->  /*
->   * All the scheduling class methods:
->   */
-> -- 
-> 2.1.4
-> 
