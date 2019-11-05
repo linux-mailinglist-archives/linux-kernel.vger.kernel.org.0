@@ -2,121 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0ACF067E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:58:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 751FBF06AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfKET6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 14:58:03 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42228 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfKET6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 14:58:02 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b16so18730171otk.9;
-        Tue, 05 Nov 2019 11:58:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x/Pqzh0wjtCm8/DGrbF/d0ukivugFZC6wp2pNvyyKqU=;
-        b=YuZ5mrtnQfjAuFFwfdDv4UNqXc+AEdAgz0eE/dx9f+KjqbW+XUS3BK6oJkJg7y2rA9
-         xtk4ReZZALvJSQ+1+hjiJ91W4MxHC1BdYG2LHEAbnIO+dGzRIHm+/gNt2YN63iKtFX/Q
-         2LVjhu+agnKwBvJZja+rpG/gmnr3RqD+xaeA3uOLtSjuV/VgcRO+klyWPhlRRiJ2x4O6
-         RFQFzd1PWg3C1YN1Y6JGEaBZjqV55MISzedWtYOJNj3Nhwnf6gZiXgewBqG+N9nq8U+t
-         BVLhIa3KZF9/M6urIkFoWNLPGAPnaX1iYxZZKuZvgxqcn6bloAcDCfezyMhVaDjAeebG
-         TSoQ==
-X-Gm-Message-State: APjAAAXtDaQFjJBPQajym/d5Y5U6Ik+ESYWOBO7Jc0wDr5CHRRqDuaO0
-        g2GeMLzafWikxbj1lI27M7eFIwA=
-X-Google-Smtp-Source: APXvYqzVTpLLqzm+L3XsD+1vas5TRGDVn3vLjnHeqDn40MYgszVtjMGB2hevWDiXQ0kvMy5d6Dbxrg==
-X-Received: by 2002:a9d:5617:: with SMTP id e23mr3940969oti.208.1572983881547;
-        Tue, 05 Nov 2019 11:58:01 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c20sm1533138otm.80.2019.11.05.11.58.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 11:58:00 -0800 (PST)
-Date:   Tue, 5 Nov 2019 13:58:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     p.zabel@pengutronix.de, mark.rutland@arm.com, yuenn@google.com,
-        venture@google.com, benjaminfair@google.com,
-        avifishman70@gmail.com, joel@jms.id.au, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-binding: reset: add NPCM reset controller
- documentation
-Message-ID: <20191105195800.GA16739@bogus>
-References: <20191031135617.249303-1-tmaimon77@gmail.com>
- <20191031135617.249303-2-tmaimon77@gmail.com>
+        id S1729583AbfKEUJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:09:58 -0500
+Received: from foss.arm.com ([217.140.110.172]:58970 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbfKEUJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:09:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB28C64F;
+        Tue,  5 Nov 2019 12:09:56 -0800 (PST)
+Received: from [10.162.40.121] (a075563-lin.blr.arm.com [10.162.40.121])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02C4E3FB2A;
+        Mon,  4 Nov 2019 22:50:36 -0800 (PST)
+Subject: Re: [PATCHv2 1/8] ftrace: add ftrace_init_nop()
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        deller@gmx.de, duwe@suse.de, James.Bottomley@HansenPartnership.com,
+        james.morse@arm.com, jeyu@kernel.org, jpoimboe@redhat.com,
+        jthierry@redhat.com, linux-parisc@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, svens@stackframe.org,
+        takahiro.akashi@linaro.org, will@kernel.org
+References: <20191029165832.33606-1-mark.rutland@arm.com>
+ <20191029165832.33606-2-mark.rutland@arm.com>
+ <daad0785-a33f-3cfb-cf0f-657b6c677257@arm.com>
+ <20191104133657.GE45140@lakrids.cambridge.arm.com>
+From:   Amit Kachhap <amit.kachhap@arm.com>
+Message-ID: <8e68de1f-f961-752d-9c07-ce41ce624d35@arm.com>
+Date:   Tue, 5 Nov 2019 12:17:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031135617.249303-2-tmaimon77@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191104133657.GE45140@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 03:56:15PM +0200, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM reset controller.
+Hi Mark,
 
-'dt-bindings' for the subject.
-
+On 11/4/19 7:06 PM, Mark Rutland wrote:
+> On Sat, Nov 02, 2019 at 05:49:00PM +0530, Amit Daniel Kachhap wrote:
+>> Hi Mark,
 > 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/reset/nuvoton,npcm-reset.txt     | 32 +++++++++++++++++++
->  1 file changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+> Hi Amit,
 > 
-> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
-> new file mode 100644
-> index 000000000000..6e802703af60
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
-> @@ -0,0 +1,32 @@
-> +Nuvoton NPCM Reset controller
-> +
-> +Required properties:
-> +- compatible : "nuvoton,npcm750-reset" for NPCM7XX BMC
-> +- reg : specifies physical base address and size of the register.
-> +- #reset-cells: must be set to 2
-> +
-> +Optional property:
-> +- nuvoton,sw-reset-number - Contains the software reset number to restart the SoC.
-> +  NPCM7xx contain four software reset that represent numbers 1 to 4.
-> +
-> +  If 'nuvoton,sw-reset-number' is not specfied software reset is disabled.
-> +
-> +Example:
-> +       rstc: rstc@f0801000 {
-> +               compatible = "nuvoton,npcm750-reset";
-> +               reg = <0xf0801000 0x70>;
-> +               #reset-cells = <2>;
-> +               nuvoton,sw-reset-number = <2>;
-> +       };
-> +
-> +Specifying reset lines connected to IP NPCM7XX modules
-> +======================================================
-> +example:
-> +
-> +        spi0: spi@..... {
-> +                ...
-> +                resets = <&rstc NPCM7XX_RESET_IPSRST2 NPCM7XX_RESET_PSPI1>;
-> +                ...
-> +        };
-> +
-> +The index could be found in <dt-bindings/reset/nuvoton,npcm7xx-reset.h>.
-> --
-> 2.22.0
+> Thanks for the review!
+>   
+>> On 10/29/19 10:28 PM, Mark Rutland wrote:
+>>> Architectures may need to perform special initialization of ftrace
+>>> callsites, and today they do so by special-casing ftrace_make_nop() when
+>>> the expected branch address is MCOUNT_ADDR. In some cases (e.g. for
+>>> patchable-function-entry), we don't have an mcount-like symbol and don't
+>> s/an mcount/a mcount.
+>>> want a synthetic MCOUNT_ADDR, but we may need to perform some
+>>> initialization of callsites.
+>>>
+>>> To make it possible to separate initialization from runtime
+>>> modification, and to handle cases without an mcount-like symbol, this
+>> Same as above.
 > 
+> Using 'an' in both of these cases is correct, even though 'mcount'
+> starts with a consonant, since it's pronounced as-if it were 'emcount'.
+> I will leave this as-is.
+Ok sure. It makes sense.
 > 
+>>> patch adds an optional ftrace_init_nop() function that architectures can
+>>> implement, which does not pass a branch address.
+>>>
+>>> Where an architecture does not provide ftrace_init_nop(), we will fall
+>>> back to the existing behaviour of calling ftrace_make_nop() with
+>>> MCOUNT_ADDR.
+>>>
+>>> At the same time, ftrace_code_disable() is renamed to
+>>> ftrace_nop_initialize() to make it clearer that it is intended to
+>>> intialize a callsite into a disabled state, and is not for disabling a
+>>> callsite that has been runtime enabled. The kerneldoc description of rec
+>>> arguments is updated to cover non-mcount callsites.
+>>>
+>>> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+>>> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>> Cc: Torsten Duwe <duwe@suse.de>
+>>> ---
+>>>    include/linux/ftrace.h | 35 ++++++++++++++++++++++++++++++++---
+>>>    kernel/trace/ftrace.c  |  6 +++---
+>>>    2 files changed, 35 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+>>> index 8a8cb3c401b2..9867d90d635e 100644
+>>> --- a/include/linux/ftrace.h
+>>> +++ b/include/linux/ftrace.h
+>>> @@ -499,7 +499,7 @@ static inline int ftrace_disable_ftrace_graph_caller(void) { return 0; }
+>>>    /**
+>>>     * ftrace_make_nop - convert code into nop
+>>>     * @mod: module structure if called by module load initialization
+>>> - * @rec: the mcount call site record
+>>> + * @rec: the call site record (e.g. mcount/fentry)
+>>>     * @addr: the address that the call site should be calling
+>>>     *
+>>>     * This is a very sensitive operation and great care needs
+>>> @@ -520,9 +520,38 @@ static inline int ftrace_disable_ftrace_graph_caller(void) { return 0; }
+>>>    extern int ftrace_make_nop(struct module *mod,
+>>>    			   struct dyn_ftrace *rec, unsigned long addr);
+>>> +
+>>> +/**
+>>> + * ftrace_init_nop - initialize a nop call site
+>>> + * @mod: module structure if called by module load initialization
+>>> + * @rec: the call site record (e.g. mcount/fentry)
+>>> + *
+>>> + * This is a very sensitive operation and great care needs
+>>> + * to be taken by the arch.  The operation should carefully
+>>> + * read the location, check to see if what is read is indeed
+>>> + * what we expect it to be, and then on success of the compare,
+>>> + * it should write to the location.
+>>> + *
+>>> + * The code segment at @rec->ip should contain the contents created by
+>>> + * the compiler
+>> Nit: Will it be better to write it as "@rec->ip should store the adjusted
+>> ftrace entry address of the call site" or something like that.
 > 
-> ===========================================================================================
-> The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
+> This was the specific wording requested by Steve, and it's trying to
+> describe the instructions at rec->ip, rather than the value of rec->ip,
+> so I think it's better to leave this as-is.
+ok Its fine this way too. Actually from the comment, I could not 
+understand which one of the compiler contents this points to as in this 
+case there are 2 nops.
+> 
+>>> + *
+>>> + * Return must be:
+>>> + *  0 on success
+>>> + *  -EFAULT on error reading the location
+>>> + *  -EINVAL on a failed compare of the contents
+>>> + *  -EPERM  on error writing to the location
+>>> + * Any other value will be considered a failure.
+>>> + */
+>>> +#ifndef ftrace_init_nop
+>>> +static inline int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+>>> +{
+>>> +	return ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+>>> +}
+>>> +#endif
+>>> +
+>> Now that ftrace_init_nop is also an arch implemented function so it may be
+>> added in Documentation/trace/ftrace-design.rst along with ftrace_make_nop.
+>> In general also, adding some description about patchable-function-entry
+>> in kernel Documentation will be useful.
+> 
+> I agree that would be a good thing, but as Steve suggests I will leave
+> this for subsequent rework, as I think that also implies more
+> rework/renaming in the core code (e.g. to more cleanly separate the
+> notion of a callsite from mcount specifically).
+ok.
 
-
-We can't accept patches with this footer.
-
-Rob
-
+Thanks,
+Amit
+> 
+> Steve, if you'd like help with that (or review), I'd be happy to help.
+> 
+> Thanks,
+> Mark.
+> 
