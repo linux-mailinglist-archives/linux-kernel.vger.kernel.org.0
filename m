@@ -2,112 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9ABEF53D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DF0EF576
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:18:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729048AbfKEF4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 00:56:45 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45866 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfKEF4p (ORCPT
+        id S1730492AbfKEGSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:18:04 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:32710 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfKEGSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 00:56:45 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q13so19824927wrs.12
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 21:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=4SOW2PoFDC+5EU9P1L5VhY7dqUymZAfiXnqCmxEB2J4=;
-        b=0izHWH9lH+4BPhxa7PNCyGjd+TiBnBvvNvn04GwgAtHIIsuG71SvFiWtlpL3GM5Ehq
-         ROXRRS7jjY5pDl/ubT4QWMVcUWZ2aTAA72R8niXK9JptleSx8G/rZQmuO8m/nODUD/YF
-         SbvOLH7QOWDDvLTJXrtaPLY9OqyZ38L8Q0o9M85aXGPoswygpToQnf/9kGdiyTpB9h19
-         PSgG0Pws3vMSMP2epAZAHDjhdsyl4qSvOOzjTnWf7x9+ohGoVbLyQ9oc13QBicJ711VK
-         j+t+exEhv7CfsmoG7k2tAssVNCitTiqangSir41jrXs4Ro/ogQk78IjE4OgPoZKAmhtM
-         uOsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=4SOW2PoFDC+5EU9P1L5VhY7dqUymZAfiXnqCmxEB2J4=;
-        b=sWF7/joh9ml4i73BYLYDAgZGIByCSWTCTOrpBYgeadz1uqN1RD4N2cVCf/SKBuDaN6
-         jtM1MgVIH4MKCQGmhvQ8ZONSPATVlZSL0EZ57ab8kjgkoHCNHcBsbODH9hwPlMCWcWN6
-         OponInvLeQh7q9FAhX+7irOhCNQaKvGFZnEdsqv/4WqN04UHtE6GK0KvOk2oaVg4USP2
-         alxIwxERSfXQdUAXhK4xXI5uvro3be72JhfYr8r7gnwRIXZk16Vq2QefX12UVij/5c6g
-         PcMKosiKwaGmM+Lr7QHvwspUhMS+ZGf0OPNm+0lUDQQNUBfWTm9wM462npx42+mxItKy
-         oR/w==
-X-Gm-Message-State: APjAAAUT4WZMKmyYCKDbb8v8QieAEIzDB+KQvPuy+x5wqp4J7GeXUHXo
-        Sy3rh7lBeaezk8h/De9qXFaelA==
-X-Google-Smtp-Source: APXvYqweSIUhVVEPRZ4zXwvulFNEUKw1P+l8RWgUsliVOtATLOZL98k/1VPXRk9hEohT/pv3P3EzKA==
-X-Received: by 2002:adf:c58f:: with SMTP id m15mr25805904wrg.362.1572933403002;
-        Mon, 04 Nov 2019 21:56:43 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id w8sm25005215wrr.44.2019.11.04.21.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 21:56:42 -0800 (PST)
-Message-ID: <5dc10f1a.1c69fb81.a2525.0027@mx.google.com>
-Date:   Mon, 04 Nov 2019 21:56:42 -0800 (PST)
+        Tue, 5 Nov 2019 01:18:04 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191105061801epoutp031e0085d5843d3f80fee85bdea80dac7b~UL8JbqFKX0041400414epoutp03L
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 06:18:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191105061801epoutp031e0085d5843d3f80fee85bdea80dac7b~UL8JbqFKX0041400414epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572934681;
+        bh=zvDyle6bohL117tTJ/UWB7iQOUwEqSjQ/Ez1zyRaSUo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=VZWxh9YaMbPlq6wRBH/gf46rbkfgWTQgAR3Oj4EDTH6OdktNk1TQW+wBej3PU1ubk
+         WHa+KdrlOyyR2aQ2PVS/DFNHhGV3lxSCSISuYvaC05CLrbTXXAxDSV7V2Q26WaMZKn
+         VIOSBvKOwGgJPZVq7EP9ILcDrV3txt1JwXWWqBYI=
+Received: from epcpadp2 (unknown [182.195.40.12]) by epcas1p1.samsung.com
+        (KnoxPortal) with ESMTP id
+        20191105061801epcas1p13ce51b09e567ec4f7caa80fe4659a18f~UL8I_dX6j3234732347epcas1p1f;
+        Tue,  5 Nov 2019 06:18:01 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5~ULXRItVvL0066700667epcas1p2t;
+        Tue,  5 Nov 2019 05:35:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191105053547epsmtrp1943b7305a5721d8062454f9f08564899~ULXRHwUwu0859808598epsmtrp1Z;
+        Tue,  5 Nov 2019 05:35:47 +0000 (GMT)
+X-AuditID: b6c32a29-973ff700000060b4-89-5dc10a33c077
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        13.D8.24756.33A01CD5; Tue,  5 Nov 2019 14:35:47 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191105053546epsmtip21649b16049b13f96e965b4a83c0dc9ac~ULXQm3R1k0405604056epsmtip2B;
+        Tue,  5 Nov 2019 05:35:46 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-kernel@vger.kernel.org, myungjoo.ham@samsung.com,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org
+Cc:     chanwoo@kernel.org, mchehab+samsung@kernel.org,
+        davem@davemloft.net, robh@kernel.org, paulmck@linux.ibm.com,
+        cpgs@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] MAINTAINERS: Update myself as maintainer for DEVFREQ
+ subsystem support
+Date:   Tue,  5 Nov 2019 14:41:19 +0900
+Message-Id: <1019298652.01572934681167.JavaMail.epsvc@epcpadp2>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSvK4x18FYg/42fouJN66wWLw8pGlx
+        /ctzVos551tYLJoXr2ezuLxrDpvF+0+dTBa3G1ewWcy4NZXJ4szpS6wW//fsYHfg9tiy8iaT
+        x6ZVnWweExYdYPTYP3cNu8eWq+0sHn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJVxbpZfQQ9/
+        xZxNK9kaGKfwdjFyckgImEgsm/efuYuRi0NIYDejxLT1R9ghEpIS0y4eBUpwANnCEocPF0PU
+        fGKUuNF/mQWkhk1AS2L/ixtsILaIQL7E8q6FLCBFzAKbGSXW3d8IlhAWCJf4tfgAWAOLgKrE
+        7cNvwWxeASuJpfM3MEEsk5dYveEA8wRGngWMDKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS
+        83M3MYLDT0tzB+PlJfGHGAU4GJV4eD+0H4gVYk0sK67MPcQowcGsJMJ7ccbeWCHelMTKqtSi
+        /Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoYZ6RYSO6ZzMajPa3++b1/
+        YQxm3ncM7TfOXPsn0CDIXShoq9u6ZRNcjpdfFH7f81FcoJqzYpJVug3H5Mjpix9yeuebOVRG
+        NK84H7yU3zHmfbTjLcEFJxat79YMeqnKEvjkcJn4kmu3e6fP/RRqvOJv4ZsnTqq6X+5dY13N
+        2rd+46WSvhUpqv96lFiKMxINtZiLihMBf7fP9jsCAAA=
+X-CMS-MailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+X-Hop-Count: 3
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.198-63-g1787d5fb47ee
-In-Reply-To: <20191104211901.387893698@linuxfoundation.org>
-References: <20191104211901.387893698@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/62] 4.9.199-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+X-CMS-RootMailID: 20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5
+References: <CGME20191105053547epcas1p248c5a77579a8dd6fbd3639a12f3ca4c5@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 93 boots: 0 failed, 86 passed with 7 offline (v=
-4.9.198-63-g1787d5fb47ee)
+Update myself to the DEVFREQ entry as maintainer from reviewer and
+the git repository information to manage the devfreq patches. I've been
+reviewing and tesing the devfreq support for the couple of years as reviewer.
+From now, I'll help and reiview the devfreq as maintainer.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.198-63-g1787d5fb47ee/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.198-63-g1787d5fb47ee/
-
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.198-63-g1787d5fb47ee
-Git Commit: 1787d5fb47ee9c16fabc1473a713bfe3f3af7df7
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 49 unique boards, 20 SoC families, 14 builds out of 197
-
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-
+Suggested-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
-For more info write to <info@kernelci.org>
+ MAINTAINERS | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cba1095547fd..ebc1078c1ecb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3532,7 +3532,7 @@ BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+ S:	Maintained
+ F:	drivers/devfreq/exynos-bus.c
+ F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -4762,9 +4762,9 @@ F:	include/linux/devcoredump.h
+ DEVICE FREQUENCY (DEVFREQ)
+ M:	MyungJoo Ham <myungjoo.ham@samsung.com>
+ M:	Kyungmin Park <kyungmin.park@samsung.com>
+-R:	Chanwoo Choi <cw00.choi@samsung.com>
++M:	Chanwoo Choi <cw00.choi@samsung.com>
+ L:	linux-pm@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+ S:	Maintained
+ F:	drivers/devfreq/
+ F:	include/linux/devfreq.h
+@@ -4774,7 +4774,7 @@ F:	include/trace/events/devfreq.h
+ DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ L:	linux-pm@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+ S:	Supported
+ F:	drivers/devfreq/event/
+ F:	drivers/devfreq/devfreq-event.c
+-- 
+2.17.1
+
+
