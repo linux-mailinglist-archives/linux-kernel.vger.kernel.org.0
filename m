@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 948EDEF1EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 01:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C97EF1E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 01:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387727AbfKEAZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 19:25:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30774 "EHLO mga07.intel.com"
+        id S2387601AbfKEAZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 19:25:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25037 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387440AbfKEAZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387464AbfKEAZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Nov 2019 19:25:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 16:25:28 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 16:25:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,268,1569308400"; 
-   d="scan'208";a="213712864"
+   d="scan'208";a="212422264"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by orsmga002.jf.intel.com with ESMTP; 04 Nov 2019 16:25:28 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 04 Nov 2019 16:25:28 -0800
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 0B19C300884; Mon,  4 Nov 2019 16:25:28 -0800 (PST)
+        id 11142301376; Mon,  4 Nov 2019 16:25:28 -0800 (PST)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4 3/9] perf evlist: Maintain evlist->all_cpus
-Date:   Mon,  4 Nov 2019 16:25:16 -0800
-Message-Id: <20191105002522.83803-4-andi@firstfloor.org>
+Subject: [PATCH v4 4/9] perf evsel: Add iterator to iterate over events ordered by CPU
+Date:   Mon,  4 Nov 2019 16:25:17 -0800
+Message-Id: <20191105002522.83803-5-andi@firstfloor.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191105002522.83803-1-andi@firstfloor.org>
 References: <20191105002522.83803-1-andi@firstfloor.org>
@@ -41,123 +41,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Maintain a cpumap in the evlist that is the union of all the cpus
-of the events.
-
-This needs a cpumap merge operation. To make the merge operation
-work efficiently maintain the cpumap in a sorted state.
-
-The sorting is also needed for the affinity loop changes later.
+Add some common code that is needed to iterate over all events
+in CPU order. Used in followon patches
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/lib/cpumap.c                  | 42 ++++++++++++++++++++++++
- tools/perf/lib/evlist.c                  |  1 +
- tools/perf/lib/include/internal/evlist.h |  1 +
- tools/perf/lib/include/perf/cpumap.h     |  2 ++
- 4 files changed, 46 insertions(+)
 
-diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
-index 2ca1fafa620d..5ca26a9d318f 100644
---- a/tools/perf/lib/cpumap.c
-+++ b/tools/perf/lib/cpumap.c
-@@ -68,6 +68,11 @@ static struct perf_cpu_map *cpu_map__default_new(void)
- 	return cpus;
+---
+
+v2: Add cpumap__for_each_cpu macro to factor out some common code
+v3: Drop cpumap__for_each_cpu macro again, replace with evlist__for_each_cpu
+Add new evlist__for_each_cpu
+Don't compute cpus nir in cpu_index iterator init, just use all_cpus
+---
+ tools/perf/util/cpumap.h |  1 +
+ tools/perf/util/evlist.c | 28 ++++++++++++++++++++++++++++
+ tools/perf/util/evlist.h |  7 +++++++
+ tools/perf/util/evsel.h  |  1 +
+ 4 files changed, 37 insertions(+)
+
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index 2553bef1279d..dbc1d7e949ed 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -60,4 +60,5 @@ int cpu_map__build_map(struct perf_cpu_map *cpus, struct perf_cpu_map **res,
+ 
+ int cpu_map__cpu(struct perf_cpu_map *cpus, int idx);
+ bool cpu_map__has(struct perf_cpu_map *cpus, int cpu);
++
+ #endif /* __PERF_CPUMAP_H */
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index fdce590d2278..dccf96e0d01b 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -342,6 +342,34 @@ static int perf_evlist__nr_threads(struct evlist *evlist,
+ 		return perf_thread_map__nr(evlist->core.threads);
  }
  
-+static int cmp_int(const void *a, const void *b)
++void evlist__cpu_iter_start(struct evlist *evlist)
 +{
-+	return *(const int *)a - *(const int*)b;
++	struct evsel *pos;
++
++	/*
++	 * Reset the per evsel cpu_index. This is needed because
++	 * each evsel's cpumap may have a different index space,
++	 * and some operations need the index to modify
++	 * the FD xyarray (e.g. open, close)
++	 */
++	evlist__for_each_entry(evlist, pos)
++		pos->cpu_index = 0;
 +}
 +
- static struct perf_cpu_map *cpu_map__trim_new(int nr_cpus, int *tmp_cpus)
++bool evlist__cpu_iter_skip(struct evsel *ev, int cpu)
++{
++	if (ev->cpu_index >= ev->core.cpus->nr)
++		return true;
++	if (cpu >= 0 && ev->core.cpus->map[ev->cpu_index] != cpu)
++		return true;
++	return false;
++}
++
++void evlist__cpu_iter_next(struct evsel *ev)
++{
++	ev->cpu_index++;
++}
++
+ void evlist__disable(struct evlist *evlist)
  {
- 	size_t payload_size = nr_cpus * sizeof(int);
-@@ -76,6 +81,7 @@ static struct perf_cpu_map *cpu_map__trim_new(int nr_cpus, int *tmp_cpus)
- 	if (cpus != NULL) {
- 		cpus->nr = nr_cpus;
- 		memcpy(cpus->map, tmp_cpus, payload_size);
-+		qsort(cpus->map, nr_cpus, sizeof(int), cmp_int);
- 		refcount_set(&cpus->refcnt, 1);
- 	}
+ 	struct evsel *pos;
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 13051409fd22..106dd04f88aa 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -333,9 +333,16 @@ void perf_evlist__to_front(struct evlist *evlist,
+ #define evlist__for_each_entry_safe(evlist, tmp, evsel) \
+ 	__evlist__for_each_entry_safe(&(evlist)->core.entries, tmp, evsel)
  
-@@ -272,3 +278,39 @@ int perf_cpu_map__max(struct perf_cpu_map *map)
- 
- 	return max;
- }
++#define evlist__for_each_cpu(evlist, index, cpu) \
++	perf_cpu_map__for_each_cpu (cpu, index, (evlist)->core.all_cpus)
 +
-+struct perf_cpu_map *perf_cpu_map__update(struct perf_cpu_map *orig,
-+					  struct perf_cpu_map *other)
-+{
-+	int *tmp_cpus;
-+	int tmp_len;
-+	int i, j, k;
-+	struct perf_cpu_map *merged;
+ void perf_evlist__set_tracking_event(struct evlist *evlist,
+ 				     struct evsel *tracking_evsel);
+ 
++void evlist__cpu_iter_start(struct evlist *evlist);
++bool evlist__cpu_iter_skip(struct evsel *ev, int cpu);
++void evlist__cpu_iter_next(struct evsel *ev);
 +
-+	if (!orig) {
-+		perf_cpu_map__get(other);
-+		return other;
-+	}
-+	if (orig->nr == other->nr &&
-+	    !memcmp(orig->map, other->map, orig->nr * sizeof(int)))
-+		return orig;
-+	tmp_len = orig->nr + other->nr;
-+	tmp_cpus = malloc(tmp_len * sizeof(int));
-+	if (!tmp_cpus)
-+		return NULL;
-+	i = j = k = 0;
-+	while (i < orig->nr && j < other->nr) {
-+		if (orig->map[i] <= other->map[j])
-+			tmp_cpus[k++] = orig->map[i++];
-+		else
-+			tmp_cpus[k++] = other->map[j++];
-+	}
-+	while (i < orig->nr)
-+		tmp_cpus[k++] = orig->map[i++];
-+	while (j < other->nr)
-+		tmp_cpus[k++] = other->map[j++];
-+	assert(k < tmp_len);
-+	merged = cpu_map__trim_new(k, tmp_cpus);
-+	free(tmp_cpus);
-+	return merged;
-+}
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 205ddbb80bc1..35a627283122 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -54,6 +54,7 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
+ struct evsel *
+ perf_evlist__find_evsel_by_str(struct evlist *evlist, const char *str);
  
- 	perf_thread_map__put(evsel->threads);
- 	evsel->threads = perf_thread_map__get(evlist->threads);
-+	evlist->all_cpus = perf_cpu_map__update(evlist->all_cpus, evsel->cpus);
- }
- 
- static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index a2fbccf1922f..74dc8c3f0b66 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -18,6 +18,7 @@ struct perf_evlist {
- 	int			 nr_entries;
- 	bool			 has_user_cpus;
- 	struct perf_cpu_map	*cpus;
-+	struct perf_cpu_map	*all_cpus;
- 	struct perf_thread_map	*threads;
- 	int			 nr_mmaps;
- 	size_t			 mmap_len;
-diff --git a/tools/perf/lib/include/perf/cpumap.h b/tools/perf/lib/include/perf/cpumap.h
-index ac9aa497f84a..dcf61da64267 100644
---- a/tools/perf/lib/include/perf/cpumap.h
-+++ b/tools/perf/lib/include/perf/cpumap.h
-@@ -12,6 +12,8 @@ LIBPERF_API struct perf_cpu_map *perf_cpu_map__dummy_new(void);
- LIBPERF_API struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list);
- LIBPERF_API struct perf_cpu_map *perf_cpu_map__read(FILE *file);
- LIBPERF_API struct perf_cpu_map *perf_cpu_map__get(struct perf_cpu_map *map);
-+LIBPERF_API struct perf_cpu_map *perf_cpu_map__update(struct perf_cpu_map *orig,
-+						      struct perf_cpu_map *other);
- LIBPERF_API void perf_cpu_map__put(struct perf_cpu_map *map);
- LIBPERF_API int perf_cpu_map__cpu(const struct perf_cpu_map *cpus, int idx);
- LIBPERF_API int perf_cpu_map__nr(const struct perf_cpu_map *cpus);
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index ddc5ee6f6592..cf90019ae744 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -95,6 +95,7 @@ struct evsel {
+ 	bool			collect_stat;
+ 	bool			weak_group;
+ 	bool			percore;
++	int			cpu_index;
+ 	const char		*pmu_name;
+ 	struct {
+ 		perf_evsel__sb_cb_t	*cb;
 -- 
 2.23.0
 
