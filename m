@@ -2,200 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 998F7F04A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:01:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A739F04AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390525AbfKESBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 13:01:12 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38911 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389356AbfKESBM (ORCPT
+        id S2390617AbfKESED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 13:04:03 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:36975 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388711AbfKESED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 13:01:12 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 15so1614295pgh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 10:01:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=OQ2sUxRTRKakBtPYk/S8WUmT3yCnF85ytB5yNnyoq6o=;
-        b=NrgmzX/TspryQwSsCOZ8C24mKqj3an0i0v8R/kjSzbmAAxcRVe143F0TPH26d8/pSo
-         J3fMu08Ea+OlUPMwcNZlJGmFBYtjxQHOGMxLt1kwMAkp4CJI/ldNIaPzw1/E6IjiHIrZ
-         qyFfcjJt9v2xbzi66OOCuIodX8C+F+1ndNDsw1xh465NVMiVWxLmJKk8GEXolHE4GSiP
-         2GVt0NWMuTOaMM47vX8TjVO6ogYYPPnfCvFso3Zoy7NNvSNRK4cqpSdWDjNbCpyW5jqA
-         D5A8/py7mOENESwUELBSwcEXofwydMUynETjQFU75yvDFh8c0i57SHxtljAkotPWWFKc
-         2SwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=OQ2sUxRTRKakBtPYk/S8WUmT3yCnF85ytB5yNnyoq6o=;
-        b=r2F0BjLQwLvdiIZ5pP3bsCNXLilVENAe/XGM8XhcEz754vzltBv/gdhOEOYT97uQRD
-         9zVfoPiJQUFvce+gZihdDNyVUqVCtudtFbbTvFM+JRTj81Kuz13ZZA4H78MhunZsWhGN
-         Gwry27Xo7zxCsOpbk4RSPgsLpggPO/1MykGm0Jf8ovB3bSioxMdtSz+nboLGDsOMONN0
-         viNHfQPietPZjkVtpO2oong4yKJF3IyBhUI4nKG6Y5W4NsG+2lcuPIWaUCfKJA6I6RBx
-         e3HmiMtwRqePu5uxAXd1HhuzUWvgpsdbtpgyVnqYlEXagbjpvuYEF8FgReyWpX/hTbtW
-         huzQ==
-X-Gm-Message-State: APjAAAU5CYceznY8FAOlpoYyYMVrye+wflFExyI97wUBjIqO6M1nMzrR
-        cS6ZgF9GoznMg9NGYO0iLPXqQg==
-X-Google-Smtp-Source: APXvYqyoY9Xi1zQEjfoRsCWnqjT8HneLboOSc9h2AeSevxie1StHTNNH11eVRYn9BpFm2nuNYWff4g==
-X-Received: by 2002:a65:614a:: with SMTP id o10mr20962942pgv.219.1572976871332;
-        Tue, 05 Nov 2019 10:01:11 -0800 (PST)
-Received: from localhost ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id n8sm62516pja.30.2019.11.05.10.01.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 10:01:10 -0800 (PST)
-Date:   Tue, 5 Nov 2019 10:01:10 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     daniel.lezcano@linaro.org, tglx@linutronix.de
-cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: Re: [PATCH 06/12] riscv: add support for MMIO access to the timer
- registers
-In-Reply-To: <20191028121043.22934-7-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.9999.1911050958020.20606@viisi.sifive.com>
-References: <20191028121043.22934-1-hch@lst.de> <20191028121043.22934-7-hch@lst.de>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Tue, 5 Nov 2019 13:04:03 -0500
+Received: from smtp6.infomaniak.ch (smtp6.infomaniak.ch [83.166.132.19])
+        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id xA5I1n5F051832
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 Nov 2019 19:01:49 +0100
+Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp6.infomaniak.ch (8.14.5/8.14.5) with ESMTP id xA5I1fcs055903
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
+        Tue, 5 Nov 2019 19:01:42 +0100
+Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        KP Singh <kpsingh@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+References: <20191104172146.30797-1-mic@digikod.net>
+ <20191104172146.30797-5-mic@digikod.net>
+ <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Openpgp: preference=signencrypt
+Message-ID: <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
+Date:   Tue, 5 Nov 2019 19:01:41 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel, Thomas,
 
-On Mon, 28 Oct 2019, Christoph Hellwig wrote:
-
-> When running in M-mode we can't use the SBI to set the timer, and
-> don't have access to the time CSR as that usually is emulated by
-> M-mode.  Instead provide code that directly accesses the MMIO for
-> the timer.
+On 05/11/2019 18:18, Alexei Starovoitov wrote:
+> On Mon, Nov 04, 2019 at 06:21:43PM +0100, Mickaël Salaün wrote:
+>> Add a first Landlock hook that can be used to enforce a security policy
+>> or to audit some process activities.  For a sandboxing use-case, it is
+>> needed to inform the kernel if a task can legitimately debug another.
+>> ptrace(2) can also be used by an attacker to impersonate another task
+>> and remain undetected while performing malicious activities.
+>>
+>> Using ptrace(2) and related features on a target process can lead to a
+>> privilege escalation.  A sandboxed task must then be able to tell the
+>> kernel if another task is more privileged, via ptrace_may_access().
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ...
+>> +static int check_ptrace(struct landlock_domain *domain,
+>> +		struct task_struct *tracer, struct task_struct *tracee)
+>> +{
+>> +	struct landlock_hook_ctx_ptrace ctx_ptrace = {
+>> +		.prog_ctx = {
+>> +			.tracer = (uintptr_t)tracer,
+>> +			.tracee = (uintptr_t)tracee,
+>> +		},
+>> +	};
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Anup Patel <anup@brainfault.org>
+> So you're passing two kernel pointers obfuscated as u64 into bpf program
+> yet claiming that the end goal is to make landlock unprivileged?!
+> The most basic security hole in the tool that is aiming to provide security.
 
-Care to give a quick ack to the drivers/clocksource/timer-riscv.c changes?
+How could you used these pointers without dedicated BPF helpers? This
+context items are typed as PTR_TO_TASK and can't be used without a
+dedicated helper able to deal with ARG_PTR_TO_TASK. Moreover, pointer
+arithmetic is explicitly forbidden (and I added tests for that). Did I
+miss something?
 
-thanks,
-
-- Paul
-
-> ---
->  arch/riscv/include/asm/sbi.h      |  3 ++-
->  arch/riscv/include/asm/timex.h    | 19 +++++++++++++++++--
->  drivers/clocksource/timer-riscv.c | 21 +++++++++++++++++----
->  3 files changed, 36 insertions(+), 7 deletions(-)
 > 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 0cb74eccc73f..a4774bafe033 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -95,7 +95,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
->  	SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
->  }
->  #else /* CONFIG_RISCV_SBI */
-> -/* stub to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
-> +/* stubs to for code is only reachable under IS_ENABLED(CONFIG_RISCV_SBI): */
-> +void sbi_set_timer(uint64_t stime_value);
->  void sbi_remote_fence_i(const unsigned long *hart_mask);
->  #endif /* CONFIG_RISCV_SBI */
->  #endif /* _ASM_RISCV_SBI_H */
-> diff --git a/arch/riscv/include/asm/timex.h b/arch/riscv/include/asm/timex.h
-> index c7ef131b9e4c..e17837d61667 100644
-> --- a/arch/riscv/include/asm/timex.h
-> +++ b/arch/riscv/include/asm/timex.h
-> @@ -7,12 +7,25 @@
->  #define _ASM_RISCV_TIMEX_H
->  
->  #include <asm/csr.h>
-> +#include <asm/io.h>
->  
->  typedef unsigned long cycles_t;
->  
-> +extern u64 __iomem *riscv_time_val;
-> +extern u64 __iomem *riscv_time_cmp;
-> +
-> +#ifdef CONFIG_64BIT
-> +#define mmio_get_cycles()	readq_relaxed(riscv_time_val)
-> +#else
-> +#define mmio_get_cycles()	readl_relaxed(riscv_time_val)
-> +#define mmio_get_cycles_hi()	readl_relaxed(((u32 *)riscv_time_val) + 1)
-> +#endif
-> +
->  static inline cycles_t get_cycles(void)
->  {
-> -	return csr_read(CSR_TIME);
-> +	if (IS_ENABLED(CONFIG_RISCV_SBI))
-> +		return csr_read(CSR_TIME);
-> +	return mmio_get_cycles();
->  }
->  #define get_cycles get_cycles
->  
-> @@ -24,7 +37,9 @@ static inline u64 get_cycles64(void)
->  #else /* CONFIG_64BIT */
->  static inline u32 get_cycles_hi(void)
->  {
-> -	return csr_read(CSR_TIMEH);
-> +	if (IS_ENABLED(CONFIG_RISCV_SBI))
-> +		return csr_read(CSR_TIMEH);
-> +	return mmio_get_cycles_hi();
->  }
->  
->  static inline u64 get_cycles64(void)
-> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-> index d083bfb535f6..f3eb0c04401a 100644
-> --- a/drivers/clocksource/timer-riscv.c
-> +++ b/drivers/clocksource/timer-riscv.c
-> @@ -3,9 +3,9 @@
->   * Copyright (C) 2012 Regents of the University of California
->   * Copyright (C) 2017 SiFive
->   *
-> - * All RISC-V systems have a timer attached to every hart.  These timers can be
-> - * read from the "time" and "timeh" CSRs, and can use the SBI to setup
-> - * events.
-> + * All RISC-V systems have a timer attached to every hart.  These timers can
-> + * either be read from the "time" and "timeh" CSRs, and can use the SBI to
-> + * setup events, or directly accessed using MMIO registers.
->   */
->  #include <linux/clocksource.h>
->  #include <linux/clockchips.h>
-> @@ -13,14 +13,27 @@
->  #include <linux/delay.h>
->  #include <linux/irq.h>
->  #include <linux/sched_clock.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
->  #include <asm/smp.h>
->  #include <asm/sbi.h>
->  
-> +u64 __iomem *riscv_time_cmp;
-> +u64 __iomem *riscv_time_val;
-> +
-> +static inline void mmio_set_timer(u64 val)
-> +{
-> +	writeq_relaxed(val,
-> +		riscv_time_cmp + cpuid_to_hartid_map(smp_processor_id()));
-> +}
-> +
->  static int riscv_clock_next_event(unsigned long delta,
->  		struct clock_event_device *ce)
->  {
->  	csr_set(CSR_IE, IE_TIE);
-> -	sbi_set_timer(get_cycles64() + delta);
-> +	if (IS_ENABLED(CONFIG_RISCV_SBI))
-> +		sbi_set_timer(get_cycles64() + delta);
-> +	else
-> +		mmio_set_timer(get_cycles64() + delta);
->  	return 0;
->  }
->  
-> -- 
-> 2.20.1
-> 
-> 
+> I think the only way bpf-based LSM can land is both landlock and KRSI
+> developers work together on a design that solves all use cases.
 
+As I said in a previous cover letter [1], that would be great. I think
+that the current Landlock bases (almost everything from this series
+except the seccomp interface) should meet both needs, but I would like
+to have the point of view of the KRSI developers.
 
-- Paul
+[1] https://lore.kernel.org/lkml/20191029171505.6650-1-mic@digikod.net/
+
+> BPF is capable
+> to be a superset of all existing LSMs whereas landlock and KRSI propsals today
+> are custom solutions to specific security concerns. BPF subsystem was extended
+> with custom things in the past. In networking we have lwt, skb, tc, xdp, sk
+> program types with a lot of overlapping functionality. We couldn't figure out
+> how to generalize them into single 'networking' program. Now we can and we
+> should. Accepting two partially overlapping bpf-based LSMs would be repeating
+> the same mistake again.
+
+I'll let the LSM maintainers comment on whether BPF could be a superset
+of all LSM, but given the complexity of an access-control system, I have
+some doubts though. Anyway, we need to start somewhere and then iterate.
+This patch series is a first step.
