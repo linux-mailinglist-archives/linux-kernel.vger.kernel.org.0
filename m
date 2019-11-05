@@ -2,117 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F083EF06C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D83CCF06CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:22:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbfKEUUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:20:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52020 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfKEUUj (ORCPT
+        id S1729705AbfKEUWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:22:01 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45364 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEUWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:20:39 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q70so817851wme.1;
-        Tue, 05 Nov 2019 12:20:37 -0800 (PST)
+        Tue, 5 Nov 2019 15:22:00 -0500
+Received: by mail-oi1-f194.google.com with SMTP id k2so18762100oij.12
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 12:22:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DJ/Rzer6W3I0Dr0ryA3Ftmba0w7zthSuSKlMtsEH54E=;
-        b=MB9QGhKPy9nfaeBeKb3LecMRQJ6UHjvm90x370vDoluYyIO5QJb+Yc18SfvBCLEqgZ
-         FeS/zznvJX09sMr5q3gXVqRmosboazpxQxnXHpLFwY09KOIV5R84gG1I/n9aV/wLonx5
-         41e8+9myNG35zXsAc+jLinqOZg9PXxuf0RqB2B89EJA1pnf/UB7XiCUSklMl0tGUbdKd
-         2Rx7T26IWr+baBhWJtddGrmWxlrQocy9Y7tLVYWF5lPJ8wmuVZsGZXFCyuepHLvuBgBo
-         PSorKlsWl7nxZfsIu3w6r5GqmikPV8TIHCPpz0chz2GPibSLmEZgRbk1zU5NYlMMZx2z
-         dKmA==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kJ/QmiONw/J1ide8QmCrFO9LpvSdfgpzRIFng2Jw4qI=;
+        b=DB9RWO4dZYZTGfAckFGl8vDSfPDdaQ/QjEk/hU671olt9Y3FXIlMxBJuMHNhSEx+1y
+         +ZUlhvLB7QpgLPV/AFtZT4PiVrgnDMKWO9nCWljG9Nsi/ZNexqMf1WdMhvzJEZ4S+4HH
+         2P+bUsoBcu22z3J9i7SqxWpBh2o1czjevA1/8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DJ/Rzer6W3I0Dr0ryA3Ftmba0w7zthSuSKlMtsEH54E=;
-        b=RyBW6U8uEeaB/AiXVvZ/87haTC9m57VFJjTs6iZys6+eT4YLA/sa4x5PaQ4ctxC2ma
-         2jSNwlNK48FkBMzDJHBxftb3hZOCbPRGCPpYsM73uZMII95HWY6fF8doiDgGMgmE0U45
-         5MI2vh37Y+aE6ChcyjELVPFuvGqj5N8BhEp19+rU/CYqnK0fgyitrJS1kOM50JUmD+bA
-         BxMNMjjvJhHh7DbL3xqOARp1G2ymjxPhwaTaxjrEquoCjQz0Auss8NP2NBaUNFg54uWz
-         k0A6d5UU32RWRlIZ87zQbyMZ9R8+otvqTOktWhlxygcI1lfUDJ5+YQwFKhtbx7/bRhdT
-         I71w==
-X-Gm-Message-State: APjAAAW28BssX19UnF/CPFe+FuC3cu+hby0SosyIjBPa7MaHP/4JYVJ5
-        Mflhie3YHc1/B5UNRh4qVTcVEH1X
-X-Google-Smtp-Source: APXvYqzoOTj6ukyAvLKVtrPhUU0akXk/A43iub2Lt3iaWVQbynakEf8nEiW51FCbD1Zb0yVOCAMZAw==
-X-Received: by 2002:a1c:67d7:: with SMTP id b206mr715005wmc.68.1572985236966;
-        Tue, 05 Nov 2019 12:20:36 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f17:6e00:e905:33d7:3b10:e04b? (p200300EA8F176E00E90533D73B10E04B.dip0.t-ipconnect.de. [2003:ea:8f17:6e00:e905:33d7:3b10:e04b])
-        by smtp.googlemail.com with ESMTPSA id g184sm724742wma.8.2019.11.05.12.20.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Nov 2019 12:20:36 -0800 (PST)
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Add TI dp83869 phy
-To:     Dan Murphy <dmurphy@ti.com>, andrew@lunn.ch, f.fainelli@gmail.com,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191105181826.25114-1-dmurphy@ti.com>
- <20191105181826.25114-2-dmurphy@ti.com>
- <68b9c003-4fb3-b854-695a-fa1c6e08f518@gmail.com>
- <4ffebfad-87d2-0e19-5b54-7e550c540d03@ti.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <1f64ae30-bbf3-525a-4fab-556924b18122@gmail.com>
-Date:   Tue, 5 Nov 2019 21:20:27 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kJ/QmiONw/J1ide8QmCrFO9LpvSdfgpzRIFng2Jw4qI=;
+        b=iOafq8Se6UBKucYkZsDTJr43eGqq1JKoc9IO1PiWtZYoxb02mYS2WlsvtW7uZa5y2W
+         V7r1Y2J7Y0MvVQeZepeQXuRF5i4JG9/VR8W38PF3rJBwtPtu0yngudKxa5mRjgdYoSH9
+         AeuhG+mt+uSYEVGqG60nLjQkjhsev/Ah/KTcX/8psOwxK7R5SQBDiWSgfdC5NsGxaclY
+         wnVK1OaSZ2t44x0R7Y7NCVD5RekRJAWFFSascEQpcxFO/0fu3hc2oojN9KWQrHtG+Qch
+         pdBhiPN2Fd0XNuLfto7NeOW7Gyy/vE6wTWqUrx6BFCNuk1K+x4+Nxmq6NM59lmCoVvIZ
+         mu7Q==
+X-Gm-Message-State: APjAAAWDP805WPFnBTdNldqdBrJ027lPuEkLtKyEn5E1r3sANkmsC/Dv
+        E7pEv2SXKMyM6IUAiIRhr6SDHsxlJhT2US5E1i2+OA==
+X-Google-Smtp-Source: APXvYqyZxGVl4poXtSRvZtdxq7Wur+8kFccBtl3PEV76j3oETOjDMbjpJaT33SPft+J8OIDKbi5KCnTRb9Ulu0IGitc=
+X-Received: by 2002:a05:6808:4cf:: with SMTP id a15mr727042oie.132.1572985319540;
+ Tue, 05 Nov 2019 12:21:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <4ffebfad-87d2-0e19-5b54-7e550c540d03@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191025234834.28214-1-john.stultz@linaro.org>
+ <20191104095823.GD10326@phenom.ffwll.local> <CALAqxLW_CoAn-KXki0dGKK+vo-R4CTnjt1Azrw=mRdL8BUFGWw@mail.gmail.com>
+ <20191105094259.GX10326@phenom.ffwll.local> <CALAqxLWvNOL=Exybb25GgYQujyJcPNTsFuaBnjLQPKTkVAi6Xw@mail.gmail.com>
+ <CAKMK7uFSBNqVWy0N-GH7CzH-R7c9CVb97LgCffdMzGCgvVan4Q@mail.gmail.com> <CALAqxLV+MfESanq+PenRUNR_w6KZT1KQ7suPjmiT-bdAFx83EA@mail.gmail.com>
+In-Reply-To: <CALAqxLV+MfESanq+PenRUNR_w6KZT1KQ7suPjmiT-bdAFx83EA@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 5 Nov 2019 21:21:48 +0100
+Message-ID: <CAKMK7uETgyRSerpjDvkF=b5SCf-Vj++uHFs6ckui6ZbFP-Si3g@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/2] Allow DMA BUF heaps to be loaded as modules
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Sandeep Patil <sspatil@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Liam Mark <lmark@codeaurora.org>, Yue Hu <huyue2@yulong.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pratik Patel <pratikp@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.11.2019 21:02, Dan Murphy wrote:
-> Heiner
-> 
-> On 11/5/19 1:55 PM, Heiner Kallweit wrote:
->> On 05.11.2019 19:18, Dan Murphy wrote:
->>> Add support for the TI DP83869 Gigabit ethernet phy
->>> device.
->>>
->>> The DP83869 is a robust, low power, fully featured
->>> Physical Layer transceiver with integrated PMD
->>> sublayers to support 10BASE-T, 100BASE-TX and
->>> 1000BASE-T Ethernet protocols.
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>   drivers/net/phy/Kconfig              |   6 +
->>>   drivers/net/phy/Makefile             |   1 +
->>>   drivers/net/phy/dp83869.c            | 439 +++++++++++++++++++++++++++
->>>   include/dt-bindings/net/ti-dp83869.h |  43 +++
->>>   4 files changed, 489 insertions(+)
->>>   create mode 100644 drivers/net/phy/dp83869.c
->>>   create mode 100644 include/dt-bindings/net/ti-dp83869.h
+On Tue, Nov 5, 2019 at 8:48 PM John Stultz <john.stultz@linaro.org> wrote:
+>
+> On Tue, Nov 5, 2019 at 11:19 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Tue, Nov 5, 2019 at 6:41 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > On Tue, Nov 5, 2019 at 1:43 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > >
+> > > > On Mon, Nov 04, 2019 at 10:57:44AM -0800, John Stultz wrote:
+> > > > > On Mon, Nov 4, 2019 at 1:58 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > > > > On Fri, Oct 25, 2019 at 11:48:32PM +0000, John Stultz wrote:
+> > > > > So even if the heaps are configured via DT (which at the moment there
+> > > > > is no such binding, so that's not really a valid method yet), there's
+> > > > > still the question of if the heap is necessary/makes sense on the
+> > > > > device. And the DT would only control the availability of the heap
+> > > > > interface, not if the heap driver is loaded or not.
+> > > >
+> > > > Hm I thought the cma regions are configured in DT? How does that work if
+> > > > it's not using DT?
+> > >
+> > > So yea, CMA regions are either configured by DT or setup at build time
+> > > (I think there's a cmdline option to set it up as well).
+> > >
+> > > But the CMA regions and the dmabuf cma heap driver are separate
+> > > things. The latter uses the former.
+> >
+> > Huh, I assumed the plan is that whenever there's a cma region, we want
+> > to instantiate a dma-buf heap for it? Why/when would we not want to do
+> > that?
+>
+> Not quite. Andrew noted that we may not want to expose all CMA regions
+> via dmabuf heaps, so right now we only expose the default region. I
+> have follow on patches that I sent out earlier (which requires a
+> to-be-finalized DT binding) which allows us to specify which other CMA
+> regions to expose.
 
-[...]
+Why do we not want to expose them all? I figured if there's a cma
+heap, then a device you have needs it, and if that's the case you
+might want to allocate for that device from the heap? Maybe link to
+the discussion?
 
->>> +static int op_mode;
->>> +
->>> +module_param(op_mode, int, 0644);
->>> +MODULE_PARM_DESC(op_mode, "The operational mode of the PHY");
->>> +
->> A module parameter isn't the preferred option here.
->> You could have more than one such PHY in different configurations.
->> Other drivers like the Marvell one use the interface mode to
->> check for the desired mode. Or you could read it from DT.
->>
-> We do read the initial mode from the DT but there was a request to be able to change the mode during runtime.
+> > > > > On the HiKey/HiKey960 boards, we have to allocate contiguous buffers
+> > > > > for the display framebuffer. So gralloc uses ION to allocate from the
+> > > > > CMA heap. However on the db845c, it has no such restrictions, so the
+> > > > > CMA heap isn't necessary.
+> > > >
+> > > > Why do you have a CMA region for the 2nd board if you don't need it?
+> > > > _That_ sounds like some serious memory waster, not a few lines of code
+> > > > loaded for nothing :-)
+> > >
+> > > ??? That's not what I said above.  If the db845c doesn't need CMA it
+> > > won't have a CMA region.
+> > >
+> > > The issue at hand is that we may want to avoid loading the dmabuf CMA
+> > > heap driver on a board that doesn't use CMA.
+> >
+> > So the CMA core code is also a module, or how does that work? Not
+>
+> No.  CMA core isn't available as a module.
+>
+> > loading the cma dma-buf heap, but keeping all the other cma code
+> > around feels slightly silly. Do we have numbers that justify this
+> > silliness?
+>
+> I agree that is maybe not the most critical item on the list, but its
+> one of many that do add up over time.
+>
+> Again, I'll defer to Sandeep or other folks on the Google side to help
+> with the importance here. Mostly I'm trying to ensure there is
+> functional parity to ION so we don't give folks any reason they could
+> object to deprecating it.
+>
+> > > The main reason I'm only submitting system and CMA is because those
+> > > are the only two I personally have a user for (HiKey/HiKey960 boards).
+> > > It's my hope that once we deprecate ION in Android, vendors will
+> > > migrate and we'll be able to push them to upstream their heaps as
+> > > well.
+> >
+> > I think for upstream I'd want to see those other heaps first. If
+> > they're mostly driver allocators exposed as heaps, then I think we
+> > need something different than heap modules, maybe allow dma-buf to
+> > allocate from drivers instead. But afaiui all such driver allocators
+> > we have in upstream are cma regions only right now.
+>
+> I'm sorry, I'm not sure I understand what you mean here (I'm not sure
+> what action I should be taking). Could you clarify this point?
 
-Maybe we need to understand the use case better to be able to advise.
-Will this be needed in production? Or was it requested as debug feature?
-There's the option to set PHY registers from userspace, e.g. with phytool.
-This could be used for reconfiguring the PHY.
-
-Heiner
-
-
-
-[...]
+I'm not sold on the use-case for this, but maybe if I see the actual
+use-cases I might be swayed. A very basic/minimal "register a new
+dma-buf heap" function should be all that's really needed for android,
+so maybe we can start with that?
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
