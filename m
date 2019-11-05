@@ -2,134 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB36DF0737
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1522F0744
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfKEUtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:49:01 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39578 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfKEUtB (ORCPT
+        id S1729877AbfKEUvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:51:25 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51502 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEUvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:49:01 -0500
-Received: by mail-wr1-f65.google.com with SMTP id a11so23097747wra.6;
-        Tue, 05 Nov 2019 12:48:58 -0800 (PST)
+        Tue, 5 Nov 2019 15:51:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q70so908872wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 12:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hYSd/3njTuRQYW+MbQwSCa/QBWDUOU5HAkx5FhnJaxQ=;
-        b=SJi0bd5eZKeDma6tKVX5tx5Y4/nqRMP5L8Pk0IqeZD7fyFmlOqlfgeSYs3HwmL1reG
-         ZhMAD1lxKulx24PY9hoMnqSpJinCmLPs+vf2UbGiA0/R4Izkti5z9CobAeZJO8VSKp1B
-         xAgDUwXzMhbchGqsLPQKhq28CUrriSyDGMdFJB7Qz21qAMMxuPbxug5sJPhPKceXcoaR
-         JJUVqQXTs5PdQ+i5H4TrTFpWfqtwIMNKc9GFmM3qdm+FdLS+d4AnT+zuZT1F61wyx+j0
-         WHR31XpUKVdUTG5PdPs0lsVZm0oykFjZvXr/NuT1eniwuNVVPkz85R3lD8g5IYFzuYYn
-         Ob0g==
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=86+b3nLS9bc8VDStO93HdimlizslTYlGrlQhHJTbrT4=;
+        b=VsXcQfpstDMDBiO/7BvB/yl0oN780/GG/FJehxFtBv77wAHaYRFX8xW5lDSq2WHLlS
+         8RF/ARYHZfN5KAqvNgA91kSpzufz7c/zI/5GhNR34FdUiNTmFDlOvRAxt/jEz7Xc18fQ
+         F3+4wE6qJOQtYYHS6cz5on9mOT+NI+HGGhjDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hYSd/3njTuRQYW+MbQwSCa/QBWDUOU5HAkx5FhnJaxQ=;
-        b=hx1/OR3njjJNjnTotqwLHN/g6lVEWyXHWjg3P12WZ7twp7aUw8FATdIALpAUIshsOS
-         UOAJPvC5RykRmpmN7hlKpQLajq5FJx4aqv61cZsNmPvIVJDtXNV0KhfE5zCpjB/rj08U
-         9YUx46Ev9tL8Yra1VXcGwrds+v33UKEXEsA1rHD0IqS9pH4CIAIUyfPyIg15RArl4c7X
-         mBDc9KPnijiHnhIEaSALV0Uq0ntMAknmK4HdUOOp7+7Iz5jrca3jE8t044yEXvsZiKz3
-         YuIhLPfwiTZ8WXTSHOkDZsQfZ+DZXfMih4o9rqXTkQXTZnd1Uz7hjJBqEKg25ldhSv4l
-         88/g==
-X-Gm-Message-State: APjAAAWLGbG0jrvwyFyxm+GUoXWFS6BFI0dfdRTtKafHmHn7tYs02In6
-        dDjW0CbiGkiJlXKdWlXbgOt0l3LW
-X-Google-Smtp-Source: APXvYqySnnEKyJwbTzo0v50ES/1OR5Mrp2AyU38W23B8j9lg6q78wc1WUJZ4o4jz43cdC6i2YAyHRQ==
-X-Received: by 2002:adf:e387:: with SMTP id e7mr13795359wrm.180.1572986937915;
-        Tue, 05 Nov 2019 12:48:57 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f17:6e00:e905:33d7:3b10:e04b? (p200300EA8F176E00E90533D73B10E04B.dip0.t-ipconnect.de. [2003:ea:8f17:6e00:e905:33d7:3b10:e04b])
-        by smtp.googlemail.com with ESMTPSA id a8sm549480wme.11.2019.11.05.12.48.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Nov 2019 12:48:57 -0800 (PST)
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Add TI dp83869 phy
-To:     Dan Murphy <dmurphy@ti.com>, andrew@lunn.ch, f.fainelli@gmail.com,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191105181826.25114-1-dmurphy@ti.com>
- <20191105181826.25114-2-dmurphy@ti.com>
- <68b9c003-4fb3-b854-695a-fa1c6e08f518@gmail.com>
- <4ffebfad-87d2-0e19-5b54-7e550c540d03@ti.com>
- <1f64ae30-bbf3-525a-4fab-556924b18122@gmail.com>
- <3c4696b4-32ac-8529-ef97-1a2ae6bbfa32@ti.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <b0727f9f-2837-51bb-a8b7-d11bdc9af110@gmail.com>
-Date:   Tue, 5 Nov 2019 21:48:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=86+b3nLS9bc8VDStO93HdimlizslTYlGrlQhHJTbrT4=;
+        b=Psc6cwvBehT6QCh96zkjX/UgqVsiYHWL72vfH0uuuK71yOFDZgOQ2e6kX6EQMQY0tj
+         Vv0NkXYvx8o3qTXUz9iCfW+Rd7rvS7AIMQSuYZnH4ClyPLX89t6TQB0PFvvZvuBOqFOK
+         Cxo60Y/t4J25d4OkoAvGYaclLNPZxdJOIdTnRuUxbx9G57mqQQwsxrKpZ8hbYZt3Hpup
+         tE/3DqxxXZOtFCJG18PnUN289i1cp7U9uQUNBVqg9VWRkh1BxxbiRR+5IRGjyupY+knw
+         HrE7CmvjWQymM8sZBv3tS8pkwSyICmLPX2pFiPt+dxZoi3R68Hu6VbxaBm8M3SHJF6Y0
+         vqPQ==
+X-Gm-Message-State: APjAAAUnVyruqAO5XvmqYxUg/iJrfZXssKHiWsmLIPIvdaxaf3+ly7Ij
+        QlATeWfqNVnK2nWhwoRZITCGFA==
+X-Google-Smtp-Source: APXvYqygaILxJIOrGAvvSOaxQJT6uuJyMfYoMplcREbHs8U18/qyRi5rEm0JQSsunlDySZ4b2tLKTQ==
+X-Received: by 2002:a1c:e0c4:: with SMTP id x187mr797441wmg.93.1572987082645;
+        Tue, 05 Nov 2019 12:51:22 -0800 (PST)
+Received: from prevas-ravi.prevas.se (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
+        by smtp.gmail.com with ESMTPSA id 4sm690226wmd.33.2019.11.05.12.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 12:51:21 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v2] watchdog: make nowayout sysfs file writable
+Date:   Tue,  5 Nov 2019 21:51:18 +0100
+Message-Id: <20191105205118.11359-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191105123125.25985-1-linux@rasmusvillemoes.dk>
+References: <20191105123125.25985-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-In-Reply-To: <3c4696b4-32ac-8529-ef97-1a2ae6bbfa32@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.11.2019 21:26, Dan Murphy wrote:
-> Heiner
-> 
-> On 11/5/19 2:20 PM, Heiner Kallweit wrote:
->> On 05.11.2019 21:02, Dan Murphy wrote:
->>> Heiner
->>>
->>> On 11/5/19 1:55 PM, Heiner Kallweit wrote:
->>>> On 05.11.2019 19:18, Dan Murphy wrote:
->>>>> Add support for the TI DP83869 Gigabit ethernet phy
->>>>> device.
->>>>>
->>>>> The DP83869 is a robust, low power, fully featured
->>>>> Physical Layer transceiver with integrated PMD
->>>>> sublayers to support 10BASE-T, 100BASE-TX and
->>>>> 1000BASE-T Ethernet protocols.
->>>>>
->>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>> ---
->>>>>    drivers/net/phy/Kconfig              |   6 +
->>>>>    drivers/net/phy/Makefile             |   1 +
->>>>>    drivers/net/phy/dp83869.c            | 439 +++++++++++++++++++++++++++
->>>>>    include/dt-bindings/net/ti-dp83869.h |  43 +++
->>>>>    4 files changed, 489 insertions(+)
->>>>>    create mode 100644 drivers/net/phy/dp83869.c
->>>>>    create mode 100644 include/dt-bindings/net/ti-dp83869.h
->> [...]
->>
->>>>> +static int op_mode;
->>>>> +
->>>>> +module_param(op_mode, int, 0644);
->>>>> +MODULE_PARM_DESC(op_mode, "The operational mode of the PHY");
->>>>> +
->>>> A module parameter isn't the preferred option here.
->>>> You could have more than one such PHY in different configurations.
->>>> Other drivers like the Marvell one use the interface mode to
->>>> check for the desired mode. Or you could read it from DT.
->>>>
->>> We do read the initial mode from the DT but there was a request to be able to change the mode during runtime.
->> Maybe we need to understand the use case better to be able to advise.
->> Will this be needed in production? Or was it requested as debug feature?
->> There's the option to set PHY registers from userspace, e.g. with phytool.
->> This could be used for reconfiguring the PHY.
-> 
-> This was a customer request that they be able to modify the op_mode from user space.
-> 
-> This was all I was given for a requirement.  The customers use case was proprietary.
-> 
-If the module parameter serves just a (unknown) proprietary use case,
-then it should not be in mainline. You could provide a patch with this
-parameter separately to the client.
+It can be useful to delay setting the nowayout feature for a watchdog
+device. Moreover, not every driver (notably gpio_wdt) implements a
+nowayout module parameter/otherwise respects CONFIG_WATCHDOG_NOWAYOUT,
+and modifying those drivers carries a risk of causing a regression for
+someone who has two watchdog devices, sets CONFIG_WATCHDOG_NOWAYOUT
+and somehow relies on the gpio_wdt driver being ignorant of
+that (i.e., allowing one to gracefully close a gpio_wdt but not the
+other watchdog in the system).
 
-> Dan
-> 
-> 
->> Heiner
->>
->>
->>
->> [...]
-> 
+So instead, simply make the nowayout sysfs file writable. Obviously,
+setting nowayout is a one-way street.
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+v2: drop redundant "current" variable and !!.
+
+ .../ABI/testing/sysfs-class-watchdog          |  9 ++++++--
+ drivers/watchdog/watchdog_dev.c               | 21 ++++++++++++++++++-
+ 2 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
+index 675f9b537661..9860a8b2ba75 100644
+--- a/Documentation/ABI/testing/sysfs-class-watchdog
++++ b/Documentation/ABI/testing/sysfs-class-watchdog
+@@ -17,8 +17,13 @@ What:		/sys/class/watchdog/watchdogn/nowayout
+ Date:		August 2015
+ Contact:	Wim Van Sebroeck <wim@iguana.be>
+ Description:
+-		It is a read only file. While reading, it gives '1' if that
+-		device supports nowayout feature else, it gives '0'.
++		It is a read/write file. While reading, it gives '1'
++		if the device has the nowayout feature set, otherwise
++		it gives '0'. Writing a '1' to the file enables the
++		nowayout feature. Once set, the nowayout feature
++		cannot be disabled, so writing a '0' either has no
++		effect (if the feature was already disabled) or
++		results in a permission error.
+ 
+ What:		/sys/class/watchdog/watchdogn/state
+ Date:		August 2015
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index dbd2ad4c9294..d3bdcb144657 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -452,7 +452,26 @@ static ssize_t nowayout_show(struct device *dev, struct device_attribute *attr,
+ 
+ 	return sprintf(buf, "%d\n", !!test_bit(WDOG_NO_WAY_OUT, &wdd->status));
+ }
+-static DEVICE_ATTR_RO(nowayout);
++
++static ssize_t nowayout_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t len)
++{
++	struct watchdog_device *wdd = dev_get_drvdata(dev);
++	unsigned int value;
++	int ret;
++
++	ret = kstrtouint(buf, 0, &value);
++	if (ret)
++		return ret;
++	if (value > 1)
++		return -EINVAL;
++	/* nowayout cannot be disabled once set */
++	if (test_bit(WDOG_NO_WAY_OUT, &wdd->status) && !value)
++		return -EPERM;
++	watchdog_set_nowayout(wdd, value);
++	return len;
++}
++static DEVICE_ATTR_RW(nowayout);
+ 
+ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
+-- 
+2.23.0
 
