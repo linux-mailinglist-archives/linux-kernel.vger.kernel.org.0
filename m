@@ -2,89 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAF7F01E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8B9F01FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389940AbfKEPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:50:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389571AbfKEPuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:50:32 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4423E217F5;
-        Tue,  5 Nov 2019 15:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572969032;
-        bh=0Wqzj5saWGFQPcHScriQ0P5BJ17JeJjwaDDE8C9MBUo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lw6RcLyVKDqZHREc1LJoj5D99aRFj5tS/8E3bHXUhXcKbtYJGENJOIzd5iZtYohGz
-         Dml2XWiVgjGGBUno9CecWRRK6ZlG4hkdovBT2hIWYEBPS4fY9Lrr3vWzKkY0ltWlVU
-         v3/rkQc3kviutnrDR1pINh8O9crNybecRgd7Kng4=
-Date:   Tue, 5 Nov 2019 16:50:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chen Wandun <chenwandun@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        perex@perex.cz, kstewart@linuxfoundation.org, allison@lohutok.net,
-        tglx@linutronix.de, joe@perches.com
-Subject: Re: [PATCH v2] hp100: remove set but not used variable val
-Message-ID: <20191105155024.GA2677365@kroah.com>
-References: <20191105133554.6C01F9A06CB85816F399@huawei.com>
- <1572964619-76671-1-git-send-email-chenwandun@huawei.com>
+        id S2390049AbfKEP5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:57:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51297 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389949AbfKEP5f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:57:35 -0500
+Received: from [185.81.136.19] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iS1D2-0007OY-Lm; Tue, 05 Nov 2019 15:57:33 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] thread fixes
+Date:   Tue,  5 Nov 2019 16:52:17 +0100
+Message-Id: <20191105155217.23759-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572964619-76671-1-git-send-email-chenwandun@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 10:36:59PM +0800, Chen Wandun wrote:
-> From: Chenwandun <chenwandun@huawei.com>
-> 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/staging/hp/hp100.c: In function hp100_start_xmit:
-> drivers/staging/hp/hp100.c:1629:10: warning: variable val set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Chenwandun <chenwandun@huawei.com>
+Hi Linus,
 
-I need a "full" name here, like the one on your email "From:" line.
+/* Summary */
+This changes clone3() to do basic stack validation and to set up the stack
+depending on whether or not it is growing up or down. With clone3() the
+expectation is now very simply that the .stack argument points to the
+lowest address of the stack and that .stack_size specifies the initial
+stack size. This is diferent from legacy clone() where the "stack" argument
+had to point to the lowest or highest address of the stack depending on the
+architecture.
 
-> ---
->  drivers/staging/hp/hp100.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/staging/hp/hp100.c b/drivers/staging/hp/hp100.c
-> index 6ec78f5..6fc7733 100644
-> --- a/drivers/staging/hp/hp100.c
-> +++ b/drivers/staging/hp/hp100.c
-> @@ -1626,7 +1626,9 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
->  	unsigned long flags;
->  	int i, ok_flag;
->  	int ioaddr = dev->base_addr;
-> +#ifdef HP100_DEBUG_TX
->  	u_short val;
-> +#endif
+clone3() was released with 5.3. Currently, it is not documented and very
+unclear to userspace how the stack and stack_size argument have to be
+passed. After talking to glibc folks we concluded that changing clone3() to
+determine stack direction and doing basic validation is the right course of
+action.
+Note, this is a potentially user visible change. In the very unlikely case,
+that it breaks someone's use-case we will revert. (And then e.g.
+place the new behavior under an appropriate flag.)
+Note that passing an empty stack will continue working just as before.
+Breaking someone's use-case is very unlikely. Neither glibc nor musl
+currently expose a wrapper for clone3(). There is currently also no real
+motivation for anyone to use clone3() directly. First, because using
+clone{3}() with stacks requires some assembly (see glibc and musl). Second,
+because it does not provide features that legacy clone() doesn't. New
+features for clone3() will first happen in v5.5 which is why v5.4 is still
+a good time to try and make that change now and backport it to v5.3.
 
-#ifdefs are not ok in .c code, sorry.
+I did a codesearch on https://codesearch.debian.net, github, and gitlab and
+could not find any software currently relying directly on clone3(). I
+expect this to change once we land CLONE_CLEAR_SIGHAND which was a request
+coming from glibc at which point they'll likely start using it.
 
->  	struct hp100_private *lp = netdev_priv(dev);
->  
->  #ifdef HP100_DEBUG_B
-> @@ -1695,7 +1697,9 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
->  
->  	spin_lock_irqsave(&lp->lock, flags);
->  	hp100_ints_off();
-> +#ifdef HP100_DEBUG_TX
->  	val = hp100_inw(IRQ_STATUS);
+The following changes since commit d6d5df1db6e9d7f8f76d2911707f7d5877251b02:
 
-Are you sure that this doesn't actually change the hardware in some way?
+  Linux 5.4-rc5 (2019-10-27 13:19:19 -0400)
 
-thanks,
+are available in the Git repository at:
 
-greg k-h
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-2019-11-05
+
+for you to fetch changes up to fa729c4df558936b4a1a7b3e2234011f44ede28b:
+
+  clone3: validate stack arguments (2019-11-05 15:50:14 +0100)
+
+/* Testing */
+All patches have seen exposure in linux-next and are based on v5.4-rc5.
+The patch has a recent change date because I added Arnd's ack.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next.
+
+Please consider pulling these changes from the signed for-linus-2019-11-05 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+for-linus-2019-11-05
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      clone3: validate stack arguments
+
+ include/uapi/linux/sched.h |  4 ++++
+ kernel/fork.c              | 33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 1 deletion(-)
