@@ -2,97 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB23AEF80F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:08:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02336EF848
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388049AbfKEJIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:08:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38345 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730533AbfKEJIv (ORCPT
+        id S1730718AbfKEJKi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 5 Nov 2019 04:10:38 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:40959 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729171AbfKEJKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:08:51 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c13so14733139pfp.5;
-        Tue, 05 Nov 2019 01:08:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3IN+RmgrA9UuV2EXkkUk1yKQc727vvMO7nQN5m0x7fQ=;
-        b=PPdE5lSoTbfeWE39yleufpUJr53ZwN4GoeYnjibmEiejj6I3/LTa9lm6tV3g7xUWHv
-         Yr4N1EkLATrunX+49DRIstYvODsB6lS07WqRfokwahj/fXhXVb08/vJRtoiy299krnSc
-         XC710aWgDBVoRaDNWcWvlLsKH+HoF6CLbyRJM7Gx9RqfLyeQ9XxmVjGAvwkvI4a1sE0g
-         mSfd5SYaopG9NMT+TR9MxqRzjljl4HWATJdlpJJAEIn3adYb8iTM6vBanDE3QSDsDLZK
-         Cmu4+rkNi9ZN4XCqbUFWjrSDf29jG0YOPBbsg/G7skYBVbjlOJv84ilFSx3AYKEualaK
-         tKZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3IN+RmgrA9UuV2EXkkUk1yKQc727vvMO7nQN5m0x7fQ=;
-        b=P016hklU+PGiKAZNOKXgJLWAFECpx2oer62ZKkFa9+HhCf2N6V1WQU3bV95JcZm2sC
-         1O5Zlksyay4p9QlyFF5bbapkL137228USAbnBJE/TM4Zyp+yAWcV3F7/d2Kcy/fjRCFh
-         ZJ5S/YZ416D923tbqKYUsn7t67J2e9+DdtbwOh3cA8KgKJb2v8ucKJaJLoF+CqmW1maR
-         WhDwZIvC9okiApohWh4NdB0bowxgjJC1TlYlKvBDURsg1pO8AwtHha2si0RyvB6QAZPt
-         RSplacckidMqsYIfiPyPsBVeOjPC4+KVn94/VEO8Sz0E1VA/qhDYG+g8njo+IgLFo6/j
-         YPWg==
-X-Gm-Message-State: APjAAAW8VVNEJuCdBFdt4Cmki7XxCD34yCbhaOFnxhg4ekmTva6p6qbp
-        pdz6i1iGmvUfL94mq3kp9lFuHVGumUSfmIdfqUk=
-X-Google-Smtp-Source: APXvYqwcJpF1Dm56pg/Q3f42I41lxG7yrTVd2IBUReo74ZKyoGoglJgiG27q2ULFv8XHzvVwjYJ2Wx+9YAF2nZH0nA0=
-X-Received: by 2002:aa7:8e8d:: with SMTP id a13mr6708143pfr.241.1572944930238;
- Tue, 05 Nov 2019 01:08:50 -0800 (PST)
+        Tue, 5 Nov 2019 04:10:38 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id xA59ALpw009604
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 5 Nov 2019 18:10:21 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id xA59ALr6007501;
+        Tue, 5 Nov 2019 18:10:21 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id xA59AL0p027424;
+        Tue, 5 Nov 2019 18:10:21 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-10078506; Tue, 5 Nov 2019 18:09:45 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0439.000; Tue, 5
+ Nov 2019 18:09:44 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+Subject: Re: [PATCH] mm/memory-failure.c: replace with page_shift() in
+ add_to_kill()
+Thread-Topic: [PATCH] mm/memory-failure.c: replace with page_shift() in
+ add_to_kill()
+Thread-Index: AQHVk7IjOfxiniM4JEmew4TP7s3IhKd7s0IA
+Date:   Tue, 5 Nov 2019 09:09:44 +0000
+Message-ID: <20191105090944.GA29554@hori.linux.bs1.fc.nec.co.jp>
+References: <7bc9d610-728c-37b0-d175-dba21dc0dfff@huawei.com>
+In-Reply-To: <7bc9d610-728c-37b0-d175-dba21dc0dfff@huawei.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <587BFB72EE2C8B4A9C1842BF814BA0B9@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20191014124803.13661-1-miquel.raynal@bootlin.com>
- <CAHp75Vc4vnNVKc+Q_TY8DpwV4rLZYGm2MvGBC7r67XjmtNoskQ@mail.gmail.com>
- <20191015163055.0d8f44e5@xps13> <CAHp75VemkA7kap0O7=iACX4cD5_r6QXaLF6nS8R94ErStK0DwA@mail.gmail.com>
- <20191104161103.64995b8a@xps13> <CAMpxmJVjyUXSNFEiTxMC1bdzXTex74DqeiHPqLBPdnb2_LYRnQ@mail.gmail.com>
- <20191104203346.epdbzflnynh2gf3z@pengutronix.de> <CAHp75VdULzZ6NXP7fp=6KQFAHOSvoJ-_WTqfcmhQJbrLUw3M4Q@mail.gmail.com>
- <20191105100157.2b6eb22b@xps13>
-In-Reply-To: <20191105100157.2b6eb22b@xps13>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 5 Nov 2019 11:08:39 +0200
-Message-ID: <CAHp75Ve6_8dXJgF6c2OdZDeV=icyRondvMKwTxhom-RXDACfUA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: Add Maxim MAX7313 PWM support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pwm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 5, 2019 at 11:02 AM Miquel Raynal <miquel.raynal@bootlin.com> w=
-rote:
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote on Tue, 5 Nov 2019
-> 09:06:37 +0200:
-> > On Mon, Nov 4, 2019 at 10:33 PM Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
+On Tue, Nov 05, 2019 at 04:21:44PM +0800, Yunfeng Ye wrote:
+> The function page_shift() is supported after the commit 94ad9338109f
+> ("mm: introduce page_shift()").
+> 
+> So replace with page_shift() in add_to_kill() for readability.
+> 
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
 
-> > For me it sounds more likely that PWM is a *pin function* of a pin
-> > controller and actually this GPIO driver should be a pin controller
-> > with corresponding function(s).
-> >
->
-> Ok, thanks for the input, I will address Thierry's comments and
-> re-submit as a single file (same shape as in v1).
-
-Perhaps I have to be more clear. What I meant is that pin control
-should support PWM pin function and PCA953x be converted to a pin
-control + GPIO + PWM.
-Above definitely is not what you did and it's not for immediate submission.
-
-I really would like to hear if it makes sense.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
