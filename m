@@ -2,130 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DC1EF521
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94006EF52E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:53:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbfKEFvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 00:51:15 -0500
-Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:54133
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730346AbfKEFvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 00:51:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mBMMxG2huW/59S4VwnUYDM8Kvxa/d3vw6v1Kj+LFIgpdWAiti2GUhFTDwKDC3ZGLPuIJOdz5k8wpgESj5g88V0Vuh2rotUSU10T2GfshN4dvOWsbUpjC9GbKiOcewCrTQnyLKHf9J04pJDXUndsNunjCS9nBTYmvzK/IFTGIPfQ5ZHlZhsMu7sxwOAqj+89c1ERWCLJe/KaJdJXbtIXsZEIqOb3I7hXq4r+yFh1ghZtxav0bj0Kb005Lkx32R3Y7hUvLws+byykpBB/EPIeuIeoSa2s/r5YOAdiEMpoRq59roJQW3AhubGDOWOezJ3+TgmMNcLqNlYZWlWg1DwUxag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JPyZrmpAPaahxF+qF4gSZaY1kf6h19Xe4R3VQsF9it8=;
- b=klWZXf703drMard1boevbaRTuMEjJPBMSoXehAKvWyakJask7OB07Pcv/ea6C0E74MPa/tyonoCrq5golzCupDiuVz0RFU8ap3/qe3c78FjrGLSzARVcDUqh0Ls+CMQKnCNXjytgz/ZlDIu1aUdNp9s1RT32wwIuitAfSEPOG0UD5IJpbVFpQCtofPt38krjeHxk+119rHM4Bk4VNh3OAWdxg42HB3oMikFG31k6nVZDigEUY7/DDyou7VGVrepyLi++n/wp1NuHAOZK9cAt/akfP91FAgK5EUhAegqE7AsZ7ACqv7aKrAKr3FMkAIQoGhlJ9LS+AC9TgHBc2SKE7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JPyZrmpAPaahxF+qF4gSZaY1kf6h19Xe4R3VQsF9it8=;
- b=Y2gNuspCqvJYkwPPlDM9NlZsz259Kkrq+1F6CrMflvDQIoFlNQa+cAbzrv/nze5sg40l3PBAQ58bxeKAQEGnPohCeGv5yivCd4JX4GLpFeUCP/DvvOhWPShrOTAxNtDXsLqw8aomm291CcfRviT/d8zYNks2fRHBzVghE2Z60cY=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6241.eurprd04.prod.outlook.com (20.179.32.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Tue, 5 Nov 2019 05:51:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2408.024; Tue, 5 Nov 2019
- 05:51:10 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH] tty: serial: fsl_lpuart: use the sg count from dma_map_sg
-Thread-Topic: [PATCH] tty: serial: fsl_lpuart: use the sg count from
- dma_map_sg
-Thread-Index: AQHVk50GWgKPiRrVwUSj/ElNagRx2g==
-Date:   Tue, 5 Nov 2019 05:51:10 +0000
-Message-ID: <1572932977-17866-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0220.apcprd02.prod.outlook.com
- (2603:1096:201:20::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b1ab60dd-0507-4196-5aeb-08d761b4288a
-x-ms-traffictypediagnostic: AM0PR04MB6241:|AM0PR04MB6241:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB62414AD0D526A8F6B57582E6887E0@AM0PR04MB6241.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0212BDE3BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(5660300002)(36756003)(386003)(6506007)(4326008)(102836004)(52116002)(54906003)(2501003)(316002)(14454004)(99286004)(64756008)(6512007)(66476007)(66556008)(66446008)(66946007)(478600001)(25786009)(6436002)(110136005)(2906002)(305945005)(486006)(2616005)(44832011)(50226002)(6486002)(8936002)(81166006)(81156014)(8676002)(256004)(71200400001)(71190400001)(26005)(86362001)(2201001)(6116002)(3846002)(66066001)(7736002)(476003)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6241;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EIQgOMMcuSbMVc+mGDg8VYJAulWFeJSfDaGQ6GjAawTutCWYAJwE+hBPlMGMkKRHbWoXk6LPbK08PHtHQaCZg4kTJeGaPAM4efZkebSoo3bFx05xDvFd1IK1SD8OzI6YODnz22uiprzpeUvkD+Sh8DDxx84SjekBlREvJydO4/3WJv2E0gn8o7UvEJ8VF5JADOF+Y1XRm6blVuUmwUBejkOfEvjBFRb6K1BkMljQA5nRr7VTt0uOEqmF9RwCg8l6jFk8eUMf50auYw9sm2X7gaDtoMlTi7YQgfTnKg8/uAt1VtqtW3svb3LN1uGcDbl4h8Ur0l6vx8+Cz13+BD+hK/f1eFq8w1xv4NR4uLSy3N7/zMd1cbdlbSaI4LSqBY6tqbIr2rqi6vus3IeR5mcLppZJebVzwcg7VCPb2T3rbBYerzoFn/qd0vPfRApECess
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2387623AbfKEFxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 00:53:23 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34153 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387555AbfKEFxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 00:53:23 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 476f3G5hh9z9sP6;
+        Tue,  5 Nov 2019 16:53:14 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1572933197;
+        bh=f9hNs4jQjbohnId4YFBy7pOqvHYnA2ugkM9qvTsebHQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GPVY7jb6FGsf8JZrV/ipYnnxNIEM7HBPaIwCw45kae9w/Q5iODqTnvsiQLpC6Ofxx
+         dJ8WhYQlGLrEh7Wg1la0Fa5ej7Aie3yacltVFawILzMPhAQ4l/l1zkbS3N7GqjrdPK
+         PT7Rk2RjsfqTmbj40SXrSWFyJMeR3T8uz0FtPzEK6KqLaQO4CnvpZzIwqpQGOsTO/B
+         +YIbyw4HV2eRbHTkPCBrHpYQa7AvSb0lDaUcYKegGQDCNIN0gIuaCs99Nd4qlKZesa
+         PFB1H7dxLkCQFg7EPMEPusINTTyM1zINwuw0WkWXn30KfnOzDlpo3TRS4vT3av90oy
+         /69Nc8RSKtaug==
+Date:   Tue, 5 Nov 2019 16:53:13 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        =?UTF-8?B?SsOpcsO0?= =?UTF-8?B?bWU=?= Pouiller 
+        <jerome.pouiller@silabs.com>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current and net-next trees
+Message-ID: <20191105165313.59a5cc11@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1ab60dd-0507-4196-5aeb-08d761b4288a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 05:51:10.3275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0s6ppI741+S/5omhP/Z8XSUP1laq617Nck/JdLamvVeM6Zv3c3qZZTjiBV3LRJEPpQoZjBtVSUwB/nDiK2Kt3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6241
+Content-Type: multipart/signed; boundary="Sig_/f83taoECjBr4uwFqhb6tiJk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+--Sig_/f83taoECjBr4uwFqhb6tiJk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The dmaengine_prep_slave_sg needs to use sg count returned
-by dma_map_sg, not use sport->dma_tx_nents, because the return
-value of dma_map_sg is not always same with "nents".
+Hi all,
 
-When enabling iommu for lpuart + edma, iommu framework may concatenate
-two sgs into one.
+Today's linux-next merge of the staging tree got conflicts in:
 
-Fixes: 6250cc30c4c4e ("tty: serial: fsl_lpuart: Use scatter/gather DMA for =
-Tx")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/tty/serial/fsl_lpuart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  drivers/staging/Kconfig
+  drivers/staging/Makefile
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuar=
-t.c
-index 3e17bb8a0b16..3643b8f7a3df 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -437,8 +437,8 @@ static void lpuart_dma_tx(struct lpuart_port *sport)
- 	}
-=20
- 	sport->dma_tx_desc =3D dmaengine_prep_slave_sg(sport->dma_tx_chan, sgl,
--					sport->dma_tx_nents,
--					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
-+					ret, DMA_MEM_TO_DEV,
-+					DMA_PREP_INTERRUPT);
- 	if (!sport->dma_tx_desc) {
- 		dma_unmap_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
- 		dev_err(dev, "Cannot prepare TX slave DMA!\n");
+between commits:
+
+  df4028658f9d ("staging: Add VirtualBox guest shared folder (vboxsf) suppo=
+rt")
+  52340b82cf1a ("hp100: Move 100BaseVG AnyLAN driver to staging")
+
+from the staging.current and net-next trees and commit:
+
+  a7a91ca5a23d ("staging: wfx: add infrastructure for new driver")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
-2.16.4
+Cheers,
+Stephen Rothwell
 
+diff --cc drivers/staging/Kconfig
+index be74f91500b3,a490141a0e88..000000000000
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@@ -125,8 -125,6 +125,10 @@@ source "drivers/staging/exfat/Kconfig
+ =20
+  source "drivers/staging/qlge/Kconfig"
+ =20
+ +source "drivers/staging/vboxsf/Kconfig"
+ +
+ +source "drivers/staging/hp/Kconfig"
+ +
++ source "drivers/staging/wfx/Kconfig"
++=20
+  endif # STAGING
+diff --cc drivers/staging/Makefile
+index b8bd05091453,4cb548a0ff87..000000000000
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@@ -53,5 -53,4 +53,6 @@@ obj-$(CONFIG_UWB)		+=3D uwb
+  obj-$(CONFIG_USB_WUSB)		+=3D wusbcore/
+  obj-$(CONFIG_EXFAT_FS)		+=3D exfat/
+  obj-$(CONFIG_QLGE)		+=3D qlge/
+ +obj-$(CONFIG_VBOXSF_FS)		+=3D vboxsf/
+ +obj-$(CONFIG_NET_VENDOR_HP)	+=3D hp/
++ obj-$(CONFIG_WFX)		+=3D wfx/
+
+--Sig_/f83taoECjBr4uwFqhb6tiJk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3BDkoACgkQAVBC80lX
+0GxBIwf+JkgmrQnEKVPJu7rwU8CbLhidBcV458j3OQGqiRJJw+TuaCAb0ygF9dX6
+0oRTOf9YvxFQBitjGkn7rqsMyGyy2p6Q4n4/9/fQU8BwjKfwdQJw13//VypkLj/I
+55D2Zwb+hwfmYOhFVioNHX4RsB9qpMK1uDG63oaz5IEHG/n9+prfwRy3raKa6ONX
+y/LqUs2LSURHj2y8r0fqh4O4nn+MuMvwQ9X8Z3/CRZgXrZQYGzPja7S3VTJEgkn/
+LCXjY0hoTSsutrkGwy4q5t7mZMpWIE49NX/1L5BMpctt6dn3vQpXl6t6wwLBVzKd
+4XWDm6zCf8G/zerbC1As51AEFG1h6w==
+=g9pO
+-----END PGP SIGNATURE-----
+
+--Sig_/f83taoECjBr4uwFqhb6tiJk--
