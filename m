@@ -2,118 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABB8EFA5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0120EFA57
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 11:01:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388166AbfKEKCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 05:02:03 -0500
-Received: from mga03.intel.com ([134.134.136.65]:22746 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730699AbfKEKCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 05:02:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 02:02:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,270,1569308400"; 
-   d="scan'208";a="227047022"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.197])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Nov 2019 02:01:57 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf inject: Make --strip keep evsels
-Date:   Tue,  5 Nov 2019 12:00:57 +0200
-Message-Id: <20191105100057.21465-1-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S2388189AbfKEKBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 05:01:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40774 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388108AbfKEKBi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 05:01:38 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iRveW-0000FL-L6; Tue, 05 Nov 2019 11:01:33 +0100
+Date:   Tue, 5 Nov 2019 11:01:32 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arul Jeniston <arul.jeniston@gmail.com>
+cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
+ function.
+In-Reply-To: <CACAVd4grhGVVSYpwjof5YiS1duZ2_SFjvXtctP+cmR5Actkjyg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1911051100471.17054@nanos.tec.linutronix.de>
+References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com> <alpine.DEB.2.21.1908191646350.2147@nanos.tec.linutronix.de> <CACAVd4j60pn=td5hh485SJOcoYZ_jWQDQg2DVasSodPtsaupkw@mail.gmail.com>
+ <alpine.DEB.2.21.1908191752580.2147@nanos.tec.linutronix.de> <CACAVd4iRN7=eq_B1+Yb-xcspU-Sg1dmMo_=VtLXXVPkjN1hY5Q@mail.gmail.com> <alpine.DEB.2.21.1908191943280.1796@nanos.tec.linutronix.de> <CACAVd4jAJ5QcOH=q=Q9kAz20X4_nAc7=vVU_gPWTS1UuiGK-fg@mail.gmail.com>
+ <alpine.DEB.2.21.1908201036200.2223@nanos.tec.linutronix.de> <CACAVd4jT4Ke7giPmKSzt+Wo3Ro-g9zWDRz_GHaRcs0Nb3_rkBw@mail.gmail.com> <CACAVd4gRoQih6f_K7kMzr=AwA_DvP0OksxBKj1bGPsP2F_9sFg@mail.gmail.com> <alpine.DEB.2.21.1909051707150.1902@nanos.tec.linutronix.de>
+ <CACAVd4hS1i--fxWaarXP2psagW-JmBoLAJRrfu9gkRc49Ja4pg@mail.gmail.com> <alpine.DEB.2.21.1909071630000.1902@nanos.tec.linutronix.de> <CACAVd4grhGVVSYpwjof5YiS1duZ2_SFjvXtctP+cmR5Actkjyg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-create_gcov (refer to the autofdo example in
-tools/perf/Documentation/intel-pt.txt) now needs the evsels to read the
-perf.data file. So don't strip them.
+Arul,
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/builtin-inject.c | 54 -------------------------------------
- 1 file changed, 54 deletions(-)
+On Tue, 5 Nov 2019, Arul Jeniston wrote:
+> >  So I'm going to send a patch to document that in the manpage.
+> 
+> Did you get a chance to make the manpage patch? if yes, please help us
+> by sharing the link where we can find the patch.
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 372ecb3e2c06..1e5d28311e14 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -578,58 +578,6 @@ static void strip_init(struct perf_inject *inject)
- 		evsel->handler = drop_sample;
- }
- 
--static bool has_tracking(struct evsel *evsel)
--{
--	return evsel->core.attr.mmap || evsel->core.attr.mmap2 || evsel->core.attr.comm ||
--	       evsel->core.attr.task;
--}
--
--#define COMPAT_MASK (PERF_SAMPLE_ID | PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
--		     PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_IDENTIFIER)
--
--/*
-- * In order that the perf.data file is parsable, tracking events like MMAP need
-- * their selected event to exist, except if there is only 1 selected event left
-- * and it has a compatible sample type.
-- */
--static bool ok_to_remove(struct evlist *evlist,
--			 struct evsel *evsel_to_remove)
--{
--	struct evsel *evsel;
--	int cnt = 0;
--	bool ok = false;
--
--	if (!has_tracking(evsel_to_remove))
--		return true;
--
--	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->handler != drop_sample) {
--			cnt += 1;
--			if ((evsel->core.attr.sample_type & COMPAT_MASK) ==
--			    (evsel_to_remove->core.attr.sample_type & COMPAT_MASK))
--				ok = true;
--		}
--	}
--
--	return ok && cnt == 1;
--}
--
--static void strip_fini(struct perf_inject *inject)
--{
--	struct evlist *evlist = inject->session->evlist;
--	struct evsel *evsel, *tmp;
--
--	/* Remove non-synthesized evsels if possible */
--	evlist__for_each_entry_safe(evlist, tmp, evsel) {
--		if (evsel->handler == drop_sample &&
--		    ok_to_remove(evlist, evsel)) {
--			pr_debug("Deleting %s\n", perf_evsel__name(evsel));
--			evlist__remove(evlist, evsel);
--			evsel__delete(evsel);
--		}
--	}
--}
--
- static int __cmd_inject(struct perf_inject *inject)
- {
- 	int ret = -EINVAL;
-@@ -729,8 +677,6 @@ static int __cmd_inject(struct perf_inject *inject)
- 				evlist__remove(session->evlist, evsel);
- 				evsel__delete(evsel);
- 			}
--			if (inject->strip)
--				strip_fini(inject);
- 		}
- 		session->header.data_offset = output_data_offset;
- 		session->header.data_size = inject->bytes_written;
--- 
-2.17.1
+No. I would have Cc'ed you when posting. It's somewhere on my todo list.
 
+Thanks,
+
+	tglx
