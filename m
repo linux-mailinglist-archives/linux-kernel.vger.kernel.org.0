@@ -2,137 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43708F0AAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 00:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31EC4F0AC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 01:00:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbfKEX5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 18:57:03 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39785 "EHLO
+        id S1730478AbfKFAAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 19:00:10 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41074 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730704AbfKEX5A (ORCPT
+        with ESMTP id S1729563AbfKFAAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 18:57:00 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x28so14132428pfo.6;
-        Tue, 05 Nov 2019 15:56:59 -0800 (PST)
+        Tue, 5 Nov 2019 19:00:09 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p26so17344719pfq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 16:00:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lyd/uQwCMyHvu0EwXvw/80bYdPYYHY4g1rXnVpIYvtQ=;
-        b=QUBzc0rQ+6OSXZ6QoHFh7qoNgThIJgzdzc+UcxyU3G/RUF4bLMI8JGxLftWHgt2X7H
-         nmHUOLAxFBgQFQgeu/QJoC3WRDETTCsdRAB5L89zXLZGvUqwy5AJZYzQWMb5uEDY1hVC
-         ncY/51LRWT+JvGoOqhJqo896nyMeRsDLO/QQaU2MbluuwnchgsOijC6iB6WnL+VNtt2I
-         xVcnV7j4QY86iD4aEZJ1cWcUlo3ZcgHwDRKfe4toB1OSf6Eu+uXgLzdSmTpAFZAmHNg1
-         QivA+SZSuL29lwcneC10YMMvbvpLTXPn9km3/HrkOa08C1rXu0puE5rmtQ8xOZXF8tUc
-         h4RQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lhPGHL3YRrXYTue69wU9eU8V8Hx/b8hEqaEa6yTMnkc=;
+        b=VlMCTkpT+whd9RxOskp1d0UAGHuA0h6fy1q55ME6v1BSRDECHdj3UWLD4/nl2kFi57
+         QpRQjXkkG5d9C2XQorCh+PtySWXjM/1Ism68mr8kGSxX6kw1HJkesh4FOnHnGPZ9dsTD
+         aamT7cM11W7vGaxrQIWXJJmkRttlHajiwihfjEq3uvKt5ZGOqMDiLRXukqUs6y4y/I+F
+         ZcRpXOi/VnaKLTPk1GXl1k3S8OX8QuI+UWU+nJm83HCp9Fd9umODkJeL+YS99b/pyJVz
+         +T2egQKbxqr6HH1esUB6oT76CdyQY8WAkKAuJWMpkQA1MU1q9jVYpcx+lmxI6UmsWCNh
+         to6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lyd/uQwCMyHvu0EwXvw/80bYdPYYHY4g1rXnVpIYvtQ=;
-        b=ZANrDJl5eC6fW3M8tvzTv/FxYeuknppAWmyD1Fb0q33GIMCIAgAJ+q1Ov2qF/jjL67
-         XS1s9P7zASTXVo0YKzu60oAeUD9NQe6E4rDlGoVQnzP8gODn6reTX92CsMRjsEU2F01G
-         oGbQZEKti7XQKrEVscbIj6fUqiKp4PvGM5EgEKhm41EIAvp5zELIR/ZkbkgTA/S+VQhQ
-         mWUZp45yuj44Mm3RDYbxV8z1J1ru17Frszm3/AX1OXCYk2TgSuBIuDC/By00RClXkwVu
-         Pz0kbjK3/EOqxjutTdIh+PHpSV7Qb5xMjtSWDXWK8Q8aeS0L438AVP1yq26yrXg6IMIZ
-         4PNA==
-X-Gm-Message-State: APjAAAVgCIjHGzRPrgVFHv8ch9rt9pXkIxPbdE2rvDo1UiesM16k1s5I
-        /EDgeaIjsZgZs18Y4Hvh2dl5fBj8
-X-Google-Smtp-Source: APXvYqw1tZlGJpnft6JBqkIg80ds5OGJJXsVz3MvtryZMlCAINilHgvNVbjSVNUMeenci+2YHQO2CQ==
-X-Received: by 2002:a65:404b:: with SMTP id h11mr39237598pgp.28.1572998218903;
-        Tue, 05 Nov 2019 15:56:58 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id q34sm564387pjb.15.2019.11.05.15.56.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 15:56:58 -0800 (PST)
-Date:   Tue, 5 Nov 2019 15:56:56 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v6 11/15] software node: move small properties inline
- when copying
-Message-ID: <20191105235656.GW57214@dtor-ws>
-References: <20191023200233.86616-1-dmitry.torokhov@gmail.com>
- <20191023200233.86616-12-dmitry.torokhov@gmail.com>
- <47671501.dVG71sAca0@kreacher>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lhPGHL3YRrXYTue69wU9eU8V8Hx/b8hEqaEa6yTMnkc=;
+        b=K2T+hkltNyV1oElY5ceb/l9E94T8QF6q83WaHoPmk7Kn58omQX424z9SNOaClP+j28
+         thdnS8193lQsWLo7JXDKA61CbORrdrGuu0GS6VcbNjVJHHBYbvkE3QCXxEL3mGUAC9jl
+         4Ozo+I81aA+P4QnGdAIKKGc47ZkEQtYHvBzRp4In/p/PoyzBqZ3Nll55CdSWn014m42j
+         7EwEbe8egI4pb0I6ffvO4rQYYXEMm7cwap4Pv7yPgVUtjeMGypUa9YNp3ZU77+l7xNiF
+         kZKijpE6/FeqQDhlQhwMEmxk5km06IKA4SHDJQLpU/TDcwqWx32H69YBGq/nfQ3lkKKC
+         a4Fg==
+X-Gm-Message-State: APjAAAXqDJ72FLSrf5dkYCy9lPy28IvBlxZhY+yDgIGEWtVzSdwwfm+r
+        xnFX4k+SEPClMbRUBp6CFHLXYMcH5T69Sr7eBbVcwA==
+X-Google-Smtp-Source: APXvYqx2fYUU/NkVF71Am9HasgI3vwxMoHR3QiibGcvRUftbZnyu0R3anDH7NSvGotdiSWDPP3VbGLfdWXuUHeNFMvw=
+X-Received: by 2002:a65:664e:: with SMTP id z14mr39064849pgv.201.1572998408009;
+ Tue, 05 Nov 2019 16:00:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47671501.dVG71sAca0@kreacher>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191018001816.94460-1-brendanhiggins@google.com>
+ <20191018122949.GD11244@42.do-not-panic.com> <alpine.LRH.2.20.1910191348280.11804@dhcp-10-175-221-34.vpn.oracle.com>
+ <CAFd5g46aO4jwyo32DSz4L8GdhP6t38+Qb9NB+3fev3u4G6sg4w@mail.gmail.com>
+ <20191024101529.GK11244@42.do-not-panic.com> <201910301205.74EC2A226D@keescook>
+ <CAAXuY3o31iCJwZ+WGHMaK1MgpC0qv=JkJWnzv8Lhym9TnZQvcQ@mail.gmail.com>
+ <CAFd5g446cyijzgap9r8nm_202zkUsfdZXrn5E1_Mfe-R+eFb_g@mail.gmail.com> <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
+In-Reply-To: <205525ba-dc2f-34a9-b7dc-4421285535d7@canonical.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 5 Nov 2019 15:59:56 -0800
+Message-ID: <CAFd5g47_H=JeC-esa_1H2jgwvW5kThWYzm6Wj_XonEsk-J6JDw@mail.gmail.com>
+Subject: Re: [PATCH linux-kselftest/test v1] apparmor: add AppArmor KUnit
+ tests for policy unpack
+To:     Mike Salvatore <mike.salvatore@canonical.com>
+Cc:     Iurii Zaikin <yzaikin@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        shuah <shuah@kernel.org>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, David Gow <davidgow@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+On Tue, Nov 5, 2019 at 8:43 AM Mike Salvatore
+<mike.salvatore@canonical.com> wrote:
+>
+> >> but such approach is not mainstream.
+> >> I personally like the idea of testing the lowest level bits in isolation even if
+> >> they are not a part of any interface. I think that specifying the
+> >> interface using
+> >> unit tests and ensuring implementation correctness are complementary but
+> >> I haven't had much luck arguing this with our esteemed colleagues.
+>
+> In general, testing public interfaces is preferable, however, I think it's
+> important to avoid becoming dogmatic. IMHO, it's more important to have tests
+> that are clear in what they test than to not write tests (or write confusing
+> tests) in order to adhere to a generalized principle.
 
-On Wed, Nov 06, 2019 at 12:42:02AM +0100, Rafael J. Wysocki wrote:
-> On Wednesday, October 23, 2019 10:02:29 PM CET Dmitry Torokhov wrote:
-> > When copying/duplicating set of properties, move smaller properties that
-> > were stored separately directly inside property entry structures. We can
-> > move:
-> > 
-> > - up to 8 bytes from U8 arrays
-> > - up to 4 words
-> > - up to 2 double words
-> > - one U64 value
-> > - one or 2 strings.
-> 
-> Yes, we can do that, but how much of a difference does this really make?
+That's a really good point.
 
-Arguably not much I think, but it was pretty cheap to do.
+> > So I think this is a very subtle point which is very widely
+> > misunderstood. Most people write code and then write their tests,
+> > following this practice along with only testing public interfaces
+> > often causes people to just not test all of their code, which is
+> > wrong.
+>
+> The very nature of this situation is that the code was written before the tests.
+>
+> > The idea of only testing public interfaces is supposed to make people
+> > think more carefully about what the composite layers of the program
+> > is. If you are having difficulty getting decent coverage by only
+> > testing your public interfaces, then it likely tells you that you have
+> > one of two problems:
+> >
+> > 1) You have code that you don't need, and you should remove it.
+> >
+> > 2) One of the layers in your program is too think, and you should
+> > introduce a new layer with a new public interface that you can test
+> > through.
+> >
+> > I think the second point here is problematic with how C is written in
+> > the kernel. We don't really have any concept of public vs. private
+> > inside the kernel outside of static vs. not static, which is much more
+> > restricted.
+>
+> I don't think we can expect developers to refactor large portions of complex
+> kernel code in order to improve its testability. I imagine this will happen
+> naturally over time, but I think we need to allow for developers to test
+> "private" code in the meanwhile.
+>
+> My opinion is that it's more important to have tests than not. As evidence, I
+> submit the following commit:
+> https://github.com/torvalds/linux/commit/156e42996bd84eccb6acf319f19ce0cb140d00e3.
+>
+> While not a major bug, this bug was discovered as a direct result of writing
+> these unit tests. So, in summary, I see value in "testing the lowest level bits
+> in isolation", even if it doesn't necessarily represent the Gold Standard in
+> Unit Testing.
 
-> 
-> Also, how can one distinguish between a single-value property and an inline
-> array which this change?  By looking at the length?
+You're right.
 
-We do not really need to distinguish between the 2. The device
-properties API is typically wrap single values around arrays (i.e. it is
-perfectly fine to use scalar API to fetch first element of array and use
-array API to fetch a scalar). So we have property of certain type with
-certain number of elements, and it can either be stored inside
-property_entry structure, or outside of it. They are 2 orthogonal
-concepts.
+I think, in summary, it seems that pretty much everyone agrees that we
+need to provide a mechanism for testing low level bits of code in
+isolation in such a way that the tests are easy to write, and don't
+require the code under test to be massively refactored. Beyond that it
+seems that we are mostly in between either including tests in the
+source for the code under test or using the __visible_for_testing
+mechanism. Between the two, it seems the preference is for including
+the test in the source.
 
-> 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/base/swnode.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-> > index 18a30fb3cc58..49e1108aa4b7 100644
-> > --- a/drivers/base/swnode.c
-> > +++ b/drivers/base/swnode.c
-> > @@ -280,6 +280,16 @@ static int property_entry_copy_data(struct property_entry *dst,
-> >  	if (!dst->name)
-> >  		goto out_free_data;
-> >  
-> > +	if (!dst->is_inline && dst->length <= sizeof(dst->value)) {
-> > +		/* We have an opportunity to move the data inline */
-> > +		const void *tmp = dst->pointer;
-> > +
-> > +		memcpy(&dst->value, tmp, dst->length);
-> > +		dst->is_inline = true;
-> > +
-> > +		kfree(tmp);
-> 
-> This would have been more useful if we had been able to avoid making the
-> allocation altogether.
+So I think I will still send out a patch to add in the
+__visible_for_testing mechanism in case someone wants to use it in the
+future.
 
-OK, I can do that and re-send this patch and the one with the tests. In
-the mean time, can you please consider patches 12-14? They can be
-applied even if you temporarily drop this one (#11).
+Nevertheless, I will reformat this patch to include the tests in the
+files that are under test. One question, do we have a preference
+between putting all the tests in the same file as the code under test?
+Or do we want to put them in a separate file that gets #included in
+the file under test? I have a preference for the latter, but will
+defer to what everyone else wants.
 
-Thanks.
-
--- 
-Dmitry
+Thanks everyone!
