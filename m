@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCFFBEF55C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E35EF557
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730435AbfKEGGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:06:34 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.45]:25179 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727063AbfKEGGd (ORCPT
+        id S1730592AbfKEGEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:04:21 -0500
+Received: from gateway23.websitewelcome.com ([192.185.48.251]:28867 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730152AbfKEGEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:06:33 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id C788D378
-        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 23:42:33 -0600 (CST)
+        Tue, 5 Nov 2019 01:04:20 -0500
+X-Greylist: delayed 1300 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Nov 2019 01:04:20 EST
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id BFDFC308
+        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 23:42:39 -0600 (CST)
 Received: from br164.hostgator.com.br ([192.185.176.180])
         by cmsmtp with SMTP
-        id Rrbtihw2yBnGaRrbtiKdsz; Mon, 04 Nov 2019 23:42:33 -0600
+        id Rrbzi7JcgOdBHRrbziOTLC; Mon, 04 Nov 2019 23:42:39 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
@@ -25,17 +26,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0e1qX27Ap8ajDLmuZXwZOfgehLgO/33J03C0zj3Kqnk=; b=ShdaYUK+4tFBVA/UwyB2NUaYwa
-        9K0Hr9Vt9i9qFwvqRrsYMSTeu2kpsP87ztp8xoEE6JWiRbKunU9FyjV8Y5W9AiNv40SnbOByMcZqM
-        veoNKzz6qgq8q7bwGcnJRrhpof+H9PM77m/WmlY6HDCKmko1ZMsS/70R3mZDTCLtFoTpCtloMUq2R
-        9dTWC69fw4JC5sAfhn+ezZbPuHk8P+GkQfIMCUYLQec4Q2Qc0cqrE633vjMVFJP/DxwQkZCAx24ve
-        5ok+zLy7azXnqufh1k646xFH9iiPJ/orn7l8EStfeIkHwfjH6BCQCmrhzG5IS2aAzCq5dVn+O15HK
-        g8javk7g==;
+        bh=NXoTDm5tilUy+3fiCn1QLdQDuJ4WM4+qUq84t9usS4k=; b=y0g1VKoYKEdO/9b5CptUIGjYdl
+        umbUcAqMZWmxgEhDq4Ar0JYjUCfRTD1FnDKvbP5uFsGSVn1HuquS/X+qSnYnCBXJWx/0DEEGZhcth
+        8MifgPRm+PRuRiVH8XqvFjJ9lHWcIv+DgFrzhqx7gdUpfqSIGY/JvFmwWQ21Z+8NYXa0abAMJx635
+        XGRLXX/1UHKC1Ih7q3pYk4d7b1FhWFKIhUxzIW/YWQ5urr55TrEdJmkR/XqEA8055uBTqAvAuRnV+
+        FExZxxefngQV3WKSmN/tkWbZNtHeZ5nXM9k9TrzY5I6fwqoVmBb+G0AYg+vP5YiTlISgu+nwZpqLY
+        9fdEeBaQ==;
 Received: from [191.31.196.28] (port=37450 helo=castello.castello)
         by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92)
         (envelope-from <matheus@castello.eng.br>)
-        id 1iRrbt-002sjK-0w; Tue, 05 Nov 2019 02:42:33 -0300
+        id 1iRrby-002sjK-Uv; Tue, 05 Nov 2019 02:42:39 -0300
 From:   Matheus Castello <matheus@castello.eng.br>
 To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
 Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
@@ -43,9 +44,9 @@ Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
         linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v5 3/5] devicetree: mfd: max14577: Add reference to max14040_battery.txt descriptions
-Date:   Tue,  5 Nov 2019 02:42:16 -0300
-Message-Id: <20191105054218.29826-4-matheus@castello.eng.br>
+Subject: [PATCH v5 5/5] power: supply: max17040: Send uevent in SOC and status change
+Date:   Tue,  5 Nov 2019 02:42:18 -0300
+Message-Id: <20191105054218.29826-6-matheus@castello.eng.br>
 X-Mailer: git-send-email 2.24.0.rc2
 In-Reply-To: <20191105054218.29826-1-matheus@castello.eng.br>
 References: <20191105015827.GA332@bogus>
@@ -60,13 +61,13 @@ X-AntiAbuse: Sender Address Domain - castello.eng.br
 X-BWhitelist: no
 X-Source-IP: 191.31.196.28
 X-Source-L: No
-X-Exim-ID: 1iRrbt-002sjK-0w
+X-Exim-ID: 1iRrby-002sjK-Uv
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: (castello.castello) [191.31.196.28]:37450
 X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 49
+X-Email-Count: 71
 X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,28 +75,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-max77836 MFD has a fuel gauge that has a low SOC alert feature that is
-described in Documentation/devicetree/bindings/power/supply/max17040_battery.txt.
-Adding the reference to de documentation here.
+Notify core through power_supply_changed() in case of changes in state
+of charge and power supply status. This is useful for user-space to
+efficiently update current battery level.
 
 Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/mfd/max14577.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/supply/max17040_battery.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max14577.txt b/Documentation/devicetree/bindings/mfd/max14577.txt
-index fc6f0f4e8beb..04d790b1513c 100644
---- a/Documentation/devicetree/bindings/mfd/max14577.txt
-+++ b/Documentation/devicetree/bindings/mfd/max14577.txt
-@@ -5,6 +5,8 @@ Battery Charger and SFOUT LDO output for powering USB devices. It is
- interfaced to host controller using I2C.
+diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+index c48a691cbd7b..d7405650cc38 100644
+--- a/drivers/power/supply/max17040_battery.c
++++ b/drivers/power/supply/max17040_battery.c
+@@ -209,10 +209,19 @@ static void max17040_check_changes(struct i2c_client *client)
+ static void max17040_work(struct work_struct *work)
+ {
+ 	struct max17040_chip *chip;
++	int last_soc, last_status;
 
- MAX77836 additionally contains PMIC (with two LDO regulators) and Fuel Gauge.
-+For the description of Fuel Gauge low SOC alert interrupt see:
-+Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+ 	chip = container_of(work, struct max17040_chip, work.work);
++
++	/* store SOC and status to check changes */
++	last_soc = chip->soc;
++	last_status = chip->status;
+ 	max17040_check_changes(chip->client);
 
-
- Required properties:
++	/* check changes and send uevent */
++	if (last_soc != chip->soc || last_status != chip->status)
++		power_supply_changed(chip->battery);
++
+ 	queue_delayed_work(system_power_efficient_wq, &chip->work,
+ 			   MAX17040_DELAY);
+ }
 --
 2.24.0.rc2
 
