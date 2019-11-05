@@ -2,78 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CEF4EFFC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19653F0002
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389569AbfKEOa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:30:28 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50036 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbfKEOa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:30:28 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 78F22EEBB3532B380AED;
-        Tue,  5 Nov 2019 22:30:25 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 5 Nov 2019 22:30:18 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <perex@perex.cz>, <gregkh@linuxfoundation.org>,
-        <kstewart@linuxfoundation.org>, <allison@lohutok.net>,
-        <tglx@linutronix.de>, <joe@perches.com>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH v2] hp100: remove set but not used variable val
-Date:   Tue, 5 Nov 2019 22:36:59 +0800
-Message-ID: <1572964619-76671-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20191105133554.6C01F9A06CB85816F399@huawei.com>
-References: <20191105133554.6C01F9A06CB85816F399@huawei.com>
+        id S1729047AbfKEOh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:37:57 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:32833 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfKEOh5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 09:37:57 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t5so22140041ljk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 06:37:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZdJE1lbb5fhgh/dT3Cyx1JGxGkZvflUF/h+AJfWcCJI=;
+        b=f6vmZPzK6wN/ZTTID0x/cd4SSt8ekXi1ir5sne5MSoH45L0UNr9omwVWP2bDNLs6Xs
+         eNZNSf45WDQweLQXXAkVAJxgDAF1UB5DXvpbZ+A7T+RaKNHR0h/apnJRB8rFRwJ8zGeJ
+         j8YWui/JXG6rGbUD0RWW3cCMx7J9Mlgmc4dVFf/Rs5mhZrL48chnIX78UTomjkWh3ECT
+         z4gvx+XYtIB2jTxCS0wRxWdqJv53t9giSuAnnkaLC0kY3HeCwns7sOLEWZkFC+wcGTJM
+         oTI0XxzVWoc4pdX38Fn8vfHJJIjMui/B7yFSxt5jur6v9QVrJvEYN0/LF0VFig22Lnxa
+         EGvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZdJE1lbb5fhgh/dT3Cyx1JGxGkZvflUF/h+AJfWcCJI=;
+        b=G/rOt7Mc0bHbBQ8Ra9FegGP1h22l2p1xvt+21LzH/nn5FNw8NSGCJMJZAjlMXOoI48
+         xZ5DtbFFM4hMvtOxl8j23SMORbJE8VvcENvNIzgnmnxCTQeHD/v0PuzKyG4Cp6beNh5x
+         77ozEuFndcxnzKGyS0pmflojumrDZ3gQF/JOrPb6HfePWNVYz01mNSrCiBxFbjqUg1uZ
+         hZb/xvSu/XHg2gLy98pNYXfM3K2C7ylwc4Tl7m3VKLEZxfWRMJWVSr3t/ElF7CHV+hfZ
+         URIjzY+pT0SL9ubaJx/IVssvq5s+2He1emvq2S2bPzDu75YCl37WuNY/kCFru3MCzNqe
+         VXZA==
+X-Gm-Message-State: APjAAAWjfvwnA8FM5jgdFvaNuZMyMrRbdc5fpo23f+ZAb30LeAapV9uX
+        tQiGmC4CDXPxNB1SlkDMH3UWK5/7blS0/VBC1Fw=
+X-Google-Smtp-Source: APXvYqxgGw17+25AHqiIoU0G2KGdv9w0Er+BSG4nwCY1ZRqHiKsXY7UGoLDPS/tewDU/kOt4Kg31eVCW3fRm6k5GTWI=
+X-Received: by 2002:a2e:3a1a:: with SMTP id h26mr23610009lja.25.1572964675138;
+ Tue, 05 Nov 2019 06:37:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+References: <20191104090339.20941-1-ilie.halip@gmail.com> <CAKwvOdmSo=BWGnaVeejez6K0Tukny2niWXrr52YvOPDYnXbOsg@mail.gmail.com>
+In-Reply-To: <CAKwvOdmSo=BWGnaVeejez6K0Tukny2niWXrr52YvOPDYnXbOsg@mail.gmail.com>
+From:   Ilie Halip <ilie.halip@gmail.com>
+Date:   Tue, 5 Nov 2019 16:37:43 +0200
+Message-ID: <CAHFW8PQ0UoyM=O4Seccsze_QDKjW21jM7Wh0koGgUXfm62zEUg@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: explicitly place .eh_frame after .rodata
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Fangrui Song <maskray@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chenwandun <chenwandun@huawei.com>
+> The wildcard on the end can be left off; we don't need to glob
+> different sections with the prefix `.eh_frame`.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Sounds good, it doesn't look like any .eh_frame_hdr sections are
+being created so it should be fine to remove that wildcard.
 
-drivers/staging/hp/hp100.c: In function hp100_start_xmit:
-drivers/staging/hp/hp100.c:1629:10: warning: variable val set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Chenwandun <chenwandun@huawei.com>
----
- drivers/staging/hp/hp100.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/staging/hp/hp100.c b/drivers/staging/hp/hp100.c
-index 6ec78f5..6fc7733 100644
---- a/drivers/staging/hp/hp100.c
-+++ b/drivers/staging/hp/hp100.c
-@@ -1626,7 +1626,9 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
- 	unsigned long flags;
- 	int i, ok_flag;
- 	int ioaddr = dev->base_addr;
-+#ifdef HP100_DEBUG_TX
- 	u_short val;
-+#endif
- 	struct hp100_private *lp = netdev_priv(dev);
- 
- #ifdef HP100_DEBUG_B
-@@ -1695,7 +1697,9 @@ static netdev_tx_t hp100_start_xmit(struct sk_buff *skb,
- 
- 	spin_lock_irqsave(&lp->lock, flags);
- 	hp100_ints_off();
-+#ifdef HP100_DEBUG_TX
- 	val = hp100_inw(IRQ_STATUS);
-+#endif
- 	/* Ack / clear the interrupt TX_COMPLETE interrupt - this interrupt is set
- 	 * when the current packet being transmitted on the wire is completed. */
- 	hp100_outw(HP100_TX_COMPLETE, IRQ_STATUS);
--- 
-2.7.4
-
+I.H.
