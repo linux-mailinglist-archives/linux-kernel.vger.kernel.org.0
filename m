@@ -2,97 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763E8F06BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:15:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFA3F0686
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfKEUO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:14:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:59202 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727401AbfKEUO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:14:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A5727B9;
-        Tue,  5 Nov 2019 12:14:56 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BC003FBF5;
-        Tue,  5 Nov 2019 01:37:10 -0800 (PST)
-Date:   Tue, 5 Nov 2019 09:37:08 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        David Hildenbrand <david@redhat.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yu Zhao <yuzhao@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: simplify the page end calculation in
- __create_pgd_mapping()
-Message-ID: <20191105093708.GE4743@lakrids.cambridge.arm.com>
-References: <20191103123559.8866-1-yamada.masahiro@socionext.com>
+        id S1728112AbfKEUAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:00:38 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43908 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfKEUAi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:00:38 -0500
+Received: by mail-pg1-f193.google.com with SMTP id l24so15140948pgh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 12:00:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ijT2GiWjIk0i5IPeCeqTo4IKLHUoxPnZNqQGZcLSsUM=;
+        b=IlrzHL7ezty7NJqDoQVYCYZlgd5TLmozpoptOSResx7u8dduPfsVCwxetHhcwt9646
+         G5tawFW78NnqVIQt8407pHG1e5zjGMrJqwSAl/oTDeue+ZI2bATAOFZnrvI5R4CrFfiJ
+         n/6N9z9oo1SS6gVNC+qeZlwIfm5V4ROnhCdfuQ88aX5YBI34+oEw7Plr+gCPLfYF88Vv
+         t5tkx9zp3H7o8W4fjZlCkI79/q3S/1dYYa3tpdlZAhUsRg24PXeyBp+HEkPn07uvN5Ub
+         L9GkaFYee6+WNZPm2Nz3Y0BWrpxuapPuy18/e3w0kK2dmoGn0+nwp0yPpHzqG6gUGVPj
+         itFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ijT2GiWjIk0i5IPeCeqTo4IKLHUoxPnZNqQGZcLSsUM=;
+        b=QAKbmGEeyx/Rx1+6lNKhvsI0cn3BnldYpEZb9YmcgV4RaUKvtcmHdVRKr8ovaooVC4
+         MQx55IfrIBmRGnQ4uKnWKy4Q6Ckf+Ywo+jFQ22nJTqL36/pyGeVALlE7ZLjfkbrCokj7
+         0Lhz07kub6VrnMszb1pNrSrlAga/AhF+RiFBhajw5nrGhg18GiOn7vn/zxin3eBvHxOV
+         4YyEjbyM7o9qXc0smCajBfvGOxaUowxLwN+zmTXU55iP7+Qw60L95FPBw6EZWQzo+bvD
+         SH5tXANx5ld1EMYPyAJU5iYj8ZgyZfo0pnjcUKTJG7i4EMffrqQO43Ezk76dThrcYbfI
+         TfCQ==
+X-Gm-Message-State: APjAAAWZx4Ne9Kamtikl9AfwoKvvME97r8hZwq4eMTaLiKQea6onfKfZ
+        A+/OLpvuaT+UixBgEf+6CTbk+pmuxRdoEx6bSbiBewY4ckk=
+X-Google-Smtp-Source: APXvYqyIFpCKniQqTsvrpnzyV0E86VzxTLXkPlxCMRfFt3g4qhjOa1M4benI/dNGWIb6R6YCFbVunWVoJWRhpBKoHRs=
+X-Received: by 2002:a17:90a:178e:: with SMTP id q14mr1056137pja.134.1572984037414;
+ Tue, 05 Nov 2019 12:00:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191103123559.8866-1-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191101221150.116536-1-samitolvanen@google.com> <20191101221150.116536-12-samitolvanen@google.com>
+ <20191104171132.GB2024@lakrids.cambridge.arm.com> <CABCJKufDnLjP9vA-wSW0gSY05Cbr=NOpJ-WCh-bdj2ZNq7VNXw@mail.gmail.com>
+ <20191105091301.GB4743@lakrids.cambridge.arm.com>
+In-Reply-To: <20191105091301.GB4743@lakrids.cambridge.arm.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 5 Nov 2019 12:00:25 -0800
+Message-ID: <CAKwvOd=3mEUaxMX7Q6n3DAMAdge4eB=KYdiQxn2tY77taCD1NA@mail.gmail.com>
+Subject: Re: [PATCH v4 11/17] arm64: disable function graph tracing with SCS
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 03, 2019 at 09:35:58PM +0900, Masahiro Yamada wrote:
-> Calculate the page-aligned end address more simply.
-> 
-> The local variable, "length" is unneeded.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  arch/arm64/mm/mmu.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 60c929f3683b..a9f541912289 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -338,7 +338,7 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->  				 phys_addr_t (*pgtable_alloc)(int),
->  				 int flags)
->  {
-> -	unsigned long addr, length, end, next;
-> +	unsigned long addr, end, next;
->  	pgd_t *pgdp = pgd_offset_raw(pgdir, virt);
->  
->  	/*
-> @@ -350,9 +350,8 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->  
->  	phys &= PAGE_MASK;
->  	addr = virt & PAGE_MASK;
-> -	length = PAGE_ALIGN(size + (virt & ~PAGE_MASK));
-> +	end = PAGE_ALIGN(virt + size);
->  
-> -	end = addr + length;
+On Tue, Nov 5, 2019 at 11:55 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> Similarly, if clang gained -fpatchable-funciton-etnry, we'd get that for
+> free.
 
-While looking at this, I got confused by the old code and thought that
-there was an existing bug, but I now see that's not the case, and the
-old and new code are equivalent.
-
-The new code looks cleaner, and leaves less room for confusion, so I
-think that's preferable:
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
->  	do {
->  		next = pgd_addr_end(addr, end);
->  		alloc_init_pud(pgdp, addr, next, phys, prot, pgtable_alloc,
-> -- 
-> 2.17.1
-> 
+Filed: https://bugs.llvm.org/show_bug.cgi?id=43912
+-- 
+Thanks,
+~Nick Desaulniers
