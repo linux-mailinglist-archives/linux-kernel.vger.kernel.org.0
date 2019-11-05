@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D311EF9F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E429FEF9FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387962AbfKEJtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:49:22 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41470 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387867AbfKEJtW (ORCPT
+        id S2388138AbfKEJtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:49:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:57571 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388093AbfKEJtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:49:22 -0500
-Received: by mail-lj1-f193.google.com with SMTP id m9so21001077ljh.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:49:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TAJe5ziKrCKK7rX2BdKY2ykoCXQoTfLqEiQktMB0pZc=;
-        b=XCvudKjB3WldlrlLUYWp/rPSkhOTlZs7uTgllg94l9Dj/pvnvq+ZHihNGllZ5Cnfq2
-         3YEIZcIKR7ab5YkIh0hd3sd3vHojbv0gNSkvu/8KbJzhxt6ln836ALEKFfSCMzu/KCdj
-         CIm/wm9HhbRTGIlU7t98t9inx4s3syMNih/JbId2T8lWPiVQPkJfvBb8fXfHrmq8wVvu
-         puto/O0rx5kW+R1PhNelEX7ydVAXKvbm31QA1dx+VlQegxySg7VaY9I/nwJ+ThZ/HjYs
-         ZRMKjym+sv62w8vchDShhPjQ+J07r0+nWHFQAxFnFqO1NGw6cI3NdDud7gfMsrAp0dfG
-         HBmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TAJe5ziKrCKK7rX2BdKY2ykoCXQoTfLqEiQktMB0pZc=;
-        b=nJp2SVd3sBHJnYYgnm6TY2wTPLahs1VvDwOzbDyRxUp4HuJ8tDljsoDIjLuY4u479N
-         rjhwmX/lLqshGrPNTLhzMCLHTO3LdGZ9JtmdoRtM2e0o+t6yGT/Mq9fUA4kIx0TIFCk4
-         VxksxQTduPQPWcPCI50erpWiH1Qf6qW3d5CESlfwA/IAbqZtogJ013kRDCOi+QiWN+mh
-         2IJ4+bxxZ+U3JxVS0F4igboDgWhfQ8BFEUODvE0N4j+BIuzfH4t4kX0WZTTfRFeSdYQs
-         mtN+EDgWEec4kR4dbkfS4o0fz2gATd2q5YyBQpds47QdAj7nFb1v1CrioZ7NxmBuUlyJ
-         h7UQ==
-X-Gm-Message-State: APjAAAWlZ0ouSa3eK1Z+QicHI6LFfUUMOwQOphCoA0E0+/LTW08TeCUJ
-        1s3eOtbQwAjsJ1ENgQuzlOrt4LLeI0tJnP6/Tw8pnQ==
-X-Google-Smtp-Source: APXvYqwzKGwdM6Y55E27yheMCcnZ7qcC3Lb2zH9XzpcvqFMRqUcMcymk+LRc2yyxdiCWk004eqbcBGD0s8yWxwr90pI=
-X-Received: by 2002:a2e:a0c9:: with SMTP id f9mr22644979ljm.77.1572947358711;
- Tue, 05 Nov 2019 01:49:18 -0800 (PST)
+        Tue, 5 Nov 2019 04:49:32 -0500
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MIdW9-1ifzot1d2b-00EZnF; Tue, 05 Nov 2019 10:49:30 +0100
+Received: by mail-qt1-f178.google.com with SMTP id y10so21686113qto.3;
+        Tue, 05 Nov 2019 01:49:30 -0800 (PST)
+X-Gm-Message-State: APjAAAX5p8P40NOt8QqDGEKe3E6nJDegIQ+l1SsF0Rr4Ive1Abp4HpYc
+        GdBo1YEnNaQoqQPdn/zER2dTNe+TD3IfRAuBEIk=
+X-Google-Smtp-Source: APXvYqytk+YB723AlNICh0uVf4aP5i8XhgFrqWRnmq2L7GwuzVAxLKqOc22bK/LZTeykspfSzf0ix8jfskNYoVoVBiQ=
+X-Received: by 2002:a0c:c70a:: with SMTP id w10mr26382158qvi.222.1572947369108;
+ Tue, 05 Nov 2019 01:49:29 -0800 (PST)
 MIME-Version: 1.0
-References: <1572419178-5750-1-git-send-email-mkshah@codeaurora.org> <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 10:49:06 +0100
-Message-ID: <CACRpkdbjFSiSmRrbjAm3xD-2jYcyHPb0U9L8rqMPM44_cQi8Bg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: qcom: sc7180: Add GPIO wakeup interrupt map
-To:     Maulik Shah <mkshah@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
+References: <20191105022928.517526-1-farnasirim@gmail.com> <alpine.DEB.2.21.1911051033050.17054@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911051033050.17054@nanos.tec.linutronix.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 5 Nov 2019 10:49:12 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0wyw=CwhiU34t1zBiSesf+HGBLeaV+=JVko_TjnvATHQ@mail.gmail.com>
+Message-ID: <CAK8P3a0wyw=CwhiU34t1zBiSesf+HGBLeaV+=JVko_TjnvATHQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] syscalls: Fix references to filenames containing
+ syscall defs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Mohammad Nasirifar <far.nasiri.m@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mohammad Nasirifar <farnasirim@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, lsrao@codeaurora.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:QOfOLv/wLwxEQEaF/X9MWNmB1DyCznud2OQ3THP6bAu6BBa60/c
+ cDd750ixWXDTXPTtRdTyufI2s0MpRHzJEOvlvIfWC4/dycKY4WzLF7YDXYVrxv8M2TWlzSc
+ 74HCr0aciyCS4p8x5dOEVKwybwO2Wy5TiL853dDTu01xtOnPK42+kAwZtg3s/JXN3nv5aFl
+ 6/5WMJ/6STqxkTsT5fmpQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dIZOkZD2JWU=:WidfBCXffH/su35/Y5hSA8
+ npF/Nh9OupAcaij6tos8lEpr12kT1le+68SSTY5bHz2Xc6V7Wwe/08swyoBXzwn0C/5a9942+
+ LZMmeQKRjy5R0sd1BTSzQ4zvfq6E+X+TaFV2HgaKuV07FdcLoUPR0J/zk6pjerNyo+IIrkvKK
+ SaR50GA5EHotsDqEbNrX7/MfGEOjqWEVSgjuW3MF/WebGAu8qSnEbmbuMZ8cRpK2fjl+KmIE0
+ N+k55qMsiJeL/cPD5PPZsMj6rgUwZHeYxmSZcWrX2JtcAAHT7FUpYXwknArbe8unZoe7PTA5E
+ cmtXYa4B4Q+ZeAY6NBUWoBvTJMv4Ijvy9e42nEwu+CT8an5YLvzXFn8WyO8Oc48HtNUETRgOU
+ UXl/MSnf4DzOJuG0Fr29ZFOyjQsxiS1ennfDnVosvJWvkfcjnte4KfCNbORWN/Ond4s4kkWFs
+ 2x+HpPkPUk9k5Rs5B9gFOnhA659oMlwZ3+zG7fG/XpMdfbJS/GDkzOknFL+OLAbAayFwnqelT
+ RsbwmMjhajD4se/wjIRZkBd6I/mzBb7MRwjmZ1JUklZyUNzYmijJJH2uMG/reTXVja1bzW71i
+ IMT2nfED5yL7HLQwHO7zRZLBgrBgB7KzkE8I3MBvnnmlHzEJcH5uT6YP4xURK/g8LQcRNcCN5
+ KIauWswKQP5RJUYD7GpNTap0UE0H4eTLT4/yuuPXDUpORh9tdzMZaTcC06ywjuliKqEANenEd
+ 0X0F/1BahJO/QVKJX+nFX6x6F0HPNg1bUArm8XOxhvsw4Gst079Y1M7znbC53i0ElR4yR6Mri
+ tIYATTsc6LjuGc5i5259zYExsA5EB/+962804CxM+asLmzX2i0QMDDrFh3Zj5vMPOBMJM99Mn
+ jBuXUjKbgIYs6ht3v+zA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 8:07 AM Maulik Shah <mkshah@codeaurora.org> wrote:
-
-> GPIOs that can be configured as wakeup sources, have their
-> interrupt lines routed to PDC interrupt controller.
+On Tue, Nov 5, 2019 at 10:34 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Mon, 4 Nov 2019, Mohammad Nasirifar wrote:
+> > Fix stale references to files containing syscall definitions in
+> > 'include/linux/syscalls.h' and 'include/uapi/asm-generic/unistd.h',
+> > pointing to 'kernel/itimer.c', 'kernel/hrtimer.c', and 'kernel/time.c'.
+> > They are now under 'kernel/time'.
+> >
+> > Also definitions of 'getpid', 'getppid', 'getuid', 'geteuid', 'getgid',
+> > 'getegid', 'gettid', and 'sysinfo' are now in 'kernel/sys.c'.
 >
-> Provide the interrupt map of the GPIO to its wakeup capable
-> interrupt parent.
->
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> Can we please remove these file references completely. They are going to be
+> stale sooner than later again and they really do not provide any value.
 
-Looks good to me but I'd like to see Bjorns and preferably also
-Lina's review on this.
++1
 
-Yours,
-Linus Walleij
+Good idea!
+
+In the long run, I'd prefer to have a parsable format that can be used to
+generate both the header file and the stubs that we currently provide
+using SYSCALL_DEFINEx(), but before that I'd like the remaining two
+unistd.h files to be converted to syscall.tbl format (Nitesh is still working
+on that).
+
+      Arnd
