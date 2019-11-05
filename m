@@ -2,129 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED608F048F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 18:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 725B5F0499
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 18:59:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390600AbfKER66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 12:58:58 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24870 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390452AbfKER66 (ORCPT
+        id S2390627AbfKER7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 12:59:45 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42246 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389356AbfKER7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 12:58:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572976736;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6tu1v4G9fE/ChX8bRQ38WG0hz1iaA5qDIbKie9vJH4o=;
-        b=OGvjmcl+1limUf2GkEkJwjghjeSB80IqjEl1TXQ+9WbunBhMAjbZipFyjfZF63v0EFNEZu
-        /Beadxq3H0y5Q+YpXXUCv/ipfijwm0/bL1qwIBMIlWeRsLum3FeDIcvpGRKvaqkvb9+V5E
-        Zk4KOVMEqKDBFV0t2fM0LS0k5Fohx/Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-174-vstKXwaEPzyCzJ10MyBS1A-1; Tue, 05 Nov 2019 12:58:52 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03AE21800D4A;
-        Tue,  5 Nov 2019 17:58:46 +0000 (UTC)
-Received: from x1.home (ovpn-116-110.phx2.redhat.com [10.3.116.110])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 31C85100164D;
-        Tue,  5 Nov 2019 17:58:35 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 10:58:34 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com
-Subject: Re: [PATCH V8 0/6] mdev based hardware virtio offloading support
-Message-ID: <20191105105834.469675f0@x1.home>
-In-Reply-To: <20191105093240.5135-1-jasowang@redhat.com>
-References: <20191105093240.5135-1-jasowang@redhat.com>
-Organization: Red Hat
+        Tue, 5 Nov 2019 12:59:45 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1iS37A-00019e-Kf; Tue, 05 Nov 2019 18:59:36 +0100
+Date:   Tue, 5 Nov 2019 18:59:34 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Oleg Nesterov <oleg@redhat.com>
+cc:     Florian Weimer <fweimer@redhat.com>, Shawn Landden <shawn@git.icu>,
+        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Keith Packard <keithp@keithp.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: handle_exit_race && PF_EXITING
+In-Reply-To: <alpine.DEB.2.21.1911051800070.1869@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1911051851380.1869@nanos.tec.linutronix.de>
+References: <20191104002909.25783-1-shawn@git.icu> <87woceslfs.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051053470.17054@nanos.tec.linutronix.de> <20191105152728.GA5666@redhat.com> <alpine.DEB.2.21.1911051800070.1869@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: vstKXwaEPzyCzJ10MyBS1A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  5 Nov 2019 17:32:34 +0800
-Jason Wang <jasowang@redhat.com> wrote:
+On Tue, 5 Nov 2019, Thomas Gleixner wrote:
 
-> Hi all:
->=20
-> There are hardwares that can do virtio datapath offloading while
-> having its own control path. This path tries to implement a mdev based
-> unified API to support using kernel virtio driver to drive those
-> devices. This is done by introducing a new mdev transport for virtio
-> (virtio_mdev) and register itself as a new kind of mdev driver. Then
-> it provides a unified way for kernel virtio driver to talk with mdev
-> device implementation.
->=20
-> Though the series only contains kernel driver support, the goal is to
-> make the transport generic enough to support userspace drivers. This
-> means vhost-mdev[1] could be built on top as well by resuing the
-> transport.
->=20
-> A sample driver is also implemented which simulate a virito-net
-> loopback ethernet device on top of vringh + workqueue. This could be
-> used as a reference implementation for real hardware driver.
->=20
-> Also a real ICF VF driver was also posted here[2] which is a good
-> reference for vendors who is interested in their own virtio datapath
-> offloading product.
->=20
-> Consider mdev framework only support VFIO device and driver right now,
-> this series also extend it to support other types. This is done
-> through introducing class id to the device and pairing it with
-> id_talbe claimed by the driver. On top, this seris also decouple
-> device specific parents ops out of the common ones.
->=20
-> Pktgen test was done with virito-net + mvnet loop back device.
->=20
-> Please review.
->=20
-> [1] https://lkml.org/lkml/2019/10/31/440
-> [2] https://lkml.org/lkml/2019/10/15/1226
->=20
-> Changes from V7:
-> - drop {set|get}_mdev_features for virtio
-> - typo and comment style fixes
+> On Tue, 5 Nov 2019, Oleg Nesterov wrote:
+> > On 11/05, Thomas Gleixner wrote:
+> > >
+> > > Out of curiosity, what's the race issue vs. robust list which you are
+> > > trying to solve?
+> > 
+> > Off-topic, but this reminds me...
+> > 
+> > 	#include <sched.h>
+> > 	#include <assert.h>
+> > 	#include <unistd.h>
+> > 	#include <syscall.h>
+> > 
+> > 	#define FUTEX_LOCK_PI		6
+> > 
+> > 	int main(void)
+> > 	{
+> > 		struct sched_param sp = {};
+> > 
+> > 		sp.sched_priority = 2;
+> > 		assert(sched_setscheduler(0, SCHED_FIFO, &sp) == 0);
+> > 
+> > 		int lock = vfork();
+> > 		if (!lock) {
+> > 			sp.sched_priority = 1;
+> > 			assert(sched_setscheduler(0, SCHED_FIFO, &sp) == 0);
+> > 			_exit(0);
+> > 		}
+> > 
+> > 		syscall(__NR_futex, &lock, FUTEX_LOCK_PI, 0,0,0);
+> > 		return 0;
+> > 	}
+> > 
+> > this creates the unkillable RT process spinning in futex_lock_pi() on
+> > a single CPU machine (or you can use taskset).
+> 
+> Uuurgh.
 
+But staring more at it. That's a scheduler bug.
 
-Seems we're nearly there, all the remaining comments are relatively
-superficial, though I would appreciate a v9 addressing them as well as
-the checkpatch warnings:
+parent	    	    	child
 
-https://patchwork.freedesktop.org/series/68977/
+ set FIFO prio 2
 
-Consider this a last call for reviews or acks (or naks) from affected
-mdev vendor drivers, mdev-core sub-maintainers (Hi Kirti), virtio
-stakeholders, etc.  Thanks,
+ fork()	         ->	set FIFO prio 1
+ 		 	 sched_setscheduler(...)
+			   return from syscall		<= BUG
 
-Alex
+ 		 	_exit()
 
+When the child lowers its priority from 2 to 1, then the parent _must_
+preempt the child simply because the parent is now the top priority task on
+that CPU. Child should never reach exit before the parent blocks on the
+futex.
+
+Peter?
+
+What's even more disturbing is that even with that bug happening the child
+is able to set PF_EXITING, but not PF_EXITPIDONE. That doesn't make sense.
+
+Thanks,
+
+	tglx
