@@ -2,193 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81145EF527
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:51:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22DC1EF521
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:51:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbfKEFvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 00:51:46 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:50763 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbfKEFvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 00:51:46 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id EC4323C0594;
-        Tue,  5 Nov 2019 06:51:42 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NIvBb3uK3IUk; Tue,  5 Nov 2019 06:51:37 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 807E13C0585;
-        Tue,  5 Nov 2019 06:51:37 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 5 Nov 2019
- 06:51:36 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-mmc@vger.kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Pavel Machek <pavel@ucw.cz>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: [PATCH 3/3] mmc: core: Add 'fixed-emmc-driver-type-hs{200,400}'
-Date:   Tue, 5 Nov 2019 06:50:15 +0100
-Message-ID: <20191105055015.23656-3-erosca@de.adit-jv.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191105055015.23656-1-erosca@de.adit-jv.com>
-References: <20191105055015.23656-1-erosca@de.adit-jv.com>
+        id S1730445AbfKEFvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 00:51:15 -0500
+Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:54133
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730346AbfKEFvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 00:51:14 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mBMMxG2huW/59S4VwnUYDM8Kvxa/d3vw6v1Kj+LFIgpdWAiti2GUhFTDwKDC3ZGLPuIJOdz5k8wpgESj5g88V0Vuh2rotUSU10T2GfshN4dvOWsbUpjC9GbKiOcewCrTQnyLKHf9J04pJDXUndsNunjCS9nBTYmvzK/IFTGIPfQ5ZHlZhsMu7sxwOAqj+89c1ERWCLJe/KaJdJXbtIXsZEIqOb3I7hXq4r+yFh1ghZtxav0bj0Kb005Lkx32R3Y7hUvLws+byykpBB/EPIeuIeoSa2s/r5YOAdiEMpoRq59roJQW3AhubGDOWOezJ3+TgmMNcLqNlYZWlWg1DwUxag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JPyZrmpAPaahxF+qF4gSZaY1kf6h19Xe4R3VQsF9it8=;
+ b=klWZXf703drMard1boevbaRTuMEjJPBMSoXehAKvWyakJask7OB07Pcv/ea6C0E74MPa/tyonoCrq5golzCupDiuVz0RFU8ap3/qe3c78FjrGLSzARVcDUqh0Ls+CMQKnCNXjytgz/ZlDIu1aUdNp9s1RT32wwIuitAfSEPOG0UD5IJpbVFpQCtofPt38krjeHxk+119rHM4Bk4VNh3OAWdxg42HB3oMikFG31k6nVZDigEUY7/DDyou7VGVrepyLi++n/wp1NuHAOZK9cAt/akfP91FAgK5EUhAegqE7AsZ7ACqv7aKrAKr3FMkAIQoGhlJ9LS+AC9TgHBc2SKE7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JPyZrmpAPaahxF+qF4gSZaY1kf6h19Xe4R3VQsF9it8=;
+ b=Y2gNuspCqvJYkwPPlDM9NlZsz259Kkrq+1F6CrMflvDQIoFlNQa+cAbzrv/nze5sg40l3PBAQ58bxeKAQEGnPohCeGv5yivCd4JX4GLpFeUCP/DvvOhWPShrOTAxNtDXsLqw8aomm291CcfRviT/d8zYNks2fRHBzVghE2Z60cY=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6241.eurprd04.prod.outlook.com (20.179.32.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Tue, 5 Nov 2019 05:51:10 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2408.024; Tue, 5 Nov 2019
+ 05:51:10 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH] tty: serial: fsl_lpuart: use the sg count from dma_map_sg
+Thread-Topic: [PATCH] tty: serial: fsl_lpuart: use the sg count from
+ dma_map_sg
+Thread-Index: AQHVk50GWgKPiRrVwUSj/ElNagRx2g==
+Date:   Tue, 5 Nov 2019 05:51:10 +0000
+Message-ID: <1572932977-17866-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0220.apcprd02.prod.outlook.com
+ (2603:1096:201:20::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b1ab60dd-0507-4196-5aeb-08d761b4288a
+x-ms-traffictypediagnostic: AM0PR04MB6241:|AM0PR04MB6241:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB62414AD0D526A8F6B57582E6887E0@AM0PR04MB6241.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0212BDE3BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(5660300002)(36756003)(386003)(6506007)(4326008)(102836004)(52116002)(54906003)(2501003)(316002)(14454004)(99286004)(64756008)(6512007)(66476007)(66556008)(66446008)(66946007)(478600001)(25786009)(6436002)(110136005)(2906002)(305945005)(486006)(2616005)(44832011)(50226002)(6486002)(8936002)(81166006)(81156014)(8676002)(256004)(71200400001)(71190400001)(26005)(86362001)(2201001)(6116002)(3846002)(66066001)(7736002)(476003)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6241;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EIQgOMMcuSbMVc+mGDg8VYJAulWFeJSfDaGQ6GjAawTutCWYAJwE+hBPlMGMkKRHbWoXk6LPbK08PHtHQaCZg4kTJeGaPAM4efZkebSoo3bFx05xDvFd1IK1SD8OzI6YODnz22uiprzpeUvkD+Sh8DDxx84SjekBlREvJydO4/3WJv2E0gn8o7UvEJ8VF5JADOF+Y1XRm6blVuUmwUBejkOfEvjBFRb6K1BkMljQA5nRr7VTt0uOEqmF9RwCg8l6jFk8eUMf50auYw9sm2X7gaDtoMlTi7YQgfTnKg8/uAt1VtqtW3svb3LN1uGcDbl4h8Ur0l6vx8+Cz13+BD+hK/f1eFq8w1xv4NR4uLSy3N7/zMd1cbdlbSaI4LSqBY6tqbIr2rqi6vus3IeR5mcLppZJebVzwcg7VCPb2T3rbBYerzoFn/qd0vPfRApECess
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.72.93.184]
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1ab60dd-0507-4196-5aeb-08d761b4288a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 05:51:10.3275
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0s6ppI741+S/5omhP/Z8XSUP1laq617Nck/JdLamvVeM6Zv3c3qZZTjiBV3LRJEPpQoZjBtVSUwB/nDiK2Kt3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for two more DT bindings, which stem from the need to
-implement below real-life requirement shared by eMMC vendor:
+From: Peng Fan <peng.fan@nxp.com>
 
- ---snip---
- Use "drive strength" value of 4 or 1 for HS400 or 0 for HS200.
- ---snip---
+The dmaengine_prep_slave_sg needs to use sg count returned
+by dma_map_sg, not use sport->dma_tx_nents, because the return
+value of dma_map_sg is not always same with "nents".
 
-Inspire from [Y] and [Z] during implementation and testing (H3ULCB-KF).
-Below decision matrix is intended as function of user's input:
+When enabling iommu for lpuart + edma, iommu framework may concatenate
+two sgs into one.
 
-      [0]        [2]        [4]
-[0]  hs200:[0]  hs200:[2]  hs200:[0]
-     hs400:[0]  hs400:[0]  hs400:[4]
-[2]  hs200:[2]  hs200:[2]  hs200:[2]
-     hs400:[0]  hs400:[R]  hs400:[4]
-[4]  hs200:[0]  hs200:[2]  hs200:[R]
-     hs400:[4]  hs400:[4]  hs400:[4]
-
-[0] "fixed-emmc-driver-type"
-[2] "fixed-emmc-driver-type-hs200"
-[4] "fixed-emmc-driver-type-hs400"
-[R] RAW/ECSD drive strength as implemented in
-    commit cc4f414c885cd0 ("mmc: mmc: Add driver strength selection")
-[Y] commit 6186d06c519e21 ("mmc: parse new binding for eMMC fixed driver type")
-[Z] https://www.elinux.org/Tests:eMMC-fixed-drive-strength
-
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Fixes: 6250cc30c4c4e ("tty: serial: fsl_lpuart: Use scatter/gather DMA for =
+Tx")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/mmc/core/host.c  |  4 ++++
- drivers/mmc/core/mmc.c   | 19 ++++++++++++++++---
- include/linux/mmc/host.h |  2 ++
- 3 files changed, 22 insertions(+), 3 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 54abfdfc69ba..2a3d3b542e0d 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -336,6 +336,8 @@ int mmc_of_parse(struct mmc_host *host)
- 
- 	/* Must be after "non-removable" check */
- 	mmc_of_read_drv_type(host, "fixed-emmc-driver-type", &host->fixed_drv_type);
-+	mmc_of_read_drv_type(host, "fixed-emmc-driver-type-hs200", &host->fixed_drv_type_hs200);
-+	mmc_of_read_drv_type(host, "fixed-emmc-driver-type-hs400", &host->fixed_drv_type_hs400);
- 
- 	host->dsr_req = !device_property_read_u32(dev, "dsr", &host->dsr);
- 	if (host->dsr_req && (host->dsr & ~0xffff)) {
-@@ -455,6 +457,8 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
- 	host->max_blk_count = PAGE_SIZE / 512;
- 
- 	host->fixed_drv_type = -EINVAL;
-+	host->fixed_drv_type_hs200 = -EINVAL;
-+	host->fixed_drv_type_hs400 = -EINVAL;
- 	host->ios.power_delay_ms = 10;
- 
- 	return host;
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index c8804895595f..89e6fb9aedeb 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -62,6 +62,8 @@ static const unsigned int taac_mant[] = {
- 		__res & __mask;						\
- 	})
- 
-+static void mmc_select_driver_type(struct mmc_card *card, int timing);
-+
- /*
-  * Given the decoded CSD structure, decode the raw CID to our CID structure.
-  */
-@@ -1192,6 +1194,8 @@ static int mmc_select_hs400(struct mmc_card *card)
- 		return err;
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuar=
+t.c
+index 3e17bb8a0b16..3643b8f7a3df 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -437,8 +437,8 @@ static void lpuart_dma_tx(struct lpuart_port *sport)
  	}
- 
-+	mmc_select_driver_type(card, EXT_CSD_TIMING_HS400);
-+
- 	/* Switch card to HS400 */
- 	val = EXT_CSD_TIMING_HS400 |
- 	      card->drive_strength << EXT_CSD_DRV_STR_SHIFT;
-@@ -1270,6 +1274,8 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
- 	if (err)
- 		goto out_err;
- 
-+	mmc_select_driver_type(card, EXT_CSD_TIMING_HS200);
-+
- 	/* Switch HS to HS200 */
- 	val = EXT_CSD_TIMING_HS200 |
- 	      card->drive_strength << EXT_CSD_DRV_STR_SHIFT;
-@@ -1304,10 +1310,17 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
- 	return err;
- }
- 
--static void mmc_select_driver_type(struct mmc_card *card)
-+static void mmc_select_driver_type(struct mmc_card *card, int timing)
- {
- 	int card_drv_type, drive_strength, drv_type = 0;
- 	int fixed_drv_type = card->host->fixed_drv_type;
-+	int fixed_drv_type_hs200 = card->host->fixed_drv_type_hs200;
-+	int fixed_drv_type_hs400 = card->host->fixed_drv_type_hs400;
-+
-+	if (fixed_drv_type_hs200 >= 0 && timing == EXT_CSD_TIMING_HS200)
-+		fixed_drv_type = fixed_drv_type_hs200;
-+	else if (fixed_drv_type_hs400 >= 0 && timing == EXT_CSD_TIMING_HS400)
-+		fixed_drv_type = fixed_drv_type_hs400;
- 
- 	card_drv_type = card->ext_csd.raw_driver_strength |
- 			mmc_driver_type_mask(0);
-@@ -1385,7 +1398,7 @@ static int mmc_select_hs400es(struct mmc_card *card)
- 		goto out_err;
- 	}
- 
--	mmc_select_driver_type(card);
-+	mmc_select_driver_type(card, EXT_CSD_TIMING_HS400);
- 
- 	/* Switch card to HS400 */
- 	val = EXT_CSD_TIMING_HS400 |
-@@ -1445,7 +1458,7 @@ static int mmc_select_hs200(struct mmc_card *card)
- 	if (err)
- 		return err;
- 
--	mmc_select_driver_type(card);
-+	mmc_select_driver_type(card, EXT_CSD_TIMING_HS200);
- 
- 	/*
- 	 * Set the bus width(4 or 8) with host's support and
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index ba703384bea0..6960ba98810a 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -371,6 +371,8 @@ struct mmc_host {
- #define MMC_CAP2_MERGE_CAPABLE	(1 << 26)	/* Host can merge a segment over the segment size */
- 
- 	int			fixed_drv_type;	/* fixed driver type for non-removable media */
-+	int			fixed_drv_type_hs200;	/* HS200-specific fixed_drv_type */
-+	int			fixed_drv_type_hs400;	/* HS400-specific fixed_drv_type */
- 
- 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
- 
--- 
-2.23.0
+=20
+ 	sport->dma_tx_desc =3D dmaengine_prep_slave_sg(sport->dma_tx_chan, sgl,
+-					sport->dma_tx_nents,
+-					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
++					ret, DMA_MEM_TO_DEV,
++					DMA_PREP_INTERRUPT);
+ 	if (!sport->dma_tx_desc) {
+ 		dma_unmap_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
+ 		dev_err(dev, "Cannot prepare TX slave DMA!\n");
+--=20
+2.16.4
 
