@@ -2,79 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D24EF890
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08937EF897
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfKEJXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:23:04 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38369 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730554AbfKEJXD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:23:03 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q28so14567840lfa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:23:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ct9g/c4KnN6815DyJzsvIVZUxmWLuOF9LXKZAhVKbL8=;
-        b=YKSM2QTBCckxvZ/6Gq5dfMrbdS0x5OlQiyIjgvVFfiy2DEtxC/YK2sAtJ8E8yGzGnC
-         vC3vEgOdUGdyUWKGZm8gYADe06XUhQHrnBe6ZrDxDK7pUlLzOfDaqxBDFtTlhNG+NtMa
-         8ZKf+R8bkPbKUrAZB7NIxUAycktPoNmgiLYHgWuBoXStS1YJJabyH96kbSVMiTGax8h1
-         wT42Xk1tp58pYDdVtztuIbh5r2LpKP0lTkBAGpgnB5gRySMzDeXpQSAQSFInOLok0CtF
-         ioN2DYfH8dv1tE3aoeLuiJ8++IkwiM1w9xYbdf7nkWsDbyvha3XVn1Ul07aTrAxlNzRy
-         Dw8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ct9g/c4KnN6815DyJzsvIVZUxmWLuOF9LXKZAhVKbL8=;
-        b=iWjxtCBluRygfHcFDBpRkadWtiRScDVr9BLvbdVM/EfJdfBAbtAOV5tuNJ9BIR0uSm
-         l5dqkgXhf3zEXwacoZyog5/CDvn2FvimGmPOgqLjZfS6pTaHhyNhXdNwWsCUuoHHl5mt
-         Be/85lclUSPKm8RdwSEBk27WcT9/vplVSaC2RbaK9QrTqvf7Zf9VV9gmQkEpQYN69Bf8
-         VIebAYFuAtEV/DhND/+jF0J09VMFPruBF0L09nyXOOsjdTWHNvCIbuvvrWvS+WYz7kWx
-         lHm4ejCKsXKZ9Y8bGvkR83/YbxS8SuioWOxFn6bmBpVlKe7GLLr5xX7LA/jWZ8EGGp2T
-         6/GA==
-X-Gm-Message-State: APjAAAVpSlK38muykidE1Hk+FItN2U7a/jhUaBoxJxgOEHYWkvACRDlj
-        dRa03mbFR7fpgl6ITBMxGORbLtC8CGmqH2t0dvu1Tw==
-X-Google-Smtp-Source: APXvYqxeopO09ns4NgTxjigartGjOoe+JETioaWMrKGhyhGNAt2HdlvOIjunc3L7nT5gZgJzxfa7ONCTaP16w47SjKw=
-X-Received: by 2002:ac2:5295:: with SMTP id q21mr19505657lfm.93.1572945781604;
- Tue, 05 Nov 2019 01:23:01 -0800 (PST)
+        id S1730771AbfKEJXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:23:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36178 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727093AbfKEJXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 04:23:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D7D8EB2CE;
+        Tue,  5 Nov 2019 09:23:40 +0000 (UTC)
+Date:   Tue, 5 Nov 2019 10:23:37 +0100
+From:   Daniel Wagner <dwagner@suse.de>
+To:     Stefan Wahren <wahrenst@gmx.net>
+Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Marc Zyngier <maz@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: usb: lan78xx: Disable interrupts before calling
+ generic_handle_irq()
+Message-ID: <20191105092337.rkjeohkdkmiiswzy@beryllium.lan>
+References: <20191025080413.22665-1-dwagner@suse.de>
+ <20191104085703.diajpzpxo6dchuhs@beryllium.lan>
+ <793b1cfa-dc45-c01c-ef0f-72db6df3ecd1@gmx.net>
 MIME-Version: 1.0
-References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-24-arnd@arndb.de>
-In-Reply-To: <20191018154201.1276638-24-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 10:22:50 +0100
-Message-ID: <CACRpkdaT4Tn2w0LZDo-mB-GGT=Epv-stkWW6S=AZ+OWam4QWPw@mail.gmail.com>
-Subject: Re: [PATCH 24/46] ARM: pxa: magician: use platform driver for audio
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <793b1cfa-dc45-c01c-ef0f-72db6df3ecd1@gmx.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 5:42 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> did you never saw a warning about under voltage from the Raspberry Pi
+> hwmon driver?
 
-> The magician audio driver creates a codec device and gets
-> data from a board specific header file, both of which is
-> a bit suspicious. Move these into the board file itself,
-> using a gpio lookup table.
->
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: alsa-devel@alsa-project.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Guess why I feel so stupid? I just ignored it... /me goes back to
+shaming in the corner.
