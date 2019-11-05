@@ -2,84 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 846F6EF37C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF4AEF37A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730410AbfKECbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 21:31:51 -0500
-Received: from l2mail1.panix.com ([166.84.1.75]:61278 "EHLO l2mail1.panix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729760AbfKECbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:31:50 -0500
-X-Greylist: delayed 939 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 21:31:50 EST
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-        by l2mail1.panix.com (Postfix) with ESMTPS id 476YDq3FXwzDv5
-        for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2019 21:16:11 -0500 (EST)
-Received: from panix5.panix.com (panix5.panix.com [166.84.1.5])
-        by mailbackend.panix.com (Postfix) with ESMTP id 476YDp2M3Gz1GJG;
-        Mon,  4 Nov 2019 21:16:10 -0500 (EST)
-Received: by panix5.panix.com (Postfix, from userid 20529)
-        id 476YDp0xdLzfYY; Mon,  4 Nov 2019 21:16:10 -0500 (EST)
-Date:   Mon, 4 Nov 2019 21:16:09 -0500
-From:   Ruben Safir <mrbrklyn@panix.com>
-To:     gameonlinux@redchan.it
-Cc:     Ruben Safir <ruben@mrbrklyn.com>,
-        Alexandre Fran??ois Garreau <galex-713@galex-713.eu>,
-        Jean Louis <bugs@gnu.support>, gnu-misc-discuss@gnu.org,
-        gnu-misc-discuss 
-        <gnu-misc-discuss-bounces+gameonlinux=redchan.it@gnu.org>,
-        rms@gnu.org, linux-kernel@vger.kernel.org
-Subject: Re: Support for RMS and criticism of the bottom-up/social contract
- power grab attempt. - Why fewer contributors?
-Message-ID: <20191105021609.GA17680@panix.com>
-References: <5ec38bda-be9c-337e-ec18-a3b983a68b73@runbox.com>
- <6191342.WJX1yqFeDY@pc-713>
- <20191104111140.GU21905@protected.rcdrun.com>
- <3597943.aDa7FIykWb@pc-713>
- <adb26c6a71ea3b38018a99dca22cf200@redchan.it>
- <f1f4f8a4-bb9f-b6d9-9877-2b4eeef544e3@mrbrklyn.com>
- <4c26ceb504d0af028b355ad12b65261b@redchan.it>
+        id S1730381AbfKECb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 21:31:29 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:41530 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729760AbfKECb3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 21:31:29 -0500
+X-UUID: 7fffc5ef7400452bb4f7ddf0176366e7-20191105
+X-UUID: 7fffc5ef7400452bb4f7ddf0176366e7-20191105
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1067987505; Tue, 05 Nov 2019 10:31:21 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
+ (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Nov
+ 2019 10:31:16 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 5 Nov 2019 10:31:16 +0800
+Message-ID: <1572921077.18464.55.camel@mhfsdcap03>
+Subject: Re: [RFC PATCH] usb: common: change usb_debug_root as static
+ variable
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Tue, 5 Nov 2019 10:31:17 +0800
+In-Reply-To: <20191101090221.GC2671695@kroah.com>
+References: <1572575349-5596-1-git-send-email-chunfeng.yun@mediatek.com>
+         <20191101090221.GC2671695@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c26ceb504d0af028b355ad12b65261b@redchan.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 2BCAD82B0D71AB466DCD90ED35262FF773AEF73C748AB309528833C8BCB79ED62000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 12:52:44AM +0000, gameonlinux@redchan.it wrote:
-> I'm sorry Ruben, it's just how it has to be.
-> Your guys tried hard to realize liberation, but failed.
+On Fri, 2019-11-01 at 10:02 +0100, Greg Kroah-Hartman wrote:
+> On Fri, Nov 01, 2019 at 10:29:09AM +0800, Chunfeng Yun wrote:
+> > Try to avoid using extern global variable, and provide two
+> > functions for the usage cases
 > 
-> So it has to be done the other way.
-> I want a young girl bride no matter what, so do the European and other
-> Politicians.
-> 
-> The _sunni_ muslims do not bend on this: they're all for it.
-> Every single other group that was tried has bent.
-> 
-> You guys tried hard though, and almost made it happen, but you were beaten
-> back.
-> Thank you for your service. Even RMS has bent the knee now though.
-> Oh, and I notice you played Crossfire-RPG (photo on your website); I used to
-> be on the dev team there: made tons of maps for them (also did pixel art,
-> and did scripting etc later, the latter mostly for my own extended fork).
-> Small world.
-
-
-Welcome to my /dev/null
+> That is 3 different things all in one patch, not generally considered a
+> good thing at all.
 
 > 
-> On 2019-11-04 22:02, Ruben Safir wrote:
-> > On 11/4/19 6:55 AM, gameonlinux@redchan.it wrote:
-> > > 
-> > > The Muslims will solve it all, I'm glad the politicians brought them
-> > > in.
-> > > They also don't rip you off when you get your car fixed: very honest
-> > > in
-> > > business from my view.
+> Also, who is going to use these new functions?  Why are they needed?
+After remove global variable usb_debug_root, the drivers using
+usb_debug_root to create directory or files will use these new APIs
+instead.
+
+> 
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > ---
+> > NOTE:
+> >     Prepared but not send out patches for drivers using usb_debug_root,
+> > because I'm not sure whether this patch is needed, and many drivers
+> > will be modified.
+> > ---
+> >  drivers/usb/common/common.c | 16 ++++++++++++++--
+> >  include/linux/usb.h         |  5 ++++-
+> >  2 files changed, 18 insertions(+), 3 deletions(-)
 > > 
-> > 
-> > uggg
+> > diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+> > index 1433260d99b4..639ee6d243a2 100644
+> > --- a/drivers/usb/common/common.c
+> > +++ b/drivers/usb/common/common.c
+> > @@ -293,8 +293,20 @@ struct device *usb_of_get_companion_dev(struct device *dev)
+> >  EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
+> >  #endif
+> >  
+> > -struct dentry *usb_debug_root;
+> > -EXPORT_SYMBOL_GPL(usb_debug_root);
+> > +static struct dentry *usb_debug_root;
+> 
+> Doesn't this break things as-is? 
+Yes, it will, I didn't send out other patches for the drivers using
+usb_debug_root.
+
+>  You can't do that in a single patch
+> either :(
+When I make usb_debug_root as static variable, two APIs need be added
+due to other driver use it to create directory or file.
+
+> 
+> > +
+> > +struct dentry *usb_debugfs_create_dir(const char *name)
+> > +{
+> > +	return debugfs_create_dir(name, usb_debug_root);
+> > +}
+> > +EXPORT_SYMBOL_GPL(usb_debugfs_create_dir);
+> > +
+> > +struct dentry *usb_debugfs_create_file(const char *name, umode_t mode,
+> > +			void *data, const struct file_operations *fops)
+> > +{
+> > +	return debugfs_create_file(name, mode, usb_debug_root, data, fops);
+> 
+> I doubt many people want to create a file in the usb "root" debugfs
+> directory, right?  They _should_ be just creating a new subdirectory in
+> there instead.
+Currently only three .c files creates a file under usb 'root' debugfs
+directory.
+
+> 
+> thanks,
+> 
+> greg k-h
+
+
