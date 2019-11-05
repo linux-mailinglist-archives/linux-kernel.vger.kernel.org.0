@@ -2,72 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7AAEFFED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD01EFFDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389847AbfKEOew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:34:52 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57634 "EHLO huawei.com"
+        id S2389656AbfKEOdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:33:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56900 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389763AbfKEOek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:34:40 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5685F8DD25CC4EF26B11;
-        Tue,  5 Nov 2019 22:34:38 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 5 Nov 2019 22:34:28 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <wangzhou1@hisilicon.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <tanshukun1@huawei.com>
-CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next] crypto: hisilicon: move label err to #ifdef CONFIG_NUMA
-Date:   Tue, 5 Nov 2019 22:33:40 +0800
-Message-ID: <20191105143340.32950-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S2389604AbfKEOdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 09:33:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 797ACB591;
+        Tue,  5 Nov 2019 14:33:42 +0000 (UTC)
+Message-ID: <1572964421.2921.20.camel@suse.com>
+Subject: Re: [PATCH 4.14 67/95] UAS: Revert commit 3ae62a42090f ("UAS: fix
+ alignment of scatter/gather segments")
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Christoph Hellwig <hch@lst.de>
+Date:   Tue, 05 Nov 2019 15:33:41 +0100
+In-Reply-To: <20191104212111.409017128@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
+         <20191104212111.409017128@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_NUMA is not set, there is error in function
-find_zip_device:
-drivers/crypto/hisilicon/zip/zip_main.c:154:13: error:
-head undeclared (first use in this function)
-  free_list(&head);
+Am Montag, den 04.11.2019, 22:45 +0100 schrieb Greg Kroah-Hartman:
+> There is no longer any reason to keep the virt_boundary_mask setting
+> in the uas driver.  It was needed in the first place only for
+> handling devices with a block size smaller than the maxpacket size and
+> where the host controller was not capable of fully general
+> scatter-gather operation (that is, able to merge two SG segments into
+> a single USB packet).  But:
+> 
+>         High-speed or slower connections never use a bulk maxpacket
+>         value larger than 512;
+> 
+>         The SCSI layer does not handle block devices with a block size
+>         smaller than 512 bytes;
+> 
+>         All the host controllers capable of SuperSpeed operation can
+>         handle fully general SG;
+> 
+>         Since commit ea44d190764b ("usbip: Implement SG support to
+>         vhci-hcd and stub driver") was merged, the USB/IP driver can
+>         also handle SG.
 
-This is because CONFIG_NUMA is not defined, it should move
-label err to #ifdef CONFIG_NUMA.
+Hi,
 
-Fixes: 700f7d0d29c7 ("crypto: hisilicon - fix to return sub-optimal device when best device has no qps")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/crypto/hisilicon/zip/zip_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+same story as in 4.4.x, I am afraid.
 
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 255b63c..0504fb2 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -150,10 +150,12 @@ struct hisi_zip *find_zip_device(int node)
- 
- 	return ret;
- 
-+#ifdef CONFIG_NUMA
- err:
- 	free_list(&head);
- 	mutex_unlock(&hisi_zip_list_lock);
- 	return NULL;
-+#endif
- }
- 
- struct hisi_zip_hw_error {
--- 
-2.7.4
+	Regards
+		Oliver
 
