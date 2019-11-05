@@ -2,94 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52EEEEFE20
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F3BEFE35
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389121AbfKENPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:15:09 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52351 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388710AbfKENPI (ORCPT
+        id S2389012AbfKENR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:17:26 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39318 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388782AbfKENRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:15:08 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c17so13508018wmk.2;
-        Tue, 05 Nov 2019 05:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9aSxRdpuFtWHR4fiaYF0NucipXPgTqmHceHSDmByEc8=;
-        b=WkHd/djk0ORgHMR2yAYNS+7CN1X0l1n8DgXtwwIvVzlhEHMkHD/NTxTZpWptYTlZoB
-         RhCVfRsBADwmaNlswVb33scnynJbmb3xJwdaa2RmMSYOTJL/KvYY+fi6hEB+ZMpsriaJ
-         fNircKP4McRAi3tzSUZPeKuw2GeN+pkjXNeR1+7THv8EFuyl5Fv4hvOoODBd36JgTVxl
-         8F4f6KkDHX+4xxxWx/BPKC753KJbfk/ObcxfGrjTf4OeQx4yMkSFMeRTLxHjuTXbBrnF
-         gG8RzslXj+BvVVPL0ERWMv9W8lszVwUwJ1GZW7zgiJdhRdF6XLw8RIGlkZnBUs2G4UFn
-         KSBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9aSxRdpuFtWHR4fiaYF0NucipXPgTqmHceHSDmByEc8=;
-        b=ogm7D0KD9Vy4skTS95auU2C/gphlJT1I65AL7Zpi0t7tW2rzCKdbZg0ScHihDXEQP/
-         ztteisc3fUX2TilO2CT9mMNhjcmruTyK/5zBy0s5abHoIOzVpKCLAhygkciR0A7j9apd
-         41mX5kHtSEVxNTOL1Rznsue8VnAl/ZxLOAHo8cCMZwzs4bDiOq20dOb7XUjxLRLbP4uN
-         Qy9XsQ5zRL5fHsK4kbcHaFOLnAgSFud8GmRBJNtb5Uy7dXJkHTxKJ6XwohFhvrqbEKG7
-         BDxUUZ4kUwuKAAntwdBjd3yuH9sZpKwZxBRbh8G5nFpZHbTKJd5McVk5Rx+NayxaYQqc
-         abMA==
-X-Gm-Message-State: APjAAAX7mPQ7LYqe2I7B7v/IqeUFNxy5qCDU4zdguQf/blGQtRIuQhBV
-        O6KCS9FZ0vzNcB3+5HanR+c=
-X-Google-Smtp-Source: APXvYqw6UFPNrurMZG2uJGWFoKHNaQqgij6b0hb605Rot6sbahLBVS34Xu72r3LgwNTT0W2EYgOUNg==
-X-Received: by 2002:a7b:c747:: with SMTP id w7mr4417876wmk.62.1572959706136;
-        Tue, 05 Nov 2019 05:15:06 -0800 (PST)
-Received: from clement-Latitude-7490.outsight.local (lputeaux-656-1-11-33.w82-127.abo.wanadoo.fr. [82.127.142.33])
-        by smtp.gmail.com with ESMTPSA id a6sm13549920wmj.1.2019.11.05.05.15.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 05:15:05 -0800 (PST)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?=27Uwe=20Kleine-K=C3=B6nig=27?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v3 7/7] [DO NOT MERGE] arm64: allwinner: h6: enable Beelink GS1 PWM
-Date:   Tue,  5 Nov 2019 14:14:56 +0100
-Message-Id: <20191105131456.32400-8-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191105131456.32400-1-peron.clem@gmail.com>
-References: <20191105131456.32400-1-peron.clem@gmail.com>
+        Tue, 5 Nov 2019 08:17:25 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5DED5b107142;
+        Tue, 5 Nov 2019 13:16:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=zCxj2FypOGa+nB0i3E2EHjqmNc927yWEmUrHT+72n5c=;
+ b=SQQ6Y5aApPKgJEnS/ha0anIYdLmFSfo+4WUfKxNbhciq1/7JrC8FYIrsVtuF0o5iZNvF
+ bqTp0g1Zf7b3pe1YbHD9HG0HXzyl0gAqezrc2n+7hXxY1HWSgoyFPCcU+Srrl99xD93p
+ BGGGkTEhe2ttolx528xGiE8UMwAn1bk4V6v9oXvbvcfv0H+p3F72wpZoBmks1P92RJIh
+ kKZW6vHRF5NypWTIJEQdl//or7IVtfnwvhb7pGvv/bbmFW74zpfYK93D0K9JT4Nng8Gw
+ ET8cQho6Plh/9+LccGMsTZ237b2VNJnSOv2EnmZ3fNGorNigtQeG9vEzWAWgyYYIMUWJ Hg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2w11rpx4g7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 13:16:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5DFjwx190493;
+        Tue, 5 Nov 2019 13:16:13 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2w31619xcw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 13:16:13 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA5DGCZM018918;
+        Tue, 5 Nov 2019 13:16:12 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Nov 2019 05:16:11 -0800
+Date:   Tue, 5 Nov 2019 16:16:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Mao Wenan <maowenan@huawei.com>, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] usb: roles: Hide option USB_ROLE_SWITCH
+Message-ID: <20191105131605.GF10409@kadam>
+References: <20191104135312.GD996639@ulmo>
+ <20191104144850.91305-1-maowenan@huawei.com>
+ <20191105124218.GB12204@kuha.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105124218.GB12204@kuha.fi.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911050109
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911050109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On Tue, Nov 05, 2019 at 02:42:18PM +0200, Heikki Krogerus wrote:
+> On Mon, Nov 04, 2019 at 10:48:50PM +0800, Mao Wenan wrote:
+> > The USB role switch class is, after all,
+> > not useful by itself. Hiding USB_ROLE_SWITCH
+> > so we can avoid any of the pitfalls associated
+> > with user-visible symbols and "select".
+> > 
+> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> > ---
+> >  drivers/usb/roles/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
+> > index f8b31aa..1da58d4 100644
+> > --- a/drivers/usb/roles/Kconfig
+> > +++ b/drivers/usb/roles/Kconfig
+> > @@ -1,7 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  
+> >  config USB_ROLE_SWITCH
+> > -	tristate "USB Role Switch Support"
+> > +	tristate
+> >  	help
+> >  	  USB Role Switch is a device that can select the USB role - host or
+> >  	  device - for a USB port (connector). In most cases dual-role capable
+> 
+> You didn't actually convert the "depends on USB_ROLE_SWTICH" to
+> "select USB_ROLE_SWITCH" before this. You also left the help text that
+> is now useless.
+> 
+> I really think that instead of this, we should just convert all
+> "select USB_ROLE_SWTICH" to "depends on USB_ROLE_SWITCH".
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-index 1d05d570142f..38aba7e5bbd9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-@@ -131,6 +131,10 @@
- 	vcc-pg-supply = <&reg_aldo1>;
- };
- 
-+&pwm {
-+	status = "okay";
-+};
-+
- &r_i2c {
- 	status = "okay";
- 
--- 
-2.20.1
+The you have to find USB_ROLE_SWITCH first when you want to enable your
+hardware...  It's feels really confusing when you want to create a
+.config file...
+
+I sometimes think maybe I'm too stupid to configure a kernel these days
+and that's sort of sad because how is Aunt Tillie supposed to manage?
+
+regards,
+dan carpenter
 
