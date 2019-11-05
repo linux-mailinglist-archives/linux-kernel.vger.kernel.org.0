@@ -2,112 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5031F05E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9ABF05E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390877AbfKETYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 14:24:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46050 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389691AbfKETYs (ORCPT
+        id S2390935AbfKETZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 14:25:58 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46561 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390314AbfKETZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 14:24:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572981886;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fDuBnBaNcz8J1ZA9jKrH09ICdJTi+Igu4uXAX/Exyik=;
-        b=B9NTx3zxYULbGnh3qRje8uzzpXcaNKfBru+NwvlFOV7KwTs2LKCjIF7g8LEO8mGviVfRVC
-        7vevuG9/bCowhQ7DAWUBJHO3Ue8JoFLisz34BqZYHSPz+mWCjIGpbC1zo+srEmqO8HVjZy
-        1kGLNrrbWSUvlDy8QRpzaenOpWy6D5U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-87-6BnFi5GPOCeK7zC2FOeztA-1; Tue, 05 Nov 2019 14:24:43 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4DEE62A3;
-        Tue,  5 Nov 2019 19:24:41 +0000 (UTC)
-Received: from x1.home (ovpn-116-110.phx2.redhat.com [10.3.116.110])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 88F5A5C1BB;
-        Tue,  5 Nov 2019 19:24:37 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 12:24:36 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     <cohuck@redhat.com>, <eric.auger@redhat.com>, <aik@ozlabs.ru>,
-        <mpe@ellerman.id.au>, <bhelgaas@google.com>, <tglx@linutronix.de>,
-        <hexin.op@gmail.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] VFIO: PCI: eliminate unnecessary overhead in
- vfio_pci_reflck_find
-Message-ID: <20191105122436.5bd5282f@x1.home>
-In-Reply-To: <1572433030-6267-1-git-send-email-linmiaohe@huawei.com>
-References: <1572433030-6267-1-git-send-email-linmiaohe@huawei.com>
-Organization: Red Hat
+        Tue, 5 Nov 2019 14:25:58 -0500
+Received: by mail-yb1-f194.google.com with SMTP id g17so421185ybd.13;
+        Tue, 05 Nov 2019 11:25:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KChVl98RtUbkgrTOQAVv+rIQgGh7eAxBXODW2CW7diU=;
+        b=gr3DvwnNJUf3Y48Dj/m1is18b4uN/Ngwj7G0hU5nh705p48wIU/R6fdiQDM2RyKmS5
+         B4+tCC7gc0ICBXMdqQWvzmJ/ccdkGS4Km7CVRUycrScH451IQUia3g+sE/5gaXZddvvY
+         I2pDqQgPoVRbB+yNOiwgSxIWfFL1lb9JXhQoryEYHCs1nzLLtvoVwwUW9CvEZnMwR3m/
+         52DfEtsh/HX0a2fbBDrsFjV7uE9QVwgXfOs95DxVHZzqUhS04ytJ96mXTyCh105y/HUS
+         BjhzqqiChzRRcqdkexMbU3yMO8CqYb82E8llWTzjWYpzTlSKCxf65d3FE9VmBhPne6+j
+         bqsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KChVl98RtUbkgrTOQAVv+rIQgGh7eAxBXODW2CW7diU=;
+        b=bvy0uSTGcsUCj1g6EGeSu+9PcQMzbs5O7Dutdfuc34ULCVwNFSLorFL/6KtvhMQiJg
+         6nQIkmptAfk4Y+8GDkIBRJaDeeRsdPAfVSZcPhTe/qS8a1r3W92PqZqhszAYKAJ/Q1EO
+         nrJPUYo/CLLxy6Xlz66IBk56MHYFwDkKzKryDpZi7gh4qDCQDSbM6yheZV7wWZBXkavw
+         /BAEx6nVeu+/kDPUFCjxmStkA5T2xxwfAfZCEghWBnBxvJUFd6JDhtCWoM/qpJs9v755
+         4CCKNr7JzkS0uAk89froiXMKbuKdvyM25hIB53rS0OFFWJjchgEJ9wzQiR3P0AoQocOm
+         zfng==
+X-Gm-Message-State: APjAAAVf1j8MXsVljadlXxARs4/+VoWQKglRHuj5HiTeFRzWvFH5M19p
+        WWciCw76Fo3w9J4S175VZb5A77lAmBZRQ7PNLTQ=
+X-Google-Smtp-Source: APXvYqx6aFWSGHN0fNloB89+dY7LDFF8+dPoO/5MWUfPSHQSvaN/hiXzcFRfW+Ck3Kgv5gJ2I+zUDkQwtgzJ4cufWWU=
+X-Received: by 2002:a25:3744:: with SMTP id e65mr28077525yba.126.1572981956875;
+ Tue, 05 Nov 2019 11:25:56 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: 6BnFi5GPOCeK7zC2FOeztA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+References: <20191104215253.141818-1-salyzyn@android.com> <CAOQ4uxhoozGgxYmucFpFx8N=b4x9H3sfp60TNzf0dmU9eQi2UQ@mail.gmail.com>
+ <97c4108f-3a9b-e58b-56e0-dfe2642cc1f5@android.com>
+In-Reply-To: <97c4108f-3a9b-e58b-56e0-dfe2642cc1f5@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 5 Nov 2019 21:25:44 +0200
+Message-ID: <CAOQ4uxindmuTdfW6NNM2=Bt=y7KDMQsfN=zA_Z7dgkrHfptoHA@mail.gmail.com>
+Subject: Re: [PATCH v15 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Oct 2019 18:57:10 +0800
-linmiaohe <linmiaohe@huawei.com> wrote:
+On Tue, Nov 5, 2019 at 5:20 PM Mark Salyzyn <salyzyn@android.com> wrote:
+>
+> On 11/4/19 11:56 PM, Amir Goldstein wrote:
+> > On Mon, Nov 4, 2019 at 11:53 PM Mark Salyzyn <salyzyn@android.com> wrote:
+> >> Patch series:
+> >>
+> >> Mark Salyzyn (4):
+> >>    Add flags option to get xattr method paired to __vfs_getxattr
+> > Sigh.. did not get to fsdevel (again...) I already told you several times
+> > that you need to use a shorter CC list.
+>
+> This is a direct result of the _required_ scripts/get_maintainer.pl
+> logic, I am not going to override it for first send. I was going to
+> forward to fsdevel after the messages settled, I am still waiting for
+> 1/4 to land on lore before continuing.
 
-> From: Miaohe Lin <linmiaohe@huawei.com>
->=20
-> The driver of the pci device may not equal to vfio_pci_driver,
-> but we fetch vfio_device from pci_dev unconditionally in func
-> vfio_pci_reflck_find. This overhead, such as the competition
-> of vfio.group_lock, can be eliminated by check pci_dev_driver
-> with vfio_pci_driver first.
->=20
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  drivers/vfio/pci/vfio_pci.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index 379a02c36e37..1e21970543a6 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -1466,15 +1466,14 @@ static int vfio_pci_reflck_find(struct pci_dev *p=
-dev, void *data)
->  =09struct vfio_device *device;
->  =09struct vfio_pci_device *vdev;
-> =20
-> -=09device =3D vfio_device_get_from_dev(&pdev->dev);
-> -=09if (!device)
-> -=09=09return 0;
-> -
->  =09if (pci_dev_driver(pdev) !=3D &vfio_pci_driver) {
-> -=09=09vfio_device_put(device);
->  =09=09return 0;
->  =09}
-> =20
-> +=09device =3D vfio_device_get_from_dev(&pdev->dev);
-> +=09if (!device)
-> +=09=09return 0;
-> +
->  =09vdev =3D vfio_device_data(device);
-> =20
->  =09if (vdev->reflck) {
+How do you expect it to land in lore if the mailing list server rejects it?
+If I were you, I would *first* post the patch to the small crowd of the
+patch set, which includes fsdevel and *then* forward patch 1 to all
+maintainers with a link to lore for the series.
 
-I believe this introduces a race.  When we hold a reference to the vfio
-device, an unbind from a vfio bus driver will be blocked in
-vfio_del_group_dev().  Therefore if we test the driver is vfio-pci
-while holding this reference, we know that it cannot be released and
-the device_data is a valid vfio_pci_device.  Testing the driver prior
-to acquiring a vfio device reference is meaningless as we have no
-guarantee that the driver has not changed by the time we acquire a
-reference.  Are you actually seeing contention here or was this a code
-inspection optimization?  Thanks,
+The result as is was in your last 15 posting is much worst.
+There is a ghost patch in the series that nobody knows where to find.
 
-Alex
+>
+> The first patch in the series needs to get in before the others. I was
+> told to send the first one individually because the series has so many
+> recipients and stakeholders, and <crickets> because no on could see the
+> reason for the patch once it was all by itself. So I rejoined the set so
+> they could see the reason for the first patch.
+>
+> If only the first patch in the series that added the flag argument got
+> in (somewhere), then the overlayfs portion would be much easier to handle.
+>
+> >>    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> >>    overlayfs: internal getxattr operations without sepolicy checking
+> >>    overlayfs: override_creds=off option bypass creator_cred
+> > It would be better for review IMO if you rebase your series on top of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git ovl-unpriv
+> Will do, send it only to fsdevel, other recipients? What do I do with
+> get_maintainer.pl? The first patch in the series is noisy, I am getting
+> more and more uncomfortable sending it to the list as it looks more and
+> more like spam.
 
+get_maintainer.pl is a suggestion. common sense should be applied.
+Sending the entire series to the crowd of this message seems fine to
+me (I also added fsdevel). LKML is quite an overkill IMO and
+linux-doc also seems out of context if you ask me.
+
+Thanks,
+Amir.
