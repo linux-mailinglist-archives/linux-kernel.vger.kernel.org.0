@@ -2,146 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 335CEF04BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F53F04C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 19:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390617AbfKESK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 13:10:27 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32835 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390520AbfKESK1 (ORCPT
+        id S2390662AbfKESLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 13:11:37 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40951 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390634AbfKESLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 13:10:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay6so2857775plb.0;
-        Tue, 05 Nov 2019 10:10:26 -0800 (PST)
+        Tue, 5 Nov 2019 13:11:37 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f4so15858685lfk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 10:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=xgf/R13CTbGVKZNJzECasZDqFPajX8jIrP4cc+cKW80=;
-        b=L0jcEC6SQD3mY4ac3RNnZmyTkHPxwfhGTToCGoRmcz/E+NU4dBYOlS4rHvp23TuHwW
-         wOi1oGhz2chNwp3Kx3JHIMOk0BYM4Abu50vG4jO6GBypeeNHOZoSPPDQp9mS9pdRjTBC
-         cq9Kq7vmSA6qwX0jUmpHh2NDiiUreUEYOaLxfCWZjFPjKOKscmkke74ryDyHi6Sl5KfA
-         oHzQnQK1iJmsXyu99IoJzltlaQOBPRtboRQ1TKK2emnvaUbc/zieSX9UObIrvgyEyc0i
-         CYpnLWA8WNxsSe4f57/iAvPK1jcvAO24yPOYlrjyFqFhEcl7L86LQBIBs19aLCBYPuPt
-         wcsA==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=bwQB39HHmplonqlAl8XTqDxI+AfzyfVpSRrtnri/p7hr4VdsQE07vtL00Cn3iN34LH
+         jis2rCweRflr28jcnUx9T+XQ3IuiyYmzefSAwPNcdTl+I2CvVLtah9+s7M3iyDoiUryz
+         wlADN+QUCqxF+OsxyHlIinBup87NBXc2Q2H7MwGMhQU1GH7wuqbpQmUFC4DOUPx4Oose
+         scqZ1tej8CDlcKMl0g+Q9qTAwRNv6RM03PkFcslX/6x/pVSU3kab+9pOV8xpJY8iVj2a
+         Vnt/g6Ml20lO4o5cjauoYFJ7hp39mB+QZ2Q2vIWbNdilb8EElSFt4GvImIqlLESckNqy
+         tCZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=xgf/R13CTbGVKZNJzECasZDqFPajX8jIrP4cc+cKW80=;
-        b=hOi37X/lYriSsGI/d/Zuh+70VzJl9yUmj3wCtifkWYJ578+F0Jb1qg4FGS6XO6Wnlv
-         OEug+hZRcfrQQWyD0y3c3rwIy5zQTpkvG1qG1dpJzvhhx4nFW4H0xYEYbb1ZyIQYalB7
-         WHY5rxCIwQaRfYEb/0ayCUx/GxRUcQSU7irV4Cq3nh0I/m6OVITM+WHc+B8qXIz0S7kB
-         1TwzIKZZ6ndFq5RKOPhBQxHy7b5rJ9HGQV//0Ph/NodaZaFRN/pfzxMJ9BbXvlS9bZt6
-         +s7vDYl7bUsTfkyOFmkhQ/stZMPUdtnVe1LZq4jTg4ygWi4JxER9ZG79ORXzHBgWEier
-         5AHg==
-X-Gm-Message-State: APjAAAXlEKpHOiwAo/+ypydmPPr/4HPhoeflXP4BWAwBZ0ex2gjtoZiE
-        RJRypeNtG7VC5AUBSEZ4nS8=
-X-Google-Smtp-Source: APXvYqyxs1xQj4ZFUNM7OCsA+7jN0O9lyTXVuaIFG0YagWGyt9o+u2FfRGxmjyAlDYitRpgHNOp5ug==
-X-Received: by 2002:a17:902:bcc2:: with SMTP id o2mr35276811pls.281.1572977426163;
-        Tue, 05 Nov 2019 10:10:26 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 18sm20421819pfp.100.2019.11.05.10.10.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Nov 2019 10:10:25 -0800 (PST)
-Date:   Tue, 5 Nov 2019 10:10:23 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     Keith Busch <kbusch@kernel.org>, Chris Healy <cphealy@gmail.com>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v4] nvme: Add hardware monitoring support
-Message-ID: <20191105181023.GA22468@roeck-us.net>
-References: <20191102145530.16104-1-linux@roeck-us.net>
- <CAC5umyi9PuMTERNvNShfzu725bhBtkOZsD3NWtcxhKq5XGU2CQ@mail.gmail.com>
- <CAC5umyiJT300+MunDi4wwwAgSxiqx7_rersbNRvybcNoo3kGDg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=n8jnDtjqvH39o7RTJ99YZ3xho2tACJvguyV/hGcnAArafvsayIsXdZ6EUZfeHfDvbq
+         4kHXvJchRWIJbub5qZgpGR0xWOBt9MLHXdJZLYBbbgl6JAu0sVINy97GCugHqB+gBrxd
+         12TdA8OF0hrhK8OxmSLU4JYmxpkXE/33xXL+74g5VsFhZbuMb2xC5XUQ6BkcOHNpQd9+
+         MVQbyHUcsWNzwPsHnSzMyig8gCKjYbeYil3gLUzJl0GLJ8Z3KwjF8YsewX02U8hvZtml
+         +nSZTKmhePYmfYOGaJuQOi4gi76+NHKhGYSt4CxD8vIurH1Pcsot6+UEz6N+o3i7g9Ub
+         ZJUw==
+X-Gm-Message-State: APjAAAWf9VFQl/+uU9TKypmChd72jiO72r+NuzMIHEmikE+kTMM0wzKg
+        JVh0mG2yhYm9UiRtmOhsJZEP+We64aNFGS+rEoI=
+X-Google-Smtp-Source: APXvYqx9uLv3AKjNMXh8o2nM14+9OREmkWjvv+vjJ506OHuNBd7J91NfhII6MFok41bMysnR+LPtTS6wrujWbwwXazs=
+X-Received: by 2002:a19:98e:: with SMTP id 136mr21118889lfj.27.1572977495201;
+ Tue, 05 Nov 2019 10:11:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC5umyiJT300+MunDi4wwwAgSxiqx7_rersbNRvybcNoo3kGDg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:ac2:4c84:0:0:0:0:0 with HTTP; Tue, 5 Nov 2019 10:11:34 -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <barristerlevi@gmail.com>
+Date:   Tue, 5 Nov 2019 19:11:34 +0100
+Message-ID: <CAEJ6Chcg0_gEvfWVcf4g8D9aMSYYz_zjKJX1r2uMjMOWNhnziQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 12:44:56AM +0900, Akinobu Mita wrote:
-> 2019年11月6日(水) 0:38 Akinobu Mita <akinobu.mita@gmail.com>:
-> >
-> > 2019年11月2日(土) 23:55 Guenter Roeck <linux@roeck-us.net>:
-> > > diff --git a/drivers/nvme/host/nvme-hwmon.c b/drivers/nvme/host/nvme-hwmon.c
-> > > new file mode 100644
-> > > index 000000000000..28b4b7f43bb0
-> > > --- /dev/null
-> > > +++ b/drivers/nvme/host/nvme-hwmon.c
-> > > @@ -0,0 +1,181 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * NVM Express hardware monitoring support
-> > > + * Copyright (c) 2019, Guenter Roeck
-> > > + */
-> > > +
-> > > +#include <linux/hwmon.h>
-> > > +#include <asm/unaligned.h>
-> > > +
-> > > +#include "nvme.h"
-> > > +
-> > > +struct nvme_hwmon_data {
-> > > +       struct nvme_ctrl *ctrl;
-> > > +       struct nvme_smart_log log;
-> > > +       struct mutex read_lock;
-> > > +};
-> > > +
-> > > +static int nvme_hwmon_get_smart_log(struct nvme_hwmon_data *data)
-> > > +{
-> > > +       int ret;
-> > > +
-> > > +       ret = nvme_get_log(data->ctrl, NVME_NSID_ALL, NVME_LOG_SMART, 0,
-> > > +                          &data->log, sizeof(data->log), 0);
-> > > +
-> > > +       return ret <= 0 ? ret : -EIO;
-> > > +}
-> > > +
-> > > +static int nvme_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-> > > +                          u32 attr, int channel, long *val)
-> > > +{
-> > > +       struct nvme_hwmon_data *data = dev_get_drvdata(dev);
-> > > +       struct nvme_smart_log *log = &data->log;
-> > > +       int temp;
-> > > +       int err;
-> > > +
-> > > +       /*
-> > > +        * First handle attributes which don't require us to read
-> > > +        * the smart log.
-> > > +        */
-> > > +       switch (attr) {
-> > > +       case hwmon_temp_max:
-> > > +               *val = (data->ctrl->wctemp - 273) * 1000;
-> > > +               return 0;
-> > > +       case hwmon_temp_crit:
-> > > +               *val = (data->ctrl->cctemp - 273) * 1000;
-> >
-> > This attribute should be 'hwmon_temp_max_alarm' rather than
-> > 'hwmon_temp_crit_alarm'?
-> 
+Hello
 
-Yes, you are correct. Actually, re-reading the specification,
-the bit may also be set for under-temperature alarms, so I'll
-use the more generic hwmon_temp_alarm.
+My name is Joe Akaba I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
-Thanks,
-Guenter
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:joeakaba00@gmail.com
 
-> Oops, I misquoted the code.
-> 
-> This comment should be addressed to the code below:
-> 
-> +       case hwmon_temp_crit_alarm:
-> +               *val = !!(log->critical_warning & NVME_SMART_CRIT_TEMPERATURE);
-> +               break;
+Many thanks in advance,
+Mr.Joe Akaba
+
+
+Hallo
+
+Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8.5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: joeakaba00@gmail.com
+
+Vielen Dank im Voraus,
+Mr.Joe Akaba
