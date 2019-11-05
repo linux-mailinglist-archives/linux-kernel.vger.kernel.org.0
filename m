@@ -2,78 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96605EFC20
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC37BEFC1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388708AbfKELLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 06:11:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18842 "EHLO mga18.intel.com"
+        id S2388400AbfKELL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 06:11:29 -0500
+Received: from mga17.intel.com ([192.55.52.151]:50813 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388494AbfKELLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 06:11:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1730756AbfKELL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 06:11:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 03:11:43 -0800
-X-ExtLoop1: 1
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 03:11:28 -0800
 X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="403317098"
-Received: from zpanjkov-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.3.163])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2019 03:11:29 -0800
-Date:   Tue, 5 Nov 2019 13:11:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>
-Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
-Message-ID: <20191105111057.GA20879@linux.intel.com>
-References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
- <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
- <20191029092920.GA14494@linux.intel.com>
- <20191030093045.GB12481@linux.intel.com>
- <20191031211252.GC10507@linux.intel.com>
+   d="scan'208";a="195785415"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.239.13.123]) ([10.239.13.123])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 05 Nov 2019 03:11:25 -0800
+Subject: Re: [PATCH] KVM: X86: Dynamically allocating MSR number
+ lists(msrs_to_save[], emulated_msrs[], msr_based_features[])
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Chenyi Qiang <chenyi.qiang@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20191105092031.8064-1-chenyi.qiang@intel.com>
+ <8ab7565c-df06-b5a5-d02d-899ba976414b@redhat.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <6ed393eb-6402-ffe2-a652-c4fe51c9d301@intel.com>
+Date:   Tue, 5 Nov 2019 19:11:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031211252.GC10507@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8ab7565c-df06-b5a5-d02d-899ba976414b@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 11:12:52PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Oct 30, 2019 at 02:30:45AM -0700, Sean Christopherson wrote:
-> > Why?  The number of pages processed is effectively returned via the params
-> > on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
-> > And I don't see any reason to add an arbitrary cap on the number of pages,
-> > e.g. SGX plays nice with the scheduler and signals, and restricting the
-> > number of EPC pages available to a process via cgroups (returning -ENOMEM)
-> > is a better solution for managing EPC.
+On 11/5/2019 6:41 PM, Paolo Bonzini wrote:
+> On 05/11/19 10:20, Chenyi Qiang wrote:
+>> The three msr number lists(msrs_to_save[], emulated_msrs[] and
+>> msr_based_features[]) are global arrays of kvm.ko, which are
+>> initialized/adjusted (copy supported MSRs forward to override the
+>> unsupported MSRs) when installing kvm-{intel,amd}.ko, but it doesn't
+>> reset these three arrays to their initial value when uninstalling
+>> kvm-{intel,amd}.ko. Thus, at the next installation, kvm-{intel,amd}.ko
+>> will initialize the modified arrays with some MSRs lost and some MSRs
+>> duplicated.
+>>
+>> So allocate and initialize these three MSR number lists dynamically when
+>> installing kvm-{intel,amd}.ko and free them when uninstalling.
 > 
-> Returning -ENOMEM does not tell you from which page to retry.
+> I don't understand.  Do you mean insmod/rmmod when you say
+> installing/uninstalling? Global data must be reloaded from the ELF file
+> when insmod is executed.
 
-API should be robust enough to be able to cap the amount of data
-processed with or without cgroups like send(), recv(), read() and
-write() are and the call pattern for it must be a loop not a single shot
-call for any megalomaniac length.
+Yes, we mean insmod/rmmod.
+The problem is that these three MSR arrays belong to kvm.ko but not 
+kvm-{intel,amd}.ko. When we rmmod kvm_intel.ko, it does nothing to them.
 
-I'll add @count to address this. This output field will contain the
-number of bytes actually written instead of overwriting input
-parameters, which is a bad practice in anyway.
+> How is the bug reproducible?
 
-We don't need to actually cap to anything but API must be able to
-support such scenario. Caller must be prepared to deal with the
-situation where the return value is zero but @count < @length.
+Suppose there is an intel machine.
 
-/Jarkko
+1. You can first run
+	#rmmod kvm-intel.ko
+	#insmod kvm-intel.ko nested=0
+2. and then
+	#rmmod kvm-intel.ko
+	#insmod kvm-intel.ko nested=1
+
+In step 1, all the vmx-related MSRs in msr_based_features[] are not 
+supported due to nested=0. And it will move MSR_IA32_UCODE_REV and 
+MSR_IA32_ARCH_CAPABILITIES (on my Cascadelake server) forward to 
+override array member 0 and 1 (MSR_IA32_VMX_BASIC and 
+MSR_IA32_VMX_TRUE_PINBASED_CTLS).
+
+In step 2, we just lose MSR_IA32_VMX_BASIC and 
+MSR_IA32_VMX_TRUE_PINBASED_CTLS of VMX and get duplicated 
+MSR_IA32_UCODE_REV and MSR_IA32_ARCH_CAPABILITIES.
+
+> Paolo
+> 
