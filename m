@@ -2,83 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E31EF5A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321AAEF5A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:47:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbfKEGqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:46:55 -0500
-Received: from mail-m972.mail.163.com ([123.126.97.2]:45014 "EHLO
-        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387499AbfKEGqz (ORCPT
+        id S2387663AbfKEGrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:47:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33778 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387421AbfKEGrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:46:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=ykFCQO/BivaoSQgfd6
-        lpCH8QAeQHhZEYyTcon/QvQdY=; b=B1IxgbEPQCTyR8+MZIEfDb08bw1rkRw6AN
-        0HPCCvRt9PM8uKMx62Wbnk8NKi/DC85KFaEEflcBIkeZJ0yq7h2ri9TpaVn9l1VB
-        bsfMi080/jf/xasdsKM2CHwZEykUnKSLKjtUVTPLZvcwF/8RzIjlGjydLHyzOQIe
-        0bUCpM05s=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp2 (Coremail) with SMTP id GtxpCgBnqpPUGsFdAK2lAw--.391S3;
-        Tue, 05 Nov 2019 14:46:49 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Ferruh Yigit <fery@cypress.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] Input: cyttsp4_core: fix use after free bug
-Date:   Tue,  5 Nov 2019 14:46:19 +0800
-Message-Id: <1572936379-6423-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: GtxpCgBnqpPUGsFdAK2lAw--.391S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr1kWFy3KF47Ww1ktw4DXFb_yoW8GrykpF
-        Z8G3s2k3y5Ga18Jw1qqFykZFn8Jw45Ka4rGFsrGwn5ur15Ary0yrn0vrWxKa45ArWkCa4r
-        Wr1avr4UGa4kCaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQ4SwUUUUU=
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZxlkcletw8SDFgAAsA
+        Tue, 5 Nov 2019 01:47:41 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c184so14446497pfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 22:47:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=c8eBVSCLgnx4UHNdOIdUmMHjAPLlK/lRDbaNxZy4A4c=;
+        b=mEPTpthPqrMH5V6gpUyO2MP9vjXUVOG5F+cfT9fHTAvMDsPPnu++Uy0Y/UG1VJn5YB
+         reVqWzhKjLkXKJEVOpPWdARHD0lqj2UqV+m7feK5PILe6moTpRjApPU5kK+I0/R3+RPc
+         1Ng5a7znl+03oVa+3EvpFWPqYHxP5S3K1iv22FgcNrumGnBOOsKrmoRwAwoYfl3p/JKO
+         Yz970pjFTHptsZLlCJ+GJUF/T33U/rERVx4Z+cntj127yJee4y01vFwqsfBQysMyyTmz
+         0GV7j8Bhm+iIW7YG33GDh50N70CaHEuUuf6kqNCOzhYt3AR2Q39VH9eMvy8dt11Gatq3
+         IomQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=c8eBVSCLgnx4UHNdOIdUmMHjAPLlK/lRDbaNxZy4A4c=;
+        b=s+oxdbnQ7DGoQPUHVZxkw9jRTcwldza2R75px4d94K3iikW0VWGI1kdC78IwyNdYkA
+         y6dtUXEHEmQYmnsobyGdG0cClAwDwgRyDDf9yA9RjhDS4zJeF+bTMti8x6rrA0Svbpm5
+         8Uf4h9TomfG2l3veWc1iflqHPtb3OgptlUkSx4vwl7n22GwpeJ0MnRBGDo8860rE8VgW
+         LekE5RP8LX8wDJGORkRL0VZYTpifRZ00FXYdh77FZEzWBMfGGdvMGCr9A9uT8SQkdn4B
+         f76ztod68Jm2GI5XsCESImyrQfFH43Ll4pOkcNjOZpuoNYKEQJTLFnEcADUsQjwyjic0
+         Sskg==
+X-Gm-Message-State: APjAAAUn752JVxj4WvVtzRoEVKfRKGJMknExKmfWyR8h/Fxc/BkIKPTt
+        p8WXBpxtHYAeOyE0wsEiybb3WQ==
+X-Google-Smtp-Source: APXvYqysgFxpzP8+b+00PPJbazsimS6pA5b/uc82/LVtNch0fd3yxbSpRVAafZ4s/JVNEawZcmWuKQ==
+X-Received: by 2002:a17:90a:1089:: with SMTP id c9mr4506695pja.8.1572936460366;
+        Mon, 04 Nov 2019 22:47:40 -0800 (PST)
+Received: from localhost ([122.171.110.253])
+        by smtp.gmail.com with ESMTPSA id q184sm19465254pfc.111.2019.11.04.22.47.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Nov 2019 22:47:39 -0800 (PST)
+Date:   Tue, 5 Nov 2019 12:17:35 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     David Binderman <dcb314@hotmail.com>
+Cc:     "mmayer@broadcom.com" <mmayer@broadcom.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: drivers/cpufreq/brcmstb-avs-cpufreq.c:449: bad test ?
+Message-ID: <20191105064735.t6qiz2kc266em7vi@vireshk-i7>
+References: <DB7PR08MB38017C35D2B5E025804338129C660@DB7PR08MB3801.eurprd08.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DB7PR08MB38017C35D2B5E025804338129C660@DB7PR08MB3801.eurprd08.prod.outlook.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device md->input is used after it is released. Setting the device
-data to NULL is unnecessary as the device is never used again. Instead,
-md->input should be assigned NULL to avoid accessing the freed memory
-accidently. Besides, checking md->si against NULL is superfluous as it
-points to a variable address, which cannot be NULL.
+On 28-10-19, 15:18, David Binderman wrote:
+> Hello there,
+> 
+> drivers/cpufreq/brcmstb-avs-cpufreq.c:449:61: warning: logical ‘or’ of collectively exhaustive tests is always true [-Wlogical-op]
+> 
+> Source code is
+> 
+>     return (magic == AVS_FIRMWARE_MAGIC) && ((rc != -ENOTSUPP) ||
+>         (rc != -EINVAL));
+> 
+> Maybe better code:
+> 
+>     return (magic == AVS_FIRMWARE_MAGIC) && (rc != -ENOTSUPP) &&
+>         (rc != -EINVAL);
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- drivers/input/touchscreen/cyttsp4_core.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Right. Care to send a proper patch for this ?
 
-diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
-index 4b22d49a0f49..2cd5f835665e 100644
---- a/drivers/input/touchscreen/cyttsp4_core.c
-+++ b/drivers/input/touchscreen/cyttsp4_core.c
-@@ -1990,11 +1990,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
- 
- 	/* get sysinfo */
- 	md->si = &cd->sysinfo;
--	if (!md->si) {
--		dev_err(dev, "%s: Fail get sysinfo pointer from core p=%p\n",
--			__func__, md->si);
--		goto error_get_sysinfo;
--	}
- 
- 	rc = cyttsp4_setup_input_device(cd);
- 	if (rc)
-@@ -2004,8 +1999,7 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
- 
- error_init_input:
- 	input_free_device(md->input);
--error_get_sysinfo:
--	input_set_drvdata(md->input, NULL);
-+	md->input = NULL;
- error_alloc_failed:
- 	dev_err(dev, "%s failed.\n", __func__);
- 	return rc;
 -- 
-2.7.4
-
+viresh
