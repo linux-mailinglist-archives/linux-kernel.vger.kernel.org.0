@@ -2,152 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7688BEF5C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F138EF5B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387620AbfKEGwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:52:55 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:35312 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfKEGwy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:52:54 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA56pVfq180392;
-        Tue, 5 Nov 2019 06:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=gTy58HMsZTBRLpQM3pQyloVPDJUmqS00HB111ETBoQk=;
- b=qYc2TJeP+sc79NSM3dM7IkWIeg51zK2moBUOvwZM1QDaYwWpTsVY7116Xb6c0agbf9pp
- 7XHLty3B6nuio8s5aI1zk0qjzha+iwiHzDz2QkUOK5Ft80kq94a1wki3py3YFvSuMadt
- soJ+RmxarLQbTq2uazgIdtX8U44/fc8gYm9RYxLzlep6D84MNWgNKMi00lbR2M3g+tWB
- pmxzZiISHPamaEkrFUcs0V86SX4/d65yLme2B3VQCEMqFUu0M1BXc+B4G4J0GKgBCfpP
- 93DXE8EVgsyeKM7EsVWYPSWF9A03t0VcfDlbzUGzlGDp9tvi45MIvspuLbaeCiTQU4GU cA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2w11rpv3c9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 06:52:35 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA56oRDl173370;
-        Tue, 5 Nov 2019 06:50:35 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2w2wchb6r9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 06:50:33 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA56nQBm028096;
-        Tue, 5 Nov 2019 06:49:26 GMT
-Received: from [192.168.0.4] (/139.215.143.17)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Nov 2019 22:49:25 -0800
-Subject: Re: [PATCH 5/5] cpuidle-haltpoll: fix up the branch check
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        joao.m.martins@oracle.com, rafael.j.wysocki@intel.com,
-        rkrcmar@redhat.com, pbonzini@redhat.com
-References: <1572060239-17401-1-git-send-email-zhenzhong.duan@oracle.com>
- <1572060239-17401-6-git-send-email-zhenzhong.duan@oracle.com>
- <20191101212613.GB20672@amt.cnet>
- <bafc1688-02ea-77a4-fb1c-2fe6afa8a7cc@oracle.com>
- <20191104150103.GA14887@amt.cnet>
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <b7c33ed5-799b-51a0-b35b-86d979a7ad6c@oracle.com>
-Date:   Tue, 5 Nov 2019 14:49:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191104150103.GA14887@amt.cnet>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911050054
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911050054
+        id S2387627AbfKEGtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:49:50 -0500
+Received: from mga02.intel.com ([134.134.136.20]:10735 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbfKEGtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 01:49:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2019 22:49:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,270,1569308400"; 
+   d="scan'208";a="204878425"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by orsmga003.jf.intel.com with ESMTP; 04 Nov 2019 22:49:45 -0800
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v3 0/2] pinctrl: Add new pinctrl/GPIO driver
+Date:   Tue,  5 Nov 2019 14:49:41 +0800
+Message-Id: <cover.1572926608.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-On 2019/11/4 23:01, Marcelo Tosatti wrote:
-> On Mon, Nov 04, 2019 at 11:10:25AM +0800, Zhenzhong Duan wrote:
->> On 2019/11/2 5:26, Marcelo Tosatti wrote:
->>> On Sat, Oct 26, 2019 at 11:23:59AM +0800, Zhenzhong Duan wrote:
->>>> Ensure pool time is longer than block_ns, so there is a margin to
->>>> avoid vCPU get into block state unnecessorily.
->>>>
->>>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
->>>> ---
->>>>   drivers/cpuidle/governors/haltpoll.c | 6 +++---
->>>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
->>>> index 4b00d7a..59eadaf 100644
->>>> --- a/drivers/cpuidle/governors/haltpoll.c
->>>> +++ b/drivers/cpuidle/governors/haltpoll.c
->>>> @@ -81,9 +81,9 @@ static void adjust_poll_limit(struct cpuidle_device *dev, unsigned int block_us)
->>>>   	u64 block_ns = block_us*NSEC_PER_USEC;
->>>>   	/* Grow cpu_halt_poll_us if
->>>> -	 * cpu_halt_poll_us < block_ns < guest_halt_poll_us
->>>> +	 * cpu_halt_poll_us <= block_ns < guest_halt_poll_us
->>>>   	 */
->>>> -	if (block_ns > dev->poll_limit_ns && block_ns <= guest_halt_poll_ns) {
->>>> +	if (block_ns >= dev->poll_limit_ns && block_ns < guest_halt_poll_ns) {
->>> 					      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>
->>> If block_ns == guest_halt_poll_ns, you won't allow dev->poll_limit_ns to
->>> grow. Why is that?
->> Maybe I'm too strict here. My understanding is: if block_ns = guest_halt_poll_ns,
->> dev->poll_limit_ns will grow to guest_halt_poll_ns,
-> OK.
->
->> then block_ns = dev->poll_limit_ns,
-> block_ns = dev->poll_limit_ns = guest_halt_poll_ns. OK.
->
->> there is not a margin to ensure poll time is enough to cover the equal block time.
->> In this case, shrinking may be a better choice?
-> Ok, so you are considering _on the next_ halt instance, if block_ns =
-> guest_halt_poll_ns again?
-Yes, I realized it's rarely to happen in nanosecond granularity.
->
-> Then without the suggested modification: we don't shrink, poll for
-> guest_halt_poll_ns again.
->
-> With your modification: we shrink, because block_ns ==
-> guest_halt_poll_ns.
->
-> IMO what really clarifies things here is either the real sleep pattern
-> or a synthetic sleep pattern similar to the real thing.
-Agree
->
-> Do you have a scenario where the current algorithm is maintaining
-> a low dev->poll_limit_ns and performance is hurt?
->
-> If you could come up with examples, such as the client/server pair at
-> https://lore.kernel.org/lkml/20190514135022.GD4392@amt.cnet/T/
->
-> or just a sequence of delays:
-> block_ns, block_ns, block_ns-1,...
->
-> It would be easier to visualize this.
+This series is to add pinctrl & GPIO controller driver for a new SoC.
+Patch 1 adds pinmux & GPIO controller driver.
+Patch 2 adds the corresponding dt bindings YAML document.
 
-Looks hard to generate a sequence of delays of same value in nanoseconds 
-which is also CPU cycle granularity.
+Patches are against Linux 5.4-rc1 at below Git tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
 
-I think this patch doesn't help much for a real scenario, so pls ignore it.
+v3:
+- Add locking for GPIO IRQ ops.
+- Fix property naming mistake in dt bindings document.
+- Address other code quality related review concerns.
+- Fix a build error reported by kbuild test robot.
+- Remove deleted structure fields from comments.
 
-Thanks
+v2:
+- Enable GENERIC_PINMUX_FUNCTIONS & GENERIC_PINCTRL_GROUPS and use core
+  provided code for pinmux_ops & pinctrl_ops. Remove related code from
+  the driver.
+- Enable GENERIC_PINCONF & use core provided pinconf code. Remove related
+  code from the driver.
+- Use GPIOLIB_IRQCHIP framework core code instead of implementing separtely
+  in the driver.
+- Enable GPIO_GENERIC and switch to core provided memory mapped GPIO banks
+  design. 
+- Use standard pinctrl DT properties instead of custom made properties.
+- Address review concerns for dt bindings document.
+- Address code quality related review concerns.
 
-Zhenzhong
+v1:
+- Initial version.
 
+
+
+
+Rahul Tanwar (2):
+  pinctrl: Add pinmux & GPIO controller driver for a new SoC
+  dt-bindings: pinctrl: intel: Add for new SoC
+
+ .../bindings/pinctrl/intel,lgm-pinctrl.yaml        | 114 +++
+ drivers/pinctrl/Kconfig                            |  18 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-equilibrium.c              | 964 +++++++++++++++++++++
+ drivers/pinctrl/pinctrl-equilibrium.h              | 141 +++
+ 5 files changed, 1238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/pinctrl-equilibrium.c
+ create mode 100644 drivers/pinctrl/pinctrl-equilibrium.h
+
+-- 
+2.11.0
 
