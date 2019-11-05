@@ -2,124 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B97F027B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D198F028F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:23:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390117AbfKEQUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:20:44 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33522 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389760AbfKEQUn (ORCPT
+        id S2390189AbfKEQXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:23:15 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:58514 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389986AbfKEQXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:20:43 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c184so15906638pfb.0;
-        Tue, 05 Nov 2019 08:20:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZPVzr1zF8FoSavwzywDNDMaLZfpRZ21grLGFJWRaQIU=;
-        b=Z2Z8MtYGi373NNAWDZz42HeMuGe7BEJkMfI30Qyj50jQnSlcVYc85z4f4nH35KIcru
-         pFYdzrPtkPxWJaIeXkHw3mhsE/OLQSxoZglyhJDnmpZn7/e0OeIqCItP1vDMu5LY02hD
-         O8Ip8VY7PnkU9Ng0mb/VQl/+vzlPrAsaEMCrvVEf7YQ2k8rs0XYkEfBd2g9frV8GrmWR
-         gHC0yGQ0H58nS/5AB5+QnzwWZst5eY5+8whiffDUVTASowbRXKWalL11eiUUNojm+XCe
-         85qU152zCeNNi/J/AIaBFW7vL9ZEoMkJ1uBEgNu+j4mZEoLZLZxVev0j/Jlb9/7We7MK
-         Ckuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZPVzr1zF8FoSavwzywDNDMaLZfpRZ21grLGFJWRaQIU=;
-        b=Vj8L02A1McMsNW5pr2nuqAnz5pfM0NZIdvU/L5BDPx42jN/NhAayGdBj24/aC523GH
-         4zfmbnYTmdAe6eYH++W0qqnmOyFIWGE5Gke199Woaj/rPsXIoyUoHmpLFoSRGIotTEhA
-         YGVfCTX4OtOmo79OzW72mXI9mtpO7Xx5l/eNrAMRH0rTHIRSyrz9HxCGR5Vev+vivBix
-         ImmWnRyb40A2Ey7EAu3dM9uLKzp6roKAKHIeiDBGfPJZRAd/n36qmjqZc3n9r6eiWSOB
-         UJxvF3eAVVPjSjUwQicg09Ex1EGVdUVgsGdpV4pwAw86/DjXfheQSf3epWkaC7Lc7Hqx
-         bqVg==
-X-Gm-Message-State: APjAAAXp6PGh7frt1Olm92VPxpuZAf+W4NMiliMRfFpAxNkp+wSLt2rE
-        JxWp0xdL9kKYv7mFp2vSXqg=
-X-Google-Smtp-Source: APXvYqyFwAsiCDt6AGENcB7yeqqnr/v5aOegQz2usIGj2+tHe7XeVZpvQBweyYpsJ6cneMn6zCf/zw==
-X-Received: by 2002:a63:f94f:: with SMTP id q15mr17430362pgk.412.1572970841275;
-        Tue, 05 Nov 2019 08:20:41 -0800 (PST)
-Received: from workstation ([139.5.253.184])
-        by smtp.gmail.com with ESMTPSA id f2sm17765272pfg.48.2019.11.05.08.20.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 08:20:39 -0800 (PST)
-Date:   Tue, 5 Nov 2019 21:50:32 +0530
-From:   Amol Grover <frextrite@gmail.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     paulmck@kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>, rcu@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] Documentation: RCU: whatisRCU: Fix formatting for
- section 2
-Message-ID: <20191105162032.GA10619@workstation>
-References: <20191104133315.GA14499@workstation-kernel-dev>
- <20191104150328.GZ20975@paulmck-ThinkPad-P72>
- <20191104171641.GA15217@workstation-kernel-dev>
- <20191104194528.GJ20975@paulmck-ThinkPad-P72>
- <dc5570d4-26bf-59ab-76bb-79490dde2369@linuxfoundation.org>
+        Tue, 5 Nov 2019 11:23:13 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iS1bp-0001q9-KI; Tue, 05 Nov 2019 17:23:09 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, lorenzo.pieralisi@arm.com,
+        Andrew.Murray@arm.com, yuzenghui@huawei.com,
+        Heyi Guo <guoheyi@huawei.com>
+Subject: [PATCH 00/11] irqchip/gic-v3-its: Cleanup and fixes for Linux 5.5
+Date:   Tue,  5 Nov 2019 16:22:47 +0000
+Message-Id: <20191105162258.22214-1-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc5570d4-26bf-59ab-76bb-79490dde2369@linuxfoundation.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, Andrew.Murray@arm.com, yuzenghui@huawei.com, guoheyi@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 07:52:59AM -0700, Shuah Khan wrote:
-> Hi Amol,
-> 
-> On 11/4/19 12:45 PM, Paul E. McKenney wrote:
-> > On Mon, Nov 04, 2019 at 10:46:41PM +0530, Amol Grover wrote:
-> > > On Mon, Nov 04, 2019 at 07:03:28AM -0800, Paul E. McKenney wrote:
-> > > > On Mon, Nov 04, 2019 at 07:03:15PM +0530, Amol Grover wrote:
-> > > > > Convert RCU API method text to sub-headings and
-> > > > > add hyperlink and superscript to 2 literary notes
-> > > > > under rcu_dereference() section
-> > > > > 
-> > > > > Signed-off-by: Amol Grover <frextrite@gmail.com>
-> > > > 
-> > > > Good stuff, but Phong Tran beat you to it.  If you are suggesting
-> > > > changes to that patch, please send a reply to her email, which
-> > > > may be found here:
-> > > > 
-> 
-> Please do a review and send comments and suggestions in an email
-> instead of a patch.
+Hi all,
 
-Hi Shuah,
+This series is a mix of early GICv4.1 cleanups, fixes coming out of
+discussions with Zenghui Yu, and a couple of stashed bug fixes that I
+recently rediscovered (oops).
 
-Sure thing! I'll do a review and send in the suggestions.
+Hopefully nothing controvertial here, but please shout if you think
+anything looks wrong. I've given it a good shake on my D05, and
+everything was great (until the SSD containing the home directories
+decided it had enough with life and everything ground to a halt).
 
-> 
-> > > > https://lore.kernel.org/lkml/20191030233128.14997-1-tranmanphong@gmail.com/
-> > > > 
-> > > > There are several options for replying to this email listed at the
-> > > > bottom of that web page.
-> > > 
-> > > Thank you Paul! And that is correct, I was suggesting changes to
-> > > that patch. However, since that patch was already integrated into
-> > > the `dev` branch, I mistakenly believed this patch could be sent
-> > > independently. Sorry for the trouble, I'll re-send the patch the
-> > > correct way.
-> > 
-> 
-> Please drop your patch and do a review for the patch as suggested by
-> Paul. This should have been a review and not a patch on top.
+As $SUBJECT says, I plan to take this into 5.5.
 
-Noted. Will definitely keep this in mind the next time.
+Thanks,
 
-Thank you
-Amol
+	M.
 
-> 
-> thanks,
-> -- Shuah
+Marc Zyngier (11):
+  irqchip/gic-v3-its: Free collection mapping on device teardown
+  irqchip/gic-v3-its: Factor out wait_for_syncr primitive
+  irqchip/gic-v3-its: Allow LPI invalidation via the DirectLPI interface
+  irqchip/gic-v3-its: Make is_v4 use a TYPER copy
+  irqchip/gic-v3-its: Kill its->ite_size and use TYPER copy instead
+  irqchip/gic-v3-its: Kill its->device_ids and use TYPER copy instead
+  irqchip/gic-v3-its: Add its_vlpi_map helpers
+  irqchip/gic-v3-its: Synchronise INV command targetting a VLPI using
+    VSYNC
+  irqchip/gic-v3-its: Synchronise INT/CLEAR commands targetting a VLPI
+    using VSYNC
+  irqchip/gic-v3-its: Lock VLPI map array before translating it
+  irqchip/gic-v3-its: Make vlpi_lock a spinlock
+
+ drivers/irqchip/irq-gic-v3-its.c   | 288 ++++++++++++++++++++++-------
+ include/linux/irqchip/arm-gic-v3.h |   4 +-
+ 2 files changed, 224 insertions(+), 68 deletions(-)
+
+-- 
+2.20.1
+
