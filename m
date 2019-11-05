@@ -2,118 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DD9F0116
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:20:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4702EF00E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389824AbfKEPUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:20:14 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41788 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389386AbfKEPUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:20:14 -0500
-Received: by mail-pg1-f193.google.com with SMTP id l3so14430205pgr.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 07:20:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=4knTl1jsJDuMainkSHY+5ZG6p+2SnQH1xWJ5/mQLZcc=;
-        b=DjIPeMXW32l5fRqhcF/hEw9KGRzv0na04clJGjRNUHPMDnhcD3TsmsKSwyjh+w/6sQ
-         PTAqM9sTWDUSi6tZrUkRd13QgbMTNVRPQlqdW+1hhLVpk9FmJHl8J6cSMn/Mway2kCWz
-         MJm6ZtryFrevQ+LCFRayk+JyZnFlnyxIgQZD2+1CxTk2zLzkpHX0WenqGSA5OAR0vNLJ
-         vGJ8Nob1RDlf/duriZT/QO02e/vLPDCDiLWW63O8ik1SD8GufmRrU1jjAolUO1dJiToY
-         jI2ZBWJGQxv6FDn+WE71NE1f+THhy/OGWe2P+plmcPg7d6M/DmrAToeVoM6Dzo/qyyJR
-         LmVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=4knTl1jsJDuMainkSHY+5ZG6p+2SnQH1xWJ5/mQLZcc=;
-        b=CyiEJ/s+rNVL+Xg9jV8qDvvQwesYWW8nDzn1U2l0e+IcRxARz6ANy1wtlZAmtG4rYt
-         5eJK/Gqy0056wIkmnPMxyJLXc46+5EhSabq/nzefKC+YiJaRZP6JRASt80Uc1ThtHzqz
-         PuGVMReG8Fx6Ev251r/An8yIMJVyS24wyhALhA1WGJDixrYrY7K5kk62j5vek9jOcYWA
-         0g6IduC5I58yv8luWCmRrnfjvuxi+6VvjjsmKJudyNJownjuuco7s1Pwn+z1Q3mUNbG3
-         TJa44PXVZEJfNoRXHUNrU+uz3N2OcfLztO9JnJ936sYufkjyOsG9lgZiFxdbrJkyEnb4
-         xvMg==
-X-Gm-Message-State: APjAAAWHdALI6i87YfKFqhlHhJkYjtzlJyfjIqU/bQQM2yHkV2wEeOYk
-        2vk4PVbF+Ugp4P+ydNzhIaihrw==
-X-Google-Smtp-Source: APXvYqwngaEbIGV2C3ll19WybcLW+UHBVqY0ruQKQmcGOlj8LAdvhzyLZLrbbYkv25c+m4rL0C7yWw==
-X-Received: by 2002:a62:1dc6:: with SMTP id d189mr20322264pfd.100.1572967212046;
-        Tue, 05 Nov 2019 07:20:12 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id h8sm149633pjp.1.2019.11.05.07.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 07:20:11 -0800 (PST)
-Subject: Re: [PATCH v15 0/4] overlayfs override_creds=off & nested get xattr
- fix
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-References: <20191104215253.141818-1-salyzyn@android.com>
- <CAOQ4uxhoozGgxYmucFpFx8N=b4x9H3sfp60TNzf0dmU9eQi2UQ@mail.gmail.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <97c4108f-3a9b-e58b-56e0-dfe2642cc1f5@android.com>
-Date:   Tue, 5 Nov 2019 07:20:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2389816AbfKEPOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:14:04 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36260 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389083AbfKEPOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:14:03 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3702BBDD1F94A57917F7;
+        Tue,  5 Nov 2019 23:13:57 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 5 Nov 2019 23:13:48 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <ruxandra.radulescu@nxp.com>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] dpaa2-ptp: fix compile error
+Date:   Tue, 5 Nov 2019 23:20:32 +0800
+Message-ID: <1572967232-96724-1-git-send-email-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxhoozGgxYmucFpFx8N=b4x9H3sfp60TNzf0dmU9eQi2UQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/19 11:56 PM, Amir Goldstein wrote:
-> On Mon, Nov 4, 2019 at 11:53 PM Mark Salyzyn <salyzyn@android.com> wrote:
->> Patch series:
->>
->> Mark Salyzyn (4):
->>    Add flags option to get xattr method paired to __vfs_getxattr
-> Sigh.. did not get to fsdevel (again...) I already told you several times
-> that you need to use a shorter CC list.
+From: Chenwandun <chenwandun@huawei.com>
 
-This is a direct result of the _required_ scripts/get_maintainer.pl 
-logic, I am not going to override it for first send. I was going to 
-forward to fsdevel after the messages settled, I am still waiting for 
-1/4 to land on lore before continuing.
+phylink_set_port_modes will be compiled if CONFIG_PHYLINK enabled,
+dpaa2_mac_validate will be compiled if CONFIG_FSL_DPAA2_ETH enabled,
+it should select CONFIG_PHYLINK when dpaa2_mac_validate call
+phylink_set_port_modes
 
-The first patch in the series needs to get in before the others. I was 
-told to send the first one individually because the series has so many 
-recipients and stakeholders, and <crickets> because no on could see the 
-reason for the patch once it was all by itself. So I rejoined the set so 
-they could see the reason for the first patch.
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_validate':
+dpaa2-mac.c:(.text+0x3a1): undefined reference to `phylink_set_port_modes'
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_connect':
+dpaa2-mac.c:(.text+0x91a): undefined reference to `phylink_create'
+dpaa2-mac.c:(.text+0x94e): undefined reference to `phylink_of_phy_connect'
+dpaa2-mac.c:(.text+0x97f): undefined reference to `phylink_destroy'
+drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.o: In function `dpaa2_mac_disconnect':
+dpaa2-mac.c:(.text+0xa9f): undefined reference to `phylink_disconnect_phy'
+dpaa2-mac.c:(.text+0xab0): undefined reference to `phylink_destroy'
+make: *** [vmlinux] Error 1
+---
+ drivers/net/ethernet/freescale/dpaa2/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-If only the first patch in the series that added the flag argument got 
-in (somewhere), then the overlayfs portion would be much easier to handle.
-
->>    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
->>    overlayfs: internal getxattr operations without sepolicy checking
->>    overlayfs: override_creds=off option bypass creator_cred
-> It would be better for review IMO if you rebase your series on top of
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git ovl-unpriv
-Will do, send it only to fsdevel, other recipients? What do I do with 
-get_maintainer.pl? The first patch in the series is noisy, I am getting 
-more and more uncomfortable sending it to the list as it looks more and 
-more like spam.
-> 1. internal getxattr patch would be a one liner change to ovl_own_getxattr()
-> 2. The documentation of override_creds would be much more
-> meaningful if it used the overlay permission model terminology
-> that Miklos added in his patch set and extend it
->
-> Thanks,
-> Amir.
-
--- Mark
+diff --git a/drivers/net/ethernet/freescale/dpaa2/Kconfig b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+index fbef282..c6fb8e4 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/Kconfig
++++ b/drivers/net/ethernet/freescale/dpaa2/Kconfig
+@@ -2,6 +2,7 @@
+ config FSL_DPAA2_ETH
+ 	tristate "Freescale DPAA2 Ethernet"
+ 	depends on FSL_MC_BUS && FSL_MC_DPIO
++	select PHYLINK
+ 	help
+ 	  This is the DPAA2 Ethernet driver supporting Freescale SoCs
+ 	  with DPAA2 (DataPath Acceleration Architecture v2).
+-- 
+2.7.4
 
