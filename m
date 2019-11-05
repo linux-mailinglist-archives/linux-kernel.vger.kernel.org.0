@@ -2,331 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 870D0EF9FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 417AFEFA05
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388060AbfKEJtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:49:24 -0500
-Received: from mga14.intel.com ([192.55.52.115]:51083 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387867AbfKEJtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:49:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 01:49:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,270,1569308400"; 
-   d="scan'208";a="403294797"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2019 01:49:18 -0800
-Received: from andy by smile with local (Exim 4.93-RC1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1iRvSf-0007At-CI; Tue, 05 Nov 2019 11:49:17 +0200
-Date:   Tue, 5 Nov 2019 11:49:17 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
-Subject: Re: [PATCH v3 1/2] pinctrl: Add pinmux & GPIO controller driver for
- a new SoC
-Message-ID: <20191105094917.GK32742@smile.fi.intel.com>
-References: <cover.1572926608.git.rahul.tanwar@linux.intel.com>
- <02558966005c0483144785ed069b144f81d209a9.1572926608.git.rahul.tanwar@linux.intel.com>
+        id S1730807AbfKEJtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:49:42 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54946 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730722AbfKEJtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 04:49:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z26so6899874wmi.4
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:49:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oRi35sDRRYSuldGaopElz5IjGs2HKuOAcqpcVoq2wdY=;
+        b=KE3dP9KvcLUq0hJbOhSYMXJr4Z1Cuc2Vc3sYtj3A588K1AxiPBhNRv2jLPVvg3HpiB
+         asO9jGRsCrrAGrGXQuynbnaqIOtPdku/48txDbkC3jyEv0zbAYA99l9MmTsEF4lXmu4c
+         UlGTi/e9P81uVhAoSbMh6OU7HFW5tO869wbeU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=oRi35sDRRYSuldGaopElz5IjGs2HKuOAcqpcVoq2wdY=;
+        b=hTgCYSpxRsLrsqpO1O5rYiWpKlpzWS1+bn6dVGuSF5sPgS1SQjyEWHBxBqExpx0h0f
+         0UAxz7wgKYDYc0jIG21vHFa0dOgTTd3h/IP2mjnC4fFaVxAMSmwole8vwlxPXcNwX49e
+         fRZHZNMlnPdSOaXNxTYA+W5m4EehNH1nC1CW/ndhPe5Zo5NPL5X6XiFlVpxH6BMowwBK
+         1Cp5JTd28eghbzFoiM2goVlVzJUiEmlW1VXVHHZYUvpR2kSuVMCAFtK1T+scRHI9nOpw
+         UKI+QwuJzhvtlLAB+c4LFdj+2JPlubuXYLOPQbYoBF+kyxVexb20A1m3vzrNhWNUfufa
+         SedQ==
+X-Gm-Message-State: APjAAAXxJ0Vj8Bnk6PO4ZyYhKPRf8B0ufER/y3oNicaYa4R5rUL6tq9S
+        qVRRal4iXspYCBYuS9FtbWM4iw==
+X-Google-Smtp-Source: APXvYqy+m+ZJ5zxOn/Dji3l65qB+TEfMmH5EiR/oP/iFPjGmYGokusjpTK+YoOlM7MNeuKLe8vHIRQ==
+X-Received: by 2002:a7b:c925:: with SMTP id h5mr3591415wml.115.1572947379914;
+        Tue, 05 Nov 2019 01:49:39 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id j19sm25704277wre.0.2019.11.05.01.49.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 01:49:39 -0800 (PST)
+Date:   Tue, 5 Nov 2019 10:49:36 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/19] drm/via: set FOLL_PIN via pin_user_pages_fast()
+Message-ID: <20191105094936.GZ10326@phenom.ffwll.local>
+Mail-Followup-To: John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+ <20191030224930.3990755-10-jhubbard@nvidia.com>
+ <20191031233628.GI14771@iweiny-DESK2.sc.intel.com>
+ <20191104181055.GP10326@phenom.ffwll.local>
+ <48d22c77-c313-59ff-4847-bc9a9813b8a7@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02558966005c0483144785ed069b144f81d209a9.1572926608.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <48d22c77-c313-59ff-4847-bc9a9813b8a7@nvidia.com>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 02:49:42PM +0800, Rahul Tanwar wrote:
-> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
-> controls pin multiplexing & configuration including GPIO functions selection &
-> GPIO attributes configuration.
+On Mon, Nov 04, 2019 at 11:20:38AM -0800, John Hubbard wrote:
+> On 11/4/19 10:10 AM, Daniel Vetter wrote:
+> > On Thu, Oct 31, 2019 at 04:36:28PM -0700, Ira Weiny wrote:
+> >> On Wed, Oct 30, 2019 at 03:49:20PM -0700, John Hubbard wrote:
+> >>> Convert drm/via to use the new pin_user_pages_fast() call, which sets
+> >>> FOLL_PIN. Setting FOLL_PIN is now required for code that requires
+> >>> tracking of pinned pages, and therefore for any code that calls
+> >>> put_user_page().
+> >>>
+> >>
+> >> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > No one's touching the via driver anymore, so feel free to merge this
+> > through whatever tree suits best (aka I'll drop this on the floor and
+> > forget about it now).
+> > 
+> > Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > 
 > 
-> This IP is not based on & does not have anything in common with Chassis
-> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
-> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
-> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
-> 
-> Add a new GPIO & pin control framework based driver for this IP.
-
-> +static void eqbr_set_val(void __iomem *addr, u32 offset,
-
-> +			 u32 mask, u32 set, raw_spinlock_t *lock)
-
-This lock parameter is quite unusual. Can't you supply a pointer to a data
-structure which has lock along with MMIO address?
-
-> +{
-> +	u32 val;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(lock, flags);
-
-> +	mask = mask << offset;
-
-Same Q. Why do you need these...
-
-> +	val = readl(addr);
-
-> +	val = (val & ~mask) | ((set << offset) & mask);
-
-...offset shifts? It's unusual.
-
-> +	writel(val, addr);
-> +	raw_spin_unlock_irqrestore(lock, flags);
-> +}
-
-> +static int gpiochip_setup(struct device *dev, struct eqbr_gpio_desc *desc)
-> +{
-> +	struct gpio_irq_chip *girq;
-> +	struct gpio_chip *gc;
-
-> +#if defined(CONFIG_OF_GPIO)
-> +	gc->of_node = desc->node;
-> +#endif
-
-Isn't it what GPIO library does for everybody?
-
-> +
-> +	if (!of_property_read_bool(desc->node, "interrupt-controller")) {
-
-> +		dev_info(dev, "gc %s: doesn't act as interrupt controller!\n",
-> +			 desc->name);
-
-Is it fatal or non-fatal?
-
-> +		return 0;
-
-Ditto.
-
-> +	}
-
-> +}
-
-> +static int gpiolib_reg(struct eqbr_pinctrl_drv_data *drvdata)
-> +{
-> +	struct device_node *np;
-
-> +	struct eqbr_gpio_desc *desc;
-
-desc is very confusing here, since GPIO library uses this term for GPIO
-descriptors.
-
-> +	struct device *dev;
-> +	int i, ret;
-> +	struct resource res;
-> +
-
-> +		ret = bgpio_init(&desc->chip, dev, desc->bank->nr_pins/8,
-
-'nr_pins / 8,'
-
-> +				 desc->membase + GPIO_IN,
-> +				 desc->membase + GPIO_OUTSET,
-> +				 desc->membase + GPIO_OUTCLR,
-> +				 desc->membase + GPIO_DIR,
-> +				 NULL,
-> +				 0);
-> +		if (ret) {
-> +			dev_err(dev, "unable to init generic GPIO\n");
-> +			return ret;
-> +		}
-
-> +	return 0;
-> +}
-
-> +static int eqbr_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> +			       unsigned int selector, unsigned int group)
-> +{
-> +	struct eqbr_pinctrl_drv_data *pctl = pinctrl_dev_get_drvdata(pctldev);
-> +	struct function_desc *func;
-> +	struct group_desc *grp;
-> +	unsigned int *pinmux;
-> +	int i;
-
-
-> +	pinmux = grp->data;
-> +	for (i = 0; i < grp->num_pins; i++)
-> +		eqbr_set_pin_mux(pctl, pinmux[i], grp->pins[i]);
-
-Shouldn't be this part serialized?
-
-Same Q to all similar places. I guess I already mentioned this in previous
-review.
-
-> +	return 0;
-> +}
-
-> +static int is_func_exist(struct eqbr_pmx_func *funcs, const char *name,
-
-Looks like it better to be boolean.
-
-> +			 unsigned int nr_funcs, unsigned int *idx)
-> +{
-> +	int i;
-> +
-> +	if (!funcs || !nr_funcs)
-> +		return 0;
-> +
-> +	for (i = 0; i < nr_funcs; i++) {
-
-> +
-
-Redundant blank line.
-
-> +		if (funcs[i].name && (strcmp(funcs[i].name, name) == 0) ) {
-> +			*idx = i;
-> +			return 1;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-> +static int funcs_utils(struct device *dev, struct eqbr_pmx_func *funcs,
-> +		       unsigned int *nr_funcs, funcs_util_ops op)
-> +{
-> +	struct device_node *node = dev->of_node;
-> +	struct device_node *np;
-> +	struct property *prop;
-> +	unsigned int fid;
-> +	const char *fn_name;
-> +	int i, j;
-> +
-> +	i = 0;
-> +	for_each_child_of_node(node, np) {
-> +		prop = of_find_property(np, "groups", NULL);
-
-> +		if (prop) {
-
-Why not
-		if (!prop)
-			continue;
-?
-
-> +			if (of_property_read_string(np, "function",
-> +						    &fn_name)) {
-
-It's perfectly one line. Perhaps you may need to configure your text editor.
-
-> +			}
-
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-> +	for (i=0; i < nr_funcs; i++) {
-
-The better style is 'i = 0' and so on.
-Simple be consistent. Or do everywhere 'i=0; i<nr_func; i++', etc. But remember
-that this is for sure will be declined by most of the maintainers.
-
-> +	}
-
-> +static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
-> +{
-> +	struct device *dev = drvdata->dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct device_node *np;
-> +	struct property *prop;
-> +	int j, err;
-> +	unsigned int *pinmux, pin_id, pinmux_id;
-> +	struct group_desc group;
-> +
-> +	for_each_child_of_node(node, np) {
-> +		prop = of_find_property(np, "groups", NULL);
-
-> +		if (prop) {
-
-	if (!prop)
-		continue;
-
-	?
-
-> +		}
-> +		memset(&group, 0, sizeof(group));
-> +		pinmux = NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-
-> +static int pinbank_init(struct device_node *np,
-> +			struct eqbr_pinctrl_drv_data *drvdata,
-> +			struct eqbr_pin_bank *bank, unsigned int id)
-> +{
-> +	struct device *dev = drvdata->dev;
-> +	struct of_phandle_args spec;
-> +
-> +	bank->membase = drvdata->membase + id * PAD_REG_OFF;
-> +
-
-> +	if (of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &spec)) {
-> +		dev_err(dev, "gpio-range not available!\n");
-
-> +		return -EFAULT;
-
-Shadowing error code with actually unsuitable one.
-
-> +	}
-
-> +	return 0;
-> +}
-
-> +	int i=0, nr_gpio=0;
-
-Style.
-Besides the fact that better to put assignments closer to their usage.
-
-> +static int eqbr_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct eqbr_pinctrl_drv_data *drvdata;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata)
-> +		return -ENOMEM;
-> +
-> +	drvdata->dev = dev;
-
-> +	platform_set_drvdata(pdev, drvdata);
-
-I think this makes sense to do as last call in the function.
-
-> +	drvdata->membase = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(drvdata->membase))
-> +		return PTR_ERR(drvdata->membase);
-> +
-> +	ret = pinbank_probe(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pinctrl_reg(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = gpiolib_reg(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-
+> OK, great. Yes, in fact, I'm hoping Andrew can just push the whole series
+> in through the mm tree, because that would allow it to be done in one 
+> shot, in 5.5
+
+btw is there more? We should have a bunch more userptr stuff in various
+drivers, so was really surprised that drm/via is the only thing in your
+series.
+-Daniel
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
