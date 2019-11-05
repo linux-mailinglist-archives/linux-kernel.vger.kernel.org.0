@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C8EF0016
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B7D1F0037
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389169AbfKEOlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:41:44 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36574 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387776AbfKEOln (ORCPT
+        id S2389691AbfKEOpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:45:42 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:57992 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387584AbfKEOpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:41:43 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a6so11921309lfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 06:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jBzTOxq85jxdofnlZM+XjruaJTIDQtuSsbh7qG9jKHg=;
-        b=bBozmJV5Qw6b9lVapPQvukL2eua22QYk1tsW4G0355k0kjw9pURqm/uRwStnFEhLZR
-         qC+5Ag8kIoG1xVD1hfQfSl7+po3u37+/b6N0zQAdCCEZWLhKMeOM3qvwZbD/y5ZPSoh6
-         MTpvr6/VaUaAyoUz4Y8JccTmFEyS+gGu9TWdmB4keanawpHY4PkyNbC/Voz7M14+OnwZ
-         TAYmCLZMTmHCvh1OlS+QhfLx88suOLdzkGHhH4anmzik178Ir6mYQkjWWe3B1jcu/+04
-         a4brbdKi5sikiFVFPQq2Ib0/aLqGEoQrOSpOQwKU5qoOl+r+i4V2u+8HjMNE1sB13TOv
-         FTSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jBzTOxq85jxdofnlZM+XjruaJTIDQtuSsbh7qG9jKHg=;
-        b=gmcppgzYYmDfEk2/bKe3MV4RQNW2kK4WliFC/qQdn8sF9ux/NGPa6DL82XytWyAUzx
-         jW61cIduzMraHh2iymiGFLsF5NRtcITRBjY5wNEJiQbdbKIccRfOD3c8d7Mlw4mUuJtL
-         SdXHnkberchMFxd4g6BVrP1KWKvQrk3303GLKQyB1ALwzoDXtDdLIAVlCsFiEWK50824
-         nwgAkBqvT8nNmzqIahkg33ihbIMDHrtm45l0L5DIifyBjHkNp1JYVWR08mswcqE5wgIY
-         eGpijo81Exm593FKlttMdV1QMDSUqMeMz7bcWYF5Nqc9EysBWHuCqz2U5UtZabhGA8cd
-         ctew==
-X-Gm-Message-State: APjAAAUyamQtB7OJqVdCp+0cTN8vzJMuy5FYCJrKJW/1ja2Eu/gwkTq9
-        fRHDTyb1Vl2g2O4NOjAOHpSqcV6SKdLjKrdXsWvXzw==
-X-Google-Smtp-Source: APXvYqwfEk1h321csKMTRrt3DsgpCia8GUNn3QPeXjglwCRgaQ1riCiRrh9/anJdOd37y0N/igvpYMZJnznCmdaOJ5c=
-X-Received: by 2002:a19:651b:: with SMTP id z27mr20715395lfb.117.1572964898491;
- Tue, 05 Nov 2019 06:41:38 -0800 (PST)
+        Tue, 5 Nov 2019 09:45:42 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5EhvXr189911;
+        Tue, 5 Nov 2019 14:44:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=cnDpTqKYig+iH0LVqI9Gl2wReEqnuaD2T/o9SmZyNkk=;
+ b=qtVA+cdrShb6jSyaz3UziS7FJjEn6W9l/Z7maw3KFMiehu/eftD9aUi6wV3ovSZ2Diae
+ O8ho90M0Ir7Zjk4L/dmt7nFIZG3cgcIzP0fRgkNbsPjeIaJ1v+qECcvIDS+dtjJs6Fl5
+ 61DqipYaASuAa/wSdO0bBpadc2cRFyVAUl6waG8u5yw4QhVU5OqeZ6g1TThFQFgeckzK
+ G+oYN6OoTehDayxfaUQqUvmR3Y0tFyvdeRSVDJPeHGLEcJSXwXXFPhJpUIVEPGsc0ZYm
+ sTkqUPgCmLBCUI3cBaFSNHoOwdj1A1qOggUXz9dLeOiWo5+jlGod7sEtup9HGdX55ls/ fQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2w11rpxuyv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 14:44:25 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5EiIGJ040820;
+        Tue, 5 Nov 2019 14:44:24 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2w3161e8jj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Nov 2019 14:44:23 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA5Ehe9v011602;
+        Tue, 5 Nov 2019 14:43:40 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Nov 2019 06:43:39 -0800
+Date:   Tue, 5 Nov 2019 17:43:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chen Wandun <chenwandun@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        perex@perex.cz, gregkh@linuxfoundation.org,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        tglx@linutronix.de, joe@perches.com
+Subject: Re: [PATCH v2] hp100: remove set but not used variable val
+Message-ID: <20191105144329.GG10409@kadam>
+References: <20191105133554.6C01F9A06CB85816F399@huawei.com>
+ <1572964619-76671-1-git-send-email-chenwandun@huawei.com>
 MIME-Version: 1.0
-References: <20191104175744.12041-1-krzk@kernel.org>
-In-Reply-To: <20191104175744.12041-1-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 15:41:27 +0100
-Message-ID: <CACRpkda6mtF=yjPMJReO50q1Xnys6i51zm2iJvHRidxZJCKU6w@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: Pull for v5.5
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572964619-76671-1-git-send-email-chenwandun@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911050123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=860 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911050123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 6:57 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, Nov 05, 2019 at 10:36:59PM +0800, Chen Wandun wrote:
+> From: Chenwandun <chenwandun@huawei.com>
+> 
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/staging/hp/hp100.c: In function hp100_start_xmit:
+> drivers/staging/hp/hp100.c:1629:10: warning: variable val set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Chenwandun <chenwandun@huawei.com>
+> ---
 
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
->
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.5
->
-> for you to fetch changes up to a322b3377f4bac32aa25fb1acb9e7afbbbbd0137:
->
->   pinctrl: samsung: Fix device node refcount leaks in init code (2019-10-01 20:22:04 +0200)
+You should explain why you are sending a v2 under the --- cut off line.
 
-Pulled into my pinctrl "devel" branch for v5.5, thanks!
+The v1 was the correct patch, but this driver is going to be deleted
+soon so I don't think we are accepting this sort of cleanup.
 
-Yours,
-Linus Walleij
+regards,
+dan carpenter
+
