@@ -2,139 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA045F023B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:05:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E98D7F0243
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:07:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390069AbfKEQFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:05:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60646 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390011AbfKEQFy (ORCPT
+        id S2390042AbfKEQH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:07:29 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:47005 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389760AbfKEQH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:05:54 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA5G5ZO6077804;
-        Tue, 5 Nov 2019 10:05:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572969935;
-        bh=ifqGbh2iK7gCjM34CfaUPg5dKbqv4hsuWqKdYPnSGWk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=t4XqoUa1Q9IdKhWKcc6jvYqDlwYyx4v5DZ3z0peERQoohVdGZV5Ufg0o9wY0WMC4c
-         dOoGP67ABI4bj8rK4RvJM74wEg60Ot0kYz16J94+YBY1QXgiJsSFg+ONC7c59sJmcX
-         TNoZKvFnqWk3Xc1ydxGkAUYem8z1NzM0T6/rHuok=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA5G5Z4T110661
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Nov 2019 10:05:35 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 5 Nov
- 2019 10:05:20 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 5 Nov 2019 10:05:20 -0600
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA5G5W4W081978;
-        Tue, 5 Nov 2019 10:05:33 -0600
-Subject: Re: [PATCH v4 15/20] mtd: spi-nor: Extend the QE Read Back test to
- both SR1 and SR2
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
-CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
- <20191102112316.20715-16-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <b9a4e491-d081-1325-1532-b392f55fcaf9@ti.com>
-Date:   Tue, 5 Nov 2019 21:36:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 11:07:29 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e9so9183564ljp.13
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 08:07:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YLw5SYrodBEqy2waMxo41K2A0f7ArdzoSUTOLYie6s4=;
+        b=eri7qH+7uZFLsQ1nBXM7tctm6BOw+ve7hZW/6tQlf9hNm1WjWAPsqiY0Yhh6c8nJ3C
+         Xnn6dPx2b1yQNwdIRtZ0JNE5YnWD9wT4uWdQ88Alt8ix7dhCBHf1+3hKwuNpsBgC0NGc
+         ukdLhq7GYGzfbGDIUwM59OXJAAblz15nAU/hswHpLXqSIMcjqv2fwEBMUCFFkxQbTh6C
+         /Lu8vp0rEgL5fU8oJBcOT/dgw9PjRG+jLqHd2zO7jznoU26UzkHwv9gr6GQOjL28gyt7
+         uZ8vXn/mCyVxCwOnw56QpWCAoHsMV0n6qF29a/MAE/+msYFQNuy8S+uJKSCQHHYjv0EG
+         m2Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YLw5SYrodBEqy2waMxo41K2A0f7ArdzoSUTOLYie6s4=;
+        b=SIGfRJjk5xIXZertS3OaMGBR6Yrt6SaxCuQNkm4G/lJ0J9L6OKp/iFd3B6l1/ZvZ0E
+         5LESeqdgideqvPbLK5V+K38M/QTgLwWRg7qpgNTc5qEaSDGkshu8OBsXArkZLajmE6QM
+         HSMonvCsxCpKMCPb3v3e/9+zCMvJvjvhaFeusbDoLpnfC7B0UpQcTC5tPJ24vAwZi30R
+         JYPqyy9b6Jtc1DvIdDkCzmV4wJJE95nqOye1TAoyqsQeiyl1kSjjXMJQvcm0FvOKF7AA
+         8KGTEQjLnOa+T77424A8wDfJkMY2VBex5pzjmX3FcX25midNa5U55DmlWWLWjq92FuMr
+         RBAw==
+X-Gm-Message-State: APjAAAVuZ8NO8cHEgzfm08qZbqTE19vBUOaGyY88BXYXQvDUlXjJOqbn
+        7QJ8zkQLz3KnKml2FR4keRAT9/iALOxnaeDB2EwE0w==
+X-Google-Smtp-Source: APXvYqyfeC8M/8bOUxBWxwGOy++KCeRE1AqSp/eH8U72Cip1RCmkWIqkShJuw/Lzbce5kF+wF/uaswMUtDkVjGbpmA4=
+X-Received: by 2002:a2e:81c6:: with SMTP id s6mr1063081ljg.61.1572970045838;
+ Tue, 05 Nov 2019 08:07:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191102112316.20715-16-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1572967777-8812-1-git-send-email-rppt@linux.ibm.com>
+ <1572967777-8812-2-git-send-email-rppt@linux.ibm.com> <CAKOZuev93zDGNPX+ySg_jeUg4Z3zKMcpABekUQvHA01kTVn4=A@mail.gmail.com>
+ <CALCETrX=VmSjD6kLT6tuZQ4Efhc_13vZrw1mo4Z2iKqZTT-bzg@mail.gmail.com>
+In-Reply-To: <CALCETrX=VmSjD6kLT6tuZQ4Efhc_13vZrw1mo4Z2iKqZTT-bzg@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 5 Nov 2019 08:06:49 -0800
+Message-ID: <CAKOZuetu0QWUDAycTOFzC4HEbjH99EtOhb4gJnHAuovT_StpzA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: require CAP_SYS_PTRACE for UFFD_FEATURE_EVENT_FORK
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Nosh Minwalla <nosh@google.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Tim Murray <timmurray@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 5, 2019 at 8:00 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> On Tue, Nov 5, 2019 at 7:55 AM Daniel Colascione <dancol@google.com> wrote:
+> >
+> > On Tue, Nov 5, 2019 at 7:29 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > Current implementation of UFFD_FEATURE_EVENT_FORK modifies the file
+> > > descriptor table from the read() implementation of uffd, which may have
+> > > security implications for unprivileged use of the userfaultfd.
+> > >
+> > > Limit availability of UFFD_FEATURE_EVENT_FORK only for callers that have
+> > > CAP_SYS_PTRACE.
+> >
+> > Thanks. But shouldn't we be doing the capability check at
+> > userfaultfd(2) time (when we do the other permission checks), not
+> > later, in the API ioctl?
+>
+> The ioctl seems reasonable to me.  In particular, if there is anyone
+> who creates a userfaultfd as root and then drop permissions, a later
+> ioctl could unexpectedly enable FORK.
 
-
-On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> In case of 16-bit Write Status Register, check that both SR1 and
-> SR2 were written correctly.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
-
-This can be merged with previous patch as changes are quite similar
-
-Regards
-Vignesh
-
->  drivers/mtd/spi-nor/spi-nor.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 08fd2c97897d..8f11c00e8ae5 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -2067,6 +2067,7 @@ static int spansion_no_read_cr_quad_enable(struct spi_nor *nor)
->  {
->  	u8 *sr_cr = nor->bouncebuf;
->  	int ret;
-> +	u8 sr_written;
->  
->  	/* Keep the current value of the Status Register. */
->  	ret = spi_nor_read_sr(nor, sr_cr);
-> @@ -2075,7 +2076,22 @@ static int spansion_no_read_cr_quad_enable(struct spi_nor *nor)
->  
->  	sr_cr[1] = CR_QUAD_EN_SPAN;
->  
-> -	return spi_nor_write_sr(nor, sr_cr, 2);
-> +	ret = spi_nor_write_sr(nor, sr_cr, 2);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sr_written = sr_cr[0];
-> +
-> +	ret = spi_nor_read_sr(nor, sr_cr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sr_cr[0] != sr_written) {
-> +		dev_err(nor->dev, "SR: Read back test failed\n");
-> +		return -EIO;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  /**
-> @@ -2116,6 +2132,17 @@ static int spansion_read_cr_quad_enable(struct spi_nor *nor)
->  	if (ret)
->  		return ret;
->  
-> +	sr_written = sr_cr[0];
-> +
-> +	ret = spi_nor_read_sr(nor, sr_cr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sr_written != sr_cr[0]) {
-> +		dev_err(nor->dev, "SR: Read back test failed\n");
-> +		return -EIO;
-> +	}
-> +
->  	sr_written = sr_cr[1];
->  
->  	/* Read back and check it. */
-> 
-
--- 
-Regards
-Vignesh
+Sure, but the same argument applies to all the other permission checks
+that we do at open time, not at ioctl time. For better or for worse,
+the DAC-ish model used in most places is that access checks happen at
+file object creation time and anyone who has the FD can perform those
+operations later. Confusing the model by doing *some* permission
+checks at open time and *some* permission checks at usage time makes
+the system harder to understand.
