@@ -2,146 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B3AF0619
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6F0F0622
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 20:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390896AbfKETgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 14:36:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390893AbfKETgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 14:36:55 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA5JXmot134189
-        for <linux-kernel@vger.kernel.org>; Tue, 5 Nov 2019 14:36:54 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w3eh79prv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 14:36:53 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-        Tue, 5 Nov 2019 19:36:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Nov 2019 19:36:41 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA5JaeNI31719424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 5 Nov 2019 19:36:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6370DAE057;
-        Tue,  5 Nov 2019 19:36:40 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43F44AE056;
-        Tue,  5 Nov 2019 19:36:39 +0000 (GMT)
-Received: from thinkpad (unknown [9.152.97.32])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Nov 2019 19:36:39 +0000 (GMT)
-Date:   Tue, 5 Nov 2019 20:36:38 +0100
-From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V8] mm/debug: Add tests validating architecture page
- table helpers
-In-Reply-To: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-References: <1572240562-23630-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S2403787AbfKETiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 14:38:01 -0500
+Received: from mail-eopbgr720133.outbound.protection.outlook.com ([40.107.72.133]:2209
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390873AbfKETiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 14:38:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y4VYHn8p1It7Hk8ES9cIkbQ2hDLv2UM9dpALbesv/HfcV7L8Q3iUUDDfQrbOMAk0kRhWWm2iC8wriQwW82I7XrtjmCTlCIKEkSbVcnEX+yKzTllo1BEGVTJFLTdv1TqsiSRPrDH+aicCoQqQk5B/pT31G87MSILbp5HIZ2/7izyK29KaxnRId7Bu92z0dED+eJ9WqzyKAfVpLTu34KsqqwUPVl56dWiSAVgscRBObKYxQBIEHDhfBnSGGmG+06Pae7uZcUoOA+mtZ4krCGtqY42qpvqyfmoVhZjNkBJnCnJZ7nyQHaxYfGxHbYBde9sGCKBDYz4pXQM+uiv0HRKfeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=InJeiLUtrrksI7puw3zP8VDwYzSVtFqfSfIR4BOiOKg=;
+ b=M9he2Rjd3GE0JOMDJ3lut2XwgnCWjDdYW7toeSLDDPhgs6YCE+LZC03ctNKqqRVxmE5aW501MYFrBS/5XKytHdAApVEu67IR5/Vg4Hm7XH9JhyzQP3ryrdb0n/GFOI0kmVkKuzL/5jtyu0xTZVs01Y3OiAwNcKy1sJy1crJtbtqIKlM8eW+iyhF43tYPSqGu98azMRjO+W8nwfB636CjXwLmyIkmHICGaFTjyy+NjfQrlTaRjLf+BogxANHyBXVUY4O5uxjahacoVH/V628s07ckKBQe19S4nwTALxf5bDRX19tYrm2bWNQbKJZQGfDDuK6r+ysTHEc2cU8qaYZ9oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=InJeiLUtrrksI7puw3zP8VDwYzSVtFqfSfIR4BOiOKg=;
+ b=Ossg6M3KPx/9Ex3YzQqr41qUbjindjpW0vcdmiDrbOq59zNryqEo/EG+nw+mU9VwX/Q0wtoaBJjiofGM6tYDAORzpuYk39er0UiMw/V1PSRwZPpnMwubT8nf/xkXq9fmiWFLIGlcji6VCRfTuIJQbmOOqAHWjylGOpBGgm65HAo=
+Received: from DM5PR1301MB2108.namprd13.prod.outlook.com (10.174.186.34) by
+ DM5PR1301MB2075.namprd13.prod.outlook.com (10.174.185.155) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.13; Tue, 5 Nov 2019 19:37:49 +0000
+Received: from DM5PR1301MB2108.namprd13.prod.outlook.com
+ ([fe80::4c0b:3977:6b2d:6a8c]) by DM5PR1301MB2108.namprd13.prod.outlook.com
+ ([fe80::4c0b:3977:6b2d:6a8c%3]) with mapi id 15.20.2430.020; Tue, 5 Nov 2019
+ 19:37:49 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed
+ work function (7e0a0e38fcfe)
+Thread-Topic: [REGRESSION v5.3] SUNRPC: Replace the queue timer with a delayed
+ work function (7e0a0e38fcfe)
+Thread-Index: AQHViwXgaq3NPyyvUUylBSSg67ZqQKd8jB6AgAB+1oA=
+Date:   Tue, 5 Nov 2019 19:37:48 +0000
+Message-ID: <6fb130dce8b75c487ed68ec623e1f6a64c78fafb.camel@hammerspace.com>
+References: <271ff39f-1f44-b201-6274-85f1085bfc16@nvidia.com>
+         <329228f8-e194-a021-9226-69a9b6a403ce@nvidia.com>
+In-Reply-To: <329228f8-e194-a021-9226-69a9b6a403ce@nvidia.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [50.36.163.249]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 96e68bc8-5396-4410-0161-08d76227a3ff
+x-ms-traffictypediagnostic: DM5PR1301MB2075:
+x-microsoft-antispam-prvs: <DM5PR1301MB20754C26DF8A3E68D5A043E9B87E0@DM5PR1301MB2075.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1107;
+x-forefront-prvs: 0212BDE3BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(39840400004)(346002)(376002)(396003)(189003)(199004)(81156014)(2906002)(2616005)(110136005)(3846002)(99286004)(186003)(7736002)(316002)(25786009)(53546011)(6506007)(66556008)(14444005)(6246003)(81166006)(102836004)(91956017)(66946007)(76176011)(8936002)(66476007)(66446008)(71200400001)(76116006)(64756008)(71190400001)(305945005)(6116002)(8676002)(11346002)(446003)(86362001)(2501003)(256004)(6436002)(14454004)(486006)(5660300002)(118296001)(229853002)(6486002)(6512007)(36756003)(66066001)(476003)(26005)(478600001)(2201001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR1301MB2075;H:DM5PR1301MB2108.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3apWC4OD+x6R/DzvteuHuq4R+d5TlM34kgLoBy9zkJhnOvS4T6U+ejwTWhX6G5i9Hb3kjHbqvxdG3dWA2wWOabKnqKXMQUtXG4BfkKVi/lnoaaXgs+6+O4PozsO0IoWl0b5w84dkriXO6WrqIyRvyxfSp8dNZl93X9BlvqZLTg6e7ORzvC7Z77TdBQnnY/6cqnh/ncK91+U/sQpLcWR8Ougs/jVzNATwtgjrlq1mCxysaiAEYG6HGK1M/S2JBxJh1E77l36eYe8z50hsPvvyegdEG+fCUNLkzjfo67SzyjXD7f6f02K3qYIX+C+2bbEkCBCJ0jtpVBTNRGI6atgxm9iy5x4HeEDoa4JwMTpnx/WFFFPh6q9L4qn3eQhjAZDui5MkPmw+pTaQP9WPqbfnZHCskLADWZ+A0v+AvvIjQUbwHe5V3u69rBDIf6N738aw
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <27B40EEB8361884EA6D568E60B592EBA@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110519-0020-0000-0000-00000382D869
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110519-0021-0000-0000-000021D903DD
-Message-Id: <20191105203638.6889a994@thinkpad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1911050162
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96e68bc8-5396-4410-0161-08d76227a3ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 19:37:49.0389
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JEhJonRTMyc7SiqMiTfwYCRQcq6tL19GobEFkYmNItLH1XFpkWHVWoJkn3f1YbVLJzLlOrwvzIIJNBgGjv1GbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1301MB2075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Oct 2019 10:59:22 +0530
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-
-> This adds tests which will validate architecture page table helpers and
-> other accessors in their compliance with expected generic MM semantics.
-> This will help various architectures in validating changes to existing
-> page table helpers or addition of new ones.
-> 
-> This test covers basic page table entry transformations including but not
-> limited to old, young, dirty, clean, write, write protect etc at various
-> level along with populating intermediate entries with next page table page
-> and validating them.
-> 
-> Test page table pages are allocated from system memory with required size
-> and alignments. The mapped pfns at page table levels are derived from a
-> real pfn representing a valid kernel text symbol. This test gets called
-> right after page_alloc_init_late().
-> 
-> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along with
-> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to
-> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 and
-> arm64. Going forward, other architectures too can enable this after fixing
-> build or runtime problems (if any) with their page table helpers.
-
-I've prepared a couple of commits to our arch code to make this work on s390,
-they will go upstream in the next merge window. After that, we can add s390
-to the supported architectures.
-
-We had some issues, e.g. because we do not report large entries as bad in
-pxd_bad(), do not check for folded page tables in pxd_free(), or assume
-that primitives like pmd_mkdirty() will only be called after pmd_mkhuge().
-None of those should have any impact on current code, but your test module
-revealed that we do not behave like other architectures in some aspects,
-and it's good to find and fix such things to prevent possible future issues.
-
-Thanks a lot for the effort!
-
-Regards,
-Gerald
-
+T24gVHVlLCAyMDE5LTExLTA1IGF0IDEyOjAzICswMDAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBI
+aSBUcm9uZCwNCj4gDQo+IEFueSBmZWVkYmFjayBvbiB0aGlzPw0KDQpTZWUgdGhlIHBhdGNoIEkg
+c2VudCB0aGlzIG1vcm5pbmcuIEkgYmVsaWV2ZSB0aGF0IG91Z2h0IHRvIGZpeCB0aGUNCnByb2Js
+ZW0uDQpTb3JyeSBhYm91dCB0aGUgcmVncmVzc2lvbi4gQXMgeW91IHNhdyBmcm9tIHRoZSBvcmln
+aW5hbCBwYXRjaCwgaXQNCnByZWRhdGVzIHlvdXIgZmlyc3QgYnVnIHJlcG9ydCwgYW5kIHdoZW4g
+SSBxdWV1ZWQgaXQgdXAgZm9yIHN1Ym1pc3Npb24sDQpJIG1pc3NlZCB0aGF0IGl0IHdhcyBjb3B5
+aW5nIHRoZSAiZGVmZXJyYWJsZSIgc3RhdHVzIHRoYXQgY2F1c2VkIHRoYXQNCmZpcnN0IGJ1Zy4N
+Cg0KQ2hlZXJzDQogIFRyb25kDQoNCj4gDQo+IEpvbg0KPiANCj4gT24gMjUvMTAvMjAxOSAwODoy
+OCwgSm9uIEh1bnRlciB3cm90ZToNCj4gPiBIaSBUcm9uZCwNCj4gPiANCj4gPiBTaW1pbGFyIHRv
+IHRoZSBjaGFuZ2UgNDMxMjM1ODE4YmMzICgiU1VOUlBDOiBEZWNsYXJlIFJQQyB0aW1lcnMgYXMN
+Cj4gPiBUSU1FUl9ERUZFUlJBQkxFIikgSSBoYXZlIGJlZW4gdHJhY2tpbmcgZG93biBhbm90aGVy
+IHN1c3BlbmQvTkZTDQo+ID4gcmVsYXRlZA0KPiA+IGlzc3VlIHdoZXJlIGFnYWluIEkgYW0gc2Vl
+aW5nIHJhbmRvbSBkZWxheXMgZXhpdGluZyBzdXNwZW5kLiBUaGUNCj4gPiBkZWxheXMNCj4gPiBj
+YW4gYmUgdXAgdG8gYSBjb3VwbGUgbWludXRlcyBpbiB0aGUgd29yc3QgY2FzZSBhbmQgdGhpcyBp
+cyBjYXVzaW5nDQo+ID4gYQ0KPiA+IHN1c3BlbmQgdGVzdCB3ZSBoYXZlIHRvIGZhaWwuIEZvciBl
+eGFtcGxlLCB3aXRoIHRoaXMgY2hhbmdlIEkgc2VlDQo+ID4gLi4uDQo+ID4gDQo+ID4gWyAgMTMw
+LjU5OTUyMF0gUE06IHN1c3BlbmQgZW50cnkgKGRlZXApDQo+ID4gDQo+ID4gWyAgMTMwLjYwNzI2
+N10gRmlsZXN5c3RlbXMgc3luYzogMC4wMDAgc2Vjb25kcw0KPiA+IA0KPiA+IFsgIDEzMC42MTU4
+MDBdIEZyZWV6aW5nIHVzZXIgc3BhY2UgcHJvY2Vzc2VzIC4uLiAoZWxhcHNlZCAwLjAwMQ0KPiA+
+IHNlY29uZHMpIGRvbmUuDQo+ID4gDQo+ID4gWyAgMTMwLjYyODI0N10gT09NIGtpbGxlciBkaXNh
+YmxlZC4NCj4gPiANCj4gPiBbICAxMzAuNjM1MzgyXSBGcmVlemluZyByZW1haW5pbmcgZnJlZXph
+YmxlIHRhc2tzIC4uLiAoZWxhcHNlZA0KPiA+IDAuMDAxIHNlY29uZHMpIGRvbmUuDQo+ID4gDQo+
+ID4gWyAgMTMwLjY0ODA1Ml0gcHJpbnRrOiBTdXNwZW5kaW5nIGNvbnNvbGUocykgKHVzZQ0KPiA+
+IG5vX2NvbnNvbGVfc3VzcGVuZCB0byBkZWJ1ZykNCj4gPiANCj4gPiBbICAxMzAuNjg2MDE1XSBE
+aXNhYmxpbmcgbm9uLWJvb3QgQ1BVcyAuLi4NCj4gPiANCj4gPiBbICAxMzAuNjg5NTY4XSBJUlEg
+MTc6IG5vIGxvbmdlciBhZmZpbmUgdG8gQ1BVMg0KPiA+IA0KPiA+IFsgIDEzMC42OTM0MzVdIEVu
+dGVyaW5nIHN1c3BlbmQgc3RhdGUgTFAxDQo+ID4gDQo+ID4gWyAgMTMwLjY5MzQ4OV0gRW5hYmxp
+bmcgbm9uLWJvb3QgQ1BVcyAuLi4NCj4gPiANCj4gPiBbICAxMzAuNjk3MTA4XSBDUFUxIGlzIHVw
+DQo+ID4gDQo+ID4gWyAgMTMwLjcwMDYwMl0gQ1BVMiBpcyB1cA0KPiA+IA0KPiA+IFsgIDEzMC43
+MDQzMzhdIENQVTMgaXMgdXANCj4gPiANCj4gPiBbICAxMzAuNzgxMjU5XSBtbWMxOiBxdWV1aW5n
+IHVua25vd24gQ0lTIHR1cGxlIDB4ODAgKDUwIGJ5dGVzKQ0KPiA+IA0KPiA+IFsgIDEzMC43ODk3
+NDJdIG1tYzE6IHF1ZXVpbmcgdW5rbm93biBDSVMgdHVwbGUgMHg4MCAoNyBieXRlcykNCj4gPiAN
+Cj4gPiBbICAxMzAuNzkyNzkzXSBtbWMxOiBxdWV1aW5nIHVua25vd24gQ0lTIHR1cGxlIDB4ODAg
+KDcgYnl0ZXMpDQo+ID4gDQo+ID4gWyAgMTMwLjgyMDkxM10gbW1jMTogcXVldWluZyB1bmtub3du
+IENJUyB0dXBsZSAweDAyICgxIGJ5dGVzKQ0KPiA+IA0KPiA+IFsgIDEzMS4zNDU1NjldIE9PTSBr
+aWxsZXIgZW5hYmxlZC4NCj4gPiANCj4gPiBbICAxMzEuMzUyNjQzXSBSZXN0YXJ0aW5nIHRhc2tz
+IC4uLiBkb25lLg0KPiA+IA0KPiA+IFsgIDEzMS4zNjU0ODBdIFBNOiBzdXNwZW5kIGV4aXQNCj4g
+PiANCj4gPiBbICAxMzQuNTI0MjYxXSBhc2l4IDEtMToxLjAgZXRoMDogbGluayB1cCwgMTAwTWJw
+cywgZnVsbC1kdXBsZXgsDQo+ID4gbHBhIDB4Q0RFMQ0KPiA+IA0KPiA+IFsgIDI0My43NDU3ODhd
+IG5mczogc2VydmVyIDE5Mi4xNjguOTkuMSBub3QgcmVzcG9uZGluZywgc3RpbGwNCj4gPiB0cnlp
+bmcNCj4gPiANCj4gPiBbICAyNDMuNzQ1ODExXSBuZnM6IHNlcnZlciAxOTIuMTY4Ljk5LjEgbm90
+IHJlc3BvbmRpbmcsIHN0aWxsDQo+ID4gdHJ5aW5nDQo+ID4gDQo+ID4gWyAgMjQzLjc2NzkzOV0g
+bmZzOiBzZXJ2ZXIgMTkyLjE2OC45OS4xIG5vdCByZXNwb25kaW5nLCBzdGlsbA0KPiA+IHRyeWlu
+Zw0KPiA+IA0KPiA+IFsgIDI0My43NzgyMzNdIG5mczogc2VydmVyIDE5Mi4xNjguOTkuMSBPSw0K
+PiA+IA0KPiA+IFsgIDI0My43ODcwNThdIG5mczogc2VydmVyIDE5Mi4xNjguOTkuMSBPSw0KPiA+
+IA0KPiA+IFsgIDI0My43ODc1NDJdIG5mczogc2VydmVyIDE5Mi4xNjguOTkuMSBPSw0KPiA+IA0K
+PiA+IA0KPiA+IFJ1bm5pbmcgYSBnaXQgYmlzZWN0IEkgd2FzIGFibGUgdG8gdHJhY2sgaXQgZG93
+biB0byB0aGUgY29tbWl0DQo+ID4gcmVmZXJlbmNlZA0KPiA+IGluIHRoZSAkc3ViamVjdC4gUmV2
+ZXJ0aW5nIHRoaXMgb24gdG9wIG9mIHRoZSBjdXJyZW50IG1haW5saW5lDQo+ID4gZml4ZXMgdGhl
+DQo+ID4gcHJvYmxlbSBhbmQgSSBubyBsb25nZXIgc2VlIHRoZXNlIGxvbmcgZGVsYXlzLg0KPiA+
+IA0KPiA+IENoZWVycw0KPiA+IEpvbg0KPiA+IA0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4
+IE5GUyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1t
+ZXJzcGFjZS5jb20NCg0KDQo=
