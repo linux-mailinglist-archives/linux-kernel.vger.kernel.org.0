@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F6AF0298
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7517AF0289
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390144AbfKEQXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:23:14 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:41291 "EHLO
+        id S2390221AbfKEQXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:23:17 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:41716 "EHLO
         inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390063AbfKEQXN (ORCPT
+        by vger.kernel.org with ESMTP id S2390095AbfKEQXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:23:13 -0500
+        Tue, 5 Nov 2019 11:23:14 -0500
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.80)
         (envelope-from <maz@kernel.org>)
-        id 1iS1bs-0001q9-Ji; Tue, 05 Nov 2019 17:23:12 +0100
+        id 1iS1bt-0001q9-1S; Tue, 05 Nov 2019 17:23:13 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>, lorenzo.pieralisi@arm.com,
         Andrew.Murray@arm.com, yuzenghui@huawei.com,
         Heyi Guo <guoheyi@huawei.com>
-Subject: [PATCH 05/11] irqchip/gic-v3-its: Kill its->ite_size and use TYPER copy instead
-Date:   Tue,  5 Nov 2019 16:22:52 +0000
-Message-Id: <20191105162258.22214-6-maz@kernel.org>
+Subject: [PATCH 06/11] irqchip/gic-v3-its: Kill its->device_ids and use TYPER copy instead
+Date:   Tue,  5 Nov 2019 16:22:53 +0000
+Message-Id: <20191105162258.22214-7-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191105162258.22214-1-maz@kernel.org>
 References: <20191105162258.22214-1-maz@kernel.org>
@@ -41,77 +41,122 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Now that we have a copy of TYPER in the ITS structure, rely on this
-to provide the same service as its->ite_size, which gets axed.
+to provide the same service as its->device_ids, which gets axed.
 Errata workarounds are now updating the cached fields instead of
 requiring a separate field in the ITS structure.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 8 ++++----
- include/linux/irqchip/arm-gic-v3.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c   | 24 +++++++++++++-----------
+ include/linux/irqchip/arm-gic-v3.h |  2 +-
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index a5d947b243f2..161831e2b7ac 100644
+index 161831e2b7ac..9b1c53a5db4a 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/acpi_iort.h>
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/cpu.h>
- #include <linux/crash_dump.h>
-@@ -108,7 +109,6 @@ struct its_node {
+@@ -109,7 +109,6 @@ struct its_node {
  	struct list_head	its_device_list;
  	u64			flags;
  	unsigned long		list_nr;
--	u32			ite_size;
- 	u32			device_ids;
+-	u32			device_ids;
  	int			numa_node;
  	unsigned int		msi_domain_flags;
-@@ -2450,7 +2450,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	 * sized as a power of two (and you need at least one bit...).
- 	 */
- 	nr_ites = max(2, nvecs);
--	sz = nr_ites * its->ite_size;
-+	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
- 	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
- 	if (alloc_lpis) {
-@@ -3266,7 +3266,8 @@ static bool __maybe_unused its_enable_quirk_qdf2400_e0065(void *data)
+ 	u32			pre_its_base; /* for Socionext Synquacer */
+@@ -117,6 +116,7 @@ struct its_node {
+ };
+ 
+ #define is_v4(its)		(!!((its)->typer & GITS_TYPER_VLPIS))
++#define device_ids(its)		(FIELD_GET(GITS_TYPER_DEVBITS, (its)->typer) + 1)
+ 
+ #define ITS_ITT_ALIGN		SZ_256
+ 
+@@ -1953,9 +1953,9 @@ static bool its_parse_indirect_baser(struct its_node *its,
+ 	if (new_order >= MAX_ORDER) {
+ 		new_order = MAX_ORDER - 1;
+ 		ids = ilog2(PAGE_ORDER_TO_SIZE(new_order) / (int)esz);
+-		pr_warn("ITS@%pa: %s Table too large, reduce ids %u->%u\n",
++		pr_warn("ITS@%pa: %s Table too large, reduce ids %llu->%u\n",
+ 			&its->phys_base, its_base_type_string[type],
+-			its->device_ids, ids);
++			device_ids(its), ids);
+ 	}
+ 
+ 	*order = new_order;
+@@ -2001,7 +2001,7 @@ static int its_alloc_tables(struct its_node *its)
+ 		case GITS_BASER_TYPE_DEVICE:
+ 			indirect = its_parse_indirect_baser(its, baser,
+ 							    psz, &order,
+-							    its->device_ids);
++							    device_ids(its));
+ 			break;
+ 
+ 		case GITS_BASER_TYPE_VCPU:
+@@ -2392,7 +2392,7 @@ static bool its_alloc_device_table(struct its_node *its, u32 dev_id)
+ 
+ 	/* Don't allow device id that exceeds ITS hardware limit */
+ 	if (!baser)
+-		return (ilog2(dev_id) < its->device_ids);
++		return (ilog2(dev_id) < device_ids(its));
+ 
+ 	return its_alloc_table_entry(its, baser, dev_id);
+ }
+@@ -3245,8 +3245,9 @@ static bool __maybe_unused its_enable_quirk_cavium_22375(void *data)
+ {
  	struct its_node *its = data;
  
- 	/* On QDF2400, the size of the ITE is 16Bytes */
--	its->ite_size = 16;
-+	its->typer &= ~GITS_TYPER_ITT_ENTRY_SIZE;
-+	its->typer |= FIELD_PREP(GITS_TYPER_ITT_ENTRY_SIZE, 16 - 1);
+-	/* erratum 22375: only alloc 8MB table size */
+-	its->device_ids = 0x14;		/* 20 bits, 8MB */
++	/* erratum 22375: only alloc 8MB table size (20 bits) */
++	its->typer &= ~GITS_TYPER_DEVBITS;
++	its->typer |= FIELD_PREP(GITS_TYPER_DEVBITS, 20 - 1);
+ 	its->flags |= ITS_FLAGS_WORKAROUND_CAVIUM_22375;
  
  	return true;
- }
-@@ -3635,7 +3636,6 @@ static int __init its_probe_one(struct resource *res,
+@@ -3301,8 +3302,10 @@ static bool __maybe_unused its_enable_quirk_socionext_synquacer(void *data)
+ 		its->get_msi_base = its_irq_get_msi_base_pre_its;
+ 
+ 		ids = ilog2(pre_its_window[1]) - 2;
+-		if (its->device_ids > ids)
+-			its->device_ids = ids;
++		if (device_ids(its) > ids) {
++			its->typer &= ~GITS_TYPER_DEVBITS;
++			its->typer |= FIELD_PREP(GITS_TYPER_DEVBITS, ids - 1);
++		}
+ 
+ 		/* the pre-ITS breaks isolation, so disable MSI remapping */
+ 		its->msi_domain_flags &= ~IRQ_DOMAIN_FLAG_MSI_REMAP;
+@@ -3535,7 +3538,7 @@ static int its_init_vpe_domain(void)
+ 	}
+ 
+ 	/* Use the last possible DevID */
+-	devid = GENMASK(its->device_ids - 1, 0);
++	devid = GENMASK(device_ids(its) - 1, 0);
+ 	vpe_proxy.dev = its_create_device(its, devid, entries, false);
+ 	if (!vpe_proxy.dev) {
+ 		kfree(vpe_proxy.vpes);
+@@ -3636,7 +3639,6 @@ static int __init its_probe_one(struct resource *res,
  	its->typer = typer;
  	its->base = its_base;
  	its->phys_base = res->start;
--	its->ite_size = GITS_TYPER_ITT_ENTRY_SIZE(typer);
- 	its->device_ids = GITS_TYPER_DEVBITS(typer);
+-	its->device_ids = GITS_TYPER_DEVBITS(typer);
  	if (is_v4(its)) {
  		if (!(typer & GITS_TYPER_VMOVP)) {
+ 			err = its_compute_its_list_map(res, its_base);
 diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 5cc10cf7cb3e..4bce7a904075 100644
+index 4bce7a904075..b6514e8893bf 100644
 --- a/include/linux/irqchip/arm-gic-v3.h
 +++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -334,7 +334,7 @@
- #define GITS_TYPER_PLPIS		(1UL << 0)
- #define GITS_TYPER_VLPIS		(1UL << 1)
- #define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT	4
--#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0xf) + 1)
-+#define GITS_TYPER_ITT_ENTRY_SIZE	GENMASK_ULL(7, 4)
+@@ -337,7 +337,7 @@
+ #define GITS_TYPER_ITT_ENTRY_SIZE	GENMASK_ULL(7, 4)
  #define GITS_TYPER_IDBITS_SHIFT		8
  #define GITS_TYPER_DEVBITS_SHIFT	13
- #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
+-#define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
++#define GITS_TYPER_DEVBITS		GENMASK_ULL(17, 13)
+ #define GITS_TYPER_PTA			(1UL << 19)
+ #define GITS_TYPER_HCC_SHIFT		24
+ #define GITS_TYPER_HCC(r)		(((r) >> GITS_TYPER_HCC_SHIFT) & 0xff)
 -- 
 2.20.1
 
