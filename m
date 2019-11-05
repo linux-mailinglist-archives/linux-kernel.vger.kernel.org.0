@@ -2,88 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87231F008B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5173AF0091
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfKEPAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:00:01 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:47298 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730833AbfKEPAB (ORCPT
+        id S2389386AbfKEPAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:00:18 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35837 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731052AbfKEPAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:00:01 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5Ex3jX187535;
-        Tue, 5 Nov 2019 14:59:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=/Bsxp4S3+a3fFJuRw3QU2lGizYk8ZzHduC29p7dcUSY=;
- b=W19ll0Wyv9tHFNUcaMw0HK8Z35DB74VXx89suj7fb0b7BHFGGnBw2WhWJMfh3VbGaQdY
- +fdEWMD7EWJwNda8Wfuim+5lF0cLCtA3sE7sv44c6UA7c8tb5UwCMtxedKavuTtDCxR7
- Hk2WySFnf7iiHGf7ZociO61+WbdrYLmjbvvmFdeCvvsQ2lP2pMQmpZ+UTh5aIxmeNv0j
- jH0/wKqQQxcoXJANu/MLgpqWK3ueMS6t2p8Q5R5tzHcgpgikm7R9jAyosBBty2JC3d5R
- AyWnA9RrzLJ0ufPC2G+o78uHugYgRS19+ZVLSI+fA5MthJqVxi8BBpxM6uOMJtF9Fmu5 7w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2w12er6u46-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 14:59:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5ExInw023976;
-        Tue, 5 Nov 2019 14:59:35 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2w333vbdhd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 14:59:33 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA5Ex1IZ006440;
-        Tue, 5 Nov 2019 14:59:01 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 Nov 2019 06:59:00 -0800
-Date:   Tue, 5 Nov 2019 17:58:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pan Bian <bianpan2016@163.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Himadri Pandya <himadri18.07@gmail.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8192e: fix potential use after free
-Message-ID: <20191105145851.GI10409@kadam>
-References: <1572965351-6745-1-git-send-email-bianpan2016@163.com>
+        Tue, 5 Nov 2019 10:00:18 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r7so13519195ljg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 07:00:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=A0J47mNfB1CiTTqNvlw8OxSTbzzjakprFmeLRLsA40w=;
+        b=czjbF4bJIIpFdymzD0VYzoU8AvD2Naal63ivkUKSbvvLHhAX+NeBKxzo5cWnvP/leH
+         RFJDMJuhX1zKthhaX8prQFTqFCvGtg/1dGGbdlj2jNtfJW8a1+Ku26xHltYt5ZkoUuTw
+         JwnZIPr/h51tqKwvNsodT1lTezIP6vShjugsoz4qSE33VssZ2qdHzfQliR1t28vOOaYZ
+         W3uoaSdPHACmYDfHzxF99LacPWGQkza713OiEA8IoRUZUvBbaqvzx53VK3Y0qHeVa6lm
+         Lm31UNSb3MtccHlbVl1y+zdI8iDPsGL3c6/NFRgW7KG7ePRQQCOtuBghu3e9znZVvtfB
+         yisQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=A0J47mNfB1CiTTqNvlw8OxSTbzzjakprFmeLRLsA40w=;
+        b=NDvRtMZnuEWQkpVqUBN2Z+Hf1fb8ItQlzo/su9LBBOE/aHenq5FhLyaNBBOz8nogTE
+         r/mHr/32Xx1q9J970Dk4QZO+obI9vlT/LPTl7GF7RD96vQikzCtGuwS62lE+GbBrT6Wm
+         d0cdAwyJGspUe42cRwSWB8qFRZJkRBcXG6pNn7sAyjQ5T50dzQYULUeaYCC4v2CNXk+D
+         55x/ZtyoCYxN9Y53dvCF+flj1M0/emvC9gklCJYrjqWdvmFci9QX+DyfR2LvxdUaWFuX
+         uyCA2G8EsEoB2QR5scO9IAn4UeiCBDZsvXJ/4ehAU1kdobh3EmNWQQxLqWeJmx1sGfWt
+         DY9g==
+X-Gm-Message-State: APjAAAWugnwTBki9/Ins2ew1kzDOCyWaaHQi1eg+2Aq6z8qO5xnUpxw/
+        tFnHxLt/EfyzVvSX8G/ujz6nlQXDMvGxGwjR6tuATg==
+X-Google-Smtp-Source: APXvYqx2hH3qqZvjxmbSbjmVEkQ3AniK+8AaU1txtZBR2GshkriQsIRZP0d8VSk4GI/32mLIvEISfSEYMnFQfciwvNg=
+X-Received: by 2002:a2e:161b:: with SMTP id w27mr23621673ljd.183.1572966015403;
+ Tue, 05 Nov 2019 07:00:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572965351-6745-1-git-send-email-bianpan2016@163.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=706
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911050126
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9431 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=792 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911050126
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 Nov 2019 16:00:04 +0100
+Message-ID: <CACRpkdZrum7MrNCMS9jaLb0OEMEjHu+xZaL9AbsqyLEz+m97YA@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v5.4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 10:49:11PM +0800, Pan Bian wrote:
-> The variable skb is released via kfree_skb() when the return value of
-> _rtl92e_tx is not zero. However, after that, skb is accessed again to
-> read its length, which may result in a use after free bug. This patch
-> fixes the bug by moving the release operation to where skb is never
-> used later.
-> 
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
+Hi Linus,
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+more GPIO fixes! We found a late regression in the Intel
+Merrifield driver. Oh well. We fixed it up.
 
-regards,
-dan carpenter
+More details in the signed tag.
 
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 7d194c2100ad2a6dded545887d02754948ca5241:
+
+  Linux 5.4-rc4 (2019-10-20 15:56:22 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.4-4
+
+for you to fetch changes up to 1173c3c28abfc3d7b7665db502280ba9322320e6:
+
+  Revert "gpio: merrifield: Pass irqchip when adding gpiochip"
+(2019-11-03 23:41:11 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.4 series:
+
+- Fix a build error in the tools used for kselftest.
+- A series of reverts to bring the Intel Merrifield back to
+  working. We will likely unrevert the reverts for v5.5
+  but we can't have v5.4 broken.
+
+----------------------------------------------------------------
+Linus Walleij (4):
+      Merge tag 'gpio-v5.4-rc5-fixes-for-linus' of
+git://git.kernel.org/.../brgl/linux into fixes
+      Revert "gpio: merrifield: Move hardware initialization to callback"
+      Revert "gpio: merrifield: Restore use of irq_base"
+      Revert "gpio: merrifield: Pass irqchip when adding gpiochip"
+
+Shuah Khan (1):
+      tools: gpio: Use !building_out_of_srctree to determine srctree
+
+ drivers/gpio/gpio-merrifield.c | 33 +++++++++++++--------------------
+ tools/gpio/Makefile            |  6 +++++-
+ 2 files changed, 18 insertions(+), 21 deletions(-)
