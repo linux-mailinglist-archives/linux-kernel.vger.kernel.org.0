@@ -2,250 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88FE4EFC15
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:11:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96605EFC20
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730855AbfKELLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 06:11:10 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46848 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730762AbfKELLJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 06:11:09 -0500
-Received: by mail-ot1-f65.google.com with SMTP id n23so7012764otr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 03:11:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5B6n8kH55VbZzEY+wjyqB8FdxqyxjbBetSMGjeJd+Zc=;
-        b=UdD+cwSex9YqLUgmLDHvIdRuczHsP9I3go9ioWHKDeoQdh5OQ99sHfW3BLlN8Ff6HP
-         8R28ndXbv4hgtUQV3/XxhzEmvZkCXUzkhE0nYViO6ZMEk7CDLU4rpKAE9axwufvKNZ2L
-         Kx71TrGgidPXzEKaXFxPZUZxJCOVqTCuO3XKhbrW8m1S3dQoWQyeL9HeqUeGocDTO96c
-         GLAbijQEINerKedL2FS1iiDHMprU1EIBzoiZUUp4y/nrTCgy5U2hsY0NqNmMiV4n+JxJ
-         LBqAP7ZrAjvi71F1SEMk5eMUKwrNp2pP6nFBEM+hnoQhCe+kfAdOXmA+RphJ9rpfJEGn
-         OU9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5B6n8kH55VbZzEY+wjyqB8FdxqyxjbBetSMGjeJd+Zc=;
-        b=OD/Che43NY4H5XHMMEtPWywyuXiKxOl0Qn6W/EgCoDlbEbeJJQFFh2ayq89cZxl6vw
-         EQCjWyERHqWyFYZmlpmQD9mj2Zbvt1E3vK6Kty/qZTXfRumGMgc2H/kOXlFPq/izXnwh
-         IFSzJVWIq6SNBzcGwt1fkywSP0C3zM3ohS10WazUgRC8cUgBx0UIqxn6E+uQ4gETZrO6
-         ZBt1Nmv5vddU7Z2QOzM2eIcSdOIpW4DP+mH8jTETHGb9ia5WJdj1vzkv/td7LhyYaUc1
-         J/nE3iFwmX/psEwbrxGLrpnTEdSJ2JJ4U05RheB0wB/BmyOoAINfCoKSaWCKAjovHycT
-         d8wQ==
-X-Gm-Message-State: APjAAAU1XPjyUw9nTpX9gzOTGYsizx0tlQoXE7Z8o/AfFkPq7LGG4o6L
-        S1ZSWKybabdf7hEAG1bLx7qEYKNUR/vng9v4ojGlbA==
-X-Google-Smtp-Source: APXvYqxrBEp73s3i3gThYRaC4jrcPXypBj9UG+5da1MVtjpJ1hGe+870E3FHigNLsj9J2v5KeREkaOCk1yn4bHYd3bs=
-X-Received: by 2002:a9d:82e:: with SMTP id 43mr22800110oty.23.1572952267599;
- Tue, 05 Nov 2019 03:11:07 -0800 (PST)
+        id S2388708AbfKELLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 06:11:44 -0500
+Received: from mga18.intel.com ([134.134.136.126]:18842 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388494AbfKELLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 06:11:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 03:11:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
+   d="scan'208";a="403317098"
+Received: from zpanjkov-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.3.163])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2019 03:11:29 -0800
+Date:   Tue, 5 Nov 2019 13:11:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v23 12/24] x86/sgx: Linux Enclave Driver
+Message-ID: <20191105111057.GA20879@linux.intel.com>
+References: <20191028210324.12475-1-jarkko.sakkinen@linux.intel.com>
+ <20191028210324.12475-13-jarkko.sakkinen@linux.intel.com>
+ <20191029092920.GA14494@linux.intel.com>
+ <20191030093045.GB12481@linux.intel.com>
+ <20191031211252.GC10507@linux.intel.com>
 MIME-Version: 1.0
-References: <20191104142745.14722-1-elver@google.com> <20191104164717.GE20975@paulmck-ThinkPad-P72>
- <CANpmjNOtR6NEsXGo=M1o26d8vUyF7gwj=gew+LAeE_D+qfbEmQ@mail.gmail.com> <20191104194658.GK20975@paulmck-ThinkPad-P72>
-In-Reply-To: <20191104194658.GK20975@paulmck-ThinkPad-P72>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 5 Nov 2019 12:10:56 +0100
-Message-ID: <CANpmjNPpVCRhgVgfaApZJCnMKHsGxVUno+o-Fe+7OYKmPvCboQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] Add Kernel Concurrency Sanitizer (KCSAN)
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031211252.GC10507@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Nov 2019 at 20:47, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Mon, Nov 04, 2019 at 07:41:30PM +0100, Marco Elver wrote:
-> > On Mon, 4 Nov 2019 at 17:47, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > >
-> > > On Mon, Nov 04, 2019 at 03:27:36PM +0100, Marco Elver wrote:
-> > > > This is the patch-series for the Kernel Concurrency Sanitizer (KCSAN).
-> > > > KCSAN is a sampling watchpoint-based data-race detector. More details
-> > > > are included in Documentation/dev-tools/kcsan.rst. This patch-series
-> > > > only enables KCSAN for x86, but we expect adding support for other
-> > > > architectures is relatively straightforward (we are aware of
-> > > > experimental ARM64 and POWER support).
-> > > >
-> > > > To gather early feedback, we announced KCSAN back in September, and
-> > > > have integrated the feedback where possible:
-> > > > http://lkml.kernel.org/r/CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com
-> > > >
-> > > > We want to point out and acknowledge the work surrounding the LKMM,
-> > > > including several articles that motivate why data-races are dangerous
-> > > > [1, 2], justifying a data-race detector such as KCSAN.
-> > > > [1] https://lwn.net/Articles/793253/
-> > > > [2] https://lwn.net/Articles/799218/
-> > > >
-> > > > The current list of known upstream fixes for data-races found by KCSAN
-> > > > can be found here:
-> > > > https://github.com/google/ktsan/wiki/KCSAN#upstream-fixes-of-data-races-found-by-kcsan
-> > >
-> > > Making this more accessible to more people seems like a good thing.
-> > > So, for the series:
-> > >
-> > > Acked-by: Paul E. McKenney <paulmck@kernel.org>
-> >
-> > Much appreciated. Thanks, Paul!
-> >
-> > Any suggestions which tree this could eventually land in?
->
-> I would guess that Dmitry might have some suggestions.
+On Thu, Oct 31, 2019 at 11:12:52PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Oct 30, 2019 at 02:30:45AM -0700, Sean Christopherson wrote:
+> > Why?  The number of pages processed is effectively returned via the params
+> > on any error, e.g. wouldn't it be more appropriate to return -ERESTARTSYS?
+> > And I don't see any reason to add an arbitrary cap on the number of pages,
+> > e.g. SGX plays nice with the scheduler and signals, and restricting the
+> > number of EPC pages available to a process via cgroups (returning -ENOMEM)
+> > is a better solution for managing EPC.
+> 
+> Returning -ENOMEM does not tell you from which page to retry.
 
-I checked and we're both unclear what the most obvious tree to land in
-is (the other sanitizers are mm related, which KCSAN is not).
+API should be robust enough to be able to cap the amount of data
+processed with or without cgroups like send(), recv(), read() and
+write() are and the call pattern for it must be a loop not a single shot
+call for any megalomaniac length.
 
-One suggestion that comes to my mind is for KCSAN to go through the
-same tree (rcu?) as the LKMM due to their inherent relationship. Would
-that make most sense?
+I'll add @count to address this. This output field will contain the
+number of bytes actually written instead of overwriting input
+parameters, which is a bad practice in anyway.
 
-Thanks,
--- Marco
+We don't need to actually cap to anything but API must be able to
+support such scenario. Caller must be prepared to deal with the
+situation where the return value is zero but @count < @length.
 
-> >
-> > > > Changelog
-> > > > ---------
-> > > > v3:
-> > > > * Major changes:
-> > > >  - Add microbenchmark.
-> > > >  - Add instruction watchpoint skip randomization.
-> > > >  - Refactor API and core runtime fast-path and slow-path. Compared to
-> > > >    the previous version, with a default config and benchmarked using the
-> > > >    added microbenchmark, this version is 3.8x faster.
-> > > >  - Make __tsan_unaligned __alias of generic accesses.
-> > > >  - Rename kcsan_{begin,end}_atomic ->
-> > > >    kcsan_{nestable,flat}_atomic_{begin,end}
-> > > >  - For filter list in debugfs.c use kmalloc+krealloc instead of
-> > > >    kvmalloc.
-> > > >  - Split Documentation into separate patch.
-> > > >
-> > > > v2: http://lkml.kernel.org/r/20191017141305.146193-1-elver@google.com
-> > > > * Major changes:
-> > > >  - Replace kcsan_check_access(.., {true, false}) with
-> > > >    kcsan_check_{read,write}.
-> > > >  - Change atomic-instrumented.h to use __atomic_check_{read,write}.
-> > > >  - Use common struct kcsan_ctx in task_struct and for per-CPU interrupt
-> > > >    contexts.
-> > > >
-> > > > v1: http://lkml.kernel.org/r/20191016083959.186860-1-elver@google.com
-> > > >
-> > > > Marco Elver (9):
-> > > >   kcsan: Add Kernel Concurrency Sanitizer infrastructure
-> > > >   kcsan: Add Documentation entry in dev-tools
-> > > >   objtool, kcsan: Add KCSAN runtime functions to whitelist
-> > > >   build, kcsan: Add KCSAN build exceptions
-> > > >   seqlock, kcsan: Add annotations for KCSAN
-> > > >   seqlock: Require WRITE_ONCE surrounding raw_seqcount_barrier
-> > > >   asm-generic, kcsan: Add KCSAN instrumentation for bitops
-> > > >   locking/atomics, kcsan: Add KCSAN instrumentation
-> > > >   x86, kcsan: Enable KCSAN for x86
-> > > >
-> > > >  Documentation/dev-tools/index.rst         |   1 +
-> > > >  Documentation/dev-tools/kcsan.rst         | 217 +++++++++
-> > > >  MAINTAINERS                               |  11 +
-> > > >  Makefile                                  |   3 +-
-> > > >  arch/x86/Kconfig                          |   1 +
-> > > >  arch/x86/boot/Makefile                    |   2 +
-> > > >  arch/x86/boot/compressed/Makefile         |   2 +
-> > > >  arch/x86/entry/vdso/Makefile              |   3 +
-> > > >  arch/x86/include/asm/bitops.h             |   6 +-
-> > > >  arch/x86/kernel/Makefile                  |   7 +
-> > > >  arch/x86/kernel/cpu/Makefile              |   3 +
-> > > >  arch/x86/lib/Makefile                     |   4 +
-> > > >  arch/x86/mm/Makefile                      |   3 +
-> > > >  arch/x86/purgatory/Makefile               |   2 +
-> > > >  arch/x86/realmode/Makefile                |   3 +
-> > > >  arch/x86/realmode/rm/Makefile             |   3 +
-> > > >  drivers/firmware/efi/libstub/Makefile     |   2 +
-> > > >  include/asm-generic/atomic-instrumented.h | 393 +++++++--------
-> > > >  include/asm-generic/bitops-instrumented.h |  18 +
-> > > >  include/linux/compiler-clang.h            |   9 +
-> > > >  include/linux/compiler-gcc.h              |   7 +
-> > > >  include/linux/compiler.h                  |  35 +-
-> > > >  include/linux/kcsan-checks.h              |  97 ++++
-> > > >  include/linux/kcsan.h                     | 115 +++++
-> > > >  include/linux/sched.h                     |   4 +
-> > > >  include/linux/seqlock.h                   |  51 +-
-> > > >  init/init_task.c                          |   8 +
-> > > >  init/main.c                               |   2 +
-> > > >  kernel/Makefile                           |   6 +
-> > > >  kernel/kcsan/Makefile                     |  11 +
-> > > >  kernel/kcsan/atomic.h                     |  27 ++
-> > > >  kernel/kcsan/core.c                       | 560 ++++++++++++++++++++++
-> > > >  kernel/kcsan/debugfs.c                    | 275 +++++++++++
-> > > >  kernel/kcsan/encoding.h                   |  94 ++++
-> > > >  kernel/kcsan/kcsan.h                      | 131 +++++
-> > > >  kernel/kcsan/report.c                     | 306 ++++++++++++
-> > > >  kernel/kcsan/test.c                       | 121 +++++
-> > > >  kernel/sched/Makefile                     |   6 +
-> > > >  lib/Kconfig.debug                         |   2 +
-> > > >  lib/Kconfig.kcsan                         | 119 +++++
-> > > >  lib/Makefile                              |   3 +
-> > > >  mm/Makefile                               |   8 +
-> > > >  scripts/Makefile.kcsan                    |   6 +
-> > > >  scripts/Makefile.lib                      |  10 +
-> > > >  scripts/atomic/gen-atomic-instrumented.sh |  17 +-
-> > > >  tools/objtool/check.c                     |  18 +
-> > > >  46 files changed, 2526 insertions(+), 206 deletions(-)
-> > > >  create mode 100644 Documentation/dev-tools/kcsan.rst
-> > > >  create mode 100644 include/linux/kcsan-checks.h
-> > > >  create mode 100644 include/linux/kcsan.h
-> > > >  create mode 100644 kernel/kcsan/Makefile
-> > > >  create mode 100644 kernel/kcsan/atomic.h
-> > > >  create mode 100644 kernel/kcsan/core.c
-> > > >  create mode 100644 kernel/kcsan/debugfs.c
-> > > >  create mode 100644 kernel/kcsan/encoding.h
-> > > >  create mode 100644 kernel/kcsan/kcsan.h
-> > > >  create mode 100644 kernel/kcsan/report.c
-> > > >  create mode 100644 kernel/kcsan/test.c
-> > > >  create mode 100644 lib/Kconfig.kcsan
-> > > >  create mode 100644 scripts/Makefile.kcsan
-> > > >
-> > > > --
-> > > > 2.24.0.rc1.363.gb1bccd3e3d-goog
-> > > >
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20191104164717.GE20975%40paulmck-ThinkPad-P72.
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20191104194658.GK20975%40paulmck-ThinkPad-P72.
+/Jarkko
