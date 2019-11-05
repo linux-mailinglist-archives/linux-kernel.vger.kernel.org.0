@@ -2,96 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 167FDEF895
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E7FEF89F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbfKEJXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:23:42 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44656 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfKEJXl (ORCPT
+        id S1730639AbfKEJZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:25:50 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38181 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730475AbfKEJZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:23:41 -0500
-Received: by mail-qk1-f194.google.com with SMTP id m16so20136955qki.11
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:23:41 -0800 (PST)
+        Tue, 5 Nov 2019 04:25:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v8so5300290ljh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:25:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=YkhaHXSsDqirPfbF2CFOp3B+1zltTG0E4zKqdP/VC+c=;
-        b=Dw49I8qifVDCORWLRdtpBY9ooKcZxEjz2rc/KtxMb3rpM9VgH9M9vzmE0C99ph48hG
-         B4DFLdKLK/Iezm85RKrniMhZYCNoCU2AfUjlyOsNy3vbPTaSzk7Ag57GCgNsshy03qTd
-         Oe87p1SLyxn+tTUhfeSrz/DJmY9lFundHyKQQs1r5dVdvtRZ8NSMHlURt3EsfrLuAUW2
-         82N13FPIgVgdGIQc+sY4MdguhhPxCg+zkF413zNlN5CbAfX5wBxwePrIs4OtP9Pr8YAf
-         b0WBAjnmLyH9S/hAsy9nDql1h8n6wf6IkiOmolfN4f4mAxWiRr9lYBDisfaGOtyR+ULj
-         Rn9g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k8LC5hoQOSSC3SYIdMqveplyFLeeSr89WqnCil+AS+E=;
+        b=w76q11BCIBe59Mmf6DY+f8/pscc+d0jjzVhnZMY2wavCZw1hfWfQa59gIGMkWkfX6V
+         7Ju/8lwlgbw0zEfv7/Ja2CpBuZFIOq0svpp2ozaca1Iz6wL78qT8mYqfF/9Qau+dyPm5
+         Vigtyj0ZMX5wYJTnBycUg8mYx598+Q5CpionMfqiLFIK5zlxtsNvBAjutiG048/snHzl
+         oyHV2lK33ABHUBfJERNid6lTsuPdYvt0Tslq2d9GWtEVKuEQxe9g4VQ1Y7HLya8XXx0N
+         JI4Ybxidp502FZeLUgAQ9FUI/wAfDbfYXg2/YPGTV1DwHrJfKklLod01tnE2WbpHQm9D
+         MpeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=YkhaHXSsDqirPfbF2CFOp3B+1zltTG0E4zKqdP/VC+c=;
-        b=KkHolR13B1i+r7i/HGN+RGcog2DQai41ZNQJOOxZZfnOTTRtAChnQpVRXyNSQfcF0B
-         5PGImYRxXfPpSJ44LfSs/Eqr4hnzTI3PUXxbPi6fOcXCvR/3eashQ0x6nT8XLhqWHqj9
-         /HGER6cZ5gXxAoBIivgaHfuhw58whGTi34DP5/oLRoFrl1lZRyN9WMOmdCBFrnCNMAxC
-         0hvu7TT4qbTwpJSy6oQn4kB/0o/bKffQ2XOHFHO+baRcXgPu2n3RnPyQWYzH77aApVad
-         tpIqpZgR0nwlmhHHOEXHr6M33WCXJ+iIhVVwVqNQJDWm5PRlJtZwk0yOQDG5J4aUcCSr
-         flCw==
-X-Gm-Message-State: APjAAAUt1mVNNXnJjqLTPXDkVC/k5pfAaOyTEMNVIXLH7jAD+go5G4IZ
-        dmubV/quFlWYRdGdzCbYCG7LVg==
-X-Google-Smtp-Source: APXvYqytwCb3ZVQn9qLgXXk+sTvXDqBUutYEvS0fjTCi17iuFjOtgFUudKA9oaz/cAwAyjiut+zA0g==
-X-Received: by 2002:a05:620a:a85:: with SMTP id v5mr9941501qkg.471.1572945820720;
-        Tue, 05 Nov 2019 01:23:40 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u27sm12218079qtj.5.2019.11.05.01.23.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 01:23:40 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: 5.4-rc1 boot regression with kmemleak enabled
-Date:   Tue, 5 Nov 2019 04:23:39 -0500
-Message-Id: <036DEC84-92EE-4A47-B078-ADC605482255@lca.pw>
-References: <CAOQ4uxgy6THDG2NsNSQ+=FP+iSZKeCkNEM9PbxQSB5p5nHvoCA@mail.gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Theodore Tso <tytso@mit.edu>,
-        fstests <fstests@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAOQ4uxgy6THDG2NsNSQ+=FP+iSZKeCkNEM9PbxQSB5p5nHvoCA@mail.gmail.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-X-Mailer: iPhone Mail (17A878)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k8LC5hoQOSSC3SYIdMqveplyFLeeSr89WqnCil+AS+E=;
+        b=nLDCTSBt8YrgemmmoSnkX8+90JMUhjNoTnrn0B8n+rG52BX/2+kyYCroW00OEdNVL0
+         E1tTttSujagAf1jlH4rF1IkGPb3fv9PQQPNHDlbHfGSvLoDQvN+lBoRtsw1lnrTTJ/b3
+         ogOFeIbi/zVdtEryt7ZWWsZYrF76v2a83fh6P7wC86hG/GF2dhp+6Xq7Sj5fS4F8Sn2O
+         o7rixhoXqHu5sXYMyOwqiNq9VHXQSOd2I76nQq3XYC7eICLpsUt1nU5ZxkSkFaEoBiFe
+         Vj4TsbvSOiNi3jHdXW/WjMCS7Gx9rHYNXR/DWzGs39O/Wl4Aj3ZWu1Tlyr3xKv3Jj7OD
+         LF9A==
+X-Gm-Message-State: APjAAAWgHghfIfPBccEpTZIlbB83odCQf0yu+ktHz2387/vmf5/GON+d
+        4k7C842hwXvEEqHiobzJzMODixJL4YAlww+jzgWmIQ==
+X-Google-Smtp-Source: APXvYqzOSHsg62Fj4vlheyb1uz8LbSqHiWIcvvFBmqGNwblm2et9MzcOhrpktjoIYMoo2tnFaHHN7BmRLDAaoZ8KOCU=
+X-Received: by 2002:a2e:161b:: with SMTP id w27mr22351639ljd.183.1572945947937;
+ Tue, 05 Nov 2019 01:25:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-25-arnd@arndb.de>
+In-Reply-To: <20191018154201.1276638-25-arnd@arndb.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 Nov 2019 10:25:36 +0100
+Message-ID: <CACRpkdbsJn6axZC2_gHq8JCo2bE2Ra=+cavGeR6qpsASnEW9yQ@mail.gmail.com>
+Subject: Re: [PATCH 25/46] ARM: pxa: mainstone-wm97xx: use gpio lookup table
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Linux Input <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 18, 2019 at 5:42 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
+> This driver hardcodes gpio numbers without a header file.
+> Use lookup tables instead.
+>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: linux-input@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> On Nov 5, 2019, at 2:14 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->=20
-> My kvm-xfstests [1] VM doesn't boot with kmemleak enabled since commit
-> c5665868183f ("mm: kmemleak: use the memory pool for early allocations").
->=20
-> There is no console output when running:
->=20
-> $ kvm -boot order=3Dc -net none -machine type=3Dpc,accel=3Dkvm:tcg -cpu ho=
-st \
->    -drive file=3D$ROOTFS,if=3Dvirtio,snapshot=3Don -vga none -nographic \
->    -smp 2 -m 2048 -serial mon:stdio --kernel $KERNEL \
->    --append 'root=3D/dev/vda console=3DttyS0,115200'
->=20
-> $ kvm --version
-> QEMU emulator version 2.11.1(Debian 1:2.11+dfsg-1ubuntu7.19)
-> Copyright (c) 2003-2017 Fabrice Bellard and the QEMU Project developers
->=20
-> Attached defconfig saved by 'make savedefconfig'.
->=20
-> I tried increasing DEBUG_KMEMLEAK_MEM_POOL_SIZE, which did not help.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-It probably use a bit more memory than before. Does lower the parameter help=
-? Eventually, It should boot with POOL_SIZE=3D0, no?=
+Yours,
+Linus Walleij
