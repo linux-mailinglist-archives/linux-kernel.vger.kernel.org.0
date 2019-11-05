@@ -2,92 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 132DCF024C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D324F0259
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 17:09:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390163AbfKEQIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 11:08:15 -0500
-Received: from mx1.cock.li ([185.10.68.5]:55127 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389843AbfKEQIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 11:08:15 -0500
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
+        id S2390130AbfKEQJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 11:09:45 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60118 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390035AbfKEQJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 11:09:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zYj73f1UT7gOij9GCCcNrorE4sfMx2ngwu5XUOipz28=; b=icIN7PqFV7lEMwnaLNKG7bxBF
+        D3oYIWzLqeG4iMGvdsbIM2GeR9041rEZBJiqBPeznRMvwpUeOWEgaCnyAZ6A66J5qZws2AGah9rke
+        x4sP8yJLok3HX448lZB7ah2qcA7SZWua53CWYlhSAH1KhCdwPti+ikajFdRD+HeNU5Hwvx+8RfHWf
+        yQtCuFLP5wBsKI8iz55oSNtq0pQmmcyXgFZS3eKUF1Tnwn810bw0yVCGxJZ7AQRh2g1GBg0TgdaT2
+        SGimOUiWNsppaBBdQVAQKftbxcec2ULbOy/DjnG8PGBbdR5y8igtL3GemlMDBIXPFuo6MYFKrQpQ5
+        tEvuJmxyg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iS1Op-0005lQ-NQ; Tue, 05 Nov 2019 16:09:43 +0000
+Date:   Tue, 5 Nov 2019 08:09:43 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 5/5] PCI: PM: Fold __pci_complete_power_transition() into
+ its caller
+Message-ID: <20191105160943.GA19190@infradead.org>
+References: <2771503.n70vfTtcVb@kreacher>
+ <1769241.yKxyosiRnQ@kreacher>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1572970091; bh=TO9KvzRzQl6Ot1r8fldjk8jx5yc9bJo7kd+9gy49Ku4=;
-        h=Date:From:To:Subject:From;
-        b=vbDKjm/LCia44oiPUfOQtlsEfhv3BjodwxqU2xfcQtjkXKIguemn2QSBtE3DpS+LL
-         tY3XJdTkEzfzeji9eDp7LXreX3tsUi+rsiGGAc6VB+CJmqOsI+80GEXHEuThQqMtKG
-         Ujo0B5FZ0VcwA34VzzCASp4tl0OxdF8QLovpC1Ghq1r2VtGF+aK/r3OG/ZyGy4wTlp
-         SzhGHlMddosBQAhe8vvQQ1BLASc8X7FJLSFo9zMS8c9TL2WLuyhhZ823VvyjuHC9cw
-         uREy9sAFGgvW/0P1f0oUDXvTsvxEdmIWPrHczyxeQFzs7+5UnDcYkQ8fwdJaqeedWN
-         OIxMBTRmMBxBA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 05 Nov 2019 16:08:07 +0000
-From:   gameonlinux@redchan.it
-To:     linux-kernel@vger.kernel.org, debian-user@lists.debian.org
-Subject: Proposal: More GTK1 (and 2) programs. (Reviving use of these
- libraries in free systems, for efficiency and avoidance of lock-in)
-Message-ID: <6191833c208dc4c495ada501f14f525c@redchan.it>
-X-Sender: gameonlinux@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1769241.yKxyosiRnQ@kreacher>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It has been noted that GTK1 and GTK2 were the GIMP ToolKit and were 
-fairly efficient, and allowed the creation of programs that could run on 
-a wide variety of hardware; however GTK3 is Gnome*'s ToolKit.
+On Tue, Nov 05, 2019 at 11:32:02AM +0100, Rafael J. Wysocki wrote:
+>  	if (state > PCI_D3cold)
+> @@ -1132,10 +1112,12 @@ int pci_set_power_state(struct pci_dev *
+>  	error = pci_raw_set_power_state(dev, state > PCI_D3hot ?
+>  					PCI_D3hot : state);
+>  
+> -	if (!__pci_complete_power_transition(dev, state))
+> -		error = 0;
+> +	ret = pci_platform_power_transition(dev, state);
+> +	/* Powering off a bridge may power off the whole hierarchy */
+> +	if (!ret && state == PCI_D3cold)
+> +		pci_bus_set_current_state(dev->subordinate, PCI_D3cold);
+>  
+> -	return error;
+> +	return ret ? error : 0;
 
-GTK1 was lightweight, and fairly straight forward, and was built by the 
-GIMP hackers.
-GTK2 was aswell, but introduced things similar to a "windows registry" 
-for gfx, however it increased the options the hackers had when creating 
-their programs.
-GTK3 is quite slow, removes many options, and is controlled by Gnome 
-with no input by the hackers, and is not a Gnu project, essentially. No 
-hacker can rely on it: only the Gnome programmers at the Gnome 
-foundation can.
+Total nitpick, but why not:
 
-*(now "Gnome: they stopped being "GNOME" in 2012 since they didn't want 
-to be an acronym associated with Gnu any longer (see: their mailing list 
-regarding "rebranding"))
+	if (pci_platform_power_transition(dev, state))
+		return error;
 
-GTK3 is unsuited for the poor who do not have access to 
-high-memory-bandwith modern computers (note: I just switched to one, 
-after my old desktop failed: there is much difference), great amounts of 
-memory, and fast tertiary storage (SSDs). It is also controlled by a 
-foundation, not the hackers, who seems to act like the corporate 
-entities the hackers rejected.
+	/* Powering off a bridge may power off the whole hierarchy */
+	if (state == PCI_D3cold)
+		pci_bus_set_current_state(dev->subordinate, PCI_D3cold);
+	return 0;
 
-So my proposal is that GTK1 and GTK2 programs be written again, and the 
-libraries be included in distributions of GNU/Linux again thusly: to 
-avoid being taken down a river by Gnome.
-
-Recently I wished to use a free-software program from a project I 
-contributed to a decade+ ago. Seems like yesterday that I was 
-contributing to it.
-
-I got gtk1.2, and glib1.2, had to patch it to work with gcc3x ( 
-glib-1.2.10-gcc34-1.patch ), and use the c89 option, also compiled 
-libpng-1.4.22 (after that they removed code that was relied upon) , 
-compiled it all, and was able to use my GTK1 program.
-
-It worked fine. It was fast, and was no different than it had ever been, 
-but the Gnome folks would make it seem as if Gimp's 2 tool kits are dead 
-and you have to follow their development (they even use slow Javascript 
-for their stuff aswell, instead of C: slowing things down even more). 
-They're just trying to lock us in: they've all-ready taken control of 
-they system away from the hackers and given it to their employees, who 
-they direct.
-
-Can we step back into the promised land, together?
-Must we be lead by the nose by these foundation-managers and their 
-workers that they own?
