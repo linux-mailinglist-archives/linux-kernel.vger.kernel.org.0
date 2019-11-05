@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9938EFDBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43DC4EFDB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389006AbfKEMw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 07:52:56 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47190 "EHLO
+        id S2388976AbfKEMww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 07:52:52 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:23636 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388678AbfKEMws (ORCPT
+        by vger.kernel.org with ESMTP id S2388894AbfKEMws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Nov 2019 07:52:48 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA5CnPFZ027895;
-        Tue, 5 Nov 2019 13:52:36 +0100
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA5Cq28r024530;
+        Tue, 5 Nov 2019 13:52:37 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=7qTkJgeLvJG9yVLjxR53YS50TdExPF24lYbqfsmrqvk=;
- b=HsMOixEbY1ruOLkQkxxCJ1z3pter8jt/eEfoLcOYQqmjh7Fv3GAyTVc/l1Hn9ukj0tUS
- slRGdrwyy4uWHmWBxf3TvSk4HFbieyaZUV9cXJIsJQ60oVXEbMe2HYE1r3WVRX8QXecX
- WdW9shpbHGw1KVLyIbKRs0Joh3sIATuyIcqVis9gyCqeaA727HWJRe4/EJSjtja46Hct
- 6r7fFv5lpPL4sdTv1Ovzmf2pSFad+MdOLPXyRSp7orBkO7EC6ibMGafkIq4Imfek8vqp
- JPTeQf93GdFRa09InEEkwP+TNrwNF8VqdNUx8wRpktlBt3v/k2W55DhXMbfp2hWeit76 9A== 
+ bh=jJI/DkkYdOFDwfHxMZJXjpmLkJFu22QOe9fKOFedHns=;
+ b=x+V94dO16nBLaZVKESj9twoAzIqkX2dmbi0tkxahtdqGDOAsdgW8/fD7TVzDuINq7WwO
+ kFC1IWJ5IjwXjx9BIlXxRLn8TpEo9TDJsi5nWc2YndNZ5QPYjUrOktRP/SEiCCEVzOl3
+ VYiu5L7B9iw98OxmsMxXEIUnkE5X0AL4MrLDqIXBAbIyRHQbicEi415GmoMZIiBLq2wP
+ pHgjGcCrAMihURKUeUsVAISGD6XcQY1tPesd1C4Cle9xujkJpSD39KT0juQJjpFRu1vh
+ 35028gplQEUuIjm0O4g+w65gK47GGf8lOjMQ49Cp7LajTArwQIoi5Kz0y88KhJATcSXU WQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2w11jn7kg9-1
+        by mx08-00178001.pphosted.com with ESMTP id 2w0ytcr0bq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Nov 2019 13:52:36 +0100
+        Tue, 05 Nov 2019 13:52:37 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09340100039;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0AF30100034;
+        Tue,  5 Nov 2019 13:52:37 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F38932BC5E5;
         Tue,  5 Nov 2019 13:52:36 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC5372BC5E7;
-        Tue,  5 Nov 2019 13:52:35 +0100 (CET)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019
- 13:52:35 +0100
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019
+ 13:52:36 +0100
 Received: from localhost (10.48.0.192) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019 13:52:35 +0100
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019 13:52:36 +0100
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
 To:     <alexandre.torgue@st.com>
 CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
@@ -46,9 +46,9 @@ CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <fabrice.gasnier@st.com>
-Subject: [PATCH 2/4] ARM: dts: stm32: add pwm pin muxing for stm32mp157a-dk1
-Date:   Tue, 5 Nov 2019 13:52:19 +0100
-Message-ID: <1572958341-12404-3-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH 3/4] ARM: dts: stm32: add pwm sleep pins to stm32mp157c-ev1
+Date:   Tue, 5 Nov 2019 13:52:20 +0100
+Message-ID: <1572958341-12404-4-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1572958341-12404-1-git-send-email-fabrice.gasnier@st.com>
 References: <1572958341-12404-1-git-send-email-fabrice.gasnier@st.com>
@@ -62,112 +62,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add all PWM pinctrl definitions that can be used on stm32mp157a-dk1 board.
+Add pinctrl sleep state for PWM on stm32mp157c-ev1 board.
 
 Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 81 +++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index de5679f..0f42ab1 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -587,6 +587,25 @@
- 				};
- 			};
- 
-+			pwm1_pins_a: pwm1-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('E', 9, AF1)>, /* TIM1_CH1 */
-+						 <STM32_PINMUX('E', 11, AF1)>, /* TIM1_CH2 */
-+						 <STM32_PINMUX('E', 14, AF1)>; /* TIM1_CH4 */
-+					bias-pull-down;
-+					drive-push-pull;
-+					slew-rate = <0>;
-+				};
-+			};
-+
-+			pwm1_sleep_pins_a: pwm1-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('E', 9, ANALOG)>, /* TIM1_CH1 */
-+						 <STM32_PINMUX('E', 11, ANALOG)>, /* TIM1_CH2 */
-+						 <STM32_PINMUX('E', 14, ANALOG)>; /* TIM1_CH4 */
-+				};
-+			};
-+
- 			pwm2_pins_a: pwm2-0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 3, AF1)>; /* TIM2_CH4 */
-@@ -602,6 +621,68 @@
- 				};
- 			};
- 
-+			pwm3_pins_a: pwm3-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('C', 7, AF2)>; /* TIM3_CH2 */
-+					bias-pull-down;
-+					drive-push-pull;
-+					slew-rate = <0>;
-+				};
-+			};
-+
-+			pwm3_sleep_pins_a: pwm3-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('C', 7, ANALOG)>; /* TIM3_CH2 */
-+				};
-+			};
-+
-+			pwm4_pins_a: pwm4-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('D', 14, AF2)>, /* TIM4_CH3 */
-+						 <STM32_PINMUX('D', 15, AF2)>; /* TIM4_CH4 */
-+					bias-pull-down;
-+					drive-push-pull;
-+					slew-rate = <0>;
-+				};
-+			};
-+
-+			pwm4_sleep_pins_a: pwm4-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('D', 14, ANALOG)>, /* TIM4_CH3 */
-+						 <STM32_PINMUX('D', 15, ANALOG)>; /* TIM4_CH4 */
-+				};
-+			};
-+
-+			pwm4_pins_b: pwm4-1 {
-+				pins {
-+					pinmux = <STM32_PINMUX('D', 13, AF2)>; /* TIM4_CH2 */
-+					bias-pull-down;
-+					drive-push-pull;
-+					slew-rate = <0>;
-+				};
-+			};
-+
-+			pwm4_sleep_pins_b: pwm4-sleep-1 {
-+				pins {
-+					pinmux = <STM32_PINMUX('D', 13, ANALOG)>; /* TIM4_CH2 */
-+				};
-+			};
-+
-+			pwm5_pins_a: pwm5-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('H', 11, AF2)>; /* TIM5_CH2 */
-+					bias-pull-down;
-+					drive-push-pull;
-+					slew-rate = <0>;
-+				};
-+			};
-+
-+			pwm5_sleep_pins_a: pwm5-sleep-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('H', 11, ANALOG)>; /* TIM5_CH2 */
-+				};
-+			};
-+
- 			pwm8_pins_a: pwm8-0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('I', 2, AF3)>; /* TIM8_CH4 */
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index 2baae5f..7ab5dbd 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -305,7 +305,8 @@
+ 	status = "disabled";
+ 	pwm {
+ 		pinctrl-0 = <&pwm2_pins_a>;
+-		pinctrl-names = "default";
++		pinctrl-1 = <&pwm2_sleep_pins_a>;
++		pinctrl-names = "default", "sleep";
+ 		status = "okay";
+ 	};
+ 	timer@1 {
+@@ -319,7 +320,8 @@
+ 	status = "disabled";
+ 	pwm {
+ 		pinctrl-0 = <&pwm8_pins_a>;
+-		pinctrl-names = "default";
++		pinctrl-1 = <&pwm8_sleep_pins_a>;
++		pinctrl-names = "default", "sleep";
+ 		status = "okay";
+ 	};
+ 	timer@7 {
+@@ -333,7 +335,8 @@
+ 	status = "disabled";
+ 	pwm {
+ 		pinctrl-0 = <&pwm12_pins_a>;
+-		pinctrl-names = "default";
++		pinctrl-1 = <&pwm12_sleep_pins_a>;
++		pinctrl-names = "default", "sleep";
+ 		status = "okay";
+ 	};
+ 	timer@11 {
 -- 
 2.7.4
 
