@@ -2,35 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3BCBEFD10
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C21EFD26
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 13:31:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbfKEMTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 07:19:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:9770 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730869AbfKEMTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 07:19:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 04:19:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="200359819"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.155])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Nov 2019 04:19:36 -0800
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc 2/2] mei: me: add comet point V device id
-Date:   Tue,  5 Nov 2019 17:05:14 +0200
-Message-Id: <20191105150514.14010-2-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191105150514.14010-1-tomas.winkler@intel.com>
-References: <20191105150514.14010-1-tomas.winkler@intel.com>
+        id S2388340AbfKEMbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 07:31:33 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39758 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387744AbfKEMbd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 07:31:33 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 195so14959086lfj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 04:31:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kMRRzBdYGAmjCi84Oik+o1hEPde0vMlLbqwfzhBep3Y=;
+        b=TLkHehXCoUaUGstiwdj8fjVlz9gpUtcPChFOwjxmUtGkFfOi0uQ7WwBFH9q99o2YaS
+         RyO+Ddp4ujrXZoIKDYOx4TOi+TqY9Mu5qkwdw83/3cvXoJW63WcWkgO+D01XxbKUhkNa
+         HyqFjL7lLvZ6HfbuTZdSE0DCCBUUTUCRDluvU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kMRRzBdYGAmjCi84Oik+o1hEPde0vMlLbqwfzhBep3Y=;
+        b=hXPSU3LtrB+G/XL2fO9x8jOHxIv0zDGCqcyC+IJFneZ1QozcbMnUAvCnmhvmazrao/
+         gTrfE24RvGlRapcw9N1KWrtkzMG0zxUs/Ikgzkqv1HSkERjaF9paFLHnBfiqsPrY8Owt
+         AibFewGPpNgySnM7yVb6oYdjYI5bHB86LEsB6VXN6DLl0GAXrMsp6SyAbmgZkVVfB/8d
+         2acBfqi7q3nBndhMc098iO6s14ugE0OJLMZTBuGGemJ9JhC4/+utlQHh5DF36sQu7Kbl
+         bphIMr/+gMJQB7myXV57QZU/EmsDYm6Rngxs/c4JJwyMNtzBVUApjkEu4MMyNt5N7o1i
+         LCuQ==
+X-Gm-Message-State: APjAAAWrSL0m9jQWPsxsfM1WnoSF4wGNTggIgITf6FDD/yxW9iB+Fizo
+        4Er/2womloNAPg6i7sbfBHQDAN8C4AkYcg==
+X-Google-Smtp-Source: APXvYqz7pTQrY6+PNDzgbHOOx5ljSHLg2gy/5/9BxlS/JkI4le74b5m9Xs7646wgzBUgM1YLYIcswA==
+X-Received: by 2002:ac2:4856:: with SMTP id 22mr19654061lfy.131.1572957089421;
+        Tue, 05 Nov 2019 04:31:29 -0800 (PST)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id i128sm10953245lfd.6.2019.11.05.04.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 04:31:28 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH] watchdog: make nowayout sysfs file writable
+Date:   Tue,  5 Nov 2019 13:31:25 +0100
+Message-Id: <20191105123125.25985-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -38,42 +58,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+It can be useful to delay setting the nowayout feature for a watchdog
+device. Moreover, not every driver (notably gpio_wdt) implements a
+nowayout module parameter/otherwise respects CONFIG_WATCHDOG_NOWAYOUT,
+and modifying those drivers carries a risk of causing a regression for
+someone who has two watchdog devices, sets CONFIG_WATCHDOG_NOWAYOUT
+and somehow relies on the gpio_wdt driver being ignorant of
+that (i.e., allowing one to gracefully close a gpio_wdt but not the
+other watchdog in the system).
 
-Comet Point (Comet Lake) V device id.
+So instead, simply make the nowayout sysfs file writable. Obviously,
+setting nowayout is a one-way street.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/misc/mei/hw-me-regs.h | 1 +
- drivers/misc/mei/pci-me.c     | 1 +
- 2 files changed, 2 insertions(+)
+ .../ABI/testing/sysfs-class-watchdog          |  9 ++++++--
+ drivers/watchdog/watchdog_dev.c               | 22 ++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/mei/hw-me-regs.h b/drivers/misc/mei/hw-me-regs.h
-index c09f8bb49495..b359f06f05e7 100644
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -81,6 +81,7 @@
+diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
+index 675f9b537661..9860a8b2ba75 100644
+--- a/Documentation/ABI/testing/sysfs-class-watchdog
++++ b/Documentation/ABI/testing/sysfs-class-watchdog
+@@ -17,8 +17,13 @@ What:		/sys/class/watchdog/watchdogn/nowayout
+ Date:		August 2015
+ Contact:	Wim Van Sebroeck <wim@iguana.be>
+ Description:
+-		It is a read only file. While reading, it gives '1' if that
+-		device supports nowayout feature else, it gives '0'.
++		It is a read/write file. While reading, it gives '1'
++		if the device has the nowayout feature set, otherwise
++		it gives '0'. Writing a '1' to the file enables the
++		nowayout feature. Once set, the nowayout feature
++		cannot be disabled, so writing a '0' either has no
++		effect (if the feature was already disabled) or
++		results in a permission error.
  
- #define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
- #define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
-+#define MEI_DEV_ID_CMP_V      0xA3BA  /* Comet Point Lake V */
+ What:		/sys/class/watchdog/watchdogn/state
+ Date:		August 2015
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index dbd2ad4c9294..0c478b8f8d5a 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -452,7 +452,27 @@ static ssize_t nowayout_show(struct device *dev, struct device_attribute *attr,
  
- #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 	return sprintf(buf, "%d\n", !!test_bit(WDOG_NO_WAY_OUT, &wdd->status));
+ }
+-static DEVICE_ATTR_RO(nowayout);
++
++static ssize_t nowayout_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t len)
++{
++	struct watchdog_device *wdd = dev_get_drvdata(dev);
++	unsigned int value, current;
++	int ret;
++
++	ret = kstrtouint(buf, 0, &value);
++	if (ret)
++		return ret;
++	if (value > 1)
++		return -EINVAL;
++	current = !!test_bit(WDOG_NO_WAY_OUT, &wdd->status);
++	/* nowayout cannot be disabled once set */
++	if (current && !value)
++		return -EPERM;
++	watchdog_set_nowayout(wdd, value);
++	return len;
++}
++static DEVICE_ATTR_RW(nowayout);
  
-diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-index 3dca63eddaa0..ce43415a536c 100644
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -98,6 +98,7 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_V, MEI_ME_PCH12_CFG)},
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
- 
+ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
 -- 
-2.21.0
+2.23.0
 
