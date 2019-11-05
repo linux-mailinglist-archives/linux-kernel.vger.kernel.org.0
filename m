@@ -2,189 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF9AEFC1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:11:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D86EFC55
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 12:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbfKELLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 06:11:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388494AbfKELLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 06:11:39 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4BA820869;
-        Tue,  5 Nov 2019 11:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572952297;
-        bh=L0MQuT4XYxAFwm79QAhiL05f/SdnH/s1jkfSPz113BE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yl1o9f4oD62go+SoZTI/xdBt6WJXvvuOwVzpe7vPn+ctS79K7B1/M8YvcKQlgyXiJ
-         BE2CNaKz1BaPD3A6kklxIl+zEHlVAvYshsIDdrpTGwnP16AI0jIK7jzvyj0RyhME5g
-         DlR6EqbQDkkEYmG8eIj2b92ZyKXifryUwNnjalY8=
-Date:   Tue, 5 Nov 2019 12:11:34 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>, kernel@pengutronix.de
-Subject: Re: [PATCH v2 1/7] dt-bindings: pwm: allwinner: Add H6 PWM
- description
-Message-ID: <20191105111134.GG3876@gilmour.lan>
-References: <20191103203334.10539-1-peron.clem@gmail.com>
- <20191103203334.10539-2-peron.clem@gmail.com>
- <20191104080359.6kjugbt3yi63ywhb@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+jhVVhN62yS6hEJ8"
-Content-Disposition: inline
-In-Reply-To: <20191104080359.6kjugbt3yi63ywhb@pengutronix.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2387880AbfKEL17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 06:27:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35292 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730624AbfKEL16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 06:27:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AE44FB3D1;
+        Tue,  5 Nov 2019 11:27:56 +0000 (UTC)
+Message-ID: <1572952316.2921.3.camel@suse.com>
+Subject: Re: KMSAN: uninit-value in cdc_ncm_set_dgram_size
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+0631d878823ce2411636@syzkaller.appspotmail.com>,
+        davem@davemloft.net, glider@google.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Date:   Tue, 05 Nov 2019 12:11:56 +0100
+In-Reply-To: <00000000000013c4c1059625a655@google.com>
+References: <00000000000013c4c1059625a655@google.com>
+Content-Type: multipart/mixed; boundary="=-tHZcmQBfFGLiVVm2/Dfe"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---+jhVVhN62yS6hEJ8
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--=-tHZcmQBfFGLiVVm2/Dfe
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Clement, Uwe,
+Am Mittwoch, den 30.10.2019, 12:22 -0700 schrieb syzbot:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    96c6c319 net: kasan: kmsan: support CONFIG_GENERIC_CSUM on..
+> git tree:       https://github.com/google/kmsan.git master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11f103bce00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9e324dfe9c7b0360
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0631d878823ce2411636
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dd9774e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13651a24e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0631d878823ce2411636@syzkaller.appspotmail.com
+#syz test: https://github.com/google/kmsan.git 96c6c319
 
-On Mon, Nov 04, 2019 at 09:03:59AM +0100, Uwe Kleine-K=F6nig wrote:
-> On Sun, Nov 03, 2019 at 09:33:28PM +0100, Cl=E9ment P=E9ron wrote:
-> > From: Jernej Skrabec <jernej.skrabec@siol.net>
-> >
-> > H6 PWM block is basically the same as A20 PWM, except that it also has
-> > bus clock and reset line which needs to be handled accordingly.
-> >
-> > Expand Allwinner PWM binding with H6 PWM specifics.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
-> > ---
-> >  .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml | 45 ++++++++++++++++++-
-> >  1 file changed, 44 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-=
-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.ya=
-ml
-> > index 0ac52f83a58c..bf36ea509f31 100644
-> > --- a/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
-> > +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml
-> > @@ -30,13 +30,46 @@ properties:
-> >        - items:
-> >            - const: allwinner,sun50i-h5-pwm
-> >            - const: allwinner,sun5i-a13-pwm
-> > +      - const: allwinner,sun50i-h6-pwm
-> >
-> >    reg:
-> >      maxItems: 1
-> >
-> > -  clocks:
-> > +  # Even though it only applies to subschemas under the conditionals,
-> > +  # not listing them here will trigger a warning because of the
-> > +  # additionalsProperties set to false.
-> > +  clocks: true
-> > +  clock-names: true
-> > +  resets:
-> >      maxItems: 1
-> >
-> > +  if:
-> > +    properties:
-> > +      compatible:
-> > +        contains:
-> > +          const: allwinner,sun50i-h6-pwm
-> > +
-> > +  then:
-> > +    properties:
-> > +      clocks:
-> > +        items:
-> > +          - description: Module Clock
-> > +          - description: Bus Clock
-> > +
-> > +      clock-names:
-> > +        items:
-> > +          - const: mod
-> > +          - const: bus
-> > +
-> > +    required:
-> > +      - clock-names
-> > +      - resets
-> > +
-> > +  else:
-> > +    properties:
-> > +      clocks:
-> > +        maxItems: 1
-> > +
->
-> I guess this hunk says "If this is a allwinner,sun50i-h6-pwm, a mod and
-> bus clock is required.", right?
->
-> I wonder if it is sensible to require a clock-names property in the else
-> branch, too. This would make it obvious if the clock there corresponds
-> to the "mod" or the "bus" clock on H6. (I guess it's "mod".)
+--=-tHZcmQBfFGLiVVm2/Dfe
+Content-Disposition: attachment;
+	filename="0001-CDC-NCM-handle-incomplete-transfer-of-MTU.patch"
+Content-Type: text/x-patch; name="0001-CDC-NCM-handle-incomplete-transfer-of-MTU.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-This can be done a bit differently and could address your concerns
+RnJvbSAwOTBhYzAzMDViYjQ3ZGE5MzM2YzAxODhlMGU1OWU1MGZmMjI0M2MzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
+OiBUdWUsIDUgTm92IDIwMTkgMTI6MDQ6NDQgKzAxMDAKU3ViamVjdDogW1BBVENIXSBDREMtTkNN
+OiBoYW5kbGUgaW5jb21wbGV0ZSB0cmFuc2ZlciBvZiBNVFUKCkEgbWFsaWNpb3VzIGRldmljZSBt
+YXkgZ2l2ZSBoYWxmIGFuIGFuc3dlciB3aGVuIGFza2VkCmZvciBpdHMgTVRVLiBUaGUgZHJpdmVy
+IHdpbGwgcHJvY2VlZCBhZnRlciB0aGlzIHdpdGgKYSBnYXJiYWdlIE1UVS4gQW55dGhpbmcgYnV0
+IGEgY29tcGxldGUgYW5zd2VyIG11c3QgYmUgdHJlYXRlZAphcyBhbiBlcnJvci4KClJlcG9ydGVk
+LWJ5OiBzeXpib3QrMDYzMWQ4Nzg4MjNjZTI0MTE2MzZAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNv
+bQpTaWduZWQtb2ZmLWJ5OiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgotLS0KIGRy
+aXZlcnMvbmV0L3VzYi9jZGNfbmNtLmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
+b24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC91c2IvY2RjX25j
+bS5jIGIvZHJpdmVycy9uZXQvdXNiL2NkY19uY20uYwppbmRleCAwMGNhYjNmNDNhNGMuLjkzOTQ4
+N2E1ZjRiYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvdXNiL2NkY19uY20uYworKysgYi9kcml2
+ZXJzL25ldC91c2IvY2RjX25jbS5jCkBAIC01NzksNyArNTc5LDcgQEAgc3RhdGljIHZvaWQgY2Rj
+X25jbV9zZXRfZGdyYW1fc2l6ZShzdHJ1Y3QgdXNibmV0ICpkZXYsIGludCBuZXdfc2l6ZSkKIAll
+cnIgPSB1c2JuZXRfcmVhZF9jbWQoZGV2LCBVU0JfQ0RDX0dFVF9NQVhfREFUQUdSQU1fU0laRSwK
+IAkJCSAgICAgIFVTQl9UWVBFX0NMQVNTIHwgVVNCX0RJUl9JTiB8IFVTQl9SRUNJUF9JTlRFUkZB
+Q0UsCiAJCQkgICAgICAwLCBpZmFjZV9ubywgJm1heF9kYXRhZ3JhbV9zaXplLCAyKTsKLQlpZiAo
+ZXJyIDwgMCkgeworCWlmIChlcnIgPCAyKSB7CiAJCWRldl9kYmcoJmRldi0+aW50Zi0+ZGV2LCAi
+R0VUX01BWF9EQVRBR1JBTV9TSVpFIGZhaWxlZFxuIik7CiAJCWdvdG8gb3V0OwogCX0KLS0gCjIu
+MTYuNAoK
 
-Something like
 
-properties:
-  ...
+--=-tHZcmQBfFGLiVVm2/Dfe--
 
-  clocks:
-    minItems: 1
-    maxItems: 2
-    items:
-      - description: Bus Clock
-      - description: Module Clock
-
-required:
-  - clocks
-
-if:
-  ...
-
-then:
-  properties:
-    clocks:
-      maxItems: 2
-
-    clocks-names:
-      items:
-        - const: mod
-        - const: bus
-
-    required:
-      - clock-names
-
-else:
-  properties:
-    clocks:
-      maxItems: 1
-
-That way, the definition of the order and which clock is which is
-pretty obvious in both cases, and we don't get any weird warnings.
-
-Maxime
---+jhVVhN62yS6hEJ8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXcFY5gAKCRDj7w1vZxhR
-xbV/AQCe7CHt/mkieAm/L+E98h/loKt0hEB6kyNqdnXH0QKxZAEA3BWTeLZyVpFc
-GGWBi+MvM8vrJsH5MAMILsm76CTF6QE=
-=GzAC
------END PGP SIGNATURE-----
-
---+jhVVhN62yS6hEJ8--
