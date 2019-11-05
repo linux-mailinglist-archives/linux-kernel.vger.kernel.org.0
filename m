@@ -2,150 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6802AEF49F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 05:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7834FEF4A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 06:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbfKEE4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 23:56:04 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:35713 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfKEE4E (ORCPT
+        id S1726231AbfKEFAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 00:00:25 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37473 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfKEFAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 23:56:04 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191105045559epoutp01c000093561afebdfb89cfe83546946f7~UK0hApMaN3218332183epoutp01V
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 04:55:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191105045559epoutp01c000093561afebdfb89cfe83546946f7~UK0hApMaN3218332183epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572929759;
-        bh=Ytjp7wk0UhlcXLv1udNAWJDob+wMlvoJ1O86UtYOlYM=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=UJgROrTF0VT4NC57Mz9vGpLpZfTyW4wwQbGxfQrKYHopwmzEvnQA+3heFazTMVV5t
-         feyIpG/r/PhiEpcXzIGYoj6+WMhsaclDWfdii7NH8mMrtjWhXt+83ZfJ/3a1IUTiSi
-         RQS0hRxC6NyO5eFkr5CsSx5OiUd7riSw7vbprPx0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191105045558epcas1p4bca547e7d03b44fdabb802313e48e958~UK0gg2BuP1859818598epcas1p4B;
-        Tue,  5 Nov 2019 04:55:58 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 476cn73KW8zMqYkm; Tue,  5 Nov
-        2019 04:55:55 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D6.D1.04224.AD001CD5; Tue,  5 Nov 2019 13:55:54 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1~UK0bYsViC1338813388epcas1p3C;
-        Tue,  5 Nov 2019 04:55:53 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191105045553epsmtrp26c9ede3a644a5120d18d11c43779bd06~UK0bX3-tH2539125391epsmtrp2L;
-        Tue,  5 Nov 2019 04:55:53 +0000 (GMT)
-X-AuditID: b6c32a38-d5bff70000001080-b3-5dc100da0de0
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.72.25663.9D001CD5; Tue,  5 Nov 2019 13:55:53 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191105045552epsmtip10f519e0f560466763330aa804a1ee756~UK0bP2Oib2329523295epsmtip1X;
-        Tue,  5 Nov 2019 04:55:52 +0000 (GMT)
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
-        =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [GIT PULL v2] extcon-next for v5.5
-Organization: Samsung Electronics
-Message-ID: <ff758fcb-8ff9-4e87-9ee8-0247dcf686c1@samsung.com>
-Date:   Tue, 5 Nov 2019 14:01:30 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Tue, 5 Nov 2019 00:00:24 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y194so16396037oie.4;
+        Mon, 04 Nov 2019 21:00:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QGgGQaFEZRAOWraIxNIv4g2Bv5QWueLj5WXSnd8kx80=;
+        b=YFEhjgdrxfiUQ2PaME5EbHYYDODaj5R38CaCkiE0eD8jxAAI/MYB/Rcz28Cqbn+PCH
+         OQ2VDSeBd5h5qVoSTOro0x+fQoOVFp4opgn8p72LxFcRQGcHEoaxFEFn4rVJMrbzJ4rF
+         TmR5fusHPVATGNR9k5sqIhHO0EX+0F0nvmN3n5hqKgX8ulmhx50tdjJv2q5AD9tDPNC7
+         scKpkT19XeJKVkIlz+f0NqTZu88R8+g370FSQDklwYNwxIAFoC3K2GymlJtljV6QZx70
+         koZ4SQy+Reci+5hehBdgr10ZNMKOavMlg5CKZhcE4E/iloaPCwUVadelD6XS7bxA3dSF
+         EtlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QGgGQaFEZRAOWraIxNIv4g2Bv5QWueLj5WXSnd8kx80=;
+        b=jrZlUqaahjqQDXYQ3bxJcsWMGVpUsbSfPRGy0v/EN8Cb/yMfvts/WfvNhIyxD7n1Xo
+         ZtEbe0BwCEc1aPTbC+bArTygtvXzI80KknwBxrKfqXMTosnNAJCN21XAb1ixgGVQE0rg
+         CMHAIz7NjE/NBoTsMwhKMDXlt6UaxTYergHm7NDQgyuRglXefAHxmL61RkQfut65sxLg
+         VsYZThXwA9+4Qbpx9D1T7FonWi4kcSRvjBKstsH600h2UBi5fioMUca1qOc3Lrwam7t6
+         QFmTbSQBl+CHhBhUFwPMUvp0rO2vpcxjtMrVCjsKQaSRNVNsX9te+DTYLmnxFGkN7MMj
+         +PZg==
+X-Gm-Message-State: APjAAAXWCm5ISDBu8x+Dxl2sqcEfv/WNqOWlsL7sOCanfRD0sm4bjGPd
+        uGRv0knL7YYa3DO3YU2XKdU=
+X-Google-Smtp-Source: APXvYqyxXtL3mEV0v4w+KpEl31fxktM6xe6xt5qmYDqWX2Zq+EQAay7XmZRQXj6vm8ZfyPhCAb9CtA==
+X-Received: by 2002:aca:1e14:: with SMTP id m20mr2381639oic.20.1572930023573;
+        Mon, 04 Nov 2019 21:00:23 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id e93sm6089553otb.60.2019.11.04.21.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 21:00:22 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH v2] media: v4l2-device.h: Explicitly compare grpmask to zero in v4l2_device_mask_call_all
+Date:   Mon,  4 Nov 2019 21:59:08 -0700
+Message-Id: <20191105045907.26123-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191024201240.49063-1-natechancellor@gmail.com>
+References: <20191024201240.49063-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTut3u9XsXZdZYdh6Reo9LQdtXpDLWiklX+IYQQ4bDrdtnEvdid
-        0irIYeUrwh5EStLTR/ZQlqhpMp1FWFGZSekIBjXoaaVYUlBtu0r+951zvu/3nXN+h8Qkpwkp
-        WWq0chYjq6eJULxnJFGWPLVsWCWbPR2iOPX6Ja6outpJKMb7LxAKt72d2IIrHR21hNLZfDNY
-        ebK7AylnHasL8H1l2TqO1XCWOM6oNmlKjdocevee4m3F8gwZk8xkKTLpOCNr4HLo7fkFyXml
-        ep8lHVfB6st9qQKW5+mNudkWU7mVi9OZeGsOzZk1enOWOYVnDXy5UZuiNhk2MTJZqtxH3F+m
-        83jacLNdfODR/AxWicZC61AICVQ63Om5FVyHQkkJ1Ydg+mwnLgQzCCobry0EPxAcP/oKLUqc
-        33uDhMIgApf9p0gIviI4NtAq8rNWUOvhw4OpgByjuhF8+tyH+wsElQTO968JP46kNsDk32+Y
-        Hy+n4mFi/m3AQkzlgnPCG+Dg1BroGGv15UlyJbUXHs+xAiUCRhvfBZ7EqFUw9e6iSMCx0Pvl
-        Aub3BeoeASMDzYTQ9nZw1DUECTgSPj7sDhawFGanBxc4h+D66H1CENcg6HY+XxCkgbPljMjf
-        BEYlQmf/RiEdD3d/NyPBOBym504E+SlAiaHmuESgJMC4541IwNFwtbp2wUoJbu9d1IDim5aM
-        07RknKYl4zT9N76E8A4UxZl5g5bjGXP60u92oMA9Jin60L2n+S5EkYgOE3+rHlJJgtgK3mZw
-        ISAxeoV47PygSiLWsLaDnMVUbCnXc7wLyX3LPoVJV6pNvus2WosZeWpaWpoincmQMwy9Sry1
-        rUUlobSslSvjODNnWdSJyBBpJWKG6q3znWZ2c2yqTe0eTSl5MRj+uMz+KFjraGkvqjqiczfa
-        7TFtRV2H147V10XueNLq+NNeTRSqUL36oe1GjLeQaz6WZbt96Lc3I2/4ctcV19tz0aHumoJ1
-        k1FPLw8PV4T1T8zUi0pUA65dmTs941J+iz4+4ddow7OISJVnXkPjvI5lkjALz/4DKvedLqUD
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSnO5NhoOxBrsOs1pMvHGFxaJ58Xo2
-        i8u75rBZ3G5cwebA4rFpVSebx/65a9g9+rasYvT4vEkugCWKyyYlNSezLLVI3y6BK+PBg+Us
-        BY28Fad+fGJuYLzI1cXIySEhYCKx/+N21i5GLg4hgd2MElcunWGDSEhKTLt4lLmLkQPIFpY4
-        fLgYouYto8T2zyfBakQENCReHr3FApJgFtjCKNE2aSYTSIJNQEti/4sbYEXCAtoSN/9/YAax
-        +QUUJa7+eMwIYvMK2Ensv/oUrIZFQEVi1cVlYHFRgQiJ59tvQNUISpyc+YQFxGYWUJf4M+8S
-        M4QtLnHryXwmCFteYvvbOcwTGAVnIWmZhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcr
-        TswtLs1L10vOz93ECA57La0djCdOxB9iFOBgVOLh/dB+IFaINbGsuDL3EKMEB7OSCO/FGXtj
-        hXhTEiurUovy44tKc1KLDzFKc7AoifPK5x+LFBJITyxJzU5NLUgtgskycXBKNTCmvpipflCz
-        vDnR/tQJSe5w6/64uj61ojzdRfZBik1H66rW8dRXG54OZFc76m411bL/5FfOu0+lX+qsVSx8
-        q9vyREmT9WHA+ffXu9OS5+9uSL808RQ705bbE9qqX8lH3Nu26ce8M4Ktdm9ubq6481I1nV30
-        OeOSG3WSlvLVm9cqlblkH8tgmqfEUpyRaKjFXFScCAB4FiZPdwIAAA==
-X-CMS-MailID: 20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1
-References: <CGME20191105045553epcas1p3aeb81b122b12c40e93bc5768272e2ce1@epcas1p3.samsung.com>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Greg,
+When building with Clang + -Wtautological-constant-compare, several of
+the ivtv drivers warn along the lines of:
 
-This is extcon-next pull request for v5.5. I add detailed description of
-this pull request on below. Please pull extcon with following updates.
+ drivers/media/pci/cx18/cx18-driver.c:1005:21: warning: converting the
+ result of '<<' to a boolean always evaluates to true
+ [-Wtautological-constant-compare]
+                         cx18_call_hw(cx, CX18_HW_GPIO_RESET_CTRL,
+                                         ^
+ drivers/media/pci/cx18/cx18-cards.h:18:37: note: expanded from macro
+ 'CX18_HW_GPIO_RESET_CTRL'
+ #define CX18_HW_GPIO_RESET_CTRL         (1 << 6)
+                                           ^
+ 1 warning generated.
 
-Detailed description for this pull request:
-1. Clean up the and fix the minor issue of extcon provider driver
-- extcon-intel-cht-wc don't reset the USB data connection at probe time
-  in order to prevent the removing all devices from bus.
-- extcon-sm5502 reset the registers at proble time in order to
-  prevent the some stuck state. And remove the redundant variable
-  initialization.
+This is because the shift operation is implicitly converted to a boolean
+in v4l2_device_mask_call_all before being negated. This can be solved by
+just comparing the mask result to 0 explicitly so that there is no
+boolean conversion.
 
-Changes from v2 as following:
-- add the missed patch title of this pull request
+Link: https://github.com/ClangBuiltLinux/linux/issues/752
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
 
-Best Regards,
-Chanwoo Choi
+v1 -> v2: https://lore.kernel.org/lkml/20191024201240.49063-1-natechancellor@gmail.com/
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+* Fix typo in commit message
+* Add Nick's Reviewed-by.
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+ include/media/v4l2-device.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-are available in the Git repository at:
+diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+index e0b8f2602670..8564b3227887 100644
+--- a/include/media/v4l2-device.h
++++ b/include/media/v4l2-device.h
+@@ -431,8 +431,8 @@ static inline bool v4l2_device_supports_requests(struct v4l2_device *v4l2_dev)
+ 		struct v4l2_subdev *__sd;				\
+ 									\
+ 		__v4l2_device_call_subdevs_p(v4l2_dev, __sd,		\
+-			!(grpmsk) || (__sd->grp_id & (grpmsk)), o, f ,	\
+-			##args);					\
++			(grpmsk) == 0 || (__sd->grp_id & (grpmsk)), o,	\
++			f , ##args);					\
+ 	} while (0)
+ 
+ /**
+-- 
+2.24.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-5.5
-
-for you to fetch changes up to ddd1bbbae486ff5913c8fc72c853dcea60713236:
-
-  extcon: sm5502: remove redundant assignment to variable cable_type (2019-10-31 13:47:42 +0900)
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      extcon: sm5502: remove redundant assignment to variable cable_type
-
-Stephan Gerhold (1):
-      extcon: sm5502: Reset registers during initialization
-
-Yauhen Kharuzhy (1):
-      extcon-intel-cht-wc: Don't reset USB data connection at probe
-
- drivers/extcon/extcon-intel-cht-wc.c | 16 ++++++++++++++--
- drivers/extcon/extcon-sm5502.c       |  6 +++++-
- drivers/extcon/extcon-sm5502.h       |  2 ++
- 3 files changed, 21 insertions(+), 3 deletions(-)
