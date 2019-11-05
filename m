@@ -2,126 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2552F0880
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 569C2F089A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfKEVi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 16:38:26 -0500
-Received: from mout.web.de ([212.227.15.4]:45601 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfKEVi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:38:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1572989897;
-        bh=Z0h9yJgXnSUcWdErBXHxvaR+qAseoj0Jwa1kwKZvWjs=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=By5GKG3/XauRyP4gGGo/jEQFdb5JlgyZ/lkCeciTGQjvQ70TBL/6c9nJOVD9ytTfQ
-         Y81rZyXzB8tzj3Hmwh/kqzxVRh1xdRDBlLaZSc/6/eGI5jBbns6laW29yR7HsBzoeM
-         7UPxQU3mwqnUUPiB5bpWDJHnwhLcxBG4KLNvzSoo=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.164.204]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lxf1X-1hqkIl4Bzf-017AXB; Tue, 05
- Nov 2019 22:38:17 +0100
-To:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] CIFS: Adjustments for smb2_ioctl_query_info()
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
-Date:   Tue, 5 Nov 2019 22:38:15 +0100
+        id S1730244AbfKEVnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 16:43:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45391 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729680AbfKEVne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 16:43:34 -0500
+Received: from carbon-x1.hos.anvin.org ([IPv6:2601:646:8600:3281:e7ea:4585:74bd:2ff0])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id xA5LeY98676567
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Tue, 5 Nov 2019 13:40:34 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com xA5LeY98676567
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019091901; t=1572990035;
+        bh=hV95SYGgMVR5wGxxOALwv/ps4w4vExuRTEInenwJJ/8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nXSmzhHh3MMQiHdNjLkOYKgl+nxPFIG9UR1AlYj0pB1u/YFIeiEOSUxo0D4V7Z52P
+         DuOOHXX3pN3t3HPiT/HWLYRpAHfwBSBW85fVcO52n6xIoDfb5kfXr3saCRpsgjjz4F
+         rz9WpEnNMhEI2gAKERTR/q+Er5zCtOar+BnEzg5+riWFrc6Qf8rgqAJQ6lo9+piMUE
+         ugWD97HlNeJipb9ecQ5q8ZkamOHSXie9U5EL/pF0YDyKMODesaKW7dS8wssyCi92Ee
+         2T0gwFp7Zgx5l+cKaq714MOAZDGtjbnsnnvXRwLsf5hNVK8u0oxsouwiRPVlSZZjjC
+         7I7HgRVitwnmg==
+Subject: Re: [PATCH v5 0/3] x86/boot: Introduce the kernel_info et consortes
+To:     Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
+        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
+        tglx@linutronix.de
+References: <20191104151354.28145-1-daniel.kiper@oracle.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <d45aa4da-57fd-757f-3f82-d88449f057ce@zytor.com>
+Date:   Tue, 5 Nov 2019 13:40:28 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <20191104151354.28145-1-daniel.kiper@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:B+T63bsrdVK7IeDZFAXORLQRkM1LR5oi1X3PWAnIzQtetpH249q
- ZkQ/dJ2HnOpCiLx3HTQuS10Xw8JK4pAnLZ1BPY7kqcSlMdfkZMJVZPtR3lMTeaDA67zwFsz
- KW5YsR96AbDz6dvByurxtk8cDtK/vapGzDRAzQKEFx2zquTH9wGkIjIKiqPWbhxBn24xZEX
- veP5yVdWsZt6bBpkfGHtA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:25K7cMc+uzo=:suAa/4UDPTeSi6PRwAHKXN
- sa2tI8gEgU1s0DozqaCjb/iYgOJi5cAUcUCel57c4UQJHDueRCwskbr/0woz9oAj/M1XkWgaj
- WkA7s308uQsi3t+oOqR5dhVl0Ewscl5/K1lazje1+lSsa7g7DLGH3QcyOWruhCAuMTPSX6U1o
- tINe5to8MasWU+HyKSCoAoH36aGmdXQ88xMAE25xeoviIAUDORW1kgIOI4b4tTowMvPxhLlsD
- uaMU6f7SLbhpccVY6i9icoYE/Y1ey6yX4qnVAVEM+lDNW9Jup8IHqXhiyzrr4m/D9kDyMv0an
- GRRakd669Kyb2WUXsQxXlaklCbJ4mZEWjRugq2suw7heDtf6aYpHyvIBkXI9mpYq04mP4zb0M
- OUbLukvRQOO0pN4+dE3ZL0zCmhxHDD1H0sBJbnLCpTmUmcNRA/FE8//De9OpQy0Js+qS8L/Jy
- NRNc+mRiJ5qG/ruDlS+Z99EtV40SgPs1YLvUg2SJHkNUCgeAW399DwGcI8EHoKmM/+4mxO578
- b0Uyi0nenTW+FW229WcdhwkIpPqJbrIeDlfC+EKNFmIYQzWsfKuUxE/lslrFqPQxCzbtNctEL
- A7OS2a24ImONlYGfpb2AafHaY64UMCG+2ob7vw1CRqrsgscAOMR9E9htHkBmOX3pkAJeqWAKR
- kMHq+dWDeiiNdUkHZ9PPQDxFDHdYkBaoZZAQ5Br3qVe22trI+WAlT+62QCbQDmPgGTCBXatvy
- IYkcg1SWU5YItuJJZrztzJxJxHIUo3fOgkalFq8PNGK5jzevLLqktljXcL8fPJQFFEvFvlG7c
- 5SWvdeRLBEwTbU3z+kR+JoU125jyFFB+vHIrtPM0SCzWAkmeXX72Ak7aVrt0bv2YYASA2Afj4
- 6k3I+m0wuSRTd5RGPu9HPRDXtbGCuKFEuZ1jJFi0y8W7tg58G4fZmt6+XbX3QrYvfJER8FX6i
- /rmH1IT6wrZ7gCobFEdsw1O+LyRHOPkOYb6DPQt5xtIhAIjx28uE8hu5w5MzpNz2LPTb+zyW3
- Hx9X26X4bcGDkUziiS5MBFHoDf+EPiLhMyZcFG2aTSYSAWIcYhjAqkf6meei2VVk3bKsnp6/B
- K1ZxzQR5NCTtQal1oDMJMhPgBQa1lG7q+KI+ejLG+ehoJYvyH5U+fHoCiY55CXD7UUlDfJjq9
- ud46X8byLCaaaNyg1Fl+MR0QeUkOtPixRF8mmVZSCnWvCK3s1srtYxaFlD7/HbvV0jOSuU6kP
- N4I1P5Qs+KQnCFpyf0aDzyYJ2+h6JeAOxEE6Qqjmgzfey3DlOIppWm6rNR2k=
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 5 Nov 2019 22:32:23 +0100
+On 2019-11-04 07:13, Daniel Kiper wrote:
+> Hi,
+> 
+> Due to very limited space in the setup_header this patch series introduces new
+> kernel_info struct which will be used to convey information from the kernel to
+> the bootloader. This way the boot protocol can be extended regardless of the
+> setup_header limitations. Additionally, the patch series introduces some
+> convenience features like the setup_indirect struct and the
+> kernel_info.setup_type_max field.
+> 
+> Daniel
+> 
 
-Two update suggestions were taken into account
-from static source code analysis.
+Looks great!  Ship it!
 
-Markus Elfring (2):
-  Use memdup_user() rather than duplicating its implementation
-  Use common error handling code in smb2_ioctl_query_info()
+Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 
- fs/cifs/smb2ops.c | 58 ++++++++++++++++++++++-------------------------
- 1 file changed, 27 insertions(+), 31 deletions(-)
-
-=2D-
-2.24.0
-
+	-hpa
