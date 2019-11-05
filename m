@@ -2,103 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE4B3EF779
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 09:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E64BEF783
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 09:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730537AbfKEIn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 03:43:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51110 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727401AbfKEInz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 03:43:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20CBDAC9A;
-        Tue,  5 Nov 2019 08:43:54 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 09:43:52 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Pavel Tatashin <pasha.tatashin@soleen.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/sparse: Consistently do not zero memmap
-Message-ID: <20191105084352.GJ22672@dhcp22.suse.cz>
-References: <20191030131122.8256-1-vincent.whitchurch@axis.com>
- <20191030132958.GD31513@dhcp22.suse.cz>
- <20191030140216.i26n22asgafckfxy@axis.com>
- <20191030141259.GE31513@dhcp22.suse.cz>
- <CA+CK2bDObV=N1Y+LhDX=tYsTX3HZ+mbB=8aXT=fPX254hKEUBQ@mail.gmail.com>
- <20191030153150.GI31513@dhcp22.suse.cz>
- <CA+CK2bA3gM4pMSj-wDWgAPNoPtcjwd59_6VivKA2Uf2GriASsw@mail.gmail.com>
- <20191030173123.GK31513@dhcp22.suse.cz>
- <20191031072555.GA13102@dhcp22.suse.cz>
- <20191104155126.y2fcjwrx5mhdoqi7@axis.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104155126.y2fcjwrx5mhdoqi7@axis.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730556AbfKEIrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 03:47:31 -0500
+Received: from m12-11.163.com ([220.181.12.11]:43786 "EHLO m12-11.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbfKEIrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 03:47:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Mime-Version:Message-ID; bh=lH+jz
+        Gdxy7IvVSVSVo6MZm80v9GuSQGvFMsJ7zCs8xY=; b=bNt5s5YFkuTwaVPmD28Fw
+        7lGTaBaO4Za6cBv/Gx9NoI9F00ZERiI7AnsWSlZh+QSZPrvUoxErv+8clsrsqL2F
+        oynBb0KJ+IxxU1ZoTx4y4xggViiAVaGbeHiZiyJeMsLICcfKwyTYB1e+9jfYF+HU
+        y6DJLgjdlUrWQV9vW+b+vY=
+Received: from SKY-20180422ZRB (unknown [202.100.50.59])
+        by smtp7 (Coremail) with SMTP id C8CowABnh8MIN8FdEx3ABw--.37827S2;
+        Tue, 05 Nov 2019 16:47:09 +0800 (CST)
+Date:   Tue, 5 Nov 2019 16:47:53 +0800
+From:   "sxauwsk@163.com" <sxauwsk@163.com>
+To:     "Shubhrajyoti Datta" <shubhrajyoti.datta@gmail.com>
+Cc:     "Michal Simek" <michal.simek@xilinx.com>,
+        "Shubhrajyoti Datta" <shubhrajyoti.datta@xilinx.com>,
+        "Wolfram Sang" <wsa@the-dreams.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v2] i2c: cadence: try reset when master receive arbitration lost
+References: <20190219012447.5900-1-sxauwsk@163.com>, 
+        <CAKfKVtEwHcydp=+hNhG91h3qbMoYOPq7jEYjbuAVrWXT53DC3Q@mail.gmail.com>
+X-Priority: 3
+X-GUID: 186E92E8-E129-42B5-B97D-0BAC69171ADB
+X-Has-Attach: no
+X-Mailer: Foxmail 7.2.14.406[cn]
+Mime-Version: 1.0
+Message-ID: <2019110516474778997625@163.com>
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+X-CM-TRANSID: C8CowABnh8MIN8FdEx3ABw--.37827S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFyxtFyUGF4Dtr18Cw15Jwb_yoW8Gr1Dpa
+        y8G3s3CF4DJrn2vrsrZ3WDuF90grWxGF98KF15Xw1kuas8G34qyFy2kan8tFyxGrWDAwn0
+        qFsYv34j9a4DZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07b1dgAUUUUU=
+X-Originating-IP: [202.100.50.59]
+X-CM-SenderInfo: 5v0d34lvn6il2tof0z/1tbiDg5kJlXluZcLIAAAs3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04-11-19 16:51:26, Vincent Whitchurch wrote:
-> On Thu, Oct 31, 2019 at 08:25:55AM +0100, Michal Hocko wrote:
-> > On Wed 30-10-19 18:31:23, Michal Hocko wrote:
-> > [...]
-> > > What about this? It still aligns to the size but that should be
-> > > correctly done to the section size level.
-> > > 
-> > > diff --git a/mm/sparse.c b/mm/sparse.c
-> > > index 72f010d9bff5..ab1e6175ac9a 100644
-> > > --- a/mm/sparse.c
-> > > +++ b/mm/sparse.c
-> > > @@ -456,8 +456,7 @@ struct page __init *__populate_section_memmap(unsigned long pfn,
-> > >  	if (map)
-> > >  		return map;
-> > >  
-> > > -	map = memblock_alloc_try_nid(size,
-> > > -					  PAGE_SIZE, addr,
-> > > +	map = memblock_alloc_try_nid(size, size, addr,
-> > >  					  MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-> > >  	if (!map)
-> > >  		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%pa\n",
-> > > @@ -474,8 +473,13 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
-> > >  {
-> > >  	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
-> > >  	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
-> > > +	/*
-> > > +	 * Pre-allocated buffer is mainly used by __populate_section_memmap
-> > > +	 * and we want it to be properly aligned to the section size - this is
-> > > +	 * especially the case for VMEMMAP which maps memmap to PMDs
-> > > +	 */
-> > >  	sparsemap_buf =
-> > > -		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
-> > > +		memblock_alloc_try_nid_raw(size, section_map_size(),
-> > >  						addr,
-> > >  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-> > >  	sparsemap_buf_end = sparsemap_buf + size;
-> >
-> > Vincent, could you give this a try please? It would be even better if
-> > you could add some debugging to measure the overhead. Let me know if you
-> > need any help with a debugging patch.
-> 
-> I've tested this patch and it works on my platform:  The allocations
-> from sparse_buffer_alloc() now succeed and the fallback path is not
-> taken.
+PkhpIFNoaWthaSwKPgo+T24gVHVlLCBGZWIgMTksIDIwMTkgYXQgODoxOSBBTSBTaGlrYWkgV2Fu
+ZyA8c3hhdXdza0AxNjMuY29tPiB3cm90ZToKPj4KPj4gV2hlbiB0aGUgYWRhcHRlciByZWNlaXZl
+IGFyYml0cmF0aW9uIGxvc3QgZXJyb3IgaW50ZXJydXB0cywKPj4gY2Ruc19pMmNfbWFzdGVyX3hm
+ZXIgcmV0dXJuIHRvIHRoZSBjYWxsZXIgZGlyZWN0bHkgaW5zdGVhZCBvZiByZXNldHRpbmcKPj4g
+dGhlIGFkYXB0ZXIgd2hpY2ggcmVzdWx0ZWQgaW4gdGhlIGFkYXB0ZXIgYmVpbmcgb3V0IG9mIGNv
+bnRyb2wuCj4+Cj4+IFNvIHdoZW4gZHJpdmVyIGRldGVjdCBlcnJfc3RhdHVzIHN1Y2ggYXMgYXJi
+aXRyYXRpb24gbG9zdCwKPj4gdGhlbiB0cnkgdG8gcmVwYWlyIGFuZCBmaXggaXQuCj4+Cj5JIGFt
+IG1pc3NpbmcgdGhlIGlzc3VlIHRoYXQgeW91IGFyZSBmYWNpbmcuCj5Zb3UgYXJlIGhhdmluZyBh
+IG11bHRpbWFzdGVyIHNjZW5hcmlvIGFuZCBnZXR0aW5nIGFyYml0cmF0aW9uIGxvc3QuCj4KPnRo
+ZSBjdXJyZW50IGNvZGUgd291bGQgYXR0ZW1wdCBhIHJldHJ5IGRpZCB0aGF0IGxlYWQgdG8gYW55
+IGlzc3Vlcz8KPgo+Q2FuIHlvdSBleHBsYWluIHRoZSBpc3N1ZSB0aGF0IHlvdSBhcmUgZmFjaW5n
+PyAKCk9mIGNvdXJjZSwgwqBUaGUgZm9sbG93aW5nIGRlc2NyaWJlIG15IHNpdHVhdGlvbi4KCklu
+IG15IHByb2R1Y3QsIMKgVG91Y2hzY3JlZW4gY29ubmVjdCB0byB6eW5xLTcwMDAgWEM3WjAxMCBi
+eSBpMmMgYnVzKCBKdXN0IGNvbm5lY3Qgb25seSBvbmUgaTJjLWRldmljZSBvZiB0b3VjaHNjcmVl
+biksIMKgCndoZW4gdXNlciB0YXAgVG91Y2hzY3JlZW4sIFRvdWNoc2NyZWVuIGludGVycnVwdCBz
+ZW5kIHRvIENQVSBhbmQgbm90aWZ5ZWQgaTJjLWRyaXZlciB0byBvYnRhaW4gbG9jYXRpb24gZGF0
+YSBieSBpMmMtYnVzLCDCoAoKd2hlbiBUYXAgdGhlIHNjcmVlbiBmcmVxdWVudGx5LCDCoHNvbWV0
+aW1lcyBDUFUgZ2V0IGludGVycnVwdCBmcm9tIHRvdWNoc2NyZWVuIGFuZCB0cnkgdG8gb2J0YWlu
+IGRhdGEsIMKgdGhlbiBkZXRlY3QgYXJiaXRyYXRpb24gbG9zdCwKQWx0aG91Z2ggaTJjLWRyaXZl
+ciB0cnkgdGhyZWUgdGltZXMsIMKgaXQncyB1c2VsZXNzLgrCoMKgCkFjdHVhbGx5IGkyYyBjbG9j
+ay1saW5lIGFuZCBkYXRhLWxpbmUga2VlcCBoaWdoLCB0aGF0IG1lYW4gaTJjIGJ1cyBmcmVlLgpP
+bmNlIHRoaXMgc2l0dWF0aW9uIG9jY3VyLCBpMmMtY29udHJvbCBkaWQndCB3b3JrIGFueW5heSBi
+dXQgY3B1IHJlY2VpdmUgaW50ZXJycHV0cyBzdGlsbC4KCkkgYW0gc29ycnkgdGhhdCBJIGhhdmUn
+dCBmb3VuZCBhIGdvb2Qgc29sdXRpb24gZm9yIHRoaXMgaXNzdXNlOwo=
 
-Thanks a lot. I will try to prepare the full patch with a proper
-changelog sometimes this week.
 
-> I'm not sure what kind of overhead you're interested in.
-
-The memory overhead when the sparsemap_buf PAGE_SIZE alignment is in
-place. In other words (ptr - sparsemap_buf) in sparse_buffer_alloc. If
-the sparsemap_buf was properly aligned then the diff should be 0.
-
--- 
-Michal Hocko
-SUSE Labs
