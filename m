@@ -2,103 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B07EF356
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 272ECEF358
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 03:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfKECUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 4 Nov 2019 21:20:17 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42862 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729760AbfKECUR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:20:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s5so5729692pfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 18:20:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=7b2y3zgo8qKKjwrv6gUDcqxB+dAh/ssjQVAiaSKyz7Q=;
-        b=TPTDOXVlU4Ws9mRO9LEwkd5W6sg+gRV8f6gRKqE655V1UndxFs8t5BPpP8StgUXNoG
-         46ihj7sC20mR7XvKUo4Xj6mhrUgxm9j6i7M+Z/mpBg3AL/IkW8pQ4nOwYyGeZqcYMu0j
-         0rCbCzaBYgooSEH2EB+VJgT9jKBxxDJww9tcWwJImuCYZb8//6quyO8BRJYok01ITSjp
-         GILCJ1yAAieQ1baq+COTX+5ihc2umosJWZgPNJT8WTf1/ll/996vgXHupAvHbUDNKiFs
-         qtQklXVxCbMul9siP++iinLe2XUl0RyjXoYNE9zeR/tuJmBFbmu9ZYbYErP7hkQ1rtrA
-         FUlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7b2y3zgo8qKKjwrv6gUDcqxB+dAh/ssjQVAiaSKyz7Q=;
-        b=hvBy5VI6B9+fKAtFv8piFdCMHsDR6iBzNoHfRIutLkLi6qN9CRr2QEOqaWNgRZlJoV
-         1feR2TiRJgTk1QC6Ah2xitGry/YPK2mgQ/lPIT/6HY6xwjnIdVdCvXT4F57XV9clD1fY
-         nW4rklqiDinkgOsFRBVhi6vQG7clXp7MfQvlXmwT/0GCpjie9kqFgdGpfsZXfQuf643j
-         o7AbJpWSdQNhosiwINergo5EylsrTKfhB5BPiWwoxNl2Nh9VEPeomNmnRXTB37G4A7zv
-         QyCUg02TvaUonagXfDI6EHm20EthG2yipdfWhVDijZwTIY2ppjumkUuIYW29btjgEzS9
-         zPJA==
-X-Gm-Message-State: APjAAAUFYMFkWK+awXbS4JjbN6UFShNRZg4xXgAm+WgeiuddncIwuHcI
-        Ijl7zW2vpARvGnIQQdKCIiScuNbZwFI=
-X-Google-Smtp-Source: APXvYqxhgOLlKkh3nf5acik48nMMfKxZywcjeW4trXTCKPfHOjiCvY+zpJGEw9VefSRc7EiasIIn7Q==
-X-Received: by 2002:a17:90a:c082:: with SMTP id o2mr3132965pjs.94.1572920416635;
-        Mon, 04 Nov 2019 18:20:16 -0800 (PST)
-Received: from gamma07.internal.sifive.com ([64.62.193.194])
-        by smtp.gmail.com with ESMTPSA id i32sm10313443pgl.73.2019.11.04.18.20.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Nov 2019 18:20:16 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        paul.walmsley@sifive.com, palmer@sifive.com, Anup.Patel@wdc.com
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v2] riscv: Use PMD_SIZE to repalce PTE_PARENT_SIZE
-Date:   Mon,  4 Nov 2019 18:20:12 -0800
-Message-Id: <1572920412-15661-1-git-send-email-zong.li@sifive.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730290AbfKECUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 4 Nov 2019 21:20:25 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5266 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729760AbfKECUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Nov 2019 21:20:25 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7C57681846D94643D48E;
+        Tue,  5 Nov 2019 10:20:23 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019
+ 10:20:19 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid kernel panic on corruption test
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20191101163624.7994-1-jaegeuk@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2b94de72-841d-def2-0a96-a8317810a524@huawei.com>
+Date:   Tue, 5 Nov 2019 10:20:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20191101163624.7994-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PMD_SIZE is equal to PGDIR_SIZE when __PAGETABLE_PMD_FOLDED is
-defined.
+On 2019/11/2 0:36, Jaegeuk Kim wrote:
+> xfstests/generic/475 complains kernel warn/panic while testing corrupted disk.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- arch/riscv/mm/init.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 573463d..642b330 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -273,7 +273,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
- #define get_pgd_next_virt(__pa)	get_pmd_virt(__pa)
- #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
- 	create_pmd_mapping(__nextp, __va, __pa, __sz, __prot)
--#define PTE_PARENT_SIZE		PMD_SIZE
- #define fixmap_pgd_next		fixmap_pmd
- #else
- #define pgd_next_t		pte_t
-@@ -281,7 +280,6 @@ static void __init create_pmd_mapping(pmd_t *pmdp,
- #define get_pgd_next_virt(__pa)	get_pte_virt(__pa)
- #define create_pgd_next_mapping(__nextp, __va, __pa, __sz, __prot)	\
- 	create_pte_mapping(__nextp, __va, __pa, __sz, __prot)
--#define PTE_PARENT_SIZE		PGDIR_SIZE
- #define fixmap_pgd_next		fixmap_pte
- #endif
- 
-@@ -316,10 +314,10 @@ static uintptr_t __init best_map_size(phys_addr_t base, phys_addr_t size)
- {
- 	uintptr_t map_size = PAGE_SIZE;
- 
--	/* Upgrade to PMD/PGDIR mappings whenever possible */
--	if (!(base & (PTE_PARENT_SIZE - 1)) &&
--	    !(size & (PTE_PARENT_SIZE - 1)))
--		map_size = PTE_PARENT_SIZE;
-+	/* Upgrade to PMD_SIZE mappings whenever possible */
-+	if (!(base & (PMD_SIZE - 1)) &&
-+	    !(size & (PMD_SIZE - 1)))
-+		map_size = PMD_SIZE;
- 
- 	return map_size;
- }
--- 
-2.7.4
-
+Thanks,
