@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4003EF5A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E31EF5A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 07:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387640AbfKEGpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 01:45:12 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:33598 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387586AbfKEGpL (ORCPT
+        id S2387653AbfKEGqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 01:46:55 -0500
+Received: from mail-m972.mail.163.com ([123.126.97.2]:45014 "EHLO
+        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387499AbfKEGqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 01:45:11 -0500
-Received: by mail-pf1-f201.google.com with SMTP id s24so4650211pfd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2019 22:45:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=uOGehhWZgUVKoLCu9uPvy6GNYBcrgHwxU8kr8wE+agE=;
-        b=vUzRIv/2PDghmvnw9rVBASojH8O7qO7BRdTsZxQ5eMoiwNwmO1zPP40Q59AkhRbjLy
-         8yLLQSajwQ+U00YF0GZiq+JvGVpzOneNzV+z91JKg+gIidUQNTKKFZWfs4RHr6qiZJVr
-         q205UVk6UriZ4t+g+CXb9EpCgYFRQCq9g6ZqJkqEvWjtfTdEBVLPgc43aIRGAypeGvco
-         J+fEMvYvmw90IE/dJ+bkayWODd5GuMTyzbAnHkTSp3hfBJ+sV3NBmHUK6oi0T6/A3jzM
-         KK/o/RpxbfT9s0GGJHKd3Yi25k6rnzC2Y9COjrw/ISiPHykqloGJAJkqXAi6alEgvQfP
-         bRTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=uOGehhWZgUVKoLCu9uPvy6GNYBcrgHwxU8kr8wE+agE=;
-        b=KUlhs+gsSOhi/MPigzi/R1BQ140wUaiP3yY8RRTMFnDnrjr2hqblNQOHB2RHQzCpHF
-         xkS6WBO4q577dRy8enpnhcWrN59hXTvqL/Kke7oT/jOgLfQp/oKsISeqw1ugmMbUdUQa
-         B1qZMJZc8GNhLFw89cRqUDP32DRj1/vBDzrR103hnAzaEhwPCXtMHCApvF0/gYSSncUC
-         TxtupvN/KfPgANWnZ9k/8kuOqYCktyXNyB9aEvHBXmQ32i/d8MNeQbUuIXsBW90F1II2
-         3Zh3xJSEdfGBlt5rpq02wgNZeOWY3OSRTjtQT3c0AquL8b7Ntxs0MCV7tx9RlUHLzNRb
-         i5oQ==
-X-Gm-Message-State: APjAAAUzBa1bPT53lR/QtHuDTt7R19HC6bXTUmOjSc7G1Ywi+xdp7IHF
-        tv7OWED+5oKQH0a0KuRxMq3r94nSeaPtfTw=
-X-Google-Smtp-Source: APXvYqwaX9o+xhbZdnc91VSu2I/Dnb1YJqF2Lfci4ZBRM0SNaH8Zs2+tatmB25BXH45BJuY9FNhdEaiHvzDf9bs=
-X-Received: by 2002:a63:d4c:: with SMTP id 12mr34357755pgn.127.1572936309333;
- Mon, 04 Nov 2019 22:45:09 -0800 (PST)
-Date:   Mon,  4 Nov 2019 22:44:55 -0800
-In-Reply-To: <20191105064456.36906-1-saravanak@google.com>
-Message-Id: <20191105064456.36906-4-saravanak@google.com>
-Mime-Version: 1.0
-References: <20191105064456.36906-1-saravanak@google.com>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-Subject: [PATCH v1 3/3] of: property: Add device link support for iommus,
- mboxes and io-channels
-From:   Saravana Kannan <saravanak@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 5 Nov 2019 01:46:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=ykFCQO/BivaoSQgfd6
+        lpCH8QAeQHhZEYyTcon/QvQdY=; b=B1IxgbEPQCTyR8+MZIEfDb08bw1rkRw6AN
+        0HPCCvRt9PM8uKMx62Wbnk8NKi/DC85KFaEEflcBIkeZJ0yq7h2ri9TpaVn9l1VB
+        bsfMi080/jf/xasdsKM2CHwZEykUnKSLKjtUVTPLZvcwF/8RzIjlGjydLHyzOQIe
+        0bUCpM05s=
+Received: from localhost.localdomain (unknown [202.112.113.212])
+        by smtp2 (Coremail) with SMTP id GtxpCgBnqpPUGsFdAK2lAw--.391S3;
+        Tue, 05 Nov 2019 14:46:49 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Ferruh Yigit <fery@cypress.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] Input: cyttsp4_core: fix use after free bug
+Date:   Tue,  5 Nov 2019 14:46:19 +0800
+Message-Id: <1572936379-6423-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: GtxpCgBnqpPUGsFdAK2lAw--.391S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr1kWFy3KF47Ww1ktw4DXFb_yoW8GrykpF
+        Z8G3s2k3y5Ga18Jw1qqFykZFn8Jw45Ka4rGFsrGwn5ur15Ary0yrn0vrWxKa45ArWkCa4r
+        Wr1avr4UGa4kCaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQ4SwUUUUU=
+X-Originating-IP: [202.112.113.212]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZxlkcletw8SDFgAAsA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for creating device links out of more DT properties.
+The device md->input is used after it is released. Setting the device
+data to NULL is unnecessary as the device is never used again. Instead,
+md->input should be assigned NULL to avoid accessing the freed memory
+accidently. Besides, checking md->si against NULL is superfluous as it
+points to a variable address, which cannot be NULL.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
 ---
- drivers/of/property.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/input/touchscreen/cyttsp4_core.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 812b69a029d1..0fa04692e3cc 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1185,11 +1185,17 @@ struct supplier_bindings {
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index 4b22d49a0f49..2cd5f835665e 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -1990,11 +1990,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
  
- DEFINE_SIMPLE_PROP(clocks, "clocks", "#clock-cells")
- DEFINE_SIMPLE_PROP(interconnects, "interconnects", "#interconnect-cells")
-+DEFINE_SIMPLE_PROP(iommus, "iommus", "#iommu-cells")
-+DEFINE_SIMPLE_PROP(mboxes, "mboxes", "#mbox-cells")
-+DEFINE_SIMPLE_PROP(io_channels, "io-channel", "#io-channel-cells")
- DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+ 	/* get sysinfo */
+ 	md->si = &cd->sysinfo;
+-	if (!md->si) {
+-		dev_err(dev, "%s: Fail get sysinfo pointer from core p=%p\n",
+-			__func__, md->si);
+-		goto error_get_sysinfo;
+-	}
  
- static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_clocks, },
- 	{ .parse_prop = parse_interconnects, },
-+	{ .parse_prop = parse_iommus, },
-+	{ .parse_prop = parse_mboxes, },
-+	{ .parse_prop = parse_io_channels, },
- 	{ .parse_prop = parse_regulators, },
- 	{}
- };
+ 	rc = cyttsp4_setup_input_device(cd);
+ 	if (rc)
+@@ -2004,8 +1999,7 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
+ 
+ error_init_input:
+ 	input_free_device(md->input);
+-error_get_sysinfo:
+-	input_set_drvdata(md->input, NULL);
++	md->input = NULL;
+ error_alloc_failed:
+ 	dev_err(dev, "%s failed.\n", __func__);
+ 	return rc;
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
+2.7.4
 
