@@ -2,105 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6D5F0027
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C49F002D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389519AbfKEOpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:45:04 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42985 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730833AbfKEOpE (ORCPT
+        id S2389606AbfKEOpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:45:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45032 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389096AbfKEOpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:45:04 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i185so17712841oif.9
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 06:45:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VWnis//m4WNFnlxLyNlHl8kK3/QSGA3JjJ79aEU0to4=;
-        b=DaoxlrH9q8f7VCHjGeu+EM52lhWRyNzsdKcNSLlVI919X2J79nOoQI7JIhlywaQa9h
-         ensrTq2YlUuY5oQpH5MWwsmyNmG+r9fngp6ZLi0YkCSGvxm4wDDY6vqiNizXtM4TfuiI
-         Lr12OXEqSF6yK38Ln94IdqzBCXpOXNDZlVqEs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VWnis//m4WNFnlxLyNlHl8kK3/QSGA3JjJ79aEU0to4=;
-        b=t2bO4ZGJLsnquwO9Nin+8r/z3S/gF3Br5keCXNmJzmPenDE2C+xAoMey4htIxXYoyL
-         2ze5sozDmjL+6JT/FCkyQ/NiQzRuvRBzVu893TZN4Do2krslFQeuafTqAN1xfpXWeSn7
-         dvoS2n5cRATyKPH7bz+8mx/HZ7NpvDRhxkHucSWI4aPNBKRuIk/z5bJt+ZtjFtDXHNwF
-         FPvz36YGvL3e6VDXNtt/rRhWryWVPhCMfy2CYYVksSXlxhy0tnguCL4lPXSh19IzfJT1
-         Zi0ALdpN0eg9VdjxHzvydbQkVhpcpq0NSaMBW8mXc+1VX5njoL89Hvcm3vr/MBe/u8I6
-         KLIw==
-X-Gm-Message-State: APjAAAWyvEKkHG5YCzOT07rccrtX3hbJ82cef1p/9pXwgVrRzJv9zoXY
-        O7zNK4XBJ252Gqs7a2BNJA904A==
-X-Google-Smtp-Source: APXvYqwaQf3DBxvRDNzusDulEDuG9xrAmBVp2JvYuo/mCUCbGA+vq0YIswqjp7l2c7F5rwTAG08+JQ==
-X-Received: by 2002:aca:f4c6:: with SMTP id s189mr1961325oih.63.1572965103115;
-        Tue, 05 Nov 2019 06:45:03 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id x16sm5732293oic.40.2019.11.05.06.45.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Nov 2019 06:45:02 -0800 (PST)
-Subject: Re: linux-next: manual merge of the akpm tree with the kunit tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Gow <davidgow@google.com>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20191105204526.32f19975@canb.auug.org.au>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <4dcb9885-3094-88eb-9998-5edb87a3b4bf@linuxfoundation.org>
-Date:   Tue, 5 Nov 2019 07:45:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 09:45:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2C2216160A; Tue,  5 Nov 2019 14:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572965120;
+        bh=cFPlxNSMY1K9+A3LYb2LGLWYFwQfD7aAy8BX2vuRuqM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=J0w0FIHCKDvOgJR9MyLTc2TKcGAanAZaQ8+cGTfGsnX4GgU8e2MlMYsCDmB1JaAL4
+         fGEMJ06oA2h5VtuPNPnHCMAV2X25lE012zg7A+0ejg/4WZEGJKii6HzG8l/zcJhZ99
+         Yv1rqoiR37yzY6kj7FsA/dNZBvV5oTbDVKU4OpCg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2864C61603;
+        Tue,  5 Nov 2019 14:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572965119;
+        bh=cFPlxNSMY1K9+A3LYb2LGLWYFwQfD7aAy8BX2vuRuqM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KzuZISi6AGnf90xULWtm9wSXcy1ZrM1zQrZdivCdSOLeSJXCycGLBGpPb7iX9DbyK
+         9nS8y0EXYQ5ZsVVvJ1X3DFSnuvez/UU+gcdKWQLa9oegLXP4ZE7uJbzEmjNsHaUT+4
+         eJXxnxIVIDjvVyqWG5Dw9DCIdclF3YeAzk8YL6IY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2864C61603
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        tientzu@chromium.org, seanpaul@chromium.org
+Subject: [PATCH v1 0/2] Enable Bluetooth functionality for WCN3991
+Date:   Tue,  5 Nov 2019 20:15:06 +0530
+Message-Id: <20191105144508.22989-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20191105204526.32f19975@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/19 2:45 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm tree got conflicts in:
-> 
->    MAINTAINERS
->    lib/Kconfig.debug
->    lib/Makefile
->    lib/list-test.c
-> 
-> between commit:
-> 
->    ea2dd7c0875e ("lib/list-test: add a test for the 'list' doubly linked list")
-> 
-> from the kunit tree and patch:
-> 
->    "lib/list-test.c: add a test for the 'list' doubly linked list"
-> 
-> from the akpm tree.
-> 
-> I fixed it up (I just assume that these are different versions of the
-> same patch, so I just dropped the version in the akpm tree) and can
-> carry the fix as necessary. This is now fixed as far as linux-next is
-> concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
-> 
+These patches enables Bluetooth functinalties for new Qualcomm
+Bluetooth chip wnc3991. As this is latest chip with new features,
+along with some common features to old chip "qcom,qcawcn3991-bt".
+Major difference between old BT SoC's with WCN3991 is WCN3991 
+will not send any VSE for the VSC instead is sends the data on CC
+packet.
 
-Right. Andrew and I discussed this patch and he is in the loop that
-there is a new version of this patch and that it will be combined
-with the Kunit patches in kselftest tree.
+Balakrishna Godavarthi (2):
+  Bluetooth: btqca: Rename ROME specific variables to generic variables
+  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth SoC WCN3991
 
-Please drop the patch from akpm and carry the fix if necessary.
+ drivers/bluetooth/btqca.c   | 92 ++++++++++++++++++++++++++-----------
+ drivers/bluetooth/btqca.h   | 32 +++++++------
+ drivers/bluetooth/hci_qca.c | 16 ++++++-
+ 3 files changed, 97 insertions(+), 43 deletions(-)
 
-thanks,
--- Shuah
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
