@@ -2,107 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA32DEFF96
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:23:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3CBEFF9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389393AbfKEOW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:22:59 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52223 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389238AbfKEOW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:22:59 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 476sML30Mcz9sNx;
-        Wed,  6 Nov 2019 01:22:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1572963775;
-        bh=tKE0unT97Mgi0G6lcUeqkq6Frke/9A5fPrYnSHBwf2o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UxD6NHXgO4Btb/r6S9VisX/YD2A1lOK2IuGyh9N/fjGktkTAWS4w5muojbcCGdIlK
-         7yfa2E0TcWbKZ/wQtxX5VKb+DP82nhdaYwLcUHJbY5dKQMztVQF86JGwKsSI8TrodU
-         W4SkjgFwtNtX5uvmN4O4+awUgmXaMTZaDF/JPh8m6xXnUHHrNazuSk2Q3dClBHlvbr
-         yqoRVNx8wehZep3hKm5apGeCO0YCr2pXvus5gWcRms2kPCbCAqPlg7r2uc+07+75zS
-         Dh/SB7nxzSKQT4jgHIANwGkY4s5TibFDv/BeZHqnClMW3QNcsMlObjsATMlJ/HCQ2h
-         x4/a6A6E/vqHg==
-Date:   Wed, 6 Nov 2019 01:22:51 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20191106012251.5bfc5e92@canb.auug.org.au>
-In-Reply-To: <20191105135054.GA7189@lunn.ch>
-References: <20191105195341.666c4a3a@canb.auug.org.au>
-        <20191105135054.GA7189@lunn.ch>
+        id S2389507AbfKEOXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:23:39 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:49583 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389083AbfKEOXi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 09:23:38 -0500
+Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mj8iJ-1hxtan37R7-00f9Ij; Tue, 05 Nov 2019 15:23:36 +0100
+Received: by mail-qk1-f170.google.com with SMTP id h15so11531680qka.13;
+        Tue, 05 Nov 2019 06:23:36 -0800 (PST)
+X-Gm-Message-State: APjAAAVlMfeuJT7rM+C/sroAovXLCi1GZcDkVuDDZwQUVENLWPutJqCP
+        npS776GVNjjF7+F/LjxKY20czgP5tkbnzrAVDVI=
+X-Google-Smtp-Source: APXvYqxEJlpoNZwMPLpzsXqtyuzA7jOFNpOCO6jYdbmb8Rt9qzUV9PB1GkNKVDNJDtW7nTqNAE7nVJYyIwLqAnfMeaY=
+X-Received: by 2002:a37:4f13:: with SMTP id d19mr7205469qkb.138.1572963815449;
+ Tue, 05 Nov 2019 06:23:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fD6AAWwQM+5dF0afKAc.40g";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20191031113608.20713-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20191031113608.20713-1-christian.brauner@ubuntu.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 5 Nov 2019 15:23:19 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2P0djkhfHhQUGdO3YX7QGtLeF2OH1HaJmbmRq5Nuojbg@mail.gmail.com>
+Message-ID: <CAK8P3a2P0djkhfHhQUGdO3YX7QGtLeF2OH1HaJmbmRq5Nuojbg@mail.gmail.com>
+Subject: Re: [PATCH] clone3: validate stack arguments
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:g9UvdAFkc5K5I1WUz3TIItfnCw2AoYB7lvNx6PYbY2iTTZkZBuV
+ 1T7QX9Skaji8HOzG6B7oI/t8iwBJdguhPv+e44QUBvV9T+P/RTh7gqvoR44j29THV/jswrA
+ fpiuKzqM7ga+3+/dQVv3Cx3ADfxY70sJmqgE6Mrc3bLpeZJAS+JxJx+BbQkAhZpd8UvSDyi
+ oZ/0oeJrAiKrU5ZTYGhJA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5JY4BvQQdNI=:MuZI6gc0XPZdqM1HqDwBh1
+ u0UgyA7sT+aegKhB7KPWR7ohGn/3nu3xLEG1jaj9XeHSyMjKH4tntDL0YGpwKh+aEn36jjWoQ
+ QH3ok9yLl+Z9uzG6DBLbdwXOXKB2i2y9vAtEyiaK3Qm4DR58vPtAO6jdSNcUD+UgEnvLHPrm5
+ B+UUtbM6rx/08GFsyMsG03qdnMteLatFdX06hSriygEiN/J6aMlnEGIGErrJr8L4wsNQw1gup
+ a8AtGWcxY/Tvu2hQ20n6JrpKwlpC1OU2VGaHezL1BSt+TyChSe6p7+LYMOvSW36ythyBuq+oz
+ ABW/P+Wxjw0eiS0vQxJ61IKNL13kzyDAztMQFa6J8EuyosGfeFfpQkw7f4JzG6gHDaVcySuhJ
+ o0JpDtJelNviB5raADwGCL+/CfkTCxfq6SfAHd8k2M9gwAUdhbC2a4wZX3Py7bcV1/gTH0QKp
+ 3jN0Mr22gAYLDY3nAOVyeVu8e7CYvzVJpX2VghN6kqvt2LhaqMmAXmKOUpRh3Wbn66sK6PGwF
+ 1sYQ8lw/3d77PGBwKu+wGtnUlLZ3kEgv8C8DUnpeW8yWWtY+nYXM4KHq23B0dULgBr2wUt4Nw
+ urjfHfu2CIRi3XEXaKyebuelQgWIgxLvHqPLKiKHIBhQwzWHM5dnK4ZwT4n0ppV4/sVKnWmFU
+ SRnVxlJuPv5JpXXVfVB/tG0M8NRQvoCVqf5W8FqLDSbCuqoQJtKOW1Dqxc4io1Bi2rP+Lz12l
+ zcIfq7Jk7fv2MTgWWSumoxR9G7upXwkQlBP1Ei7RGeLirmpyhKnczDvVEN0ALdbwTpBTrQvHK
+ HGSrWt5tMxCU+67V3YTynAvQCPcqUCL/8e1jHb21yJrYr7Vymn50VbK1AzuiD4nDNjDovO99P
+ B+nb043KbWyQOUxGRw7w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fD6AAWwQM+5dF0afKAc.40g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andrew,
-
-On Tue, 5 Nov 2019 14:50:54 +0100 Andrew Lunn <andrew@lunn.ch> wrote:
+On Thu, Oct 31, 2019 at 12:36 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
 >
-> On Tue, Nov 05, 2019 at 07:53:41PM +1100, Stephen Rothwell wrote:
-> >=20
-> > After merging the net-next tree, today's linux-next build (powepc
-> > ppc44x_defconfig) failed like this:
-> >=20
-> >=20
+> Validate the stack arguments and setup the stack depening on whether or not
+> it is growing down or up.
+>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Sorry about leaving the error out :-(
-
-> > Caused by commit
-> >=20
-> >   0c65b2b90d13 ("net: of_get_phy_mode: Change API to solve int/unit war=
-nings")
-> >=20
-> > I applied the following patch, but there is probably a nicer and more
-> > complete way to fix this. =20
->=20
-> I just received the 0-day about this. I did not know David had merged
-> it!
->=20
-> What you have works. So:
->=20
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->=20
-> The nicer way is a bit bigger. Is this too big to go in via you?
-> Should i submit it via netdev, and you can drop your fix once this
-> arrives?
-
-via Dave, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/fD6AAWwQM+5dF0afKAc.40g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3BhbsACgkQAVBC80lX
-0GwF7wf+NyXeqLnnor8kxF9m3WHuOzQzyTVxUgi8CrgYF+WYmt9rbuCzG6HyfM0P
-/T/xTaTigKc+j9d6Nv9KoXF03Mvm7/zmEnhi5c1SsCbecmozveeoxdbPNuNkq7yt
-nFKsIdR3rd6xaj0YfJQgDpYzYmG/wfjwWwXGq5EVg/2CJxrMpyjMuppBcSVxLSQx
-P6JTkfPEH2pD5fuibkexox40ubqiX0U6ugUL+7MUXWvbCxy9swtkhbTGJucNZuwD
-rs9mo7l/BdZnupEpLnydyjiQPcGXuD7btBzNTKOpEdELuOp2/gmdAQSVweYGpP90
-esvYwCjoIaOjXoEPtSfENYWOhHIqvQ==
-=63Z1
------END PGP SIGNATURE-----
-
---Sig_/fD6AAWwQM+5dF0afKAc.40g--
+Acked-by: Arnd Bergmann <arnd@arndb.de>
