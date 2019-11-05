@@ -2,98 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0011BF084F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 603A4F0854
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbfKEV3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 16:29:04 -0500
-Received: from foss.arm.com ([217.140.110.172]:54224 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfKEV3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:29:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE9D930E;
-        Tue,  5 Nov 2019 13:29:02 -0800 (PST)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.199.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ED5C3F6C4;
-        Tue,  5 Nov 2019 13:29:02 -0800 (PST)
-Date:   Tue, 5 Nov 2019 21:29:01 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [Patch v4 6/6] sched: thermal: Enable tuning of decay period
-Message-ID: <20191105212735.GA32353@e108754-lin>
-References: <1571776465-29763-1-git-send-email-thara.gopinath@linaro.org>
- <1571776465-29763-7-git-send-email-thara.gopinath@linaro.org>
- <20191104161035.GA6680@e108754-lin>
- <5DC1DADE.60603@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5DC1DADE.60603@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1730094AbfKEV3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 16:29:42 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39868 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbfKEV3m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 16:29:42 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 29so4099345pgm.6;
+        Tue, 05 Nov 2019 13:29:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/3vtuMbo2Nno4c5epkK+9ZuqU3gi24D4qXzwnR0105w=;
+        b=Y8+nN28MJHvNLkconUxm0D1DW279dP/3XKV0xks7lwjKbgkFsUv2Gk0c45Sm5pdytv
+         TvD0z3uMV4BeEC0Vdw2mgg3Xtox3TfLlW8CBqdy/5wQMorTCTCMsJaTaowX4K8RMubUS
+         F7oMgWull7Car2vzHrlJZ6TnOuVBZq71dpDhsT2pXCIpSSdGgnybUU+J3x/glyk9085A
+         xiIZ83J6qznRdSjBKytP8yK9dIfwr5ItY1oe+8C0D4pBGmJ1b7Jx5mrWx3TY1yYudONw
+         tUMX3k8okcXeiQcf+FiBUnVbLCpxzd5DbKoUjEKALAzt0LOUhb9B7K4qPJb2KlIKulBC
+         gLsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/3vtuMbo2Nno4c5epkK+9ZuqU3gi24D4qXzwnR0105w=;
+        b=sDgJYsYOZI5FiS2U8oUngmVFHZLUhMqfU7UI1/b9hhdVRaE+J+YY8IqFpjZSNO2EWE
+         b7AFp09Gjkpk7jAAzqhVI/Z4E07jgaX8e5debcOsKWI8a2itE0WJGjDRlHFKS0Ucn9uJ
+         nkef6p8meyyX6B7uhGKhrDE5Sw482/8CRLteu6Do5WlSWQqq5nnq/EP63NUTcnviSZ2w
+         YUDYQRHClUAOXjP90Ix2ubyo7lsaQrxtVUONwJEZNuZdTidC2nAKM+v0dlx5GuMecU66
+         Pg/jIDwq1c8ZA6Ek4A8NoN6aEp2Y+3CE6UNEp+k/tfR0f39bMX9q0SgKYeRHaB81X7J/
+         kONQ==
+X-Gm-Message-State: APjAAAX1TVHx37R4/KFcAdkPHX5UThyossczax2ifnc91cpsXGvyscJd
+        Yv35M5tuO2KbREAqNZVdsfk=
+X-Google-Smtp-Source: APXvYqx/DEl3pgVzSwinBSwE4HEKhElQMucE6B2yI9QSj1UbKcFLQBhjSG+gAIzhYt2jG98V9aDf1w==
+X-Received: by 2002:a17:90a:6583:: with SMTP id k3mr1522054pjj.50.1572989381200;
+        Tue, 05 Nov 2019 13:29:41 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:50b:6566:c4f0:fef1:89e3:687])
+        by smtp.gmail.com with ESMTPSA id z63sm19040007pgb.75.2019.11.05.13.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 13:29:40 -0800 (PST)
+From:   madhuparnabhowmik04@gmail.com
+To:     paulmck@kernel.org, tranmanphong@gmail.com, frextrite@gmail.com
+Cc:     joel@joelfernandes.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH 2/2] Documentation: RCU: arrayRCU: Improve format for arrayRCU.rst
+Date:   Wed,  6 Nov 2019 02:59:27 +0530
+Message-Id: <20191105212927.13924-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 05 Nov 2019 at 15:26:06 (-0500), Thara Gopinath wrote:
-> On 11/04/2019 11:12 AM, Ionela Voinescu wrote:
-> > Hi Thara,
-> > 
-> > On Tuesday 22 Oct 2019 at 16:34:25 (-0400), Thara Gopinath wrote:
-> >> Thermal pressure follows pelt signas which means the
-> >> decay period for thermal pressure is the default pelt
-> >> decay period. Depending on soc charecteristics and thermal
-> >> activity, it might be beneficial to decay thermal pressure
-> >> slower, but still in-tune with the pelt signals.
-> > 
-> > I wonder if it can be beneficial to decay thermal pressure faster as
-> > well.
-> > 
-> > This implementation makes 32 (LOAD_AVG_PERIOD) the minimum half-life
-> > of the thermal pressure samples. This results in more than 100ms for a
-> > sample to decay significantly and therefore let's say it can take more
-> > than 100ms for capacity to return to (close to) max when the CPU is no
-> > longer capped. This value seems high to me considering that a minimum
-> > value should result in close to 'instantaneous' behaviour, when there
-> > are thermal capping mechanisms that can react in ~20ms (hikey960 has a
-> > polling delay of 25ms, if I'm remembering correctly).
-> > 
-> > I agree 32ms seems like a good default but given that you've made this
-> > configurable as to give users options, I'm wondering if it would be
-> > better to cover a wider range.
-> >
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-[...]
+This patch adds cross-references and fixes a few formtting issues.
 
-> 
-> Hi Ionela,
->
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ Documentation/RCU/arrayRCU.rst | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-[...]
+diff --git a/Documentation/RCU/arrayRCU.rst b/Documentation/RCU/arrayRCU.rst
+index ed5ae24b196e..30c007edfbfb 100644
+--- a/Documentation/RCU/arrayRCU.rst
++++ b/Documentation/RCU/arrayRCU.rst
+@@ -6,16 +6,16 @@ Using RCU to Protect Read-Mostly Arrays
+ Although RCU is more commonly used to protect linked lists, it can
+ also be used to protect arrays.  Three situations are as follows:
+ 
+-1.  Hash Tables
++1.  :ref:`Hash Tables <hash_tables>`
+ 
+-2.  Static Arrays
++2.  :ref:`Static Arrays <static_arrays>`
+ 
+-3.  Resizeable Arrays
++3.  :ref:`Resizeable Arrays <resizeable_arrays>`
+ 
+ Each of these three situations involves an RCU-protected pointer to an
+ array that is separately indexed.  It might be tempting to consider use
+ of RCU to instead protect the index into an array, however, this use
+-case is -not- supported.  The problem with RCU-protected indexes into
++case is **not** supported.  The problem with RCU-protected indexes into
+ arrays is that compilers can play way too many optimization games with
+ integers, which means that the rules governing handling of these indexes
+ are far more trouble than they are worth.  If RCU-protected indexes into
+@@ -26,6 +26,7 @@ to be safely used.
+ That aside, each of the three RCU-protected pointer situations are
+ described in the following sections.
+ 
++.. _hash_tables:
+ 
+ Situation 1: Hash Tables
+ ------------------------
+@@ -35,6 +36,7 @@ has a linked-list hash chain.  Each hash chain can be protected by RCU
+ as described in the listRCU.txt document.  This approach also applies
+ to other array-of-list situations, such as radix trees.
+ 
++.. _static_arrays:
+ 
+ Situation 2: Static Arrays
+ --------------------------
+@@ -50,6 +52,8 @@ Quick Quiz:
+ 
+ :ref:`Answer to Quick Quiz <answer_quick_quiz_seqlock>`
+ 
++.. _resizeable_arrays:
++
+ Situation 3: Resizeable Arrays
+ ------------------------------
+ 
+@@ -66,7 +70,7 @@ the remainder of the new, updates the ids->entries pointer to point to
+ the new array, and invokes ipc_rcu_putref() to free up the old array.
+ Note that rcu_assign_pointer() is used to update the ids->entries pointer,
+ which includes any memory barriers required on whatever architecture
+-you are running on.::
++you are running on::
+ 
+ 	static int grow_ary(struct ipc_ids* ids, int newsize)
+ 	{
+@@ -118,7 +122,7 @@ a simple check suffices.  The pointer to the structure corresponding
+ to the desired IPC object is placed in "out", with NULL indicating
+ a non-existent entry.  After acquiring "out->lock", the "out->deleted"
+ flag indicates whether the IPC object is in the process of being
+-deleted, and, if not, the pointer is returned.::
++deleted, and, if not, the pointer is returned::
+ 
+ 	struct kern_ipc_perm* ipc_lock(struct ipc_ids* ids, int id)
+ 	{
+-- 
+2.17.1
 
-> 
-> Regarding a slower decay, we need a strong case for it.
-> 
->
-
-I think you mean faster decay, if you refer to my comment above.
-
-To be blunt, I'm not sure there is a strong case for either kind of
-dacay, if we look at the test results only. There is a theoretical case
-for both, in my opinion and given that the purpose of this patch is to
-give options to platform with different thermal characteristics, I do
-believe it's worth providing a good range of options for the decay
-period.
-
-Thanks,
-Ionela.
-
-> 
-> -- 
-> Warm Regards
-> Thara
