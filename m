@@ -2,86 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E32AEF91D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B947EF938
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 10:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbfKEJ22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 04:28:28 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35722 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388387AbfKEJ21 (ORCPT
+        id S2388514AbfKEJ2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 04:28:49 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46378 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388497AbfKEJ2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 04:28:27 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r7so12273495ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:28:26 -0800 (PST)
+        Tue, 5 Nov 2019 04:28:48 -0500
+Received: by mail-vs1-f67.google.com with SMTP id m6so6431831vsn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 01:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=broadcom.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=F2FPfgjdbIXWdDjS0yCRl6/2h1CV4PZp64uPK2X2BNQ=;
-        b=WVjlcjsAOE+e3hERSGqNCL8ugQssMBzjxA2Ol1tzpslqafskb+d2jyNqT1JD9GsOMo
-         qsCQWow1BCS3ieMoh8sCB2LZw8OMmnvBYirEwVOK0hECiIXvPCK/qloP+/hGPgf7mBIW
-         nGNIpW27JhXojS4uyw/a9qYmYpu4wEau1xe775jP74yD7K+PQU+DawGWaPSO4jZolhMl
-         6n7hDnxoY9IKeSpOdI6474fWiZmGTcVWlgZhkPxjoPRFYxP80S927Ww00HXm1JWknfso
-         QkI943Fcr72SDf9V+JOoKKVnRzqbaw5PWTIj8OaHuycQeD6GgTHdHdEHSGxza4WG1wkx
-         hJwQ==
+        bh=Q5/7s98PhC6jxZLJVmCHmR13iFo5P8VlHAp+JLns2BA=;
+        b=GX5X3lUmaa27neYrHSlFgvaDCVsuKz/zKucQz8VNcC098H9XmWKI7OFY/WbmbEh1CC
+         fEQIldAz+Q7MpE1bwuhsGjiuiXHchytXBPJc1l65BFH4Djj36gXxuelWVFBkFdc6oCeH
+         d2Il/QdnLcun0JKe4t0Y8XUZIyAAisSSZDQyI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=F2FPfgjdbIXWdDjS0yCRl6/2h1CV4PZp64uPK2X2BNQ=;
-        b=aNj5P5hdiqZi4f9ygo9zWt13cLgmkR16WI2xl8UJGnxG9HPwqCtEMYIgVmgoMndmYo
-         IMaDS/Pgd4HHezwLFdDU4TI7wD8hmkjZ+Pges4Ndq9a/5JvMM8/ZHzmzkU+CoVks2Dze
-         Cb6jGjxOGS8RDL8v6S7fBsvMbycTawIriNRxh40bqCD+5BNuGtD9uU0jMknnoWlJ/CL1
-         CubeAdDRAIC8BINNhJfwsvUYPlbEssqCC/gEJCBPMe6pDFx4QmllCPckPNVSyHgHDZp3
-         EJKjLz2C7Au6tjGkj7+aoM25evhaxxLqx2LloNiFmkwW7Z25nS9piJ3aOqtTORrCxaIG
-         Bxqg==
-X-Gm-Message-State: APjAAAVRiJi2xklbg4B0B4MwLaEWXzspgVwOhM7JPiN05EIauCS0E7bt
-        c6vMLEQ2mbI8FKCM+G4Fwen7zykYj2DgjXgwBhMFMw==
-X-Google-Smtp-Source: APXvYqzkf3P4NiC+7rZsNgbXYUIcsBRDikSMDKFNsnz+OK18v4KaaK/EheFwXUjlKoFP+nppakoDlDtKmiwMGx5B9Mw=
-X-Received: by 2002:a2e:9a55:: with SMTP id k21mr8803557ljj.251.1572946105330;
- Tue, 05 Nov 2019 01:28:25 -0800 (PST)
+        bh=Q5/7s98PhC6jxZLJVmCHmR13iFo5P8VlHAp+JLns2BA=;
+        b=CGKDoDV1C9AZn5w0wScLyweR4MIPVwOG99XzKotEwsuYMQPq+AkA1Naa4peyv0cQjA
+         WJu/ErNtRUzU4tz1EV2ziF81nwZpwbLTVANE+fGqBEadJJHaI5lc0uP/36LoESICTcnX
+         G94BpKHxzS2hNyUMZypucpUIipGuODaghmjTaH5cdtm16oY/yZO1TRtdK4eYDqLIwNqZ
+         FNqnAAHrLP55m6RqF+Lr1l8lhQFLbtYV1SWr7AIQlNNpjBXp8LeadCSdF7FGcTwBbIXo
+         DkhkJPGZYW1kLah8O0FGlsy9nM77+OlBUNf6xhu+MI1Rhk4IjlgW3ToIqHfAQrbhyWt+
+         W/IA==
+X-Gm-Message-State: APjAAAXvCYRgr1HU0vJuThsPgDpTzEnJ1ABN989ji7ZPyeV+BrEtbbPf
+        54Ov6AqUh1mXxfVOLkhXHxotK60fLi+NvQz8xD45dQ==
+X-Google-Smtp-Source: APXvYqzcC4WZuFL9Q+uUY8ZxtbmZjlncd9HmkUg6UwU2E06KR+lY3eX/ogNGlaNjf9cIke6TqFQSGDhqa/Z34PxYQiQ=
+X-Received: by 2002:a67:b917:: with SMTP id q23mr7153086vsn.205.1572946127039;
+ Tue, 05 Nov 2019 01:28:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-26-arnd@arndb.de>
-In-Reply-To: <20191018154201.1276638-26-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 10:28:12 +0100
-Message-ID: <CACRpkdYDaJmd1MxmEA52Fjbh0d6Q5Vvb-Fb1SVLH-6AquxC6+Q@mail.gmail.com>
-Subject: Re: [PATCH 26/46] ARM: pxa: zylonite: use gpio lookup instead mfp header
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linux Input <linux-input@vger.kernel.org>
+References: <d5c12f05-5a07-b698-ae60-2728330dd378@web.de>
+In-Reply-To: <d5c12f05-5a07-b698-ae60-2728330dd378@web.de>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Tue, 5 Nov 2019 14:58:35 +0530
+Message-ID: <CAL2rwxrdOVeO3RT_Y3mk3p-076eMMWm6VVF0C4yiYEWJ0TO5DQ@mail.gmail.com>
+Subject: Re: [PATCH] scsi: megaraid_sas: Use common error handling code in megasas_mgmt_ioctl_fw()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Linux SCSI List <linux-scsi@vger.kernel.org>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
+        "James E. J. Bottomley" <jejb@linux.ibm.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Chandrakanth Patil <chandrakanth.patil@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 5:42 PM Arnd Bergmann <arnd@arndb.de> wrote:
-
-> The mach/mfp.h header is only used by this one driver
-> for hardcoded gpio numbers. Change that to use a lookup
-> table instead.
+On Fri, Nov 1, 2019 at 3:06 AM Markus Elfring <Markus.Elfring@web.de> wrote:
 >
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-(...)
-> +               GPIO_LOOKUP("gpio-pxa", mfp_to_gpio(MFP_PIN_GPIO15),
-> +                           "touch", GPIO_ACTIVE_LOW),
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 31 Oct 2019 22:23:02 +0100
+>
+> Move the same error code assignments so that such exception handling
+> can be better reused at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-What I tried to do with code like this, when I was ambitious,
-was to wind out mfp_to_gpio() as well and either just encode
-the offset on gpio-pxa as a define locally.
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 
-But this works too, the kernel looks better after than before
-and I am not perfectionist, so:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_base.c | 25 ++++++++++-------------
+>  1 file changed, 11 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+> index c40fbea06cc5..f2f2a240e5af 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+> @@ -8272,27 +8272,20 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+>                 return PTR_ERR(ioc);
+>
+>         instance = megasas_lookup_instance(ioc->host_no);
+> -       if (!instance) {
+> -               error = -ENODEV;
+> -               goto out_kfree_ioc;
+> -       }
+> +       if (!instance)
+> +               goto e_nodev;
+>
+>         /* Block ioctls in VF mode */
+> -       if (instance->requestorId && !allow_vf_ioctls) {
+> -               error = -ENODEV;
+> -               goto out_kfree_ioc;
+> -       }
+> +       if (instance->requestorId && !allow_vf_ioctls)
+> +               goto e_nodev;
+>
+>         if (atomic_read(&instance->adprecovery) == MEGASAS_HW_CRITICAL_ERROR) {
+>                 dev_err(&instance->pdev->dev, "Controller in crit error\n");
+> -               error = -ENODEV;
+> -               goto out_kfree_ioc;
+> +               goto e_nodev;
+>         }
+>
+> -       if (instance->unload == 1) {
+> -               error = -ENODEV;
+> -               goto out_kfree_ioc;
+> -       }
+> +       if (instance->unload == 1)
+> +               goto e_nodev;
+>
+>         if (down_interruptible(&instance->ioctl_sem)) {
+>                 error = -ERESTARTSYS;
+> @@ -8311,6 +8304,10 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+>  out_kfree_ioc:
+>         kfree(ioc);
+>         return error;
+> +
+> +e_nodev:
+> +       error = -ENODEV;
+> +       goto out_kfree_ioc;
+>  }
+>
+>  static int megasas_mgmt_ioctl_aen(struct file *file, unsigned long arg)
+> --
+> 2.23.0
+>
