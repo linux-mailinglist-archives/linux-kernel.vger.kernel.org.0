@@ -2,324 +2,398 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F89BF0716
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09448F0728
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 21:43:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbfKEUgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 15:36:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:13316 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726608AbfKEUgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:36:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:36:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="214020092"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2019 12:36:32 -0800
-Message-ID: <810bfb95a42090ff64f86e4154e2bd2cfda29f27.camel@linux.intel.com>
-Subject: Re: [RFC][PATCH] x86, mce, therm_throt: Optimize notifications of
- thermal throttle
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, bberg@redhat.com, x86@kernel.org,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hdegoede@redhat.com, ckellner@redhat.com
-Date:   Tue, 05 Nov 2019 12:36:32 -0800
-In-Reply-To: <20191105144411.GC28418@zn.tnic>
-References: <20191025001924.10199-1-srinivas.pandruvada@linux.intel.com>
-         <20191105144411.GC28418@zn.tnic>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729688AbfKEUni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 15:43:38 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43601 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEUni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:43:38 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l20so6768740oie.10;
+        Tue, 05 Nov 2019 12:43:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RkODek+8IsNsEOzoc63Wjx0Tnh0J25xfJnOEthQTkL0=;
+        b=noLaUxphl6DYAZznVdo0VudNFjqrLYCPm342a3aNqlRhzIklUv+wveMjhOsOY+pfSt
+         RtjAkSAr8NBGWtbFNtNADC8nftFRfnixVHtoG73xU1IT2DJExJNZomdPLZd48RoS/sfw
+         td3BpcOUCKo2rrZRvImWPa4OebQ5vETGEtUxwhjHyXojZhKyVqIC5ZZBVb9dbuwmvkjN
+         SDcv/SbJFykC2DlLheRFJyvbado7kbs4yZ5kFolGzpQeak7UufZiE8ZWWr2bGQeTil+h
+         8jodhRKrGsW2zxnhVmg8wKAPmVMUmCXO3lkdMaCnEkQU1NFy4kJ23OowspwFKsdIbphM
+         2Bdw==
+X-Gm-Message-State: APjAAAXGzgZ+hwVOsu8/fHvHGVtFbp6ox5pXFtqcbQyqQfAjUcG7VrDq
+        iEyvCKq4E/Xkb1vhA1+Cng==
+X-Google-Smtp-Source: APXvYqwmFRObbqHaoVxXxF4nzE7y0+CWhzTqQJ05JITnCfvlFJDjwhK2kCt75mPTDpjjYI6VOFrLoQ==
+X-Received: by 2002:aca:dbc3:: with SMTP id s186mr805095oig.130.1572986616095;
+        Tue, 05 Nov 2019 12:43:36 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m8sm1918560oie.30.2019.11.05.12.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 12:43:35 -0800 (PST)
+Date:   Tue, 5 Nov 2019 14:43:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [RFC PATCH v3 02/15] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Message-ID: <20191105204334.GA629@bogus>
+References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+ <ae5d8cf6d276a29432583c1e5241ba7e852036b9.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae5d8cf6d276a29432583c1e5241ba7e852036b9.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-11-05 at 15:44 +0100, Borislav Petkov wrote:
-> On Thu, Oct 24, 2019 at 05:19:24PM -0700, Srinivas Pandruvada wrote:
+On Fri, Nov 01, 2019 at 01:31:03PM +0200, Matti Vaittinen wrote:
+> ROHM BD71828 Power management IC integrates 7 buck converters, 7 LDOs,
+> a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> and a 32.768 kHz clock gate.
+> 
+> Document the dt bindings drivers are using.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+> 
+> Changes from v2 - my first encounter with yaml :/
+> 
+>  .../bindings/mfd/rohm,bd71828-pmic.yaml       | 249 ++++++++++++++++++
+>  1 file changed, 249 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> new file mode 100644
+> index 000000000000..b2a88f6e1bb7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> @@ -0,0 +1,249 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Thanks for the review.
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 
-> > Some modern systems have very tight thermal tolerances. Because of
-> > this
-> > they may cross thermal thresholds when running normal workloads
-> > (even
-> > during boot). The CPU hardware will react by limiting
-> > power/frequency
-> > and using duty cycles to bring the temperature back into normal
-> > range.
-> > 
-> > Thus users may see a "critical" message about the "temperature
-> > above
-> > threshold" which is soon followed by "temperature/speed normal".
-> > These
-> > messages are rate limited, but still may repeat every few minutes.
-> 
-> rate-limited
-OK
+for new bindings.
 
-> 
-> > A test run on a laptop with Intel 8th Gen i5 core for two hours
-> > with a
-> > workload resulted in 20K+ thermal interrupts per CPU for core level
-> > and
-> > another 20K+ interrupts at package level. The kernel logs were full
-> > of
-> > throttling messages.
-> > 
-> > Brief background, on why there are so many thermal interrupts in a
-> > modern system:
-> > From IvyBridge, there is another offset called TCC offset is
-> > introduced.
-> 
-> That sentence needs fixing.
-Will try.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/rohm,bd71828-pmic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ROHM BD71828 Power Management Integrated Circuit bindings
+> +
+> +maintainers:
+> +  - Lee Jones <lee.jones@linaro.org>
+> +  - Rob Herring <robh@kernel.org>
+> +  - Mark Rutland <mark.rutland@arm.com>
 
-> 
-> > This adds an offset to the real PROCHOT temperature target. So
-> > effectively
-> > this interrupt is generated much before the PROCHOT. There will be
-> > several
-> > very short throttling by the processor using adaptive thermal
-> > monitoring
-> 
->   ^^^^^^^^^^^^^^^^^^^^^^
-> 
-> "There will be several very short throttling" reads funny.
-Will try to remove "Fun" out of it.
+Don't list me or Mark here. I maintain everything...
 
-> 
-> > at this threshold, instead of more aggressive action close to
-> > PROCHOT.
-> > This offset is configured by OEMs and some tend to be more
-> > conservative
-> > than others. So logging such events just generates noise in the
-> > logs.
-> > 
-> > The real value of these threshold interrupts, is to debug problems
-> > with
-> > the external cooling solutions and performance issues due to
-> > excessive
-> > throttling.
-> > 
-> > So the solution here:
-> > - Show in the current thermal_throttle folder, the maximum time for
-> > one
-> > throttling event and total amount of time, the system was in
-> > throttling
-> > state.
-> > - Don't log short excursions.
-> > - Log only when, in spite of thermal throttling the temperature is
-> > rising.
-> > This is done by monitoring temperature trend using three point
-> > moving
-> > average. On the high threshold interrupt trigger a delayed
-> > workqueue,
-> > which monitors the threshold violation log bit, calculates moving
-> > moving
-> 
-> What is the "threshold violation log bit" ? THERM_STATUS_PROCHOT_LOG
-> ?
-Yes, BIT 1 of therm
-MSR_IA32_THERM_STATUS/MSR_IA32_PACKAGE_THERM_STATUS.
+> +
+> +description: |
+> +  BD71828GW is a single-chip power management IC for battery-powered portable
+> +  devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500 mA
+> +  single-cell linear charger. Also included is a Coulomb counter, a real-time
+> +  clock (RTC), and a 32.768 kHz clock gate.
+> +
+> +  The BD71828 RUN state is divided into 4 configurable run-levels named RUN0,
+> +  RUN1, RUN2 and RUN3. Bucks 1, 2, 6 and 7 can be either controlled individually
+> +  via I2C, or some/all of them can be bound to run-levels and controlled as a
+> +  group. If bucks are controlled individually these run-levels are ignored. See
+> +  ../regulator/rohm,bd71828-regulator.yaml for how to define regulator voltages
+> +  for run-levels. Run-levels can be changed by I2C or GPIO depending on PMIC's
+> +  OTP configuration.
+> +
+> +properties:
+> +  compatible:
+> +    const: rohm,bd71828
 
-> 
-> s/moving moving/moving/
-> 
-> Please read your commit message before sending to check whether it
-> makes
-> any sense. Commit messages are not write-only.
-Noted.
+blank line here please
 
-> 
-> > average and logs when temperature trend is raising. When the log
-> > bit is
-> > clear and temperature is below threshold temperature, it will print
-> > "Normal" message. Once a high threshold event is logged, it rate
-> > limits
-> > number of log messages.
-> > - Reduce the logging severity to warning.
-> 
-> I already took the reducing printk severity patch, you'd need to redo
-> yours ontop of tip/master.
-I will rebase and remove this from the description.
+> +  reg:
+> +    description:
+> +      I2C slave address.
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      The interrupt line the device is connected to.
+> +
+> +  gpio-controller: true
+> +      # Indicate BD71828 acts as a GPIO controller.
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the pin number and the second cell is used to specify
+> +      flags. See ../gpio/gpio.txt for more information.
+> +
+> +  clocks:
+> +    description:
+> +      The parent clock connected to PMIC.
 
-> > 
+How many?
 
-[...]
+maxItems: 1
 
-> 
-> > +	int			rate_control_active;
-> 
-> That wants to be a bool judging by the context it is used in.
-I can change to bool, just didn't use it
-https://yarchive.net/comp/linux/bool.html
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  rohm,charger-sense-resistor:
+> +    $ref: "/schemas/types.yaml#/definitions/uint32"
+> +    description: |
+> +      BD71827 and BD71828 have SAR ADC for measuring charging currents.
+> +      External sense resistor (RSENSE in data sheet) should be used. If some
+> +      other but 30MOhm resistor is used the resistance value should be given
+> +      here in Ohms.
 
-> 
-> > +	int			level;
-> > +	int			sample_index;
-> > +	int			sample_count;
-> > +	int			average;
-> > +	int			baseline_temp;
-> > +	u8			temp_samples[3];
-> 
-> All these new members (and old members) should be documented what
-> they
-> are. Like, what is "max_time_ms", for example? I can find out from
-> the
-> sysfs func names below but having comments explaining what those are
-> is
-> much better.
-> 
-> >  };
-I will do that.
+Standard units need a unit suffix as defined in property-units.txt. So 
+'-ohms' in this case. With that, you can drop $ref because we already 
+define the type.
 
-> >  
+Is there a valid range of values? If so, use minimum/maximum.
 
-[...]
+> +
+> +  regulators:
+> +    $ref: ../regulator/rohm,bd71828-regulator.yaml
 
-> > +
-> > +static void therm_throt_clear_therm_status_log(int level)
-> 
-> That's a static function, called only once so prepending its name
-> with
-> the "therm_throt_" prefix is pointless and doesn't help readability.
-> Having simply
-> 
-> 	clear_therm_status_log(state->level);
-> 
-> in the code is clearer and shorter. Ditto for the other helper
-> functions.
-OK.
+Not bisectable. These files have to come in this patch or before.
 
-> 
-> > +{
-> > +	u64 msr_val;
-> > +	int msr;
-> > +
-> > +	msr = (level == CORE_LEVEL) ? MSR_IA32_THERM_STATUS :
-> > +			MSR_IA32_PACKAGE_THERM_STATUS;
-> 
-> Make that a normal if-else statement for better readability:
-> 
-OK
+> +    description:
+> +      List of child nodes that specify the regulators.
+> +
+> +  leds:
+> +    $ref: ../leds/rohm,leds-bd71828.yaml
 
-> 	if (level == CORE_LEVEL)
-> 		msr = MSR_IA32_THERM_STATUS;
-> 	else
-> 		msr = MSR_IA32_PACKAGE_THERM_STATUS;
-> 
-> > +	rdmsrl(msr, msr_val);
-> 
-> Is that rdmsrl() always going to succeed here or you need to handle a
-> possible error it returns?
-> 
-It should not.
-They are architectural MSRs and the fact that we are getting called
-means that they are enabled by looking at CPUID bits. Also this MSR was
-read before once in intel_thermal_interrupt(). 
+Filename should match the compatible if possible.
 
+> +
+> +  clock-output-names:
+> +    description:
+> +      Should contain name for output clock.
 
-> > +	wrmsrl(msr, msr_val & ~THERM_STATUS_PROCHOT_LOG);
-> 
-> Same here.
+Need to document what the name is. Though, with only 1 clock, not that 
+useful.
 
-> 
-It shouldn't fail for local CPU write. But I can add error handling.
+> +
+> +  rohm,dvs-vsel-gpios:
+> +    description: |
+> +      GPIOs used to control PMIC run-levels. Should describe two GPIOs.
+> +      (See run-level control in data-sheet). If this property is omitted but
+> +      some bucks are marked to be controlled by run-levels - then OTP option
+> +      allowing run-level control via I2C is assumed.
 
+How many? Needs 'maxItems'.
 
-> > +}
-> > +
-> > +static void therm_throt_get_therm_status(int level, int *proc_hot,
-> > int *temp)
-> > +{
-> > +	u64 msr_val;
-> > +	int msr;
-> > +
-> > +	msr = (level == CORE_LEVEL) ? MSR_IA32_THERM_STATUS :
-> > +			MSR_IA32_PACKAGE_THERM_STATUS;
-> > +	rdmsrl(msr, msr_val);
-> > +	*proc_hot = msr_val & THERM_STATUS_PROCHOT_LOG ? 1 : 0;
-> > +	*temp = (msr_val >> 16) & 0x7F;
-> 
-> Same comments as for the therm_throt_clear_therm_status_log()
-> function above.
-> 
-OK
+> +
+> +  gpio-reserved-ranges:
+> +    description: |
+> +      Usage of BD71828 GPIO pins can be changed via OTP. This property can be
+> +      used to mark the pins which should not be configured for GPIO. Please see
+> +      the ../gpio/gpio.txt for more information.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - "#clock-cells"
+> +  - regulators
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/leds/common.h>
+> +    i2c {
 
-> ...
-> 
-> > @@ -178,27 +292,23 @@ static void therm_throt_process(bool
-> > new_event, int event, int level)
-> >  	if (new_event)
-> >  		state->count++;
-> >  
-> > -	if (time_before64(now, state->next_check) &&
-> > -			state->count != state->last_count)
-> > -		return;
-> > +	if (event == THERMAL_THROTTLING_EVENT) {
-> 
-> Save an indentation level:
-> 
-OK
+'make dt_binding_check' reports an error building this, but I'm not 
+seeing where it is:
 
-Thanks,
-Srinivas
+Error: Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.example.dts:155.36-37 syntax error
+FATAL ERROR: Unable to parse input tree
 
-> 	if (event != THERMAL_THROTTLING_EVENT)
-> 		return;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        pmic: pmic@4b {
+> +            compatible = "rohm,bd71828";
+> +            reg = <0x4b>;
+> +
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +            clocks = <&osc 0>;
+> +            #clock-cells = <0>;
+> +            clock-output-names = "bd71828-32k-out";
+> +
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            gpio-reserved-ranges = <0 1 2 1>;
+> +
+> +            rohm,dvs-vsel-gpios = <&gpio1 12 0>, <&gpio1 13 0>;
+> +            rohm,charger-sense-resistor = <10000000>;
+> +
+> +            regulators {
+> +                buck1: BUCK1 {
+> +                    regulator-name = "buck1";
+> +                    regulator-min-microvolt = <500000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-ramp-delay = <2500>;
+> +                    rohm,dvs-runlvl-ctrl;
+> +                    rohm,dvs-runlevel0-voltage = <500000>;
+> +                    rohm,dvs-runlevel1-voltage = <506250>;
+> +                    rohm,dvs-runlevel2-voltage = <512500>;
+> +                    rohm,dvs-runlevel3-voltage = <518750>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck2: BUCK2 {
+> +                    regulator-name = "buck2";
+> +                    regulator-min-microvolt = <500000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-ramp-delay = <2500>;
+> +                    rohm,dvs-runlvl-ctrl;
+> +                    rohm,dvs-runlevel0-voltage = <500000>;
+> +                    rohm,dvs-runlevel1-voltage = <506250>;
+> +                    rohm,dvs-runlevel2-voltage = <512500>;
+> +                    rohm,dvs-runlevel3-voltage = <518750>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck3: BUCK3 {
+> +                    regulator-name = "buck3";
+> +                    regulator-min-microvolt = <1200000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck4: BUCK4 {
+> +                    regulator-name = "buck4";
+> +                    regulator-min-microvolt = <1000000>;
+> +                    regulator-max-microvolt = <1800000>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck5: BUCK5 {
+> +                    regulator-name = "buck5";
+> +                    regulator-min-microvolt = <2500000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck6: BUCK6 {
+> +                    regulator-name = "buck6";
+> +                    regulator-min-microvolt = <500000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-ramp-delay = <2500>;
+> +                    rohm,dvs-runlvl-ctrl;
+> +                    rohm,dvs-runlevel0-voltage = <500000>;
+> +                    rohm,dvs-runlevel1-voltage = <506250>;
+> +                    rohm,dvs-runlevel2-voltage = <512500>;
+> +                    rohm,dvs-runlevel3-voltage = <518750>;
+> +                    regulator-boot-on;
+> +                };
+> +                buck7: BUCK7 {
+> +                    regulator-name = "buck7";
+> +                    regulator-min-microvolt = <500000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-ramp-delay = <2500>;
+> +                    rohm,dvs-runlvl-ctrl;
+> +                    rohm,dvs-runlevel0-voltage = <500000>;
+> +                    rohm,dvs-runlevel1-voltage = <506250>;
+> +                    rohm,dvs-runlevel2-voltage = <512500>;
+> +                    rohm,dvs-runlevel3-voltage = <518750>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo1: LDO1 {
+> +                    regulator-name = "ldo1";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo2: LDO2 {
+> +                    regulator-name = "ldo2";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo3: LDO3 {
+> +                    regulator-name = "ldo3";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo4: LDO4 {
+> +                    regulator-name = "ldo4";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo5: LDO5 {
+> +                    regulator-name = "ldo5";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo6: LDO6 {
+> +                    regulator-name = "ldo6";
+> +                    regulator-min-microvolt = <1800000>;
+> +                    regulator-max-microvolt = <1800000>;
+> +                    regulator-boot-on;
+> +                };
+> +                ldo7_reg: LDO7 {
+> +                    regulator-name = "ldo7";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-boot-on;
+> +                };
+> +            };
+> +
+> +            leds {
+> +                compatible = "rohm,bd71828-led";
+> +
+> +                led-1 {
+> +                    function = LED_FUNCTION_INDICATOR;
+> +                    color = <LED_COLOR_ID_GREEN>;
+> +                };
+> +                led-2 {
+> +                    function = LED_FUNCTION_CHARGING;
+> +                    color = <LED_COLOR_ID_AMBER>;
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.21.0
 > 
-> 	/* next statement starts here */
 > 
-> > +		if (new_event && !state->last_interrupt_time) {
-> > +			int hot;
-> >  
-> > -	state->next_check = now + CHECK_INTERVAL;
-> > -	state->last_count = state->count;
-> > +			therm_throt_get_therm_status(state->level,
-> > &hot, &state->baseline_temp);
-> >  
-> > -	/* if we just entered the thermal event */
-> > -	if (new_event) {
-> > -		if (event == THERMAL_THROTTLING_EVENT)
-> > -			pr_crit("CPU%d: %s temperature above threshold,
-> > cpu clock throttled (total events = %lu)\n",
-> > -				this_cpu,
-> > -				level == CORE_LEVEL ? "Core" :
-> > "Package",
-> > -				state->count);
-> > -		return;
-> > -	}
-> > -	if (old_event) {
-> > -		if (event == THERMAL_THROTTLING_EVENT)
-> > -			pr_info("CPU%d: %s temperature/speed normal\n",
-> > this_cpu,
-> > -				level == CORE_LEVEL ? "Core" :
-> > "Package");
-> > -		return;
-> > +			state->last_interrupt_time = now;
-> > +			schedule_delayed_work_on(this_cpu, &state-
-> > >therm_work, THERM_THROT_POLL_INTERVAL);
-> > +		} else if (old_event && state->last_interrupt_time) {
-> > +			unsigned long throttle_time;
-> > +
-> > +			throttle_time = jiffies_delta_to_msecs(now -
-> > state->last_interrupt_time);
-> > +			if (throttle_time > state->max_time_ms)
-> > +				state->max_time_ms = throttle_time;
-> > +			state->total_time_ms += throttle_time;
-> > +			state->last_interrupt_time = 0;
-> > +		}
-> >  	}
-> >  }
-> >  
+> -- 
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
 > 
-> 
-
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =] 
