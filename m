@@ -2,91 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1043DEFF20
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD721EFEF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 14:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389356AbfKEN7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 08:59:36 -0500
-Received: from einhorn-mail.in-berlin.de ([217.197.80.20]:36711 "EHLO
-        einhorn-mail.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388209AbfKEN7f (ORCPT
+        id S2389319AbfKENtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 08:49:53 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41743 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388860AbfKENtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 08:59:35 -0500
-X-Greylist: delayed 581 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Nov 2019 08:59:35 EST
-X-Envelope-From: stefanr@s5r6.in-berlin.de
-Received: from authenticated.user (localhost [127.0.0.1]) by einhorn.in-berlin.de  with ESMTPSA id xA5DneLi023521
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Tue, 5 Nov 2019 14:49:40 +0100
-Date:   Tue, 5 Nov 2019 14:49:39 +0100
-From:   Stefan Richter <stefanr@s5r6.in-berlin.de>
-To:     linux1394-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: core: code cleanup after vm_map_pages_zero
- introduction
-Message-ID: <20191105144939.3b38ce48@kant>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 5 Nov 2019 08:49:53 -0500
+Received: by mail-pl1-f196.google.com with SMTP id d29so3097232plj.8;
+        Tue, 05 Nov 2019 05:49:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=G9rssNOaono36gRg5NAIBeRasLl8BPM5p4jbq9dvddU=;
+        b=Gv1PzgVjSrnaJzXRpe3MqOP0r7bT/E0EVIcMVM39LxQ3p548fllIwQMVZqmqTPvVcq
+         pdGkwB4OLfW9i09JFx8MWUvLWQiAkB548+DEdVi1l8SnZ1huoF4OaGUrRz+z8aQ/O2Ce
+         Ay/Em5Ahb+H/16h11WfCVgnEAtMF4vTHkhFbix3G59AC9lqFGcOv19Y3EUBM59x2x6bT
+         XoKjOFjykDA2P3/p1wFt8TQs9EfhXlN8LnhJdKSybqkqYh8wyPwUEEWkJDrnqx2uEUMZ
+         8slr9rRYwhzMiElFQBhb2oeF+mw80ackFj8lAJybrnEth+WIuYJtCyePVpNT+SlIRxmO
+         Yy3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=G9rssNOaono36gRg5NAIBeRasLl8BPM5p4jbq9dvddU=;
+        b=Lby4v1Y4MiMrQAif0MMMAjNGSzgwvSdxgabjQjxUNi1uu+FczS57hfNjzYxv5ZJUUr
+         gC2G2FUoOA3qBXuoowQKCM0kS68uubonW2JrHsPPd7yhgRRGRviU05hryP3RDrFriESG
+         EsPHf/bXyVykJnXffdMsGFHFR66F1bm3kmPQ5OHsEdz0NCjOAxznfdlxZRMPP9lbiSNn
+         ka022wDktGq8gwuNWm1id/PySh7O/DJ2BTXTrxRejzZ4wsQT/qPy/18TJkBeXXWVL1m8
+         kQ2Yo+YdrI1ehNHRC3zhauStPDQcyNX+AfELiawPKk5OTgM9v6ibQBuva+/lfgE3czzb
+         9xPQ==
+X-Gm-Message-State: APjAAAUyn5usKN5HgF/afPKFB2TunvCOsUPTlqunvqsZeOeRobSTehS2
+        +uvUC7rmg7IKJRoc7X45RCuzEyFwbBo=
+X-Google-Smtp-Source: APXvYqzdj8IJGR+Nx5X7epq1joXUf3thCiGJri9n74bpzCqrSGzpqvAFUafY88t1iP5PdN1HG6hluw==
+X-Received: by 2002:a17:902:b40f:: with SMTP id x15mr6490438plr.118.1572961791634;
+        Tue, 05 Nov 2019 05:49:51 -0800 (PST)
+Received: from ?IPv6:2405:4800:58f7:3f8f:27cb:abb4:d0bd:49cb? ([2405:4800:58f7:3f8f:27cb:abb4:d0bd:49cb])
+        by smtp.gmail.com with ESMTPSA id s202sm22001772pfs.24.2019.11.05.05.49.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2019 05:49:51 -0800 (PST)
+Cc:     paulmck@kernel.org, joel@joelfernandes.org, corbet@lwn.net,
+        tranmanphong@gmail.com, rcu@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: RCU: arrayRCU:
+ Converted arrayRCU.txt to arrayRCU.rst
+To:     madhuparnabhowmik04@gmail.com
+References: <20191028202417.13095-1-madhuparnabhowmik04@gmail.com>
+From:   Phong Tran <tranmanphong@gmail.com>
+Message-ID: <ac8da2f5-4cda-8985-ff90-061478a4e2c9@gmail.com>
+Date:   Tue, 5 Nov 2019 20:49:47 +0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20191028202417.13095-1-madhuparnabhowmik04@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 22660db89262 turned fw_iso_buffer_map_vma into a one-liner.
-There is no need to keep this in the core-iso.c collection of buffer
-management functions; put it inline into the sole user, the character
-device file driver.
+On 10/29/19 3:24 AM, madhuparnabhowmik04@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> 
+> This patch converts arrayRCU from txt to rst format.
+> arrayRCU.rst is also added in the index.rst file.
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> ---
+>   .../RCU/{arrayRCU.txt => arrayRCU.rst}         | 18 +++++++++++++-----
+>   Documentation/RCU/index.rst                    |  1 +
+>   2 files changed, 14 insertions(+), 5 deletions(-)
+>   rename Documentation/RCU/{arrayRCU.txt => arrayRCU.rst} (91%)
+> 
+> diff --git a/Documentation/RCU/arrayRCU.txt b/Documentation/RCU/arrayRCU.rst
+> similarity index 91%
+> rename from Documentation/RCU/arrayRCU.txt
+> rename to Documentation/RCU/arrayRCU.rst
+> index f05a9afb2c39..ed5ae24b196e 100644
+> --- a/Documentation/RCU/arrayRCU.txt
+> +++ b/Documentation/RCU/arrayRCU.rst
+> @@ -1,5 +1,7 @@
+> -Using RCU to Protect Read-Mostly Arrays
+> +.. _array_rcu_doc:
+>   
+> +Using RCU to Protect Read-Mostly Arrays
+> +=======================================
+>   
+>   Although RCU is more commonly used to protect linked lists, it can
+>   also be used to protect arrays.  Three situations are as follows:
+> @@ -26,6 +28,7 @@ described in the following sections.
+>   
+>   
 
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
----
- drivers/firewire/core-cdev.c |    3 ++-
- drivers/firewire/core-iso.c  |    7 -------
- drivers/firewire/core.h      |    2 --
- 3 files changed, 2 insertions(+), 10 deletions(-)
+It will be better to have the cross reference for each situation.
 
---- a/drivers/firewire/core-cdev.c
-+++ b/drivers/firewire/core-cdev.c
-@@ -1694,7 +1694,8 @@ static int fw_device_op_mmap(struct file
- 	if (ret < 0)
- 		goto fail;
- 
--	ret = fw_iso_buffer_map_vma(&client->buffer, vma);
-+	ret = vm_map_pages_zero(vma, client->buffer.pages,
-+				client->buffer.page_count);
- 	if (ret < 0)
- 		goto fail;
- 
---- a/drivers/firewire/core-iso.c
-+++ b/drivers/firewire/core-iso.c
-@@ -91,13 +91,6 @@ int fw_iso_buffer_init(struct fw_iso_buf
- }
- EXPORT_SYMBOL(fw_iso_buffer_init);
- 
--int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
--			  struct vm_area_struct *vma)
--{
--	return vm_map_pages_zero(vma, buffer->pages,
--					buffer->page_count);
--}
--
- void fw_iso_buffer_destroy(struct fw_iso_buffer *buffer,
- 			   struct fw_card *card)
- {
---- a/drivers/firewire/core.h
-+++ b/drivers/firewire/core.h
-@@ -158,8 +158,6 @@ void fw_node_event(struct fw_card *card,
- int fw_iso_buffer_alloc(struct fw_iso_buffer *buffer, int page_count);
- int fw_iso_buffer_map_dma(struct fw_iso_buffer *buffer, struct fw_card *card,
- 			  enum dma_data_direction direction);
--int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
--			  struct vm_area_struct *vma);
- 
- 
- /* -topology */
+Hash Tables
+Static Arrays
+Resizeable Arrays
+
+>   Situation 1: Hash Tables
+> +------------------------
+>   
+>   Hash tables are often implemented as an array, where each array entry
+>   has a linked-list hash chain.  Each hash chain can be protected by RCU
+> @@ -34,6 +37,7 @@ to other array-of-list situations, such as radix trees.
+>   
+>   
+>   Situation 2: Static Arrays
+> +--------------------------
+>   
+>   Static arrays, where the data (rather than a pointer to the data) is
+>   located in each array element, and where the array is never resized,
+> @@ -41,11 +45,13 @@ have not been used with RCU.  Rik van Riel recommends using seqlock in
+>   this situation, which would also have minimal read-side overhead as long
+>   as updates are rare.
+>   
+> -Quick Quiz:  Why is it so important that updates be rare when
+> -	     using seqlock?
+> +Quick Quiz:
+> +		Why is it so important that updates be rare when using seqlock?
+>   
+> +:ref:`Answer to Quick Quiz <answer_quick_quiz_seqlock>`
+>   
+>   Situation 3: Resizeable Arrays
+> +------------------------------
+>   
+>   Use of RCU for resizeable arrays is demonstrated by the grow_ary()
+>   function formerly used by the System V IPC code.  The array is used
+> @@ -60,7 +66,7 @@ the remainder of the new, updates the ids->entries pointer to point to
+>   the new array, and invokes ipc_rcu_putref() to free up the old array.
+>   Note that rcu_assign_pointer() is used to update the ids->entries pointer,
+>   which includes any memory barriers required on whatever architecture
+> -you are running on.
+> +you are running on.::
+>   
+
+a redundant ":" in here with html page.
 
 
--- 
-Stefan Richter
--======---== =-== --=-=
-http://arcgraph.de/sr/
+
+
+>   	static int grow_ary(struct ipc_ids* ids, int newsize)
+>   	{
+> @@ -112,7 +118,7 @@ a simple check suffices.  The pointer to the structure corresponding
+>   to the desired IPC object is placed in "out", with NULL indicating
+>   a non-existent entry.  After acquiring "out->lock", the "out->deleted"
+>   flag indicates whether the IPC object is in the process of being
+> -deleted, and, if not, the pointer is returned.
+> +deleted, and, if not, the pointer is returned.::
+>   
+
+same as above
+
+
+Tested-by: Phong Tran <tranmanphong@gmail.com>
+
+Regards,
+Phong.
+
+>   	struct kern_ipc_perm* ipc_lock(struct ipc_ids* ids, int id)
+>   	{
+> @@ -144,8 +150,10 @@ deleted, and, if not, the pointer is returned.
+>   		return out;
+>   	}
+>   
+> +.. _answer_quick_quiz_seqlock:
+>   
+>   Answer to Quick Quiz:
+> +	Why is it so important that updates be rare when using seqlock?
+>   
+>   	The reason that it is important that updates be rare when
+>   	using seqlock is that frequent updates can livelock readers.
+> diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
+> index 5c99185710fa..8d20d44f8fd4 100644
+> --- a/Documentation/RCU/index.rst
+> +++ b/Documentation/RCU/index.rst
+> @@ -7,6 +7,7 @@ RCU concepts
+>   .. toctree::
+>      :maxdepth: 3
+>   
+> +   arrayRCU
+>      rcu
+>      listRCU
+>      UP
+> 
