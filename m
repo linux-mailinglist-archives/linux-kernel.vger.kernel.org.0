@@ -2,314 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3EA1F0898
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0BEF089F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:44:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbfKEVn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 16:43:29 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44902 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729747AbfKEVn3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:43:29 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q26so16939793pfn.11;
-        Tue, 05 Nov 2019 13:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PzgUCHmX4SKtXHoHzT3qESrsCOYBynwOpztbmGqg0O0=;
-        b=JLZGt4VBlvn/7SRVm30hukJ/2OU401CXRI3XTJ61J3zbU4ssJnUO+4xrJ8sN/DwYCT
-         x5wn2/2MYlKgORmDMnwlhUEMCVAsDM4/1tdkkozSRr37vW8XKFh6UyNDnwEureqLvjpE
-         76W3UkaFhT7K42bsMGh44ExnE3mEOHPdYEs3/54hhQ8tcQ3RjZtm2a559+C44TELGW5n
-         GOzNUVWoFadfAb9rNOv5hMSFE4s59D/keKeFuov20FSUM+VaWBE9/imO1GyA3GOeh4ZF
-         kGZj2Xd+a6QPyX4vqN+nfIL3j3jqzvF1yKG+a8IOmvad1A5/2PIRaWftWwNrR52ehMgP
-         /4Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PzgUCHmX4SKtXHoHzT3qESrsCOYBynwOpztbmGqg0O0=;
-        b=j8hcIs2sfMI4vF2IJukLLQzVimQvQ1SAoiVTGbaLn6+Kom85ho1uCDczHUkqfEtcbV
-         sivI5cNsFmkhmbKD+PtbOg0nBIJ9zUxLPbtFoWnc7RMZws+ejbnF6gueI1WzgTC65JOR
-         ec+49R38iMUY//J6Jo6Qla1/6s9+wFDEH3XhWPYMhzZGr7+F081ZHw2OQgrodtaT35MH
-         KiPRQJ0h5bnPMpsbxpTB2uVlR26/kF2++9KBXW4ahNMJ0TgE8dn2Aw4idvFRbSFr1N3g
-         KV8OxgbfFt5ykADIKb2ZtWwUVy/TIvauW1MuK2ewiEcnaXIVxd0rz/WAKiCclM+humHZ
-         9PkQ==
-X-Gm-Message-State: APjAAAUpnkYPRzRsr724aDzbCuuDWlZ1zCElFWzNo7fV8VpE4jspZ2Y1
-        HvJSTinlmZVPfGCKqcDpGBg=
-X-Google-Smtp-Source: APXvYqzh7qCItQmbwlGWFB35LJmpSi0Zx9nz8WPKkZC+a4Y2dKLaZ7uhpWoO6DnwyRQS4JGyI7QgvA==
-X-Received: by 2002:a63:cf4d:: with SMTP id b13mr38055347pgj.396.1572990206533;
-        Tue, 05 Nov 2019 13:43:26 -0800 (PST)
-Received: from debian.net.fpt ([2405:4800:58f7:3f8f:27cb:abb4:d0bd:49cb])
-        by smtp.gmail.com with ESMTPSA id c12sm25428790pfp.67.2019.11.05.13.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 13:43:25 -0800 (PST)
-From:   Phong Tran <tranmanphong@gmail.com>
-To:     frextrite@gmail.com, paulmck@kernel.org
-Cc:     corbet@lwn.net, linux-doc@vger.kernel.org, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        mathieu.desnoyers@efficios.com, joel@joelfernandes.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Phong Tran <tranmanphong@gmail.com>
-Subject: [PATCH] Doc: whatisRCU: Add more Markup
-Date:   Wed,  6 Nov 2019 04:42:34 +0700
-Message-Id: <20191105214234.17116-1-tranmanphong@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191105165938.GA10903@workstation>
-References: <20191105165938.GA10903@workstation>
+        id S1730258AbfKEVoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 16:44:34 -0500
+Received: from mout.web.de ([212.227.15.4]:55075 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729680AbfKEVod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 16:44:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1572990264;
+        bh=0qnYFMDMyA7y0OfkTj2iUOaga/IHqw5JPmaH5tNvbVc=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=RsCkRYNGty3MLOh/R5H+mNg+y+22YJ+B9dOaEjQ8oEKUZD/L81gzcIRTRKiNWpNdz
+         W9PBuc1lLzH35TzQFUaW5aM5Yo8nwFBJTPmvmAk0lhuQHGh70DD52WRW9xr7UgIx6X
+         +rQsPm41ulaGneHj6Im0lh19it1OmxXF7z3Ya530=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.164.204]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MYejS-1iOAkP3zEo-00VLq5; Tue, 05
+ Nov 2019 22:44:24 +0100
+Subject: [PATCH 2/2] CIFS: Use common error handling code in
+ smb2_ioctl_query_info()
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     linux-cifs@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>
+References: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <bfd1b925-7190-ba05-aeaf-f5f3a3e3d124@web.de>
+Date:   Tue, 5 Nov 2019 22:44:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b797b2fc-1a33-7311-70d7-dd258d721a03@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SWfNy9wh8i4ZLQM/dRU5mV9Gqh6cS80cu7li+ZwtkhaMVDhmFaJ
+ jhoHLnRIQGbEIRvZl6e/gEw1sPEV2EIcNc180nUQxpZQefZacnKGxDepdtl0V2ODkK5j2Pc
+ x4oJYPKidLpAFjEhM/w5zbxaqGsnoKk6N2apLdNFGcjz5dqbYKca9piQRk4A8MwJuuL6lsV
+ PMuoTmVpdGCiXBrIPD1aw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:99U6//HAIGA=:KvydFjGSVqPmdvUTEq06zE
+ X6krgbJP8pFsAnFnEVYGdsvcSRfwGCfPg+RQ7uXDmomAC7+ZX2ePIntvswvJ03Y2UIdK9vecu
+ MkUScc708ERkzK05DCiDTk996z102+T2SChJzQGo4RFEp2UpL+poh5VeFzjbg1TVgehgLswIQ
+ Ztm9c2Te8JLwnDtBGSVoxz7u/eiKAS4NNao8MpXkWv43yRYzT8sLfmjOJvd2uRCRQmJ0HH8RQ
+ GTTqQFKr4HkKvKvPtcJx8e4PU4FkjC1ORMxSpqIKcR7ALkdh+nqPFcQHCpSc3s6IfeQPNeypK
+ iOOajOVxVA3qogYPD74CN9qq1zsM/gHFAGf96RRTQDME18A6t1cmIQ7nFDOP4WGn9vvt8eqYn
+ Qd+iXrFx+tKGXj3s23UjKvUyQW9B6kU23Ak4tZJrdGiP3L58Biu8DjeBgrWGsDF0hJoDqkX6U
+ WESIFhMofWDn/G+rmiuyaEbVumIvX9R9VegTtQW6M8zGHNyFTV6jzvzNUndYXtFAVY+Xgd9NQ
+ pNvTpV8zlz8kr/mRlykSXZTidx4DxPJq01QWtkUktxiOR1A0OkzsW1KulSJtcuijlMhVbnY31
+ XPqEcxFywpUXtysc9n4CVyUsKcDZpbPJ/mdnCfYhxQTwB5Or/m3vIwSGCO/VCFNBo6X80oovf
+ jqm/dtHChf9WYtzWDMeYnz59Yyz8sHfTv7g/MY0ji/wKHbvRewErBtKmZRG8htm7ehueg03Xy
+ nuJ+Jr9dRCh1kgiEN2WtEs95BKwBxQ2tJJgyut/DGPtE170KidiVFvgyC5eQDhjqJhjVSufTK
+ eZWdNANwobXMoGsm6M4lJVDRUW3RB4HDdg4/w0F8Q+Jcq5Qj6MStcZnisQrlxz62E6Ecwpueh
+ CwlnRjOo/Z0YejacZCytZg7lboH4q6stbg43o68RuVObPgCHDSEZr+NIcv6ILt4NgupBeoA0+
+ Pr54EW4sJS7Bl6tRAOMEFPrwYyxI1fomfko2o755GH8vM59v1y/QTdK+gFHvNOELG/en8r+MG
+ edcCrtv74rYF4RXEJTcdEcY2Q7ltQNSOAwJrR7DbjG9pCMi/qdYK/jm7QvxpdNsKQvXz/yEiU
+ qGsaSLH7W7SI5ClEaCEO2iUZPj6GcDNEnDL5oSXjYfQkQXW2loAmhxt7KCI0imVj3Ct0K6Cis
+ 223qqdTT8hN0I1bmSEWVMsdhGbdrD3/jwNh4jGi+RKaqH5SYOf4QPeSr9Y6Zl0IemaR8V/+Sv
+ KtG/27/gICttr4g0c2di1agNtBoNiN4wLM3GQnocHtyQkKgw726duXJ2+bmE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-o Adding more crossrefs.
-o Bold some words.
-o Add header levels.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 5 Nov 2019 22:26:53 +0100
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
----
- Documentation/RCU/whatisRCU.rst | 67 ++++++++++++++++++++-------------
- 1 file changed, 41 insertions(+), 26 deletions(-)
+Move the same error code assignments so that such exception handling
+can be better reused at the end of this function.
 
-diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-index ae40c8bcc56c..3e24e0155a91 100644
---- a/Documentation/RCU/whatisRCU.rst
-+++ b/Documentation/RCU/whatisRCU.rst
-@@ -150,7 +150,7 @@ later.  See the kernel docbook documentation for more info, or look directly
- at the function header comments.
- 
- rcu_read_lock()
--
-+^^^^^^^^^^^^^^^
- 	void rcu_read_lock(void);
- 
- 	Used by a reader to inform the reclaimer that the reader is
-@@ -164,7 +164,7 @@ rcu_read_lock()
- 	longer-term references to data structures.
- 
- rcu_read_unlock()
--
-+^^^^^^^^^^^^^^^^^
- 	void rcu_read_unlock(void);
- 
- 	Used by a reader to inform the reclaimer that the reader is
-@@ -172,13 +172,13 @@ rcu_read_unlock()
- 	read-side critical sections may be nested and/or overlapping.
- 
- synchronize_rcu()
--
-+^^^^^^^^^^^^^^^^^
- 	void synchronize_rcu(void);
- 
- 	Marks the end of updater code and the beginning of reclaimer
- 	code.  It does this by blocking until all pre-existing RCU
- 	read-side critical sections on all CPUs have completed.
--	Note that synchronize_rcu() will -not- necessarily wait for
-+	Note that synchronize_rcu() will **not** necessarily wait for
- 	any subsequent RCU read-side critical sections to complete.
- 	For example, consider the following sequence of events::
- 
-@@ -196,7 +196,7 @@ synchronize_rcu()
- 	any that begin after synchronize_rcu() is invoked.
- 
- 	Of course, synchronize_rcu() does not necessarily return
--	-immediately- after the last pre-existing RCU read-side critical
-+	**immediately** after the last pre-existing RCU read-side critical
- 	section completes.  For one thing, there might well be scheduling
- 	delays.  For another thing, many RCU implementations process
- 	requests in batches in order to improve efficiencies, which can
-@@ -225,10 +225,10 @@ synchronize_rcu()
- 	checklist.txt for some approaches to limiting the update rate.
- 
- rcu_assign_pointer()
--
-+^^^^^^^^^^^^^^^^^^^^
- 	void rcu_assign_pointer(p, typeof(p) v);
- 
--	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
-+	Yes, rcu_assign_pointer() **is** implemented as a macro, though it
- 	would be cool to be able to declare a function in this manner.
- 	(Compiler experts will no doubt disagree.)
- 
-@@ -245,7 +245,7 @@ rcu_assign_pointer()
- 	the _rcu list-manipulation primitives such as list_add_rcu().
- 
- rcu_dereference()
--
-+^^^^^^^^^^^^^^^^^
- 	typeof(p) rcu_dereference(p);
- 
- 	Like rcu_assign_pointer(), rcu_dereference() must be implemented
-@@ -280,8 +280,8 @@ rcu_dereference()
- 	unnecessary overhead on Alpha CPUs.
- 
- 	Note that the value returned by rcu_dereference() is valid
--	only within the enclosing RCU read-side critical section [1].
--	For example, the following is -not- legal::
-+	only within the enclosing RCU read-side critical section [1]_.
-+	For example, the following is **not** legal::
- 
- 		rcu_read_lock();
- 		p = rcu_dereference(head.next);
-@@ -304,9 +304,11 @@ rcu_dereference()
- 	at any time, including immediately after the rcu_dereference().
- 	And, again like rcu_assign_pointer(), rcu_dereference() is
- 	typically used indirectly, via the _rcu list-manipulation
--	primitives, such as list_for_each_entry_rcu() [2].
-+	primitives, such as list_for_each_entry_rcu() [2]_.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/cifs/smb2ops.c | 45 +++++++++++++++++++++++----------------------
+ 1 file changed, 23 insertions(+), 22 deletions(-)
+
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index fde2e6d241a8..fde912aabb20 100644
+=2D-- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1535,35 +1535,32 @@ smb2_ioctl_query_info(const unsigned int xid,
+ 		if (le32_to_cpu(io_rsp->OutputCount) < qi.input_buffer_length)
+ 			qi.input_buffer_length =3D le32_to_cpu(io_rsp->OutputCount);
+ 		if (qi.input_buffer_length > 0 &&
+-		    le32_to_cpu(io_rsp->OutputOffset) + qi.input_buffer_length > rsp_io=
+v[1].iov_len) {
+-			rc =3D -EFAULT;
+-			goto iqinf_exit;
+-		}
+-		if (copy_to_user(&pqi->input_buffer_length, &qi.input_buffer_length,
+-				 sizeof(qi.input_buffer_length))) {
+-			rc =3D -EFAULT;
+-			goto iqinf_exit;
+-		}
++		    le32_to_cpu(io_rsp->OutputOffset) + qi.input_buffer_length
++		    > rsp_iov[1].iov_len)
++			goto e_fault;
 +
-+	.. [1]
- 
--	[1] The variant rcu_dereference_protected() can be used outside
-+	The variant rcu_dereference_protected() can be used outside
- 	of an RCU read-side critical section as long as the usage is
- 	protected by locks acquired by the update-side code.  This variant
- 	avoids the lockdep warning that would happen when using (for
-@@ -319,7 +321,9 @@ rcu_dereference()
- 	a lockdep splat is emitted.  See Documentation/RCU/Design/Requirements/Requirements.rst
- 	and the API's code comments for more details and example usage.
- 
--	[2] If the list_for_each_entry_rcu() instance might be used by
-+	.. [2]
++		if (copy_to_user(&pqi->input_buffer_length,
++				 &qi.input_buffer_length,
++				 sizeof(qi.input_buffer_length)))
++			goto e_fault;
 +
-+	If the list_for_each_entry_rcu() instance might be used by
- 	update-side code as well as by RCU readers, then an additional
- 	lockdep expression can be added to its list of arguments.
- 	For example, given an additional "lock_is_held(&mylock)" argument,
-@@ -459,22 +463,22 @@ uses of RCU may be found in :ref:`listRCU.rst <list_rcu_doc>`,
- 
- So, to sum up:
- 
--o	Use rcu_read_lock() and rcu_read_unlock() to guard RCU
-+-	Use rcu_read_lock() and rcu_read_unlock() to guard RCU
- 	read-side critical sections.
- 
--o	Within an RCU read-side critical section, use rcu_dereference()
-+-	Within an RCU read-side critical section, use rcu_dereference()
- 	to dereference RCU-protected pointers.
- 
--o	Use some solid scheme (such as locks or semaphores) to
-+-	Use some solid scheme (such as locks or semaphores) to
- 	keep concurrent updates from interfering with each other.
- 
--o	Use rcu_assign_pointer() to update an RCU-protected pointer.
-+-	Use rcu_assign_pointer() to update an RCU-protected pointer.
- 	This primitive protects concurrent readers from the updater,
--	-not- concurrent updates from each other!  You therefore still
-+	**not** concurrent updates from each other!  You therefore still
- 	need to use locking (or something similar) to keep concurrent
- 	rcu_assign_pointer() primitives from interfering with each other.
- 
--o	Use synchronize_rcu() -after- removing a data element from an
-+-	Use synchronize_rcu() **after** removing a data element from an
- 	RCU-protected data structure, but -before- reclaiming/freeing
- 	the data element, in order to wait for the completion of all
- 	RCU read-side critical sections that might be referencing that
-@@ -566,7 +570,7 @@ namely foo_reclaim().
- The summary of advice is the same as for the previous section, except
- that we are now using call_rcu() rather than synchronize_rcu():
- 
--o	Use call_rcu() -after- removing a data element from an
-+-	Use call_rcu() **after** removing a data element from an
- 	RCU-protected data structure in order to register a callback
- 	function that will be invoked after the completion of all RCU
- 	read-side critical sections that might be referencing that
-@@ -603,7 +607,7 @@ more details on the current implementation as of early 2004.
- 
- 
- 5A.  "TOY" IMPLEMENTATION #1: LOCKING
--
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- This section presents a "toy" RCU implementation that is based on
- familiar locking primitives.  Its overhead makes it a non-starter for
- real-life use, as does its lack of scalability.  It is also unsuitable
-@@ -671,6 +675,8 @@ that the only thing that can block rcu_read_lock() is a synchronize_rcu().
- But synchronize_rcu() does not acquire any locks while holding rcu_gp_mutex,
- so there can be no deadlock cycle.
- 
-+.. _quiz_1:
+ 		if (copy_to_user((void __user *)pqi + sizeof(struct smb_query_info),
+ 				 (const void *)io_rsp + le32_to_cpu(io_rsp->OutputOffset),
+-				 qi.input_buffer_length)) {
+-			rc =3D -EFAULT;
+-			goto iqinf_exit;
+-		}
++				 qi.input_buffer_length))
++			goto e_fault;
+ 	} else {
+ 		pqi =3D (struct smb_query_info __user *)arg;
+ 		qi_rsp =3D (struct smb2_query_info_rsp *)rsp_iov[1].iov_base;
+ 		if (le32_to_cpu(qi_rsp->OutputBufferLength) < qi.input_buffer_length)
+ 			qi.input_buffer_length =3D le32_to_cpu(qi_rsp->OutputBufferLength);
+-		if (copy_to_user(&pqi->input_buffer_length, &qi.input_buffer_length,
+-				 sizeof(qi.input_buffer_length))) {
+-			rc =3D -EFAULT;
+-			goto iqinf_exit;
+-		}
+-		if (copy_to_user(pqi + 1, qi_rsp->Buffer, qi.input_buffer_length)) {
+-			rc =3D -EFAULT;
+-			goto iqinf_exit;
+-		}
++		if (copy_to_user(&pqi->input_buffer_length,
++				 &qi.input_buffer_length,
++				 sizeof(qi.input_buffer_length)))
++			goto e_fault;
 +
- Quick Quiz #1:
- 		Why is this argument naive?  How could a deadlock
- 		occur when using this algorithm in a real-world Linux
-@@ -679,7 +685,7 @@ Quick Quiz #1:
- :ref:`Answers to Quick Quiz <8_whatisRCU>`
- 
- 5B.  "TOY" EXAMPLE #2: CLASSIC RCU
--
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- This section presents a "toy" RCU implementation that is based on
- "classic RCU".  It is also short on performance (but only for updates) and
- on features such as hotplug CPU and the ability to run in CONFIG_PREEMPT
-@@ -710,14 +716,14 @@ CPU in turn.  The run_on() primitive can be implemented straightforwardly
- in terms of the sched_setaffinity() primitive.  Of course, a somewhat less
- "toy" implementation would restore the affinity upon completion rather
- than just leaving all tasks running on the last CPU, but when I said
--"toy", I meant -toy-!
-+"toy", I meant **toy**!
- 
- So how the heck is this supposed to work???
- 
- Remember that it is illegal to block while in an RCU read-side critical
- section.  Therefore, if a given CPU executes a context switch, we know
- that it must have completed all preceding RCU read-side critical sections.
--Once -all- CPUs have executed a context switch, then -all- preceding
-+Once **all** CPUs have executed a context switch, then **all** preceding
- RCU read-side critical sections will have completed.
- 
- So, suppose that we remove a data item from its structure and then invoke
-@@ -725,12 +731,16 @@ synchronize_rcu().  Once synchronize_rcu() returns, we are guaranteed
- that there are no RCU read-side critical sections holding a reference
- to that data item, so we can safely reclaim it.
- 
-+.. _quiz_2:
++		if (copy_to_user(pqi + 1, qi_rsp->Buffer,
++				 qi.input_buffer_length))
++			goto e_fault;
+ 	}
+
+  iqinf_exit:
+@@ -1579,6 +1576,10 @@ smb2_ioctl_query_info(const unsigned int xid,
+ 	free_rsp_buf(resp_buftype[1], rsp_iov[1].iov_base);
+ 	free_rsp_buf(resp_buftype[2], rsp_iov[2].iov_base);
+ 	return rc;
 +
- Quick Quiz #2:
- 		Give an example where Classic RCU's read-side
--		overhead is -negative-.
-+		overhead is **negative**.
- 
- :ref:`Answers to Quick Quiz <8_whatisRCU>`
- 
-+.. _quiz_3:
-+
- Quick Quiz #3:
- 		If it is illegal to block in an RCU read-side
- 		critical section, what the heck do you do in
-@@ -1076,9 +1086,11 @@ Answer:
- 		approach where tasks in RCU read-side critical sections
- 		cannot be blocked by tasks executing synchronize_rcu().
- 
-+:ref:`Back to Quick Quiz #1 <quiz_1>`
-+
- Quick Quiz #2:
- 		Give an example where Classic RCU's read-side
--		overhead is -negative-.
-+		overhead is **negative**.
- 
- Answer:
- 		Imagine a single-CPU system with a non-CONFIG_PREEMPT
-@@ -1103,6 +1115,8 @@ Answer:
- 		even the theoretical possibility of negative overhead for
- 		a synchronization primitive is a bit unexpected.  ;-)
- 
-+:ref:`Back to Quick Quiz #2 <quiz_2>`
-+
- Quick Quiz #3:
- 		If it is illegal to block in an RCU read-side
- 		critical section, what the heck do you do in
-@@ -1128,6 +1142,7 @@ Answer:
- 		Besides, how does the computer know what pizza parlor
- 		the human being went to???
- 
-+:ref:`Back to Quick Quiz #3 <quiz_3>`
- 
- ACKNOWLEDGEMENTS
- 
--- 
-2.20.1
++e_fault:
++	rc =3D -EFAULT;
++	goto iqinf_exit;
+ }
+
+ static ssize_t
+=2D-
+2.24.0
 
