@@ -2,72 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569C2F089A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38EF2F088D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 22:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbfKEVnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 16:43:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45391 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfKEVne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:43:34 -0500
-Received: from carbon-x1.hos.anvin.org ([IPv6:2601:646:8600:3281:e7ea:4585:74bd:2ff0])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id xA5LeY98676567
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Tue, 5 Nov 2019 13:40:34 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com xA5LeY98676567
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019091901; t=1572990035;
-        bh=hV95SYGgMVR5wGxxOALwv/ps4w4vExuRTEInenwJJ/8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nXSmzhHh3MMQiHdNjLkOYKgl+nxPFIG9UR1AlYj0pB1u/YFIeiEOSUxo0D4V7Z52P
-         DuOOHXX3pN3t3HPiT/HWLYRpAHfwBSBW85fVcO52n6xIoDfb5kfXr3saCRpsgjjz4F
-         rz9WpEnNMhEI2gAKERTR/q+Er5zCtOar+BnEzg5+riWFrc6Qf8rgqAJQ6lo9+piMUE
-         ugWD97HlNeJipb9ecQ5q8ZkamOHSXie9U5EL/pF0YDyKMODesaKW7dS8wssyCi92Ee
-         2T0gwFp7Zgx5l+cKaq714MOAZDGtjbnsnnvXRwLsf5hNVK8u0oxsouwiRPVlSZZjjC
-         7I7HgRVitwnmg==
-Subject: Re: [PATCH v5 0/3] x86/boot: Introduce the kernel_info et consortes
-To:     Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, eric.snowberg@oracle.com,
-        jgross@suse.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        mingo@redhat.com, rdunlap@infradead.org, ross.philipson@oracle.com,
-        tglx@linutronix.de
-References: <20191104151354.28145-1-daniel.kiper@oracle.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <d45aa4da-57fd-757f-3f82-d88449f057ce@zytor.com>
-Date:   Tue, 5 Nov 2019 13:40:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1730095AbfKEVls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 16:41:48 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46371 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729830AbfKEVls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 16:41:48 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 39B858365A;
+        Wed,  6 Nov 2019 10:41:44 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1572990104;
+        bh=qCCum7Y7ylZunEZTc0mEN2AR+w9a1L5cSW5bKWxjglM=;
+        h=From:To:Cc:Subject:Date;
+        b=NJPB8zmU/4e80+N03rFjRr4ub/wYH2eXncfm4tVERnJhchxSdULhYJcVBFNMqqORW
+         1gykRjWIdqQJMBfty97g/eOUg+JUyD2BkACUWkgTvjSbla+14Aql/xMD9B02xOOzOZ
+         y3NYy7IPzO7mFhwtrptxul8ZVWkJ2VJv6ycOwlHmh3HWHw3FyJLBv3A//SJmHrjyW6
+         pJ8SSmWESaY4c5bZFLceeKSGN5yWnOElqm/B/h5Ty/gPIX4MKx54ZNcQCJf9THoHu3
+         cJ7xUQbPEMkBnSaOqgnlDadelYJEFOFuFhBZ5n7nFNZlOFLxqzA+J7hYmfVr+a6F9I
+         UfQsCMrCrWrWg==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5dc1ec970000>; Wed, 06 Nov 2019 10:41:44 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id E0D1513EEEB;
+        Wed,  6 Nov 2019 10:41:41 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id F409528005F; Wed,  6 Nov 2019 10:41:42 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     broonie@kernel.org
+Cc:     trivial@kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH] spi: bcm2835: fix typo in comment
+Date:   Wed,  6 Nov 2019 10:41:34 +1300
+Message-Id: <20191105214134.25142-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191104151354.28145-1-daniel.kiper@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-04 07:13, Daniel Kiper wrote:
-> Hi,
-> 
-> Due to very limited space in the setup_header this patch series introduces new
-> kernel_info struct which will be used to convey information from the kernel to
-> the bootloader. This way the boot protocol can be extended regardless of the
-> setup_header limitations. Additionally, the patch series introduces some
-> convenience features like the setup_indirect struct and the
-> kernel_info.setup_type_max field.
-> 
-> Daniel
-> 
+GPIOS_OUT_LOW should be GPIOD_OUT_LOW.
 
-Looks great!  Ship it!
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ drivers/spi/spi-bcm2835.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index b4070c0de3df..fb61a620effc 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -1248,7 +1248,7 @@ static int bcm2835_spi_setup(struct spi_device *spi=
+)
+ 	/*
+ 	 * Retrieve the corresponding GPIO line used for CS.
+ 	 * The inversion semantics will be handled by the GPIO core
+-	 * code, so we pass GPIOS_OUT_LOW for "unasserted" and
++	 * code, so we pass GPIOD_OUT_LOW for "unasserted" and
+ 	 * the correct flag for inversion semantics. The SPI_CS_HIGH
+ 	 * on spi->mode cannot be checked for polarity in this case
+ 	 * as the flag use_gpio_descriptors enforces SPI_CS_HIGH.
+--=20
+2.24.0
 
-	-hpa
