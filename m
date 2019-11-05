@@ -2,79 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D07DF0079
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:58:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FEA3F0081
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:58:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389755AbfKEO63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:58:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56348 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388842AbfKEO62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:58:28 -0500
-Received: from zn.tnic (p200300EC2F0EF00014F02C62D0694FB9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:f000:14f0:2c62:d069:4fb9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C79DC1EC0C82;
-        Tue,  5 Nov 2019 15:58:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1572965906;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ukquyBILKVfbO4SjqBe2FVU0Y8O1nG4L04w2gtXFP9U=;
-        b=AdEtYm7TCtDhkmWzPhuAHMxWych/WpMnM3d4v8Un2zgsiA7PfYmottof0RpjhGu3xx4cUA
-        4uD2crjiFFLtcFu6rj6lJiZiK6I1jRPt2oCrav789mERt/4bKD2VxOTlBrbEdStnA/15k/
-        wGR4dg7miVBMm1bkEqGX9WfrBrL2OMo=
-Date:   Tue, 5 Nov 2019 15:58:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] EDAC, ghes: Fix locking and memory barrier issues
-Message-ID: <20191105145821.GD28418@zn.tnic>
-References: <20191025211226.2444-1-rrichter@marvell.com>
- <20191105110511.GA28418@zn.tnic>
- <20191105141734.ubw5qegth3hdahls@rric.localdomain>
+        id S2389796AbfKEO6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:58:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49853 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388842AbfKEO6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 09:58:54 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iS0I9-0002nP-Av; Tue, 05 Nov 2019 14:58:45 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: allwinner: fix spelling mistake "recommandation" -> "recommendation"
+Date:   Tue,  5 Nov 2019 14:58:45 +0000
+Message-Id: <20191105145845.60786-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191105141734.ubw5qegth3hdahls@rric.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just to hold down what we discussed on IRC.
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Nov 05, 2019 at 02:17:42PM +0000, Robert Richter wrote:
-> Here the bypass:
-> 
-> 1) Entering ghes_edac_register(), instance #1
+There are spelling mistakes in dev_warn messages. Fix these.
 
-That was a misunderstanding, I know what Robert means now.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c | 2 +-
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> Right, there will be a parent device created for each instance. But an
-> array is not required as this also can be part of the private data.
-> Only some sort of list head is needed to collect them all.
-
-Ok.
-
-> I would rather avoid an own implementation of reference counting and
-> also better switch from atomic_* to refcount_* which also provides
-> range checks. There is no benefit doing this our own.
-> 
-> Any objections here for the renaming and using the refcount API?
-
-None.
-
-Thx.
-
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+index 8e4eddbcc814..bc7ee265c51f 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+@@ -469,7 +469,7 @@ static int sun8i_ce_get_clks(struct sun8i_ce_dev *ce)
+ 		}
+ 		if (ce->variant->ce_clks[i].max_freq > 0 &&
+ 		    cr > ce->variant->ce_clks[i].max_freq)
+-			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
++			dev_warn(ce->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+ 				 ce->variant->ce_clks[i].name, cr,
+ 				 ce->variant->ce_clks[i].max_freq);
+ 	}
+diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+index e58407ac256b..04b5b90ba965 100644
+--- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
++++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+@@ -502,7 +502,7 @@ static int sun8i_ss_get_clks(struct sun8i_ss_dev *ss)
+ 		}
+ 		if (ss->variant->ss_clks[i].max_freq > 0 &&
+ 		    cr > ss->variant->ss_clks[i].max_freq)
+-			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
++			dev_warn(ss->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommendation (%lu hz)",
+ 				 ss->variant->ss_clks[i].name, cr,
+ 				 ss->variant->ss_clks[i].max_freq);
+ 	}
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
