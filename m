@@ -2,75 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D6DBF0074
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62D9FF007D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 15:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389727AbfKEO55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 09:57:57 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43119 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388985AbfKEO55 (ORCPT
+        id S2389787AbfKEO6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 09:58:34 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44144 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388842AbfKEO6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:57:57 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iS0HF-0000SN-Bl; Tue, 05 Nov 2019 15:57:49 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iS0HE-0001Yr-Vt; Tue, 05 Nov 2019 15:57:48 +0100
-Date:   Tue, 5 Nov 2019 15:57:48 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <pza@pengutronix.de>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [PATCH v3 5/7] pwm: sun4i: Add support for H6 PWM
-Message-ID: <20191105145748.6l4ke7zxlt6mibmk@pengutronix.de>
-References: <20191105131456.32400-1-peron.clem@gmail.com>
- <20191105131456.32400-6-peron.clem@gmail.com>
+        Tue, 5 Nov 2019 09:58:34 -0500
+Received: by mail-ed1-f65.google.com with SMTP id a67so4277382edf.11;
+        Tue, 05 Nov 2019 06:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OsGNCpli0aKylNdzfXqGGNk51dXTucSwdxTJSWlZuDo=;
+        b=BezCicS6Hxs25abhx2HqWWKnW19usdAdHbmmOP2sbmgjL77FDHp8bVN1/AT3xOfj5+
+         udDjWeZ3lJXPL/opmkrCC4myrHN06gDmaHa523NqDfpz5IWjUEzLlxhae2YuPl3gkiB+
+         kNwA63wA7d6kdzUFZgXFaIqreDChdIkHhupc7Uc9B5JCVgc213itt0UrYqYTwcLwPH4B
+         um7GQlSM1wSTKphTjpiFXqJeX7zoaW07rIO/oTIoIuOKL5MtNTXRZj19NUfYDTFskpxq
+         vhNOs547ShZK42QJR3kMK0VllmNCguEZD7l4pdtAWQUZbwx5iwspibI+9d19FoEKKs4F
+         Gj3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OsGNCpli0aKylNdzfXqGGNk51dXTucSwdxTJSWlZuDo=;
+        b=IPFIrTy+xohUyJDE0dmXs8pJf2njJj601lvj3YHp/S9tgV542VheVfQdNqT5jAoMe2
+         OLgCoRdznv4NcRodloT8We6DpkflWcfGVMT1MoURw75THLDoOEWLrxagXX50k0cI4N/F
+         kDNjJt8pk26grujIFZB5sZy2aBjIdWRNKnCn3UVH89deoNHU7ZPPseLmL+8Xl2Fx21RW
+         SrmK4rr/GTAGhYEkWXwJs8NWjKip2/U/F3xBrQ1criDKFFMLR9WCNCC3UlWmAR2fboiq
+         kTe4TozI/9eEZ40ZL+dCan5gsDKj34GIPxKxYQ28RxRLfvo+yV17TlQQc9kep10uM/Jo
+         aO7A==
+X-Gm-Message-State: APjAAAWyq4JJaE7fixLnO/7GJRdmdJAecj7fUgeN8nBqLU5AyqOVZzUl
+        +9b3oAW0muyDoZ4j716yYaCaNPdoOB36hSDF5g8=
+X-Google-Smtp-Source: APXvYqy43mMHO0/x0G5HbHOwDOkgrETQbEGRexxUmLoW5TvTDXB/Ovve31RulrcR4/womJ50Dbe66S9RauKfI3+xvyk=
+X-Received: by 2002:a17:906:529a:: with SMTP id c26mr5331884ejm.69.1572965911324;
+ Tue, 05 Nov 2019 06:58:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191105131456.32400-6-peron.clem@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <1572938135-31886-1-git-send-email-rppt@kernel.org>
+In-Reply-To: <1572938135-31886-1-git-send-email-rppt@kernel.org>
+From:   Anatoly Pugachev <matorola@gmail.com>
+Date:   Tue, 5 Nov 2019 17:58:20 +0300
+Message-ID: <CADxRZqyJewYKn_juVPrxm9KVQjZQngnig-FYf1q3G6wc=oawYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/13] mm: remove __ARCH_HAS_4LEVEL_HACK
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
+        Richard Weinberger <richard@nod.at>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
+        linux-um@lists.infradead.org,
+        Sparc kernel list <sparclinux@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 02:14:54PM +0100, Clément Péron wrote:
-> From: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> Now that sun4i PWM driver supports deasserting reset line and enabling
-> bus clock, support for H6 PWM can be added.
-> 
-> Note that while H6 PWM has two channels, only first one is wired to
-> output pin. Second channel is used as a clock source to companion AC200
-> chip which is bundled into same package.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+On Tue, Nov 5, 2019 at 10:16 AM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> From: Mike Rapoport <rppt@linux.ibm.com>
+>
+> Hi,
+>
+> These patches convert several architectures to use page table folding and
+> remove __ARCH_HAS_4LEVEL_HACK along with include/asm-generic/4level-fixup.h.
+>
+> For the nommu configurations the folding is already implemented by the
+> generic code so the only change was to use the appropriate header file.
+>
+> As for the rest, the changes are mostly about mechanical replacement of
+> pgd accessors with pud/pmd ones and the addition of higher levels to page
+> table traversals.
+>
+> With Vineet's patches from "elide extraneous generated code for folded
+> p4d/pud/pmd" series [1] there is a small shrink of the kernel size of about
+> -0.01% for the defconfig builds.
+>
+> The set is boot-tested on UML, qemu-{alpha,sparc} and aranym.
+>
+> v4 changes:
+> * m68k: fix sun3x_defconfig build and reorder ifdefs as per Geert's
+>   suggestion
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Thanks
-Uwe
+Mike,
 
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+tested your patch series on a debian sid/unstable sparc64 LDOM running
+on a T5-2 sparc server - it boots for me.
