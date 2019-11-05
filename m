@@ -2,124 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720A4F00D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B907F00DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2019 16:11:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389662AbfKEPKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 10:10:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59828 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389505AbfKEPKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:10:51 -0500
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DF65859FC
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2019 15:10:50 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id f2so7767287wmf.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 07:10:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZVrAMio36Q6kKW94w/mV9hSJkALDbxmAtiCfECylkvk=;
-        b=ob7ZPd1biWXmWRMUBtw+N50OQT85avlgzgcx7SXns8AFm+W4yzIEhc20uYg6SHp14r
-         akw/pqedZFBo/tImeN+gJ9owrAmutfgy4bOZlIG5AwbhmFTQLKvZ2rB5Nhrgi/FffkHE
-         GmQm9b3QYpEcOQG5m8C5f+8G3uwaPUc90vK0Zmqr6a0T7kPZLQ1Zsl3xmdPXn/nfTRux
-         FIGGSVIUjh5Eh2jNURNREQT6tKkhSjMczapoqTxjLciPQyIc/3BBc86agKGNNmTDMr3G
-         URFhsda3sKLsNEbapltIR/D91QpILv/P194hj2rKH7YsGoruKV3sNfdn4EgaKGpC/oIB
-         0H+A==
-X-Gm-Message-State: APjAAAU/6UaToa71VjHfOsfnfod6i3ABXuGDEkqp9AGENEPcaPD8XijG
-        b/xNa9dsAGP6SesCoFi821glDt+DWVfClV462nEyoHvp/J/wn4ayGCgNbhn+ceo4fCGljNomzkm
-        eYWGwbOTF+HY4eo/kgUjnNxvr
-X-Received: by 2002:a1c:67d7:: with SMTP id b206mr4554599wmc.68.1572966649246;
-        Tue, 05 Nov 2019 07:10:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy4i4e/q0Sa4nnexI0PLDlDkB5K02RJOOefw63TuKDz9JzNgSQf8/7dd6FWjGMKPDiJFaP+8Q==
-X-Received: by 2002:a1c:67d7:: with SMTP id b206mr4554564wmc.68.1572966648914;
-        Tue, 05 Nov 2019 07:10:48 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:4051:461:136e:3f74? ([2001:b07:6468:f312:4051:461:136e:3f74])
-        by smtp.gmail.com with ESMTPSA id s21sm1905806wmh.28.2019.11.05.07.10.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 07:10:48 -0800 (PST)
-Subject: Re: [PATCH 03/13] kvm: monolithic: fixup x86-32 build
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Matthias Maennich <maennich@google.com>
-References: <20191104230001.27774-1-aarcange@redhat.com>
- <20191104230001.27774-4-aarcange@redhat.com>
- <6ed4a5cd-38b1-04f8-e3d5-3327a1bd5d87@redhat.com>
- <678358c1-0621-3d2a-186e-b60742b2a286@redhat.com>
- <20191105135414.GA30717@redhat.com>
- <330acce5-a527-543b-84c0-f3d8d277a0e2@redhat.com>
- <20191105145651.GD30717@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <ab18744b-afc7-75d4-b5f3-e77e9aae41a6@redhat.com>
-Date:   Tue, 5 Nov 2019 16:10:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389716AbfKEPLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 10:11:06 -0500
+Received: from smtprelay0144.hostedemail.com ([216.40.44.144]:34153 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389546AbfKEPLG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 10:11:06 -0500
+X-Greylist: delayed 73910 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Nov 2019 10:11:05 EST
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id CFE671801DC08;
+        Tue,  5 Nov 2019 15:11:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 40,2.5,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1981:2194:2198:2199:2200:2393:2551:2553:2559:2562:2689:2692:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3871:3872:3873:4250:4321:4605:5007:6117:6119:6238:7576:7809:7904:9010:9165:9545:10011:10400:11232:11658:11914:12043:12050:12297:12555:12740:12760:12895:13095:13161:13229:13436:13439:13972:14096:14097:14181:14659:14721:14877:21080:21433:21451:21627:21740:21796:30003:30036:30048:30054:30055:30060:30063:30080:30090:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:1:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: chalk38_6091a4e45df63
+X-Filterd-Recvd-Size: 3595
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  5 Nov 2019 15:11:03 +0000 (UTC)
+Message-ID: <ec20c751ac1e4156aca0b02dfa0cef4b70cb8ec5.camel@perches.com>
+Subject: Re: spdxcheck.py complains about the second OR?
+From:   Joe Perches <joe@perches.com>
+To:     "Zavras, Alexios" <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 05 Nov 2019 07:10:52 -0800
+In-Reply-To: <CY4PR1101MB2360AB7647D9E2FA15044EE4897E0@CY4PR1101MB2360.namprd11.prod.outlook.com>
+References: <CAK7LNASwF9y+MkhkvCRATu0qXSJkxx8fZ-DUjQTfWOi9+1YrfQ@mail.gmail.com>
+         <alpine.DEB.2.21.1911042310040.17054@nanos.tec.linutronix.de>
+         <46615f063c973eee649e3fdb8261978102c89108.camel@perches.com>
+         <CY4PR1101MB2360AB7647D9E2FA15044EE4897E0@CY4PR1101MB2360.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20191105145651.GD30717@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/19 15:56, Andrea Arcangeli wrote:
->>> I think we should:
->>>
->>> 1) whitelist to shut off the warnings on demand
->>
->> Do you mean adding a whitelist to modpost?  That would work, though I am
->> not sure if the module maintainer (Jessica Yu) would accept that.
+On Tue, 2019-11-05 at 10:11 +0000, Zavras, Alexios wrote:
+> This is not correct.
+> Since the grammar includes the production "expr: expr OR expr",
+> there is absolutely no need to add a rule with more than two operands --
+> it will be handled recursively.
+
+You sure about the recursion?
+
+It does work and spdxcheck no longer emits a message for
+these two files.
+
+> -- zvr
 > 
-> Yes that's exactly what I meant.
-
-Ok, thanks.  Jessica, the issue here is that we have two (mutually
-exclusive) modules providing the same interface to a third module.
-
-Andrea will check that, when the same symbol is exported by two modules,
-the second-loaded module correctly fails insmod.  If that is okay, we
-will also need modpost not to warn for these symbols in sym_add_exported.
-
->> The answer is maintainability.  My suggestion is that we start looking
->> into removing all assignments and tests of kvm_x86_ops, one step at a
->> time.  Until this is done, unfortunately we won't be able to reap the
->> performance benefit.  But the advantage is that this can be done in many
+> -----Original Message-----
+> From: linux-spdx-owner@vger.kernel.org <linux-spdx-owner@vger.kernel.org> On Behalf Of Joe Perches
+> Sent: Monday, 4 November, 2019 23:24
+> To: Thomas Gleixner <tglx@linutronix.de>; Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-spdx@vger.kernel.org; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+> Subject: Re: spdxcheck.py complains about the second OR?
 > 
-> There's not much performance benefit left from the removal
-> kvm_x86_ops.
-
-Indeed; what I mean is that until then we will have to keep the
-retpolines.  Not removing kvm_x86_ops leaves an unsustainable mess in
-terms of maintainability, therefore we will need to first refactor the
-code.  Once the refactoring is over, kvm_x86_ops can be dropped easily,
-just like kvm_pmu_ops in this version of the series.
-
-The good thing is that the modpost discussion can proceed in parallel.
-
-> The removal of kvm_x86_ops is just a badly needed code cleanup and of
-> course I agree it must happen sooner than later. I'm just trying to
-> avoid running into rejects on those further commit cleanups too.
-
->> That is good enough to prove the feasibility of the idea, so I agree
->> that was a good plan.
+> On Mon, 2019-11-04 at 23:11 +0100, Thomas Gleixner wrote:
+> > On Fri, 1 Nov 2019, Masahiro Yamada wrote:
+> > > scripts/spdxcheck.py warns the following two files.
+> > > 
+> > > $ ./scripts/spdxcheck.py
+> > > drivers/net/ethernet/pensando/ionic/ionic_if.h: 1:52 Syntax error: 
+> > > OR
+> > > drivers/net/ethernet/pensando/ionic/ionic_regs.h: 1:52 Syntax error: 
+> > > OR
+> > > 
+> > > I do not understand what is wrong with them.
+> > > 
+> > > I think "A OR B OR C" is sane.
+> > 
+> > Yes it is, but obviously we did not expect files with 3 possible 
+> > alternative licenses.
 > 
-> All right, so I'm not exactly sure what's the plan and if it's ok to
-> do it over time or if I should go ahead doing all logic changes while
-> the big patch remains out of tree.
+> Perhaps just this, but the generic logic obviously isn't complete.
+> ---
+>  scripts/spdxcheck.py | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py index 6374e0..00be34 100755
+> --- a/scripts/spdxcheck.py
+> +++ b/scripts/spdxcheck.py
+> @@ -150,6 +150,7 @@ class id_parser(object):
+>                  | ID WITH EXC
+>                  | expr AND expr
+>                  | expr OR expr
+> +                | expr OR expr OR expr
+>                  | LPAR expr RPAR'''
+>          pass
+>  
+> 
+> 
+> Intel Deutschland GmbH
+> Registered Address: Am Campeon 10-12, 85579 Neubiberg, Germany
+> Tel: +49 89 99 8853-0, www.intel.de
+> Managing Directors: Christin Eisenschmid, Gary Kershaw
+> Chairperson of the Supervisory Board: Nicole Lau
+> Registered Office: Munich
+> Commercial Register: Amtsgericht Muenchen HRB 186928
+> 
 
-Yes, the changes to remove tests and assignments to kvm_x86_ops must
-happen first.  I understand that the big patch is a conflict magnet, but
-once all the refactoring is done it will be very easy to review and it
-will get in quickly.
-
-Paolo
