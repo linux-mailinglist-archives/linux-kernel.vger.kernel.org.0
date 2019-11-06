@@ -2,162 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC003F194C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:01:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD5CF1963
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:03:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbfKFPBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:01:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:41282 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727321AbfKFPBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:01:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DA6F46A;
-        Wed,  6 Nov 2019 07:01:35 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A418A3F71A;
-        Wed,  6 Nov 2019 07:01:33 -0800 (PST)
-Date:   Wed, 6 Nov 2019 15:01:28 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "M.h. Lian" <minghuan.lian@nxp.com>
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: Re: [PATCH v6 3/3] PCI: layerscape: Add LS1028a support
-Message-ID: <20191106150128.GA18689@e121166-lin.cambridge.arm.com>
-References: <20190902034319.14026-1-xiaowei.bao@nxp.com>
- <20190902034319.14026-3-xiaowei.bao@nxp.com>
- <20191105123233.GA26960@e121166-lin.cambridge.arm.com>
- <AM5PR04MB32999C59EE51DACC030E13D7F5790@AM5PR04MB3299.eurprd04.prod.outlook.com>
- <VI1PR0401MB22372AF4F02D3F22EA2184BEE8790@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR0401MB22372AF4F02D3F22EA2184BEE8790@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1732009AbfKFPDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:03:14 -0500
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:43094 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731944AbfKFPDM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 10:03:12 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C994DC0486;
+        Wed,  6 Nov 2019 15:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1573052592; bh=GRMw5KsuEu3tCfQdQK07Pp1yvOjWXrXvCMdDCR8/7Rs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QVd8rwFitMwUxrJM2ueIli+P/H09CxFhXntduV37l53PAcTPAxJa1NCY3Pb9TZG1z
+         qp1d+dlFLmdbvhTqAQmBuNK6f67Y/O8EcKTv5BIwWYCmr2v2sFMuS53LGkZhm+CX5T
+         MsIwUi3ppwpkWyfKIKESa+lNzFP2fJ6pGSNxG0ufXoKToDvI0JtLUvLy2AqnhL7CRD
+         C8G2lU05O5C/xAvKxDMFPiCS8GAQqV/rjzZ0iyUSAAG8FdIzLsTChmkSB0SKzJKJkI
+         mfmE4wJOuzl2/JmN53EM304nOMEZpRVQXS2xgRh/G18rfg1xZrU9oDYCC5kOSHq/Al
+         hhWGhu8WRMryA==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A99C6A005D;
+        Wed,  6 Nov 2019 15:03:09 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net 00/11] net: stmmac: Fixes for -net
+Date:   Wed,  6 Nov 2019 16:02:54 +0100
+Message-Id: <cover.1573052378.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 03:46:17AM +0000, M.h. Lian wrote:
-> Hi Lorenzo,
-> 
-> Sorry for the late reply.
-> 
-> Acked-by: Minghuan Lian <minghuan.Lian@nxp.com>
+Misc fixes for stmmac.
 
-https://en.wikipedia.org/wiki/Posting_style#Top-posting
+Patch 1/11 and 2/11, use the correct variable type for bitrev32() calls.
 
-Never top-post on kernel mailing lists.
+Patch 3/11, fixes the random failures the we were seing when running selftests.
 
-Thanks,
-Lorenzo
+Patch 4/11, prevents a crash that can occur when receiving AVB packets and with
+SPH feature enabled on XGMAC.
 
-> Thanks,
-> Minghuan
-> 
-> > -----Original Message-----
-> > From: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > Sent: Wednesday, November 6, 2019 11:36 AM
-> > To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org;
-> > Leo Li <leoyang.li@nxp.com>; M.h. Lian <minghuan.lian@nxp.com>; Mingkai
-> > Hu <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>; linux-
-> > pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linuxppc-
-> > dev@lists.ozlabs.org; bhelgaas@google.com; Z.q. Hou
-> > <zhiqiang.hou@nxp.com>
-> > Subject: RE: [PATCH v6 3/3] PCI: layerscape: Add LS1028a support
-> > 
-> > 
-> > 
-> > > -----Original Message-----
-> > > From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > > Sent: 2019年11月5日 20:33
-> > > To: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > Cc: robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org;
-> > Leo
-> > > Li <leoyang.li@nxp.com>; M.h. Lian <minghuan.lian@nxp.com>; Mingkai
-> > Hu
-> > > <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>;
-> > > linux-pci@vger.kernel.org; devicetree@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linuxppc-dev@lists.ozlabs.org; bhelgaas@google.com; Z.q. Hou
-> > > <zhiqiang.hou@nxp.com>
-> > > Subject: Re: [PATCH v6 3/3] PCI: layerscape: Add LS1028a support
-> > >
-> > > On Mon, Sep 02, 2019 at 11:43:19AM +0800, Xiaowei Bao wrote:
-> > > > Add support for the LS1028a PCIe controller.
-> > > >
-> > > > Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> > > > ---
-> > > > v2:
-> > > >  - No change.
-> > > > v3:
-> > > >  - Reuse the ls2088 driver data structurt.
-> > > > v4:
-> > > >  - No change.
-> > > > v5:
-> > > >  - No change.
-> > > > v6:
-> > > >  - No change.
-> > > >
-> > > >  drivers/pci/controller/dwc/pci-layerscape.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > >
-> > > I have not seen any comment on any layerscape driver patches coming
-> > > from the maintainers as listed in the MAINTAINERS file (and CCed in this
-> > series).
-> > >
-> > > I request maintainers ACK on these patches and I expect them to start
-> > > reviewing your code if they want to be still considered maintainers
-> > > for this driver.
-> > >
-> > > The changes look OK minus Shawn's remark on compatible string that was
-> > > ignored.
-> > 
-> > Hi Lorenzo,
-> > 
-> > Thanks for your comments.
-> > 
-> > In fact, the patches have reviewed in our internal mail list, after the review by
-> > Minghuan and Mingkai, I will send these patches to opensource, they will
-> > give the ACK when these patches seems is OK and no comments on this.
-> > 
-> > Thanks
-> > Xiaowei
-> > 
-> > >
-> > > Thanks,
-> > > Lorenzo
-> > >
-> > > > diff --git a/drivers/pci/controller/dwc/pci-layerscape.c
-> > > > b/drivers/pci/controller/dwc/pci-layerscape.c
-> > > > index 3a5fa26..f24f79a 100644
-> > > > --- a/drivers/pci/controller/dwc/pci-layerscape.c
-> > > > +++ b/drivers/pci/controller/dwc/pci-layerscape.c
-> > > > @@ -263,6 +263,7 @@ static const struct ls_pcie_drvdata
-> > > > ls2088_drvdata = {  static const struct of_device_id ls_pcie_of_match[] = {
-> > > >  	{ .compatible = "fsl,ls1012a-pcie", .data = &ls1046_drvdata },
-> > > >  	{ .compatible = "fsl,ls1021a-pcie", .data = &ls1021_drvdata },
-> > > > +	{ .compatible = "fsl,ls1028a-pcie", .data = &ls2088_drvdata },
-> > > >  	{ .compatible = "fsl,ls1043a-pcie", .data = &ls1043_drvdata },
-> > > >  	{ .compatible = "fsl,ls1046a-pcie", .data = &ls1046_drvdata },
-> > > >  	{ .compatible = "fsl,ls2080a-pcie", .data = &ls2080_drvdata },
-> > > > --
-> > > > 2.9.5
-> > > >
+Patch 5/11, fixes the correct settings for CBS on XGMAC.
+
+Patch 6/11, corrects the interpretation of AVB feature on XGMAC.
+
+Patch 7/11, disables Flow Control for AVB enabled queues on XGMAC.
+
+Patch 8/11, disables MMC interrupts on XGMAC, preventing a storm of interrupts.
+
+Patch 9/11, fixes the number of packets that were being taken into account in
+the RX path cleaning function.
+
+Patch 10/11, fixes an incorrect descriptor setting that could cause IP
+misbehavior.
+
+Patch 11/11, fixes the IOC generation mechanism when multiple descriptors
+are used.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (11):
+  net: stmmac: gmac4: bitrev32 returns u32
+  net: stmmac: xgmac: bitrev32 returns u32
+  net: stmmac: selftests: Prevent false positives in filter tests
+  net: stmmac: xgmac: Only get SPH header len if available
+  net: stmmac: xgmac: Fix TSA selection
+  net: stmmac: xgmac: Fix AV Feature detection
+  net: stmmac: xgmac: Disable Flow Control when 1 or more queues are in
+    AV
+  net: stmmac: xgmac: Disable MMC interrupts by default
+  net: stmmac: Fix the packet count in stmmac_rx()
+  net: stmmac: Fix TSO descriptor with Enhanced Addressing
+  net: stmmac: Fix the TX IOC in xmit path
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   2 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |   3 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  70 ++++++-----
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 134 +++++++++++++++------
+ 7 files changed, 144 insertions(+), 78 deletions(-)
+
+-- 
+2.7.4
+
