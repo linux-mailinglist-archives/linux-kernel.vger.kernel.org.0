@@ -2,91 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085CCF1E03
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:02:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680E4F1E19
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbfKFTBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 14:01:39 -0500
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:46151 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731922AbfKFTBi (ORCPT
+        id S1732599AbfKFTCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:02:14 -0500
+Received: from smtprelay0127.hostedemail.com ([216.40.44.127]:36857 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732219AbfKFTCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:01:38 -0500
-Received: by mail-qt1-f175.google.com with SMTP id u22so34841348qtq.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 11:01:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bUWe5P+sqYK5OZT5sl31hT/qcl3zO9MIPDH1nbBo4Zg=;
-        b=ME4JSc6G9HbfOYVGH4FkIJgVzwb14PicsP2oJM5SvPryNR2hGnq1KtrEV5aIiAkXbe
-         eNaxSJLx9L3FnzWyQL4GspIpqzO21y5xQ6TW+0duNgXUKJR7t02VOQJ/48sdIWaZEBJ7
-         lBixZB54gBmk691BrjYrlhEND3BYK9hj9RN2e4oKnu+BOQbB6APii+HdqwVfHDwFWecD
-         z+f//5pXmgbKV4PP6wuyY09Rcscr7Qvlq3zWsLvre33W8dhoncV0pzc9l1pYC3S7Kzl4
-         muxzvhia+gERCjmPN7e0aXI82BzQX15YFB+prIBp8qkMG+yQpiuDXZmGCf0nqaPtW+dT
-         Bzhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bUWe5P+sqYK5OZT5sl31hT/qcl3zO9MIPDH1nbBo4Zg=;
-        b=k5i99DqOzC0RJj6C10URowZaqPLhda9ucKGvweO2HIY4mj6RyWcbgp+mxnYdGL57E1
-         j30tjIec+AQ2l+0ki4jkLUQZPBLeKHaTIB/Un8NT9puN2BuSpm9tabbLd53gXNvAs/aG
-         MrIgMo8A9LnQgje0GsjEmYs+jTsXCOHzBIJk8LaaPsCWeCe4gjbBi69Xh2buBMRC06dP
-         TM0dnn1Kcw8aUaRExPViwTcR8kpYTMTkf1FEokJ3Z0uutDkVqecmABQzaWpEtuj3uAHn
-         D/7iWFIGl59NEcufY2zVd3DsrzmQ6tzI2dySUz7PW/JSqYMFSjoLU6npdNd8fynSxbca
-         9Xgg==
-X-Gm-Message-State: APjAAAVseQ4Rp1YoIt4FGvNoItpbLaD5CoCM0yBLgpyGLOM2hXkrOzMf
-        Z8dS+4X396Vu3kvKeTIfT4s=
-X-Google-Smtp-Source: APXvYqwJ/O8AcowIryHI4Grt9phufoUjsBOJYILRrRQvq/msQ7B5xlTKfd6+VWR0iLnyLRLx7EamjQ==
-X-Received: by 2002:ac8:4409:: with SMTP id j9mr55667qtn.283.1573066896386;
-        Wed, 06 Nov 2019 11:01:36 -0800 (PST)
-Received: from quaco.ghostprotocols.net (187-26-100-98.3g.claro.net.br. [187.26.100.98])
-        by smtp.gmail.com with ESMTPSA id s123sm11888405qke.31.2019.11.06.11.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 11:01:35 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6DD5A40B1D; Wed,  6 Nov 2019 16:01:31 -0300 (-03)
-Date:   Wed, 6 Nov 2019 16:01:31 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ian Rogers <irogers@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf annotate: fix heap overflow
-Message-ID: <20191106190131.GD3636@kernel.org>
-References: <20191026035644.217548-1-irogers@google.com>
- <20191028192908.GA28772@krava>
+        Wed, 6 Nov 2019 14:02:09 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D8FA918021E46;
+        Wed,  6 Nov 2019 19:02:07 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3871:3872:3873:3874:3876:4321:5007:6691:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21324:21451:21627:30012:30054:30091,0,RBL:47.151.135.224:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: pipe51_86cd89710ff50
+X-Filterd-Recvd-Size: 1661
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  6 Nov 2019 19:02:06 +0000 (UTC)
+Message-ID: <7b6295e48dbb4b5b9c578516f40b61ad2afd115b.camel@perches.com>
+Subject: Re: s390/pkey: Use memdup_user() rather than duplicating its
+ implementation
+From:   Joe Perches <joe@perches.com>
+To:     Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Cc:     Christian =?ISO-8859-1?Q?Borntr=E4ger?= <borntraeger@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 06 Nov 2019 11:01:53 -0800
+In-Reply-To: <cba4068c-0d63-fc0a-44bb-2664b690f126@web.de>
+References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
+         <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
+         <0f90b278-7b3e-6509-1633-301d16513c5d@web.de>
+         <47c55ab899aafe10898e6581582363aa446b2091.camel@perches.com>
+         <cba4068c-0d63-fc0a-44bb-2664b690f126@web.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028192908.GA28772@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 28, 2019 at 08:29:08PM +0100, Jiri Olsa escreveu:
-> On Fri, Oct 25, 2019 at 08:56:44PM -0700, Ian Rogers wrote:
-> > Fix expand_tabs that copies the source lines '\0' and then appends
-> > another '\0' at a potentially out of bounds address.
+On Wed, 2019-11-06 at 19:55 +0100, Markus Elfring wrote:
+> > There is no bug here.
 > 
-> not sure it could get out of bounds, but i think
-> the change is right, it matches the memcpy before
-> and I dont see reason to add +1
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> Do you find duplicated source code questionable?
+
+No.  It is something that can be improved through
+code consolidation though.
+
+> Is this also an error item?
+
+Definitely not.  It is _only_ an error if there is
+some logic defect.  There is no logic defect here.
 
 
-Thanks, applied,
-
-- Arnaldo
