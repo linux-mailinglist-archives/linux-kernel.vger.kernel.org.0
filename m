@@ -2,398 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173B8F0DC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:23:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA70F0DCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbfKFEXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 23:23:11 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41591 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729705AbfKFEXK (ORCPT
+        id S1731170AbfKFE3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 23:29:41 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41835 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730583AbfKFE3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 23:23:10 -0500
-Received: by mail-pl1-f196.google.com with SMTP id d29so4452171plj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 20:23:08 -0800 (PST)
+        Tue, 5 Nov 2019 23:29:41 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p26so17852736pfq.8;
+        Tue, 05 Nov 2019 20:29:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UtTKts7n6PwB/KSUdkueiRv1jM81Y5uAXuxP+Ek2MAU=;
-        b=TNerTCHdR/xBMOsoi2KWvCd5wto/Yno6XdqjK6FABEeKXtahodPeaWep+1SW5Quiln
-         jt8R0OrM42dMW7h/4Xytu+ifBAwjfK/K+xaB4StGggJSl/GFeE1A15UV+qc7dRgOONge
-         KFvX1PM2VGgAT1hk9v39Ox3ZxNhmYPkG3HCGUhEQWba/ym5/r+Pq6x0azkUfrxLfv4QE
-         dw24QAOTz0Vp3B4DyjXBbJdwA7K6lXpNDZuXY3WE+kbcjJq8XqhJ3vgSSC5gXIQ4AzMj
-         3+Z50L/ucPOlBlvmJu7S88huuIfH4sqevRAfC1h4s7ohHH0O4C6naJKXgB4BTHWIp4D8
-         xhSA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cEzk/8oDOYv4rMZYFovcOC7T1s33B/sHCx+vVjslo00=;
+        b=MRQqUCi8y0aLkzs4AZYTW/zPFCyBHiASaOkVNuVKqNmwCvsbkmKdrTPGqd2MBG+m/l
+         Nq0jiD8KcAi3guexyAxW8BVf165wcY3RLdtPv0UO3Ifo6kj9JbpWsCPuJsxSLCxqk1aP
+         m0iNsgcXprGPrKH92kdqkNNAYFmUOoZpq/Vxs30xSP5OAvRTI4uuT4M43XmwWV2mY95y
+         FNLx7brsby7djad1ukEO9PEISqaaE07N/dw4n+vP88Wtv0jAMdM8rUliFssn1kFkKROw
+         sfHgf00bMM9iJjIsAxXQd9/qwiyPQ2e0SPu/roKXVPfUFj9YH08m+w+2kjS6qQ+s7W7Y
+         EH0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UtTKts7n6PwB/KSUdkueiRv1jM81Y5uAXuxP+Ek2MAU=;
-        b=BBqVR0xpmWQmSvaLVjmPPiTfgYgnPuoFEsguqzPtvS96pipN0IUOnTrwum8ehTQAiM
-         pf43eUr1JNYJVbczW1FL8ZOaz8FpNB+vK4enacyWhEEdkVfbjklUi0DJAviOFxJXsnVj
-         5xwjQU7Wzi5tdTTE4DK3/3HysjZp12Ep8XHZq8QSpKgMadJ6w3JYo2dlawVlU7RJcAhj
-         qDjsFCRSpxKt2rsHPQCXDKQ7wMtG7hymLv3pwBHRFcq4lGgeETY5zJxaDnMoG6rZoo3i
-         P1cK+343YBZnAyA0sKra/l4G76KuCRDf64+axVOyeA4fFMteDKLVMkbjPWnzpFKkcdaG
-         iVUg==
-X-Gm-Message-State: APjAAAXMsAA3Tfx+SPx8tKpGhqsbqt676Lr5M37EUbmtPV5eeWv6JhBT
-        a8j8AlAC/JZ3jPy4LU/GD5igJSmIIFY=
-X-Google-Smtp-Source: APXvYqxyDRrtA0GraHS6OeTmC5cm+tpYnMLVkj2j3n9+AfoWSwLV4JEpLjaz2cTZIBShxeGJcOfftA==
-X-Received: by 2002:a17:902:322:: with SMTP id 31mr409718pld.293.1573014187513;
-        Tue, 05 Nov 2019 20:23:07 -0800 (PST)
-Received: from localhost.localdomain (c-67-170-172-113.hsd1.or.comcast.net. [67.170.172.113])
-        by smtp.gmail.com with ESMTPSA id n15sm23730289pfq.146.2019.11.05.20.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 20:23:07 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Dave Airlie <airlied@gmail.com>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v15 5/5] kselftests: Add dma-heap test
-Date:   Wed,  6 Nov 2019 04:22:52 +0000
-Message-Id: <20191106042252.72452-6-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191106042252.72452-1-john.stultz@linaro.org>
-References: <20191106042252.72452-1-john.stultz@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cEzk/8oDOYv4rMZYFovcOC7T1s33B/sHCx+vVjslo00=;
+        b=T1wdjtYBuI23QnCqnLggNuZs//elGWYd0diSoYcouX+5xvCJcMVRuNXDJChOrjbQxD
+         f7sI9zV8bcsXNT2Lx/ciC3ZLqVzhCDX1wfIrVFoczt9/ptLdGclhL0Jfz7z6suot/z6y
+         ntRkXlVjxRQ/3JX6U2bKB4v8Du74r8KyCYntvPJRCwLuo2wlKNCFAQNh0Oboc/pQHuIs
+         CLqTtyv44wGvRc4MKNHLPX6tlfSUORbI+xLGqIeE+kHBGWegLBufbv3QbN3kMhP758ax
+         dWN9t2sruKd97LuIoIKkYE8yyKi/5/vY/lp6gwR5OfE8NGxu81WToAHR6P/K+KAfyGDl
+         Lv8A==
+X-Gm-Message-State: APjAAAWiFFs26ikLgKvPJ3pIcAlcu9k3SqUS7AElRHmRbIisEk1pOieq
+        7rhAnp58egAt6roXxID1aPI=
+X-Google-Smtp-Source: APXvYqysVoWGJ9Z+UwDC3VuCLB8LAqU9bY3x482YFddWnGSmoUKOHhg9EUeJZyiXGJ8AFXvUhBToRw==
+X-Received: by 2002:a62:1c89:: with SMTP id c131mr807915pfc.168.1573014579877;
+        Tue, 05 Nov 2019 20:29:39 -0800 (PST)
+Received: from Gentoo ([103.231.91.67])
+        by smtp.gmail.com with ESMTPSA id x9sm1048459pje.27.2019.11.05.20.29.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 20:29:39 -0800 (PST)
+Date:   Wed, 6 Nov 2019 09:59:25 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scripts:prune-kernel:remove old kernels and modules dir
+ from system
+Message-ID: <20191106042922.GD20442@Gentoo>
+References: <20191102063036.28601-1-unixbhaskar@gmail.com>
+ <50680c37-9e85-0050-c1e1-700260a0471c@infradead.org>
+ <20191105023243.GA16635@fieldses.org>
+ <CAK7LNARAgOEnMRYAyzbvJ-xZzFfwOMckxb=bW0-E+P1HYu5nhA@mail.gmail.com>
+ <20191106031027.GA20442@Gentoo>
+ <CAK7LNAQVhUS=WNoqgWQaS2-MJ9KoVBXurop8_vS5OC1VPtVTKw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQVhUS=WNoqgWQaS2-MJ9KoVBXurop8_vS5OC1VPtVTKw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add very trivial allocation and import test for dma-heaps,
-utilizing the vgem driver as a test importer.
 
-A good chunk of this code taken from:
-  tools/testing/selftests/android/ion/ionmap_test.c
-  Originally by Laura Abbott <labbott@redhat.com>
+--EP0wieDxd4TSJjHq
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Liam Mark <lmark@codeaurora.org>
-Cc: Pratik Patel <pratikp@codeaurora.org>
-Cc: Brian Starkey <Brian.Starkey@arm.com>
-Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
-Cc: Sudipto Paul <Sudipto.Paul@arm.com>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Chenbo Feng <fengc@google.com>
-Cc: Alistair Strachan <astrachan@google.com>
-Cc: Hridya Valsaraju <hridya@google.com>
-Cc: Sandeep Patil <sspatil@google.com>
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: Dave Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Acked-by: Sandeep Patil <sspatil@android.com>
-Acked-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Ayan Kumar Halder <ayan.halder@arm.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2:
-* Switched to use reworked dma-heap apis
-v3:
-* Add simple mmap
-* Utilize dma-buf testdev to test importing
-v4:
-* Rework to use vgem
-* Pass in fd_flags to match interface changes
-* Skip . and .. dirs
-v6:
-* Number of style/cleanups suggested by Brian
-v7:
-* Whitespace fixup for checkpatch
-v8:
-* More checkpatch whitespace fixups
-v9:
-* Better handling error returns out to main, suggested
-  by Brian Starkey
-* Switch to using snprintf, suggested by Brian
-v14:
-* Fix a missing return value
-* Add calls to test the GET_FEATURES ioctl
-* Build fix reported by kernel test robot <lkp@intel.com>
-  and fixed by Xiao Yang <ice_yangxiao@163.com>
-* Minor Makefile cleanups
-v15:
-* Remove usage of dropped get_features ioctl
----
- tools/testing/selftests/dmabuf-heaps/Makefile |   6 +
- .../selftests/dmabuf-heaps/dmabuf-heap.c      | 238 ++++++++++++++++++
- 2 files changed, 244 insertions(+)
- create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
- create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+On 13:03 Wed 06 Nov 2019, Masahiro Yamada wrote:
+>On Wed, Nov 6, 2019 at 12:10 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> =
+wrote:
+>>
+>> On 11:53 Wed 06 Nov 2019, Masahiro Yamada wrote:
+>> >On Tue, Nov 5, 2019 at 11:32 AM J. Bruce Fields <bfields@fieldses.org> =
+wrote:
+>> >>
+>> >> On Mon, Nov 04, 2019 at 06:03:13PM -0800, Randy Dunlap wrote:
+>> >> > On 11/1/19 11:30 PM, Bhaskar Chowdhury wrote:
+>> >> > > This patch allow you to remove old kernels and associated modules
+>> >> > > directory from the system.You can do it at once with the -r flag
+>> >> > > and interactively with the -i flag.
+>> >> > >
+>> >> > > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+>> >> > > ---
+>> >> > >  scripts/prune-kernel | 82 +++++++++++++++++++++++++++++++++++---=
+------
+>> >> > >  1 file changed, 65 insertions(+), 17 deletions(-)
+>> >> >
+>> >> > Hi,
+>> >> > I believe that this script now does what the patch author intends i=
+t to do.
+>> >> > It does have a few whitespace issues, but no big deals.  (see below)
+>> >>
+>> >> My original comment stands: looks like it prompts for full module path
+>> >> and kernel versions which means it's no more convenient than just doi=
+ng
+>> >> an "ls" and then removing the ones you want to.  (In fact, with "rm"
+>> >> you'd also get the benefit of tab completion....)
+>> >>
+>> >> It's quite different from the original script and I don't really see =
+the
+>> >> advantage.
+>> >>
+>> >> --b.
+>> >
+>> >I am with Bruce.
+>> >
+>> >This patch is trying to replace everything
+>> >with worse code.
+>> Well,Masahiro,
+>> I won't mind dropping the idea, which you already concluded.But, would
+>> you care to let me know how worse the code seems to be????
+>
+>
+>As far as I understood this script,
+>it is useful to delete stale versions with a single command.
+>
+>scripts/prune-kernel  5.2-rc1  5.2-rc2  5.2-rc3
+>
+>
+>This patch is dropping the 'for f in "$@"' loop,
+>so you would end up with running this script multiple times.
+>
+>scripts/prune-kernel -r  5.2-rc1  5.2-rc1
+>scripts/prune-kernel -r  5.2-rc2  5.2-rc2
+>scripts/prune-kernel -r  5.2-rc3  5.2-rc3
+>
+Yes, true. You don't want all the stale kernels to be discarded at once,
+do you???
+>
+>What is funny is, it takes the kernel_version and modules_version
+>separately.
+Lack of farsight of mine ...will take your suggestion. Should have
+realized it before, but was writing for different purpose.
 
-diff --git a/tools/testing/selftests/dmabuf-heaps/Makefile b/tools/testing/selftests/dmabuf-heaps/Makefile
-new file mode 100644
-index 000000000000..607c2acd2082
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+CFLAGS += -static -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include
-+
-+TEST_GEN_PROGS = dmabuf-heap
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-new file mode 100644
-index 000000000000..efca067ba96c
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-@@ -0,0 +1,238 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <dirent.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+
-+#include <linux/dma-buf.h>
-+#include <drm/drm.h>
-+
-+#include "../../../../include/uapi/linux/dma-heap.h"
-+
-+#define DEVPATH "/dev/dma_heap"
-+
-+static int check_vgem(int fd)
-+{
-+	drm_version_t version = { 0 };
-+	char name[5];
-+	int ret;
-+
-+	version.name_len = 4;
-+	version.name = name;
-+
-+	ret = ioctl(fd, DRM_IOCTL_VERSION, &version);
-+	if (ret)
-+		return 0;
-+
-+	return !strcmp(name, "vgem");
-+}
-+
-+static int open_vgem(void)
-+{
-+	int i, fd;
-+	const char *drmstr = "/dev/dri/card";
-+
-+	fd = -1;
-+	for (i = 0; i < 16; i++) {
-+		char name[80];
-+
-+		snprintf(name, 80, "%s%u", drmstr, i);
-+
-+		fd = open(name, O_RDWR);
-+		if (fd < 0)
-+			continue;
-+
-+		if (!check_vgem(fd)) {
-+			close(fd);
-+			fd = -1;
-+			continue;
-+		} else {
-+			break;
-+		}
-+	}
-+	return fd;
-+}
-+
-+static int import_vgem_fd(int vgem_fd, int dma_buf_fd, uint32_t *handle)
-+{
-+	struct drm_prime_handle import_handle = {
-+		.fd = dma_buf_fd,
-+		.flags = 0,
-+		.handle = 0,
-+	 };
-+	int ret;
-+
-+	ret = ioctl(vgem_fd, DRM_IOCTL_PRIME_FD_TO_HANDLE, &import_handle);
-+	if (ret == 0)
-+		*handle = import_handle.handle;
-+	return ret;
-+}
-+
-+static void close_handle(int vgem_fd, uint32_t handle)
-+{
-+	struct drm_gem_close close = {
-+		.handle = handle,
-+	};
-+
-+	ioctl(vgem_fd, DRM_IOCTL_GEM_CLOSE, &close);
-+}
-+
-+static int dmabuf_heap_open(char *name)
-+{
-+	int ret, fd;
-+	char buf[256];
-+
-+	ret = snprintf(buf, 256, "%s/%s", DEVPATH, name);
-+	if (ret < 0) {
-+		printf("snprintf failed!\n");
-+		return ret;
-+	}
-+
-+	fd = open(buf, O_RDWR);
-+	if (fd < 0)
-+		printf("open %s failed!\n", buf);
-+	return fd;
-+}
-+
-+static int dmabuf_heap_alloc(int fd, size_t len, unsigned int flags,
-+			     int *dmabuf_fd)
-+{
-+	struct dma_heap_allocation_data data = {
-+		.len = len,
-+		.fd_flags = O_RDWR | O_CLOEXEC,
-+		.heap_flags = flags,
-+	};
-+	int ret;
-+
-+	if (!dmabuf_fd)
-+		return -EINVAL;
-+
-+	ret = ioctl(fd, DMA_HEAP_IOC_ALLOC, &data);
-+	if (ret < 0)
-+		return ret;
-+	*dmabuf_fd = (int)data.fd;
-+	return ret;
-+}
-+
-+static void dmabuf_sync(int fd, int start_stop)
-+{
-+	struct dma_buf_sync sync = {
-+		.flags = start_stop | DMA_BUF_SYNC_RW,
-+	};
-+	int ret;
-+
-+	ret = ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync);
-+	if (ret)
-+		printf("sync failed %d\n", errno);
-+}
-+
-+#define ONE_MEG (1024 * 1024)
-+
-+static int do_test(char *heap_name)
-+{
-+	int heap_fd = -1, dmabuf_fd = -1, importer_fd = -1;
-+	uint32_t handle = 0;
-+	void *p = NULL;
-+	int ret;
-+
-+	printf("Testing heap: %s\n", heap_name);
-+
-+	heap_fd = dmabuf_heap_open(heap_name);
-+	if (heap_fd < 0)
-+		return -1;
-+
-+	printf("Allocating 1 MEG\n");
-+	ret = dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
-+	if (ret) {
-+		printf("Allocation Failed!\n");
-+		ret = -1;
-+		goto out;
-+	}
-+	/* mmap and write a simple pattern */
-+	p = mmap(NULL,
-+		 ONE_MEG,
-+		 PROT_READ | PROT_WRITE,
-+		 MAP_SHARED,
-+		 dmabuf_fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		ret = -1;
-+		goto out;
-+	}
-+	printf("mmap passed\n");
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+	memset(p, 1, ONE_MEG / 2);
-+	memset((char *)p + ONE_MEG / 2, 0, ONE_MEG / 2);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+
-+	importer_fd = open_vgem();
-+	if (importer_fd < 0) {
-+		ret = importer_fd;
-+		printf("Failed to open vgem\n");
-+		goto out;
-+	}
-+
-+	ret = import_vgem_fd(importer_fd, dmabuf_fd, &handle);
-+	if (ret < 0) {
-+		printf("Failed to import buffer\n");
-+		goto out;
-+	}
-+	printf("import passed\n");
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+	memset(p, 0xff, ONE_MEG);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+	printf("syncs passed\n");
-+
-+	close_handle(importer_fd, handle);
-+	ret = 0;
-+
-+out:
-+	if (p)
-+		munmap(p, ONE_MEG);
-+	if (importer_fd >= 0)
-+		close(importer_fd);
-+	if (dmabuf_fd >= 0)
-+		close(dmabuf_fd);
-+	if (heap_fd >= 0)
-+		close(heap_fd);
-+
-+	return ret;
-+}
-+
-+int main(void)
-+{
-+	DIR *d;
-+	struct dirent *dir;
-+	int ret = -1;
-+
-+	d = opendir(DEVPATH);
-+	if (!d) {
-+		printf("No %s directory?\n", DEVPATH);
-+		return -1;
-+	}
-+
-+	while ((dir = readdir(d)) != NULL) {
-+		if (!strncmp(dir->d_name, ".", 2))
-+			continue;
-+		if (!strncmp(dir->d_name, "..", 3))
-+			continue;
-+
-+		ret = do_test(dir->d_name);
-+		if (ret)
-+			break;
-+	}
-+	closedir(d);
-+
-+	return ret;
-+}
--- 
-2.17.1
+>And now it requires -r option for the default behavior.
+Because other flags are involved and they do different things.
 
+>I see nothing cool overall.
+>
+Meh... I am interpreting you "cool" literal way...which you certainly
+didn't mean it...do you??
+>
+>
+>J. Bruce Fields suggested:
+>"But if somebody does actually use it as-is, it'd be nicer to keep the
+>current behavior and add an option ("-i" or something) for the
+>interactive behavior."
+>
+Yes, that's true ...and now I understood. On the contrary ,if I
+recollect properly, Bruce ,once told that he won't if do something which
+will be useful to the wider users..not sure that stands anymore.
+>
+>I want to see a patch if and only if
+>you can add -i without intrusively changing the current code.
+>
+Hopefully , you wish get fulfilled sooner than later.
+>
+>Masahiro
+>
+>
+>
+Bhaskar
+>
+>> >
+>> >BTW.
+>> >Bruce,
+>> >Does the current script expect RHEL or something?
+>> >I do not see 'new-kernel-pkg' on my Ubuntu machine.
+>> >
+>> >It would still work with 'new-kernel-pkg: command not found'
+>> >warning.
+>> >
+>> >We could bypass it if we like.
+>> >
+>> >command -v new-kernel-pkg && new-kernel-pkg --remove $f
+>> >
+>> >
+>> >
+>> >Masahiro Yamada
+>> >
+>> >
+>> >
+>> >> >
+>> >> > Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>> >> >
+>> >> >
+>> >> > > diff --git a/scripts/prune-kernel b/scripts/prune-kernel
+>> >> > > index e8aa940bc0a9..01d0778db71f 100755
+>> >> > > --- a/scripts/prune-kernel
+>> >> > > +++ b/scripts/prune-kernel
+>> >> > > @@ -1,21 +1,69 @@
+>> >> > >  #!/bin/bash
+>> >> > >  # SPDX-License-Identifier: GPL-2.0
+>> >> > > +#This script will remove old kernels and modules directory relat=
+ed to it.
+>> >> > > +#"-r" or "--remove" show how to silently remove old kernel and m=
+odules dir.
+>> >> > > +# "-h" or "--help" show how to use this script or show without p=
+arameter.
+>> >> > > +#"-i" or "--interactive" show how to remove interactively.
+>> >> > > +
+>> >> > > +flag=3D$1
+>> >> > > +kernel_version=3D$2
+>> >> > > +modules_version=3D$3
+>> >> > > +boot_dir=3D/boot
+>> >> > > +modules_dir=3D/lib/modules
+>> >> > > +
+>> >> > > +remove_old_kernel() {
+>> >> > > +   cd $boot_dir
+>> >> > > +   rm -If vmlinuz-$kernel_version System.map-$kernel_version con=
+fig-$kernel_version
+>> >> > > +   return 0
+>> >> > > +}
+>> >> > > +
+>> >> > > +remove_old_modules_dir() {
+>> >> > > +   cd $modules_dir
+>> >> > > +   rm -rf $modules_version
+>> >> > > +   return 0
+>> >> > > +}
+>> >> > > +
+>> >> > > +usage() {
+>> >> > > +   printf "Usage: $(basename $0) [-ri]\n"
+>> >> > > +   printf "\n -r or --remove  kernel_version modules_version\n"
+>> >> > > +   printf "\n -i or --interactive do as interactive way\n"
+>> >> > > +   return 0
+>> >> > > +}
+>> >> > > +
+>> >> > > +case "$flag" in
+>> >> > > +   -i | --interactive)
+>> >> > > +           printf "\nEnter kernel version to remove or blank/emp=
+ty to exit:"
+>> >> > > +           read kernel_version
+>> >> > > +           if [[ $kernel_version !=3D "" ]]; then
+>> >> > > +                   remove_old_kernel
+>> >> > > +                   printf "\nRemoved kernel version:$kernel_vers=
+ion from the system.\n\n"
+>> >> >
+>> >> > space after ':'
+>> >> >
+>> >> > drop one \n above.
+>> >> >
+>> >> > > +                   printf "Please give the full modules director=
+y name to remove:"
+>> >> > > +                   read modules_version
+>> >> > > +                   if [[ $modules_version !=3D "" ]]; then
+>> >> > > +                           remove_old_modules_dir
+>> >> > > +                           printf "\n\nRemoved modules directory=
+:$modules_version from the system.\n\n"
+>> >> >
+>> >> > space after ':'
+>> >> >
+>> >> > drop one \n above.
+>> >> >
+>> >> > > +                   else
+>> >> > > +                           exit 1
+>> >> > > +                   fi
+>> >> > > +           fi
+>> >> > > +           ;;
+>> >> > > +   -h | --help)
+>> >> > > +           usage
+>> >> > > +           exit 0
+>> >> > > +           ;;
+>> >> > > +   -r | --remove)
+>> >> > > +           if [[ $# -ne 3 ]]; then
+>> >> > > +                    printf "You need to provide kernel version a=
+nd modules directory name.\n"
+>> >> > > +                    exit 1
+>> >> > > +            else
+>> >> > > +                    remove_old_kernel
+>> >> > > +                    remove_old_modules_dir
+>> >> > > +           fi
+>> >> > > +           ;;
+>> >> > > +   *)
+>> >> > > +           usage
+>> >> > > +           exit 1
+>> >> > > +           ;;
+>> >> > > +esac
+>> >> > >
+>> >> > > -# because I use CONFIG_LOCALVERSION_AUTO, not the same version a=
+gain and
+>> >> > > -# again, /boot and /lib/modules/ eventually fill up.
+>> >> > > -# Dumb script to purge that stuff:
+>> >> > >
+>> >> >
+>> >> > OK, the former script's loop is removed.. good.
+>> >> > But the 2 preceding blank lines are not removed, so the script
+>> >> > now ends with 2 unnecessary blank lines.
+>> >> >
+>> >> > > -for f in "$@"
+>> >> > > -do
+>> >> > > -        if rpm -qf "/lib/modules/$f" >/dev/null; then
+>> >> > > -                echo "keeping $f (installed from rpm)"
+>> >> > > -        elif [ $(uname -r) =3D "$f" ]; then
+>> >> > > -                echo "keeping $f (running kernel) "
+>> >> > > -        else
+>> >> > > -                echo "removing $f"
+>> >> > > -                rm -f "/boot/initramfs-$f.img" "/boot/System.map=
+-$f"
+>> >> > > -                rm -f "/boot/vmlinuz-$f"   "/boot/config-$f"
+>> >> > > -                rm -rf "/lib/modules/$f"
+>> >> > > -                new-kernel-pkg --remove $f
+>> >> > > -        fi
+>> >> > > -done
+>> >> > > --
+>> >> >
+>> >> >
+>> >> > --
+>> >> > ~Randy
+>> >
+>> >
+>> >
+>> >--
+>> >Best Regards
+>> >
+>> >Masahiro Yamada
+>
+>
+>
+>--=20
+>Best Regards
+>Masahiro Yamada
+
+--EP0wieDxd4TSJjHq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl3CTB8ACgkQsjqdtxFL
+KRW5NAgA0uVcwzRFLEvGndfy6LOeW2pEg7NLPhU6RiPRpAdGpvf4U02sO6H7B3DR
+TC47joFXWmi8cbrQVQYyjlCspa2EenGfaD6qQWLtuYUoEux++H2CWsd1cyw1U6UX
+LYv5Ibs3htO0LRjt+0r79Rt+v6RMucrs0A1Z3zrYrTJOPAhyQzaPJ6GZv06asx9Z
+A9dC+An5s2tlirX3oKp/ERRBliR5WLHR+G3Yiae3JtwtjYtVXBgs9RuVjrrwsblJ
+PcULONU318O8M2WGjNkASmnyN18TqSBtZltive5e7F+CnNNZ58QkwMe+zSJeYbcS
+89FEJ3oG87N+PHp5XOXg+PJ9k1x7Cg==
+=UI0O
+-----END PGP SIGNATURE-----
+
+--EP0wieDxd4TSJjHq--
