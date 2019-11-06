@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1712F1CBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ABDEF1CB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732428AbfKFRrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:47:37 -0500
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:57167 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbfKFRrh (ORCPT
+        id S1732326AbfKFRqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:46:10 -0500
+Received: from rcdn-iport-3.cisco.com ([173.37.86.74]:40575 "EHLO
+        rcdn-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728539AbfKFRqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:47:37 -0500
-IronPort-SDR: sd6OuxopJhKmmx/JuGV9b10kaT67pmrqn8wiC6tlyzdFj+YDlzaaWo1UXzpBb1JfACEtcVyNPj
- Mlbdn9ZHvRb/uCAiV9jyr//hhfBLzrvoR9EUOsLSjB/6TapUu2J1MvjMcNHo7f7jUwD74kVccO
- R/xAcIaY+UHvBAHc3CKY0tTebvWR59VbVufAexjyuYAWsVC5Qqf0Ye/xSO5cy25wTLM6dWRA2H
- fBZRzZBknANkqaruul2lX2KsJ/QHUHC1xh562CleTdnYem95qr1+lCt6hxFVpifBqIhbl9UjCt
- whc=
-X-IronPort-AV: E=Sophos;i="5.68,275,1569312000"; 
-   d="scan'208";a="42868123"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 06 Nov 2019 09:47:09 -0800
-IronPort-SDR: g9MUu+J8OTyqvHJDx9CiNu5O73/mDmSTZYzD+voBBo9Cj6HpRaWRQjlgURahtsyp/DdA//iJ1L
- bEZE+5fvcdQMqja8husaJyIA2kUIwmCsAp59H4JNgv7R2BaP4xiCrtHDjrm3J7AIK85zDN01PW
- wR/DFh8DvHVrIs9NX1o5T2vkxBM1XFL2C1JWZYIFQwq/61bWQtdu9gS7xPAKTbR6reVxAEckGL
- OPo4yOAv1RvWPrLuR7/EQFodZwvD2cYWZeuxs7bcgWk41hiKNOUo7Oc72X9IsKuRDHWKASuIoD
- 6pU=
-From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
-To:     Takashi Iwai <tiwai@suse.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-References: <20191105143218.5948-1-andrew_gabbasov@mentor.com>  <20191105143218.5948-2-andrew_gabbasov@mentor.com>      <20191105143218.5948-3-andrew_gabbasov@mentor.com>      <20191105143218.5948-4-andrew_gabbasov@mentor.com>,<s5h36f13sv5.wl-tiwai@suse.de>
-In-Reply-To: <s5h36f13sv5.wl-tiwai@suse.de>
-Subject: Re: [PATCH v2 3/8] ALSA: aloop: loopback_timer_stop: Support return of error code
-Date:   Wed, 6 Nov 2019 20:45:51 +0300
-Organization: Mentor Graphics Corporation
-Message-ID: <000001d594ca$1dd487f0$597d97d0$@mentor.com>
+        Wed, 6 Nov 2019 12:46:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1489; q=dns/txt; s=iport;
+  t=1573062369; x=1574271969;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9LWdUWFwz+0nguJkEnlwOwG8B5lAe20QbOKg7mn/Puw=;
+  b=HsxudzhpllSSNe7+0sDmvsEGE/LLaIuYC7p9+Qbx5hKn6vomfRwiBz6R
+   FWQubN9poyG8iyY8Ptxw1HuPiE4TsQw07notF+O4m+a9tgrAxW3p0NwNk
+   AwPvYPBJRcEds8teFdOybqQcGJsNlCKTDEBc8CIYt8iY80f0qimMAMlPv
+   4=;
+X-IronPort-AV: E=Sophos;i="5.68,275,1569283200"; 
+   d="scan'208";a="646600509"
+Received: from alln-core-10.cisco.com ([173.36.13.132])
+  by rcdn-iport-3.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 06 Nov 2019 17:46:08 +0000
+Received: from zorba ([10.154.200.26])
+        by alln-core-10.cisco.com (8.15.2/8.15.2) with ESMTPS id xA6Hk55r004590
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 6 Nov 2019 17:46:07 GMT
+Date:   Wed, 6 Nov 2019 09:46:02 -0800
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Claudiu Manoil <claudiu.manoil@nxp.com>
+Cc:     Sathish Jarugumalli <sjarugum@cisco.com>,
+        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
+        Daniel Walker <dwalker@fifo99.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drivers: net: gianfar: Shortest frame drops at Ethernet
+ port
+Message-ID: <20191106174602.GV18744@zorba>
+References: <20191106170320.27662-1-danielwa@cisco.com>
+ <VI1PR04MB4880B060847C1CD175B998DF96790@VI1PR04MB4880.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQHVk+YTmTkKZHEEGEaaN+TTFIVO0Kd+THEAgAAY32M=
-Content-Language: en-us
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB4880B060847C1CD175B998DF96790@VI1PR04MB4880.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.200.26, [10.154.200.26]
+X-Outbound-Node: alln-core-10.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Thank you very much for your response.
-
-> From: Takashi Iwai <tiwai@suse.de>
-> Sent: Wednesday, November 6, 2019 18:51
-> 
-> On Tue, 05 Nov 2019 15:32:13 +0100,
-> Andrew Gabbasov wrote:
+On Wed, Nov 06, 2019 at 05:38:06PM +0000, Claudiu Manoil wrote:
+> >-----Original Message-----
+> >From: Daniel Walker <danielwa@cisco.com>
+> >Sent: Wednesday, November 6, 2019 7:03 PM
+> >To: Claudiu Manoil <claudiu.manoil@nxp.com>
+> >Cc: Sathish Jarugumalli <sjarugum@cisco.com>; xe-linux-external@cisco.com;
+> >Daniel Walker <dwalker@fifo99.com>; David S. Miller
+> ><davem@davemloft.net>; netdev@vger.kernel.org; linux-
+> >kernel@vger.kernel.org
+> >Subject: [PATCH] drivers: net: gianfar: Shortest frame drops at Ethernet port
 > >
-> > From: Timo Wischer <twischer@de.adit-jv.com>
+> >NXP has provided the patch for packet drops  at ethernet port
+> >Frames shorter than 60bytes are getting dropped at ethernetport
+> >need to add padding for the shorter range frames to be transmit
+> >the function "eth_skb_pad(skb" provides padding (and CRC) for
+> >packets under 60 bytes
 > >
-> > This is required for additional timer implementations which could detect
-> > errors and want to throw them.
-> >
-> > Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
-> > Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> >Signed-off-by: Sathish Jarugumalli <sjarugum@cisco.com>
+> >Cc: xe-linux-external@cisco.com
+> >Signed-off-by: Daniel Walker <dwalker@fifo99.com>
 > 
-> I'd fold this into the patch 2.  Both patches do fairly same things
-> but just for start and stop.
-
-OK, I agree. I'll squash these 2 commits into a single one in the next
-update (there will be an update for sure to fix the snd_cards reference
-in patch #7).
-
+> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 > 
-> And the same question as patch#2 is applied to this one, too, BTW.
+> Normally padding is done by the hardware, and it works at least on my
+> test cases and boards.
+> But cisco seems to have hit a case where h/w padding gets
+> unexpectedly disabled (concurrency issue writing the config register?).
+> This patch should go as a workaround, until root cause found.
 
-As for the notifications in case of timer operation failures:
 
-For stop/suspend operations, the return code of the timer operation,
-and of the PCM trigger function as a whole, actually makes no difference,
-the streams state is changed anyway, so the notification should be done
-in any case.
+Where would this hardware setup normally happen? Does it happen in the
+bootloader or inside the kernel someplace ?
 
-For start/resume operations, it seems OK to send notifications
-even if the timer operation fails, if the cable->running and cable->pause
-fields are set before that (as is now), so that the notified control
-reflects the changed state. In case of failure the whole operation
-will be un-done by upper PCM layer, changing the state back,
-and sending one more notifcation.
-
-Alternatively, we could re-order the code and do not set the running
-fields if timer operation fails (and do not notify in this case).
-But the undoing stop operation will be executed in this case
-that will cause the (unpaired) notification, which is probably
-not quite correct.
-
-Thanks.
-
-Best regards,
-Andrew
-
+Daniel
