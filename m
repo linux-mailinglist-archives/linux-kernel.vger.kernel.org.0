@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71839F1E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED62F1E48
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:11:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732055AbfKFTK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 14:10:56 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40778 "EHLO
+        id S1732119AbfKFTLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:11:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40812 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731826AbfKFTKz (ORCPT
+        with ESMTP id S1728580AbfKFTLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:10:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 15so17784630pgt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 11:10:55 -0800 (PST)
+        Wed, 6 Nov 2019 14:11:18 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 15so17785279pgt.7
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 11:11:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=message-id:mime-version:content-transfer-encoding:in-reply-to
          :references:subject:from:to:cc:user-agent:date;
-        bh=bvzyaeqQgm+ODV2zn40NLUNXtHBkt8JdlUL5UNv0l4w=;
-        b=I1Z9vGAwk25jlQ11dQZp3amW+1dHSKt8UAg1cVjghjAnP4X5P59EHC1lm3jAKHU/p/
-         V6achbPb6JpUnOhCVoWt+ITiJ1+2q/5WeovtoXNJQpBXFXEqRfhyawEotr9dlCcEACJV
-         VUW313cPgbNYZhABbSZ7DgkvoyCQgvDLA3prs=
+        bh=OY7gYgd4FJIkTEZvHN5NIFLp9ZtxgEWcRq8vKLuNkWk=;
+        b=eZKYMJZEiWsrur04nmp7VZR3e1RCS4GAobfM3f+fvB/0jOdeMyvy6E0CNoiiG58tmP
+         HF+qx4/SsMBzIpYVrT5lktFKK73yQsJZ59QUCf4A9aesilgrJWeWFSepb5iecF7/6HVp
+         McKkOqPs9GfnRlwLHmQFzVq+rgHR6xd7KNhJA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:mime-version
          :content-transfer-encoding:in-reply-to:references:subject:from:to:cc
          :user-agent:date;
-        bh=bvzyaeqQgm+ODV2zn40NLUNXtHBkt8JdlUL5UNv0l4w=;
-        b=da7bFcPunFFaRi/kxda5gNJ5Li2aDGOEoQot8hb+AVCp5myhuYbC5XeP8U7YWVXyN2
-         HL6dnNq99BUnJ/Zlm0+l5Axq7lb0IcsxcCV8TsELcryrSdzMznTsHNFNCEXEC2oockyP
-         tKf2/lpTjeBchUso+9iDGvA6jRIJCHqsPorIu7FzBvSUGsglXr7sXFB1RSfMvuG52c3c
-         Mj4K8F29x/MEMYn1qaUYXdcsHDo84IusdnPwGt939lDl2I6LtFWx46ixCXEPZ/1GPeiC
-         oIoDBIz/+gPo7h/cnZ5ck7VnVAVEI8RaZnI6yK2C6bHxgIdnZLQo/uiBT84YtJqsSjtn
-         KDYQ==
-X-Gm-Message-State: APjAAAVzhVrFucYoHhkkz0koBAtiBNgCnYvK3eoRGxCf8faPQYOSIEQE
-        d9F5cLzR5j4vV86OkNmUIWSnpg==
-X-Google-Smtp-Source: APXvYqySU0SqbmsExE8w0VMB5UDSw5bGW97FD8SWOT1NMVBReEti1N8fzmDu5SWW9saMQ0Muy549Qg==
-X-Received: by 2002:a63:1743:: with SMTP id 3mr4910114pgx.161.1573067455077;
-        Wed, 06 Nov 2019 11:10:55 -0800 (PST)
+        bh=OY7gYgd4FJIkTEZvHN5NIFLp9ZtxgEWcRq8vKLuNkWk=;
+        b=gM8OqlVc/vHu5h4UKNScqdvyk+AVMX5YOHjbgW5bW+jeBpe1CALP0JpRfi0VH1Jjb0
+         MB5whxWPHZvSnhMWDlh3vWfGwno9mbenvqxJdKPcXf0Zwe6ZDPR02PHDzzbXysTBu8dv
+         oT3MvGgoJuoSR/q3WTMZm7LzvIpWJqK28WnNieeMdlsFQn8qJu58kQnhyI1GmMI90xNh
+         HRf0o6KO8t/9BsQJJi/MOXjYijbVDHsdRjbw5fN9G51yfZTosKsCojAymimAs5FcrVAH
+         BJbj5xtHetb6CrqekYroD0YA/Ts2P2o6hF7szk5xrndgIyMKlKssSCon2MMGaiFHRNww
+         Vtxg==
+X-Gm-Message-State: APjAAAW3xNIyCcNbQr+ah5HYtbg+12AoFEgx0W/fkfl0StGxIEsZLSs9
+        AQmlWyxpSjJ3odzTI5wbBJDCvA==
+X-Google-Smtp-Source: APXvYqyI9rQeSviss4gD6JhTRezTghk0Fxp7c2WSM+6a22e7Ntor3/PHJM3cg/rIyepQ2iDqA3GZRQ==
+X-Received: by 2002:a63:ec4f:: with SMTP id r15mr4643147pgj.17.1573067477046;
+        Wed, 06 Nov 2019 11:11:17 -0800 (PST)
 Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id q13sm3841834pjq.0.2019.11.06.11.10.54
+        by smtp.gmail.com with ESMTPSA id x9sm3943428pje.27.2019.11.06.11.11.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 11:10:54 -0800 (PST)
-Message-ID: <5dc31abe.1c69fb81.1da16.a8b4@mx.google.com>
+        Wed, 06 Nov 2019 11:11:16 -0800 (PST)
+Message-ID: <5dc31ad4.1c69fb81.195ac.b1d8@mx.google.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191106065017.22144-8-rnayak@codeaurora.org>
-References: <20191106065017.22144-1-rnayak@codeaurora.org> <20191106065017.22144-8-rnayak@codeaurora.org>
-Subject: Re: [PATCH v4 07/14] drivers: irqchip: qcom-pdc: Move to an SoC independent compatible
+In-Reply-To: <20191106065017.22144-9-rnayak@codeaurora.org>
+References: <20191106065017.22144-1-rnayak@codeaurora.org> <20191106065017.22144-9-rnayak@codeaurora.org>
+Subject: Re: [PATCH v4 08/14] dt-bindings: qcom,pdc: Add compatible for sc7180
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Rajendra Nayak <rnayak@codeaurora.org>, agross@kernel.org,
         bjorn.andersson@linaro.org, robh+dt@kernel.org
@@ -58,17 +58,14 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Lina Iyer <ilina@codeaurora.org>, Marc Zyngier <maz@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 06 Nov 2019 11:10:53 -0800
+Date:   Wed, 06 Nov 2019 11:11:15 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2019-11-05 22:50:10)
-> Remove the sdm845 SoC specific compatible to make the driver
-> easily reusable across other SoC's with the same IP block.
-> This will reduce further churn adding any SoC specific
-> compatibles unless really needed.
+Quoting Rajendra Nayak (2019-11-05 22:50:11)
+> Add the compatible string for sc7180 SoC from Qualcomm.
 >=20
 > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > Cc: Lina Iyer <ilina@codeaurora.org>
