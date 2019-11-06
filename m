@@ -2,111 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A66D9F10B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872D0F10B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:01:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbfKFIAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:00:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46305 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbfKFIAl (ORCPT
+        id S1731382AbfKFIBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:01:46 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53458 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729878AbfKFIBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:00:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 193so16938167pfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 00:00:41 -0800 (PST)
+        Wed, 6 Nov 2019 03:01:46 -0500
+Received: by mail-wm1-f65.google.com with SMTP id x4so2200694wmi.3;
+        Wed, 06 Nov 2019 00:01:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KuPVTVr4RYweQb+V3z56bkXkHnz53CjmsEHwNcAKPBA=;
-        b=nrz8ddPkTcWqz4wbBXtX1ZVpAU55IYE7RYAUO6y5C3CA9bYv9NQ8EB6N1Mn1prJBdm
-         pa/1N+2ErAAwWwcSLAH4+Q5E5BmC5oJAt7vBdKoFtZR68Yta1/Heo4pwtfPJPiQHopbV
-         DzMsrrf+pPTLtHT3c01UvZaB/ryskTUdorhm1B4BVr2UJAVKMKpU7qsxdfBsLD6ZFI/U
-         /MMZf4JIrpIM5EX9rHOoiKD+pZ/e5W9ZvGrVwN0RqQO1ycKkEYQFCiMyKyRVAnDajHCZ
-         QOZ6XVv8FLfc9WDguFYQFgjQcObPl3WSnGX1rtXe6ZjMlnmOv5SNhfngzgzqyEw2Wknx
-         nPpw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OmFJplJ1m4VwQ427zpEUzGG+xB7JCkAtrYHj59vzKyE=;
+        b=MrbKKbkEEpLaaU1VA3LNiZShxLjleQKizjxFb7o/RogoTWhFIPRUc8oQXlcid/bVNM
+         4vs+KOYK7Xf5q6D0wkM5qVbvZknjzUgZottXfmR5MFEA8mY2XmBlY4ZTY/GEXT4tQgGD
+         xZMblYOfLeUwcmgAh0AYFTdcMatBIMY9scFaNjjkUM2hSIGADavlKn+ob8wlhdBpTWFE
+         b6u2fPUxGn+S7Y+T9FluJIptb5NoU0PCt/U5tbNkP8kJORoGJCa5gfOx1u6OtF32xgIi
+         kcJUVmQsTwlYtYMdKaLGN1KJKArN03Zdlu1TVBOLR+b2T91a2uyIj49Iyzv0HjsN4W4a
+         XJ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KuPVTVr4RYweQb+V3z56bkXkHnz53CjmsEHwNcAKPBA=;
-        b=i3SV9YhU3KHmKa0VJR6NK85HsKhm1fxCuHtqAM2b4Az+oZoJXMtmpXnMX/wkAC+HPY
-         cutRFtmyNjYWKO+A7Dxypq20foZ6lVzk8S8JczGb0ssYKHW1rb/nt18uqPC1rqcy6Xnm
-         IELaKkFm1W0ZbMvVg9p/noBZmaRtQBx6joX1Q0frOjnGWhEIvie+2VbA8CipZfx317YR
-         Da8+ESXY2fjuV8ucz2TqnSf9222+WeEWOvZTHg2wK9aIqcW7w3MWMioIWlyxXlR/9m+b
-         bCU8u5SGzJML2xkVfrGUEthB5qq3koLk7C2n7/HDlXwww2fQcpOk9qOD+RgW+vHYaItK
-         IzGQ==
-X-Gm-Message-State: APjAAAUvzZnYPXDoxO0hStdeKDTETSLsgibl6xAaIJCBK9qQtSy5HGx4
-        LCvrnh98G22hSaeuA6m+vS0=
-X-Google-Smtp-Source: APXvYqy6WTKqy9mtM9teFAhh5LwP4xmTEivvABPHoP3S/DIO3JEoUN6rh0CwbHefPFSoxTmIK/fKCA==
-X-Received: by 2002:a62:108:: with SMTP id 8mr1688106pfb.53.1573027240908;
-        Wed, 06 Nov 2019 00:00:40 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
-        by smtp.gmail.com with ESMTPSA id 13sm24968289pgq.72.2019.11.06.00.00.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OmFJplJ1m4VwQ427zpEUzGG+xB7JCkAtrYHj59vzKyE=;
+        b=nNQW7zFxps+qoCaaIc0dYMZchZdo19VtBkJNQWKNHjFK27xNr5Dx2Gkt7BXJ84lOX3
+         jA1Q1041VuoNLShWJqsVpzXo0ojx1q/GXkGu/cWcQOXYW9O9qCIaEkuYcfwFHa+Gl6VI
+         56TJeAP9dXQMJWSXLBLn6KWUgiLWRtEMyBOQ8uRhSPZGeP22f+n/04w1wpD+NNljP/fH
+         rVobrQBa53zmat08GNuRT/neCHaktCW8u8qlpUocXuHDr18xh6fjXGf1YVBp+6HsCaOU
+         sAXnqOCWLg3pSMnp17jFRam5dqpbuKExW1Tl12YCbGiXKdJVllYh1CqM5YkFZ+e8Jcyv
+         0Sxg==
+X-Gm-Message-State: APjAAAUV56qm7uV/YygmjQZ5cY3RUm0iqqKtrvDYxfEpCP11Y4GfgvN0
+        E2XdCNnsH4jmNlqFpob4G6I=
+X-Google-Smtp-Source: APXvYqz0qSwFylWIoX9SCHh6ZEfiYNutupEMlWdsubaKkmKhmucKMct2x7LvguGkr4ZOhw5eOEZczQ==
+X-Received: by 2002:a1c:b607:: with SMTP id g7mr1032801wmf.94.1573027304320;
+        Wed, 06 Nov 2019 00:01:44 -0800 (PST)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id q124sm1196668wme.13.2019.11.06.00.01.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 00:00:39 -0800 (PST)
-Date:   Wed, 6 Nov 2019 17:00:37 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Ioannis Ilkos <ilkos@google.com>,
-        minchan@google.com, primiano@google.com, fmayer@google.com,
-        hjd@google.com, joaodias@google.com, joelaf@google.com,
-        lalitm@google.com, rslawik@google.com, sspatil@google.com,
-        timmurray@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, Petr Mladek <pmladek@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] rss_stat: Add support to detect RSS updates of external
- mm
-Message-ID: <20191106080037.GA59367@google.com>
-References: <20191106024452.81923-1-joel@joelfernandes.org>
+        Wed, 06 Nov 2019 00:01:43 -0800 (PST)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Fugang Duan <fugang.duan@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] net: fec: add a check for CONFIG_PM to avoid clock count mis-match
+Date:   Wed,  6 Nov 2019 16:01:28 +0800
+Message-Id: <20191106080128.23284-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106024452.81923-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (19/11/05 21:44), Joel Fernandes (Google) wrote:
-[..]
-> +++ b/lib/vsprintf.c
-> @@ -761,11 +761,34 @@ static int __init initialize_ptr_random(void)
->  early_initcall(initialize_ptr_random);
->  
->  /* Maps a pointer to a 32 bit unique identifier. */
-> +int ptr_to_hashval(const void *ptr, unsigned long *hashval_out)
-> +{
-> +	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
-> +	unsigned long hashval;
-> +
-> +	if (static_branch_unlikely(&not_filled_random_ptr_key))
-> +		return -EAGAIN;
-> +
-> +#ifdef CONFIG_64BIT
-> +	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
-> +	/*
-> +	 * Mask off the first 32 bits, this makes explicit that we have
-> +	 * modified the address (and 32 bits is plenty for a unique ID).
-> +	 */
-> +	hashval = hashval & 0xffffffff;
-> +#else
-> +	hashval = (unsigned long)siphash_1u32((u32)ptr, &ptr_key);
-> +#endif
-> +	*hashval_out = hashval;
-> +	return 0;
-> +}
+If CONFIG_PM is enabled, runtime pm will work and call runtime_suspend
+automatically to disable clks.
+Therefore, remove only needs to disable clks when CONFIG_PM is disabled.
+Add this check to avoid clock count mis-match caused by double-disable.
 
-Maybe we want to move this thing to more generic code - lib/siphash.c -
-since it's going to have several users.
+This patch depends on patch
+("net: fec: add missed clk_disable_unprepare in remove").
 
-	-ss
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index a9c386b63581..696550f4972f 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3645,8 +3645,10 @@ fec_drv_remove(struct platform_device *pdev)
+ 		regulator_disable(fep->reg_phy);
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++#ifndef CONFIG_PM
+ 	clk_disable_unprepare(fep->clk_ahb);
+ 	clk_disable_unprepare(fep->clk_ipg);
++#endif
+ 	if (of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ 	of_node_put(fep->phy_node);
+-- 
+2.23.0
+
