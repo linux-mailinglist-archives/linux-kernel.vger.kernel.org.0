@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D384EF1BE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA58F1BF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732310AbfKFRAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:00:53 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38609 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732176AbfKFRAx (ORCPT
+        id S1732409AbfKFRBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:01:21 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33047 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732352AbfKFRBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:00:53 -0500
-Received: by mail-qk1-f193.google.com with SMTP id e2so25236917qkn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:00:51 -0800 (PST)
+        Wed, 6 Nov 2019 12:01:14 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y39so34493761qty.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:01:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:references:cc:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding;
-        bh=TuUoy8AF5+MQM14Gz0S6Jwy4jFwogd2IsB/lmQVPWOU=;
-        b=AfrgdJhVutnHKlbfu7HBPtnX6DELZ9cgqccdljj5em2WkeXm7A+cS4SocjHeEBGrey
-         V5js7w0f6AKzhPOP8qngyoMT+q5ClnmhglpUJwzdcerB3rZVe5CIrup1wJYqXSNJp+aV
-         K0fVk91f4XrVESCNS8JK7pmXSNRAePxBF6/BEkNOu5fAGE6adJaZ6u6DhWmSM+pciczh
-         O4rHYR7nb518D25cuU+DdtAZOzyJhWOHjPZNN4jmXQv4zOD2pz6FZoAB3gg2lKadTRZC
-         EPgO75NJk3QkDC5V4/hb8nxR+Kolt+kxnIu/TsXeHFrqzokUcvuo56nRZoX4aL6VpJA7
-         VZGg==
+        bh=1YkokgK/hXG9nZEjXyGUWaHvhkSIFQdZBFHevJIglRo=;
+        b=tRJMvKgddVtpOXo/MzS+cGY5ilVByBFJDJ88m9zKx1JKj2rfrsktiFtsiZ4V6ThWln
+         0sJX+QgwbOSY+EUnWlq8Go83HIWvAzRfWZL4GKijFh1U1ekDYFi6GCL5Nfs5wbDjZp4v
+         as7hE5l24nCVf/mbUSNDU5ib40KgbihEjhJXvhnbmQnpTBoxKq3FDdM/RtA7uW0eJY+r
+         SlMtAMwC+1LcH/nccbv7hH4TLrtAyXGGkkHZzJfHzKU77O2Kwq/XK+u8NjcLX5AqWZ/U
+         KPkJkDUTAfHTaXESWi/IhNL6SNd2mCEIyxG7K1lopMZOrpjp9/wmkWuVfCaD5rSGoH+/
+         5d8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:cc:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=TuUoy8AF5+MQM14Gz0S6Jwy4jFwogd2IsB/lmQVPWOU=;
-        b=Nvb3KXuJYqFPdfbC5E9by+Xa572j/7/pRHJO/2DeTEv3xDC/5e9VdmzKNvryiikRor
-         w/1noBvEHRbVtkf6BTNRxA7Tyt7Mr9S+u70Medwh8P5h6WG25K0gOn1sA1ozl0BYOVhI
-         KfoJAwjds7Uwn+o/YjgXLj6WUWKdbBOENKlV5OKze07Pd43UUa8riBY6XuWCDW5LHfUR
-         FXM0sBla7S17ZOX6sCmAX/4OJfTJgJgllkLGs2LUJQmQz/L6gb1o/DJt2sPq4JZeQXDg
-         fz3SUNZk09hXmdduH3xOH8dWHnRYDsx9oi8EEg02aD2bmx3ARjKWvAarA4cyoYgdFivb
-         gWKQ==
-X-Gm-Message-State: APjAAAUB9c8gkikS8vkbM0wtQ4mdD7n/jR7xqeDuKJavp2QbqAPyfp85
-        HQRQfPpE89iZvMkgsik3lbRF/w==
-X-Google-Smtp-Source: APXvYqwwWT8C+swhRztT53AjhPmsd/3onsnkwEvch3jAcYo6eP2coaOnK75ia/480UKp81xboBvi5g==
-X-Received: by 2002:a37:9f48:: with SMTP id i69mr2912658qke.273.1573059650812;
-        Wed, 06 Nov 2019 09:00:50 -0800 (PST)
+        bh=1YkokgK/hXG9nZEjXyGUWaHvhkSIFQdZBFHevJIglRo=;
+        b=RECYMMz4IyyMPEcTZWxIHHWiuPwqRplxLimOoElaku9gyPAkR1AdjJjqRs8Yf1rLZ+
+         AJ5QLmfyj8DdKleNThFWX3potenZq9qIdZ5X+JT5O2AmWstezvnRqzoAQYvDTGeXmOZf
+         vX8AWm6K2tf9MNO1bzEOzR8xq1JWcMxajhtPaAPzem7DiWlSvt5Ewc9kq/i7uAGvU1m4
+         tkSLModBzvfsOmntd1E1GCKzd7Ax7feZwTaEfOWuune4fL7PPK13CxShlFcJM4j9UZC5
+         uFoxRr42SWOthSyJQyDUx2d489Ip+Mnn2fLzUPdazdJqNIGfKdgdnUIQTksfomqtvlgR
+         f8sg==
+X-Gm-Message-State: APjAAAXV9TzjkCEgMT5U1XEYjjXdDtvifLYQIX8EWgz/fJLNIfr+sC51
+        UF1wNKmuZ8B8zg+A4RlFJToH2w==
+X-Google-Smtp-Source: APXvYqxdU901BFxbDtR2Rd4uDOiWpRBN/+H61rqGylSm1v6pCqitdnpcme8Fd2ykJ8tdTip1La24Hw==
+X-Received: by 2002:aed:31e7:: with SMTP id 94mr3393686qth.71.1573059673522;
+        Wed, 06 Nov 2019 09:01:13 -0800 (PST)
 Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id s123sm11680430qke.31.2019.11.06.09.00.49
+        by smtp.gmail.com with ESMTPSA id 23sm12270001qkj.52.2019.11.06.09.01.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 09:00:50 -0800 (PST)
-Subject: Re: [Patch v5 2/6] sched/fair: Add infrastructure to store and update
- instantaneous thermal pressure
+        Wed, 06 Nov 2019 09:01:12 -0800 (PST)
+Subject: Re: [Patch v5 3/6] sched/fair: Enable periodic update of average
+ thermal pressure
 To:     Vincent Guittot <vincent.guittot@linaro.org>
 References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-3-git-send-email-thara.gopinath@linaro.org>
- <CAKfTPtCQXSoR5ohpJvT+esAeXewRDFoBEGGzfgB37_ZWJuKjeQ@mail.gmail.com>
+ <1572979786-20361-4-git-send-email-thara.gopinath@linaro.org>
+ <CAKfTPtBrOdiN+wBfy-1cHr65d48-cBZc3LS7Jt_65Ptssb0Gpg@mail.gmail.com>
 Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ionela Voinescu <ionela.voinescu@arm.com>,
@@ -62,12 +62,12 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Javi Merino <javi.merino@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>
 From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DC2FC41.8030308@linaro.org>
-Date:   Wed, 6 Nov 2019 12:00:49 -0500
+Message-ID: <5DC2FC58.7050604@linaro.org>
+Date:   Wed, 6 Nov 2019 12:01:12 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
  Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtCQXSoR5ohpJvT+esAeXewRDFoBEGGzfgB37_ZWJuKjeQ@mail.gmail.com>
+In-Reply-To: <CAKfTPtBrOdiN+wBfy-1cHr65d48-cBZc3LS7Jt_65Ptssb0Gpg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,137 +75,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
-Thanks for the review
-On 11/06/2019 03:27 AM, Vincent Guittot wrote:
-> Hi Thara,
-> 
-> 
+On 11/06/2019 03:32 AM, Vincent Guittot wrote:
 > On Tue, 5 Nov 2019 at 19:49, Thara Gopinath <thara.gopinath@linaro.org> wrote:
 >>
->> Add interface APIs to initialize, update/average, track, accumulate
->> and decay thermal pressure per cpu basis. A per cpu variable
->> thermal_pressure is introduced to keep track of instantaneous per
->> cpu thermal pressure. Thermal pressure is the delta between maximum
->> capacity and capped capacity due to a thermal event.
->> API trigger_thermal_pressure_average is called for periodic accumulate
->> and decay of the thermal pressure.This API passes on the instantaneous
->> thermal pressure of a cpu to update_thermal_load_avg to do the necessary
->> accumulate, decay and average.
->> API update_thermal_pressure is for the system to update the thermal
->> pressure by providing a capped maximum capacity.
->> Considering, trigger_thermal_pressure_average reads thermal_pressure and
->> update_thermal_pressure writes into thermal_pressure, one can argue for
->> some sort of locking mechanism to avoid a stale value.
->> But considering trigger_thermal_pressure_average can be called from a
->> system critical path like scheduler tick function, a locking mechanism
->> is not ideal. This means that it is possible the thermal_pressure value
->> used to calculate average thermal pressure for a cpu can be
->> stale for upto 1 tick period.
+>> Introduce support in CFS periodic tick and other bookkeeping apis
+>> to trigger the process of computing average thermal pressure for a
+>> cpu. Also consider avg_thermal.load_avg in others_have_blocked
+>> which allows for decay of pelt signals.
 >>
 >> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 >> ---
 >>
->> v3->v4:
->>         - Dropped per cpu max_capacity_info struct and instead added a per
->>           delta_capacity variable to store the delta between maximum
->>           capacity and capped capacity. The delta is now calculated when
->>           thermal pressure is updated and not every tick.
->>         - Dropped populate_max_capacity_info api as only per cpu delta
->>           capacity is stored.
->>         - Renamed update_periodic_maxcap to
->>           trigger_thermal_pressure_average and update_maxcap_capacity to
->>           update_thermal_pressure.
 >> v4->v5:
->>         - As per Peter's review comments folded thermal.c into fair.c.
->>         - As per Ionela's review comments revamped update_thermal_pressure
->>           to take maximum available capacity as input instead of maximum
->>           capped frequency ration.
+>>         - Updated both versions of update_blocked_averages to trigger the
+>>           process of computing average thermal pressure.
+>>         - Updated others_have_blocked to considerd avg_thermal.load_avg.
 >>
->> ---
->>  include/linux/sched.h |  9 +++++++++
->>  kernel/sched/fair.c   | 37 +++++++++++++++++++++++++++++++++++++
->>  2 files changed, 46 insertions(+)
+>>  kernel/sched/fair.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
 >>
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 263cf08..3c31084 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1993,6 +1993,15 @@ static inline void rseq_syscall(struct pt_regs *regs)
->>
->>  #endif
->>
->> +#ifdef CONFIG_SMP
->> +void update_thermal_pressure(int cpu, unsigned long capped_capacity);
->> +#else
->> +static inline void
->> +update_thermal_pressure(int cpu, unsigned long capped_capacity)
->> +{
->> +}
->> +#endif
->> +
->>  const struct sched_avg *sched_trace_cfs_rq_avg(struct cfs_rq *cfs_rq);
->>  char *sched_trace_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int len);
->>  int sched_trace_cfs_rq_cpu(struct cfs_rq *cfs_rq);
 >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 682a754..2e907cc 100644
+>> index 2e907cc..9fb0494 100644
 >> --- a/kernel/sched/fair.c
 >> +++ b/kernel/sched/fair.c
->> @@ -86,6 +86,12 @@ static unsigned int normalized_sysctl_sched_wakeup_granularity       = 1000000UL;
+>> @@ -92,6 +92,8 @@ const_debug unsigned int sysctl_sched_migration_cost  = 500000UL;
+>>   */
+>>  static DEFINE_PER_CPU(unsigned long, thermal_pressure);
 >>
->>  const_debug unsigned int sysctl_sched_migration_cost   = 500000UL;
->>
->> +/*
->> + * Per-cpu instantaneous delta between maximum capacity
->> + * and maximum available capacity due to thermal events.
->> + */
->> +static DEFINE_PER_CPU(unsigned long, thermal_pressure);
+>> +static void trigger_thermal_pressure_average(struct rq *rq);
 >> +
 >>  #ifdef CONFIG_SMP
 >>  /*
 >>   * For asym packing, by default the lower numbered CPU has higher priority.
->> @@ -10401,6 +10407,37 @@ static unsigned int get_rr_interval_fair(struct rq *rq, struct task_struct *task
->>         return rr_interval;
+>> @@ -7493,6 +7495,9 @@ static inline bool others_have_blocked(struct rq *rq)
+>>         if (READ_ONCE(rq->avg_dl.util_avg))
+>>                 return true;
+>>
+>> +       if (READ_ONCE(rq->avg_thermal.load_avg))
+>> +               return true;
+>> +
+>>  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+>>         if (READ_ONCE(rq->avg_irq.util_avg))
+>>                 return true;
+>> @@ -7580,6 +7585,8 @@ static void update_blocked_averages(int cpu)
+>>                 done = false;
+>>
+>>         update_blocked_load_status(rq, !done);
+>> +
+>> +       trigger_thermal_pressure_average(rq);
+> 
+> This must be called before others_have_blocked() to take into account
+> the latest update
+
+It is a bug. I agree. Will fix it.
+> 
+>>         rq_unlock_irqrestore(rq, &rf);
 >>  }
 >>
->> +#ifdef CONFIG_SMP
->> +/**
->> + * update_thermal_pressure: Update thermal pressure
->> + * @cpu: the cpu for which thermal pressure is to be updated for
->> + * @capped_capacity: maximum capacity of the cpu after the capping
->> + *                  due to thermal event.
->> + *
->> + * Delta between the arch_scale_cpu_capacity and capped max capacity is
->> + * stored in per cpu thermal_pressure variable.
->> + */
->> +void update_thermal_pressure(int cpu, unsigned long capped_capacity)
->> +{
->> +       unsigned long delta;
->> +
->> +       delta = arch_scale_cpu_capacity(cpu) - capped_capacity;
->> +       per_cpu(thermal_pressure, cpu) = delta;
+>> @@ -7646,6 +7653,7 @@ static inline void update_blocked_averages(int cpu)
+>>         update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
+>>         update_irq_load_avg(rq, 0);
+>>         update_blocked_load_status(rq, cfs_rq_has_blocked(cfs_rq) || others_have_blocked(rq));
+>> +       trigger_thermal_pressure_average(rq);
 > 
-> use WRITE_ONCE
-Will do.
+> idem
 > 
->> +}
->> +#endif
+>>         rq_unlock_irqrestore(rq, &rf);
+>>  }
+>>
+>> @@ -9939,6 +9947,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+>>
+>>         update_misfit_status(curr, rq);
+>>         update_overutilized_status(task_rq(curr));
 >> +
->> +/**
->> + * trigger_thermal_pressure_average: Trigger the thermal pressure accumulate
->> + *                                  and average algorithm
->> + */
->> +static void trigger_thermal_pressure_average(struct rq *rq)
->> +{
->> +#ifdef CONFIG_SMP
->> +       update_thermal_load_avg(rq_clock_task(rq), rq,
->> +                               per_cpu(thermal_pressure, cpu_of(rq)));
->> +#endif
->> +}
->> +
+> 
+> remove blank line
+> 
+>> +       trigger_thermal_pressure_average(rq);
+>>  }
+>>
 >>  /*
->>   * All the scheduling class methods:
->>   */
 >> --
 >> 2.1.4
 >>
