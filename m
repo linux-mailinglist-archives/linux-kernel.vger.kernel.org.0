@@ -2,186 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CEDF1502
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AFBF14F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731542AbfKFLZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:25:21 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:47954 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfKFLZV (ORCPT
+        id S1731496AbfKFLYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:24:10 -0500
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:45109 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725890AbfKFLYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:25:21 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id xA6BO1Em018531;
-        Wed, 6 Nov 2019 20:24:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xA6BO1Em018531
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1573039442;
-        bh=rLZcOrok9PdZlKG4VRBTQujCqfo2C2HipVKQXAB7ZNc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pkbFRrG7vHWYHM1pshA3Ue0PBy3/uE1m+zP1ucyA47F9KzYFOotOL6eexS7TnejYE
-         ZZozWyll4V5rXUTCogyxXfrNOvS6RvCFk3W8bPnF7wXohalB42Wg9uzIUby2FeQinx
-         dWibk0Yx0vGo0ATJBme0jcGKqeKucr0lTIiVjDYhg30ZWHd0BKHifgaFjJSBNf+72l
-         7GPoN6/nOariFEnqJP/Ftz11zjC1F2A2bOB3qI+iAGRAH89AUU2eEaQzQZgDFCr0M+
-         Jv8bQvAkzWQQw0iR2irr4/VO2Rd1O+eFrsgptLDQy8yi4xDMhlQS9JyKgH8V6OZI9B
-         5jZAZupTC33qQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] modpost: add an option to suppress 'exported twice' warnings
-Date:   Wed,  6 Nov 2019 20:23:57 +0900
-Message-Id: <20191106112357.29053-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Nov 2019 06:24:10 -0500
+Received: from [IPv6:2001:420:44c1:2577:dd0c:75f0:7ccb:ac5a]
+ ([IPv6:2001:420:44c1:2577:dd0c:75f0:7ccb:ac5a])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id SJPviPSTwTzKrSJPziyAi1; Wed, 06 Nov 2019 12:24:08 +0100
+Subject: Re: [RFC PATCH 12/12] media: v4l2-core: convert to
+ i2c_new_scanned_device
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191106095033.25182-1-wsa+renesas@sang-engineering.com>
+ <20191106095033.25182-13-wsa+renesas@sang-engineering.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4799e282-2f49-a0ae-8396-ee8f0fa26064@xs4all.nl>
+Date:   Wed, 6 Nov 2019 12:24:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191106095033.25182-13-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfJ0z9ugTAiIGMFQtuOXFD4BDdp1quJn20dF04acRBYYGdUg5s05sQzKopywruJFux6tz0HVf/rsMOGdrzTN/7PfQ18+cglKE9HM/3EjAJm/wM5V/FRMC
+ Pku36bLhs24G5YCZd6scmWbxmNEEfrHDNQVRurOzFKRgQVtzeYFuTKAe4Ie+6xFT+wquLICDb9Uq9RsZzp+BbDc62WVjMLxUJiTHpnNp0SY4wpBcwvioee6g
+ wMGb3pb2F26CKQkcu0qXaUfp/fknLMOQvUGKHHdH6a8NulvyG1mLSgZrpXoxNqmTRYWaC8rMV1FdWDTDJ4xAkt4klhrWTEeBKENCUEr2v2tYjIEYsmY4jec2
+ woG3FwVqC+0rg4YDIbwixpsloKp+isaxjn5ZXG297xMCVRpoJq6PS1MZFaE4ANVj/epgAWZIoRCUX0odkioWNJciMD7TuA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit "modpost: do not set ->preloaded for symbols from
-Module.symvers", the modpost always warns about symbols exported
-multiple times.
+On 11/6/19 10:50 AM, Wolfram Sang wrote:
+> Move from the deprecated i2c_new_probed_device() to the new
+> i2c_new_scanned_device(). Make use of the new ERRPTR if suitable.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Generally, I believe it is a good thing to show a warning when the
-same symbol name is exported twice. This avoids the accidental symbol
-conflict.
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-However, in some cases, we build an external module to provide a
-different version/variant of the in-kernel module, overriding the
-same set of exported symbols.
+Regards,
 
-At least, there is one use-case in the upstream code;
-tools/testing/nvdimm/libnvdimm.ko replaces drivers/nvdimm/libnvdimm.ko
-in order to link it against mocked version of core kernel symbols.
+	Hans
 
-Now, this emits a lots of 'exported twice' warnings:
-
-  https://lkml.org/lkml/2019/10/31/627
-
-To suppress those, add a new option KBUILD_DUPLICATED_EXPORTS_NO_WARN.
-
-If you intentionally override the existing symbols, you can pass it
-from the command line:
-
-  make M=tools/testing/nvdimm KBUILD_DUPLICATED_EXPORTS_NO_WARN=1
-
-Or, more conveniently, you can add it to the module Makefile, so
-you can still do:
-
-  make M=tools/testing/nvdimm
-
-without sprinkling the warnings.
-
-Reported-by: Jeff Moyer <jmoyer@redhat.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Jeff Moyer,
-Dan Williams,
-
-Please check if this patch solves the nvdimm build issue.
-
-
- Documentation/kbuild/kbuild.rst | 7 +++++++
- scripts/Makefile.modpost        | 1 +
- scripts/mod/modpost.c           | 9 +++++++--
- tools/testing/nvdimm/Kbuild     | 4 ++++
- 4 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
-index f1e5dce86af7..8ff0935f9e7f 100644
---- a/Documentation/kbuild/kbuild.rst
-+++ b/Documentation/kbuild/kbuild.rst
-@@ -223,6 +223,13 @@ KBUILD_SIGN_PIN
- This variable allows a passphrase or PIN to be passed to the sign-file
- utility when signing kernel modules, if the private key requires such.
- 
-+KBUILD_DUPLICATED_EXPORTS_NO_WARN
-+---------------------------------
-+This variable can be set to suppress warnings about symbols exported
-+multiple times. This is useful when you are building an external module
-+to provide a different version of an in-tree module.
-+
-+
- KBUILD_MODPOST_WARN
- -------------------
- KBUILD_MODPOST_WARN can be set to avoid errors in case of undefined
-diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
-index 8359f8af5ee6..52e50ac45688 100644
---- a/scripts/Makefile.modpost
-+++ b/scripts/Makefile.modpost
-@@ -53,6 +53,7 @@ MODPOST = scripts/mod/modpost						\
- 	$(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS)))	\
- 	$(if $(KBUILD_EXTMOD),-o $(modulesymfile))			\
- 	$(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)			\
-+	$(if $(KBUILD_DUPLICATED_EXPORTS_NO_WARN),-W)			\
- 	$(if $(KBUILD_MODPOST_WARN),-w)
- 
- ifdef MODPOST_VMLINUX
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index f70b924f379f..858568f4edb4 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -33,6 +33,8 @@ static int external_module = 0;
- static int vmlinux_section_warnings = 1;
- /* Only warn about unresolved symbols */
- static int warn_unresolved = 0;
-+/* Warn about symbols exported multiple times */
-+static int warn_duplicated_exports = 1;
- /* How a symbol is exported */
- static int sec_mismatch_count = 0;
- static int sec_mismatch_fatal = 0;
-@@ -382,7 +384,7 @@ static struct symbol *sym_add_exported(const char *name, struct module *mod,
- 	if (!s) {
- 		s = new_symbol(name, mod, export);
- 	} else {
--		if (!s->preloaded) {
-+		if (warn_duplicated_exports && !s->preloaded) {
- 			warn("%s: '%s' exported twice. Previous export was in %s%s\n",
- 			     mod->name, name, s->module->name,
- 			     is_vmlinux(s->module->name) ? "" : ".ko");
-@@ -2559,7 +2561,7 @@ int main(int argc, char **argv)
- 	struct ext_sym_list *extsym_iter;
- 	struct ext_sym_list *extsym_start = NULL;
- 
--	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awEd:")) != -1) {
-+	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awWEd:")) != -1) {
- 		switch (opt) {
- 		case 'i':
- 			kernel_read = optarg;
-@@ -2594,6 +2596,9 @@ int main(int argc, char **argv)
- 		case 'w':
- 			warn_unresolved = 1;
- 			break;
-+		case 'W':
-+			warn_duplicated_exports = 0;
-+			break;
- 		case 'E':
- 			sec_mismatch_fatal = 1;
- 			break;
-diff --git a/tools/testing/nvdimm/Kbuild b/tools/testing/nvdimm/Kbuild
-index c4a9196d794c..c848374f3b0b 100644
---- a/tools/testing/nvdimm/Kbuild
-+++ b/tools/testing/nvdimm/Kbuild
-@@ -93,4 +93,8 @@ libnvdimm-y += dimm_devs.o
- libnvdimm-y += libnvdimm_test.o
- libnvdimm-y += config_check.o
- 
-+# This intentionally overrides the original libnvdimm.ko
-+# Suppress 'exported twice' warnings from the modpost.
-+KBUILD_DUPLICATED_EXPORTS_NO_WARN := 1
-+
- obj-m += test/
--- 
-2.17.1
+> ---
+> 
+> Build tested only. RFC, please comment and/or ack, but don't apply yet.
+> 
+>  drivers/media/v4l2-core/v4l2-i2c.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-i2c.c b/drivers/media/v4l2-core/v4l2-i2c.c
+> index 5bf99e7c0c09..25ddda3b7ce6 100644
+> --- a/drivers/media/v4l2-core/v4l2-i2c.c
+> +++ b/drivers/media/v4l2-core/v4l2-i2c.c
+> @@ -74,10 +74,10 @@ struct v4l2_subdev
+>  
+>  	/* Create the i2c client */
+>  	if (info->addr == 0 && probe_addrs)
+> -		client = i2c_new_probed_device(adapter, info, probe_addrs,
+> -					       NULL);
+> +		client = i2c_new_scanned_device(adapter, info, probe_addrs,
+> +					        NULL);
+>  	else
+> -		client = i2c_new_device(adapter, info);
+> +		client = i2c_new_client_device(adapter, info);
+>  
+>  	/*
+>  	 * Note: by loading the module first we are certain that c->driver
+> @@ -88,7 +88,7 @@ struct v4l2_subdev
+>  	 * want to use the i2c device, so explicitly loading the module
+>  	 * is the best alternative.
+>  	 */
+> -	if (!client || !client->dev.driver)
+> +	if (IS_ERR(client) || !client->dev.driver)
+>  		goto error;
+>  
+>  	/* Lock the module so we can safely get the v4l2_subdev pointer */
+> @@ -110,7 +110,7 @@ struct v4l2_subdev
+>  	 * If we have a client but no subdev, then something went wrong and
+>  	 * we must unregister the client.
+>  	 */
+> -	if (client && !sd)
+> +	if (!IS_ERR(client) && !sd)
+>  		i2c_unregister_device(client);
+>  	return sd;
+>  }
+> 
 
