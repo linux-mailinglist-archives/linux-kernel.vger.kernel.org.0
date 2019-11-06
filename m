@@ -2,132 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6CAF0E66
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40800F0E7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfKFFbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 00:31:19 -0500
-Received: from mail-eopbgr30067.outbound.protection.outlook.com ([40.107.3.67]:7806
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725616AbfKFFbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 00:31:19 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QG02v5zmFF6aHwB6YuDJlFVyym3QH5DNIls0KRZjBeDR7rnyMRbG9tZzh7DrEJo2EUR2eEf9vFkUO6FbHVaQYDUGsABa8gd8Nt8YSxADBflVwCeSQzVOOpRzvHlXv+TVgLLzBfRmNz9VRUxUQtR4ho9t2cRyB9lMSkTN7epHiXQb0J1TP/EI/RhftvGtzbM9vvZv2LaxWr3V5Ksw8lvBVDGro7QCry2XCxJtw5QAhoQZJSWMC19ozqhrGFvLP4BFCuAy3slqpke2lgc9tH4EP5LOVW7jmO4LVn4jOzqpAkgRko4Q+KuI9u6POwE10r0/rjD0SO9l3UVPOsfU4wGwmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZILj+/RNXyvglyWPuYnjTqv8mXOrESz3yqO60rK9YU=;
- b=jb3VAizod0Yjrge6yjYgPlxYEkCzI3Wed6oA4d0dOhOI4Wa7/Kytx3jrY2QbdZaxACa34VjQ8hrqR3kRCjptunhE/a5OJCnE2W5m+yPfJk4qYOioa6qzfJDcDxP7M/5M9/YrXR/daSqkysZKCyjUpDy/EFP7quDg1hz7KrXEflPORDHwFVNvJytMRUbY0JhqBytBF7lAOGk3BTSLMnXZKsSK5v3e0XSfcyFUPrta5WjlJ1ula81lPcA4ojoAYOU7Uk1AFYotirEgenoq40ZNFSUY92uo7R7+CC81BEuUFJr6+3bOyQLQo/NdIUuPuRnG9A27tafZLLrUs380xC9flw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZILj+/RNXyvglyWPuYnjTqv8mXOrESz3yqO60rK9YU=;
- b=OPeesbwvxlE5xhrpV0qVPvJuz+HjzFsnGAOKx6gtN8Y9eqtt2p2ha7/2ULPJvh/I11jl05MzcR8iBoqdF2Udpiw9Zl2BgGx39piYLKAdy0mgEKxbga5DGNQYEcEcvpp8tng5XmTMVzgnvlu8AkH/JPW29B8/gucvwj3C1qYsswA=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5009.eurprd04.prod.outlook.com (20.176.215.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Wed, 6 Nov 2019 05:31:15 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2408.024; Wed, 6 Nov 2019
- 05:31:15 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Topic: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Index: AQHVlGNoepC2TDBj7kaCYRyt+h3yDw==
-Date:   Wed, 6 Nov 2019 05:31:15 +0000
-Message-ID: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR04CA0003.apcprd04.prod.outlook.com
- (2603:1096:203:36::15) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0dd6f3c3-ebe6-4980-6f4c-08d7627a8a99
-x-ms-traffictypediagnostic: AM0PR04MB5009:|AM0PR04MB5009:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB50099577F705688A5CDF72D288790@AM0PR04MB5009.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(136003)(366004)(396003)(199004)(189003)(81156014)(81166006)(99286004)(486006)(476003)(14454004)(6486002)(25786009)(186003)(44832011)(316002)(52116002)(102836004)(6506007)(386003)(8676002)(6116002)(26005)(8936002)(50226002)(7736002)(4744005)(5660300002)(54906003)(71200400001)(4326008)(71190400001)(86362001)(66946007)(305945005)(2616005)(66446008)(3846002)(110136005)(14444005)(256004)(2906002)(478600001)(6436002)(2501003)(66066001)(36756003)(2201001)(6636002)(64756008)(6512007)(66556008)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5009;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Utzgprxqyh2MO6z6fhlqWnzg8SI3nRTHcw8b24BXaEnr3Y9/xi6V0Dq5iYFcfNpkwpae7nk7mAF2r7jM87xEfn2ok4ETxLSH7k+U52jb5Bgo6WujYxSL5F7ib4xEDs+a4Vn+aIYNcBLREF0/LqScEVbXMoDEGUnM/XkSfjs4HPkEF0k3+iwKsX+lVdIiFgLYliF0yDiTES8rvQ2086DyEtRigzj0PyYOjCtIJ5ElGPyKXcoXoU7Eztkc5pB5k0a68jN9sL4ZSlqpgb+dFN7YWwE97226S1iQN5+Pzjkaoxd4kUxioEQpBmp5Hccdhkoyp8U35zFueA7Zg7gMwcBIVO1wj2AcuwTUzcXJJff9Ip/qdgGWJ/wPvZtvpaKs8Y4JEgXUV4t0QghFwEtEnl9otnj4GfuLmR4PHemxxEg557s2qJPMvZTLgkzMDyXCs6YH
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1730620AbfKFFlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 00:41:00 -0500
+Received: from vm1.sequanux.org ([188.165.36.56]:43489 "EHLO vm1.sequanux.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfKFFk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 00:40:59 -0500
+X-Greylist: delayed 370 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 00:40:59 EST
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by vm1.sequanux.org (Postfix) with ESMTP id 29B321085FB;
+        Wed,  6 Nov 2019 06:34:48 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
+Received: from vm1.sequanux.org ([127.0.0.1])
+        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8LSr8mww9hPp; Wed,  6 Nov 2019 06:34:46 +0100 (CET)
+Received: from localhost (softwrestling.org [188.165.144.248])
+        by vm1.sequanux.org (Postfix) with ESMTPSA id 219CB108084;
+        Wed,  6 Nov 2019 06:34:46 +0100 (CET)
+Date:   Wed, 6 Nov 2019 06:34:46 +0100
+From:   Simon Guinot <simon.guinot@sequanux.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/62] gpio: gpio-f7188x: Use new GPIO_LINE_DIRECTION
+Message-ID: <20191106053446.GD5290@kw.sim.vm.gnt>
+References: <cover.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
+ <0a1fe4365ef599adde42396f0bb735c8623f679c.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd6f3c3-ebe6-4980-6f4c-08d7627a8a99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 05:31:15.0905
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9uRsrAfBUQ5n2bsdJ2N81KoqLe1Rj4Cddumn6zHnp9kR/B+a1MHvCOZkUIrztTR/ke53MUT2RXPXNV5r7VRG3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5009
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
+Content-Disposition: inline
+In-Reply-To: <0a1fe4365ef599adde42396f0bb735c8623f679c.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
 
-The usage of readl_poll_timeout is wrong, the cond should be
-"val & LOCK_STATUS" not "val & LOCK_TIMEOUT_US".
+--d01dLTUuW90fS44H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+On Tue, Nov 05, 2019 at 12:16:03PM +0200, Matti Vaittinen wrote:
+> It's hard for occasional GPIO code reader/writer to know if values 0/1
+> equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
+> GPIO_LINE_DIRECTION_OUT to help them out.
+>=20
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/gpio/gpio-f7188x.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+> index fdc639f856f1..cadd02993539 100644
+> --- a/drivers/gpio/gpio-f7188x.c
+> +++ b/drivers/gpio/gpio-f7188x.c
+> @@ -250,7 +250,10 @@ static int f7188x_gpio_get_direction(struct gpio_chi=
+p *chip, unsigned offset)
+> =20
+>  	superio_exit(sio->addr);
+> =20
+> -	return !(dir & 1 << offset);
+> +	if (dir & 1 << offset)
+> +		return GPIO_LINE_DIRECTION_OUT;
+> +
+> +	return GPIO_LINE_DIRECTION_IN
 
-V1:
- Hi Shawn,
-   This patch is made based on 5.4-rc6, not your for-next branch,
-   not sure whether this patch could catch 5.4 release.
+Hi Matti,
 
- drivers/clk/imx/clk-pll14xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am probably missing something but I can't find GPIO_LINE_DIRECTION_IN
+and GPIO_LINE_DIRECTION_OUT defined anywhere.
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 7a815ec76aa5..d43b4a3c0de8 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -153,7 +153,7 @@ static int clk_pll14xx_wait_lock(struct clk_pll14xx *pl=
-l)
- {
- 	u32 val;
-=20
--	return readl_poll_timeout(pll->base, val, val & LOCK_TIMEOUT_US, 0,
-+	return readl_poll_timeout(pll->base, val, val & LOCK_STATUS, 0,
- 			LOCK_TIMEOUT_US);
- }
-=20
---=20
-2.16.4
+Besides I am an occasional code reader/writer and I find the original
+code easy to understand.
 
+Simon
+
+--d01dLTUuW90fS44H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl3CW3UACgkQzyg/RDPm
+szoNOA//bBFFObRst51hWETEA6zUf1ZURgI4sqYsn9hBwSFGIvvsEDQs2VWa/6Vu
+zU60fN3VUhBeOW8RewOxFvzj3gtBzINUU5FADZZ6jAK+JT4gj3AChB/qlc+L3QZk
+bE1huTQHsMbivNE/7bAkHowfQfKL5t5ztWYCNTs4YMr7/Jq8n6JNLYgta2Yx6J2H
+6WBb2rd1EyMbnfqfohc3GjaIGsF9ptnomtX5yTsq41UfanaECNik8rU5boDvLNB4
+m6EPG0MAqUiGVKo8RcelnxoEn+67HNIVxl50hpgPoX0Cp3wsCM4ve4l7Tk2YyF+/
+O7ZEw8ho54ShvlXbbs0oAFpo5OlRMiLxxK3ekLDwpOUIJ0vamubwXhvtlPRem96l
+eTnWAzMi8WgXoHQTqtwh+WipDKoyEuKzPpIqGt2wbD9s4eWjovtczP/gtEMnMECH
+LVwO4N+pSd1QSjx65Goa9MrbeAtpEZNe/YknasoGHQm/Y4Rxzlcl5gBKFKUHtt3Y
+K/cPOQNpJoFyRK9oxZd6C+cmjCbjCGzohft/deq1DemNeTrRJPzmGHQpkCh8iRYf
+Cb7HuKyWc5aCtNuodWRE55xoCN1SlA1L8X7r4MdNKgcG/WY6d2ZHLfNaRD6klJVT
+asP8NhSxb9PlogAfx8FfxdVdU1rfMtGD+/6lKozXrvyH2RMB4n8=
+=uYre
+-----END PGP SIGNATURE-----
+
+--d01dLTUuW90fS44H--
