@@ -2,67 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7ACF10C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D889EF10C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:08:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731287AbfKFIGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:06:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36194 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729896AbfKFIGL (ORCPT
+        id S1730223AbfKFIIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:08:04 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:21663 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729734AbfKFIIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:06:11 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c22so2213883wmd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 00:06:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=xEd17N/iM3aeWfoqUbdMYKooGfg6r+45R3Loxxm4otM=;
-        b=JuOp9KJ59pTCMeOacvxwHWp7aCkD7w8zs/67TY8J2lmZL8nVsoYdC/c1/U5Cv1G6Hu
-         r7KeU4PRi273mQBHKYZw7DnHTYw0Bfw5DjEJXoKlDYFt/6k/6krbnkSexLO+cNE5g/z9
-         Pdx3AVfpoRd5NlnH6k8EBu31oCS4shYXXTlvyrHyk1ouSb1/7UYtgt1i6QHwdsW2tQ+2
-         O37BSz0Dh9i0t5RqyLLMqg1AkktfEogXN5R5ycUw+pnJnbbbrc+OjaB1BIasyCrXfFLw
-         AjEWJqIY7Dfiv+nXn+8oCqdLbC7SUC1/xwNad7EoZleuk+hbXuCMgE8t/tlicPpwhmS1
-         0A/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=xEd17N/iM3aeWfoqUbdMYKooGfg6r+45R3Loxxm4otM=;
-        b=MjUgN3Q7uyHsIaQEDeFUj9vHkzVpagSCAVOloecQLcafMweUPuzkVDqsKR2YrV2u9m
-         Ng9D/EmNM17ZApHBfkpWymEsZbP3F9+moKEljavCMNrZ3ljz9+re7VecA/6eWzhkvewA
-         Gz99V14WgUoyLzqVsxZ3UCgl20AwbGC4L7+an4OvymqIZJ5o/jlyXuD2z3BlAqS8Ze1v
-         2FG+W+H3TDpP9QnG2WXIFTbFcS59snpqRFM2p1xykWadprPpdd7H6AYtR49CxZ+iKry8
-         mPkFwtenfY4RM/TosUOI2el04f9LIBayQxgN3L7gvyHyQ39z4yjWfZ0YWUxc51s+aseZ
-         yyKg==
-X-Gm-Message-State: APjAAAW+BHG7M4MzYtwLAIfJJbBhGH+toOLZ37SLgF05clTxLf3woQ83
-        p6GudlAwoezfBRUmuf079lgHVpPSsPnWvC3DuYY=
-X-Google-Smtp-Source: APXvYqyE3akUhjT8nEiRtMV3QJuFVg3cMk4cMAOZrgvdD90JwZIoZbSChdxU0TMZjOXAy1lXdQDJdsRVfUekOcjOARM=
-X-Received: by 2002:a7b:c392:: with SMTP id s18mr1078068wmj.61.1573027569351;
- Wed, 06 Nov 2019 00:06:09 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:adf:cf06:0:0:0:0:0 with HTTP; Wed, 6 Nov 2019 00:06:08 -0800 (PST)
-From:   Sayid Amira <sayidamira44@gmail.com>
-Date:   Wed, 6 Nov 2019 08:06:08 +0000
-X-Google-Sender-Auth: kAu7kWIsRU0RmPnnWGmD9HAjrhA
-Message-ID: <CAAiAw2GbSSZvSs3UaA2Yph3tks9k87G5Y6QCKkT+dZ4G2KU=uQ@mail.gmail.com>
-Subject: Dear
-To:     undisclosed-recipients:;
+        Wed, 6 Nov 2019 03:08:04 -0500
+X-UUID: 8ca62760f9b54534a57f712a1ec937ab-20191106
+X-UUID: 8ca62760f9b54534a57f712a1ec937ab-20191106
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <chun-hung.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1091685658; Wed, 06 Nov 2019 16:07:54 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 6 Nov 2019 16:07:50 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 6 Nov 2019 16:07:50 +0800
+Message-ID: <1573027672.2646.1.camel@mtkswgap22>
+Subject: Re: [PATCH 3/3] [3/3] dt-bindings: mmc: mediatek: Add document for
+ mt6779
+From:   Chun-Hung Wu <chun-hung.wu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Pan Bian <bianpan2016@163.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 6 Nov 2019 16:07:52 +0800
+In-Reply-To: <20191106041708.GA26489@bogus>
+References: <1572590582-11056-1-git-send-email-chun-hung.wu@mediatek.com>
+         <1572590582-11056-3-git-send-email-chun-hung.wu@mediatek.com>
+         <20191106041708.GA26489@bogus>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
+Hi Rob,
 
-Greetings and how are you?
+  Thanks for the reply.
+We will prepare another patch set to remove these tags.
 
-I am an Orphan from Ivory Coast and I am in  Burkina Faso to locate a
-treasure kept by my late parents but at the moment I'm stranded in a
-mission house and need urgent help from you  till I can claim this
-treasure.
 
-Regards
+On Tue, 2019-11-05 at 22:17 -0600, Rob Herring wrote:
+> On Fri, Nov 01, 2019 at 02:43:02PM +0800, Chun-Hung Wu wrote:
+> > Add compatible node for mt6779 mmc
+> > 
+> > Change-Id: Id36a136a75e892c9360ec95c7f52db06f5b308a4
+> > CR-Id:
+> > Feature:
+> 
+> Remove these tags.
+> 
+> > Signed-off-by: Chun-Hung Wu <chun-hung.wu@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/mmc/mtk-sd.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> > index 8a532f4..0c9cf6a 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> > +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+> > @@ -12,6 +12,7 @@ Required properties:
+> >  	"mediatek,mt8173-mmc": for mmc host ip compatible with mt8173
+> >  	"mediatek,mt8183-mmc": for mmc host ip compatible with mt8183
+> >  	"mediatek,mt8516-mmc": for mmc host ip compatible with mt8516
+> > +	"mediatek,mt6779-mmc": for mmc host ip compatible with mt6779
+> >  	"mediatek,mt2701-mmc": for mmc host ip compatible with mt2701
+> >  	"mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
+> >  	"mediatek,mt7622-mmc": for MT7622 SoC
+> > -- 
+> > 1.9.1
+> > 
 
-Amira
+
