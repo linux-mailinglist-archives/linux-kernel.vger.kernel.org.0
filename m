@@ -2,75 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF78F1DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 707AEF1DD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:56:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfKFSx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:53:28 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36950 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbfKFSx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:53:27 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so18865747lfp.4;
-        Wed, 06 Nov 2019 10:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gLznzpSficyw+cau4sOkgTHjwC6PDJjCQ2rc4dgYYf0=;
-        b=Uql4rKOH7YgCusk36G4GBA9j5aQqXDA2dil4Eort1qMg+nyJf4fU4XuWqpb26XppgD
-         0JzxBjE6pTIWU0ASmNkl5HdB5M08OcwuV+qobzVEAKXw4M0GTPjSv2yY6uBulF5Nu0t5
-         IZxST+zmVFc6ZU2GiaC7+Xu3LGWsp4B0JRbrirVN2De7cusI0tfXmrGX8UYdtJpWenll
-         7+VdkPu7piECCLx7Qi2XyPz5oHMjBODP5SyEwD8SlUbOCMlfU58wfE8tp3sKRHrxhPDV
-         9mxCQ+K7x0bWjpT9Ak7ZNIe/debUSmAjocY4ffMoF61qUETgyq6Bw6NWIYis01Qa2Nan
-         1cIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gLznzpSficyw+cau4sOkgTHjwC6PDJjCQ2rc4dgYYf0=;
-        b=GJGuzRnkKHjmSv7w0+qDIiEB3dXMN7v+0r0R7P9TOjZYPDNeXX8XqC+mzAvQP30FuJ
-         /V2khfC8W59bvqL8xFHYGEBSenV+mTZ/aMf0nkhs97ZOR3H9WHCwp/m6c+L+7idlzeXp
-         1ZSL3HppiCFRqkqD76nnY7KLMA7OSsjBiQ0Cn5lviA/pfG/eU/UmsfT/wF+AOv/8+iAZ
-         52DyIk1dzdReoqcdDeSP8nsuF+YiA6rBzWpqiNDJWrmeywIdLqEuB3o3vHPVH2lyRcX+
-         l4SKJjcVttdFiRDsB8mDCndxPi62aJWU6LES8UmUT5ZSQtC4V4G7ToY6/0rKA7Jw3vhI
-         U6Ww==
-X-Gm-Message-State: APjAAAWyhhF7CqA3hq5H0skDJr4TMCT6A4Dmgn8gvp85lIQlSp9p9Tfe
-        Wh5hx+7TsogJm8emxBuxnwAQj+v9xjN18r2l83o=
-X-Google-Smtp-Source: APXvYqwhALcE0Us/iv8boWdM3KnNNSApk/MhZ/BEZTaZYHvpzh8pEJOdNvMu28YyHDCFyNdTPBi/DufunSiut7FMiFo=
-X-Received: by 2002:ac2:5097:: with SMTP id f23mr25347199lfm.90.1573066403944;
- Wed, 06 Nov 2019 10:53:23 -0800 (PST)
+        id S1731889AbfKFS40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:56:26 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5739 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727208AbfKFS4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 13:56:25 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B9BAA58BFBDC6172BC23;
+        Thu,  7 Nov 2019 02:56:23 +0800 (CST)
+Received: from A190218597.china.huawei.com (10.202.226.45) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 7 Nov 2019 02:56:14 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>, <maz@kernel.org>
+CC:     <edumazet@google.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <lipeng321@huawei.com>,
+        <mehta.salil@opnsrc.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH net] net: hns: Fix the stray netpoll locks causing deadlock in NAPI path
+Date:   Wed, 6 Nov 2019 18:54:05 +0000
+Message-ID: <20191106185405.23112-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-References: <20191106183716.29170-1-dwlsalmeida@gmail.com>
-In-Reply-To: <20191106183716.29170-1-dwlsalmeida@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 6 Nov 2019 15:53:14 -0300
-Message-ID: <CAOMZO5Dm6d5wO+uFdAzcOHt-S_LWpH1dHH=Q-+wGaCiknU=zoQ@mail.gmail.com>
-Subject: Re: [PATCH] media: dvb_dummy_fe: place EXPORT_SYMBOL below
- corresponding function
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rfontana@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        allison@lohutok.net, Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+This patch fixes the problem of the spin locks, originally
+meant for the netpoll path of hns driver, causing deadlock in
+the normal NAPI poll path. The issue happened due presence of
+the stray leftover spin lock code related to the netpoll,
+whose support was earlier removed from the HNS[1], got activated
+due to enabling of NET_POLL_CONTROLLER switch.
 
-On Wed, Nov 6, 2019 at 3:51 PM Daniel W. S. Almeida
-<dwlsalmeida@gmail.com> wrote:
->
-> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Earlier background:
+The netpoll handling code originally had this bug(as identified
+by Marc Zyngier[2]) of wrong spin lock API being used which did
+not disable the interrupts and hence could cause locking issues.
+i.e. if the lock were first acquired in context to thread like
+'ip' util and this lock if ever got later acquired again in
+context to the interrupt context like TX/RX (Interrupts could
+always pre-empt the lock holding task and acquire the lock again)
+and hence could cause deadlock.
 
-Please write a commit log.
+Proposed Solution:
+1. If the netpoll was enabled in the HNS driver, which is not
+   right now, we could have simply used spin_[un]lock_irqsave()
+2. But as netpoll is disabled, therefore, it is best to get rid
+   of the existing locks and stray code for now. This should
+   solve the problem reported by Marc.
 
-> Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+@Marc,
+Could you please test this patch and confirm if the problem is
+fixed at your end?
+
+Many Thanks
+
+[1] https://git.kernel.org/torvalds/c/4bd2c03be7
+[2] https://patchwork.ozlabs.org/patch/1189139/
+
+Fixes: 4bd2c03be707 ("net: hns: remove ndo_poll_controller")
+Cc: lipeng <lipeng321@huawei.com>
+Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: David S. Miller <davem@davemloft.net>
+Reported-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 22 +------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index a48396dd4ebb..14ab20491fd0 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -943,15 +943,6 @@ static int is_valid_clean_head(struct hnae_ring *ring, int h)
+ 	return u > c ? (h > c && h <= u) : (h > c || h <= u);
+ }
+ 
+-/* netif_tx_lock will turn down the performance, set only when necessary */
+-#ifdef CONFIG_NET_POLL_CONTROLLER
+-#define NETIF_TX_LOCK(ring) spin_lock(&(ring)->lock)
+-#define NETIF_TX_UNLOCK(ring) spin_unlock(&(ring)->lock)
+-#else
+-#define NETIF_TX_LOCK(ring)
+-#define NETIF_TX_UNLOCK(ring)
+-#endif
+-
+ /* reclaim all desc in one budget
+  * return error or number of desc left
+  */
+@@ -965,21 +956,16 @@ static int hns_nic_tx_poll_one(struct hns_nic_ring_data *ring_data,
+ 	int head;
+ 	int bytes, pkts;
+ 
+-	NETIF_TX_LOCK(ring);
+-
+ 	head = readl_relaxed(ring->io_base + RCB_REG_HEAD);
+ 	rmb(); /* make sure head is ready before touch any data */
+ 
+-	if (is_ring_empty(ring) || head == ring->next_to_clean) {
+-		NETIF_TX_UNLOCK(ring);
++	if (is_ring_empty(ring) || head == ring->next_to_clean)
+ 		return 0; /* no data to poll */
+-	}
+ 
+ 	if (!is_valid_clean_head(ring, head)) {
+ 		netdev_err(ndev, "wrong head (%d, %d-%d)\n", head,
+ 			   ring->next_to_use, ring->next_to_clean);
+ 		ring->stats.io_err_cnt++;
+-		NETIF_TX_UNLOCK(ring);
+ 		return -EIO;
+ 	}
+ 
+@@ -994,8 +980,6 @@ static int hns_nic_tx_poll_one(struct hns_nic_ring_data *ring_data,
+ 	ring->stats.tx_pkts += pkts;
+ 	ring->stats.tx_bytes += bytes;
+ 
+-	NETIF_TX_UNLOCK(ring);
+-
+ 	dev_queue = netdev_get_tx_queue(ndev, ring_data->queue_index);
+ 	netdev_tx_completed_queue(dev_queue, pkts, bytes);
+ 
+@@ -1055,16 +1039,12 @@ static void hns_nic_tx_clr_all_bufs(struct hns_nic_ring_data *ring_data)
+ 	int head;
+ 	int bytes, pkts;
+ 
+-	NETIF_TX_LOCK(ring);
+-
+ 	head = ring->next_to_use; /* ntu :soft setted ring position*/
+ 	bytes = 0;
+ 	pkts = 0;
+ 	while (head != ring->next_to_clean)
+ 		hns_nic_reclaim_one_desc(ring, &bytes, &pkts);
+ 
+-	NETIF_TX_UNLOCK(ring);
+-
+ 	dev_queue = netdev_get_tx_queue(ndev, ring_data->queue_index);
+ 	netdev_tx_reset_queue(dev_queue);
+ }
+-- 
+2.17.1
+
+
