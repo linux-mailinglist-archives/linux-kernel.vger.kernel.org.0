@@ -2,130 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA61F1FAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D264CF1FD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732119AbfKFUXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 15:23:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41568 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbfKFUXz (ORCPT
+        id S1732664AbfKFUYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 15:24:30 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:53120 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732208AbfKFUYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 15:23:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id l3so17900085pgr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 12:23:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y3ErlOr8zz0pSn0wPZ07CUTX0RGvOBpRtPLCuFwaNrU=;
-        b=YC4Z2dHC4F15YVKn4yT41EJQgMIWuL7hjQk/OTXa3g0MxmASCu11F86facfUqg8IVP
-         H74cF+N1vvF5qMKFjmYP/NyKznq/EYetZgGS6zVJbgY1dq/+fq8p9BCFpLgDY21xH6Fb
-         ZF/c657P0QvNsknVIoB/RiiAskAZw8n8Aq8cRFXGQTepkqAifg9k8nR5fdGYuGUgUx6+
-         4XvGXYfoPd0lD6/8+1TpiijrbwEPhh1HVGRAe18sBeWRhwhIdywCsQE6zJIAM+uGLl6o
-         yJo1tYhCreBBrUBwKunybHKS/ir9sY/sAXJ37HcoRlpzhHLnq321EmAL3WxZbE3Pe/n8
-         ENHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y3ErlOr8zz0pSn0wPZ07CUTX0RGvOBpRtPLCuFwaNrU=;
-        b=tYgmk6SRUEX399/i9l/IbeXBlSaHWBRRHVoXxhvQBzERmYzp1ORKMsNk/GbUpAV/Us
-         WxTaPr2UzDp8WT1vIk1jxgaAltRTc/5dhSpKSOlItwqALBQHtc/avROs2k+uIHslmSVq
-         8IxIVLANz0wzLzobSe7c7MGNjfMmKT51MkmEe5/oPiTmMnX05nomnvSwbUp+v1/zTIWz
-         WpHXjsQIZNNjdF2H0aYXTjd6/lmVkdpmQXHSjvb6ssLr/koUx5PTE1TZ607IlQ05taBx
-         lcmChVAMFrwJeCzDewbpwqnqD5hG9vyXkWDHpDkk179eNYPcO86FDhXGzPZpMqXnRE1Q
-         et2A==
-X-Gm-Message-State: APjAAAUeohnegzoB7/vy6ibSRf+DNYk4LnR2NLJ2dXBi+LuN3wksmxnX
-        I984OQrplTJrZiQFFyQ5oNUq5w==
-X-Google-Smtp-Source: APXvYqyYQ890RT5KorI4LSOMnM/qz6CZ76JmLNXzmgX+AVICrIQOgPg99MRUcCBfttjdwh5qqH78Sw==
-X-Received: by 2002:a65:47cd:: with SMTP id f13mr5023056pgs.356.1573071834146;
-        Wed, 06 Nov 2019 12:23:54 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p9sm27469818pfq.40.2019.11.06.12.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 12:23:53 -0800 (PST)
-Date:   Wed, 6 Nov 2019 12:23:51 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom: Fix the fixup of PCI_VENDOR_ID_QCOM
-Message-ID: <20191106202351.GE36595@minitux>
-References: <20191102002420.4091061-1-bjorn.andersson@linaro.org>
- <f1e89dcc-4d5f-cc1f-8036-dcb062645cb0@mm-sol.com>
+        Wed, 6 Nov 2019 15:24:05 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6KNswV047032;
+        Wed, 6 Nov 2019 14:23:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573071834;
+        bh=h17DwjMjACihpzGQQpzvviAQl9+USvbZ27dLSxqFdPs=;
+        h=From:To:CC:Subject:Date;
+        b=W1LAcRBrtCFpAhaaLQgLT4su0gm1EBaij3r6tRYP9yVxogPlimA23AVNA7h7I5YoX
+         YBq6VWF58nlFf4+CHgpGlACRk1ys+UtYyPPGq6wAZjgO72ALHbm/ROcvFn1KpKG79N
+         gVCAdnGFqpAUBzsn1OtIqlkpRCgKeDFYiDBgbuJM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA6KNsTR015435
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Nov 2019 14:23:54 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
+ 2019 14:23:39 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 6 Nov 2019 14:23:39 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6KNsir119124;
+        Wed, 6 Nov 2019 14:23:54 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v3 0/5] ARM: dts: dra7: add vpe nodes 
+Date:   Wed, 6 Nov 2019 14:26:17 -0600
+Message-ID: <20191106202622.2648-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1e89dcc-4d5f-cc1f-8036-dcb062645cb0@mm-sol.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04 Nov 05:00 PST 2019, Stanimir Varbanov wrote:
+This patch series adds the needed clkctrl and ty-sysc nodes for VPE module.
+We also document the VPE DT bindings.
 
-> Hi Bjorn,
-> 
-> Thanks for the fix!
-> 
-> On 11/2/19 2:24 AM, Bjorn Andersson wrote:
-> > There exists non-bridge PCIe devices with PCI_VENDOR_ID_QCOM, so limit
-> > the fixup to only affect the PCIe 2.0 (0x106) and PCIe 3.0 (0x107)
-> > bridges.
-> 
-> Are you sure that this will not break ops_1_0_0 (Qcom IP rev.: 1.0.0
-> Synopsys IP rev.: 4.11a) i.e. apq8084 ?
-> 
+Changes since v2:
+- Fix binding spdx license
+- Added Rob's ack 
 
-I am not, I've only tested this on db820c and db845c. Unfortunately I'm
-unable to find a branch with the necessary dts snippets to test it. Do
-you perhaps have a branch somewhere?
+Changes since v1:
+- Added a patch to update the compatible in the driver
+- Removed unnededed #cell #size properties
+- Updated the compatible in dtsi to match binding
+- Split off the clk code into its own patch
+- Added device specific prefix
+- Converted binding to dt schema
 
-Regards,
-Bjorn
+Benoit Parrot (5):
+  dt-bindings: media: ti-vpe: Document VPE driver
+  clk: ti: dra7: add vpe clkctrl data
+  ARM: dts: dra7: add vpe clkctrl node
+  ARM: dts: dra7: Add ti-sysc node for VPE
+  media: ti-vpe: vpe: fix compatible to match bindings
 
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 3 ++-
-> >  include/linux/pci_ids.h                | 2 ++
-> >  2 files changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 35f4980480bb..b91abf4d4905 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -1441,7 +1441,8 @@ static void qcom_fixup_class(struct pci_dev *dev)
-> >  {
-> >  	dev->class = PCI_CLASS_BRIDGE_PCI << 8;
-> >  }
-> > -DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, PCI_ANY_ID, qcom_fixup_class);
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, PCIE_DEVICE_ID_QCOM_PCIE20, qcom_fixup_class);
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, PCIE_DEVICE_ID_QCOM_PCIE30, qcom_fixup_class);
-> >  
-> >  static struct platform_driver qcom_pcie_driver = {
-> >  	.probe = qcom_pcie_probe,
-> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> > index 21a572469a4e..3d0724ee4d2f 100644
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -2413,6 +2413,8 @@
-> >  #define PCI_VENDOR_ID_LENOVO		0x17aa
-> >  
-> >  #define PCI_VENDOR_ID_QCOM		0x17cb
-> > +#define PCIE_DEVICE_ID_QCOM_PCIE20	0x0106
-> > +#define PCIE_DEVICE_ID_QCOM_PCIE30	0x0107
-> >  
-> >  #define PCI_VENDOR_ID_CDNS		0x17cd
-> >  
-> > 
-> 
-> -- 
-> regards,
-> Stan
+ .../devicetree/bindings/media/ti,vpe.yaml     | 64 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ arch/arm/boot/dts/dra7-l4.dtsi                | 28 +++++++-
+ arch/arm/boot/dts/dra7xx-clocks.dtsi          | 18 +++++-
+ drivers/clk/ti/clk-7xx.c                      |  6 ++
+ drivers/media/platform/ti-vpe/vpe.c           |  2 +-
+ include/dt-bindings/clock/dra7.h              | 10 +++
+ 7 files changed, 123 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/ti,vpe.yaml
+
+-- 
+2.17.1
+
