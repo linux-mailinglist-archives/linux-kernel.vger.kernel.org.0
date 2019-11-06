@@ -2,96 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 667E7F1033
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0FFAF103A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbfKFH2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:28:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43340 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729695AbfKFH2h (ORCPT
+        id S1731343AbfKFH3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:29:19 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37563 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729683AbfKFH3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:28:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y23so13939699ljh.10;
-        Tue, 05 Nov 2019 23:28:35 -0800 (PST)
+        Wed, 6 Nov 2019 02:29:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p24so11675305pfn.4;
+        Tue, 05 Nov 2019 23:29:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tL7GGhFlW5adac2tYoxQS+JgkXCcxkJj9jtno9t3BBU=;
-        b=f2xpuM4bvsGPnXJ9o/Ja6C1QUuH8QyWDCU0F9wwcy819GFZu6Ms/cQLD5f+PD8Y6vm
-         92hMxXUNBoq+QPgS35WGy/49yDzEO74YWLKUauvrrmEdaidWzid6KjTsQCDfUtewh+qd
-         tkcgAUGMmmwvfL2wsA/rm5mjdnA3pNgRkzMXgc5+DRI24BbvrgEaVTwRlzui0DhWHKWf
-         D9Ne0LcxuAA/UEMAo1Y46KbBq/aKuL10z6NhMaFseuhoKaRG+XC5g2Tg74VmVoPRiU3E
-         EwSt+Ro4I2bcUWgazmeyHIJkMYeJIfpq+cPMNk21yhOFUNi1yRZjFcRWs1TEhukrcWUV
-         092A==
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=CZXGdk9uFu2d7V8fak5kkfAh72DjR9+d3K1XsYdLz38=;
+        b=oGcJVGIO9nAfwZ9U9gs9P3ysGflXOrasF6qEiEhb6WpEy/r0O4b4WcXcLFHBABCJ7R
+         QUOnBvxM0K+ORQ5GEwdd68Rbvuyj5JajApo+O20Qk7aw+1UO9FWS+6+LzSfRmtqSLrdq
+         xvCHWuUmC+aEABOOmXkQjFb1AvmC1AZ+Bwjcb+sSQtS1GRTuQLMEbpuch+Wd9OB5B9nR
+         MEP3ZWqL3l8J6HAnG5DRusZtOBOPsYcpMAZ4FMs88UBSyQ00BeMuWCLwvOdu7PSHWk++
+         XtgmclZQxAc89Qmj6l/gKcwAVt76pZv/YKMWttV48g2arcZGneYo8SkwGAFkxvqsnIJf
+         JInQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tL7GGhFlW5adac2tYoxQS+JgkXCcxkJj9jtno9t3BBU=;
-        b=mR4aiv0oNjO2CzYH4AWB4LBZipkVdtsmgIVtMNYekEz4RvreHKF383gB8r1KXBQ98Q
-         eIENu/LeN0wkpO4set2I656l4uhP9MrCc6NMALx7cESc+yrBZeXwUvXkBaYcNrk70gms
-         2TKwgRz3sDZIoLNpydKoKTf+C/j1tpC3dALVoxCdECq9TnrlpcxetFjYx6lFy0TVvd0W
-         olDb4rcHFBuqzwnq7Mw/sDBJTyeenOg9RjvSG23BsGDw/uGIeodfSeV42MAOWe5gMKYD
-         4pDw34Oy1PcaTWBiM3euzwuwQdhqwuO0hUDJvyPDvkW55vYdQA1je37km6RUYPBo3yVT
-         8t0w==
-X-Gm-Message-State: APjAAAWun2RvvsIaMkFcWD/D0KtOtFpw8Rho9IaQ4dSepeVewDSDwugH
-        z7quKUm2P3Bm8I81uqKtoQU=
-X-Google-Smtp-Source: APXvYqz+tpZFUNF/7rn+2RUfKd3T7lYwDMCYKra/BDGVwKOBvZr394OswIiHuhQNw9nekIFFYsYBCw==
-X-Received: by 2002:a2e:91c7:: with SMTP id u7mr678244ljg.249.1573025314830;
-        Tue, 05 Nov 2019 23:28:34 -0800 (PST)
-Received: from uranus.localdomain ([5.18.102.224])
-        by smtp.gmail.com with ESMTPSA id w21sm1148384ljg.91.2019.11.05.23.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 23:28:33 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 4BF074612CA; Wed,  6 Nov 2019 10:28:33 +0300 (MSK)
-Date:   Wed, 6 Nov 2019 10:28:33 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Kees Cook <keescook@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=CZXGdk9uFu2d7V8fak5kkfAh72DjR9+d3K1XsYdLz38=;
+        b=Q4lV1Xswzj4qqatwb2ujC9gH4pkWhafFPB07X3XWK5E4TIvxWZf5BonxcBXijR+sP3
+         KO7Jawtje/RgwKtFxzHCm/bUSdoEMzjUIedL1L0PziiLoe9Y5lVRb1/B5zuqH+Tk5TuK
+         ZvtMULnCb9GaFGUQYrXl5lNqDotlk4LwdnAd4S912B99Y5r/RY8FwSw4p9sNHIrwjw4f
+         GtipFVCOqm4/Npf3aGZqvb5CK2Y8G7n2OCX2yDErC+b722KDa0HWxcEqz/tMdNWeWnmT
+         3qnKNu+i+IA5jBxR1KyKPpV5G9CoTYdTyP0kAqylNa1fhiIqJbFWFOC/hS4JNyiOyFu4
+         c90w==
+X-Gm-Message-State: APjAAAWRqo10a89mb3Iuje+7KWXGLTsaLpeuTAj21ItbCJq+/93JjN+v
+        YDUbWDkzAVXGLLdoxi44CR0=
+X-Google-Smtp-Source: APXvYqxBVXh1jmjAePr3S1g4NtkWBhTLAIl9OTaZqYXb6wMgMaiO3o4Y3mgSEbDLjoLjMA38tOeOfg==
+X-Received: by 2002:a62:90:: with SMTP id 138mr1557534pfa.209.1573025356612;
+        Tue, 05 Nov 2019 23:29:16 -0800 (PST)
+Received: from [192.168.1.101] (122-58-182-39-adsl.sparkbb.co.nz. [122.58.182.39])
+        by smtp.gmail.com with ESMTPSA id h13sm26505185pfr.98.2019.11.05.23.29.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 23:29:15 -0800 (PST)
+Subject: Re: [PATCH v3 05/13] m68k: mm: use pgtable-nopXd instead of
+ 4level-fixup
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>
+References: <1572850587-20314-1-git-send-email-rppt@kernel.org>
+ <1572850587-20314-6-git-send-email-rppt@kernel.org>
+ <CAMuHMdUG3V7uxzhbetw75vVeobeP0-bQySb3r=0V5XujUF123g@mail.gmail.com>
+ <20191104094748.GB23288@rapoport-lnx>
+ <CAMuHMdVHsNyLxhaxZcVdLvQ1PUnb=2_+ECPWVD0234V+qu+kOw@mail.gmail.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Helge Deller <deller@gmx.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Peter Rosin <peda@axentia.se>,
+        Richard Weinberger <richard@nod.at>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Creasey <sammy@sammy.net>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
-Subject: Re: linux-next: manual merge of the kspp tree with the tip tree
-Message-ID: <20191106072833.GC2560@uranus.lan>
-References: <20191106160331.016b2521@canb.auug.org.au>
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-um@lists.infradead.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <15fafca0-e4c4-1f46-4f19-9b2a177f7d6b@gmail.com>
+Date:   Wed, 6 Nov 2019 20:28:59 +1300
+User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
+ Icedove/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106160331.016b2521@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAMuHMdVHsNyLxhaxZcVdLvQ1PUnb=2_+ECPWVD0234V+qu+kOw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 04:03:31PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kspp tree got a conflict in:
-> 
->   arch/x86/kernel/fpu/xstate.c
-> 
-> between commit:
-> 
->   446e693ca30b ("x86/fpu: Use XFEATURE_FP/SSE enum values instead of hardcoded numbers")
-> 
-> from the tip tree and commit:
-> 
->   ec2f877856e0 ("treewide: Use sizeof_member() macro")
-> 
-> from the kspp tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi Geert,
 
-Since these macros are just the same the fix is fine. Thank you!
+Am 04.11.2019 um 22:53 schrieb Geert Uytterhoeven:
+>>> This indeed boots fine on ARAnyM, which emulates on 68040.
+>>> It would be good to have some boot testing on '020/030, too.
+>>
+>> To be honest, I have no idea how to to that :)
+>
+> Sure. This was more a request for the fellow m68k users.
+
+I heard you :-) Still doing more regression testing on the latest SCSI 
+fix, but I can schedule this next.
+
+Cheers,
+
+	Michael
+
+> But don't worry too much about it.  If it breaks '020/'030, we can fix
+> that later.
+>
+> Thanks!
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
