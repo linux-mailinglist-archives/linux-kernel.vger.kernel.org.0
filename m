@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2134F1309
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94542F130F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:59:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbfKFJ6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 04:58:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34012 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfKFJ6Q (ORCPT
+        id S1731154AbfKFJ7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 04:59:23 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:43996 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727628AbfKFJ7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 04:58:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pEOi60hxj9rUlpmt3AQ2uyxpDVk2yVdnMhMixbzTFeI=; b=HRYyyvVQsAS6nAl+fCluFegk1
-        jeYNquWSMkN9TaXSNwh6k8vUGgVyIpMek9be5kmVO4ugopk1YFD/5gHHx7mnrmnmHewqbMlrsloJa
-        WcwXroIxDJYrHs4dfHjc4Z7dBq1Yv/YT3gpCNQL7VGpZV4N8T6VzYL+i3WXk/+BXC9DXvR24lyAXL
-        L/wbBjPI/zGJrWhOrNVumMj5YTFL/t+Y8hkAVY1668Afwkn9D0GmZiBLeQwZJ3UvR3THH5540hPrV
-        cRtHfpjY9TE/VLcpAYt+yxNk8sTSQGNeZvxbOsDgvOBRCBa+MP06lFzaekAEi+G0aXc27Y3r1rHHH
-        Aqgx/lpvA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSI4q-0003dA-BR; Wed, 06 Nov 2019 09:58:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6FB11301A79;
-        Wed,  6 Nov 2019 10:57:06 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7142529ABB5FD; Wed,  6 Nov 2019 10:58:10 +0100 (CET)
-Date:   Wed, 6 Nov 2019 10:58:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "gklkml16@gmail.com" <gklkml16@gmail.com>
-Subject: Re: [PATCH 1/2] perf/core: Adding capability to disable PMUs event
- multiplexing
-Message-ID: <20191106095810.GK5671@hirez.programming.kicks-ass.net>
-References: <1573002091-9744-1-git-send-email-gkulkarni@marvell.com>
- <1573002091-9744-2-git-send-email-gkulkarni@marvell.com>
- <20191106094032.GV4131@hirez.programming.kicks-ass.net>
+        Wed, 6 Nov 2019 04:59:22 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xA69wXsP021265;
+        Wed, 6 Nov 2019 11:58:34 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id C3B4E60275; Wed,  6 Nov 2019 11:58:33 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        yuenn@google.com, venture@google.com, benjaminfair@google.com,
+        avifishman70@gmail.com, joel@jms.id.au
+Cc:     openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v4 0/3] reset: npcm: add NPCM reset driver support
+Date:   Wed,  6 Nov 2019 11:58:29 +0200
+Message-Id: <20191106095832.236766-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106094032.GV4131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 10:40:32AM +0100, Peter Zijlstra wrote:
-> On Wed, Nov 06, 2019 at 01:01:40AM +0000, Ganapatrao Prabhakerrao Kulkarni wrote:
-> > When PMUs are registered, perf core enables event multiplexing
-> > support by default. There is no provision for PMUs to disable
-> > event multiplexing, if PMUs want to disable due to unavoidable
-> > circumstances like hardware errata etc.
-> > 
-> > Adding PMU capability flag PERF_PMU_CAP_NO_MUX_EVENTS and support
-> > to allow PMUs to explicitly disable event multiplexing.
-> 
-> This doesn't make sense, multiplexing relies on nothing that normal
-> event scheduling doesn't also rely on.
-> 
-> Either you can schedule different sets of events, or you cannot.
+This patch set adds reset controller support 
+for the Nuvoton NPCM Baseboard Management Controller (BMC).
 
-More specifically, how is a reschedule due to rotation any different
-than a reschedule due to context switch?
+Apart of controlling all NPCM BMC reset module lines the NPCM reset driver
+support NPCM BMC software reset to restarting the NPCM BMC.
 
-Both cases we do a full reprogram of the PMU.
+Supporting NPCM USB-PHY reset as follow:
+
+NPCM BMC USB-PHY connected to two modules USB device (UDC) and USB host.
+
+If we will restart the USB-PHY at the UDC probe and later the 
+USB host probe will restart USB-PHY again it will disable the UDC
+and vice versa.
+
+The solution is to reset the USB-PHY at the reset probe stage before 
+the UDC and the USB host are initializing.
+
+NPCM reset driver tested on NPCM750 evaluation board.
+
+Addressed comments from:.
+ - Rob Herring : https://lkml.org/lkml/2019/11/5/918
+
+Changes since version 3:
+ - Modify to dt-bindings in the commit subject.
+ - Remove footer from all the sent patches.
+ 
+Changes since version 2:
+ - Remove unnecessary details in the dt-binding documentation.
+ - Modify device tree binding constants.
+ - initialize gcr_regmap parameter to NULL.
+ - Add of_xlate support.
+ - Enable NPCM reset driver by default.
+ - Remove unused header include.
+ - Using devm_platform_ioremap_resource instead of_address_to_resource 
+	and devm_ioremap_resource.
+ - Modify number of resets.
+ - Using devm_reset_controller_register instead reset_controller_register.
+ - Remove unnecessary probe print.
+  
+Changes since version 1:
+ - Check if gcr_regmap parameter initialized before using it.
+
+Tomer Maimon (3):
+  dt-bindings: reset: add NPCM reset controller documentation
+  dt-bindings: reset: Add binding constants for NPCM7xx reset controller
+  reset: npcm: add NPCM reset controller driver
+
+ .../bindings/reset/nuvoton,npcm-reset.txt     |  32 ++
+ drivers/reset/Kconfig                         |   7 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-npcm.c                    | 281 ++++++++++++++++++
+ .../dt-bindings/reset/nuvoton,npcm7xx-reset.h |  91 ++++++
+ 5 files changed, 412 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+ create mode 100644 drivers/reset/reset-npcm.c
+ create mode 100644 include/dt-bindings/reset/nuvoton,npcm7xx-reset.h
+
+-- 
+2.22.0
+
