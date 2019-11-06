@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89EDAF21A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F486F21AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:27:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732784AbfKFWZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:25:45 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37093 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfKFWZn (ORCPT
+        id S1727867AbfKFW1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:27:06 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39968 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbfKFW1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:25:43 -0500
-Received: by mail-lj1-f194.google.com with SMTP id l20so9329606lje.4
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 14:25:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=UvwdesBcQZqmQhktp11TUp8JihSez+TCYyNxul884p0B71qAwQ6MfcGxEuOL6lk6nN
-         vqRFKgeJkNJdJNoUgHme5S9HsHIXDwXIBq/wy/rwilSMjJKa+zcCi1kqbDaSnJcrJgGl
-         OwwKNTD1EjTIvMDTOqFgq0kuqVrnYnt65hX38Pt+bA3xzcppe507HBa1z+lrBqdH+uec
-         jFDUwEIuK8WsKxFO/BcgOfQoJL/jYbSWfZPdq5nKzWCPp7g9OemdVglo1KsG/aUVmh5Q
-         zy88fHlTULKPQv38YWTz0kwn3xPp14tGTbe/M4QaSneU44Y32TAw2tNhdRrNdIK4FjqD
-         r+XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
-        b=nUzA4q3oF4IW8psynOee/7jY6sveE1/x8htpsCKiKQlwiKxce524Pl6Y4V+ebM9eYv
-         scC8iebiOtLCdjJ+s8gaAAh7BKk+sDtGIdmCOpYmoXkLCyKeg185w9346BPt+Lr3ni8l
-         ESd89yT9o/mbnqJuCOQbNjcsVIjwYKzhzn2F4Zan4JzbHruip4ob3Z4J8BbVIyh74vvr
-         urbHzuHbFaFc6Cc7HSnYoCzuSWM9AzeVEIGrRyraV46Jd4PdWtYlk/SgL82dzpH82iNV
-         5mFeUjok0nVXLlmBUH6d/tC8eyf9ojtgSLgoa8u7psBeg+d0Wv22Noj2Chm+1b9RTd1P
-         zX8g==
-X-Gm-Message-State: APjAAAXEJiady6worx6emifSUXBRRhi0fFgSB0jbLeDu7uuAJiEFn6AP
-        pNeCxIMbtbA+qy6otIkr8noCo681OxdfoCGtGwQ=
-X-Google-Smtp-Source: APXvYqzHhOE1iCFKT8XBTc7J1oJ/Zw+5mdN448Lgv/MNKEBJdbddguHjpXHdfwpi8ofxclD5IhSABFdwBiENuOJpSaA=
-X-Received: by 2002:a2e:970e:: with SMTP id r14mr3499532lji.57.1573079140660;
- Wed, 06 Nov 2019 14:25:40 -0800 (PST)
+        Wed, 6 Nov 2019 17:27:05 -0500
+Received: from [IPv6:2a00:5f00:102:0:5c62:8eff:fefa:67] (unknown [IPv6:2a00:5f00:102:0:5c62:8eff:fefa:67])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: gtucker)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9EB7E28FF3E;
+        Wed,  6 Nov 2019 22:26:50 +0000 (GMT)
+Subject: Re: next/master boot bisection: next-20191106 on r8a7795-salvator-x
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        tomeu.vizoso@collabora.com, mgalka@collabora.com,
+        broonie@kernel.org, matthew.hart@linaro.org,
+        Scott Branden <scott.branden@broadcom.com>,
+        khilman@baylibre.com, enric.balletbo@collabora.com,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Scott Branden <sbranden@broadcom.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <5dc3460a.1c69fb81.bfae4.adf1@mx.google.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <e2ba3c23-4b85-f83b-0ba4-dc0db1b8dd0f@collabora.com>
+Date:   Wed, 6 Nov 2019 22:26:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Received: by 2002:a2e:b1c9:0:0:0:0:0 with HTTP; Wed, 6 Nov 2019 14:25:40 -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <brichardjohnson02@gmail.com>
-Date:   Wed, 6 Nov 2019 23:25:40 +0100
-Message-ID: <CAOZWaH8FKbN64UbmXGB_rt3CMOdKvhekxenioRFcbx3TVj4pWg@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5dc3460a.1c69fb81.bfae4.adf1@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day, dear
+On 06/11/2019 22:15, kernelci.org bot wrote:
+> +static const struct of_device_id bcm_iproc_gpio_of_match[] __initconst = {
+> +	{ .compatible = "brcm,iproc-gpio-cca" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm_iproc_gpio_of_match);
+> +
+> +static struct platform_driver bcm_iproc_gpio_driver = {
+> +	.driver = {
+> +		.name = "iproc-xgs-gpio",
+> +		.owner = THIS_MODULE,
+> +		.of_match_table = bcm_iproc_gpio_of_match,
+> +	},
+> +	.probe = iproc_gpio_probe,
+> +	.remove = iproc_gpio_remove,
+> +};
 
-My name is Mr. Joe Akaba ESQ, Working with one of the best
-chambers and I write to inform you about the death of my client who
-dead as a result of an accident with his family .On the 19th day of August
-2017, My late client died as a result of deadly accident without him be
-register any of his family member as next of kin to bank where he deposited
-a huge amount of money and He died with his family and i have searched for
-any other members of his
-nearby relative without any fruitful result and it was when the bank
-here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
- in line
-with their abandoned property.
+There's a fix for this which Mark sent yesterday[1] and should
+have now been applied, by removing __initconst for the
+of_device_id table.  So this regression should not be present in
+the next linux-next tag.
 
-This is to bring your attention by seeking your consent to present
-your name as My late client next of Kin to the bank where he
-deposited a huge amount of money before his death Eight million Five
-hundred thousand United State dollar .$8.5 million Usd
+Guillaume
 
-I have unsuccessfully made several attempts to locate any of my
-clients extended relatives, but all to no avail. Please i need your urgent
- respond so that we can move to the bank where the fund is deposited .
+[1] https://www.spinics.net/lists/arm-kernel/msg766621.html
 
-Thanks and regards,
-Barrister Joe Akaba (Esq)
-Principal attorney of
-dominion associates
-chambers barristers & solicitors
-Call +22890-33-26-71
