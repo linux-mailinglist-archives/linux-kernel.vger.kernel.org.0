@@ -2,84 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6741CF0DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 407DAF0DD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:34:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbfKFEcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 23:32:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50662 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfKFEct (ORCPT
+        id S1731256AbfKFEd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 23:33:57 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34325 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbfKFEd4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 23:32:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PMimL9+oB2bOWW84I/hNElf9NkYqwMaoxNkbiyzsGX0=; b=XoBmyDfvf+NlaUhoQ/dYQZsuv
-        8G7aO9Tbcnx8GuOPcDblc4JFz6Te0esLvcMIUF9/WrFUXtjDAQx/zp5/7hcSsEIogFDQQVlN+gsNI
-        iyrkl3yb+6ulq/y9BGAGCyNVPNIYp4n28s4uaEnmhZ87K1Ot5mlbXNQJ2cwDAuUd+iBVPbAkW2E++
-        Bsb5T1U0xRhxozcUBCNUBHEZRcbh38lxhmguipZL31FpxDCfENxWDYy+RJV3FhIz6TJenTMD0/dAx
-        ncO/x/R0UKwkUPQGPxc2Whf/tvYG1gWcqwHaImfobHd+fjaPLi7YOAyABqzR6RGnR8GmeBwtOLhLA
-        SbpoNhdcQ==;
-Received: from [2601:1c0:6280:3f0::4ba1]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSCzw-0005ec-M2; Wed, 06 Nov 2019 04:32:48 +0000
-Subject: Re: [PATCH] scripts:prune-kernel:remove old kernels and modules dir
- from system
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191102063036.28601-1-unixbhaskar@gmail.com>
- <50680c37-9e85-0050-c1e1-700260a0471c@infradead.org>
- <20191105023243.GA16635@fieldses.org>
- <CAK7LNARAgOEnMRYAyzbvJ-xZzFfwOMckxb=bW0-E+P1HYu5nhA@mail.gmail.com>
- <20191106043120.GB6355@fieldses.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2754bf80-2653-5d94-6b1e-f33a34914b77@infradead.org>
-Date:   Tue, 5 Nov 2019 20:32:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 5 Nov 2019 23:33:56 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t4so8250326otr.1;
+        Tue, 05 Nov 2019 20:33:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FcT3X6SewhnUxdf5PpBjzQ67V8xmr4mQJa2czEyvT2g=;
+        b=iSuhSjqtCG2qfq5s7Z4Qg4XGOio8c5seno9tP6SqCAAh6kKcMe2YiA7cBVBbspdXrj
+         L5fMf/JoiO+yt+NH98HoRsaOyDVvyQZU0tGTjypXPmEXc12qX9t9P4nW2C8eNLfv7o4Q
+         LYHODVL+7qXnur0zTdEmD+MOrIlZAumHmqMu9kNHLRl4wc4gcLvHNG3o3iHtAjtGI0l9
+         9L9QQ4E4Admxb4u3VvDLaS+dPpapg6VA07zywsCf9Esg09hVG+q5Ox0GlBFpWIfzNuu2
+         IfUdrnaFMe1PsnZpb+mOdywg/XXkWZ150rk4D1ITms8+QWSwM6J6/Y4GuMEa4djKBD5+
+         bDsw==
+X-Gm-Message-State: APjAAAVHMC0X1PVdQOqbd5l5EbBAZ3UwASd8Ch9sz4txvoOtwNg/kwPB
+        41+YOfT1HdmgDs7qX/gr3GVALew=
+X-Google-Smtp-Source: APXvYqwCOMEzMdBqzxWu5qvCmo8ekEG/dMArnHbMg24m1XrIvAR2fjo0dYvF19jO5nQN6nOZZAZzqw==
+X-Received: by 2002:a9d:4c15:: with SMTP id l21mr331639otf.204.1573014835602;
+        Tue, 05 Nov 2019 20:33:55 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m14sm6399297otl.26.2019.11.05.20.33.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 20:33:54 -0800 (PST)
+Date:   Tue, 5 Nov 2019 22:33:54 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] dt-bindings: net: davinci-mdio: convert bindings to
+ json-schema
+Message-ID: <20191106043354.GA17824@bogus>
+References: <20191101164502.19089-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20191106043120.GB6355@fieldses.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101164502.19089-1-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/19 8:31 PM, J. Bruce Fields wrote:
-> On Wed, Nov 06, 2019 at 11:53:28AM +0900, Masahiro Yamada wrote:
->> BTW.
->> Bruce,
->> Does the current script expect RHEL or something?
->> I do not see 'new-kernel-pkg' on my Ubuntu machine.
+On Fri, 1 Nov 2019 18:45:02 +0200, Grygorii Strashko wrote:
+> Now that we have the DT validation in place, let's convert the device tree
+> bindings for the TI SoC Davinci/OMAP/Keystone2 MDIO Controllerr over to a
+> YAML schemas.
 > 
-> I test on Fedora.  Looks like on recent Fedora that's only provided by
-> an rpm "grubby-deprecated", which is an inauspicious name....
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+> changes since rfc:
+>  - removed old bindings
+>  - bus_freq defined as "required" for davinci_mdio
+> rfc: https://lkml.org/lkml/2019/10/24/300
 > 
-> I think maybe you're supposed to use "grubby" itself now.  Do you have
-> that?
+>  .../devicetree/bindings/net/davinci-mdio.txt  | 36 ----------
+>  .../bindings/net/ti,davinci-mdio.yaml         | 71 +++++++++++++++++++
+>  2 files changed, 71 insertions(+), 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/net/davinci-mdio.txt
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,davinci-mdio.yaml
 > 
->> It would still work with 'new-kernel-pkg: command not found'
->> warning.
->>
->> We could bypass it if we like.
->>
->> command -v new-kernel-pkg && new-kernel-pkg --remove $f
-> 
-> Looks like it's what updates the grub configuration, which is probably a
-> nice thing to do if you can.
 
-on openSUSE, I don't have new-kernel-pkg or grubby.
+Applied, thanks.
 
--- 
-~Randy
-
+Rob
