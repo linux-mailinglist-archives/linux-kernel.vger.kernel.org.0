@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D82EF1BF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 056D7F1BF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732400AbfKFRBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:01:17 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:17104 "EHLO
+        id S1732420AbfKFRBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:01:23 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:32429 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732363AbfKFRBJ (ORCPT
+        with ESMTP id S1732364AbfKFRBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:01:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573059665;
+        Wed, 6 Nov 2019 12:01:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573059666;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=sZdoB36F5UBdckaG8aj1GzQtE3+0zrTPGHer5Xs7ohg=;
-        b=CsIoJ7y4Wlj/BHrw9+Ve8Bwq2n0bAI1sFjGVuB2Ml0K3wAi27eaBfDr7/78em8BDZR
-        YcFskSeIbrEjWGZGelFSNlvoJTuwPvgU5H7RdqE6lP/kwvY/A7npmwsVeVnuwCnRf3zd
-        CQViIbEAj9KgZKflJmyXkieYnsnSZ7dppImuECFg1HSj/i21TLG+XQ0IuM6TjmPXBx4k
-        g5VW6zG0zw5VOppirWuaDm1b+WA+3/P8uNTkYuA5jvUeS5YDvvcLMpNBC6NJ3w4VLTtt
-        EudMZFckOFgabfhC89MaSRZhuxUeCLCx8xz3U6Rwauw5sJSS0nszLIJj9WBXx6MuqhW/
-        Lz8g==
+        bh=U9jpWVAVI4H0QzeOFwQuOzYJ4uhUGMoHYCQ/+t9hVSI=;
+        b=Vx6MN3ok8VHhcTcabS4vBasAjw7b4WR8aVXM78TyW1zp3OjvQCJFL+FU54aviONG20
+        zcqxagUR4AZvBQj8eS6KKgV+oNUIVfHQmGl648ObsAcvfjjV19/zNoOUhSwiEKCqyW9c
+        EiwsohkPk/cDDQXKZ0/OxR/aypMYrVGb4asMjnXu+Ap/Qu7eMoBYi/K/0mGfeiYqXpvn
+        UXkpd8jhkaHzRMZJhSepghaQIq9a9Z55oyfVCTnXQGjBGAVC2+JmsLv9TC7SrU4gMB8y
+        JzK6k8oEqcDveaouP8sTQnBArxARG+JFxTm20OgukLbcIbQiYZCCpg8CmtVTYltU489w
+        vAfw==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXs8PvtBNfIQ=="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 44.29.0 AUTH)
-        with ESMTPSA id e07688vA6H15hLw
+        with ESMTPSA id e07688vA6H15hLx
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
         Wed, 6 Nov 2019 18:01:05 +0100 (CET)
@@ -36,9 +36,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 6/7] drm/mcde: dsi: Enable clocks in pre_enable() instead of mode_set()
-Date:   Wed,  6 Nov 2019 17:58:34 +0100
-Message-Id: <20191106165835.2863-7-stephan@gerhold.net>
+Subject: [PATCH 7/7] drm/mcde: Handle pending vblank while disabling display
+Date:   Wed,  6 Nov 2019 17:58:35 +0100
+Message-Id: <20191106165835.2863-8-stephan@gerhold.net>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191106165835.2863-1-stephan@gerhold.net>
 References: <20191106165835.2863-1-stephan@gerhold.net>
@@ -49,141 +49,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DSI initialization sequence incorrectly assumes that the mode_set()
-function of the DRM bridge is always called when (re-)enabling the display.
-This is not necessarily the case.
+Disabling the display using MCDE currently results in a warning
+together with a delay caused by some timeouts:
 
-Keeping the device idle in the framebuffer console for a while results
-in the display being turned off using the disable() function. However,
-as soon as any key is pressed only (pre_)enable() are called.
-mode_set() is skipped because the mode has not been changed.
+    mcde a0350000.mcde: MCDE display is disabled
+    ------------[ cut here ]------------
+    WARNING: CPU: 0 PID: 20 at drivers/gpu/drm/drm_atomic_helper.c:2258 drm_atomic_helper_commit_hw_done+0xe0/0xe4
+    Hardware name: ST-Ericsson Ux5x0 platform (Device Tree Support)
+    Workqueue: events drm_mode_rmfb_work_fn
+    [<c010f468>] (unwind_backtrace) from [<c010b54c>] (show_stack+0x10/0x14)
+    [<c010b54c>] (show_stack) from [<c079dd90>] (dump_stack+0x84/0x98)
+    [<c079dd90>] (dump_stack) from [<c011d1b0>] (__warn+0xb8/0xd4)
+    [<c011d1b0>] (__warn) from [<c011d230>] (warn_slowpath_fmt+0x64/0xc4)
+    [<c011d230>] (warn_slowpath_fmt) from [<c0413048>] (drm_atomic_helper_commit_hw_done+0xe0/0xe4)
+    [<c0413048>] (drm_atomic_helper_commit_hw_done) from [<c04159cc>] (drm_atomic_helper_commit_tail_rpm+0x44/0x6c)
+    [<c04159cc>] (drm_atomic_helper_commit_tail_rpm) from [<c0415f5c>] (commit_tail+0x50/0x10c)
+    [<c0415f5c>] (commit_tail) from [<c04160dc>] (drm_atomic_helper_commit+0xbc/0x128)
+    [<c04160dc>] (drm_atomic_helper_commit) from [<c0430790>] (drm_framebuffer_remove+0x390/0x428)
+    [<c0430790>] (drm_framebuffer_remove) from [<c0430860>] (drm_mode_rmfb_work_fn+0x38/0x48)
+    [<c0430860>] (drm_mode_rmfb_work_fn) from [<c01368a8>] (process_one_work+0x1f0/0x43c)
+    [<c01368a8>] (process_one_work) from [<c0136d48>] (worker_thread+0x254/0x55c)
+    [<c0136d48>] (worker_thread) from [<c013c014>] (kthread+0x124/0x150)
+    [<c013c014>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+    Exception stack(0xeb14dfb0 to 0xeb14dff8)
+    dfa0:                                     00000000 00000000 00000000 00000000
+    dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+    ---[ end trace 314909bcd4c7d50c ]---
+    [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:32:crtc-0] flip_done timed out
+    [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:34:DSI-1] flip_done timed out
+    [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:31:plane-0] flip_done timed out
 
-In this case, the DSI HS/LP clocks are never turned back on,
-preventing the display from working.
+The reason for this is that there is a vblank event pending, but we
+never handle it after disabling the vblank interrupts.
 
-Fix this by moving a part of the initialization sequence from
-mode_set() to pre_enable(). Keep most of the video mode setup in
-mode_set() since most of the registers are only dependent on the mode
-that is set for the panel - there is no need to write them again each
-time we re-enable the display.
+Check if there is an vblank event pending when disabling the display,
+and clear it by sending a fake vblank event in that case.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 67 ++++++++++++++++++---------------
- 1 file changed, 37 insertions(+), 30 deletions(-)
+ drivers/gpu/drm/mcde/mcde_display.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index df963e078c35..03896a1f339a 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -562,21 +562,6 @@ static void mcde_dsi_setup_video_mode(struct mcde_dsi *d,
- 		DSI_VID_VCA_SETTING2_EXACT_BURST_LIMIT_SHIFT;
- 	writel(val, d->regs + DSI_VID_VCA_SETTING2);
+diff --git a/drivers/gpu/drm/mcde/mcde_display.c b/drivers/gpu/drm/mcde/mcde_display.c
+index a3375a974caf..e59907e68854 100644
+--- a/drivers/gpu/drm/mcde/mcde_display.c
++++ b/drivers/gpu/drm/mcde/mcde_display.c
+@@ -949,12 +949,22 @@ static void mcde_display_disable(struct drm_simple_display_pipe *pipe)
+ 	struct drm_crtc *crtc = &pipe->crtc;
+ 	struct drm_device *drm = crtc->dev;
+ 	struct mcde *mcde = drm->dev_private;
++	struct drm_pending_vblank_event *event;
  
--	/* Put IF1 into video mode */
--	val = readl(d->regs + DSI_MCTL_MAIN_DATA_CTL);
--	val |= DSI_MCTL_MAIN_DATA_CTL_IF1_MODE;
--	writel(val, d->regs + DSI_MCTL_MAIN_DATA_CTL);
--
--	/* Disable command mode on IF1 */
--	val = readl(d->regs + DSI_CMD_MODE_CTL);
--	val &= ~DSI_CMD_MODE_CTL_IF1_LP_EN;
--	writel(val, d->regs + DSI_CMD_MODE_CTL);
--
--	/* Enable some error interrupts */
--	val = readl(d->regs + DSI_VID_MODE_STS_CTL);
--	val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_VSYNC;
--	val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_DATA;
--	writel(val, d->regs + DSI_VID_MODE_STS_CTL);
- }
+ 	drm_crtc_vblank_off(crtc);
  
- static void mcde_dsi_start(struct mcde_dsi *d)
-@@ -700,26 +685,13 @@ static void mcde_dsi_bridge_enable(struct drm_bridge *bridge)
- 	dev_info(d->dev, "enable DSI master\n");
- };
+ 	/* Disable FIFO A flow */
+ 	mcde_disable_fifo(mcde, MCDE_FIFO_A, true);
  
--static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
--				     const struct drm_display_mode *mode,
--				     const struct drm_display_mode *adj)
-+static void mcde_dsi_bridge_pre_enable(struct drm_bridge *bridge)
- {
- 	struct mcde_dsi *d = bridge_to_mcde_dsi(bridge);
--	unsigned long pixel_clock_hz = mode->clock * 1000;
- 	unsigned long hs_freq, lp_freq;
- 	u32 val;
- 	int ret;
- 
--	if (!d->mdsi) {
--		dev_err(d->dev, "no DSI device attached to encoder!\n");
--		return;
--	}
--
--	dev_info(d->dev, "set DSI master to %dx%d %lu Hz %s mode\n",
--		 mode->hdisplay, mode->vdisplay, pixel_clock_hz,
--		 (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) ? "VIDEO" : "CMD"
--		);
--
- 	/* Copy maximum clock frequencies */
- 	if (d->mdsi->lp_rate)
- 		lp_freq = d->mdsi->lp_rate;
-@@ -758,7 +730,21 @@ static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
- 			 d->hs_freq);
- 
- 	if (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
--		mcde_dsi_setup_video_mode(d, mode);
-+		/* Put IF1 into video mode */
-+		val = readl(d->regs + DSI_MCTL_MAIN_DATA_CTL);
-+		val |= DSI_MCTL_MAIN_DATA_CTL_IF1_MODE;
-+		writel(val, d->regs + DSI_MCTL_MAIN_DATA_CTL);
++	event = crtc->state->event;
++	if (event) {
++		crtc->state->event = NULL;
 +
-+		/* Disable command mode on IF1 */
-+		val = readl(d->regs + DSI_CMD_MODE_CTL);
-+		val &= ~DSI_CMD_MODE_CTL_IF1_LP_EN;
-+		writel(val, d->regs + DSI_CMD_MODE_CTL);
-+
-+		/* Enable some error interrupts */
-+		val = readl(d->regs + DSI_VID_MODE_STS_CTL);
-+		val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_VSYNC;
-+		val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_DATA;
-+		writel(val, d->regs + DSI_VID_MODE_STS_CTL);
- 	} else {
- 		/* Command mode, clear IF1 ID */
- 		val = readl(d->regs + DSI_CMD_MODE_CTL);
-@@ -772,6 +758,26 @@ static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
- 	}
- }
- 
-+static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
-+				     const struct drm_display_mode *mode,
-+				     const struct drm_display_mode *adj)
-+{
-+	struct mcde_dsi *d = bridge_to_mcde_dsi(bridge);
-+
-+	if (!d->mdsi) {
-+		dev_err(d->dev, "no DSI device attached to encoder!\n");
-+		return;
++		spin_lock_irq(&crtc->dev->event_lock);
++		drm_crtc_send_vblank_event(crtc, event);
++		spin_unlock_irq(&crtc->dev->event_lock);
 +	}
 +
-+	dev_info(d->dev, "set DSI master to %dx%d %u Hz %s mode\n",
-+		 mode->hdisplay, mode->vdisplay, mode->clock * 1000,
-+		 (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) ? "VIDEO" : "CMD"
-+		);
-+
-+	if (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO)
-+		mcde_dsi_setup_video_mode(d, mode);
-+}
-+
- static void mcde_dsi_wait_for_command_mode_stop(struct mcde_dsi *d)
- {
- 	u32 val;
-@@ -863,6 +869,7 @@ static const struct drm_bridge_funcs mcde_dsi_bridge_funcs = {
- 	.mode_set = mcde_dsi_bridge_mode_set,
- 	.disable = mcde_dsi_bridge_disable,
- 	.enable = mcde_dsi_bridge_enable,
-+	.pre_enable = mcde_dsi_bridge_pre_enable,
- };
+ 	dev_info(drm->dev, "MCDE display is disabled\n");
+ }
  
- static int mcde_dsi_bind(struct device *dev, struct device *master,
 -- 
 2.23.0
 
