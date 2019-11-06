@@ -2,103 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75925F1712
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31FB5F170D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:29:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731918AbfKFN3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 08:29:23 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35399 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731917AbfKFN3V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 08:29:21 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s10so591970plp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 05:29:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=ndl0P+VsTZD2v+P2v9bn/U9V2szmDcFpE9QaZn60GcY=;
-        b=Jk++708LXyo/7ByqvgwlIhPiri1IenbjKc2cSae50LsdvVJ10VmxSRemddzrpMGYof
-         ybKFnP4OZTKR+IWnxPv3rZ9SPmHwVgfII4zpEmSWVuBQrRmabm5c3d8DPoBhycjaN1E8
-         wi1E4HvuUCTJKw0uZbJVmAD24BB6z6q6XQSkrwm6bh4+2zlfDBTWijbLLo+BwJ9Vgnlp
-         lHWz+p3h9owUvqYFwwuS4MD/Emodoj4SNJ6y436+Vqyu2XrS8bkMQxSUvLOMM/jsVOIs
-         KGo41pjh56vWYLWunJ2sIYBrwuf6HTjyenTCgPLhrmloOJzaCwR87IgyzvWh/5QJM4fm
-         VeGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=ndl0P+VsTZD2v+P2v9bn/U9V2szmDcFpE9QaZn60GcY=;
-        b=WLTy7kcktx+eYp6bO6X5fWrJwlghenWiQpVsOdyj7hTO7Pn/N+SLIQUbN8JjOr8YBG
-         gj0/tiwBvOwQtGMpRELi3ew/JXreVYUGcvNwtDUuCHg9MeZ4hi6XvaxarHRlDnN8v2TJ
-         xg+Ffw6s+RKEEHRje6jxivdBGHqY3aqKlSZAXKo+rdrE/aGoZyzRo4csX7N/dN6B8QwS
-         9+IOAlOpUKmml5H0LCHS3Dn/hF2BRR/5d0ksFFXK/rP5Lk9Q5EHkyqfcUOkRv3Qs49RT
-         v3qOtyb/NpXHtaEYDEvHnMroF5Lkz7sC/9riWeyCecZV2pQuvoTwglgO2QHsRYJ5sdco
-         RY9g==
-X-Gm-Message-State: APjAAAVDZweJmRa3UqYObDVO1Y2slsWk3bw2HKKR5doizh5Nhs+cCMJJ
-        8Jpm1p0q1AQvX+jE4p2+5HrbvNW34G7sYQ==
-X-Google-Smtp-Source: APXvYqzXrRMY/E/IAnXs8Uf12RYzyqlGrByEWUa6Sj8R2R4qoSFZoC7S4GJxnvAfOPq5HOOXQ9Tv9Q==
-X-Received: by 2002:a17:902:ac98:: with SMTP id h24mr688438plr.227.1573046959859;
-        Wed, 06 Nov 2019 05:29:19 -0800 (PST)
-Received: from localhost ([49.248.202.230])
-        by smtp.gmail.com with ESMTPSA id x20sm23088825pfa.186.2019.11.06.05.29.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Nov 2019 05:29:19 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Javi Merino <javi.merino@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: [PATCH 11/11] thermal: zx2967: Appease the kernel-doc deity
-Date:   Wed,  6 Nov 2019 18:58:27 +0530
-Message-Id: <b8cca2b414eeb2db19f297571dd4654a733a2417.1573046440.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1573046440.git.amit.kucheria@linaro.org>
-References: <cover.1573046440.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1573046440.git.amit.kucheria@linaro.org>
-References: <cover.1573046440.git.amit.kucheria@linaro.org>
+        id S1731891AbfKFN3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 08:29:13 -0500
+Received: from mga03.intel.com ([134.134.136.65]:35175 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731876AbfKFN3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 08:29:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 05:29:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
+   d="scan'208";a="212773427"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 06 Nov 2019 05:29:05 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 06 Nov 2019 15:29:04 +0200
+Date:   Wed, 6 Nov 2019 15:29:04 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] PCI: Add missing link delays required by the PCIe
+ spec
+Message-ID: <20191106132904.GL2552@lahna.fi.intel.com>
+References: <20191105152832.GC2552@lahna.fi.intel.com>
+ <20191105161017.GA219591@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105161017.GA219591@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix up the following warning when compiled with make W=1:
+On Tue, Nov 05, 2019 at 10:10:17AM -0600, Bjorn Helgaas wrote:
+> > > I actually suspect there *is* a dependency -- we should respect the
+> > > Target Link Speed and and width so the link resumes in the same
+> > > configuration it was before suspend.  And I suspect that may require
+> > > an explicit retrain after restoring PCI_EXP_LNKCTL2.
+> > 
+> > According the PCIe spec the PCI_EXP_LNKCTL2 Target Link Speed is marked
+> > as RWS (S for sticky) so I suspect its value is retained after reset in
+> > the same way as PME bits. Assuming I understood it correctly.
+> 
+> This patch is about coming from D3cold, isn't it?  I don't think we
+> can assume sticky bits are preserved in D3cold (except maybe when
+> auxiliary power is enabled).
 
-linux.git/drivers/thermal/zx2967_thermal.c:57: warning: Function
-parameter or member 'dev' not described in 'zx2967_thermal_priv'
+Indeed, good point. I see some GPU drivers are programming Target Link
+Speed which will not be retained after the hierarchy is put into D3cold
+and back. I think this potential problem is not related to the missing
+link delays this patch is addressing, though. It has been existing in
+pci_restore_pcie_state() already (where it restores PCI_EXP_LNKCTL2).
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/thermal/zx2967_thermal.c | 1 +
- 1 file changed, 1 insertion(+)
+I think this can be solved as a separate patch by doing something
+like:
 
-diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
-index 7c8a82c8e1e92..8e3a2d3c2f9a3 100644
---- a/drivers/thermal/zx2967_thermal.c
-+++ b/drivers/thermal/zx2967_thermal.c
-@@ -45,6 +45,7 @@
-  * @clk_topcrm: topcrm clk structure
-  * @clk_apb: apb clk structure
-  * @regs: pointer to base address of the thermal sensor
-+ * @dev: struct device pointer
-  */
- 
- struct zx2967_thermal_priv {
--- 
-2.17.1
+  1. In pci_restore_pcie_state() check if the saved Target Link Speed
+     differs from what is in the register currently.
 
+  2. Restore the value as we already do now.
+
+  3. If there the speed differs then trigger link retrain.
+
+  4. Restore rest of the root/downstream port state.
+
+It is not clear if we need to do anything for upstream ports (PCIe 5.0
+sec 6.11 talks about doing this on upstream component e.g downstream
+port). After this there will be the link delay (added by this patch)
+which takes care of waiting for the downstream component to be
+accessible (even after retrain).
+
+However, I'm not sure how this can be properly tested. Maybe hacking
+some downstream port to lower the speed, enter D3cold and then resume it
+and see if the Target Link Speed gets updated correctly.
