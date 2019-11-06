@@ -2,161 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED2E6F1CD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DED36F1D00
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:58:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732397AbfKFRxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:53:19 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36137 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfKFRxT (ORCPT
+        id S1732501AbfKFR5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:57:51 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59272 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbfKFR5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:53:19 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d13so25411404qko.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:53:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=Ftk18S8wR2FwZXFsfv5TX/VhCJr3QuM7Ugjyky/oois=;
-        b=PYZVS6eic6ywHgAWhZ0slu1m0lqe8jsFYTXwps7NgP7Zy3dwnPmKZcV9iRpb9YSq2C
-         tii63sbNFb2MoNTm2vyj2netv9Pm3vW/gv0L1D1Vm2DDbZFr/Ze9b4w5f8hRB8dEYdgn
-         t99rteomrM7J2W4NAenfT2kNxrmRef552adWUcR4Pqfv2VLLjpN1hYi4njYISxAiZ0ZQ
-         HgaAeUC8Cj4R61U5XZgDmZwwHosjHUo0qpZj7wlH0O7XpVShPNhiwfVzEuvr7FovbGkY
-         IBSrjBE3z77APmyhR2PPRwp4+b6sstHOhdlk/e1n+gKT6n5Nxdc1WLnhFtMpCJakvsu0
-         G1zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=Ftk18S8wR2FwZXFsfv5TX/VhCJr3QuM7Ugjyky/oois=;
-        b=dDT7Io1xCODJjZIhxHW/qX6E1KbNTBRJA1yo1oQZwKirFC/MLiM4GxMAGyF0CDjUZ4
-         2qMq3xkbW5JKKi1X5lNo5O8IUCCuChzVAcgB4fIA/UYC/CG93T2nrUWld+D+umtYRleQ
-         w2AAu7GVoHhmilqpBNRgj/15wNUItirnZ0iSK0h3NSEEnwGAtXmVf3FxoS3+FGkREeQG
-         ZRhIa/FOSSU5u7bYgylcVGE/OhgxypbsOoGu7ZdWGQLWz6tuXG67KEgleAGlqiOGQxgY
-         bcC679joGlfZZ+v/BMUE1t1dLHOty0eXiWNi5UlVB92ez/ZCl2ecAHW9gvzu7+DlTvWb
-         EkVQ==
-X-Gm-Message-State: APjAAAWxBJ1q7FKKK9nh4QOp4yqKq7JwNe1xPaiLkRhzXlmVCO6c4Jjq
-        a3slvO/I94yXasr4//th6MPNkg==
-X-Google-Smtp-Source: APXvYqwhLlIai52h6gAWWwD8eX5gN2LF3vX9K4kJDsFLK1Mn1AnyHd0YxHjLa9/y3vUzB3fvNlPW7Q==
-X-Received: by 2002:ae9:eb07:: with SMTP id b7mr3216060qkg.104.1573062797273;
-        Wed, 06 Nov 2019 09:53:17 -0800 (PST)
-Received: from [192.168.1.169] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
-        by smtp.gmail.com with ESMTPSA id m65sm10496688qte.54.2019.11.06.09.53.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 09:53:16 -0800 (PST)
-Subject: Re: [Patch v5 2/6] sched/fair: Add infrastructure to store and update
- instantaneous thermal pressure
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-3-git-send-email-thara.gopinath@linaro.org>
- <20191105202037.GA17494@e108754-lin> <5DC1E348.2090104@linaro.org>
- <20191105211446.GA25349@e108754-lin> <5DC1E9BC.1010001@linaro.org>
- <20191105215233.GA6450@e108754-lin>
- <436ad772-c727-127e-1469-d99549db03fc@arm.com>
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <5DC3088B.8070401@linaro.org>
-Date:   Wed, 6 Nov 2019 12:53:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 6 Nov 2019 12:57:50 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6HsKGa015768;
+        Wed, 6 Nov 2019 17:56:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=uBEGSNLJVxXMk9u64tP8o0TzUbcsZmdPCKdTVcSvJeg=;
+ b=Z0gJMfyMXtJfFJvsCCk7dUZmTg2FxtLGV8ypVvVVh/r2U2ssB4M1JSKBCZ7ngUiSP63l
+ TdlbQUPyRWyP6ztuSsDxHSmanSKzk6xbmNL7F9k60eduhnRKaZWaIT7iccE3JaaSVlDc
+ YgmzhK8+aS0tRuuVYkD+6m3tuE6psYaKTD8q9+MJSVIpzYD/iLCj2feZBsnDdzsIQbEZ
+ 2GEscujetQ+ao/bCwK0nePNYneRimlznnObMkFA5mFK4rpd19CIKIbJ8giZO/k9rZrRd
+ NsJLqYYIBn3R6Wq5a70K9RGXb5XAwtvBzcJhV2944sWfiSDAYu401kbJ6hFTFSuAYuH9 Jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2w41w10m56-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 17:56:27 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6Hreox022490;
+        Wed, 6 Nov 2019 17:56:26 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2w41wcvewg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 17:56:26 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA6HuNS0003881;
+        Wed, 6 Nov 2019 17:56:24 GMT
+Received: from paddy.uk.oracle.com (/10.175.178.239)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 09:56:23 -0800
+From:   Joao Martins <joao.m.martins@oracle.com>
+To:     kvm@vger.kernel.org
+Cc:     Joao Martins <joao.m.martins@oracle.com>,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Liran Alon <liran.alon@oracle.com>,
+        Jag Raman <jag.raman@oracle.com>
+Subject: [PATCH v1 0/3] KVM: VMX: Posted Interrupts fixes
+Date:   Wed,  6 Nov 2019 17:55:59 +0000
+Message-Id: <20191106175602.4515-1-joao.m.martins@oracle.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <436ad772-c727-127e-1469-d99549db03fc@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=600
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911060173
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=680 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911060174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/2019 07:50 AM, Dietmar Eggemann wrote:
-> On 05/11/2019 22:53, Ionela Voinescu wrote:
->> On Tuesday 05 Nov 2019 at 16:29:32 (-0500), Thara Gopinath wrote:
->>> On 11/05/2019 04:15 PM, Ionela Voinescu wrote:
->>>> On Tuesday 05 Nov 2019 at 16:02:00 (-0500), Thara Gopinath wrote:
->>>>> On 11/05/2019 03:21 PM, Ionela Voinescu wrote:
->>>>>> Hi Thara,
->>>>>>
->>>>>> On Tuesday 05 Nov 2019 at 13:49:42 (-0500), Thara Gopinath wrote:
->>>>>> [...]
->>>>>>> +static void trigger_thermal_pressure_average(struct rq *rq)
->>>>>>> +{
->>>>>>> +#ifdef CONFIG_SMP
->>>>>>> +	update_thermal_load_avg(rq_clock_task(rq), rq,
->>>>>>> +				per_cpu(thermal_pressure, cpu_of(rq)));
->>>>>>> +#endif
->>>>>>> +}
->>>>>>
->>>>>> Why did you decide to keep trigger_thermal_pressure_average and not
->>>>>> call update_thermal_load_avg directly?
->>>>>>
->>>>>> For !CONFIG_SMP you already have an update_thermal_load_avg function
->>>>>> that does nothing, in kernel/sched/pelt.h, so you don't need that
->>>>>> ifdef. 
->>>>> Hi,
->>>>>
->>>>> Yes you are right. But later with the shift option added, I shift
->>>>> rq_clock_task(rq) by the shift. I thought it is better to contain it in
->>>>> a function that replicate it in three different places. I can remove the
->>>>> CONFIG_SMP in the next version.
->>>>
->>>> You could still keep that in one place if you shift the now argument of
->>>> ___update_load_sum instead.
->>>
->>> No. I cannot do this. The authors of the pelt framework  prefers not to
->>> include a shift parameter there. I had discussed this with Vincent earlier.
->>>
->>
->> Right! I missed Vincent's last comment on this in v4. 
->>
->> I would argue that it's more of a PELT parameter than a CFS parameter
->> :), where it's currently being used. I would also argue that's more of a
->> PELT parameter than a thermal parameter. It controls the PELT time
->> progression for the thermal signal, but it seems more to configure the
->> PELT algorithm, rather than directly characterize thermals.
->>
->> In any case, it only seemed to me that adding a wrapper function for
->> this purpose only was not worth doing.
-> 
-> Coming back to the v4 discussion
-> https://lore.kernel.org/r/379d23e5-79a5-9d90-0fb6-125d9be85e99@arm.com
-> 
-> There is no API between pelt.c and other parts of the scheduler/kernel
-> so why should we keep an unnecessary parameter and wrapper functions?
-> 
-> There is also no abstraction, update_thermal_load_avg() in pelt.c even
-> carries '_thermal_' in its name.
-> 
-> So why not define this shift value '[sched_|pelt_]thermal_decay_shift'
-> there as well? It belongs to update_thermal_load_avg().
-> 
-> All call sites of update_thermal_load_avg() use 'rq_clock_task(rq) >>
-> sched_thermal_decay_shift' so I don't see the need to pass it in.
-> 
-> IMHO, preparing for eventual code changes (e.g. parsing different now
-> values) is not a good practice in the kernel. Keeping the code small and
-> tidy is.
+Hey,
 
-I think we are going in circles on this one. I acknowledge you have an
-issue. That being said, I also understand the need to keep the pelt
-framework code tight. Also Ionela pointed out that there could be a need
-for a faster decay in which case it could mean a left shift leading to
-further complications if defined in pelt.c (I am not saying that I will
-implement a faster decay in this patch set but it is more of a future
-extension if needed!)
+This mini-series addresses two bugs plus a small cleanup: 
 
-I can make trigger_thermal_pressure_average inline if that will
-alleviate some of the concerns.
+ 1) Considering PID.PIR as opposed to just PID.ON for pending interrupt checks
+    in the direct yield code path;
+ 
+ 2) Not changing NDST in vmx_vcpu_pi_load(), which addresses a regression. 
+    Prior to this, we would observe Win2K12 guests hanging momentarily.
+ 
+ 3) Small cleanup to streamline PIR checks with a common helper.
 
-I would also urge you to reconsider the merits of arguing this point
-back and forth.
-> 
+The cleanup is done last to simplify backports.
 
+	Joao
+
+Joao Martins (3):
+  KVM: VMX: Consider PID.PIR to determine if vCPU has pending interrupts
+  KVM: VMX: Do not change PID.NDST when loading a blocked vCPU
+  KVM: VMX: Introduce pi_is_pir_empty() helper
+
+ arch/x86/kvm/vmx/vmx.c | 20 ++++++++++++++++++--
+ arch/x86/kvm/vmx/vmx.h | 11 +++++++++++
+ 2 files changed, 29 insertions(+), 2 deletions(-)
 
 -- 
-Warm Regards
-Thara
+2.11.0
+
