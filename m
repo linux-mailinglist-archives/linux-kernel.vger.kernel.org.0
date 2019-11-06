@@ -2,87 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 300AEF1FE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C13E8F2000
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732266AbfKFUdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 15:33:09 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46252 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfKFUdI (ORCPT
+        id S1732555AbfKFUj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 15:39:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33633 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbfKFUj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 15:33:08 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6KWfoh096274;
-        Wed, 6 Nov 2019 14:32:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573072361;
-        bh=4KPGIKWmTjDsaXDJhbPERAOcnx56q00US+atK5Qvn/w=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=oyYbSxID0NOqhjsyNfcHdwfmfFyNWrQVo4Ctz2uaFW46Ct2BBiCsN7yuVj6i/7hGe
-         3x96IxZO+YCHanFnYfXY+lLSAOBp8Ui6yEptLhkIupuiJ0xun+qRw4HP8U/7yQ+6aB
-         v/0x2kR4fPKXwZ8ys6rKLjj394ttWnrw9isbQP44=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA6KWfQc063526
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Nov 2019 14:32:41 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
- 2019 14:32:41 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 6 Nov 2019 14:32:41 -0600
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with SMTP id xA6KWfe7059453;
-        Wed, 6 Nov 2019 14:32:41 -0600
-Date:   Wed, 6 Nov 2019 14:35:42 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jyri Sarha <jsarha@ti.com>
-Subject: Re: [Patch v2 07/20] media: ti-vpe: cal: add CSI2 PHY LDO errata
- support
-Message-ID: <20191106203542.uab6bwgdrkb627q4@ti.com>
-References: <20191104193140.31145-1-bparrot@ti.com>
- <20191104193140.31145-8-bparrot@ti.com>
- <20191106085501.GA6253@valkosipuli.retiisi.org.uk>
+        Wed, 6 Nov 2019 15:39:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id h27so991725pgn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 12:39:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bp86L5fucSA+9Bwlt84/eQbHaJRbEE/iIVDIU2TrYmM=;
+        b=CrBxheWL+VkOfPX3aTBccoLvNQF92thO3oi5LNHeY04/wZsBJ5+Awp3yG38gVaW419
+         EwFnyiPDR1gnnZmr8ul0W/yKVfgIK5xZNdfgklRC9owvzvrb5YtTfIJlYj3tqqOBxrYA
+         puDhDKyZABgAkq3XZb5IJ/rCNzuAn76ZWc52ybg9wLNMg+z+ZgcGsKJOYHhRkT6tP0wM
+         ec8iwNatVcZ1mqzjbPOeUiHln+ne0fBBsTlHbQGoAkvksK/Txg3rLgikXk+7vSpyZ9Zz
+         Pee10GCisuUq4SYMJ+mByVVfZzuStCOWn9eeJ1oEBMVnENoJixSlbPeRYZP5cyGdf0TZ
+         UunA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bp86L5fucSA+9Bwlt84/eQbHaJRbEE/iIVDIU2TrYmM=;
+        b=RjDy/IqN7FwcMpeyxrwUV1BbnX2iMgbcZP/L4Fa2BAEIYx43g15adVO7RvPu5UkKoc
+         uaL2zDkMyPfmi94FTT8NSkovxCTj02gqy/ytUU82jXRTY9haIkCx1Pr1YU9EUOuRC6Gw
+         iXtrvQ2CvKBmHkr9T0PD3o98OE3ycmdSSwqLB4kW6ZcqTIm+0GhrTNVXh7pHL4MRevBy
+         p0BmwwTsfJPKpFmdjCc7R0nyevgVxjHLcEoZ1xc3LIzVZ9h0AaBe7svz+28q9GYLXo2/
+         Ax0pA+k1WmIznGhEyw5e5f0uq16U+1OBcrp9SQakoDuij+D+YsJL0HZIcLgKbi2giTDN
+         tczg==
+X-Gm-Message-State: APjAAAX8hpH6vJJz/aWhDVIj3k/w4aUCjN8jyQfHWwU3VjqsdM+RpJ9B
+        Yt/MFzvsXlJclB56BEsi4PNpwAzPSCJX8yBpYy3EdA==
+X-Google-Smtp-Source: APXvYqzpFAhempBHWwl6LQCKUCJ19FjjZGAWA1oF9chpT593c5XiKJbvgs2xxIRCQukRs4o+FH4Rat+2Sk/7ytURtoo=
+X-Received: by 2002:aa7:8e56:: with SMTP id d22mr5854475pfr.3.1573072766085;
+ Wed, 06 Nov 2019 12:39:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191106085501.GA6253@valkosipuli.retiisi.org.uk>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191105235608.107702-1-samitolvanen@google.com> <20191105235608.107702-11-samitolvanen@google.com>
+In-Reply-To: <20191105235608.107702-11-samitolvanen@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 6 Nov 2019 12:39:14 -0800
+Message-ID: <CAKwvOdkGUn+X2HCnV7zM8ruCPYBsRi_UD8JY4VW4FbuOam8Pmg@mail.gmail.com>
+Subject: Re: [PATCH v5 10/14] arm64: preserve x18 when CPU is suspended
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>, Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sakari Ailus <sakari.ailus@iki.fi> wrote on Wed [2019-Nov-06 10:55:02 +0200]:
-> Hi Benoit,
-> 
-> On Mon, Nov 04, 2019 at 01:31:27PM -0600, Benoit Parrot wrote:
-> 
-> ...
-> 
-> > @@ -458,6 +483,8 @@
-> >  #define CAL_CSI2_PHY_REG1_CLOCK_MISS_DETECTOR_STATUS_SUCCESS		0
-> >  #define CAL_CSI2_PHY_REG1_RESET_DONE_STATUS_MASK		GENMASK(29, 28)
-> >  
-> > +#define CAL_CSI2_PHY_REG10_I933_LDO_DISABLE_MASK		BIT_MASK(6)
-> 
-> BIT(6) ?
-> 
-> BIT_MASK() is intended for a different purpose.
+On Tue, Nov 5, 2019 at 3:56 PM Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> Don't lose the current task's shadow stack when the CPU is suspended.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Wow, good catch, I have never realized that.
+Re-LGTM
 
-Benoit
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/arm64/include/asm/suspend.h |  2 +-
+>  arch/arm64/mm/proc.S             | 14 ++++++++++++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/include/asm/suspend.h b/arch/arm64/include/asm/suspend.h
+> index 8939c87c4dce..0cde2f473971 100644
+> --- a/arch/arm64/include/asm/suspend.h
+> +++ b/arch/arm64/include/asm/suspend.h
+> @@ -2,7 +2,7 @@
+>  #ifndef __ASM_SUSPEND_H
+>  #define __ASM_SUSPEND_H
+>
+> -#define NR_CTX_REGS 12
+> +#define NR_CTX_REGS 13
+>  #define NR_CALLEE_SAVED_REGS 12
+>
+>  /*
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index fdabf40a83c8..5c8219c55948 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -49,6 +49,8 @@
+>   * cpu_do_suspend - save CPU registers context
+>   *
+>   * x0: virtual address of context pointer
+> + *
+> + * This must be kept in sync with struct cpu_suspend_ctx in <asm/suspend.h>.
+>   */
+>  ENTRY(cpu_do_suspend)
+>         mrs     x2, tpidr_el0
+> @@ -73,6 +75,11 @@ alternative_endif
+>         stp     x8, x9, [x0, #48]
+>         stp     x10, x11, [x0, #64]
+>         stp     x12, x13, [x0, #80]
+> +       /*
+> +        * Save x18 as it may be used as a platform register, e.g. by shadow
+> +        * call stack.
+> +        */
+> +       str     x18, [x0, #96]
+>         ret
+>  ENDPROC(cpu_do_suspend)
+>
+> @@ -89,6 +96,13 @@ ENTRY(cpu_do_resume)
+>         ldp     x9, x10, [x0, #48]
+>         ldp     x11, x12, [x0, #64]
+>         ldp     x13, x14, [x0, #80]
+> +       /*
+> +        * Restore x18, as it may be used as a platform register, and clear
+> +        * the buffer to minimize the risk of exposure when used for shadow
+> +        * call stack.
+> +        */
+> +       ldr     x18, [x0, #96]
+> +       str     xzr, [x0, #96]
+>         msr     tpidr_el0, x2
+>         msr     tpidrro_el0, x3
+>         msr     contextidr_el1, x4
+> --
+> 2.24.0.rc1.363.gb1bccd3e3d-goog
+>
 
-> 
-> -- 
-> Regards,
-> 
-> Sakari Ailus
+
+-- 
+Thanks,
+~Nick Desaulniers
