@@ -2,99 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E65F1A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5DFF1A68
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfKFPvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:51:22 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41914 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfKFPvW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:51:22 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FmqSn087241;
-        Wed, 6 Nov 2019 15:50:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=PO5xmk8/u2tGcx69lrZ2ukP6AxC0vWVORGFcZZoWIYs=;
- b=h4YefMSV8UO5B8PpOmCvsc6dc7N/uPcBlLU1j372VyQS4pmZda2oXwHzBQzWqIn1MtRw
- ER76GbT6kBLaD/Z48fK82XHsOWYKu4KvRt30Fz1kqVCL0DmCSwd9x5e2YQV2wB2kXHuH
- 9GbfqPD8kqtV1noMusHNHPvqRLSaUz5Gq5MV+0kP/nfJV/cIAT40/iEoRdbQZIL/yyAe
- HCK9XNX8FCWK97TWkttwTa8o+NLduFSLguG9+Pm5iDmNWEkKUA1PX2zUXIoNBQzORCWg
- nS6kpR1RlR3sd15SXaiDm/wAoUaFuEsGLDtEQbVNvdhfDrFRt8u0KIH2CjwcPdPy/gO1 Sg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2w117u7pvn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 15:50:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FnAVt109387;
-        Wed, 6 Nov 2019 15:50:48 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2w3xc2vkww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 15:50:48 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA6FoivW011280;
-        Wed, 6 Nov 2019 15:50:44 GMT
-Received: from [10.39.238.145] (/10.39.238.145)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 07:50:44 -0800
-Subject: Re: [patch V2 04/17] x86/entry: Make DEBUG_ENTRY_ASSERT_IRQS_OFF
- available for 32bit
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-References: <20191023122705.198339581@linutronix.de>
- <20191023123117.976831752@linutronix.de>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <9a1170f8-819b-9d30-9d77-66c60cd4cafb@oracle.com>
-Date:   Wed, 6 Nov 2019 16:50:41 +0100
+        id S1732092AbfKFPwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:52:16 -0500
+Received: from relay.sw.ru ([185.231.240.75]:51000 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727321AbfKFPwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 10:52:15 -0500
+Received: from [172.16.24.104]
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1iSNb5-0008Sq-7A; Wed, 06 Nov 2019 18:51:51 +0300
+Subject: Re: Re: NULL pointer dereference in pick_next_task_fair
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <qperret@google.com>
+Cc:     linux-kernel@vger.kernel.org, aaron.lwe@gmail.com,
+        valentin.schneider@arm.com, mingo@kernel.org, pauld@redhat.com,
+        jdesfossez@digitalocean.com, naravamudan@digitalocean.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, kernel-team@android.com, john.stultz@linaro.org
+References: <20191028174603.GA246917@google.com>
+ <20191106120525.GX4131@hirez.programming.kicks-ass.net>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <33643a5b-1b83-8605-2347-acd1aea04f93@virtuozzo.com>
+Date:   Wed, 6 Nov 2019 18:51:40 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191023123117.976831752@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191106120525.GX4131@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911060152
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911060152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/23/19 2:27 PM, Thomas Gleixner wrote:
-> Move the interrupt state verification debug macro to common code and fixup
-> the irqflags and paravirt components so it can be used in 32bit code later.
+On 06.11.2019 15:05, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2019 at 05:46:03PM +0000, Quentin Perret wrote:
+>>
+>> After digging a bit, the offending commit seems to be:
+>>
+>>     67692435c411 ("sched: Rework pick_next_task() slow-path")
+>>
+>> By 'offending' I mean that reverting it makes the issue go away. The
+>> issue comes from the fact that pick_next_entity() returns a NULL se in
+>> the 'simple' path of pick_next_task_fair(), which causes obvious
+>> problems in the subsequent call to set_next_entity().
+>>
+>> I'll dig more, but if anybody understands the issue in the meatime feel
+>> free to send me a patch to try out :)
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> So for all those who didn't follow along on IRC, the below seems to cure
+> things.
+> 
+> The only thing I'm now considering is if we shouldn't be setting
+> ->on_cpu=2 _before_ calling put_prev_task(). I'll go audit the RT/DL
+> cases.
+> 
 > ---
->   arch/x86/entry/calling.h        |   12 ++++++++++++
->   arch/x86/entry/entry_64.S       |   12 ------------
->   arch/x86/include/asm/irqflags.h |    8 ++++++--
->   arch/x86/include/asm/paravirt.h |    9 +++++----
->   4 files changed, 23 insertions(+), 18 deletions(-)
+> Subject: sched: Fix pick_next_task() vs 'change' pattern race
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Mon Nov 4 22:18:14 CET 2019
+> 
+> Commit 67692435c411 ("sched: Rework pick_next_task() slow-path")
+> inadvertly introduced a race because it changed a previously
+> unexplored dependency between dropping the rq->lock and
+> sched_class::put_prev_task().
+> 
+> The comments about dropping rq->lock, in for example
+> newidle_balance(), only mentions the task being current and ->on_cpu
+> being set. But when we look at the 'change' pattern (in for example
+> sched_setnuma()):
+> 
+> 	queued = task_on_rq_queued(p); /* p->on_rq == TASK_ON_RQ_QUEUED */
+> 	running = task_current(rq, p); /* rq->curr == p */
+> 
+> 	if (queued)
+> 		dequeue_task(...);
+> 	if (running)
+> 		put_prev_task(...);
+> 
+> 	/* change task properties */
+> 
+> 	if (queued)
+> 		enqueue_task(...);
+> 	if (running)
+> 		set_next_task(...);
+> 
+> It becomes obvious that if we do this after put_prev_task() has
+> already been called on @p, things go sideways. This is exactly what
+> the commit in question allows to happen when it does:
+> 
+> 	prev->sched_class->put_prev_task(rq, prev, rf);
+> 	if (!rq->nr_running)
+> 		newidle_balance(rq, rf);
+> 
+> The newidle_balance() call will drop rq->lock after we've called
+> put_prev_task() and that allows the above 'change' pattern to
+> interleave and mess up the state.
+> 
+> The order in pick_next_task() is mandated by the fact that RT/DL
+> put_prev_task() can pull other RT tasks, in which case we should not
+> call newidle_balance() since we'll not be going idle. Similarly, we
+> cannot put newidle_balance() in put_prev_task_fair() because it should
+> be called every time we'll end up selecting the idle task.
+> 
+> Given that we're stuck with this order, the only solution is fixing
+> the 'change' pattern. The simplest fix seems to be to 'absuse'
+> p->on_cpu to carry more state. Adding more state to p->on_rq is
+> possible but is far more invasive and also ends up duplicating much of
+> the state we already carry in p->on_cpu.
+> 
+> Introduce task_on_rq_curr() to indicate the if
+> sched_class::set_next_task() has been called -- and we thus need to
+> call put_prev_task().
+> 
+> Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
+> Reported-by: Quentin Perret <qperret@google.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Tested-by: Quentin Perret <qperret@google.com>
+> Tested-by: Qais Yousef <qais.yousef@arm.com>
+> Tested-by: Valentin Schneider <valentin.schneider@arm.com>
+> Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> ---
+>  kernel/sched/core.c  |   22 +++++++++++++++-------
+>  kernel/sched/sched.h |   16 ++++++++++++++++
+>  2 files changed, 31 insertions(+), 7 deletions(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1595,7 +1595,7 @@ void do_set_cpus_allowed(struct task_str
+>  	lockdep_assert_held(&p->pi_lock);
+>  
+>  	queued = task_on_rq_queued(p);
+> -	running = task_current(rq, p);
+> +	running = task_on_rq_curr(rq, p);
+>  
+>  	if (queued) {
+>  		/*
+> @@ -3934,8 +3934,16 @@ pick_next_task(struct rq *rq, struct tas
+>  	 * can PULL higher prio tasks when we lower the RQ 'priority'.
+>  	 */
+>  	prev->sched_class->put_prev_task(rq, prev, rf);
+> -	if (!rq->nr_running)
+> +#ifdef CONFIG_SMP
+> +	if (!rq->nr_running) {
+> +		/*
+> +		 * Make sure task_on_rq_curr() fails, such that we don't do
+> +		 * put_prev_task() + set_next_task() on this task again.
+> +		 */
+> +		prev->on_cpu = 2;
+>  		newidle_balance(rq, rf);
+
+Shouldn't we restore prev->on_cpu = 1 after newidle_balance()? Can't prev
+become pickable again after newidle_balance() releases rq->lock, and we
+take it again, so this on_cpu == 2 never will be cleared?
+
+> +	}
+> +#endif
+>  
+>  	for_each_class(class) {
+>  		p = class->pick_next_task(rq, NULL, NULL);
+> @@ -4422,7 +4430,7 @@ void rt_mutex_setprio(struct task_struct
+>  
+>  	prev_class = p->sched_class;
+>  	queued = task_on_rq_queued(p);
+> -	running = task_current(rq, p);
+> +	running = task_on_rq_curr(rq, p);
+>  	if (queued)
+>  		dequeue_task(rq, p, queue_flag);
+>  	if (running)
+> @@ -4509,7 +4517,7 @@ void set_user_nice(struct task_struct *p
+>  		goto out_unlock;
+>  	}
+>  	queued = task_on_rq_queued(p);
+> -	running = task_current(rq, p);
+> +	running = task_on_rq_curr(rq, p);
+>  	if (queued)
+>  		dequeue_task(rq, p, DEQUEUE_SAVE | DEQUEUE_NOCLOCK);
+>  	if (running)
+> @@ -4957,7 +4965,7 @@ static int __sched_setscheduler(struct t
+>  	}
+>  
+>  	queued = task_on_rq_queued(p);
+> -	running = task_current(rq, p);
+> +	running = task_on_rq_curr(rq, p);
+>  	if (queued)
+>  		dequeue_task(rq, p, queue_flags);
+>  	if (running)
+> @@ -6141,7 +6149,7 @@ void sched_setnuma(struct task_struct *p
+>  
+>  	rq = task_rq_lock(p, &rf);
+>  	queued = task_on_rq_queued(p);
+> -	running = task_current(rq, p);
+> +	running = task_on_rq_curr(rq, p);
+>  
+>  	if (queued)
+>  		dequeue_task(rq, p, DEQUEUE_SAVE);
+> @@ -7031,7 +7039,7 @@ void sched_move_task(struct task_struct
+>  	rq = task_rq_lock(tsk, &rf);
+>  	update_rq_clock(rq);
+>  
+> -	running = task_current(rq, tsk);
+> +	running = task_on_rq_curr(rq, tsk);
+>  	queued = task_on_rq_queued(tsk);
+>  
+>  	if (queued)
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1628,6 +1628,22 @@ static inline int task_running(struct rq
+>  #endif
+>  }
+>  
+> +/*
+> + * If true, @p has had sched_class::set_next_task() called on it.
+> + * See pick_next_task().
+> + */
+> +static inline bool task_on_rq_curr(struct rq *rq, struct task_struct *p)
+> +{
+> +#ifdef CONFIG_SMP
+> +	return rq->curr == p && p->on_cpu == 1;
+> +#else
+> +	return rq->curr == p;
+> +#endif
+> +}
+> +
+> +/*
+> + * If true, @p has has sched_class::enqueue_task() called on it.
+> + */
+>  static inline int task_on_rq_queued(struct task_struct *p)
+>  {
+>  	return p->on_rq == TASK_ON_RQ_QUEUED;
 > 
 
-Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-
-alex.
