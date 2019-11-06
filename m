@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E0FF114B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:40:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48207F113E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbfKFIjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:39:41 -0500
-Received: from mail-m974.mail.163.com ([123.126.97.4]:34842 "EHLO
-        mail-m974.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730212AbfKFIjj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:39:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=+JzU+esi7fl0h4YK8N
-        PHkxPWloJ5wIl06K/wPnc/A2k=; b=L6xaRbUAJMTvsW09nge/+GKrTTCh43e6VO
-        OSswfOX+OhhilUA4bHqozbqprvxu7fxm7mTUpPgGFyqG2f+1jzHNCdrDBuDY9ZXg
-        aiCUKSIZSw9UTB4Jy1CcGxULHabKQP3rG/Ttoavt0yEO/D1/C4ALXy0Azd31k+py
-        373MrR5Mg=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp4 (Coremail) with SMTP id HNxpCgDHZtOBhsJdCHKDBQ--.289S3;
-        Wed, 06 Nov 2019 16:38:35 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chuhong Yuan <hslester96@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] usb: gadget: pch_udc: fix use after free
-Date:   Wed,  6 Nov 2019 16:38:23 +0800
-Message-Id: <1573029503-18369-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: HNxpCgDHZtOBhsJdCHKDBQ--.289S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWUXr43Wr1UuF1kKF13twb_yoWfurcEk3
-        yjgFnrWryYq3Z8Kr4fJry3Ar4293ZYqan3uFnaqrZ3Z3y5Way5Xr18ZF9Y93y7uw47GF93
-        u3yqqFyYgF4S9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1jNt3UUUUU==
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiDgtlclXluaTJ2AAAsu
+        id S1730844AbfKFIj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:39:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730088AbfKFIj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 03:39:29 -0500
+Received: from localhost.localdomain (unknown [223.226.46.117])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FEB12084D;
+        Wed,  6 Nov 2019 08:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573029568;
+        bh=7MFR2ZIi37ajuns9jLuWI/+9zvp+HfFtIxkIU4zEI60=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bcAhhbMaoVAmAYFuJ10uG+owvwd2gbXCPmhqlNqTc0Fmn69XwzgZz9g/qXQRkpz7s
+         M9Iy9XgDlKDC/dGfdJkcQanFi8e3Dsk2PtXppoaojL9nyN7a4b7mQFSnnIKaiwo3mQ
+         stKr8yR7/lnsVKyuZZAIaYXEC5Dfe02Fx2sDwoCo=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4] usb: xhci: Add support for Renesas USB controllers
+Date:   Wed,  6 Nov 2019 14:08:39 +0530
+Message-Id: <20191106083843.1718437-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The next field of the DMA descriptor is written after releasing the
-descriptor, which may result in a use-after-free issue. Set the value of
-the field before it is released to fix the bug.
+This series add support for Renesas USB controllers uPD720201 and uPD720202.
+These require firmware to be loaded and in case devices have ROM those can
+also be programmed if empty. If ROM is programmed, it runs from ROM as well.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- drivers/usb/gadget/udc/pch_udc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This includes two patches from Christian which supported these controllers
+w/o ROM and later my patches for ROM support and multiple firmware versions.
 
-diff --git a/drivers/usb/gadget/udc/pch_udc.c b/drivers/usb/gadget/udc/pch_udc.c
-index 265dab2bbfac..c5b8ec908aab 100644
---- a/drivers/usb/gadget/udc/pch_udc.c
-+++ b/drivers/usb/gadget/udc/pch_udc.c
-@@ -1518,8 +1518,8 @@ static void pch_udc_free_dma_chain(struct pch_udc_dev *dev,
- 		/* do not free first desc., will be done by free for request */
- 		td = phys_to_virt(addr);
- 		addr2 = (dma_addr_t)td->next;
--		dma_pool_free(dev->data_requests, td, addr);
- 		td->next = 0x00;
-+		dma_pool_free(dev->data_requests, td, addr);
- 		addr = addr2;
- 	}
- 	req->chain_len = 1;
+Changes in v5:
+ Added a debugfs rom erase patch, helps in debugging
+ Squashed patch 1 & 2 as requested by Mathias
+
+Changes in v4:
+ Rollback the delay values as we got device failures
+
+Changes in v3:
+  Dropped patch 2 as discussed with Christian
+  Removed aligned 8 bytes check
+  Change order for firware search from highest version to lowest
+  Added entry for new firmware for device 0x14 as well
+  Add tested by Christian
+
+Changes in v2:
+  used macros for timeout count and delay
+  removed renesas_fw_alive_check
+  cleaned renesas_fw_callback
+  removed recurion for renesas_fw_download
+  added MODULE_FIRMWARE
+  added comment for multiple fw order
+
+Christian Lamparter (1):
+  usb: xhci: add firmware loader for uPD720201 and uPD720202 w/o ROM
+
+Vinod Koul (3):
+  usb: xhci: Add ROM loader for uPD720201
+  usb: xhci: allow multiple firmware versions
+  usb: xhci: provide a debugfs hook for erasing rom
+
+ drivers/usb/host/xhci-pci.c | 911 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 911 insertions(+)
+
 -- 
-2.7.4
+2.23.0
 
