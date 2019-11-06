@@ -2,126 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BC9F17D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 15:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D755FF1840
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 15:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfKFOAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 09:00:40 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46222 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfKFOAk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 09:00:40 -0500
-Received: by mail-qk1-f194.google.com with SMTP id h15so14914007qka.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 06:00:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e8GY1rXwBKcb+Lwe+YcPDTUeq1DMxubTmclRXFMT0T0=;
-        b=PViz45aMNMK1rfF9SBa7813o21Y/gwutBw9tMmMdUictdChdtRWKU8Gh7/XnW/bxkD
-         bMJX3fIxJF41b50XbbdtINkEKbPPZjHUD2GunYz10ORPVF4bvnZjf0bhA8+C5WTyxsAg
-         c4nywx/Q4cdxqvkNJmP6DuRZwd7qxO7yaaa7q85bpJ8ZlXSrbDrX+UT5b5K2NRij8JIn
-         I26Fz3nPNtR83xiSd7bP9YbvXT1XI0D/sSxMRoxC3CiwjczD7bK5IqFFrej6zszY5/Vi
-         L3nJSi/wg5sZg6DkRbTnObEJkotJX/weMSBKdbiY6XqOwt+qc8V4hv/RsVul62TIJ/Om
-         Q+Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e8GY1rXwBKcb+Lwe+YcPDTUeq1DMxubTmclRXFMT0T0=;
-        b=XVPZ0J8bPDCf9cC9Fsh+RAsnmVkC+iZlm0xJzko7WGIjsGwbEacDiHCbTtSf8F36II
-         tIX5oe+Wx0ejZsBsGu32RAbXRI4tT+yvLblXyAgJVbsTan0MaukraZ3/Kv4lJBJ64C9r
-         Og9iHTqQZsfIe3cvEme9WFid4ZTXuiwGnETuzHz3IdbU/kPTQD4seH3tQqjFvCMoq7P3
-         MoafxesRnf5tI/g0mUwNasVy3ab5fJy6UFYwTkf/5b2riM3qQIY9s3QYCmY0GUngHKvS
-         WF3ZDUODM8dwD5L22FAtFCoB5pd0s0vd0c4tI5Lk8aPKVffzhT8ZZLJREIsAoPeWkBHo
-         /ZCw==
-X-Gm-Message-State: APjAAAXiK+cVkRRvA95YkzqJjlkVRW33eiWDXPHXhkXcTavfB/IV5aId
-        26XHGrnNHkbX3JBI7wnziuY=
-X-Google-Smtp-Source: APXvYqxHj2ckfpE0/WV/i5Zvo58qVZsKnwiS9WmeBMrPNo2oR7fqb9LJE46M3nZMzHWWXmuI5JM9Ow==
-X-Received: by 2002:ae9:f012:: with SMTP id l18mr2010858qkg.291.1573048838971;
-        Wed, 06 Nov 2019 06:00:38 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id o2sm12444965qte.79.2019.11.06.06.00.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 06:00:38 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6A5F140B1D; Wed,  6 Nov 2019 11:00:36 -0300 (-03)
-Date:   Wed, 6 Nov 2019 11:00:36 -0300
-To:     John Garry <john.garry@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH] perf tools: Fix cross compile for ARM64
-Message-ID: <20191106140036.GA6259@kernel.org>
-References: <1573045254-39833-1-git-send-email-john.garry@huawei.com>
+        id S1731919AbfKFOQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 09:16:32 -0500
+Received: from l2mail1.panix.com ([166.84.1.75]:50702 "EHLO l2mail1.panix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727478AbfKFOQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 09:16:31 -0500
+X-Greylist: delayed 926 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 09:16:30 EST
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+        by l2mail1.panix.com (Postfix) with ESMTPS id 477Sqj3NDGzFGw;
+        Wed,  6 Nov 2019 09:01:05 -0500 (EST)
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+        by mailbackend.panix.com (Postfix) with ESMTPSA id 477Sqh2bHWz14BZ;
+        Wed,  6 Nov 2019 09:01:04 -0500 (EST)
+Received: by mail-io1-f51.google.com with SMTP id k1so15264588ioj.6;
+        Wed, 06 Nov 2019 06:01:03 -0800 (PST)
+X-Gm-Message-State: APjAAAW30bdjrwoPxeQ+iEMF8z1CV67HC3DFxqmDKz/ZNvREcNfUWjOF
+        nRA2UU0sLTo0hTmRxJ/RDCtYUe0MXyqs+ilgIds=
+X-Google-Smtp-Source: APXvYqyNiiZ980P2aQYdN2JGZ2ay2hIizWuWJTEwXvcdX3q2z/Mm48i+X6g4IkKCzWPTnAKbEi9ZHkCaXH06gLiiYmk=
+X-Received: by 2002:a5d:9ecd:: with SMTP id a13mr20356555ioe.270.1573048863570;
+ Wed, 06 Nov 2019 06:01:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573045254-39833-1-git-send-email-john.garry@huawei.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191104002909.25783-1-shawn@git.icu> <87woceslfs.fsf@oldenburg2.str.redhat.com>
+ <alpine.DEB.2.21.1911051053470.17054@nanos.tec.linutronix.de>
+ <87sgn2skm6.fsf@oldenburg2.str.redhat.com> <alpine.DEB.2.21.1911051253430.17054@nanos.tec.linutronix.de>
+ <f11d82f1-1e81-e344-3ad2-76e4cb488a3d@redhat.com> <alpine.DEB.2.21.1911051520090.17054@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1911051520090.17054@nanos.tec.linutronix.de>
+From:   Zack Weinberg <zackw@panix.com>
+Date:   Wed, 6 Nov 2019 09:00:51 -0500
+X-Gmail-Original-Message-ID: <CAKCAbMjYBpTjwyMJkkENps09o4KFoQAb_KOKp4g0BtWUXjYAzQ@mail.gmail.com>
+Message-ID: <CAKCAbMjYBpTjwyMJkkENps09o4KFoQAb_KOKp4g0BtWUXjYAzQ@mail.gmail.com>
+Subject: Re: [RFC v2 PATCH] futex: extend set_robust_list to allow 2 locking
+ ABIs at the same time.
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Carlos O'Donell" <carlos@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Shawn Landden <shawn@git.icu>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Keith Packard <keithp@keithp.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Nov 06, 2019 at 09:00:54PM +0800, John Garry escreveu:
-> Currently when cross compiling perf tool for ARM64 on my x86 machine I get
-> this error:
-> arch/arm64/util/sym-handling.c:9:10: fatal error: gelf.h: No such file or directory
->  #include <gelf.h>
-> 
-> For the build, libelf is reported off:
-> Auto-detecting system features:
-> ...
-> ...                        libelf: [ OFF ]
+On Tue, Nov 5, 2019 at 9:28 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> The real issue is that the robust list could be circular by incident or
+> malice and there is no way for the kernel to figure that out. That would
+> prevent the task from exiting and make it iterate over the list until
+> doomsday, i.e. a nice unpriviledged DoS.
 
-Thanks, applied.
+Why can't the kernel use the standard tortoise-and-hare algorithm for
+detecting circular linked lists here?
 
-- Arnaldo
- 
-> Indeed, test-libelf is not built successfully:
-> more ./build/feature/test-libelf.make.output
-> test-libelf.c:2:10: fatal error: libelf.h: No such file or directory
->  #include <libelf.h>
->           ^~~~~~~~~~
-> compilation terminated.
-> 
-> I have no such problems natively compiling on ARM64, and I did not
-> previously have this issue for cross compiling. Fix by relocating
-> the gelf.h include.
-> 
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
-> 
-> I marked this as RFC as I am suspicious that I have seen no other
-> reports, and whether fixing up the libelf.h include issue is the proper
-> approach.
-> 
-> diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
-> index 5df788985130..8dfa3e5229f1 100644
-> --- a/tools/perf/arch/arm64/util/sym-handling.c
-> +++ b/tools/perf/arch/arm64/util/sym-handling.c
-> @@ -6,9 +6,10 @@
->  
->  #include "symbol.h" // for the elf__needs_adjust_symbols() prototype
->  #include <stdbool.h>
-> -#include <gelf.h>
->  
->  #ifdef HAVE_LIBELF_SUPPORT
-> +#include <gelf.h>
-> +
->  bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
->  {
->  	return ehdr.e_type == ET_EXEC ||
-> -- 
-> 2.17.1
-
--- 
-
-- Arnaldo
+zw
