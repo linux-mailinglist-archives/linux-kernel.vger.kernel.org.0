@@ -2,164 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF439F1BB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:53:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF635F1B83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:44:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732334AbfKFQxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 11:53:01 -0500
-Received: from mga03.intel.com ([134.134.136.65]:52065 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfKFQw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 11:52:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 08:52:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="353532513"
-Received: from pdblomfi-mobl.gar.corp.intel.com (HELO [10.254.107.145]) ([10.254.107.145])
-  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2019 08:52:58 -0800
-Subject: Re: [alsa-devel] [RESEND PATCH v2 7/7] ASoC: amd: Added ACP3x system
- resume and runtime pm ops
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <1573137364-5592-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1573137364-5592-8-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c30bea61-8db4-fb7a-bead-c665f88b3091@linux.intel.com>
-Date:   Wed, 6 Nov 2019 10:43:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728670AbfKFQoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 11:44:32 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42743 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbfKFQob (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 11:44:31 -0500
+Received: by mail-yw1-f68.google.com with SMTP id z67so668830ywb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 08:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RnIAWuMyz7kDieVNrBUbl2Gvb5/kFTUXSVFfu5Y2MNA=;
+        b=onjprryLGJm1op2xyFSo6LKEns+ebTE+WwtbI/KR7L/OuP/jFfOc8vreiDstWJZR5i
+         /u34Zaq7MWWxqSd+SGkwtkDpk6tS0d1kTZDR2FdEyd5oj0PFBrd23iUcJfhicjIfPRhy
+         zDhP2KmoNL1ZQuLofdscn7ApRDNAtL336tUiKYbvcHRxgSBAagFZWasEnyp1e1HLC7SV
+         vCWBlOdp6ZIWKkwM3LLZD9WTkMHawaX303IekXO0G/MYohKPwMddc3BeRW3SwykXDyxV
+         zbd3kZe8KO2SHQAFQnfg84pdBayvETXJemPlECfLm1cL1+X3jUEd9SHgDl5zzoVeYSMm
+         3FCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RnIAWuMyz7kDieVNrBUbl2Gvb5/kFTUXSVFfu5Y2MNA=;
+        b=hofE2P19CvrafkmR0c//tmnmo30zQ91oOtK+KpwnM8v8I7ePoJsoB5ZD4th+VoN9lP
+         49qIXc+n1sgC55KdQvCbfmZmoasBJ9LisjE4Ng68VVEA2BPOhHVpWlE2y6uaEcZqnyha
+         vpzge8JZlT3denjqd6KN9EWRrT+KXrxGDXGPZKvHjK4RgtINuTrllByn/vAtPN5esgMX
+         7/mvcZaz2I/sFv3P7ySsM7P1d/0/59Aj7DSKL3z3Zf/7sj2UP/I17yHyGFFBrEf/l7vB
+         QarO1/7E89kqIWYQGmwgW+Q/++JlRGDDxLntdohzz7j7XQHZWyUOZeaZ2LuJcwDNRm0X
+         ccrQ==
+X-Gm-Message-State: APjAAAV8FZnSuGQbyUMG7Gm7J9nU4iXT2ckessohOOVIARXfUR8e/LFc
+        H0cflQHGsF/cHZ3cwlh6r7xlUKoHkpWur+1KgMg=
+X-Google-Smtp-Source: APXvYqw5uvqnnms4M9LntHdMzBZDGmmovjOZaUoXw0nc8YS06THSQKVbnZiwnNAj2zKs+Hfa6nXYPA9UZA7vULRnsXE=
+X-Received: by 2002:a81:8415:: with SMTP id u21mr2283731ywf.129.1573058670927;
+ Wed, 06 Nov 2019 08:44:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1573137364-5592-8-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191106030542.868541-1-dima@arista.com> <20191106030542.868541-44-dima@arista.com>
+ <CAMo8Bf+q0j81VZeUQdvCkXt131uzSBfJ0N7RTe7+NpjRkVpzdA@mail.gmail.com> <20191106081541.soxefwyvu3o72tqg@pathway.suse.cz>
+In-Reply-To: <20191106081541.soxefwyvu3o72tqg@pathway.suse.cz>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Wed, 6 Nov 2019 08:44:19 -0800
+Message-ID: <CAMo8Bf+ASTba15G7xj=zLTnnCaU=SeHiEO6Ab-0MCcJMiOXNkw@mail.gmail.com>
+Subject: Re: [PATCH 43/50] xtensa: Add show_stack_loglvl()
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Dmitry Safonov <dima@arista.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Chris Zankel <chris@zankel.net>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 6, 2019 at 12:15 AM Petr Mladek <pmladek@suse.com> wrote:
+> > >         for (i = 0; i < kstack_depth_to_print; i++) {
+> > >                 if (kstack_end(sp))
+> > >                         break;
+> > > -               pr_cont(" %08lx", *sp++);
+> > > +               printk("%s %08lx", loglvl, *sp++);
+>
+> KERN_CONT can be combined with any other loglevel.
+> So you could keep using pr_cont() together with explicit loglevel:
+>
+>                         pr_cont("%s %08lx", loglvl, *sp++);
+>
+> It should fix the problems reported below.
+>
+> Well, the preferred solution would be to snprintf() the continuous
+> line into a temporary buffer. And printk() it when it is complete.
+> pr_cont() is not reliable when more CPUs print at the same time.
 
+Good point. Let me do this cleanup.
 
-On 11/7/19 8:36 AM, Ravulapati Vishnu vardhan rao wrote:
-> When system wide suspend happens, ACP will be powered off
-> and when system resumes,for audio usecase to continue,
-> all the runtime configuration data needs to be programmed again.
-> Added resume pm call back to ACP pm ops and
-> also Added runtime PM operations for ACP3x PCM platform device.
-> Device will enter into D3 state when there is no activity
-> on audio I2S lines.
-
-spaces after punctuation and use of capital letters at the start of a 
-sentence?
-
-> 
-> Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-> ---
->   sound/soc/amd/raven/pci-acp3x.c | 47 ++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 46 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-> index 7727c9d..d567585 100644
-> --- a/sound/soc/amd/raven/pci-acp3x.c
-> +++ b/sound/soc/amd/raven/pci-acp3x.c
-> @@ -9,6 +9,9 @@
->   #include <linux/io.h>
->   #include <linux/platform_device.h>
->   #include <linux/interrupt.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/delay.h>
-> +#include <sound/pcm.h>
->   
->   #include "acp3x.h"
->   
-> @@ -247,6 +250,11 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   		}
->   		break;
->   	}
-> +	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
-> +	pm_runtime_use_autosuspend(&pci->dev);
-> +	pm_runtime_set_active(&pci->dev);
-> +	pm_runtime_put_noidle(&pci->dev);
-> +	pm_runtime_enable(&pci->dev);
->   	return 0;
->   
->   unmap_mmio:
-> @@ -268,6 +276,39 @@ static int snd_acp3x_probe(struct pci_dev *pci,
->   	return ret;
->   }
->   
-> +static int  snd_acp3x_suspend(struct device *dev)
-> +{
-> +	int status;
-> +	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-> +
-> +	status = acp3x_deinit(adata->acp3x_base);
-> +	if (status)
-> +		dev_err(dev, "ACP de-init failed\n");
-> +	else
-> +		dev_info(dev, "ACP de-initialized\n");
-> +
-> +	return 0;
-> +}
-> +static int  snd_acp3x_resume(struct device *dev)
-> +{
-> +	int status;
-> +	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-> +
-> +	status = acp3x_init(adata->acp3x_base);
-> +	if (status) {
-> +		dev_err(dev, "ACP init failed\n");
-> +		return status;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops acp3x_pm = {
-> +	.runtime_suspend = snd_acp3x_suspend,
-> +	.runtime_resume =  snd_acp3x_resume,
-> +	.resume =       snd_acp3x_resume,
-> +};
-
-that should have been combined with the previous patch, you resume inits 
-in the platform device resume and only add it to the PCI level here.
-
-> +
->   static void snd_acp3x_remove(struct pci_dev *pci)
->   {
->   	int i, ret;
-> @@ -283,7 +324,8 @@ static void snd_acp3x_remove(struct pci_dev *pci)
->   	else
->   		dev_info(&pci->dev, "ACP de-initialized\n");
->   	iounmap(adata->acp3x_base);
-> -
-> +	pm_runtime_disable(&pci->dev);
-> +	pm_runtime_get_noresume(&pci->dev);
->   	pci_disable_msi(pci);
->   	pci_release_regions(pci);
->   	pci_disable_device(pci);
-> @@ -302,6 +344,9 @@ static struct pci_driver acp3x_driver  = {
->   	.id_table = snd_acp3x_ids,
->   	.probe = snd_acp3x_probe,
->   	.remove = snd_acp3x_remove,
-> +	.driver = {
-> +		.pm = &acp3x_pm,
-> +	}
->   };
->   
->   module_pci_driver(acp3x_driver);
-> 
+-- 
+Thanks.
+-- Max
