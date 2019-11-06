@@ -2,90 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19453F0D63
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:53:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE4FF0D5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:52:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbfKFDxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:53:46 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39303 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729784AbfKFDxp (ORCPT
+        id S1731111AbfKFDwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:52:41 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44936 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfKFDwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:53:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573012424;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EaTbE+HmGj8bDfQK0HMuk+gfERcklzcbJD+zUHMoips=;
-        b=LhNflBN+PrTgQwEkL5Fd+8csaEcGKVVgVJyT/E2WhSNoe/4Xq9E9s0/bHJ6MQjkG+VMp97
-        xhmbxHnS59znS1kq0xxCIK+xeZeuSWAZ94liz7ydU08yqOlngCjacqI2zd66n+y6YwINos
-        GSALM/6JGyHZTvtK99s2/CmavTMxiF0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-41-s3GVRo2xO9Kh53Br-bjUiw-1; Tue, 05 Nov 2019 22:53:41 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE2061005500;
-        Wed,  6 Nov 2019 03:53:36 +0000 (UTC)
-Received: from [10.72.12.193] (ovpn-12-193.pek2.redhat.com [10.72.12.193])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 16874600C6;
-        Wed,  6 Nov 2019 03:51:35 +0000 (UTC)
-Subject: Re: [PATCH V8 4/6] mdev: introduce virtio device and its device ops
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        mst@redhat.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        cohuck@redhat.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
-        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
-        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
-        stefanha@redhat.com
-References: <20191105093240.5135-1-jasowang@redhat.com>
- <20191105093240.5135-5-jasowang@redhat.com> <20191105104710.16d0f629@x1.home>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <0de9abaf-d740-f4c7-50ff-3bd68a50ab40@redhat.com>
-Date:   Wed, 6 Nov 2019 11:51:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 5 Nov 2019 22:52:41 -0500
+Received: by mail-ot1-f67.google.com with SMTP id c19so3550282otr.11;
+        Tue, 05 Nov 2019 19:52:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qVL6/KdJU5CK3KGDry37q377IXjdSjsU4IwjB7ytqvU=;
+        b=AOdIx3mGPHoOBVTbgrR3Ttjyc1KxVQ/dsXwYAAx6JfxXfqiTnLJL0dk/EGZlkVaAvy
+         g0P9h7uY5VBXBFdJbB8aYblf8feoPB88INwQN10CnQwUQX9MzhIahs70KpMnS075qGmA
+         FIHFIfcXvLRtXOFor5y0K/CeDeOqAa0M82/RkEHljwbcl3ViZ1Z04OD4EBvEYGZNhyP+
+         CoWddgQU2Zl+C5cyMWKuGQXsv/YVEqOhaQJPF7tJxvVHI7GxNbRPYuoxnODMPt3xQeh/
+         saURn0KKPUEvaPlcFzpV0Xp3qUDukwjA7z5qWjR+mxEYdY8qcm5uV8n4b4uBPlFtDjni
+         OXPQ==
+X-Gm-Message-State: APjAAAX+umnKDBiXH1i0rPFQu604ZSCndBbkAAzLjctnBHVXp8bhW2z6
+        AyMD/+kR+naye2RgEr/gqg==
+X-Google-Smtp-Source: APXvYqw9JKyWfFwQh0q+Ym9dD6boCstaS2iRfFy5rBdgL0cCxIbhhpjTpkl5RRvH3B5KqmWgf9RjNQ==
+X-Received: by 2002:a9d:4604:: with SMTP id y4mr219841ote.10.1573012359179;
+        Tue, 05 Nov 2019 19:52:39 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m205sm6483459oif.10.2019.11.05.19.52.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 19:52:38 -0800 (PST)
+Date:   Tue, 5 Nov 2019 21:52:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     robh+dt@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] dt-bindings: interconnect: Convert qcom,qcs404 to DT
+ schema
+Message-ID: <20191106035238.GA25559@bogus>
+References: <20191030101555.10955-1-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20191105104710.16d0f629@x1.home>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: s3GVRo2xO9Kh53Br-bjUiw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030101555.10955-1-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 30 Oct 2019 12:15:55 +0200, Georgi Djakov wrote:
+> Convert the qcom,qcs404 interconnect provider binding to DT schema.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  .../bindings/interconnect/qcom,qcs404.txt     | 45 -----------
+>  .../bindings/interconnect/qcom,qcs404.yaml    | 77 +++++++++++++++++++
+>  2 files changed, 77 insertions(+), 45 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.yaml
+> 
 
-On 2019/11/6 =E4=B8=8A=E5=8D=881:47, Alex Williamson wrote:
->> +#define VIRTIO_MDEV_DEVICE_API_STRING=09=09"virtio-mdev"
->> +#define VIRTIO_MDEV_F_VERSION_1 0x1
-> This entire concept of VIRTIO_MDEV_F_VERSION_1 is gone now, right?
-> Let's remove it here and below.  Thanks,
->
-> Alex
->
+Applied, thanks.
 
-Yes, will fix.
-
-Thanks
-
+Rob
