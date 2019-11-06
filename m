@@ -2,71 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71432F0FBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB412F0F8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731852AbfKFHEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:04:55 -0500
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:18687 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731824AbfKFHEz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:04:55 -0500
-IronPort-SDR: GXUtK91lnGhqhFsdIhspZy1fB1f8vO9Xasm1VzIxnLZAqz9mLWXsTxdALcAIlDYJj3EaiMpYxa
- GoY1aDt/bVfjJo3Cw0KNg0yoE0yeMWh3xGTg4+0M1qR0MA2d9UPpCU5JRH47h3YoaP0q89SAdV
- RV8MoNH4roKbCfg68e6vor4iBVnG+dL9ArhAniyrtjRw5YKAt/QgD4Zxo4KKarCOzWU3oEjWqx
- II5ZQ+jH4amVELfrNWwm5Q7mDzhIeNqM908Vr9Lib2sAnqfLJ49BUlucsn29cRjnja1AITIBiZ
- pIQ=
-X-IronPort-AV: E=Sophos;i="5.68,272,1569312000"; 
-   d="scan'208";a="44759346"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 05 Nov 2019 23:04:54 -0800
-IronPort-SDR: riHpJbmBY/cMLTF4AEiPSrR6qbNyBs4glwf6GgoEx8d1aeIuZfDmrh8HAQJjZZWypZ7u2uar6d
- 7ZMOXux6jlvEdzMnTErgo72U0Q91GzSriN/QGtg80vP0hi4cNCMCvU0IUMqVxA85nUs8epoYMc
- HhQVhqPRsdrQnx96RPBGgl5hP3rQT/Xw4s036Bk+q+mFjkAywj6Z/MQV7HAhjV/OK29wJSaE+V
- 7D6IdJRVjEPO4Ks60HkOrO5gmY4Vp76hS1Z1FllYDEEENckDCL3b/U2xqAldlSfMeLSW/VMRQK
- sCE=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <rydberg@bitmath.org>, <dmitry.torokhov@gmail.com>,
-        <nick@shmanahar.org>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>, <erosca@de.adit-jv.com>,
-        <Andrew_Gabbasov@mentor.com>
-Subject: [PATCH v5 48/48] Input: atmel_mxt_ts - Fix compilation warning
-Date:   Wed, 6 Nov 2019 16:01:46 +0900
-Message-ID: <20191106070146.18759-49-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191106070146.18759-1-jiada_wang@mentor.com>
-References: <20191106070146.18759-1-jiada_wang@mentor.com>
+        id S1731597AbfKFHD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:03:29 -0500
+Received: from mailoutvs7.siol.net ([185.57.226.198]:52844 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731206AbfKFHD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:03:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id B373352475C;
+        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id X00OQJgGRu0m; Wed,  6 Nov 2019 08:03:25 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 6677B52506A;
+        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
+Received: from localhost.localdomain (cpe-86-58-102-7.static.triera.net [86.58.102.7])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPSA id 1B990524D52;
+        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: v4l2-mem2mem: Fix hold buf flag checks
+Date:   Wed,  6 Nov 2019 08:02:53 +0100
+Message-Id: <20191106070253.1986421-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix "make W=1" compilation warnings from Atmel driver
-as per the compilation logs.
+Hold buf flag is set on output queue, not capture. Fix that.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Fixes: f07602ac3887 ("media: v4l2-mem2mem: add new_frame detection")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-mem2mem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 243820b102b8..3e2697810cf0 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2049,7 +2049,7 @@ static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
- 
- 			byte_offset = reg + i - cfg->start_ofs;
- 
--			if (byte_offset >= 0 && byte_offset < cfg->mem_size) {
-+			if (byte_offset < cfg->mem_size) {
- 				*(cfg->mem + byte_offset) = val;
- 			} else {
- 				dev_err(dev, "Bad object: reg:%d, T%d, ofs=%d\n",
--- 
-2.17.1
+diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-=
+core/v4l2-mem2mem.c
+index db07ef3bf3d0..1afd9c6ad908 100644
+--- a/drivers/media/v4l2-core/v4l2-mem2mem.c
++++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+@@ -335,7 +335,7 @@ static void __v4l2_m2m_try_queue(struct v4l2_m2m_dev =
+*m2m_dev,
+ 		}
+ 	}
+=20
+-	if (src && dst && (m2m_ctx->cap_q_ctx.q.subsystem_flags &
++	if (src && dst && (m2m_ctx->out_q_ctx.q.subsystem_flags &
+ 			   VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF))
+ 		m2m_ctx->new_frame =3D !dst->vb2_buf.copied_timestamp ||
+ 			dst->vb2_buf.timestamp !=3D src->vb2_buf.timestamp;
+@@ -474,7 +474,7 @@ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev=
+,
+ 	 * holding capture buffers. Those should use
+ 	 * v4l2_m2m_buf_done_and_job_finish() instead.
+ 	 */
+-	WARN_ON(m2m_ctx->cap_q_ctx.q.subsystem_flags &
++	WARN_ON(m2m_ctx->out_q_ctx.q.subsystem_flags &
+ 		VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF);
+ 	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+ 	schedule_next =3D _v4l2_m2m_job_finish(m2m_dev, m2m_ctx);
+--=20
+2.24.0
 
