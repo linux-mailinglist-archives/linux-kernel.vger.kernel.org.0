@@ -2,100 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22434F14F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63CEDF1502
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:25:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731415AbfKFLYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:24:04 -0500
-Received: from canardo.mork.no ([148.122.252.1]:54583 "EHLO canardo.mork.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfKFLYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:24:04 -0500
-Received: from miraculix.mork.no ([IPv6:2a02:2121:340:755f:c09a:74ff:fe7f:b715])
-        (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id xA6BNVj8026517
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 6 Nov 2019 12:23:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1573039412; bh=v3Ba2yCnHfZ6sWycbEkeGJ9xcXrxQTVKv4WO5jG2qwc=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=Wln6GCVyIkaef7sMAOv6ek7lP5o1xy0S1INtPHQnAoDUffuDZ2o0pPydAUfne/laa
-         ctt3go12cGkgv/kwJEghK4+6Y1OMP5f4eLb8q3xIdMJi3okndPjaJaw+kiFAQF2MG2
-         IjfTIXRXX1PJQ4nncvXP5p0i0jOr5FifEL7Ps8f8=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
-        (envelope-from <bjorn@mork.no>)
-        id 1iSJPI-0005PT-KN; Wed, 06 Nov 2019 12:23:24 +0100
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        gregkh@linuxfoundation.org, <mathias.nyman@intel.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: Allow USB device to be warm reset in suspended state
-Organization: m
-References: <Pine.LNX.4.44L0.1911051200570.1678-100000@iolanthe.rowland.org>
-Date:   Wed, 06 Nov 2019 12:23:24 +0100
-In-Reply-To: <Pine.LNX.4.44L0.1911051200570.1678-100000@iolanthe.rowland.org>
-        (Alan Stern's message of "Tue, 5 Nov 2019 13:07:34 -0500 (EST)")
-Message-ID: <87o8xpz1sj.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.101.4 at canardo
-X-Virus-Status: Clean
+        id S1731542AbfKFLZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:25:21 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47954 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfKFLZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 06:25:21 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id xA6BO1Em018531;
+        Wed, 6 Nov 2019 20:24:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xA6BO1Em018531
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573039442;
+        bh=rLZcOrok9PdZlKG4VRBTQujCqfo2C2HipVKQXAB7ZNc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pkbFRrG7vHWYHM1pshA3Ue0PBy3/uE1m+zP1ucyA47F9KzYFOotOL6eexS7TnejYE
+         ZZozWyll4V5rXUTCogyxXfrNOvS6RvCFk3W8bPnF7wXohalB42Wg9uzIUby2FeQinx
+         dWibk0Yx0vGo0ATJBme0jcGKqeKucr0lTIiVjDYhg30ZWHd0BKHifgaFjJSBNf+72l
+         7GPoN6/nOariFEnqJP/Ftz11zjC1F2A2bOB3qI+iAGRAH89AUU2eEaQzQZgDFCr0M+
+         Jv8bQvAkzWQQw0iR2irr4/VO2Rd1O+eFrsgptLDQy8yi4xDMhlQS9JyKgH8V6OZI9B
+         5jZAZupTC33qQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] modpost: add an option to suppress 'exported twice' warnings
+Date:   Wed,  6 Nov 2019 20:23:57 +0900
+Message-Id: <20191106112357.29053-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alan Stern <stern@rowland.harvard.edu> writes:
+Since commit "modpost: do not set ->preloaded for symbols from
+Module.symvers", the modpost always warns about symbols exported
+multiple times.
 
-> I was sure I remembered reading somewhere that suspended devices were
-> not allowed to be reset, but now I can't find that requirement anywhere
-> in the USB spec.
+Generally, I believe it is a good thing to show a warning when the
+same symbol name is exported twice. This avoids the accidental symbol
+conflict.
 
-I don't know anything about this, but "Reset From Suspended State" is
-part of Appendix C in the USB 2.0 spec. Looks valid to me..
+However, in some cases, we build an external module to provide a
+different version/variant of the in-kernel module, overriding the
+same set of exported symbols.
 
-Quoting the relevant section for those who don't have that spec at hand:
+At least, there is one use-case in the upstream code;
+tools/testing/nvdimm/libnvdimm.ko replaces drivers/nvdimm/libnvdimm.ko
+in order to link it against mocked version of core kernel symbols.
 
+Now, this emits a lots of 'exported twice' warnings:
 
-  C.2.1 Reset From Suspended State
+  https://lkml.org/lkml/2019/10/31/627
 
-  As can be seen from Figure C-2, the device wakes up from the Suspended
-  state as soon as it sees a K or an SE0 on the bus. A J would be
-  indistinguishable from idle on the bus that a suspended device sees
-  normally. On seeing a K, the device will initiate a resume
-  process. For the details of this process, see Section 7.1.7.7. On
-  seeing an SE0, the device could enter the reset handshake procedure,
-  so it starts timer T0.
+To suppress those, add a new option KBUILD_DUPLICATED_EXPORTS_NO_WARN.
 
-  The actual reset handshake is only started after seeing a continuous
-  assertion of SE0 for at least 2.5 =CE=BCs (T FILTSE0 ).  The loop between
-  the blocks with =E2=80=9CClear timer T1=E2=80=9D and =E2=80=9CRun timer T=
-1=E2=80=9D represents this
-  filtering. If the device has not detected a continuous SE0 before
-  timer T0 exceeds the value of T UCHEND - T UCH , the device goes back
-  into the Suspended state.
+If you intentionally override the existing symbols, you can pass it
+from the command line:
 
-  A device coming from suspend most probably had its high-speed clock
-  stopped to meet the power requirements for a suspended device (see
-  Section 7.2.3). Therefore, it may take some time to let the clock
-  settle to a level of operation where it is able to perform the reset
-  detection and handshake with enough precision. In the state diagram, a
-  time symbol T WTCLK is used to have the device wait for a stable
-  clock. This symbol is not part of the USB 2.0 specification and does
-  not appear in Chapter 7. It is an implementation specific detail of
-  the reset detection state diagram for the upstream facing port, where
-  it is marked with a asterisk (*). T WTCLK should have a value
-  somewhere between 0 and 5.0 ms. This allows at least 1.0 ms time to
-  detect the continuous SE0.
+  make M=tools/testing/nvdimm KBUILD_DUPLICATED_EXPORTS_NO_WARN=1
 
-  If the device has seen an SE0 signal on the bus for at least T FILTSE0
-  , then it can safely assume to have detected a reset and can start the
-  reset handshake.
+Or, more conveniently, you can add it to the module Makefile, so
+you can still do:
+
+  make M=tools/testing/nvdimm
+
+without sprinkling the warnings.
+
+Reported-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Jeff Moyer,
+Dan Williams,
+
+Please check if this patch solves the nvdimm build issue.
 
 
+ Documentation/kbuild/kbuild.rst | 7 +++++++
+ scripts/Makefile.modpost        | 1 +
+ scripts/mod/modpost.c           | 9 +++++++--
+ tools/testing/nvdimm/Kbuild     | 4 ++++
+ 4 files changed, 19 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
+index f1e5dce86af7..8ff0935f9e7f 100644
+--- a/Documentation/kbuild/kbuild.rst
++++ b/Documentation/kbuild/kbuild.rst
+@@ -223,6 +223,13 @@ KBUILD_SIGN_PIN
+ This variable allows a passphrase or PIN to be passed to the sign-file
+ utility when signing kernel modules, if the private key requires such.
+ 
++KBUILD_DUPLICATED_EXPORTS_NO_WARN
++---------------------------------
++This variable can be set to suppress warnings about symbols exported
++multiple times. This is useful when you are building an external module
++to provide a different version of an in-tree module.
++
++
+ KBUILD_MODPOST_WARN
+ -------------------
+ KBUILD_MODPOST_WARN can be set to avoid errors in case of undefined
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index 8359f8af5ee6..52e50ac45688 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -53,6 +53,7 @@ MODPOST = scripts/mod/modpost						\
+ 	$(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS)))	\
+ 	$(if $(KBUILD_EXTMOD),-o $(modulesymfile))			\
+ 	$(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)			\
++	$(if $(KBUILD_DUPLICATED_EXPORTS_NO_WARN),-W)			\
+ 	$(if $(KBUILD_MODPOST_WARN),-w)
+ 
+ ifdef MODPOST_VMLINUX
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index f70b924f379f..858568f4edb4 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -33,6 +33,8 @@ static int external_module = 0;
+ static int vmlinux_section_warnings = 1;
+ /* Only warn about unresolved symbols */
+ static int warn_unresolved = 0;
++/* Warn about symbols exported multiple times */
++static int warn_duplicated_exports = 1;
+ /* How a symbol is exported */
+ static int sec_mismatch_count = 0;
+ static int sec_mismatch_fatal = 0;
+@@ -382,7 +384,7 @@ static struct symbol *sym_add_exported(const char *name, struct module *mod,
+ 	if (!s) {
+ 		s = new_symbol(name, mod, export);
+ 	} else {
+-		if (!s->preloaded) {
++		if (warn_duplicated_exports && !s->preloaded) {
+ 			warn("%s: '%s' exported twice. Previous export was in %s%s\n",
+ 			     mod->name, name, s->module->name,
+ 			     is_vmlinux(s->module->name) ? "" : ".ko");
+@@ -2559,7 +2561,7 @@ int main(int argc, char **argv)
+ 	struct ext_sym_list *extsym_iter;
+ 	struct ext_sym_list *extsym_start = NULL;
+ 
+-	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awEd:")) != -1) {
++	while ((opt = getopt(argc, argv, "i:e:mnsT:o:awWEd:")) != -1) {
+ 		switch (opt) {
+ 		case 'i':
+ 			kernel_read = optarg;
+@@ -2594,6 +2596,9 @@ int main(int argc, char **argv)
+ 		case 'w':
+ 			warn_unresolved = 1;
+ 			break;
++		case 'W':
++			warn_duplicated_exports = 0;
++			break;
+ 		case 'E':
+ 			sec_mismatch_fatal = 1;
+ 			break;
+diff --git a/tools/testing/nvdimm/Kbuild b/tools/testing/nvdimm/Kbuild
+index c4a9196d794c..c848374f3b0b 100644
+--- a/tools/testing/nvdimm/Kbuild
++++ b/tools/testing/nvdimm/Kbuild
+@@ -93,4 +93,8 @@ libnvdimm-y += dimm_devs.o
+ libnvdimm-y += libnvdimm_test.o
+ libnvdimm-y += config_check.o
+ 
++# This intentionally overrides the original libnvdimm.ko
++# Suppress 'exported twice' warnings from the modpost.
++KBUILD_DUPLICATED_EXPORTS_NO_WARN := 1
++
+ obj-m += test/
+-- 
+2.17.1
 
-Bj=C3=B8rn
