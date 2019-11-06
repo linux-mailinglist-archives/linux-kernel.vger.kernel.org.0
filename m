@@ -2,207 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276D4F1DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 094AFF1DE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:59:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfKFS6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:58:18 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39321 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfKFS6S (ORCPT
+        id S1731997AbfKFS7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:59:37 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43391 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfKFS7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:58:18 -0500
-Received: by mail-yw1-f65.google.com with SMTP id k127so9950186ywc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:58:17 -0800 (PST)
+        Wed, 6 Nov 2019 13:59:36 -0500
+Received: by mail-pg1-f195.google.com with SMTP id l24so17764229pgh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:59:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0MXcH0+MhIAIwCsst+sUwWj3vWo2sspD8l9LQIiuDn8=;
-        b=cIfRAAiC4qOCBoT4IlNmmCOs9EQ2pN4IhUvbQsdYXeFHylavkdQGeKM/3wVCba+aGL
-         6MUuR52YYvyBqz1Y0YG56AwHc3EnAy2Tu5xAqyEkdpBXibfAET4SUObouTM5Mnygu15K
-         ZWZPG0S/E7/dBd3Hr31G70u1SvmduxPKYYy6NVJNLPlPEmyZAv/Mz18+8BBm6IpAPVrA
-         iTryLGi9BxvHLgrgsj0XCESANItuSjZfPLcHV5bjHKT/aiqnm5KfXd3st1OSocvTdDuR
-         eA07Qzwnd/RcfAeahaxQd/rQL0DJJOw7TLyIFZ+O1CfMEdNV4jc4xp1pj8wcp31nkvZZ
-         oXlw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=BIQCSfOYMfSPPWp0Qb5BWbcN1l6pkF5qUeQHWu3kjSE=;
+        b=R62sOVIcL3prslkSy42HxlOARu8i7/2Zfnyl/1paXE2qy1aWqSqiDIF3qJ8rvcEs4B
+         XAqe5jVmPG8JqVIcfyWdW+5VKOuXGc7Q3spA59TYK9xVzSDrJLgySp9W6DuhmxZvrFeY
+         O1asfFdpTVIVoD668/42+ah/31+DCARaCD5n5BSrtUkEjwiSGg560wGcF4Ql3XkYln49
+         6S8h4ExLgJxIZLy7+p/7mP9ISRFH077BsmLrVToWkDIanGLs9dqAWqQHtFE0vZabj5A6
+         3HuvGPrzwfiU2ylZFXBga1/j/tHB5UOXGUoHyYc20oE+hEJjn0Hr9NyUvz7kTGh37vd5
+         YRZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0MXcH0+MhIAIwCsst+sUwWj3vWo2sspD8l9LQIiuDn8=;
-        b=FC9QqfmZHL4sTXB09WE2HbU2gIZSZKG6ln8bqN85b2Bygho8cRElNwt/jyKtD6uWya
-         OaWYeiNK8W9T9rzXlQ9fscTD55oLfV92akh4BmZWt+aPMTPUmrw3bLyn9EQWhWhOs/jb
-         Ytev3Xq847dNtkGsNeCwYghVEr6t3orV+iu55USqidYJraZkIh7r2kDrq2ofTwsHJ+8s
-         xrBYu3oiqfmxQ3p+vby1C4R/69zuy2+QbAizloB44jBoq4g3eXKvIM3KYXz1gvnT+1Es
-         WsTPt9KTXCHteJk9aSCxL0H7t+V0tKk3iEMrthP7TIPtcwJe0UMhXQTclACBCemOty2A
-         8v/Q==
-X-Gm-Message-State: APjAAAXbo7RlHXAAVSJxZK8XJM5fMgda5kB6lLF0F04Qyhc8CXLP06Pb
-        6PJvopZSYuO/IdTeEMz9Ur5K2g==
-X-Google-Smtp-Source: APXvYqyoHGhHZ2Tokg56LUX7ZhWl32oT4TeFymTsLfThNayr5cMfbJBNkoJ+AUyPbHDYSJLaFfpniQ==
-X-Received: by 2002:a81:5b03:: with SMTP id p3mr2658691ywb.189.1573066696343;
-        Wed, 06 Nov 2019 10:58:16 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id k62sm7166332ywd.72.2019.11.06.10.58.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 10:58:15 -0800 (PST)
-Date:   Wed, 6 Nov 2019 13:58:14 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2 v2] drm/atomic: fix self-refresh helpers crtc state
- dereference
-Message-ID: <20191106185814.GD63329@art_vandelay>
-References: <20191104173737.142558-1-robdclark@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=BIQCSfOYMfSPPWp0Qb5BWbcN1l6pkF5qUeQHWu3kjSE=;
+        b=hZRLf65u3oOrkpXJxmI9fep0sj1t5lA/nKhZ1WoxP+2ckcj7CjfjcydFJ8Kzkn5HOG
+         TF8Nk5MVEGCk0XbQMiAo7JXfOC5txniFfcLAaPZ7riXKsqatj24mnpMIe94ezObDMKqx
+         pxBPNL1zxiIfwLkPWNHZ5adpVftU1UjlvhDPHc31HlSBJIvJAcNpln1cDBlJkMAAclDJ
+         aaUqhns9UFyzfCnhVhAy9SKD7U8YUXozSCdnkdoy0kg8HqBhpEObenrgloJsbXMKQvha
+         ddXBVDhMeSN1sNr7EErLD7cefttrHmg5bCO5eIHsx9PMhqfexpxF4FqenoyxwdOTjQod
+         y1ZQ==
+X-Gm-Message-State: APjAAAXwzDZt8dFRburyg7OUAVbhy7aQYqlgIp5GoOJU6LaPRrYsg7y1
+        cq/Cy3UjD8LMMQOra3+ujtUdbg==
+X-Google-Smtp-Source: APXvYqxDwFakqvr//ZgK1/vU58b12jUvY1mNW38GapLOAve+COSgTcbDlmnEFlZg/cxi2ZAzxzzjGg==
+X-Received: by 2002:a17:90a:741:: with SMTP id s1mr5936926pje.107.1573066774325;
+        Wed, 06 Nov 2019 10:59:34 -0800 (PST)
+Received: from [100.112.92.218] ([104.133.9.106])
+        by smtp.gmail.com with ESMTPSA id y4sm17514559pfn.97.2019.11.06.10.59.33
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 06 Nov 2019 10:59:33 -0800 (PST)
+Date:   Wed, 6 Nov 2019 10:59:21 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+cc:     Michal Hocko <mhocko@kernel.org>, hughd@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: shmem: use proper gfp flags for shmem_writepage()
+In-Reply-To: <733100ea-97aa-db27-4b43-cf42317afaf8@linux.alibaba.com>
+Message-ID: <alpine.LSU.2.11.1911061039540.1357@eggly.anvils>
+References: <1572991351-86061-1-git-send-email-yang.shi@linux.alibaba.com> <20191106151820.GB8138@dhcp22.suse.cz> <733100ea-97aa-db27-4b43-cf42317afaf8@linux.alibaba.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191104173737.142558-1-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: MULTIPART/MIXED; BOUNDARY="0-1214476646-1573066773=:1357"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 09:37:36AM -0800, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> drm_self_refresh_helper_update_avg_times() was incorrectly accessing the
-> new incoming state after drm_atomic_helper_commit_hw_done().  But this
-> state might have already been superceeded by an !nonblock atomic update
-> resulting in dereferencing an already free'd crtc_state.
-> 
-> TODO I *think* this will more or less do the right thing.. althought I'm
-> not 100% sure if, for example, we enter psr in a nonblock commit, and
-> then leave psr in a !nonblock commit that overtakes the completion of
-> the nonblock commit.  Not sure if this sort of scenario can happen in
-> practice.  But not crashing is better than crashing, so I guess we
-> should either take this patch or rever the self-refresh helpers until
-> Sean can figure out a better solution.
-> 
-> Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks for tracking this down, Rob. I gave it a spin on my rk3399 kevin and it
-behaved as expected.
+--0-1214476646-1573066773=:1357
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-I've pushed this patch to drm-misc-fixes in hopes it'll catch 5.4
+On Wed, 6 Nov 2019, Yang Shi wrote:
+> On 11/6/19 7:18 AM, Michal Hocko wrote:
+> > On Wed 06-11-19 06:02:31, Yang Shi wrote:
+> > > The shmem_writepage() uses GFP_ATOMIC to allocate swap cache.
+> > > GFP_ATOMIC used to mean __GFP_HIGH, but now it means __GFP_HIGH |
+> > > __GFP_ATOMIC | __GFP_KSWAPD_RECLAIM.  However, shmem_writepage() shou=
+ld
+> > > write out to swap only in response to memory pressure, so
+> > > __GFP_KSWAPD_RECLAIM looks useless since the caller may be kswapd its=
+elf
+> > > or in direct reclaim already.
+> > What kind of problem are you trying to fix here?
+>=20
+> I didn't run into any visible problem. I just happened to find this
+> inconsistency when I was looking into the other problem.
 
-Sean
+Yes, I don't think it fixes any actual problem: just a cleanup to
+make the two calls look the same when they don't need to be different
+(whereas the call from __read_swap_cache_async() rightly uses a=20
+lower priority gfp).
 
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c       | 14 +++++++++++++-
->  drivers/gpu/drm/drm_self_refresh_helper.c | 15 +++++++++------
->  include/drm/drm_self_refresh_helper.h     |  3 ++-
->  3 files changed, 24 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 3ef2ac52ce94..648494c813e5 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1581,8 +1581,11 @@ static void commit_tail(struct drm_atomic_state *old_state)
->  {
->  	struct drm_device *dev = old_state->dev;
->  	const struct drm_mode_config_helper_funcs *funcs;
-> +	struct drm_crtc_state *new_crtc_state;
-> +	struct drm_crtc *crtc;
->  	ktime_t start;
->  	s64 commit_time_ms;
-> +	unsigned i, new_self_refresh_mask = 0;
->  
->  	funcs = dev->mode_config.helper_private;
->  
-> @@ -1602,6 +1605,14 @@ static void commit_tail(struct drm_atomic_state *old_state)
->  
->  	drm_atomic_helper_wait_for_dependencies(old_state);
->  
-> +	/*
-> +	 * We cannot safely access new_crtc_state after drm_atomic_helper_commit_hw_done()
-> +	 * so figure out which crtc's have self-refresh active beforehand:
-> +	 */
-> +	for_each_new_crtc_in_state(old_state, crtc, new_crtc_state, i)
-> +		if (new_crtc_state->self_refresh_active)
-> +			new_self_refresh_mask |= BIT(i);
-> +
->  	if (funcs && funcs->atomic_commit_tail)
->  		funcs->atomic_commit_tail(old_state);
->  	else
-> @@ -1610,7 +1621,8 @@ static void commit_tail(struct drm_atomic_state *old_state)
->  	commit_time_ms = ktime_ms_delta(ktime_get(), start);
->  	if (commit_time_ms > 0)
->  		drm_self_refresh_helper_update_avg_times(old_state,
-> -						 (unsigned long)commit_time_ms);
-> +						 (unsigned long)commit_time_ms,
-> +						 new_self_refresh_mask);
->  
->  	drm_atomic_helper_commit_cleanup_done(old_state);
->  
-> diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
-> index 68f4765a5896..011b8d5f7dd6 100644
-> --- a/drivers/gpu/drm/drm_self_refresh_helper.c
-> +++ b/drivers/gpu/drm/drm_self_refresh_helper.c
-> @@ -133,6 +133,8 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
->   * drm_self_refresh_helper_update_avg_times - Updates a crtc's SR time averages
->   * @state: the state which has just been applied to hardware
->   * @commit_time_ms: the amount of time in ms that this commit took to complete
-> + * @new_self_refresh_mask: bitmask of crtc's that have self_refresh_active in
-> + *    new state
->   *
->   * Called after &drm_mode_config_funcs.atomic_commit_tail, this function will
->   * update the average entry/exit self refresh times on self refresh transitions.
-> @@ -140,22 +142,23 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
->   * entering self refresh mode after activity.
->   */
->  void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
-> -					      unsigned int commit_time_ms)
-> +					      unsigned int commit_time_ms,
-> +					      unsigned int new_self_refresh_mask)
->  {
->  	struct drm_crtc *crtc;
-> -	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-> +	struct drm_crtc_state *old_crtc_state;
->  	int i;
->  
-> -	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
-> -				      new_crtc_state, i) {
-> +	for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
-> +		bool new_self_refresh_active = new_self_refresh_mask & BIT(i);
->  		struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
->  		struct ewma_psr_time *time;
->  
->  		if (old_crtc_state->self_refresh_active ==
-> -		    new_crtc_state->self_refresh_active)
-> +		    new_self_refresh_active)
->  			continue;
->  
-> -		if (new_crtc_state->self_refresh_active)
-> +		if (new_self_refresh_active)
->  			time = &sr_data->entry_avg_ms;
->  		else
->  			time = &sr_data->exit_avg_ms;
-> diff --git a/include/drm/drm_self_refresh_helper.h b/include/drm/drm_self_refresh_helper.h
-> index 5b79d253fb46..b2c08b328aa1 100644
-> --- a/include/drm/drm_self_refresh_helper.h
-> +++ b/include/drm/drm_self_refresh_helper.h
-> @@ -13,7 +13,8 @@ struct drm_crtc;
->  
->  void drm_self_refresh_helper_alter_state(struct drm_atomic_state *state);
->  void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
-> -					      unsigned int commit_time_ms);
-> +					      unsigned int commit_time_ms,
-> +					      unsigned int new_self_refresh_mask);
->  
->  int drm_self_refresh_helper_init(struct drm_crtc *crtc);
->  void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc);
-> -- 
-> 2.23.0
-> 
+If it does fix a problem, then you need to worry also about the
+=09 * TODO: this could cause a theoretical memory reclaim
+=09 * deadlock in the swap out path.
+comment still against the call in add_to_swap(): but I think that
+is equally theoretical, demanding no attention since 2.6.12.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+>=20
+> The add_to_swap() does:
+>=20
+> int add_to_swap(struct page *page)
+> {
+> ...
+> err =3D add_to_swap_cache(page, entry,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __GFP_HI=
+GH|__GFP_NOMEMALLOC|__GFP_NOWARN);
+> ...
+> }
+>=20
+> Actually, shmem_writepage() does almost the same thing and both of them a=
+re
+> called in reclaim context, so I didn't see why they should use different =
+gfp
+> flag. And, GFP_ATOMIC is also different from the old definition as I
+> mentioned in the commit log.
+>=20
+> >=20
+> > > In addition, XArray node allocations from PF_MEMALLOC contexts could
+> > > completely exhaust the page allocator, __GFP_NOMEMALLOC stops emergen=
+cy
+> > > reserves from being allocated.
+> > I am not really familiar with XArray much, could you be more specific
+> > please?
+>=20
+> It comes from the comments of add_to_swap(), says:
+>=20
+> /*
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * XArray node allocation=
+s from PF_MEMALLOC contexts could
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * completely exhaust the=
+ page allocator. __GFP_NOMEMALLOC
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * stops emergency reserv=
+es from being allocated.
+>=20
+> And, it looks the original comment came from pre-git time, TBH I'm not qu=
+ite
+> sure about the specific problem which incurred this. I suspect it may be
+> because PF_MEMALLOC context allows ALLOC_NO_WATERMARK.
+>=20
+> >=20
+> > > Here just copy the gfp flags used by add_to_swap().
+> > >=20
+> > > Cc: Hugh Dickins <hughd@google.com>
+> > > Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> > > ---
+> > >   mm/shmem.c | 3 ++-
+> > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/mm/shmem.c b/mm/shmem.c
+> > > index 220be9f..9691dec 100644
+> > > --- a/mm/shmem.c
+> > > +++ b/mm/shmem.c
+> > > @@ -1369,7 +1369,8 @@ static int shmem_writepage(struct page *page,
+> > > struct writeback_control *wbc)
+> > >   =09if (list_empty(&info->swaplist))
+> > >   =09=09list_add(&info->swaplist, &shmem_swaplist);
+> > >   -=09if (add_to_swap_cache(page, swap, GFP_ATOMIC) =3D=3D 0) {
+> > > +=09if (add_to_swap_cache(page, swap,
+> > > +=09=09=09__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN) =3D=3D 0) {
+> > >   =09=09spin_lock_irq(&info->lock);
+> > >   =09=09shmem_recalc_inode(inode);
+> > >   =09=09info->swapped++;
+> > > --=20
+> > > 1.8.3.1
+--0-1214476646-1573066773=:1357--
