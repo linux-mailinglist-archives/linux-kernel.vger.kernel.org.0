@@ -2,81 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE5AF0FB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BCE1F0FC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbfKFHEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:04:46 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44225 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731321AbfKFHEo (ORCPT
+        id S1731862AbfKFHFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:05:11 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:54517 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731136AbfKFHFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:04:44 -0500
-Received: by mail-pg1-f196.google.com with SMTP id f19so7385781pgk.11;
-        Tue, 05 Nov 2019 23:04:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1tK6qAgSyW1KVyDgDREpaqmKGvD0WIXvKK/Qd6b0nDE=;
-        b=ae+CLWxdJ3cYhTJypVyTMiKYRRBjtcupazQX7FhuFJgEqDORogowjNmDWmOLcAmf3D
-         GotCPztGZjZW8WqD3qfU8baB4BYxEQ3rqzAyZya6Akj/Ixf2TRZyZ0h5O2mc3NdTjU0T
-         RAF2UP80BV91SDlLUacf0n4+28QvsyB0XCIJbtTc2aqvIIiKP4LcUESt9URLbTN7XRGi
-         Y2eX1QJMpis4kGBTmHXTBzsxs8PgML7Ul81JS8JNFt0/qUA3mXVyKitcaWwrFYSXgOa4
-         iHPnvCdA1nVzxLUpYdZ4ECjok20iHKwwcLOuCsamCiNroVDCTAfjUClIfegTtyq/VPe/
-         0QUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1tK6qAgSyW1KVyDgDREpaqmKGvD0WIXvKK/Qd6b0nDE=;
-        b=KVqoFEpAfdEoiNPpY962euGWhqnxDe5u/7xQ5N3WvD0rdpYW4GZhWh5nnhU0m02o2I
-         hm0TOsDVXOlmn89W0HDm76f5zOvTLCPWzPdQebT0NeQkF9HJye0152em4RnHpXrOCaaA
-         eiW7ci4/NoNs4w6qI3H2V40nG/0EQ+Gc2jDcWKyic0+sPe5gQh/U1i6n3Ss4r3BGcAOg
-         dKxxKXNeVbnLClxFDA4MRD5w6kYAQt6Ic71NnoPCDy+8smLsn21CNwtT59ReWnG4QcPA
-         f0EBHh5weWe8f+8IEbNKvLH5yJpVFIC6juBeURdKBo1cEGUPO2p6ecKN/mkQiIOYRAhO
-         366w==
-X-Gm-Message-State: APjAAAUUTiFCd+TQwFaZdnZbX/MWByBGqk4bd7GRqxo0yn2vxPkZFPJ5
-        LdDYxzvUmX09j8CrAb7NDOrEa2QZP5rNhNAscjnjPdQJNig=
-X-Google-Smtp-Source: APXvYqzc4zZKIjN/CYg0KVgxmIzcwQx4OV/6km/EjesoJzoAGNrpR9KJz6tgaXVSYgCHP/jXRqIizOArh/yNANwLH0o=
-X-Received: by 2002:a65:5542:: with SMTP id t2mr1165282pgr.74.1573023882548;
- Tue, 05 Nov 2019 23:04:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20191104213828.18278-1-leonmaxx@gmail.com> <201911050736.UAVD3aIV%lkp@intel.com>
-In-Reply-To: <201911050736.UAVD3aIV%lkp@intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 6 Nov 2019 09:04:31 +0200
-Message-ID: <CAHp75VdS5T8xVn_FFWX4DbAvP34CP3J2Ax_j9row9APQw0PY2w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] platform/x86: asus_wmi: Support fan boost mode on FX505DY/FX705DY
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Leonid Maksymchuk <leonmaxx@gmail.com>, kbuild-all@lists.01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Chris Chiu <chiu@endlessm.com>,
-        Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>,
-        Kristian Klausen <kristian@klausen.dk>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Corentin Chary <corentin.chary@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Nov 2019 02:05:06 -0500
+X-IronPort-AV: E=Sophos;i="5.68,272,1569250800"; 
+   d="scan'208";a="30965352"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2019 16:05:05 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5D10140031EA;
+        Wed,  6 Nov 2019 16:05:05 +0900 (JST)
+Date:   Wed, 06 Nov 2019 16:05:05 +0900
+Message-ID: <87bltph4da.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH] ASoC: soc-core: fixup dead-lock at snd_soc_unregister_component()
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 5, 2019 at 2:01 AM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Leonid,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v5.4-rc6 next-20191031]
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Leonid, I may not accept patches that contributor didn't even compile.
-How had you tested?
+snd_soc_unregister_component() is calling snd_soc_lookup_component()
+under mutex_lock(). But, snd_soc_lookup_component() itself is using
+mutex_lock(), thus it will be dead-lock.
+This patch adds _nolocked version of it, and avoid dead-lock issue.
 
+Fixes: ac6a4dd3e9f0("ASoC: soc-core: use snd_soc_lookup_component() at snd_soc_unregister_component()")
+Reported-by: "kernelci.org bot" <bot@kernelci.org>"
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+> Please double check/test it.
+
+ sound/soc/soc-core.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index cc59687..94f1078 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -356,14 +356,13 @@ struct snd_soc_component *snd_soc_rtdcom_lookup(struct snd_soc_pcm_runtime *rtd,
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_rtdcom_lookup);
+ 
+-struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
+-						   const char *driver_name)
++static struct snd_soc_component
++*snd_soc_lookup_component_nolocked(struct device *dev, const char *driver_name)
+ {
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_component *found_component;
+ 
+ 	found_component = NULL;
+-	mutex_lock(&client_mutex);
+ 	for_each_component(component) {
+ 		if ((dev == component->dev) &&
+ 		    (!driver_name ||
+@@ -373,10 +372,21 @@ struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
+ 			break;
+ 		}
+ 	}
+-	mutex_unlock(&client_mutex);
+ 
+ 	return found_component;
+ }
++
++struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
++						   const char *driver_name)
++{
++	struct snd_soc_component *component;
++
++	mutex_lock(&client_mutex);
++	component = snd_soc_lookup_component_nolocked(dev, driver_name);
++	mutex_unlock(&client_mutex);
++
++	return component;
++}
+ EXPORT_SYMBOL_GPL(snd_soc_lookup_component);
+ 
+ struct snd_pcm_substream *snd_soc_get_dai_substream(struct snd_soc_card *card,
+@@ -2853,7 +2863,7 @@ void snd_soc_unregister_component(struct device *dev)
+ 
+ 	mutex_lock(&client_mutex);
+ 	while (1) {
+-		component = snd_soc_lookup_component(dev, NULL);
++		component = snd_soc_lookup_component_nolocked(dev, NULL);
+ 		if (!component)
+ 			break;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
+
