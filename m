@@ -2,67 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 975DEF14D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:18:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 157CDF14CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbfKFLSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:18:09 -0500
-Received: from cnc.isely.net ([75.149.91.89]:38739 "EHLO cnc.isely.net"
+        id S1730293AbfKFLRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbfKFLSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:18:09 -0500
-X-Greylist: delayed 309 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 06:18:08 EST
-Received: from ts3-dock2.isely.net (ts3-dock2.isely.net [::ffff:192.168.23.14])
-  (AUTH: PLAIN isely, TLS: TLSv1/SSLv3,256bits,DHE-RSA-AES256-GCM-SHA384)
-  by cnc.isely.net with ESMTPSA; Wed, 06 Nov 2019 05:12:58 -0600
-  id 00000000001426BE.000000005DC2AABA.00004E8C
-Date:   Wed, 6 Nov 2019 05:12:51 -0600 (CST)
-From:   Mike Isely <isely@isely.net>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Isely <isely@isely.net>
-Subject: Re: [PATCH] pvrusb2: Fix oops on tear-down when radio support is
- not present
-In-Reply-To: <5491a24e-e41a-5d11-7ac5-6d6804989550@xs4all.nl>
-Message-ID: <alpine.DEB.2.21.1911060511360.31133@sheridan.isely.net>
-References: <alpine.DEB.2.21.1911052034300.31133@sheridan.isely.net> <5491a24e-e41a-5d11-7ac5-6d6804989550@xs4all.nl>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-Mime-Version: 1.0
+        id S1725890AbfKFLRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 06:17:09 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12B192067B;
+        Wed,  6 Nov 2019 11:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573039028;
+        bh=MofkAeh32ygz8kQiJ/NW8nxCM7dhfQeKB7/bbaa70aU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ns9bAC0NqPB9Y8HYDug8Evp+nR+wHYk3/sqAjAcgF9twD05PXqHjgA7LBc6r7yiEa
+         SFCzyhXELwHDKfwXqsCuv4Pr8PdDIWLg23rSncp1FMWKdvzJLkrYtnJbD54ae9/woL
+         D4AinOxxBdoy3rg7i7xRze7VjeSoujc7MhNEd64U=
+Date:   Wed, 6 Nov 2019 12:17:06 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 4.9 37/62] UAS: Revert commit 3ae62a42090f ("UAS: fix
+ alignment of scatter/gather segments")
+Message-ID: <20191106111706.GA3033188@kroah.com>
+References: <20191104211901.387893698@linuxfoundation.org>
+ <20191104211940.713506931@linuxfoundation.org>
+ <1572964268.2921.19.camel@suse.com>
+ <20191106001102.GI4787@sasha-vm>
+ <1573026302.3090.2.camel@suse.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <1573026302.3090.2.camel@suse.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Thanks for spotting that.  I think I had eliminated the from header 
-because I thought I was seeing a duplicate from header and didn't want 
-to cause confusion.  That'll teach me.
-
-It's been reposted.
-
-  -Mike
-
-On Wed, 6 Nov 2019, Hans Verkuil wrote:
-
-> Hi Mike,
+On Wed, Nov 06, 2019 at 08:45:02AM +0100, Oliver Neukum wrote:
+> Am Dienstag, den 05.11.2019, 19:11 -0500 schrieb Sasha Levin:
+> > On Tue, Nov 05, 2019 at 03:31:08PM +0100, Oliver Neukum wrote:
+> > > Am Montag, den 04.11.2019, 22:44 +0100 schrieb Greg Kroah-Hartman:
+> > > >         All the host controllers capable of SuperSpeed operation can
+> > > >         handle fully general SG;
+> > > > 
+> > > >         Since commit ea44d190764b ("usbip: Implement SG support to
+> > > >         vhci-hcd and stub driver") was merged, the USB/IP driver can
+> > > >         also handle SG.
+> > > 
+> > > Not in 4.9.x. AFAICT the same story as 4.4.x
+> > > The patch is not strictly needed, but breaks UAS over usbip.
+> > 
+> > It's in 4.9 since April this year... Same story for 4.4.
 > 
-> For some reason your mailer didn't include a "From:" line, only a "Reply-To:"
-> line. This means that the patch authorship is not detected by patchwork and
-> git. Can you repost with a valid From: line in the email header?
+> Hi,
 > 
-> Thanks!
+> now I am confused. Neither looking at the logs nor the source
+> I can see the commit. Top commit is
+> 9e48f0c28dd505e39bd136ec92a042b311b127c6
+> of git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 > 
-> 	Hans
-> 
+> I am sorry for being obnoxious here and it is entirely possible that
+> I am stupid, but this is a discrepancy that needs to be resolved.
 
-[...]
+Commit 3ae62a42090f ("UAS: fix alignment of scatter/gather segments") is
+the patch that is being reverted here, and it is in the following kernel
+releases:
+	4.4.180 4.9.175 4.14.118 4.19.42 5.0.15 5.1.1 5.2
+And it is causing known issues, so we should revert it.
 
--- 
+Now if usbip breaks with this revert, we should add the newer patch that
+keeps it working properly, is that what you are thinking that
+ea44d190764b ("usbip: Implement SG support to vhci-hcd and stub driver")
+is?
 
-Mike Isely
-isely @ isely (dot) net
-PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
+thanks,
+
+greg k-h
