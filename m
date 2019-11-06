@@ -2,172 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F54F1A12
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA43F1A18
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:34:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731990AbfKFPdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:33:24 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:41765 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbfKFPdY (ORCPT
+        id S1732077AbfKFPeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:34:01 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:46884 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfKFPeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:33:24 -0500
-Received: by mail-qv1-f66.google.com with SMTP id g18so1573600qvp.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 07:33:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zdno54+YrnAis2IfaLsHue6J0VhFxBM3FnDvV7pWPE0=;
-        b=iXsO6yva0aQZuX4+y9BQ7GZSJYcllIFyCdyEQ+l7gHjC4BzR1seiva0AMKvEye11VM
-         2v108y0tDdwffVHSNTuDS5sgUowcAVOHrjbokW2Ve1V936IfXcW/6Nnu/seNTsntGB5O
-         VFIqon8WatW0MXEXrc2nocVfBM8DeEr/oCWMoy8tAnOAOS9Errt/BWfx6hJE2+7Z2v1I
-         jFUph1pn5NaZkSpXREX7oxCb4siXnY7OEV4983VXJWvu769VI3eGrUcZR3/D7Cvne9Ne
-         vFDkEZmbEKMIaISAxO0ffPp/5qbBRJGzHpEPnhIE0F87jguXcOm2DOv33KLfZobGf0y/
-         ZtdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zdno54+YrnAis2IfaLsHue6J0VhFxBM3FnDvV7pWPE0=;
-        b=EgndqXWRBNXX+aEvubm8d1Cuq0BEKJqEY8kZDhnf206Rfy0cTSfgrA0VeeS61WDrDP
-         xv7mcQyllkLVQLLpWvHEft5aIKYkfPHUL/MdXZM5Zoh/BS3UQ/zDtI04u4/DRZNMZi7Y
-         tytZ1Tc8okp7ZSmLJeQ6WWuGhJTuuflsdFDB2Dv5J4NwmclYTiRMA+G3b8BlP0iIXVYL
-         NYsxpdhG4p95orr/SMnyHmEEeJBFNrOwG0q40xlEBYjtMMQeim7OHVSQ7G0Lwr6h6c+B
-         EHSB+/CtEjtgjoJrds8W/2dUi71o2+gClJkhI2C3mH5Nk6dCBodk9mT7fBtwzrMXrj8N
-         Jbvw==
-X-Gm-Message-State: APjAAAUC04EtsSHid0bcYqpPwCBV+L8zr/fS6L2Zc6nGVaA2Yyr2Ho6f
-        SjSyt+0LNWA9kw2yf0f7QFD/ZEIvCDdjWoAidOCt7A==
-X-Google-Smtp-Source: APXvYqyLSem31h83DgUIYvdHHQeKGyX/qiJCt7AlY4nkLyEIHADw27IRWEXv92THikVCLb+PUsaN/wYsMyEz7dLBjDM=
-X-Received: by 2002:a0c:b064:: with SMTP id l33mr2823588qvc.34.1573054402522;
- Wed, 06 Nov 2019 07:33:22 -0800 (PST)
+        Wed, 6 Nov 2019 10:34:00 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FJ19h045138;
+        Wed, 6 Nov 2019 15:33:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=8HvIMo9o0gvTpDtbNdGhYkbxoKeXS6Wz6uiSRqv8w/8=;
+ b=H0ruiOOtM87NM5XDsFkMQsLGrAIthdbFrzCox9zQCkDkMBExl0a8rRvdQXYdnccRXe8+
+ 5f7UQHmxlTF32JazZw/IWDrjJnE/oc3lrSeXLvYiQ3A1DbeqsAphRrKTd8pAAvwtOZ80
+ SvUTLA2SdwRJ4lUChDgQs8LogKaWjAsJ5OsQBPiGDCE2O3SFQzkj1SZ3XE6e7xs1oPZw
+ K9q7J2Yd5bUDnhsCKUDT5ZP3PeM/tm0IPmhUrysErGqP93smKFn+0maZgL0BSLRaIpCP
+ IZ9cgreOtSq7Yvqg3uoftcaXGc3nbc3mj82OFtTPAoDzhbr3H9ccAmXQsvAglOf/9aPS WQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2w11rq7ex9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 15:33:21 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6FOM68019576;
+        Wed, 6 Nov 2019 15:33:21 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2w3xc2udjw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 15:33:20 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA6FXJEo023716;
+        Wed, 6 Nov 2019 15:33:19 GMT
+Received: from [10.39.238.145] (/10.39.238.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 07:33:19 -0800
+Subject: Re: [patch V2 03/17] x86/traps: Remove pointless irq enable from
+ do_spurious_interrupt_bug()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+References: <20191023122705.198339581@linutronix.de>
+ <20191023123117.871608831@linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <52673a2a-6e6e-c0f1-9586-70849429e7a0@oracle.com>
+Date:   Wed, 6 Nov 2019 16:33:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <000000000000b2de3a0594d8b4ca@google.com> <00000000000012ff570596af15cc@google.com>
- <CAKMK7uFQt+=7XMo9jvz77QvDWLAAU_V7-_qZ=iKe-GXG7cqeJg@mail.gmail.com> <CAKMK7uEeQnxMXeyMTvqJ-8H3wFeSexkbL1OJ0oJeUoep=YXcVg@mail.gmail.com>
-In-Reply-To: <CAKMK7uEeQnxMXeyMTvqJ-8H3wFeSexkbL1OJ0oJeUoep=YXcVg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 6 Nov 2019 16:33:11 +0100
-Message-ID: <CACT4Y+b1yx9cYAtedSv+D4utu+MF_3uJt5oKmcQs7qDBrPx2=w@mail.gmail.com>
-Subject: Re: WARNING in drm_mode_createblob_ioctl
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191023123117.871608831@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=961
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911060150
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911060150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 4:28 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Wed, Nov 6, 2019 at 4:23 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Wed, Nov 6, 2019 at 4:20 PM syzbot
-> > <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com> wrote:
-> > >
-> > > syzbot has bisected this bug to:
-> > >
-> > > commit 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
-> > > Author: Kees Cook <keescook@chromium.org>
-> > > Date:   Mon Nov 4 22:57:23 2019 +0000
-> > >
-> > >      uaccess: disallow > INT_MAX copy sizes
-> >
-> > Ah cool, this explains it.
-> >
-> > fwiw I never managed to get the WARNING in the backtrace to lign up
-> > with any code. No idea what's been going on.
->
-> Ok I think I have an idea, the above commit isn't in the linux-next I
-> have here. Where is this from?
-> -Daniel
 
-You need to fetch tags to linux-next. syzbot started bisecting from
-the commit where the crash happened, and it is now probably not the
-current tag.
+On 10/23/19 2:27 PM, Thomas Gleixner wrote:
+> That function returns immediately after conditionally reenabling interrupts which
+> is more than pointless and requires the ASM code to disable interrupts again.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   arch/x86/kernel/traps.c |    1 -
+>   1 file changed, 1 deletion(-)
+> 
 
-linux$ git show 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
-commit 9e5a64c71b2f70ba530f8156046dd7dfb8a7a0ba
-Author: Kees Cook <keescook@chromium.org>
-Date:   Tue Nov 5 09:57:23 2019 +1100
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 
-    uaccess: disallow > INT_MAX copy sizes
-
-    As we've done with VFS, string operations, etc, reject usercopy sizes
-    larger than INT_MAX, which would be nice to have for catching bugs related
-    to size calculation overflows[1].
-
-    This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
-    section:
-
-       text    data     bss     dec     hex filename
-    19691167        5134320 1646664 26472151        193eed7 vmlinux.before
-    19691177        5136300 1646664 26474141        193f69d vmlinux.after
-
-    [1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
-
-    Link: http://lkml.kernel.org/r/201908251612.F9902D7A@keescook
-    Signed-off-by: Kees Cook <keescook@chromium.org>
-    Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 659a4400517b2..e93e249a4e9bf 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -147,6 +147,8 @@ check_copy_size(const void *addr, size_t bytes,
-bool is_source)
-                        __bad_copy_to();
-                return false;
-        }
-+       if (WARN_ON_ONCE(bytes > INT_MAX))
-+               return false;
-        check_object_size(addr, bytes, is_source);
-        return true;
- }
-
-
-> > I'll type a patch to paper over this.
-> > -Daniel
-> >
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=125fe6dce00000
-> > > start commit:   51309b9d Add linux-next specific files for 20191105
-> > > git tree:       linux-next
-> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=115fe6dce00000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=165fe6dce00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=a9b1a641c1f1fc52
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=fb77e97ebf0612ee6914
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1212dc3ae00000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145f604ae00000
-> > >
-> > > Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
-> > > Fixes: 9e5a64c71b2f ("uaccess: disallow > INT_MAX copy sizes")
-> > >
-> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> >
-> >
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+alex.
