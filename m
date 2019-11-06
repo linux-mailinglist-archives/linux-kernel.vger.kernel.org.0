@@ -2,178 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D861F1E6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A418F1E7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:18:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbfKFTPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 14:15:37 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43091 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbfKFTPg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:15:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id l24so17793316pgh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 11:15:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WzHqm4hUE8MNt+qyeWiz/5PjTIeCqwMc1ND2S9oehxw=;
-        b=y27zd/CUez7bdedi/6sc9qYeGcIIbrrCwH+aCzNMdjmXJPQJtNbIfJFvC7zWmLnAH6
-         QGreh1pGI2/4dsOHHLlNgcK6nX7U3iG8zMOcagfLAJ/AkOUrZVt4PoF+f8/VZFHxRWX4
-         Rb4UqdvwR2qR4eJQihfKgcJ78Yx9+y04KzTT4eQvcCHTpcTHiS740C8UALMvAMQeVIsd
-         5FbbP2PRSQr7edTe3anPWEdUW3Ejd6/OxjN5pZVVuqkpvb/MUI7aAiXN5TkfBuYz+Wbt
-         xx3nOTIndLnUQG7ub2NRUQvzovE4tWrDdWMCEwfsy9xA8E5xhyn9kfGPgcn+wZMoo8Te
-         az5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WzHqm4hUE8MNt+qyeWiz/5PjTIeCqwMc1ND2S9oehxw=;
-        b=Wj2J9y4eqDTio7OBUSMt5ZXMArL8Uu4Wpt5hmeMLKM7hInrwmmZgXl6bFvxQXxyq0V
-         nPLQrm+5eE0uWzIaubPvm4BXC6/nJUkO+vuTIoCkdq9ctvIepRvF/Mh2GUER1ZvvCu6d
-         dRYxr4CCeTDEW844LzdEdLlG1rpFAlNJaZOHgukPnOV6PukgAGtWU5023Lr6RjPq1k5m
-         EvmUo2VDC/uwzCi/z1c6clP+aohTp6IhosV+hMtkIASHfNuKfZX4rWfFSfjppCsNd+10
-         SYeCqKGAE6L1vQXJvQiAKhENuW6PpW+R+nSjPy/n5c01OjE/eblFsyeX2nlpIuAqUK4J
-         WPuw==
-X-Gm-Message-State: APjAAAXycC/EMu9VxQjdp9Ht/4SsXe/CA8YW6OrjThKozN15BHVVCdOP
-        WRsXwNZuUEy8XF95O+b/8MZepg==
-X-Google-Smtp-Source: APXvYqzc0iN22btKd/Vtw/Fr+WSYW5egm0HT79orf9yYFiFTGDPRkTZdI1o+twBnWnoKnvoFhCdCpw==
-X-Received: by 2002:a17:90a:340c:: with SMTP id o12mr5993956pjb.18.1573067735490;
-        Wed, 06 Nov 2019 11:15:35 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c9sm35655913pfb.114.2019.11.06.11.15.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 11:15:34 -0800 (PST)
-Date:   Wed, 6 Nov 2019 11:15:32 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sdm845: Add second PCIe PHY and
- controller
-Message-ID: <20191106191532.GD36595@minitux>
-References: <20191102003148.4091335-1-bjorn.andersson@linaro.org>
- <20191102003148.4091335-3-bjorn.andersson@linaro.org>
- <af66ac9a-f473-44b7-8604-2153c680960b@linaro.org>
+        id S1732075AbfKFTSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:18:16 -0500
+Received: from mout.web.de ([212.227.17.11]:51809 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727422AbfKFTSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 14:18:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1573067886;
+        bh=nUznGpfstPycpqKVbu+foKUPDV+1Xm5lDGkw6bfU0XE=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Sbcy0H95/vR5YizE5kiA5/rywbdwvior0xHpzBY8FoCFYqL8sfgv0sdz9cLDjiB+u
+         8pdvTJJyAgxELfucb3lPPgXS23370gOwezzmc+saf578RzqYmyqNJR8LJ1UxS1KZlO
+         OtPMlNZzG5LdkuMck9PpOv0O6tOizfLa58gWxwUM=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.49.91.235]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MDgLi-1iiO2q2fZm-00H4E7; Wed, 06
+ Nov 2019 20:18:06 +0100
+Subject: Re: s390/pkey: Use memdup_user() rather than duplicating its
+ implementation
+To:     Joe Perches <joe@perches.com>, linux-s390@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Cc:     =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <08422b7e-2071-ee52-049e-c3ac55bc67a9@web.de>
+ <6137855bb4170c438c7436cbdb7dfd21639a8855.camel@perches.com>
+ <0f90b278-7b3e-6509-1633-301d16513c5d@web.de>
+ <47c55ab899aafe10898e6581582363aa446b2091.camel@perches.com>
+ <cba4068c-0d63-fc0a-44bb-2664b690f126@web.de>
+ <7b6295e48dbb4b5b9c578516f40b61ad2afd115b.camel@perches.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <298c5ecf-2fc7-b604-b97a-85c0717cafc9@web.de>
+Date:   Wed, 6 Nov 2019 20:18:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af66ac9a-f473-44b7-8604-2153c680960b@linaro.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <7b6295e48dbb4b5b9c578516f40b61ad2afd115b.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ivP7Ayc+8l2QrGHXeQNzI50+BTim+l2WE+BmsN1snU3FlspAecR
+ aGnOTMnJak/mz4RN9kLzbtMKruOzrcyl0K4uHbXot0pd5aH05Aiv1HXuK52Y6dtfRB3Huj1
+ R3HVj3zXIs9Tfo4UDTfrDKi2KlyoQsPMd/0/dVUjTil1lGpzpxtv7hG9HddIO4qgohnayc+
+ OoU0Io4QNGTzOT1obRrdg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZV1XDlmpQTQ=:ncioeVX9pIUqnXPhOGnrv9
+ QukYRuDTXf9tEtGR/Vz1rw4NBt2OfWcj0s8BmoW8Gt3A6FH44HIg+wQ2OVl/Zuwo2ERg/3emF
+ G4kV+HZmmq9uw8yAHxwtsGmDiych7aO0l+1gwvvZ3dX/woII/UqGQ8lAQ1Sxx8WL0wTVtdWo9
+ F5E3YX21JEZUXwjLB8owekBMmk0GHFjcCHMO9Y0oXxz1chG9noKj1ZSsnIeijW1XsOwNqKB9P
+ tOPi9eW4Ym18PxKHoduEqurYxbJNLX2txCt/7bc2zLr5YPeymH+Nkn+Cd4k7yTYauYrDcKj6O
+ oym6pYvaIpc55RjF6jfwWZ107meohnadu84+mFcMb9BZQOO44LUPo47XZysoPE/YQrx0G4aV5
+ d2qj3Kw2z3ZoBNtYh4DbF2OpRJ4X0mldvj396cssP9o8bl56pBXyd8yW/YV43lTny8tyBUoOI
+ 5hEKxt+gOiJPmn893DhAdFy6E+o1ZJdPUw2m2lvDzt2ZK9UP0IsgqWK/ekIjm6Br1W1TsPgv7
+ ItGbRB04FBlP4DHbkNB/FwoQGTGdO1GGWeh8ZMyNpzUxFyyaV1sa9CwMlTe+zKj1NM1lEJFHv
+ XKLGc2tZwnDSCllVwpfM/QHH43Vo7yebBBE/QYcIvAX6I4lq7fV48/z4Ie+foYV7OmKqnRR2U
+ BwA3mG9cmxiKXKDSGarxnQl5YkFp8wBmqfWz4sGJ7RsOOm6huIUMOSRGVGPFFGZlSNMhkv/Ms
+ z5YGXAL5lVn0FEagqB+9qhjDWjAGoRukJXptModbxOXxGRYFtoqaY+zftjkDg7Y6q6knzDPb8
+ 4LxuPrxx3+7/WBC3wKORzbWFzGMIC3MOR/oMmA8DK+ME5kXk0R0DbL6NUSqWq21aR6tbZc5zg
+ 5W/EtlOPEqT5yk4NgcY9ATAC0IFmFmZnCkBu0CjMpyP2sP7RoJyoL0bXrBLv8y5ULqD6Pygo4
+ HUvSc1G3E8+XwG+bDlO4sCZFN8dxufUgFyaTfRJ4fpqkROA7scNfcjusxn50T52SEVzRCuzve
+ U5Q8wDfULyTMtF4o50jxNgc1nidBmuW62C7grnyyINlkM3YdfKMOsieaEbk2EOqbnNDeHyKZ4
+ KWUvYKhjqH5yiNkIPTE/zXVYCUTZC1RvhiXO5jSls7/LuIK4Shtqhx9j2ji2iTEp2dzn7vYun
+ rSmQFE8AUdCsJQUyUlCAONZh1D3egXBmHjNwyOBy20VAiV4nRqv61cfHt6xLm06f41nQV0Imr
+ 7/uuoOTs9P74hmmXy02MTelkcEJthxG8x/+7xWCYokHSAu37UGZIHwQZV2c4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06 Nov 05:53 PST 2019, Georgi Djakov wrote:
+>>> There is no bug here.
+>>
+>> Do you find duplicated source code questionable?
+>
+> No.
 
-> Hi Bjorn,
-> 
-> On 2.11.19 ??. 2:31 ??., Bjorn Andersson wrote:
-> > Add the second PCIe controller and the associated QHP PHY found on
-> > SDM845.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 111 +++++++++++++++++++++++++++
-> >  1 file changed, 111 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index b93537b7a59f..0cdcc8d6d223 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -1468,6 +1468,117 @@
-> >  			};
-> >  		};
-> >  
-> > +		pcie1: pci@1c08000 {
-> > +			compatible = "qcom,pcie-sdm845", "snps,dw-pcie";
-> > +			reg = <0 0x01c08000 0 0x2000>,
-> > +			      <0 0x40000000 0 0xf1d>,
-> > +			      <0 0x40000f20 0 0xa8>,
-> > +			      <0 0x40100000 0 0x100000>;
-> > +			reg-names = "parf", "dbi", "elbi", "config";
-> > +			device_type = "pci";
-> > +			linux,pci-domain = <1>;
-> > +			bus-range = <0x00 0xff>;
-> > +			num-lanes = <1>;
-> > +
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +
-> > +			ranges = <0x01000000 0x0 0x40200000 0x0 0x40200000 0x0 0x100000>,
-> > +				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
-> > +
-> > +			interrupts = <GIC_SPI 307 IRQ_TYPE_EDGE_RISING>;
-> > +			interrupt-names = "msi";
-> > +			#interrupt-cells = <1>;
-> > +			interrupt-map-mask = <0 0 0 0x7>;
-> > +			interrupt-map = <0 0 0 1 &intc 0 434 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> > +					<0 0 0 2 &intc 0 435 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> > +					<0 0 0 3 &intc 0 438 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> > +					<0 0 0 4 &intc 0 439 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-> > +
-> > +			clocks = <&gcc GCC_PCIE_1_PIPE_CLK>,
-> > +				 <&gcc GCC_PCIE_1_AUX_CLK>,
-> > +				 <&gcc GCC_PCIE_1_CFG_AHB_CLK>,
-> > +				 <&gcc GCC_PCIE_1_MSTR_AXI_CLK>,
-> > +				 <&gcc GCC_PCIE_1_SLV_AXI_CLK>,
-> > +				 <&gcc GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-> > +				 <&gcc GCC_PCIE_1_CLKREF_CLK>,
-> > +				 <&gcc GCC_AGGRE_NOC_PCIE_TBU_CLK>;
-> > +			clock-names = "pipe",
-> > +				      "aux",
-> > +				      "cfg",
-> > +				      "bus_master",
-> > +				      "bus_slave",
-> > +				      "slave_q2a",
-> > +				      "ref",
-> > +				      "tbu";
-> > +
-> > +			assigned-clocks = <&gcc GCC_PCIE_1_AUX_CLK>;
-> > +			assigned-clock-rates = <19200000>;
-> > +
-> > +			iommus = <&apps_smmu 0x1c00 0xf>;
-> > +			iommu-map = <0x0   &apps_smmu 0x1c00 0x1>,
-> > +				    <0x100 &apps_smmu 0x1c01 0x1>,
-> > +				    <0x200 &apps_smmu 0x1c02 0x1>,
-> > +				    <0x300 &apps_smmu 0x1c03 0x1>,
-> > +				    <0x400 &apps_smmu 0x1c04 0x1>,
-> > +				    <0x500 &apps_smmu 0x1c05 0x1>,
-> > +				    <0x600 &apps_smmu 0x1c06 0x1>,
-> > +				    <0x700 &apps_smmu 0x1c07 0x1>,
-> > +				    <0x800 &apps_smmu 0x1c08 0x1>,
-> > +				    <0x900 &apps_smmu 0x1c09 0x1>,
-> > +				    <0xa00 &apps_smmu 0x1c0a 0x1>,
-> > +				    <0xb00 &apps_smmu 0x1c0b 0x1>,
-> > +				    <0xc00 &apps_smmu 0x1c0c 0x1>,
-> > +				    <0xd00 &apps_smmu 0x1c0d 0x1>,
-> > +				    <0xe00 &apps_smmu 0x1c0e 0x1>,
-> > +				    <0xf00 &apps_smmu 0x1c0f 0x1>;
-> > +
-> > +			resets = <&gcc GCC_PCIE_1_BCR>;
-> > +			reset-names = "pci";
-> > +
-> > +			power-domains = <&gcc PCIE_1_GDSC>;
-> > +
-> > +			interconnects = <&rsc_hlos MASTER_PCIE_0 &rsc_hlos SLAVE_EBI1>;
-> > +			interconnect-names = "pcie-mem";
-> 
-> Maybe leave this hunk out (although it looks good), until we conclude on these
-> refactoring patches [1].
-> 
+Do you disagree to the following information which can be provided by
+a coccicheck run?
 
-Yes that makes sense and it's not necessary for it to be functional,
-will drop it for now.
+./drivers/s390/crypto/pkey_api.c:722:8-15: WARNING opportunity for memdup_=
+user
+
+
+> It is something that can be improved through
+> code consolidation though.
+>
+>> Is this also an error item?
+>
+> Definitely not.
+
+Your view seems to be very limited at the moment.
+
+
+> It is _only_ an error if there is some logic defect.
+> There is no logic defect here.
+
+I suggest to consider additional software weaknesses besides logic errors.
+Do we occasionally care any more for the development principle
+=E2=80=9CDon't repeat yourself=E2=80=9D?
 
 Regards,
-Bjorn
-
-> Thanks,
-> Georgi
-> 
-> [1]
-> http://lore.kernel.org/r/1571278852-8023-1-git-send-email-daidavid1@codeaurora.org
+Markus
