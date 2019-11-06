@@ -2,184 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD6EF2107
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:46:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6D0F2115
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbfKFVqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 16:46:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35906 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726779AbfKFVpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:45:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC0CCAE35;
-        Wed,  6 Nov 2019 21:45:46 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Andrew Murray <andrew.murray@arm.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] dt-bindings: pci: add bindings for brcmstb's PCIe device
-Date:   Wed,  6 Nov 2019 22:45:23 +0100
-Message-Id: <20191106214527.18736-2-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191106214527.18736-1-nsaenzjulienne@suse.de>
-References: <20191106214527.18736-1-nsaenzjulienne@suse.de>
+        id S1732625AbfKFVvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 16:51:11 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46257 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbfKFVvL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 16:51:11 -0500
+Received: by mail-lj1-f193.google.com with SMTP id e9so14603799ljp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 13:51:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XXHffMhLqHV3+nf/8dCtN6KvSuj9fMAxyuhOM6lmxAs=;
+        b=VVYt2y6mmF5rVyBM0aYxD9AE+a5vRgGSZdO2bi6U8c2WRgi/xa1J4PtJmJT0eOD2LO
+         fOEs7VCCtZybdoirayhpjnp+VhEvb8EjdzfpBnEEMqTUttfbGrt8EWWqpyjFOqq9NEbe
+         2NwK3aTU5HmFQnjUtXz2CrxS1My5iMESEuWgC7ZQt2olHOcgexC2ABFg6wLLhunB0LuO
+         x58adyhHwK/9vfVq+EPDnO/sMQ1P7dxkL+sWQFV5oFe/VVbMyFmNJYcGJQS01htj31hW
+         YzjC09YBrNwzoOnmkRwSHMlh18D1KtcSXa7a1x/yVkslgjFKHvED3ATLTbOi48aEhKhD
+         RlFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XXHffMhLqHV3+nf/8dCtN6KvSuj9fMAxyuhOM6lmxAs=;
+        b=hUJRBspmn9j7XyBrMpG7shNH+/5bOWfafktqVjdCNHwYkKY94jnrn6gQBfaJfzsYt4
+         N03I3oB4Cx1oPVs+zfqpG5QkPAwB3jpfwbh53Dae+wEee4O5gb4EE0xytNQM7c3mjFnq
+         ErkFqRKeNkjgks5TDYAygTMLRjt26GfAQAu6Mq8wFT8i7clUQf24FeHJMScfkag5HL19
+         JydhYr4Unx+0cXhMv+ucc/BPdK2sp1tiaINBcrd5mHGoWZrhwvCyYJOYKOYY+hPhu/Rx
+         brgxX0GisNWiDG+wH3NJyTub/bGnO8gX3fhRleMHpTmM68BtjfGM+6X5jgcxkekzgcD4
+         hqHQ==
+X-Gm-Message-State: APjAAAXJrdLZI/0aUdvnG/1s6WbPkFjk8hYBsDjJFqjUIgEfLEulc3Dm
+        1rcqrFPL0QZfUXop8qYz5U7APZ+nWhTcWg3HiuQ=
+X-Google-Smtp-Source: APXvYqy/wCCWRQ2JBV3PNapXKlfu1wU4Z35nh3XscrtsJDbENGiKGiAE5Q0b/ln+I7HSRVkJr0GqvlyeoxZt6njoZZY=
+X-Received: by 2002:a2e:6a19:: with SMTP id f25mr3575611ljc.147.1573077069287;
+ Wed, 06 Nov 2019 13:51:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191012200524.23512-1-alistair@alistair23.me>
+ <20191016144946.p3tm67vh5lqigndn@gilmour> <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
+ <20191021111709.dpu6g7jltuw6cbbn@gilmour> <CAKmqyKN8Ru19h3y=9O13=5wpys3BC2LQM65S+2QYjPdJQn2O4w@mail.gmail.com>
+ <20191106115222.GA8617@gilmour.lan>
+In-Reply-To: <20191106115222.GA8617@gilmour.lan>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Wed, 6 Nov 2019 13:45:24 -0800
+Message-ID: <CAKmqyKOQDD848PCXrqB1YD5OORtGhSF_uz4WzAzYr1iEQANZag@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
+ serial2 and serial3
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Alistair Francis <alistair@alistair23.me>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Quinlan <james.quinlan@broadcom.com>
+On Wed, Nov 6, 2019 at 3:52 AM Maxime Ripard <mripard@kernel.org> wrote:
+>
+> On Tue, Nov 05, 2019 at 11:27:42AM -0800, Alistair Francis wrote:
+> > On Mon, Oct 21, 2019 at 4:17 AM Maxime Ripard <mripard@kernel.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Wed, Oct 16, 2019 at 10:54:27PM +0800, Chen-Yu Tsai wrote:
+> > > > On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
+> > > > > On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
+> > > > > > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
+> > > > > > connections.
+> > > > > >
+> > > > > > Signed-off-by: Alistair Francis <alistair@alistair23.me>
+> > > > > > ---
+> > > > > >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
+> > > > > >  1 file changed, 25 insertions(+)
+> > > > > >
+> > > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > > index 124b0b030b28..49c37b21ab36 100644
+> > > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > > @@ -56,6 +56,10 @@
+> > > > > >       aliases {
+> > > > > >               ethernet0 = &emac;
+> > > > > >               serial0 = &uart0;
+> > > > > > +             serial1 = &uart1;
+> > > > > > +             serial2 = &uart2;
+> > > > > > +             serial3 = &uart3;
+> > > > > > +             serial4 = &uart4;
+> > > > > >       };
+> > > > > >
+> > > > > >       chosen {
+> > > > > > @@ -280,6 +284,27 @@
+> > > > > >       };
+> > > > > >  };
+> > > > > >
+> > > > > > +/* On Pi-2 connector */
+> > > > > > +&uart2 {
+> > > > > > +     pinctrl-names = "default";
+> > > > > > +     pinctrl-0 = <&uart2_pins>;
+> > > > > > +     status = "disabled";
+> > > > > > +};
+> > > > > > +
+> > > > > > +/* On Euler connector */
+> > > > > > +&uart3 {
+> > > > > > +     pinctrl-names = "default";
+> > > > > > +     pinctrl-0 = <&uart3_pins>;
+> > > > > > +     status = "disabled";
+> > > > > > +};
+> > > > > > +
+> > > > > > +/* On Euler connector, RTS/CTS optional */
+> > > > > > +&uart4 {
+> > > > > > +     pinctrl-names = "default";
+> > > > > > +     pinctrl-0 = <&uart4_pins>;
+> > > > > > +     status = "disabled";
+> > > > > > +};
+> > > > >
+> > > > > Since these are all the default muxing, maybe we should just set that
+> > > > > in the DTSI?
+> > > >
+> > > > Maybe not, since people may want to only use RX/TX, and leave the other
+> > > > two pins for GPIO?
+> > >
+> > > Right, I'll apply that patch.
+> >
+> > Ping, just want to make sure this has been applied/will be applied.
+>
+> This has been applied, and was part of the PR for 5.5 sent last week
 
-The DT bindings description of the brcmstb PCIe device is described.
-This node can only be used for now on the Raspberry Pi 4.
+Thanks :)
 
-This was based on Jim's original submission[1], converted to yaml and
-adapted to the RPi4 case.
+Alistair
 
-[1] https://patchwork.kernel.org/patch/10605937/
-
-Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- .../bindings/pci/brcm,stb-pcie.yaml           | 116 ++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-
-diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-new file mode 100644
-index 000000000000..0b81c26f8568
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-@@ -0,0 +1,116 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Brcmstb PCIe Host Controller Device Tree Bindings
-+
-+maintainers:
-+  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+
-+properties:
-+  compatible:
-+    const: brcm,bcm2711-pcie # The Raspberry Pi 4
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      - description: PCIe host controller
-+      - description: builtin MSI controller
-+
-+  interrupt-names:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      - const: pcie
-+      - const: msi
-+
-+  "#address-cells":
-+    const: 3
-+
-+  "#size-cells":
-+    const: 2
-+
-+  "#interrupt-cells":
-+    const: 1
-+
-+  interrupt-map-mask: true
-+
-+  interrupt-map: true
-+
-+  ranges: true
-+
-+  dma-ranges: true
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: sw_pcie
-+
-+  msi-controller:
-+    description: Identifies the node as an MSI controller.
-+    type: boolean
-+
-+  msi-parent:
-+    description: MSI controller the device is capable of using.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+  linux,pci-domain:
-+    description: PCI domain ID. Should be unique for each host controller.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  brcm,enable-ssc:
-+    description: Indicates usage of spread-spectrum clocking.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - "#interrupt-cells"
-+  - interrupt-map-mask
-+  - interrupt-map
-+  - ranges
-+  - dma-ranges
-+  - linux,pci-domain
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    scb {
-+            #address-cells = <2>;
-+            #size-cells = <1>;
-+            pcie0: pcie@7d500000 {
-+                    compatible = "brcm,bcm2711-pcie";
-+                    reg = <0x0 0x7d500000 0x9310>;
-+                    #address-cells = <3>;
-+                    #size-cells = <2>;
-+                    #interrupt-cells = <1>;
-+                    interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+                                 <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+                    interrupt-names = "pcie", "msi";
-+                    interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-+                    interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH
-+                                     0 0 0 2 &gicv2 GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH
-+                                     0 0 0 3 &gicv2 GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH
-+                                     0 0 0 4 &gicv2 GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+                    msi-parent = <&pcie0>;
-+                    msi-controller;
-+                    ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000 0x0 0x04000000>;
-+                    dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
-+                    linux,pci-domain = <0>;
-+                    brcm,enable-ssc;
-+            };
-+    };
--- 
-2.23.0
-
+>
+> Maxime
