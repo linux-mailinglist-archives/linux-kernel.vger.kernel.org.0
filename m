@@ -2,367 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 633F5F1317
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 097D1F130E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:59:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbfKFJ7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 04:59:33 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:43998 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727560AbfKFJ7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 04:59:23 -0500
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xA69wZl9021268;
-        Wed, 6 Nov 2019 11:58:35 +0200
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 51BB16032E; Wed,  6 Nov 2019 11:58:35 +0200 (IST)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        yuenn@google.com, venture@google.com, benjaminfair@google.com,
-        avifishman70@gmail.com, joel@jms.id.au
-Cc:     openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v4 3/3] reset: npcm: add NPCM reset controller driver
-Date:   Wed,  6 Nov 2019 11:58:32 +0200
-Message-Id: <20191106095832.236766-4-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191106095832.236766-1-tmaimon77@gmail.com>
-References: <20191106095832.236766-1-tmaimon77@gmail.com>
+        id S1729750AbfKFJ7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 04:59:22 -0500
+Received: from mail-eopbgr720047.outbound.protection.outlook.com ([40.107.72.47]:6897
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727239AbfKFJ7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 04:59:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nl5Wf0kgVg/4l0d9vYYxBDUqxgT1KC7jy1QdHrg5l8yJyrJh7wd73u7bAwLSkzKdGyppsAYMS8+VoLAGl70d4AN7LScDwU/GbV2Ga5tly1r7PwHUTi+61GLfoornKcOvAXJfDy8l9vLmbs78BBXsK0QiMAybVo8GTmV4oKFMr+tZyvFH3NU2kSuDFPfR3B81KMAVV7dtvRUUOvUaUXpt7aAaT3bd9TpsxfT3FSscafnqv/U+nC5FD9evj/8vCmmKeFboypjOTv4sDA100luAWmXPXwZk/VDJUpnBUcbQMirO8yymxwu5q2iYefJG+LvmWpo03W9rgaLX9Mg79hprTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=++0vHScicFMYU3AoK1PWUKBvS9x7WxKbCGrFmfCb1to=;
+ b=Q7a9U5L9uOSGOmvUeVhDpgXdS6jKJ0A48dy3zvovTwhEK2duBJ1VxoBXKbnN/ovjZ3/hlZU12/KR5iTpgG79W381haz1tZTYIPmg0KFMqn5lNMYLt/D3IlgBk9iTkYNn91/6q4cl3u6N4QTogl3SnFqmDe4bxx+mH2H8qpChUt2ZimNHPmTqDhoChWn9QY2rAxYgH8BnF0YrkZYP3DT7bLLN8PuGRLqjZbdYftWXVx9mUzPeDXltYUauvegbUc1O6/oNmizu7bTq4XOmCE9a3RTkrynC94a+L+1hMOdXnVqQ0X48z32upGF35gt0cR0vYVeajqKN8Bh6efvE8KUcrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=++0vHScicFMYU3AoK1PWUKBvS9x7WxKbCGrFmfCb1to=;
+ b=FPufp6MKw4TyqaoCbMYgOjMu7ao6WHsQGuq1oncx9FGGTHQXJilFUABoBRWfxbsJlr3wfryYe0yEP1RHxGx4dRA7zi3HOsnYWBr/tGSYBJEuBDkqb9bSqhMqrSes0ST+3UlvtARgUn6wbzM2+H1izxu7BWdFa7Edo+6WxGcH3uM=
+Received: from DM5PR12MB1705.namprd12.prod.outlook.com (10.175.88.22) by
+ DM5PR12MB2583.namprd12.prod.outlook.com (52.132.140.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Wed, 6 Nov 2019 09:59:14 +0000
+Received: from DM5PR12MB1705.namprd12.prod.outlook.com
+ ([fe80::e5e7:96f0:ad90:d933]) by DM5PR12MB1705.namprd12.prod.outlook.com
+ ([fe80::e5e7:96f0:ad90:d933%7]) with mapi id 15.20.2408.024; Wed, 6 Nov 2019
+ 09:59:14 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     Pan Bian <bianpan2016@163.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/amdgpu: fix double reference dropping
+Thread-Topic: [PATCH] drm/amdgpu: fix double reference dropping
+Thread-Index: AQHVlIgIUEATmLAki0qOQWOuXuremad96JYA
+Date:   Wed, 6 Nov 2019 09:59:14 +0000
+Message-ID: <b7b3c444-9ece-dd08-cb4c-c7ac4009373b@amd.com>
+References: <1573033994-17102-1-git-send-email-bianpan2016@163.com>
+In-Reply-To: <1573033994-17102-1-git-send-email-bianpan2016@163.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+x-clientproxiedby: AM4PR08CA0050.eurprd08.prod.outlook.com
+ (2603:10a6:205:2::21) To DM5PR12MB1705.namprd12.prod.outlook.com
+ (2603:10b6:3:10c::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 361df50a-e2dc-41ad-5f03-08d7629ffa9b
+x-ms-traffictypediagnostic: DM5PR12MB2583:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR12MB2583C71F049E8900954D399983790@DM5PR12MB2583.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 02135EB356
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(136003)(366004)(376002)(189003)(199004)(66946007)(46003)(2616005)(54906003)(102836004)(58126008)(7736002)(316002)(446003)(11346002)(256004)(186003)(305945005)(6116002)(76176011)(36756003)(81166006)(476003)(8676002)(486006)(386003)(6506007)(66556008)(81156014)(64756008)(8936002)(99286004)(66446008)(110136005)(52116002)(66476007)(25786009)(5660300002)(6486002)(65956001)(6436002)(65806001)(31686004)(2906002)(229853002)(6512007)(6246003)(86362001)(4326008)(71190400001)(31696002)(71200400001)(478600001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2583;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pooUUX74HMMRtpKe6Oe74fsXXoY26Q0369JAsyl7iK9R3U/YYOhnxgaVAWm07BRzDKJqxFMLTOFyIiF1SYiOOl5TcWG642Tu+UwVWjJAKRFj+8Rqju0DszGUWJ4b+0RIu36KNn5HKO+Oii2axrsTRzL5Nfw4zyJJ49OLmD0KQAs6ezC4gUsFhvoJS/5bUNTSwbpEzU96sgLk4ocMcitWPjtqE5ogPStIHyGPzEpRI0XuF5kNRAgwGeTmQqVglE5Z1z+WQg8363O8gchxB3dw1R6uOMy95WedWnoaZoZKFQd8Xu+fJfDpgJXrzLx8Rt0CFFZceJVIE2y9zvf/07XC2hFfPJfA9L6INy3UNK6+3sYhEpr8GBwxCkUfXXj1HKsGekJjeFAYpDFym9929F/jofnRMh/jrlmRRLI64nsPMaFN5PFX8haSwEjtPVHSLVoP
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <77E364CC8E10554AB20F379E5D40C4B0@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 361df50a-e2dc-41ad-5f03-08d7629ffa9b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 09:59:14.4061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rqoJlOWVPSqrrbqWZ8ZzsoGnHyWjlwiu2woT2wklhio79klsmN3eOvhsb+SEpBao
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2583
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Nuvoton NPCM BMC reset controller driver.
-
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/reset/Kconfig      |   7 +
- drivers/reset/Makefile     |   1 +
- drivers/reset/reset-npcm.c | 281 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 289 insertions(+)
- create mode 100644 drivers/reset/reset-npcm.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 7b07281aa0ae..9e3eac30e7db 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -89,6 +89,13 @@ config RESET_MESON_AUDIO_ARB
- 	  This enables the reset driver for Audio Memory Arbiter of
- 	  Amlogic's A113 based SoCs
- 
-+config RESET_NPCM
-+	bool "NPCM BMC Reset Driver" if COMPILE_TEST
-+	default ARCH_NPCM
-+	help
-+	  This enables the reset controller driver for Nuvoton NPCM
-+	  BMC SoCs.
-+
- config RESET_OXNAS
- 	bool
- 
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index cf60ce526064..00767c03f5f2 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
- obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
- obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-+obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
-diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
-new file mode 100644
-index 000000000000..ad09d466d7f9
---- /dev/null
-+++ b/drivers/reset/reset-npcm.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2019 Nuvoton Technology corporation.
-+
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/reset-controller.h>
-+#include <linux/spinlock.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/of_address.h>
-+
-+/* NPCM7xx GCR registers */
-+#define NPCM_MDLR_OFFSET	0x7C
-+#define NPCM_MDLR_USBD0		BIT(9)
-+#define NPCM_MDLR_USBD1		BIT(8)
-+#define NPCM_MDLR_USBD2_4	BIT(21)
-+#define NPCM_MDLR_USBD5_9	BIT(22)
-+
-+#define NPCM_USB1PHYCTL_OFFSET	0x140
-+#define NPCM_USB2PHYCTL_OFFSET	0x144
-+#define NPCM_USBXPHYCTL_RS	BIT(28)
-+
-+/* NPCM7xx Reset registers */
-+#define NPCM_SWRSTR		0x14
-+#define NPCM_SWRST		BIT(2)
-+
-+#define NPCM_IPSRST1		0x20
-+#define NPCM_IPSRST1_USBD1	BIT(5)
-+#define NPCM_IPSRST1_USBD2	BIT(8)
-+#define NPCM_IPSRST1_USBD3	BIT(25)
-+#define NPCM_IPSRST1_USBD4	BIT(22)
-+#define NPCM_IPSRST1_USBD5	BIT(23)
-+#define NPCM_IPSRST1_USBD6	BIT(24)
-+
-+#define NPCM_IPSRST2		0x24
-+#define NPCM_IPSRST2_USB_HOST	BIT(26)
-+
-+#define NPCM_IPSRST3		0x34
-+#define NPCM_IPSRST3_USBD0	BIT(4)
-+#define NPCM_IPSRST3_USBD7	BIT(5)
-+#define NPCM_IPSRST3_USBD8	BIT(6)
-+#define NPCM_IPSRST3_USBD9	BIT(7)
-+#define NPCM_IPSRST3_USBPHY1	BIT(24)
-+#define NPCM_IPSRST3_USBPHY2	BIT(25)
-+
-+#define NPCM_RC_RESETS_PER_REG	32
-+#define NPCM_MASK_RESETS	GENMASK(4, 0)
-+
-+struct npcm_rc_data {
-+	struct reset_controller_dev rcdev;
-+	struct notifier_block restart_nb;
-+	u32 sw_reset_number;
-+	void __iomem *base;
-+	spinlock_t lock;
-+};
-+
-+#define to_rc_data(p) container_of(p, struct npcm_rc_data, rcdev)
-+
-+static int npcm_rc_restart(struct notifier_block *nb, unsigned long mode,
-+			   void *cmd)
-+{
-+	struct npcm_rc_data *rc = container_of(nb, struct npcm_rc_data,
-+					       restart_nb);
-+
-+	writel(NPCM_SWRST << rc->sw_reset_number, rc->base + NPCM_SWRSTR);
-+	mdelay(1000);
-+
-+	pr_emerg("%s: unable to restart system\n", __func__);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int npcm_rc_setclear_reset(struct reset_controller_dev *rcdev,
-+				  unsigned long id, bool set)
-+{
-+	struct npcm_rc_data *rc = to_rc_data(rcdev);
-+	unsigned int rst_bit = BIT(id & NPCM_MASK_RESETS);
-+	unsigned int ctrl_offset = id >> 8;
-+	unsigned long flags;
-+	u32 stat;
-+
-+	spin_lock_irqsave(&rc->lock, flags);
-+	stat = readl(rc->base + ctrl_offset);
-+	if (set)
-+		writel(stat | rst_bit, rc->base + ctrl_offset);
-+	else
-+		writel(stat & ~rst_bit, rc->base + ctrl_offset);
-+	spin_unlock_irqrestore(&rc->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int npcm_rc_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	return npcm_rc_setclear_reset(rcdev, id, true);
-+}
-+
-+static int npcm_rc_deassert(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	return npcm_rc_setclear_reset(rcdev, id, false);
-+}
-+
-+static int npcm_rc_status(struct reset_controller_dev *rcdev,
-+			  unsigned long id)
-+{
-+	struct npcm_rc_data *rc = to_rc_data(rcdev);
-+	unsigned int rst_bit = BIT(id & NPCM_MASK_RESETS);
-+	unsigned int ctrl_offset = id >> 8;
-+
-+	return (readl(rc->base + ctrl_offset) & rst_bit);
-+}
-+
-+/*
-+ *  The following procedure should be observed in USB PHY, USB device and
-+ *  USB host initialization at BMC boot
-+ */
-+static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	u32 mdlr, iprst1, iprst2, iprst3;
-+	struct regmap *gcr_regmap = NULL;
-+	u32 ipsrst1_bits = 0;
-+	u32 ipsrst2_bits = NPCM_IPSRST2_USB_HOST;
-+	u32 ipsrst3_bits = 0;
-+
-+	if (of_device_is_compatible(np, "nuvoton,npcm750-reset")) {
-+		gcr_regmap = syscon_regmap_lookup_by_compatible("nuvoton,npcm750-gcr");
-+		if (IS_ERR(gcr_regmap)) {
-+			dev_err(&pdev->dev, "Failed to find nuvoton,npcm750-gcr\n");
-+			return PTR_ERR(gcr_regmap);
-+		}
-+	}
-+	if (!gcr_regmap)
-+		return -ENXIO;
-+
-+	/* checking which USB device is enabled */
-+	regmap_read(gcr_regmap, NPCM_MDLR_OFFSET, &mdlr);
-+	if (!(mdlr & NPCM_MDLR_USBD0))
-+		ipsrst3_bits |= NPCM_IPSRST3_USBD0;
-+	if (!(mdlr & NPCM_MDLR_USBD1))
-+		ipsrst1_bits |= NPCM_IPSRST1_USBD1;
-+	if (!(mdlr & NPCM_MDLR_USBD2_4))
-+		ipsrst1_bits |= (NPCM_IPSRST1_USBD2 |
-+				 NPCM_IPSRST1_USBD3 |
-+				 NPCM_IPSRST1_USBD4);
-+	if (!(mdlr & NPCM_MDLR_USBD0)) {
-+		ipsrst1_bits |= (NPCM_IPSRST1_USBD5 |
-+				 NPCM_IPSRST1_USBD6);
-+		ipsrst3_bits |= (NPCM_IPSRST3_USBD7 |
-+				 NPCM_IPSRST3_USBD8 |
-+				 NPCM_IPSRST3_USBD9);
-+	}
-+
-+	/* assert reset USB PHY and USB devices */
-+	iprst1 = readl(rc->base + NPCM_IPSRST1);
-+	iprst2 = readl(rc->base + NPCM_IPSRST2);
-+	iprst3 = readl(rc->base + NPCM_IPSRST3);
-+
-+	iprst1 |= ipsrst1_bits;
-+	iprst2 |= ipsrst2_bits;
-+	iprst3 |= (ipsrst3_bits | NPCM_IPSRST3_USBPHY1 |
-+		   NPCM_IPSRST3_USBPHY2);
-+
-+	writel(iprst1, rc->base + NPCM_IPSRST1);
-+	writel(iprst2, rc->base + NPCM_IPSRST2);
-+	writel(iprst3, rc->base + NPCM_IPSRST3);
-+
-+	/* clear USB PHY RS bit */
-+	regmap_update_bits(gcr_regmap, NPCM_USB1PHYCTL_OFFSET,
-+			   NPCM_USBXPHYCTL_RS, 0);
-+	regmap_update_bits(gcr_regmap, NPCM_USB2PHYCTL_OFFSET,
-+			   NPCM_USBXPHYCTL_RS, 0);
-+
-+	/* deassert reset USB PHY */
-+	iprst3 &= ~(NPCM_IPSRST3_USBPHY1 | NPCM_IPSRST3_USBPHY2);
-+	writel(iprst3, rc->base + NPCM_IPSRST3);
-+
-+	udelay(50);
-+
-+	/* set USB PHY RS bit */
-+	regmap_update_bits(gcr_regmap, NPCM_USB1PHYCTL_OFFSET,
-+			   NPCM_USBXPHYCTL_RS, NPCM_USBXPHYCTL_RS);
-+	regmap_update_bits(gcr_regmap, NPCM_USB2PHYCTL_OFFSET,
-+			   NPCM_USBXPHYCTL_RS, NPCM_USBXPHYCTL_RS);
-+
-+	/* deassert reset USB devices*/
-+	iprst1 &= ~ipsrst1_bits;
-+	iprst2 &= ~ipsrst2_bits;
-+	iprst3 &= ~ipsrst3_bits;
-+
-+	writel(iprst1, rc->base + NPCM_IPSRST1);
-+	writel(iprst2, rc->base + NPCM_IPSRST2);
-+	writel(iprst3, rc->base + NPCM_IPSRST3);
-+
-+	return 0;
-+}
-+
-+static int npcm_reset_xlate(struct reset_controller_dev *rcdev,
-+			    const struct of_phandle_args *reset_spec)
-+{
-+	unsigned int offset, bit;
-+
-+	offset = reset_spec->args[0];
-+	bit = reset_spec->args[1];
-+
-+	return (offset << 8) | bit;
-+}
-+
-+static const struct reset_control_ops npcm_rc_ops = {
-+	.assert		= npcm_rc_assert,
-+	.deassert	= npcm_rc_deassert,
-+	.status		= npcm_rc_status,
-+};
-+
-+static int npcm_rc_probe(struct platform_device *pdev)
-+{
-+	struct npcm_rc_data *rc;
-+	int ret;
-+
-+	rc = devm_kzalloc(&pdev->dev, sizeof(*rc), GFP_KERNEL);
-+	if (!rc)
-+		return -ENOMEM;
-+
-+	rc->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(rc->base))
-+		return PTR_ERR(rc->base);
-+
-+	spin_lock_init(&rc->lock);
-+
-+	rc->rcdev.owner = THIS_MODULE;
-+	rc->rcdev.nr_resets = NPCM_RC_RESETS_PER_REG;
-+	rc->rcdev.ops = &npcm_rc_ops;
-+	rc->rcdev.of_node = pdev->dev.of_node;
-+	rc->rcdev.of_reset_n_cells = 2;
-+	rc->rcdev.of_xlate = npcm_reset_xlate;
-+
-+	platform_set_drvdata(pdev, rc);
-+
-+	ret = devm_reset_controller_register(&pdev->dev, &rc->rcdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to register device\n");
-+		return ret;
-+	}
-+
-+	if (npcm_usb_reset(pdev, rc))
-+		dev_warn(&pdev->dev, "NPCM USB reset failed, can cause issues with UDC and USB host\n");
-+
-+	if (!of_property_read_u32(pdev->dev.of_node, "nuvoton,sw-reset-number",
-+				  &rc->sw_reset_number)) {
-+		if (rc->sw_reset_number && rc->sw_reset_number < 5) {
-+			rc->restart_nb.priority = 192,
-+			rc->restart_nb.notifier_call = npcm_rc_restart,
-+			ret = register_restart_handler(&rc->restart_nb);
-+			if (ret)
-+				dev_warn(&pdev->dev, "failed to register restart handler\n");
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id npcm_rc_match[] = {
-+	{ .compatible = "nuvoton,npcm750-reset" },
-+	{ }
-+};
-+
-+static struct platform_driver npcm_rc_driver = {
-+	.probe	= npcm_rc_probe,
-+	.driver	= {
-+		.name			= "npcm-reset",
-+		.of_match_table		= npcm_rc_match,
-+		.suppress_bind_attrs	= true,
-+	},
-+};
-+builtin_platform_driver(npcm_rc_driver);
--- 
-2.22.0
-
+QW0gMDYuMTEuMTkgdW0gMTA6NTMgc2NocmllYiBQYW4gQmlhbjoNCj4gQWZ0ZXIgZHJvcHBpbmcg
+dGhlIHJlZmVyZW5jZSBvZiBvYmplY3QgZmVuY2UgaW4gdGhlIGxvb3AsIGl0IHNob3VsZCBiZQ0K
+PiBzZXQgdG8gTlVMTCB0byBwcm90ZWN0aW5nIGRyb3BwaW5nIGl0cyByZWZlcmVuY2UgYWdhaW4g
+b3V0c2lkZSB0aGUgbG9vcC4NCg0KTkFLLCB0aGUgYWN0dWFsIGJ1ZyBpcyB0aGF0IHdlIHNob3Vs
+ZG4ndCBkcm9wIHRoZSBmZW5jZSBvdXRzaWRlIHRoZSBsb29wIA0KaW4gdGhlIGZpcnN0IHBsYWNl
+Lg0KDQpKdXN0IG1vdmUgdGhlIGRtYV9mZW5jZV9wdXQoZmVuY2UpOyB0d28gbGluZXMgdXAgYW5k
+IGRyb3AgaW5pdGlhbGl6aW5nIA0KZmVuY2UgdG8gTlVMTC4NCg0KUmVnYXJkcywNCkNocmlzdGlh
+bi4NCg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBQYW4gQmlhbiA8YmlhbnBhbjIwMTZAMTYzLmNvbT4N
+Cj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2JlbmNobWFyay5j
+IHwgMSArDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+DQo+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfYmVuY2htYXJrLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfYmVuY2htYXJrLmMNCj4gaW5kZXggNjQ5ZTY4
+YzQ0NzliLi4zMTc0MDkzZjM1ZjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQv
+YW1kZ3B1L2FtZGdwdV9iZW5jaG1hcmsuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfYmVuY2htYXJrLmMNCj4gQEAgLTQ3LDYgKzQ3LDcgQEAgc3RhdGljIGludCBh
+bWRncHVfYmVuY2htYXJrX2RvX21vdmUoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYsIHVuc2ln
+bmVkIHNpemUsDQo+ICAgCQlpZiAocikNCj4gICAJCQlnb3RvIGV4aXRfZG9fbW92ZTsNCj4gICAJ
+CWRtYV9mZW5jZV9wdXQoZmVuY2UpOw0KPiArCQlmZW5jZSA9IE5VTEw7DQo+ICAgCX0NCj4gICAJ
+ZW5kX2ppZmZpZXMgPSBqaWZmaWVzOw0KPiAgIAlyID0gamlmZmllc190b19tc2VjcyhlbmRfamlm
+ZmllcyAtIHN0YXJ0X2ppZmZpZXMpOw0KDQo=
