@@ -2,186 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88948F1B92
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01795F1B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbfKFQrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 11:47:23 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36232 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732243AbfKFQrX (ORCPT
+        id S1732298AbfKFQsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 11:48:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36592 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbfKFQsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 11:47:23 -0500
-Received: by mail-io1-f65.google.com with SMTP id s3so23907013ioe.3;
-        Wed, 06 Nov 2019 08:47:22 -0800 (PST)
+        Wed, 6 Nov 2019 11:48:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w18so26729755wrt.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 08:48:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2R5MjRsOyPZ+phiKWzGDwF2/MhcPqEyoa3AVfrLcHWM=;
-        b=ruoL50pDSqAk/m67JBky7sRfRYeZr0gXPsgu+ApwR/ycEDiAB0eRJT3mvpl/du1L0Q
-         52A5mjgD1ZbHdqu/Hx1Uhhe1Ua+nrUpbr1ilZz1aqKXdS69tlAwkLUGixc1Bp5DctyQ3
-         kHBLDgDf7dQbYMDKD4uKimsaKPVwbBp8YFUCSmGWldA75GtmsP1GK7rzQWHZT47q8Qoh
-         BAWDf8ukvALIoglx7UvzTLA9A6NYWPKODQOTfvB7RmLFaivcWYYmjPl3TaBK7TxFV6DE
-         aNepjb0xHLXoLssIIs6+OSHxIi7rGJ3mQ+W+fdIGM9YVKYg7Hb9k69qkQIHCW9j1YAyG
-         youg==
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qsQf+1m23+jsDxNB5IS6XnKaQp9Ng9lV2UMQAWB4LKw=;
+        b=TDfF3VN9GaeQ/u0sLLvRvovI5BAhrbb/MI7b7LHt4gu3mjqLxSEwVXmdM5bBA4L5tQ
+         g7XAIkJ7IQJfMDsIjivw9DRrqHmIoKbtWxjFhIrjhkqMI0UtiiE0xFVyLu6hxlA53eZG
+         y674F5ysqw5/BF1d6i0Fu8yX3hTWMgSLluQXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2R5MjRsOyPZ+phiKWzGDwF2/MhcPqEyoa3AVfrLcHWM=;
-        b=TxkBkWa3EPjfaBKRQEgnMxfn3mkXr+dwUp9rAxns/BxUuDCkM9lxRSFD/nuoPZjSCQ
-         wt5QmtXwgKEzO3QRPeUPQ22Ju1wj3BqEFMN+gjDoc8U5KSk9E3AtQWhyp8kyRovXUhUb
-         zNDbkpNEBLSdz/4se8TBdwaNWd949pRFFu1bILmjbeXmUtNJGaLTFK0c76DaBKlo17R5
-         01GYZTBL+LtG2F9Yj9htuHUm1tc8kjcY84B1frreEKGYyjNWf0GfHECvesFJcA537DvN
-         9gPYx3feYhJMcfOetYjYSAdMXaUg+6/rb2FGvWqd/KNXrQcWHVdtJEXO9ncHNneeRG6F
-         6NjQ==
-X-Gm-Message-State: APjAAAUcgleAdtoL7GlLNB7q+EspFy+i0utaspReFCBB4+vGFqD52rA+
-        euWkJIMkw3l7lQsY5oXhE3NbcCKMS5JB1uiGBhI=
-X-Google-Smtp-Source: APXvYqxH5Ib6M5MWFwrsZQWfqPmZ4IY34qPLHotGHrUurUCRA88RVvH5TE2xsiTrkijZdVOnVqjZ2qYTdLM/+AGPxM4=
-X-Received: by 2002:a5d:8e17:: with SMTP id e23mr1367166iod.263.1573058842250;
- Wed, 06 Nov 2019 08:47:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qsQf+1m23+jsDxNB5IS6XnKaQp9Ng9lV2UMQAWB4LKw=;
+        b=qQO3wbRP4auG7+2hjqYrVBo7lL/tUJw6FWiWlkMTCPRwyzvoIaGQCDfZyHnWKQPWN7
+         Kz00HI8u8hhC1AUcluGo5lRuaLrBDjc5m4Rb9NpyyAxLWTAMyI1fiEeXJuWo4OJyBYiw
+         uSa+OkDZXFtKLooyfvgvR1LY1VnEAAbuzrya+Amu9/AdxrKEAH2pc5A4U9SkfFbX9cKD
+         T/QlNuVLLfIdOPD2DXP3I8zold64lX+wIqevfd/ew7QaV9qowL/9G3s+upHYpkDvF1f1
+         o2tcClnXcukmey02pKHegihxA4sn6BrLlmepUfdUWsX7OYrMnY6sBI+VFc3HM+JwgPVp
+         Z1Iw==
+X-Gm-Message-State: APjAAAUjafA16lhstLmUo5b3oqJdeYLkIcbdB0Aacbxy1Hns+exsMjLd
+        LkuhYF7dgDhonlJd4rbiQfxUnA==
+X-Google-Smtp-Source: APXvYqzGy3n/IVXtHdPDD+4tIgpqH4phKgxw3vXsnxKnjEcXZQRREIZ7Z3grAjzpRiN/nIjVtv+L4Q==
+X-Received: by 2002:a5d:678f:: with SMTP id v15mr2521944wru.242.1573058881709;
+        Wed, 06 Nov 2019 08:48:01 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id p4sm16694187wrx.71.2019.11.06.08.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 08:48:01 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH] drm: Limit to INT_MAX in create_blob ioctl
+Date:   Wed,  6 Nov 2019 17:47:55 +0100
+Message-Id: <20191106164755.31478-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.24.0.rc2
 MIME-Version: 1.0
-References: <20191105000129.GA6536@onstation.org> <CAF6AEGv3gs+LFOP3AGthXd4niFb_XYOuwLfEa2G9eb27b1wMMA@mail.gmail.com>
- <20191105100804.GA9492@onstation.org> <CAF6AEGtB+g=4eiB31jkyuBGW7r0TBSh2oMj6TGtSgQ=q1ZV1tg@mail.gmail.com>
- <20191106091335.GA16729@onstation.org> <CAF6AEGuEO1jg6KhOFWEMUjq4ZQy5w61dWJk6uLWRzHnMZYZv=g@mail.gmail.com>
-In-Reply-To: <CAF6AEGuEO1jg6KhOFWEMUjq4ZQy5w61dWJk6uLWRzHnMZYZv=g@mail.gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Wed, 6 Nov 2019 09:47:11 -0700
-Message-ID: <CAOCk7NomH2MsZ+FvPFAMWeabOFpyOwODCb_Ro07v+2k2v_C4NA@mail.gmail.com>
-Subject: Re: [Freedreno] drm/msm: 'pp done time out' errors after async commit changes
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Brian Masney <masneyb@onstation.org>,
-        Rob Clark <robdclark@chromium.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Sean Paul <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 9:30 AM Rob Clark <robdclark@gmail.com> wrote:
->
-> On Wed, Nov 6, 2019 at 1:13 AM Brian Masney <masneyb@onstation.org> wrote:
-> >
-> > On Tue, Nov 05, 2019 at 08:23:27AM -0800, Rob Clark wrote:
-> > > On Tue, Nov 5, 2019 at 2:08 AM Brian Masney <masneyb@onstation.org> wrote:
-> > > > The 'pp done time out' errors go away if I revert the following three
-> > > > commits:
-> > > >
-> > > > cd6d923167b1 ("drm/msm/dpu: async commit support")
-> > > > d934a712c5e6 ("drm/msm: add atomic traces")
-> > > > 2d99ced787e3 ("drm/msm: async commit support")
-> > > >
-> > > > I reverted the first one to fix a compiler error, and the second one so
-> > > > that the last patch can be reverted without any merge conflicts.
-> > > >
-> > > > I see that crtc_flush() calls mdp5_ctl_commit(). I tried to use
-> > > > crtc_flush_all() in mdp5_flush_commit() and the contents of the frame
-> > > > buffer dance around the screen like its out of sync. I renamed
-> > > > crtc_flush_all() to mdp5_crtc_flush_all() and removed the static
-> > > > declaration. Here's the relevant part of what I tried:
-> > > >
-> > > > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-> > > > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-> > > > @@ -171,7 +171,15 @@ static void mdp5_prepare_commit(struct msm_kms *kms, struct drm_atomic_state *st
-> > > >
-> > > >  static void mdp5_flush_commit(struct msm_kms *kms, unsigned crtc_mask)
-> > > >  {
-> > > > -       /* TODO */
-> > > > +       struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(kms));
-> > > > +       struct drm_crtc *crtc;
-> > > > +
-> > > > +       for_each_crtc_mask(mdp5_kms->dev, crtc, crtc_mask) {
-> > > > +               if (!crtc->state->active)
-> > > > +                       continue;
-> > > > +
-> > > > +               mdp5_crtc_flush_all(crtc);
-> > > > +       }
-> > > >  }
-> > > >
-> > > > Any tips would be appreciated.
-> > >
-> > >
-> > > I think this is along the lines of what we need to enable async commit
-> > > for mdp5 (but also removing the flush from the atomic-commit path)..
-> > > the principle behind the async commit is to do all the atomic state
-> > > commit normally, but defer writing the flush bits.  This way, if you
-> > > get another async update before the next vblank, you just apply it
-> > > immediately instead of waiting for vblank.
-> > >
-> > > But I guess you are on a command mode panel, if I remember?  Which is
-> > > a case I didn't have a way to test.  And I'm not entirely about how
-> > > kms_funcs->vsync_time() should be implemented for cmd mode panels.
-> >
-> > Yes, this is a command-mode panel and there's no hardware frame counter
-> > available. The key to getting the display working on this phone was this
-> > patch:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2bab52af6fe68c43b327a57e5ce5fc10eefdfadf
-> >
-> > > That all said, I think we should first fix what is broken, before
-> > > worrying about extending async commit support to mdp5.. which
-> > > shouldn't hit the async==true path, due to not implementing
-> > > kms_funcs->vsync_time().
-> > >
-> > > What I think is going on is that, in the cmd mode case,
-> > > mdp5_wait_flush() (indirectly) calls mdp5_crtc_wait_for_pp_done(),
-> > > which waits for a pp-done irq regardless of whether there is a flush
-> > > in progress.  Since there is no flush pending, the irq never comes.
-> > > But the expectation is that kms_funcs->wait_flush() returns
-> > > immediately if there is nothing to wait for.
-> >
-> > I don't think that's happening in this case. I added some pr_info()
-> > statements to request_pp_done_pending() and mdp5_crtc_pp_done_irq().
-> > Here's the first two sets of messages that appear in dmesg:
-> >
-> > [   14.018907] msm fd900000.mdss: pp done time out, lm=0
-> > [   14.018993] request_pp_done_pending: HERE
-> > [   14.074208] mdp5_crtc_pp_done_irq: HERE
-> > [   14.074368] Console: switching to colour frame buffer device 135x120
-> > [   14.138938] msm fd900000.mdss: pp done time out, lm=0
-> > [   14.139021] request_pp_done_pending: HERE
-> > [   14.158097] mdp5_crtc_pp_done_irq: HERE
-> >
-> > The messages go on like this with the same pattern.
-> >
-> > I tried two different changes:
-> >
-> > 1) I moved the request_pp_done_pending() and corresponding if statement
-> >    from mdp5_crtc_atomic_flush() and into mdp5_crtc_atomic_begin().
-> >
-> > 2) I increased the timeout in wait_for_completion_timeout() by several
-> >    increments; all the way to 5 seconds.
->
-> increasing the timeout won't help, because the pp-done irq has already
-> come at the point where we wait for it..
->
-> maybe the easy thing is just add mdp5_crtc->needs_pp, set to true
-> before requesting, and false when we get the irq.. and then
-> mdp5_crtc_wait_for_pp_done() just returns if needs_pp==false..
+The hardened usercpy code is too paranoid ever since:
 
-On the otherhand, what about trying to make command mode panels
-resemble video mode panels slightly?  Video mode panels have a vsync
-counter in hardware, which is missing from command mode - however it
-seems like the driver/drm framework would prefer such a counter.
-Would it be a reasonable idea to make a software counter, and just
-increment it every time the pp_done irq is triggered?
+commit 6a30afa8c1fbde5f10f9c584c2992aa3c7f7a8fe
+Author: Kees Cook <keescook@chromium.org>
+Date:   Wed Nov 6 16:07:01 2019 +1100
 
-I'm just thinking that we'll avoid issues long term by trying to make
-the code common, rather than diverging it for the two modes.
+    uaccess: disallow > INT_MAX copy sizes
 
->
-> BR,
-> -R
->
-> > I haven't dug into the new code anymore.
-> >
-> > Brian
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
+Code itself should have been fine as-is.
+
+Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
+Fixes: 6a30afa8c1fb ("uaccess: disallow > INT_MAX copy sizes")
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+--
+Kees/Andrew,
+
+Since this is -mm can I have a stable sha1 or something for
+referencing? Or do you want to include this in the -mm patch bomb for
+the merge window?
+-Daniel
+---
+ drivers/gpu/drm/drm_property.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
+index 892ce636ef72..6ee04803c362 100644
+--- a/drivers/gpu/drm/drm_property.c
++++ b/drivers/gpu/drm/drm_property.c
+@@ -561,7 +561,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
+ 	struct drm_property_blob *blob;
+ 	int ret;
+ 
+-	if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
++	if (!length || length > INT_MAX - sizeof(struct drm_property_blob))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	blob = kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
+-- 
+2.24.0.rc2
+
