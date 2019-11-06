@@ -2,249 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58081F19F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B564F19F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732064AbfKFPY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:24:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34193 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbfKFPY6 (ORCPT
+        id S1732133AbfKFPZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:25:13 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46785 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731769AbfKFPZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:24:58 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e6so24461725wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 07:24:56 -0800 (PST)
+        Wed, 6 Nov 2019 10:25:12 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 19so13193619lft.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 07:25:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gq3QyBnCV9nTAcj4pWnGxrDyFJDXcEPQTCyegYfFr/Q=;
-        b=Yw29w3zfakrlCT2cDey3VVh5tDHaCMvIO6MpF158HWHn8WKL35VHLMIsRDFVIsNSb3
-         O+xol5hLWGkMcKNbgbXQJ+Syl8SmDYPsnlj3gO5+rxH7995Xa55eoi59bSW1sl8LGwNT
-         MFNzYZrSokupdAH46kaI1bdMItV1E4/cSQ/U74/drfSwbEBRH/8EVuUy1cJRtOtHswC3
-         fS9e0txk0bEN2DhZHUhV3RQK9cueVoJD6c4oXzHh8Xj/NQqXheI5whwUpy9q8jMzl0qG
-         K+P40Ly9s5RlKyhxZecGXYIgpQPVT7+h61bUF/oHxMW/Y5z1jUDA3eOWjw8MiLwI5kiE
-         qkTw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kpt1tMqBU2FG8Pm1FbFS5640gv2u5fVbhPUnnmuHCDk=;
+        b=K2oP6Nva56UfcPhWfgStsFBYCAsokhE7pf+F3uK3ErR+EInHLPlS9LeCwD00P94dAf
+         klz0rDvjuMkE9pNQ49l0FNWsMMLYf6jIWfidO9867TkMHb9053P599iy4mCJVVp/ocB8
+         OJEo62ZaVSwPgxnaikGCujPfs/GrRSHZ03c+mYmCTIcsGj/yRweLehJ6HdtUCFypNL1x
+         BH8RO0LpxYfmAKu/iLBeIQDz4kv5qBd8E7BuDuWoo8w40O35TG+cW/gtQj0AUyQV2AIA
+         R1BegY2dsdYm1QQ7qPqgUxnkpcTIO0SpQhUa6rH3dwZ2uEdsBdtKov87rFgKfDx8GaRl
+         mwAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gq3QyBnCV9nTAcj4pWnGxrDyFJDXcEPQTCyegYfFr/Q=;
-        b=iZLIOGubxewKz7NT7x/Y0n5scVn3s/RPUu/LDGP0/ciXLW5A16ojawVcSo6USQs7N+
-         1iqm6woud8LChS2d361QEVGaMl2s5KKbu0OL6RsdJ+Tfn43kdmAcZiGZOrZOXMf1sru5
-         iS7wMuFOnh1dCN+3bFVDRyoqNmnw9cWpCfZAAtSsjxV8W12MANvEGp0do/4deh8v5RZT
-         +0prUq4zeTbRsN8OrPoORdNzRqjJRvOs5wMnvr2YeUCWXxL067SJGtobCvRMJgrY4Jrr
-         qkzp0ZmwpyIDqA1TUuz8cYBKfq09nx8Mz3d+MejCFtwF7Dbiu55Kori3OD60+RFDte71
-         /y6Q==
-X-Gm-Message-State: APjAAAX2oWTxjqPUIOj9hBE7/EHjoZaDUMV5ej3F67RKVBUVZSsT5/zT
-        BrNR/sXBndK/J6pKboKodexFfw==
-X-Google-Smtp-Source: APXvYqz6Y8xt6u4IPXJKj8XE8xu5Mmxd3odbp1p0H8wbFZ9BqHQdElzA8Z1K+Mep13j2EuKKxvvaaQ==
-X-Received: by 2002:adf:e712:: with SMTP id c18mr3072972wrm.127.1573053895499;
-        Wed, 06 Nov 2019 07:24:55 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id g5sm3423856wmf.37.2019.11.06.07.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 07:24:54 -0800 (PST)
-Date:   Wed, 6 Nov 2019 15:24:54 +0000
-From:   Matthias Maennich <maennich@google.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Jessica Yu <jeyu@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] modpost: dump missing namespaces into a single
- modules.nsdeps file
-Message-ID: <20191106152454.GA1243@google.com>
-References: <20191029123809.29301-1-yamada.masahiro@socionext.com>
- <20191029123809.29301-3-yamada.masahiro@socionext.com>
- <20191031112044.GC2177@linux-8ccs>
- <CAK7LNASCmSUuqLyJhZW+3yrGk1KTPxA-_0x86N=Y7A5psCVUSg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kpt1tMqBU2FG8Pm1FbFS5640gv2u5fVbhPUnnmuHCDk=;
+        b=KRAssZBk+o3fabYfsTZF5YW5lk7CIAyMMf1e0JTOHsR7wzs7BVSIADnLhrBDmbEubY
+         ULPPzczp0G3Rn4omr1l2GUJ4cf0rNPxHGbU7lZz6fOuv/VdcQkmxh5tEXovfzmnw4uS/
+         l3gqqJmPzcyjT5JDQG2SCqUypDJJK8CVq2sX0ifNYAnrqurCDilbqnP1zW7OKNiB/3Ya
+         bYv9D/sW7rHwdXf0Oz7LVCOw8m3rWR3fhUGsRypNdT9bZrFhQf+1A9SIHH8xR3Oh9NOK
+         7mydHXkHFBZUzJ5jFVcRTTmnvw8vh7vzWBenqrZZEXJRL79QjVOc+Xq4/L9jP0fdXuR6
+         sByA==
+X-Gm-Message-State: APjAAAWZhmbgPXtKTAwy0O/6tjzprHcl9brj0VI2zLtDNYNA9TC8CoTb
+        Q2zReyfGkrK6wJ1cqBk+hzthPoTGcO2EKbT1j+U=
+X-Google-Smtp-Source: APXvYqx79330Uffd1npteE8w8+65z1biNi0WznSNuwOnl89J7bl0hH3ubXKiE4WDDde6AYS0XW7p5Esokzw77/vnrMk=
+X-Received: by 2002:a19:4909:: with SMTP id w9mr1969323lfa.174.1573053909911;
+ Wed, 06 Nov 2019 07:25:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASCmSUuqLyJhZW+3yrGk1KTPxA-_0x86N=Y7A5psCVUSg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191106094400.445834-1-paul.kocialkowski@bootlin.com> <20191106094400.445834-3-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20191106094400.445834-3-paul.kocialkowski@bootlin.com>
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date:   Wed, 6 Nov 2019 16:24:59 +0100
+Message-ID: <CAMeQTsa=SWXHt8ZvToa9x5qc6W29B6B4Ssvixs3nd-w=+dYGzA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/gma500: Add page flip support on psb/cdv
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        James Hilliard <james.hilliard1@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 08:53:25PM +0900, Masahiro Yamada wrote:
->On Thu, Oct 31, 2019 at 8:20 PM Jessica Yu <jeyu@kernel.org> wrote:
->>
->> +++ Masahiro Yamada [29/10/19 21:38 +0900]:
->> >The modpost, with the -d option given, generates per-module .ns_deps
->> >files.
->> >
->> >Kbuild generates per-module .mod files to carry module information.
->> >This is convenient because Make handles multiple jobs when the -j
->> >option is given.
->> >
->> >On the other hand, the modpost always runs as a single thread.
->> >I do not see a strong reason to produce separate .ns_deps files.
->> >
->> >This commit changes the modpost to generate just one file,
->> >modules.nsdeps, each line of which has the following format:
->> >
->> >  <module_name>: <list of missing namespaces>
->> >
->> >Please note it contains *missing* namespaces instead of required ones.
->> >So, modules.nsdeps is empty if the namespace dependency is all good.
->> >
->> >This will work more efficiently because spatch will no longer process
->> >already imported namespaces. I removed the '(if needed)' from the
->> >nsdeps log since spatch is invoked only when needed.
->> >
->> >This also solved the stale .ns_deps files problem reported by
->> >Jessica Yu:
->> >
->> >  https://lkml.org/lkml/2019/10/28/467
->> >
->> >While I was here, I improved the modpost code a little more;
->> >I freed ns_deps_bus.p because buf_write() allocates memory.
->> >
->> >Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> >---
->> >
->> > .gitignore               |  2 +-
->> > Documentation/dontdiff   |  1 +
->> > Makefile                 |  4 ++--
->> > scripts/Makefile.modpost |  2 +-
->> > scripts/mod/modpost.c    | 44 +++++++++++++++++-----------------------
->> > scripts/mod/modpost.h    |  4 ++--
->> > scripts/nsdeps           | 21 +++++++++----------
->> > 7 files changed, 36 insertions(+), 42 deletions(-)
->> >
->> >diff --git a/.gitignore b/.gitignore
->> >index 70580bdd352c..72ef86a5570d 100644
->> >--- a/.gitignore
->> >+++ b/.gitignore
->> >@@ -32,7 +32,6 @@
->> > *.lzo
->> > *.mod
->> > *.mod.c
->> >-*.ns_deps
->> > *.o
->> > *.o.*
->> > *.patch
->> >@@ -61,6 +60,7 @@ modules.order
->> > /System.map
->> > /Module.markers
->> > /modules.builtin.modinfo
->> >+/modules.nsdeps
->> >
->> > #
->> > # RPM spec file (make rpm-pkg)
->> >diff --git a/Documentation/dontdiff b/Documentation/dontdiff
->> >index 9f4392876099..72fc2e9e2b63 100644
->> >--- a/Documentation/dontdiff
->> >+++ b/Documentation/dontdiff
->> >@@ -179,6 +179,7 @@ mkutf8data
->> > modpost
->> > modules.builtin
->> > modules.builtin.modinfo
->> >+modules.nsdeps
->> > modules.order
->> > modversions.h*
->> > nconf
->> >diff --git a/Makefile b/Makefile
->> >index 0ef897fd9cfd..1e3f307bd49b 100644
->> >--- a/Makefile
->> >+++ b/Makefile
->> >@@ -1356,7 +1356,7 @@ endif # CONFIG_MODULES
->> >
->> > # Directories & files removed with 'make clean'
->> > CLEAN_DIRS  += include/ksym
->> >-CLEAN_FILES += modules.builtin.modinfo
->> >+CLEAN_FILES += modules.builtin.modinfo modules.nsdeps
->>
->> Hmm, I tried to run `make -C path/to/kernel/src M=$(PWD) clean` for a test
->> external module, but it didn't remove modules.nsdeps for me. I declared a
->> MODULE namespace for testing purposes.
->>
->> $ make
->> make -C /dev/shm/linux M=/tmp/ppyu/test-module
->> make[1]: Entering directory '/dev/shm/linux'
->>   AR      /tmp/ppyu/test-module/built-in.a
->>   CC [M]  /tmp/ppyu/test-module/test1.o
->>   CC [M]  /tmp/ppyu/test-module/test2.o
->>   LD [M]  /tmp/ppyu/test-module/test.o
->>   Building modules, stage 2.
->>   MODPOST 1 modules
->> WARNING: module test uses symbol try_module_get from namespace MODULE, but does not import it.
->>   CC [M]  /tmp/ppyu/test-module/test.mod.o
->>   LD [M]  /tmp/ppyu/test-module/test.ko
->> make[1]: Leaving directory '/dev/shm/linux'
->>
->> Then I make nsdeps:
->>
->> make -C /dev/shm/linux M=/tmp/ppyu/test-module nsdeps
->> make[1]: Entering directory '/dev/shm/linux'
->>   Building modules, stage 2.
->>   MODPOST 1 modules
->> WARNING: module test uses symbol try_module_get from namespace MODULE, but does not import it.
->> Adding namespace MODULE to module /tmp/ppyu/test-module/test.ko.
->> --- /tmp/ppyu/test-module/test1.c
->> +++ /tmp/cocci-output-3696-c1f8b3-test1.c
->> @@ -38,3 +38,4 @@ static void __exit hello_cleanup(void)
->>  module_init(hello_init);
->>  module_exit(hello_cleanup);
->>  MODULE_LICENSE("GPL");
->> +MODULE_IMPORT_NS(MODULE);
->> make[1]: Leaving directory '/dev/shm/linux'
->> $ cat modules.nsdeps
->> /tmp/ppyu/test-module/test.ko: MODULE
->>
->> Looks good so far, then I try make clean:
->>
->> $ make clean
->> make -C /dev/shm/linux M=/tmp/ppyu/test-module clean
->> make[1]: Entering directory '/dev/shm/linux'
->>   CLEAN   /tmp/ppyu/test-module/Module.symvers
->> make[1]: Leaving directory '/dev/shm/linux'
->> $ ls
->> Makefile  modules.nsdeps  test1.c  test2.c
->>
->> But modules.nsdeps is still there.
->>
+On Wed, Nov 6, 2019 at 10:44 AM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 >
->Good catch!
+> Legacy (non-atomic) page flip support is added to the driver by using the
+> mode_set_base CRTC function, that allows configuring a new framebuffer for
+> display. Since the function requires the primary plane's fb to be set
+> already, this is done prior to calling the function in the page flip helper
+> and reverted if the flip fails.
 >
->I forgot to take care of it for external module builds.
+> The vblank interrupt handler is also refactored to support passing an event.
+> The PIPE_TE_STATUS bit is also considered to indicate vblank on medfield
+> only, as explained in psb_enable_vblank.
 >
->The following should work. I will fold it in 3/4.
+> It was tested by running weston on both poulsbo and cedartrail.
 >
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/gpu/drm/gma500/cdv_intel_display.c |  1 +
+>  drivers/gpu/drm/gma500/gma_display.c       | 46 ++++++++++++++++++++++
+>  drivers/gpu/drm/gma500/gma_display.h       |  6 +++
+>  drivers/gpu/drm/gma500/psb_intel_display.c |  1 +
+>  drivers/gpu/drm/gma500/psb_intel_drv.h     |  3 ++
+>  drivers/gpu/drm/gma500/psb_irq.c           | 18 +++++++--
+>  6 files changed, 72 insertions(+), 3 deletions(-)
 >
+> diff --git a/drivers/gpu/drm/gma500/cdv_intel_display.c b/drivers/gpu/drm/gma500/cdv_intel_display.c
+> index 8b784947ed3b..7109d3d19be0 100644
+> --- a/drivers/gpu/drm/gma500/cdv_intel_display.c
+> +++ b/drivers/gpu/drm/gma500/cdv_intel_display.c
+> @@ -979,6 +979,7 @@ const struct drm_crtc_funcs cdv_intel_crtc_funcs = {
+>         .gamma_set = gma_crtc_gamma_set,
+>         .set_config = gma_crtc_set_config,
+>         .destroy = gma_crtc_destroy,
+> +       .page_flip = gma_crtc_page_flip,
+>  };
 >
+>  const struct gma_clock_funcs cdv_clock_funcs = {
+> diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
+> index bc07ae2a9a1d..17f136985d21 100644
+> --- a/drivers/gpu/drm/gma500/gma_display.c
+> +++ b/drivers/gpu/drm/gma500/gma_display.c
+> @@ -503,6 +503,52 @@ void gma_crtc_destroy(struct drm_crtc *crtc)
+>         kfree(gma_crtc);
+>  }
 >
->diff --git a/Makefile b/Makefile
->index 79be70bf2899..6035702803eb 100644
->--- a/Makefile
->+++ b/Makefile
->@@ -1619,7 +1619,7 @@ _emodinst_post: _emodinst_
->        $(call cmd,depmod)
+> +int gma_crtc_page_flip(struct drm_crtc *crtc,
+> +                      struct drm_framebuffer *fb,
+> +                      struct drm_pending_vblank_event *event,
+> +                      uint32_t page_flip_flags,
+> +                      struct drm_modeset_acquire_ctx *ctx)
+> +{
+> +       struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
+> +       struct drm_framebuffer *current_fb = crtc->primary->fb;
+> +       struct drm_framebuffer *old_fb = crtc->primary->old_fb;
+> +       const struct drm_crtc_helper_funcs *crtc_funcs = crtc->helper_private;
+> +       struct drm_device *dev = crtc->dev;
+> +       unsigned long flags;
+> +       int ret;
+> +
+> +       if (!crtc_funcs->mode_set_base)
+> +               return -EINVAL;
+> +
+> +       /* Using mode_set_base requires the new fb to be set already. */
+> +       crtc->primary->fb = fb;
+> +
+> +       if (event) {
+> +               spin_lock_irqsave(&dev->event_lock, flags);
+> +
+> +               WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+> +
+> +               gma_crtc->page_flip_event = event;
+> +
+> +               /* Call this locked if we want an event at vblank interrupt. */
+> +               ret = crtc_funcs->mode_set_base(crtc, crtc->x, crtc->y, old_fb);
+> +               if (ret) {
+> +                       gma_crtc->page_flip_event = NULL;
+> +                       drm_crtc_vblank_put(crtc);
+> +               }
+> +
+> +               spin_unlock_irqrestore(&dev->event_lock, flags);
+> +       } else {
+> +               ret = crtc_funcs->mode_set_base(crtc, crtc->x, crtc->y, old_fb);
+> +       }
+> +
+> +       /* Restore previous fb in case of failure. */
+> +       if (ret)
+> +               crtc->primary->fb = current_fb;
+> +
+> +       return ret;
+> +}
+> +
+>  int gma_crtc_set_config(struct drm_mode_set *set,
+>                         struct drm_modeset_acquire_ctx *ctx)
+>  {
+> diff --git a/drivers/gpu/drm/gma500/gma_display.h b/drivers/gpu/drm/gma500/gma_display.h
+> index fdbd7ecaa59c..7bd6c1ee8b21 100644
+> --- a/drivers/gpu/drm/gma500/gma_display.h
+> +++ b/drivers/gpu/drm/gma500/gma_display.h
+> @@ -11,6 +11,7 @@
+>  #define _GMA_DISPLAY_H_
 >
-> clean-dirs := $(KBUILD_EXTMOD)
->-clean: rm-files := $(KBUILD_EXTMOD)/Module.symvers
->+clean: rm-files := $(KBUILD_EXTMOD)/Module.symvers $(KBUILD_EXTMOD)/modules.nsdeps
+>  #include <linux/pm_runtime.h>
+> +#include <drm/drm_vblank.h>
+>
+>  struct drm_encoder;
+>  struct drm_mode_set;
+> @@ -71,6 +72,11 @@ extern void gma_crtc_prepare(struct drm_crtc *crtc);
+>  extern void gma_crtc_commit(struct drm_crtc *crtc);
+>  extern void gma_crtc_disable(struct drm_crtc *crtc);
+>  extern void gma_crtc_destroy(struct drm_crtc *crtc);
+> +extern int gma_crtc_page_flip(struct drm_crtc *crtc,
+> +                             struct drm_framebuffer *fb,
+> +                             struct drm_pending_vblank_event *event,
+> +                             uint32_t page_flip_flags,
+> +                             struct drm_modeset_acquire_ctx *ctx);
+>  extern int gma_crtc_set_config(struct drm_mode_set *set,
+>                                struct drm_modeset_acquire_ctx *ctx);
+>
+> diff --git a/drivers/gpu/drm/gma500/psb_intel_display.c b/drivers/gpu/drm/gma500/psb_intel_display.c
+> index 4256410535f0..fed3b563e62e 100644
+> --- a/drivers/gpu/drm/gma500/psb_intel_display.c
+> +++ b/drivers/gpu/drm/gma500/psb_intel_display.c
+> @@ -432,6 +432,7 @@ const struct drm_crtc_funcs psb_intel_crtc_funcs = {
+>         .gamma_set = gma_crtc_gamma_set,
+>         .set_config = gma_crtc_set_config,
+>         .destroy = gma_crtc_destroy,
+> +       .page_flip = gma_crtc_page_flip,
+>  };
+>
+>  const struct gma_clock_funcs psb_clock_funcs = {
+> diff --git a/drivers/gpu/drm/gma500/psb_intel_drv.h b/drivers/gpu/drm/gma500/psb_intel_drv.h
+> index cdf10333d1c2..16c6136f778b 100644
+> --- a/drivers/gpu/drm/gma500/psb_intel_drv.h
+> +++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
+> @@ -12,6 +12,7 @@
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_probe_helper.h>
+> +#include <drm/drm_vblank.h>
+>  #include <linux/gpio.h>
+>  #include "gma_display.h"
+>
+> @@ -182,6 +183,8 @@ struct gma_crtc {
+>         struct psb_intel_crtc_state *crtc_state;
+>
+>         const struct gma_clock_funcs *clock_funcs;
+> +
+> +       struct drm_pending_vblank_event *page_flip_event;
+>  };
+>
+>  #define to_gma_crtc(x) \
+> diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
+> index e6265fb85626..f787a51f6335 100644
+> --- a/drivers/gpu/drm/gma500/psb_irq.c
+> +++ b/drivers/gpu/drm/gma500/psb_irq.c
+> @@ -165,11 +165,23 @@ static void mid_pipe_event_handler(struct drm_device *dev, int pipe)
+>                 "%s, can't clear status bits for pipe %d, its value = 0x%x.\n",
+>                 __func__, pipe, PSB_RVDC32(pipe_stat_reg));
+>
+> -       if (pipe_stat_val & PIPE_VBLANK_STATUS)
+> -               drm_handle_vblank(dev, pipe);
+> +       if (pipe_stat_val & PIPE_VBLANK_STATUS ||
+> +           (IS_MFLD(dev) && pipe_stat_val & PIPE_TE_STATUS)) {
+> +               struct drm_crtc *crtc = drm_crtc_from_index(dev, pipe);
+> +               struct gma_crtc *gma_crtc = to_gma_crtc(crtc);
+> +               unsigned long flags;
+>
+> -       if (pipe_stat_val & PIPE_TE_STATUS)
+>                 drm_handle_vblank(dev, pipe);
+> +
+> +               spin_lock_irqsave(&dev->event_lock, flags);
+> +               if (gma_crtc->page_flip_event) {
+> +                       drm_crtc_send_vblank_event(crtc,
+> +                                                  gma_crtc->page_flip_event);
+> +                       gma_crtc->page_flip_event = NULL;
+> +                       drm_crtc_vblank_put(crtc);
+> +               }
+> +               spin_unlock_irqrestore(&dev->event_lock, flags);
+> +       }
+>  }
+>
+>  /*
+> --
+> 2.23.0
+>
 
-Reviewed-by: Matthias Maennich <maennich@google.com>
-Tested-by: Matthias Maennich <maennich@google.com>
+Looks good!
 
-Thanks for this improvement!
-
-Cheers,
-Matthias
-
->
-> PHONY += /
-> /:
->
->
->
->-- 
->Best Regards
->Masahiro Yamada
+Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
