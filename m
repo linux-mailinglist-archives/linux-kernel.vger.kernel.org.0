@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB54BF0CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60FACF0CA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731196AbfKFDJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:09:28 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43827 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388466AbfKFDIs (ORCPT
+        id S1731101AbfKFDIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:08:55 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35327 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731087AbfKFDIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:08:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 3so17718143pfb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 19:08:47 -0800 (PST)
+        Tue, 5 Nov 2019 22:08:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id x6so10731596pln.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 19:08:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=khH3jrRzWOA8KXT9/T2oBYupKLoCJRNbsOsZHkrh+kA=;
-        b=PpfjGJAFs3zWDKErSpq0MTUlUYX7mP8i+6S/IRuW7aPEabYOWq08DK+7ZcT+1fnBb2
-         c47KZdGJON2I9mKihJmiUF1co06gjLugZ7i0gwEKBNZD4pfSgPelc1yS9Ys4wrYdMtyO
-         gXUlpk9ZANNA9hKj+8VWbXv5Lur/n3bS3f8jdooN0NG/3MsiPGnt4gZFrNVbiQKHUB8A
-         Wy7fd4OR07v4KPLMpIwzQaDCoi1Ydk1a5lDiJgJ2WLx0dshYiQY0wa2Ieu0fSlPzXV0/
-         I0QOajhCqM7Uk6CD4U2mzdnPmEktgc7BGe2YxbecCqBTvsO6IMkA7oxG5kyfbs4HBXBn
-         abbg==
+        bh=N1CFwW2Lm09nRLvgyZYRXxfZ7SInie3qB3fO3E3lvMM=;
+        b=BYCbNjxnCKSUWP/HkZiGt6P10evxcNKiAhL25CeoFxPbOCVkyxKFvpaSqDjbFGhUW1
+         hRZTqA72lB3F6gBZLNf5Axt0itQPo8MukQ/NIKdKBi5I/Ig94XUCvV5nKsNphQDbzsic
+         cN4yegmfagZJffzD2QbENFRrbayRaJz4FPrbcAAIdOHbhNHP9ThuRGC5ht6T0FcWvxbs
+         8u2FvYHevA7quLveiCBHFOxAEIK08hPBRwlAEAxkiepwc88xVHoogz+azgnlgXGk8k3F
+         CRyGh7VgcSZEXrYSaRXmi2SYg+3WUjuGL+cDOP7oseO8yZTWJaPoCM8m7dFcBVYYOUwu
+         7guA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=khH3jrRzWOA8KXT9/T2oBYupKLoCJRNbsOsZHkrh+kA=;
-        b=TKlFw8ZfexuR2okmyfJ5jEKDpdcmcYVBrOy9RiCXlQpNw2yHb9jJdNwe42y1XJpUTc
-         2ssEtwIFm/c7isdLJVKsIc2y2DKAOCEJvVwQgx0g9MsFVcXaHuwSxTX0Xok4A7yoEhtm
-         L4LIY21ajCTOiNWlGn2dcUgOKPPe6Kvm4QrmhhZO418U36q+pPYIqkNzGzKA2e7ota+/
-         8l4CQ2BljpBGcwohWMrPUHpDHNfwn9a/HvuA5ThBQTCFLgwz1PM7au4AX3eVu1ZibBL8
-         4pdCh3RuIlrefjQWW0RT+dE2AeiY3nkhHIiGnyFTZ2zndVxIho2g/oy+Om89Rf/E0yGO
-         wrFQ==
-X-Gm-Message-State: APjAAAVHAMv0Y6I9FwrWI0zXC9Vby8Kcvn0elMiHIJZbO4uI0X220NaN
-        nfwRlPCmJ6jBWHa9ERuHZZQCWwrXEug=
-X-Google-Smtp-Source: APXvYqzvP1pWaPKxmJO5kVLOC8oAa65GWg7uhS61nLCXKZ9uMT7LujNzam1TSvzryMdhViuRD6Hbjw==
-X-Received: by 2002:a63:5f44:: with SMTP id t65mr224662pgb.124.1573009726840;
-        Tue, 05 Nov 2019 19:08:46 -0800 (PST)
+        bh=N1CFwW2Lm09nRLvgyZYRXxfZ7SInie3qB3fO3E3lvMM=;
+        b=VKG3AVX4KQvbUKhSgmKVIcw4dkDGs/9l3W5UifbO+e3ezgIKqZ+ggNlMdJaQ8hqVcI
+         tGbBWRcgrnKSQ7lfwuTVCyVwk0CDW+TPmFgaJemfIR5qjS20D5iqWeEAZF0SfHCBsMYk
+         lt0HHWHmenaBt+Ky7cWliAJo7kd9Zueahzdpv4HPLQy6MhfddJGNbq4FhNkxBnxXfWka
+         o9fjfdqK38vHwl3G7iq3bb1j8HotnLkdV3vrXCmBUvgJAjsPE7P0EtLN4HDGBT76V/kg
+         6CtL2gSpwEM7viEyTMeNNy9Jrx6wZMauV/Lj146D98ipJgIJk0swlT4pLMfXE49VyOe3
+         Mm/Q==
+X-Gm-Message-State: APjAAAUCapueSI8zWuekC2wKFeQ8Ul8ZQg3PFQP+PpUfSWwQrbzRGgb+
+        pBPtXRpShblgbookeM65JjhtTQTnDo0=
+X-Google-Smtp-Source: APXvYqxmUJkYUfsMuSjwuj86fK8YwxR9TLHl3Xu9Ov3zBW+ykQ34oQjeBz2bBneBVDyZo47XtlLFoA==
+X-Received: by 2002:a17:902:b48d:: with SMTP id y13mr174340plr.290.1573009730444;
+        Tue, 05 Nov 2019 19:08:50 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id k24sm19570487pgl.6.2019.11.05.19.08.43
+        by smtp.gmail.com with ESMTPSA id k24sm19570487pgl.6.2019.11.05.19.08.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 19:08:45 -0800 (PST)
+        Tue, 05 Nov 2019 19:08:49 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -59,9 +59,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Chris Zankel <chris@zankel.net>,
         Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org
-Subject: [PATCH 42/50] xtensa: Add loglvl to show_trace()
-Date:   Wed,  6 Nov 2019 03:05:33 +0000
-Message-Id: <20191106030542.868541-43-dima@arista.com>
+Subject: [PATCH 43/50] xtensa: Add show_stack_loglvl()
+Date:   Wed,  6 Nov 2019 03:05:34 +0000
+Message-Id: <20191106030542.868541-44-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191106030542.868541-1-dima@arista.com>
 References: <20191106030542.868541-1-dima@arista.com>
@@ -88,8 +88,8 @@ Introducing log-level parameter and KERN_UNSUPPRESSED [1] seems
 an easier approach than introducing more printk buffers.
 Also, it will consolidate printings with headers.
 
-Add log level argument to show_trace() as a preparation for introducing
-show_stack_loglvl().
+Introduce show_stack_loglvl(), that eventually will substitute
+show_stack().
 
 Cc: Chris Zankel <chris@zankel.net>
 Cc: Max Filippov <jcmvbkbc@gmail.com>
@@ -97,49 +97,46 @@ Cc: linux-xtensa@linux-xtensa.org
 [1]: https://lore.kernel.org/lkml/20190528002412.1625-1-dima@arista.com/T/#u
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/xtensa/kernel/traps.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/xtensa/kernel/traps.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-index 4a6c495ce9b6..cbc0d673f542 100644
+index cbc0d673f542..ba6c150095c6 100644
 --- a/arch/xtensa/kernel/traps.c
 +++ b/arch/xtensa/kernel/traps.c
-@@ -479,20 +479,24 @@ void show_regs(struct pt_regs * regs)
+@@ -502,7 +502,8 @@ static void show_trace(struct task_struct *task, unsigned long *sp,
  
- static int show_trace_cb(struct stackframe *frame, void *data)
- {
-+	const char *loglvl = data;
-+
- 	if (kernel_text_address(frame->pc))
--		pr_cont(" [<%08lx>] %pB\n", frame->pc, (void *)frame->pc);
-+		printk("%s [<%08lx>] %pB\n",
-+			loglvl, frame->pc, (void *)frame->pc);
- 	return 0;
- }
+ static int kstack_depth_to_print = 24;
  
--void show_trace(struct task_struct *task, unsigned long *sp)
-+static void show_trace(struct task_struct *task, unsigned long *sp,
+-void show_stack(struct task_struct *task, unsigned long *sp)
++void show_stack_loglvl(struct task_struct *task, unsigned long *sp,
 +		       const char *loglvl)
  {
- 	if (!sp)
+ 	int i = 0;
+ 	unsigned long *stack;
+@@ -511,16 +512,21 @@ void show_stack(struct task_struct *task, unsigned long *sp)
  		sp = stack_pointer(task);
+ 	stack = sp;
  
--	pr_info("Call Trace:\n");
--	walk_stackframe(sp, show_trace_cb, NULL);
-+	printk("%sCall Trace:\n", loglvl);
-+	walk_stackframe(sp, show_trace_cb, (void *)loglvl);
- #ifndef CONFIG_KALLSYMS
--	pr_cont("\n");
-+	printk("%s\n", loglvl);
- #endif
- }
+-	pr_info("Stack:\n");
++	printk("%sStack:\n", loglvl);
  
-@@ -516,7 +520,7 @@ void show_stack(struct task_struct *task, unsigned long *sp)
+ 	for (i = 0; i < kstack_depth_to_print; i++) {
+ 		if (kstack_end(sp))
+ 			break;
+-		pr_cont(" %08lx", *sp++);
++		printk("%s %08lx", loglvl, *sp++);
  		if (i % 8 == 7)
- 			pr_cont("\n");
+-			pr_cont("\n");
++			printk("%s\n", loglvl);
  	}
--	show_trace(task, stack);
-+	show_trace(task, stack, KERN_INFO);
+-	show_trace(task, stack, KERN_INFO);
++	show_trace(task, stack, loglvl);
++}
++
++void show_stack(struct task_struct *task, unsigned long *sp)
++{
++	show_stack_loglvl(task, sp, KERN_INFO);
  }
  
  DEFINE_SPINLOCK(die_lock);
