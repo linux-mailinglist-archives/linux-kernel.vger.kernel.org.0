@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E3D9F1BF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D82EF1BF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbfKFRBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:01:12 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:25683 "EHLO
+        id S1732400AbfKFRBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:01:17 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:17104 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732365AbfKFRBI (ORCPT
+        with ESMTP id S1732363AbfKFRBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:01:08 -0500
+        Wed, 6 Nov 2019 12:01:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1573059665;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=uZcQk++YEkD2ap+7a/P9KdfqpT2ypee67VJ6/UFHXeA=;
-        b=e3UVDyBmq66yy/OZMAN/KPIIIvY2IwTuzsv0GwVWt6ie7MvKI7vYAEDXuiOJ9ZG+Qw
-        QDKeol282wSsWyr04ek2FyS9mm7wdVia55UhAHey7/aGhWSkEUaxUvxfiNJuPmNuHcFl
-        b37JwrtbYfvt4g/pWd6rBZdOxL5eBbK8LwB8MhX9II7IPKjAVqPUJUtKa/L4Z4vz/OBZ
-        BP+zAGCL72N+Ad6CYP4O/WOUFxL44jfoZQDC1oLtOvDGiaWdcx0lMCIjMrGp+EFBg+mN
-        2s90pkm80xXcsHGQolyyPpcMKVRN8KD0xhRXapy9yuWAJjbeeaSZ+bQNzGRKtXLoxbPU
-        rfQA==
+        bh=sZdoB36F5UBdckaG8aj1GzQtE3+0zrTPGHer5Xs7ohg=;
+        b=CsIoJ7y4Wlj/BHrw9+Ve8Bwq2n0bAI1sFjGVuB2Ml0K3wAi27eaBfDr7/78em8BDZR
+        YcFskSeIbrEjWGZGelFSNlvoJTuwPvgU5H7RdqE6lP/kwvY/A7npmwsVeVnuwCnRf3zd
+        CQViIbEAj9KgZKflJmyXkieYnsnSZ7dppImuECFg1HSj/i21TLG+XQ0IuM6TjmPXBx4k
+        g5VW6zG0zw5VOppirWuaDm1b+WA+3/P8uNTkYuA5jvUeS5YDvvcLMpNBC6NJ3w4VLTtt
+        EudMZFckOFgabfhC89MaSRZhuxUeCLCx8xz3U6Rwauw5sJSS0nszLIJj9WBXx6MuqhW/
+        Lz8g==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXs8PvtBNfIQ=="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 44.29.0 AUTH)
-        with ESMTPSA id e07688vA6H15hLv
+        with ESMTPSA id e07688vA6H15hLw
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
         Wed, 6 Nov 2019 18:01:05 +0100 (CET)
@@ -36,9 +36,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 5/7] drm/mcde: dsi: Fix duplicated DSI connector
-Date:   Wed,  6 Nov 2019 17:58:33 +0100
-Message-Id: <20191106165835.2863-6-stephan@gerhold.net>
+Subject: [PATCH 6/7] drm/mcde: dsi: Enable clocks in pre_enable() instead of mode_set()
+Date:   Wed,  6 Nov 2019 17:58:34 +0100
+Message-Id: <20191106165835.2863-7-stephan@gerhold.net>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191106165835.2863-1-stephan@gerhold.net>
 References: <20191106165835.2863-1-stephan@gerhold.net>
@@ -49,141 +49,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using a (single) DSI display with MCDE currently results in
-two "connected" connectors:
+The DSI initialization sequence incorrectly assumes that the mode_set()
+function of the DRM bridge is always called when (re-)enabling the display.
+This is not necessarily the case.
 
-  Connector: DSI-1
-          id             : 34
-          encoder id     : 0
-          conn           : connected
-          size           : 0x0 (mm)
-          count_modes    : 0
-          count_props    : 5
-          props          : 1 2 5 6 4
-          count_encoders : 1
-          encoders       : 33
-  Connector: DSI-2
-          id             : 35
-          encoder id     : 33
-          conn           : connected
-          size           : 53x89 (mm)
-          count_modes    : 1
-          count_props    : 5
-          props          : 1 2 5 6 4
-          count_encoders : 1
-          encoders       : 33
-    Mode: "480x800" 480x800 60
+Keeping the device idle in the framebuffer console for a while results
+in the display being turned off using the disable() function. However,
+as soon as any key is pressed only (pre_)enable() are called.
+mode_set() is skipped because the mode has not been changed.
 
-Although both show up as connected, the first one does not have
-any size and no available modes. This confuses userspace tools
-(e.g. kmscube) who look for available modes for the first connector.
+In this case, the DSI HS/LP clocks are never turned back on,
+preventing the display from working.
 
-The reason for the duplicated connector is that mcde_dsi.c and the
-DRM panel bridge helper both set up a DSI connector, with more or less
-the same code. The connector set up by the DRM panel bridge is the
-one that is correctly set up in the example above.
-
-Therefore we can just remove the connector setup from mcde_dsi.c
-and let the DRM core handle all the hard work.
+Fix this by moving a part of the initialization sequence from
+mode_set() to pre_enable(). Keep most of the video mode setup in
+mode_set() since most of the registers are only dependent on the mode
+that is set for the panel - there is no need to write them again each
+time we re-enable the display.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 52 +--------------------------------
- 1 file changed, 1 insertion(+), 51 deletions(-)
+ drivers/gpu/drm/mcde/mcde_dsi.c | 67 ++++++++++++++++++---------------
+ 1 file changed, 37 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index 4710f23b2966..df963e078c35 100644
+index df963e078c35..03896a1f339a 100644
 --- a/drivers/gpu/drm/mcde/mcde_dsi.c
 +++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -39,7 +39,6 @@ struct mcde_dsi {
- 	struct device *dev;
- 	struct mcde *mcde;
- 	struct drm_bridge bridge;
--	struct drm_connector connector;
- 	struct drm_panel *panel;
- 	struct drm_bridge *bridge_out;
- 	struct mipi_dsi_host dsi_host;
-@@ -64,11 +63,6 @@ static inline struct mcde_dsi *host_to_mcde_dsi(struct mipi_dsi_host *h)
- 	return container_of(h, struct mcde_dsi, dsi_host);
+@@ -562,21 +562,6 @@ static void mcde_dsi_setup_video_mode(struct mcde_dsi *d,
+ 		DSI_VID_VCA_SETTING2_EXACT_BURST_LIMIT_SHIFT;
+ 	writel(val, d->regs + DSI_VID_VCA_SETTING2);
+ 
+-	/* Put IF1 into video mode */
+-	val = readl(d->regs + DSI_MCTL_MAIN_DATA_CTL);
+-	val |= DSI_MCTL_MAIN_DATA_CTL_IF1_MODE;
+-	writel(val, d->regs + DSI_MCTL_MAIN_DATA_CTL);
+-
+-	/* Disable command mode on IF1 */
+-	val = readl(d->regs + DSI_CMD_MODE_CTL);
+-	val &= ~DSI_CMD_MODE_CTL_IF1_LP_EN;
+-	writel(val, d->regs + DSI_CMD_MODE_CTL);
+-
+-	/* Enable some error interrupts */
+-	val = readl(d->regs + DSI_VID_MODE_STS_CTL);
+-	val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_VSYNC;
+-	val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_DATA;
+-	writel(val, d->regs + DSI_VID_MODE_STS_CTL);
  }
  
--static inline struct mcde_dsi *connector_to_mcde_dsi(struct drm_connector *c)
--{
--	return container_of(c, struct mcde_dsi, connector);
--}
--
- bool mcde_dsi_irq(struct mipi_dsi_device *mdsi)
- {
- 	struct mcde_dsi *d;
-@@ -843,67 +837,23 @@ static void mcde_dsi_bridge_disable(struct drm_bridge *bridge)
- 	clk_disable_unprepare(d->lp_clk);
- }
+ static void mcde_dsi_start(struct mcde_dsi *d)
+@@ -700,26 +685,13 @@ static void mcde_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	dev_info(d->dev, "enable DSI master\n");
+ };
  
--/*
-- * This connector needs no special handling, just use the default
-- * helpers for everything. It's pretty dummy.
-- */
--static const struct drm_connector_funcs mcde_dsi_connector_funcs = {
--	.reset = drm_atomic_helper_connector_reset,
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = drm_connector_cleanup,
--	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--};
--
--static int mcde_dsi_get_modes(struct drm_connector *connector)
--{
--	struct mcde_dsi *d = connector_to_mcde_dsi(connector);
--
--	/* Just pass the question to the panel */
--	if (d->panel)
--		return drm_panel_get_modes(d->panel);
--
--	/* TODO: deal with bridges */
--
--	return 0;
--}
--
--static const struct drm_connector_helper_funcs
--mcde_dsi_connector_helper_funcs = {
--	.get_modes = mcde_dsi_get_modes,
--};
--
- static int mcde_dsi_bridge_attach(struct drm_bridge *bridge)
+-static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
+-				     const struct drm_display_mode *mode,
+-				     const struct drm_display_mode *adj)
++static void mcde_dsi_bridge_pre_enable(struct drm_bridge *bridge)
  {
  	struct mcde_dsi *d = bridge_to_mcde_dsi(bridge);
- 	struct drm_device *drm = bridge->dev;
+-	unsigned long pixel_clock_hz = mode->clock * 1000;
+ 	unsigned long hs_freq, lp_freq;
+ 	u32 val;
  	int ret;
  
--	drm_connector_helper_add(&d->connector,
--				 &mcde_dsi_connector_helper_funcs);
--
- 	if (!drm_core_check_feature(drm, DRIVER_ATOMIC)) {
- 		dev_err(d->dev, "we need atomic updates\n");
- 		return -ENOTSUPP;
- 	}
- 
--	ret = drm_connector_init(drm, &d->connector,
--				 &mcde_dsi_connector_funcs,
--				 DRM_MODE_CONNECTOR_DSI);
--	if (ret) {
--		dev_err(d->dev, "failed to initialize DSI bridge connector\n");
--		return ret;
+-	if (!d->mdsi) {
+-		dev_err(d->dev, "no DSI device attached to encoder!\n");
+-		return;
 -	}
--	d->connector.polled = DRM_CONNECTOR_POLL_CONNECT;
--	/* The encoder in the bridge attached to the DSI bridge */
--	drm_connector_attach_encoder(&d->connector, bridge->encoder);
--	/* Then we attach the DSI bridge to the output (panel etc) bridge */
-+	/* Attach the DSI bridge to the output (panel etc) bridge */
- 	ret = drm_bridge_attach(bridge->encoder, d->bridge_out, bridge);
- 	if (ret) {
- 		dev_err(d->dev, "failed to attach the DSI bridge\n");
- 		return ret;
- 	}
--	d->connector.status = connector_status_connected;
+-
+-	dev_info(d->dev, "set DSI master to %dx%d %lu Hz %s mode\n",
+-		 mode->hdisplay, mode->vdisplay, pixel_clock_hz,
+-		 (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) ? "VIDEO" : "CMD"
+-		);
+-
+ 	/* Copy maximum clock frequencies */
+ 	if (d->mdsi->lp_rate)
+ 		lp_freq = d->mdsi->lp_rate;
+@@ -758,7 +730,21 @@ static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
+ 			 d->hs_freq);
  
- 	return 0;
+ 	if (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
+-		mcde_dsi_setup_video_mode(d, mode);
++		/* Put IF1 into video mode */
++		val = readl(d->regs + DSI_MCTL_MAIN_DATA_CTL);
++		val |= DSI_MCTL_MAIN_DATA_CTL_IF1_MODE;
++		writel(val, d->regs + DSI_MCTL_MAIN_DATA_CTL);
++
++		/* Disable command mode on IF1 */
++		val = readl(d->regs + DSI_CMD_MODE_CTL);
++		val &= ~DSI_CMD_MODE_CTL_IF1_LP_EN;
++		writel(val, d->regs + DSI_CMD_MODE_CTL);
++
++		/* Enable some error interrupts */
++		val = readl(d->regs + DSI_VID_MODE_STS_CTL);
++		val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_VSYNC;
++		val |= DSI_VID_MODE_STS_CTL_ERR_MISSING_DATA;
++		writel(val, d->regs + DSI_VID_MODE_STS_CTL);
+ 	} else {
+ 		/* Command mode, clear IF1 ID */
+ 		val = readl(d->regs + DSI_CMD_MODE_CTL);
+@@ -772,6 +758,26 @@ static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
+ 	}
  }
+ 
++static void mcde_dsi_bridge_mode_set(struct drm_bridge *bridge,
++				     const struct drm_display_mode *mode,
++				     const struct drm_display_mode *adj)
++{
++	struct mcde_dsi *d = bridge_to_mcde_dsi(bridge);
++
++	if (!d->mdsi) {
++		dev_err(d->dev, "no DSI device attached to encoder!\n");
++		return;
++	}
++
++	dev_info(d->dev, "set DSI master to %dx%d %u Hz %s mode\n",
++		 mode->hdisplay, mode->vdisplay, mode->clock * 1000,
++		 (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO) ? "VIDEO" : "CMD"
++		);
++
++	if (d->mdsi->mode_flags & MIPI_DSI_MODE_VIDEO)
++		mcde_dsi_setup_video_mode(d, mode);
++}
++
+ static void mcde_dsi_wait_for_command_mode_stop(struct mcde_dsi *d)
+ {
+ 	u32 val;
+@@ -863,6 +869,7 @@ static const struct drm_bridge_funcs mcde_dsi_bridge_funcs = {
+ 	.mode_set = mcde_dsi_bridge_mode_set,
+ 	.disable = mcde_dsi_bridge_disable,
+ 	.enable = mcde_dsi_bridge_enable,
++	.pre_enable = mcde_dsi_bridge_pre_enable,
+ };
+ 
+ static int mcde_dsi_bind(struct device *dev, struct device *master,
 -- 
 2.23.0
 
