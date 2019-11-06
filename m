@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12891F1371
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6862F136E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 11:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbfKFKKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 05:10:01 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7268 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731363AbfKFKJ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731608AbfKFKJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 6 Nov 2019 05:09:57 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7290 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731327AbfKFKJ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 05:09:56 -0500
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA6A7Bc5003302;
-        Wed, 6 Nov 2019 11:09:42 +0100
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA6A7AGF003297;
+        Wed, 6 Nov 2019 11:09:44 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=Eu/qqzaS1pp8TvmfaYHxuA1TJTYBQ4y6Pgq5d0GE35Y=;
- b=ruFqG6l380JE4X24zCDqGhmxLBLWJN6jvQycNwE4r/5QY8g8YNhx2IwNeaYefI3CQ8oq
- vQzBA6FsyQxNRWLg3gA1Lv6p4p1mIGXDUIw09U+1TxphjOO9gbIYbZRhytjhghTaXgFP
- TzjJmhPxf+f9ZzbyERi1y9l6wq6QrsjeWia9j1aZa/18Vd+z/TfKqrhfRm621H0h4r8L
- UbKCpKuZPLndASO92vNV3WJxhgNeEM/O+jH5YPjXfdWeITJPxIXNtUN/8qwo6E0qJGBK
- FqCnReeJN4ZHTRPiDzX1iv4eLXrdSigF2WwFwnSOj3VenZ1yJGayo7l99em3HxnFugh3 2g== 
+ bh=jhrwb4GJ5N7MbgDVj22lmG3ajS2c9NSSIBuynieXO2c=;
+ b=KQ0BZ/ZCvaCkJSt/+B0t7jshJafF1s9X0DDwNfbBE9xkusjVXNDJUAGf6FzRACmH9yPo
+ ybTP0uMxB1352UKH6jC2yVUmjx1Y+wEQj7UrxMtX66MkqFNEhzlnYbvVe6/rn52c1OPX
+ a6ZeYoZNjZOvFIED5tVMBAYmVdZeIs4tmq+GyrVDgZIko17VjnZ74pql//SHPyZEWke5
+ FzmPbVg2Jsvr9HGZ/KH0CHSeeNCXNx/icrypZNiFSo+Ii/5umLmaTTQZNf6lfJjEJVFd
+ 8HDYMaYRJWkPEx0iPap69N7yfw/+OcBIYXdQ64uFmS5XS/1+74/Knq1P/dHkD7HcOQi8 qw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2w10f1mpur-1
+        by mx07-00178001.pphosted.com with ESMTP id 2w10f1mpux-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Nov 2019 11:09:42 +0100
+        Wed, 06 Nov 2019 11:09:44 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6D45C10002A;
-        Wed,  6 Nov 2019 11:09:42 +0100 (CET)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 60F392AD337;
-        Wed,  6 Nov 2019 11:09:42 +0100 (CET)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019
- 11:09:42 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B25D9100034;
+        Wed,  6 Nov 2019 11:09:43 +0100 (CET)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A61C72AD337;
+        Wed,  6 Nov 2019 11:09:43 +0100 (CET)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019
+ 11:09:43 +0100
 Received: from localhost (10.48.1.131) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019 11:09:41 +0100
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 6 Nov 2019 11:09:42 +0100
 From:   Yann Gautier <yann.gautier@st.com>
 To:     <alexandre.torgue@st.com>
 CC:     <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>,
@@ -47,9 +47,9 @@ CC:     <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Yann Gautier <yann.gautier@st.com>,
         "Ludovic Barre" <ludovic.barre@st.com>
-Subject: [PATCH 1/4] ARM: dts: stm32: update slew-rate properties for sdmmc1 on stm32mp157
-Date:   Wed, 6 Nov 2019 11:09:35 +0100
-Message-ID: <20191106100938.11368-2-yann.gautier@st.com>
+Subject: [PATCH 2/4] ARM: dts: stm32: add sdmmc2 & 3 nodes for STM32MP157 SoC
+Date:   Wed, 6 Nov 2019 11:09:36 +0100
+Message-ID: <20191106100938.11368-3-yann.gautier@st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191106100938.11368-1-yann.gautier@st.com>
 References: <20191106100938.11368-1-yann.gautier@st.com>
@@ -63,76 +63,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Relax sdmmc1 pins slew-rate to minimize peak currents.
+The STM32MP157 SoC series includes 3 instances of the SDMMC peripheral.
+The sdmmc2 and sdmmc3 nodes are added in STM32MP157 SoC DT file.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 Signed-off-by: Yann Gautier <yann.gautier@st.com>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 28 +++++++++++++++--------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 33 +++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index 0a3a7d66737b..2904bc8c6a41 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -731,14 +731,19 @@
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 9b11654a0a39..fa71aac0b0c5 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -1030,6 +1030,21 @@
  			};
+ 		};
  
- 			sdmmc1_b4_pins_a: sdmmc1-b4-0 {
--				pins {
-+				pins1 {
- 					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
- 						 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
- 						 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
- 						 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
--						 <STM32_PINMUX('C', 12, AF12)>, /* SDMMC1_CK */
- 						 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
--					slew-rate = <3>;
-+					slew-rate = <1>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+				pins2 {
-+					pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
-+					slew-rate = <2>;
- 					drive-push-pull;
- 					bias-disable;
- 				};
-@@ -749,15 +754,20 @@
- 					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
- 						 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
- 						 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
--						 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
--						 <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
--					slew-rate = <3>;
-+						 <STM32_PINMUX('C', 11, AF12)>; /* SDMMC1_D3 */
-+					slew-rate = <1>;
- 					drive-push-pull;
- 					bias-disable;
- 				};
--				pins2{
-+				pins2 {
-+					pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
-+					slew-rate = <2>;
-+					drive-push-pull;
-+					bias-disable;
-+				};
-+				pins3 {
- 					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 					drive-open-drain;
- 					bias-disable;
- 				};
-@@ -779,7 +789,7 @@
- 					pinmux = <STM32_PINMUX('F', 2, AF11)>, /* SDMMC1_D0DIR */
- 						 <STM32_PINMUX('C', 7, AF8)>, /* SDMMC1_D123DIR */
- 						 <STM32_PINMUX('B', 9, AF11)>; /* SDMMC1_CDIR */
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 					drive-push-pull;
- 					bias-pull-up;
- 				};
++		sdmmc3: sdmmc@48004000 {
++			compatible = "arm,pl18x", "arm,primecell";
++			arm,primecell-periphid = <0x10153180>;
++			reg = <0x48004000 0x400>;
++			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "cmd_irq";
++			clocks = <&rcc SDMMC3_K>;
++			clock-names = "apb_pclk";
++			resets = <&rcc SDMMC3_R>;
++			cap-sd-highspeed;
++			cap-mmc-highspeed;
++			max-frequency = <120000000>;
++			status = "disabled";
++		};
++
+ 		usbotg_hs: usb-otg@49000000 {
+ 			compatible = "snps,dwc2";
+ 			reg = <0x49000000 0x10000>;
+@@ -1295,13 +1310,29 @@
+ 			arm,primecell-periphid = <0x10153180>;
+ 			reg = <0x58005000 0x1000>;
+ 			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names	= "cmd_irq";
++			interrupt-names = "cmd_irq";
+ 			clocks = <&rcc SDMMC1_K>;
+ 			clock-names = "apb_pclk";
+ 			resets = <&rcc SDMMC1_R>;
+ 			cap-sd-highspeed;
+ 			cap-mmc-highspeed;
+ 			max-frequency = <120000000>;
++			status = "disabled";
++		};
++
++		sdmmc2: sdmmc@58007000 {
++			compatible = "arm,pl18x", "arm,primecell";
++			arm,primecell-periphid = <0x10153180>;
++			reg = <0x58007000 0x1000>;
++			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "cmd_irq";
++			clocks = <&rcc SDMMC2_K>;
++			clock-names = "apb_pclk";
++			resets = <&rcc SDMMC2_R>;
++			cap-sd-highspeed;
++			cap-mmc-highspeed;
++			max-frequency = <120000000>;
++			status = "disabled";
+ 		};
+ 
+ 		crc1: crc@58009000 {
 -- 
 2.17.1
 
