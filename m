@@ -2,131 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A0EF1C6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26305F1C6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:24:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732419AbfKFRYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:24:21 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42761 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729511AbfKFRYV (ORCPT
+        id S1732429AbfKFRYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:24:31 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33743 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728983AbfKFRYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:24:21 -0500
-Received: by mail-pg1-f194.google.com with SMTP id q17so2138642pgt.9
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:24:20 -0800 (PST)
+        Wed, 6 Nov 2019 12:24:31 -0500
+Received: by mail-yb1-f193.google.com with SMTP id i15so2265798ybq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:24:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=12yzcHf1qZ16w0lmbe/z8YOyijtRMnml2sd6alF7R5E=;
-        b=Kjeez8xg9w1G0Sz1XNlqaJiqB+5U+nf27WRtq9ESx/wrXx9XWIlBYGf3N+a1s30Lqf
-         PO9E2S/zhEHf1DsS35YdbMoLwH66sXNTBbln/nDtH4nNulV3cDyG24+euda4cLAG+myE
-         aM2/vQI5JXoWUGhG8qnNOmPeigi3l2obzYdKQ=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=Akh9lzikL6AjEXSgDVQWSdD7IjJW4Sia7VzPAvefhTxcg/wRodZthDJz+WKhe5Ipwd
+         Z+aWiedatfsh68h/ruv9QcSbisnwUaooUuJyjP32JiL53ELRA25/JG69NEbUvdsUav3Q
+         LlYGbq1cVMxX/A5uMRGMPLEmbCb+GEaZ7Ti2OwCI3ZOjWNjkf30qPbPAnf2oePJ9JgT6
+         r3JTNjnGVyWq1wzGo6fmeWNWes9BJQt132PG9H9VjqshtKOUJRvCTGbIF9f76GIf8QrS
+         wAVBVtazcx8ZPNix6nWbrcN4tfsT5bT/YxYK0XG/gOcXkFL0T49CrwkQ5VEz2Xy1vKTs
+         XcRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=12yzcHf1qZ16w0lmbe/z8YOyijtRMnml2sd6alF7R5E=;
-        b=S6u5gb/CpY14+rKzSv708SzwdLlQ7kLFxOS3m4hgrR1cRzFYs+dtsbMuVQhXaslEGM
-         vt19VV36gIOEdiIykTvT65AmeeflKozAEzo+OWz32nejMptfJwr1BtHlEQXmr9XbeAlj
-         zEMwqMWpQa3KIJNwbS6cAZCMf9Q9KRmAgGRFiR8SuIH5hCu4PD0NyUUpjHNUDjKoDPZw
-         JH5aMmv/nhTujWI7fHso6sWayKO7fe7ZNYIBOP0TFsvywyvz2jrVS1JkVAVVrVJEypIa
-         QE+qiKO8VHW1d7oXdf0hdf0Rwn7HEhp22r7XiutVBeWU/IzdT5E/1k8n8Is9xKbB80Al
-         w7xA==
-X-Gm-Message-State: APjAAAW96e0VBCIC26NRIJgDMHxmbqFHPIn70YQmRtjJZyl0WmmIOmvs
-        afXbk0vv0Pd6UHyyipK9cfjUcw==
-X-Google-Smtp-Source: APXvYqy7xuqTPQAOe29RalAbDCQZWFanMlY7Ggk5BBqItrUCBBl297x/gKwCqPK8O48UCRtYXi9sLw==
-X-Received: by 2002:a63:9a09:: with SMTP id o9mr4197481pge.276.1573061060339;
-        Wed, 06 Nov 2019 09:24:20 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j7sm3606496pjz.12.2019.11.06.09.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 09:24:19 -0800 (PST)
-Date:   Wed, 6 Nov 2019 09:24:18 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] drm: Limit to INT_MAX in create_blob ioctl
-Message-ID: <201911060920.71D7E76E@keescook>
-References: <20191106164755.31478-1-daniel.vetter@ffwll.ch>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=RFB1pqp5YWJ2J+5cPsc37KoPK3QSbx2sGb1xpC65Ecw=;
+        b=LI9TsjvUaXQYNzS197TeBikjrf6/26eSffmjECSKuL6j0DV68CtwlvqFLZht1xqoHt
+         6qlSy0fSRyUsewAubumK4s9i7yiA4Vgwbukke2pX5JoLalGF9yDfaYZoydhNfblvV5Rh
+         3uL4365kj32RJEy+nFrHi8i1VnjO3p4f7CYKp1wLmgz7ZG6gx0kwjh06CPWc6YCmqWy2
+         MkdTAYaQvnJPLl9+LDWSFpg6d2hJlRfoylRQU7dZX/QZ3w0uJijKpn2Sv3CAFAhC6bzj
+         t4SoEn6WbYlpyrfhjcrIUlizIb4FycN7QbMFfxp1bb4qCpnmmQ9MYy6o1ZJ7zh2vdPsi
+         qXow==
+X-Gm-Message-State: APjAAAUHhCSeswqyl88Qj3a/9TqagdXU2YD0w69PNTQGR+NASH3RDRyI
+        RCgHnJKecWVKERuRHeYn1vUNoAss0db/BsgDVqg=
+X-Google-Smtp-Source: APXvYqyQbAXHA2JEZI+LgCoYdvZLBe0g38u0iQy10r2O9CkqWgCzj76HWcDbjI/fLJBj/Pqmtiq6f8ufS3asz7UZlS8=
+X-Received: by 2002:a25:2189:: with SMTP id h131mr2898312ybh.231.1573061069544;
+ Wed, 06 Nov 2019 09:24:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106164755.31478-1-daniel.vetter@ffwll.ch>
+Received: by 2002:a25:dfc4:0:0:0:0:0 with HTTP; Wed, 6 Nov 2019 09:24:29 -0800 (PST)
+Reply-To: joeakaba00@gmail.com
+From:   joe akaba <moordavis0002@gmail.com>
+Date:   Wed, 6 Nov 2019 18:24:29 +0100
+Message-ID: <CALTCcCwJR1rRhOaGV=kK9SJtCWPrx2LdL69w2oyi6V-zQd-YZQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 05:47:55PM +0100, Daniel Vetter wrote:
-> The hardened usercpy code is too paranoid ever since:
-> 
-> commit 6a30afa8c1fbde5f10f9c584c2992aa3c7f7a8fe
-> Author: Kees Cook <keescook@chromium.org>
-> Date:   Wed Nov 6 16:07:01 2019 +1100
-> 
->     uaccess: disallow > INT_MAX copy sizes
-> 
-> Code itself should have been fine as-is.
+Good day, dear
 
-I had to go read the syzbot report to understand what was actually being
-fixed here. Can you be a bit more verbose in this commit log? It sounds
-like huge usercopy sizes were allowed by drm (though I guess they would
-fail gracefully in some other way?) but after 6a30afa8c1fb, the copy
-would yell about sizes where INT_MAX < size < ULONG_MAX - sizeof(...) ?
+My name is Mr. Joe Akaba ESQ, Working with one of the best
+chambers and I write to inform you about the death of my client who
+dead as a result of an accident with his family .On the 19th day of August
+2017, My late client died as a result of deadly accident without him be
+register any of his family member as next of kin to bank where he deposited
+a huge amount of money and He died with his family and i have searched for
+any other members of his
+nearby relative without any fruitful result and it was when the bank
+here sent me a notice of their resolution to confiscate he=E2=80=99s estate=
+ in line
+with their abandoned property.
 
-What was the prior failure mode that made the existing ULONG_MAX check
-safe? Your patch looks fine, though:
+This is to bring your attention by seeking your consent to present
+your name as My late client next of Kin to the bank where he
+deposited a huge amount of money before his death Eight million Five
+hundred thousand United State dollar .$8.5 million Usd
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+I have unsuccessfully made several attempts to locate any of my
+clients extended relatives, but all to no avail. Please i need your urgent
+ respond so that we can move to the bank where the fund is deposited .
 
-> Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
-> Fixes: 6a30afa8c1fb ("uaccess: disallow > INT_MAX copy sizes")
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> --
-> Kees/Andrew,
-> 
-> Since this is -mm can I have a stable sha1 or something for
-> referencing? Or do you want to include this in the -mm patch bomb for
-> the merge window?
-
-Traditionally these things live in akpm's tree when they are fixes for
-patches in there. I have no idea how the Fixes tags work in that case,
-though...
-
--Kees
-
-> -Daniel
-> ---
->  drivers/gpu/drm/drm_property.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
-> index 892ce636ef72..6ee04803c362 100644
-> --- a/drivers/gpu/drm/drm_property.c
-> +++ b/drivers/gpu/drm/drm_property.c
-> @@ -561,7 +561,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
->  	struct drm_property_blob *blob;
->  	int ret;
->  
-> -	if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
-> +	if (!length || length > INT_MAX - sizeof(struct drm_property_blob))
->  		return ERR_PTR(-EINVAL);
->  
->  	blob = kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
-> -- 
-> 2.24.0.rc2
-> 
-
--- 
-Kees Cook
+Thanks and regards,
+Barrister Joe Akaba (Esq)
+Principal attorney of
+dominion associates
+chambers barristers & solicitors
+Call +22890-33-26-71
