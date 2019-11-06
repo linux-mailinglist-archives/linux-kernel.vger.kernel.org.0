@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D9DF1DE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:59:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC8AF1DE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 20:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731820AbfKFS7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:59:35 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:39282 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfKFS7f (ORCPT
+        id S1732018AbfKFTAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 14:00:09 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41146 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfKFTAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:59:35 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 14F251C0997; Wed,  6 Nov 2019 19:59:33 +0100 (CET)
-Date:   Wed, 6 Nov 2019 19:59:32 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/93] 4.19.81-stable review
-Message-ID: <20191106185932.GA2183@amd>
-References: <20191027203251.029297948@linuxfoundation.org>
- <20191029162419.cumhku6smn2x2bq4@ucw.cz>
- <20191029180233.GA587491@kroah.com>
+        Wed, 6 Nov 2019 14:00:08 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p26so19619021pfq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 11:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=rO+IauwMGdgaps0ucduNU3H5J/6BS8Jkm16fDnKR+To=;
+        b=eL4lIcmqkWusaAGmp02ncwkbxgTL4yMKeWUr+mzAwtW54bYNR1ni7i+r/J8NYEJVp/
+         sK3/+Qjl9hQUHxuzlSj2e4blqI4r+fU2JAjP2husqslwAM/x/XYUYqgEe64pMmEBqilL
+         FWbCncRVlx2G3K3tlbg41bwF+eGxOE5vUgJdZZViavo4iGWaEFMqHPzAOJbJOvHtzITt
+         sUlEAct93wbBYoY8dT1Y7Kbs3ISnPoR5tPodYkAh1+gFndBmchQUkI5cCqeZwQWpPhtU
+         DGyrIr6+Bhh2ybD/I+pEmHE5CkQvNIjG4J82+6xalXHo2r5XOqwSszq+55CHDiEHipxs
+         BPpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=rO+IauwMGdgaps0ucduNU3H5J/6BS8Jkm16fDnKR+To=;
+        b=Z8aJv7ZJVCoa9cz/Hrw8ybPP8E+B2/0mgy1yWMyuL9PZ0i0ZYy6jLn4OcKhBf7AdvV
+         rs2t0kN6dudbTDmYXIFsp/d6kikVZ0QYcdQ3VMRFbSdJdSEhm6Y75Bu05opvgVWIWtPR
+         WQW4AquWGtozdgKO5Ccfzk8rNnsHt5zNgYnPsHvmqO40Ty+7sFsZwxEZtiS57g6kjhIp
+         ck2SgcqhuTnpaCe/hsWmRTM2EkEK5IY8o2JD1hi/y6h74To6ydDobc+zOjwj91PVDyBV
+         w3WVFFNFutJhdat3DUKCT6fVkPpXaje1nfL3dIgmOjLCvqpGA29YVu2uD2wuW725BG32
+         bYdA==
+X-Gm-Message-State: APjAAAX0CkFRnSHO2OZ5WtbbWiUTT8zNkH7tvB3sm587gw9Il7IxyS7I
+        FgIZdBbkPdFXKB2mhfl2TA91TaEE+9g=
+X-Google-Smtp-Source: APXvYqzNSDigwU6xgzfjskX2HjwUGhvaq3NRBRwrZvIRrwf8p+EzTP7vyJq8epLKZN3rqxpyUFm4Og==
+X-Received: by 2002:a17:90a:1a52:: with SMTP id 18mr5688274pjl.26.1573066807979;
+        Wed, 06 Nov 2019 11:00:07 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id i126sm26724495pfc.29.2019.11.06.11.00.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 11:00:07 -0800 (PST)
+Date:   Wed, 6 Nov 2019 11:00:05 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Zong Li <zong.li@sifive.com>
+cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        palmer@sifive.com, Anup.Patel@wdc.com
+Subject: Re: [PATCH v2] riscv: Use PMD_SIZE to repalce PTE_PARENT_SIZE
+In-Reply-To: <1572920412-15661-1-git-send-email-zong.li@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1911061059420.20606@viisi.sifive.com>
+References: <1572920412-15661-1-git-send-email-zong.li@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
-Content-Disposition: inline
-In-Reply-To: <20191029180233.GA587491@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 4 Nov 2019, Zong Li wrote:
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The PMD_SIZE is equal to PGDIR_SIZE when __PAGETABLE_PMD_FOLDED is
+> defined.
+> 
+> Signed-off-by: Zong Li <zong.li@sifive.com>
 
-On Tue 2019-10-29 19:02:33, Greg Kroah-Hartman wrote:
-> On Tue, Oct 29, 2019 at 05:24:19PM +0100, Pavel Machek wrote:
-> > > This is the start of the stable review cycle for the 4.19.81 release.
-> > > There are 93 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >=20
-> > > Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
-> > > Anything received after that time might be too late.
-> >=20
-> > > Date: Tue, 29 Oct 2019 10:19:29 +0100
-> > > From: Greg KH <gregkh@linuxfoundation.org>
-> > > To: linux-kernel@vger.kernel.org, Andrew Morton
-> > > Subject: Linux 4.19.81
-> >=20
-> > > [-- The following data is signed --]
-> >=20
-> > >  I'm announcing the release of the 4.19.81 kernel.
-> >=20
-> > > All users of the 4.19 kernel series must upgrade.
-> >=20
-> > Am I confused or was the 4.19.81 released a bit early?
->=20
-> I said:
-> 	Responses should be made by Tue 29 Oct 2019 08:27:02 PM UTC.
->=20
-> And I released at:
-> 	Date: Tue, 29 Oct 2019 10:19:29 +0100
->=20
-> So really, I was a few minutes late :)
+Thanks, queued for v5.5-rc1 with Anup's Reviewed-by:.
 
-I'm confused. You said "by Tue ... 08:27:02 PM UTC". That 8 PM is 20h,
-but did the release on 10h GMT+1, or 9h UTC -- 9 AM.... so like 11
-hours early, if I got the timezones right.
 
-Does PM mean something else in the above context?
-
-Best regards,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl3DGBQACgkQMOfwapXb+vIgvACfXy4dOoxStaX4TYXK6Hv1J6yh
-YAcAnAnHKWkiTjwoB5Cg5Y58K+iR3jvj
-=V8Qg
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
+- Paul
