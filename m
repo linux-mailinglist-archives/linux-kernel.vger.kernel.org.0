@@ -2,323 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB21BF0E80
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E29F0E8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbfKFFpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 00:45:47 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47082 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfKFFpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 00:45:46 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA65jVnw066184;
-        Tue, 5 Nov 2019 23:45:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573019131;
-        bh=F+2KCiRVtt38KnE0aoSA04LjhA8ClGxqrZ5iELh5C9Q=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=H2bAuAd99tEJLZRqsLOArOvhB4rfFLkWxBK+PcW2rDeP2NFxxKx1mpCtULzqKSBSi
-         4M9LGisJGMqDYqHpnyiePall+Jxt837DnmKxQ2VDpe2WVe6tAYTakAcw9FInjOuZdu
-         m08A6LkWl5JKHfj3nsJcu+G1KvLb+Us5tOBnkNG4=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA65jVh4040135
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Nov 2019 23:45:31 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 5 Nov
- 2019 23:45:16 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 5 Nov 2019 23:45:16 -0600
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA65jTIr128203;
-        Tue, 5 Nov 2019 23:45:29 -0600
-Subject: Re: [PATCH v4 17/20] mtd: spi-nor: Merge spansion Quad Enable methods
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
-CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
- <20191102112316.20715-18-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <b82f9dd6-5b49-21a0-0720-5f46f53f8cc0@ti.com>
-Date:   Wed, 6 Nov 2019 11:16:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726133AbfKFF5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 00:57:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725813AbfKFF5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 00:57:54 -0500
+Received: from localhost (unknown [223.226.46.117])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E09372075C;
+        Wed,  6 Nov 2019 05:57:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573019873;
+        bh=N5o6peU//PMnucYwpKTzl5eOldbEpdCTD+gxenP5XhE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Dn+xsot+H/yGLg+PgZ8A2MOcl35y9FI53m8jE3cDAhNaVsy79TYpqnD+lWGRbCJ/Q
+         mn562CmBzhd/gQJLDmOPZZZjrTfj4AuHggkZfhlvfvJ9A7jT2Tzebvu6hPOgxzgJaG
+         eOavqH9CFePaoGWpIgeGoXK3V3vXR76QZo5PiG7A=
+Date:   Wed, 6 Nov 2019 11:27:48 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: phy-qcom-qmp: Add sm8150 UFS phy
+ compatible string
+Message-ID: <20191106055748.GI952516@vkoul-mobl>
+References: <20191024074802.26526-1-vkoul@kernel.org>
+ <20191024074802.26526-3-vkoul@kernel.org>
+ <20191105060249.GX2695@vkoul-mobl.Dlink>
+ <733450bb-640a-c680-7e36-3f0192a9b996@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20191102112316.20715-18-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <733450bb-640a-c680-7e36-3f0192a9b996@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On 06-11-19, 10:56, Kishon Vijay Abraham I wrote:
+> Vinod,
 > 
-> Merge
->     spansion_no_read_cr_quad_enable()
->     spansion_read_cr_quad_enable()
-> into
->     spi_nor_sr2_bit1_quad_enable().
+> On 05/11/19 11:32 AM, Vinod Koul wrote:
+> > On 24-10-19, 13:18, Vinod Koul wrote:
+> >> Document "qcom,sdm845-qmp-ufs-phy" compatible string for QMP UFS PHY
+> >> found on SM8150.
+> >>
+> >> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> >> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> > 
+> > Kishon,
+> > 
+> > Can you pick this and 3rd patch please
 > 
-> Reduce code duplication by introducing spi_nor_write_16bit_cr_and_check().
-> The Configuration Register contains bits that can be updated in future:
-> FREEZE, CMP. Provide a generic method that allows updating all bits
-> of the Configuration Register.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> This is already in phy -next. Will be sending a PR to Greg today.
 
-Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-
-Regards
-Vignesh
-
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 165 +++++++++++++++++-------------------------
->  1 file changed, 68 insertions(+), 97 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index e367a4862ec1..8bc29cc073a0 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1055,6 +1055,59 @@ static int spi_nor_write_16bit_sr_and_check(struct spi_nor *nor, u8 sr1)
->  }
->  
->  /**
-> + * spi_nor_write_16bit_cr_and_check() - Write the Status Register 1 and the
-> + * Configuration Register in one shot. Ensure that the byte written in the
-> + * Configuration Register match the received value, and that the 16-bit Write
-> + * did not affect what was already in the Status Register 1.
-> + * @nor:	pointer to a 'struct spi_nor'.
-> + * @cr:		byte value to be written to the Configuration Register.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int spi_nor_write_16bit_cr_and_check(struct spi_nor *nor, u8 cr)
-> +{
-> +	int ret;
-> +	u8 *sr_cr = nor->bouncebuf;
-> +	u8 sr_written;
-> +
-> +	/* Keep the current value of the Status Register 1. */
-> +	ret = spi_nor_read_sr(nor, sr_cr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sr_cr[1] = cr;
-> +
-> +	ret = spi_nor_write_sr(nor, sr_cr, 2);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sr_written = sr_cr[0];
-> +
-> +	ret = spi_nor_read_sr(nor, sr_cr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sr_written != sr_cr[0]) {
-> +		dev_dbg(nor->dev, "SR: Read back test failed\n");
-> +		return -EIO;
-> +	}
-> +
-> +	if (nor->flags & SNOR_F_NO_READ_CR)
-> +		return 0;
-> +
-> +	ret = spi_nor_read_cr(nor, &sr_cr[1]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (cr != sr_cr[1]) {
-> +		dev_dbg(nor->dev, "CR: read back test failed\n");
-> +		return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
->   * spi_nor_write_sr_and_check() - Write the Status Register 1 and ensure that
->   * the byte written match the received value without affecting other bits in the
->   * Status Register 1 and 2.
-> @@ -2051,111 +2104,29 @@ static int macronix_quad_enable(struct spi_nor *nor)
->  }
->  
->  /**
-> - * spansion_no_read_cr_quad_enable() - set QE bit in Configuration Register.
-> - * @nor:	pointer to a 'struct spi_nor'
-> + * spi_nor_sr2_bit1_quad_enable() - set the Quad Enable BIT(1) in the Status
-> + * Register 2.
-> + * @nor:       pointer to a 'struct spi_nor'.
->   *
-> - * Set the Quad Enable (QE) bit in the Configuration Register.
-> - * This function should be used with QSPI memories not supporting the Read
-> - * Configuration Register (35h) instruction.
-> - *
-> - * bit 1 of the Configuration Register is the QE bit for Spansion like QSPI
-> - * memories.
-> + * Bit 1 of the Status Register 2 is the QE bit for Spansion like QSPI memories.
->   *
->   * Return: 0 on success, -errno otherwise.
->   */
-> -static int spansion_no_read_cr_quad_enable(struct spi_nor *nor)
-> +static int spi_nor_sr2_bit1_quad_enable(struct spi_nor *nor)
->  {
-> -	u8 *sr_cr = nor->bouncebuf;
->  	int ret;
-> -	u8 sr_written;
-> -
-> -	/* Keep the current value of the Status Register. */
-> -	ret = spi_nor_read_sr(nor, sr_cr);
-> -	if (ret)
-> -		return ret;
-> -
-> -	sr_cr[1] = SR2_QUAD_EN_BIT1;
-> -
-> -	ret = spi_nor_write_sr(nor, sr_cr, 2);
-> -	if (ret)
-> -		return ret;
->  
-> -	sr_written = sr_cr[0];
-> -
-> -	ret = spi_nor_read_sr(nor, sr_cr);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (sr_cr[0] != sr_written) {
-> -		dev_err(nor->dev, "SR: Read back test failed\n");
-> -		return -EIO;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -/**
-> - * spansion_read_cr_quad_enable() - set QE bit in Configuration Register.
-> - * @nor:	pointer to a 'struct spi_nor'
-> - *
-> - * Set the Quad Enable (QE) bit in the Configuration Register.
-> - * This function should be used with QSPI memories supporting the Read
-> - * Configuration Register (35h) instruction.
-> - *
-> - * bit 1 of the Configuration Register is the QE bit for Spansion like QSPI
-> - * memories.
-> - *
-> - * Return: 0 on success, -errno otherwise.
-> - */
-> -static int spansion_read_cr_quad_enable(struct spi_nor *nor)
-> -{
-> -	u8 *sr_cr = nor->bouncebuf;
-> -	int ret;
-> -	u8 sr_written;
-> +	if (nor->flags & SNOR_F_NO_READ_CR)
-> +		return spi_nor_write_16bit_cr_and_check(nor, SR2_QUAD_EN_BIT1);
->  
-> -	/* Check current Quad Enable bit value. */
-> -	ret = spi_nor_read_cr(nor, &sr_cr[1]);
-> +	ret = spi_nor_read_cr(nor, nor->bouncebuf);
->  	if (ret)
->  		return ret;
->  
-> -	if (sr_cr[1] & SR2_QUAD_EN_BIT1)
-> +	if (nor->bouncebuf[0] & SR2_QUAD_EN_BIT1)
->  		return 0;
->  
-> -	sr_cr[1] |= SR2_QUAD_EN_BIT1;
-> -
-> -	/* Keep the current value of the Status Register. */
-> -	ret = spi_nor_read_sr(nor, sr_cr);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = spi_nor_write_sr(nor, sr_cr, 2);
-> -	if (ret)
-> -		return ret;
-> -
-> -	sr_written = sr_cr[0];
-> -
-> -	ret = spi_nor_read_sr(nor, sr_cr);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (sr_written != sr_cr[0]) {
-> -		dev_err(nor->dev, "SR: Read back test failed\n");
-> -		return -EIO;
-> -	}
-> -
-> -	sr_written = sr_cr[1];
-> -
-> -	/* Read back and check it. */
-> -	ret = spi_nor_read_cr(nor, &sr_cr[1]);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (sr_cr[1] != sr_written) {
-> -		dev_dbg(nor->dev, "CR: Read back test failed\n");
-> -		return -EIO;
-> -	}
-> -
-> -	return 0;
-> +	return spi_nor_write_16bit_cr_and_check(nor, nor->bouncebuf[0]);
->  }
->  
->  /**
-> @@ -2235,7 +2206,7 @@ static int spi_nor_clear_sr_bp(struct spi_nor *nor)
->   *
->   * Read-modify-write function that clears the Block Protection bits from the
->   * Status Register without affecting other bits. The function is tightly
-> - * coupled with the spansion_read_cr_quad_enable() function. Both assume that
-> + * coupled with the spi_nor_sr2_bit1_quad_enable() function. Both assume that
->   * the Write Register with 16 bits, together with the Read Configuration
->   * Register (35h) instructions are supported.
->   *
-> @@ -3753,7 +3724,7 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
->  		 * supported.
->  		 */
->  		nor->flags |= SNOR_F_HAS_16BIT_SR | SNOR_F_NO_READ_CR;
-> -		params->quad_enable = spansion_no_read_cr_quad_enable;
-> +		params->quad_enable = spi_nor_sr2_bit1_quad_enable;
->  		break;
->  
->  	case BFPT_DWORD15_QER_SR1_BIT6:
-> @@ -3775,7 +3746,7 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
->  		 */
->  		nor->flags |= SNOR_F_HAS_16BIT_SR;
->  
-> -		params->quad_enable = spansion_read_cr_quad_enable;
-> +		params->quad_enable = spi_nor_sr2_bit1_quad_enable;
->  		break;
->  
->  	default:
-> @@ -4738,7 +4709,7 @@ static void spi_nor_info_init_params(struct spi_nor *nor)
->  	u8 i, erase_mask;
->  
->  	/* Initialize legacy flash parameters and settings. */
-> -	params->quad_enable = spansion_read_cr_quad_enable;
-> +	params->quad_enable = spi_nor_sr2_bit1_quad_enable;
->  	params->set_4byte = spansion_set_4byte;
->  	params->setup = spi_nor_default_setup;
->  	/* Default to 16-bit Write Status (01h) Command */
-> @@ -4955,7 +4926,7 @@ static int spi_nor_init(struct spi_nor *nor)
->  	int err;
->  
->  	if (nor->clear_sr_bp) {
-> -		if (nor->params.quad_enable == spansion_read_cr_quad_enable)
-> +		if (nor->params.quad_enable == spi_nor_sr2_bit1_quad_enable)
->  			nor->clear_sr_bp = spi_nor_spansion_clear_sr_bp;
->  
->  		err = nor->clear_sr_bp(nor);
-> 
-
+Thanks, I never got the auto notification so was thinking that these are
+not applied.
 -- 
-Regards
-Vignesh
+~Vinod
