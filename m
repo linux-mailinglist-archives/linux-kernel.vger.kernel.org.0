@@ -2,220 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728F5F0EF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D14F0F02
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbfKFGfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 01:35:14 -0500
-Received: from mga01.intel.com ([192.55.52.88]:15587 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727795AbfKFGfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 01:35:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 22:35:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,272,1569308400"; 
-   d="scan'208";a="232754499"
-Received: from chenyi-pc.sh.intel.com ([10.239.159.72])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Nov 2019 22:35:11 -0800
-From:   Chenyi Qiang <chenyi.qiang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH v2] KVM: X86: Fix initialization of MSR lists(msrs_to_save[], emulated_msrs[] and msr_based_features[])
-Date:   Wed,  6 Nov 2019 14:35:20 +0800
-Message-Id: <20191106063520.1915-1-chenyi.qiang@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1731016AbfKFGkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 01:40:05 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:51522 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728724AbfKFGkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 01:40:05 -0500
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 04F453A1D93;
+        Wed,  6 Nov 2019 17:39:54 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iSEyu-0001iI-Op; Wed, 06 Nov 2019 17:39:52 +1100
+Date:   Wed, 6 Nov 2019 17:39:52 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     dsterba@suse.cz, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
+Message-ID: <20191106063952.GE4614@dread.disaster.area>
+References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
+ <CAMuHMdXzyVBa4TZEc5eRaBzu50thgJ2TrHJLZqwhbQ=JASgWOA@mail.gmail.com>
+ <20191101213823.GW4614@dread.disaster.area>
+ <20191105151550.GK3001@twin.jikos.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105151550.GK3001@twin.jikos.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=eJfxgxciAAAA:8 a=7-415B0cAAAA:8 a=nWWV64Vs4Ia0ohqM8ygA:9
+        a=G5VXLrwXQuX2I6J2:21 a=BA2X2tOPKDw4xi1b:21 a=CjuIK1q_8ugA:10
+        a=xM9caqqi1sUkTy8OJ5Uh:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The three MSR lists(msrs_to_save[], emulated_msrs[] and
-msr_based_features[]) are global arrays of kvm.ko, which are
-adjusted (copy supported MSRs forward to override the unsupported MSRs)
-when insmod kvm-{intel,amd}.ko, but it doesn't reset these three arrays
-to their initial value when rmmod kvm-{intel,amd}.ko. Thus, at the next
-installation, kvm-{intel,amd}.ko will do operations on the modified
-arrays with some MSRs lost and some MSRs duplicated.
+On Tue, Nov 05, 2019 at 04:15:50PM +0100, David Sterba wrote:
+> On Sat, Nov 02, 2019 at 08:38:23AM +1100, Dave Chinner wrote:
+> > On Fri, Nov 01, 2019 at 09:57:31PM +0100, Geert Uytterhoeven wrote:
+> > > Hi Valdis,
+> > > 
+> > > On Thu, Oct 31, 2019 at 2:11 AM Valdis Kletnieks
+> > > <valdis.kletnieks@vt.edu> wrote:
+> > > > Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
+> > > > patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
+> > > > (c) if one patch, who gets to shepherd it through?
+> > > >
+> > > > There's currently 6 filesystems that have the same #define. Move it
+> > > > into errno.h so it's defined in just one place.
+> > > >
+> > > > Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+> > > 
+> > > Thanks for your patch!
+> > > 
+> > > > --- a/include/uapi/asm-generic/errno.h
+> > > > +++ b/include/uapi/asm-generic/errno.h
+> > > > @@ -98,6 +98,7 @@
+> > > >  #define        EINPROGRESS     115     /* Operation now in progress */
+> > > >  #define        ESTALE          116     /* Stale file handle */
+> > > >  #define        EUCLEAN         117     /* Structure needs cleaning */
+> > > > +#define        EFSCORRUPTED    EUCLEAN
+> > > 
+> > > I have two questions:
+> > > a) Why not use EUCLEAN everywhere instead?
+> > >     Having two different names for the same errno complicates grepping.
+> > 
+> > Because:
+> > 	a) EUCLEAN is horrible for code documentation. EFSCORRUPTED
+> > 	describes exactly the error being returned and/or checked for.
+> > 
+> > 	b) we've used EFSCORRUPTED in XFS since 1993. i.e. it was an
+> > 	official, published error value on Irix, and we've kept it
+> > 	in the linux code for the past ~20 years because of a)
+> > 
+> > 	c) Userspace programs that include filesystem specific
+> > 	headers have already been exposed to and use EFSCORRUPTED,
+> > 	so we can't remove/change it without breaking userspace.
+> > 
+> > 	d) EUCLEAN has a convenient userspace string description
+> > 	that is appropriate for filesystem corruption: "Structure
+> > 	needs cleaning" is precisely what needs to happen. Repair of
+> > 	the filesystem (i.e. recovery to a clean state) is what is
+> > 	required to fix the error....
+> 
+> The description is very confusing to users that are also not filesystem
+> developers.
 
-So define three constant arrays to hold the initial MSR lists and
-initialize msrs_to_save[], emulated_msrs[] and msr_based_features[]
-based on the constant arrays.
+That's a pretty good description of most error messages for modern
+software packages. Anything that is a non-trivial error requires web
+searching to understand and diagnose these days.
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Signed-off-by: Chenyi Qiang <chenyi.qiang@intel.com>
----
-Changes in v2:
- - define initial MSR lists with static const.
- - change the dynamic allocation of supported MSR lists to static allocation.
+Google knows exactly what you are looking for if you search for
+"mount structure needs cleaning" or other similar error messages.
+That means users also know what it means and what they need to
+do to address it.  i.e. it's been around long enough that there's a
+deep history in internet search engines and question forums like
+stackexchange.
 
- arch/x86/kvm/x86.c | 51 +++++++++++++++++++++++++---------------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
+> "Structure needs cleaning" says what needs to be done but
+> not what happened. Unlike other error codes like "not enough memory",
+> "IO error" etc. We don't have EBUYMEM / "Buy more memory" instead of
+> ENOMEM.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 89621025577a..0b4b6db5b13f 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1138,13 +1138,15 @@ EXPORT_SYMBOL_GPL(kvm_rdpmc);
-  * List of msr numbers which we expose to userspace through KVM_GET_MSRS
-  * and KVM_SET_MSRS, and KVM_GET_MSR_INDEX_LIST.
-  *
-- * This list is modified at module load time to reflect the
-+ * The three MSR lists(msrs_to_save, emulated_msrs, msr_based_features)
-+ * extract the supported MSRs from the related const lists.
-+ * msrs_to_save is selected from the msrs_to_save_all to reflect the
-  * capabilities of the host cpu. This capabilities test skips MSRs that are
-- * kvm-specific. Those are put in emulated_msrs; filtering of emulated_msrs
-+ * kvm-specific. Those are put in emulated_msrs_all; filtering of emulated_msrs
-  * may depend on host virtualization features rather than host cpu features.
-  */
+Message grammar is largely irrelevant. And not unique to EUCLEAN. e.g.
+EAGAIN = "Try again".
+
+> Fuzzing tests and crafted images produce most of the EUCLEAN errors and
+> in this context "structure needs cleaning" makes even less sense.
+
+It's pretty silly to argue that a developer crafting and/or fuzzing
+corrupted filesystem images is not going to understand what the
+error message returned when they successfully corrupt a filesystem
+actually means....
+
+> > > b) Perhaps both errors should use different values?
+> > 
+> > That horse bolted to userspace years ago - this is just
+> > formalising the practice that has spread across multiple linux
+> > filesystems from XFS over the past ~10 years..
+> 
+> EFSCORRUPTED is a appropriate name but to share the number with
+> EUCLEAN was a terrible decision and now every filesystem has to
+> suffer and explain to users what the code really means and point
+> to the the sad story when asked "So why don't you have a separate
+> code?".
+
+Damned if you do, damned if you don't.
+
+Back in 2005-2006, XFS developers tried to make EFSCORRUPTED a
+proper system wide errno (like we had on Irix). The NIH was strong
+in the linux community back then, and we were largely told to go
+away as the superior Linux filesystems would never need to report
+corruption to userspace so we don't need a special errno just
+because some shitty Irix filesystem port needs it.
+
+And so we didn't get a new errno and went with the second choice:
+precedence set by older unix systems....
+
+commit 9e1fd551aba7291564d5d6c28948405142d5e2ca
+Author: Nathan Scott <nathans@sgi.com>
+Date:   Tue Jun 20 03:49:47 2006 +0000
+
+    Map EFSCORRUPTED to an actual error code, not just a made up one
+    (990).  Turns out some ye-olde unices used EUCLEAN as
+    Filesystem-needs-cleaning, so now we use that too.
+    Merge of xfs-linux-melb:xfs-kern:26286a by kenmcd.
+
+diff --git a/fs/xfs/linux-2.6/xfs_linux.h b/fs/xfs/linux-2.6/xfs_linux.h
+index 3910afa7..b4083f8c 100644
+--- a/fs/xfs/linux-2.6/xfs_linux.h
++++ b/fs/xfs/linux-2.6/xfs_linux.h
+@@ -197,25 +197,9 @@ BUFFER_FNS(PrivateStart, unwritten);
+ /* bytes to clicks */
+ #define btoc(x)         (((__psunsigned_t)(x)+(NBPC-1))>>BPCSHIFT)
  
--static u32 msrs_to_save[] = {
-+static const u32 msrs_to_save_all[] = {
- 	MSR_IA32_SYSENTER_CS, MSR_IA32_SYSENTER_ESP, MSR_IA32_SYSENTER_EIP,
- 	MSR_STAR,
- #ifdef CONFIG_X86_64
-@@ -1185,9 +1187,10 @@ static u32 msrs_to_save[] = {
- 	MSR_ARCH_PERFMON_EVENTSEL0 + 16, MSR_ARCH_PERFMON_EVENTSEL0 + 17,
- };
+-#ifndef ENOATTR
+ #define ENOATTR                ENODATA         /* Attribute not found */
+-#endif
+-
+-/* Note: EWRONGFS never visible outside the kernel */
+-#define        EWRONGFS        EINVAL          /* Mount with wrong filesystem type */
+-
+-/*
+- * XXX EFSCORRUPTED needs a real value in errno.h. asm-i386/errno.h won't
+- *     return codes out of its known range in errno.
+- * XXX Also note: needs to be < 1000 and fairly unique on Linux (mustn't
+- *     conflict with any code we use already or any code a driver may use)
+- * XXX Some options (currently we do #2):
+- *     1/ New error code ["Filesystem is corrupted", _after_ glibc updated]
+- *     2/ 990 ["Unknown error 990"]
+- *     3/ EUCLEAN ["Structure needs cleaning"]
+- *     4/ Convert EFSCORRUPTED to EIO [just prior to return into userspace]
+- */
+-#define EFSCORRUPTED    990            /* Filesystem is corrupted */
++#define EWRONGFS       EINVAL          /* Mount with wrong filesystem type */
++#define EFSCORRUPTED   EUCLEAN         /* Filesystem is corrupted */
  
-+static u32 msrs_to_save[ARRAY_SIZE(msrs_to_save_all)];
- static unsigned num_msrs_to_save;
- 
--static u32 emulated_msrs[] = {
-+static const u32 emulated_msrs_all[] = {
- 	MSR_KVM_SYSTEM_TIME, MSR_KVM_WALL_CLOCK,
- 	MSR_KVM_SYSTEM_TIME_NEW, MSR_KVM_WALL_CLOCK_NEW,
- 	HV_X64_MSR_GUEST_OS_ID, HV_X64_MSR_HYPERCALL,
-@@ -1226,7 +1229,7 @@ static u32 emulated_msrs[] = {
- 	 * by arch/x86/kvm/vmx/nested.c based on CPUID or other MSRs.
- 	 * We always support the "true" VMX control MSRs, even if the host
- 	 * processor does not, so I am putting these registers here rather
--	 * than in msrs_to_save.
-+	 * than in msrs_to_save_all.
- 	 */
- 	MSR_IA32_VMX_BASIC,
- 	MSR_IA32_VMX_TRUE_PINBASED_CTLS,
-@@ -1245,13 +1248,14 @@ static u32 emulated_msrs[] = {
- 	MSR_KVM_POLL_CONTROL,
- };
- 
-+static u32 emulated_msrs[ARRAY_SIZE(emulated_msrs_all)];
- static unsigned num_emulated_msrs;
- 
- /*
-  * List of msr numbers which are used to expose MSR-based features that
-  * can be used by a hypervisor to validate requested CPU features.
-  */
--static u32 msr_based_features[] = {
-+static const u32 msr_based_features_all[] = {
- 	MSR_IA32_VMX_BASIC,
- 	MSR_IA32_VMX_TRUE_PINBASED_CTLS,
- 	MSR_IA32_VMX_PINBASED_CTLS,
-@@ -1276,6 +1280,7 @@ static u32 msr_based_features[] = {
- 	MSR_IA32_ARCH_CAPABILITIES,
- };
- 
-+static u32 msr_based_features[ARRAY_SIZE(msr_based_features_all)];
- static unsigned int num_msr_based_features;
- 
- static u64 kvm_get_arch_capabilities(void)
-@@ -5131,19 +5136,19 @@ static void kvm_init_msr_list(void)
- 	unsigned i, j;
- 
- 	BUILD_BUG_ON_MSG(INTEL_PMC_MAX_FIXED != 4,
--			 "Please update the fixed PMCs in msrs_to_save[]");
-+			 "Please update the fixed PMCs in msrs_to_saved_all[]");
- 
- 	perf_get_x86_pmu_capability(&x86_pmu);
- 
--	for (i = j = 0; i < ARRAY_SIZE(msrs_to_save); i++) {
--		if (rdmsr_safe(msrs_to_save[i], &dummy[0], &dummy[1]) < 0)
-+	for (i = j = 0; i < ARRAY_SIZE(msrs_to_save_all); i++) {
-+		if (rdmsr_safe(msrs_to_save_all[i], &dummy[0], &dummy[1]) < 0)
- 			continue;
- 
- 		/*
- 		 * Even MSRs that are valid in the host may not be exposed
- 		 * to the guests in some cases.
- 		 */
--		switch (msrs_to_save[i]) {
-+		switch (msrs_to_save_all[i]) {
- 		case MSR_IA32_BNDCFGS:
- 			if (!kvm_mpx_supported())
- 				continue;
-@@ -5171,17 +5176,17 @@ static void kvm_init_msr_list(void)
- 			break;
- 		case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: {
- 			if (!kvm_x86_ops->pt_supported() ||
--				msrs_to_save[i] - MSR_IA32_RTIT_ADDR0_A >=
-+				msrs_to_save_all[i] - MSR_IA32_RTIT_ADDR0_A >=
- 				intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2)
- 				continue;
- 			break;
- 		case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR0 + 17:
--			if (msrs_to_save[i] - MSR_ARCH_PERFMON_PERFCTR0 >=
-+			if (msrs_to_save_all[i] - MSR_ARCH_PERFMON_PERFCTR0 >=
- 			    min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
- 				continue;
- 			break;
- 		case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL0 + 17:
--			if (msrs_to_save[i] - MSR_ARCH_PERFMON_EVENTSEL0 >=
-+			if (msrs_to_save_all[i] - MSR_ARCH_PERFMON_EVENTSEL0 >=
- 			    min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
- 				continue;
- 		}
-@@ -5189,31 +5194,31 @@ static void kvm_init_msr_list(void)
- 			break;
- 		}
- 
--		if (j < i)
--			msrs_to_save[j] = msrs_to_save[i];
-+		if (j <= i)
-+			msrs_to_save[j] = msrs_to_save_all[i];
- 		j++;
- 	}
- 	num_msrs_to_save = j;
- 
--	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs); i++) {
--		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs[i]))
-+	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs_all); i++) {
-+		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs_all[i]))
- 			continue;
- 
--		if (j < i)
--			emulated_msrs[j] = emulated_msrs[i];
-+		if (j <= i)
-+			emulated_msrs[j] = emulated_msrs_all[i];
- 		j++;
- 	}
- 	num_emulated_msrs = j;
- 
--	for (i = j = 0; i < ARRAY_SIZE(msr_based_features); i++) {
-+	for (i = j = 0; i < ARRAY_SIZE(msr_based_features_all); i++) {
- 		struct kvm_msr_entry msr;
- 
--		msr.index = msr_based_features[i];
-+		msr.index = msr_based_features_all[i];
- 		if (kvm_get_msr_feature(&msr))
- 			continue;
- 
--		if (j < i)
--			msr_based_features[j] = msr_based_features[i];
-+		if (j <= i)
-+			msr_based_features[j] = msr_based_features_all[i];
- 		j++;
- 	}
- 	num_msr_based_features = j;
+ #define SYNCHRONIZE()  barrier()
+ #define __return_address __builtin_return_address(0)
+
+Perhaps you should learn the history of why certain decisions were
+made before letting go with both barrels, hmmm?
+
+> I wonder what userspace package really depends on the value, that
+> would eg. change code flow. Uncommon error values usually lead to
+> a message and exit.
+> 
+> Debian code search shows only jython, e2fsprogs, xfsprogs,
+> python2.7, pypy, linux, partclone using EFSCORRUPTED. So 2 of them
+> are filesystem packages that can handle that, python/jython only
+> defines the value for IRIX platform. The rest is linux kernel, not
+> relevant.
+
+You didn't search for EUCLEAN, did you?
+
+> So please give me one example where userspace will break.
+
+ABI changes cannot be justified this way and you should damn well
+know it. Especially as EUCLEAN/EFSCORRUPTED is documented in quite a
+few man pages out there:
+
+$ git grep -l EFSCORRUPTED man/
+man/man2/ioctl_xfs_ag_geometry.2
+man/man2/ioctl_xfs_bulkstat.2
+man/man2/ioctl_xfs_fsbulkstat.2
+man/man2/ioctl_xfs_fscounts.2
+man/man2/ioctl_xfs_fsgetxattr.2
+man/man2/ioctl_xfs_fsinumbers.2
+man/man2/ioctl_xfs_fsop_geometry.2
+man/man2/ioctl_xfs_getbmapx.2
+man/man2/ioctl_xfs_getresblks.2
+man/man2/ioctl_xfs_goingdown.2
+man/man2/ioctl_xfs_inumbers.2
+man/man2/ioctl_xfs_scrub_metadata.2
+
+And EUCLEAN is in a few, too. e.g:
+
+$ man ioctl_getfsmap |grep -A 1 EUCLEAN
+       EUCLEAN
+              The filesystem metadata is corrupt and needs repair.
+
+So, yeah, the EFSCORRUPTED = EUCLEAN horse bolted long ago, and no
+amount of retconning will put the genie back in the bottle.
+
+Cheers,
+
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
