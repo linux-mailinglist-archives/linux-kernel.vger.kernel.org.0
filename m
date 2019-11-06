@@ -2,185 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C51C2F0DA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 762A7F0DAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 05:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbfKFEPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 23:15:21 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35219 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfKFEPU (ORCPT
+        id S1731225AbfKFEQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 23:16:32 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:33463 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfKFEQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 23:15:20 -0500
-Received: by mail-ot1-f67.google.com with SMTP id z6so19714110otb.2;
-        Tue, 05 Nov 2019 20:15:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eU07epBZUVYLaHBjz3RtRcFaFle5kQt9relwi3C3BoI=;
-        b=FsvSCwhNSpsQ3eFun1z70YCzCBOdZkM0v3lVcclhjCaiySJNjL2ak/Ifq3he7hd6Ci
-         +3wXYQBpNX8i6AOb+4WCxxlp7fjm+1fOEfXON/A5jpIYk/grCyiNQ26FyHnkRanHsMJV
-         Td2Q/CDgBHpi68lCkh95KQmsP3RoKLYR1MUItvXJMYr/59dVCrVHYu/4BfZ2L6gMMcLo
-         aQSETJ+yPc6x1Gaqg3+gQhtIFuCs3Lz5z98TqxiPfOCs+LIHTxvQjcZ0RzRbpW3uk9sN
-         r6y4RHebd+ht8vReH/xJNZ+/l5wEu9dTnrn31RTb5vPAehxVMBBszNU7/Wmd/+R5nlMm
-         gNTQ==
-X-Gm-Message-State: APjAAAXYW3/4epqtcK2YHlzYoxnKUWYfOCDdyPi1VRdkNIbSgn+xmDL1
-        RZzodu04y3+l+GZ9Rr4wrQ==
-X-Google-Smtp-Source: APXvYqyL7N4ZSd4YdH6F4tHPJTvw4bxJUurlUdTYajOsiR6wMLQz0zP3nOgOpX9idyBcv2QLfignhw==
-X-Received: by 2002:a9d:6950:: with SMTP id p16mr289110oto.16.1573013719528;
-        Tue, 05 Nov 2019 20:15:19 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d17sm1946185otl.13.2019.11.05.20.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 20:15:18 -0800 (PST)
-Date:   Tue, 5 Nov 2019 22:15:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     mark.rutland@arm.com, alexandre.torgue@st.com,
-        fabrice.gasnier@st.com, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, lee.jones@linaro.org,
-        thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: mfd: Convert stm32 timers bindings to
- json-schema
-Message-ID: <20191106041518.GC5294@bogus>
-References: <20191031123040.26316-1-benjamin.gaignard@st.com>
- <20191031123040.26316-5-benjamin.gaignard@st.com>
+        Tue, 5 Nov 2019 23:16:32 -0500
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id xA64GQDP008203;
+        Wed, 6 Nov 2019 13:16:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com xA64GQDP008203
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1573013787;
+        bh=oq2kVTgJnhwHzQg6FYk0N33Gkp9WTDpEnW/af98rhL8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PQGhudb9I08q8LPWfnqoOWuLLs5X+mGpAQziK25vEzrTIvYt5zBVFCgvQeaD6mSNz
+         8nSM9Wjtt2ecKL1ccG0YsJF7zaLURVJ2xhI3uR22YINY4XebxpTOp+AtO7wtittIvI
+         HMfhOphz2kfwtkGaQMet8OjJXAwwH1/suWVnpEq2F5RNCGx++35U357xEETqnsau4U
+         yNNj0rlxBtKHWbU2ux4iDicg9Lz5ugIsrpVOeaYClNH4HZBOsMdzyS+ezqk3HfhAL7
+         wG+cJ0dR5LNC5A8rnFkn3D/SwDefQ46T1V2PFAm1g3zaRhN8GtS89t6lvLnKTixTXf
+         u4eUobhmuJkzQ==
+X-Nifty-SrcIP: [209.85.217.49]
+Received: by mail-vs1-f49.google.com with SMTP id k15so15073726vsp.2;
+        Tue, 05 Nov 2019 20:16:26 -0800 (PST)
+X-Gm-Message-State: APjAAAUHHw2T/9q6kXRIyMsPOyIwWAqEpXstB6PNGZapLcdsVqnUIv+c
+        VUxBvlRJSiGi9em89O5uHCgO8Iei8b9plZYpJKE=
+X-Google-Smtp-Source: APXvYqyj2fn6n6xfIF0zWdZVbfoYZNCKmN0aECMFEX4AODzPIGTNIPvyzpVHP4cWRdHOCSwn4LNzAWBWw3vOWk/7IsE=
+X-Received: by 2002:a05:6102:726:: with SMTP id u6mr262077vsg.179.1573013785785;
+ Tue, 05 Nov 2019 20:16:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031123040.26316-5-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191025080544.7209-1-unixbhaskar@gmail.com>
+In-Reply-To: <20191025080544.7209-1-unixbhaskar@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 6 Nov 2019 13:15:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT1=e36tLgPcHUOxKUSCH7MW3egYuJMtY+OfZWvHRxfGA@mail.gmail.com>
+Message-ID: <CAK7LNAT1=e36tLgPcHUOxKUSCH7MW3egYuJMtY+OfZWvHRxfGA@mail.gmail.com>
+Subject: Re: [PATCH] scripts:patch-kernel:bash syntax replace,correct one
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 01:30:40PM +0100, Benjamin Gaignard wrote:
-> Convert the STM32 timers binding to DT schema format using json-schema
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+On Fri, Oct 25, 2019 at 5:06 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+>
+> This patch will replace backquote to dollar parenthesis syntax
+> for better readability.Corrected one.
+
+Talking about the commit subject,
+which part is 'bash syntax' ?
+
+One more thing,
+"correct one" is not the correct way to send
+a new patch version.
+See the patch submission from other people.
+The version number is enclosed in the square brackets.
+
+[PATCH v2]
+
+
+The commit subject should describe what it does
+in imperative mood.
+
+https://patchwork.kernel.org/patch/11205593/
+
+
+
+
+
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 > ---
->  .../devicetree/bindings/mfd/st,stm32-timers.yaml   | 91 ++++++++++++++++++++++
->  .../devicetree/bindings/mfd/stm32-timers.txt       | 73 -----------------
->  2 files changed, 91 insertions(+), 73 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/stm32-timers.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
-> new file mode 100644
-> index 000000000000..3f0a65fb2bc0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/st,stm32-timers.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/st,stm32-timers.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STMicroelectronics STM32 Timers bindings
-> +
-> +description: |
-> +  This hardware block provides 3 types of timer along with PWM functionality: \
+>  scripts/patch-kernel | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/scripts/patch-kernel b/scripts/patch-kernel
+> index 033d5916797d..6f9443336f9a 100755
+> --- a/scripts/patch-kernel
+> +++ b/scripts/patch-kernel
+> @@ -153,7 +153,7 @@ applyPatch () {
+>      echo "failed.  Clean up yourself."
+>      return 1;
+>    fi
+> -  if [ "`find $sourcedir/ '(' -name '*.rej' -o -name '.*.rej' ')' -print`" ]
+> +  if [ "$(find $sourcedir/ '(' -name '*.rej' -o -name '.*.rej' ')' -print)" ]
+>    then
+>      echo "Aborting.  Reject files found."
+>      return 1;
+> @@ -175,7 +175,7 @@ reversePatch () {
+>                 echo "failed.  Clean it up."
+>                 exit 1
+>         fi
+> -       if [ "`find $sourcedir/ '(' -name '*.rej' -o -name '.*.rej' ')' -print`" ]
+> +       if [ "$(find $sourcedir/ '(' -name '*.rej' -o -name '.*.rej' ')' -print)" ]
+>         then
+>                 echo "Aborting.  Reject files found."
+>                 return 1
+> @@ -189,7 +189,7 @@ reversePatch () {
+>  # set current VERSION, PATCHLEVEL, SUBLEVEL, EXTRAVERSION
+>  # force $TMPFILEs below to be in local directory: a slash character prevents
+>  # the dot command from using the search path.
+> -TMPFILE=`mktemp ./.tmpver.XXXXXX` || { echo "cannot make temp file" ; exit 1; }
+> +TMPFILE=$(mktemp ./.tmpver.XXXXXX) || { echo "cannot make temp file" ; exit 1; }
+>  grep -E "^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION)" $sourcedir/Makefile > $TMPFILE
+>  tr -d [:blank:] < $TMPFILE > $TMPFILE.1
+>  . $TMPFILE.1
+> @@ -200,7 +200,7 @@ then
+>      exit 1
+>  fi
+>
+> -NAME=`grep ^NAME $sourcedir/Makefile`
+> +NAME=$(grep ^NAME $sourcedir/Makefil)
+>  NAME=${NAME##*=}
+>
+>  echo "Current kernel version is $VERSION.$PATCHLEVEL.$SUBLEVEL${EXTRAVERSION} ($NAME)"
+> @@ -216,8 +216,8 @@ fi
+>
+>  #echo "stopvers=$stopvers"
+>  if [ $stopvers != "default" ]; then
+> -       STOPSUBLEVEL=`echo $stopvers | cut -d. -f3`
+> -       STOPEXTRA=`echo $stopvers | cut -d. -f4`
+> +       STOPSUBLEVEL=$(echo $stopvers | cut -d. -f3)
+> +       STOPEXTRA=$(echo $stopvers | cut -d. -f4)
+>         STOPFULLVERSION=${stopvers%%.$STOPEXTRA}
+>         #echo "#___STOPSUBLEVEL=/$STOPSUBLEVEL/, STOPEXTRA=/$STOPEXTRA/"
+>  else
+> @@ -306,7 +306,7 @@ if [ x$gotac != x ]; then
+>                 HIGHESTPATCH=0
+>                 for PATCHNAMES in $patchdir/patch-${CURRENTFULLVERSION}-ac*\.*
+>                 do
+> -                       ACVALUE=`echo $PATCHNAMES | sed -e 's/^.*patch-[0-9.]*-ac\([0-9]*\).*/\1/'`
+> +                       ACVALUE=$(echo $PATCHNAMES | sed -e 's/^.*patch-[0-9.]*-ac\([0-9]*\).*/\1/')
+>                         # Check it is actually a recognised patch type
+>                         findFile $patchdir/patch-${CURRENTFULLVERSION}-ac${ACVALUE} || break
+>
+> --
+> 2.20.1
+>
 
-Don't need the \
 
-> +    - advanced-control timers consist of a 16-bit auto-reload counter driven by a programmable \
-> +      prescaler, break input feature, PWM outputs and complementary PWM ouputs channels. \
-> +    - general-purpose timers consist of a 16-bit or 32-bit auto-reload counter driven by a \
-> +      programmable prescaler and PWM outputs.\
-> +    - basic timers consist of a 16-bit auto-reload counter driven by a programmable prescaler.
-> +
-> +maintainers:
-> +  - Benjamin Gaignard <benjamin.gaignard@st.com>
-> +  - Fabrice Gasnier <fabrice.gasnier@st.com>
-> +
-> +allOf:
-> +  - $ref: "../pwm/st,stm32-pwm.yaml#"
-> +  - $ref: "../iio/timer/st,stm32-timer-trigger.yaml#"
-> +  - $ref: "../counter/st,stm32-timer-cnt.yaml#"
-
-This works, but I prefer the child node names be listed under properties 
-here with a ref:
-
-counter:
-  $ref: "../counter/st,stm32-timer-cnt.yaml#"
-
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32-timers
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: int
-> +
-> +  reset:
-> +    maxItems: 1
-> +
-> +  dmas: true
-
-How many?
-
-> +
-> +  dma-names: true
-
-What are the names?
-
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +required:
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/stm32mp1-clks.h>
-> +    timers2: timer@40000000 {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      compatible = "st,stm32-timers";
-> +      reg = <0x40000000 0x400>;
-> +      clocks = <&rcc TIM2_K>;
-> +      clock-names = "int";
-> +      dmas = <&dmamux1 18 0x400 0x1>,
-> +             <&dmamux1 19 0x400 0x1>,
-> +             <&dmamux1 20 0x400 0x1>,
-> +             <&dmamux1 21 0x400 0x1>,
-> +             <&dmamux1 22 0x400 0x1>;
-> +      dma-names = "ch1", "ch2", "ch3", "ch4", "up";
-> +      pwm {
-> +        compatible = "st,stm32-pwm";
-> +        #pwm-cells = <3>;
-> +        st,breakinput = <0 1 5>;
-> +      };
-> +      timer@0 {
-> +        compatible = "st,stm32-timer-trigger";
-> +        reg = <0>;
-> +      };
-> +      counter {
-> +        compatible = "st,stm32-timer-counter";
-> +      };
-> +    };
-> +
-> +...
+--
+Best Regards
+Masahiro Yamada
