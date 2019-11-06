@@ -2,99 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465C6F1C17
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A3B0F1C13
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732259AbfKFRGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:06:31 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43524 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfKFRGa (ORCPT
+        id S1731959AbfKFRGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:06:18 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44096 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbfKFRGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:06:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ezCIO+lFqtUT0UzJR4NajfDokaUzH2Q2R0P2sNn9les=; b=c9wFz4hRgvRc99LLWN/T1GTg+
-        LbpdvxRZK3g+vpD+YTqTSa+GJTHT5hVm86y3as1T4m2JOELIUK0FF8rw0VDuT3Iy+tgOIdR1jI5zl
-        ZiqQOznz4ptyNKfqEwsUv9QGpUtlZcXmciI3WYAzPPNydQ/nNRw5NEG5GtSNfeRBf+z1s=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iSOl4-0001tA-Iy; Wed, 06 Nov 2019 17:06:14 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A3E9E2743035; Wed,  6 Nov 2019 17:06:13 +0000 (GMT)
-Date:   Wed, 6 Nov 2019 17:06:13 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Sanju R Mehta <sanju.mehta@amd.com>, djkurtz@google.com,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/7] ASoC: amd: Enabling I2S instance in
- DMA and DAI
-Message-ID: <20191106170613.GE11849@sirena.co.uk>
-References: <1573137364-5592-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1573137364-5592-4-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <99656586-8512-ed13-6174-12e0b1fbb3dd@linux.intel.com>
+        Wed, 6 Nov 2019 12:06:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id q16so11727950pll.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
+        b=d9cuY1FP9HD7ILAybQhSFr0Z4YgmO46WW7Y1JC1EF9ZqI8QkEG7UAytsoF3RSA9OxL
+         R2tYxPEwPIttunD2NEjJDK4fth8egG2jRYUR+Yp8AqzuxaDU5am84eaEX4gLGUM23toV
+         VfSf2S6X+2gfEftz0WGxj0GKFMmbYZdj9WmKJBvw1ZrkEqtWm2w9PJDweTT2nW3rHZCV
+         L7HqqiJGuhxxswxTmC08yP0uxHeU6vyGThAJYjSGpkycR8Dv19svmhpaP7V1K7nNe/NU
+         1pvUwhqNQ/RM+Y0us5TNL4Isz7CN1X0EqOEdv/GkGFURdkBOsFNTtjv79yEzeFh3nUFK
+         hDQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
+        b=HpNNfW+2kFJh/YfZ/xQS7nOreWLJo8R4Pcs66pC0NM991Q+4xGV10hm9/Mjasyp4wc
+         Q0B3Q6rA7p1hS3QvLhQqYYhKP/jZg7hxAmnDTP3FDwJ6H/16+u+hTJ6FtAm2KvCaJkur
+         Gv2doNJf/SfmKpfnPx4KIamLVvyJWD9Co0Akf7Jj6Qj74S1bOz5+tfN19oU+9hhwJm+J
+         T0jTnzJsu8k4kMzcScrOzwWB2LUna49dnUCuNyq3Elf6OED63NM4Kzt07PYp8KgtplQ8
+         jdkAe4lixxRv9acq5HnJOSJtEdwcesXCwBCLFn51jjJ38BPbIF+UD4/C3AqPir+6yS+/
+         kNNA==
+X-Gm-Message-State: APjAAAUSesRzJhq37FRXYXWgS7Ve2dxZeJcWB2LUw0ej0dzuiAbtz+7V
+        oo0hqSmIk1GlMaNEa0wocQsPbUN4Ci3lGhEzZuacw8vPv8s=
+X-Google-Smtp-Source: APXvYqx3YdptKhgrR51eA4rJBL2k3N7ch1IkE30GUh2q5h7mNJ/5nTGIOXYkHFs4nXUIuSMq0ywT1thqR/6CJUiesDA=
+X-Received: by 2002:a17:902:b28b:: with SMTP id u11mr3615956plr.207.1573059975990;
+ Wed, 06 Nov 2019 09:06:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lteA1dqeVaWQ9QQl"
-Content-Disposition: inline
-In-Reply-To: <99656586-8512-ed13-6174-12e0b1fbb3dd@linux.intel.com>
-X-Cookie: Shah, shah!  Ayatollah you so!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a17:90a:7bc4:0:0:0:0 with HTTP; Wed, 6 Nov 2019 09:06:15
+ -0800 (PST)
+Reply-To: priscalamberth@gmail.com
+From:   "DR. OMAR KALIFA" <baradfufana@gmail.com>
+Date:   Wed, 6 Nov 2019 18:06:15 +0100
+Message-ID: <CADZD1FqgqbeCyOe3d--naagfeGcaQG+dXMUGWbv2CyFOnGEO7A@mail.gmail.com>
+Subject: REQUEST FOR URGENT ASSISTANCE.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+-- 
+Hello,
 
---lteA1dqeVaWQ9QQl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Compliment of the season. My name is Dr. Omar Kalifa. i work with one
+of the reputable banks here in West Africa.I have a lucrative and
+profitable business to discuse with you. Reply if you are intersted
+for more details.
 
-On Wed, Nov 06, 2019 at 10:34:54AM -0600, Pierre-Louis Bossart wrote:
->=20
->=20
-> On 11/7/19 8:36 AM, Ravulapati Vishnu vardhan rao wrote:
-> > This patch adds I2S SP support in ACP PCM DMA and DAI.
-> > Added I2S support in DMA and DAI probe,its hw_params handling
-> > its open and close functionalities.
-
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
---lteA1dqeVaWQ9QQl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3C/YQACgkQJNaLcl1U
-h9ArOQgAht7bgmnQJdpVp5l7IWMftkKi3ziKEPuoEkjW98IEYZ3al7FiJ/Eg+Cc8
-AD8ry73ti7FFnGIgJrCiMZf/eDLbzcZxN+zWCjNmW2s0GozS0N9xw/dEJ97OH01/
-fZNRjMjGmfloux+wZ3o/2OXnMBZEtYBmv62I6Qoc0uRH5boJZAh6RIovWyZgIxWe
-qJ/UmfqFIqf9X+RqDfsgTdB3+qaGkGBWw0o1uMbZunkRHmlouS8tdFPPkP0pPfo2
-wncn1Cmg0HK1iSnDuLghAHWQdxhVdfHn7h6v1ljN7Rr5lIbwVuh4bUYMW9Tdz1PX
-Pz0X5ICSXHDtW7SkjpnACVQ0I/mU0g==
-=2GZw
------END PGP SIGNATURE-----
-
---lteA1dqeVaWQ9QQl--
+Regards,
+Dr. Omar Kalifa
