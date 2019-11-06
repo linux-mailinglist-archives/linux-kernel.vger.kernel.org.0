@@ -2,89 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE54F1BCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E559F1BD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:57:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732324AbfKFQ4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 11:56:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:43158 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732201AbfKFQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 11:56:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 375C746A;
-        Wed,  6 Nov 2019 08:56:52 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CC9B3F719;
-        Wed,  6 Nov 2019 08:56:50 -0800 (PST)
-Date:   Wed, 6 Nov 2019 16:56:48 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, qperret@google.com,
-        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
-        javi.merino@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [Patch v5 4/6] sched/fair: update cpu_capcity to reflect thermal
- pressure
-Message-ID: <20191106165646.vc7j4hbhj2hcrku4@e107158-lin.cambridge.arm.com>
-References: <1572979786-20361-1-git-send-email-thara.gopinath@linaro.org>
- <1572979786-20361-5-git-send-email-thara.gopinath@linaro.org>
+        id S1732331AbfKFQ5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 11:57:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727824AbfKFQ5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 11:57:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=W/jgvGvtlOT33baRLN2nmwKV1/9KU4FO13RDpfuZP1w=; b=SusUVAstNuToStTW3xMVgBKPL
+        L593P0GytU+ai7zW4p4x4eAe57s7aN0WvU42L2RK13FpPrvODwCO2Gul7aD6UT1zdk7UziOcyi8EI
+        56yLui1bzCNrMBImu9kLnZOXGwJ+P3IX94rMJ7a+l/Fczbc3z1Zioce8JaiQ35rnYsmQgl+DSK6de
+        i9cIQOzSOwR2YAwgKC4PY05dE9capBgdV0//9PZXWy3vY8OUsMLIHgL0p0IF3BDxeJxfHV5nlIDf9
+        Ogx8YZ0ctueyo0G8u29sQk1fJFZfkX69aNBU9Yd3rvPzx48nTHtcQNjwGBO5vUI+Avc4zxhwBozdT
+        pX+6LVGJA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSOch-0001Fi-8M; Wed, 06 Nov 2019 16:57:35 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 17366301A79;
+        Wed,  6 Nov 2019 17:56:29 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 24B742025EDA7; Wed,  6 Nov 2019 17:57:33 +0100 (CET)
+Date:   Wed, 6 Nov 2019 17:57:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Quentin Perret <qperret@google.com>, linux-kernel@vger.kernel.org,
+        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
+        pauld@redhat.com, jdesfossez@digitalocean.com,
+        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        kernel-team@android.com, john.stultz@linaro.org
+Subject: Re: NULL pointer dereference in pick_next_task_fair
+Message-ID: <20191106165733.GY4114@hirez.programming.kicks-ass.net>
+References: <20191028174603.GA246917@google.com>
+ <20191106120525.GX4131@hirez.programming.kicks-ass.net>
+ <20191106130838.GL5671@hirez.programming.kicks-ass.net>
+ <20191106150450.fa5ppdejiggsb46a@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1572979786-20361-5-git-send-email-thara.gopinath@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20191106150450.fa5ppdejiggsb46a@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/05/19 13:49, Thara Gopinath wrote:
-> cpu_capacity relflects the maximum available capacity of a cpu. Thermal
-> pressure on a cpu means this maximum available capacity is reduced. This
-> patch reduces the average thermal pressure for a cpu from its maximum
-> available capacity so that cpu_capacity reflects the actual
-> available capacity.
+On Wed, Nov 06, 2019 at 03:04:50PM +0000, Qais Yousef wrote:
+> On 11/06/19 14:08, Peter Zijlstra wrote:
+> > On Wed, Nov 06, 2019 at 01:05:25PM +0100, Peter Zijlstra wrote:
+
+> > > The only thing I'm now considering is if we shouldn't be setting
+> > > ->on_cpu=2 _before_ calling put_prev_task(). I'll go audit the RT/DL
+> > > cases.
+> > 
+> > So I think it all works, but that's more by accident than anything else.
+> > I'll move the ->on_cpu=2 assignment earlier. That clearly avoids calling
+> > put_prev_task() while we're in put_prev_task().
 > 
-> Other signals that are deducted from cpu_capacity to reflect the actual
-> capacity available are rt and dl util_avg. util_avg tracks a binary signal
-> and uses the weights 1024 and 0. Whereas thermal pressure is tracked
-> using load_avg. load_avg uses the actual "delta" capacity as the weight.
+> Did you mean avoids calling *set_next_task()* while we're in put_prev_task()?
 
-I think you intended to put this as comment...
+Either, really. The change pattern does put_prev_task() first, and then
+restores state by calling set_next_task(). And it can do that while
+we're in put_prev_task(), unless we're setting ->on_cpu=2.
 
-> 
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  kernel/sched/fair.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9fb0494..5f6c371 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7738,6 +7738,7 @@ static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
->  
->  	used = READ_ONCE(rq->avg_rt.util_avg);
->  	used += READ_ONCE(rq->avg_dl.util_avg);
-> +	used += READ_ONCE(rq->avg_thermal.load_avg);
+> So what you're saying is that put_prev_task_{rt,dl}() could drop the rq_lock()
+> too and the race could happen while we're inside these functions, correct? Or
+> is it a different reason?
 
-... here?
+Indeed, except it looks like that actually works (mostly by accident).
 
-I find the explanation hard to parse too. Do you think you can rephrase it?
-Something based on what you wrote here would be more understandable IMHO:
-https://lore.kernel.org/lkml/5DBB05BC.40502@linaro.org/
+> By the way, is all reads/writes to ->on_cpu happen when a lock is held? Ie: we
+> don't need to use any smp read/write barriers?
 
-
-Thanks!
-
---
-Qais Yousef
-
->  
->  	if (unlikely(used >= max))
->  		return 1;
-> -- 
-> 2.1.4
-> 
+Yes, ->on_cpu is fully serialized by rq->lock. We use
+smp_store_release() in finish_task() due to ttwu spin-waiting on it
+(which reminds me, riel was seeing lots of that).
