@@ -2,147 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E62CDF0C7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 125DAF0C96
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:08:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387934AbfKFDHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:07:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:41418 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387917AbfKFDHg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:07:36 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7FD8720B7192;
-        Tue,  5 Nov 2019 19:07:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7FD8720B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573009655;
-        bh=t+UX8ssq46MLjcIIguwgYQLFTqBQfN20laK/0LJnJMk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=b5tCaED+1a14jU4yDtJu7DHZpYKeU9bgyFe7/6cyEQ9AMFm/YaUzZN3tW3ammEHen
-         3XQnptYEN3Xga6e/24SucJMjEQ/auFnVvUJ7eTfQW8LMG1nQVLpe/LyWzLc6mUNPRR
-         6zW1QXKCY3gFLNwPy+gFg1B+uGOBz9wacrmAJUWA=
-Subject: Re: [PATCH v6 1/4] powerpc/powernv: Add OPAL API interface to access
- secure variable
-To:     Eric Richter <erichte@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        id S2388204AbfKFDIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:08:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388166AbfKFDIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 22:08:17 -0500
+Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C36F3217F4;
+        Wed,  6 Nov 2019 03:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573009696;
+        bh=5ECmT8FGRoGD6l/D6ITTUE2Q2jjqPWMI3DiUs4PR6cw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CJ15ziau/jYm63JLGehDix5QfhcY1Uca/GkRGHKleOhRMHRtCMJg7JAwaq+dS9t+h
+         Vls8DVe4fIVT6UC3Hjq5zjNv5iCTTeZ4VUz3nQxrFm71Tp2TMfAp0XpBiJjwIJw5/1
+         7CMBv/m8J7XABRZNFcOrXjV4hMrMjiqYIIsyLgGE=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20191105082450.14746-1-erichte@linux.ibm.com>
- <20191105082450.14746-2-erichte@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <3d2e3792-e78e-95a8-623e-1ddcf3ccf241@linux.microsoft.com>
-Date:   Tue, 5 Nov 2019 19:07:55 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH 0/9] sched/nohz: Make the rest of kcpustat vtime aware
+Date:   Wed,  6 Nov 2019 04:07:58 +0100
+Message-Id: <20191106030807.31091-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191105082450.14746-2-erichte@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/2019 12:24 AM, Eric Richter wrote:
+So we fixed CPUTIME_SYSTEM on nohz_full, now is the turn for
+CPUTIME_USER, CPUTIME_NICE, CPUTIME_GUEST and CPUTIME_GUEST_NICE.
 
-> From: Nayna Jain <nayna@linux.ibm.com>
-> 
-> The X.509 certificates trusted by the platform and required to secure boot
-> the OS kernel are wrapped in secure variables, which are controlled by
-> OPAL.
-> 
-> This patch adds firmware/kernel interface to read and write OPAL secure
-> variables based on the unique key.
+The tricky piece was to handle "nice-ness" correctly. I think I addressed
+most reviews (one year ago now) from peterz
+(https://lore.kernel.org/lkml/20181120141754.GW2131@hirez.programming.kicks-ass.net/)
+Among which:
 
-I feel splitting this patch into smaller set of changes would make it 
-easier to review. For instance roughly as below:
+* Merge patches that didn't make sense together
+* Clarify the changelog (I hope) and add comments
+* Also hook nice updates on __setscheduler_params()
+* Uninline a big function
 
-  1, opal-api.h which adds the #defines  OPAL_SECVAR_ and the API signature.
-  2, secvar.h then adds secvar_operations struct
-  3, powerpc/kernel for the Interface definitions
-  4, powernv/opal-secvar.c for the API implementations
-  5, powernv/opal-call.c for the API calls
-  6, powernv/opal.c for the secvar init calls.
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
+	nohz/kcpustat-v3
 
-> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-> index 378e3997845a..c1f25a760eb1 100644
-> --- a/arch/powerpc/include/asm/opal-api.h
-> +++ b/arch/powerpc/include/asm/opal-api.h
-> @@ -211,7 +211,10 @@
->   #define OPAL_MPIPL_UPDATE			173
->   #define OPAL_MPIPL_REGISTER_TAG			174
->   #define OPAL_MPIPL_QUERY_TAG			175
-> -#define OPAL_LAST				175
-> +#define OPAL_SECVAR_GET				176
-> +#define OPAL_SECVAR_GET_NEXT			177
-> +#define OPAL_SECVAR_ENQUEUE_UPDATE		178
-> +#define OPAL_LAST				178
+HEAD: cfd377b0f261f1107ba5f3d2cf68a8ac5f359943
 
-Please fix the indentation for the #defines
+Thanks,
+	Frederic
+---
+
+Frederic Weisbecker (9):
+      sched/cputime: Allow to pass cputime index on user/guest accounting
+      sched/cputime: Standardize the kcpustat index based accounting functions
+      sched/vtime: Handle nice updates under vtime
+      sched/cputime: Support other fields on kcpustat_field()
+      sched/vtime: Bring all-in-one kcpustat accessor for vtime fields
+      procfs: Use all-in-one vtime aware kcpustat accessor
+      cpufreq: Use vtime aware kcpustat accessors for user time
+      leds: Use all-in-one vtime aware kcpustat accessor
+      rackmeter: Use vtime aware kcpustat accessor
 
 
-> +static int opal_get_variable(const char *key, uint64_t ksize,
-> +			     u8 *data, uint64_t *dsize)
-> +{
-> +	int rc;
-> +
-> +	if (!key || !dsize)
-> +		return -EINVAL;
-> +
-> +	*dsize = cpu_to_be64(*dsize);
-> +
-> +	rc = opal_secvar_get(key, ksize, data, dsize);
-> +
-> +	*dsize = be64_to_cpu(*dsize);
-
-Should the return status (rc) from opal_secvar_get be checked before 
-attempting to do the conversion (be64_to_cpu)?
-
-> +static int opal_get_next_variable(const char *key, uint64_t *keylen,
-> +				  uint64_t keybufsize)
-> +{
-> +	int rc;
-> +
-> +	if (!key || !keylen)
-> +		return -EINVAL;
-> +
-> +	*keylen = cpu_to_be64(*keylen);
-> +
-> +	rc = opal_secvar_get_next(key, keylen, keybufsize);
-> +
-> +	*keylen = be64_to_cpu(*keylen);
-
-Same comment as above - should rc be checke before attempting to convert?
-
-> +
-> +	return opal_status_to_err(rc);
-> +}
-> +
-> +static int opal_set_variable(const char *key, uint64_t ksize, u8 *data,
-> +			     uint64_t dsize)
-> +{
-> +	int rc;
-> +
-> +	if (!key || !data)
-> +		return -EINVAL;
-
-Is the key and data received here from a trusted caller? If not, should 
-there be some validation checks done here before enqueuing the data?
-
-  -lakshmi
-
+ arch/ia64/kernel/time.c                 |   6 +-
+ arch/powerpc/kernel/time.c              |   6 +-
+ arch/s390/kernel/vtime.c                |   2 +-
+ drivers/cpufreq/cpufreq.c               |  13 +-
+ drivers/cpufreq/cpufreq_governor.c      |   6 +-
+ drivers/leds/trigger/ledtrig-activity.c |   9 +-
+ drivers/macintosh/rack-meter.c          |   7 +-
+ fs/proc/stat.c                          |  20 +-
+ include/linux/kernel_stat.h             |  25 ++-
+ include/linux/sched.h                   |   1 +
+ include/linux/vtime.h                   |   2 +
+ kernel/sched/core.c                     |  16 +-
+ kernel/sched/cputime.c                  | 378 ++++++++++++++++++++++++++------
+ kernel/sched/sched.h                    |  18 ++
+ 14 files changed, 412 insertions(+), 97 deletions(-)
