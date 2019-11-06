@@ -2,91 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E559F1BD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7296F1BDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbfKFQ5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 11:57:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43620 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727824AbfKFQ5o (ORCPT
+        id S1732254AbfKFQ7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 11:59:49 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:56885 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbfKFQ7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 11:57:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W/jgvGvtlOT33baRLN2nmwKV1/9KU4FO13RDpfuZP1w=; b=SusUVAstNuToStTW3xMVgBKPL
-        L593P0GytU+ai7zW4p4x4eAe57s7aN0WvU42L2RK13FpPrvODwCO2Gul7aD6UT1zdk7UziOcyi8EI
-        56yLui1bzCNrMBImu9kLnZOXGwJ+P3IX94rMJ7a+l/Fczbc3z1Zioce8JaiQ35rnYsmQgl+DSK6de
-        i9cIQOzSOwR2YAwgKC4PY05dE9capBgdV0//9PZXWy3vY8OUsMLIHgL0p0IF3BDxeJxfHV5nlIDf9
-        Ogx8YZ0ctueyo0G8u29sQk1fJFZfkX69aNBU9Yd3rvPzx48nTHtcQNjwGBO5vUI+Avc4zxhwBozdT
-        pX+6LVGJA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSOch-0001Fi-8M; Wed, 06 Nov 2019 16:57:35 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 17366301A79;
-        Wed,  6 Nov 2019 17:56:29 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 24B742025EDA7; Wed,  6 Nov 2019 17:57:33 +0100 (CET)
-Date:   Wed, 6 Nov 2019 17:57:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Quentin Perret <qperret@google.com>, linux-kernel@vger.kernel.org,
-        aaron.lwe@gmail.com, valentin.schneider@arm.com, mingo@kernel.org,
-        pauld@redhat.com, jdesfossez@digitalocean.com,
-        naravamudan@digitalocean.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        kernel-team@android.com, john.stultz@linaro.org
-Subject: Re: NULL pointer dereference in pick_next_task_fair
-Message-ID: <20191106165733.GY4114@hirez.programming.kicks-ass.net>
-References: <20191028174603.GA246917@google.com>
- <20191106120525.GX4131@hirez.programming.kicks-ass.net>
- <20191106130838.GL5671@hirez.programming.kicks-ass.net>
- <20191106150450.fa5ppdejiggsb46a@e107158-lin.cambridge.arm.com>
+        Wed, 6 Nov 2019 11:59:49 -0500
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id xA6Gwo9C007338
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 Nov 2019 17:58:50 +0100
+Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id xA6Gwk4g089756
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
+        Wed, 6 Nov 2019 17:58:46 +0100
+Subject: Re: [PATCH bpf-next v13 4/7] landlock: Add ptrace LSM hooks
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>, bpf@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+References: <20191104172146.30797-1-mic@digikod.net>
+ <20191104172146.30797-5-mic@digikod.net>
+ <20191105171824.dfve44gjiftpnvy7@ast-mbp.dhcp.thefacebook.com>
+ <23acf523-dbc4-855b-ca49-2bbfa5e7117e@digikod.net>
+ <20191106101558.GA19467@chromium.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Openpgp: preference=signencrypt
+Message-ID: <026b6f3f-d17a-d50e-4793-a76e6719cc1f@digikod.net>
+Date:   Wed, 6 Nov 2019 17:58:46 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106150450.fa5ppdejiggsb46a@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191106101558.GA19467@chromium.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 03:04:50PM +0000, Qais Yousef wrote:
-> On 11/06/19 14:08, Peter Zijlstra wrote:
-> > On Wed, Nov 06, 2019 at 01:05:25PM +0100, Peter Zijlstra wrote:
 
-> > > The only thing I'm now considering is if we shouldn't be setting
-> > > ->on_cpu=2 _before_ calling put_prev_task(). I'll go audit the RT/DL
-> > > cases.
-> > 
-> > So I think it all works, but that's more by accident than anything else.
-> > I'll move the ->on_cpu=2 assignment earlier. That clearly avoids calling
-> > put_prev_task() while we're in put_prev_task().
+On 06/11/2019 11:15, KP Singh wrote:
+> On 05-Nov 19:01, Mickaël Salaün wrote:
+>> On 05/11/2019 18:18, Alexei Starovoitov wrote:
+
+[...]
+
+>>>
+>>> I think the only way bpf-based LSM can land is both landlock and KRSI
+>>> developers work together on a design that solves all use cases.
+>>
+>> As I said in a previous cover letter [1], that would be great. I think
+>> that the current Landlock bases (almost everything from this series
+>> except the seccomp interface) should meet both needs, but I would like
+>> to have the point of view of the KRSI developers.
 > 
-> Did you mean avoids calling *set_next_task()* while we're in put_prev_task()?
+> As I mentioned we are willing to collaborate but the current landlock
+> patches does not meet the needs for KRSI:
+> 
+> * One program type per use-case (eg. LANDLOCK_PROG_PTRACE) as opposed to
+>   a single program type. This is something that KRSI proposed in it's
+>   initial design [1] and the new common "eBPF + LSM" based approach
+>   [2] would maintain as well.
 
-Either, really. The change pattern does put_prev_task() first, and then
-restores state by calling set_next_task(). And it can do that while
-we're in put_prev_task(), unless we're setting ->on_cpu=2.
+As ask in my previous email [1], I don't see how KRSI would efficiently
+deal with other LSM hooks with a unique program (attach) type.
 
-> So what you're saying is that put_prev_task_{rt,dl}() could drop the rq_lock()
-> too and the race could happen while we're inside these functions, correct? Or
-> is it a different reason?
+[1]
+https://lore.kernel.org/lkml/813cedde-8ed7-2d3b-883d-909efa978d41@digikod.net/
 
-Indeed, except it looks like that actually works (mostly by accident).
+> 
+> * Landlock chooses to have multiple LSM hooks per landlock hook which is
+>   more restrictive. It's not easy to write precise MAC and Audit
+>   policies for a privileged LSM based on this and this ends up bloating
+>   the context that needs to be maintained and requires avoidable
+>   boilerplate work in the kernel.
 
-> By the way, is all reads/writes to ->on_cpu happen when a lock is held? Ie: we
-> don't need to use any smp read/write barriers?
+Why do you think it is more restrictive or it adds boilerplate work? How
+does KRSI will deal with more complex hooks than execve-like with
+multiple kernel objects?
 
-Yes, ->on_cpu is fully serialized by rq->lock. We use
-smp_store_release() in finish_task() due to ttwu spin-waiting on it
-(which reminds me, riel was seeing lots of that).
+
+> 
+> [1] https://lore.kernel.org/patchwork/project/lkml/list/?series=410101
+> [2] https://lore.kernel.org/bpf/20191106100655.GA18815@chromium.org/T/#u
+> 
+> - KP Singh
