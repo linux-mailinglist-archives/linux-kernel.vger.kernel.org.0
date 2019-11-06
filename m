@@ -2,123 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEE3F1208
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 905A1F1217
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:24:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbfKFJWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 04:22:13 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51990 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfKFJWM (ORCPT
+        id S1728140AbfKFJX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 04:23:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41330 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbfKFJX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 04:22:12 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA69M1wk068510;
-        Wed, 6 Nov 2019 03:22:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573032122;
-        bh=nDCiTg+AGtGr0dZ/+jhmDYrrfhHz9pKeKyYvNkCel2k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=I8DryP5b7FZM8h0XiWnOIVcVIAcYzWX26Z4VQOGDAZiTfya0SATzcxInZt5vYEX/d
-         6N3ancFsu5pKs3fQLUxotE+jvopwpB2E1zavF1HdEKjHk2L5t6KSf/GddZlp0Z7Hrc
-         4bpTe6F1y/XVHGGeJ8RMW6YIa927OzRGrCYRyQ4E=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA69M1t6009702
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Nov 2019 03:22:01 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
- 2019 03:21:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 6 Nov 2019 03:21:46 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA69Lw8s101919;
-        Wed, 6 Nov 2019 03:21:58 -0600
-Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Brown <broonie@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
- <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
- <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
- <20191030141736.GN4568@sirena.org.uk>
- <f9c181d1-5e0c-5e82-a740-f4e97822604f@ti.com>
- <CAL_JsqJ4WdaRvmZcjQG-jVyOOeKZX9fn1WcQZGWfUPqwunQCFw@mail.gmail.com>
- <1258a5bf-a829-d47a-902f-bf2c3db07513@ti.com>
- <CAL_Jsq+V0oAdVCaW+S12CUa4grCJhZD8OGDeu=0ohcGgxOkPVg@mail.gmail.com>
- <5669a4c1-2bc1-423b-1407-073317f7df7e@ti.com>
- <CAL_JsqJbhG+-zVs9bjHg8asGuM1+FNnGJ0xx7qcPBwuRX35ijw@mail.gmail.com>
- <CACRpkdbiG5mt3WGEeHWsu-L3dzQJUQjxjGwQXK0cLgZNZ74yWg@mail.gmail.com>
- <109f9ff2-81e0-6d3d-db60-d48cb0a4e74f@ti.com>
- <ffb8e042-7f22-0e6e-f855-afa0dc3236bb@ti.com>
- <61c8c126-3061-e297-8dab-7333316b0754@ti.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <e209692a-18a3-4079-fda7-1cc7b6b74667@ti.com>
-Date:   Wed, 6 Nov 2019 11:23:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 6 Nov 2019 04:23:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dZAvUYDePFsqcqkjX6yNxgsmYiIMmUcwPOFdzrAXXu4=; b=GG/e9clQsUsKdrpSf3iPml1VC
+        7JsEg1rFXmLJpheGRfp3a5aFxDX3xvWBVEdsOxjixgv3baBpShQPTo1XBy2bDUzS144dBcmfRUhse
+        OOIFW8m7FkZHLzlFHL514g/oU88KsD5KN5R/WVbrv8n03Ua6YbXEZAmTCNpBkv0OxFctdhy+2Z+6i
+        a52KD0IvC0w6PE8WOw3b53HNxplzezNOL+WxXFEvebzaj+iBojvBGn4OTibQH3Js8Mx4T1vAJYefI
+        aYa3DwMH8lWj4B4/CHew3QDr2HDDqmMc5RuddVfWcDa6ydVib1pQMicA/ZgKnmMHYu2G/3QaMEXgy
+        4sg1eyrYA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSHXe-0005dK-BV; Wed, 06 Nov 2019 09:23:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8C5BF301A79;
+        Wed,  6 Nov 2019 10:22:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 981E229A4C2C7; Wed,  6 Nov 2019 10:23:52 +0100 (CET)
+Date:   Wed, 6 Nov 2019 10:23:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     mingo@redhat.com, andi@firstfloor.org, acme@kernel.org,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] perf/core: fix unlock balance in perf_init_event
+Message-ID: <20191106092352.GU4131@hirez.programming.kicks-ass.net>
+References: <20191106052935.8352-1-cai@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <61c8c126-3061-e297-8dab-7333316b0754@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106052935.8352-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/11/2019 20.07, Grygorii Strashko wrote:
->>> (but hey - if this is boot only then gpio-hogs should work. Are they?)
->>
->> That is another thing which almost works ;)
->> w/o gpio binding deferred probing is not possible if the GPIO controller
->> is probed later.
->> In some cases it might be even impossible to make sure that the GPIO
->> controller would probe first (GPIO extender on different i2c bus than
->> the user(s) of the gpio line)
->> In some cases moving around nodes in DT might artificially make things
->> work, but then someone compiles the expander as module, or some 'small'
->> change in kernel and the probe order on the bus changes.
->> I don't think it is a valid thing to have commits on the DT files
->> saying: move the expander front/after the hog affected user since since
->> Monday the probe order has changed. Then move it back two weeks later ;)
->>
+On Wed, Nov 06, 2019 at 12:29:35AM -0500, Qian Cai wrote:
+> The -next commit "perf/core: Optimize perf_init_event()" [1] introduced
+> an unlock imbalance in perf_init_event() where it calls "goto again" and
+> then only repeat rcu_read_unlock().
 > 
-> Ok. Above sounds like real problem. The implicit dependence is exist,
-> but can't
-> be resolved if any driver depends on gpio-hog of some gpio-controller.
-> Probe deferring of gpio-controller will not lead to probe differing of
-> dependent driver.
+>   WARNING: bad unlock balance detected!
+>   perf_event_open/6185 is trying to release lock (rcu_read_lock) at:
+>   [<ffffffffb5eb4039>] perf_event_alloc+0xbb9/0x17f0
+>   but there are no more locks to release!
+>   other info that might help us debug this:
+>   2 locks held by perf_event_open/6185:
+>   #0: ffff888526780b50 (&sig->cred_guard_mutex){+.+.}, at: __do_sys_perf_event_open+0x6ee/0x1460
+>   #1: ffffffffb866b4e8 (&pmus_srcu){....}, at: perf_event_alloc+0xab8/0x17f0
+>   Call Trace:
+>    dump_stack+0xa0/0xea
+>    print_unlock_imbalance_bug.cold.40+0xb1/0xb6
+>    lock_release+0x349/0x4b0
+>    perf_event_alloc+0xbcf/0x17f0
+>    __do_sys_perf_event_open+0x1e2/0x1460
+>    __x64_sys_perf_event_open+0x62/0x70
+>    do_syscall_64+0xcc/0xaec
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
 > 
-> Question: will gpio-hog mechanism resolve your case if it works (and
-> probe differing issues)?
+> [1] https://lore.kernel.org/lkml/20191022092307.425783389@infradead.org/
 
-I see gpio-hog to fulfill different role, use cases. It is more like
-controlling muxes on boards to select between different exclusive
-features. Things like route the I2S lines to analog codec or HDMI, route
-RGB video to LCD panel or to HDMI, etc.
+You wanted to write:
 
-But, if it would work it could be used for components which can be
-enabled all the time. On the other hand, if a device has reset/enable
-line then the driver should have a way to control it.
+Fixes: 66d258c5b048 ("perf/core: Optimize perf_init_event()")
 
-- Péter
+instead, right? Fixed that for you.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  kernel/events/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cfd89b4a02d8..8226d6ecdb86 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10307,7 +10307,6 @@ static struct pmu *perf_init_event(struct perf_event *event)
+>  			goto unlock;
+>  	}
+>  
+> -	rcu_read_lock();
+>  	/*
+>  	 * PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE
+>  	 * are often aliases for PERF_TYPE_RAW.
+> @@ -10317,6 +10316,7 @@ static struct pmu *perf_init_event(struct perf_event *event)
+>  		type = PERF_TYPE_RAW;
+>  
+>  again:
+> +	rcu_read_lock();
+>  	pmu = idr_find(&pmu_idr, type);
+>  	rcu_read_unlock();
+>  	if (pmu) {
+> -- 
+> 2.21.0 (Apple Git-122)
+> 
