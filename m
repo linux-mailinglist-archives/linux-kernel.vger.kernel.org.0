@@ -2,121 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE4DF0B46
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 01:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30DFAF0B49
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 01:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfKFAuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 19:50:12 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50336 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727046AbfKFAuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 19:50:12 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 13411F21071883A3EAD7;
-        Wed,  6 Nov 2019 08:50:10 +0800 (CST)
-Received: from [127.0.0.1] (10.63.139.185) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 6 Nov 2019
- 08:50:04 +0800
-Subject: Re: [PATCH -next] crypto: hisilicon: move label err to #ifdef
- CONFIG_NUMA
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mao Wenan <maowenan@huawei.com>
-References: <20191105143340.32950-1-maowenan@huawei.com>
- <20191105145602.GH10409@kadam>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <tanshukun1@huawei.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-Message-ID: <5DC218BB.3080001@hisilicon.com>
-Date:   Wed, 6 Nov 2019 08:50:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1730400AbfKFAxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 19:53:38 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44012 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfKFAxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Nov 2019 19:53:38 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l20so7333218oie.10
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 16:53:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P9Pg0JQBq9olWzIox809pWVr9m3m9tTHnVzraba7SzM=;
+        b=lW8QRsc5AkkZwfN0feDJmRYBr3aYw7pQal8SFSlGBYYB5pyPFlopEm3/fY102S85OD
+         +GWLcgmMtSMJV+7e1b1kHUpvmZQSyGVCJhYvC1KfFxkcd0V7vZKQUjGEzoySz94SNvi+
+         QjCHudKIe5fbXdlgnze8ffVrk8Kg/5tpVZuaywZV+uSdPNEHevH78VeZt5lYrEWYCO6U
+         cMCH0DjXBXYf8u0XGgjKEbbxEmYRI9JdfUYlkFxuCqFN1pXZ5YxDlvyuZ1mQMg1KY2m4
+         hC7Cq+jZvnwOXPVb927XxC86sRxXLQmgAEGEnBbKBhsuvffUUtRe8yEezM5ua+HdcEkZ
+         +s+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=P9Pg0JQBq9olWzIox809pWVr9m3m9tTHnVzraba7SzM=;
+        b=b1eLBPcFT4RH+aHA0Asz4gq2gNUdGyj9Pbv8wyGFaMZ1izJxDiAdBqyu1LxTwq/Xw/
+         At02YRU04me4kFwHZNV7+DMbFJ3NMX30Gnl5YEdz+IewARQWYY4Wpp4vfE16GgpAqc3l
+         NJSxSst7Bw069tGMQxd4G4HimU0LGKfDY2blapyUKFucOt5XYKe41VGvFK3eqGopYGy2
+         s2h97ZWJZY5f4NkJrJkaFkQSw/SoXW1ocZ7nUqKG0OMyDqQugqiwD8TZZxGmxnLXAkwa
+         5yWrevX3m5KjkSKkibZD8jowJ9+KvvzQmEcYR+s5AZn45W/BoIsv9IHH/IDA4TnqkBaU
+         szBw==
+X-Gm-Message-State: APjAAAUMxZuMMsflfYBNzfQtjwjqrWbFsW3nfMLOed/3sbSR99My/oQT
+        uoF87ubLIvHrnvEASMP1MfmdniA=
+X-Google-Smtp-Source: APXvYqw5BBxvW9KfjRdTCsJ0Opct2+UrH4BnJ/XsbHqv05DiaZYEZmhjOaQY6LKSrI56LdVdFfjZbg==
+X-Received: by 2002:aca:3889:: with SMTP id f131mr124947oia.14.1573001615578;
+        Tue, 05 Nov 2019 16:53:35 -0800 (PST)
+Received: from serve.minyard.net ([47.184.136.59])
+        by smtp.gmail.com with ESMTPSA id v13sm1308951ota.53.2019.11.05.16.53.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 16:53:34 -0800 (PST)
+Received: from minyard.net (unknown [192.168.27.180])
+        by serve.minyard.net (Postfix) with ESMTPSA id E48E6180044;
+        Wed,  6 Nov 2019 00:53:33 +0000 (UTC)
+Date:   Tue, 5 Nov 2019 18:53:32 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Vijay Khemka <vijaykhemka@fb.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, cminyard@mvista.com,
+        asmaa@mellanox.com, joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
+        sdasari@fb.com
+Subject: Re: [PATCH] drivers: ipmi: Support for both IPMB Req and Resp
+Message-ID: <20191106005332.GA2754@minyard.net>
+Reply-To: minyard@acm.org
+References: <20191105194732.1521963-1-vijaykhemka@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20191105145602.GH10409@kadam>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.139.185]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105194732.1521963-1-vijaykhemka@fb.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/11/5 22:56, Dan Carpenter wrote:
-> The ifdefs in this function were pretty ugly before but this makes it
-> super extra ugly...  :/  There are bunch of ways to fix this nicely
-> but my favourite is this:
+On Tue, Nov 05, 2019 at 11:47:31AM -0800, Vijay Khemka wrote:
+> Removed check for request or response in IPMB packets coming from
+> device as well as from host. Now it supports both way communication
+> to device via IPMB. Both request and response will be passed to
+> application.
 > 
-> Feel free to give me a Suggested-by tag.
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+>  drivers/char/ipmi/ipmb_dev_int.c | 29 +----------------------------
+>  1 file changed, 1 insertion(+), 28 deletions(-)
 > 
-> diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-> index 255b63cfbe1d..1b22f0ead56e 100644
-> --- a/drivers/crypto/hisilicon/zip/zip_main.c
-> +++ b/drivers/crypto/hisilicon/zip/zip_main.c
-> @@ -105,20 +105,27 @@ static void free_list(struct list_head *head)
->  struct hisi_zip *find_zip_device(int node)
->  {
->  	struct hisi_zip *ret = NULL;
-> -#ifdef CONFIG_NUMA
->  	struct hisi_zip_resource *res, *tmp;
->  	struct hisi_zip *hisi_zip;
->  	struct list_head *n;
->  	struct device *dev;
->  	LIST_HEAD(head);
+> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+> index 285e0b8f9a97..7201fdb533d8 100644
+> --- a/drivers/char/ipmi/ipmb_dev_int.c
+> +++ b/drivers/char/ipmi/ipmb_dev_int.c
+> @@ -133,9 +133,6 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
+>  	rq_sa = GET_7BIT_ADDR(msg[RQ_SA_8BIT_IDX]);
+>  	netf_rq_lun = msg[NETFN_LUN_IDX];
 >  
-> +	if (!IS_ENABLED(CONFIG_NUMA)) {
-> +		mutex_lock(&hisi_zip_list_lock);
-> +		ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
-> +		mutex_unlock(&hisi_zip_list_lock);
-> +		return ret;
-> +	}
-> +
->  	mutex_lock(&hisi_zip_list_lock);
->  
->  	list_for_each_entry(hisi_zip, &hisi_zip_list, list) {
->  		res = kzalloc(sizeof(*res), GFP_KERNEL);
-> -		if (!res)
-> -			goto err;
+> -	if (!(netf_rq_lun & NETFN_RSP_BIT_MASK))
+> -		return -EINVAL;
 > -
-> +		if (!res) {
-> +			ret = NULL;
-> +			goto done;
-> +		}
->  		dev = &hisi_zip->qm.pdev->dev;
->  		res->hzip = hisi_zip;
->  		res->distance = node_distance(dev->numa_node, node);
-> @@ -140,20 +147,10 @@ struct hisi_zip *find_zip_device(int node)
->  		}
->  	}
->  
-> +done:
->  	free_list(&head);
-> -#else
-> -	mutex_lock(&hisi_zip_list_lock);
-> -
-> -	ret = list_first_entry(&hisi_zip_list, struct hisi_zip, list);
-> -#endif
->  	mutex_unlock(&hisi_zip_list_lock);
-> -
->  	return ret;
-> -
-> -err:
-> -	free_list(&head);
-> -	mutex_unlock(&hisi_zip_list_lock);
-> -	return NULL;
+>  	/*
+>  	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
+>  	 * i2c_smbus_xfer
+> @@ -203,28 +200,6 @@ static u8 ipmb_verify_checksum1(struct ipmb_dev *ipmb_dev, u8 rs_sa)
+>  		ipmb_dev->request.checksum1);
 >  }
 >  
->  struct hisi_zip_hw_error {
+> -static bool is_ipmb_request(struct ipmb_dev *ipmb_dev, u8 rs_sa)
+> -{
+> -	if (ipmb_dev->msg_idx >= IPMB_REQUEST_LEN_MIN) {
+> -		if (ipmb_verify_checksum1(ipmb_dev, rs_sa))
+> -			return false;
+
+You still need to check the message length and checksum, you just need
+to ignore the req/resp bit.
+
+-corey
+
+> -
+> -		/*
+> -		 * Check whether this is an IPMB request or
+> -		 * response.
+> -		 * The 6 MSB of netfn_rs_lun are dedicated to the netfn
+> -		 * while the remaining bits are dedicated to the lun.
+> -		 * If the LSB of the netfn is cleared, it is associated
+> -		 * with an IPMB request.
+> -		 * If the LSB of the netfn is set, it is associated with
+> -		 * an IPMB response.
+> -		 */
+> -		if (!(ipmb_dev->request.netfn_rs_lun & NETFN_RSP_BIT_MASK))
+> -			return true;
+> -	}
+> -	return false;
+> -}
+> -
+>  /*
+>   * The IPMB protocol only supports I2C Writes so there is no need
+>   * to support I2C_SLAVE_READ* events.
+> @@ -273,9 +248,7 @@ static int ipmb_slave_cb(struct i2c_client *client,
+>  
+>  	case I2C_SLAVE_STOP:
+>  		ipmb_dev->request.len = ipmb_dev->msg_idx;
+> -
+> -		if (is_ipmb_request(ipmb_dev, GET_8BIT_ADDR(client->addr)))
+> -			ipmb_handle_request(ipmb_dev);
+> +		ipmb_handle_request(ipmb_dev);
+>  		break;
+>  
+>  	default:
+> -- 
+> 2.17.1
 > 
-> 
-> .
-> 
-
-Hi Mao and Dan,
-
-I already posted a patch to fix this problem:
-[PATCH] crypto: hisilicon - replace #ifdef with IS_ENABLED for CONFIG_NUMA
-
-Many thanks for your help,
-Zhou
-
