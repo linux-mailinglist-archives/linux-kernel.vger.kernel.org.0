@@ -2,123 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3ACF220D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:45:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12563F2205
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732793AbfKFWpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:45:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727154AbfKFWpI (ORCPT
+        id S1732741AbfKFWny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:43:54 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45803 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732658AbfKFWnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:45:08 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA6MggIv103088
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Nov 2019 17:45:04 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w44af5csj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 17:45:04 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 6 Nov 2019 22:45:02 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Nov 2019 22:45:00 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA6MixhP55640138
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Nov 2019 22:44:59 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F376A4076;
-        Wed,  6 Nov 2019 22:44:59 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55B85A406F;
-        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
-Received: from dhcp-9-31-102-173.watson.ibm.com (unknown [9.31.102.173])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
-Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on
- key create or update
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191106190116.2578-2-nramas@linux.microsoft.com>
-References: <20191106190116.2578-1-nramas@linux.microsoft.com>
-         <20191106190116.2578-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 06 Nov 2019 17:43:09 -0500
-Mime-Version: 1.0
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19110622-0012-0000-0000-000003615CB7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19110622-0013-0000-0000-0000219CBB65
-Message-Id: <1573080189.5028.313.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911060218
+        Wed, 6 Nov 2019 17:43:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573080232;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ehcenr1LSi0upLqj9Lbf+2rbNqzvy+MiD6O9YRzn41o=;
+        b=bVqZ07QDFK2H6WT9tcBkkpuksqLdnfHSfZht245cVDpjAwwRafqTzogKIdl7Iuy4X1tBAB
+        tgxwp04BC4tYkV0L703VqE160T3QsImwdAVug6FCho2z6yRuC2KzX/p7HbVuRz3n/1heKZ
+        sqIlAOFoSgzUJ8lqJDkPwlKX4DDGlsE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-361-qna9tDmHOLalurHbBo30iQ-1; Wed, 06 Nov 2019 17:43:49 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 053098017E0;
+        Wed,  6 Nov 2019 22:43:48 +0000 (UTC)
+Received: from dustball.brq.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF7CE5C296;
+        Wed,  6 Nov 2019 22:43:43 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     peterz@infradead.org, dvhart@infradead.org, longman@redhat.com,
+        linux-kernel@vger.kernel.org, jstancek@redhat.com
+Subject: [RFC PATCH] futex: don't retry futex_wait() with stale uaddr/val after spurious wakeup
+Date:   Wed,  6 Nov 2019 23:43:19 +0100
+Message-Id: <9179dbc3505e1de99ee36b09b0a12995239d73c3.1573079868.git.jstancek@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: qna9tDmHOLalurHbBo30iQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-06 at 11:01 -0800, Lakshmi Ramasubramanian wrote:
-> Asymmetric keys used for verifying file signatures or certificates
-> are currently not included in the IMA measurement list.
-> 
-> This patch defines a new IMA hook namely ima_post_key_create_or_update()
-> to measure asymmetric keys.
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_main.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index d7e987baf127..a0e233afe876 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -721,6 +721,22 @@ void ima_kexec_cmdline(const void *buf, int size)
->  					   KEXEC_CMDLINE, 0);
->  }
->  
-> +/**
-> + * ima_post_key_create_or_update - measure asymmetric keys
-> + * @keyring: keyring to which the key is linked to
-> + * @key: created or updated key
-> + * @flags: key flags
-> + * @create: flag indicating whether the key was created or updated
-> + *
-> + * Keys can only be measured, not appraised.
-> + */
-> +void ima_post_key_create_or_update(struct key *keyring, struct key *key,
-> +				   unsigned long flags, bool create)
-> +{
-> +	if ((keyring != NULL) && (key != NULL))
-> +		return;
+Assume following scenario: process A is sleeping on futex (uaddr1)
+inside futex_wait(). Process B requeues this waiter via FUTEX_CMP_REQUEUE
+to uaddr2, but doesn't wake it up. Later, process A spuriously wakes up
+and futex_wait() retries to queue again with same uaddr1/val1:
+        if (!signal_pending(current))
+                goto retry;
 
-I would move the patch that defines the "keyring=" policy option prior
-to this one.  Include the call to process_buffer_measurement() in this
-patch.  A subsequent patch would add support to defer measuring the
-key, by calling a function named something like
-ima_queue_key_measurement().
+Problem: Userspace fails to wake process A with futex(uaddr2, FUTEX_WAKE)
 
-Mimi
+Store target uaddr/val in futex_requeue() and let futex_wait()
+retry after spurious wake up using stored values.
 
-> +}
-> +
->  static int __init init_ima(void)
->  {
->  	int error;
+Fixes: d58e6576b0de ("futex: Handle spurious wake up")
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Waiman Long <longman@redhat.com>
+---
+ kernel/futex.c | 52 +++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 19 deletions(-)
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index bd18f60e4c6c..c13cfee25d35 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -237,6 +237,9 @@ struct futex_q {
+ =09struct rt_mutex_waiter *rt_waiter;
+ =09union futex_key *requeue_pi_key;
+ =09u32 bitset;
++
++=09u32 *uaddr;
++=09u32 val;
+ } __randomize_layout;
+=20
+ static const struct futex_q futex_q_init =3D {
+@@ -1939,6 +1942,7 @@ static int futex_requeue(u32 __user *uaddr1, unsigned=
+ int flags,
+ =09struct futex_hash_bucket *hb1, *hb2;
+ =09struct futex_q *this, *next;
+ =09DEFINE_WAKE_Q(wake_q);
++=09u32 curval, targetval;
+=20
+ =09if (nr_wake < 0 || nr_requeue < 0)
+ =09=09return -EINVAL;
+@@ -2005,30 +2009,32 @@ static int futex_requeue(u32 __user *uaddr1, unsign=
+ed int flags,
+ =09hb_waiters_inc(hb2);
+ =09double_lock_hb(hb1, hb2);
+=20
+-=09if (likely(cmpval !=3D NULL)) {
+-=09=09u32 curval;
+-
++=09ret =3D get_futex_value_locked(&targetval, uaddr2);
++=09if (!ret && likely(cmpval !=3D NULL))
+ =09=09ret =3D get_futex_value_locked(&curval, uaddr1);
+=20
+-=09=09if (unlikely(ret)) {
+-=09=09=09double_unlock_hb(hb1, hb2);
+-=09=09=09hb_waiters_dec(hb2);
++=09if (unlikely(ret)) {
++=09=09double_unlock_hb(hb1, hb2);
++=09=09hb_waiters_dec(hb2);
+=20
++=09=09ret =3D get_user(targetval, uaddr2);
++=09=09if (!ret && likely(cmpval !=3D NULL))
+ =09=09=09ret =3D get_user(curval, uaddr1);
+-=09=09=09if (ret)
+-=09=09=09=09goto out_put_keys;
+=20
+-=09=09=09if (!(flags & FLAGS_SHARED))
+-=09=09=09=09goto retry_private;
++=09=09if (ret)
++=09=09=09goto out_put_keys;
+=20
+-=09=09=09put_futex_key(&key2);
+-=09=09=09put_futex_key(&key1);
+-=09=09=09goto retry;
+-=09=09}
+-=09=09if (curval !=3D *cmpval) {
+-=09=09=09ret =3D -EAGAIN;
+-=09=09=09goto out_unlock;
+-=09=09}
++=09=09if (!(flags & FLAGS_SHARED))
++=09=09=09goto retry_private;
++
++=09=09put_futex_key(&key2);
++=09=09put_futex_key(&key1);
++=09=09goto retry;
++=09}
++
++=09if (likely(cmpval !=3D NULL) && (curval !=3D *cmpval)) {
++=09=09ret =3D -EAGAIN;
++=09=09goto out_unlock;
+ =09}
+=20
+ =09if (requeue_pi && (task_count - nr_wake < nr_requeue)) {
+@@ -2185,6 +2191,12 @@ static int futex_requeue(u32 __user *uaddr1, unsigne=
+d int flags,
+ =09=09=09}
+ =09=09}
+ =09=09requeue_futex(this, hb1, hb2, &key2);
++=09=09/*
++=09=09 * Save target uaddr/val, in case futex_wait() wakes
++=09=09 * up spuriously and retries to requeue.
++=09=09 */
++=09=09this->uaddr =3D uaddr2;
++=09=09this->val =3D targetval;
+ =09=09drop_count++;
+ =09}
+=20
+@@ -2717,6 +2729,8 @@ static int futex_wait(u32 __user *uaddr, unsigned int=
+ flags, u32 val,
+ =09if (!bitset)
+ =09=09return -EINVAL;
+ =09q.bitset =3D bitset;
++=09q.uaddr =3D uaddr;
++=09q.val =3D val;
+=20
+ =09to =3D futex_setup_timer(abs_time, &timeout, flags,
+ =09=09=09       current->timer_slack_ns);
+@@ -2725,7 +2739,7 @@ static int futex_wait(u32 __user *uaddr, unsigned int=
+ flags, u32 val,
+ =09 * Prepare to wait on uaddr. On success, holds hb lock and increments
+ =09 * q.key refs.
+ =09 */
+-=09ret =3D futex_wait_setup(uaddr, val, flags, &q, &hb);
++=09ret =3D futex_wait_setup(q.uaddr, q.val, flags, &q, &hb);
+ =09if (ret)
+ =09=09goto out;
+=20
+--=20
+1.8.3.1
 
