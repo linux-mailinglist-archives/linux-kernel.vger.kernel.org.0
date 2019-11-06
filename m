@@ -2,106 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40800F0E7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D6AF0E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730620AbfKFFlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 00:41:00 -0500
-Received: from vm1.sequanux.org ([188.165.36.56]:43489 "EHLO vm1.sequanux.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfKFFk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 00:40:59 -0500
-X-Greylist: delayed 370 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 00:40:59 EST
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vm1.sequanux.org (Postfix) with ESMTP id 29B321085FB;
-        Wed,  6 Nov 2019 06:34:48 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
-Received: from vm1.sequanux.org ([127.0.0.1])
-        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8LSr8mww9hPp; Wed,  6 Nov 2019 06:34:46 +0100 (CET)
-Received: from localhost (softwrestling.org [188.165.144.248])
-        by vm1.sequanux.org (Postfix) with ESMTPSA id 219CB108084;
-        Wed,  6 Nov 2019 06:34:46 +0100 (CET)
-Date:   Wed, 6 Nov 2019 06:34:46 +0100
-From:   Simon Guinot <simon.guinot@sequanux.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/62] gpio: gpio-f7188x: Use new GPIO_LINE_DIRECTION
-Message-ID: <20191106053446.GD5290@kw.sim.vm.gnt>
-References: <cover.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
- <0a1fe4365ef599adde42396f0bb735c8623f679c.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1725906AbfKFFhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 00:37:34 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45413 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfKFFhe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 00:37:34 -0500
+Received: by mail-io1-f66.google.com with SMTP id s17so25597256iol.12;
+        Tue, 05 Nov 2019 21:37:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YtzABwczyZfNxL6XzweD6I6Q63/FdFYN7U2QH0SQbdg=;
+        b=eIhxf6+YBKxXXanCrpjy9m6LcWa7mOKSyqdsrTDJFCwvUSKKeqJU/L8V0n/6F3agP3
+         HqRUiotx5g/K6NiA2pddwtPSSeemhplxj00BKjVuVleZZWwL8ZRJJhuvQEXjqdyMfwa5
+         7rjxE996A5N2goi8Q5tFBNHeEvFnQF7XzzGqZonA2yNoSoKcPcCrblu8RdXbF1kGgji8
+         jyEPs0bNsGUCHolkdb67Levt7xX8tSBpcCSTS2ZLeK0qO1tivwUmFSZ9UTVLh7fA0vPp
+         RLxKcnvBff5fqT/fkDOQRhGYW9THwF0NMb+CN/ePAIV0zd7toKnAXpv2FghzW/U2WPPO
+         iaDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YtzABwczyZfNxL6XzweD6I6Q63/FdFYN7U2QH0SQbdg=;
+        b=IFV7bJoOFoWwyNxyosAd2Kg/gQrWvo0HCXE8MgdO1v78aPiO8KY0fCdtgvmhNvDaUF
+         w+sCPzXnlAn4uTBbrxd4Xeu7VR8DQNNCehrIjnNHn+6vbkG3oF1aGUqOiBVhljTSmH14
+         VfITP81lZt/4cltpn9XgHXf1u95SG3+bIYuGFjHK7VW+Ha85JAi9Q1hr/srTvkIoF946
+         E+k2W6X780N8ut33JglD0k4kH8O4u6jLJ7ZPPro0PjqEk2GoGVYdg8AbYPEq/ZixXfTg
+         STehUAXKQhCK1KwoyY2dgYeM6xDDE2bk/6YB/BCGvw6+UuvmhgkrLHCgYprYLgYRx7XW
+         WJLA==
+X-Gm-Message-State: APjAAAUos+hOwEK62sqg4tTuQAVZjrqSlKGevynT9MHaU5iRsObxTtBI
+        5bi1mLjmdU829Og23HsiplR+Njocmh0gpqXCENKL3g==
+X-Google-Smtp-Source: APXvYqzv1ZnOAK1rEr6ulQ1qi0lC4bdrx7fbrkHaMMOiwYG3QZDrvYhJvFAjURZg3OzoSr8i0tnquTbI5EU4fUTlqjg=
+X-Received: by 2002:a5e:9706:: with SMTP id w6mr2508377ioj.252.1573018652955;
+ Tue, 05 Nov 2019 21:37:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
-Content-Disposition: inline
-In-Reply-To: <0a1fe4365ef599adde42396f0bb735c8623f679c.1572945757.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+References: <20190920002232.27477-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190920002232.27477-1-navid.emamdoost@gmail.com>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Tue, 5 Nov 2019 23:37:22 -0600
+Message-ID: <CAEkB2EQ2BPpXcpRpN-+ErJD5Vkq6LiKONy8XQfvu0F1pO4weqw@mail.gmail.com>
+Subject: Re: [PATCH] NFSv4: fix memory leak if nfs4_begin_drain_session fails
+To:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc:     Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Would you please review this patch?
 
---d01dLTUuW90fS44H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 05, 2019 at 12:16:03PM +0200, Matti Vaittinen wrote:
-> It's hard for occasional GPIO code reader/writer to know if values 0/1
-> equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
-> GPIO_LINE_DIRECTION_OUT to help them out.
->=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+On Thu, Sep 19, 2019 at 7:22 PM Navid Emamdoost
+<navid.emamdoost@gmail.com> wrote:
+>
+> In nfs4_try_migration, if nfs4_begin_drain_session fails the allocated
+> memory should be released.
+>
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 > ---
->  drivers/gpio/gpio-f7188x.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-> index fdc639f856f1..cadd02993539 100644
-> --- a/drivers/gpio/gpio-f7188x.c
-> +++ b/drivers/gpio/gpio-f7188x.c
-> @@ -250,7 +250,10 @@ static int f7188x_gpio_get_direction(struct gpio_chi=
-p *chip, unsigned offset)
-> =20
->  	superio_exit(sio->addr);
-> =20
-> -	return !(dir & 1 << offset);
-> +	if (dir & 1 << offset)
-> +		return GPIO_LINE_DIRECTION_OUT;
-> +
-> +	return GPIO_LINE_DIRECTION_IN
+>  fs/nfs/nfs4state.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+> index cad4e064b328..124649f12067 100644
+> --- a/fs/nfs/nfs4state.c
+> +++ b/fs/nfs/nfs4state.c
+> @@ -2096,7 +2096,7 @@ static int nfs4_try_migration(struct nfs_server *server, const struct cred *cred
+>
+>         status = nfs4_begin_drain_session(clp);
+>         if (status != 0)
+> -               return status;
+> +               goto out;
+>
+>         status = nfs4_replace_transport(server, locations);
+>         if (status != 0) {
+> --
+> 2.17.1
+>
 
-Hi Matti,
 
-I am probably missing something but I can't find GPIO_LINE_DIRECTION_IN
-and GPIO_LINE_DIRECTION_OUT defined anywhere.
-
-Besides I am an occasional code reader/writer and I find the original
-code easy to understand.
-
-Simon
-
---d01dLTUuW90fS44H
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl3CW3UACgkQzyg/RDPm
-szoNOA//bBFFObRst51hWETEA6zUf1ZURgI4sqYsn9hBwSFGIvvsEDQs2VWa/6Vu
-zU60fN3VUhBeOW8RewOxFvzj3gtBzINUU5FADZZ6jAK+JT4gj3AChB/qlc+L3QZk
-bE1huTQHsMbivNE/7bAkHowfQfKL5t5ztWYCNTs4YMr7/Jq8n6JNLYgta2Yx6J2H
-6WBb2rd1EyMbnfqfohc3GjaIGsF9ptnomtX5yTsq41UfanaECNik8rU5boDvLNB4
-m6EPG0MAqUiGVKo8RcelnxoEn+67HNIVxl50hpgPoX0Cp3wsCM4ve4l7Tk2YyF+/
-O7ZEw8ho54ShvlXbbs0oAFpo5OlRMiLxxK3ekLDwpOUIJ0vamubwXhvtlPRem96l
-eTnWAzMi8WgXoHQTqtwh+WipDKoyEuKzPpIqGt2wbD9s4eWjovtczP/gtEMnMECH
-LVwO4N+pSd1QSjx65Goa9MrbeAtpEZNe/YknasoGHQm/Y4Rxzlcl5gBKFKUHtt3Y
-K/cPOQNpJoFyRK9oxZd6C+cmjCbjCGzohft/deq1DemNeTrRJPzmGHQpkCh8iRYf
-Cb7HuKyWc5aCtNuodWRE55xoCN1SlA1L8X7r4MdNKgcG/WY6d2ZHLfNaRD6klJVT
-asP8NhSxb9PlogAfx8FfxdVdU1rfMtGD+/6lKozXrvyH2RMB4n8=
-=uYre
------END PGP SIGNATURE-----
-
---d01dLTUuW90fS44H--
+-- 
+Navid.
