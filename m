@@ -2,92 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43FF8F20E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBBFF20F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:45:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfKFVh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 16:37:28 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:58410 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfKFVh2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:37:28 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 36D4F1C09B6; Wed,  6 Nov 2019 22:37:26 +0100 (CET)
-Date:   Wed, 6 Nov 2019 22:37:25 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-xfs@vger.kernel.org,
-        Jan Kara <jack@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 10/10] errno.h: Provide EFSCORRUPTED for everybody
-Message-ID: <20191106213725.GB7020@amd>
-References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
- <20191104014510.102356-11-Valdis.Kletnieks@vt.edu>
- <5c441427-7e65-fcae-3518-eb37cea5f875@huawei.com>
+        id S1728096AbfKFVpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 16:45:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35884 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726779AbfKFVpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 16:45:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2EEEAED5;
+        Wed,  6 Nov 2019 21:45:44 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Andrew Murray <andrew.murray@arm.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Raspberry Pi 4 PCIe support
+Date:   Wed,  6 Nov 2019 22:45:22 +0100
+Message-Id: <20191106214527.18736-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
-Content-Disposition: inline
-In-Reply-To: <5c441427-7e65-fcae-3518-eb37cea5f875@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series aims at providing support for Raspberry Pi 4's PCIe
+controller, which is also shared with the Broadcom STB family of
+devices.
 
---jq0ap7NbKX2Kqbes
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There was a previous attempt to upstream this some years ago[1] but was
+blocked as most STB PCIe integrations have a sparse DMA mapping[2] which
+is something currently not supported by the kernel.  Luckily this is not
+the case for the Raspberry Pi 4.
 
-Hi!
+Note that the driver code is to be based on top of Rob Herring's series
+simplifying inbound and outbound range parsing.
 
-> > There's currently 6 filesystems that have the same #define. Move it
-> > into errno.h so it's defined in just one place.
-> >=20
-> > Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
-> > Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > Acked-by: Theodore Ts'o <tytso@mit.edu>
->=20
-> >  fs/erofs/internal.h              | 2 --
->=20
-> >  fs/f2fs/f2fs.h                   | 1 -
->=20
-> Acked-by: Chao Yu <yuchao0@huawei.com>
+[1] https://patchwork.kernel.org/cover/10605933/
+[2] https://patchwork.kernel.org/patch/10605957/
+---
 
-Are we still using EUCLEAN for something else than EFSCORRUPTED? Could
-we perhaps change the glibc definiton to "your filesystem is
-corrupted" in the long run?
+Jim Quinlan (3):
+  dt-bindings: pci: add bindings for brcmstb's PCIe device
+  PCI: brcmstb: add Broadcom STB PCIe host controller driver
+  PCI: brcmstb: add MSI capability
 
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Nicolas Saenz Julienne (1):
+  ARM: dts: bcm2711: Enable PCIe controller
 
---jq0ap7NbKX2Kqbes
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ .../bindings/pci/brcm,stb-pcie.yaml           |  116 ++
+ arch/arm/boot/dts/bcm2711.dtsi                |   47 +
+ drivers/pci/controller/Kconfig                |   12 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-brcmstb.c         | 1302 +++++++++++++++++
+ 5 files changed, 1478 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-brcmstb.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+-- 
+2.23.0
 
-iEYEARECAAYFAl3DPRUACgkQMOfwapXb+vIeLACgumqpgUAXyu1qs1LlH4i+wJ+u
-sPEAn0YdeU4hDroZD6g3yLDme7o5MHbL
-=nCbA
------END PGP SIGNATURE-----
-
---jq0ap7NbKX2Kqbes--
