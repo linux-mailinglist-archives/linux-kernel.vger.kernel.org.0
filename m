@@ -2,121 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D501F11E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C2BF11FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 10:19:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfKFJPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 04:15:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54744 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfKFJPD (ORCPT
+        id S1727652AbfKFJS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 04:18:57 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51504 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfKFJS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 04:15:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lP3B/Vo/I9QdPeICg8iLU3blMa8/4rNF6jQ70MKhNEE=; b=MxTz7+SYoIl9TfF4qivxyCl8M
-        13eawyPsRgqgr/jFGPKK7kvfBToC+PEGon12F+fceZjh3hZqWgxuYjY8eGJS5tLVYWzoGPJKu8N3V
-        b8IzbFgK5H4WZFk5C6VGtuUs+s0huTanouG2bVxauYEEbYDReru7jPpeOkUwTyWUfDNWxMZW3ALwl
-        Muh2K0VHSDAm74aX8qeBwZELXqXbwbMIMEHPSnRQl7JsBJjDSD/Xo+UhUwTsD9bqn9VxMUSPgOxah
-        pVnp5Mr5zbTUvy1Ob2LeAtgB7UFpUd3uLAQMCqXrLz9+7g3tzi1qxwyvRg2x5iXZCSIdNgDtQACo8
-        TMJiLUOFA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSHP2-0008Eo-Tw; Wed, 06 Nov 2019 09:15:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EF546301A79;
-        Wed,  6 Nov 2019 10:13:54 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0364029A4C2C5; Wed,  6 Nov 2019 10:14:58 +0100 (CET)
-Date:   Wed, 6 Nov 2019 10:14:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v6] perf: Sharing PMU counters across compatible events
-Message-ID: <20191106091458.GS4131@hirez.programming.kicks-ass.net>
-References: <20190919052314.2925604-1-songliubraving@fb.com>
- <20191031124332.GQ4131@hirez.programming.kicks-ass.net>
- <19AE6C78-C54C-4C37-BBD2-0396BB97A474@fb.com>
- <98A6264C-B833-4930-95A0-2A3186519D87@fb.com>
- <20191105201623.GG3079@worktop.programming.kicks-ass.net>
- <23D48724-55B7-45A3-A77A-56BAD57937F9@fb.com>
+        Wed, 6 Nov 2019 04:18:57 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA69IcxD067545;
+        Wed, 6 Nov 2019 03:18:38 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573031918;
+        bh=eldzo8YWe5MamJNiigJfyEJUufaORNMZTQ1Z2CgzULc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=U5qB+MFrnN88rFoGyyYQkKCueJVXXaxryE8U0eoUby4U5nJbeHbmVzBrxURQ1GD2p
+         gETubghjWq98LjZE040mYFK5DkzPnL9HOE0tfc1zgGzX3lG/g3kLqM6B7MPHpz5T7+
+         4QSlYCTeXy2njOgSj9S7btAwLKCJViL1nxN/yRWw=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA69IcxR087453
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Nov 2019 03:18:38 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
+ 2019 03:18:23 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 6 Nov 2019 03:18:38 -0600
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA69IYtN114855;
+        Wed, 6 Nov 2019 03:18:36 -0600
+Subject: Re: [PATCH v4 03/20] mtd: spi-nor: Check for errors after each
+ Register Operation
+To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
+CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
+ <20191102112316.20715-4-tudor.ambarus@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <f25eab6d-4ccd-09c2-6ce1-fa6f00ca9367@ti.com>
+Date:   Wed, 6 Nov 2019 14:49:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23D48724-55B7-45A3-A77A-56BAD57937F9@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191102112316.20715-4-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:06:06PM +0000, Song Liu wrote:
+
+
+On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
 > 
+> Check for the return vales of each Register Operation.
 > 
-> > On Nov 5, 2019, at 12:16 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > On Tue, Nov 05, 2019 at 05:11:08PM +0000, Song Liu wrote:
-> > 
-> >>> I think we can use one of the event as master. We need to be careful when
-> >>> the master event is removed, but it should be doable. Let me try. 
-> >> 
-> >> Actually, there is a bigger issue when we use one event as the master: what
-> >> shall we do if the master event is not running? Say it is an cgroup event, 
-> >> and the cgroup is not running on this cpu. An extra master (and all these
-> >> array hacks) help us get O(1) complexity in such scenario. 
-> >> 
-> >> Do you have suggestions on how to solve this problem? Maybe we can keep the 
-> >> extra master, and try get rid of the double alloc? 
-> > 
-> > Right, you have to consider scope when sharing. The master should be the
-> > largest scope event and any slaves should be complete subsets.
-> > 
-> > Without much thought this seems a fairly straight forward constraint;
-> > that is, given cgroups I'm not immediately seeing how we can violate
-> > that.
-> > 
-> > Basically, pick the cgroup event nearest to the root as the master.
-> > We have to have logic to re-elect the master anyway for deletion, so
-> > changing it on add shouldn't be different.
-> > 
-> > (obviously the root-cgroup is cpu-wide and always on, and if you have
-> > two events from disjoint subtrees they have no overlap, so it doesn't
-> > make sense to share anyway)
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+
+
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+Regards
+Vignesh
+
+>  drivers/mtd/spi-nor/spi-nor.c | 81 ++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 60 insertions(+), 21 deletions(-)
 > 
-> Hmm... I didn't think about cgroup structure with this much detail. And 
-> this is very interesting idea. 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 0cb3122e74ad..5debb0f7ca13 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -595,11 +595,15 @@ static int st_micron_set_4byte(struct spi_nor *nor, bool enable)
+>  {
+>  	int ret;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = macronix_set_4byte(nor, enable);
+> -	spi_nor_write_disable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+> -	return ret;
+> +	return spi_nor_write_disable(nor);
+>  }
+>  
+>  static int spansion_set_4byte(struct spi_nor *nor, bool enable)
+> @@ -665,11 +669,15 @@ static int winbond_set_4byte(struct spi_nor *nor, bool enable)
+>  	 * Register to be set to 1, so all 3-byte-address reads come from the
+>  	 * second 16M. We must clear the register to enable normal behavior.
+>  	 */
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = spi_nor_write_ear(nor, 0);
+> -	spi_nor_write_disable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+> -	return ret;
+> +	return spi_nor_write_disable(nor);
+>  }
+>  
+>  static int spi_nor_xread_sr(struct spi_nor *nor, u8 *sr)
+> @@ -859,7 +867,9 @@ static int spi_nor_write_sr_cr(struct spi_nor *nor, const u8 *sr_cr)
+>  {
+>  	int ret;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (nor->spimem) {
+>  		struct spi_mem_op op =
+> @@ -889,7 +899,10 @@ static int spi_nor_write_sr_and_check(struct spi_nor *nor, u8 status_new,
+>  {
+>  	int ret;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = spi_nor_write_sr(nor, status_new);
+>  	if (ret)
+>  		return ret;
+> @@ -1397,7 +1410,9 @@ static int spi_nor_erase_multi_sectors(struct spi_nor *nor, u64 addr, u32 len)
+>  	list_for_each_entry_safe(cmd, next, &erase_list, list) {
+>  		nor->erase_opcode = cmd->opcode;
+>  		while (cmd->count) {
+> -			spi_nor_write_enable(nor);
+> +			ret = spi_nor_write_enable(nor);
+> +			if (ret)
+> +				goto destroy_erase_cmd_list;
+>  
+>  			ret = spi_nor_erase_sector(nor, addr);
+>  			if (ret)
+> @@ -1452,7 +1467,9 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
+>  	if (len == mtd->size && !(nor->flags & SNOR_F_NO_OP_CHIP_ERASE)) {
+>  		unsigned long timeout;
+>  
+> -		spi_nor_write_enable(nor);
+> +		ret = spi_nor_write_enable(nor);
+> +		if (ret)
+> +			goto erase_err;
+>  
+>  		ret = spi_nor_erase_chip(nor);
+>  		if (ret)
+> @@ -1479,7 +1496,9 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
+>  	/* "sector"-at-a-time erase */
+>  	} else if (spi_nor_has_uniform_erase(nor)) {
+>  		while (len) {
+> -			spi_nor_write_enable(nor);
+> +			ret = spi_nor_write_enable(nor);
+> +			if (ret)
+> +				goto erase_err;
+>  
+>  			ret = spi_nor_erase_sector(nor, addr);
+>  			if (ret)
+> @@ -1500,7 +1519,7 @@ static int spi_nor_erase(struct mtd_info *mtd, struct erase_info *instr)
+>  			goto erase_err;
+>  	}
+>  
+> -	spi_nor_write_disable(nor);
+> +	ret = spi_nor_write_disable(nor);
+>  
+>  erase_err:
+>  	spi_nor_unlock_and_unprep(nor, SPI_NOR_OPS_ERASE);
+> @@ -1849,9 +1868,13 @@ static int macronix_quad_enable(struct spi_nor *nor)
+>  	if (nor->bouncebuf[0] & SR_QUAD_EN_MX)
+>  		return 0;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+> -	spi_nor_write_sr(nor, nor->bouncebuf[0] | SR_QUAD_EN_MX);
+> +	ret = spi_nor_write_sr(nor, nor->bouncebuf[0] | SR_QUAD_EN_MX);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = spi_nor_wait_till_ready(nor);
+>  	if (ret)
+> @@ -2022,7 +2045,9 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+>  	/* Update the Quad Enable bit. */
+>  	*sr2 |= SR2_QUAD_EN_BIT7;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = spi_nor_write_sr2(nor, sr2);
+>  	if (ret)
+> @@ -2063,7 +2088,9 @@ static int spi_nor_clear_sr_bp(struct spi_nor *nor)
+>  	if (ret)
+>  		return ret;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = spi_nor_write_sr(nor, nor->bouncebuf[0] & ~mask);
+>  	if (ret)
+> @@ -2680,7 +2707,9 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  	if (ret)
+>  		return ret;
+>  
+> -	spi_nor_write_enable(nor);
+> +	ret = spi_nor_write_enable(nor);
+> +	if (ret)
+> +		goto sst_write_err;
+>  
+>  	nor->sst_write_second = false;
+>  
+> @@ -2718,14 +2747,19 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  	}
+>  	nor->sst_write_second = false;
+>  
+> -	spi_nor_write_disable(nor);
+> +	ret = spi_nor_write_disable(nor);
+> +	if (ret)
+> +		goto sst_write_err;
+> +
+>  	ret = spi_nor_wait_till_ready(nor);
+>  	if (ret)
+>  		goto sst_write_err;
+>  
+>  	/* Write out trailing byte if it exists. */
+>  	if (actual != len) {
+> -		spi_nor_write_enable(nor);
+> +		ret = spi_nor_write_enable(nor);
+> +		if (ret)
+> +			goto sst_write_err;
+>  
+>  		nor->program_opcode = SPINOR_OP_BP;
+>  		ret = spi_nor_write_data(nor, to, 1, buf + actual);
+> @@ -2735,8 +2769,10 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  		ret = spi_nor_wait_till_ready(nor);
+>  		if (ret)
+>  			goto sst_write_err;
+> -		spi_nor_write_disable(nor);
+> +
+>  		actual += 1;
+> +
+> +		ret = spi_nor_write_disable(nor);
+>  	}
+>  sst_write_err:
+>  	*retlen += actual;
+> @@ -2787,7 +2823,10 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  
+>  		addr = spi_nor_convert_addr(nor, addr);
+>  
+> -		spi_nor_write_enable(nor);
+> +		ret = spi_nor_write_enable(nor);
+> +		if (ret)
+> +			goto write_err;
+> +
+>  		ret = spi_nor_write_data(nor, addr, page_remain, buf + i);
+>  		if (ret < 0)
+>  			goto write_err;
 > 
-> OTOH, non-cgroup event could also be inactive. For example, when we have 
-> to rotate events, we may schedule slave before master. 
 
-Right, although I suppose in that case you can do what you did in your
-patch here. If someone did IOC_DISABLE on the master, we'd have to
-re-elect a master -- obviously (and IOC_ENABLE).
-
-> And if the master is in an event group, it will be more complicated...
-
-Hurmph, do you actually have that use-case? And yes, this one is tricky.
-
-Would it be sufficient if we disallow group events to be master (but
-allow them to be slaves) ?
-
-> Currently, we already have two separate scopes in sharing: one for cpu_ctx, 
-> the other for task_ctx. I would like to enable as much sharing as possible
-> with in each ctx. 
-
-Right, although at plumbers you mentioned the idea of sticking
-per-task-per-cpu events on the cpu context (as opposed on the task
-context where they live today), which is interesting (it's basically an
-extention of the cgroup scheduling to per-task scope).
+-- 
+Regards
+Vignesh
