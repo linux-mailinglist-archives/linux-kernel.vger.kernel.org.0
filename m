@@ -2,138 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A7EF1097
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5DBF1085
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbfKFHpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:45:08 -0500
-Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:18985
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729986AbfKFHpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:45:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jlakg06RjDkIE1KDSVYBM9NXNvTX0Fwk1Z88Xi3zq1CHUAjRilzyKBNy2bnMQJ3kSnkCGaIW/rMABA3Go/ylobXqnvF9LE6pgbaj+S6yzJwhYhzKeiHHifoqF54s2Qdi3TSo0ecTD2GwwEZ3tbj+hhckjkITg1Na5G+LMqY0e4LId+on47IC/v05NUzfmvMiTH7w0mpaWBQlWN+Z1tBA9q+8tCVseuZnp+314mueJfpJhwbtrffWxaayK86B479iuE6tgr1QcznDUqYLcm55O535RfhOGBOdDQdszHyLsDDJRe8xt1lof4hR7xA43xQfJaPrpgxzoEZh5q6yHKL23A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
- b=a6u6xnCj7MA/vxhM8vYYLo1qOVqJvsfxbPN/Fsn/EvTqbbBmyiy2UcwY6I/e6mgLv2MH6lfciWepne0rfeuWKRIu8mzLJEhK7cuJ2zCO/tJx10Z5Yi4iQKc9RmFgBLQUQhWTYOXspIHJoXZr1AAExIuXdUbLBy7lnjc6kR4X2u/Bgi8eZwCdjo+XEGlVc4dP9KSpjUNtNQvbpHU/84NXZUGltrHDsbbOWebmjUXta4yjr+e+E4Mkcm1E40JpY7lP7FR20ATe5CAuI6K0Ed9zzlx+UHRR2h1yaU1iRGBUwdRuZP+L0ehQotPFJK2U8mjiVklRjgyHnYsqjldBhb16ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
- b=abpYqtWBQQZdnl6Tt/aXybxHaHaUSxz0YNcM5CNNXun7e2xRLoTI5r3uI/HCTT/JDfecU6kHF4Sq0DIAgzAtpKgVJHND/C8L8lQBmizu3igZJadwyyQD/l9nBqriK9BXkQcYpsqZYug1H8cPb+glISo7H/V16sgDon9RSSCcRT8=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB3956.eurprd04.prod.outlook.com (52.134.93.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Wed, 6 Nov 2019 07:45:02 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
- 07:45:01 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Topic: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Index: AQHVlGNoepC2TDBj7kaCYRyt+h3yD6d9w2gA
-Date:   Wed, 6 Nov 2019 07:45:01 +0000
-Message-ID: <20191106074500.vwihbt6s4dwqyun7@fsr-ub1664-175>
-References: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR0101CA0057.eurprd01.prod.exchangelabs.com
- (2603:10a6:200:41::25) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
-x-ms-traffictypediagnostic: AM0PR04MB3956:|AM0PR04MB3956:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB395665F85B4C56349A243B5CF6790@AM0PR04MB3956.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(7916004)(4636009)(376002)(346002)(136003)(396003)(366004)(39860400002)(199004)(189003)(6512007)(316002)(64756008)(6636002)(5660300002)(66446008)(2906002)(26005)(305945005)(102836004)(7736002)(86362001)(6116002)(76176011)(14444005)(8936002)(8676002)(66476007)(44832011)(66556008)(6506007)(3846002)(66066001)(71200400001)(6436002)(71190400001)(6486002)(478600001)(81166006)(6246003)(99286004)(476003)(9686003)(229853002)(52116002)(386003)(256004)(54906003)(81156014)(446003)(486006)(1076003)(6862004)(4744005)(25786009)(14454004)(66946007)(4326008)(53546011)(33716001)(11346002)(186003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3956;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PoAT/lwDNarbS17vfheekcGmymmENkNYSI+U1qLmqUpBZ2BgO4xBagbMGTLRBW+FWidooLGz4kBjEuH+YgYG8ImGvv5k8czCvwZvggNCQ+8yzD4Yxt4LRG5mDk8RT6eVwwoeq/yJOyEAHnWG5xzZ8wo5GzycKGv+0TaUMuVTfcf1dv7qpjJOhm1/JdF6YsCtCk2Tk0grUY76em95RMnhXkPy/KcExX1XzyGJsvKTE+dWUtrf/7fLpeMxSG08pCED4dR00g5J9gKrK95umpdkajl0cx9cEThmSkaz8RPqiTaehpV9N8y0YGetRRkXTyGxwFG3uRbNhi1eTaLAzToMSVRwtyFPuH4avgsZ0ZyXf0AIZxT8c5aEAg/fo3tDkwAsE+J5eifzHUdSX5JpulyY8S/inmQfE4JUS/1DgK1NLvwHVv5vqhEuvirno9WSdPu7
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3C2A340762855A46862663A22A7574CA@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 07:45:01.8697
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6qHDHv/EU/5rIHVd3bzy4CWxTEnN0HJAlOu8krcC3jnaS+FNLxw5URS1aRaWjAZbTx3kW3dZR5rEA1p/kI2wQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3956
+        id S1731501AbfKFHnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:43:08 -0500
+Received: from mga06.intel.com ([134.134.136.31]:15141 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731431AbfKFHmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:42:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 23:42:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
+   d="scan'208";a="232770749"
+Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Nov 2019 23:42:52 -0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v6 7/9] mmu: spp: Enable Lazy mode SPP protection
+Date:   Wed,  6 Nov 2019 15:45:02 +0800
+Message-Id: <20191106074504.14858-8-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20191106074504.14858-1-weijiang.yang@intel.com>
+References: <20191106074504.14858-1-weijiang.yang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-11-06 05:31:15, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> The usage of readl_poll_timeout is wrong, the cond should be
-> "val & LOCK_STATUS" not "val & LOCK_TIMEOUT_US".
->=20
-> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+To deal with SPP protected 4KB pages within hugepage(2MB,1GB etc),
+the hugepage entry is first zapped when set subpage permission, then
+in tdp_page_fault(), it checks whether the gfn should be mapped to
+PT_PAGE_TABLE_LEVEL or PT_DIRECTORY_LEVEL level depending on gfn
+inclusion of SPP protected page range.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+---
+ arch/x86/kvm/mmu.c     | 14 ++++++++++++
+ arch/x86/kvm/vmx/spp.c | 48 ++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/spp.h |  4 ++++
+ 3 files changed, 66 insertions(+)
 
-> ---
->=20
-> V1:
->  Hi Shawn,
->    This patch is made based on 5.4-rc6, not your for-next branch,
->    not sure whether this patch could catch 5.4 release.
->=20
->  drivers/clk/imx/clk-pll14xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
-c
-> index 7a815ec76aa5..d43b4a3c0de8 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -153,7 +153,7 @@ static int clk_pll14xx_wait_lock(struct clk_pll14xx *=
-pll)
->  {
->  	u32 val;
-> =20
-> -	return readl_poll_timeout(pll->base, val, val & LOCK_TIMEOUT_US, 0,
-> +	return readl_poll_timeout(pll->base, val, val & LOCK_STATUS, 0,
->  			LOCK_TIMEOUT_US);
->  }
-> =20
-> --=20
-> 2.16.4
->=20
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index a632c6b3c326..9c5be402a0b2 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3240,6 +3240,17 @@ static int __direct_map(struct kvm_vcpu *vcpu, gpa_t gpa, int write,
+ 			   map_writable);
+ 	direct_pte_prefetch(vcpu, it.sptep);
+ 	++vcpu->stat.pf_fixed;
++	if (level == PT_PAGE_TABLE_LEVEL) {
++		struct kvm_subpage sbp = {0};
++		int pages;
++
++		sbp.base_gfn = gfn;
++		sbp.npages = 1;
++		pages = kvm_spp_get_permission(vcpu->kvm, &sbp);
++		if (pages == 1  && sbp.access_map[0] != FULL_SPP_ACCESS)
++			kvm_spp_mark_protection(vcpu->kvm, &sbp);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -4183,6 +4194,9 @@ static int tdp_page_fault(struct kvm_vcpu *vcpu, gva_t gpa, u32 error_code,
+ 		if (level > PT_DIRECTORY_LEVEL &&
+ 		    !check_hugepage_cache_consistency(vcpu, gfn, level))
+ 			level = PT_DIRECTORY_LEVEL;
++
++		check_spp_protection(vcpu, gfn, &force_pt_level, &level);
++
+ 		gfn &= ~(KVM_PAGES_PER_HPAGE(level) - 1);
+ 	}
+ 
+diff --git a/arch/x86/kvm/vmx/spp.c b/arch/x86/kvm/vmx/spp.c
+index 7329291c9f7c..25c4a7cf7d59 100644
+--- a/arch/x86/kvm/vmx/spp.c
++++ b/arch/x86/kvm/vmx/spp.c
+@@ -545,6 +545,54 @@ inline u64 construct_spptp(unsigned long root_hpa)
+ }
+ EXPORT_SYMBOL_GPL(construct_spptp);
+ 
++bool is_spp_protected(struct kvm_memory_slot *slot, gfn_t gfn, int level)
++{
++	int page_num = KVM_PAGES_PER_HPAGE(level);
++	int i;
++
++	gfn &= ~(page_num - 1);
++	for (i = 0; i < page_num; ++i) {
++		if (*gfn_to_subpage_wp_info(slot, gfn + i) != FULL_SPP_ACCESS)
++			return true;
++	}
++	return false;
++}
++
++bool check_spp_protection(struct kvm_vcpu *vcpu, gfn_t gfn,
++			  bool *force_pt_level, int *level)
++{
++	struct kvm *kvm = vcpu->kvm;
++	struct kvm_memory_slot *slot;
++	u32 access;
++
++	if (!kvm->arch.spp_active)
++		return false;
++
++	slot = gfn_to_memslot(kvm, gfn);
++
++	if (!slot)
++		return false;
++
++	if (*level == PT_PAGE_TABLE_LEVEL) {
++		access = *gfn_to_subpage_wp_info(slot, gfn);
++
++		if (access != FULL_SPP_ACCESS) {
++			*force_pt_level = true;
++			return true;
++		}
++	} else {
++		if (is_spp_protected(slot, gfn, PT_PDPE_LEVEL)) {
++			bool protected = is_spp_protected(slot, gfn,
++							  PT_DIRECTORY_LEVEL);
++			*level = protected ? PT_PAGE_TABLE_LEVEL :
++				 PT_DIRECTORY_LEVEL;
++			*force_pt_level = protected;
++			return true;
++		}
++	}
++	return false;
++}
++
+ int kvm_vm_ioctl_get_subpages(struct kvm *kvm,
+ 			      struct kvm_subpage *spp_info)
+ {
+diff --git a/arch/x86/kvm/vmx/spp.h b/arch/x86/kvm/vmx/spp.h
+index 208b557cac7d..1ad526866977 100644
+--- a/arch/x86/kvm/vmx/spp.h
++++ b/arch/x86/kvm/vmx/spp.h
+@@ -4,9 +4,13 @@
+ 
+ #define FULL_SPP_ACCESS		((u32)((1ULL << 32) - 1))
+ 
++int kvm_spp_get_permission(struct kvm *kvm, struct kvm_subpage *spp_info);
++int kvm_spp_mark_protection(struct kvm *kvm, struct kvm_subpage *spp_info);
+ bool is_spp_spte(struct kvm_mmu_page *sp);
+ void restore_spp_bit(u64 *spte);
+ bool was_spp_armed(u64 spte);
++bool check_spp_protection(struct kvm_vcpu *vcpu, gfn_t gfn,
++			  bool *force_pt_level, int *level);
+ inline u64 construct_spptp(unsigned long root_hpa);
+ int kvm_vm_ioctl_get_subpages(struct kvm *kvm,
+ 			      struct kvm_subpage *spp_info);
+-- 
+2.17.2
+
