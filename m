@@ -2,199 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA892F0D48
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4BAF0D50
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 04:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbfKFDrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 5 Nov 2019 22:47:11 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39629 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfKFDrK (ORCPT
+        id S1731159AbfKFDuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 5 Nov 2019 22:50:05 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:31638 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731127AbfKFDuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:47:10 -0500
-Received: by mail-io1-f67.google.com with SMTP id k1so13589442ioj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 19:47:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z2H/vfY+M3FOVI8nyc1KajqzdWqSXMeNKABjk0rdQL0=;
-        b=YHFILQCp/WqkCCA/t3E5TZqDHrrZL0ezjrzpHcw8xJd/nT4G4Cov+gxz6SmCFE/cij
-         9BNwJ62Azjuuo+MFxfXeBcRjneHg1rluxOFicfqjSD/DLMv1RCTlh2Qyg/nkHkYT5V9n
-         Qjdyn0JZaL4uG6byGwnWrnkNocwPBsZrIuBSs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z2H/vfY+M3FOVI8nyc1KajqzdWqSXMeNKABjk0rdQL0=;
-        b=NnkuqdWMslmPX6qRiCVcR9dc7nv0J7J6CJlFe/pNOeAq4o/ypSv+NRPecSF67pRl1X
-         e/Ls6joSIf/bKFheg5i4tb1IgG1f7EQfeWRwWkJEJPYF7oMZBd0E4tU5bt6VZl1YMvoM
-         QwJHT/mAepcXklG8/XIUZFIjgFc6qLgP7W+2s6zlU17zrUTOh7PquemFyoqyqzGKb7jF
-         MSeXn0X78kPeZCWEyCuPQnAawMTvzs/cpFsyKVUQl9RTYRqQQ1nWL3Z4wFJdgH6jTufN
-         1zgajv5BwlwcBV4CJC8Y6kLO7QAzJ50sxVaD7rwwwwuPy9BwlX/Jj/fIVLN6hngO/72v
-         DmvQ==
-X-Gm-Message-State: APjAAAV6Q12mHaggc1xUq5t0xHxQx1BqnSKKnBXg41armjtAMgw2AFbd
-        O19qQEsxlX85ee36UcMEnrwlo1JmB5+DynQi/gt+mg==
-X-Google-Smtp-Source: APXvYqzM4v8A7/KdBti0Vuh47ZVMEZFBED5Uz6EFt/lWzRoGkj9v0kX9qfllxewVAnd9O0epfOmwy6yqBkGg6SO1Zv4=
-X-Received: by 2002:a02:742a:: with SMTP id o42mr25123417jac.24.1573012029823;
- Tue, 05 Nov 2019 19:47:09 -0800 (PST)
+        Tue, 5 Nov 2019 22:50:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573012203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a+TaoYnSx8JQIw9cwMdJxIlkL0BV7vW8cxJKGh2NCEs=;
+        b=JP8h0I64125MCLW//sjvkgnDtBLN0y7TbHnpYmTeANLAwgUZfkdMEaTtZq/5cqDCt+Pqum
+        YgoNb7DcivRRfXkOyD1gjrxh1KN/poeGWi6HV6Ifb61gMqG/JcCvgormh50LNWxVniXEPb
+        zkJZUmIujdnxOYZghdjDUNB1AM0mv6g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-408-LCO48t2kOHqlYcbL8wcx_w-1; Tue, 05 Nov 2019 22:50:00 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CFF47107ACC3;
+        Wed,  6 Nov 2019 03:49:55 +0000 (UTC)
+Received: from [10.72.12.193] (ovpn-12-193.pek2.redhat.com [10.72.12.193])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3371C600C4;
+        Wed,  6 Nov 2019 03:48:33 +0000 (UTC)
+Subject: Re: [PATCH V8 3/6] mdev: introduce device specific ops
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        maxime.coquelin@redhat.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, rob.miller@broadcom.com,
+        xiao.w.wang@intel.com, haotian.wang@sifive.com,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        farman@linux.ibm.com, pasic@linux.ibm.com, sebott@linux.ibm.com,
+        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+References: <20191105093240.5135-1-jasowang@redhat.com>
+ <20191105093240.5135-4-jasowang@redhat.com>
+ <20191105175025.1a620844.cohuck@redhat.com> <20191105104418.1735d800@x1.home>
+ <20191105192851.40548978.cohuck@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <42afbc46-ac7d-b4d7-9b4a-343b1400d2a8@redhat.com>
+Date:   Wed, 6 Nov 2019 11:48:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191104173737.142558-1-robdclark@gmail.com>
-In-Reply-To: <20191104173737.142558-1-robdclark@gmail.com>
-From:   Rob Clark <robdclark@chromium.org>
-Date:   Tue, 5 Nov 2019 19:46:59 -0800
-Message-ID: <CAJs_Fx4qbQXdDmxB4-F+vJTBr7y2YkSvGbOVGid6T1=HGZer6Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] drm/atomic: fix self-refresh helpers crtc state dereference
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191105192851.40548978.cohuck@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: LCO48t2kOHqlYcbL8wcx_w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 9:39 AM Rob Clark <robdclark@gmail.com> wrote:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> drm_self_refresh_helper_update_avg_times() was incorrectly accessing the
-> new incoming state after drm_atomic_helper_commit_hw_done().  But this
-> state might have already been superceeded by an !nonblock atomic update
-> resulting in dereferencing an already free'd crtc_state.
->
-> TODO I *think* this will more or less do the right thing.. althought I'm
-> not 100% sure if, for example, we enter psr in a nonblock commit, and
-> then leave psr in a !nonblock commit that overtakes the completion of
-> the nonblock commit.  Not sure if this sort of scenario can happen in
-> practice.  But not crashing is better than crashing, so I guess we
-> should either take this patch or rever the self-refresh helpers until
-> Sean can figure out a better solution.
 
-btw, I think we can drop this TODO para from the commit msg.. but
-would be nice to get this (1/2) landed in v5.4-fixes as it fixes an
-actual regressions..
+On 2019/11/6 =E4=B8=8A=E5=8D=882:28, Cornelia Huck wrote:
+> On Tue, 5 Nov 2019 10:44:18 -0700
+> Alex Williamson <alex.williamson@redhat.com> wrote:
+>
+>> On Tue, 5 Nov 2019 17:50:25 +0100
+>> Cornelia Huck <cohuck@redhat.com> wrote:
+>>
+>>> On Tue,  5 Nov 2019 17:32:37 +0800
+>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>   =20
+>>>> Currently, except for the create and remove, the rest of
+>>>> mdev_parent_ops is designed for vfio-mdev driver only and may not help
+>>>> for kernel mdev driver. With the help of class id, this patch
+>>>> introduces device specific callbacks inside mdev_device
+>>>> structure. This allows different set of callback to be used by
+>>>> vfio-mdev and virtio-mdev.
+>>>>
+>>>> Reviewed-by: Parav Pandit <parav@mellanox.com>
+>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>>> ---
+>>>>   .../driver-api/vfio-mediated-device.rst       | 35 +++++++++----
+>>>>   MAINTAINERS                                   |  1 +
+>>>>   drivers/gpu/drm/i915/gvt/kvmgt.c              | 18 ++++---
+>>>>   drivers/s390/cio/vfio_ccw_ops.c               | 18 ++++---
+>>>>   drivers/s390/crypto/vfio_ap_ops.c             | 14 +++--
+>>>>   drivers/vfio/mdev/mdev_core.c                 | 24 ++++++++-
+>>>>   drivers/vfio/mdev/mdev_private.h              |  5 ++
+>>>>   drivers/vfio/mdev/vfio_mdev.c                 | 37 ++++++-------
+>>>>   include/linux/mdev.h                          | 43 ++++-----------
+>>>>   include/linux/mdev_vfio_ops.h                 | 52 +++++++++++++++++=
+++
+>>>>   samples/vfio-mdev/mbochs.c                    | 20 ++++---
+>>>>   samples/vfio-mdev/mdpy.c                      | 20 ++++---
+>>>>   samples/vfio-mdev/mtty.c                      | 18 ++++---
+>>>>   13 files changed, 206 insertions(+), 99 deletions(-)
+>>>>   create mode 100644 include/linux/mdev_vfio_ops.h
+>>>>     =20
+>>> (...)
+>>>   =20
+>>>> @@ -172,10 +163,34 @@ that a driver should use to unregister itself wi=
+th the mdev core driver::
+>>>>  =20
+>>>>   =09extern void mdev_unregister_device(struct device *dev);
+>>>>  =20
+>>>> -It is also required to specify the class_id in create() callback thro=
+ugh::
+>>>> +As multiple types of mediated devices may be supported, class id need=
+s
+>>>> +to be specified in the create callback(). This could be done
+>>> The brackets should probably go behind 'create'?
+>>>   =20
+>>>> +explicitly for the device that does not use on mdev bus for its
+>>> "for devices that do not use the mdev bus" ?
+>>>
+>>> But why wouldn't they? I feel like I've missed some discussion here :/
+>> The device ops provide a route through mdev-core for known callbacks,
+>> which is primarily useful when we have 1:N relation between mdev bus
+>> driver and vendor drivers.  The obvious example here is vfio-mdev,
+>> where we have GVT-g, vfio-ap, vfio-ccw, NVIDIA GRID, and various sample
+>> drivers all advertising vfio-mdev support via their class id.  However,
+>> if we have a tightly coupled vendor driver and mdev bus driver, as the
+>> mlx5 support that Parav is developing, the claim is that they prefer
+>> not to expose any device ops and intend to interact directly with the
+>> mdev device.  At least that's my understanding.  Thanks,
+>>
+>> Alex
+> Ah, ok.
+>
+> So maybe use the phrasing "devices that interact with the mdev device
+> directly" vs "devices that use device-specific ops" instead?
+>
+> Not a strong critique, though.
 
-patch 2/2 probably shouldn't be for v5.4, since according to kbuild
-robot it is turning up some other problems.. but I still think it is
-probably a good idea
 
-BR,
--R
+Will use what you suggest here.
+
+Thanks
+
 
 >
-> Fixes: d4da4e33341c ("drm: Measure Self Refresh Entry/Exit times to avoid thrashing")
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c       | 14 +++++++++++++-
->  drivers/gpu/drm/drm_self_refresh_helper.c | 15 +++++++++------
->  include/drm/drm_self_refresh_helper.h     |  3 ++-
->  3 files changed, 24 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 3ef2ac52ce94..648494c813e5 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1581,8 +1581,11 @@ static void commit_tail(struct drm_atomic_state *old_state)
->  {
->         struct drm_device *dev = old_state->dev;
->         const struct drm_mode_config_helper_funcs *funcs;
-> +       struct drm_crtc_state *new_crtc_state;
-> +       struct drm_crtc *crtc;
->         ktime_t start;
->         s64 commit_time_ms;
-> +       unsigned i, new_self_refresh_mask = 0;
->
->         funcs = dev->mode_config.helper_private;
->
-> @@ -1602,6 +1605,14 @@ static void commit_tail(struct drm_atomic_state *old_state)
->
->         drm_atomic_helper_wait_for_dependencies(old_state);
->
-> +       /*
-> +        * We cannot safely access new_crtc_state after drm_atomic_helper_commit_hw_done()
-> +        * so figure out which crtc's have self-refresh active beforehand:
-> +        */
-> +       for_each_new_crtc_in_state(old_state, crtc, new_crtc_state, i)
-> +               if (new_crtc_state->self_refresh_active)
-> +                       new_self_refresh_mask |= BIT(i);
-> +
->         if (funcs && funcs->atomic_commit_tail)
->                 funcs->atomic_commit_tail(old_state);
->         else
-> @@ -1610,7 +1621,8 @@ static void commit_tail(struct drm_atomic_state *old_state)
->         commit_time_ms = ktime_ms_delta(ktime_get(), start);
->         if (commit_time_ms > 0)
->                 drm_self_refresh_helper_update_avg_times(old_state,
-> -                                                (unsigned long)commit_time_ms);
-> +                                                (unsigned long)commit_time_ms,
-> +                                                new_self_refresh_mask);
->
->         drm_atomic_helper_commit_cleanup_done(old_state);
->
-> diff --git a/drivers/gpu/drm/drm_self_refresh_helper.c b/drivers/gpu/drm/drm_self_refresh_helper.c
-> index 68f4765a5896..011b8d5f7dd6 100644
-> --- a/drivers/gpu/drm/drm_self_refresh_helper.c
-> +++ b/drivers/gpu/drm/drm_self_refresh_helper.c
-> @@ -133,6 +133,8 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
->   * drm_self_refresh_helper_update_avg_times - Updates a crtc's SR time averages
->   * @state: the state which has just been applied to hardware
->   * @commit_time_ms: the amount of time in ms that this commit took to complete
-> + * @new_self_refresh_mask: bitmask of crtc's that have self_refresh_active in
-> + *    new state
->   *
->   * Called after &drm_mode_config_funcs.atomic_commit_tail, this function will
->   * update the average entry/exit self refresh times on self refresh transitions.
-> @@ -140,22 +142,23 @@ static void drm_self_refresh_helper_entry_work(struct work_struct *work)
->   * entering self refresh mode after activity.
->   */
->  void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
-> -                                             unsigned int commit_time_ms)
-> +                                             unsigned int commit_time_ms,
-> +                                             unsigned int new_self_refresh_mask)
->  {
->         struct drm_crtc *crtc;
-> -       struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-> +       struct drm_crtc_state *old_crtc_state;
->         int i;
->
-> -       for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
-> -                                     new_crtc_state, i) {
-> +       for_each_old_crtc_in_state(state, crtc, old_crtc_state, i) {
-> +               bool new_self_refresh_active = new_self_refresh_mask & BIT(i);
->                 struct drm_self_refresh_data *sr_data = crtc->self_refresh_data;
->                 struct ewma_psr_time *time;
->
->                 if (old_crtc_state->self_refresh_active ==
-> -                   new_crtc_state->self_refresh_active)
-> +                   new_self_refresh_active)
->                         continue;
->
-> -               if (new_crtc_state->self_refresh_active)
-> +               if (new_self_refresh_active)
->                         time = &sr_data->entry_avg_ms;
->                 else
->                         time = &sr_data->exit_avg_ms;
-> diff --git a/include/drm/drm_self_refresh_helper.h b/include/drm/drm_self_refresh_helper.h
-> index 5b79d253fb46..b2c08b328aa1 100644
-> --- a/include/drm/drm_self_refresh_helper.h
-> +++ b/include/drm/drm_self_refresh_helper.h
-> @@ -13,7 +13,8 @@ struct drm_crtc;
->
->  void drm_self_refresh_helper_alter_state(struct drm_atomic_state *state);
->  void drm_self_refresh_helper_update_avg_times(struct drm_atomic_state *state,
-> -                                             unsigned int commit_time_ms);
-> +                                             unsigned int commit_time_ms,
-> +                                             unsigned int new_self_refresh_mask);
->
->  int drm_self_refresh_helper_init(struct drm_crtc *crtc);
->  void drm_self_refresh_helper_cleanup(struct drm_crtc *crtc);
-> --
-> 2.23.0
->
+>>>> +operation through:
+>>>>  =20
+>>>>   =09int mdev_set_class(struct mdev_device *mdev, u16 id);
+>>>>  =20
+>>>> +For the device that uses on the mdev bus for its operation, the
+>>>> class
+>>> "For devices that use the mdev bus..."
+>>>
+>>> But same comment as above.
+>>>   =20
+>>>> +should provide helper function to set class id and device
+>>>> specific +ops. E.g for vfio-mdev devices, the function to be
+>>>> called is:: +
+>>>> +=09int mdev_set_vfio_ops(struct mdev_device *mdev,
+>>>> +                              const struct mdev_vfio_device_ops
+>>>> *vfio_ops); +
+>>>> +The class id (set by this function to MDEV_CLASS_ID_VFIO) is
+>>>> used to +match a device with an mdev driver via its id table. The
+>>>> device +specific callbacks (specified in *vfio_ops) are
+>>>> obtainable via +mdev_get_vfio_ops() (for use by the mdev bus
+>>>> driver). A vfio-mdev +device (class id MDEV_CLASS_ID_VFIO) uses
+>>>> the following +device-specific ops:
+>>>> +
+>>>> +* open: open callback of vfio mediated device
+>>>> +* close: close callback of vfio mediated device
+>>>> +* ioctl: ioctl callback of vfio mediated device
+>>>> +* read : read emulation callback
+>>>> +* write: write emulation callback
+>>>> +* mmap: mmap emulation callback
+>>>> +
+>>>>   Mediated Device Management Interface Through sysfs
+>>>>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>>> Otherwise, looks good.
+
