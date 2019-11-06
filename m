@@ -2,104 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E027F117D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4271F118B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbfKFIyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:54:44 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39969 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbfKFIyo (ORCPT
+        id S1731544AbfKFI4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:56:20 -0500
+Received: from retiisi.org.uk ([95.216.213.190]:55938 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727068AbfKFI4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:54:44 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e3so8985588plt.7;
-        Wed, 06 Nov 2019 00:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n6GjS6HuTnbZ88vQVj4JSFkPPvT/i5ODPCza1wsk6Lc=;
-        b=YjFJBlz0++/RfQRFL30Y70Clnu/B5Hp9fXIBT1QrAOFMv/NsaZC2Flm5rjoMJ20tlw
-         f5e0FEe+rH0OW3NB8daQp/K0Bs8KgObrXvagmBkyDglxa3uFIHg+axqXP935hwlBBBEQ
-         HT6WSpSUcMTsASmr4ElQU7ydbAHQjyqz0F+akDk0u3WSqKoW/bjFKuZkgj8PLWk3upfl
-         i/KjRmaEVmEkXQjWyQ+9zpLOwWPbUvtdZVpM6mlmKK2Fc12N1nMb+ZULqUPr9XXzr+Ql
-         iYdtfEtxgoUHDjMSISrzU291orjEHaXndF3Uhq8yEI/JFXiVeNmv81Jxan2aSkTGWK6Q
-         5+GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n6GjS6HuTnbZ88vQVj4JSFkPPvT/i5ODPCza1wsk6Lc=;
-        b=CiK9fnFs0/0HZw+dpmx//EYDn9YvaaQwpUgPFbjYUJL5otIUFSZgCQ0NRshbv5MYD1
-         mC62gDwJMD8wZ8/DEaXGaXbN3FwovB60ylgqxD9rgfw5iRjepnc5eUaOoI5REJYeyY7H
-         t9C0kWcIrSu711fPBS0hjx6B7RIhY5w1K4eIyJRyz8OmgjhM04PL6Ts5I7+uqBA79sm/
-         flRq8RrwxEYBYIy0Cx0L/c6P/sDMGC1C05cqJT8VaorXGPzRQk4pLDfWV6i7oEEEzOqr
-         x4QoTrQb6ZvGyUIcst6oUUR695qrZrdjG33b2tELRQ9AArOA5awJyXCtZanSIJkW8GMS
-         lFSw==
-X-Gm-Message-State: APjAAAVzYuxL2QBSsWtSjR+TvJoDbILU4cH7DSXEywLZmI61DN8UzTES
-        AJ9nbdAowskRCfYRCDkTlZLnD6jRLocnl28qiX0=
-X-Google-Smtp-Source: APXvYqxFnaPObwnV4COxhNQXBd8N5/3daW/8Ez/WckSwKSEWB7RTX/MES+iZPC3KFUYBE1ai/zETl1cz5ChX9RR8Tos=
-X-Received: by 2002:a17:902:b40e:: with SMTP id x14mr1434268plr.262.1573030482891;
- Wed, 06 Nov 2019 00:54:42 -0800 (PST)
+        Wed, 6 Nov 2019 03:56:20 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 0D78C634C87;
+        Wed,  6 Nov 2019 10:55:03 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iSH5i-0002VM-1T; Wed, 06 Nov 2019 10:55:02 +0200
+Date:   Wed, 6 Nov 2019 10:55:02 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jyri Sarha <jsarha@ti.com>
+Subject: Re: [Patch v2 07/20] media: ti-vpe: cal: add CSI2 PHY LDO errata
+ support
+Message-ID: <20191106085501.GA6253@valkosipuli.retiisi.org.uk>
+References: <20191104193140.31145-1-bparrot@ti.com>
+ <20191104193140.31145-8-bparrot@ti.com>
 MIME-Version: 1.0
-References: <1573029503-18369-1-git-send-email-bianpan2016@163.com>
-In-Reply-To: <1573029503-18369-1-git-send-email-bianpan2016@163.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 6 Nov 2019 10:54:32 +0200
-Message-ID: <CAHp75VeQ_3mConCN=u9O_Ckz9O+awHU=s+d3Kn6R35ZfzzAJKg@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: pch_udc: fix use after free
-To:     Pan Bian <bianpan2016@163.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chuhong Yuan <hslester96@gmail.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104193140.31145-8-bparrot@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 10:41 AM Pan Bian <bianpan2016@163.com> wrote:
->
-> The next field of the DMA descriptor is written after releasing the
-> descriptor, which may result in a use-after-free issue. Set the value of
-> the field before it is released to fix the bug.
->
+Hi Benoit,
 
-Had you chance to read the discussion [1]?
-I Cc to Gustavo to hear from him about destiny of the change.
+On Mon, Nov 04, 2019 at 01:31:27PM -0600, Benoit Parrot wrote:
 
-[1]: http://lkml.iu.edu/hypermail/linux/kernel/1702.1/00843.html
+...
 
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
-> ---
->  drivers/usb/gadget/udc/pch_udc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/gadget/udc/pch_udc.c b/drivers/usb/gadget/udc/pch_udc.c
-> index 265dab2bbfac..c5b8ec908aab 100644
-> --- a/drivers/usb/gadget/udc/pch_udc.c
-> +++ b/drivers/usb/gadget/udc/pch_udc.c
-> @@ -1518,8 +1518,8 @@ static void pch_udc_free_dma_chain(struct pch_udc_dev *dev,
->                 /* do not free first desc., will be done by free for request */
->                 td = phys_to_virt(addr);
->                 addr2 = (dma_addr_t)td->next;
-> -               dma_pool_free(dev->data_requests, td, addr);
->                 td->next = 0x00;
-> +               dma_pool_free(dev->data_requests, td, addr);
->                 addr = addr2;
->         }
->         req->chain_len = 1;
-> --
-> 2.7.4
->
+> @@ -458,6 +483,8 @@
+>  #define CAL_CSI2_PHY_REG1_CLOCK_MISS_DETECTOR_STATUS_SUCCESS		0
+>  #define CAL_CSI2_PHY_REG1_RESET_DONE_STATUS_MASK		GENMASK(29, 28)
+>  
+> +#define CAL_CSI2_PHY_REG10_I933_LDO_DISABLE_MASK		BIT_MASK(6)
 
+BIT(6) ?
+
+BIT_MASK() is intended for a different purpose.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+
+Sakari Ailus
