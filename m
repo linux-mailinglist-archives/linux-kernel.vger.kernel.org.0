@@ -2,102 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F3BF0F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:03:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3440F0F9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731614AbfKFHDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:03:32 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40850 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731601AbfKFHDa (ORCPT
+        id S1731693AbfKFHDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:03:52 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:60423 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731670AbfKFHDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:03:30 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e3so8860402plt.7;
-        Tue, 05 Nov 2019 23:03:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WN6t2RxJTrcSpXWmkeYE7YP/Liw+XUS9WWZURfMVu18=;
-        b=e0d3mmTA3q+QfxCGgXPi0MsudpNOZYUrnPNw83QkvDpwth/fkqJuxRIWo2EkiK6DLz
-         IeJqc46wle64sFTk8FuEVNXLJrRk4prjD8RX/WOCZ3/OzvEtypYyfPtU5PDwGwVBfbER
-         JZ0wW0gPRcE7OhCBImVi2VYJfOdqvaoQzUjUwOqUge+mExV/crPCKnPmNGjcnAxP6h/g
-         kpEJECsmzWVub9jtDJw+OWKvohu1AcTJXc0BlSGYF18mnqPh6cQ7sE964JYSDrwXExk9
-         ipSMejz88ZGZHsVszIpIEsBdqxIxj1pzUwHj3TFpbT4z1CfnxmrmnuDUWfIoCUysFjAc
-         qxQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WN6t2RxJTrcSpXWmkeYE7YP/Liw+XUS9WWZURfMVu18=;
-        b=I6mHt/7wRhqQXrPE7pTLs641uAzSNpqG7uGqj8Y/0c5B5e/D1rDBfPSrPYLKNF8lCo
-         Y76nNVUCl8gZtbn85gQML7oMY0cBIkveXX35DpcU2XOaAm9hWLTgeyk0Sb3OU8yso3ie
-         VlLbXsOEhG1jZaJoUqLbhAeWL5Mns/QH144svv0GEnsiUuqvS1nlnZ2qyPjVhrisz0+g
-         iy/1ECYv/97LIjYMiOcQN1Oj6pZTfHGkiun5Sk7woOWH9G9aGYDaV79j9iyPBn7rSnOC
-         xYgdpYd6QZt4RNZIdlqG4saEoHeemsCKtI4TyRiFnzERZxeh5U6CzUwOgOOmF/bHE2QL
-         R15w==
-X-Gm-Message-State: APjAAAX7M97vjtRaNB+6oXdAU+triff4QK6tmxl9jYSnoGt/yfKIORV0
-        +llJNJiRIhQ6bpnj5sYD7C5oOng+MLB1WE7rhZ0=
-X-Google-Smtp-Source: APXvYqw4jyXL6u9kK1PwIkQAjG0ZoqTmBU33xW+M3eN+g5vMz4eih/Rdu9J4jTWVAlWUjIE3n3XB5B69aeDKKfte098=
-X-Received: by 2002:a17:902:bb84:: with SMTP id m4mr1006603pls.255.1573023809520;
- Tue, 05 Nov 2019 23:03:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20191104213417.18036-1-leonmaxx@gmail.com> <20191104213907.18413-1-leonmaxx@gmail.com>
-In-Reply-To: <20191104213907.18413-1-leonmaxx@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 6 Nov 2019 09:03:17 +0200
-Message-ID: <CAHp75VfgTAa8TgTYn99gr_F4mmVuJZgEu=JcDE+bOnAO-pqqxA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] platform/x86: asus_wmi: Set default fan boost mode
- to normal
-To:     Leonid Maksymchuk <leonmaxx@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Chris Chiu <chiu@endlessm.com>,
-        Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>,
-        Kristian Klausen <kristian@klausen.dk>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Corentin Chary <corentin.chary@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Nov 2019 02:03:48 -0500
+Date:   06 Nov 2019 16:03:47 +0900
+X-IronPort-AV: E=Sophos;i="5.68,272,1569250800"; 
+   d="scan'208";a="30965220"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2019 16:03:47 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3C21840031EA;
+        Wed,  6 Nov 2019 16:03:47 +0900 (JST)
+Message-ID: <87d0e5h4fg.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     "kernelci.org bot" <bot@kernelci.org>
+Cc:     Mark Brown <broonie@kernel.org>, tomeu.vizoso@collabora.com,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: broonie-sound/for-next boot bisection: v5.4-rc6-292-gc1efaea10be0 on sun8i-h3-libretech-all-h3-cc
+In-Reply-To: <5dc267e7.1c69fb81.496da.9bf1@mx.google.com>
+References: <5dc267e7.1c69fb81.496da.9bf1@mx.google.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 11:39 PM Leonid Maksymchuk <leonmaxx@gmail.com> wrote:
->
-> Set default fan boost mode to normal for multiple reasons:
->
-> 1) existing code assumes that laptop started in normal mode and that is
->    not always correct.
-> 2) FX705DY/FX505DY starts in silent mode and under heavy CPU load it
->    overheats and drops CPU frequency to 399MHz [1]. Setting fan mode to
->    normal avoids overheating.
->
-> [1] Link: https://bugzilla.kernel.org/show_bug.cgi?id=203733
->
-> Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
 
-> +static int fan_boost_mode_set_default(struct asus_wmi *asus)
-> +{
-> +       int result = 0;
-> +
-> +       if (asus->fan_boost_mode_available) {
-> +               asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
-> +               result = fan_boost_mode_write(asus);
-> +       }
-> +
-> +       return result;
-> +}
+Hi
 
-This can be refactored
+> Summary:
+>   Start:      c1efaea10be0 Merge branch 'asoc-5.5' into asoc-next
+>   Details:    https://kernelci.org/boot/id/5dc218e159b5142346138dff
+>   Plain log:  https://storage.kernelci.org//broonie-sound/for-next/v5.4-rc6-292-gc1efaea10be0/arm/sunxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.txt
+>   HTML log:   https://storage.kernelci.org//broonie-sound/for-next/v5.4-rc6-292-gc1efaea10be0/arm/sunxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.html
+>   Result:     ac6a4dd3e9f0 ASoC: soc-core: use snd_soc_lookup_component() at snd_soc_unregister_component()
 
-if (!foo)
-  return 0;
-...
-return bar(asus);
+Thank you for reporting !!
+I created fixup patch.
+I will post it at next mail.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thank you for your help !!
+Best regards
+---
+Kuninori Morimoto
