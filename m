@@ -2,110 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48FDAF20D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55520F20EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbfKFV3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 16:29:38 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:56578 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfKFV3i (ORCPT
+        id S1727700AbfKFVmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 16:42:47 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.164]:40806 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726779AbfKFVmr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:29:38 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 9B5A81C09B6; Wed,  6 Nov 2019 22:29:36 +0100 (CET)
-Date:   Wed, 6 Nov 2019 22:29:21 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-pm@vger.kernel.org, Chris Healy <cphealy@gmail.com>
-Subject: Re: [PATCH v2] nvme: Add hardware monitoring support
-Message-ID: <20191106212921.GA7020@amd>
-References: <20191029223214.18889-1-linux@roeck-us.net>
- <20191030005327.GC15332@redsun51.ssa.fujisawa.hgst.com>
+        Wed, 6 Nov 2019 16:42:47 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 6259F5D973
+        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 14:36:19 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id SS1mirYkGOdBHSS1mi89RW; Wed, 06 Nov 2019 14:35:42 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XIxA713O4Mg37eoDrUSCzjj+vN9vg0NpHpyRVBkru4U=; b=jk04JwNcYqsa0Df9xUzYTPoZo0
+        RU6yyRfU1vvEj5MAj5fJfMHlCRlg6NEWdlQ5jqDcTx++h0JVYqVNeXycBu+EBYEMGiN47MrfwQwo9
+        dvYu+0U5EgPqJNFiehI3vx9Kp2SY+aZ0+wuJPp4TcWjyj8Da4nHah9cBrXl+5pmj+tiNv9OGR7ehV
+        X3QVD3X4gpZAnZB3c9GZqZsTgnBX+vJOp3Cj9abeNWUVx7bDdrKBY1xiGQcP6St8eLq0/vqmHqdXL
+        RkPT50soZ+jW5M9WasPfdl9Z2S+gxzjVyqQnPGHCzuMhiGJjLy67npY9kxiBG9BlbfvkrOlc/fbzK
+        QFymSZOQ==;
+Received: from [187.192.2.30] (port=35304 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iSS1l-0031aJ-M6; Wed, 06 Nov 2019 14:35:42 -0600
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Pan Bian <bianpan2016@163.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Chuhong Yuan <hslester96@gmail.com>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1573029503-18369-1-git-send-email-bianpan2016@163.com>
+ <CAHp75VeQ_3mConCN=u9O_Ckz9O+awHU=s+d3Kn6R35ZfzzAJKg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] usb: gadget: pch_udc: fix use after free
+Message-ID: <7827836d-e42f-b688-625d-89d2027cf3d6@embeddedor.com>
+Date:   Wed, 6 Nov 2019 14:35:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
-In-Reply-To: <20191030005327.GC15332@redsun51.ssa.fujisawa.hgst.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAHp75VeQ_3mConCN=u9O_Ckz9O+awHU=s+d3Kn6R35ZfzzAJKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.2.30
+X-Source-L: No
+X-Exim-ID: 1iSS1l-0031aJ-M6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [187.192.2.30]:35304
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 11/6/19 02:54, Andy Shevchenko wrote:
+> On Wed, Nov 6, 2019 at 10:41 AM Pan Bian <bianpan2016@163.com> wrote:
+>>
+>> The next field of the DMA descriptor is written after releasing the
+>> descriptor, which may result in a use-after-free issue. Set the value of
+>> the field before it is released to fix the bug.
+>>
+> 
+> Had you chance to read the discussion [1]?
+> I Cc to Gustavo to hear from him about destiny of the change.
+> 
 
-> > nvme devices report temperature information in the controller informati=
-on
-> > (for limits) and in the smart log. Currently, the only means to retrieve
-> > this information is the nvme command line interface, which requires
-> > super-user privileges.
-> >=20
-> > At the same time, it would be desirable to use NVME temperature informa=
-tion
-> > for thermal control.
-> >=20
-> > This patch adds support to read NVME temperatures from the kernel using=
- the
-> > hwmon API and adds temperature zones for NVME drives. The thermal subsy=
-stem
-> > can use this information to set thermal policies, and userspace can acc=
-ess
-> > it using libsensors and/or the "sensors" command.
-> >=20
-> > Example output from the "sensors" command:
-> >=20
-> > nvme0-pci-0100
-> > Adapter: PCI adapter
-> > Composite:    +39.0=B0C  (high =3D +85.0=B0C, crit =3D +85.0=B0C)
-> > Sensor 1:     +39.0=B0C
-> > Sensor 2:     +41.0=B0C
-> >=20
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->=20
-> This looks fine to me, but I'll wait a few more days to see if there are
-> any additional comments..
+Wow, thanks for reminding me about this thread, Andy.
+I had totally forgotten about this for more than two years... :|
 
-User wants to know temperature of /dev/sda... and we already have an
-userspace tools knowing about smart, etc...
+Here is the final version:
 
-pavel@amd:/data/film$ sudo hddtemp /dev/sda
-/dev/sda: ST1000LM014-1EJ164: 48=B0C
+https://lore.kernel.org/lkml/20191106202821.GA20347@embeddedor/
 
-I see we also have sensors framework but it does _not_ handle
-harddrive temperatures.
+Thanks
+--
+Gustavo
 
-Does it need some kind of unification? Should NVMe devices expose
-"SMART" information in the same way other SSDs do?
-
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl3DOzEACgkQMOfwapXb+vIMvACfQ4av1AszPWgW7jbyZuTg6fmz
-a2EAoIkF7v4EygABLAACFFwF9dxY14dS
-=o7Jq
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
