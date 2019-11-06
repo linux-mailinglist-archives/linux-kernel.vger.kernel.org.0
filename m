@@ -2,418 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26FDAF107F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:43:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55A7EF1097
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:45:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731446AbfKFHmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:42:55 -0500
-Received: from mga06.intel.com ([134.134.136.31]:15140 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbfKFHmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:42:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 23:42:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
-   d="scan'208";a="232770738"
-Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Nov 2019 23:42:50 -0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        sean.j.christopherson@intel.com
-Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
-Subject: [PATCH v6 6/9] vmx: spp: Set up SPP paging table at vmentry/vmexit
-Date:   Wed,  6 Nov 2019 15:45:01 +0800
-Message-Id: <20191106074504.14858-7-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191106074504.14858-1-weijiang.yang@intel.com>
-References: <20191106074504.14858-1-weijiang.yang@intel.com>
+        id S1731589AbfKFHpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:45:08 -0500
+Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:18985
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729986AbfKFHpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:45:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jlakg06RjDkIE1KDSVYBM9NXNvTX0Fwk1Z88Xi3zq1CHUAjRilzyKBNy2bnMQJ3kSnkCGaIW/rMABA3Go/ylobXqnvF9LE6pgbaj+S6yzJwhYhzKeiHHifoqF54s2Qdi3TSo0ecTD2GwwEZ3tbj+hhckjkITg1Na5G+LMqY0e4LId+on47IC/v05NUzfmvMiTH7w0mpaWBQlWN+Z1tBA9q+8tCVseuZnp+314mueJfpJhwbtrffWxaayK86B479iuE6tgr1QcznDUqYLcm55O535RfhOGBOdDQdszHyLsDDJRe8xt1lof4hR7xA43xQfJaPrpgxzoEZh5q6yHKL23A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
+ b=a6u6xnCj7MA/vxhM8vYYLo1qOVqJvsfxbPN/Fsn/EvTqbbBmyiy2UcwY6I/e6mgLv2MH6lfciWepne0rfeuWKRIu8mzLJEhK7cuJ2zCO/tJx10Z5Yi4iQKc9RmFgBLQUQhWTYOXspIHJoXZr1AAExIuXdUbLBy7lnjc6kR4X2u/Bgi8eZwCdjo+XEGlVc4dP9KSpjUNtNQvbpHU/84NXZUGltrHDsbbOWebmjUXta4yjr+e+E4Mkcm1E40JpY7lP7FR20ATe5CAuI6K0Ed9zzlx+UHRR2h1yaU1iRGBUwdRuZP+L0ehQotPFJK2U8mjiVklRjgyHnYsqjldBhb16ZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
+ b=abpYqtWBQQZdnl6Tt/aXybxHaHaUSxz0YNcM5CNNXun7e2xRLoTI5r3uI/HCTT/JDfecU6kHF4Sq0DIAgzAtpKgVJHND/C8L8lQBmizu3igZJadwyyQD/l9nBqriK9BXkQcYpsqZYug1H8cPb+glISo7H/V16sgDon9RSSCcRT8=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB3956.eurprd04.prod.outlook.com (52.134.93.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Wed, 6 Nov 2019 07:45:02 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
+ 07:45:01 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
+Thread-Topic: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
+Thread-Index: AQHVlGNoepC2TDBj7kaCYRyt+h3yD6d9w2gA
+Date:   Wed, 6 Nov 2019 07:45:01 +0000
+Message-ID: <20191106074500.vwihbt6s4dwqyun7@fsr-ub1664-175>
+References: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM4PR0101CA0057.eurprd01.prod.exchangelabs.com
+ (2603:10a6:200:41::25) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [89.37.124.34]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
+x-ms-traffictypediagnostic: AM0PR04MB3956:|AM0PR04MB3956:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB395665F85B4C56349A243B5CF6790@AM0PR04MB3956.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 02135EB356
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(7916004)(4636009)(376002)(346002)(136003)(396003)(366004)(39860400002)(199004)(189003)(6512007)(316002)(64756008)(6636002)(5660300002)(66446008)(2906002)(26005)(305945005)(102836004)(7736002)(86362001)(6116002)(76176011)(14444005)(8936002)(8676002)(66476007)(44832011)(66556008)(6506007)(3846002)(66066001)(71200400001)(6436002)(71190400001)(6486002)(478600001)(81166006)(6246003)(99286004)(476003)(9686003)(229853002)(52116002)(386003)(256004)(54906003)(81156014)(446003)(486006)(1076003)(6862004)(4744005)(25786009)(14454004)(66946007)(4326008)(53546011)(33716001)(11346002)(186003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3956;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PoAT/lwDNarbS17vfheekcGmymmENkNYSI+U1qLmqUpBZ2BgO4xBagbMGTLRBW+FWidooLGz4kBjEuH+YgYG8ImGvv5k8czCvwZvggNCQ+8yzD4Yxt4LRG5mDk8RT6eVwwoeq/yJOyEAHnWG5xzZ8wo5GzycKGv+0TaUMuVTfcf1dv7qpjJOhm1/JdF6YsCtCk2Tk0grUY76em95RMnhXkPy/KcExX1XzyGJsvKTE+dWUtrf/7fLpeMxSG08pCED4dR00g5J9gKrK95umpdkajl0cx9cEThmSkaz8RPqiTaehpV9N8y0YGetRRkXTyGxwFG3uRbNhi1eTaLAzToMSVRwtyFPuH4avgsZ0ZyXf0AIZxT8c5aEAg/fo3tDkwAsE+J5eifzHUdSX5JpulyY8S/inmQfE4JUS/1DgK1NLvwHVv5vqhEuvirno9WSdPu7
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3C2A340762855A46862663A22A7574CA@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 07:45:01.8697
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6qHDHv/EU/5rIHVd3bzy4CWxTEnN0HJAlOu8krcC3jnaS+FNLxw5URS1aRaWjAZbTx3kW3dZR5rEA1p/kI2wQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3956
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If write to subpage is not allowed, EPT violation generates
-and it's handled in fast_page_fault().
+On 19-11-06 05:31:15, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> The usage of readl_poll_timeout is wrong, the cond should be
+> "val & LOCK_STATUS" not "val & LOCK_TIMEOUT_US".
+>=20
+> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-In current implementation, SPPT setup is only handled in handle_spp()
-vmexit handler, it's triggered when SPP bit is set in EPT leaf
-entry while SPPT entries are not ready.
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-A SPP specific bit(11) is added to exit_qualification and a new
-exit reason(66) is introduced for SPP.
-
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Co-developed-by: He Chen <he.chen@linux.intel.com>
-Signed-off-by: He Chen <he.chen@linux.intel.com>
-Co-developed-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- arch/x86/include/asm/vmx.h      |  9 ++++
- arch/x86/include/uapi/asm/vmx.h |  2 +
- arch/x86/kvm/mmu.c              | 42 ++++++++++++++++-
- arch/x86/kvm/vmx/spp.c          | 12 +++++
- arch/x86/kvm/vmx/spp.h          |  2 +
- arch/x86/kvm/vmx/vmx.c          | 80 +++++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.c              |  2 +
- include/uapi/linux/kvm.h        |  5 +++
- 8 files changed, 153 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index e1137807affc..f41989eae5e2 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -211,6 +211,8 @@ enum vmcs_field {
- 	XSS_EXIT_BITMAP_HIGH            = 0x0000202D,
- 	ENCLS_EXITING_BITMAP		= 0x0000202E,
- 	ENCLS_EXITING_BITMAP_HIGH	= 0x0000202F,
-+	SPPT_POINTER			= 0x00002030,
-+	SPPT_POINTER_HIGH		= 0x00002031,
- 	TSC_MULTIPLIER                  = 0x00002032,
- 	TSC_MULTIPLIER_HIGH             = 0x00002033,
- 	GUEST_PHYSICAL_ADDRESS          = 0x00002400,
-@@ -532,6 +534,13 @@ struct vmx_msr_entry {
- #define EPT_VIOLATION_EXECUTABLE	(1 << EPT_VIOLATION_EXECUTABLE_BIT)
- #define EPT_VIOLATION_GVA_TRANSLATED	(1 << EPT_VIOLATION_GVA_TRANSLATED_BIT)
- 
-+/*
-+ * Exit Qualifications for SPPT-Induced vmexits
-+ */
-+#define SPPT_INDUCED_EXIT_TYPE_BIT     11
-+#define SPPT_INDUCED_EXIT_TYPE         (1 << SPPT_INDUCED_EXIT_TYPE_BIT)
-+#define SPPT_INTR_INFO_UNBLOCK_NMI     INTR_INFO_UNBLOCK_NMI
-+
- /*
-  * VM-instruction error numbers
-  */
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index f0b0c90dd398..ac67622bac5a 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,7 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_SPP                 66
- 
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -141,6 +142,7 @@
- 	{ EXIT_REASON_ENCLS,                 "ENCLS" }, \
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
-+	{ EXIT_REASON_SPP,                   "SPP" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
- 	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
- 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index a63964e7cec7..a632c6b3c326 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -20,6 +20,7 @@
- #include "x86.h"
- #include "kvm_cache_regs.h"
- #include "cpuid.h"
-+#include "vmx/spp.h"
- 
- #include <linux/kvm_host.h>
- #include <linux/types.h>
-@@ -137,6 +138,7 @@ module_param(dbg, bool, 0644);
- /* The mask for the R/X bits in EPT PTEs */
- #define PT64_EPT_READABLE_MASK			0x1ull
- #define PT64_EPT_EXECUTABLE_MASK		0x4ull
-+#define PT64_SPP_SAVED_BIT	(1ULL << (PT64_SECOND_AVAIL_BITS_SHIFT + 1))
- 
- #include <trace/events/kvm.h>
- 
-@@ -918,6 +920,11 @@ static u64 mark_spte_for_access_track(u64 spte)
- 		shadow_acc_track_saved_bits_shift;
- 	spte &= ~shadow_acc_track_mask;
- 
-+	if (spte & PT_SPP_MASK) {
-+		spte &= ~PT_SPP_MASK;
-+		spte |= PT64_SPP_SAVED_BIT;
-+	}
-+
- 	return spte;
- }
- 
-@@ -1598,9 +1605,15 @@ static bool wrprot_ad_disabled_spte(u64 *sptep)
- {
- 	bool was_writable = test_and_clear_bit(PT_WRITABLE_SHIFT,
- 					       (unsigned long *)sptep);
-+	bool was_spp_armed = test_and_clear_bit(PT_SPP_SHIFT,
-+					       (unsigned long *)sptep);
-+
- 	if (was_writable)
- 		kvm_set_pfn_dirty(spte_to_pfn(*sptep));
- 
-+	if (was_spp_armed)
-+		*sptep |= PT64_SPP_SAVED_BIT;
-+
- 	return was_writable;
- }
- 
-@@ -3453,7 +3466,23 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
- 		if ((error_code & PFERR_WRITE_MASK) &&
- 		    spte_can_locklessly_be_made_writable(spte))
- 		{
--			new_spte |= PT_WRITABLE_MASK;
-+			/*
-+			 * Record write protect fault caused by
-+			 * Sub-page Protection, let VMI decide
-+			 * the next step.
-+			 */
-+			if (spte & PT_SPP_MASK) {
-+				fault_handled = true;
-+				vcpu->run->exit_reason = KVM_EXIT_SPP;
-+				vcpu->run->spp.addr = gva;
-+				kvm_skip_emulated_instruction(vcpu);
-+				break;
-+			}
-+
-+			if (was_spp_armed(new_spte))
-+				restore_spp_bit(&new_spte);
-+			else
-+				new_spte |= PT_WRITABLE_MASK;
- 
- 			/*
- 			 * Do not fix write-permission on the large spte.  Since
-@@ -3604,6 +3633,9 @@ void kvm_mmu_free_roots(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 		    (mmu->root_level >= PT64_ROOT_4LEVEL || mmu->direct_map)) {
- 			mmu_free_root_page(vcpu->kvm, &mmu->root_hpa,
- 					   &invalid_list);
-+			if (vcpu->kvm->arch.spp_active)
-+				mmu_free_root_page(vcpu->kvm, &mmu->sppt_root,
-+						   &invalid_list);
- 		} else {
- 			for (i = 0; i < 4; ++i)
- 				if (mmu->pae_root[i] != 0)
-@@ -5083,6 +5115,8 @@ void kvm_init_mmu(struct kvm_vcpu *vcpu, bool reset_roots)
- 		uint i;
- 
- 		vcpu->arch.mmu->root_hpa = INVALID_PAGE;
-+		if (!vcpu->kvm->arch.spp_active)
-+			vcpu->arch.mmu->sppt_root = INVALID_PAGE;
- 
- 		for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
- 			vcpu->arch.mmu->prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
-@@ -5400,6 +5434,10 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
- 		r = vcpu->arch.mmu->page_fault(vcpu, cr2,
- 					       lower_32_bits(error_code),
- 					       false);
-+
-+		if (vcpu->run->exit_reason == KVM_EXIT_SPP)
-+			return 0;
-+
- 		WARN_ON(r == RET_PF_INVALID);
- 	}
- 
-@@ -6165,6 +6203,8 @@ unsigned long kvm_mmu_calculate_default_mmu_pages(struct kvm *kvm)
- 	return nr_mmu_pages;
- }
- 
-+#include "vmx/spp.c"
-+
- void kvm_mmu_destroy(struct kvm_vcpu *vcpu)
- {
- 	kvm_mmu_unload(vcpu);
-diff --git a/arch/x86/kvm/vmx/spp.c b/arch/x86/kvm/vmx/spp.c
-index c2b484372010..7329291c9f7c 100644
---- a/arch/x86/kvm/vmx/spp.c
-+++ b/arch/x86/kvm/vmx/spp.c
-@@ -17,6 +17,18 @@ static void shadow_spp_walk_init(struct kvm_shadow_walk_iterator *iterator,
- 	iterator->level = PT64_ROOT_4LEVEL;
- }
- 
-+/* Restore an spp armed PTE */
-+void restore_spp_bit(u64 *spte)
-+{
-+	*spte &= ~PT64_SPP_SAVED_BIT;
-+	*spte |= PT_SPP_MASK;
-+}
-+
-+bool was_spp_armed(u64 spte)
-+{
-+	return !!(spte & PT64_SPP_SAVED_BIT);
-+}
-+
- static int is_spp_shadow_present(u64 pte)
- {
- 	return pte & PT_PRESENT_MASK;
-diff --git a/arch/x86/kvm/vmx/spp.h b/arch/x86/kvm/vmx/spp.h
-index ad13a35bfca2..208b557cac7d 100644
---- a/arch/x86/kvm/vmx/spp.h
-+++ b/arch/x86/kvm/vmx/spp.h
-@@ -5,6 +5,8 @@
- #define FULL_SPP_ACCESS		((u32)((1ULL << 32) - 1))
- 
- bool is_spp_spte(struct kvm_mmu_page *sp);
-+void restore_spp_bit(u64 *spte);
-+bool was_spp_armed(u64 spte);
- inline u64 construct_spptp(unsigned long root_hpa);
- int kvm_vm_ioctl_get_subpages(struct kvm *kvm,
- 			      struct kvm_subpage *spp_info);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index af296a290173..8a8d49d7231c 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2891,6 +2891,7 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- 	struct kvm *kvm = vcpu->kvm;
- 	unsigned long guest_cr3;
- 	u64 eptp;
-+	u64 spptp;
- 
- 	guest_cr3 = cr3;
- 	if (enable_ept) {
-@@ -2913,6 +2914,12 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- 		ept_load_pdptrs(vcpu);
- 	}
- 
-+	if (kvm->arch.spp_active && VALID_PAGE(vcpu->arch.mmu->sppt_root)) {
-+		spptp = construct_spptp(vcpu->arch.mmu->sppt_root);
-+		vmcs_write64(SPPT_POINTER, spptp);
-+		vmx_flush_tlb(vcpu, true);
-+	}
-+
- 	vmcs_writel(GUEST_CR3, guest_cr3);
- }
- 
-@@ -5333,6 +5340,75 @@ static int handle_monitor_trap(struct kvm_vcpu *vcpu)
- 	return 1;
- }
- 
-+int handle_spp(struct kvm_vcpu *vcpu)
-+{
-+	unsigned long exit_qualification;
-+	struct kvm_memory_slot *slot;
-+	gpa_t gpa;
-+	gfn_t gfn;
-+
-+	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
-+
-+	/*
-+	 * SPP VM exit happened while executing iret from NMI,
-+	 * "blocked by NMI" bit has to be set before next VM entry.
-+	 * There are errata that may cause this bit to not be set:
-+	 * AAK134, BY25.
-+	 */
-+	if (!(to_vmx(vcpu)->idt_vectoring_info & VECTORING_INFO_VALID_MASK) &&
-+	    (exit_qualification & SPPT_INTR_INFO_UNBLOCK_NMI))
-+		vmcs_set_bits(GUEST_INTERRUPTIBILITY_INFO,
-+			      GUEST_INTR_STATE_NMI);
-+
-+	vcpu->arch.exit_qualification = exit_qualification;
-+	if (exit_qualification & SPPT_INDUCED_EXIT_TYPE) {
-+		struct kvm_subpage spp_info = {0};
-+		int ret;
-+
-+		/*
-+		 * SPPT missing
-+		 * We don't set SPP write access for the corresponding
-+		 * GPA, if we haven't setup, we need to construct
-+		 * SPP table here.
-+		 */
-+		pr_info("SPP - SPPT entry missing!\n");
-+		gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-+		gfn = gpa >> PAGE_SHIFT;
-+		slot = gfn_to_memslot(vcpu->kvm, gfn);
-+		if (!slot)
-+			return -EFAULT;
-+
-+		/*
-+		 * if the target gfn is not protected, but SPPT is
-+		 * traversed now, regard this as some kind of fault.
-+		 */
-+		spp_info.base_gfn = gfn;
-+		spp_info.npages = 1;
-+
-+		spin_lock(&vcpu->kvm->mmu_lock);
-+		ret = kvm_spp_get_permission(vcpu->kvm, &spp_info);
-+		if (ret == 1) {
-+			kvm_spp_setup_structure(vcpu, spp_info.access_map[0],
-+						gfn);
-+		}
-+		spin_unlock(&vcpu->kvm->mmu_lock);
-+
-+		return 1;
-+	}
-+
-+	/*
-+	 * SPPT Misconfig
-+	 * This is probably caused by some mis-configuration in SPPT
-+	 * entries, cannot handle it here, escalate the fault to
-+	 * emulator.
-+	 */
-+	WARN_ON(1);
-+	vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
-+	vcpu->run->hw.hardware_exit_reason = EXIT_REASON_SPP;
-+	pr_alert("SPP - SPPT Misconfiguration!\n");
-+	return 0;
-+}
-+
- static int handle_monitor(struct kvm_vcpu *vcpu)
- {
- 	printk_once(KERN_WARNING "kvm: MONITOR instruction emulated as NOP!\n");
-@@ -5547,6 +5623,7 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_INVVPID]                 = handle_vmx_instruction,
- 	[EXIT_REASON_RDRAND]                  = handle_invalid_op,
- 	[EXIT_REASON_RDSEED]                  = handle_invalid_op,
-+	[EXIT_REASON_SPP]                     = handle_spp,
- 	[EXIT_REASON_XSAVES]                  = handle_xsaves,
- 	[EXIT_REASON_XRSTORS]                 = handle_xrstors,
- 	[EXIT_REASON_PML_FULL]		      = handle_pml_full,
-@@ -5781,6 +5858,9 @@ void dump_vmcs(void)
- 		pr_err("PostedIntrVec = 0x%02x\n", vmcs_read16(POSTED_INTR_NV));
- 	if ((secondary_exec_control & SECONDARY_EXEC_ENABLE_EPT))
- 		pr_err("EPT pointer = 0x%016llx\n", vmcs_read64(EPT_POINTER));
-+	if ((secondary_exec_control & SECONDARY_EXEC_ENABLE_SPP))
-+		pr_err("SPPT pointer = 0x%016llx\n", vmcs_read64(SPPT_POINTER));
-+
- 	n = vmcs_read32(CR3_TARGET_COUNT);
- 	for (i = 0; i + 1 < n; i += 4)
- 		pr_err("CR3 target%u=%016lx target%u=%016lx\n",
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 78605d75690e..fa114b5db672 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9523,6 +9523,8 @@ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *free,
- 	}
- 
- 	kvm_page_track_free_memslot(free, dont);
-+	if (kvm->arch.spp_active)
-+		kvm_spp_free_memslot(free, dont);
- }
- 
- int kvm_arch_create_memslot(struct kvm *kvm, struct kvm_memory_slot *slot,
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 700f0825336d..3816f0ac5dad 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -244,6 +244,7 @@ struct kvm_hyperv_exit {
- #define KVM_EXIT_S390_STSI        25
- #define KVM_EXIT_IOAPIC_EOI       26
- #define KVM_EXIT_HYPERV           27
-+#define KVM_EXIT_SPP              28
- 
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
-@@ -399,6 +400,10 @@ struct kvm_run {
- 		struct {
- 			__u8 vector;
- 		} eoi;
-+		/* KVM_EXIT_SPP */
-+		struct {
-+			__u64 addr;
-+		} spp;
- 		/* KVM_EXIT_HYPERV */
- 		struct kvm_hyperv_exit hyperv;
- 		/* Fix the size of the union. */
--- 
-2.17.2
-
+> ---
+>=20
+> V1:
+>  Hi Shawn,
+>    This patch is made based on 5.4-rc6, not your for-next branch,
+>    not sure whether this patch could catch 5.4 release.
+>=20
+>  drivers/clk/imx/clk-pll14xx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
+c
+> index 7a815ec76aa5..d43b4a3c0de8 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -153,7 +153,7 @@ static int clk_pll14xx_wait_lock(struct clk_pll14xx *=
+pll)
+>  {
+>  	u32 val;
+> =20
+> -	return readl_poll_timeout(pll->base, val, val & LOCK_TIMEOUT_US, 0,
+> +	return readl_poll_timeout(pll->base, val, val & LOCK_STATUS, 0,
+>  			LOCK_TIMEOUT_US);
+>  }
+> =20
+> --=20
+> 2.16.4
+>=20
