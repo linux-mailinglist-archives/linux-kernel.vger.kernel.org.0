@@ -2,151 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55520F20EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 319A7F20D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 22:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbfKFVmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 16:42:47 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.164]:40806 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726779AbfKFVmr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:42:47 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 6259F5D973
-        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 14:36:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id SS1mirYkGOdBHSS1mi89RW; Wed, 06 Nov 2019 14:35:42 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XIxA713O4Mg37eoDrUSCzjj+vN9vg0NpHpyRVBkru4U=; b=jk04JwNcYqsa0Df9xUzYTPoZo0
-        RU6yyRfU1vvEj5MAj5fJfMHlCRlg6NEWdlQ5jqDcTx++h0JVYqVNeXycBu+EBYEMGiN47MrfwQwo9
-        dvYu+0U5EgPqJNFiehI3vx9Kp2SY+aZ0+wuJPp4TcWjyj8Da4nHah9cBrXl+5pmj+tiNv9OGR7ehV
-        X3QVD3X4gpZAnZB3c9GZqZsTgnBX+vJOp3Cj9abeNWUVx7bDdrKBY1xiGQcP6St8eLq0/vqmHqdXL
-        RkPT50soZ+jW5M9WasPfdl9Z2S+gxzjVyqQnPGHCzuMhiGJjLy67npY9kxiBG9BlbfvkrOlc/fbzK
-        QFymSZOQ==;
-Received: from [187.192.2.30] (port=35304 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iSS1l-0031aJ-M6; Wed, 06 Nov 2019 14:35:42 -0600
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Pan Bian <bianpan2016@163.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chuhong Yuan <hslester96@gmail.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1573029503-18369-1-git-send-email-bianpan2016@163.com>
- <CAHp75VeQ_3mConCN=u9O_Ckz9O+awHU=s+d3Kn6R35ZfzzAJKg@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] usb: gadget: pch_udc: fix use after free
-Message-ID: <7827836d-e42f-b688-625d-89d2027cf3d6@embeddedor.com>
-Date:   Wed, 6 Nov 2019 14:35:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732382AbfKFVaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 16:30:35 -0500
+Received: from mga06.intel.com ([134.134.136.31]:14326 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726779AbfKFVaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 16:30:35 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 13:30:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
+   d="scan'208";a="212860856"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Nov 2019 13:30:33 -0800
+Date:   Wed, 6 Nov 2019 13:30:32 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/2] KVM: MMU: Do not treat ZONE_DEVICE pages as being
+ reserved
+Message-ID: <20191106213032.GA20475@linux.intel.com>
+References: <20191106170727.14457-1-sean.j.christopherson@intel.com>
+ <20191106170727.14457-2-sean.j.christopherson@intel.com>
+ <CAPcyv4gJk2cXLdT2dZwCH2AssMVNxUfdx-bYYwJwy1LwFxOs0w@mail.gmail.com>
+ <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeQ_3mConCN=u9O_Ckz9O+awHU=s+d3Kn6R35ZfzzAJKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.2.30
-X-Source-L: No
-X-Exim-ID: 1iSS1l-0031aJ-M6
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [187.192.2.30]:35304
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cf71906-ba99-e637-650f-fc08ac4f3d5f@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/6/19 02:54, Andy Shevchenko wrote:
-> On Wed, Nov 6, 2019 at 10:41 AM Pan Bian <bianpan2016@163.com> wrote:
->>
->> The next field of the DMA descriptor is written after releasing the
->> descriptor, which may result in a use-after-free issue. Set the value of
->> the field before it is released to fix the bug.
->>
+On Wed, Nov 06, 2019 at 10:09:29PM +0100, Paolo Bonzini wrote:
+> On 06/11/19 19:04, Dan Williams wrote:
+> > On Wed, Nov 6, 2019 at 9:07 AM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > This is racy unless you can be certain that the pfn and resulting page
+> > has already been pinned by get_user_pages().
 > 
-> Had you chance to read the discussion [1]?
-> I Cc to Gustavo to hear from him about destiny of the change.
+> What is the race exactly?
+
+The check in kvm_get_pfn() is guaranteed to be racy, but that's already
+broken with respect to ZONE_DEVICE.
+ 
+> In general KVM does not use pfn's until after having gotten them from
+> get_user_pages (or follow_pfn for VM_IO | VM_PFNMAP vmas, for which
+> get_user_pages fails, but this is not an issue here).  It then creates
+> the page tables and releases the reference to the struct page.
 > 
+> Anything else happens _after_ the reference has been released, but still
+> from an mmu notifier; this is why KVM uses pfn_to_page quite pervasively.
+> 
+> If this is enough to avoid races, then I prefer Sean's patch.  If it is
+> racy, we need to fix kvm_set_pfn_accessed and kvm_set_pfn_dirty first,
+> and second at transparent_hugepage_adjust and kvm_mmu_zap_collapsible_spte:
 
-Wow, thanks for reminding me about this thread, Andy.
-I had totally forgotten about this for more than two years... :|
+transparent_hugepage_adjust() would be ok, it's called before the original
+reference is put back.
 
-Here is the final version:
+> - if accessed/dirty state need not be tracked properly for ZONE_DEVICE,
+> then I suppose David's patch is okay (though I'd like to have a big
+> comment explaining all the things that went on in these emails).  If
+> they need to work, however, Sean's patch 1 is the right thing to do.
+> 
+> - if we need Sean's patch 1, but it is racy to use is_zone_device_page,
+> we could first introduce a helper similar to kvm_is_hugepage_allowed()
+> from his patch 2, but using pfn_to_online_page() to filter out
+> ZONE_DEVICE pages.  This would cover both transparent_hugepage_adjust
+> and kvm_mmu_zap_collapsible_spte.
 
-https://lore.kernel.org/lkml/20191106202821.GA20347@embeddedor/
+After more thought, I agree with Paolo that adding kvm_is_zone_device_pfn()
+is preferably if blocking with mmu_notifier is sufficient to avoid races.
+The only caller that isn't protected by mmu_notifier (or holding a gup()-
+obtained referece) is kvm_get_pfn(), but again, that's completely borked
+anyways.   Adding a WARN_ON(page_count()) in kvm_is_zone_device_pfn() would
+help with the auditing issue.
 
-Thanks
---
-Gustavo
+The scope of the changes required to completely avoid is_zone_device_page()
+is massive, and probably would result in additional trickery :-(
 
+> > This is why I told David
+> > to steer clear of adding more is_zone_device_page() usage, it's
+> > difficult to audit. Without an existing pin the metadata to determine
+> > whether a page is ZONE_DEVICE or not could be in the process of being
+> > torn down. Ideally KVM would pass around a struct { struct page *page,
+> > unsigned long pfn } tuple so it would not have to do this "recall
+> > context" dance on every pfn operation.
+> 
+> Unfortunately once KVM has created its own page tables, the struct page*
+> reference is lost, as the PFN is the only thing that is stored in there.
+
+Ya, the horrible idea I had in mind was to steal a bit from KVM_PFN_ERR_MASK
+to track whether or not the PFN is associated with a struct page.
