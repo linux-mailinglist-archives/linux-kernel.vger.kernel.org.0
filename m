@@ -2,131 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D237F1CFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AFAF1CE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:56:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbfKFR5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:57:48 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:45030 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbfKFR5s (ORCPT
+        id S1729154AbfKFR4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:56:25 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41001 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfKFR4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:57:48 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6HsKcq003208;
-        Wed, 6 Nov 2019 17:56:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=MdbVWmDz8xkvlQ078mvBd8bDaGm/LTI2iHt8U7Q0AT0=;
- b=IkEA0Vxf9r2AB6/pbXp0iZ+ah6dQ9X4x/J11RYbAPKt/64+mZur6Dfye99u+b6VZLUTs
- jtluOOQRHlvgqgiCy/epmfAu/iNjvw4Uj7K4jNovK8QtnIFlKJRDjnvjEY7KI1XdYIam
- XRN659HAZJkBZD5vfSZDm17HRRymQo8tkL36Sf2O1jAy3BvP87mlEotAvdrZNGRJvviS
- sLLPZIZwOBwFAqZZPEQIQtetlM7vUKGwgPpxL3Q6aGGVtUlY+Eo0rFlxU+w/faxYlNDe
- ziWODqW2IoKfLJB9THUyrYSG0GMpHzPxKTMQAL6EF1o1pJtIKma8C6Aih0UdfaD4iFj3 fA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2w41w0rkrp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 17:56:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6Hre4C022398;
-        Wed, 6 Nov 2019 17:56:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2w41wcvfav-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 17:56:33 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA6HuXYZ032009;
-        Wed, 6 Nov 2019 17:56:33 GMT
-Received: from paddy.uk.oracle.com (/10.175.178.239)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 09:56:32 -0800
-From:   Joao Martins <joao.m.martins@oracle.com>
-To:     kvm@vger.kernel.org
-Cc:     Joao Martins <joao.m.martins@oracle.com>,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Jag Raman <jag.raman@oracle.com>
-Subject: [PATCH v1 3/3] KVM: VMX: Introduce pi_is_pir_empty() helper
-Date:   Wed,  6 Nov 2019 17:56:02 +0000
-Message-Id: <20191106175602.4515-4-joao.m.martins@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191106175602.4515-1-joao.m.martins@oracle.com>
-References: <20191106175602.4515-1-joao.m.martins@oracle.com>
+        Wed, 6 Nov 2019 12:56:25 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 94so21573289oty.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 09:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wVNAkLALcXf3ECseCh6fIvYcw+YM/ecsEduyd+L1OzY=;
+        b=Zb6XWmzK5jZjbch2MifX0aU6MslUtqvH7JbhSPtSBmHPH66O7HbtFoy6LpphJKLUwB
+         723tGBxQfPxaoBW6PpvIpwg6lf3XhiiVWKXW1UzkcxiMbWml24UT3FTI+Lageu5vNGFT
+         INVLdgOdIaQLo3ou/yTt8IgVtwT6MW23mq+KA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wVNAkLALcXf3ECseCh6fIvYcw+YM/ecsEduyd+L1OzY=;
+        b=jNeSt/VnX/h8Pm2DFqFQ0m5T0mEaTw++KpOsZj/iMLl9hBZYdMF1bca4ZNtVMlKe4O
+         Uo991kD18VKXpRHeUeWYqgJ2gQAhnDtOc9TCN57/Qq+12Hw4+m2bi+NoWGoeoPUGtNPw
+         w6ar0zU749dkLdHVOceUHVMXSMreTcL2D4UbW0WO2ogjVn9cYOchqiMvzbNP58C1uf3l
+         Big+a5DdJM7Ymt9/hs/cn84U8DlIfqb7Otb3joGmKslB3pPBfq4E6XnVly0eXYgy8Oc6
+         NX5OjKxJoGZYSWk94fQWs4Ugx5DDPDKeMjPiDTzUxjnFmga822YA4gLa7tTSd6VyjhfN
+         D2cw==
+X-Gm-Message-State: APjAAAWmBPk6EAfKOvbHiT04oaBUCxrRzrAwyl4Ky0HnfiRiy/ciqEWM
+        QeBuQIzPiRvFiYGYjjdIQ2u2mRk7L03mKwaUD2gDjw==
+X-Google-Smtp-Source: APXvYqzxbABqhuHazS+yjloa/OpTTnWvOIpez+z4/iPCKEvqK9ko+QH4PbBYKrqM2WqcfHeTeq609guGaPY66JUrYAc=
+X-Received: by 2002:a9d:62d8:: with SMTP id z24mr2924164otk.188.1573062983862;
+ Wed, 06 Nov 2019 09:56:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911060173
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=712 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911060174
+References: <20191106164755.31478-1-daniel.vetter@ffwll.ch> <201911060920.71D7E76E@keescook>
+In-Reply-To: <201911060920.71D7E76E@keescook>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed, 6 Nov 2019 18:56:12 +0100
+Message-ID: <CAKMK7uGq5o+jj-YigTomfx2XEHh5eUjnKD70Trkc6opZOViUHg@mail.gmail.com>
+Subject: Re: [PATCH] drm: Limit to INT_MAX in create_blob ioctl
+To:     Kees Cook <keescook@chromium.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Streamline the PID.PIR check and change its call sites to use
-the newly added helper.
+On Wed, Nov 6, 2019 at 6:24 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Wed, Nov 06, 2019 at 05:47:55PM +0100, Daniel Vetter wrote:
+> > The hardened usercpy code is too paranoid ever since:
+> >
+> > commit 6a30afa8c1fbde5f10f9c584c2992aa3c7f7a8fe
+> > Author: Kees Cook <keescook@chromium.org>
+> > Date:   Wed Nov 6 16:07:01 2019 +1100
+> >
+> >     uaccess: disallow > INT_MAX copy sizes
+> >
+> > Code itself should have been fine as-is.
+>
+> I had to go read the syzbot report to understand what was actually being
+> fixed here. Can you be a bit more verbose in this commit log? It sounds
+> like huge usercopy sizes were allowed by drm (though I guess they would
+> fail gracefully in some other way?) but after 6a30afa8c1fb, the copy
+> would yell about sizes where INT_MAX < size < ULONG_MAX - sizeof(...) ?
 
-Suggested-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
----
- arch/x86/kvm/vmx/vmx.c | 5 ++---
- arch/x86/kvm/vmx/vmx.h | 5 +++++
- 2 files changed, 7 insertions(+), 3 deletions(-)
+The WARNING seems to have been the only bad effect. I guess in
+practice the real big stuff fails at memory allocation time, but
+shouldn't overflow. Or maybe I still don't get how this C thing works.
+Anyway I figured the cited patch is good enough, userptr copies >
+INT_MAX aren't allowed anymore, so we need to adjust our overflow
+checks.
+-Daniel
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 75d903455e1c..8e8dbb174d14 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1311,7 +1311,7 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
- 	 */
- 	smp_mb__after_atomic();
- 
--	if (!bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS))
-+	if (!pi_is_pir_empty(pi_desc))
- 		pi_set_on(pi_desc);
- }
- 
-@@ -6157,8 +6157,7 @@ static bool vmx_dy_apicv_has_pending_interrupt(struct kvm_vcpu *vcpu)
- {
- 	struct pi_desc *pi_desc = vcpu_to_pi_desc(vcpu);
- 
--	return pi_test_on(pi_desc) ||
--		!bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
-+	return pi_test_on(pi_desc) || !pi_is_pir_empty(pi_desc);
- }
- 
- static void vmx_load_eoi_exitmap(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap)
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 1e32ab54fc2d..5a0f34b1e226 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -355,6 +355,11 @@ static inline int pi_test_and_set_pir(int vector, struct pi_desc *pi_desc)
- 	return test_and_set_bit(vector, (unsigned long *)pi_desc->pir);
- }
- 
-+static inline bool pi_is_pir_empty(struct pi_desc *pi_desc)
-+{
-+	return bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
-+}
-+
- static inline void pi_set_sn(struct pi_desc *pi_desc)
- {
- 	set_bit(POSTED_INTR_SN,
+> What was the prior failure mode that made the existing ULONG_MAX check
+> safe? Your patch looks fine, though:
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> > Reported-by: syzbot+fb77e97ebf0612ee6914@syzkaller.appspotmail.com
+> > Fixes: 6a30afa8c1fb ("uaccess: disallow > INT_MAX copy sizes")
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > --
+> > Kees/Andrew,
+> >
+> > Since this is -mm can I have a stable sha1 or something for
+> > referencing? Or do you want to include this in the -mm patch bomb for
+> > the merge window?
+>
+> Traditionally these things live in akpm's tree when they are fixes for
+> patches in there. I have no idea how the Fixes tags work in that case,
+> though...
+>
+> -Kees
+>
+> > -Daniel
+> > ---
+> >  drivers/gpu/drm/drm_property.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
+> > index 892ce636ef72..6ee04803c362 100644
+> > --- a/drivers/gpu/drm/drm_property.c
+> > +++ b/drivers/gpu/drm/drm_property.c
+> > @@ -561,7 +561,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
+> >       struct drm_property_blob *blob;
+> >       int ret;
+> >
+> > -     if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
+> > +     if (!length || length > INT_MAX - sizeof(struct drm_property_blob))
+> >               return ERR_PTR(-EINVAL);
+> >
+> >       blob = kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
+> > --
+> > 2.24.0.rc2
+> >
+>
+> --
+> Kees Cook
+
+
+
 -- 
-2.11.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
