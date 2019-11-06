@@ -2,113 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A42F1184
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BFD9F118D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfKFIzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:55:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55186 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726830AbfKFIze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:55:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07C3AABBD;
-        Wed,  6 Nov 2019 08:55:32 +0000 (UTC)
-Subject: Re: [PATCH v2 6/8] mm: prevent get_user_pages() from overflowing page
- refcount
-To:     Ajay Kaher <akaher@vmware.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "punit.agrawal@arm.com" <punit.agrawal@arm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mszeredi@redhat.com" <mszeredi@redhat.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Srivatsa Bhat <srivatsab@vmware.com>,
-        "srivatsa@csail.mit.edu" <srivatsa@csail.mit.edu>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        Srinidhi Rao <srinidhir@vmware.com>,
-        Vikash Bansal <bvikas@vmware.com>,
-        Anish Swaminathan <anishs@vmware.com>,
-        Vasavi Sirnapalli <vsirnapalli@vmware.com>,
-        Steven Rostedt <srostedt@vmware.com>,
-        "stable@kernel.org" <stable@kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-References: <1570581863-12090-1-git-send-email-akaher@vmware.com>
- <1570581863-12090-7-git-send-email-akaher@vmware.com>
- <f899be71-4bc0-d07b-f650-d85a335cdebb@suse.cz>
- <BF0587E3-D104-4DB2-B972-9BC4FD4CA014@vmware.com>
- <0E5175FB-7058-4211-9AA4-9D5E2F6A30B9@vmware.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <35d74931-2c18-00ff-7622-522a79be9103@suse.cz>
-Date:   Wed, 6 Nov 2019 09:55:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1731574AbfKFI42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:56:28 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47806 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfKFI41 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 03:56:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=44GvMM++gfwG+DDWQL/KQ5WsRQ+No/syq2kMB/W9GJ4=; b=HGfs3DRyCNhEWmsj1R5Jv6sk0
+        WaGfT1Y2+97W8sSYa2mDoMzk0MOa9GaQzsO8rMPDiZBJxLi+xVvJkJZIyn009ddCqLr/mac5IQkhP
+        dlgaRCadah8JjUjDN+GIvzWWNi3moA52/OtcCq3Kc2hDLtRgqiTIygViShjEPknWZoUUHYZplwd+M
+        Oppk/8w45DTSFi5CFbrodyPVDyScKt7Ujop0kt1bOtHaVh3RyIVG7Lp87TBjro/tT1v9AsLT7TYy/
+        +30yrNLvoMtSpB31RKp8l9rkWchjQkKp4+hRk616PXzIxrul1uvpyyadfLtdcPH9dYUJAB0+10ZiJ
+        gU5nrvNcQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iSH6v-0004iG-9P; Wed, 06 Nov 2019 08:56:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0968D300692;
+        Wed,  6 Nov 2019 09:55:12 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 067A629A4C2C4; Wed,  6 Nov 2019 09:56:16 +0100 (CET)
+Date:   Wed, 6 Nov 2019 09:56:15 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v6] perf: Sharing PMU counters across compatible events
+Message-ID: <20191106085615.GW4114@hirez.programming.kicks-ass.net>
+References: <20190919052314.2925604-1-songliubraving@fb.com>
+ <FAD07921-FB10-4FDD-9A81-48300EE24F20@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <0E5175FB-7058-4211-9AA4-9D5E2F6A30B9@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <FAD07921-FB10-4FDD-9A81-48300EE24F20@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/19 8:18 AM, Ajay Kaher wrote:
-> ﻿On 17/10/19, 9:58 PM, "Ajay Kaher" <akaher@vmware.com> wrote:
->     
->> > This seems to have the same issue as the 4.9 stable version [1], in not
->> > touching the arch-specific gup.c variants.
->> >    
->> > [1]
->> > https://lore.kernel.org/lkml/6650323f-dbc9-f069-000b-f6b0f941a065@suse.cz/
->>    
->> Thanks Vlastimil for highlighting this here.
->> 
->> Yes, arch-specific gup.c variants also need to handle not only for 4.4.y,
->> however it should be handled till 4.19.y. I believe it's better to start
->> from 4.19.y and then backport those changes till 4.4.y.
->>    
->> Affected areas of gup.c (where page->count have been used) are:
->> #1: get_page() used in these files and this is safe as
->>        it's defined in mm.h (here it's already taken care of)
->> #2: get_head_page_multiple() has following:
->>               VM_BUG_ON_PAGE(page_count(page) == 0, page);
->>          Need to change this to:
->>               VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(page), page);
->> #3: Some of the files have used page_cache_get_speculative(),
->>        page_cache_add_speculative() with combination of compound_head(),
->>        this scenario needs to be handled as it was handled here:
->>            https://lore.kernel.org/stable/1570581863-12090-7-git-send-email-akaher@vmware.com/
->>    
->> Please share with me any suggestions or patches if you have already  
->> worked on this.
->>    
->> Could we handle arch-specific gup.c in different patch sets and 
->> let these patches to merge to 4.4.y?
->   
-> Vlastimil, please suggest if it's fine to merge these patches to 4.4.y
+On Tue, Nov 05, 2019 at 11:51:42PM +0000, Song Liu wrote:
 
-I'm not sure if it makes much sense to merge them without the arch-specific gup
-support, when we're aware that it's missing.
-
-> and handle arch-specific gup.c in different patch sets starts from 4.19.y,
-
-Actually arch-specific gup.c were removed in 4.13, so it's enough to start from
-4.9.y, which I'm going to finally look into.
-
-> then backport all the way to 4.4.y. 
+> > We allocate a separate perf_event for perf_event_dup->master. This needs
+> > extra attention, because perf_event_alloc() may sleep. To allocate the
+> > master event properly, a new pointer, tmp_master, is added to perf_event.
+> > tmp_master carries a separate perf_event into list_[add|del]_event().
+> > The master event has valid ->ctx and holds ctx->refcount.
 > 
-> Greg, any suggestion from your side.
-> 
->>    - Ajay
->     
->     
->     
-> 
+> If we do GFP_ATOMIC in perf_event_alloc(), maybe with an extra option, we
+> don't need the tmp_master hack. So we only allocate master when we will 
+> use it. 
 
+You can't, that's broken on -RT. ctx->lock is a raw_spinlock_t and
+allocator locks are spinlock_t.
