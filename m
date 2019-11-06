@@ -2,127 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90FA8F18DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 15:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4212AF18D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 15:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732070AbfKFOjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 09:39:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54504 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732050AbfKFOi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 09:38:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C942DB167;
-        Wed,  6 Nov 2019 14:38:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9F90C1E4353; Wed,  6 Nov 2019 15:38:55 +0100 (CET)
-Date:   Wed, 6 Nov 2019 15:38:55 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     snazy@snazy.de
-Cc:     Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>
-Subject: Re: mlockall(MCL_CURRENT) blocking infinitely
-Message-ID: <20191106143855.GJ16085@quack2.suse.cz>
-References: <20191025132700.GJ17610@dhcp22.suse.cz>
- <707b72c6dac76c534dcce60830fa300c44f53404.camel@gmx.de>
- <20191025135749.GK17610@dhcp22.suse.cz>
- <20191025140029.GL17610@dhcp22.suse.cz>
- <c2505804fda5326acf76b2be0155d558e5481fb5.camel@gmx.de>
- <fa6599459300c61da6348cdfd0cfda79e1c17a7a.camel@gmx.de>
- <ad13f479-3fda-b55a-d311-ef3914fbe649@suse.cz>
- <20191105182211.GA33242@cmpxchg.org>
- <20191106120315.GF16085@quack2.suse.cz>
- <4edf4dea97f6c1e3c7d4fed0e12c3dc6dff7575f.camel@gmx.de>
+        id S1732018AbfKFOi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 09:38:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:50000 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731929AbfKFOiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 09:38:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:38:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
+   d="scan'208";a="214264460"
+Received: from dpdk-virtio-tbie-2.sh.intel.com (HELO ___) ([10.67.104.74])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2019 06:38:21 -0800
+Date:   Wed, 6 Nov 2019 22:39:07 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     jasowang@redhat.com, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+Subject: Re: [PATCH v5] vhost: introduce mdev based hardware backend
+Message-ID: <20191106143907.GA10776@___>
+References: <20191105115332.11026-1-tiwei.bie@intel.com>
+ <20191106075733-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="hQiwHBbRI9kgIhsi"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4edf4dea97f6c1e3c7d4fed0e12c3dc6dff7575f.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191106075733-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---hQiwHBbRI9kgIhsi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed 06-11-19 14:45:43, Robert Stupp wrote:
-> On Wed, 2019-11-06 at 13:03 +0100, Jan Kara wrote:
-> > On Tue 05-11-19 13:22:11, Johannes Weiner wrote:
-> > > What I don't quite understand yet is why the fault path doesn't
-> > > make
-> > > progress eventually. We must drop the mmap_sem without changing the
-> > > state in any way. How can we keep looping on the same page?
-> >
-> > That may be a slight suboptimality with Josef's patches. If the page
-> > is marked as PageReadahead, we always drop mmap_sem if we can and
-> > start
-> > readahead without checking whether that makes sense or not in
-> > do_async_mmap_readahead(). OTOH page_cache_async_readahead() then
-> > clears
-> > PageReadahead so the only way how I can see we could loop like this
-> > is when
-> > file->ra->ra_pages is 0. Not sure if that's what's happening through.
-> > We'd
-> > need to find which of the paths in filemap_fault() calls
-> > maybe_unlock_mmap_for_io() to tell more.
+On Wed, Nov 06, 2019 at 07:59:02AM -0500, Michael S. Tsirkin wrote:
+> On Tue, Nov 05, 2019 at 07:53:32PM +0800, Tiwei Bie wrote:
+> > This patch introduces a mdev based hardware vhost backend.
+> > This backend is built on top of the same abstraction used
+> > in virtio-mdev and provides a generic vhost interface for
+> > userspace to accelerate the virtio devices in guest.
+> > 
+> > This backend is implemented as a mdev device driver on top
+> > of the same mdev device ops used in virtio-mdev but using
+> > a different mdev class id, and it will register the device
+> > as a VFIO device for userspace to use. Userspace can setup
+> > the IOMMU with the existing VFIO container/group APIs and
+> > then get the device fd with the device name. After getting
+> > the device fd, userspace can use vhost ioctls on top of it
+> > to setup the backend.
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 > 
-> Yes, ra_pages==0
+> So at this point, looks like the only thing missing is IFC, and then all
+> these patches can go in.
+> But as IFC is still being worked on anyway, it makes sense to
+> address the minor comments manwhile so we don't need
+> patches on top.
+> Right?
 
-BTW, attached patch should workaround your problem as well. But that's just
-a performance optimization that happens to paper over your problem. Real
-fix is the proper handling of fault retry as you did it.
+Yeah, of course.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---hQiwHBbRI9kgIhsi
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-mm-Don-t-bother-dropping-mmap_sem-for-zero-size-read.patch"
-
-From e12c861e687364ff5a891f0ae90283b384d74197 Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 6 Nov 2019 15:30:26 +0100
-Subject: [PATCH] mm: Don't bother dropping mmap_sem for zero size readahead
-
-When handling a page fault, we drop mmap_sem to start async readahead so
-that we don't block on IO submission with mmap_sem held.  However
-there's no point to drop mmap_sem in case readahead is disabled. Handle
-that case to avoid pointless dropping of mmap_sem and retrying the
-fault.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- mm/filemap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1146fcfa3215..3d39c437b07e 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2458,7 +2458,7 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- 	pgoff_t offset = vmf->pgoff;
- 
- 	/* If we don't want any read-ahead, don't bother */
--	if (vmf->vma->vm_flags & VM_RAND_READ)
-+	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
- 		return fpin;
- 	if (ra->mmap_miss > 0)
- 		ra->mmap_miss--;
--- 
-2.16.4
-
-
---hQiwHBbRI9kgIhsi--
+Thanks,
+Tiwei
