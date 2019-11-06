@@ -2,137 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE6DAF0E76
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0C0F0E7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 06:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfKFFjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 00:39:39 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42934 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfKFFjh (ORCPT
+        id S1726036AbfKFFpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 00:45:24 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51246 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfKFFpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 00:39:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n5so13570036ljc.9
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2019 21:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nheAZEvkv4WhdWdV6TIir5cz0kQhP+59XXc12ABo7pc=;
-        b=kIYeAYrjHWg2GFGOpruAxujtdh3wbmCUraF4IyCwX5CD3O+a5H+wkCMLewdc/yD+dG
-         B5NL9ZmEAkj46hq0oQs+Sk4d9BWvkqoDm65Bg7J1Rg2asaqQw60iKiD7zRiwk1ECZNJ6
-         qBrI3T6rtNj7iwsduxGGDfY/Q38OgQfKubGAdNeGjFxQLQu/nA+GtbgxBB4ANi22Qb2c
-         lH9D0F2TAhD1kevPGtibF4qTf2OAgQo14UaMZ0PqeTX66I+tuBlnLl0UqJiHj9Amz0bA
-         MPlWCIWcwtwH3uz9zURJxVJapjR0EbBQRPE77Ef/2DfFD8YzTFeKG1nNcJelblYltZD2
-         wfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nheAZEvkv4WhdWdV6TIir5cz0kQhP+59XXc12ABo7pc=;
-        b=bGBMCvhe2pPqMH2tsGw58JdtOFWHrGXm3SkZ3EGyuM+Vb/DnLtWc3MD9ZgViTR2s2e
-         DUPWrbxFM6ez1ZkslzGvEA2hnBperqNd3ZMF07eGqxUC8/zuJmziQeJlsXmnDRaDsikW
-         qpdSCsdhnjU9KpW6uVPPPxCXTvknRThQ38Pr3UYR7pFxrMfP93kVuFF3lWUvTciCBOkj
-         amT5lpZczz1sxJlb6A+VX/wE/h1Pyi42308M2XQvcCcNBTuv4wQ6QhVlqJ5d2sEncjeB
-         GmUl/jjh/UKdtXoSRK4je20PoLg1h71C/g7y4LMiap3OI4c/SIJJbohDZcTKFvvVRDhE
-         AljQ==
-X-Gm-Message-State: APjAAAXrDGblaWpLOjQcjXi6Aq8Jo7Gqo+5aqrwOfq0eOGW3IJ7rGV5G
-        zB7O/o2QIsdkEsdkpDw5xpFCCw==
-X-Google-Smtp-Source: APXvYqwH8nu8dAepTAIesKpvaxxiBkagLjJ0C6Ab793jliy5lUDersmIqUqtZOtwmPNecAeXH/iGbw==
-X-Received: by 2002:a2e:970e:: with SMTP id r14mr399846lji.57.1573018774960;
-        Tue, 05 Nov 2019 21:39:34 -0800 (PST)
-Received: from mimer.lan (h-137-65.A159.priv.bahnhof.se. [81.170.137.65])
-        by smtp.gmail.com with ESMTPSA id c22sm754737ljk.43.2019.11.05.21.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 21:39:34 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     nicolas.dichtel@6wind.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, Jonas Bonn <jonas@norrbonn.se>
-Subject: [PATCH v2 5/5] net: namespace: allow setting NSIDs outside current namespace
-Date:   Wed,  6 Nov 2019 06:39:23 +0100
-Message-Id: <20191106053923.10414-6-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191106053923.10414-1-jonas@norrbonn.se>
-References: <20191106053923.10414-1-jonas@norrbonn.se>
+        Wed, 6 Nov 2019 00:45:23 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA65j4Bx125992;
+        Tue, 5 Nov 2019 23:45:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573019104;
+        bh=kcsJtvuh/ZeYHZ1N0JL53sjXg9t96k4SlPrBCY1RDFs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=l/he5zoLUijOOSORmhEb1GICJ1ah3Vn/JDhbB4eEZAKuK32RWg3K4LPwYhxYagm8F
+         N9pQ0d7BEwqHwJ+sZocNT0PEAMVHE9QxfmBBlGKO+sIORegv1rGZiNy1wPMGxZqhtd
+         CHhC3WsqTeKpcYSjJPYOOWXgBMG8j6ZKChhCDOP0=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA65j4Z7030988;
+        Tue, 5 Nov 2019 23:45:04 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 5 Nov
+ 2019 23:44:49 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 5 Nov 2019 23:44:49 -0600
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA65j1PK071193;
+        Tue, 5 Nov 2019 23:45:02 -0600
+Subject: Re: [PATCH v4 16/20] mtd: spi-nor: Rename CR_QUAD_EN_SPAN to
+ SR2_QUAD_EN_BIT1
+To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>
+CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20191102112316.20715-1-tudor.ambarus@microchip.com>
+ <20191102112316.20715-17-tudor.ambarus@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <56381a82-0bf9-a018-90c6-64405c2d23c1@ti.com>
+Date:   Wed, 6 Nov 2019 11:15:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191102112316.20715-17-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently it is only possible to move an interface to a new namespace if
-the destination namespace has an ID in the interface's current namespace.
-If the interface already resides outside of the current namespace, then
-we may need to assign the destination namespace an ID in the interface's
-namespace in order to effect the move.
 
-This patch allows namespace ID's to be created outside of the current
-namespace.  With this, the following is possible:
 
-i)    Our namespace is 'A'.
-ii)   The interface resides in namespace 'B'
-iii)  We can assign an ID for NS 'A' in NS 'B'
-iv)   We can then move the interface into our own namespace.
+On 02/11/19 4:53 PM, Tudor.Ambarus@microchip.com wrote:
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> JEDEC Basic Flash Parameter Table, 15th DWORD, bits 22:20,
+> refers to this bit as "bit 1 of the status register 2".
+> Rename the macro accordingly.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-and
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
 
-i)   Our namespace is 'A'; namespaces 'B' and 'C' also exist
-ii)  We can assign an ID for namespace 'C' in namespace 'B'
-iii) We can then create a VETH interface directly in namespace 'B' with
-the other end in 'C', all without ever leaving namespace 'A'
+Regards
+Vignesh
 
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
-Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
----
- net/core/net_namespace.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 10 +++++-----
+>  include/linux/mtd/spi-nor.h   |  4 +---
+>  2 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 8f11c00e8ae5..e367a4862ec1 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1026,7 +1026,7 @@ static int spi_nor_write_16bit_sr_and_check(struct spi_nor *nor, u8 sr1)
+>  		 * Write Status (01h) command is available just for the cases
+>  		 * in which the QE bit is described in SR2 at BIT(1).
+>  		 */
+> -		sr_cr[1] = CR_QUAD_EN_SPAN;
+> +		sr_cr[1] = SR2_QUAD_EN_BIT1;
+>  	} else {
+>  		sr_cr[1] = 0;
+>  	}
+> @@ -2074,7 +2074,7 @@ static int spansion_no_read_cr_quad_enable(struct spi_nor *nor)
+>  	if (ret)
+>  		return ret;
+>  
+> -	sr_cr[1] = CR_QUAD_EN_SPAN;
+> +	sr_cr[1] = SR2_QUAD_EN_BIT1;
+>  
+>  	ret = spi_nor_write_sr(nor, sr_cr, 2);
+>  	if (ret)
+> @@ -2118,10 +2118,10 @@ static int spansion_read_cr_quad_enable(struct spi_nor *nor)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (sr_cr[1] & CR_QUAD_EN_SPAN)
+> +	if (sr_cr[1] & SR2_QUAD_EN_BIT1)
+>  		return 0;
+>  
+> -	sr_cr[1] |= CR_QUAD_EN_SPAN;
+> +	sr_cr[1] |= SR2_QUAD_EN_BIT1;
+>  
+>  	/* Keep the current value of the Status Register. */
+>  	ret = spi_nor_read_sr(nor, sr_cr);
+> @@ -2256,7 +2256,7 @@ static int spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
+>  	 * When the configuration register Quad Enable bit is one, only the
+>  	 * Write Status (01h) command with two data bytes may be used.
+>  	 */
+> -	if (sr_cr[1] & CR_QUAD_EN_SPAN) {
+> +	if (sr_cr[1] & SR2_QUAD_EN_BIT1) {
+>  		ret = spi_nor_read_sr(nor, sr_cr);
+>  		if (ret)
+>  			return ret;
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index d6ec55cc6d97..f626e0e52909 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -144,10 +144,8 @@
+>  #define FSR_P_ERR		BIT(4)	/* Program operation status */
+>  #define FSR_PT_ERR		BIT(1)	/* Protection error bit */
+>  
+> -/* Configuration Register bits. */
+> -#define CR_QUAD_EN_SPAN		BIT(1)	/* Spansion Quad I/O */
+> -
+>  /* Status Register 2 bits. */
+> +#define SR2_QUAD_EN_BIT1	BIT(1)
+>  #define SR2_QUAD_EN_BIT7	BIT(7)
+>  
+>  /* Supported SPI protocols */
+> 
 
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 6d3e4821b02d..0071f395098d 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -724,6 +724,7 @@ static int rtnl_net_newid(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	struct nlattr *tb[NETNSA_MAX + 1];
- 	struct nlattr *nla;
- 	struct net *peer;
-+	struct net *target = NULL;
- 	int nsid, err;
- 
- 	err = nlmsg_parse_deprecated(nlh, sizeof(struct rtgenmsg), tb,
-@@ -752,6 +753,21 @@ static int rtnl_net_newid(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		return PTR_ERR(peer);
- 	}
- 
-+	if (tb[NETNSA_TARGET_NSID]) {
-+		int id = nla_get_s32(tb[NETNSA_TARGET_NSID]);
-+
-+		target = rtnl_get_net_ns_capable(NETLINK_CB(skb).sk, id);
-+		if (IS_ERR(target)) {
-+			NL_SET_BAD_ATTR(extack, tb[NETNSA_TARGET_NSID]);
-+			NL_SET_ERR_MSG(extack,
-+				       "Target netns reference is invalid");
-+			err = PTR_ERR(target);
-+			goto out;
-+		}
-+
-+		net = target;
-+	}
-+
- 	spin_lock_bh(&net->nsid_lock);
- 	if (__peernet2id(net, peer) >= 0) {
- 		spin_unlock_bh(&net->nsid_lock);
-@@ -773,6 +789,9 @@ static int rtnl_net_newid(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		NL_SET_BAD_ATTR(extack, tb[NETNSA_NSID]);
- 		NL_SET_ERR_MSG(extack, "The specified nsid is already used");
- 	}
-+
-+	if (target)
-+		put_net(target);
- out:
- 	put_net(peer);
- 	return err;
 -- 
-2.20.1
-
+Regards
+Vignesh
