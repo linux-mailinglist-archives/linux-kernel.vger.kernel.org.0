@@ -2,130 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3D7F0EE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F3BF0EE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbfKFG1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 01:27:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44398 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728112AbfKFG1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 01:27:21 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1iSEmj-0004kO-6K; Wed, 06 Nov 2019 06:27:17 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     mathias.nyman@intel.com, stern@rowland.harvard.edu,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] usb: Allow USB device to be warm reset in suspended state
-Date:   Wed,  6 Nov 2019 14:27:10 +0800
-Message-Id: <20191106062710.29880-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729841AbfKFG3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 01:29:44 -0500
+Received: from mga04.intel.com ([192.55.52.120]:24752 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbfKFG3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 01:29:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 22:29:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,272,1569308400"; 
+   d="scan'208";a="376952022"
+Received: from test-hp-compaq-8100-elite-cmt-pc.igk.intel.com ([10.237.149.93])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2019 22:29:41 -0800
+From:   Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rostedt@goodmis.org, mingo@redhat.com, andriy.shevchenko@intel.com,
+        cezary.rojewski@intel.com, gustaw.lewandowski@intel.com,
+        Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+Subject: [PATCH 1/2] seq_buf: Add printing formatted hex dumps
+Date:   Wed,  6 Nov 2019 07:27:39 +0100
+Message-Id: <1573021660-30540-1-git-send-email-piotrx.maziarz@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dell WD15 dock, sometimes USB ethernet cannot be detected after plugging
-cable to the ethernet port, the hub and roothub get runtime resumed and
-runtime suspended immediately:
-...
-[  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.315204] usb usb4: usb auto-resume
-[  433.315226] hub 4-0:1.0: hub_resume
-[  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
-[  433.315264] usb usb4-port1: status 0343 change 0001
-[  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
-[  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
-[  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-[  433.422307] usb usb4-port1: do warm reset
-[  433.422311] usb 4-1: device reset not allowed in state 8
-[  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
-[  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-[  433.422356] usb usb4-port1: do warm reset
-[  433.422358] usb 4-1: device reset not allowed in state 8
-[  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
-[  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
-[  433.422465] hub 4-0:1.0: hub_suspend
-[  433.422475] usb usb4: bus auto-suspend, wakeup 1
-[  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
-[  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
-[  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
-[  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
-[  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
-[  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
-[  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
-[  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
-[  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
-[  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
-[  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
-[  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
-[  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.902919] usb usb4: usb wakeup-resume
-[  433.902942] usb usb4: usb auto-resume
-[  433.902966] hub 4-0:1.0: hub_resume
-...
+Provided function is an analogue of print_hex_dump().
 
-As Mathias pointed out, the hub enters Cold Attach Status state and
-requires a warm reset. However usb_reset_device() bails out early when
-the device is in suspended state, as its callers port_event() and
-hub_event() don't always resume the device.
+Implementing this function in seq_buf allows using for multiple
+purposes (e.g. for tracing) and therefore prevents from code duplication
+in every layer that uses seq_buf.
 
-Since there's nothing wrong to reset a suspended device, allow
-usb_reset_device() to do so to solve the issue.
+print_hex_dump() is an essential part of logging data to dmesg. Adding
+similar capability for other purposes is beneficial to all users.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
 ---
-v2:
-- Update kerneldoc.
+ include/linux/seq_buf.h |  3 +++
+ lib/seq_buf.c           | 38 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
- drivers/usb/core/hub.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 05a2d51bdbe0..eaf28eed51b0 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5849,7 +5849,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index aa5deb0..fb0205d 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -125,6 +125,9 @@ extern int seq_buf_putmem(struct seq_buf *s, const void *mem, unsigned int len);
+ extern int seq_buf_putmem_hex(struct seq_buf *s, const void *mem,
+ 			      unsigned int len);
+ extern int seq_buf_path(struct seq_buf *s, const struct path *path, const char *esc);
++extern int seq_buf_hex_dump(struct seq_buf *s, const char *prefix_str,
++			    int prefix_type, int rowsize, int groupsize,
++			    const void *buf, size_t len, bool ascii);
  
- /**
-  * usb_reset_device - warn interface drivers and perform a USB port reset
-- * @udev: device to reset (not in SUSPENDED or NOTATTACHED state)
-+ * @udev: device to reset (not in NOTATTACHED state)
-  *
-  * Warns all drivers bound to registered interfaces (using their pre_reset
-  * method), performs the port reset, and then lets the drivers know that
-@@ -5877,8 +5877,7 @@ int usb_reset_device(struct usb_device *udev)
- 	struct usb_host_config *config = udev->actconfig;
- 	struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);
- 
--	if (udev->state == USB_STATE_NOTATTACHED ||
--			udev->state == USB_STATE_SUSPENDED) {
-+	if (udev->state == USB_STATE_NOTATTACHED) {
- 		dev_dbg(&udev->dev, "device reset not allowed in state %d\n",
- 				udev->state);
- 		return -EINVAL;
+ #ifdef CONFIG_BINARY_PRINTF
+ extern int
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index bd807f5..0509706 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -328,3 +328,41 @@ int seq_buf_to_user(struct seq_buf *s, char __user *ubuf, int cnt)
+ 	s->readpos += cnt;
+ 	return cnt;
+ }
++
++int seq_buf_hex_dump(struct seq_buf *s, const char *prefix_str, int prefix_type,
++		     int rowsize, int groupsize,
++		     const void *buf, size_t len, bool ascii)
++{
++	const u8 *ptr = buf;
++	int i, linelen, remaining = len;
++	unsigned char linebuf[32 * 3 + 2 + 32 + 1];
++	int ret;
++
++	if (rowsize != 16 && rowsize != 32)
++		rowsize = 16;
++
++	for (i = 0; i < len; i += rowsize) {
++		linelen = min(remaining, rowsize);
++		remaining -= rowsize;
++
++		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
++				   linebuf, sizeof(linebuf), ascii);
++
++		switch (prefix_type) {
++		case DUMP_PREFIX_ADDRESS:
++			ret = seq_buf_printf(s, "%s%p: %s\n",
++			       prefix_str, ptr + i, linebuf);
++			break;
++		case DUMP_PREFIX_OFFSET:
++			ret = seq_buf_printf(s, "%s%.8x: %s\n",
++					     prefix_str, i, linebuf);
++			break;
++		default:
++			ret = seq_buf_printf(s, "%s%s\n", prefix_str, linebuf);
++			break;
++		}
++		if (ret)
++			return ret;
++	}
++	return 0;
++}
 -- 
-2.17.1
+2.7.4
 
