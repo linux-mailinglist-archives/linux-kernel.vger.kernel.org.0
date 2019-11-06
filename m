@@ -2,51 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B8DDF1BAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DABCFF1B50
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 17:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732217AbfKFQvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 11:51:23 -0500
-Received: from mga17.intel.com ([192.55.52.151]:62357 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfKFQvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 11:51:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 08:51:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="353532224"
-Received: from pdblomfi-mobl.gar.corp.intel.com (HELO [10.254.107.145]) ([10.254.107.145])
-  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2019 08:51:20 -0800
-Subject: Re: [alsa-devel] [RESEND PATCH v2 2/7] ASoC: amd: Refactoring of DAI
- from DMA driver
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Akshu.Agrawal@amd.com,
-        Sanju R Mehta <sanju.mehta@amd.com>,
-        Mark Brown <broonie@kernel.org>, djkurtz@google.com,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Colin Ian King <colin.king@canonical.com>
-References: <1573137364-5592-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1573137364-5592-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <6768c0eb-003c-398b-6b44-8167d44b3cfe@linux.intel.com>
-Date:   Wed, 6 Nov 2019 10:31:38 -0600
+        id S1732252AbfKFQcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 11:32:15 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46446 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbfKFQcP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 11:32:15 -0500
+Received: by mail-pl1-f195.google.com with SMTP id l4so6433025plt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 08:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YDXR99N/YzQ/pZqCEI29huJxwejGrYigJcQpVl3mLN0=;
+        b=RDjOLla7UpdFA1uZVV/RjkQ6SwfLGswLg8cNYaDk16wAy2jKbHaMgvrGMS8PErrxrW
+         GFDxosOG5HVnj4O+ADH20k7STXbGnrgA7hy1HmziitFTqXDWjWdcbKeriEp4JFFQeLZa
+         kDyPWLHToo27tjU2eNGO/Vllhc2AHU6Bdq/yxqnkKCoOCkUQH6vfLsUVOoMGt/A/2npb
+         gnyLGHxmd5oYviEmAREMcaw4zruZmAxc07zAPbTcHGNNXl8MvZLk3Fl2rWYvWkwoyDCE
+         1xPysUBCTD+eYaEZERw3pv6bKvd/HaBKrT6uITNWO/cM57G9mxGX2doCTFJq47dDsnYs
+         p8gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YDXR99N/YzQ/pZqCEI29huJxwejGrYigJcQpVl3mLN0=;
+        b=S7kk+yJMCCcy2LC4t02LtBOIxzBjYC4Q6UbWLipf4xBD19w1hBnNXIVrUKti5HUe78
+         H/oZU4I/NjnLpI/s3bu0NlIUPreMXGiIo1Uap9nZISEml+i8WtfxT38xoVBqt/meD8Rv
+         0ylQ4+kKcPSVtw7usS68ZJQNBqExtzFjMN3YKZ0Ja/7+hfdWGmllM7iVKhq4ma4/gW0F
+         dZhwcZEf8E1E8oXdawbA6al5zlbtQsUWjRiTWm6z+GClhDiZjMw0CT+v5y9++IaJwb1T
+         7gOl7StXiKeInBWVwj7RO1RgSS00yAY9wtxjlKbWN4WSJGBrT1JzsM8pr6eia5oCOf7o
+         0DPw==
+X-Gm-Message-State: APjAAAXI0v1LMFBiZxBTBcjRWDX2U3H8FZV2+x+9lIXHUY4ZG7ynvkfV
+        IKiPtjtyQDNHcBge7ShVqqzC6Q==
+X-Google-Smtp-Source: APXvYqzGnty5jGHPlGvF4cPMglmlPHfo5F67afnyOnzik5KBFCH43E7LJ5r8u2evmErEOI3pDLHStg==
+X-Received: by 2002:a17:902:8486:: with SMTP id c6mr274839plo.137.1573057934474;
+        Wed, 06 Nov 2019 08:32:14 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id m12sm2974603pjk.13.2019.11.06.08.32.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2019 08:32:13 -0800 (PST)
+Subject: Re: [PATCH 05/50] arm: Add loglvl to unwind_backtrace()
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        clang-built-linux@googlegroups.com
+References: <20191106030542.868541-1-dima@arista.com>
+ <20191106030542.868541-6-dima@arista.com>
+ <20191106091258.GS25745@shell.armlinux.org.uk>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <cd6c5df5-effd-a1f9-8a25-9f5aac3a92f9@arista.com>
+Date:   Wed, 6 Nov 2019 16:32:07 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <1573137364-5592-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191106091258.GS25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,290 +78,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/7/19 8:35 AM, Ravulapati Vishnu vardhan rao wrote:
-> Asoc: PCM DMA driver should only have dma ops.
-> So Removed all DAI related functionality.
-> Refactoring the PCM DMA diver code.
-> Added new file containing only DAI ops.
+On 11/6/19 9:12 AM, Russell King - ARM Linux admin wrote:
+> On Wed, Nov 06, 2019 at 03:04:56AM +0000, Dmitry Safonov wrote:
+>> diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+>> index 7c3f32b26585..69e35462c9e9 100644
+>> --- a/arch/arm/kernel/traps.c
+>> +++ b/arch/arm/kernel/traps.c
+>> @@ -202,7 +202,7 @@ static void dump_instr(const char *lvl, struct pt_regs *regs)
+>>  #ifdef CONFIG_ARM_UNWIND
+>>  static inline void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>>  {
+>> -	unwind_backtrace(regs, tsk);
+>> +	unwind_backtrace(regs, tsk, KERN_DEBUG);
 > 
-> Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-> ---
->   sound/soc/amd/raven/Makefile        |   2 +
->   sound/soc/amd/raven/acp3x-i2s.c     | 268 ++++++++++++++++++++++++++++++++++++
->   sound/soc/amd/raven/acp3x-pcm-dma.c | 232 ++-----------------------------
->   sound/soc/amd/raven/acp3x.h         |  42 ++++++
->   4 files changed, 326 insertions(+), 218 deletions(-)
->   create mode 100644 sound/soc/amd/raven/acp3x-i2s.c
+> Why demote this to debug level?  This is used as part of the kernel
+> panic message, surely we don't want this at debug level?  What about
+> the non-unwind version?
+
+Right, I wanted to keep the old loglevel in this patch - KERN_DEFAULT.
+But got confused with log level in unwind_backtrace().
+Will fix.
+
+[..]
+>> diff --git a/arch/arm/kernel/unwind.c b/arch/arm/kernel/unwind.c
+>> index 0a65005e10f0..caaae1b6f721 100644
+>> --- a/arch/arm/kernel/unwind.c
+>> +++ b/arch/arm/kernel/unwind.c
+>> @@ -455,11 +455,12 @@ int unwind_frame(struct stackframe *frame)
+>>  	return URC_OK;
+>>  }
+>>  
+>> -void unwind_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>> +void unwind_backtrace(struct pt_regs *regs, struct task_struct *tsk,
+>> +		      const char *loglvl)
+>>  {
+>>  	struct stackframe frame;
+>>  
+>> -	pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
+>> +	printk("%s%s(regs = %p tsk = %p)\n", loglvl, __func__, regs, tsk);
 > 
-> diff --git a/sound/soc/amd/raven/Makefile b/sound/soc/amd/raven/Makefile
-> index 108d1ac..8eef292 100644
-> --- a/sound/soc/amd/raven/Makefile
-> +++ b/sound/soc/amd/raven/Makefile
-> @@ -1,6 +1,8 @@
->   # SPDX-License-Identifier: GPL-2.0+
->   # Raven Ridge platform Support
->   snd-pci-acp3x-objs	:= pci-acp3x.o
-> +snd-acp3x-i2s-objs	:= acp3x-i2s.o
->   snd-acp3x-pcm-dma-objs	:= acp3x-pcm-dma.o
->   obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-pci-acp3x.o
-> +obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-acp3x-i2s.o
->   obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-acp3x-pcm-dma.o
-> diff --git a/sound/soc/amd/raven/acp3x-i2s.c b/sound/soc/amd/raven/acp3x-i2s.c
-> new file mode 100644
-> index 0000000..728e757
-> --- /dev/null
-> +++ b/sound/soc/amd/raven/acp3x-i2s.c
-> @@ -0,0 +1,268 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// AMD ALSA SoC PCM Driver
-> +//
-> +//Copyright 2016 Advanced Micro Devices, Inc.
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/pm_runtime.h>
-> +#include <sound/pcm.h>
-> +#include <sound/pcm_params.h>
-> +#include <sound/soc.h>
-> +#include <sound/soc-dai.h>
-> +#include <linux/dma-mapping.h>
-> +
-> +#include "acp3x.h"
-> +
-> +#define DRV_NAME "acp3x-i2s"
-> +
-> +static int acp3x_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
-> +{
-> +
-> +	struct i2s_dev_data *adata = snd_soc_dai_get_drvdata(cpu_dai);
-> +
-> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-> +
-> +	case SND_SOC_DAIFMT_I2S:
-> +		adata->tdm_mode = false;
-> +		break;
-> +	case SND_SOC_DAIFMT_DSP_A:
-> +			adata->tdm_mode = true;
-> +			break;
+> Clearly, this isn't supposed to be part of the normal backtrace output...
 
-alignment is off
+Yes, sorry it's debug for a backtrace - will return pr_debug() for the
+message.
 
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int acp3x_i2s_set_tdm_slot(struct snd_soc_dai *cpu_dai, u32 tx_mask,
-> +		u32 rx_mask, int slots, int slot_width)
-> +{
-> +	u32 val = 0;
-
-init not needed
-
-> +	u16 slot_len;
-> +
-> +	struct i2s_dev_data *adata = snd_soc_dai_get_drvdata(cpu_dai);
-> +
-> +	switch (slot_width) {
-> +	case SLOT_WIDTH_8:
-> +		slot_len = 8;
-> +		break;
-> +	case SLOT_WIDTH_16:
-> +		slot_len = 16;
-> +		break;
-> +	case SLOT_WIDTH_24:
-> +		slot_len = 24;
-> +		break;
-> +	case SLOT_WIDTH_32:
-> +		slot_len = 0;
-
-That looks suspicious or a comment would help.
-
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	val = rv_readl(adata->acp3x_base + mmACP_BTTDM_ITER);
-> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_BTTDM_ITER);
-> +	val = rv_readl(adata->acp3x_base + mmACP_BTTDM_IRER);
-> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_BTTDM_IRER);
-> +
-> +	val = (FRM_LEN | (slots << 15) | (slot_len << 18));
-> +	rv_writel(val, adata->acp3x_base + mmACP_BTTDM_TXFRMT);
-> +	rv_writel(val, adata->acp3x_base + mmACP_BTTDM_RXFRMT);
-> +
-> +	adata->tdm_fmt = val;
-> +	return 0;
-> +}
-> +
-> +static int acp3x_i2s_hwparams(struct snd_pcm_substream *substream,
-> +		struct snd_pcm_hw_params *params,
-> +		struct snd_soc_dai *dai)
-> +{
-> +	u32 val = 0;
-> +	struct i2s_stream_instance *rtd = substream->runtime->private_data;
-> +
-> +	switch (params_format(params)) {
-> +	case SNDRV_PCM_FORMAT_U8:
-> +	case SNDRV_PCM_FORMAT_S8:
-> +		rtd->xfer_resolution = 0x0;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S16_LE:
-> +		rtd->xfer_resolution = 0x02;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S24_LE:
-> +		rtd->xfer_resolution = 0x04;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S32_LE:
-> +		rtd->xfer_resolution = 0x05;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +	val = val | (rtd->xfer_resolution  << 3);
-> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-> +		rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +	else
-> +		rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_IRER);
-
-for the capture case, you didn't initially read from IRER, so you are 
-doing a read-modify-write for playback but write for capture.
-
-maybe that's legit but a comment would help then.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
-> +		int cmd, struct snd_soc_dai *dai)
-> +{
-> +	int ret = 0;
-> +	struct i2s_stream_instance *rtd = substream->runtime->private_data;
-> +	u32 val, period_bytes;
-> +
-> +	period_bytes = frames_to_bytes(substream->runtime,
-> +			substream->runtime->period_size);
-> +	switch (cmd) {
-> +	case SNDRV_PCM_TRIGGER_START:
-> +	case SNDRV_PCM_TRIGGER_RESUME:
-> +	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-> +		rtd->bytescount = acp_get_byte_count(rtd,
-> +						substream->stream);
-> +		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-> +			rv_writel(period_bytes, rtd->acp3x_base +
-> +					mmACP_BT_TX_INTR_WATERMARK_SIZE);
-> +			val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +			val = val | BIT(0);
-> +			rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +		} else {
-> +			rv_writel(period_bytes, rtd->acp3x_base +
-> +					mmACP_BT_RX_INTR_WATERMARK_SIZE);
-> +			val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_IRER);
-> +			val = val | BIT(0);
-> +			rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_IRER);
-
-and here you separated the reads for ITER and IRER, so my comment above 
-likely points to a mistake.
-
-> +		}
-> +		rv_writel(1, rtd->acp3x_base + mmACP_BTTDM_IER);
-> +		break;
-> +	case SNDRV_PCM_TRIGGER_STOP:
-> +	case SNDRV_PCM_TRIGGER_SUSPEND:
-> +	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-> +		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-> +			val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +			val = val & ~BIT(0);
-> +			rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_ITER);
-> +		} else {
-> +			val = rv_readl(rtd->acp3x_base + mmACP_BTTDM_IRER);
-> +			val = val & ~BIT(0);
-> +			rv_writel(val, rtd->acp3x_base + mmACP_BTTDM_IRER);
-> +		}
-> +		rv_writel(0, rtd->acp3x_base + mmACP_BTTDM_IER);
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static struct snd_soc_dai_ops acp3x_i2s_dai_ops = {
-> +	.hw_params = acp3x_i2s_hwparams,
-> +	.trigger   = acp3x_i2s_trigger,
-> +	.set_fmt = acp3x_i2s_set_fmt,
-> +	.set_tdm_slot = acp3x_i2s_set_tdm_slot,
-> +};
-> +
-> +static const struct snd_soc_component_driver acp3x_dai_component = {
-> +	.name           = "acp3x-i2s",
-> +};
-> +
-> +static struct snd_soc_dai_driver acp3x_i2s_dai = {
-> +	.playback = {
-> +		.rates = SNDRV_PCM_RATE_8000_96000,
-> +		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
-> +			SNDRV_PCM_FMTBIT_U8 |
-> +			SNDRV_PCM_FMTBIT_S24_LE |
-> +			SNDRV_PCM_FMTBIT_S32_LE,
-> +		.channels_min = 2,
-> +		.channels_max = 8,
-> +
-> +		.rate_min = 8000,
-> +		.rate_max = 96000,
-> +	},
-> +	.capture = {
-> +		.rates = SNDRV_PCM_RATE_8000_48000,
-> +		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
-> +			SNDRV_PCM_FMTBIT_U8 |
-> +			SNDRV_PCM_FMTBIT_S24_LE |
-> +			SNDRV_PCM_FMTBIT_S32_LE,
-> +		.channels_min = 2,
-> +		.channels_max = 2,
-> +		.rate_min = 8000,
-> +		.rate_max = 48000,
-> +	},
-> +	.ops = &acp3x_i2s_dai_ops,
-> +};
-> +
-> +
-> +static int acp3x_dai_probe(struct platform_device *pdev)
-> +{
-> +	int status;
-> +	struct resource *res;
-> +	struct i2s_dev_data *adata;
-> +
-> +	if (!pdev->dev.platform_data) {
-> +		dev_err(&pdev->dev, "platform_data not retrieved\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	adata = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dev_data),
-> +			GFP_KERNEL);
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "IORESOURCE_MEM FAILED\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
-> +			resource_size(res));
-> +	if (IS_ERR(adata->acp3x_base))
-> +		return PTR_ERR(adata->acp3x_base);
-> +
-> +
-> +
-
-extra lines, run checkpatch...
+Thanks,
+          Dmitry
