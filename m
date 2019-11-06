@@ -2,455 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB6C3F2181
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28E90F218B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbfKFWSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:18:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54056 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727153AbfKFWSz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:18:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573078733;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=F+yNCOx/XpllH8totIi2TAdOLihbfSV40uo15Q/PIQE=;
-        b=FUZol9kZU+ckDrAoXOeXTYxRglGojVPkiTXZhGxDxBcIaB99nUjz3QEYoDvTmOCrRvy+pR
-        RXr69Lvl4ijOkPEcULc16vXjp2o/ZbF9a3oVvGOMKv9b7dcdoiMjuHM+KQF4URoXM3mb7M
-        VRMJhvvYnBDut1d1X67ujJTqXyIYuzM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-34-WId1sO5bPGe9lynkroM0Ww-1; Wed, 06 Nov 2019 17:18:49 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731910AbfKFWWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:22:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbfKFWWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 17:22:13 -0500
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B53E5107ACC3;
-        Wed,  6 Nov 2019 22:18:48 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 119335C651;
-        Wed,  6 Nov 2019 22:18:47 +0000 (UTC)
-Date:   Wed, 6 Nov 2019 17:18:46 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/28] xfs: rework unreferenced inode lookups
-Message-ID: <20191106221846.GE37080@bfoster>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-29-david@fromorbit.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id A9B4FC05A1D0
+        for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2019 22:22:12 +0000 (UTC)
+Received: by mail-qk1-f198.google.com with SMTP id p68so26446544qkf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 14:22:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dLGSnQ4fkDuSeMipTwar+6JmifzoOygUiu/8/zw4SzM=;
+        b=TLDGE337TrgjTxm40qyKiIAG99zEDLFxk26CHzbtCb4WU1TEeczoH7iIfjbqK5WkiJ
+         ejtlMHzED0RxNNsu0z5sv53KHjc5y1UcZ9ZRsYCQ/IFhZYqUKvZGJ4UDVAyiguuSASeQ
+         qSmUssIH3E6+1x3eP+i/DtVtnwqJedTwv9lTf9/a/SYza4gw/C50B/n2xyBcjKIA5l/u
+         5PRBVcKr6kO5TZYPz7ilzd1+hpoUZH8JxA5oepD35X3aFAhtU22mQW2vU7BW4MYkHvCV
+         5br53HBEc2puiEdiixvgC2kyWUB5HwxQ1TzYwJ1yWudt27srJyB5sHnu7cWbhMr+sleU
+         I+aw==
+X-Gm-Message-State: APjAAAVcDF1dOoCG/TDlYeM8K6c+UdLA8NjTq0GUBI5T0Uy2iMw66AVl
+        2xrYCtrC4TIhhKpZgxDlUppBl7NCVWQfcTJRcwsVDRV1vzcR8DRHUSBktqPYlBtV9/3F0ODBBn6
+        jI07av5C5CUgpRVh9N83OewK5
+X-Received: by 2002:ac8:22b5:: with SMTP id f50mr323365qta.229.1573078931910;
+        Wed, 06 Nov 2019 14:22:11 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzHQnmM1Vt9DyGkXwPmrF6WH+1xUM4DgxYXTh69ua35Qf6sOfTXB/8AHJsSBTp5UTA69gXkkA==
+X-Received: by 2002:ac8:22b5:: with SMTP id f50mr323334qta.229.1573078931573;
+        Wed, 06 Nov 2019 14:22:11 -0800 (PST)
+Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id 32sm156131qth.16.2019.11.06.14.22.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 14:22:10 -0800 (PST)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Laura Abbott <labbott@redhat.com>, netdev@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>, clipos@ssi.gouv.fr,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+Subject: [PATCH] mm: slub: Really fix slab walking for init_on_free
+Date:   Wed,  6 Nov 2019 17:22:08 -0500
+Message-Id: <20191106222208.26815-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191031234618.15403-29-david@fromorbit.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: WId1sO5bPGe9lynkroM0Ww-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 10:46:18AM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
->=20
-> Looking up an unreferenced inode in the inode cache is a bit hairy.
-> We do this for inode invalidation and writeback clustering purposes,
-> which is all invisible to the VFS. Hence we can't take reference
-> counts to the inode and so must be very careful how we do it.
->=20
-> There are several different places that all do the lookups and
-> checks slightly differently. Fundamentally, though, they are all
-> racy and inode reclaim has to block waiting for the inode lock if it
-> loses the race. This is not very optimal given all the work we;ve
-> already done to make reclaim non-blocking.
->=20
-> We can make the reclaim process nonblocking with a couple of simple
-> changes. If we define the unreferenced lookup process in a way that
-> will either always grab an inode in a way that reclaim will notice
-> and skip, or will notice a reclaim has grabbed the inode so it can
-> skip the inode, then there is no need for reclaim to need to cycle
-> the inode ILOCK at all.
->=20
-> Selecting an inode for reclaim is already non-blocking, so if the
-> ILOCK is held the inode will be skipped. If we ensure that reclaim
-> holds the ILOCK until the inode is freed, then we can do the same
-> thing in the unreferenced lookup to avoid inodes in reclaim. We can
-> do this simply by holding the ILOCK until the RCU grace period
-> expires and the inode freeing callback is run. As all unreferenced
-> lookups have to hold the rcu_read_lock(), we are guaranteed that
-> a reclaimed inode will be noticed as the trylock will fail.
->=20
-...
->=20
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/xfs/mrlock.h     |  27 +++++++++
->  fs/xfs/xfs_icache.c |  88 +++++++++++++++++++++--------
->  fs/xfs/xfs_inode.c  | 131 +++++++++++++++++++++-----------------------
->  3 files changed, 153 insertions(+), 93 deletions(-)
->=20
-> diff --git a/fs/xfs/mrlock.h b/fs/xfs/mrlock.h
-> index 79155eec341b..1752a2592bcc 100644
-> --- a/fs/xfs/mrlock.h
-> +++ b/fs/xfs/mrlock.h
-...
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index 11bf4768d491..45ee3b5cd873 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -106,6 +106,7 @@ xfs_inode_free_callback(
->  =09=09ip->i_itemp =3D NULL;
->  =09}
-> =20
-> +=09mrunlock_excl_non_owner(&ip->i_lock);
->  =09kmem_zone_free(xfs_inode_zone, ip);
->  }
-> =20
-> @@ -132,6 +133,7 @@ xfs_inode_free(
->  =09 * free state. The ip->i_flags_lock provides the barrier against look=
-up
->  =09 * races.
->  =09 */
-> +=09mrupdate_non_owner(&ip->i_lock);
+Commit 1b7e816fc80e ("mm: slub: Fix slab walking for init_on_free")
+fixed one problem with the slab walking but missed a key detail:
+When walking the list, the head and tail pointers need to be updated
+since we end up reversing the list as a result. Without doing this,
+bulk free is broken. One way this is exposed is a NULL pointer with
+slub_debug=F:
 
-Can we tie these into the proper locking interface using flags? For
-example, something like xfs_ilock(ip, XFS_ILOCK_EXCL|XFS_ILOCK_NONOWNER)
-or xfs_ilock(ip, XFS_ILOCK_EXCL_NONOWNER) perhaps?
+=============================================================================
+BUG skbuff_head_cache (Tainted: G                T): Object already free
+-----------------------------------------------------------------------------
 
->  =09spin_lock(&ip->i_flags_lock);
->  =09ip->i_flags =3D XFS_IRECLAIM;
->  =09ip->i_ino =3D 0;
-> @@ -295,11 +297,24 @@ xfs_iget_cache_hit(
->  =09=09}
-> =20
->  =09=09/*
-> -=09=09 * We need to set XFS_IRECLAIM to prevent xfs_reclaim_inode
-> -=09=09 * from stomping over us while we recycle the inode. Remove it
-> -=09=09 * from the LRU straight away so we can re-init the VFS inode.
-> +=09=09 * Before we reinitialise the inode, we need to make sure
-> +=09=09 * reclaim does not pull it out from underneath us. We already
-> +=09=09 * hold the i_flags_lock, and because the XFS_IRECLAIM is not
-> +=09=09 * set we know the inode is still on the LRU. However, the LRU
-> +=09=09 * code may have just selected this inode to reclaim, so we need
-> +=09=09 * to ensure we hold the i_flags_lock long enough for the
-> +=09=09 * trylock in xfs_inode_reclaim_isolate() to fail. We do this by
-> +=09=09 * removing the inode from the LRU, which will spin on the LRU
-> +=09=09 * list locks until reclaim stops walking, at which point we
-> +=09=09 * know there is no possible race between reclaim isolation and
-> +=09=09 * this lookup.
-> +=09=09 *
+INFO: Slab 0x000000000d2d2f8f objects=16 used=3 fp=0x0000000064309071 flags=0x3fff00000000201
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP PTI
+CPU: 0 PID: 0 Comm: swapper/0 Tainted: G    B           T 5.3.8 #1
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+RIP: 0010:print_trailer+0x70/0x1d5
+Code: 28 4d 8b 4d 00 4d 8b 45 20 81 e2 ff 7f 00 00 e8 86 ce ef ff 8b 4b 20 48 89 ea 48 89 ee 4c 29 e2 48 c7 c7 90 6f d4 89 48 01 e9 <48> 33 09 48 33 8b 70 01 00 00 e8 61 ce ef ff f6 43 09 04 74 35 8b
+RSP: 0018:ffffbf7680003d58 EFLAGS: 00010046
+RAX: 000000000000005d RBX: ffffa3d2bb08e540 RCX: 0000000000000000
+RDX: 00005c2d8fdc2000 RSI: 0000000000000000 RDI: ffffffff89d46f90
+RBP: 0000000000000000 R08: 0000000000000242 R09: 000000000000006c
+R10: 0000000000000000 R11: 0000000000000030 R12: ffffa3d27023e000
+R13: fffff11080c08f80 R14: ffffa3d2bb047a80 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffffa3d2be400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000007a6c4000 CR4: 00000000000006f0
+Call Trace:
+ <IRQ>
+ free_debug_processing.cold.37+0xc9/0x149
+ ? __kfree_skb_flush+0x30/0x40
+ ? __kfree_skb_flush+0x30/0x40
+ __slab_free+0x22a/0x3d0
+ ? tcp_wfree+0x2a/0x140
+ ? __sock_wfree+0x1b/0x30
+ kmem_cache_free_bulk+0x415/0x420
+ ? __kfree_skb_flush+0x30/0x40
+ __kfree_skb_flush+0x30/0x40
+ net_rx_action+0x2dd/0x480
+ __do_softirq+0xf0/0x246
+ irq_exit+0x93/0xb0
+ do_IRQ+0xa0/0x110
+ common_interrupt+0xf/0xf
+ </IRQ>
 
-Somewhat related to my question about the lru_lock on the earlier patch.
+Given we're now almost identical to the existing debugging
+code which correctly walks the list, combine with that.
 
-> +=09=09 * We also set the XFS_IRECLAIM flag here while trying to do the
-> +=09=09 * re-initialisation to prevent multiple racing lookups on this
-> +=09=09 * inode from all landing here at the same time.
->  =09=09 */
->  =09=09ip->i_flags |=3D XFS_IRECLAIM;
-> +=09=09list_lru_del(&mp->m_inode_lru, &inode->i_lru);
->  =09=09spin_unlock(&ip->i_flags_lock);
->  =09=09rcu_read_unlock();
-> =20
-...
-> @@ -1022,19 +1076,7 @@ xfs_dispose_inode(
->  =09spin_unlock(&pag->pag_ici_lock);
->  =09xfs_perag_put(pag);
-> =20
-> -=09/*
-> -=09 * Here we do an (almost) spurious inode lock in order to coordinate
-> -=09 * with inode cache radix tree lookups.  This is because the lookup
-> -=09 * can reference the inodes in the cache without taking references.
-> -=09 *
-> -=09 * We make that OK here by ensuring that we wait until the inode is
-> -=09 * unlocked after the lookup before we go ahead and free it.
-> -=09 *
-> -=09 * XXX: need to check this is still true. Not sure it is.
-> -=09 */
-> -=09xfs_ilock(ip, XFS_ILOCK_EXCL);
->  =09xfs_qm_dqdetach(ip);
-> -=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
+Link: https://lkml.kernel.org/r/20191104170303.GA50361@gandi.net
+Reported-by: Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+Fixes: 1b7e816fc80e ("mm: slub: Fix slab walking for init_on_free")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ mm/slub.c | 39 +++++++++------------------------------
+ 1 file changed, 9 insertions(+), 30 deletions(-)
 
-Ok, so I'm staring at this a bit more and think I'm missing something.
-If we put aside the change to hold ilock until the inode is freed, we
-basically have the following (simplified) flow as the inode goes from
-isolation to disposal:
-
-=09ilock=09(isolate)
-=09iflock
-=09set XFS_IRECLAIM
-=09ifunlock (disposal)
-=09iunlock
-=09radix delete
-=09ilock cycle (drain)
-=09rcu free
-
-What we're trying to eliminate is the ilock cycle to drain any
-concurrent unreferenced lookups from accessing the inode once it is
-freed. The free itself is still RCU protected.
-
-Looking over at the ifree path, we now have something like this:
-
-=09rcu_read_lock()
-=09radix lookup
-=09check XFS_IRECLAIM
-=09ilock
-=09if XFS_ISTALE, skip
-=09set XFS_ISTALE
-=09rcu_read_unlock()
-=09iflock
-=09/* return locked down inode */
-
-Given that we set XFS_IRECLAIM under ilock, would we still need either
-the ilock cycle or to hold ilock through the RCU free if the ifree side
-(re)checked XFS_IRECLAIM after it has the ilock (but before it drops the
-rcu read lock)? ISTM we should either have a non-reclaim inode with
-ilock protection or a reclaim inode with RCU protection (so we can skip
-it before it frees), but I could easily be missing something here..
-
-> =20
->  =09__xfs_inode_free(ip);
->  }
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 33edb18098ca..5c0be82195fc 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -2538,60 +2538,63 @@ xfs_ifree_get_one_inode(
->  =09if (!ip)
->  =09=09goto out_rcu_unlock;
-> =20
-> +
-
-Extra whitespace here.
-
-> +=09spin_lock(&ip->i_flags_lock);
-> +=09if (!ip->i_ino || ip->i_ino !=3D inum ||
-> +=09    __xfs_iflags_test(ip, XFS_IRECLAIM))
-> +=09=09goto out_iflags_unlock;
-> +
->  =09/*
-> -=09 * because this is an RCU protected lookup, we could find a recently
-> -=09 * freed or even reallocated inode during the lookup. We need to chec=
-k
-> -=09 * under the i_flags_lock for a valid inode here. Skip it if it is no=
-t
-> -=09 * valid, the wrong inode or stale.
-> +=09 * We've got the right inode and it isn't in reclaim but it might be
-> +=09 * locked by someone else.  In that case, we retry the inode rather t=
-han
-> +=09 * skipping it completely as we have to process it with the cluster
-> +=09 * being freed.
->  =09 */
-> -=09spin_lock(&ip->i_flags_lock);
-> -=09if (ip->i_ino !=3D inum || __xfs_iflags_test(ip, XFS_ISTALE)) {
-> +=09if (ip !=3D free_ip && !xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
->  =09=09spin_unlock(&ip->i_flags_lock);
-> -=09=09goto out_rcu_unlock;
-> +=09=09rcu_read_unlock();
-> +=09=09delay(1);
-> +=09=09goto retry;
->  =09}
-> -=09spin_unlock(&ip->i_flags_lock);
-> =20
->  =09/*
-> -=09 * Don't try to lock/unlock the current inode, but we _cannot_ skip t=
-he
-> -=09 * other inodes that we did not find in the list attached to the buff=
-er
-> -=09 * and are not already marked stale. If we can't lock it, back off an=
-d
-> -=09 * retry.
-> +=09 * Inode is now pinned against reclaim until we unlock it. If the ino=
-de
-> +=09 * is already marked stale, then it has already been flush locked and
-> +=09 * attached to the buffer so we don't need to do anything more here.
->  =09 */
-> -=09if (ip !=3D free_ip) {
-> -=09=09if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
-> -=09=09=09rcu_read_unlock();
-> -=09=09=09delay(1);
-> -=09=09=09goto retry;
-> -=09=09}
-> -
-> -=09=09/*
-> -=09=09 * Check the inode number again in case we're racing with
-> -=09=09 * freeing in xfs_reclaim_inode().  See the comments in that
-> -=09=09 * function for more information as to why the initial check is
-> -=09=09 * not sufficient.
-> -=09=09 */
-> -=09=09if (ip->i_ino !=3D inum) {
-> +=09if (__xfs_iflags_test(ip, XFS_ISTALE)) {
-
-Is there a correctness reason for why we move the stale check to under
-ilock (in both iflush/ifree)?
-
-> +=09=09if (ip !=3D free_ip)
->  =09=09=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> -=09=09=09goto out_rcu_unlock;
-> -=09=09}
-> +=09=09goto out_iflags_unlock;
->  =09}
-> +=09__xfs_iflags_set(ip, XFS_ISTALE);
-> +=09spin_unlock(&ip->i_flags_lock);
->  =09rcu_read_unlock();
-> =20
-> +=09/*
-> +=09 * The flush lock will now hold off inode reclaim until the buffer
-> +=09 * completion routine runs the xfs_istale_done callback and unlocks t=
-he
-> +=09 * flush lock. Hence the caller can safely drop the ILOCK when it is
-> +=09 * done attaching the inode to the cluster buffer.
-> +=09 */
->  =09xfs_iflock(ip);
-> -=09xfs_iflags_set(ip, XFS_ISTALE);
-> =20
->  =09/*
-> -=09 * We don't need to attach clean inodes or those only with unlogged
-> -=09 * changes (which we throw away, anyway).
-> +=09 * We don't need to attach clean inodes to the buffer - they are mark=
-ed
-> +=09 * stale in memory now and will need to be re-initialised by inode
-> +=09 * allocation before they can be reused.
->  =09 */
->  =09if (!ip->i_itemp || xfs_inode_clean(ip)) {
->  =09=09ASSERT(ip !=3D free_ip);
->  =09=09xfs_ifunlock(ip);
-> -=09=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
-> +=09=09if (ip !=3D free_ip)
-> +=09=09=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
-
-There's an assert against this case just above, though I suppose there's
-nothing wrong with just keeping it and making the functional code more
-cautious.
-
-Brian
-
->  =09=09goto out_no_inode;
->  =09}
->  =09return ip;
-> =20
-> +out_iflags_unlock:
-> +=09spin_unlock(&ip->i_flags_lock);
->  out_rcu_unlock:
->  =09rcu_read_unlock();
->  out_no_inode:
-> @@ -3519,44 +3522,40 @@ xfs_iflush_cluster(
->  =09=09=09continue;
-> =20
->  =09=09/*
-> -=09=09 * because this is an RCU protected lookup, we could find a
-> -=09=09 * recently freed or even reallocated inode during the lookup.
-> -=09=09 * We need to check under the i_flags_lock for a valid inode
-> -=09=09 * here. Skip it if it is not valid or the wrong inode.
-> +=09=09 * See xfs_dispose_inode() for an explanation of the
-> +=09=09 * tests here to avoid inode reclaim races.
->  =09=09 */
->  =09=09spin_lock(&cip->i_flags_lock);
->  =09=09if (!cip->i_ino ||
-> -=09=09    __xfs_iflags_test(cip, XFS_ISTALE)) {
-> +=09=09    __xfs_iflags_test(cip, XFS_IRECLAIM)) {
->  =09=09=09spin_unlock(&cip->i_flags_lock);
->  =09=09=09continue;
->  =09=09}
-> =20
-> -=09=09/*
-> -=09=09 * Once we fall off the end of the cluster, no point checking
-> -=09=09 * any more inodes in the list because they will also all be
-> -=09=09 * outside the cluster.
-> -=09=09 */
-> +=09=09/* ILOCK will pin the inode against reclaim */
-> +=09=09if (!xfs_ilock_nowait(cip, XFS_ILOCK_SHARED)) {
-> +=09=09=09spin_unlock(&cip->i_flags_lock);
-> +=09=09=09continue;
-> +=09=09}
-> +
-> +=09=09if (__xfs_iflags_test(cip, XFS_ISTALE)) {
-> +=09=09=09xfs_iunlock(cip, XFS_ILOCK_SHARED);
-> +=09=09=09spin_unlock(&cip->i_flags_lock);
-> +=09=09=09continue;
-> +=09=09}
-> +
-> +=09=09/* Lookup can find inodes outside the cluster being flushed. */
->  =09=09if ((XFS_INO_TO_AGINO(mp, cip->i_ino) & mask) !=3D first_index) {
-> +=09=09=09xfs_iunlock(cip, XFS_ILOCK_SHARED);
->  =09=09=09spin_unlock(&cip->i_flags_lock);
->  =09=09=09break;
->  =09=09}
->  =09=09spin_unlock(&cip->i_flags_lock);
-> =20
->  =09=09/*
-> -=09=09 * Do an un-protected check to see if the inode is dirty and
-> -=09=09 * is a candidate for flushing.  These checks will be repeated
-> -=09=09 * later after the appropriate locks are acquired.
-> -=09=09 */
-> -=09=09if (xfs_inode_clean(cip) && xfs_ipincount(cip) =3D=3D 0)
-> -=09=09=09continue;
-> -
-> -=09=09/*
-> -=09=09 * Try to get locks.  If any are unavailable or it is pinned,
-> +=09=09 * If we can't get the flush lock now or the inode is pinned,
->  =09=09 * then this inode cannot be flushed and is skipped.
->  =09=09 */
-> -
-> -=09=09if (!xfs_ilock_nowait(cip, XFS_ILOCK_SHARED))
-> -=09=09=09continue;
->  =09=09if (!xfs_iflock_nowait(cip)) {
->  =09=09=09xfs_iunlock(cip, XFS_ILOCK_SHARED);
->  =09=09=09continue;
-> @@ -3567,22 +3566,9 @@ xfs_iflush_cluster(
->  =09=09=09continue;
->  =09=09}
-> =20
-> -
->  =09=09/*
-> -=09=09 * Check the inode number again, just to be certain we are not
-> -=09=09 * racing with freeing in xfs_reclaim_inode(). See the comments
-> -=09=09 * in that function for more information as to why the initial
-> -=09=09 * check is not sufficient.
-> -=09=09 */
-> -=09=09if (!cip->i_ino) {
-> -=09=09=09xfs_ifunlock(cip);
-> -=09=09=09xfs_iunlock(cip, XFS_ILOCK_SHARED);
-> -=09=09=09continue;
-> -=09=09}
-> -
-> -=09=09/*
-> -=09=09 * arriving here means that this inode can be flushed.  First
-> -=09=09 * re-check that it's dirty before flushing.
-> +=09=09 * Arriving here means that this inode can be flushed. First
-> +=09=09 * check that it's dirty before flushing.
->  =09=09 */
->  =09=09if (!xfs_inode_clean(cip)) {
->  =09=09=09int=09error;
-> @@ -3596,6 +3582,7 @@ xfs_iflush_cluster(
->  =09=09=09xfs_ifunlock(cip);
->  =09=09}
->  =09=09xfs_iunlock(cip, XFS_ILOCK_SHARED);
-> +=09=09/* unsafe to reference cip from here */
->  =09}
-> =20
->  =09if (clcount) {
-> @@ -3634,7 +3621,11 @@ xfs_iflush_cluster(
-> =20
->  =09xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
-> =20
-> -=09/* abort the corrupt inode, as it was not attached to the buffer */
-> +=09/*
-> +=09 * Abort the corrupt inode, as it was not attached to the buffer. It =
-is
-> +=09 * unlocked, but still pinned against reclaim by the flush lock so it=
- is
-> +=09 * safe to reference here until after the flush abort completes.
-> +=09 */
->  =09xfs_iflush_abort(cip, false);
->  =09kmem_free(cilist);
->  =09xfs_perag_put(pag);
-> --=20
-> 2.24.0.rc0
->=20
+diff --git a/mm/slub.c b/mm/slub.c
+index dac41cf0b94a..d2445dd1c7ed 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1432,12 +1432,15 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
+ 	void *old_tail = *tail ? *tail : *head;
+ 	int rsize;
+ 
+-	if (slab_want_init_on_free(s)) {
+-		void *p = NULL;
++	/* Head and tail of the reconstructed freelist */
++	*head = NULL;
++	*tail = NULL;
+ 
+-		do {
+-			object = next;
+-			next = get_freepointer(s, object);
++	do {
++		object = next;
++		next = get_freepointer(s, object);
++
++		if (slab_want_init_on_free(s)) {
+ 			/*
+ 			 * Clear the object and the metadata, but don't touch
+ 			 * the redzone.
+@@ -1447,29 +1450,8 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
+ 							   : 0;
+ 			memset((char *)object + s->inuse, 0,
+ 			       s->size - s->inuse - rsize);
+-			set_freepointer(s, object, p);
+-			p = object;
+-		} while (object != old_tail);
+-	}
+-
+-/*
+- * Compiler cannot detect this function can be removed if slab_free_hook()
+- * evaluates to nothing.  Thus, catch all relevant config debug options here.
+- */
+-#if defined(CONFIG_LOCKDEP)	||		\
+-	defined(CONFIG_DEBUG_KMEMLEAK) ||	\
+-	defined(CONFIG_DEBUG_OBJECTS_FREE) ||	\
+-	defined(CONFIG_KASAN)
+ 
+-	next = *head;
+-
+-	/* Head and tail of the reconstructed freelist */
+-	*head = NULL;
+-	*tail = NULL;
+-
+-	do {
+-		object = next;
+-		next = get_freepointer(s, object);
++		}
+ 		/* If object's reuse doesn't have to be delayed */
+ 		if (!slab_free_hook(s, object)) {
+ 			/* Move object to the new freelist */
+@@ -1484,9 +1466,6 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
+ 		*tail = NULL;
+ 
+ 	return *head != NULL;
+-#else
+-	return true;
+-#endif
+ }
+ 
+ static void *setup_object(struct kmem_cache *s, struct page *page,
+-- 
+2.21.0
 
