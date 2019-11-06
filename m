@@ -2,154 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F26F1F7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BED7F1F81
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 21:04:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732490AbfKFUC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 15:02:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9026 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbfKFUC4 (ORCPT
+        id S1731781AbfKFUEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 15:04:11 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]:36429 "EHLO
+        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfKFUEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 15:02:56 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA6JwoxG062832;
-        Wed, 6 Nov 2019 15:01:18 -0500
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w41wcepmb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Nov 2019 15:01:17 -0500
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xA6K0ebD022045;
-        Wed, 6 Nov 2019 20:01:16 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03dal.us.ibm.com with ESMTP id 2w41uk1stf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Nov 2019 20:01:16 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA6K1FFf43843876
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Nov 2019 20:01:15 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC5A528068;
-        Wed,  6 Nov 2019 20:01:15 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 361E42805A;
-        Wed,  6 Nov 2019 20:01:15 +0000 (GMT)
-Received: from wisp4.ibm.com (unknown [9.163.22.179])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Nov 2019 20:01:15 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-hwmon@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux@roeck-us.net,
-        jdelvare@suse.com, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH 2/2] hwmon: (pmbus/ibm-cffps) Fix LED blink behavior
-Date:   Wed,  6 Nov 2019 14:01:06 -0600
-Message-Id: <20191106200106.29519-3-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191106200106.29519-1-eajames@linux.ibm.com>
-References: <20191106200106.29519-1-eajames@linux.ibm.com>
+        Wed, 6 Nov 2019 15:04:10 -0500
+Received: by mail-qt1-f174.google.com with SMTP id y10so28311887qto.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 12:04:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Syvd9OtNpcXiNUdc2Ks9QJdKdCRXCjH9isxgWic1uto=;
+        b=SKUagXxE3aHtk6zXf03B6K9HgYRdjVe27Aj68kyYDQALM45zhfcD8mP1NABiAZCoDm
+         LdyANegIr7Uua4/fB8Xz6qdpk2ik8QSkT9UIIwtiGPLzMwG3f3LPLVGoQ/7pJdSPi4bH
+         w0mYwWNOLcvNyTRaIPa9RLXJ3oZIZHCAI9TFK85ZdD8TeP2txhm1cfZoazJLKmUYokY3
+         xkpMfxQHEWFZqIBWlK+wE8wBKwCuRwt4yV5B7eGYkk/aDM+EvtUaPbWg+uuaeZdXk55l
+         ZPWFtigum1Xvc4myBZRW+dFXYDgXUEhC9vZVz4875W2aDqbJ4CDnePdjhsoILz0Csvfa
+         +ODA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Syvd9OtNpcXiNUdc2Ks9QJdKdCRXCjH9isxgWic1uto=;
+        b=eDpM/fY89gZkjSkp6tb1DIWWIkreohmKov/I2mfDf6QgbB4NY9BHLlvD7MicfgnbKT
+         /pcilnZ6ULiQYGd5J7I3Q48OTb1KqZG0cITYUI5qtiw5o4FgviMxDfHki9u2TI16ym/g
+         pR/6LTYdbL3vw5i37jQq+1uFS0beZeeI/q1L9LfYHnb4S3/0I8sFxjNf6ZaG5vE+w12i
+         LIBaam19mYIQBGU2yvCrvOQKbxTjYOsZeZKcFxNe5rpYJYl+u6JFMPcXnZXaQqG+li7C
+         y8jv2Qvd9CEjfAmJ3HplESb8jlfCRce/0irZd8jXxAbqM2UHw1Srg4TroIpB2q8ul6HB
+         NnUw==
+X-Gm-Message-State: APjAAAWqZpRpRZujmogkooHQ4RfiNg+NV0OromZYdrwaCpJMJrABWomv
+        /6ACzwnmKmwVJ0nBSrkMpLM=
+X-Google-Smtp-Source: APXvYqxE8neSG3qy+YpgpyQUKpHWzoIuV5JYwTwYaNO1iBJb69vcybbOqfBa2f9eH6tOapNfyzz8Vw==
+X-Received: by 2002:ac8:51d6:: with SMTP id d22mr4287228qtn.102.1573070649831;
+        Wed, 06 Nov 2019 12:04:09 -0800 (PST)
+Received: from quaco.ghostprotocols.net (187-26-100-98.3g.claro.net.br. [187.26.100.98])
+        by smtp.gmail.com with ESMTPSA id r80sm5832652qke.121.2019.11.06.12.04.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 12:04:09 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 9B21040B1D; Wed,  6 Nov 2019 17:04:01 -0300 (-03)
+Date:   Wed, 6 Nov 2019 17:04:01 -0300
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUGFIX PATCH 1/4] perf probe: Skip end-of-sequence and non
+ statement lines
+Message-ID: <20191106200401.GB13829@kernel.org>
+References: <157241935028.32002.10228194508152968737.stgit@devnote2>
+ <157241936090.32002.12156347518596111660.stgit@devnote2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=796 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911060196
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157241936090.32002.12156347518596111660.stgit@devnote2>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LED blink_set function incorrectly did not tell the PSU LED to blink
-if brightness was LED_OFF. Fix this, and also correct the LED_OFF
-command data, which should give control of the LED back to the PSU
-firmware. Also prevent I2C failures from getting the driver LED state
-out of sync and add some dev_dbg statements.
+Em Wed, Oct 30, 2019 at 04:09:21PM +0900, Masami Hiramatsu escreveu:
+> Skip end-of-sequence and non-statement lines while walking
+> through lines list.
+> 
+> The "end-of-sequence" line information means
+>  "the current address is that of the first byte after the
+>   end of a sequence of target machine instructions."
+>  (DWARF version 4 spec 6.2.2)
+> This actually means out of scope and we can not probe on it.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/hwmon/pmbus/ibm-cffps.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+Thanks, tested before and after and applied,
 
-diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-index c6a00e83aac6..d359b76bcb36 100644
---- a/drivers/hwmon/pmbus/ibm-cffps.c
-+++ b/drivers/hwmon/pmbus/ibm-cffps.c
-@@ -44,9 +44,13 @@
- #define CFFPS_MFR_VAUX_FAULT			BIT(6)
- #define CFFPS_MFR_CURRENT_SHARE_WARNING		BIT(7)
- 
-+/*
-+ * LED off state actually relinquishes LED control to PSU firmware, so it can
-+ * turn on the LED for faults.
-+ */
-+#define CFFPS_LED_OFF				0
- #define CFFPS_LED_BLINK				BIT(0)
- #define CFFPS_LED_ON				BIT(1)
--#define CFFPS_LED_OFF				BIT(2)
- #define CFFPS_BLINK_RATE_MS			250
- 
- enum {
-@@ -301,23 +305,31 @@ static int ibm_cffps_led_brightness_set(struct led_classdev *led_cdev,
- 					enum led_brightness brightness)
- {
- 	int rc;
-+	u8 next_led_state;
- 	struct ibm_cffps *psu = container_of(led_cdev, struct ibm_cffps, led);
- 
- 	if (brightness == LED_OFF) {
--		psu->led_state = CFFPS_LED_OFF;
-+		next_led_state = CFFPS_LED_OFF;
- 	} else {
- 		brightness = LED_FULL;
-+
- 		if (psu->led_state != CFFPS_LED_BLINK)
--			psu->led_state = CFFPS_LED_ON;
-+			next_led_state = CFFPS_LED_ON;
-+		else
-+			next_led_state = CFFPS_LED_BLINK;
- 	}
- 
-+	dev_dbg(&psu->client->dev, "LED brightness set: %d. Command: %d.\n",
-+		brightness, next_led_state);
-+
- 	pmbus_set_page(psu->client, 0);
- 
- 	rc = i2c_smbus_write_byte_data(psu->client, CFFPS_SYS_CONFIG_CMD,
--				       psu->led_state);
-+				       next_led_state);
- 	if (rc < 0)
- 		return rc;
- 
-+	psu->led_state = next_led_state;
- 	led_cdev->brightness = brightness;
- 
- 	return 0;
-@@ -330,10 +342,7 @@ static int ibm_cffps_led_blink_set(struct led_classdev *led_cdev,
- 	int rc;
- 	struct ibm_cffps *psu = container_of(led_cdev, struct ibm_cffps, led);
- 
--	psu->led_state = CFFPS_LED_BLINK;
--
--	if (led_cdev->brightness == LED_OFF)
--		return 0;
-+	dev_dbg(&psu->client->dev, "LED blink set.\n");
- 
- 	pmbus_set_page(psu->client, 0);
- 
-@@ -342,6 +351,8 @@ static int ibm_cffps_led_blink_set(struct led_classdev *led_cdev,
- 	if (rc < 0)
- 		return rc;
- 
-+	psu->led_state = CFFPS_LED_BLINK;
-+	led_cdev->brightness = LED_FULL;
- 	*delay_on = CFFPS_BLINK_RATE_MS;
- 	*delay_off = CFFPS_BLINK_RATE_MS;
- 
--- 
-2.23.0
-
+- Arnaldo
