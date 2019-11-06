@@ -2,90 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D768EF2201
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3ACF220D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:45:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfKFWnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:43:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfKFWnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:43:07 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A85342173E;
-        Wed,  6 Nov 2019 22:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573080186;
-        bh=sIJIhyS0MXsdS5o5wl8jxauoavtoO6HaIcCyLg5qR2A=;
-        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-        b=OD88XhMD/Q/B3vEuWJ+r36+i67KZcYpPXGr9PLTb0wb+AoHAYEudOiF6ZgX1F2uBT
-         6ltkC+OsIobNsreQFPLQuhrXgvcZvUAklfQ++ovnM1P/yaAHZQcLluFFGakhbrHAih
-         VUQWs8glJ4k5gV5c1kO8RHLrZPwGpX6hj4ScnIz8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191106113551.5557-1-alexandru.ardelean@analog.com>
-References: <20191106113551.5557-1-alexandru.ardelean@analog.com>
-Subject: Re: [PATCH] clk: clk-gpio: Add dt option to propagate rate change to parent
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, jsarha@ti.com, ce3a@gmx.de,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-User-Agent: alot/0.8.1
-Date:   Wed, 06 Nov 2019 14:43:05 -0800
-Message-Id: <20191106224306.A85342173E@mail.kernel.org>
+        id S1732793AbfKFWpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:45:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38254 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727154AbfKFWpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 17:45:08 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA6MggIv103088
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Nov 2019 17:45:04 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w44af5csj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 17:45:04 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 6 Nov 2019 22:45:02 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 6 Nov 2019 22:45:00 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA6MixhP55640138
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 Nov 2019 22:44:59 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F376A4076;
+        Wed,  6 Nov 2019 22:44:59 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55B85A406F;
+        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
+Received: from dhcp-9-31-102-173.watson.ibm.com (unknown [9.31.102.173])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  6 Nov 2019 22:44:58 +0000 (GMT)
+Subject: Re: [PATCH v4 01/10] IMA: Defined an IMA hook to measure keys on
+ key create or update
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191106190116.2578-2-nramas@linux.microsoft.com>
+References: <20191106190116.2578-1-nramas@linux.microsoft.com>
+         <20191106190116.2578-2-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 06 Nov 2019 17:43:09 -0500
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19110622-0012-0000-0000-000003615CB7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110622-0013-0000-0000-0000219CBB65
+Message-Id: <1573080189.5028.313.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911060218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexandru Ardelean (2019-11-06 03:35:51)
-> From: Michael Hennerich <michael.hennerich@analog.com>
->=20
-> For certain setups/boards it's useful to propagate the rate change of the
-> clock up one level to the parent clock.
->=20
-> This change implements this by defining a `clk-set-rate-parent` device-tr=
-ee
-> property which sets the `CLK_SET_RATE_PARENT` flag to the clock (when set=
-).
->=20
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+On Wed, 2019-11-06 at 11:01 -0800, Lakshmi Ramasubramanian wrote:
+> Asymmetric keys used for verifying file signatures or certificates
+> are currently not included in the IMA measurement list.
+> 
+> This patch defines a new IMA hook namely ima_post_key_create_or_update()
+> to measure asymmetric keys.
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 > ---
->  drivers/clk/clk-gpio.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 9d930edd6516..6dfbc4b952fe 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -241,6 +241,7 @@ static int gpio_clk_driver_probe(struct platform_devi=
-ce *pdev)
->         struct device_node *node =3D pdev->dev.of_node;
->         const char **parent_names, *gpio_name;
->         unsigned int num_parents;
-> +       unsigned long clk_flags;
->         struct gpio_desc *gpiod;
->         struct clk *clk;
->         bool is_mux;
-> @@ -274,13 +275,16 @@ static int gpio_clk_driver_probe(struct platform_de=
-vice *pdev)
->                 return ret;
->         }
-> =20
-> +       clk_flags =3D of_property_read_bool(node, "clk-set-rate-parent") ?
-> +                       CLK_SET_RATE_PARENT : 0;
+>  security/integrity/ima/ima_main.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index d7e987baf127..a0e233afe876 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -721,6 +721,22 @@ void ima_kexec_cmdline(const void *buf, int size)
+>  					   KEXEC_CMDLINE, 0);
+>  }
+>  
+> +/**
+> + * ima_post_key_create_or_update - measure asymmetric keys
+> + * @keyring: keyring to which the key is linked to
+> + * @key: created or updated key
+> + * @flags: key flags
+> + * @create: flag indicating whether the key was created or updated
+> + *
+> + * Keys can only be measured, not appraised.
+> + */
+> +void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+> +				   unsigned long flags, bool create)
+> +{
+> +	if ((keyring != NULL) && (key != NULL))
+> +		return;
 
-Is there a DT binding update somewhere? It looks like a linux-ism from
-the DT perspective. I wonder if we can somehow figure out that it's OK
-to call clk_set_rate() on the parent here? Or is it safe to assume that
-we can just always call set rate on the parent? I think for a gate it's
-good and we can just do so, but for a mux maybe not. Care to describe
-your scenario a little more so we can understand why you want to set
-this flag? Is it for a mux or a gate type gpio?
+I would move the patch that defines the "keyring=" policy option prior
+to this one.  Include the call to process_buffer_measurement() in this
+patch.  A subsequent patch would add support to defer measuring the
+key, by calling a function named something like
+ima_queue_key_measurement().
+
+Mimi
+
+> +}
+> +
+>  static int __init init_ima(void)
+>  {
+>  	int error;
 
