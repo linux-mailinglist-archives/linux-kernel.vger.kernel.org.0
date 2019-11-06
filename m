@@ -2,223 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAFCFF1CD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85464F1CD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 18:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfKFRwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 12:52:00 -0500
-Received: from mail-eopbgr50042.outbound.protection.outlook.com ([40.107.5.42]:2214
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1729725AbfKFRwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 12:52:55 -0500
+Received: from mx1.cock.li ([185.10.68.5]:50641 "EHLO cock.li"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726963AbfKFRv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 12:51:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ipv5bL6v/AFxOVK/z8rESLfOAYZ98PHBjQVkKUKY8YY=;
- b=1W/cvQwH1DHJJhSgf5jd0t9f6HFzeWniVs3WunxCFeo0L1eWBUitVWcsg+14YHE86eCifKoELXUerOV3A9BwBVJsYhrcbDaaNQL7yyFmlU8dPdG/uTUR3r9Uj8LfoW3dMWWYLvjrVFMsW+E8UJS1xqVuwVJ6qfZK5viBJR7NUEU=
-Received: from HE1PR08CA0063.eurprd08.prod.outlook.com (2603:10a6:7:2a::34) by
- HE1PR0801MB1818.eurprd08.prod.outlook.com (2603:10a6:3:7b::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Wed, 6 Nov 2019 17:51:53 +0000
-Received: from AM5EUR03FT040.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e08::202) by HE1PR08CA0063.outlook.office365.com
- (2603:10a6:7:2a::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2430.20 via Frontend
- Transport; Wed, 6 Nov 2019 17:51:53 +0000
-Authentication-Results: spf=fail (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: Fail (protection.outlook.com: domain of arm.com does not
- designate 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT040.mail.protection.outlook.com (10.152.17.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2430.21 via Frontend Transport; Wed, 6 Nov 2019 17:51:53 +0000
-Received: ("Tessian outbound e4042aced47b:v33"); Wed, 06 Nov 2019 17:51:51 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: a289ec9c161cbd34
-X-CR-MTA-TID: 64aa7808
-Received: from cc64c54e40ce.1 (cr-mta-lb-1.cr-mta-net [104.47.10.50])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 1A7515C2-77E5-4A4C-B19A-689A266CB20F.1;
-        Wed, 06 Nov 2019 17:51:46 +0000
-Received: from EUR03-DB5-obe.outbound.protection.outlook.com (mail-db5eur03lp2050.outbound.protection.outlook.com [104.47.10.50])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id cc64c54e40ce.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 06 Nov 2019 17:51:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fJymDEVR4BjZIOrCtnNpypwWKnZx73R2lLEepPEF80XIL/BVUr1wf92VSQ946jMny0pWIbhC+3H6NnKEPbDkMd3cQ0BHl9prYRd2DiTn9XWygKXPN3JpbfF6URm8ueowfbIpFb5eMNpcp0/bGasGMbdQUfZQkfqQlBqxzDkJpSvYh0BDjNG+6JT7HBCx4HJztlV1SKRSPio++HcdZA8e4/WcMWwAvvIBJ+8Kco0Xx5lFhHGVLySH4893Z4XwNXMEvFZO2WvHhCyRDrgPE8HKaaqGrDPpxNh7tDHMvteL6HW//NqeIFg5KZ20O99USc39dGhlNC6KYI7Iugqo0soHQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ipv5bL6v/AFxOVK/z8rESLfOAYZ98PHBjQVkKUKY8YY=;
- b=liZXZMq4N8KWL9viasjchV6wa+ib3sYemBL92+a2Od1MAhE2Xwm0pecRAmCngIdeOfPGr9qT4YMLkyHsNB98QnO527h2qd4WlSQRYGhsesvTJLadsiSbk9zm4oR+CqROsK0/S61C1ylkhHFhzBgx55oL9OhsvGMzqvRTU/iLVKrzYf9MsYmekhBvgQUhN+pAOHnEQtz6jRMx0Nzrbq1TE/m1kk+dv/JvBiWchv4WOICtz6E1p7OjujlqzFs3eHi3L0Cv+RJzpqQvXb/brgJtRK+g9u6SRyFqve/oRfqXVhg+cDY6B4rStENFOX15jngkR/8M3cDYWElBc80KmfBqaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ipv5bL6v/AFxOVK/z8rESLfOAYZ98PHBjQVkKUKY8YY=;
- b=1W/cvQwH1DHJJhSgf5jd0t9f6HFzeWniVs3WunxCFeo0L1eWBUitVWcsg+14YHE86eCifKoELXUerOV3A9BwBVJsYhrcbDaaNQL7yyFmlU8dPdG/uTUR3r9Uj8LfoW3dMWWYLvjrVFMsW+E8UJS1xqVuwVJ6qfZK5viBJR7NUEU=
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
- VI1PR08MB5533.eurprd08.prod.outlook.com (52.133.244.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.22; Wed, 6 Nov 2019 17:51:45 +0000
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::8191:f0ac:574a:d24d]) by VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::8191:f0ac:574a:d24d%3]) with mapi id 15.20.2408.024; Wed, 6 Nov 2019
- 17:51:45 +0000
-From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     nd <nd@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        David Airlie <airlied@linux.ie>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, nd <nd@arm.com>
-Subject: Re: drm/komeda: Use devm_platform_ioremap_resource() in
- komeda_dev_create()
-Thread-Topic: drm/komeda: Use devm_platform_ioremap_resource() in
- komeda_dev_create()
-Thread-Index: AQHVfn+X0ywwD9NhU0O9ZT09tcfr2Kd+kFmA
-Date:   Wed, 6 Nov 2019 17:51:43 +0000
-Message-ID: <28103957.GdvMQdgHhr@e123338-lin>
-References: <64a6ea39-3e4b-2ebe-74f7-98720e581e3e@web.de>
- <20191009085704.GA26615@jamwan02-TSP300>
-In-Reply-To: <20191009085704.GA26615@jamwan02-TSP300>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.55]
-x-clientproxiedby: LO2P265CA0478.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a2::34) To VI1PR08MB4078.eurprd08.prod.outlook.com
- (2603:10a6:803:e5::28)
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 71738190-8277-449b-1792-08d762e2021b
-X-MS-TrafficTypeDiagnostic: VI1PR08MB5533:|VI1PR08MB5533:|HE1PR0801MB1818:
-X-MS-Exchange-PUrlCount: 1
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB18187FC1CE07025066AE4E818F790@HE1PR0801MB1818.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:7691;OLM:7691;
-x-forefront-prvs: 02135EB356
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(346002)(396003)(366004)(39860400002)(376002)(136003)(199004)(189003)(386003)(64756008)(66556008)(66446008)(6506007)(66946007)(102836004)(5660300002)(66476007)(305945005)(71190400001)(81156014)(6486002)(86362001)(76176011)(486006)(33716001)(52116002)(6436002)(81166006)(8676002)(446003)(71200400001)(476003)(11346002)(9686003)(6246003)(6512007)(2351001)(5640700003)(2501003)(26005)(25786009)(186003)(8936002)(4326008)(6306002)(6116002)(3846002)(478600001)(229853002)(7736002)(99286004)(14454004)(966005)(256004)(316002)(2906002)(54906003)(14444005)(66066001)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB5533;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: vXwzzM7EYQuQCoBmEwIo/DQLZq5WQWtOTUh6D6K+VKR0XKJMYIxbX3xRG0ES4yMmD3wsW6Blg/QBLYhN2+Ge4ZnnzCKtrnpSEnGSIflQryyc7Tu8xF2xNxODPGPerzQR9G/Y8g2De9TRL1Y78hhG9A1Hj0QvCk7WZrgmvVnZawpwC7fgpMW22nrzCtVzoqTiHiKqZSLpAQRxHE4+Pk2rTER2QSIb/lV9B99jA5w7NFhGO3kiv4GyHy1p8rnN7cdZcpHGVZAKqZDHdSccaHwJRUu+JXdAxyvlCjaIiDV8ompDg8knYTioOExpW5F6hPf+nwBl5wNw6oZTvP/nZlU7Hb/iO3zkSEjHLepaDjE5s8X19HhibemWMNC/pdINCCNdX55wUZBm16ELYVujmjVKXSMympht9eAtrHzW5/s7xOlrWFI9oHJBOisx2EZ767tF3Zps8tjn152Fw5hpm6Xl9ADZegKDgYlDDPBxxctsleI=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <184B2102DD5CE648896FEEA08791FEB1@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726963AbfKFRwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 12:52:55 -0500
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: *
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_60,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5533
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT040.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(7916004)(4636009)(136003)(396003)(346002)(376002)(39860400002)(1110001)(339900001)(199004)(189003)(54906003)(5640700003)(86362001)(22756006)(66066001)(8746002)(450100002)(2906002)(305945005)(81166006)(81156014)(70586007)(478600001)(966005)(26826003)(7736002)(99286004)(36906005)(316002)(25786009)(26005)(2501003)(47776003)(2351001)(3846002)(6116002)(105606002)(356004)(76130400001)(50466002)(23726003)(102836004)(6506007)(386003)(14454004)(70206006)(8676002)(8936002)(46406003)(6512007)(33716001)(11346002)(9686003)(6306002)(126002)(486006)(446003)(476003)(4326008)(14444005)(186003)(336012)(6862004)(6486002)(5660300002)(229853002)(76176011)(97756001)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0801MB1818;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Fail;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: af046850-12c4-428a-10f7-08d762e1fc27
-NoDisclaimer: True
-X-Forefront-PRVS: 02135EB356
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rBLvvWXGtHkbFtxpkIdtoJGC/HS1GpWzjh+ybSr4ucsMcUJr8K6oT/rgg3glB/233b3YyXLbmbhj4YYFqTGOgDhvf9x7Ye597iXRrgiMHmxMxxwi9GQzyKd2jcmYMxUMp9V6zJVVWmT3HKC8SVDybzFWsa1TT5CGK5oZLp2F5XR+w9puTrVXtZAn6N+akMcstz276mvKf96btDMwzl55Kr5dxVam0ARyDKPfYVWaiY0cV6mfSxWYI4Eyautix/oXXTSZRVMWtY4QStEj55cq35INL05E7qyMhyMxpRdWkFfVuJ/2PMTqh7sMGKQlpdLnfyHNxSySkxyzKIRtXDl8MuBOMRslWqFdVd2CsPn6rDL4QK62lCkiUalisnewcuxFAOVhXaaxqvY6DrBgBobmFipNRJwLfhq07HdDooda2wAYqYznvFqXjGcKYefzKwX35KeuWzIxtbLmEhaLOxC6F+9vQO6IEKx/0SMAsNlul8M=
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2019 17:51:53.2844
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71738190-8277-449b-1792-08d762e2021b
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1818
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1573062770; bh=RPCmKA5OgUsS1NQUfaFKcUOpVglGaqnRtkrogQ11dnM=;
+        h=Date:From:To:Subject:From;
+        b=XWdYUIXozBoIU/BKC6Y/dhsUsfO1wHZkeoIFV+Dw2bUayEOTi+dR1l+DforwpcYVF
+         Sh8hJTunpf6M0mJqWKwRldm7Lvmu2EHVeGnk9uoVq18UR0ABgjgb1bls35BZv8D5PP
+         5AXgjdaJ4myDkOySfwTNn6axL1R18Qzy2Goo3WpZPBaDr8JkDiEM2xIPy308WikDPa
+         +in3QaHokAmZ0IS45C0h2oBwrOG8C7Nu+aM1aOZBg7Ik9ZIhuDJy9aY0dld7s5zGCk
+         wzvondWpH/O0vpa8jN4dr21iFfa9AO1KgD5RJrff8/xkmqWkwhVdcd2cnGSI+7Fol0
+         hpNaNCx34W+9w==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 06 Nov 2019 17:52:50 +0000
+From:   gameonlinux@redchan.it
+To:     gnu-system-discuss@gnu.org
+Subject: Coreboot vs Libreboot - GNU: Please use Coreboot without the blobs
+ (compile time option).
+Message-ID: <b1b6ab4e31856450d82afccaba587b0f@redchan.it>
+X-Sender: gameonlinux@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, 9 October 2019 09:57:11 GMT james qian wang (Arm Technology C=
-hina) wrote:
-> On Sat, Sep 21, 2019 at 07:50:46PM +0200, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 21 Sep 2019 19:43:51 +0200
-> >=20
-> > Simplify this function implementation by using a known wrapper function=
-.
-> >=20
-> > This issue was detected by using the Coccinelle software.
-> >=20
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->=20
-> Thank you for the patch.
->=20
-> Looks good to me.
-> Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.=
-com>
+[Posting here because the technical reason Libreboot is now a bad option 
+is because it doesn't work with newer systems, and the Libreboot 
+"maintainer" has seemingly no will to update the project, and no 
+technical ability to work
+around the problems]
 
-Applied to drm-misc-next - 50ec5b563bed04b0b262822b755f6aa336f1f40a
+Coreboot is the actual project, it can be compiled without binary
+blobs, and has an command line option to do so.
+Libre boot is Coreboot without the binary blobs.
 
->=20
-> > ---
-> >  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 9 +--------
-> >  1 file changed, 1 insertion(+), 8 deletions(-)
-> >=20
-> > --
-> > 2.23.0
-> >=20
-> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/=
-gpu/drm/arm/display/komeda/komeda_dev.c
-> > index ca64a129c594..a387d923962e 100644
-> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> > @@ -172,19 +172,12 @@ struct komeda_dev *komeda_dev_create(struct devic=
-e *dev)
-> >  	struct platform_device *pdev =3D to_platform_device(dev);
-> >  	const struct komeda_product_data *product;
-> >  	struct komeda_dev *mdev;
-> > -	struct resource *io_res;
-> >  	int err =3D 0;
-> >=20
-> >  	product =3D of_device_get_match_data(dev);
-> >  	if (!product)
-> >  		return ERR_PTR(-ENODEV);
-> >=20
-> > -	io_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (!io_res) {
-> > -		DRM_ERROR("No registers defined.\n");
-> > -		return ERR_PTR(-ENODEV);
-> > -	}
-> > -
-> >  	mdev =3D devm_kzalloc(dev, sizeof(*mdev), GFP_KERNEL);
-> >  	if (!mdev)
-> >  		return ERR_PTR(-ENOMEM);
-> > @@ -192,7 +185,7 @@ struct komeda_dev *komeda_dev_create(struct device =
-*dev)
-> >  	mutex_init(&mdev->lock);
-> >=20
-> >  	mdev->dev =3D dev;
-> > -	mdev->reg_base =3D devm_ioremap_resource(dev, io_res);
-> > +	mdev->reg_base =3D devm_platform_ioremap_resource(pdev, 0);
-> >  	if (IS_ERR(mdev->reg_base)) {
-> >  		DRM_ERROR("Map register space failed.\n");
-> >  		err =3D PTR_ERR(mdev->reg_base);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
+Libre boot has not been updated in 3 years. The "maintainer" does
+nothing. Usually this would be fine for a program: at some point often
+a program is completed and needs fewer code updates (then one should
+focus on media updates and additions that use its capabilities), but
+this particular program must be updated to work with new hardware
+(new, ever more compromised hardware...)
 
+The "maintainer" (again: here we have someone who is not a
+main-programmer of the Work, being effectivly credited with the Work,
+when the work on the Work consists simply of removing parts of the
+Work, or just setting different complile options) in the past attacked
+the FSF and RMS for some emotional issue he was having.
 
---=20
-Mihail
+The "maintainer" recently had his genitals sawn off.
+He posted pictures of it being done on his personal web page.
+Americans (white) men and American (white) women cheer.
 
+This is completely "Fine" and "good" according to Americans, this
+"maintainer" has not been cancled, even though he is setting a True
+harmful example (not doing any work, essentially plagirising, and
+cutting off his manhood, encouraging others to follow his example in
+all three cases).
+
+However RMS making comments, that put him in the same camp as the
+Authors of some of the books of the Torah, of some of the hadiths of
+Islam, of some of the laws of the old Vedic religions, etc, comments
+that, if followed, would be benificial to men as men; he is viciously
+attacked for that. RMS is an actual programmer, not merely a
+"maintainer" who /removes/ things: he built things from the ground up.
+
+America hates men and wishes men to be removed and nullified: which is
+why the actions of the Libreboot "maintainer" are lauded by proud
+white american men:
+
+1) The Libreboot "maintainer" does nothing
+America wants men to be inert and docile, except when working to
+support his owner (Ownership is Dominion and Control: women have that
+over the "males" in the USA, and every Dominion of the USA)
+
+2) The libreboot "maintainer" has castrated himself physically
+America wants men to do this: cut off their genitals.
+American women love this: the 80 percent of "males" they do not like
+are removed from bothering them: existing only to work and maintain
+the women's society.
+
+3) The libreboot "maintainer" has castrated Coreboot
+The same mental idea is used here. This may have cause the Libreboot
+maintainer to entertain the idea in realitly aswell. Like follows
+like. The brain makes objective connections between subjective matters.
+
+All of you likely "respect" the Libre-Boot maintainer, revile the
+Coreboot programers, and deeply-disagree with RMS's past comments on
+paedophillia (men used to commonly marry girl children in the past:
+this only stopped when _white_ America (a country run for the benifit
+of white women) decided to effectivly outlaw it world wide by
+murdering or tourturing any society that practiced this good-for-men
+practice, _white_ (woman-run) America has also popularized men cutting
+off their genitals the world over recently: white women like this to
+be done to most men; the ones they do not favor and who are "useless"
+to them), infact some of you are trying to oust him now.
+
+You have also infected his mind and forced him to reverse his previous
+3 statements, statements that the men support (not american men, but
+american white men are not human beings: they exibit no agency of
+their own so can be thought of as human shaped automatons instead)
+since they are benificial to men (they are /harmful/ to white WOMEN:
+yes: and what WOMEN want is harmful to men (a castrated economic
+slave for money, plus some studs in addition)
+
+I propose that Coreboot simply be used without the blobs, and
+libreboot be thrown in the trash where the "maintainers" genitals have
+been placed. (He has effectivly thrown it in the trash by not doing
+anything with it and only using it as a way to gain attention for
+himself: "Look what I do" "I'm a programmer" "Important" "Follow my
+lead")
+
+"Maintainers" should not steal the glory from the actual originators of
+the Work. We see it happen here where "Maintainers" try to oust the
+Authors. They should know their place, or not have one at all (their
+position and role is more of one of plagirism than anything else)
+
+It was better when the actual programmers ran things. We had none of
+this whining that the white women do (they were ejected immediatly
+since they didn't contribute anything and just tried to control the
+men socially), and we built code, not tear it down and stick a new
+name on it and then attack the hand that feeds.
+
+Libre-boot brings shame to Free Software. Men do not want to have
+anything to do with a man who cuts his genetals off, and does no
+constructive work either. Libre-boot is very American.
+
+RMS brought honour to Free Software. Men agree that marrying cute
+young girls is good. RMS is constructive: built the compiler in a week
+initially, and is the but-for cause of all of this. RMS was very
+un-American, but has tried to become more American recently, sadly.
+
+RMS: Why do you surround yourself with those who do nothing and do not
+respect you? There are many who do respect you and respect you even
+more for your statements which were benificial to men.
+
+Why side with the enemies of your Class? Why place yourself in their
+Prison? You could probably even have everything you might want in
+Russia or South America or Japan or South-East Asia etc.
+
+You're still respected there. But those are men's countries, not
+white-women's countries. What have the Americans ever done for you?
+(Other than throw you out, and make fun of you for exibiting a sign of
+nervousness regarding public speaking once, and spreading rumours
+about hygene constantly)?
+
+[Notice: Libreboot author posting photos of his genitals being cut off 
+is respected, while RMS posting /text/ suggesting Men perhaps could 
+marry /girls/ causes absolute revulsion and hatread from the 
+arachnid-like American white men and their rulers: the white women (the 
+white women find it "disgusting", RMS's opinions, but are happy about 
+Libreboot-"maintainers" photos and action of chopping his manhood off 
+(because white women _HATE_ men: thus libreboot-"maintainer"'s shameful 
+act is in keeping with their interests, while RMS's past text ideas are 
+not: white women are _EVIL_ tyrants who encourage their men (and they 
+are _their_ men) to MURDER COUNTLESS INNOCENT muslim men, women, 
+children BECAUSE "they are p[a]edos: the men should be killed, the 
+children are better of dead than living in that society"))]
+
+...
+For these reasons I propose coreboot with the no-blobs option be used 
+over "libreboot". It is free-software without the blobs; but even 
+blobless the spyware in your processor is still there either way 
+(another gift of America).
 
 
