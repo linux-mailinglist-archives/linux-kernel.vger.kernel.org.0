@@ -2,111 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE81BF1083
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:43:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA7CF1092
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731491AbfKFHnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:43:00 -0500
-Received: from mga06.intel.com ([134.134.136.31]:15141 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731465AbfKFHm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:42:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 23:42:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,274,1569308400"; 
-   d="scan'208";a="232770774"
-Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Nov 2019 23:42:55 -0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        sean.j.christopherson@intel.com
-Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
-Subject: [PATCH v6 9/9] x86: spp: Add SPP protection check in emulation.
-Date:   Wed,  6 Nov 2019 15:45:04 +0800
-Message-Id: <20191106074504.14858-10-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191106074504.14858-1-weijiang.yang@intel.com>
-References: <20191106074504.14858-1-weijiang.yang@intel.com>
+        id S1731580AbfKFHoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:44:44 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34396 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731136AbfKFHon (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:44:43 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA67idae109132;
+        Wed, 6 Nov 2019 01:44:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573026279;
+        bh=f1NEPFJjClLNi2nXj2/pBImQn0eR1YY7EU9xYbARDFY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=UfWy7760YyHkaT2NRw59cyv7eFBBc2ElZuZ6711GeQI2LpkxxKIyIS3gXR6ZtbZkH
+         33ZDi+aNXJ4bf65emhVovprynkAAbxDvLzQUfUo3kbLVVnmtBLVUM2XqL6N89fyTQj
+         u9ya/lWygS+943byIWb9IArzdpVGWfpJIXB1X5p0=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA67idbQ084075
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Nov 2019 01:44:39 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
+ 2019 01:44:37 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 6 Nov 2019 01:44:22 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA67iZjb063767;
+        Wed, 6 Nov 2019 01:44:36 -0600
+Subject: Re: [PATCH v4 0/3] dmaengine: bindings/edma: dma-channel-mask to
+ array
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     <robh+dt@kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dan.j.williams@intel.com>,
+        <devicetree@vger.kernel.org>
+References: <20190930114055.29315-1-peter.ujfalusi@ti.com>
+ <20191105165145.GB952516@vkoul-mobl>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <fc83b096-f737-4d90-cb3e-0d8eb43c7f12@ti.com>
+Date:   Wed, 6 Nov 2019 09:45:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191105165145.GB952516@vkoul-mobl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In instruction/mmio emulation cases, if the target write memroy
-is SPP protected, exit to user-space to handle it as if it's
-caused by SPP induced EPT violation due to guest write.
+Hi Vinod,
 
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- arch/x86/kvm/x86.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+On 05/11/2019 18.51, Vinod Koul wrote:
+> On 30-09-19, 14:40, Peter Ujfalusi wrote:
+>> Hi,
+>>
+>> Changes since v3:
+>> - Update the dma-common.yaml and edma binding documentation according to Rob's
+>>   suggestion
+>>
+>> Changes since v2:
+>> - Fix dma-common.yaml documentation patch and extend the description of the
+>>   dma-channel-mask array
+>> - The edma documentation now includes information on the dma-channel-mask array
+>>   size for EDMAs with 32 or 64 channels
+>>
+>> Changes since v1:
+>> - Extend the common dma-channel-mask to uint32-array to be usable for
+>>   controllers with more than 32 channels
+>> - Use the dma-channel-mask instead custom property for available channels for
+>>   EDMA.
+>>
+>> The original patch was part of the EDMA multicore usage series.
+>>
+>> Rob: I'm not sure if I got the dma-common.yaml update correctly...
+>>
+>> EDMAs can have 32 or 64 channels depending on the SoC, the dma-channel-mask
+>> needs to be an array to be usable for the driver.
+> 
+> Applied, thanks
+> 
+> There was a conflict on patch3, I have reolved it, please check.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index fa114b5db672..71f5a8ae76cf 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5525,6 +5525,36 @@ static const struct read_write_emulator_ops write_emultor = {
- 	.write = true,
- };
- 
-+static bool is_emulator_spp_protected(struct kvm_vcpu *vcpu,
-+				      gpa_t gpa,
-+				      unsigned int bytes)
-+{
-+	gfn_t gfn, start_gfn, end_gfn;
-+	struct kvm *kvm = vcpu->kvm;
-+	struct kvm_memory_slot *slot;
-+	u32 access;
-+
-+	if (!kvm->arch.spp_active)
-+		return false;
-+
-+	start_gfn = gpa >> PAGE_SHIFT;
-+	end_gfn = (gpa + bytes) >> PAGE_SHIFT;
-+	for (gfn = start_gfn; gfn <= end_gfn; gfn++) {
-+		slot = gfn_to_memslot(kvm, gfn);
-+		if (slot) {
-+			access = *gfn_to_subpage_wp_info(slot, gfn);
-+			if (access != FULL_SPP_ACCESS) {
-+				vcpu->run->exit_reason = KVM_EXIT_SPP;
-+				vcpu->run->spp.addr = gfn;
-+				kvm_skip_emulated_instruction(vcpu);
-+				return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static int emulator_read_write_onepage(unsigned long addr, void *val,
- 				       unsigned int bytes,
- 				       struct x86_exception *exception,
-@@ -5555,6 +5585,9 @@ static int emulator_read_write_onepage(unsigned long addr, void *val,
- 			return X86EMUL_PROPAGATE_FAULT;
- 	}
- 
-+	if (write && is_emulator_spp_protected(vcpu, gpa, bytes))
-+		return X86EMUL_UNHANDLEABLE;
-+
- 	if (!ret && ops->read_write_emulate(vcpu, gpa, val, bytes))
- 		return X86EMUL_CONTINUE;
- 
-@@ -6616,6 +6649,9 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
- 		return EMULATE_DONE;
- 
- 	if (r == EMULATION_FAILED) {
-+		if (vcpu->run->exit_reason == KVM_EXIT_SPP)
-+			return EMULATE_USER_EXIT;
-+
- 		if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
- 					emulation_type))
- 			return EMULATE_DONE;
--- 
-2.17.2
+Looks good, I wonder what caused the conflict. The patch looks identical
+in your vinod/next and in my linux-next-wip.
 
+Oh, this is v4 and you have picked the v5. That explains.
+
+Thank you,
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
