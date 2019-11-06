@@ -2,137 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF79F1573
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB76F1580
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbfKFLw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfKFLw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:52:26 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870302075C;
-        Wed,  6 Nov 2019 11:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573041146;
-        bh=OF5G2aua6XJ/Sp4YTPouRXr0Og+dxfgO9zAId67DLXE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qIUFYfJ37F3Z3WnIERx/g5BXRvKYxqkb58MjBLfS4mnY4LrPgrprykjOUbSbTH9wM
-         1BuL2ZUvQD1NSjB4KzI13eNg5rZ87yDmhcv8TXNPYjjm7WtzxFgizy7YU9zdiIVb+c
-         P3USJmz6ZAZQsdpb0C+2dlJeMGpZWWzEeWU0kOrs=
-Date:   Wed, 6 Nov 2019 12:52:22 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Alistair Francis <alistair23@gmail.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Alistair Francis <alistair@alistair23.me>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
- serial2 and serial3
-Message-ID: <20191106115222.GA8617@gilmour.lan>
-References: <20191012200524.23512-1-alistair@alistair23.me>
- <20191016144946.p3tm67vh5lqigndn@gilmour>
- <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
- <20191021111709.dpu6g7jltuw6cbbn@gilmour>
- <CAKmqyKN8Ru19h3y=9O13=5wpys3BC2LQM65S+2QYjPdJQn2O4w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
-Content-Disposition: inline
-In-Reply-To: <CAKmqyKN8Ru19h3y=9O13=5wpys3BC2LQM65S+2QYjPdJQn2O4w@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1731264AbfKFL4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:56:09 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37270 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbfKFL4I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 06:56:08 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6BsP9Q061515;
+        Wed, 6 Nov 2019 11:55:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=vtOUSXhJOWeZNpYZPR4dz6ez1tfCq89k9rogWBbRY90=;
+ b=ECBRyQrD0dB8jrv1x0LFRvrc3cO7pcmPZUyPQGkc0oeGvRC73YV890LmonDGPACREL6y
+ YWlri1SAXf8V1f945+9v5YESTe5WG3i4AO7htghuicupNcHnHrQCUcUGOsDAdy8WoFJO
+ cvu0V6LPTUpk3Z8d62q6LNGRk61MrH/UNilOktZ+mJCBMd67IrAbsjm+bHd3qGXvMd2R
+ PasgF+xa0/w4FN0FSLu27OvmkKjZiryzze63TcnBDVgAvqWDlAVpFyfHQfsMRKROe0f8
+ +AcOcxOQrVQYvfmie7U5TPGmuqQ0lOjdBmi3rIIUpE0jLb3avuFfEUxSwbGtOe3V7s5I NQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2w117u5p8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 11:55:41 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6BsHBb051668;
+        Wed, 6 Nov 2019 11:55:40 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2w31639sd8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 11:55:40 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA6Btda5021392;
+        Wed, 6 Nov 2019 11:55:39 GMT
+Received: from z2.cn.oracle.com (/10.182.71.218)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 03:55:39 -0800
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        rafael.j.wysocki@intel.com, joao.m.martins@oracle.com,
+        mtosatti@redhat.com, kvm@vger.kernel.org, linux-pm@vger.kernel.org,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH RESEND v2 0/4] misc fixes on halt-poll code for both KVM and guest
+Date:   Wed,  6 Nov 2019 19:54:58 +0800
+Message-Id: <1573041302-4904-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911060119
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911060119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset tries to fix below issues:
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+1. Admin could set halt_poll_ns to 0 at runtime to disable poll and kernel
+behave just like the generic halt driver. Then If guest_halt_poll_grow_start
+is set to 0 and guest_halt_poll_ns set to nonzero later, cpu_halt_poll_us will
+never grow beyond 0. The first two patches fix this issue from both kvm and
+guest side.
 
-On Tue, Nov 05, 2019 at 11:27:42AM -0800, Alistair Francis wrote:
-> On Mon, Oct 21, 2019 at 4:17 AM Maxime Ripard <mripard@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > On Wed, Oct 16, 2019 at 10:54:27PM +0800, Chen-Yu Tsai wrote:
-> > > On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > > > On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
-> > > > > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
-> > > > > connections.
-> > > > >
-> > > > > Signed-off-by: Alistair Francis <alistair@alistair23.me>
-> > > > > ---
-> > > > >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
-> > > > >  1 file changed, 25 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > > > index 124b0b030b28..49c37b21ab36 100644
-> > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> > > > > @@ -56,6 +56,10 @@
-> > > > >       aliases {
-> > > > >               ethernet0 = &emac;
-> > > > >               serial0 = &uart0;
-> > > > > +             serial1 = &uart1;
-> > > > > +             serial2 = &uart2;
-> > > > > +             serial3 = &uart3;
-> > > > > +             serial4 = &uart4;
-> > > > >       };
-> > > > >
-> > > > >       chosen {
-> > > > > @@ -280,6 +284,27 @@
-> > > > >       };
-> > > > >  };
-> > > > >
-> > > > > +/* On Pi-2 connector */
-> > > > > +&uart2 {
-> > > > > +     pinctrl-names = "default";
-> > > > > +     pinctrl-0 = <&uart2_pins>;
-> > > > > +     status = "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +/* On Euler connector */
-> > > > > +&uart3 {
-> > > > > +     pinctrl-names = "default";
-> > > > > +     pinctrl-0 = <&uart3_pins>;
-> > > > > +     status = "disabled";
-> > > > > +};
-> > > > > +
-> > > > > +/* On Euler connector, RTS/CTS optional */
-> > > > > +&uart4 {
-> > > > > +     pinctrl-names = "default";
-> > > > > +     pinctrl-0 = <&uart4_pins>;
-> > > > > +     status = "disabled";
-> > > > > +};
-> > > >
-> > > > Since these are all the default muxing, maybe we should just set that
-> > > > in the DTSI?
-> > >
-> > > Maybe not, since people may want to only use RX/TX, and leave the other
-> > > two pins for GPIO?
-> >
-> > Right, I'll apply that patch.
->
-> Ping, just want to make sure this has been applied/will be applied.
+2. guest_halt_poll_grow_start and guest_halt_poll_ns could be adjusted at
+runtime by admin, this could make a window where cpu_halt_poll_us jump out
+of the boundary. the window could be long in some cases(e.g. guest_halt_poll_grow_start
+is bumped and cpu_halt_poll_us is shrinking) The last two patches fix this
+issue from both kvm and guest side.
 
-This has been applied, and was part of the PR for 5.5 sent last week
+3. The 4th patch also simplifies branch check code.
 
-Maxime
+v2:
+Rewrite the patches and drop unnecessory changes
 
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
+Zhenzhong Duan (4):
+  cpuidle-haltpoll: ensure grow start value is nonzero
+  KVM: ensure grow start value is nonzero
+  cpuidle-haltpoll: ensure cpu_halt_poll_us in right scope
+  KVM: ensure vCPU halt_poll_us in right scope
 
------BEGIN PGP SIGNATURE-----
+ drivers/cpuidle/governors/haltpoll.c | 50 ++++++++++++++++++++++++-----------
+ virt/kvm/kvm_main.c                  | 51 ++++++++++++++++++++++++------------
+ 2 files changed, 68 insertions(+), 33 deletions(-)
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXcKz9gAKCRDj7w1vZxhR
-xfPJAP4qP44/SpPzLjXIyoizSx9xs7CQpWprZuxSoSTc3Ba5RgEA4Q2NIc2Xk6rr
-HnXc85K09hZjEcpzLo2Q1Dw6Kx3rBw0=
-=Zoc5
------END PGP SIGNATURE-----
+-- 
+1.8.3.1
 
---NzB8fVQJ5HfG6fxh--
