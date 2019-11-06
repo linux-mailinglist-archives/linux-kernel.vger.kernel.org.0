@@ -2,232 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4811EF1A3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 776A6F1A4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 16:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732087AbfKFPma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 10:42:30 -0500
-Received: from mail-eopbgr60117.outbound.protection.outlook.com ([40.107.6.117]:21573
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727028AbfKFPma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 10:42:30 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WPXZJgThj7uJcGl2AAmV9wcR7bopU6kzP3BUkjPeowosQyicN+Rc+6z2EMqzWc04zNiMgXkmLsWcYrK1S470eM7lioTnv0amxDG9nWZMSSFoptxS9MgL/Wdckjmdji6JTzty0urnBUuPuLhBA+hbmDjYndbKowVxV2aF7Qwy5Y3eLfSqXaX50d0b3B9T8ptYJ9QMy0KQifalyeU3CjIiJPKxuKdgUoVE+RCsQiPqEidNxTGNJmWYn+FuQ3MkjMk4fZeNKNiGer4Z1n+f88qRfKjnHkhCR82Kh09fLENsM2y/SaznL3OEjV7bkOY6icm9SWgmpFfsdOfXNavL3WEciA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WZvUAGxaLgtGJWb2NDNBjCtddpwg6H2W0+Jv+MklurU=;
- b=Dg8f0JElqSHdlscl20PoOqt7shFcEcU61OsNj/9aaNKlRm/nI32FV+Zh5/H2As0gynduPCeXzhq5f9w4Txonnu2Mcvyi32RqXa5JZBnnDxsHleTIEClJG+55w5vlmeQMzfRGxBxxBoJeir351mZmuOTYM2rxP/c4E89/fdzlHhP5XK2ZUHGmJBiLuy9u3pHG++gx2SkKsDhX8dfAPuOklFdqhKQxMdTouwD+e8p6N4xZC0l8x2KHpI4hfrGfPgTDF13HU99PtVomkWbT/nfrYWpodoDpbfcxVUIJ5ybiaz+GqEugpL38kbDl8zLehEtzIfS/AnHHl5/ZA/6W3vzGVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WZvUAGxaLgtGJWb2NDNBjCtddpwg6H2W0+Jv+MklurU=;
- b=pJJSThKdZR/mwnLQFHfd+gjRIbbSd+s/fdpRCBLtlLThJvi+nP7OkXHUjzH7e/6FpXGomsgNnlZXIpvMWJYx8oRJ9Z6DxX04JwliFYwlqYhrDmQPUyeF6X5PuNmXKuvRUBTqWTn11FPSP7HFNEOIIwnBDIoOv1E+dmmmtbagjKs=
-Received: from VI1PR07MB5040.eurprd07.prod.outlook.com (20.177.203.20) by
- VI1PR07MB4287.eurprd07.prod.outlook.com (20.176.5.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.16; Wed, 6 Nov 2019 15:42:25 +0000
-Received: from VI1PR07MB5040.eurprd07.prod.outlook.com
- ([fe80::ec3b:5048:b5f7:2826]) by VI1PR07MB5040.eurprd07.prod.outlook.com
- ([fe80::ec3b:5048:b5f7:2826%5]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
- 15:42:24 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH v2] ARM: ftrace/recordmcount: filter relocation types
-Thread-Topic: [PATCH v2] ARM: ftrace/recordmcount: filter relocation types
-Thread-Index: AQHVlLjJ3L9/ljk2bEOhhVB0w3EsXA==
-Date:   Wed, 6 Nov 2019 15:42:24 +0000
-Message-ID: <20191106154209.118919-1-alexander.sverdlin@nokia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.181]
-x-mailer: git-send-email 2.23.0
-x-clientproxiedby: HE1PR05CA0197.eurprd05.prod.outlook.com
- (2603:10a6:3:f9::21) To VI1PR07MB5040.eurprd07.prod.outlook.com
- (2603:10a6:803:9c::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d1790361-7bf5-4f1c-3707-08d762cfeb96
-x-ms-traffictypediagnostic: VI1PR07MB4287:
-x-ms-exchange-purlcount: 2
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR07MB4287A59693EC5DD22236DF2488790@VI1PR07MB4287.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(39860400002)(136003)(189003)(199004)(54534003)(2351001)(478600001)(5660300002)(6506007)(4326008)(386003)(14454004)(52116002)(966005)(6306002)(2616005)(26005)(486006)(25786009)(36756003)(102836004)(6486002)(316002)(5640700003)(6916009)(6512007)(476003)(54906003)(6436002)(1076003)(99286004)(186003)(81156014)(256004)(14444005)(305945005)(7736002)(2501003)(66476007)(66556008)(64756008)(66446008)(71190400001)(3846002)(71200400001)(6116002)(66946007)(66066001)(8936002)(81166006)(2906002)(86362001)(8676002)(50226002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB4287;H:VI1PR07MB5040.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: l1NQYYq1e5RTtgU/GYjCNFsfcwDmCWXFEO+M3LogAep4WGrYcoqtEznIvT7Me+wOH6dxu0LtX7VRX+KnXJMAWFd6M83gyw10SlHmmVxQRDUU4dmFE1YApdUDqFR4gghkRE1gu0UkrCT5Np248nNHykrKO5Mms5ajU+l1Qlwdf2sr5NQLPU+pdJ4YlHNHq8tEzH4YdIWaJbLrPLfljPJDnlFU1l/Ljaq2azqSDFVqaLEyt1W6VmUs+bIlgqsQ+XHNdNw09V+cde0ZghpMxirooUJAWHRtPay1vAoVClFFffgDR7uac7exfPTcKS1hJg2dl/cSQQjk1UXJXW50p6RV4Qn8EuZXADzLSPj10JHr3MpsunFoMFj0BVIBL23COBN2HJUXgp4P4eHZRZN9eAh+D0trIzSD/oDxCtvfh81rxheMMedZYdIm4Ir82AAHgpfQERR1OpCaUaXn69UVzFgO9i4DkswAzHDCWJFEPkrLqOQ=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1730005AbfKFPqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 10:46:39 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52214 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727028AbfKFPqj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 10:46:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573055198;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I513jpBvCXeiyw/OWi6grP+ZDrJYUiN54Oer6ld6BmU=;
+        b=jN7GMg/x9Y2f/+TyzycVU8/MzeTbjfnVPGYFoemsYYEIkLBkCb4lVPgjB88iGpgVL3D656
+        QrsaWIaWiWRgrIcnRBy2Flh9AkkmYUplqcLpMLAp9IsxW4wD2IeeBJgT07f4KIMwMPsTJW
+        Ml8ARk6cdWmCZdkI/3vhpiiCQ2JQZHQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-162-fwIHBv6vMJS67yhI-7qIqA-1; Wed, 06 Nov 2019 10:46:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C586800EBA;
+        Wed,  6 Nov 2019 15:46:33 +0000 (UTC)
+Received: from redhat.com (ovpn-125-216.rdu2.redhat.com [10.10.125.216])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E155E5D9E1;
+        Wed,  6 Nov 2019 15:46:31 +0000 (UTC)
+Date:   Wed, 6 Nov 2019 10:46:29 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [RFC] mm: gup: add helper page_try_gup_pin(page)
+Message-ID: <20191106154629.GA3889@redhat.com>
+References: <20191103112113.8256-1-hdanton@sina.com>
+ <20191104043420.15648-1-hdanton@sina.com>
+ <20191104102050.15988-1-hdanton@sina.com>
+ <20191105042755.7292-1-hdanton@sina.com>
+ <20191106092240.1712-1-hdanton@sina.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1790361-7bf5-4f1c-3707-08d762cfeb96
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 15:42:24.8176
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DgkQj7kYcwdH6ITA7J1wOda9lYIqXDt3gN3SL3Iki0WBEK8auL4JuYKMPYzYi96/XL/UN5j9kKPJm7XogOoPCRXkXIkHWjk/x89Jnb3fEd8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB4287
+In-Reply-To: <20191106092240.1712-1-hdanton@sina.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: fwIHBv6vMJS67yhI-7qIqA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+On Wed, Nov 06, 2019 at 05:22:40PM +0800, Hillf Danton wrote:
+>=20
+> On Tue, 5 Nov 2019 10:54:15 -0500 Jerome Glisse wrote:
+> >=20
+> > On Tue, Nov 05, 2019 at 12:27:55PM +0800, Hillf Danton wrote:
+> > >
+> > > On Mon, 4 Nov 2019 14:03:55 -0500 Jerome Glisse wrote:
+> > > >
+> > > > On Mon, Nov 04, 2019 at 06:20:50PM +0800, Hillf Danton wrote:
+> > > > >
+> > > > > On Sun, 3 Nov 2019 22:09:03 -0800 John Hubbard wrote:
+> > > > > > On 11/3/19 8:34 PM, Hillf Danton wrote:
+> > > > > > ...
+> > > > > > >>
+> > > > > > >> Well, as long as we're counting bits, I've taken 21 bits (!)=
+ to track
+> > > > > > >> "gupers". :)  More accurately, I'm sharing 31 bits with get_=
+page()...please
+> > > > > > >
+> > > > > > > Would you please specify the reasoning of tracking multiple g=
+upers
+> > > > > > > for a dirty page? Do you mean that it is all fine for guper-A=
+ to add
+> > > > > > > changes to guper-B's data without warning and vice versa?
+> > > > > >
+> > > > > > It's generally OK to call get_user_pages() on a page more than =
+once.
+> > > > >
+> > > > > Does this explain that it's generally OK to gup pin a page under
+> > > > > writeback and then start DMA to it behind the flusher's back with=
+out
+> > > > > warning?
+> > > >
+> > > > It can happens today, is it ok ... well no but we live in an imperf=
+ect
+> > > > world. GUP have been abuse by few device driver over the years and =
+those
+> > > > never checked what it meant to use it so now we are left with exist=
+ing
+> > > > device driver that we can not break that do wrong thing.
+> > >
+> > > See your point :)
+> > >
+> > > > I personaly think that we should use bounce page for writeback so t=
+hat
+> > > > writeback can still happens if a page is GUPed.
+> > >
+> > > Gup can be prevented from falling foul of writeback IMHO if the page
+> > > under writeback, gup pinned or not, remains stable until it is no
+> > > longer dirty.
+> > >
+> > > For that stability, either we can check PageWriteback on gup pinning
+> > > for instance as the RFC does or drivers can set a gup-pinned page
+> > > dirty only after DMA and start no more DMA until it is clean again.
+> > >
+> > > As long as that stability is ensured writeback will no longer need to
+> > > take care of gup pin, long-lived or transient.
+> > >
+> > > It seems unlike a request too strict to meet in practice wrt data
+> > > corruption, and bounce page for writeback sounds promising. Does it
+> > > need to do a memory copy?
+> >=20
+> > Once driver has GUP it does not check and re-check the struct page
+> > so there is no synchronization whatsoever after GUP happened. In
+> > fact for some driver you can not synchronize anything once the device
+> > has been program. Many devices are not just simple DMA engine you
+> > can start and stop at will (network, GPUs, ...).
+>=20
+> Because "there is no synchronization whatsoever after GUP happened,"
+> we need to take another close look at the reasoning for tracking
+> multiple gupers if the chance of their mutual data corruptions exists
+> in the wild. (If any sync mechanism sits between them to avoid data
+> corruption, then it seems single pin is enough.)
 
-Scenario 1, ARMv7
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+It does exist in the wild but the userspace application would be either
+doing something stupid or something terribly clever. For instance you
+can have 2 network interface writing to the same GUPed page but that is
+because the application made the same request over two NICs and both
+endup writting the samething.
 
-If code in arch/arm/kernel/ftrace.c would operate on mcount() pointer
-the following may be generated:
+You can also have 2 GUPer each writting to different part of the page
+and never stepping on each others.
 
-00000230 <prealloc_fixed_plts>:
- 230:   b5f8            push    {r3, r4, r5, r6, r7, lr}
- 232:   b500            push    {lr}
- 234:   f7ff fffe       bl      0 <__gnu_mcount_nc>
-                        234: R_ARM_THM_CALL     __gnu_mcount_nc
- 238:   f240 0600       movw    r6, #0
-                        238: R_ARM_THM_MOVW_ABS_NC      __gnu_mcount_nc
- 23c:   f8d0 1180       ldr.w   r1, [r0, #384]  ; 0x180
+The point really is that from kernel point of view there is just no
+way to know if the application is doing something wrong or if it just
+perfectly fine. This is exactly the same thing as CPU threads, you do
+not ask the kernel to ascertain wether what application threads are
+doing is wrong or right.
 
-FTRACE currently is not able to deal with it:
+So we have to live with the fact that we can have multiple GUPers and
+that it is not our problems if that happens and we can do nothing
+about it.
 
-WARNING: CPU: 0 PID: 0 at .../kernel/trace/ftrace.c:1979 ftrace_bug+0x1ad/0=
-x230()
-...
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.4.116-... #1
-...
-[<c0314e3d>] (unwind_backtrace) from [<c03115e9>] (show_stack+0x11/0x14)
-[<c03115e9>] (show_stack) from [<c051a7f1>] (dump_stack+0x81/0xa8)
-[<c051a7f1>] (dump_stack) from [<c0321c5d>] (warn_slowpath_common+0x69/0x90=
-)
-[<c0321c5d>] (warn_slowpath_common) from [<c0321cf3>] (warn_slowpath_null+0=
-x17/0x1c)
-[<c0321cf3>] (warn_slowpath_null) from [<c038ee9d>] (ftrace_bug+0x1ad/0x230=
-)
-[<c038ee9d>] (ftrace_bug) from [<c038f1f9>] (ftrace_process_locs+0x27d/0x44=
-4)
-[<c038f1f9>] (ftrace_process_locs) from [<c08915bd>] (ftrace_init+0x91/0xe8=
-)
-[<c08915bd>] (ftrace_init) from [<c0885a67>] (start_kernel+0x34b/0x358)
-[<c0885a67>] (start_kernel) from [<00308095>] (0x308095)
----[ end trace cb88537fdc8fa200 ]---
-ftrace failed to modify [<c031266c>] prealloc_fixed_plts+0x8/0x60
- actual: 44:f2:e1:36
-ftrace record flags: 0
- (0)   expected tramp: c03143e9
+Note that we are removing GUP from some of those driver, ones where
+the device can abide to mmu notifier. But that is just something
+orthogonal to all this.
 
-Scenario 2, ARMv4T
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-ftrace: allocating 14435 entries in 43 pages
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/trace/ftrace.c:2029 ftrace_bug+0x204/0x310
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.5 #1
-Hardware name: Cirrus Logic EDB9302 Evaluation Board
-[<c0010a24>] (unwind_backtrace) from [<c000ecb0>] (show_stack+0x20/0x2c)
-[<c000ecb0>] (show_stack) from [<c03c72e8>] (dump_stack+0x20/0x30)
-[<c03c72e8>] (dump_stack) from [<c0021c18>] (__warn+0xdc/0x104)
-[<c0021c18>] (__warn) from [<c0021d7c>] (warn_slowpath_null+0x4c/0x5c)
-[<c0021d7c>] (warn_slowpath_null) from [<c0095360>] (ftrace_bug+0x204/0x310=
-)
-[<c0095360>] (ftrace_bug) from [<c04dabac>] (ftrace_init+0x3b4/0x4d4)
-[<c04dabac>] (ftrace_init) from [<c04cef4c>] (start_kernel+0x20c/0x410)
-[<c04cef4c>] (start_kernel) from [<00000000>] (  (null))
----[ end trace 0506a2f5dae6b341 ]---
-ftrace failed to modify
-[<c000c350>] perf_trace_sys_exit+0x5c/0xe8
- actual:   1e:ff:2f:e1
-Initializing ftrace call sites
-ftrace record flags: 0
- (0)
- expected tramp: c000fb24
+> > So once a page is GUP there is just noway to garanty its stability
+> > hence the best thing we can do is snapshot it to a bounce page.
+>=20
+> It becomes clearer OTOH that we are more likely than not moving in
+> the incorrect direction, in cases like how to detect gupers and what
+> to do for writeback if page is gup pinned, without a clear picture
+> of the bounce page in the first place. Any plan to post a patch just
+> for idea show?
 
-The analysis for this problem has been already performed previously,
-refer to the link below.
+The agreement so far is that we need to be able to identify GUPed
+pages and this is what John's patchset does. Once we have that piece
+than we can discuss what to do in respect of write-back. Which is
+still something where there is no agreement as far as i remember the
+outcome of the last discussion we had. I expect this will a topic
+at next LSF/MM or maybe something we can flush out before.
 
-Fix the above problems by allowing only selected reloc types in
-__mcount_loc. The list itself comes from the legacy recordmcount.pl
-script.
+In any case my opinion is bounce page is the best thing we can do,
+from application and FS point of view it mimics the characteristics
+of regular write-back just as if the write protection window of the
+write-backed page was infinitly short.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/lkml/56961010.6000806@pengutronix.de/
-Fixes: ed60453fa8 ("ARM: 6511/1: ftrace: add ARM support for C version of r=
-ecordmcount")
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-
----
-Changelog:
-v2: Rebased
-
- scripts/recordmcount.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
-index 612268e..6872d26 100644
---- a/scripts/recordmcount.c
-+++ b/scripts/recordmcount.c
-@@ -38,6 +38,10 @@
- #define R_AARCH64_ABS64	257
- #endif
-=20
-+#define R_ARM_PC24		1
-+#define R_ARM_THM_CALL		10
-+#define R_ARM_CALL		28
-+
- static int fd_map;	/* File descriptor for file being modified. */
- static int mmap_failed; /* Boolean flag. */
- static char gpfx;	/* prefix for global symbol name (sometimes '_') */
-@@ -418,6 +422,18 @@ static char const *already_has_rel_mcount =3D "success=
-"; /* our work here is done!
- #define RECORD_MCOUNT_64
- #include "recordmcount.h"
-=20
-+static int arm_is_fake_mcount(Elf32_Rel const *rp)
-+{
-+	switch (ELF32_R_TYPE(w(rp->r_info))) {
-+	case R_ARM_THM_CALL:
-+	case R_ARM_CALL:
-+	case R_ARM_PC24:
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
- /* 64-bit EM_MIPS has weird ELF64_Rela.r_info.
-  * http://techpubs.sgi.com/library/manuals/4000/007-4658-001/pdf/007-4658-=
-001.pdf
-  * We interpret Table 29 Relocation Operation (Elf64_Rel, Elf64_Rela) [p.4=
-0]
-@@ -523,6 +539,7 @@ static int do_file(char const *const fname)
- 		altmcount =3D "__gnu_mcount_nc";
- 		make_nop =3D make_nop_arm;
- 		rel_type_nop =3D R_ARM_NONE;
-+		is_fake_mcount32 =3D arm_is_fake_mcount;
- 		gpfx =3D 0;
- 		break;
- 	case EM_AARCH64:
---=20
-2.4.6
+Cheers,
+J=E9r=F4me
 
