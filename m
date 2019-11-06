@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB412F0F8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F3BF0F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 08:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbfKFHD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 02:03:29 -0500
-Received: from mailoutvs7.siol.net ([185.57.226.198]:52844 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731206AbfKFHD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:03:28 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id B373352475C;
-        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id X00OQJgGRu0m; Wed,  6 Nov 2019 08:03:25 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 6677B52506A;
-        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
-Received: from localhost.localdomain (cpe-86-58-102-7.static.triera.net [86.58.102.7])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id 1B990524D52;
-        Wed,  6 Nov 2019 08:03:25 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: v4l2-mem2mem: Fix hold buf flag checks
-Date:   Wed,  6 Nov 2019 08:02:53 +0100
-Message-Id: <20191106070253.1986421-1-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.24.0
+        id S1731614AbfKFHDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 02:03:32 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40850 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731601AbfKFHDa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 02:03:30 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e3so8860402plt.7;
+        Tue, 05 Nov 2019 23:03:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WN6t2RxJTrcSpXWmkeYE7YP/Liw+XUS9WWZURfMVu18=;
+        b=e0d3mmTA3q+QfxCGgXPi0MsudpNOZYUrnPNw83QkvDpwth/fkqJuxRIWo2EkiK6DLz
+         IeJqc46wle64sFTk8FuEVNXLJrRk4prjD8RX/WOCZ3/OzvEtypYyfPtU5PDwGwVBfbER
+         JZ0wW0gPRcE7OhCBImVi2VYJfOdqvaoQzUjUwOqUge+mExV/crPCKnPmNGjcnAxP6h/g
+         kpEJECsmzWVub9jtDJw+OWKvohu1AcTJXc0BlSGYF18mnqPh6cQ7sE964JYSDrwXExk9
+         ipSMejz88ZGZHsVszIpIEsBdqxIxj1pzUwHj3TFpbT4z1CfnxmrmnuDUWfIoCUysFjAc
+         qxQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WN6t2RxJTrcSpXWmkeYE7YP/Liw+XUS9WWZURfMVu18=;
+        b=I6mHt/7wRhqQXrPE7pTLs641uAzSNpqG7uGqj8Y/0c5B5e/D1rDBfPSrPYLKNF8lCo
+         Y76nNVUCl8gZtbn85gQML7oMY0cBIkveXX35DpcU2XOaAm9hWLTgeyk0Sb3OU8yso3ie
+         VlLbXsOEhG1jZaJoUqLbhAeWL5Mns/QH144svv0GEnsiUuqvS1nlnZ2qyPjVhrisz0+g
+         iy/1ECYv/97LIjYMiOcQN1Oj6pZTfHGkiun5Sk7woOWH9G9aGYDaV79j9iyPBn7rSnOC
+         xYgdpYd6QZt4RNZIdlqG4saEoHeemsCKtI4TyRiFnzERZxeh5U6CzUwOgOOmF/bHE2QL
+         R15w==
+X-Gm-Message-State: APjAAAX7M97vjtRaNB+6oXdAU+triff4QK6tmxl9jYSnoGt/yfKIORV0
+        +llJNJiRIhQ6bpnj5sYD7C5oOng+MLB1WE7rhZ0=
+X-Google-Smtp-Source: APXvYqw4jyXL6u9kK1PwIkQAjG0ZoqTmBU33xW+M3eN+g5vMz4eih/Rdu9J4jTWVAlWUjIE3n3XB5B69aeDKKfte098=
+X-Received: by 2002:a17:902:bb84:: with SMTP id m4mr1006603pls.255.1573023809520;
+ Tue, 05 Nov 2019 23:03:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20191104213417.18036-1-leonmaxx@gmail.com> <20191104213907.18413-1-leonmaxx@gmail.com>
+In-Reply-To: <20191104213907.18413-1-leonmaxx@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 6 Nov 2019 09:03:17 +0200
+Message-ID: <CAHp75VfgTAa8TgTYn99gr_F4mmVuJZgEu=JcDE+bOnAO-pqqxA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] platform/x86: asus_wmi: Set default fan boost mode
+ to normal
+To:     Leonid Maksymchuk <leonmaxx@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Chris Chiu <chiu@endlessm.com>,
+        Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>,
+        Kristian Klausen <kristian@klausen.dk>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Corentin Chary <corentin.chary@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hold buf flag is set on output queue, not capture. Fix that.
+On Mon, Nov 4, 2019 at 11:39 PM Leonid Maksymchuk <leonmaxx@gmail.com> wrote:
+>
+> Set default fan boost mode to normal for multiple reasons:
+>
+> 1) existing code assumes that laptop started in normal mode and that is
+>    not always correct.
+> 2) FX705DY/FX505DY starts in silent mode and under heavy CPU load it
+>    overheats and drops CPU frequency to 399MHz [1]. Setting fan mode to
+>    normal avoids overheating.
+>
+> [1] Link: https://bugzilla.kernel.org/show_bug.cgi?id=203733
+>
+> Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
 
-Fixes: f07602ac3887 ("media: v4l2-mem2mem: add new_frame detection")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/media/v4l2-core/v4l2-mem2mem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +static int fan_boost_mode_set_default(struct asus_wmi *asus)
+> +{
+> +       int result = 0;
+> +
+> +       if (asus->fan_boost_mode_available) {
+> +               asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
+> +               result = fan_boost_mode_write(asus);
+> +       }
+> +
+> +       return result;
+> +}
 
-diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-=
-core/v4l2-mem2mem.c
-index db07ef3bf3d0..1afd9c6ad908 100644
---- a/drivers/media/v4l2-core/v4l2-mem2mem.c
-+++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
-@@ -335,7 +335,7 @@ static void __v4l2_m2m_try_queue(struct v4l2_m2m_dev =
-*m2m_dev,
- 		}
- 	}
-=20
--	if (src && dst && (m2m_ctx->cap_q_ctx.q.subsystem_flags &
-+	if (src && dst && (m2m_ctx->out_q_ctx.q.subsystem_flags &
- 			   VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF))
- 		m2m_ctx->new_frame =3D !dst->vb2_buf.copied_timestamp ||
- 			dst->vb2_buf.timestamp !=3D src->vb2_buf.timestamp;
-@@ -474,7 +474,7 @@ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev=
-,
- 	 * holding capture buffers. Those should use
- 	 * v4l2_m2m_buf_done_and_job_finish() instead.
- 	 */
--	WARN_ON(m2m_ctx->cap_q_ctx.q.subsystem_flags &
-+	WARN_ON(m2m_ctx->out_q_ctx.q.subsystem_flags &
- 		VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF);
- 	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
- 	schedule_next =3D _v4l2_m2m_job_finish(m2m_dev, m2m_ctx);
---=20
-2.24.0
+This can be refactored
 
+if (!foo)
+  return 0;
+...
+return bar(asus);
+
+-- 
+With Best Regards,
+Andy Shevchenko
