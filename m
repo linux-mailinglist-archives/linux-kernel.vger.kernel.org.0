@@ -2,175 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861FEF2235
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E2C5F223A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfKFWzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:55:50 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44362 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfKFWzt (ORCPT
+        id S1725937AbfKFW6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:58:19 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49706 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727196AbfKFW6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:55:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id f19so74195pgk.11;
-        Wed, 06 Nov 2019 14:55:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WwmAXrpZu1baXaKN4OHedrq+hk5dzg0MV9DJtmeM5HE=;
-        b=OdEEXEf0qkDqsHtYS7pq4C8nmslrlJTdjW9dPAIa1jbutFk3tUZXnW+4clWiI2ich0
-         5YEQThPkDG0EnyQLLVbjZ7LahZg4By60KPsRfP+xE2+Q/su/4oMFO74cSKEgpFugWuo1
-         MqxkWJ7xkke6p5RGvLvvHGRqSrK/ZYGxTcPVTOK7vgUy//4eItotPTNKeWQzJcTy5kZh
-         vwzSn59Exx4C2nqYb2PFQQtBH0SWgKyAPq62hAnezeRhpL2jCvd+EhE33yz3SSvxpNgz
-         DaPQT+etQDdqLZRNwXJSIzwKsF7zwGSh1e1NheSfVUXWEAVhdZIVJIEiTL8EzPi1K7KH
-         1lHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WwmAXrpZu1baXaKN4OHedrq+hk5dzg0MV9DJtmeM5HE=;
-        b=WR3OiQKQGpNfwOD16eLT9lq5oOYbXrUL/ieptsfgXEKulIJJQmzOOMolCI8hODms4U
-         Mye2K9SkRXJgLFHBStVdZOEIxBM66QiSmac+LkWKi7zLmLdt51oc7s3cLqcwbsXOpjBq
-         HwdZzCozJY2k2kGVCkJtim0XM556eJBPYa4PC5RHV+Y27z+sYMNV3WKg08lxBJBGVQMA
-         ePxbgYJlcIAgHUQALLUllFQQcF65vAbiUPuAbt0uQFbshPIhFELYLNQuL9g49G3V/DAy
-         0jBlKpFEUpG/e0w6yo2vmqn8z7lVmuBjlhkuT8g2xkUTd+I66dsLRt8SH7UBSXW9TMSJ
-         TeKQ==
-X-Gm-Message-State: APjAAAXYroovfDTSD2y4zVbeQhAriyltO44xE+oJeUT3+laaXbHPwpCd
-        ZnwQK33+S+L1RNspdX47th5yQpMYlB8=
-X-Google-Smtp-Source: APXvYqx2gZUmxB7PHKNEnVpURy1RgEUrL9gwFxw9zOyKVDCH3QDFfNgLDcVtNEFtrylLD/GkuKsARQ==
-X-Received: by 2002:a63:4104:: with SMTP id o4mr353589pga.169.1573080947192;
-        Wed, 06 Nov 2019 14:55:47 -0800 (PST)
-Received: from odroid.ad.adelaide.edu.au (staff-249-202.wireless.adelaide.edu.au. [129.127.249.202])
-        by smtp.googlemail.com with ESMTPSA id y16sm32851pfo.62.2019.11.06.14.55.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 14:55:46 -0800 (PST)
-From:   Marian Mihailescu <mihailescu2m@gmail.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kgene@kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: [PATCH v4 2/2] ARM: dts: exynos5420: add mali dt node and enable mali on Odroid XU3/4
-Date:   Thu,  7 Nov 2019 09:25:27 +1030
-Message-Id: <20191106225527.9121-2-mihailescu2m@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20191106225527.9121-1-mihailescu2m@gmail.com>
-References: <20191106225527.9121-1-mihailescu2m@gmail.com>
+        Wed, 6 Nov 2019 17:58:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573081098;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9Clhu2rt+kpo43UbuiVcjjHoWtjEgIjo2tHeRtPjlyQ=;
+        b=bZQe086k/IHnAuMY7ONkhRZddgHCeTz99r92g31HRvHEpYqODSOG66hMNdJeyg5OwNZjIh
+        AMzG76nktxoFwj2Wb4bJOEsht7+aMBYXCoWM70wrBfiOa+3BFdCgfulYMCtZzg1AEUvdaU
+        IMB6uxhYJFoFZ1Hx/p3oDZ/uKrI6tyk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-331-YbiNC0ioPxK3IgeNVq5zwQ-1; Wed, 06 Nov 2019 17:58:14 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2C16107ACC3;
+        Wed,  6 Nov 2019 22:58:10 +0000 (UTC)
+Received: from x1.home (ovpn-116-138.phx2.redhat.com [10.3.116.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BF7AB5C1BB;
+        Wed,  6 Nov 2019 22:58:00 +0000 (UTC)
+Date:   Wed, 6 Nov 2019 15:58:00 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
+        mst@redhat.com, tiwei.bie@intel.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        cohuck@redhat.com, maxime.coquelin@redhat.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        rob.miller@broadcom.com, xiao.w.wang@intel.com,
+        haotian.wang@sifive.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, farman@linux.ibm.com,
+        pasic@linux.ibm.com, sebott@linux.ibm.com, oberpar@linux.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
+        freude@linux.ibm.com, lingshan.zhu@intel.com, idos@mellanox.com,
+        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
+        christophe.de.dinechin@gmail.com, kevin.tian@intel.com,
+        stefanha@redhat.com
+Subject: Re: [PATCH V9 6/6] docs: sample driver to demonstrate how to
+ implement virtio-mdev framework
+Message-ID: <20191106155800.0b8418ec@x1.home>
+In-Reply-To: <88efad07-70aa-3879-31e7-ace4d2ad63a1@infradead.org>
+References: <20191106070548.18980-1-jasowang@redhat.com>
+        <20191106070548.18980-7-jasowang@redhat.com>
+        <88efad07-70aa-3879-31e7-ace4d2ad63a1@infradead.org>
+Organization: Red Hat
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: YbiNC0ioPxK3IgeNVq5zwQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree node for Mali GPU for Exynos 542x SoC.
-GPU is disabled by default, and is enabled for each board after the
-regulator is defined. Tested on Odroid-XU4.
+On Wed, 6 Nov 2019 14:50:30 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Changes since v3:
-- fixed compatible to match bindings
+> On 11/5/19 11:05 PM, Jason Wang wrote:
+> > diff --git a/samples/Kconfig b/samples/Kconfig
+> > index c8dacb4dda80..13a2443e18e0 100644
+> > --- a/samples/Kconfig
+> > +++ b/samples/Kconfig
+> > @@ -131,6 +131,16 @@ config SAMPLE_VFIO_MDEV_MDPY
+> >  =09  mediated device.  It is a simple framebuffer and supports
+> >  =09  the region display interface (VFIO_GFX_PLANE_TYPE_REGION).
+> > =20
+> > +config SAMPLE_VIRTIO_MDEV_NET
+> > +=09tristate "Build VIRTIO net example mediated device sample code -- l=
+oadable modules only"
+> > +=09depends on VIRTIO_MDEV && VHOST_RING && m
+> > +=09help
+> > +=09  Build a networking sample device for use as a virtio
+> > +=09  mediated device. The device coopreates with virtio-mdev bus =20
+>=20
+> typo here:
+> =09                              cooperates
+>=20
 
-Changes since v2:
-- separate patch for bindings
-- fixed bindings typo
+I can fix this on commit relative to V10 if there are no other issues
+raised:
 
-Changes since v1:
-- used generic node and label for GPU
-- added bindings for compatible
-- fixed irq indentation
-- fixed interrupt-names to match bindings
-- added cooling cells for future TMU connection
-- used generic node and label for GPU opp table
-- removed always-on from SoC GPU regulator
+diff --git a/samples/Kconfig b/samples/Kconfig
+index 13a2443e18e0..b7116d97cbbe 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -136,7 +136,7 @@ config SAMPLE_VIRTIO_MDEV_NET
+        depends on VIRTIO_MDEV && VHOST_RING && m
+        help
+          Build a networking sample device for use as a virtio
+-         mediated device. The device coopreates with virtio-mdev bus
++         mediated device. The device cooperates with virtio-mdev bus
+          driver to present an virtio ethernet driver for
+          kernel. It simply loopbacks all packets from its TX
+          virtqueue to its RX virtqueue.
 
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
----
- arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
- 2 files changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 7d51e0f4ab79..31b5f7ba0e3b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -670,6 +670,56 @@
- 			iommus = <&sysmmu_gscl1>;
- 		};
- 
-+		gpu: gpu@11800000 {
-+			compatible = "samsung,exynos5420-mali", "arm,mali-t628";
-+			reg = <0x11800000 0x5000>;
-+			interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "job", "mmu", "gpu";
-+
-+			clocks = <&clock CLK_G3D>;
-+			clock-names = "core";
-+			power-domains = <&g3d_pd>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+
-+			status = "disabled";
-+			#cooling-cells = <2>;
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp@177000000 {
-+					opp-hz = /bits/ 64 <177000000>;
-+					opp-microvolt = <812500>;
-+				};
-+				opp@266000000 {
-+					opp-hz = /bits/ 64 <266000000>;
-+					opp-microvolt = <862500>;
-+				};
-+				opp@350000000 {
-+					opp-hz = /bits/ 64 <350000000>;
-+					opp-microvolt = <912500>;
-+				};
-+				opp-420000000 {
-+					opp-hz = /bits/ 64 <420000000>;
-+					opp-microvolt = <962500>;
-+				};
-+				opp-480000000 {
-+					opp-hz = /bits/ 64 <480000000>;
-+					opp-microvolt = <1000000>;
-+				};
-+				opp-543000000 {
-+					opp-hz = /bits/ 64 <543000000>;
-+					opp-microvolt = <1037500>;
-+				};
-+				opp-600000000 {
-+					opp-hz = /bits/ 64 <600000000>;
-+					opp-microvolt = <1150000>;
-+				};
-+			};
-+		};
-+
- 		scaler_0: scaler@12800000 {
- 			compatible = "samsung,exynos5420-scaler";
- 			reg = <0x12800000 0x1294>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 422692b20c46..ce774f7b2ce0 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -522,7 +522,6 @@
- 				regulator-name = "vdd_g3d";
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <1400000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 
- 				regulator-state-mem {
-@@ -659,6 +658,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&buck4_reg>;
-+	status = "okay";
-+};
-+
- &rtc {
- 	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
--- 
-2.14.1
+Thanks,
+Alex
 
