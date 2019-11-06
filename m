@@ -2,73 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8B06F0F00
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1917F0EEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 07:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbfKFGjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 01:39:40 -0500
-Received: from mail-m973.mail.163.com ([123.126.97.3]:41070 "EHLO
-        mail-m973.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729470AbfKFGjk (ORCPT
+        id S1730038AbfKFGc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 01:32:59 -0500
+Received: from werkudoro.jatengprov.go.id ([103.9.227.34]:37156 "EHLO
+        werkudoro.jatengprov.go.id" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725806AbfKFGc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 01:39:40 -0500
-X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 01:39:39 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=ZW7ADXOpY7jtfDW7OG
-        JksEYT6Hht/9ZWqeFWJehNnHY=; b=faHvyNdhd7HbjtZqDveFTPKZ6/7nMDwot0
-        h+rK3VdRd0Nctm7wLwWcCulsbK3FOo/YRIMw2+0E+r1ZfhS63ps9uC3HZHchprB3
-        792N0sCnIwhccWH0zZ1o6PZa7ivrhAFpYb0SoMrxUEOhBuc9erjxA4iyuAADB0cZ
-        hZ5f9TeCw=
-Received: from localhost.localdomain (unknown [202.112.113.212])
-        by smtp3 (Coremail) with SMTP id G9xpCgAXbAsCZ8JdsYANHw--.188S3;
-        Wed, 06 Nov 2019 14:24:24 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Michal Kalderon <mkalderon@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] RDMA/qedr: fix potential use after free
-Date:   Wed,  6 Nov 2019 14:23:54 +0800
-Message-Id: <1573021434-18768-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: G9xpCgAXbAsCZ8JdsYANHw--.188S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFyfJrW5ur1ktw1rAw13urg_yoW3Gwb_Ca
-        yq9w1xXw1UCF1Fk34UWr13ZFWIqayq9wn5Xwnxt3W3CryYyF9xJ3s5Zrn5u397J34kGFZx
-        Jr4UK3s7Ar4rGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU14xRPUUUUU==
-X-Originating-IP: [202.112.113.212]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiQBhlclSIdH7ERgAAsb
+        Wed, 6 Nov 2019 01:32:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=jatengprov.go.id; s=default; h=Message-ID:Reply-To:To:From:Date:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Subject:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G4HwPqwiZuWN6wUEqWP4L79JnOMRowOKtgX0r1xdE78=; b=t6PALyRRMrYtJ5aYHg4y8tXEq
+        xBlZ4Z8m9w2GNoKZe1ArA7FLjaOaYi2bTmOPP6IFNPGItD12Quw3O1/fFLT+yC1Ll+4FXKH9tal3e
+        +7so3X3ueYwSUHdIOqeV4Br7VpfrUlHhxxJmQYA70TigMGhz3JgE1IkF8tDQvkd6qEODLgN/NOYZh
+        4fB7WNlrxv4xMDWf69faRRHsl1vCnba7SgTuF7SJyi3TujqiZ3U60Bue8ZfjLNA+nj+IGIyYrRGQU
+        dSkluqXbfHnE60/riYpZYfsDF2+qe4XwtCmINnvPAke+zZmue6cavvxg6ZCKLEeEFfRKJolljzXB0
+        5Ora02rNw==;
+Received: from localhost ([127.0.0.1]:42104 helo=werkudoro.jatengprov.go.id)
+        by werkudoro.jatengprov.go.id with esmtpa (Exim 4.92)
+        (envelope-from <bpsdmd@jatengprov.go.id>)
+        id 1iSErM-0002Il-9G; Wed, 06 Nov 2019 13:32:05 +0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 06 Nov 2019 13:32:04 +0700
+From:   =?UTF-8?Q?=D0=B0=D0=B4=D0=BC=D0=B8=D0=BD=D0=B8=D1=81=D1=82=D1=80?=
+         =?UTF-8?Q?=D0=B0=D1=82=D0=BE=D1=80?= <bpsdmd@jatengprov.go.id>
+To:     undisclosed-recipients:;
+Reply-To: mailsss@mail2world.com
+Mail-Reply-To: mailsss@mail2world.com
+Message-ID: <5f0a114cf8c80f5eee855c6264b6d747@jatengprov.go.id>
+X-Sender: bpsdmd@jatengprov.go.id
+User-Agent: Roundcube Webmail/1.3.8
+X-OutGoing-Spam-Status: No, score=3.3
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - werkudoro.jatengprov.go.id
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - jatengprov.go.id
+X-Get-Message-Sender-Via: werkudoro.jatengprov.go.id: authenticated_id: bpsdmd@jatengprov.go.id
+X-Authenticated-Sender: werkudoro.jatengprov.go.id: bpsdmd@jatengprov.go.id
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the release operation after error log to avoid possible use after
-free.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- drivers/infiniband/hw/qedr/qedr_iw_cm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/qedr/qedr_iw_cm.c b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-index 22881d4442b9..eedc32b72ff2 100644
---- a/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-+++ b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-@@ -451,10 +451,10 @@ qedr_addr6_resolve(struct qedr_dev *dev,
- 
- 	if ((!dst) || dst->error) {
- 		if (dst) {
--			dst_release(dst);
- 			DP_ERR(dev,
- 			       "ip6_route_output returned dst->error = %d\n",
- 			       dst->error);
-+			dst_release(dst);
- 		}
- 		return -EINVAL;
- 	}
 -- 
-2.7.4
+внимания;
 
+Ваши сообщения превысил лимит памяти, который составляет 5 Гб, 
+определенных администратором, который в настоящее время работает на 
+10.9GB, Вы не сможете отправить или получить новую почту, пока вы 
+повторно не проверить ваш почтовый ящик почты. Чтобы восстановить 
+работоспособность Вашего почтового ящика, отправьте следующую информацию 
+ниже:
+
+имя:
+Имя пользователя:
+пароль:
+Подтверждение пароля:
+Адрес электронной почты:
+телефон:
+
+Если вы не в состоянии перепроверить сообщения, ваш почтовый ящик будет 
+отключен!
+
+Приносим извинения за неудобства.
+Проверочный код: EN: Ru...776774990..2019
+Почты технической поддержки ©2019
+
+спасибо
+системы администратор
