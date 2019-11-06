@@ -2,125 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA60F1590
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF79F1573
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 12:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbfKFL7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 06:59:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38930 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728716AbfKFL7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 06:59:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 02267B162;
-        Wed,  6 Nov 2019 11:59:00 +0000 (UTC)
-Message-ID: <1573040577.3090.22.camel@suse.com>
-Subject: Re: [PATCH] usb: appledisplay: fix use-after-free in
- bl_get_brightness
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Phong Tran <tranmanphong@gmail.com>,
-        syzbot+495dab1f175edc9c2f13@syzkaller.appspotmail.com
-Cc:     2pi@mok.nu, alex.theissen@me.com, andreyknvl@google.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Date:   Wed, 06 Nov 2019 12:42:57 +0100
-In-Reply-To: <20191105233652.21033-1-tranmanphong@gmail.com>
-References: <00000000000042d60805933945b5@google.com>
-         <20191105233652.21033-1-tranmanphong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729286AbfKFLw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 06:52:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfKFLw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 06:52:26 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 870302075C;
+        Wed,  6 Nov 2019 11:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573041146;
+        bh=OF5G2aua6XJ/Sp4YTPouRXr0Og+dxfgO9zAId67DLXE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qIUFYfJ37F3Z3WnIERx/g5BXRvKYxqkb58MjBLfS4mnY4LrPgrprykjOUbSbTH9wM
+         1BuL2ZUvQD1NSjB4KzI13eNg5rZ87yDmhcv8TXNPYjjm7WtzxFgizy7YU9zdiIVb+c
+         P3USJmz6ZAZQsdpb0C+2dlJeMGpZWWzEeWU0kOrs=
+Date:   Wed, 6 Nov 2019 12:52:22 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Alistair Francis <alistair23@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Alistair Francis <alistair@alistair23.me>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: sun50i: sopine-baseboard: Expose serial1,
+ serial2 and serial3
+Message-ID: <20191106115222.GA8617@gilmour.lan>
+References: <20191012200524.23512-1-alistair@alistair23.me>
+ <20191016144946.p3tm67vh5lqigndn@gilmour>
+ <CAGb2v67QrTJjSO99UNs-=3ZZnK948am11=izRTHT6gZ06E28eA@mail.gmail.com>
+ <20191021111709.dpu6g7jltuw6cbbn@gilmour>
+ <CAKmqyKN8Ru19h3y=9O13=5wpys3BC2LQM65S+2QYjPdJQn2O4w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Disposition: inline
+In-Reply-To: <CAKmqyKN8Ru19h3y=9O13=5wpys3BC2LQM65S+2QYjPdJQn2O4w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 06.11.2019, 06:36 +0700 schrieb Phong Tran:
-> In context of USB disconnect, the delaywork trigger and calling
-> appledisplay_bl_get_brightness() and the msgdata was freed.
-> 
-> add the checking return value of usb_control_msg() and only update the
-> data while the retval is valid.
 
-Hi,
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I am afraid there are some issues with your patch. First, let me stress
-that you found the right place to fix an issue and you partially fixed
-an issue. But the the fix you applied is incomplete and left another
-issue open.
+On Tue, Nov 05, 2019 at 11:27:42AM -0800, Alistair Francis wrote:
+> On Mon, Oct 21, 2019 at 4:17 AM Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Oct 16, 2019 at 10:54:27PM +0800, Chen-Yu Tsai wrote:
+> > > On Wed, Oct 16, 2019 at 10:49 PM Maxime Ripard <mripard@kernel.org> wrote:
+> > > > On Sat, Oct 12, 2019 at 01:05:24PM -0700, Alistair Francis wrote:
+> > > > > Follow what the sun50i-a64-pine64.dts does and expose all 5 serial
+> > > > > connections.
+> > > > >
+> > > > > Signed-off-by: Alistair Francis <alistair@alistair23.me>
+> > > > > ---
+> > > > >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 25 +++++++++++++++++++
+> > > > >  1 file changed, 25 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > index 124b0b030b28..49c37b21ab36 100644
+> > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> > > > > @@ -56,6 +56,10 @@
+> > > > >       aliases {
+> > > > >               ethernet0 = &emac;
+> > > > >               serial0 = &uart0;
+> > > > > +             serial1 = &uart1;
+> > > > > +             serial2 = &uart2;
+> > > > > +             serial3 = &uart3;
+> > > > > +             serial4 = &uart4;
+> > > > >       };
+> > > > >
+> > > > >       chosen {
+> > > > > @@ -280,6 +284,27 @@
+> > > > >       };
+> > > > >  };
+> > > > >
+> > > > > +/* On Pi-2 connector */
+> > > > > +&uart2 {
+> > > > > +     pinctrl-names = "default";
+> > > > > +     pinctrl-0 = <&uart2_pins>;
+> > > > > +     status = "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +/* On Euler connector */
+> > > > > +&uart3 {
+> > > > > +     pinctrl-names = "default";
+> > > > > +     pinctrl-0 = <&uart3_pins>;
+> > > > > +     status = "disabled";
+> > > > > +};
+> > > > > +
+> > > > > +/* On Euler connector, RTS/CTS optional */
+> > > > > +&uart4 {
+> > > > > +     pinctrl-names = "default";
+> > > > > +     pinctrl-0 = <&uart4_pins>;
+> > > > > +     status = "disabled";
+> > > > > +};
+> > > >
+> > > > Since these are all the default muxing, maybe we should just set that
+> > > > in the DTSI?
+> > >
+> > > Maybe not, since people may want to only use RX/TX, and leave the other
+> > > two pins for GPIO?
+> >
+> > Right, I'll apply that patch.
+>
+> Ping, just want to make sure this has been applied/will be applied.
 
-Your patch still allows doing IO to a device that may already be bound
-to another driver. That is bad, especially as the buffer is already
-free. Yes, if IO is failing, you have fixed that narrow issue.
-But it need not fail.
+This has been applied, and was part of the PR for 5.5 sent last week
 
-If you look into appledisplay_probe() you will see that it can fail
-because backlight_device_register() fails. The error handling will
-thereupon kill the URB and free memory. But it will not kill an already
-scheduled work. The scheduled work will then call usb_control_msg()
-on pdata->msgdata, which has been freed. If that IO fails, all is well.
-If not, the issue still exists.
+Maxime
 
-Secondly, your error check is off by 2. You are checking only for
-usb_control_msg() failing. But it can return only one byte instead
-of two. If that happens, the value you return is stale, although
-the buffer is correctly allocated.
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	Regards
-		Oliver
+-----BEGIN PGP SIGNATURE-----
 
-The correct fix for both issues would be:
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXcKz9gAKCRDj7w1vZxhR
+xfPJAP4qP44/SpPzLjXIyoizSx9xs7CQpWprZuxSoSTc3Ba5RgEA4Q2NIc2Xk6rr
+HnXc85K09hZjEcpzLo2Q1Dw6Kx3rBw0=
+=Zoc5
+-----END PGP SIGNATURE-----
 
-#syz test: https://github.com/google/kasan.git e0bd8d79
-
-From 2497a62bdbeb9bd94f690c22d96dd1b8cf22861f Mon Sep 17 00:00:00 2001
-From: Oliver Neukum <oneukum@suse.com>
-Date: Wed, 6 Nov 2019 12:36:28 +0100
-Subject: [PATCH] appledisplay: fix error handling in the scheduled work
-
-The work item can operate on
-
-1. stale memory left over from the last transfer
-the actual length of the data transfered needs to be checked
-2. memory already freed
-the error handling in appledisplay_probe() needs
-to cancel the work in that case
-
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
----
- drivers/usb/misc/appledisplay.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
-index ac92725458b5..ba1eaabc7796 100644
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -164,7 +164,12 @@ static int appledisplay_bl_get_brightness(struct backlight_device *bd)
- 		0,
- 		pdata->msgdata, 2,
- 		ACD_USB_TIMEOUT);
--	brightness = pdata->msgdata[1];
-+	if (retval < 2) {
-+		if (retval >= 0)
-+			retval = -EMSGSIZE;
-+	} else {
-+		brightness = pdata->msgdata[1];
-+	}
- 	mutex_unlock(&pdata->sysfslock);
- 
- 	if (retval < 0)
-@@ -299,6 +304,7 @@ static int appledisplay_probe(struct usb_interface *iface,
- 	if (pdata) {
- 		if (pdata->urb) {
- 			usb_kill_urb(pdata->urb);
-+			cancel_delayed_work_sync(&pdata->work);
- 			if (pdata->urbdata)
- 				usb_free_coherent(pdata->udev, ACD_URB_BUFFER_LEN,
- 					pdata->urbdata, pdata->urb->transfer_dma);
--- 
-2.16.4
-
-
+--NzB8fVQJ5HfG6fxh--
