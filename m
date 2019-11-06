@@ -2,226 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3522AF1764
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11C5AF178A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 14:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbfKFNkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 08:40:17 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48988 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730456AbfKFNkQ (ORCPT
+        id S1730913AbfKFNo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 08:44:56 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34756 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfKFNo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 08:40:16 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6DdjRd104694;
-        Wed, 6 Nov 2019 07:39:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573047585;
-        bh=B4AqWpvbkF9WwJU+qXr/4lM8+KtnmSOFmTVCwEr68/c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=T6+hrNSEcYbMNGY8yQ8noGwJoc1vkj/nZLrAdWGY4qwTosk3QasLuy2seIDsn9tjG
-         NW1S0DM+36C9zcG8uKT1PJYysjyv7gt3g/Hfr8bZz4icnETFcs9f+ysa30CDAj9YlX
-         iBj+pEBwVXYN5BYoh3tnvYhOqTyM80B2C7xzBFJQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6DdjmR071492;
-        Wed, 6 Nov 2019 07:39:45 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
- 2019 07:39:30 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 6 Nov 2019 07:39:30 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6Dddi6039199;
-        Wed, 6 Nov 2019 07:39:40 -0600
-Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the doorbell
- way
-To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.co" <lorenzo.pieralisi@arm.co>,
-        "arnd@arndb.de" <arnd@arndb.de>,
+        Wed, 6 Nov 2019 08:44:56 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id DB34B26D9C0
+Message-ID: <b1a8fa60a3c8922c364a18b0583dab55660f2fb4.camel@collabora.com>
+Subject: Re: [PATCH v9 1/4] media: videodev2.h, v4l2-ioctl: add rkisp1 meta
+ buffer format
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Helen Koike <helen.koike@collabora.com>,
+        "Hans Verkuil (hansverk)" <hansverk@cisco.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>
+Cc:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "eddie.cai.linux@gmail.com" <eddie.cai.linux@gmail.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
         "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jeffy.chen@rock-chips.com" <jeffy.chen@rock-chips.com>,
+        "zyc@rock-chips.com" <zyc@rock-chips.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tfiga@chromium.org" <tfiga@chromium.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "kernel@collabora.com" <kernel@collabora.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
- <20190822112242.16309-7-xiaowei.bao@nxp.com>
- <20190823135816.GH14582@e119886-lin.cambridge.arm.com>
- <AM5PR04MB3299E50BA5D7579D41B8B4F9F5A70@AM5PR04MB3299.eurprd04.prod.outlook.com>
- <20190827132504.GL14582@e119886-lin.cambridge.arm.com>
- <e64a484c-7cf5-5f65-400c-47128ab45e52@ti.com>
- <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <e34708a1-1116-89f9-c3f8-7f21b63c9d9c@ti.com>
-Date:   Wed, 6 Nov 2019 19:09:05 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        "zhengsq@rock-chips.com" <zhengsq@rock-chips.com>,
+        Jacob Chen <jacob2.chen@rock-chips.com>
+Date:   Wed, 06 Nov 2019 10:44:43 -0300
+In-Reply-To: <28cff7ab-ef56-791e-0342-571f64cb9807@collabora.com>
+References: <20191106120132.6876-1-helen.koike@collabora.com>
+         <20191106120132.6876-2-helen.koike@collabora.com>
+         <9102bcf8-0279-7972-daff-b15aaf98804d@cisco.com>
+         <28cff7ab-ef56-791e-0342-571f64cb9807@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <DM6PR12MB40107A9B97A8DAF32A4C651EDA790@DM6PR12MB4010.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gustavo,
+Hi Hans, Helen:
 
-On 06/11/19 3:10 PM, Gustavo Pimentel wrote:
-> On Thu, Aug 29, 2019 at 6:13:18, Kishon Vijay Abraham I <kishon@ti.com> 
-> wrote:
+On Wed, 2019-11-06 at 09:30 -0300, Helen Koike wrote:
 > 
-> Hi, this email slip away from my attention...
+> On 11/6/19 10:22 AM, Hans Verkuil (hansverk) wrote:
+> > On 11/6/19 1:01 PM, Helen Koike wrote:
+> > > From: Shunqian Zheng <zhengsq@rock-chips.com>
+> > > 
+> > > Add the Rockchip ISP1 specific processing parameter format
+> > > V4L2_META_FMT_RK_ISP1_PARAMS and metadata format
+> > > V4L2_META_FMT_RK_ISP1_STAT_3A for 3A.
+> > > 
+> > > Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+> > > Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+> > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > 
+> > I acked this? It is missing documentation for these new formats.
 > 
->> Gustavo,
->>
->> On 27/08/19 6:55 PM, Andrew Murray wrote:
->>> On Sat, Aug 24, 2019 at 12:08:40AM +0000, Xiaowei Bao wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Andrew Murray <andrew.murray@arm.com>
->>>>> Sent: 2019年8月23日 21:58
->>>>> To: Xiaowei Bao <xiaowei.bao@nxp.com>
->>>>> Cc: bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
->>>>> shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; kishon@ti.com;
->>>>> lorenzo.pieralisi@arm.co; arnd@arndb.de; gregkh@linuxfoundation.org; M.h.
->>>>> Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy
->>>>> Zang <roy.zang@nxp.com>; jingoohan1@gmail.com;
->>>>> gustavo.pimentel@synopsys.com; linux-pci@vger.kernel.org;
->>>>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
->>>>> linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
->>>>> Subject: Re: [PATCH v2 07/10] PCI: layerscape: Modify the MSIX to the
->>>>> doorbell way
->>>>>
->>>>> On Thu, Aug 22, 2019 at 07:22:39PM +0800, Xiaowei Bao wrote:
->>>>>> The layerscape platform use the doorbell way to trigger MSIX interrupt
->>>>>> in EP mode.
->>>>>>
->>>>>
->>>>> I have no problems with this patch, however...
->>>>>
->>>>> Are you able to add to this message a reason for why you are making this
->>>>> change? Did dw_pcie_ep_raise_msix_irq not work when func_no != 0? Or did
->>>>> it work yet dw_pcie_ep_raise_msix_irq_doorbell is more efficient?
->>>>
->>>> The fact is that, this driver is verified in ls1046a platform of NXP before, and ls1046a don't
->>>> support MSIX feature, so I set the msix_capable of pci_epc_features struct is false,
->>>> but in other platform, e.g. ls1088a, it support the MSIX feature, I verified the MSIX
->>>> feature in ls1088a, it is not OK, so I changed to another way. Thanks.
->>>
->>> Right, so the existing pci-layerscape-ep.c driver never supported MSIX yet it
->>> erroneously had a switch case statement to call dw_pcie_ep_raise_msix_irq which
->>> would never get used.
->>>
->>> Now that we're adding a platform with MSIX support the existing
->>> dw_pcie_ep_raise_msix_irq doesn't work (for this platform) so we are adding a
->>> different method.
->>
->> Gustavo, can you confirm dw_pcie_ep_raise_msix_irq() works for designware as it
->> didn't work for both me and Xiaowei?
+> I think so https://www.spinics.net/lists/linux-rockchip/msg18999.html :)
 > 
-> When I implemented the dw_pcie_ep_raise_msix_irq(), the implementation 
-> was working quite fine on DesignWare solution. Otherwise, I wouldn't 
-> submit it to the kernel.
-> From what I have seen and if I recall well, Xiaowei implementation was 
-> done having PF's configurated on his solution, which is a configuration 
-> that I don't have in my solution, I believe this could be the missing 
-> piece that differs between our 2 implementations.
-
-I haven't debugged the issue yet but in my understanding the MSI-X table should
-be in the memory (DDR) of EP system. This table will be populated by RC while
-configuring MSI-X (with msg address and msg data). The EP will use the
-populated msg address and msg data for raising MSI-X interrupt.
-
-From the dw_pcie_ep_raise_msix_irq() (copied below), nowhere the MSI-X table is
-being read from the memory of EP system. I've given my comments below.
-
-int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-			     u16 interrupt_num)
-{
-	.
-	.
-	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
-	bar_addr_upper = 0;
-	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
-
-BAR register will hold the "PCI address" programmed by the host. So
-"bar_addr_lower" will have PCI address.
-
-	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
-	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
-		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
-
-	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
-
-The "tbl_addr" now has the PCI address programmed by the host.
-
-	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
-	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
-
-	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr,
-				   PCI_MSIX_ENTRY_SIZE);
-
-"ep->phys_base" will have EPs outbound memory address and "tbl_addr" will have
-PCI address. So msix_tbl points to the EPs outbound memory region.
-	if (!msix_tbl)
-		return -EINVAL;
-
-	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
-	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
-
-Here an access to the EP outbound region is made (and the transaction will be
-based on ATU configuration).
-The message address should ideally be obtained from the MSI-X table present in
-the EP system. There need not be any access to the OB region for getting data
-from MSI-X table.
-
-	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
-	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
-	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
-
-All this should be obtained from the memory of EP.
-	.
-	.
-}
-
-I'm not sure how this worked for you.
-
-Thanks
-Kishon
-
+> I'll update the docs and the fixes you pointed below.
 > 
-> Since patch submission into the kernel related to msix feature on pcitest 
-> tool, I didn't touch or re-tested the msix feature by lack of time (other 
-> projects requires my full attention for now). However is on my roadmap to 
-> came back to add some other features on DesignWare eDMA driver and I can 
-> do at that time some tests to see if the 
-> dw_pcie_ep_raise_msix_irq_doorbell() is compatible or not with my 
-> solution. If so, I can do some patch to simplify and use the 
-> dw_pcie_ep_raise_msix_irq_doorbell() if it still works as expected like 
-> on dw_pcie_ep_raise_msix_irq(). Agree?
+> Thanks.
+> Helen
 > 
-> Gustavo
-> 
->>
->> Thanks
->> Kishon
-> 
-> 
+> > > [refactored for upstream]
+> > > Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > 
+> > > ---
+> > > 
+> > > Changes in v9:
+> > > - Add reviewed-by tag from Laurent
+> > > 
+> > > Changes in v8: None
+> > > Changes in v7:
+> > > - s/IPU3/RK_ISP1
+> > > 
+> > >  drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
+> > >  include/uapi/linux/videodev2.h       | 4 ++++
+> > >  2 files changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > index 315ac12c3e0a..ade990554caf 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > @@ -1341,6 +1341,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+> > >  	case V4L2_META_FMT_UVC:		descr = "UVC Payload Header Metadata"; break;
+> > >  	case V4L2_META_FMT_D4XX:	descr = "Intel D4xx UVC Metadata"; break;
+> > >  	case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
+> > > +	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A params"; break;
+> > 
+> > params -> Params
+> > 
+> > > +	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A statistics"; break;
+> > 
+> > statistics -> Statistics
+> > 
+> > >  
+> > >  	default:
+> > >  		/* Compressed formats */
+> > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > > index f98bbcced8ff..56798b09cd85 100644
+> > > --- a/include/uapi/linux/videodev2.h
+> > > +++ b/include/uapi/linux/videodev2.h
+
+Can we avoid touching videodev2.h, as we did for the stateless codec pixfmts?
+
+Thanks,
+Ezequiel
+
+> > > @@ -762,6 +762,10 @@ struct v4l2_pix_format {
+> > >  #define V4L2_META_FMT_D4XX        v4l2_fourcc('D', '4', 'X', 'X') /* D4XX Payload Header metadata */
+> > >  #define V4L2_META_FMT_VIVID	  v4l2_fourcc('V', 'I', 'V', 'D') /* Vivid Metadata */
+> > >  
+> > > +/* Vendor specific - used for RK_ISP1 camera sub-system */
+> > > +#define V4L2_META_FMT_RK_ISP1_PARAMS	v4l2_fourcc('R', 'K', '1', 'P') /* Rockchip ISP1 params */
+> > > +#define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A statistics */
+> > > +
+> > >  /* priv field value to indicates that subsequent fields are valid. */
+> > >  #define V4L2_PIX_FMT_PRIV_MAGIC		0xfeedcafe
+> > >  
+> > > 
+> > 
+> > Regards,
+> > 
+> > 	Hans
+> > 
+
+
