@@ -2,228 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491ACF118F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:57:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2EE4F1196
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:58:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730268AbfKFI5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:57:23 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:32884 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbfKFI5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:57:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA68sGtL078363;
-        Wed, 6 Nov 2019 08:57:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=gmnid+hdT1s07JCeYdtAkYWiqv3dMar9XcNgp1zmJQE=;
- b=Zk3iomBm/KYLIP4JiNvBSEw4WRPDyyc7o568HPTLtPtTlgr3Ij+6JPQVoqNjtem25rW1
- TK+Cgqnw6H5ShxNWPmF+LiI5DF7Y0odpCwrKsbEcFYRLqzfhcw98qslAigyeD9L9JG+K
- siJmzM7ELzgdCT8UF/kmd3pl4xCihKUAjP3E3PzfuMfCreAI2nTWJ+Lqlr5fpjnvQT6s
- L5013jzx9wvfUe/lOGfcZ0LMcfaKOxhnBPHCMDeZjqmfq8g3JJQziPRvl2GihrYbYYSq
- oN6LMimId63U4snG/yVzKOytoP826Q2JX62Kfayc0jbE7ToHKA+auu1K4w4+T8wNPwlk xw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2w12erc7t2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 08:57:19 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA68rPB0137234;
-        Wed, 6 Nov 2019 08:57:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2w333wwv87-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Nov 2019 08:57:19 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA68vHJ3005299;
-        Wed, 6 Nov 2019 08:57:17 GMT
-Received: from [192.168.1.14] (/114.88.246.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 00:57:17 -0800
-Subject: Re: [PATCH v2 1/2] io_uring: Merge io_submit_sqes and io_ring_submit
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1572988512.git.asml.silence@gmail.com>
- <09fcce1a50f4d1a399b903e3669ba98ede408d9c.1572988512.git.asml.silence@gmail.com>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <4654948b-caac-3dc8-904c-ceb0c245d7c3@oracle.com>
-Date:   Wed, 6 Nov 2019 16:57:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <09fcce1a50f4d1a399b903e3669ba98ede408d9c.1572988512.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1731600AbfKFI6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:58:32 -0500
+Received: from mail-eopbgr130100.outbound.protection.outlook.com ([40.107.13.100]:45377
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726903AbfKFI6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 03:58:31 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T6ZvDjEjw9w1qf7QtBppmv3j0MwW727436goJUs2+qPZvlPnQN2xi5joRd2sUEZRUT0mBtDbnq7MwotOF5tmU0SvxEp9kSQMNNjaDnJDNUe2Vc1psTul/PI8AYqYvoN7e6WhvoOhQN6oWWlI9z7DishFUNtC+yUEIRrW3WdAS7LFsOtlzNFIuXEXZvoLDINB+rxRu8zqGvPVPgWGjHOM1r/8pe9sMLWFlKo9y6jF1Rl1AwccEqvxhbmJrREAcVtaVfb3egw/hDiFcFYu6uOUj4quqY8j+Z09vmrWzJGtkhcA9huzbuDzivZR2rXZIQCWpvsbndd2pT7YO5wxfVN2iA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Too3ny17LSAqPtNW38ym6QAB7oLVKAUqAlvOEcwZDgE=;
+ b=TwYQ0GR8YXAM+bfGam0Uixb2Pt4tiRnlbFSLOJGARKVpg6a1dCROtE+lizJ5fRQxDrFwy9SWmVqkDT0Yc+UlxJ8U+SFovduf6J24c4d5A6HipGV41W3dHglZMn7NuTZ5dF0Me+hsLrgWGKhPSQM1PImEpYLRMaIiRNnToY8rUu2z8FW337fKIXhes0PzsfOpgv9lR1GIbzmJPlaIarg3ioQvs+cBaH9CuUm8dBRmCOmbVsUuMchP00oDf/FBhW7MuUfLB3iwCNE11+aiXPQnr4zr3fYdBHjC5yVVEWVPepoRUft1+7QMMIQwYBGoHNfdsKBKI/cdn2wJ+zeZDNUXrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Too3ny17LSAqPtNW38ym6QAB7oLVKAUqAlvOEcwZDgE=;
+ b=YLOS1Ti9qqwHUpBR7BMWlABEijJOciEa2UjGO5SfoJ1blkO3XaebHrlBc2xksG5e5MCWUTGkBWWw20x9qeNOkoyEcnEFxJrnP/EuVvz9xuke6g3jXbLscyXiZBOpb0yNhWsWsqPVl+j0uZgu9qtrCPtTgLGdzJNH3HdAGX9yejc=
+Received: from VI1PR05MB6415.eurprd05.prod.outlook.com (20.179.27.139) by
+ VI1PR05MB5726.eurprd05.prod.outlook.com (20.178.121.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Wed, 6 Nov 2019 08:58:25 +0000
+Received: from VI1PR05MB6415.eurprd05.prod.outlook.com
+ ([fe80::284c:b89e:d17e:794e]) by VI1PR05MB6415.eurprd05.prod.outlook.com
+ ([fe80::284c:b89e:d17e:794e%7]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
+ 08:58:25 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>
+CC:     Philippe Schenker <philippe.schenker@toradex.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: input: tochscreen: ad7879: generic
+ node names in example
+Thread-Topic: [PATCH v2 3/5] dt-bindings: input: tochscreen: ad7879: generic
+ node names in example
+Thread-Index: AQHVi9xiBbTK4Mn9XEC/Bt3TYQb1MqdzPkqAgACY4ICAChHOAA==
+Date:   Wed, 6 Nov 2019 08:58:25 +0000
+Message-ID: <c200444ba450d7884cd26e12163b68db6db63725.camel@toradex.com>
+References: <20191026090403.3057-1-marcel@ziswiler.com>
+         <20191026090403.3057-3-marcel@ziswiler.com> <20191030140455.GA4544@bogus>
+         <20191030231205.GI57214@dtor-ws>
+In-Reply-To: <20191030231205.GI57214@dtor-ws>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911060093
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911060093
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [31.10.206.124]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ba6d87a6-bae4-4e47-c848-08d762977bfe
+x-ms-traffictypediagnostic: VI1PR05MB5726:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR05MB57266BBFB9FA77D46022EF84FB790@VI1PR05MB5726.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3173;
+x-forefront-prvs: 02135EB356
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(396003)(376002)(136003)(366004)(39850400004)(199004)(189003)(305945005)(66476007)(6436002)(66946007)(64756008)(66446008)(76116006)(91956017)(76176011)(256004)(71190400001)(71200400001)(446003)(14444005)(66556008)(6486002)(6246003)(229853002)(6512007)(4326008)(5660300002)(6116002)(3846002)(8936002)(110136005)(54906003)(36756003)(4001150100001)(99286004)(118296001)(81156014)(8676002)(81166006)(4744005)(7736002)(2906002)(2501003)(316002)(486006)(6506007)(66066001)(102836004)(86362001)(2616005)(11346002)(44832011)(476003)(478600001)(186003)(14454004)(25786009)(26005)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB5726;H:VI1PR05MB6415.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: z6Qp4CxdtTi/vbLr1xXBAST9yPtlLtHkwyaKNyzbztgqIWU8kXGoVNob0UYlRL9+wCAnVSzTW0Pw8i2n+sEMgmRK0vIV2WU1xptvjrnWkCn0+zFkZvJ1SJUju5SjDIQT+R5vhUTjxn4NHgFPEr4yb6Pa+HeCPFWRdUlqZbkjXf/ljseu1HBo1G9DeeW/GhnV/PnDm+d8rnFl1mhJCEZCU9T60o9cU01r4HYnV8T9djvL94mQjJJyc2jazKvC01WlBvx5m468XW7SnkNm5tc5K9IgfZUulvE8tE/0s0oJyX3TNTQQpwlUHDP5ZDLICDj+SxUQiDc65Z/+QeJfBcRYmiLww/yaibKEUBJaCqhK7GwlhNYYm1n5cO/RHtEdAYAW0wJkKa26eySXRsbdLGwdErh4peFKUKqkd89WSBObm/DQi6pYBLpithj9fH1Zhv10
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AC973709B0891240854066BF948668E0@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba6d87a6-bae4-4e47-c848-08d762977bfe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 08:58:25.3544
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TxzUAEeYSPRa13PsNQ0K08Njap6d6louXUi7ZZ3S6KPw8uWChbBqhvZcFOUWtdmx+n3UxLE/6O+CQcs3VAK+TOQL2dEs0DMZ1lOWKLOeoeg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5726
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/19 5:22 AM, Pavel Begunkov wrote:
-> io_submit_sqes() and io_ring_submit() are doing the same stuff with
-> a little difference. Deduplicate them.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/io_uring.c | 88 +++++++++++----------------------------------------
->  1 file changed, 18 insertions(+), 70 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 7813bc7d5b61..ebe2a4edd644 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2681,7 +2681,8 @@ static bool io_get_sqring(struct io_ring_ctx *ctx, struct sqe_submit *s)
->  }
->  
->  static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
-> -			  struct mm_struct **mm)
-> +			  struct file *ring_file, int ring_fd,
-> +			  struct mm_struct **mm, bool async)
->  {
->  	struct io_submit_state state, *statep = NULL;
->  	struct io_kiocb *link = NULL;
-> @@ -2732,10 +2733,12 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
->  		}
->  
->  out:
-> +		s.ring_file = ring_file;
-> +		s.ring_fd = ring_fd;
->  		s.has_user = *mm != NULL;
-> -		s.in_async = true;
-> -		s.needs_fixed_file = true;
-> -		trace_io_uring_submit_sqe(ctx, s.sqe->user_data, true, true);
-> +		s.in_async = async;
-> +		s.needs_fixed_file = async;
-> +		trace_io_uring_submit_sqe(ctx, s.sqe->user_data, true, async);
->  		io_submit_sqe(ctx, &s, statep, &link);
->  		submitted++;
->  	}
-> @@ -2745,6 +2748,9 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
->  	if (statep)
->  		io_submit_state_end(&state);
->  
-> +	 /* Commit SQ ring head once we've consumed and submitted all SQEs */
-> +	io_commit_sqring(ctx);
-> +
-
-Then don't need io_commit_sqring() in io_sq_thread any more?
-
-Anyway, looks good to me.
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-
->  	return submitted;
->  }
->  
-> @@ -2849,7 +2855,8 @@ static int io_sq_thread(void *data)
->  		}
->  
->  		to_submit = min(to_submit, ctx->sq_entries);
-> -		inflight += io_submit_sqes(ctx, to_submit, &cur_mm);
-> +		inflight += io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm,
-> +					   true);
->  
->  		/* Commit SQ ring head once we've consumed all SQEs */
->  		io_commit_sqring(ctx);
-> @@ -2866,69 +2873,6 @@ static int io_sq_thread(void *data)
->  	return 0;
->  }
->  
-> -static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit,
-> -			  struct file *ring_file, int ring_fd)
-> -{
-> -	struct io_submit_state state, *statep = NULL;
-> -	struct io_kiocb *link = NULL;
-> -	struct io_kiocb *shadow_req = NULL;
-> -	bool prev_was_link = false;
-> -	int i, submit = 0;
-> -
-> -	if (to_submit > IO_PLUG_THRESHOLD) {
-> -		io_submit_state_start(&state, ctx, to_submit);
-> -		statep = &state;
-> -	}
-> -
-> -	for (i = 0; i < to_submit; i++) {
-> -		struct sqe_submit s;
-> -
-> -		if (!io_get_sqring(ctx, &s))
-> -			break;
-> -
-> -		/*
-> -		 * If previous wasn't linked and we have a linked command,
-> -		 * that's the end of the chain. Submit the previous link.
-> -		 */
-> -		if (!prev_was_link && link) {
-> -			io_queue_link_head(ctx, link, &link->submit, shadow_req);
-> -			link = NULL;
-> -			shadow_req = NULL;
-> -		}
-> -		prev_was_link = (s.sqe->flags & IOSQE_IO_LINK) != 0;
-> -
-> -		if (link && (s.sqe->flags & IOSQE_IO_DRAIN)) {
-> -			if (!shadow_req) {
-> -				shadow_req = io_get_req(ctx, NULL);
-> -				if (unlikely(!shadow_req))
-> -					goto out;
-> -				shadow_req->flags |= (REQ_F_IO_DRAIN | REQ_F_SHADOW_DRAIN);
-> -				refcount_dec(&shadow_req->refs);
-> -			}
-> -			shadow_req->sequence = s.sequence;
-> -		}
-> -
-> -out:
-> -		s.ring_file = ring_file;
-> -		s.has_user = true;
-> -		s.in_async = false;
-> -		s.needs_fixed_file = false;
-> -		s.ring_fd = ring_fd;
-> -		submit++;
-> -		trace_io_uring_submit_sqe(ctx, s.sqe->user_data, true, false);
-> -		io_submit_sqe(ctx, &s, statep, &link);
-> -	}
-> -
-> -	if (link)
-> -		io_queue_link_head(ctx, link, &link->submit, shadow_req);
-> -	if (statep)
-> -		io_submit_state_end(statep);
-> -
-> -	io_commit_sqring(ctx);
-> -
-> -	return submit;
-> -}
-> -
->  struct io_wait_queue {
->  	struct wait_queue_entry wq;
->  	struct io_ring_ctx *ctx;
-> @@ -4049,10 +3993,14 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
->  			wake_up(&ctx->sqo_wait);
->  		submitted = to_submit;
->  	} else if (to_submit) {
-> -		to_submit = min(to_submit, ctx->sq_entries);
-> +		struct mm_struct *cur_mm;
->  
-> +		to_submit = min(to_submit, ctx->sq_entries);
->  		mutex_lock(&ctx->uring_lock);
-> -		submitted = io_ring_submit(ctx, to_submit, f.file, fd);
-> +		/* already have mm, so io_submit_sqes() won't try to grab it */
-> +		cur_mm = ctx->sqo_mm;
-> +		submitted = io_submit_sqes(ctx, to_submit, f.file, fd,
-> +					   &cur_mm, false);
->  		mutex_unlock(&ctx->uring_lock);
->  	}
->  	if (flags & IORING_ENTER_GETEVENTS) {
-> 
-
+T24gV2VkLCAyMDE5LTEwLTMwIGF0IDE2OjEyIC0wNzAwLCBEbWl0cnkgVG9yb2tob3Ygd3JvdGU6
+DQo+IE9uIFdlZCwgT2N0IDMwLCAyMDE5IGF0IDA5OjA0OjU1QU0gLTA1MDAsIFJvYiBIZXJyaW5n
+IHdyb3RlOg0KPiA+IE9uIFNhdCwgT2N0IDI2LCAyMDE5IGF0IDExOjA0OjAxQU0gKzAyMDAsIE1h
+cmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiA+IEZyb206IE1hcmNlbCBaaXN3aWxlciA8bWFyY2Vs
+Lnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IFRoZXJlJ3MgYSB0eXBvIGluIHRoZSBz
+dWJqZWN0Lg0KPiANCj4gSSBmaXhlZCBpdCB1cCBmaWxlIGFwcGx5aW5nLCB0aGFuayB5b3UgZm9y
+IG5vdGljaW5nLg0KDQpXaGVyZSBleGFjdGx5IGRpZCB5b3UgYXBwbHkgdGhpcz8gQXMgSSBzdGls
+bCBjYW4ndCBmaW5kIGl0IGFwcGxpZWQNCmFueXdoZXJlLiBUaGFua3MhDQoNCj4gPiA+IFVwZGF0
+ZSBleGFtcGxlIGluIGFkNzg3OSBkZXZpY2V0cmVlIGRvY3VtZW50YXRpb24gdG8gdXNlIGdlbmVy
+aWMNCj4gPiA+IHRvdWNoDQo+ID4gPiBjb250cm9sbGVyIG5vZGUgbmFtZXMuDQo+ID4gPiANCj4g
+PiA+IFNpZ25lZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFk
+ZXguY29tPg0KPiA+ID4gDQo+ID4gPiAtLS0NCj4gPiA+IA0KPiA+ID4gQ2hhbmdlcyBpbiB2Mjog
+TmV3IHBhdGNoLg0KPiA+ID4gDQo+ID4gPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQv
+dG91Y2hzY3JlZW4vYWQ3ODc5LnR4dCAgICAgICAgICB8DQo+ID4gPiA0ICsrLS0NCj4gPiA+ICAx
+IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0K
