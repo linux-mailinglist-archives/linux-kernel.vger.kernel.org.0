@@ -2,65 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38FFFF1DC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:49:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8ADAF1DCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 19:52:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfKFStg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 13:49:36 -0500
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:45528 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfKFStg (ORCPT
+        id S1729725AbfKFSws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 13:52:48 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36937 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfKFSwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 13:49:36 -0500
-Received: by mail-pl1-f201.google.com with SMTP id f7so5213130plj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:49:36 -0800 (PST)
+        Wed, 6 Nov 2019 13:52:47 -0500
+Received: by mail-ot1-f68.google.com with SMTP id d5so9711423otp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 10:52:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=iuhKlytJBZM6z4JfLv4nGpswwtwyGQLqGn2PJIaoWCM=;
-        b=hBcR4sd/6XYZVq594jdQ+i79/9ZXlBpq2iJFRWLOmD3spNkjRNe+mVflTyHP8Q9dE+
-         u3MGAM0kFdZVliTFaJ6Qk9/890kOPzZbf2e/gSGu/ItaVXE1P1pokh38IrmGSc4mGHwK
-         hh91R71Am9AIlz9pdsTW5DBI3EBeUPP2sdwOUIXZiWEcOwWd16+5p8KPTuoaCPmiyaS8
-         MMTLvoKIqB19NjchLW6yehriOwyfxo0Dw61hP/zAK254hzGmC3yxOpx2QxmKpfYGIehp
-         Y3fkduB2rrSbrS0JadmAg1FM16FV5yzhUozU8h0fgl19HVmEXr8Exms7TV/i5xKXmiJh
-         ZXOw==
+        d=gmail.com; s=20161025;
+        h=sender:mime-version:content-transfer-encoding:to:from:in-reply-to
+         :cc:references:message-id:user-agent:subject:date;
+        bh=/laGZJEmPy2D0nklJHHpG1RYf/kARGTtsk0gGb6OD8s=;
+        b=EQQ2FIfpsQyWLB5lYTCbH/5TJ6+nQdEKYjCGAUFU2I9v/wn5AxK2ic9UdlXhLEcAwp
+         edmHOL0xf3BdnB0U+7wpdDcSSogc9T3rM+uJJPbLscZnA7E9eN6OD9ppQ5yf5cIawZpB
+         Bwc3IG6XqGRm42CybHUFLUqasSJ2aagHP4OLWi0QkbBlTHTzpa+u0SHoNDRSN4UH5WK1
+         QsPjpDw/PkQlEQDWyJpaAuzBeyzfb7nIJITI9WPBjgIfMqHLy1jC6w5Cvm7EkTfQJmmJ
+         T8/Y0O0bnMLeraHzmy1pfZjmJfjKIa8ypgSV9CA56txDVzpHPHFvyLlF5h9n1sdqFEOB
+         crPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=iuhKlytJBZM6z4JfLv4nGpswwtwyGQLqGn2PJIaoWCM=;
-        b=oWBwycOZySr+XiLnGGzm0vEuTXDI33D9bfhLNdZGBW0KlnngCQTyincuzKVvkz0tac
-         LRA6qFrNpk1jMFNc62sOfusY0cCJd4luphNZL5zSYq3IAwHOTsxlG/wTRbiDU9P0VMOr
-         bQItYXFN2V2aFdnglxctJHio2ZIHk0TsOdIa3expaL26iNria48AXbznm8dU4nWnH4BW
-         +VszO+32mFMzqYLh/l1JT7htmWP6e/gm1yhV1meDW0PUw2iSrIvewEnVTtPStkya9A4q
-         xLJWQwuxEySTuykv24avbC8LT0lAJA0wn7SS6ZbHhM0FasvdQ4wJzmroYyStZ/cE78FA
-         D59Q==
-X-Gm-Message-State: APjAAAUv7tYFor+OPyBy1este53dj1rhT9i+K2TU0IOX/zb4XS5+Fu3r
-        WTTkbvzbHmkv1MgY41aj4SdOyhkTlQ==
-X-Google-Smtp-Source: APXvYqxwRyZ8JO9BSn9Wbg9rolgzDQlfODKPEiZ6igpaIr0m8nKCMYQGHG735BO75tms3/j1xkDgEPQZ94I=
-X-Received: by 2002:a63:1001:: with SMTP id f1mr4574203pgl.373.1573066175512;
- Wed, 06 Nov 2019 10:49:35 -0800 (PST)
-Date:   Wed,  6 Nov 2019 10:49:31 -0800
-In-Reply-To: <20191106115651.113943-1-weiyongjun1@huawei.com>
-Message-Id: <20191106184931.200312-1-yabinc@google.com>
-Mime-Version: 1.0
-References: <20191106115651.113943-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-Subject: Re: [PATCH -next] coresight: replicator: Fix missing spin_lock_init()
-From:   Yabin Cui <yabinc@google.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Yabin Cui <yabinc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:mime-version:content-transfer-encoding:to
+         :from:in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=/laGZJEmPy2D0nklJHHpG1RYf/kARGTtsk0gGb6OD8s=;
+        b=ZlZT6kz2D8cHIs99Qn1afDFPT+igxrGSDEPo3m+yCLIjk/hTdBoTD6njNVKOrbKkCt
+         lDp2c3Kp9yaVlNaGK/GafgdlnRI84QO2+duUlEybG4SZ5le9Z61+ZYp1esGzRH1pON1b
+         wPJUDOOcSqAd+HgE7ciFi3HTDYkmsXuh0h258j+unLtk3b+Ett3RiFlpOhkYSMZSBlzJ
+         116F5Slfd84ILOBU3kJAvUGp4ksJQJfO69r/Ey2EekRw7YsU0icXQNg9odZ/UpYiGpCX
+         tYeyKG1xdWhJrRJ45EQdEJdIh1fwaFnyEcBVe3YnBIwRGO3xM9Cz+tiO5oFOkCWKyIT0
+         xYcg==
+X-Gm-Message-State: APjAAAWCyxu+kaYxj4KDa9y/QEa1KyItud5YEI95xaCtq9al8Nq2yz3E
+        QGTXg5fPQ/gooFNMECoeJeo=
+X-Google-Smtp-Source: APXvYqzd/uW5CIndQtAe5OzDf/POp/SdrPUqtEJNDrh8KUVb+MS+/vQ6RYWhqoGoa4PiY7fY12yL9A==
+X-Received: by 2002:a9d:6294:: with SMTP id x20mr2828006otk.31.1573066365766;
+        Wed, 06 Nov 2019 10:52:45 -0800 (PST)
+Received: from localhost (76-251-165-188.lightspeed.austtx.sbcglobal.net. [76.251.165.188])
+        by smtp.gmail.com with ESMTPSA id c7sm7235360otr.32.2019.11.06.10.52.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Nov 2019 10:52:44 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+From:   Michael Roth <mdroth@linux.vnet.ibm.com>
+In-Reply-To: <20191106130558-mutt-send-email-mst@kernel.org>
+Cc:     Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        benh@kernel.crashing.org, david@gibson.dropbear.id.au,
+        mpe@ellerman.id.au, paulus@ozlabs.org, hch@lst.de,
+        andmike@us.ibm.com, sukadev@linux.vnet.ibm.com,
+        ram.n.pai@gmail.com, cai@lca.pw, tglx@linutronix.de,
+        bauerman@linux.ibm.com, linux-kernel@vger.kernel.org
+References: <1572902923-8096-1-git-send-email-linuxram@us.ibm.com>
+ <265679db-9cb3-1660-0cf6-97f740b1b48b@ozlabs.ru>
+ <20191106130558-mutt-send-email-mst@kernel.org>
+Message-ID: <157306632211.17570.17567742230498149897@sif>
+User-Agent: alot/0.7
+Subject: Re: [RFC v1 0/2] Enable IOMMU support for pseries Secure VMs
+Date:   Wed, 06 Nov 2019 12:52:02 -0600
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the fix! I should have tested with CONFIG_DEBUG_SPINLOCK.
+Quoting Michael S. Tsirkin (2019-11-06 12:06:37)
+> On Wed, Nov 06, 2019 at 12:59:50PM +1100, Alexey Kardashevskiy wrote:
+> > =
 
-Tested-by: Yabin Cui <yabinc@google.com>
+> > =
+
+> > On 05/11/2019 08:28, Ram Pai wrote:
+> > > This patch series enables IOMMU support for pseries Secure VMs.
+> > > =
+
+> > > =
+
+> > > Tested using QEMU command line option:
+> > > =
+
+> > >  "-device virtio-scsi-pci,id=3Dscsi0,bus=3Dpci.0,addr=3D0x4,
+> > >     iommu_platform=3Don,disable-modern=3Doff,disable-legacy=3Don"
+> > >  and =
+
+> > > =
+
+> > >  "-device virtio-blk-pci,scsi=3Doff,bus=3Dpci.0,
+> > >     addr=3D0x5,drive=3Ddrive-virtio-disk0,id=3Dvirtio-disk0,
+> > >     iommu_platform=3Don,disable-modern=3Doff,disable-legacy=3Don"
+> > =
+
+> > =
+
+> > Worth mentioning that SLOF won't boot with such devices as SLOF does no=
+t know about iommu_platform=3Don.
+> =
+
+> Shouldn't be hard to support: set up the iommu to allow everything
+> and ack the feature. Right?
+
+It's not a static/linear mapping in this case so we need calls to map DMA
+buffers as-needed. I've gotten it to boot with virtio-blk, but the patches
+have some hacks and need cleanup, hoping to post them soon.
+
+I'm a bit perplexed how we would manage to boot a guest without those
+changes though, this is what I get with qemu 4.1.0:
+
+  qemu-system-ppc64 -M pseries,ic-mode=3Dxics -m 512M -bios /home/mdroth/w/=
+build/qemu-4.1.0-build/pc-bios/slof.bin -device virtio-blk-pci,drive=3Ddriv=
+e0,id=3Dblk0,disable-modern=3Doff,disable-legacy=3Don,iommu_platform=3Don -=
+drive file=3D/home/mdroth/vm/bionic-server-cloudimg-ppc64el.img,if=3Dnone,i=
+d=3Ddrive0 -trace enable=3Dspapr_iommu\*,file=3Dtrace.out -monitor unix:/tm=
+p/mon.sock,server,nowait -vga none -nographic
+  qemu-system-ppc64: warning: TCG doesn't support requested feature, cap-cf=
+pc=3Dworkaround
+  qemu-system-ppc64: warning: TCG doesn't support requested feature, cap-sb=
+bc=3Dworkaround
+  qemu-system-ppc64: warning: TCG doesn't support requested feature, cap-ib=
+s=3Dworkaround
+  =
+
+  =
+
+  SLOF ********************************************************************=
+**
+  QEMU Starting
+   Build Date =3D Jul  3 2019 12:26:14
+   FW Version =3D git-ba1ab360eebe6338
+   Press "s" to enter Open Firmware.
+  =
+
+  Populating /vdevice methods
+  Populating /vdevice/vty@71000000
+  Populating /vdevice/nvram@71000001
+  Populating /vdevice/l-lan@71000002
+  Populating /vdevice/v-scsi@71000003
+         SCSI: Looking for devices
+            8200000000000000 CD-ROM   : "QEMU     QEMU CD-ROM      2.5+"
+  Populating /pci@800000020000000
+                       00 0000 (D) : 1af4 1042    virtio [ block ]
+  No NVRAM common partition, re-initializing...
+  Scanning USB
+  Using default console: /vdevice/vty@71000000
+  =
+
+    Welcome to Open Firmware
+  =
+
+    Copyright (c) 2004, 2017 IBM Corporation All rights reserved.
+    This program and the accompanying materials are made available
+    under the terms of the BSD License available at
+    http://www.opensource.org/licenses/bsd-license.php
+  =
+
+  =
+
+  Trying to load:  from: /pci@800000020000000/scsi@0 ... virtioblk_init: fa=
+iled
+  virtioblk_transfer: Access beyond end of device!
+
+And then it hangs. This is with TCG so maybe it behaves differently with
+KVM, but that's the result I would expect with the current SLOF code.
+
+> =
+
+> > > =
+
+> > > Ram Pai (2):
+> > >   powerpc/pseries/iommu: Share the per-cpu TCE page with the hypervis=
+or.
+> > >   powerpc/pseries/iommu: Use dma_iommu_ops for Secure VMs aswell.
+> > > =
+
+> > >  arch/powerpc/platforms/pseries/iommu.c | 30 ++++++++++++++++++------=
+------
+> > >  1 file changed, 18 insertions(+), 12 deletions(-)
+> > > =
+
+> > =
+
+> > -- =
+
+> > Alexey
+>=20
