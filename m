@@ -2,89 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC40F2203
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37642F2209
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 23:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbfKFWnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 17:43:50 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54775 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726779AbfKFWnu (ORCPT
+        id S1732771AbfKFWox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 17:44:53 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11138 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732411AbfKFWox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:43:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573080229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=lS+dCPRsw8mKe+le1Zkw7/5bXkrSkYDfn4dgVdUMQG4=;
-        b=goMeXVsTBG95ZZnE0BKy5sjJDMKWBKsTESPISAwg64M8m8iSMu+S81Nbll7pnK+bcf5aRO
-        d2RX+cV4J+pT1dZGdPK/SPpHp0Xwu6TdZVCnjEuOJOQtVNX7Pc9VjLM8AxTA91wepMoJjl
-        TEW3Q04kjGab01h7EgSjVUMyHue/3CE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45--x2kj8y5M569zTGeJgJ96g-1; Wed, 06 Nov 2019 17:43:47 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF84E8017DD;
-        Wed,  6 Nov 2019 22:43:46 +0000 (UTC)
-Received: from jlaw-desktop.bos.redhat.com (dhcp-17-119.bos.redhat.com [10.18.17.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6275860BE0;
-        Wed,  6 Nov 2019 22:43:46 +0000 (UTC)
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH] x86/stacktrace: update kconfig help text for reliable unwinders
-Date:   Wed,  6 Nov 2019 17:43:44 -0500
-Message-Id: <20191106224344.8373-1-joe.lawrence@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: -x2kj8y5M569zTGeJgJ96g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Wed, 6 Nov 2019 17:44:53 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xA6MghjD103125
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Nov 2019 17:44:51 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w44af5chf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 17:44:51 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 6 Nov 2019 22:44:48 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 6 Nov 2019 22:44:43 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xA6MigNn36372620
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 Nov 2019 22:44:42 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2E1AAE068;
+        Wed,  6 Nov 2019 22:44:42 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B01EFAE056;
+        Wed,  6 Nov 2019 22:44:41 +0000 (GMT)
+Received: from dhcp-9-31-102-173.watson.ibm.com (unknown [9.31.102.173])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  6 Nov 2019 22:44:41 +0000 (GMT)
+Subject: Re: [PATCH v4 08/10] IMA: Defined functions to queue and dequeue
+ keys for measurement
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 06 Nov 2019 17:44:41 -0500
+In-Reply-To: <20191106190116.2578-9-nramas@linux.microsoft.com>
+References: <20191106190116.2578-1-nramas@linux.microsoft.com>
+         <20191106190116.2578-9-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19110622-0012-0000-0000-000003615CB3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19110622-0013-0000-0000-0000219CBB5F
+Message-Id: <1573080281.5028.314.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1910280000 definitions=main-1911060218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 6415b38bae26 ("x86/stacktrace: Enable HAVE_RELIABLE_STACKTRACE
-for the ORC unwinder") marked the ORC unwinder as a "reliable" unwinder.
-Update the help text to reflect that change: the frame pointer unwinder
-is no longer the only one that provides HAVE_RELIABLE_STACKTRACE.
+On Wed, 2019-11-06 at 11:01 -0800, Lakshmi Ramasubramanian wrote:
 
-Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
----
- arch/x86/Kconfig.debug | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> +int ima_queue_or_process_key_for_measurement(struct key *keyring,
+> +					     struct key *key)
+> +{
+> +	int rc = 0;
+> +	struct ima_measure_key_entry *entry = NULL;
+> +	const struct public_key *pk;
+> +
+> +	if (key->type != &key_type_asymmetric)
+> +		return 0;
+> +
+> +	mutex_lock(&ima_measure_keys_mutex);
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index bf9cd83de777..69cdf0558c13 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -316,10 +316,6 @@ config UNWINDER_FRAME_POINTER
- =09  unwinder, but the kernel text size will grow by ~3% and the kernel's
- =09  overall performance will degrade by roughly 5-10%.
-=20
--=09  This option is recommended if you want to use the livepatch
--=09  consistency model, as this is currently the only way to get a
--=09  reliable stack trace (CONFIG_HAVE_RELIABLE_STACKTRACE).
--
- config UNWINDER_GUESS
- =09bool "Guess unwinder"
- =09depends on EXPERT
-@@ -333,6 +329,10 @@ config UNWINDER_GUESS
- =09  useful in many cases.  Unlike the other unwinders, it has no runtime
- =09  overhead.
-=20
-+=09  This option is not recommended if you want to use the livepatch
-+=09  consistency model, as this unwinder cannot guarantee reliable stack
-+=09  traces.
-+
- endchoice
-=20
- config FRAME_POINTER
---=20
-2.21.0
+Unless the key is being queued, there's no reason to take the lock. 
+
+> +
+> +	if (ima_initialized) {
+
+ima_initialized is being set in ima_init(), before a custom policy is
+loaded.  I would think that is too early.  ima_update_policy() is
+called after loading a custom policy.  Please see how to detect when a
+custom policy is loaded.
+
+> +		/*
+> +		 * keyring->description points to the name of the keyring
+> +		 * (such as ".builtin_trusted_keys", ".ima", etc.) to
+> +		 * which the given key is linked to.
+> +		 *
+> +		 * The name of the keyring is passed in the "eventname"
+> +		 * parameter to process_buffer_measurement() and is set
+> +		 * in the "eventname" field in ima_event_data for
+> +		 * the key measurement IMA event.
+> +		 *
+> +		 * The name of the keyring is also passed in the "keyring"
+> +		 * parameter to process_buffer_measurement() to check
+> +		 * if the IMA policy is configured to measure a key linked
+> +		 * to the given keyring.
+> +		 */
+> +		pk = key->payload.data[asym_crypto];
+> +		process_buffer_measurement(pk->key, pk->keylen,
+> +					   keyring->description,
+> +					   KEYRING_CHECK, 0,
+> +					   keyring->description);
+
+Measuring the key should be done in ima_post_key_create_or_update()
+unless, it is being deferred.  Please update the function name to
+reflect this.
+
+Mimi
+
+
+> +	} else {
+> +		entry = ima_alloc_measure_key_entry(keyring, key);
+> +		if (entry != NULL) {
+> +			INIT_LIST_HEAD(&entry->list);
+> +			list_add_tail(&entry->list, &ima_measure_keys);
+> +		} else
+> +			rc = -ENOMEM;
+> +	}
+> +
+> +	mutex_unlock(&ima_measure_keys_mutex);
+> +
+> +	return rc;
+> +}
 
