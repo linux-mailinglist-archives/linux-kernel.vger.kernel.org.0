@@ -2,164 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DEEF10DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD1AF10E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2019 09:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731399AbfKFIPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 6 Nov 2019 03:15:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44090 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729951AbfKFIPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:15:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DE6FDB011;
-        Wed,  6 Nov 2019 08:15:44 +0000 (UTC)
-Date:   Wed, 6 Nov 2019 09:15:41 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Dmitry Safonov <dima@arista.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Chris Zankel <chris@zankel.net>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>
-Subject: Re: [PATCH 43/50] xtensa: Add show_stack_loglvl()
-Message-ID: <20191106081541.soxefwyvu3o72tqg@pathway.suse.cz>
-References: <20191106030542.868541-1-dima@arista.com>
- <20191106030542.868541-44-dima@arista.com>
- <CAMo8Bf+q0j81VZeUQdvCkXt131uzSBfJ0N7RTe7+NpjRkVpzdA@mail.gmail.com>
+        id S1731429AbfKFISc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 6 Nov 2019 03:18:32 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44238 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729734AbfKFISb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Nov 2019 03:18:31 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q26so18254038pfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2019 00:18:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Pb3J1TnMyrHbEtYv4MyAUzMHiBthQ4b5tWMwPD00Zec=;
+        b=IT+wDsKz7eH1XfZbUEBfSiJkvJJy7o9j2aUjeVGwdRRdQgIrbw9jPP/qrGlnq+NvHr
+         plrKmujPiZ2FSwPZdTHxNzZTEqv+AsqAyBsq/fn8luoE8b31WL3D/gBKldnz/KduMuDV
+         kMwlAul+PWMpsypharNu1EbIz115+4jcLs4iOHFDd6taKUReevyVLAduuSu/ROg98q3R
+         maATSw8Lf3REgICYZa8J4rKBb86B1mgNMdLGIBPRc+8P7mkix2sHN/nnouuVqfsMf03Q
+         uWkHCakL6d7lMkHn/+uFerKz2vmVjDKld1x9hCJBwnKVa7hN4wTfeRTE7mCef4XU5u/Y
+         5qbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Pb3J1TnMyrHbEtYv4MyAUzMHiBthQ4b5tWMwPD00Zec=;
+        b=Z7qVfuYSl4BQJ2Um6Ggp4OlBb0kEH0vks+Qrcvn3xVcvbWzqsCDq1gywNfKWz77jy3
+         Nt45ub39rSGrFIfyerBiqExO7IVADQgwxNnZdzo1+RRCO0Si0AeuTp0yMkAUNaT7Fd3o
+         qv7mmW73Kr3NS6ttLtPGiAFrcErhU0pmXRW//lq5hshnCzCYkx1r5g8WvmNnX46gFQCV
+         XBGhif2/hQE176d+LvYX0WLztB23dFmPeHbf5xbINsSQWh+e3mAX8uPEx04NiFGzN72b
+         Uo+YAqYGsfKoL2OI/37NTSrP/xkOxxN9cfo5xKA2Wi4p+zTeweMWoVw7sWOQT273u80e
+         Yuzg==
+X-Gm-Message-State: APjAAAUjW4KVxV2DrMgS7epk2H3rqhn16/5EKjd2T3uw600dTi302DnA
+        WgejQ08o77BaGeHGmiymx9t4bw==
+X-Google-Smtp-Source: APXvYqz/QQDPA6+bnNKK03js7EGHCc3O8indybIknbR/TjXpwF00GzVlt5rXNQ1j1gbsdolo9KrbhQ==
+X-Received: by 2002:a65:64da:: with SMTP id t26mr1443346pgv.180.1573028310541;
+        Wed, 06 Nov 2019 00:18:30 -0800 (PST)
+Received: from ?IPv6:240e:362:4fb:4700:8c77:245e:61d8:3896? ([240e:362:4fb:4700:8c77:245e:61d8:3896])
+        by smtp.gmail.com with ESMTPSA id m2sm22041206pff.154.2019.11.06.00.18.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Nov 2019 00:18:29 -0800 (PST)
+Subject: Re: [PATCH v7 2/3] uacce: add uacce driver
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        jonathan.cameron@huawei.com, grant.likely@arm.com,
+        Jerome Glisse <jglisse@redhat.com>,
+        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
+        "haojian . zhuang" <haojian.zhuang@linaro.org>,
+        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>
+References: <1572331216-9503-1-git-send-email-zhangfei.gao@linaro.org>
+ <1572331216-9503-3-git-send-email-zhangfei.gao@linaro.org>
+ <20191105114844.GA3648434@lophozonia>
+From:   zhangfei <zhangfei.gao@linaro.org>
+Message-ID: <24cbcd55-56d0-83b9-6284-04c29da11306@linaro.org>
+Date:   Wed, 6 Nov 2019 16:17:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMo8Bf+q0j81VZeUQdvCkXt131uzSBfJ0N7RTe7+NpjRkVpzdA@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191105114844.GA3648434@lophozonia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-11-05 20:13:22, Max Filippov wrote:
-> Hi Dmitry,
-> 
-> On Tue, Nov 5, 2019 at 7:08 PM Dmitry Safonov <dima@arista.com> wrote:
-> >
-> > Currently, the log-level of show_stack() depends on a platform
-> > realization. It creates situations where the headers are printed with
-> > lower log level or higher than the stacktrace (depending on
-> > a platform or user).
-> >
-> > Furthermore, it forces the logic decision from user to an architecture
-> > side. In result, some users as sysrq/kdb/etc are doing tricks with
-> > temporary rising console_loglevel while printing their messages.
-> > And in result it not only may print unwanted messages from other CPUs,
-> > but also omit printing at all in the unlucky case where the printk()
-> > was deferred.
-> >
-> > Introducing log-level parameter and KERN_UNSUPPRESSED [1] seems
-> > an easier approach than introducing more printk buffers.
-> > Also, it will consolidate printings with headers.
-> >
-> > Introduce show_stack_loglvl(), that eventually will substitute
-> > show_stack().
-> >
-> > Cc: Chris Zankel <chris@zankel.net>
-> > Cc: Max Filippov <jcmvbkbc@gmail.com>
-> > Cc: linux-xtensa@linux-xtensa.org
-> > [1]: https://lore.kernel.org/lkml/20190528002412.1625-1-dima@arista.com/T/#u
-> > Signed-off-by: Dmitry Safonov <dima@arista.com>
-> > ---
-> >  arch/xtensa/kernel/traps.c | 16 +++++++++++-----
-> >  1 file changed, 11 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-> > index cbc0d673f542..ba6c150095c6 100644
-> > --- a/arch/xtensa/kernel/traps.c
-> > +++ b/arch/xtensa/kernel/traps.c
-> > @@ -502,7 +502,8 @@ static void show_trace(struct task_struct *task, unsigned long *sp,
-> >
-> >  static int kstack_depth_to_print = 24;
-> >
-> > -void show_stack(struct task_struct *task, unsigned long *sp)
-> > +void show_stack_loglvl(struct task_struct *task, unsigned long *sp,
-> > +                      const char *loglvl)
-> >  {
-> >         int i = 0;
-> >         unsigned long *stack;
-> > @@ -511,16 +512,21 @@ void show_stack(struct task_struct *task, unsigned long *sp)
-> >                 sp = stack_pointer(task);
-> >         stack = sp;
-> >
-> > -       pr_info("Stack:\n");
-> > +       printk("%sStack:\n", loglvl);
-> >
-> >         for (i = 0; i < kstack_depth_to_print; i++) {
-> >                 if (kstack_end(sp))
-> >                         break;
-> > -               pr_cont(" %08lx", *sp++);
-> > +               printk("%s %08lx", loglvl, *sp++);
+Hi, Jean
 
-KERN_CONT can be combined with any other loglevel.
-So you could keep using pr_cont() together with explicit loglevel:
+Thanks for the review.
 
-			pr_cont("%s %08lx", loglvl, *sp++);
+On 2019/11/5 下午7:48, Jean-Philippe Brucker wrote:
+> Hi Zhangfei,
+>
+> Thanks for simplifying this, it's a lot easier to review. I have some
+> additional comments.
+>
+> On Tue, Oct 29, 2019 at 02:40:15PM +0800, Zhangfei Gao wrote:
+>> +static int uacce_sva_exit(struct device *dev, struct iommu_sva *handle,
+>> +			  void *data)
+>> +{
+>> +	struct uacce_device *uacce = data;
+>> +	struct uacce_queue *q;
+>> +
+>> +	mutex_lock(&uacce->q_lock);
+>> +	list_for_each_entry(q, &uacce->qs, list) {
+>> +		if (q->pid == task_pid_nr(current))
+>> +			uacce_put_queue(q);
+> This won't work in some cases, because any thread can call __mmput() and
+> end up here. For example a sibling thread that inherited the queue, or a
+> workqueue that's executing mmput_async_fn(). In addition I think comparing
+> PID values is unsafe (see comment in pid.h), we'd need to use the struct
+> pid if we wanted to do it this way.
+OK, still in check.
+>
+> But I still believe it would be better to create an uacce_mm structure
+> that tracks all queues bound to this mm, and pass that to uacce_sva_exit
+> instead of the uacce_device.
+I am afraid this method may not work.
+Since currently iommu_sva_bind_device only accept the same drvdata for 
+the same dev,
+that's the reason we can not directly use "queue" as drvdata.
+Each time create an uacce_mm structure should be same problem as queue, 
+and fail for same dev.
+So we use uacce and pick up the right queue inside.
 
-It should fix the problems reported below.
+>
+> The queue isn't bound to a task, but its address space. With clone() the
+> address space can be shared between tasks. In addition, whoever has a
+> queue fd also gets access to this address space. So after a fork() the
+> child may be able to program the queue to DMA into the parent's address
+> space, even without CLONE_VM. Users must be aware of this and I think it's
+> important to explain it very clearly in the UAPI.
+>
+> [...]
+>> +static struct uacce_qfile_region *
+>> +uacce_create_region(struct uacce_queue *q, struct vm_area_struct *vma,
+>> +		    enum uacce_qfrt type, unsigned int flags)
+>> +{
+>> +	struct uacce_device *uacce = q->uacce;
+>> +	struct uacce_qfile_region *qfr;
+>> +	int ret = -ENOMEM;
+>> +
+>> +	qfr = kzalloc(sizeof(*qfr), GFP_KERNEL);
+>> +	if (!qfr)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	qfr->type = type;
+>> +	qfr->flags = flags;
+>> +
+>> +	if (vma->vm_flags & VM_READ)
+>> +		qfr->prot |= IOMMU_READ;
+> qfr->prot and qfr->flags aren't used at the moment, you could remove them.
+Yes,
+>
+>> +
+>> +	if (vma->vm_flags & VM_WRITE)
+>> +		qfr->prot |= IOMMU_WRITE;
+>> +
+>> +	if (flags & UACCE_QFRF_SELFMT) {
+>> +		if (!uacce->ops->mmap) {
+>> +			ret = -EINVAL;
+>> +			goto err_with_qfr;
+>> +		}
+>> +
+>> +		ret = uacce->ops->mmap(q, vma, qfr);
+>> +		if (ret)
+>> +			goto err_with_qfr;
+>> +		return qfr;
+>> +	}
+>> +
+>> +	return qfr;
+>> +
+>> +err_with_qfr:
+>> +	kfree(qfr);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> +static int uacce_fops_mmap(struct file *filep, struct vm_area_struct *vma)
+>> +{
+>> +	struct uacce_queue *q = filep->private_data;
+>> +	struct uacce_device *uacce = q->uacce;
+>> +	struct uacce_qfile_region *qfr;
+>> +	enum uacce_qfrt type = 0;
+>> +	unsigned int flags = 0;
+>> +	int ret;
+>> +
+>> +	if (vma->vm_pgoff < UACCE_QFRT_MAX)
+>> +		type = vma->vm_pgoff;
+> Otherwise return -EINVAL?  type probably shouldn't default to MMIO if it
+> wasn't explicitly requested by the user.
+OK
+>
+>> +
+>> +	vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_WIPEONFORK;
+>> +	vma->vm_ops = &uacce_vm_ops;
+>> +	vma->vm_private_data = q;
+>> +
+>> +	mutex_lock(&uacce_mutex);
+>> +
+>> +	if (q->qfrs[type]) {
+>> +		ret = -EEXIST;
+>> +		goto out_with_lock;
+>> +	}
+>> +
+>> +	switch (type) {
+>> +	case UACCE_QFRT_MMIO:
+>> +		flags = UACCE_QFRF_SELFMT;
+>> +		break;
+>> +
+>> +	case UACCE_QFRT_DUS:
+>> +		if (uacce->flags & UACCE_DEV_SVA) {
+>> +			flags = UACCE_QFRF_SELFMT;
+> I'd simplify this even further by getting rid of the SELFMT flag. It's the
+> only possibility at the moment.
+OK, we can remove this flag for simplicity, may add it back if required 
+in future patch.
+>
+>> +			break;
+>> +		}
+>> +		break;
+>> +
+>> +	default:
+>> +		WARN_ON(&uacce->dev);
+> WARN_ON(uacce->dev). But shouldn't we instead return -EINVAL here?
+> UACCE_QFRT_MAX is currently 16, so users can easily trigger this WARN by
+> passing an invalid value.
+Yes, good idea.
+>
+> [...]
+>> +void uacce_unregister(struct uacce_device *uacce)
+>> +{
+>> +	if (!uacce)
+>> +		return;
+>> +
+>> +	mutex_lock(&uacce->q_lock);
+>> +	if (!list_empty(&uacce->qs)) {
+>> +		struct uacce_queue *q;
+>> +
+>> +		list_for_each_entry(q, &uacce->qs, list) {
+>> +			uacce_put_queue(q);
+> The open file descriptor will still exist after this function returns.
+> Can all fops can be called with a stale queue?
+To more clear:.
+Do you mean rmmod without fops_release.
 
-Well, the preferred solution would be to snprintf() the continuous
-line into a temporary buffer. And printk() it when it is complete.
-pr_cont() is not reliable when more CPUs print at the same time.
-
-Best Regards,
-Petr
-
-> This change doesn't work well with printk timestamps, it changes
-> the following output on xtensa architecture
-> 
-> [    3.404675] Stack:
-> [    3.404861]  a05773e2 00000018 bb03dc34 bb03dc30 a0008640 bb03dc70
-> ba9ba410 37c3f000
-> [    3.405414]  37c3f000 d7c3f000 00000800 bb03dc50 a02b97ed bb03dc90
-> ba9ba400 ba9ba410
-> [    3.405969]  a05fc1bc bbff28dc 00000000 bb03dc70 a02b7fb9 bb03dce0
-> ba9ba410 a0579044
-> 
-> into this:
-> [    3.056825] Stack:
-> [    3.056963]  a04ebb20
-> [    3.056995]  bb03dc10
-> [    3.057138]  00000001
-> [    3.057277]  bb03dc10
-> [    3.057815]  a00083ca
-> [    3.057965]  bb03dc50
-> [    3.058107]  ba9ba410
-> [    3.058247]  37c3f000
-> [    3.058387]
-> [    3.058584]  a05773e2
-> [    3.058614]  00000001
-> [    3.058755]  a05ca0bc
-> [    3.058896]  bb03dc30
-> [    3.059035]  a000865c
-> [    3.059180]  bb03dc70
-> [    3.059319]  ba9ba410
-> [    3.059459]  37c3f000
-> [    3.059598]
-> [    3.059795]  37c3f000
-> [    3.059824]  d7c3f000
-> [    3.059964]  00000800
-> [    3.060103]  bb03dc50
-> [    3.060241]  a02b9809
-> [    3.060379]  bb03dc90
-> [    3.060519]  ba9ba400
-> [    3.060658]  ba9ba410
-> [    3.060796]
-> 
-> -- 
-> Thanks.
-> -- Max
+Thanks
